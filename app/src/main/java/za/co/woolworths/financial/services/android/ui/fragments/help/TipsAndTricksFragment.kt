@@ -2,14 +2,12 @@ package za.co.woolworths.financial.services.android.ui.fragments.help
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.CompoundButton
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.tips_tricks_fragment.*
+import com.awfs.coordination.databinding.TipsTricksFragmentBinding
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.ITipsAndTricksListener
 import za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity
@@ -18,23 +16,24 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.ui.adapters.TipsAndTricksListAdapter
 import za.co.woolworths.financial.services.android.util.Utils
 
-class TipsAndTricksFragment : Fragment(), ITipsAndTricksListener, CompoundButton.OnCheckedChangeListener {
+class TipsAndTricksFragment : Fragment(R.layout.tips_tricks_fragment), ITipsAndTricksListener, CompoundButton.OnCheckedChangeListener {
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.tips_tricks_fragment, container, false)
-    }
+    private lateinit var binding: TipsTricksFragmentBinding
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding = TipsTricksFragmentBinding.bind(view)
         setupToolbar()
 
-        featureSwitch?.setOnCheckedChangeListener(this)
-       featureSwitch?.isChecked = Utils.isFeatureWalkThroughTutorialsEnabled()
-        val mLayoutManager = LinearLayoutManager(activity)
-        mLayoutManager.orientation = LinearLayoutManager.VERTICAL
-        tipsAndTricksList?.layoutManager = mLayoutManager
-        tipsAndTricksList?.isNestedScrollingEnabled = false
-        tipsAndTricksList?.adapter = activity?.let { TipsAndTricksListAdapter(it, this) }
+        binding.apply {
+            featureSwitch?.setOnCheckedChangeListener(this@TipsAndTricksFragment)
+            featureSwitch?.isChecked = Utils.isFeatureWalkThroughTutorialsEnabled()
+            val mLayoutManager = LinearLayoutManager(activity)
+            mLayoutManager.orientation = LinearLayoutManager.VERTICAL
+            tipsAndTricksList?.layoutManager = mLayoutManager
+            tipsAndTricksList?.isNestedScrollingEnabled = false
+            tipsAndTricksList?.adapter = activity?.let { TipsAndTricksListAdapter(it, this@TipsAndTricksFragment) }
+        }
     }
 
     private fun setupToolbar() {

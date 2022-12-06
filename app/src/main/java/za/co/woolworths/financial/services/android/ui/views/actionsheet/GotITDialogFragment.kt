@@ -7,11 +7,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.got_it_dialog_fragment.*
+import com.awfs.coordination.databinding.GotItDialogFragmentBinding
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
 
 class GotITDialogFragment : WBottomSheetDialogFragment(), View.OnClickListener {
-
 
     companion object {
         private var mOnDialogDismiss: IDialogListener? = null
@@ -30,8 +29,11 @@ class GotITDialogFragment : WBottomSheetDialogFragment(), View.OnClickListener {
         }
     }
 
+    private lateinit var binding: GotItDialogFragmentBinding
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.got_it_dialog_fragment, container, false)
+        binding = GotItDialogFragmentBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -45,28 +47,32 @@ class GotITDialogFragment : WBottomSheetDialogFragment(), View.OnClickListener {
         val isIconAvailable = bundleArguments?.getBoolean("isIconAvailable")
         val icon = bundleArguments?.getInt("icon")
 
-        if (!TextUtils.isEmpty(mResponseTitle))
-            tvTitle.setText(mResponseTitle)
+        with(binding) {
+            if (!TextUtils.isEmpty(mResponseTitle))
+                tvTitle.setText(mResponseTitle)
 
-        if (!TextUtils.isEmpty(mResponseDesc))
-            tvDescription.setText(mResponseDesc)
+            if (!TextUtils.isEmpty(mResponseDesc))
+                tvDescription.setText(mResponseDesc)
 
-        if (!TextUtils.isEmpty(dismissDialogText))
-            btnGotIt.text = dismissDialogText
+            if (!TextUtils.isEmpty(dismissDialogText))
+                btnGotIt.text = dismissDialogText
 
-        if (!TextUtils.isEmpty(actionButtonText))
-            actionButton.text = actionButtonText
+            if (!TextUtils.isEmpty(actionButtonText))
+                actionButton.text = actionButtonText
 
-        actionButton.visibility = if (TextUtils.isEmpty(actionButtonText)) View.INVISIBLE else View.VISIBLE
-        vHorizontalDivider.visibility = if (TextUtils.isEmpty(actionButtonText)) View.VISIBLE else View.INVISIBLE
-        if (isIconAvailable!!) {
-            icon?.let { imageIcon.setBackgroundResource(it) }
-            imageIcon.visibility = View.VISIBLE
+            actionButton.visibility =
+                if (TextUtils.isEmpty(actionButtonText)) View.INVISIBLE else View.VISIBLE
+            vHorizontalDivider.visibility =
+                if (TextUtils.isEmpty(actionButtonText)) View.VISIBLE else View.INVISIBLE
+            if (isIconAvailable!!) {
+                icon?.let { imageIcon.setBackgroundResource(it) }
+                imageIcon.visibility = View.VISIBLE
+            }
+            btnGotIt.paintFlags = Paint.UNDERLINE_TEXT_FLAG
+            btnGotIt.setOnClickListener(this@GotITDialogFragment)
+
+            actionButton.setOnClickListener(this@GotITDialogFragment)
         }
-        btnGotIt.paintFlags = Paint.UNDERLINE_TEXT_FLAG
-        btnGotIt.setOnClickListener(this)
-
-        actionButton.setOnClickListener(this)
     }
 
     override fun onClick(view: View) {

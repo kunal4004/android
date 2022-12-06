@@ -2,21 +2,20 @@ package za.co.woolworths.financial.services.android.ui.fragments.contact_us
 
 import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
-import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.fragment_contact_us.*
+import com.awfs.coordination.databinding.FragmentContactUsBinding
 import za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 
-class ContactUsFragment : Fragment(), View.OnClickListener {
+class ContactUsFragment : Fragment(R.layout.fragment_contact_us), View.OnClickListener {
 
+    private lateinit var binding: FragmentContactUsBinding
     private var mBottomNavigator: BottomNavigator? = null
     private val contactUsModel = ContactUsModel()
 
@@ -27,19 +26,17 @@ class ContactUsFragment : Fragment(), View.OnClickListener {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_contact_us, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding = FragmentContactUsBinding.bind(view)
+
         (activity as? MyAccountActivity?)?.supportActionBar?.show()
         setupToolbar()
 
         with(contactUsModel) {
             contactUsLanding()?.forEachIndexed { index, item ->
 
-                val contactUsRow = layoutInflater.inflate(R.layout.contact_us_landing_item, contactUsContainerLinearLayout, false)
+                val contactUsRow = layoutInflater.inflate(R.layout.contact_us_landing_item, binding.contactUsContainerLinearLayout, false)
                 val contactUsLandingTextView = contactUsRow.findViewById<TextView>(R.id.contactUsLandingTextView)
                 val contactUsLandingDescriptionTextView = contactUsRow.findViewById<TextView>(R.id.contactUsLandingDescriptionTextView)
                 val contactUsDividertView = contactUsRow.findViewById<View>(R.id.contactUsDivider)
@@ -51,7 +48,7 @@ class ContactUsFragment : Fragment(), View.OnClickListener {
                 if (index == contactUsLanding()!!.size.minus(1)){
                     contactUsDividertView.visibility = GONE
                 }
-                contactUsContainerLinearLayout?.addView(contactUsRow)
+                binding.contactUsContainerLinearLayout?.addView(contactUsRow)
             }
         }
     }

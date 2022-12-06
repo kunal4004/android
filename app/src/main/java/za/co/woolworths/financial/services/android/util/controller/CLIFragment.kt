@@ -3,11 +3,12 @@ package za.co.woolworths.financial.services.android.util.controller
 import android.app.Activity
 import android.content.Context
 import android.view.inputmethod.InputMethodManager
+import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
 import za.co.woolworths.financial.services.android.util.CurrencyEditText
 import za.co.woolworths.financial.services.android.util.CurrencySymbols
 
-open class CLIFragment : Fragment() {
+open class CLIFragment(@LayoutRes contentLayoutId: Int) : Fragment(contentLayoutId) {
     @JvmField
 	var mCliStepIndicatorListener: CLIStepIndicatorListener? = null
     fun setStepIndicatorListener(cliStepIndicatorListener: CLIStepIndicatorListener?) {

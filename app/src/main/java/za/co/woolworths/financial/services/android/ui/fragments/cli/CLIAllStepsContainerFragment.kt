@@ -2,14 +2,12 @@ package za.co.woolworths.financial.services.android.ui.fragments.cli
 
 import android.graphics.Typeface
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.cli_step_indicator_layout.*
+import com.awfs.coordination.databinding.CliAllStepsContainerFragmentBinding
 import za.co.woolworths.financial.services.android.ui.activities.cli.CLIPhase2Activity
 import za.co.woolworths.financial.services.android.ui.extension.bindColor
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
@@ -17,26 +15,50 @@ import za.co.woolworths.financial.services.android.ui.extension.getFuturaMediumF
 import za.co.woolworths.financial.services.android.ui.extension.getFuturaSemiBoldFont
 import za.co.woolworths.financial.services.android.util.controller.CLIStepIndicatorListener
 
-class CLIAllStepsContainerFragment : Fragment(), CLIStepIndicatorListener {
+class CLIAllStepsContainerFragment : Fragment(R.layout.cli_all_steps_container_fragment), CLIStepIndicatorListener {
 
+    private lateinit var binding: CliAllStepsContainerFragmentBinding
     private var mCurrentStepTypeface: Typeface? = getFuturaSemiBoldFont()
     private var mDefaultStepTypeFace: Typeface? = getFuturaMediumFont()
 
     private val listOfIndicators: MutableList<Triple<FrameLayout?, TextView?, TextView?>>? =
             mutableListOf()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.cli_all_steps_container_fragment, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding = CliAllStepsContainerFragmentBinding.bind(view)
 
         listOfIndicators?.apply {
-            add(Triple(incomeIndicatorRelativeLayout, incomeIndicatorTextView, incomeTitleTextView))
-            add(Triple(expenseIndicatorRelativeLayout, expenseIndicatorTextView, expenseTitleTextView))
-            add(Triple(offerIndicatorRelativeLayout, otherIndicatorTextView, offerTitleTextView))
-            add(Triple(completeIndicatorRelativeLayout, completeIndicatorTextView, completeTitleTextView))
+            binding.includeCliStepIndicator.apply {
+                add(
+                    Triple(
+                        incomeIndicatorRelativeLayout,
+                        incomeIndicatorTextView,
+                        incomeTitleTextView
+                    )
+                )
+                add(
+                    Triple(
+                        expenseIndicatorRelativeLayout,
+                        expenseIndicatorTextView,
+                        expenseTitleTextView
+                    )
+                )
+                add(
+                    Triple(
+                        offerIndicatorRelativeLayout,
+                        otherIndicatorTextView,
+                        offerTitleTextView
+                    )
+                )
+                add(
+                    Triple(
+                        completeIndicatorRelativeLayout,
+                        completeIndicatorTextView,
+                        completeTitleTextView
+                    )
+                )
+            }
         }
 
         (activity as? CLIPhase2Activity)?.initFragment(this)

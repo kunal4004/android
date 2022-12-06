@@ -5,9 +5,9 @@ import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.CardInformationActivityBinding
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import kotlinx.android.synthetic.main.card_information_activity.*
 import za.co.woolworths.financial.services.android.models.dto.account.AccountHelpInformation
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -17,24 +17,29 @@ class CardInformationHelpActivity : AppCompatActivity(), View.OnClickListener {
         const val HELP_INFORMATION = "HELP_INFORMATION"
     }
 
+    private lateinit var binding: CardInformationActivityBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.card_information_activity)
+        binding = CardInformationActivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         Utils.updateStatusBarBackground(this)
 
         val helpInformation = intent?.extras?.getString(HELP_INFORMATION, "")
         val informationList: MutableList<AccountHelpInformation>? = Gson().fromJson(helpInformation, object : TypeToken<MutableList<AccountHelpInformation>>() {}.type)
 
-        informationList?.forEach { helpInformation ->
-            val view = View.inflate(this, R.layout.account_card_information_item, null)
-            val titleTextView: TextView? = view?.findViewById(R.id.titleTextView)
-            val descriptionTextView: TextView? = view?.findViewById(R.id.descriptionTextView)
-            titleTextView?.text = helpInformation.title
-            descriptionTextView?.text = helpInformation.description
-            informationContainerLinearLayout?.addView(view)
-        }
+        with(binding) {
+            informationList?.forEach { helpInformation ->
+                val view = View.inflate(this@CardInformationHelpActivity, R.layout.account_card_information_item, null)
+                val titleTextView: TextView? = view?.findViewById(R.id.titleTextView)
+                val descriptionTextView: TextView? = view?.findViewById(R.id.descriptionTextView)
+                titleTextView?.text = helpInformation.title
+                descriptionTextView?.text = helpInformation.description
+                informationContainerLinearLayout?.addView(view)
+            }
 
-        closeIcon?.setOnClickListener(this)
+            closeIcon?.setOnClickListener(this@CardInformationHelpActivity)
+        }
     }
 
     override fun onClick(v: View?) {

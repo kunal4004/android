@@ -18,7 +18,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/tv_confirm_address"
+        android:id="@+id/tv_confirm_address_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/twenty_four_dp"
@@ -43,7 +43,7 @@
         android:text="@string/we_use_your_location_to_give_you_the_most_naccurate_stock_availabilty_and_pricing"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_confirm_address" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_confirm_address_title" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/enterNewAddress"

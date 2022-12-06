@@ -7,7 +7,7 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.fragment_refinement.*
+import com.awfs.coordination.databinding.FragmentRefinementBinding
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.Refinement
 import za.co.woolworths.financial.services.android.models.dto.RefinementSelectableItem
@@ -48,7 +48,7 @@ class SubRefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initViews()
+        binding.initViews()
     }
 
     override fun onResume() {
@@ -56,8 +56,7 @@ class SubRefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
         Utils.setScreenName(activity, FirebaseManagerAnalyticsProperties.ScreenNames.PRODUCT_SEARCH_REFINEMENT_CATEGORY)
     }
 
-    private fun initViews() {
-
+    private fun FragmentRefinementBinding.initViews() {
         listener.apply {
             refinement?.label?.let { setPageTitle(it) }
             hideCloseButton()
@@ -74,7 +73,7 @@ class SubRefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
     private fun loadData() {
         dataList = getSubRefinementSelectableItems(refinement!!.subRefinements)
         subRefinementAdapter = activity?.let { SubRefinementAdapter(it, this, listener, dataList) }
-        refinementList.adapter = subRefinementAdapter
+        binding.refinementList.adapter = subRefinementAdapter
     }
 
     private fun getSubRefinementSelectableItems(subRefinements: ArrayList<SubRefinement>): ArrayList<RefinementSelectableItem> {
@@ -111,7 +110,7 @@ class SubRefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
     }
 
     override fun onSelectionChanged() {
-        clearAndResetFilter?.isEnabled = !TextUtils.isEmpty(getNavigationState())
+        binding.clearAndResetFilter?.isEnabled = !TextUtils.isEmpty(getNavigationState())
         updateSeeResultButtonText()
     }
 
@@ -129,7 +128,7 @@ class SubRefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
     }
 
     private fun updateSeeResultButtonText() {
-        seeResultCount.text = buildSeeResultButtonText()
+        binding.seeResultCount.text = buildSeeResultButtonText()
     }
 
 }

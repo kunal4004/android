@@ -1,16 +1,14 @@
 package za.co.woolworths.financial.services.android.ui.fragments.credit_card_delivery
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.CreditCardDeliveryPreferedTimeSlotsLayoutBinding
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import kotlinx.android.synthetic.main.credit_card_delivery_prefered_time_slots_layout.*
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.ScheduleDeliveryRequest
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.SlotDetails
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.StatusResponse
@@ -21,16 +19,13 @@ import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.WFormatter
 import za.co.woolworths.financial.services.android.util.picker.WheelView
 
+class CreditCardDeliveryPreferedTimeSlotFragment : CreditCardDeliveryBaseFragment(R.layout.credit_card_delivery_prefered_time_slots_layout), WheelView.OnItemSelectedListener<Any> {
 
-class CreditCardDeliveryPreferedTimeSlotFragment : CreditCardDeliveryBaseFragment(), WheelView.OnItemSelectedListener<Any> {
-
+    private lateinit var binding: CreditCardDeliveryPreferedTimeSlotsLayoutBinding
     private var timeslots: List<TimeSlot>? = null
     private var selectedDate: TimeSlot? = null
     private var selectedTime: String? = null
     var navController: NavController? = null
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.credit_card_delivery_prefered_time_slots_layout, container, false)
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,11 +35,13 @@ class CreditCardDeliveryPreferedTimeSlotFragment : CreditCardDeliveryBaseFragmen
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding = CreditCardDeliveryPreferedTimeSlotsLayoutBinding.bind(view)
+
         this.navController = Navigation.findNavController(view)
         setUpToolBar()
-        datePicker?.onItemSelectedListener = this
-        timePicker?.onItemSelectedListener = this
-        confirm?.setOnClickListener {
+        binding.datePicker?.onItemSelectedListener = this
+        binding.timePicker?.onItemSelectedListener = this
+        binding.confirm?.setOnClickListener {
             bundle?.putString("selected_date", selectedDate?.date)
             bundle?.putString("selected_time", selectedTime)
 
@@ -115,7 +112,7 @@ class CreditCardDeliveryPreferedTimeSlotFragment : CreditCardDeliveryBaseFragmen
         val defaultItemPosition = timeSlots.let { it.size / 2 }
         selectedDate = timeSlots[defaultItemPosition - 1]
         selectedTime = selectedDate?.availableTimeslots?.let { (it.size / 2) }?.let { selectedDate?.availableTimeslots?.get(it) }
-        datePicker?.apply {
+        binding.datePicker?.apply {
             data = timeSlots
             selectedItemPosition = defaultItemPosition - 1
         }
@@ -127,7 +124,7 @@ class CreditCardDeliveryPreferedTimeSlotFragment : CreditCardDeliveryBaseFragmen
     }
 
     private fun setTimePickerData(timeSlot: TimeSlot) {
-        timePicker?.apply {
+        binding.timePicker?.apply {
             data = timeSlot.availableTimeslots
             selectedItemPosition = timeSlot.availableTimeslots.let { (it.size / 2) }
         }

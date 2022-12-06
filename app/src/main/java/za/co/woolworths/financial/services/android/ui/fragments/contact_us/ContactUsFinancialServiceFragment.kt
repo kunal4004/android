@@ -5,16 +5,14 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.contact_us_financial_services.*
+import com.awfs.coordination.databinding.ContactUsFinancialServicesBinding
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatToUs
@@ -28,8 +26,9 @@ import za.co.woolworths.financial.services.android.ui.views.actionsheet.WhatsApp
 import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.Utils
 
-class ContactUsFinancialServiceFragment : Fragment(), View.OnClickListener {
+class ContactUsFinancialServiceFragment : Fragment(R.layout.contact_us_financial_services), View.OnClickListener {
 
+    private lateinit var binding: ContactUsFinancialServicesBinding
     private val contactUsModel = ContactUsModel()
 
     companion object {
@@ -46,58 +45,70 @@ class ContactUsFinancialServiceFragment : Fragment(), View.OnClickListener {
             mBottomNavigator = context
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.contact_us_financial_services, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding = ContactUsFinancialServicesBinding.bind(view)
 
-        setupToolbar()
-        with(contactUsModel) {
-            contactUsFinancialServicesEmail()?.apply {
-                val localCallerRow = layoutInflater.inflate(R.layout.contact_us_email_item, contactFinancialServicesEmailLinearLayout, false)
-                val contactUsEmailTextView = localCallerRow.findViewById<TextView>(R.id.contactUsEmailTextView)
-                val contactUsEmailDescriptionTextView = localCallerRow.findViewById<TextView>(R.id.contactUsEmailDescriptionTextView)
-                val contactUsEmailDescriptionDivider = localCallerRow.findViewById<View>(R.id.contactUsEmailDescriptionDivider)
+        binding.apply {
+            setupToolbar()
+            with(contactUsModel) {
+                contactUsFinancialServicesEmail()?.apply {
+                    val localCallerRow = layoutInflater.inflate(
+                        R.layout.contact_us_email_item,
+                        contactFinancialServicesEmailLinearLayout,
+                        false
+                    )
+                    val contactUsEmailTextView =
+                        localCallerRow.findViewById<TextView>(R.id.contactUsEmailTextView)
+                    val contactUsEmailDescriptionTextView =
+                        localCallerRow.findViewById<TextView>(R.id.contactUsEmailDescriptionTextView)
+                    val contactUsEmailDescriptionDivider =
+                        localCallerRow.findViewById<View>(R.id.contactUsEmailDescriptionDivider)
 
-                contactUsEmailTextView?.text = bindString(R.string.send_enquiry)
-                contactUsEmailDescriptionTextView?.visibility = GONE
-                contactUsEmailDescriptionDivider?.visibility = GONE
-                localCallerRow?.setOnClickListener {
-                    if (activity is BottomNavigationActivity)
-                        mBottomNavigator?.pushFragmentSlideUp(EnquiriesListFragment())
-                    else
-                        (activity as? MyAccountActivity)?.replaceFragment(EnquiriesListFragment())
+                    contactUsEmailTextView?.text = bindString(R.string.send_enquiry)
+                    contactUsEmailDescriptionTextView?.visibility = GONE
+                    contactUsEmailDescriptionDivider?.visibility = GONE
+                    localCallerRow?.setOnClickListener {
+                        if (activity is BottomNavigationActivity)
+                            mBottomNavigator?.pushFragmentSlideUp(EnquiriesListFragment())
+                        else
+                            (activity as? MyAccountActivity)?.replaceFragment(EnquiriesListFragment())
+                    }
+
+                    contactFinancialServicesEmailLinearLayout?.addView(localCallerRow)
+
                 }
 
-                contactFinancialServicesEmailLinearLayout?.addView(localCallerRow)
+                contactUsFinancialServicesCall()?.apply {
+                    options?.forEachIndexed { index, item ->
+                        val localCallerRow = layoutInflater.inflate(
+                            R.layout.contact_us_call_options_item,
+                            callUsLinearLayoutContainer,
+                            false
+                        )
+                        val localCallerTextView =
+                            localCallerRow.findViewById<TextView>(R.id.localCallerTextView)
+                        val localCallerPhoneNumberTextView =
+                            localCallerRow.findViewById<TextView>(R.id.localCallerPhoneNumberTextView)
 
-            }
+                        localCallerTextView?.text = item.key
+                        localCallerPhoneNumberTextView?.text = item.value
+                        localCallerRow?.tag = index
+                        localCallerRow?.setOnClickListener { Utils.makeCall(item.value) }
 
-            contactUsFinancialServicesCall()?.apply  {
-                options?.forEachIndexed { index, item ->
-                    val localCallerRow = layoutInflater.inflate(R.layout.contact_us_call_options_item, callUsLinearLayoutContainer, false)
-                    val localCallerTextView = localCallerRow.findViewById<TextView>(R.id.localCallerTextView)
-                    val localCallerPhoneNumberTextView = localCallerRow.findViewById<TextView>(R.id.localCallerPhoneNumberTextView)
+                        callUsLinearLayoutContainer?.addView(localCallerRow)
+                    }
 
-                    localCallerTextView?.text = item.key
-                    localCallerPhoneNumberTextView?.text = item.value
-                    localCallerRow?.tag = index
-                    localCallerRow?.setOnClickListener { Utils.makeCall(item.value) }
-
-                    callUsLinearLayoutContainer?.addView(localCallerRow)
+                    operationHoursTextView?.text = operatingHours
                 }
-
-                operationHoursTextView?.text = operatingHours
             }
+
+            showWhatsAppChatWithUs()
+            contactUsChatToUsRelativeLayout?.setOnClickListener(this@ContactUsFinancialServiceFragment)
         }
-
-        showWhatsAppChatWithUs()
-        contactUsChatToUsRelativeLayout?.setOnClickListener(this)
     }
 
-    private fun showWhatsAppChatWithUs() {
+    private fun ContactUsFinancialServicesBinding.showWhatsAppChatWithUs() {
         with(WhatsAppChatToUs()) {
             if (isChatWithUsEnabledForContactUs) {
                 chatWithUsLinearLayout?.visibility = VISIBLE

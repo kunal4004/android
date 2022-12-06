@@ -165,7 +165,9 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <include layout="@layout/cart_item_limits_banner" />
+                <include
+                    android:id="@+id/cart_item_limits_banner"
+                    layout="@layout/cart_item_limits_banner" />
 
                 <TextView
                     android:id="@+id/upSellMessageTextView"
@@ -244,5 +246,7 @@
         android:indeterminateTint="@color/black"
         android:visibility="gone" />
 
-    <include layout="@layout/no_connection_handler" />
+    <include
+        android:id="@+id/no_connection_handler"
+        layout="@layout/no_connection_handler" />
 </FrameLayout>
