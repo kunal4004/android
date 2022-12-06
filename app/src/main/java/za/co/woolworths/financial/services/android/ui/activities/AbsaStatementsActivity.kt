@@ -9,10 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.absa_statements_activity.*
-import kotlinx.android.synthetic.main.chat_collect_agent_floating_button_layout.*
-import kotlinx.android.synthetic.main.empty_state_template.*
-import kotlinx.android.synthetic.main.payment_options_activity.*
+import com.awfs.coordination.databinding.AbsaStatementsActivityBinding
 import za.co.absa.openbankingapi.woolworths.integration.dto.ArchivedStatement
 import za.co.absa.openbankingapi.woolworths.integration.dto.Header
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
@@ -35,6 +32,7 @@ import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
 
 class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.ActionListners {
 
+    private lateinit var binding: AbsaStatementsActivityBinding
     private lateinit var mViewArchivedStatement: ArchivedStatement
     private var mCreditCardToken: String? = null
     private var chatAccountProductLandingPage: Pair<ApplyNowState, Account>? = null
@@ -53,17 +51,21 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.absa_statements_activity)
+        binding = AbsaStatementsActivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         Utils.updateStatusBarBackground(this)
-        actionBar()
-        if (savedInstanceState == null)
-            getBundleArgument()
-        initViews()
-        showChatBubble()
-        absaResultObserver()
+
+        with(binding) {
+            actionBar()
+            if (savedInstanceState == null)
+                getBundleArgument()
+            initViews()
+            showChatBubble()
+            absaResultObserver()
+        }
     }
 
-    private fun absaResultObserver() {
+    private fun AbsaStatementsActivityBinding.absaResultObserver() {
         with(mViewModel){
             isLoading.observe(this@AbsaStatementsActivity, { isLoading ->
                 when(isLoading){
@@ -121,7 +123,7 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
 
     }
 
-    private fun actionBar() {
+    private fun AbsaStatementsActivityBinding.actionBar() {
         setSupportActionBar(mToolbar)
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
@@ -141,9 +143,16 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
         }
     }
 
-    fun initViews() {
-        mErrorHandlerView = ErrorHandlerView(this, relEmptyStateHandler, imgEmpyStateIcon, txtEmptyStateTitle, txtEmptyStateDesc, btnGoToProduct)
-        btnGoToProduct?.setOnClickListener { onActionClick() }
+    fun AbsaStatementsActivityBinding.initViews() {
+        mErrorHandlerView = ErrorHandlerView(
+            this@AbsaStatementsActivity,
+            includeEmptyStateTemplate.relEmptyStateHandler,
+            includeEmptyStateTemplate.imgEmpyStateIcon,
+            includeEmptyStateTemplate.txtEmptyStateTitle,
+            includeEmptyStateTemplate.txtEmptyStateDesc,
+            includeEmptyStateTemplate.btnGoToProduct
+        )
+        includeEmptyStateTemplate.btnGoToProduct?.setOnClickListener { onActionClick() }
         loadStatements()
     }
 
@@ -177,16 +186,16 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
     }
 
 
-    private fun showProgress() {
+    private fun AbsaStatementsActivityBinding.showProgress() {
         pbCircular.visibility = View.VISIBLE
     }
 
-    private fun hideProgress() {
+    private fun AbsaStatementsActivityBinding.hideProgress() {
         if (this@AbsaStatementsActivity.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED))
             pbCircular.visibility = View.GONE
     }
 
-    private fun showErrorView() {
+    private fun AbsaStatementsActivityBinding.showErrorView() {
         rcvStatements?.visibility = View.GONE
         hideProgress()
         mErrorHandlerView?.setEmptyStateWithAction(8, R.string.retry, ErrorHandlerView.ACTION_TYPE.RETRY)
@@ -208,7 +217,7 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
     }
 
     override fun onViewStatement(item: ArchivedStatement) {
-        if (pbCircular.visibility != View.VISIBLE) {
+        if (binding.pbCircular.visibility != View.VISIBLE) {
             mViewArchivedStatement = item
             linkDeviceIfNecessary(this, ApplyNowState.GOLD_CREDIT_CARD,
                 {
@@ -246,7 +255,7 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
 
     }
 
-    private fun showChatBubble() {
+    private fun AbsaStatementsActivityBinding.showChatBubble() {
         val account = chatAccountProductLandingPage?.second
         val card = Card()
         card.absaCardToken = mCreditCardToken
@@ -276,29 +285,27 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
                     accountList,
                     this@AbsaStatementsActivity
                 ),
-                floatingActionButton = chatBubbleFloatingButton,
+                floatingActionButton = includeChatCollectAgentFloatingButton.chatBubbleFloatingButton,
                 applyNowState = it,
-                scrollableView = paymentOptionScrollView,
-                notificationBadge = badge,
-                onlineChatImageViewIndicator = onlineIndicatorImageView,
+                notificationBadge = includeChatCollectAgentFloatingButton.badge,
+                onlineChatImageViewIndicator = includeChatCollectAgentFloatingButton.onlineIndicatorImageView,
                 vocTriggerEvent = vocTriggerEvent
             )
                 .build()
         }
     }
 
-    private fun chatToCollectionAgent(
+    private fun AbsaStatementsActivityBinding.chatToCollectionAgent(
         applyNowState: ApplyNowState,
         accountList: MutableList<Account>?
     ) {
         ChatFloatingActionButtonBubbleView(
             activity = this@AbsaStatementsActivity,
             chatBubbleVisibility = ChatBubbleVisibility(accountList, this@AbsaStatementsActivity),
-            floatingActionButton = chatBubbleFloatingButton,
+            floatingActionButton = includeChatCollectAgentFloatingButton.chatBubbleFloatingButton,
             applyNowState = applyNowState,
-            scrollableView = paymentOptionScrollView,
-            notificationBadge = badge,
-            onlineChatImageViewIndicator = onlineIndicatorImageView
+            notificationBadge = includeChatCollectAgentFloatingButton.badge,
+            onlineChatImageViewIndicator = includeChatCollectAgentFloatingButton.onlineIndicatorImageView
         ).build()
     }
 }

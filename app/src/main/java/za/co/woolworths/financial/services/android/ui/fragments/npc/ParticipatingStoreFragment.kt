@@ -12,7 +12,10 @@ import android.text.method.LinkMovementMethod
 import android.text.style.AbsoluteSizeSpan
 import android.text.style.ClickableSpan
 import android.text.style.StyleSpan
-import android.view.*
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
 import android.widget.ImageView
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
@@ -20,15 +23,11 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.ParticipatingStoreFragmentBinding
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import kotlinx.android.synthetic.main.participating_store_fragment.*
-import kotlinx.android.synthetic.main.select_store_activity.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails
 import za.co.woolworths.financial.services.android.ui.activities.card.SelectStoreActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
@@ -36,8 +35,9 @@ import za.co.woolworths.financial.services.android.ui.fragments.store.StoreLocat
 import za.co.woolworths.financial.services.android.ui.fragments.store.StoreLocatorListFragment
 import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 
-class ParticipatingStoreFragment : Fragment() {
+class ParticipatingStoreFragment : BaseFragmentBinding<ParticipatingStoreFragmentBinding>(ParticipatingStoreFragmentBinding::inflate) {
 
     private var mTitle: String? = null
     private var mDescription: String? = null
@@ -69,10 +69,6 @@ class ParticipatingStoreFragment : Fragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.participating_store_fragment, container, false)
-    }
-
     override fun onResume() {
         super.onResume()
         Utils.hideSoftKeyboard(activity)
@@ -89,7 +85,7 @@ class ParticipatingStoreFragment : Fragment() {
         val geofenceMessage = AppConfigSingleton.instantCardReplacement?.geofencing?.outOfRangeMessages
         geofenceMessage?.let {
             val participatingStoreDescription = highlightTextInDesc(context, SpannableString(if (isInGeoFence == true) it.inRange else it.outOfRange), "here", true)
-            tvStoreContactInfo?.apply {
+            binding.tvStoreContactInfo?.apply {
                 val boolean = arguments?.getBoolean(SHOW_GEOFENCING, true)
                 visibility = if (boolean == false) View.GONE else View.VISIBLE
                 text = participatingStoreDescription
@@ -176,7 +172,7 @@ class ParticipatingStoreFragment : Fragment() {
     fun getLocation(): MutableList<StoreDetails>? = mLocations
 
     private fun initViewPagerWithTabLayout() {
-        vpStoreLocator?.adapter = object : FragmentStateAdapter(this) {
+        binding.vpStoreLocator?.adapter = object : FragmentStateAdapter(this) {
             override fun createFragment(position: Int): Fragment {
                 return when (position) {
                     0 -> StoreLocatorFragment.newInstance(getLocation(), arguments?.getString(STORE_CARD), arguments?.getBoolean(SHOW_BACK_BUTTON, false) == true)
@@ -189,10 +185,10 @@ class ParticipatingStoreFragment : Fragment() {
             }
         }
 
-        TabLayoutMediator(tabs, vpStoreLocator) { _, _ -> }.attach()
+        TabLayoutMediator(binding.tabs, binding.vpStoreLocator) { _, _ -> }.attach()
 
-        val tabMapLayout = tabs?.getTabAt(0)
-        val tabListLayout = tabs?.getTabAt(1)
+        val tabMapLayout = binding.tabs?.getTabAt(0)
+        val tabListLayout = binding.tabs?.getTabAt(1)
 
         tabMapLayout?.setCustomView(R.layout.stockfinder_custom_tab)
         tabListLayout?.setCustomView(R.layout.stockfinder_custom_tab)
@@ -213,12 +209,12 @@ class ParticipatingStoreFragment : Fragment() {
 
         onTabSelected(0, tvMapView, imMapView, tvListView, imListView)
 
-        vpStoreLocator?.currentItem = 0
+        binding.vpStoreLocator?.currentItem = 0
 
         // Disable ViewPager swipe
-        vpStoreLocator?.isUserInputEnabled = false
+        binding.vpStoreLocator?.isUserInputEnabled = false
 
-        tabs?.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+        binding.tabs?.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
 
             override fun onTabSelected(tab: TabLayout.Tab?) = onTabSelected(tab?.position
                     ?: 0, tvMapView, imMapView, tvListView, imListView)
@@ -240,7 +236,7 @@ class ParticipatingStoreFragment : Fragment() {
                 tvListView?.alpha = UNSELECTED_TAB_ALPHA_VIEW
                 imListView?.alpha = UNSELECTED_TAB_ALPHA_VIEW
                 (activity as? SelectStoreActivity)?.apply {
-                    vtcReplacementToolbarTextView?.text = getString(R.string.participating_stores)
+                    binding.vtcReplacementToolbarTextView?.text = getString(R.string.participating_stores)
                 }
             }
             1 -> {
@@ -249,7 +245,7 @@ class ParticipatingStoreFragment : Fragment() {
                 tvListView?.alpha = SELECTED_TAB_ALPHA_VIEW
                 imListView?.alpha = SELECTED_TAB_ALPHA_VIEW
                 (activity as? SelectStoreActivity)?.apply {
-                    vtcReplacementToolbarTextView?.text = getString(R.string.nearest_store)
+                    binding.vtcReplacementToolbarTextView?.text = getString(R.string.nearest_store)
                 }
 
             }

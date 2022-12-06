@@ -3,40 +3,36 @@ package za.co.woolworths.financial.services.android.ui.adapters.holder
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
-import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.join_reward_walkthrough_row.view.*
-import android.text.SpannableStringBuilder
 import android.text.Spannable
+import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
+import androidx.recyclerview.widget.RecyclerView
+import com.awfs.coordination.R
+import com.awfs.coordination.databinding.JoinRewardWalkthroughRowBinding
 
-class JoinRewardViewHolder constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    constructor(parent: ViewGroup) : this(LayoutInflater.from(parent.context).inflate(R.layout.join_reward_walkthrough_row, parent, false))
+class JoinRewardViewHolder(val itemBinding: JoinRewardWalkthroughRowBinding) : RecyclerView.ViewHolder(itemBinding.root) {
 
     fun bind(imageDrawable: Int, title: Int, description: Int) {
-        itemView.context?.apply {
+        itemBinding.apply {
             with(itemView) {
-                tvReasonToJoinTitle?.text = getString(title)
-                val spanBuilder = updateWRewardCharacter(description)
+                tvReasonToJoinTitle?.text = root.context.getString(title)
+                val spanBuilder = updateWRewardCharacter(root.context, description)
                 tvReasonToJoinDesc?.text = spanBuilder
                 imHeader?.setImageResource(imageDrawable)
             }
-        }
-        uniqueIdsForRewards()
-    }
-
-    private fun uniqueIdsForRewards() {
-        itemView.context?.resources?.apply {
-            itemView.infoLinearLayoutCompat?.contentDescription = getString(R.string.infoLayout)
+            uniqueIdsForRewards()
         }
     }
 
-    private fun Context.updateWRewardCharacter(description: Int): SpannableStringBuilder {
-        val spanBuilder = SpannableStringBuilder(getString(description))
+    private fun JoinRewardWalkthroughRowBinding.uniqueIdsForRewards() {
+        root.context?.resources?.apply {
+            infoLinearLayoutCompat?.contentDescription = getString(R.string.infoLayout)
+        }
+    }
+
+    private fun updateWRewardCharacter(context: Context, description: Int): SpannableStringBuilder {
+        val spanBuilder = SpannableStringBuilder(context.getString(description))
         with(spanBuilder) {
             if (contains("WRe")) {
                 val rewardTextPosition = indexOf("WRewards")

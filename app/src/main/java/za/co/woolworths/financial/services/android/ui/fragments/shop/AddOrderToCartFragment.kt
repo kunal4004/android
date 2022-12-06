@@ -5,18 +5,12 @@ import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.FragmentAddOrderToCartBinding
 import com.google.gson.Gson
-import kotlinx.android.synthetic.main.fragment_add_order_to_cart.*
-import kotlinx.android.synthetic.main.fragment_add_order_to_cart.btnBack
-import kotlinx.android.synthetic.main.fragment_add_order_to_cart.loadingBar
-import kotlinx.android.synthetic.main.fragment_add_order_to_cart.toolbarText
 import org.json.JSONObject
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
@@ -32,9 +26,10 @@ import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.Fragm
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.RESPONSE_ERROR_CODE_1235
+import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 
 
-class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
+class AddOrderToCartFragment : BaseFragmentBinding<FragmentAddOrderToCartBinding>(FragmentAddOrderToCartBinding::inflate), AddOrderToCartAdapter.OnItemClick {
 
     private var orderDetailsResponse: OrderDetailsResponse? = null
     private var dataList = arrayListOf<OrderDetailsItem>()
@@ -49,13 +44,6 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
 
     private var order: Order? = null
     private var orderText: String = ""
-
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_add_order_to_cart, container, false)
-    }
 
     companion object {
         private const val ARG_PARAM = "orderDetailsResponse"
@@ -92,10 +80,10 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mWoolWorthsApplication = activity?.application as WoolworthsApplication
-        initViews()
+        binding.initViews()
     }
 
-    private fun initViews() {
+    private fun FragmentAddOrderToCartBinding.initViews() {
         toolbarText?.text = orderText
         btnBack?.setOnClickListener { activity?.onBackPressed() }
         rvItemsToCart.layoutManager = LinearLayoutManager(activity) as RecyclerView.LayoutManager?
@@ -109,7 +97,7 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
     fun bindData() {
         dataList = buildDataForOrderDetailsView(orderDetailsResponse!!)
         addOrderToCartAdapter = activity?.let { AddOrderToCartAdapter(it, this, dataList) }
-        rvItemsToCart.adapter = addOrderToCartAdapter
+        binding.rvItemsToCart.adapter = addOrderToCartAdapter
         makeInventoryCall()
     }
 
@@ -123,14 +111,15 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
     }
 
     override fun onItemSelectionChanged(dataList: ArrayList<OrderDetailsItem>) {
-
-        if (isAdded) {
-            isAnyItemSelected = getButtonStatus(dataList)
-            addToCartButton.isEnabled = isAnyItemSelected
-            if (dataList.size > 0)
-                tvSelectAllAddToCart?.setText(getString(if (getSelectAllMenuVisibility(dataList)) R.string.deselect else R.string.select_all))
-            else
-                tvSelectAllAddToCart?.visibility = View.GONE
+        binding.apply {
+            if (isAdded) {
+                isAnyItemSelected = getButtonStatus(dataList)
+                addToCartButton.isEnabled = isAnyItemSelected
+                if (dataList.size > 0)
+                    tvSelectAllAddToCart?.setText(getString(if (getSelectAllMenuVisibility(dataList)) R.string.deselect else R.string.select_all))
+                else
+                    tvSelectAllAddToCart?.visibility = View.GONE
+            }
         }
     }
 
@@ -373,7 +362,7 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
     }
 
     private fun setSelectAllTextVisibility(state: Boolean) {
-        tvSelectAllAddToCart?.visibility = if (state) View.VISIBLE else View.GONE
+        binding.tvSelectAllAddToCart?.visibility = if (state) View.VISIBLE else View.GONE
     }
 
     private fun selectAllItems(isSelected: Boolean) {
@@ -393,12 +382,16 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
     }
 
     private fun onSelectAll() {
-        if (tvSelectAllAddToCart?.getText().toString().equals("SELECT ALL", ignoreCase = true)) {
-            selectAllItems(true)
-            tvSelectAllAddToCart?.setText(getString(R.string.deselect))
-        } else {
-            selectAllItems(false)
-            tvSelectAllAddToCart?.setText(getString(R.string.select_all))
+        binding.apply {
+            if (tvSelectAllAddToCart?.getText().toString()
+                    .equals("SELECT ALL", ignoreCase = true)
+            ) {
+                selectAllItems(true)
+                tvSelectAllAddToCart?.setText(getString(R.string.deselect))
+            } else {
+                selectAllItems(false)
+                tvSelectAllAddToCart?.setText(getString(R.string.select_all))
+            }
         }
     }
 
@@ -421,8 +414,10 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
     }
 
     private fun onAddToCartPreExecute() {
-        tvAddToCart.visibility = View.GONE
-        loadingBar.visibility = View.VISIBLE
+        binding.apply {
+            tvAddToCart.visibility = View.GONE
+            loadingBar.visibility = View.VISIBLE
+        }
     }
 
     private fun postAddItemToCart(addItemToCart: MutableList<AddItemToCart>): Call<AddItemToCartResponse> {
@@ -451,9 +446,9 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
                 if ((KotlinUtils.isDeliveryOptionClickAndCollect() || KotlinUtils.isDeliveryOptionDash())
                     && addItemToCartResponse.data[0]?.productCountMap?.quantityLimit?.foodLayoutColour != null) {
                     addItemToCartResponse.data[0]?.productCountMap?.let {
-                        ToastFactory.showItemsLimitToastOnAddToCart(fragment_add_to_order, it, requireActivity(), size) }
+                        ToastFactory.showItemsLimitToastOnAddToCart(binding.fragmentAddToOrder, it, requireActivity(), size) }
                 } else {
-                    ToastFactory.buildAddToCartSuccessToast(fragment_add_to_order, true, requireActivity())
+                    ToastFactory.buildAddToCartSuccessToast(binding.fragmentAddToOrder, true, requireActivity())
                 }
             }
             440 -> {
@@ -462,8 +457,8 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
 
             AppConstant.HTTP_EXPECTATION_FAILED_502 -> {
                 if (addItemToCartResponse.response.code == RESPONSE_ERROR_CODE_1235 ) {
-                    loadingBar?.visibility = View.GONE
-                    tvAddToCart?.visibility = View.VISIBLE
+                    binding.loadingBar?.visibility = View.GONE
+                    binding.tvAddToCart?.visibility = View.VISIBLE
                     KotlinUtils.showQuantityLimitErrror(
                         activity?.supportFragmentManager,
                         addItemToCartResponse.response.desc,

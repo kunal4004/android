@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.bpi_overview_row.view.*
+import com.awfs.coordination.databinding.BpiOverviewRowBinding
 import za.co.woolworths.financial.services.android.models.dto.BalanceProtectionInsuranceOverview
 import za.co.woolworths.financial.services.android.models.dto.InsuranceType
 import za.co.woolworths.financial.services.android.ui.extension.bindColor
@@ -17,8 +17,9 @@ internal class BalanceProtectionInsuranceAdapter(private val bpiOverviewList: Mu
     : RecyclerView.Adapter<BalanceProtectionInsuranceAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val v: View = LayoutInflater.from(parent.context).inflate(R.layout.bpi_overview_row, parent, false)
-        return ViewHolder(v)
+        return ViewHolder(
+            BpiOverviewRowBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        )
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -31,39 +32,46 @@ internal class BalanceProtectionInsuranceAdapter(private val bpiOverviewList: Mu
 
     override fun getItemCount(): Int = bpiOverviewList?.size ?: 0
 
-   inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+   inner class ViewHolder(val binding: BpiOverviewRowBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bindItems(bpiOverview: BalanceProtectionInsuranceOverview?) {
-            setOverviewConstraint(
-                itemCount,
-                itemView.clBalanceOverview,
-                adapterPosition,
-                R.dimen.seventeen_dp,
-                R.dimen.sixteen_dp
-            )
+            with(binding) {
+                setOverviewConstraint(
+                    itemCount,
+                    clBalanceOverview,
+                    adapterPosition,
+                    R.dimen.seventeen_dp,
+                    R.dimen.sixteen_dp
+                )
 
-             val header = bpiOverview?.overview?.header ?: bpiOverview?.overview?.title
-            itemView.tvTitle?.text = header?.let { bindString(it) } ?: ""
-            itemView.tvDescription?.text = bpiOverview?.overview?.description?.let { bindString(it) }
-            bpiOverview?.overviewDrawable?.let { itemView.imOverViewDescImage.setImageResource(it) }
+                val header = bpiOverview?.overview?.header ?: bpiOverview?.overview?.title
+                tvTitle?.text = header?.let { bindString(it) } ?: ""
+                tvDescription?.text =
+                    bpiOverview?.overview?.description?.let { bindString(it) }
+                bpiOverview?.overviewDrawable?.let {
+                    imOverViewDescImage.setImageResource(
+                        it
+                    )
+                }
 
-            AnimationUtilExtension.animateViewPushDown(itemView)
+                AnimationUtilExtension.animateViewPushDown(itemView)
 
-            itemView.setOnClickListener {
-                bpiOverview?.let { onClickListener(it) }
+                itemView.setOnClickListener {
+                    bpiOverview?.let { onClickListener(it) }
+                }
             }
         }
 
         fun verticalBarBackground(insuranceType: InsuranceType) {
-            itemView.spVerticalOrangeDeco?.setBackgroundColor(if (insuranceType.covered) bindColor(R.color.bpi_orange) else bindColor(R.color.black))
+            binding.spVerticalOrangeDeco?.setBackgroundColor(if (insuranceType.covered) bindColor(R.color.bpi_orange) else bindColor(R.color.black))
         }
 
         fun itemIsCovered(insuranceType: InsuranceType) {
             if (insuranceType.covered) {
-                itemView.tvCover?.visibility = View.VISIBLE
-                itemView.imRightArrow?.visibility = View.GONE
+                binding.tvCover?.visibility = View.VISIBLE
+                binding.imRightArrow?.visibility = View.GONE
             } else {
-                itemView.tvCover?.visibility = View.GONE
-                itemView.imRightArrow?.visibility = View.VISIBLE
+                binding.tvCover?.visibility = View.GONE
+                binding.imRightArrow?.visibility = View.VISIBLE
             }
         }
 

@@ -130,10 +130,10 @@ class SubCategoryFragment :
             }
             val subCategoryModel = mSubCategoryListModel?.get(mSelectedHeaderPosition)
             subCategoryModel?.setSubCategoryChildList(subCategoryChildList)
-            if (mAdapter != null) {
+            if (mAdapter != null && mSubCategoryListModel != null && mParentViewHolder != null) {
                 mAdapter?.updateList(
-                    mSubCategoryListModel,
-                    mParentViewHolder,
+                    mSubCategoryListModel!!,
+                    mParentViewHolder!!,
                     mSelectedHeaderPosition
                 )
             }

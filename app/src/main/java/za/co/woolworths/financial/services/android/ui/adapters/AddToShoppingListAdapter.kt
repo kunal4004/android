@@ -1,17 +1,17 @@
 package za.co.woolworths.financial.services.android.ui.adapters
 
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.add_to_list_row.view.*
+import androidx.recyclerview.widget.RecyclerView
+import com.awfs.coordination.databinding.AddToListRowBinding
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList
 
 class AddToShoppingListAdapter(private var shopMutableList: MutableList<ShoppingList>, private val clickListener: (ShoppingList) -> Unit) : RecyclerView.Adapter<AddToShoppingListAdapter.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val v = LayoutInflater.from(parent.context).inflate(R.layout.add_to_list_row, parent, false)
-        return ViewHolder(v, clickListener)
+        return ViewHolder(
+            AddToListRowBinding.inflate(LayoutInflater.from(parent.context), parent, false),
+            clickListener
+        )
     }
 
     override fun onBindViewHolder(holder: AddToShoppingListAdapter.ViewHolder, position: Int) {
@@ -19,12 +19,12 @@ class AddToShoppingListAdapter(private var shopMutableList: MutableList<Shopping
         holder.bindItems(shoppingList)
     }
 
-    class ViewHolder(itemView: View, private val clickListener: (ShoppingList) -> Unit) : RecyclerView.ViewHolder(itemView) {
+    class ViewHolder(val binding: AddToListRowBinding, private val clickListener: (ShoppingList) -> Unit) : RecyclerView.ViewHolder(binding.root) {
 
         fun bindItems(shoppingList: ShoppingList) {
             shoppingList.apply {
-                itemView.tvName.text = listName
-                itemView.chxAddToList.isChecked = shoppingListRowWasSelected
+                binding.tvName.text = listName
+                binding.chxAddToList.isChecked = shoppingListRowWasSelected
 
                 itemView.setOnClickListener {
                     shoppingListRowWasSelected = !shoppingListRowWasSelected

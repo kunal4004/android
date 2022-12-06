@@ -3,15 +3,13 @@ package za.co.woolworths.financial.services.android.ui.fragments.npc
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
 import android.view.View.*
-import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.MyCardFragmentBinding
 import com.google.gson.Gson
-import kotlinx.android.synthetic.main.my_card_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.contracts.ITemporaryCardFreeze
@@ -51,8 +49,9 @@ import za.co.woolworths.financial.services.android.util.Utils.PRIMARY_CARD_POSIT
 import java.net.SocketTimeoutException
 import java.util.*
 
-class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.IOnTemporaryStoreCardDialogDismiss, OnClickListener {
+class MyCardDetailFragment : MyCardExtension(R.layout.my_card_fragment), ScanBarcodeToPayDialogFragment.IOnTemporaryStoreCardDialogDismiss, OnClickListener {
 
+    private lateinit var binding: MyCardFragmentBinding
     private var temporaryFreezeCard: TemporaryFreezeStoreCard? = null
     private var mStoreCard: StoreCard? = null
     private var mStoreCardDetail: String? = null
@@ -126,22 +125,20 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.my_card_fragment, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initListener()
-        populateView()
+        binding = MyCardFragmentBinding.bind(view)
 
-        temporaryCardFreezeSwitch?.setOnCheckedChangeListener { compoundButton, isChecked ->
+        binding.initListener()
+        binding.populateView()
+
+        binding.temporaryCardFreezeSwitch?.setOnCheckedChangeListener { compoundButton, isChecked ->
             if (compoundButton.isPressed) {
                 when (isChecked) {
                     true -> {
                         KotlinUtils.linkDeviceIfNecessary(activity, ApplyNowState.STORE_CARD, {
                             FREEZE_CARD_DETAIL = true
-                            temporaryCardFreezeSwitch?.isChecked = false
+                            binding.temporaryCardFreezeSwitch?.isChecked = false
                         },{
                             temporaryFreezeCard?.showFreezeStoreCardDialog(childFragmentManager)
                         })
@@ -162,7 +159,7 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
         when {
             SHOW_TEMPORARY_FREEZE_DIALOG -> {
                 SHOW_TEMPORARY_FREEZE_DIALOG = false
-                temporaryCardFreezeSwitch?.isChecked = true
+                binding.temporaryCardFreezeSwitch?.isChecked = true
                 temporaryFreezeCard?.showFreezeStoreCardDialog(childFragmentManager)
             }
 
@@ -174,7 +171,7 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
         }
     }
 
-    private fun initTemporaryFreezeCard() {
+    private fun MyCardFragmentBinding.initTemporaryFreezeCard() {
         temporaryFreezeCard = TemporaryFreezeStoreCard(mStoreCardsResponse, object : ITemporaryCardFreeze {
 
             override fun showProgress() {
@@ -320,7 +317,7 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
         temporaryFreezeCard?.blockStoreCardRequest()
     }
 
-    private fun uniqueIdsForCardDetails() {
+    private fun MyCardFragmentBinding.uniqueIdsForCardDetails() {
         cardDetailsView?.contentDescription = bindString(R.string.label_card_details)
         cardNumberLayout?.contentDescription = bindString(R.string.label_cardHolder)
         cardHolderLayout?.contentDescription = bindString(R.string.text_cardHolderName)
@@ -336,14 +333,14 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
         howItWorks?.contentDescription = bindString(R.string.layout_how_it_works)
     }
 
-    private fun initListener() {
-        blockCard?.setOnClickListener(this)
-        howItWorks?.setOnClickListener(this)
-        payWithCard?.setOnClickListener(this)
-        expireInfo?.setOnClickListener(this)
+    private fun MyCardFragmentBinding.initListener() {
+        blockCard?.setOnClickListener(this@MyCardDetailFragment)
+        howItWorks?.setOnClickListener(this@MyCardDetailFragment)
+        payWithCard?.setOnClickListener(this@MyCardDetailFragment)
+        expireInfo?.setOnClickListener(this@MyCardDetailFragment)
     }
 
-    private fun populateView() {
+    private fun MyCardFragmentBinding.populateView() {
         mStoreCard?.apply {
             tvCardHolderHeader?.text = this.embossedName
             maskedCardNumberWithSpaces(number).also {
@@ -430,7 +427,7 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
     private fun requestUnblockCard(otp: String = "") {
         if (isApiCallInProgress())
             return
-        showPayWithCardProgressBar(VISIBLE)
+        binding.showPayWithCardProgressBar(VISIBLE)
         val unblockStoreCardRequestBody = mStoreCard?.let {
             UnblockStoreCardRequestBody(mStoreCardsResponse?.storeCardsData?.visionAccountNumber
                     ?: "", it.number, it.sequence.toString(), otp, OTPMethodType.SMS.name)
@@ -439,7 +436,7 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
             StoreCardAPIRequest().unblockCard(mStoreCardsResponse?.storeCardsData?.productOfferingId
                     ?: "", it, object : IResponseListener<UnblockStoreCardResponse> {
                 override fun onSuccess(response: UnblockStoreCardResponse?) {
-                    showPayWithCardProgressBar(GONE)
+                    binding.showPayWithCardProgressBar(GONE)
                     when (response?.httpCode) {
                         200 -> displayTemporaryCardToPayDialog()
                         440 -> activity?.let { activity ->
@@ -454,7 +451,7 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
                 }
 
                 override fun onFailure(error: Throwable?) {
-                    showPayWithCardProgressBar(GONE)
+                    binding.showPayWithCardProgressBar(GONE)
                     if (error !is SocketTimeoutException)
                         showErrorDialog(bindString(R.string.general_error_desc))
                 }
@@ -520,7 +517,7 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
         }
     }
 
-    private fun showPayWithCardProgressBar(state: Int) {
+    private fun MyCardFragmentBinding.showPayWithCardProgressBar(state: Int) {
         activity?.apply {
             payWithCardTokenProgressBar?.indeterminateDrawable?.setColorFilter(ContextCompat.getColor(this, R.color.black), android.graphics.PorterDuff.Mode.SRC_IN)
             payWithCardTokenProgressBar?.visibility = state
@@ -539,8 +536,8 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
     }
 
     private fun isApiCallInProgress(): Boolean {
-        return payWithCardTokenProgressBar?.visibility == VISIBLE
+        return binding.payWithCardTokenProgressBar?.visibility == VISIBLE
     }
 
-    fun isTemporaryCardFreezeInProgress() = temporaryFreezeCardProgressBar?.visibility == VISIBLE
+    fun isTemporaryCardFreezeInProgress() = binding.temporaryFreezeCardProgressBar?.visibility == VISIBLE
 }

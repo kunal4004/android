@@ -5,20 +5,17 @@ import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
-import android.view.*
-import androidx.fragment.app.Fragment
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
 import androidx.navigation.findNavController
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.FragmentStoreConfirmationBinding
 import com.google.gson.Gson
-import kotlinx.android.synthetic.main.fragment_store_confirmation.*
-import kotlinx.android.synthetic.main.layout_confirmation.*
-import kotlinx.android.synthetic.main.layout_confirmation.titleTextView
-import kotlinx.android.synthetic.main.layout_store_card_confirmed.*
-import kotlinx.android.synthetic.main.layout_store_card_confirmed.view.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.GenericResponse
 import za.co.woolworths.financial.services.android.models.network.OneAppService
@@ -27,8 +24,9 @@ import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerAct
 import za.co.woolworths.financial.services.android.ui.activities.card.SelectStoreActivity
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 
-class StoreConfirmationFragment : Fragment() {
+class StoreConfirmationFragment : BaseFragmentBinding<FragmentStoreConfirmationBinding>(FragmentStoreConfirmationBinding::inflate) {
 
     private var body: StoreCardEmailConfirmBody? = null
     private var menuBar: Menu? = null
@@ -42,26 +40,18 @@ class StoreConfirmationFragment : Fragment() {
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_store_confirmation, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         setHasOptionsMenu(true)
         setActionBar()
 
-        storeConfirmedLayout.titleTextView.text = AppConfigSingleton.virtualTempCard?.replacementCardSuccessfullyOrderedTitle ?: getString(R.string.replacement_card_success_title)
-        storeConfirmedLayout.descTextView.text = AppConfigSingleton.virtualTempCard?.replacementCardSuccessfullyOrderedDescription ?: getString(R.string.replacement_card_success_desc)
+        binding.storeConfirmedLayout.titleTextView.text = AppConfigSingleton.virtualTempCard?.replacementCardSuccessfullyOrderedTitle ?: getString(R.string.replacement_card_success_title)
+        binding.storeConfirmedLayout.descTextView.text = AppConfigSingleton.virtualTempCard?.replacementCardSuccessfullyOrderedDescription ?: getString(R.string.replacement_card_success_desc)
 
         if (!TextUtils.isEmpty(body?.storeAddress)) {
             isConfirmStore = true
-            subTitleTextView?.text = body?.storeAddress
+            binding.confirmStoreLayout.subTitleTextView.text = body?.storeAddress
         } else {
             isConfirmStore = false
             body?.let {
@@ -74,29 +64,29 @@ class StoreConfirmationFragment : Fragment() {
                 } else {
                     it.businessName + ", " + it.city + ", " + it.province  + ", " + it.postalCode
                 }
-                subTitleTextView?.text = address
+                binding.confirmStoreLayout.subTitleTextView.text = address
             }
         }
 
 
         context?.let {
-            nextActionTextView.text =
+            binding.confirmStoreLayout.nextActionTextView.text =
                     if (isConfirmStore) it.getString(R.string.confirm_store) else it.getString(R.string.confirm_address)
-            titleTextView.text =
+            binding.confirmStoreLayout.titleTextView.text =
                     if (isConfirmStore) it.getString(R.string.please_confirm_your_nselected_store) else it.getString(R.string.please_confirm_your_address)
-            cancelActionTextView.text =
+            binding.confirmStoreLayout.cancelActionTextView.text =
                     if (isConfirmStore) it.getString(R.string.edit_store) else it.getString(R.string.edit_address)
         }
 
-        nextActionTextView?.setOnClickListener {
+        binding.confirmStoreLayout.nextActionTextView.setOnClickListener {
             callConfirmStoreAPI()
         }
 
-        cancelActionTextView?.setOnClickListener {
-            view?.findNavController()?.navigateUp()
+        binding.confirmStoreLayout.cancelActionTextView.setOnClickListener {
+            view.findNavController().navigateUp()
         }
 
-        emailGotItBtn?.setOnClickListener {
+        binding.storeConfirmedLayout.emailGotItBtn.setOnClickListener {
             activity?.apply {
                 setResult(RESULT_OK)
                 finish()
@@ -121,7 +111,7 @@ class StoreConfirmationFragment : Fragment() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item?.itemId) {
+        when (item.itemId) {
             R.id.closeIcon -> {
                 activity?.apply {
                     finish()
@@ -132,10 +122,10 @@ class StoreConfirmationFragment : Fragment() {
     }
 
     private fun callConfirmStoreAPI() {
-        processingViewGroup?.visibility = View.VISIBLE
-        confirmStoreLayout?.visibility = View.GONE
+        binding.processingViewGroup.visibility = View.VISIBLE
+        binding.confirmStoreLayout.root.visibility = View.GONE
         val body = getEmailConfirmationBody()
-        if (TextUtils.isEmpty(body?.visionAccountNumber)) {
+        if (TextUtils.isEmpty(body.visionAccountNumber)) {
             showErrorScreen(ErrorHandlerActivity.ERROR_STORE_CARD_EMAIL_CONFIRMATION)
             return
         }
@@ -151,7 +141,7 @@ class StoreConfirmationFragment : Fragment() {
                     }
                 }
 
-                processingViewGroup?.visibility = View.GONE
+                binding.processingViewGroup.visibility = View.GONE
                 when (response?.httpCode?.toString() ?: response?.response?.code?.toString()
                 ?: "0") {
                     AppConstant.HTTP_OK_201.toString(), AppConstant.HTTP_OK.toString() -> {
@@ -160,7 +150,7 @@ class StoreConfirmationFragment : Fragment() {
                         (activity as? SelectStoreActivity)?.apply {
                             actionBar?.show()
                         }
-                        storeConfirmedLayout?.visibility = View.VISIBLE
+                        binding.storeConfirmedLayout.root.visibility = View.VISIBLE
                     }
                     AppConstant.HTTP_SESSION_TIMEOUT_400.toString() -> {
                         showErrorScreen(
@@ -181,7 +171,7 @@ class StoreConfirmationFragment : Fragment() {
                         Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_REPLACE_CARD_F2F, this)
                     }
                 }
-                processingViewGroup?.visibility = View.GONE
+                binding.processingViewGroup.visibility = View.GONE
                 showErrorScreen(ErrorHandlerActivity.ERROR_STORE_CARD_EMAIL_CONFIRMATION)
             }
         }, GenericResponse::class.java))

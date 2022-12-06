@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.bpi.presentatio
 
 import android.app.Activity
 import android.content.Context
+import android.os.Bundle
 import android.text.InputType
 import android.view.KeyEvent
 import android.view.View
@@ -13,131 +14,176 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.fragment_enter_otp.*
+import com.awfs.coordination.databinding.BpiFragmentEnterOtpBinding
 import za.co.woolworths.financial.services.android.ui.fragments.npc.OTPViewTextWatcher
 import za.co.woolworths.financial.services.android.util.KeyboardUtil
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 
-open class BpiEnterOtpFragmentExtension : Fragment() {
-    fun setupInputListeners() {
+open class BpiEnterOtpFragmentExtension : Fragment(R.layout.bpi_fragment_enter_otp) {
+    protected lateinit var binding: BpiFragmentEnterOtpBinding
 
-        KotlinUtils.lowercaseEditText(edtVerificationCode1)
-        KotlinUtils.lowercaseEditText(edtVerificationCode2)
-        KotlinUtils.lowercaseEditText(edtVerificationCode3)
-        KotlinUtils.lowercaseEditText(edtVerificationCode4)
-        KotlinUtils.lowercaseEditText(edtVerificationCode5)
-
-        edtVerificationCode1?.addTextChangedListener(OTPViewTextWatcher(edtVerificationCode1, edtVerificationCode1, edtVerificationCode2) {validateVerificationCode()})
-        edtVerificationCode2?.addTextChangedListener(OTPViewTextWatcher(edtVerificationCode1, edtVerificationCode2, edtVerificationCode3) {validateVerificationCode()})
-        edtVerificationCode3?.addTextChangedListener(OTPViewTextWatcher(edtVerificationCode2, edtVerificationCode3, edtVerificationCode4) {validateVerificationCode()})
-        edtVerificationCode4?.addTextChangedListener(OTPViewTextWatcher(edtVerificationCode3, edtVerificationCode4, edtVerificationCode5) {validateVerificationCode()})
-        edtVerificationCode5?.addTextChangedListener(OTPViewTextWatcher(edtVerificationCode4, edtVerificationCode5, edtVerificationCode5) {validateVerificationCode()})
-
-        edtVerificationCode1?.setOnKeyListener(View.OnKeyListener
-        { _, keyCode, event ->
-            if (keyCode == KeyEvent.KEYCODE_DEL && event.action == KeyEvent.ACTION_DOWN) {
-                if (edtVerificationCode1?.text?.isEmpty() == true) {
-                    edtVerificationCode1?.setSelection(edtVerificationCode1?.text?.length ?: 0)
-                    edtVerificationCode1?.requestFocus(FOCUS_DOWN)
-                }
-                edtVerificationCode1?.text?.clear()
-                validateVerificationCode()
-                return@OnKeyListener true
-            }
-            false
-        })
-
-        edtVerificationCode2?.setOnKeyListener(View.OnKeyListener
-        { _, keyCode, event ->
-            if (keyCode == KeyEvent.KEYCODE_DEL && event.action == KeyEvent.ACTION_DOWN) {
-
-                if (edtVerificationCode2?.text?.isEmpty() == true) {
-                    edtVerificationCode1?.setSelection(edtVerificationCode1?.text?.length ?: 0)
-                    edtVerificationCode1?.requestFocus(FOCUS_DOWN)
-                }
-
-                edtVerificationCode2?.text?.clear()
-                validateVerificationCode()
-                return@OnKeyListener true
-            }
-            false
-        })
-
-        edtVerificationCode3?.setOnKeyListener(View.OnKeyListener
-        { v, keyCode, event ->
-            if (keyCode == KeyEvent.KEYCODE_DEL && event.action == KeyEvent.ACTION_DOWN) {
-
-                if (edtVerificationCode3?.text?.isEmpty() == true) {
-                    edtVerificationCode2?.setSelection(edtVerificationCode2?.text?.length ?: 0)
-                    edtVerificationCode2?.requestFocus(FOCUS_DOWN)
-                }
-                edtVerificationCode3?.text?.clear()
-                validateVerificationCode()
-                return@OnKeyListener true
-            }
-            false
-        })
-
-        edtVerificationCode4?.setOnKeyListener(View.OnKeyListener
-        { v, keyCode, event ->
-            if (keyCode == KeyEvent.KEYCODE_DEL && event.action == KeyEvent.ACTION_DOWN) {
-                if (edtVerificationCode4?.text?.isEmpty() == true) {
-                    edtVerificationCode3?.setSelection(edtVerificationCode3?.text?.length ?: 0)
-                    edtVerificationCode3?.requestFocus(FOCUS_DOWN)
-                }
-                edtVerificationCode4?.text?.clear()
-                validateVerificationCode()
-                return@OnKeyListener true
-            }
-            false
-        })
-
-        edtVerificationCode5?.setOnKeyListener(View.OnKeyListener
-        { v, keyCode, event ->
-            if (keyCode == KeyEvent.KEYCODE_DEL && event.action == KeyEvent.ACTION_DOWN) {
-                if (edtVerificationCode5?.text?.isEmpty() == true) {
-                    edtVerificationCode4?.setSelection(edtVerificationCode4?.text?.length ?: 0)
-                    edtVerificationCode4?.requestFocus(FOCUS_DOWN)
-                }
-                edtVerificationCode5?.text?.clear()
-                validateVerificationCode()
-                return@OnKeyListener true
-            }
-            false
-        })
-
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding = BpiFragmentEnterOtpBinding.bind(view)
     }
 
-    fun setOnFocusChangeListener(editTextView: EditText?) {
-        editTextView?.setOnFocusChangeListener { v, hasFocus ->
-            if (hasFocus && otpErrorTextView?.visibility == VISIBLE) {
-                clearOTP()
-                setOtpErrorBackground(R.drawable.otp_box_background_focus_selector)
-                otpErrorTextView?.visibility = View.GONE
-                requestEditTextFocus()
+    fun BpiFragmentEnterOtpBinding.setupInputListeners() {
+        includeEnterOtpFragment.apply {
+            KotlinUtils.lowercaseEditText(edtVerificationCode1)
+            KotlinUtils.lowercaseEditText(edtVerificationCode2)
+            KotlinUtils.lowercaseEditText(edtVerificationCode3)
+            KotlinUtils.lowercaseEditText(edtVerificationCode4)
+            KotlinUtils.lowercaseEditText(edtVerificationCode5)
+
+            edtVerificationCode1?.addTextChangedListener(
+                OTPViewTextWatcher(
+                    edtVerificationCode1,
+                    edtVerificationCode1,
+                    edtVerificationCode2
+                ) { validateVerificationCode() })
+            edtVerificationCode2?.addTextChangedListener(
+                OTPViewTextWatcher(
+                    edtVerificationCode1,
+                    edtVerificationCode2,
+                    edtVerificationCode3
+                ) { validateVerificationCode() })
+            edtVerificationCode3?.addTextChangedListener(
+                OTPViewTextWatcher(
+                    edtVerificationCode2,
+                    edtVerificationCode3,
+                    edtVerificationCode4
+                ) { validateVerificationCode() })
+            edtVerificationCode4?.addTextChangedListener(
+                OTPViewTextWatcher(
+                    edtVerificationCode3,
+                    edtVerificationCode4,
+                    edtVerificationCode5
+                ) { validateVerificationCode() })
+            edtVerificationCode5?.addTextChangedListener(
+                OTPViewTextWatcher(
+                    edtVerificationCode4,
+                    edtVerificationCode5,
+                    edtVerificationCode5
+                ) { validateVerificationCode() })
+
+            edtVerificationCode1?.setOnKeyListener(View.OnKeyListener
+            { _, keyCode, event ->
+                if (keyCode == KeyEvent.KEYCODE_DEL && event.action == KeyEvent.ACTION_DOWN) {
+                    if (edtVerificationCode1?.text?.isEmpty() == true) {
+                        edtVerificationCode1?.setSelection(
+                            edtVerificationCode1?.text?.length ?: 0
+                        )
+                        edtVerificationCode1?.requestFocus(FOCUS_DOWN)
+                    }
+                    edtVerificationCode1?.text?.clear()
+                    validateVerificationCode()
+                    return@OnKeyListener true
+                }
+                false
+            })
+
+            edtVerificationCode2?.setOnKeyListener(View.OnKeyListener
+            { _, keyCode, event ->
+                if (keyCode == KeyEvent.KEYCODE_DEL && event.action == KeyEvent.ACTION_DOWN) {
+
+                    if (edtVerificationCode2?.text?.isEmpty() == true) {
+                        edtVerificationCode1?.setSelection(
+                            edtVerificationCode1?.text?.length ?: 0
+                        )
+                        edtVerificationCode1?.requestFocus(FOCUS_DOWN)
+                    }
+
+                    edtVerificationCode2?.text?.clear()
+                    validateVerificationCode()
+                    return@OnKeyListener true
+                }
+                false
+            })
+
+            edtVerificationCode3?.setOnKeyListener(View.OnKeyListener
+            { v, keyCode, event ->
+                if (keyCode == KeyEvent.KEYCODE_DEL && event.action == KeyEvent.ACTION_DOWN) {
+
+                    if (edtVerificationCode3?.text?.isEmpty() == true) {
+                        edtVerificationCode2?.setSelection(
+                            edtVerificationCode2?.text?.length ?: 0
+                        )
+                        edtVerificationCode2?.requestFocus(FOCUS_DOWN)
+                    }
+                    edtVerificationCode3?.text?.clear()
+                    validateVerificationCode()
+                    return@OnKeyListener true
+                }
+                false
+            })
+
+            edtVerificationCode4?.setOnKeyListener(View.OnKeyListener
+            { v, keyCode, event ->
+                if (keyCode == KeyEvent.KEYCODE_DEL && event.action == KeyEvent.ACTION_DOWN) {
+                    if (edtVerificationCode4?.text?.isEmpty() == true) {
+                        edtVerificationCode3?.setSelection(
+                            edtVerificationCode3?.text?.length ?: 0
+                        )
+                        edtVerificationCode3?.requestFocus(FOCUS_DOWN)
+                    }
+                    edtVerificationCode4?.text?.clear()
+                    validateVerificationCode()
+                    return@OnKeyListener true
+                }
+                false
+            })
+
+            edtVerificationCode5?.setOnKeyListener(View.OnKeyListener
+            { v, keyCode, event ->
+                if (keyCode == KeyEvent.KEYCODE_DEL && event.action == KeyEvent.ACTION_DOWN) {
+                    if (edtVerificationCode5?.text?.isEmpty() == true) {
+                        edtVerificationCode4?.setSelection(
+                            edtVerificationCode4?.text?.length ?: 0
+                        )
+                        edtVerificationCode4?.requestFocus(FOCUS_DOWN)
+                    }
+                    edtVerificationCode5?.text?.clear()
+                    validateVerificationCode()
+                    return@OnKeyListener true
+                }
+                false
+            })
+        }
+    }
+
+    fun BpiFragmentEnterOtpBinding.setOnFocusChangeListener(editTextView: EditText?) {
+        includeEnterOtpFragment.apply {
+            editTextView?.setOnFocusChangeListener { v, hasFocus ->
+                if (hasFocus && otpErrorTextView?.visibility == VISIBLE) {
+                    clearOTP()
+                    setOtpErrorBackground(R.drawable.otp_box_background_focus_selector)
+                    otpErrorTextView?.visibility = View.GONE
+                    requestEditTextFocus()
+                }
             }
         }
     }
 
 
-    private fun validateVerificationCode() {
-        when ((edtVerificationCode1?.length() == 1)
-                && (edtVerificationCode2?.length() == 1)
-                && (edtVerificationCode3?.length() == 1)
-                && (edtVerificationCode4?.length() == 1)
-                && (edtVerificationCode5?.length() == 1)) {
-            true -> {
-                buttonNext?.isEnabled = true
-                buttonNext?.alpha = 1.0f
-                buttonNext?.isFocusable = false
-            }
-            false -> {
-                buttonNext?.isEnabled = false
-                buttonNext?.alpha = 0.5f
-                buttonNext?.isFocusable = true
+    private fun BpiFragmentEnterOtpBinding.validateVerificationCode() {
+        includeEnterOtpFragment.apply {
+            when ((edtVerificationCode1?.length() == 1)
+                    && (edtVerificationCode2?.length() == 1)
+                    && (edtVerificationCode3?.length() == 1)
+                    && (edtVerificationCode4?.length() == 1)
+                    && (edtVerificationCode5?.length() == 1)) {
+                true -> {
+                    buttonNext?.isEnabled = true
+                    buttonNext?.alpha = 1.0f
+                    buttonNext?.isFocusable = false
+                }
+                false -> {
+                    buttonNext?.isEnabled = false
+                    buttonNext?.alpha = 0.5f
+                    buttonNext?.isFocusable = true
+                }
             }
         }
-
     }
 
     fun getNumberFromEditText(numberEditText: EditText?) = numberEditText?.text?.toString()
@@ -155,42 +201,51 @@ open class BpiEnterOtpFragmentExtension : Fragment() {
         activity?.apply { KeyboardUtil.hideSoftKeyboard(this) }
     }
 
-    fun requestEditTextFocus() {
-        (activity as? AppCompatActivity)?.let { activity ->
-            edtVerificationCode1?.apply {
-                requestFocus()
-                showSoftKeyboard(activity, this)
-                inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+    fun BpiFragmentEnterOtpBinding.requestEditTextFocus() {
+        includeEnterOtpFragment.apply {
+            (activity as? AppCompatActivity)?.let { activity ->
+                edtVerificationCode1?.apply {
+                    requestFocus()
+                    showSoftKeyboard(activity, this)
+                    inputType =
+                        InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+                }
             }
         }
     }
 
-    fun clearOTP() {
-        edtVerificationCode1?.text?.clear()
-        edtVerificationCode2?.text?.clear()
-        edtVerificationCode3?.text?.clear()
-        edtVerificationCode4?.text?.clear()
-        edtVerificationCode5?.text?.clear()
+    fun BpiFragmentEnterOtpBinding.clearOTP() {
+        includeEnterOtpFragment.apply {
+            edtVerificationCode1?.text?.clear()
+            edtVerificationCode2?.text?.clear()
+            edtVerificationCode3?.text?.clear()
+            edtVerificationCode4?.text?.clear()
+            edtVerificationCode5?.text?.clear()
+        }
     }
 
 
-    fun removeFocus() {
-        edtVerificationCode1?.clearFocus()
-        edtVerificationCode2?.clearFocus()
-        edtVerificationCode3?.clearFocus()
-        edtVerificationCode4?.clearFocus()
-        edtVerificationCode5?.clearFocus()
+    fun BpiFragmentEnterOtpBinding.removeFocus() {
+        includeEnterOtpFragment.apply {
+            edtVerificationCode1?.clearFocus()
+            edtVerificationCode2?.clearFocus()
+            edtVerificationCode3?.clearFocus()
+            edtVerificationCode4?.clearFocus()
+            edtVerificationCode5?.clearFocus()
+        }
     }
 
 
-    fun setOtpErrorBackground(drawableId: Int) {
-        context?.let { context ->
-            ContextCompat.getDrawable(context, drawableId)?.apply {
-                edtVerificationCode1?.setBackgroundResource(drawableId)
-                edtVerificationCode2?.setBackgroundResource(drawableId)
-                edtVerificationCode3?.setBackgroundResource(drawableId)
-                edtVerificationCode4?.setBackgroundResource(drawableId)
-                edtVerificationCode5?.setBackgroundResource(drawableId)
+    fun BpiFragmentEnterOtpBinding.setOtpErrorBackground(drawableId: Int) {
+        includeEnterOtpFragment.apply {
+            context?.let { context ->
+                ContextCompat.getDrawable(context, drawableId)?.apply {
+                    edtVerificationCode1?.setBackgroundResource(drawableId)
+                    edtVerificationCode2?.setBackgroundResource(drawableId)
+                    edtVerificationCode3?.setBackgroundResource(drawableId)
+                    edtVerificationCode4?.setBackgroundResource(drawableId)
+                    edtVerificationCode5?.setBackgroundResource(drawableId)
+                }
             }
         }
     }

@@ -29,9 +29,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.fragment_stores_nearby1.*
-import kotlinx.android.synthetic.main.location_service_off_layout.*
-import kotlinx.android.synthetic.main.store_details_layout_common.*
+import com.awfs.coordination.databinding.FragmentStoresNearby1Binding
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
@@ -62,7 +60,7 @@ import za.co.woolworths.financial.services.android.util.location.Event
 import za.co.woolworths.financial.services.android.util.location.EventType
 import za.co.woolworths.financial.services.android.util.location.Locator
 
-class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageChangeListener {
+class StoresNearbyFragment1 : Fragment(R.layout.fragment_stores_nearby1), DynamicMapDelegate, ViewPager.OnPageChangeListener {
 
     companion object {
         private const val TAG = "StoresNearbyFragment1"
@@ -73,6 +71,7 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
         const val REQUEST_CODE_FINE_GPS = 5123
     }
 
+    private lateinit var binding: FragmentStoresNearby1Binding
     private lateinit var locator: Locator
 
     @DrawableRes
@@ -103,99 +102,109 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        setHasOptionsMenu(true)
-        return inflater.inflate(R.layout.fragment_stores_nearby1, container, false)
-    }
-
     @RequiresApi(api = Build.VERSION_CODES.M)
     override fun onViewCreated(v: View, savedInstanceState: Bundle?) {
         super.onViewCreated(v, savedInstanceState)
+        binding = FragmentStoresNearby1Binding.bind(v)
 
-        locator = Locator(activity as AppCompatActivity)
-        dynamicMapView?.initializeMap(savedInstanceState, this)
-        mMarkers = HashMap()
-        markers = ArrayList()
+        binding.apply {
+            locator = Locator(activity as AppCompatActivity)
+            dynamicMapView?.initializeMap(savedInstanceState, this@StoresNearbyFragment1)
+            mMarkers = HashMap()
+            markers = ArrayList()
 
-        mPopWindowValidationMessage = PopWindowValidationMessage(activity)
-        storesProgressBar?.indeterminateDrawable?.setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY)
-        val relNoConnectionLayout =
+            mPopWindowValidationMessage = PopWindowValidationMessage(activity)
+            storesProgressBar?.indeterminateDrawable?.setColorFilter(
+                Color.BLACK,
+                PorterDuff.Mode.MULTIPLY
+            )
+            val relNoConnectionLayout =
                 v.findViewById<View>(R.id.no_connection_layout) as RelativeLayout
-        mErrorHandlerView = ErrorHandlerView(activity, relNoConnectionLayout)
-        mErrorHandlerView?.setMargin(relNoConnectionLayout, 0, 0, 0, 0)
+            mErrorHandlerView = ErrorHandlerView(activity, relNoConnectionLayout)
+            mErrorHandlerView?.setMargin(relNoConnectionLayout, 0, 0, 0, 0)
 
-        setupToolbar()
+            setupToolbar()
 
-        selectUnSelectMarkerDrawable()
+            selectUnSelectMarkerDrawable()
 
-        cardPager?.addOnPageChangeListener(this)
-        cardPager?.setOnItemClickListener { position ->
-            currentStorePosition = position
-            showStoreDetails(currentStorePosition)
-        }
-
-        close?.setOnClickListener { backToAllStoresPage(currentStorePosition) }
-        sliding_layout?.setFadeOnClickListener { sliding_layout?.panelState = PanelState.COLLAPSED }
-        sliding_layout?.addPanelSlideListener(object : SlidingUpPanelLayout.PanelSlideListener {
-            override fun onPanelSlide(panel: View, slideOffset: Float) {
-                if (slideOffset.toDouble() == 0.0) {
-                    sliding_layout?.anchorPoint = 1.0f
-                    backToAllStoresPage(currentStorePosition)
-                }
+            cardPager?.addOnPageChangeListener(this@StoresNearbyFragment1)
+            cardPager?.setOnItemClickListener { position ->
+                currentStorePosition = position
+                showStoreDetails(currentStorePosition)
             }
 
-            override fun onPanelStateChanged(panel: View, previousState: PanelState, newState: PanelState) {
-                when (newState) {
-                    PanelState.COLLAPSED -> {
-                        /*
+            close?.setOnClickListener { backToAllStoresPage(currentStorePosition) }
+            slidingLayout?.setFadeOnClickListener {
+                slidingLayout?.panelState = PanelState.COLLAPSED
+            }
+            slidingLayout?.addPanelSlideListener(object : SlidingUpPanelLayout.PanelSlideListener {
+                override fun onPanelSlide(panel: View, slideOffset: Float) {
+                    if (slideOffset.toDouble() == 0.0) {
+                        slidingLayout?.anchorPoint = 1.0f
+                        backToAllStoresPage(currentStorePosition)
+                    }
+                }
+
+                override fun onPanelStateChanged(
+                    panel: View,
+                    previousState: PanelState,
+                    newState: PanelState
+                ) {
+                    when (newState) {
+                        PanelState.COLLAPSED -> {
+                            /*
                          * Previous result: Application would exit completely when back button is pressed
                          * New result: Panel just returns to its previous position (Panel collapses)
                          */
-                        sliding_layout?.isFocusableInTouchMode = true
-                        sliding_layout?.setOnKeyListener(View.OnKeyListener { _, keyCode, _ ->
-                            if (keyCode == KeyEvent.KEYCODE_BACK) {
-                                sliding_layout?.panelState = PanelState.COLLAPSED
-                                sliding_layout?.isFocusable = false
-                                return@OnKeyListener false // set to false to prevent user double tap hardware back button to navigate back
-                            }
-                            true
-                        })
-                        mBottomNavigator?.showBottomNavigationMenu()
-                        (activity as? MyAccountActivity)?.supportActionBar?.show()
-                    }
-                    PanelState.DRAGGING -> {
-                        mBottomNavigator?.hideBottomNavigationMenu()
-                        (activity as? MyAccountActivity)?.supportActionBar?.hide()
+                            slidingLayout?.isFocusableInTouchMode = true
+                            slidingLayout?.setOnKeyListener(View.OnKeyListener { _, keyCode, _ ->
+                                if (keyCode == KeyEvent.KEYCODE_BACK) {
+                                    slidingLayout?.panelState = PanelState.COLLAPSED
+                                    slidingLayout?.isFocusable = false
+                                    return@OnKeyListener false // set to false to prevent user double tap hardware back button to navigate back
+                                }
+                                true
+                            })
+                            mBottomNavigator?.showBottomNavigationMenu()
+                            (activity as? MyAccountActivity)?.supportActionBar?.show()
+                        }
+                        PanelState.DRAGGING -> {
+                            mBottomNavigator?.hideBottomNavigationMenu()
+                            (activity as? MyAccountActivity)?.supportActionBar?.hide()
 
-                    }
-                    else -> {
+                        }
+                        else -> {
+                        }
                     }
                 }
-            }
-        })
+            })
 
-        /*
+            /*
 		 init();
          */
-        buttonLocationOn?.setOnClickListener {
-            updateMap = true
-            KotlinUtils.openAccessMyLocationDeviceSettings(ACCESS_MY_LOCATION_REQUEST_CODE, activity)
-        }
-        v.findViewById<WButton>(R.id.btnRetry)?.setOnClickListener {
-            if (NetworkManager.getInstance().isConnectedToNetwork(activity)) {
-                mErrorHandlerView?.hideErrorHandlerLayout()
-                initLocationCheck()
+            includeLocationServiceOffLayout.buttonLocationOn?.setOnClickListener {
+                updateMap = true
+                KotlinUtils.openAccessMyLocationDeviceSettings(
+                    ACCESS_MY_LOCATION_REQUEST_CODE,
+                    activity
+                )
             }
-        }
+            v.findViewById<WButton>(R.id.btnRetry)?.setOnClickListener {
+                if (NetworkManager.getInstance().isConnectedToNetwork(activity)) {
+                    mErrorHandlerView?.hideErrorHandlerLayout()
+                    initLocationCheck()
+                }
+            }
 
-        try {
-            activity?.registerReceiver(broadcastCall, IntentFilter("broadcastCall"))
-        } catch (ex: Exception) {
-            FirebaseManager.logException(ex)
-        }
+            try {
+                activity?.registerReceiver(broadcastCall, IntentFilter("broadcastCall"))
+            } catch (ex: Exception) {
+                FirebaseManager.logException(ex)
+            }
 
-        if (activity is MyAccountActivity) {
-            (activity as? MyAccountActivity?)?.supportActionBar?.show()
+            if (activity is MyAccountActivity) {
+                (activity as? MyAccountActivity?)?.supportActionBar?.show()
+            }
         }
     }
 
@@ -252,7 +261,7 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
     }
 
     private fun drawMarker(latitude: Double, longitude: Double, @DrawableRes icon: Int?, pos: Int) {
-        val marker = dynamicMapView?.addMarker(requireContext(), latitude, longitude, icon)
+        val marker = binding.dynamicMapView?.addMarker(requireContext(), latitude, longitude, icon)
         marker?.apply {
             getId()?.let { id ->
                 mMarkers?.set(id, pos)
@@ -260,17 +269,17 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
             markers?.add(this)
         }
         if (pos == 0) {
-            dynamicMapView?.animateCamera(marker)
+            binding.dynamicMapView?.animateCamera(marker)
             previousMarker = marker
         }
     }
 
     override fun onPageSelected(position: Int) {
-        if (dynamicMapView?.isMapInstantiated() == false) return
+        if (binding.dynamicMapView?.isMapInstantiated() == false) return
 
         previousMarker?.setIcon(requireContext(), unSelectedIcon)
         markers?.get(position)?.setIcon(requireContext(), selectedIcon)
-        dynamicMapView?.animateCamera(markers?.get(position))
+        binding.dynamicMapView?.animateCamera(markers?.get(position))
         previousMarker = markers?.get(position)
         /*
 		 *InfoWindow shows description above a marker.
@@ -288,7 +297,7 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
             previousMarker?.setIcon(requireContext(), unSelectedIcon)
             marker.setIcon(requireContext(), selectedIcon)
             previousMarker = marker
-            cardPager?.currentItem = id ?: 0
+            binding.cardPager?.currentItem = id ?: 0
         } catch (ex: NullPointerException) {
             FirebaseManager.logException(ex)
         }
@@ -303,9 +312,9 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
     }
 
     fun backToAllStoresPage(position: Int) {
-        if (dynamicMapView?.isMapInstantiated() == true) {
-            dynamicMapView?.setScrollGesturesEnabled(isEnabled = true)
-            dynamicMapView?.animateCamera(
+        if (binding.dynamicMapView?.isMapInstantiated() == true) {
+            binding.dynamicMapView?.setScrollGesturesEnabled(isEnabled = true)
+            binding.dynamicMapView?.animateCamera(
                 markers?.get(position),
                 DynamicMapView.CAMERA_ANIMATION_DURATION_SLOW
             )
@@ -319,22 +328,25 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
     private fun showStoreDetails(position: Int) {
         storeDetailsList?.get(position)?.let { storeDetails -> initStoreDetailsView(storeDetails) }
 
-        if (dynamicMapView?.isMapInstantiated() == true) {
-            hideMarkers(markers, position)
-            val center = dynamicMapView?.getCameraPositionTargetLatitude()
-            val northMap = dynamicMapView?.getVisibleRegionNortheastLatitude()
-            val diff = northMap?.let { center?.minus(it) }
-            val newLat = markers?.get(position)?.getPositionLatitude()?.plus(diff?.div(1.5)!!)
-            val newLng = markers?.get(position)?.getPositionLongitude()
-            dynamicMapView?.animateCamera(newLat, newLng)
-            dynamicMapView?.setScrollGesturesEnabled(isEnabled = false)
-        }
+        binding.apply {
+            if (dynamicMapView?.isMapInstantiated() == true) {
+                hideMarkers(markers, position)
+                val center = dynamicMapView?.getCameraPositionTargetLatitude()
+                val northMap = dynamicMapView?.getVisibleRegionNortheastLatitude()
+                val diff = northMap?.let { center?.minus(it) }
+                val newLat = markers?.get(position)?.getPositionLatitude()?.plus(diff?.div(1.5)!!)
+                val newLng = markers?.get(position)?.getPositionLongitude()
+                dynamicMapView?.animateCamera(newLat, newLng)
+                dynamicMapView?.setScrollGesturesEnabled(isEnabled = false)
+            }
 
-        if (sliding_layout?.anchorPoint == 1.0f) {
-            val toolbar = mBottomNavigator?.toolbar()
-            toolbar?.animate()?.translationY(-toolbar.bottom.toFloat())?.setInterpolator(AccelerateInterpolator())?.start()
-            sliding_layout?.anchorPoint = 0.7f
-            sliding_layout?.panelState = PanelState.ANCHORED
+            if (slidingLayout?.anchorPoint == 1.0f) {
+                val toolbar = mBottomNavigator?.toolbar()
+                toolbar?.animate()?.translationY(-toolbar.bottom.toFloat())
+                    ?.setInterpolator(AccelerateInterpolator())?.start()
+                slidingLayout?.anchorPoint = 0.7f
+                slidingLayout?.panelState = PanelState.ANCHORED
+            }
         }
     }
 
@@ -355,7 +367,7 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
     }
 
     fun bindDataWithUI(storeDetailsList: List<StoreDetails>, currentLocation: Location?) {
-        if (dynamicMapView?.isMapInstantiated() == true && storeDetailsList.size >= 0) {
+        if (binding.dynamicMapView?.isMapInstantiated() == true && storeDetailsList.size >= 0) {
             updateMyCurrentLocationOnMap(currentLocation)
             for (i in storeDetailsList.indices) {
                 if (i == 0) {
@@ -363,69 +375,83 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
                 } else drawMarker(storeDetailsList[i].latitude, storeDetailsList[i].longitude, unSelectedIcon, i)
             }
         }
-        cardPager?.adapter = CardsOnMapAdapter(activity, storeDetailsList)
+        binding.cardPager?.adapter = CardsOnMapAdapter(activity, storeDetailsList)
     }
 
     @SuppressLint("InflateParams", "SetTextI18n")
     private fun initStoreDetailsView(storeDetail: StoreDetails) {
         val activity = activity ?: return
-        timeingsLayout?.removeAllViews()
-        brandsLayout?.removeAllViews()
-        storeNameTextView?.text = storeDetail.name
-        storeAddressTextView?.text =
+        binding.includeStoreDetailsLayoutCommon.apply {
+            timeingsLayout?.removeAllViews()
+            brandsLayout?.removeAllViews()
+            storeNameTextView?.text = storeDetail.name
+            storeAddressTextView?.text =
                 if (TextUtils.isEmpty(storeDetail.address)) "" else storeDetail.address
-        storeNumberTextView?.text =
+            storeNumberTextView?.text =
                 if (TextUtils.isEmpty(storeDetail.phoneNumber)) "" else storeDetail.phoneNumber
-        distanceTextView?.text =
-                activity.resources?.getString(R.string.distance_per_km, WFormatter.formatMeter(storeDetail.distance))
-        if (storeDetail.offerings != null) {
-            offeringsTextView?.text =
-                    WFormatter.formatOfferingString(getOfferingByType(storeDetail.offerings, "Department"))
-            val brandsList = getOfferingByType(storeDetail.offerings, "Brand")
-            if (brandsList.isNotEmpty()) {
-                var textView: WTextView
-                relBrandLayout?.visibility = View.VISIBLE
-                for (i in brandsList.indices) {
-                    val v = activity.layoutInflater.inflate(R.layout.opening_hours_textview, null)
-                    textView = v?.findViewById(R.id.openingHoursTextView)!!
-                    textView.setText(brandsList[i].offering)
-                    brandsLayout?.addView(textView)
+            distanceTextView?.text =
+                activity.resources?.getString(
+                    R.string.distance_per_km,
+                    WFormatter.formatMeter(storeDetail.distance)
+                )
+            if (storeDetail.offerings != null) {
+                offeringsTextView?.text =
+                    WFormatter.formatOfferingString(
+                        getOfferingByType(
+                            storeDetail.offerings,
+                            "Department"
+                        )
+                    )
+                val brandsList = getOfferingByType(storeDetail.offerings, "Brand")
+                if (brandsList.isNotEmpty()) {
+                    var textView: WTextView
+                    relBrandLayout?.visibility = View.VISIBLE
+                    for (i in brandsList.indices) {
+                        val v =
+                            activity.layoutInflater.inflate(R.layout.opening_hours_textview, null)
+                        textView = v?.findViewById(R.id.openingHoursTextView)!!
+                        textView.setText(brandsList[i].offering)
+                        brandsLayout?.addView(textView)
+                    }
+                } else {
+                    relBrandLayout?.visibility = View.GONE
                 }
             } else {
                 relBrandLayout?.visibility = View.GONE
             }
-        } else {
-            relBrandLayout?.visibility = View.GONE
-        }
-        if (storeDetail.times != null && storeDetail.times.size != 0) {
-            storeTimingView?.visibility = View.VISIBLE
-            var textView: TextView
-            val typeface: Typeface? =
+            if (storeDetail.times != null && storeDetail.times.size != 0) {
+                storeTimingView?.visibility = View.VISIBLE
+                var textView: TextView
+                val typeface: Typeface? =
                     ResourcesCompat.getFont(activity, R.font.myriad_pro_semi_bold_otf)
-            for (i in storeDetail.times.indices) {
-                val v = activity.layoutInflater.inflate(R.layout.opening_hours_textview, null)
-                textView = v?.findViewById<View>(R.id.openingHoursTextView) as TextView
-                textView.text = "${storeDetail.times[i].day} ${storeDetail.times[i].hours}"
+                for (i in storeDetail.times.indices) {
+                    val v = activity.layoutInflater.inflate(R.layout.opening_hours_textview, null)
+                    textView = v?.findViewById<View>(R.id.openingHoursTextView) as TextView
+                    textView.text = "${storeDetail.times[i].day} ${storeDetail.times[i].hours}"
 
-                if (i == 0) textView.typeface = typeface
-                timeingsLayout?.addView(textView)
+                    if (i == 0) textView.typeface = typeface
+                    timeingsLayout?.addView(textView)
+                }
+            } else {
+                storeTimingView?.visibility = View.GONE
             }
-        } else {
-            storeTimingView?.visibility = View.GONE
-        }
-        call?.setOnClickListener {
-            storeDetail.phoneNumber?.let { phoneNumber -> Utils.makeCall(phoneNumber) }
-        }
+            call?.setOnClickListener {
+                storeDetail.phoneNumber?.let { phoneNumber -> Utils.makeCall(phoneNumber) }
+            }
 
-        direction?.setOnClickListener(View.OnClickListener {
-            if (TextUtils.isEmpty(storeDetail.address)) return@OnClickListener
-            mPopWindowValidationMessage?.apply {
-                setmName(storeDetail.name)
-                setmLatitude(storeDetail.latitude)
-                setmLongiude(storeDetail.longitude)
-                displayValidationMessage("", PopWindowValidationMessage.OVERLAY_TYPE.STORE_LOCATOR_DIRECTION)
-            }
-        })
+            direction?.setOnClickListener(View.OnClickListener {
+                if (TextUtils.isEmpty(storeDetail.address)) return@OnClickListener
+                mPopWindowValidationMessage?.apply {
+                    setmName(storeDetail.name)
+                    setmLatitude(storeDetail.latitude)
+                    setmLongiude(storeDetail.longitude)
+                    displayValidationMessage(
+                        "",
+                        PopWindowValidationMessage.OVERLAY_TYPE.STORE_LOCATOR_DIRECTION
+                    )
+                }
+            })
+        }
     }
 
     fun init(location: Location?): Call<LocationResponse> {
@@ -465,16 +491,18 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
 
     private fun checkLocationServiceAndSetLayout(locationServiceStatus: Boolean) {
         //Check for location service and Last location
-        if (!locationServiceStatus) {
-            layoutLocationServiceOn?.visibility = View.GONE
-            layoutLocationServiceOff?.visibility = View.VISIBLE
-            navigateMenuState = false
-            activity?.invalidateOptionsMenu()
-        } else {
-            layoutLocationServiceOff?.visibility = View.GONE
-            layoutLocationServiceOn?.visibility = View.VISIBLE
-            navigateMenuState = true
-            if (isAdded) activity?.invalidateOptionsMenu()
+        binding.apply {
+            if (!locationServiceStatus) {
+                layoutLocationServiceOn?.visibility = View.GONE
+                includeLocationServiceOffLayout.layoutLocationServiceOff?.visibility = View.VISIBLE
+                navigateMenuState = false
+                activity?.invalidateOptionsMenu()
+            } else {
+                includeLocationServiceOffLayout.layoutLocationServiceOff?.visibility = View.GONE
+                layoutLocationServiceOn?.visibility = View.VISIBLE
+                navigateMenuState = true
+                if (isAdded) activity?.invalidateOptionsMenu()
+            }
         }
     }
 
@@ -489,8 +517,8 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
             }
             REQUEST_CHECK_SETTINGS -> initLocationCheck()
             LAYOUT_ANCHORED_RESULT_CODE -> {
-                sliding_layout?.panelState = PanelState.COLLAPSED
-                sliding_layout?.isFocusable = false
+                binding.slidingLayout?.panelState = PanelState.COLLAPSED
+                binding.slidingLayout?.isFocusable = false
             }
             ACCESS_MY_LOCATION_REQUEST_CODE -> startLocationDiscoveryProcess()
         }
@@ -503,11 +531,11 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
 
             if (myLocation == null) {
                 myLocation =
-                    dynamicMapView?.addMarker(requireContext(), latitude, longitude, R.drawable.mapcurrentlocation)
+                    binding.dynamicMapView?.addMarker(requireContext(), latitude, longitude, R.drawable.mapcurrentlocation)
             } else {
                 myLocation?.setPosition(latitude, longitude)
             }
-            dynamicMapView?.animateCamera(myLocation)
+            binding.dynamicMapView?.animateCamera(myLocation)
         } catch (ex: Exception) {
             FirebaseManager.logException(ex)
         }
@@ -530,11 +558,11 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
     }
 
     fun showProgressBar() {
-        storesProgressBar?.visibility = View.VISIBLE
+        binding.storesProgressBar?.visibility = View.VISIBLE
     }
 
     fun hideProgressBar() {
-        storesProgressBar?.visibility = View.GONE
+        binding.storesProgressBar?.visibility = View.GONE
     }
 
     private fun updateMap(location: Location?) {
@@ -569,7 +597,7 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
     }
 
     private fun zoomToLocation(location: Location) {
-        dynamicMapView?.animateCamera(
+        binding.dynamicMapView?.animateCamera(
             location.latitude,
             location.longitude,
             zoom = 13f,
@@ -599,7 +627,7 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
     }
 
     override fun onDestroyView() {
-        dynamicMapView?.onDestroy()
+        binding.dynamicMapView?.onDestroy()
         super.onDestroyView()
     }
 
@@ -611,7 +639,7 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
 
     override fun onResume() {
         super.onResume()
-        dynamicMapView?.onResume()
+        binding.dynamicMapView?.onResume()
         activity?.let { Utils.setScreenName(it, FirebaseManagerAnalyticsProperties.ScreenNames.STORES_NEARBY) }
         if (updateMap) {
             checkLocationServiceAndSetLayout(true)
@@ -674,25 +702,25 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
     }
 
     fun layoutIsAnchored(): Boolean {
-        return if (sliding_layout == null) false else sliding_layout?.panelState == PanelState.ANCHORED
+        return if (binding.slidingLayout == null) false else binding.slidingLayout?.panelState == PanelState.ANCHORED
     }
 
-    fun collapseSlidingPanel() { sliding_layout.panelState = PanelState.COLLAPSED }
+    fun collapseSlidingPanel() { binding.slidingLayout.panelState = PanelState.COLLAPSED }
 
-    fun getSlidingPanelState() = sliding_layout?.panelState
+    fun getSlidingPanelState() = binding.slidingLayout?.panelState
 
     override fun onPause() {
-        dynamicMapView?.onPause()
+        binding.dynamicMapView?.onPause()
         super.onPause()
     }
 
     override fun onLowMemory() {
         super.onLowMemory()
-        dynamicMapView?.onLowMemory()
+        binding.dynamicMapView?.onLowMemory()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        dynamicMapView?.onSaveInstanceState(outState)
+        binding.dynamicMapView?.onSaveInstanceState(outState)
     }
 }

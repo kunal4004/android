@@ -1,12 +1,11 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.refine
 
-
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.fragment_refinement.*
+import com.awfs.coordination.databinding.FragmentRefinementBinding
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.Refinement
 import za.co.woolworths.financial.services.android.models.dto.RefinementCrumb
@@ -24,7 +23,6 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
     private var refinementNavigation: RefinementNavigation? = null
     private var dataList = arrayListOf<RefinementSelectableItem>()
     private var refinedNavigateState = ""
-
 
     companion object {
         private val ARG_PARAM = "refinementNavigationObject"
@@ -52,7 +50,7 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initViews()
+        binding.initViews()
     }
 
     override fun onResume() {
@@ -60,7 +58,7 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
         Utils.setScreenName(activity, FirebaseManagerAnalyticsProperties.ScreenNames.PRODUCT_SEARCH_REFINEMENT)
     }
 
-    private fun initViews() {
+    private fun FragmentRefinementBinding.initViews() {
         listener.apply {
             refinementNavigation?.displayName?.let { setPageTitle(it) }
             hideCloseButton()
@@ -83,7 +81,7 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
     private fun loadData() {
         dataList = getRefinementSelectableItems(refinementNavigation!!)
         refinementAdapter = activity?.let { RefinementAdapter(it, this, listener, dataList, refinementNavigation!!) }
-        refinementList.adapter = refinementAdapter
+        binding.refinementList.adapter = refinementAdapter
     }
 
     private fun getRefinementSelectableItems(refinementNavigation: RefinementNavigation): ArrayList<RefinementSelectableItem> {
@@ -145,7 +143,7 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
     }
 
     override fun onSelectionChanged() {
-        clearAndResetFilter?.isEnabled = isAnyRefinementSelected()
+        binding.clearAndResetFilter?.isEnabled = isAnyRefinementSelected()
         this.updateSeeResultButtonText()
     }
 
@@ -183,7 +181,7 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
     }
 
     private fun updateSeeResultButtonText() {
-        seeResultCount.text = buildSeeResultButtonText()
+        binding.seeResultCount.text = buildSeeResultButtonText()
     }
 
 }

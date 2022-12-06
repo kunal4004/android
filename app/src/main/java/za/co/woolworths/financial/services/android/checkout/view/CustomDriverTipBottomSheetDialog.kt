@@ -4,14 +4,13 @@ import android.content.DialogInterface
 import android.os.Bundle
 import android.text.InputFilter
 import android.text.InputFilter.LengthFilter
-import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.core.widget.addTextChangedListener
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.driver_tip_custom_dialog.*
+import com.awfs.coordination.databinding.DriverTipCustomDialogBinding
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
@@ -23,6 +22,7 @@ import za.co.woolworths.financial.services.android.util.Utils
  */
 class CustomDriverTipBottomSheetDialog : WBottomSheetDialogFragment() {
 
+    private lateinit var binding: DriverTipCustomDialogBinding
     private var mTitle: String? = null
     private var mSubTitle: String? = null
     private lateinit var mTipValue: String
@@ -78,65 +78,72 @@ class CustomDriverTipBottomSheetDialog : WBottomSheetDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
-        return inflater.inflate(R.layout.driver_tip_custom_dialog, container, false)
+        binding = DriverTipCustomDialogBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        titleTextView?.text = mTitle
-        subTitleTextView?.text = mSubTitle
-        driverTipAmtEditText?.setText(mTipValue)
-        driverTipAmtEditText?.filters =
-            getMaxLengthFilter(
-                AppConfigSingleton.dashConfig?.driverTip?.maxAmount?.toString()?.length
-                ?: MAX_TIP_VALUE.toString().length,
-                2
-            )
-        if (driverTipAmtEditText?.text.isNullOrEmpty())
-            Utils.fadeInFadeOutAnimation(buttonConfirm, true)
-        driverTipAmtEditText.addTextChangedListener { amount ->
-            when {
-                amount.isNullOrEmpty() -> {
-                    Utils.fadeInFadeOutAnimation(buttonConfirm, true)
-                }
-                amount.toString().toDouble() < (AppConfigSingleton.dashConfig?.driverTip?.minAmount ?: MIN_TIP_VALUE) -> {
-                    // Driver tip should always be greater than or equal R5
-                    Utils.fadeInFadeOutAnimation(buttonConfirm, true)
-                    driverTipErrorText?.visibility = View.VISIBLE
-                    driverTipErrorText?.text =
-                        requireContext().getString(
-                            R.string.driver_minimum_tip_amt_error,
-                            AppConfigSingleton.dashConfig?.driverTip?.minAmount ?: 0.0
-                        )
-                }
-                amount.toString().toDouble() > (AppConfigSingleton.dashConfig?.driverTip?.maxAmount ?: MAX_TIP_VALUE) -> {
-                    // Driver tip should always be less than R1000
-                    Utils.fadeInFadeOutAnimation(buttonConfirm, true)
-                    driverTipErrorText?.visibility = View.VISIBLE
-                    driverTipErrorText?.text =
-                        requireContext().getString(
-                            R.string.driver_maximum_tip_amt_error,
-                            AppConfigSingleton.dashConfig?.driverTip?.maxAmount ?: 0.0
-                        )
-                }
-                else -> {
-                    driverTipErrorText?.visibility = View.GONE
-                    Utils.fadeInFadeOutAnimation(buttonConfirm, false)
+        with(binding) {
+            titleTextView?.text = mTitle
+            subTitleTextView?.text = mSubTitle
+            driverTipAmtEditText?.setText(mTipValue)
+            driverTipAmtEditText?.filters =
+                getMaxLengthFilter(
+                    AppConfigSingleton.dashConfig?.driverTip?.maxAmount?.toString()?.length
+                        ?: MAX_TIP_VALUE.toString().length,
+                    2
+                )
+            if (driverTipAmtEditText?.text.isNullOrEmpty())
+                Utils.fadeInFadeOutAnimation(buttonConfirm, true)
+            driverTipAmtEditText.addTextChangedListener { amount ->
+                when {
+                    amount.isNullOrEmpty() -> {
+                        Utils.fadeInFadeOutAnimation(buttonConfirm, true)
+                    }
+                    amount.toString()
+                        .toDouble() < (AppConfigSingleton.dashConfig?.driverTip?.minAmount
+                        ?: MIN_TIP_VALUE) -> {
+                        // Driver tip should always be greater than or equal R5
+                        Utils.fadeInFadeOutAnimation(buttonConfirm, true)
+                        driverTipErrorText?.visibility = View.VISIBLE
+                        driverTipErrorText?.text =
+                            requireContext().getString(
+                                R.string.driver_minimum_tip_amt_error,
+                                AppConfigSingleton.dashConfig?.driverTip?.minAmount ?: 0.0
+                            )
+                    }
+                    amount.toString()
+                        .toDouble() > (AppConfigSingleton.dashConfig?.driverTip?.maxAmount
+                        ?: MAX_TIP_VALUE) -> {
+                        // Driver tip should always be less than R1000
+                        Utils.fadeInFadeOutAnimation(buttonConfirm, true)
+                        driverTipErrorText?.visibility = View.VISIBLE
+                        driverTipErrorText?.text =
+                            requireContext().getString(
+                                R.string.driver_maximum_tip_amt_error,
+                                AppConfigSingleton.dashConfig?.driverTip?.maxAmount ?: 0.0
+                            )
+                    }
+                    else -> {
+                        driverTipErrorText?.visibility = View.GONE
+                        Utils.fadeInFadeOutAnimation(buttonConfirm, false)
+                    }
                 }
             }
-        }
-        buttonConfirm?.setOnClickListener {
-            // dismiss dialog and pass the value to original fragment
-            dismiss()
-            mTipValue = driverTipAmtEditText?.text.toString()
-            clickListner?.onConfirmClick(mTipValue)
-            val customProgressBottomSheetDialog =
-                CustomProgressBottomSheetDialog.newInstance(mTipValue)
-            customProgressBottomSheetDialog.show(
-                requireFragmentManager(),
-                CustomProgressBottomSheetDialog::class.java.simpleName
-            )
+            buttonConfirm?.setOnClickListener {
+                // dismiss dialog and pass the value to original fragment
+                dismiss()
+                mTipValue = driverTipAmtEditText?.text.toString()
+                clickListner?.onConfirmClick(mTipValue)
+                val customProgressBottomSheetDialog =
+                    CustomProgressBottomSheetDialog.newInstance(mTipValue)
+                customProgressBottomSheetDialog.show(
+                    requireFragmentManager(),
+                    CustomProgressBottomSheetDialog::class.java.simpleName
+                )
+            }
         }
     }
 

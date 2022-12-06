@@ -15,7 +15,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.balance_protection_insurance_activity.*
+import com.awfs.coordination.databinding.BalanceProtectionInsuranceActivityBinding
 import za.co.woolworths.financial.services.android.ui.extension.bindColor
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.opt_in.otp.BPIProcessingRequestFragment
@@ -26,6 +26,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.bpi.viewmodel.BP
 
 class BalanceProtectionInsuranceActivity : AppCompatActivity() {
 
+    lateinit var binding: BalanceProtectionInsuranceActivityBinding
     private var bpiOptIn: Boolean = false
     private var bpiProductGroupCode: String? = null
     private var bpiPresenter: BPIOverviewPresenter? = null
@@ -40,7 +41,8 @@ class BalanceProtectionInsuranceActivity : AppCompatActivity() {
     @SuppressLint("ResourceType")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.balance_protection_insurance_activity)
+        binding = BalanceProtectionInsuranceActivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         bpiViewModel?.setAccount(intent?.extras)
         actionBar()
         /*
@@ -70,14 +72,14 @@ class BalanceProtectionInsuranceActivity : AppCompatActivity() {
     }
 
     fun actionBar() {
-        setSupportActionBar(bpiToolbar)
+        setSupportActionBar(binding.bpiToolbar)
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
             setDisplayShowTitleEnabled(false)
             setDisplayUseLogoEnabled(false)
             setHomeAsUpIndicator(R.drawable.back24)
         }
-        bpiToolbar.setNavigationOnClickListener {
+        binding.bpiToolbar.setNavigationOnClickListener {
             onBackPressed()
         }
     }
@@ -105,63 +107,69 @@ class BalanceProtectionInsuranceActivity : AppCompatActivity() {
     }
 
     fun setToolbarTitle(@StringRes titleIdRes: Int) {
-        toolbarTitleTextView?.text = bindString(titleIdRes)
+        binding.toolbarTitleTextView?.text = bindString(titleIdRes)
     }
 
     fun setToolbarTitle(title: String) {
-        toolbarTitleTextView?.text = title
+        binding.toolbarTitleTextView?.text = title
     }
 
     fun changeActionBarUI(@ColorRes colorId: Int = R.color.white, isActionBarTitleVisible: Boolean = true) {
-        if (isActionBarTitleVisible) {
-            appbar?.setBackgroundColor(bindColor(colorId))
-            horizontalDivider?.visibility = VISIBLE
-            toolbarTitleTextView?.visibility = VISIBLE
-            btnClose?.visibility = GONE
-            supportActionBar?.apply {
-                setDisplayHomeAsUpEnabled(true)
-                setBackgroundDrawable(ColorDrawable(Color.WHITE))
-                setHomeAsUpIndicator(R.drawable.back24)
+        with(binding) {
+            if (isActionBarTitleVisible) {
+                appbar?.setBackgroundColor(bindColor(colorId))
+                horizontalDivider?.visibility = VISIBLE
+                toolbarTitleTextView?.visibility = VISIBLE
+                btnClose?.visibility = GONE
+                supportActionBar?.apply {
+                    setDisplayHomeAsUpEnabled(true)
+                    setBackgroundDrawable(ColorDrawable(Color.WHITE))
+                    setHomeAsUpIndicator(R.drawable.back24)
+                }
+            } else {
+                appbar?.setBackgroundColor(Color.TRANSPARENT)
+                horizontalDivider?.visibility = GONE
+                toolbarTitleTextView?.visibility = GONE
+                btnClose?.visibility = GONE
+                supportActionBar?.apply {
+                    setDisplayHomeAsUpEnabled(true)
+                    setHomeAsUpIndicator(R.drawable.back_white)
+                    setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+                }
             }
-        } else {
+            supportActionBar?.elevation = 0f
+        }
+    }
+
+    fun changeActionBarUIForBPIOptIn() {
+        with(binding) {
             appbar?.setBackgroundColor(Color.TRANSPARENT)
             horizontalDivider?.visibility = GONE
             toolbarTitleTextView?.visibility = GONE
             btnClose?.visibility = GONE
             supportActionBar?.apply {
                 setDisplayHomeAsUpEnabled(true)
-                setHomeAsUpIndicator(R.drawable.back_white)
+                setHomeAsUpIndicator(R.drawable.back24)
                 setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             }
+            supportActionBar?.elevation = 0f
         }
-        supportActionBar?.elevation = 0f
-    }
-
-    fun changeActionBarUIForBPIOptIn() {
-        appbar?.setBackgroundColor(Color.TRANSPARENT)
-        horizontalDivider?.visibility = GONE
-        toolbarTitleTextView?.visibility = GONE
-        btnClose?.visibility = GONE
-        supportActionBar?.apply {
-            setDisplayHomeAsUpEnabled(true)
-            setHomeAsUpIndicator(R.drawable.back24)
-            setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        }
-        supportActionBar?.elevation = 0f
     }
 
     fun changeActionBarUIForBPITermsConditions() {
-        appbar?.setBackgroundColor(Color.WHITE)
-        horizontalDivider?.visibility = GONE
-        toolbarTitleTextView?.visibility = VISIBLE
-        btnClose?.visibility = VISIBLE
-        btnClose?.setOnClickListener{
-            bpiPresenter?.navigateToPreviousFragment()
+        with(binding) {
+            appbar?.setBackgroundColor(Color.WHITE)
+            horizontalDivider?.visibility = GONE
+            toolbarTitleTextView?.visibility = VISIBLE
+            btnClose?.visibility = VISIBLE
+            btnClose?.setOnClickListener {
+                bpiPresenter?.navigateToPreviousFragment()
+            }
+            supportActionBar?.apply {
+                setDisplayHomeAsUpEnabled(false)
+            }
+            supportActionBar?.elevation = 0f
         }
-        supportActionBar?.apply {
-            setDisplayHomeAsUpEnabled(false)
-        }
-        supportActionBar?.elevation = 0f
     }
 
     fun hideDisplayHomeAsUpEnabled(){
