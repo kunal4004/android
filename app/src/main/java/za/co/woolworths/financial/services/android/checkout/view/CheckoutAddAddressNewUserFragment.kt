@@ -3,7 +3,9 @@ package za.co.woolworths.financial.services.android.checkout.view
 import android.animation.ObjectAnimator
 import android.content.Intent
 import android.os.Bundle
-import android.view.*
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.View
 import android.widget.*
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatActivity
@@ -1419,7 +1421,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             val anim = ObjectAnimator.ofInt(
                 binding.newUserNestedScrollView,
                 "scrollY",
-                recipientLayoutValue ?: 0 + textView.y?.toInt()
+                recipientLayoutValue ?: (0 + (textView?.y?.toInt() ?: 0))
             )
             anim.setDuration(300).start()
         }
