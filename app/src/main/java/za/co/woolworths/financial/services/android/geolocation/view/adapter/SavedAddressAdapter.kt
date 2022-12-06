@@ -6,9 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.address_row_layout.view.*
-import kotlinx.android.synthetic.main.address_row_layout.view.tvAddress
-import kotlinx.android.synthetic.main.address_row_layout.view.tvAddressNickName
+import com.awfs.coordination.databinding.AddressRowLayoutBinding
 import za.co.woolworths.financial.services.android.checkout.service.network.Address
 
 class SavedAddressAdapter(
@@ -23,7 +21,7 @@ class SavedAddressAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SavedAddressViewHolder {
         return SavedAddressViewHolder(
-            LayoutInflater.from(context).inflate(R.layout.address_row_layout, parent, false)
+            AddressRowLayoutBinding.inflate(LayoutInflater.from(context), parent, false)
         )
     }
 
@@ -82,14 +80,14 @@ class SavedAddressAdapter(
         }
     }
 
-    inner class SavedAddressViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class SavedAddressViewHolder(val itemBinding: AddressRowLayoutBinding) : RecyclerView.ViewHolder(itemBinding.root) {
 
-        val tvAddressNickname = itemView.tvAddressNickName
-        val view = itemView
-        val tvAddress = itemView.tvAddress
-        val tvUpdateAddress = itemView.tvUpdateAddress
-        val rbAddressSelector = itemView.rbAddressSelector
-        val imgEditAddress = itemView.imgEditAddress
+        val tvAddressNickname = itemBinding.tvAddressNickName
+        val view = itemBinding.root
+        val tvAddress = itemBinding.tvAddress
+        val tvUpdateAddress = itemBinding.tvUpdateAddress
+        val rbAddressSelector = itemBinding.rbAddressSelector
+        val imgEditAddress = itemBinding.imgEditAddress
     }
 
     interface OnAddressSelected {

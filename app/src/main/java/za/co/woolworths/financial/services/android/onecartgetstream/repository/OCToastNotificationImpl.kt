@@ -2,40 +2,34 @@ package za.co.woolworths.financial.services.android.onecartgetstream.repository
 
 import android.app.Activity
 import android.graphics.Color
+import android.view.LayoutInflater
 import android.view.View
 import androidx.lifecycle.LifecycleOwner
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.OcChatToastNotificationBinding
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.oc_chat_toast_notification.view.*
-import kotlinx.android.synthetic.main.single_line_common_toast.*
 import za.co.woolworths.financial.services.android.onecartgetstream.OCChatActivity
 import za.co.woolworths.financial.services.android.onecartgetstream.common.constant.OCConstant
 import za.co.woolworths.financial.services.android.onecartgetstream.service.UpdateMessageCount
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.util.AppConstant
-
 import javax.inject.Inject
 
+class OCToastNotificationImpl @Inject constructor(): OCToastNotification {
 
-
-class OCToastNotificationImpl @Inject constructor(
-
-) : OCToastNotification {
     private var updateMessageCount = 0
+
     override fun showOCToastNotification(
         context: Activity,
         messageCount: String,
         yOffset: Int,
         orderId: String,
     ) {
-
         showOCChatNotificationOnScreen(context,orderId)
     }
 
     private fun showOCChatNotificationOnScreen(context: Activity, orderId: String) {
-        val layout = context.layoutInflater.inflate(
-            R.layout.oc_chat_toast_notification,
-            context.mainCommonToastLayout)
+        val binding = OcChatToastNotificationBinding.inflate(LayoutInflater.from(context), null, false)
         val snackbar =
             Snackbar.make(context.findViewById(android.R.id.content), "",AppConstant.DELAY_20000_MS.toInt())
         val snackbarLayout = snackbar.view as Snackbar.SnackbarLayout
@@ -47,7 +41,7 @@ class OCToastNotificationImpl @Inject constructor(
         } else {
             snackbarLayout.setPadding(20, 0, 20, 250)
         }
-        layout?.ocChatLayout?.setOnClickListener {
+        binding.ocChatLayout.setOnClickListener {
             OCConstant.ocObserveCountMessage = 0
             UpdateMessageCount.value = 0
             snackbar.dismiss()
@@ -56,13 +50,12 @@ class OCToastNotificationImpl @Inject constructor(
         }
         UpdateMessageCount.observe(context as LifecycleOwner) {
             updateMessageCount = it
-            layout?.ocMessageCount?.text = it?.toString()
+            binding.ocMessageCount.text = it?.toString()
         }
         if (!snackbar.isShown) {
-            snackbarLayout.addView(layout, 0)
+            snackbarLayout.addView(binding.root, 0)
             snackbar.show()
         }
-
     }
 
 }

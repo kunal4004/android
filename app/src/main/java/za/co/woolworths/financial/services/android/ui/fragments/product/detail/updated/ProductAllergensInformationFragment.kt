@@ -5,23 +5,19 @@ import android.os.Bundle
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.StyleSpan
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.fragment_prodcut_allergens_information.*
-import kotlinx.android.synthetic.main.fragment_prodcut_ingredients_information.title
+import com.awfs.coordination.databinding.FragmentProdcutAllergensInformationBinding
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
+import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 
-class ProductAllergensInformationFragment : Fragment(){
+class ProductAllergensInformationFragment : BaseFragmentBinding<FragmentProdcutAllergensInformationBinding>(FragmentProdcutAllergensInformationBinding::inflate){
     private var allergens: String = ""
 
     companion object {
         fun newInstance(allergens: String?) = ProductAllergensInformationFragment().withArgs {
             putString("ALLERGEN_INFO", allergens)
         }
-
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,20 +28,16 @@ class ProductAllergensInformationFragment : Fragment(){
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_prodcut_allergens_information, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        allergensText.text = getStyledText(allergens)
+        binding.allergensText.text = getStyledText(allergens)
         setUniqueIds()
     }
 
     private fun setUniqueIds() {
         resources.apply {
-            title?.contentDescription = getString(R.string.pdp_productAllergensTitle)
-            allergensText?.contentDescription = getString(R.string.pdp_textViewAllergens)
+            binding.title?.contentDescription = getString(R.string.pdp_productAllergensTitle)
+            binding.allergensText?.contentDescription = getString(R.string.pdp_textViewAllergens)
         }
     }
 

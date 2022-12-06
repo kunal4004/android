@@ -2,14 +2,13 @@ package za.co.woolworths.financial.services.android.util.expand
 
 import android.view.View
 import android.view.animation.RotateAnimation
-import kotlinx.android.synthetic.main.sub_category_parent_view.view.*
+import com.awfs.coordination.databinding.SubCategoryParentViewBinding
 import za.co.woolworths.financial.services.android.util.ImageManager.Companion.setPictureWithoutPlaceHolder
 
-
-class ParentSubCategoryViewHolder(itemView: View) : ParentViewHolder(itemView) {
+class ParentSubCategoryViewHolder(val itemBinding: SubCategoryParentViewBinding) : ParentViewHolder(itemBinding.root) {
 
     fun bind(subCategoryModel: SubCategoryModel) {
-        itemView.carbonGroupText?.setText(subCategoryModel.name)
+        itemBinding.carbonGroupText?.setText(subCategoryModel.name)
         arrowVisibility(subCategoryModel)
         retrieveChildVisibility(subCategoryModel)
         setNewBadgeImage(subCategoryModel)
@@ -17,36 +16,36 @@ class ParentSubCategoryViewHolder(itemView: View) : ParentViewHolder(itemView) {
 
     private fun setNewBadgeImage(subCategoryModel: SubCategoryModel) {
         if (subCategoryModel.imageUrl != null) {
-            itemView.imgBadge?.visibility = View.VISIBLE
-            setPictureWithoutPlaceHolder(itemView.imgBadge, subCategoryModel.imageUrl)
+            itemBinding.imgBadge?.visibility = View.VISIBLE
+            setPictureWithoutPlaceHolder(itemBinding.imgBadge, subCategoryModel.imageUrl)
         } else {
-            itemView.imgBadge?.visibility = View.GONE
+            itemBinding.imgBadge?.visibility = View.GONE
         }
     }
 
     private fun arrowVisibility(subCategoryModel: SubCategoryModel) {
-        itemView.llLoadChild?.visibility =
+        itemBinding.llLoadChild?.visibility =
             if (subCategoryModel.subCategory.hasChildren) View.VISIBLE else View.INVISIBLE
     }
 
     private fun retrieveChildVisibility(subCategoryModel: SubCategoryModel) {
         val progressBarIsVisible = subCategoryModel.subCategory.singleProductItemIsLoading
-        itemView.pbLoadChildItem?.visibility = if (progressBarIsVisible) View.VISIBLE else View.GONE
-        itemView.carbonGroupExpandedIndicator?.visibility =
+        itemBinding.pbLoadChildItem?.visibility = if (progressBarIsVisible) View.VISIBLE else View.GONE
+        itemBinding.carbonGroupExpandedIndicator?.visibility =
             if (progressBarIsVisible) View.GONE else View.VISIBLE
     }
 
     fun retrieveChildVisibility(visible: Boolean) {
-        itemView.pbLoadChildItem?.visibility = if (visible) View.VISIBLE else View.GONE
-        itemView.carbonGroupExpandedIndicator?.visibility = if (visible) View.GONE else View.VISIBLE
+        itemBinding.pbLoadChildItem?.visibility = if (visible) View.VISIBLE else View.GONE
+        itemBinding.carbonGroupExpandedIndicator?.visibility = if (visible) View.GONE else View.VISIBLE
     }
 
     override fun setExpanded(expanded: Boolean) {
-        super.setExpanded(expanded)
+        super.isRowExpanded = expanded
         if (expanded) {
-            itemView.carbonGroupExpandedIndicator?.rotation = ROTATED_POSITION
+            itemBinding.carbonGroupExpandedIndicator?.rotation = ROTATED_POSITION
         } else {
-            itemView.carbonGroupExpandedIndicator?.rotation = INITIAL_POSITION
+            itemBinding.carbonGroupExpandedIndicator?.rotation = INITIAL_POSITION
         }
     }
 
@@ -65,7 +64,7 @@ class ParentSubCategoryViewHolder(itemView: View) : ParentViewHolder(itemView) {
         }
         rotateAnimation.duration = 200
         rotateAnimation.fillAfter = true
-        itemView.carbonGroupExpandedIndicator?.startAnimation(rotateAnimation)
+        itemBinding.carbonGroupExpandedIndicator?.startAnimation(rotateAnimation)
     }
 
     companion object {

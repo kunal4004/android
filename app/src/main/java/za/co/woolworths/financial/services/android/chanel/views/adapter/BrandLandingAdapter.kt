@@ -4,7 +4,10 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.awfs.coordination.R
+import com.awfs.coordination.databinding.ChanelAppBannerViewBinding
+import com.awfs.coordination.databinding.ChanelCategoryNavigationViewBinding
+import com.awfs.coordination.databinding.ChanelHeaderBannerViewBinding
+import com.awfs.coordination.databinding.ChanelLogoViewBinding
 import za.co.woolworths.financial.services.android.models.dto.brandlandingpage.DynamicBanner
 import za.co.woolworths.financial.services.android.chanel.views.ChanelNavigationClickListener
 import za.co.woolworths.financial.services.android.chanel.views.viewholder.ChanelAppBannerViewHolder
@@ -12,7 +15,7 @@ import za.co.woolworths.financial.services.android.chanel.views.viewholder.Chane
 import za.co.woolworths.financial.services.android.chanel.views.viewholder.ChanelHeaderBannerViewHolder
 import za.co.woolworths.financial.services.android.chanel.views.viewholder.ChanelLogoViewHolder
 
-class BrandLandingAdapter(val context: Context?, val list: List<DynamicBanner?>, val chanelNavigationClickListener: ChanelNavigationClickListener) :
+class BrandLandingAdapter(val context: Context?, val list: List<DynamicBanner?>, private val chanelNavigationClickListener: ChanelNavigationClickListener) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
@@ -30,25 +33,21 @@ class BrandLandingAdapter(val context: Context?, val list: List<DynamicBanner?>,
         when (viewType) {
             VIEW_TYPE_LOGO -> {
                 return ChanelLogoViewHolder(
-                    LayoutInflater.from(context).inflate(R.layout.chanel_logo_view, parent, false)
-                )
+                    ChanelLogoViewBinding.inflate(LayoutInflater.from(parent.context), parent, false))
             }
             VIEW_TYPE_APP_BANNER -> {
                 return ChanelAppBannerViewHolder(
-                    LayoutInflater.from(context).inflate(R.layout.chanel_app_banner_view, parent, false)
+                    ChanelAppBannerViewBinding.inflate(LayoutInflater.from(parent.context), parent, false)
                 )
             }
             VIEW_TYPE_NAVIGATION -> {
                 return ChanelCategoryNavigationViewHolder(
-                    LayoutInflater.from(context).inflate(R.layout.chanel_category_navigation_view, parent, false),
+                    ChanelCategoryNavigationViewBinding.inflate(LayoutInflater.from(parent.context), parent, false),
                     chanelNavigationClickListener
                 )
             }
             else -> return ChanelHeaderBannerViewHolder(
-                LayoutInflater.from(context)
-                    .inflate(R.layout.chanel_header_banner_view, parent, false),
-                parent
-            )
+               ChanelHeaderBannerViewBinding.inflate(LayoutInflater.from(parent.context), parent, false),parent)
         }
     }
 

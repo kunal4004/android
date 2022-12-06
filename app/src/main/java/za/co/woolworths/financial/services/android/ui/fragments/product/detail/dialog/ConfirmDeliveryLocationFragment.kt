@@ -5,16 +5,18 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import kotlinx.android.synthetic.main.confirm_deliverylocation_bottom_sheet_dialog.*
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.util.Utils
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.ConfirmDeliverylocationBottomSheetDialogBinding
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
 class ConfirmDeliveryLocationFragment : WBottomSheetDialogFragment() {
+
+    private lateinit var binding: ConfirmDeliverylocationBottomSheetDialogBinding
     private var listener: IOnConfirmDeliveryLocationActionListener? = null
 
     companion object {
@@ -36,61 +38,67 @@ class ConfirmDeliveryLocationFragment : WBottomSheetDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
-        return inflater.inflate(R.layout.confirm_deliverylocation_bottom_sheet_dialog,
-            container,
-            false)
+        binding = ConfirmDeliverylocationBottomSheetDialogBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        btnDefaultLocation.setOnClickListener {
-            if (KotlinUtils.getPreferredDeliveryType() == Delivery.CNC) {
-                Utils.triggerFireBaseEvents(
-                    FirebaseManagerAnalyticsProperties.SHOP_CONFIRM_DELIVERY_ADDRESS,
-                    hashMapOf(
-                        FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
-                                FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_SHOP_CONFIRM_DELIVERY_ADDRESS
-                    ),
-                    activity)
-            } else {
-                Utils.triggerFireBaseEvents(
-                    FirebaseManagerAnalyticsProperties.SHOP_CONFIRM_DELIVERY_ADDRESS,
-                    hashMapOf(
-                        FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
-                                FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_SHOP_CONFIRM_DELIVERY_ADDRESS
-                    ),
-                    activity)
-            }
 
-            listener?.onConfirmLocation()
-            dismissAllowingStateLoss()
-        }
-        btnSetNewLocation.setOnClickListener {
-            if (KotlinUtils.getPreferredDeliveryType() == Delivery.CNC) {
-                Utils.triggerFireBaseEvents(
-                    FirebaseManagerAnalyticsProperties.SHOP_EDIT_LOCATION,
-                    hashMapOf(
-                        FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
-                                FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_SHOP_EDIT_LOCATION
-                    ),
-                    activity)
-            } else {
-                Utils.triggerFireBaseEvents(
-                    FirebaseManagerAnalyticsProperties.SHOP_EDIT_DELIVERY_ADDRESS,
-                    hashMapOf(
-                        FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
-                                FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_SHOP_EDIT_DELIVERY_ADDRESS
-                    ),
-                    activity)
-            }
+        with(binding) {
+            btnDefaultLocation.setOnClickListener {
+                if (KotlinUtils.getPreferredDeliveryType() == Delivery.CNC) {
+                    Utils.triggerFireBaseEvents(
+                        FirebaseManagerAnalyticsProperties.SHOP_CONFIRM_DELIVERY_ADDRESS,
+                        hashMapOf(
+                            FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                                    FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_SHOP_CONFIRM_DELIVERY_ADDRESS
+                        ),
+                        activity
+                    )
+                } else {
+                    Utils.triggerFireBaseEvents(
+                        FirebaseManagerAnalyticsProperties.SHOP_CONFIRM_DELIVERY_ADDRESS,
+                        hashMapOf(
+                            FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                                    FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_SHOP_CONFIRM_DELIVERY_ADDRESS
+                        ),
+                        activity
+                    )
+                }
 
-            listener?.onSetNewLocation()
-            dismissAllowingStateLoss()
+                listener?.onConfirmLocation()
+                dismissAllowingStateLoss()
+            }
+            btnSetNewLocation.setOnClickListener {
+                if (KotlinUtils.getPreferredDeliveryType() == Delivery.CNC) {
+                    Utils.triggerFireBaseEvents(
+                        FirebaseManagerAnalyticsProperties.SHOP_EDIT_LOCATION,
+                        hashMapOf(
+                            FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                                    FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_SHOP_EDIT_LOCATION
+                        ),
+                        activity
+                    )
+                } else {
+                    Utils.triggerFireBaseEvents(
+                        FirebaseManagerAnalyticsProperties.SHOP_EDIT_DELIVERY_ADDRESS,
+                        hashMapOf(
+                            FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                                    FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_SHOP_EDIT_DELIVERY_ADDRESS
+                        ),
+                        activity
+                    )
+                }
+
+                listener?.onSetNewLocation()
+                dismissAllowingStateLoss()
+            }
+            configureUI()
         }
-        configureUI()
     }
 
-    private fun configureUI() {
+    private fun ConfirmDeliverylocationBottomSheetDialogBinding.configureUI() {
         Utils.getPreferredDeliveryLocation()?.apply {
             val storePickup = KotlinUtils.getPreferredDeliveryType() == Delivery.CNC
             btnSetNewLocation.paintFlags = btnSetNewLocation.paintFlags or Paint.UNDERLINE_TEXT_FLAG

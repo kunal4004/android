@@ -2,32 +2,32 @@ package za.co.woolworths.financial.services.android.chanel.views.viewholder
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.chanel_logo_view.view.*
+import com.awfs.coordination.databinding.ChanelLogoViewBinding
 import za.co.woolworths.financial.services.android.models.dto.brandlandingpage.DynamicBanner
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.ImageManager
 
-class ChanelLogoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+class ChanelLogoViewHolder(val binding: ChanelLogoViewBinding) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(position: Int, list: List<DynamicBanner?>) {
 
         if (list.get(position)?.label.isNullOrEmpty() && list.get(position)?.externalImageRefV2.isNullOrEmpty()) {
-            itemView.tv_logo_name.visibility = View.GONE
-            itemView.img_view_logo.visibility = View.GONE
+            binding.tvLogoName.visibility = View.GONE
+            binding.imgViewLogo.visibility = View.GONE
             return
         }
         if (list.get(position)?.label == null || list.get(position)?.label == AppConstant.EMPTY_STRING) {
-            itemView.tv_logo_name.visibility = View.GONE
-            itemView.img_view_logo.visibility = View.VISIBLE
+            binding.tvLogoName.visibility = View.GONE
+            binding.imgViewLogo.visibility = View.VISIBLE
             list.get(position)?.externalImageRefV2?.let {
-                ImageManager.loadImage(itemView.img_view_logo,
+                ImageManager.loadImage(binding.imgViewLogo,
                     it
                 )
             }
         } else {
-            itemView.tv_logo_name.visibility = View.VISIBLE
-            itemView.img_view_logo.visibility = View.GONE
-            itemView.tv_logo_name.text = list.get(position)?.label
+            binding.tvLogoName.visibility = View.VISIBLE
+            binding.imgViewLogo.visibility = View.GONE
+            binding.tvLogoName.text = list.get(position)?.label
         }
     }
 }

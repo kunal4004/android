@@ -18,7 +18,7 @@ import androidx.lifecycle.observe
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.pma_update_payment_fragment.*
+import com.awfs.coordination.databinding.PmaUpdatePaymentFragmentBinding
 import za.co.woolworths.financial.services.android.models.dto.PMACardPopupModel
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
@@ -31,9 +31,9 @@ import za.co.woolworths.financial.services.android.util.wenum.PayMyAccountStartD
 
 class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListener {
 
+    private lateinit var binding: PmaUpdatePaymentFragmentBinding
     private var previousCardNumber: String? = null
 
-    private var root: View? = null
     private var navController: NavController? = null
     private val changeCardLabel = bindString(R.string.change_label)
     private val addCardLabel = bindString(R.string.add_card_label)
@@ -55,9 +55,8 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        if (root == null)
-            root = inflater.inflate(R.layout.pma_update_payment_fragment, container, false)
-        return root
+        binding = PmaUpdatePaymentFragmentBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -67,82 +66,85 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
         if (activity is PayMyAccountActivity)
             navController = NavHostFragment.findNavController(this)
 
-        setupListener()
+        with(binding) {
+            setupListener()
 
-        with(payMyAccountViewModel) {
-            pmaCardPopupModel.observe(viewLifecycleOwner) { card ->
-                if (!isAdded) return@observe
+            with(payMyAccountViewModel) {
+                pmaCardPopupModel.observe(viewLifecycleOwner) { card ->
+                    if (!isAdded) return@observe
 
-                card?.amountEntered =
-                    if (card?.amountEntered?.contains("R") == true) card.amountEntered else "R ${card?.amountEntered}"
+                    card?.amountEntered =
+                        if (card?.amountEntered?.contains("R") == true) card.amountEntered else "R ${card?.amountEntered}"
 
-                when (elitePlanModel?.scope.isNullOrEmpty()) {
-                    false -> {
-                        //ElitePlan
-                        pmaAmountEnteredTextView?.text = getDiscountAmount()
-                        savedAmountTextView?.text = getString(R.string.you_saved, getSavedAmount())
-                        when (isAmountBelowMaxLimit(elitePlanModel?.settlementAmount)) {
-                            true -> {
-                                savedAmountTextView?.visibility = VISIBLE
+                    when (elitePlanModel?.scope.isNullOrEmpty()) {
+                        false -> {
+                            //ElitePlan
+                            pmaAmountEnteredTextView?.text = getDiscountAmount()
+                            savedAmountTextView?.text =
+                                getString(R.string.you_saved, getSavedAmount())
+                            when (isAmountBelowMaxLimit(elitePlanModel?.settlementAmount)) {
+                                true -> {
+                                    savedAmountTextView?.visibility = VISIBLE
+                                }
+                                false -> {
+                                    savedAmountTextView?.visibility = GONE
+                                }
                             }
-                            false -> {
-                                savedAmountTextView?.visibility = GONE
-                            }
+                            editAmountImageView?.visibility = GONE
+                            tvTitle?.text = getString(R.string.amount_payable)
                         }
-                        editAmountImageView?.visibility = GONE
-                        tvTitle?.text = getString(R.string.amount_payable)
+                        true -> {
+                            //WOP-9291 - Prevent user from paying amount less than R 1. For
+                            // this user it has overdue amount as R0.34 so it will populate R1.00 as default amount to pay
+                            pmaAmountEnteredTextView?.text =
+                                if (convertRandFormatToDouble(card?.amountEntered) in 0.01..0.99) {
+                                    getCardDetail()?.amountEntered = ONE_RAND
+                                    updateAmountEntered(ONE_RAND)
+                                } else {
+                                    updateAmountEntered(card?.amountEntered)
+                                }
+                        }
                     }
-                    true -> {
-                        //WOP-9291 - Prevent user from paying amount less than R 1. For
-                        // this user it has overdue amount as R0.34 so it will populate R1.00 as default amount to pay
-                        pmaAmountEnteredTextView?.text =
-                            if (convertRandFormatToDouble(card?.amountEntered) in 0.01..0.99) {
-                                getCardDetail()?.amountEntered = ONE_RAND
-                                updateAmountEntered(ONE_RAND)
-                            } else {
-                                updateAmountEntered(card?.amountEntered)
-                            }
+
+
+                    pmaAmountEnteredTextView?.apply {
+                        typeface = Typeface.DEFAULT_BOLD
+                        if (!payMyAccountViewModel.isAmountBelowMaxLimit(card?.amountEntered)) {
+                            invalidPaymentAmountTextView?.visibility = VISIBLE
+                        } else {
+                            invalidPaymentAmountTextView?.visibility = GONE
+                        }
                     }
+
+                    // Enable/Disable confirm payment button
+                    pmaConfirmPaymentButton?.isEnabled = isConfirmPaymentButtonEnabled(
+                        cvvEditTextInput.length(),
+                        pmaAmountEnteredTextView?.text?.toString()
+                    )
+
+                    //Disable change button when amount is R0.00
+                    when (isChangeIconEnabled(pmaAmountEnteredTextView?.text?.toString())) {
+                        true -> {
+                            changeTextView?.alpha = 1.0f
+                            changeTextView?.isEnabled = true
+                        }
+                        false -> {
+                            changeTextView?.alpha = 0.3f
+                            changeTextView?.isEnabled = false
+                        }
+                    }
+
+                    cvvFieldEnableState(pmaAmountEnteredTextView?.text?.toString())
+
+                    updateCard(this, card, this@ShowAmountPopupFragment)
                 }
-
-
-                pmaAmountEnteredTextView?.apply {
-                    typeface = Typeface.DEFAULT_BOLD
-                    if (!payMyAccountViewModel.isAmountBelowMaxLimit(card?.amountEntered)) {
-                        invalidPaymentAmountTextView?.visibility = VISIBLE
-                    } else {
-                        invalidPaymentAmountTextView?.visibility = GONE
-                    }
-                }
-
-                // Enable/Disable confirm payment button
-                pmaConfirmPaymentButton?.isEnabled = isConfirmPaymentButtonEnabled(
-                    cvvEditTextInput.length(),
-                    pmaAmountEnteredTextView?.text?.toString()
-                )
-
-                //Disable change button when amount is R0.00
-                when (isChangeIconEnabled(pmaAmountEnteredTextView?.text?.toString())) {
-                    true -> {
-                        changeTextView?.alpha = 1.0f
-                        changeTextView?.isEnabled = true
-                    }
-                    false -> {
-                        changeTextView?.alpha = 0.3f
-                        changeTextView?.isEnabled = false
-                    }
-                }
-
-                cvvFieldEnableState(pmaAmountEnteredTextView?.text?.toString())
-
-                updateCard(this, card, this@ShowAmountPopupFragment)
             }
-        }
 
-        initPaymentMethod()
+            binding.initPaymentMethod()
+        }
     }
 
-    private fun updateCard(
+    private fun PmaUpdatePaymentFragmentBinding.updateCard(
         payMyAccountViewModel1: PayMyAccountViewModel,
         card: PMACardPopupModel?,
         showAmountPopupFragment: ShowAmountPopupFragment
@@ -162,22 +164,22 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
         }
 
         with(payMyAccountViewModel1.getSelectedPaymentMethodCard()) {
-            showAmountPopupFragment.cardNumberItemTextView?.text = this?.cardNumber
-            showAmountPopupFragment.cardItemImageView?.setImageResource(
+            showAmountPopupFragment.binding.cardNumberItemTextView?.text = this?.cardNumber
+            showAmountPopupFragment.binding.cardItemImageView?.setImageResource(
                 payMyAccountViewModel1.getVendorCardDrawableId(
                     this?.vendor
                 )
             )
 
             if (showAmountPopupFragment.previousCardNumber != this?.cardNumber) {
-                showAmountPopupFragment.cvvEditTextInput?.text?.clear()
+                showAmountPopupFragment.binding.cvvEditTextInput?.text?.clear()
             }
             showAmountPopupFragment.previousCardNumber = this?.cardNumber
 
         }
     }
 
-    private fun cvvFieldEnableState(amountPayable: String?) {
+    private fun PmaUpdatePaymentFragmentBinding.cvvFieldEnableState(amountPayable: String?) {
         with(payMyAccountViewModel) {
             val isAmountPayableZero = amountPayable == RAND_AMOUNT_ZERO
             cvvEditTextInput?.apply {
@@ -188,7 +190,7 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
         }
     }
 
-    private fun setupListener() {
+    private fun PmaUpdatePaymentFragmentBinding.setupListener() {
         cvvEditTextInput?.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable) {
                 with(payMyAccountViewModel) {
@@ -207,7 +209,7 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
         })
     }
 
-    private fun hideKeyboard() {
+    private fun PmaUpdatePaymentFragmentBinding.hideKeyboard() {
         try {
             val imm: InputMethodManager? =
                 activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
@@ -217,7 +219,7 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
         }
     }
 
-    private fun initPaymentMethod() {
+    private fun PmaUpdatePaymentFragmentBinding.initPaymentMethod() {
 
         with(payMyAccountViewModel) {
 
@@ -303,7 +305,7 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
                     }
 
                     R.id.pmaConfirmPaymentButton -> {
-                        setCVVNumber(cvvEditTextInput?.text?.toString())
+                        setCVVNumber(binding.cvvEditTextInput?.text?.toString())
                         navController?.navigate(R.id.action_displayVendorCardDetailFragment_to_PMAProcessRequestFragment)
                     }
 
@@ -324,7 +326,7 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
                     }
                     R.id.changeTextView -> {
                         if (isAmountBelowMaxLimit(elitePlanModel?.settlementAmount)) {
-                            if (changeTextView.text.toString()
+                            if (binding.changeTextView.text.toString()
                                     .equals(bindString(R.string.add_card_label), ignoreCase = true)
                             ) {
                                 ActivityIntentNavigationManager.presentPayMyAccountActivity(
@@ -354,7 +356,7 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
                     }
 
                     R.id.pmaConfirmPaymentButton -> {
-                        setCVVNumber(cvvEditTextInput?.text?.toString())
+                        setCVVNumber(binding.cvvEditTextInput?.text?.toString())
                         ActivityIntentNavigationManager.presentPayMyAccountActivity(
                             activity,
                             cardInfo,

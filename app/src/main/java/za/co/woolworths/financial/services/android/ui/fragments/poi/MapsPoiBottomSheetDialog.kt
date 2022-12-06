@@ -8,9 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.poi_map_bottom_sheet_dialog.*
+import com.awfs.coordination.databinding.PoiMapBottomSheetDialogBinding
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
-
 
 class MapsPoiBottomSheetDialog(private val clickListner: ClickListner) :
     WBottomSheetDialogFragment(),
@@ -20,27 +19,26 @@ class MapsPoiBottomSheetDialog(private val clickListner: ClickListner) :
         fun onConfirmClick(StreetName: String)
     }
 
+    private lateinit var binding: PoiMapBottomSheetDialogBinding
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
-
-        return inflater.inflate(
-            R.layout.poi_map_bottom_sheet_dialog,
-            container,
-            false
-        )
-
+        binding = PoiMapBottomSheetDialogBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        dismissButton?.paint?.isUnderlineText = true
-        initClick()
+        with(binding) {
+            dismissButton?.paint?.isUnderlineText = true
+            initClick()
+        }
     }
 
-    private fun initClick() {
-        confirmButton?.setOnClickListener(this)
-        dismissButton?.setOnClickListener(this)
+    private fun PoiMapBottomSheetDialogBinding.initClick() {
+        confirmButton?.setOnClickListener(this@MapsPoiBottomSheetDialog)
+        dismissButton?.setOnClickListener(this@MapsPoiBottomSheetDialog)
         streetNameEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
@@ -74,7 +72,7 @@ class MapsPoiBottomSheetDialog(private val clickListner: ClickListner) :
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.confirmButton -> {
-                val street: String? = streetNameEditText?.text?.toString()
+                val street: String? = binding.streetNameEditText?.text?.toString()
                 if (!street.isNullOrEmpty()) {
                     clickListner.onConfirmClick(street)
                 }

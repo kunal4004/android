@@ -2,16 +2,12 @@ package za.co.woolworths.financial.services.android.ui.fragments.onboarding
 
 import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
-import com.awfs.coordination.R
+import com.awfs.coordination.databinding.OnBoardingFragmentBinding
 import com.google.android.material.tabs.TabLayoutMediator
-import kotlinx.android.synthetic.main.on_boarding_fragment.onBoardingViewPager
-import kotlinx.android.synthetic.main.on_boarding_fragment.viewPagerIndicatorTabLayout
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IViewPagerSwipeListener
 import za.co.woolworths.financial.services.android.models.dto.OnBoardingModel
@@ -19,9 +15,10 @@ import za.co.woolworths.financial.services.android.ui.activities.onboarding.IOnB
 import za.co.woolworths.financial.services.android.ui.activities.onboarding.OnBoardingModelImpl
 import za.co.woolworths.financial.services.android.ui.activities.onboarding.OnBoardingViewModelImpl
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 import za.co.woolworths.financial.services.android.util.wenum.OnBoardingScreenType
 
-class OnBoardingFragment : Fragment(), IOnBoardingContract.View {
+class OnBoardingFragment : BaseFragmentBinding<OnBoardingFragmentBinding>(OnBoardingFragmentBinding::inflate), IOnBoardingContract.View {
 
     private var mOnBoardingViewModelImpl: OnBoardingViewModelImpl? = null
     private var mViewPagerSwipeListener: IViewPagerSwipeListener? = null
@@ -32,10 +29,6 @@ class OnBoardingFragment : Fragment(), IOnBoardingContract.View {
             mViewPagerSwipeListener = context as? IViewPagerSwipeListener
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.on_boarding_fragment, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mOnBoardingViewModelImpl = OnBoardingViewModelImpl(this, OnBoardingModelImpl())
@@ -44,7 +37,7 @@ class OnBoardingFragment : Fragment(), IOnBoardingContract.View {
 
     override fun showOnBoardingItems(onBoardingItems: MutableList<OnBoardingModel>) {
         with(onBoardingItems) {
-            with(onBoardingViewPager) {
+            with(binding.onBoardingViewPager) {
                 val onBoardingItemSize = onBoardingItems.size
 
                 adapter = object : FragmentStateAdapter(this@OnBoardingFragment) {
@@ -69,8 +62,8 @@ class OnBoardingFragment : Fragment(), IOnBoardingContract.View {
     }
 
     override fun configurePageIndicator(onBoardingItems: MutableList<OnBoardingModel>) {
-        viewPagerIndicatorTabLayout?.let { tabLayout ->
-            onBoardingViewPager?.let { viewPager ->
+        binding.viewPagerIndicatorTabLayout?.let { tabLayout ->
+            binding.onBoardingViewPager?.let { viewPager ->
                 TabLayoutMediator(tabLayout, viewPager) { tab, _ -> tab.text = "" }.attach()
             }
         }

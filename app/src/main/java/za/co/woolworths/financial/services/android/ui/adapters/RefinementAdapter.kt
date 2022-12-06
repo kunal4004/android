@@ -1,14 +1,13 @@
 package za.co.woolworths.financial.services.android.ui.adapters
 
 import android.content.Context
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.refinements_multiple_selection_layout.view.*
-import kotlinx.android.synthetic.main.refinements_options_layout.view.*
-import kotlinx.android.synthetic.main.refinements_single_selection_layout.view.*
+import androidx.recyclerview.widget.RecyclerView
+import com.awfs.coordination.databinding.RefinementsMultipleSelectionLayoutBinding
+import com.awfs.coordination.databinding.RefinementsOptionsLayoutBinding
+import com.awfs.coordination.databinding.RefinementsSingleSelectionLayoutBinding
 import za.co.woolworths.financial.services.android.models.dto.Refinement
 import za.co.woolworths.financial.services.android.models.dto.RefinementCrumb
 import za.co.woolworths.financial.services.android.models.dto.RefinementNavigation
@@ -22,18 +21,28 @@ class RefinementAdapter(val context: Context, val baseListner: BaseFragmentListn
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RefinementBaseViewHolder {
         return when (viewType) {
             RefinementSelectableItem.ViewType.OPTIONS.value -> {
-                OptionsHolder(LayoutInflater.from(context).inflate(R.layout.refinements_options_layout, parent, false))
+                OptionsHolder(
+                    RefinementsOptionsLayoutBinding.inflate(LayoutInflater.from(context), parent, false)
+                )
             }
             RefinementSelectableItem.ViewType.SINGLE_SELECTOR.value -> {
-                SingleSelectorHolder(LayoutInflater.from(context).inflate(R.layout.refinements_single_selection_layout, parent, false))
+                SingleSelectorHolder(
+                    RefinementsSingleSelectionLayoutBinding.inflate(LayoutInflater.from(context), parent, false)
+                )
             }
             RefinementSelectableItem.ViewType.MULTI_SELECTOR.value -> {
-                MultiSelectorHolder(LayoutInflater.from(context).inflate(R.layout.refinements_multiple_selection_layout, parent, false))
+                MultiSelectorHolder(
+                    RefinementsMultipleSelectionLayoutBinding.inflate(LayoutInflater.from(context), parent, false)
+                )
             }
             RefinementSelectableItem.ViewType.CATEGORY.value -> {
-                CategoryHolder(LayoutInflater.from(context).inflate(R.layout.refinements_options_layout, parent, false))
+                CategoryHolder(
+                    RefinementsOptionsLayoutBinding.inflate(LayoutInflater.from(context), parent, false)
+                )
             }
-            else -> OptionsHolder(LayoutInflater.from(context).inflate(R.layout.refinements_options_layout, parent, false))
+            else -> OptionsHolder(
+                RefinementsOptionsLayoutBinding.inflate(LayoutInflater.from(context), parent, false)
+            )
         }
     }
 
@@ -45,31 +54,31 @@ class RefinementAdapter(val context: Context, val baseListner: BaseFragmentListn
         holder.bind(position)
     }
 
-    inner class OptionsHolder(itemView: View) : RefinementBaseViewHolder(itemView) {
+    inner class OptionsHolder(val itemBinding: RefinementsOptionsLayoutBinding) : RefinementBaseViewHolder(itemBinding.root) {
         override fun bind(position: Int) {
             var item = dataList[position].item as Refinement
-            itemView.displayName.text = item.label
-            itemView.refinementOptions.setOnClickListener {
+            itemBinding.displayName.text = item.label
+            itemBinding.refinementOptions.setOnClickListener {
                 listner.onRefinementSelected(item)
             }
         }
     }
 
-    inner class SingleSelectorHolder(itemView: View) : RefinementBaseViewHolder(itemView) {
+    inner class SingleSelectorHolder(val itemBinding: RefinementsSingleSelectionLayoutBinding) : RefinementBaseViewHolder(itemBinding.root) {
         override fun bind(position: Int) {
             var item = dataList[position].item
             if (item is RefinementCrumb) {
-                itemView.labelSingleSelector.text = item.label
-                itemView.countSingleSelector.text = item.count.toString()
-                itemView.singleSelector.isChecked = dataList[position].isSelected
+                itemBinding.labelSingleSelector.text = item.label
+                itemBinding.countSingleSelector.text = item.count.toString()
+                itemBinding.singleSelector.isChecked = dataList[position].isSelected
             } else {
                 item = item as Refinement
-                itemView.labelSingleSelector.text = item.label
-                itemView.countSingleSelector.text = item.count.toString()
+                itemBinding.labelSingleSelector.text = item.label
+                itemBinding.countSingleSelector.text = item.count.toString()
             }
 
-            itemView.singleSelector.isChecked = dataList[position].isSelected
-            itemView.setOnClickListener {
+            itemBinding.singleSelector.isChecked = dataList[position].isSelected
+            itemBinding.root.setOnClickListener {
                 dataList.forEachIndexed { index, refinementSelectableItem ->
                     if (index == position) {
                         refinementSelectableItem.isSelected = if (item is RefinementCrumb) !refinementSelectableItem.isSelected else true
@@ -83,21 +92,21 @@ class RefinementAdapter(val context: Context, val baseListner: BaseFragmentListn
         }
     }
 
-    inner class MultiSelectorHolder(itemView: View) : RefinementBaseViewHolder(itemView) {
+    inner class MultiSelectorHolder(val itemBinding: RefinementsMultipleSelectionLayoutBinding) : RefinementBaseViewHolder(itemBinding.root) {
         override fun bind(position: Int) {
             var item = dataList[position].item
             if (item is RefinementCrumb) {
-                itemView.labelMultiSelector.text = item.label
-                itemView.countMultiSelector.text = item.count.toString()
-                itemView.multiSelector.isChecked = dataList[position].isSelected
+                itemBinding.labelMultiSelector.text = item.label
+                itemBinding.countMultiSelector.text = item.count.toString()
+                itemBinding.multiSelector.isChecked = dataList[position].isSelected
             } else {
                 item = item as Refinement
-                itemView.labelMultiSelector.text = item.label
-                itemView.countMultiSelector.text = item.count.toString()
-                itemView.multiSelector.isChecked = dataList[position].isSelected
+                itemBinding.labelMultiSelector.text = item.label
+                itemBinding.countMultiSelector.text = item.count.toString()
+                itemBinding.multiSelector.isChecked = dataList[position].isSelected
             }
 
-            itemView.setOnClickListener {
+            itemBinding.root.setOnClickListener {
                 dataList[position].isSelected = !dataList[position].isSelected
                 notifyDataSetChanged()
                 baseListner.onSelectionChanged()
@@ -105,12 +114,12 @@ class RefinementAdapter(val context: Context, val baseListner: BaseFragmentListn
         }
     }
 
-    inner class CategoryHolder(itemView: View) : RefinementBaseViewHolder(itemView) {
+    inner class CategoryHolder(val itemBinding: RefinementsOptionsLayoutBinding) : RefinementBaseViewHolder(itemBinding.root) {
         override fun bind(position: Int) {
             val item = dataList[position].item as Refinement
-            itemView.displayName.text = item.label
-            itemView.rightArrow.visibility = View.INVISIBLE
-            itemView.refinementOptions.setOnClickListener {
+            itemBinding.displayName.text = item.label
+            itemBinding.rightArrow.visibility = View.INVISIBLE
+            itemBinding.refinementOptions.setOnClickListener {
                 listner.onCategorySelected(item, item.multiSelect)
             }
         }

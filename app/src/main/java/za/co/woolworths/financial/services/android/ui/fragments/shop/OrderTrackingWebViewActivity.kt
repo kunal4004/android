@@ -16,9 +16,7 @@ import com.awfs.coordination.databinding.TrackOrderWebviewActivityBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import za.co.woolworths.financial.services.android.common.ClickOnDialogButton
 import za.co.woolworths.financial.services.android.common.CommonConnectivityStatus
-import za.co.woolworths.financial.services.android.common.CommonErrorBottomSheetDialog
 import za.co.woolworths.financial.services.android.util.Utils
 import javax.inject.Inject
 
@@ -33,8 +31,6 @@ class OrderTrackingWebViewActivity : AppCompatActivity() {
     @Inject
     lateinit var commonConnectivityStatus: CommonConnectivityStatus
 
-    @Inject
-    lateinit var errorBottomSheetDialog: CommonErrorBottomSheetDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -101,15 +97,6 @@ class OrderTrackingWebViewActivity : AppCompatActivity() {
                     trackingOrderWebView.visibility = View.VISIBLE
                 }
 
-                override fun onReceivedError(
-                    view: WebView?,
-                    request: WebResourceRequest?,
-                    error: WebResourceError?,
-                ) {
-                    super.onReceivedError(view, request, error)
-                    showErrorDialog()
-                }
-
                 override fun onReceivedSslError(
                     view: WebView?,
                     handler: SslErrorHandler?,
@@ -156,20 +143,6 @@ class OrderTrackingWebViewActivity : AppCompatActivity() {
             Intent(context, OrderTrackingWebViewActivity::class.java).putExtra(TRACKING_URL,
                 trackingURL)
 
-    }
-
-    private fun showErrorDialog() {
-        errorBottomSheetDialog.showCommonErrorBottomDialog(
-            object : ClickOnDialogButton {
-                override fun onClick() {
-                    finish()
-                }
-            },
-            this,
-            getString(R.string.generic_error_something_wrong_newline),
-            getString(R.string.please_try_again),
-            getString(R.string.got_it)
-        )
     }
 
     override fun onBackPressed() {

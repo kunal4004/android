@@ -1,14 +1,19 @@
 package za.co.woolworths.financial.services.android.ui.adapters
 
+import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.awfs.coordination.databinding.StoreNearbyListCardItemBinding
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails
 import za.co.woolworths.financial.services.android.ui.adapters.holder.StoreLocatorCardListViewHolder
 
 class StoreLocatorCardListAdapter(private val clickListener: (StoreDetails) -> Unit) : RecyclerView.Adapter<StoreLocatorCardListViewHolder>() {
     private var storeLocatorCards: List<StoreDetails>? = mutableListOf()
-    override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): StoreLocatorCardListViewHolder {
-        return StoreLocatorCardListViewHolder(viewGroup)
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StoreLocatorCardListViewHolder {
+        return StoreLocatorCardListViewHolder(
+            StoreNearbyListCardItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        )
     }
 
     override fun onBindViewHolder(holder: StoreLocatorCardListViewHolder, position: Int) {

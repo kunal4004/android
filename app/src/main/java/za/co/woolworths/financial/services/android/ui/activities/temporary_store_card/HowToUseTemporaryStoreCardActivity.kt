@@ -9,12 +9,8 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.ConstraintLayout
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.temp_card_how_to_use_layout.*
-import kotlinx.android.synthetic.main.temp_card_how_to_use_layout.staffMessage1CheckBox
-import kotlinx.android.synthetic.main.temp_card_how_to_use_layout.staffMessage2CheckBox
-import kotlinx.android.synthetic.main.temp_card_how_to_use_layout.staffMessage3CheckBox
+import com.awfs.coordination.databinding.TempCardHowToUseLayoutBinding
 import za.co.woolworths.financial.services.android.models.dto.npc.Transition
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.VirtualCardStaffMemberMessage
 import za.co.woolworths.financial.services.android.ui.extension.bindString
@@ -30,12 +26,14 @@ class HowToUseTemporaryStoreCardActivity : AppCompatActivity() {
         var STAFF_DISCOUNT_INFO = "STAFF_DISCOUNT_INFO"
     }
 
+    private lateinit var binding: TempCardHowToUseLayoutBinding
     private var type: Transition = Transition.SLIDE_LEFT
     private var virtualCardStaffMemberMessage: VirtualCardStaffMemberMessage? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.temp_card_how_to_use_layout)
+        binding = TempCardHowToUseLayoutBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         Utils.updateStatusBarBackground(this)
         type = intent?.extras?.getSerializable(TRANSACTION_TYPE) as Transition
         if(intent?.hasExtra(STAFF_DISCOUNT_INFO) == true){
@@ -43,33 +41,40 @@ class HowToUseTemporaryStoreCardActivity : AppCompatActivity() {
         }
         actionBar()
 
-        val howToUseSpannableStringBuilder = WSpannableStringBuilder(getString(R.string.temp_card_how_to_use6))
-        howToUseSpannableStringBuilder.makeStringInteractable("appfeedback@woolworths.co.za", LinkType.EMAIL)
-        howToUseSpannableStringBuilder.makeStringUnderlined("appfeedback@woolworths.co.za")
-        setUnderlineText(howToUseSpannableStringBuilder.build(), howToUse6)
+        with(binding) {
+            val howToUseSpannableStringBuilder =
+                WSpannableStringBuilder(getString(R.string.temp_card_how_to_use6))
+            howToUseSpannableStringBuilder.makeStringInteractable(
+                "appfeedback@woolworths.co.za",
+                LinkType.EMAIL
+            )
+            howToUseSpannableStringBuilder.makeStringUnderlined("appfeedback@woolworths.co.za")
+            setUnderlineText(howToUseSpannableStringBuilder.build(), howToUse6)
 
-        val howToUse8SpannableContent = WSpannableStringBuilder(getString(R.string.temp_card_how_to_use12))
-        howToUse8SpannableContent.makeStringInteractable("queries@wfs.co.za", LinkType.EMAIL)
-        howToUse8SpannableContent.makeStringUnderlined("queries@wfs.co.za")
-        howToUse8SpannableContent.makeStringInteractable("0861 50 20 20", LinkType.PHONE)
-        howToUse8SpannableContent.makeStringUnderlined("0861 50 20 20")
-        setUnderlineText(howToUse8SpannableContent.build(), howToUse12)
+            val howToUse8SpannableContent =
+                WSpannableStringBuilder(getString(R.string.temp_card_how_to_use12))
+            howToUse8SpannableContent.makeStringInteractable("queries@wfs.co.za", LinkType.EMAIL)
+            howToUse8SpannableContent.makeStringUnderlined("queries@wfs.co.za")
+            howToUse8SpannableContent.makeStringInteractable("0861 50 20 20", LinkType.PHONE)
+            howToUse8SpannableContent.makeStringUnderlined("0861 50 20 20")
+            setUnderlineText(howToUse8SpannableContent.build(), howToUse12)
 
-        virtualCardStaffMemberMessage.let {
-            if(!virtualCardStaffMemberMessage?.paragraphs.isNullOrEmpty() &&
-                virtualCardStaffMemberMessage?.paragraphs?.size == 3){
-                staffMessage1CheckBox.visibility = View.VISIBLE
-                staffMessage2CheckBox.visibility = View.VISIBLE
-                staffMessage3CheckBox.visibility = View.VISIBLE
+            virtualCardStaffMemberMessage.let {
+                if (!virtualCardStaffMemberMessage?.paragraphs.isNullOrEmpty() &&
+                    virtualCardStaffMemberMessage?.paragraphs?.size == 3
+                ) {
+                    staffMessage1CheckBox.visibility = View.VISIBLE
+                    staffMessage2CheckBox.visibility = View.VISIBLE
+                    staffMessage3CheckBox.visibility = View.VISIBLE
 
-                staffMessage1CheckBox.text = virtualCardStaffMemberMessage?.paragraphs?.get(0)
-                staffMessage2CheckBox.text = virtualCardStaffMemberMessage?.paragraphs?.get(1)
-                staffMessage3CheckBox.text = virtualCardStaffMemberMessage?.paragraphs?.get(2)
+                    staffMessage1CheckBox.text = virtualCardStaffMemberMessage?.paragraphs?.get(0)
+                    staffMessage2CheckBox.text = virtualCardStaffMemberMessage?.paragraphs?.get(1)
+                    staffMessage3CheckBox.text = virtualCardStaffMemberMessage?.paragraphs?.get(2)
+                }
             }
+
+            setUniqueIds()
         }
-
-        setUniqueIds()
-
     }
 
     private fun setUnderlineText(howToUseSpannableContent: Spannable, textView: TextView?) {
@@ -79,7 +84,7 @@ class HowToUseTemporaryStoreCardActivity : AppCompatActivity() {
     }
 
     private fun actionBar() {
-        setSupportActionBar(tbHowToUse)
+        setSupportActionBar(binding.tbHowToUse)
         supportActionBar?.apply {
             setDisplayShowTitleEnabled(false)
             setDisplayUseLogoEnabled(false)
@@ -112,7 +117,7 @@ class HowToUseTemporaryStoreCardActivity : AppCompatActivity() {
     }
 
     private fun setUniqueIds() {
-            howItWorksTitleTextView?.contentDescription = bindString(R.string.how_to_pay_toolbar_title)
+        binding.howItWorksTitleTextView?.contentDescription = bindString(R.string.how_to_pay_toolbar_title)
     }
 }
 

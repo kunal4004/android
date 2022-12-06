@@ -10,15 +10,10 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.*
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DecodeFormat
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import kotlinx.android.synthetic.main.item_banner_carousel.view.*
-import kotlinx.android.synthetic.main.item_long_banner_list.view.*
-import kotlinx.android.synthetic.main.item_product_carousel_list.view.*
-import kotlinx.android.synthetic.main.product_listing_page_row.view.*
-import kotlinx.android.synthetic.main.product_listing_price_layout.view.*
-import kotlinx.android.synthetic.main.product_listing_promotional_images.view.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IProductListing
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
@@ -73,35 +68,30 @@ class DashCategoryAdapter(
 
             DashDeliveryAdapter.TYPE_DASH_CATEGORIES_BANNER_CAROUSEL ->
                 BannerCarouselItemViewHolder(
-                    LayoutInflater.from(context)
-                        .inflate(R.layout.item_banner_carousel, parent, false)
+                    ItemBannerCarouselBinding.inflate(LayoutInflater.from(context), parent, false)
                 )
 
             DashDeliveryAdapter.TYPE_DASH_CATEGORIES_BANNER_GRID -> {
                 BannerGridItemViewHolder(
-                    LayoutInflater.from(context)
-                        .inflate(R.layout.item_banner_grid, parent, false)
+                    ItemBannerGridBinding.inflate(LayoutInflater.from(context), parent, false)
                 )
             }
 
             DashDeliveryAdapter.TYPE_DASH_CATEGORIES_PRODUCT_CAROUSEL -> {
                 ProductCarouselItemViewHolder(
-                    LayoutInflater.from(context)
-                        .inflate(R.layout.item_product_carousel_list, parent, false)
+                    ItemProductCarouselListBinding.inflate(LayoutInflater.from(context), parent, false)
                 )
             }
 
             DashDeliveryAdapter.TYPE_DASH_CATEGORIES_LONG_BANNER_CAROUSEL -> {
                 LongBannerCarouselItemViewHolder(
-                    LayoutInflater.from(context)
-                        .inflate(R.layout.item_long_banner_carousel, parent, false)
+                    ItemLongBannerCarouselBinding.inflate(LayoutInflater.from(context), parent, false)
                 )
             }
 
             DashDeliveryAdapter.TYPE_DASH_CATEGORIES_LONG_BANNER_LIST -> {
                 LongBannerListItemViewHolder(
-                    LayoutInflater.from(context)
-                        .inflate(R.layout.item_long_banner_list, parent, false)
+                    ItemLongBannerListBinding.inflate(LayoutInflater.from(context), parent, false)
                 )
             }
             else -> EmptyViewHolder(View(context))
@@ -184,7 +174,7 @@ class DashCategoryAdapter(
     }
 }
 
-class BannerCarouselItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+class BannerCarouselItemViewHolder(val itemBinding: ItemBannerCarouselBinding) : RecyclerView.ViewHolder(itemBinding.root) {
 
     fun bind(
         context: Context,
@@ -193,7 +183,7 @@ class BannerCarouselItemViewHolder(itemView: View) : RecyclerView.ViewHolder(ite
         dashLandingNavigationListener: OnDashLandingNavigationListener?
     ) {
 
-        itemView.dashBannerCarouselContainer?.setOnClickListener {
+        itemBinding.dashBannerCarouselContainer?.setOnClickListener {
             dashLandingNavigationListener?.onDashLandingNavigationClicked(view = it, banner)
         }
         Glide.with(context)
@@ -204,11 +194,11 @@ class BannerCarouselItemViewHolder(itemView: View) : RecyclerView.ViewHolder(ite
                 RoundedCorners(context.resources.getDimensionPixelOffset(R.dimen.seven_dp))
             )
             .dontAnimate()
-            .into(itemView.imgCategoryImage)
+            .into(itemBinding.imgCategoryImage)
     }
 }
 
-class BannerGridItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+class BannerGridItemViewHolder(val itemBinding: ItemBannerGridBinding) : RecyclerView.ViewHolder(itemBinding.root) {
 
     fun bind(
         context: Context,
@@ -216,7 +206,7 @@ class BannerGridItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemVie
         banner: Banner,
         dashLandingNavigationListener: OnDashLandingNavigationListener?
     ) {
-        itemView.setOnClickListener {
+        itemBinding.root.setOnClickListener {
             dashLandingNavigationListener?.onDashLandingNavigationClicked(view = it, banner)
         }
         Glide.with(context)
@@ -227,11 +217,11 @@ class BannerGridItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemVie
                 RoundedCorners(context.resources.getDimensionPixelOffset(R.dimen.seven_dp))
             )
             .dontAnimate()
-            .into(itemView.imgCategoryImage)
+            .into(itemBinding.imgCategoryImage)
     }
 }
 
-class LongBannerCarouselItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+class LongBannerCarouselItemViewHolder(val itemBinding: ItemLongBannerCarouselBinding) : RecyclerView.ViewHolder(itemBinding.root) {
 
     fun bind(
         context: Context,
@@ -239,11 +229,11 @@ class LongBannerCarouselItemViewHolder(itemView: View) : RecyclerView.ViewHolder
         banner: Banner,
         dashLandingNavigationListener: OnDashLandingNavigationListener?
     ) {
-        itemView.longBannerListContainer?.setOnClickListener {
+        itemBinding.includeItemLongBannerList.longBannerListContainer?.setOnClickListener {
             dashLandingNavigationListener?.onDashLandingNavigationClicked(it, banner)
         }
-        itemView.tvLongBannerTitle?.text = banner.displayName
-        itemView.tvLongBannerSubtitle?.text = banner.subTitle
+        itemBinding.includeItemLongBannerList.tvLongBannerTitle?.text = banner.displayName
+        itemBinding.includeItemLongBannerList.tvLongBannerSubtitle?.text = banner.subTitle
 
         Glide.with(context)
             .load(banner.externalImageRefV2)
@@ -253,11 +243,11 @@ class LongBannerCarouselItemViewHolder(itemView: View) : RecyclerView.ViewHolder
                 RoundedCorners(context.resources.getDimensionPixelOffset(R.dimen.seven_dp))
             )
             .dontAnimate()
-            .into(itemView.imgLongBannerItem)
+            .into(itemBinding.includeItemLongBannerList.imgLongBannerItem)
     }
 }
 
-class LongBannerListItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+class LongBannerListItemViewHolder(val itemBinding: ItemLongBannerListBinding) : RecyclerView.ViewHolder(itemBinding.root) {
 
     fun bind(
         context: Context,
@@ -265,11 +255,11 @@ class LongBannerListItemViewHolder(itemView: View) : RecyclerView.ViewHolder(ite
         banner: Banner,
         dashLandingNavigationListener: OnDashLandingNavigationListener?
     ) {
-        itemView.longBannerListContainer?.setOnClickListener {
+        itemBinding.longBannerListContainer?.setOnClickListener {
             dashLandingNavigationListener?.onDashLandingNavigationClicked(it, banner)
         }
-        itemView.tvLongBannerTitle?.text = banner.displayName
-        itemView.tvLongBannerSubtitle?.text = banner.subTitle
+        itemBinding.tvLongBannerTitle?.text = banner.displayName
+        itemBinding.tvLongBannerSubtitle?.text = banner.subTitle
 
         Glide.with(context)
             .load(banner.externalImageRefV2)
@@ -279,11 +269,11 @@ class LongBannerListItemViewHolder(itemView: View) : RecyclerView.ViewHolder(ite
                 RoundedCorners(context.resources.getDimensionPixelOffset(R.dimen.seven_dp))
             )
             .dontAnimate()
-            .into(itemView.imgLongBannerItem)
+            .into(itemBinding.imgLongBannerItem)
     }
 }
 
-class ProductCarouselItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+class ProductCarouselItemViewHolder(val itemBinding: ItemProductCarouselListBinding) : RecyclerView.ViewHolder(itemBinding.root) {
 
     fun bind(
         context: Context,
@@ -302,11 +292,11 @@ class ProductCarouselItemViewHolder(itemView: View) : RecyclerView.ViewHolder(it
             setProductName(this)
             setPromotionalText(this)
             val priceItem = PriceItem()
-            priceItem.setPrice(productList, itemView)
+            priceItem.setPrice(productList, itemBinding.rowLayout.includeProductListingPriceLayout)
             setProductVariant(this)
             quickShopAddToCartSwitch(this)
             iProductListing?.let { navigator ->
-                itemView.row_layout?.setOnClickListener {
+                itemBinding.rowLayout?.root?.setOnClickListener {
                     navigator.openProductDetailView(this)
                 }
                 setQuickshopListener(context, navigator, this)
@@ -319,7 +309,7 @@ class ProductCarouselItemViewHolder(itemView: View) : RecyclerView.ViewHolder(it
         navigator: IProductListing?,
         productList: ProductList
     ) {
-        itemView.imQuickShopAddToCartIcon?.setOnClickListener {
+        itemBinding.rowLayout.includeProductListingPriceLayout.imQuickShopAddToCartIcon?.setOnClickListener {
 
             Utils.triggerFireBaseEvents(
                 FirebaseManagerAnalyticsProperties.SHOPQS_ADD_TO_CART,
@@ -336,11 +326,11 @@ class ProductCarouselItemViewHolder(itemView: View) : RecyclerView.ViewHolder(it
         }
     }
 
-    private fun setProductName(productList: ProductList?) = with(itemView) {
+    private fun setProductName(productList: ProductList?) = itemBinding.rowLayout.apply {
         tvProductName?.text = productList?.productName ?: ""
     }
 
-    private fun setPromotionalText(productList: ProductList?) = with(itemView) {
+    private fun setPromotionalText(productList: ProductList?) = itemBinding.rowLayout.apply {
         onlinePromotionalTextView1?.visibility = View.INVISIBLE
         onlinePromotionalTextView2?.visibility = View.INVISIBLE
         onlinePromotionalTextView1?.text = ""
@@ -368,7 +358,7 @@ class ProductCarouselItemViewHolder(itemView: View) : RecyclerView.ViewHolder(it
         }
     }
 
-    private fun setProductVariant(productList: ProductList?) = with(itemView) {
+    private fun setProductVariant(productList: ProductList?) = itemBinding.rowLayout.apply {
         val productVarientName = productList?.productVariants ?: ""
         if (!TextUtils.isEmpty(productVarientName)) {
             productVariantTextView?.visibility = View.VISIBLE
@@ -383,15 +373,15 @@ class ProductCarouselItemViewHolder(itemView: View) : RecyclerView.ViewHolder(it
         productList: ProductList?,
         nextProduct: ProductList?,
         previousProduct: ProductList?
-    ) = with(itemView) {
+    ) = itemBinding.rowLayout.apply {
         brandName?.text = productList?.brandText ?: ""
         brandName?.visibility =
             if (productList?.brandText.isNullOrEmpty()) View.GONE else View.VISIBLE
     }
 
     private fun setPromotionalImage(imPromo: PromotionImages?, virtualTryOn: String?) {
-        with(itemView) {
-            measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
+        itemBinding.rowLayout.productListingPromotionalImage.apply {
+            itemBinding.root.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
 
             ImageManager.setPictureOverrideWidthHeight(imReducedImage, imPromo?.reduced ?: "")
             ImageManager.setPictureWithoutPlaceHolder(imFreeGiftImage, imPromo?.freeGift ?: "")
@@ -408,16 +398,16 @@ class ProductCarouselItemViewHolder(itemView: View) : RecyclerView.ViewHolder(it
     private fun setProductImage(productList: ProductList) {
         val productImageUrl = productList.externalImageRefV2 ?: ""
         ImageManager.setPicture(
-            itemView.imProductImage,
+            itemBinding.rowLayout.imProductImage,
             productImageUrl + if (productImageUrl.indexOf("?") > 0) "w=300&q=85" else "?w=300&q=85"
         )
     }
 
     private fun quickShopAddToCartSwitch(productList: ProductList?) {
-        with(itemView) {
-            context?.apply {
+        itemBinding.apply {
+            root.context?.apply {
                 productList?.apply {
-                    imQuickShopAddToCartIcon?.visibility = if (productType.equals(
+                    rowLayout.includeProductListingPriceLayout.imQuickShopAddToCartIcon?.visibility = if (productType.equals(
                             getString(R.string.food_product_type),
                             ignoreCase = true
                         )

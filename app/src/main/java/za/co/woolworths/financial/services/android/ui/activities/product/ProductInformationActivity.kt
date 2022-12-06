@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.activity_product_information.*
+import com.awfs.coordination.databinding.ActivityProductInformationBinding
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.Companion.ACTION_ALLERGEN_INFORMATION
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.Companion.ACTION_DIETARY_INFORMATION
@@ -20,6 +20,7 @@ import za.co.woolworths.financial.services.android.util.Utils
 
 class ProductInformationActivity : AppCompatActivity() {
 
+    private lateinit var binding: ActivityProductInformationBinding
     private var productDetails: ProductDetails? = null
     private var productInformationType: ProductInformationType? = null
 
@@ -34,7 +35,8 @@ class ProductInformationActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_product_information)
+        binding = ActivityProductInformationBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         Utils.updateStatusBarBackground(this)
         actionBar()
 
@@ -47,7 +49,7 @@ class ProductInformationActivity : AppCompatActivity() {
     }
 
     private fun actionBar() {
-        setSupportActionBar(tbMyCard)
+        setSupportActionBar(binding.tbMyCard)
         supportActionBar?.apply {
             setDisplayShowTitleEnabled(false)
             setDisplayUseLogoEnabled(false)

@@ -9,8 +9,8 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager.widget.ViewPager
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.ActivityTipsAndTricsViewPagerBinding
 import com.google.gson.Gson
-import kotlinx.android.synthetic.main.activity_tips_and_trics_view_pager.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
@@ -27,6 +27,7 @@ import kotlin.properties.Delegates
 
  class TipsAndTricksViewPagerActivity : AppCompatActivity(), View.OnClickListener, ViewPager.OnPageChangeListener {
 
+    private lateinit var binding: ActivityTipsAndTricsViewPagerBinding
     private var tricksViewPagerAdapter: TipsAndTricksViewPagerAdapter? = null
     private var titles: Array<String>? = null
     private var descriptions: Array<String>? = null
@@ -49,10 +50,11 @@ import kotlin.properties.Delegates
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_tips_and_trics_view_pager)
+        binding = ActivityTipsAndTricsViewPagerBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         Utils.updateStatusBarBackground(this, R.color.unavailable_color)
-        initViews()
-        setActionBar()
+        binding.initViews()
+        binding.setActionBar()
         QueryBadgeCounter.instance.queryVoucherCount()
     }
 
@@ -61,7 +63,7 @@ import kotlin.properties.Delegates
         Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.TIPS_AND_TRICKS_DETAILS)
     }
 
-    private fun setActionBar() {
+    private fun ActivityTipsAndTricsViewPagerBinding.setActionBar() {
         setSupportActionBar(mToolbar)
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
@@ -71,11 +73,11 @@ import kotlin.properties.Delegates
         }
     }
 
-    private fun initViews() {
-        next.setOnClickListener(this)
-        previous.setOnClickListener(this)
-        viewPager.addOnPageChangeListener(this)
-        featureActionButton.setOnClickListener(this)
+    private fun ActivityTipsAndTricsViewPagerBinding.initViews() {
+        next.setOnClickListener(this@TipsAndTricksViewPagerActivity)
+        previous.setOnClickListener(this@TipsAndTricksViewPagerActivity)
+        viewPager.addOnPageChangeListener(this@TipsAndTricksViewPagerActivity)
+        featureActionButton.setOnClickListener(this@TipsAndTricksViewPagerActivity)
         titles = resources.getStringArray(R.array.tips_tricks_titles)
         descriptions = resources.getStringArray(R.array.tips_tricks_descriptions)
         icons = resources.obtainTypedArray(R.array.tips_tricks_icons)
@@ -83,11 +85,11 @@ import kotlin.properties.Delegates
         bindDataToViews()
     }
 
-    private fun bindDataToViews() {
+    private fun ActivityTipsAndTricsViewPagerBinding.bindDataToViews() {
         mCurrentItem = intent.getIntExtra("position", 0)
         if (intent.hasExtra("accounts"))
             accountsResponse = Gson().fromJson(intent.extras!!.getString("accounts"), AccountsResponse::class.java)
-        tricksViewPagerAdapter = TipsAndTricksViewPagerAdapter(this)
+        tricksViewPagerAdapter = TipsAndTricksViewPagerAdapter(this@TipsAndTricksViewPagerActivity)
         viewPager.adapter = tricksViewPagerAdapter
         viewPager.currentItem = mCurrentItem
         onPageSelected(mCurrentItem)
@@ -96,15 +98,15 @@ import kotlin.properties.Delegates
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.next -> {
-                var current: Int = viewPager.currentItem + 1
-                if (current < titles!!.size) viewPager?.currentItem = current else onBackPressed()
+                var current: Int = binding.viewPager.currentItem + 1
+                if (current < titles!!.size) binding.viewPager?.currentItem = current else onBackPressed()
             }
             R.id.previous -> {
-                val current: Int = viewPager.currentItem
-                viewPager?.currentItem = current - 1
+                val current: Int = binding.viewPager.currentItem
+                binding.viewPager?.currentItem = current - 1
             }
             R.id.featureActionButton -> {
-                when (viewPager?.currentItem) {
+                when (binding.viewPager?.currentItem) {
                 //NAVIGATION
                     0 -> {
                         if (SessionUtilities.getInstance().isUserAuthenticated && QueryBadgeCounter.instance.cartCount > 0) {
@@ -157,36 +159,38 @@ import kotlin.properties.Delegates
     }
 
     override fun onPageSelected(position: Int) {
-        featureActionButton.visibility = View.VISIBLE
-        previous.visibility = if (position == 0) View.INVISIBLE else View.VISIBLE
-        next.setText(if ((position + 1) == titles?.size) resources.getString(R.string.done) else resources.getString(R.string.next))
-        featureTitle.text = titles?.get(position)
-        featureDescription.text = descriptions?.get(position)
-        featureActionButton.text = actionButtonTexts?.get(position)
-        counter.text = (position + 1).toString() + " OF " + titles?.size.toString()
-        featureIcon.setBackgroundResource(icons.getResourceId(position, -1))
-        when (position) {
-            0->{
-                featureTitle?.text = if (SessionUtilities.getInstance().isUserAuthenticated) resources.getString(R.string.tips_tricks_get_shopping) else titles?.get(position)
-                featureActionButton?.text = if (SessionUtilities.getInstance().isUserAuthenticated && QueryBadgeCounter.instance.cartCount > 0) resources.getString(R.string.tips_tricks_view_cart) else actionButtonTexts?.get(position)
-                featureDescription?.text = if (SessionUtilities.getInstance().isUserAuthenticated && QueryBadgeCounter.instance.cartCount > 0) resources.getString(R.string.tips_tricks_desc_navigation_sign_in) else descriptions?.get(position)
-            }
-            2, 3 -> {
-                featureActionButton?.visibility = View.INVISIBLE
-            }
-            5 -> {
-                featureTitle?.text = if (SessionUtilities.getInstance().isUserAuthenticated) resources.getString(R.string.tips_tricks_your_vouchers) else titles?.get(position)
-                featureActionButton?.visibility = if (SessionUtilities.getInstance().isUserAuthenticated && QueryBadgeCounter.instance.voucherCount > 0) View.VISIBLE else View.INVISIBLE
-            }
-            6 -> {
-                featureTitle?.text =  if (SessionUtilities.getInstance().isUserAuthenticated) resources.getString(R.string.tips_tricks_view_your_accounts) else titles?.get(position)
-                featureActionButton?.text = resources?.getString(R.string.walkthrough_account_action_no_products)
-                featureActionButton.visibility = View.VISIBLE
-            }
-            7 -> {
-                featureTitle?.text = if (SessionUtilities.getInstance().isUserAuthenticated) resources.getString(R.string.tips_tricks_access_your_statements) else titles?.get(position)
-                featureActionButton?.visibility = if (SessionUtilities.getInstance().isUserAuthenticated && accountsResponse != null && ((getAvailableAccounts().contains(AccountsProductGroupCode.STORE_CARD.groupCode))
-                                || getAvailableAccounts().contains(AccountsProductGroupCode.PERSONAL_LOAN.groupCode))) View.VISIBLE else View.INVISIBLE
+        with(binding) {
+            featureActionButton.visibility = View.VISIBLE
+            previous.visibility = if (position == 0) View.INVISIBLE else View.VISIBLE
+            next.setText(if ((position + 1) == titles?.size) resources.getString(R.string.done) else resources.getString(R.string.next))
+            featureTitle.text = titles?.get(position)
+            featureDescription.text = descriptions?.get(position)
+            featureActionButton.text = actionButtonTexts?.get(position)
+            counter.text = (position + 1).toString() + " OF " + titles?.size.toString()
+            featureIcon.setBackgroundResource(icons.getResourceId(position, -1))
+            when (position) {
+                0->{
+                    featureTitle?.text = if (SessionUtilities.getInstance().isUserAuthenticated) resources.getString(R.string.tips_tricks_get_shopping) else titles?.get(position)
+                    featureActionButton?.text = if (SessionUtilities.getInstance().isUserAuthenticated && QueryBadgeCounter.instance.cartCount > 0) resources.getString(R.string.tips_tricks_view_cart) else actionButtonTexts?.get(position)
+                    featureDescription?.text = if (SessionUtilities.getInstance().isUserAuthenticated && QueryBadgeCounter.instance.cartCount > 0) resources.getString(R.string.tips_tricks_desc_navigation_sign_in) else descriptions?.get(position)
+                }
+                2, 3 -> {
+                    featureActionButton?.visibility = View.INVISIBLE
+                }
+                5 -> {
+                    featureTitle?.text = if (SessionUtilities.getInstance().isUserAuthenticated) resources.getString(R.string.tips_tricks_your_vouchers) else titles?.get(position)
+                    featureActionButton?.visibility = if (SessionUtilities.getInstance().isUserAuthenticated && QueryBadgeCounter.instance.voucherCount > 0) View.VISIBLE else View.INVISIBLE
+                }
+                6 -> {
+                    featureTitle?.text =  if (SessionUtilities.getInstance().isUserAuthenticated) resources.getString(R.string.tips_tricks_view_your_accounts) else titles?.get(position)
+                    featureActionButton?.text = resources?.getString(R.string.walkthrough_account_action_no_products)
+                    featureActionButton.visibility = View.VISIBLE
+                }
+                7 -> {
+                    featureTitle?.text = if (SessionUtilities.getInstance().isUserAuthenticated) resources.getString(R.string.tips_tricks_access_your_statements) else titles?.get(position)
+                    featureActionButton?.visibility = if (SessionUtilities.getInstance().isUserAuthenticated && accountsResponse != null && ((getAvailableAccounts().contains(AccountsProductGroupCode.STORE_CARD.groupCode))
+                                    || getAvailableAccounts().contains(AccountsProductGroupCode.PERSONAL_LOAN.groupCode))) View.VISIBLE else View.INVISIBLE
+                }
             }
         }
     }
