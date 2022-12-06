@@ -6,9 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.checkout_address_confirmation_selection_delivery_list.view.*
+import com.awfs.coordination.databinding.CheckoutAddressConfirmationSelectionDeliveryListBinding
 import za.co.woolworths.financial.services.android.checkout.service.network.OpenDayDeliverySlot
-import za.co.woolworths.financial.services.android.checkout.service.network.Slot
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment
 import za.co.woolworths.financial.services.android.ui.extension.bindColor
 import java.util.*
@@ -48,12 +47,7 @@ class CheckoutDeliveryTypeSelectionListAdapter(
         viewType: Int
     ): CheckoutDeliveryTypeSelectionListAdapter.CheckoutDeliveryTypeSelectionViewHolder {
         return CheckoutDeliveryTypeSelectionViewHolder(
-            LayoutInflater.from(parent.context)
-                .inflate(
-                    R.layout.checkout_address_confirmation_selection_delivery_list,
-                    parent,
-                    false
-                )
+            CheckoutAddressConfirmationSelectionDeliveryListBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         )
     }
 
@@ -68,9 +62,10 @@ class CheckoutDeliveryTypeSelectionListAdapter(
         holder.bindItem(position)
     }
 
-    inner class CheckoutDeliveryTypeSelectionViewHolder(itemView: View) :
-        RecyclerView.ViewHolder(itemView) {
+    inner class CheckoutDeliveryTypeSelectionViewHolder(private val binding: CheckoutAddressConfirmationSelectionDeliveryListBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun bindItem(position: Int) {
+            with(binding){
             itemView.apply {
                 hideShimmer(this)
                 openDayDeliverySlotsList?.get(position)?.let { it ->
@@ -81,11 +76,11 @@ class CheckoutDeliveryTypeSelectionListAdapter(
                         Html.fromHtml(it.description) else it.deliveryInDays
                     editAddressImageView.visibility = View.GONE
                     slotPriceButton.visibility = View.VISIBLE
-                    if(it.amount!=0L){
+                    if (it.amount != 0L) {
                         slotPriceButton.text = context.getString(R.string.currency).plus(
                             it.amount?.toString()
                         )
-                    }else{
+                    } else {
                         slotPriceButton.text = context.getString(R.string.free_delivery_slot)
                     }
                     selector.isChecked = checkedItemPosition == position
@@ -112,6 +107,7 @@ class CheckoutDeliveryTypeSelectionListAdapter(
                     onItemClicked(position)
                 }
             }
+            }
         }
     }
 
@@ -135,19 +131,19 @@ class CheckoutDeliveryTypeSelectionListAdapter(
         }
     }
 
-    private fun hideShimmer(view: View) {
+    private fun CheckoutAddressConfirmationSelectionDeliveryListBinding.hideShimmer(view: View) {
         view.apply {
-            selectorShimmerFrameLayout?.setShimmer(null)
-            selectorShimmerFrameLayout?.stopShimmer()
+            selectorShimmerFrameLayout.setShimmer(null)
+            selectorShimmerFrameLayout.stopShimmer()
             selector.visibility = View.VISIBLE
-            titleShimmerLayout?.setShimmer(null)
-            titleShimmerLayout?.stopShimmer()
+            titleShimmerLayout.setShimmer(null)
+            titleShimmerLayout.stopShimmer()
             title.visibility = View.VISIBLE
-            subtitleShimmerLayout?.setShimmer(null)
-            subtitleShimmerLayout?.stopShimmer()
+            subtitleShimmerLayout.setShimmer(null)
+            subtitleShimmerLayout.stopShimmer()
             subTitle.visibility = View.VISIBLE
-            slotPriceButtonShimmerFrameLayout?.setShimmer(null)
-            slotPriceButtonShimmerFrameLayout?.stopShimmer()
+            slotPriceButtonShimmerFrameLayout.setShimmer(null)
+            slotPriceButtonShimmerFrameLayout.stopShimmer()
             slotPriceButton.visibility = View.VISIBLE
         }
     }

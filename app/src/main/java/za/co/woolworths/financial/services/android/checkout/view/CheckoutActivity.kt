@@ -11,7 +11,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.activity_checkout.*
+import com.awfs.coordination.databinding.ActivityCheckoutBinding
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.SAVED_ADDRESS_KEY
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment.Companion.DASH_SLOT_SELECTION
@@ -37,6 +37,7 @@ import za.co.woolworths.financial.services.android.util.Constant.Companion.NO_LI
  */
 class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
 
+    private lateinit var binding: ActivityCheckoutBinding
     private var geoSlotSelection: Boolean? = false
     private var dashSlotSelection: Boolean? = false
     private var navHostFrag = NavHostFragment()
@@ -49,7 +50,8 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_checkout)
+        binding = ActivityCheckoutBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         setActionBar()
         intent?.extras?.apply {
             savedAddressResponse = getSerializable(SAVED_ADDRESS_KEY) as? SavedAddressResponse
@@ -82,8 +84,8 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     fun setActionBar() {
-        toolbar?.visibility = View.VISIBLE
-        setSupportActionBar(toolbar)
+        binding.toolbar?.visibility = View.VISIBLE
+        setSupportActionBar(binding.toolbar)
         KotlinUtils.setTransparentStatusBar(this)
         supportActionBar?.apply {
             title = ""
@@ -94,9 +96,9 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     fun showBackArrowWithoutTitle() {
-        toolbar?.visibility = View.VISIBLE
-        setSupportActionBar(toolbar)
-        toolbarText?.text = ""
+        binding.toolbar?.visibility = View.VISIBLE
+        setSupportActionBar(binding.toolbar)
+        binding.toolbarText?.text = ""
         supportActionBar?.apply {
             title = ""
             setDisplayShowTitleEnabled(false)
@@ -106,9 +108,9 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     fun showBackArrowWithTitle(titleText: String) {
-        toolbar?.visibility = View.VISIBLE
-        setSupportActionBar(toolbar)
-        toolbarText?.text = titleText
+        binding.toolbar?.visibility = View.VISIBLE
+        setSupportActionBar(binding.toolbar)
+        binding.toolbarText?.text = titleText
         supportActionBar?.apply {
             title = ""
             setDisplayShowTitleEnabled(false)
@@ -118,8 +120,8 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     fun hideBackArrow() {
-        toolbar?.visibility = View.VISIBLE
-        setSupportActionBar(toolbar)
+        binding.toolbar?.visibility = View.VISIBLE
+        setSupportActionBar(binding.toolbar)
         supportActionBar?.apply {
             title = ""
             setDisplayHomeAsUpEnabled(false)
@@ -127,11 +129,11 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     fun hideToolbar() {
-        toolbar?.visibility = View.GONE
+        binding.toolbar?.visibility = View.GONE
     }
 
     private fun loadNavHostFragment() {
-        navHostFrag = navHostFragment as NavHostFragment
+        navHostFrag = supportFragmentManager.findFragmentById(R.id.navHostFragment) as NavHostFragment
         val graph =
             navHostFrag.navController.navInflater.inflate(R.navigation.nav_graph_checkout)
 

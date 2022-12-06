@@ -2,27 +2,24 @@ package za.co.woolworths.financial.services.android.ui.adapters
 
 import android.app.Activity
 import android.content.Context
-import androidx.recyclerview.widget.RecyclerView
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.text.HtmlCompat
+import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.*
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import za.co.woolworths.financial.services.android.ui.adapters.holder.OrdersBaseViewHolder
-import kotlinx.android.synthetic.main.my_orders_past_orders_header.view.*
-import kotlinx.android.synthetic.main.order_details_commerce_item.view.*
-import kotlinx.android.synthetic.main.order_details_gift_commerce_item.view.*
-import kotlinx.android.synthetic.main.order_history_chat_layout.view.*
-import kotlinx.android.synthetic.main.order_history_details_total_amount_layout.view.*
-import kotlinx.android.synthetic.main.order_history_type.view.*
 import za.co.woolworths.financial.services.android.common.convertToTitleCase
-import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
+import za.co.woolworths.financial.services.android.models.dto.CommerceItem
+import za.co.woolworths.financial.services.android.models.dto.OrderDetailsItem
+import za.co.woolworths.financial.services.android.models.dto.OrderDetailsResponse
+import za.co.woolworths.financial.services.android.ui.adapters.holder.OrdersBaseViewHolder
 import za.co.woolworths.financial.services.android.ui.fragments.shop.OrderDetailsFragment
-import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 import za.co.woolworths.financial.services.android.util.WFormatter
@@ -34,39 +31,61 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OrdersBaseViewHolder {
         when (viewType) {
             OrderDetailsItem.ViewType.HEADER.value -> {
-                return HeaderViewHolder(LayoutInflater.from(context).inflate(R.layout.my_orders_past_orders_header, parent, false))
+                return HeaderViewHolder(
+                    MyOrdersPastOrdersHeaderBinding.inflate(LayoutInflater.from(context), parent, false)
+                )
             }
             OrderDetailsItem.ViewType.ORDER_STATUS.value -> {
-                return OrderStatusViewHolder(LayoutInflater.from(context).inflate(R.layout.order_history_type, parent, false))
+                return OrderStatusViewHolder(
+                    OrderHistoryTypeBinding.inflate(LayoutInflater.from(context), parent, false)
+                )
             }
             OrderDetailsItem.ViewType.ADD_TO_LIST_LAYOUT.value -> {
-                return AddToListViewHolder(LayoutInflater.from(context).inflate(R.layout.add_item_to_shoppinglist_layout, parent, false))
+                return AddToListViewHolder(
+                    AddItemToShoppinglistLayoutBinding.inflate(LayoutInflater.from(context), parent, false)
+                )
             }
 
             OrderDetailsItem.ViewType.GIFT.value -> {
-                return GiftViewHolder(LayoutInflater.from(context).inflate(R.layout.order_details_gift_commerce_item, parent, false))
+                return GiftViewHolder(
+                    OrderDetailsGiftCommerceItemBinding.inflate(LayoutInflater.from(context), parent, false)
+                )
             }
 
             OrderDetailsItem.ViewType.COMMERCE_ITEM.value -> {
-                return OrderItemViewHolder(LayoutInflater.from(context).inflate(R.layout.order_details_commerce_item, parent, false))
+                return OrderItemViewHolder(
+                    OrderDetailsCommerceItemBinding.inflate(LayoutInflater.from(context), parent, false)
+                )
             }
             OrderDetailsItem.ViewType.VIEW_TAX_INVOICE.value -> {
-                return ViewTaxInvoiceViewHolder(LayoutInflater.from(context).inflate(R.layout.order_details_view_tax_invoice_layout, parent, false))
+                return ViewTaxInvoiceViewHolder(
+                    OrderDetailsViewTaxInvoiceLayoutBinding.inflate(LayoutInflater.from(context), parent, false)
+                )
             }
             OrderDetailsItem.ViewType.CANCEL_ORDER.value -> {
-                return CancelOrderViewHolder(LayoutInflater.from(context).inflate(R.layout.cancel_order_layout, parent, false))
+                return CancelOrderViewHolder(
+                    CancelOrderLayoutBinding.inflate(LayoutInflater.from(context), parent, false)
+                )
             }
             OrderDetailsItem.ViewType.ORDER_TOTAL.value -> {
-                return OrderTotalViewHolder(LayoutInflater.from(context).inflate(R.layout.order_history_details_total_amount_layout, parent, false))
+                return OrderTotalViewHolder(
+                    OrderHistoryDetailsTotalAmountLayoutBinding.inflate(LayoutInflater.from(context), parent, false)
+                )
             }
             OrderDetailsItem.ViewType.CHAT_VIEW.value -> {
-                return OrderChatViewHolder(LayoutInflater.from(context).inflate(R.layout.order_history_chat_layout, parent, false))
+                return OrderChatViewHolder(
+                    OrderHistoryChatLayoutBinding.inflate(LayoutInflater.from(context), parent, false)
+                )
             }
             OrderDetailsItem.ViewType.TRACK_ORDER.value -> {
-                return TrackOrderViewHolder(LayoutInflater.from(context).inflate(R.layout.track_order_layout, parent, false))
+                return TrackOrderViewHolder(
+                    TrackOrderLayoutBinding.inflate(LayoutInflater.from(context), parent, false)
+                )
             }
         }
-        return HeaderViewHolder(LayoutInflater.from(context).inflate(R.layout.my_orders_past_orders_header, parent, false))
+        return HeaderViewHolder(
+            MyOrdersPastOrdersHeaderBinding.inflate(LayoutInflater.from(context), parent, false)
+        )
     }
 
     override fun onBindViewHolder(holder: OrdersBaseViewHolder, position: Int) {
@@ -77,10 +96,9 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
         return dataList.size
     }
 
-    inner class OrderStatusViewHolder(itemView: View) : OrdersBaseViewHolder(itemView) {
+    inner class OrderStatusViewHolder(val itemBinding: OrderHistoryTypeBinding) : OrdersBaseViewHolder(itemBinding.root) {
         override fun bind(position: Int) {
-
-            itemView.apply {
+            itemBinding.apply {
                 orderTotalView?.visibility = View.GONE
                 orderHistoryDetailsView?.visibility = View.VISIBLE
                 orderTypeView?.visibility = View.VISIBLE
@@ -171,7 +189,7 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
                     if (!item.orderSummary?.deliveryDates?.isJsonNull!!) {
                         val deliveryDates: HashMap<String, String> = hashMapOf()
                         deliveryDates.clear()
-                        itemView.deliveryDateContainer.removeAllViews()
+                        itemBinding.deliveryDateContainer.removeAllViews()
                         for (i in 0 until (item.orderSummary?.deliveryDates?.asJsonArray?.size() ?: 0)) {
                             deliveryDates.putAll(Gson().fromJson<Map<String, String>>(
                                 item.orderSummary?.deliveryDates?.asJsonArray?.get(
@@ -179,16 +197,16 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
                         }
                         when (deliveryDates.keys.size) {
                             0 -> {
-                                itemView.timeslotTitle?.visibility = View.GONE
+                                itemBinding.timeslotTitle?.visibility = View.GONE
                             }
                             1 -> {
-                                itemView.timeslot?.text =
+                                itemBinding.timeslot?.text =
                                     deliveryDates.getValue(deliveryDates.keys.toList()[0])
-                                itemView.timeslot?.visibility = View.VISIBLE
+                                itemBinding.timeslot?.visibility = View.VISIBLE
                             }
                             else -> {
-                                itemView.timeslotTitle?.visibility = View.GONE
-                                itemView.timeslot?.visibility = View.GONE
+                                itemBinding.timeslotTitle?.visibility = View.GONE
+                                itemBinding.timeslot?.visibility = View.GONE
                                 deliveryDates.entries.forEach { entry ->
                                     val view =
                                         (context as Activity).layoutInflater.inflate(R.layout.orders_list_delivery_date_item,
@@ -200,7 +218,7 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
                                     deliveryItemsType.text =
                                         context.getString(R.string.time_slot_value, entry.key)
                                     dateOfDelivery.text = entry.value
-                                    itemView.deliveryDateContainer.addView(view)
+                                    itemBinding.deliveryDateContainer.addView(view)
                                 }
                             }
                         }
@@ -210,30 +228,29 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
         }
     }
 
-    inner class OrderItemViewHolder(itemView: View) : OrdersBaseViewHolder(itemView) {
+    inner class OrderItemViewHolder(val itemBinding: OrderDetailsCommerceItemBinding) : OrdersBaseViewHolder(itemBinding.root) {
         override fun bind(position: Int) {
             val item = dataList[position].item as CommerceItem
-
-            itemView?.apply {
+            itemBinding.apply {
                 item.commerceItemInfo?.externalImageRefV2?.let {
                     setProductImage(imProductImage, it)
                 }
                 itemName?.text = item?.commerceItemInfo?.quantity?.toString()+" x "+item?.commerceItemInfo?.productDisplayName
                 price?.text = CurrencyFormatter.formatAmountToRandAndCentWithSpace(item?.priceInfo?.amount)
                 price?.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
-                setOnClickListener { listner.onOpenProductDetail(item) }
+                root.setOnClickListener { listner.onOpenProductDetail(item) }
 
-                promotion_note.visibility = if(isContainsFood && position == dataList.size - 1) View.VISIBLE else View.GONE
+                promotionNote.visibility = if(isContainsFood && position == dataList.size - 1) View.VISIBLE else View.GONE
             }
 
         }
 
     }
 
-    inner class GiftViewHolder(itemView: View) : OrdersBaseViewHolder(itemView) {
+    inner class GiftViewHolder(val itemBinding: OrderDetailsGiftCommerceItemBinding) : OrdersBaseViewHolder(itemBinding.root) {
         override fun bind(position: Int) {
             val item = dataList[position].item as CommerceItem
-            with(itemView){
+            itemBinding.apply {
                 with(item.commerceItemInfo) {
                     setProductImage(freeGiftImageView, externalImageRefV2)
                     giftItemTextView?.text = "$quantity x $productDisplayName"
@@ -242,44 +259,44 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
         }
     }
 
-    inner class HeaderViewHolder(itemView: View) : OrdersBaseViewHolder(itemView) {
+    inner class HeaderViewHolder(val itemBinding: MyOrdersPastOrdersHeaderBinding) : OrdersBaseViewHolder(itemBinding.root) {
         override fun bind(position: Int) {
             val orderItemDetail = dataList[position] as? OrderDetailsItem
             val headerText = "${orderItemDetail?.item}${if (orderItemDetail?.orderItemLength!! > 1) "s" else ""}"
-            itemView.header?.text = "${orderItemDetail?.orderItemLength} $headerText"
+            itemBinding.header?.text = "${orderItemDetail?.orderItemLength} $headerText"
             isContainsFood = headerText.contains(OrderDetailsFragment.PROMO_NOTE_FOOD, true)
         }
     }
 
-    inner class AddToListViewHolder(itemView: View) : OrdersBaseViewHolder(itemView) {
+    inner class AddToListViewHolder(val itemBinding: AddItemToShoppinglistLayoutBinding) : OrdersBaseViewHolder(itemBinding.root) {
         override fun bind(position: Int) {
-            itemView.setOnClickListener {
+            itemBinding.root.setOnClickListener {
                 listner.onAddToList(getCommerceItemList())
             }
         }
     }
 
-    inner class ViewTaxInvoiceViewHolder(itemView: View) : OrdersBaseViewHolder(itemView) {
+    inner class ViewTaxInvoiceViewHolder(val itemBinding: OrderDetailsViewTaxInvoiceLayoutBinding) : OrdersBaseViewHolder(itemBinding.root) {
         override fun bind(position: Int) {
 
-            itemView.setOnClickListener {
+            itemBinding.root.setOnClickListener {
                 listner.onViewTaxInvoice()
             }
         }
 
     }
 
-    inner class CancelOrderViewHolder(itemView: View) : OrdersBaseViewHolder(itemView) {
+    inner class CancelOrderViewHolder(val itemBinding: CancelOrderLayoutBinding) : OrdersBaseViewHolder(itemBinding.root) {
         override fun bind(position: Int) {
-            itemView.setOnClickListener {
+            itemBinding.root.setOnClickListener {
                 listner.onCancelOrder()
             }
         }
 
     }
-    inner class OrderChatViewHolder(itemView: View) : OrdersBaseViewHolder(itemView) {
+    inner class OrderChatViewHolder(val itemBinding: OrderHistoryChatLayoutBinding) : OrdersBaseViewHolder(itemBinding.root) {
         override fun bind(position: Int) {
-            itemView.apply {
+            itemBinding.apply {
                 val item = dataList[position].item as OrderDetailsResponse
                 item.orderSummary?.let {
                     it.shopperName.let {
@@ -288,17 +305,17 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
                           HtmlCompat.FROM_HTML_MODE_LEGACY)
                     }
                 }
-                itemView.setOnClickListener {
+                root.setOnClickListener {
                     listner.onOpenChatScreen(item.orderSummary?.orderId.toString())
                 }
             }
         }
 
     }
-    inner class TrackOrderViewHolder(itemView: View) : OrdersBaseViewHolder(itemView) {
+    inner class TrackOrderViewHolder(val itemBinding: TrackOrderLayoutBinding) : OrdersBaseViewHolder(itemBinding.root) {
         override fun bind(position: Int) {
             val item = dataList[position].item as OrderDetailsResponse
-            itemView.setOnClickListener {
+            itemBinding.root.setOnClickListener {
                 item.orderSummary?.driverTrackingURL?.let {
                     listner.onOpenTrackOrderScreen(it)
                 }
@@ -306,15 +323,15 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
         }
     }
 
-    inner class OrderTotalViewHolder(itemView: View) : OrdersBaseViewHolder(itemView) {
+    inner class OrderTotalViewHolder(val itemBinding: OrderHistoryDetailsTotalAmountLayoutBinding) : OrdersBaseViewHolder(itemBinding.root) {
         override fun bind(position: Int) {
-            itemView?.apply {
+            itemBinding.apply {
                 val item = dataList[position].item as OrderDetailsResponse
                 item.orderSummary?.let {
-                    it.total.let {
+                    it.total.let { totalAmount ->
                         orderHistoryDetailsTotal?.text =
-                            CurrencyFormatter.formatAmountToRandAndCentWithSpace(it)
-                        orderAmount?.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null)
+                            CurrencyFormatter.formatAmountToRandAndCentWithSpace(totalAmount)
+                        orderHistoryDetailsTotal?.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null)
                     }
                 }
             }

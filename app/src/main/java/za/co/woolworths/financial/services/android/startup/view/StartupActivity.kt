@@ -18,6 +18,9 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.os.bundleOf
 import androidx.lifecycle.ViewModelProviders
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.ActivitySplashScreenBinding
+import com.awfs.coordination.databinding.ActivityStartupBinding
+import com.awfs.coordination.databinding.ActivityStartupResourcenotfoundBinding
 import com.google.android.gms.tasks.Task
 import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseOptions
@@ -28,9 +31,6 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.activity_splash_screen.*
-import kotlinx.android.synthetic.main.activity_startup.*
-import kotlinx.android.synthetic.main.activity_startup_without_video.*
 import za.co.wigroup.androidutils.Util
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.firebase.FirebaseConfigUtils
@@ -57,6 +57,9 @@ import javax.inject.Inject
 class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
     View.OnClickListener {
 
+    private lateinit var bindingStartup: ActivityStartupBinding
+    private lateinit var bindingResourceNotFound: ActivityStartupResourcenotfoundBinding
+    private lateinit var bindingSplash: ActivitySplashScreenBinding
     private lateinit var configBuilder: FirebaseRemoteConfigSettings.Builder
     private lateinit var firebaseRemoteConfig: FirebaseRemoteConfig
     private lateinit var startupViewModel: StartupViewModel
@@ -78,8 +81,9 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
             // been sideloaded to a device with a different pixel density
             AppCompatResources.getDrawable(this, R.drawable.splash_w_logo)
 
-            setSupportActionBar(mToolbar)
-            setContentView(R.layout.activity_startup)
+            bindingStartup = ActivityStartupBinding.inflate(layoutInflater)
+            setContentView(bindingStartup.root)
+            setSupportActionBar(bindingStartup.mToolbar)
 
             window?.setFlags(
                 WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -87,21 +91,22 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
             )
             if (supportActionBar?.isShowing == true)
                 supportActionBar?.hide()
-            progressBar?.indeterminateDrawable?.setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY)
-            retry?.setOnClickListener(this@StartupActivity)
+            bindingStartup.splashNoVideoView.progressBar?.indeterminateDrawable?.setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY)
+            bindingStartup.splashNoVideoView.retry?.setOnClickListener(this@StartupActivity)
             deeplinkIntent = intent
             init()
         } catch (e: Resources.NotFoundException) {
             // Consider the app has been sideloaded and the split APK doesn't have
             // the required drawables to run on this specific device
-            setContentView(R.layout.activity_startup_resourcenotfound)
+            bindingResourceNotFound = ActivityStartupResourcenotfoundBinding.inflate(layoutInflater)
+            setContentView(bindingResourceNotFound.root)
             isAppSideLoaded = true
         }
     }
 
     private fun setUpFirebaseconfig() {
-        firebaseRemoteConfig = startupViewModel.getFirebaseRemoteConfigData();
-         configBuilder = FirebaseRemoteConfigSettings.Builder()
+        firebaseRemoteConfig = startupViewModel.getFirebaseRemoteConfigData()
+        configBuilder = FirebaseRemoteConfigSettings.Builder()
                 .setMinimumFetchIntervalInSeconds(AppConstant.FIREBASE_REMOTE_CONFIG_FETCH_INTERVAL)
                 .setFetchTimeoutInSeconds(AppConstant.FIREBASE_REMOTE_CONFIG_TIMEOUT_INTERVAL)
         val defaultJsonString = FirebaseConfigUtils.getJsonDataFromAsset(this, FirebaseConfigUtils.FILE_NAME)
@@ -126,32 +131,34 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                             presentNextScreenOrServerMessage()
                         } else {
                             // api successfull and  firebase also configured so display sunsetting ui
-                            setContentView(R.layout.activity_splash_screen)
+                            bindingSplash = ActivitySplashScreenBinding.inflate(layoutInflater)
+                            setContentView(bindingSplash.root)
                             val configData:ConfigData? = startupViewModel.parseRemoteconfigData(remoteConfigJsonString)
                             if (configData?.expiryTime == -1L || configData == null) {
                                 // in case we get json exception while parsing then we navigate with normal flow
-                                progress_bar?.visibility = View.GONE
+                                bindingSplash.progressBar?.visibility = View.GONE
                                 presentNextScreenOrServerMessage()
                             } else {
-                                setDataOnUI(configData, true)
+                                bindingSplash.setDataOnUI(configData, true)
                             }
                         }
                     } else {
                         // error  of api
                         if (remoteConfigJsonString.isEmpty()) {
                             //api is  failed and firebase not configured so show error screen of api reposne
-                            showNonVideoViewWithErrorLayout()
+                            bindingStartup.showNonVideoViewWithErrorLayout()
                         } else {
                              // api is failed and sunsetting is cofigured then show sunsetting ui
 
                             val configData:ConfigData? = startupViewModel.parseRemoteconfigData(remoteConfigJsonString)
                             if (configData?.expiryTime == -1L || configData == null) {
                                 // in case we get json exception while parsing then show error screen of api
-                                progress_bar?.visibility = View.GONE
-                                showNonVideoViewWithErrorLayout()
+                                bindingSplash.progressBar?.visibility = View.GONE
+                                bindingStartup.showNonVideoViewWithErrorLayout()
                             } else {
-                                setContentView(R.layout.activity_splash_screen)
-                                setDataOnUI(configData, false)
+                                bindingSplash = ActivitySplashScreenBinding.inflate(layoutInflater)
+                                setContentView(bindingSplash.root)
+                                bindingSplash.setDataOnUI(configData, false)
                             }
                         }
                     }
@@ -159,26 +166,25 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                     // firebase fail
                     if (isComingFromSuccess) {
                         // api is success and firebase  is failed so navigate to next screen
-                        progress_bar?.visibility = View.GONE
+                        bindingSplash.progressBar?.visibility = View.GONE
                         presentNextScreenOrServerMessage()
                     } else  {
                         // api is failed and firebase  is failed so display error layout
-
-                        progress_bar?.visibility = View.GONE
-                        showNonVideoViewWithErrorLayout()
+                        bindingSplash.progressBar?.visibility = View.GONE
+                        bindingStartup.showNonVideoViewWithErrorLayout()
                     }
                 }
             }
         }
     }
 
-    private fun setDataOnUI(configData: ConfigData?, isComingFromSuccess: Boolean) {
+    private fun ActivitySplashScreenBinding.setDataOnUI(configData: ConfigData?, isComingFromSuccess: Boolean) {
         Utils.setScreenName(FirebaseManagerAnalyticsProperties.ScreenNames.SPLASH_WITH_CTA)
-        progress_bar?.visibility = View.GONE
-        first_btn?.visibility = View.VISIBLE
-        second_btn?.visibility = View.VISIBLE
-        first_btn?.setOnClickListener(this)
-        second_btn?.setOnClickListener(this)
+        progressBar?.visibility = View.GONE
+        firstBtn?.visibility = View.VISIBLE
+        secondBtn?.visibility = View.VISIBLE
+        firstBtn?.setOnClickListener(this@StartupActivity)
+        secondBtn?.setOnClickListener(this@StartupActivity)
 
         val timeIntervalSince1970: Long = System.currentTimeMillis()
 
@@ -187,35 +193,35 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                 val activeConfiguration = configData.activeConfiguration
                 activeConfiguration?.run {
                     if (title == null)
-                        txt_title?.visibility = View.GONE
+                        txtTitle?.visibility = View.GONE
                     else
-                        txt_title?.text = activeConfiguration.title
+                        txtTitle?.text = activeConfiguration.title
 
                     if (description == null)
-                        txt_desc?.visibility = View.GONE
+                        txtDesc?.visibility = View.GONE
                     else
-                        txt_desc?.text = activeConfiguration.description
+                        txtDesc?.text = activeConfiguration.description
 
                     if (imageUrl == null)
-                        img_view?.visibility = View.GONE
+                        imgView?.visibility = View.GONE
                     else {
                         if (imageUrl.isEmpty())
-                            img_view.setImageResource(R.drawable.link_icon)
+                            imgView.setImageResource(R.drawable.link_icon)
                         else
-                            ImageManager.setPictureWithSplashPlaceHolder(img_view, imageUrl)
+                            ImageManager.setPictureWithSplashPlaceHolder(imgView, imageUrl)
                     }
 
                     if (firstButton == null)
-                        first_btn?.visibility = View.GONE
+                        firstBtn?.visibility = View.GONE
                     else {
-                        first_btn?.text = firstButton.title
+                        firstBtn?.text = firstButton.title
                         actionUrlFirst = firstButton.actionUrl
                     }
 
                     if (secondButton == null)
-                        second_btn?.visibility = View.GONE
+                        secondBtn?.visibility = View.GONE
                     else {
-                        second_btn?.text = secondButton.title
+                        secondBtn?.text = secondButton.title
                         actionUrlSecond = secondButton.actionUrl
                     }
                 }
@@ -223,42 +229,42 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                 val inActiveConfiguration = configData?.inactiveConfiguration
                 inActiveConfiguration?.run {
                     if (title == null)
-                        txt_title?.visibility = View.GONE
+                        txtTitle?.visibility = View.GONE
                     else
-                        txt_title?.text = inActiveConfiguration.title
+                        txtTitle?.text = inActiveConfiguration.title
 
                     if (description == null)
-                        txt_desc?.visibility = View.GONE
+                        txtDesc?.visibility = View.GONE
                     else
-                        txt_desc?.text = inActiveConfiguration.description
+                        txtDesc?.text = inActiveConfiguration.description
 
                     if (imageUrl == null)
-                        img_view?.visibility = View.GONE
+                        imgView?.visibility = View.GONE
                     else {
                         if(imageUrl.isEmpty())
-                            img_view.setImageResource(R.drawable.link_icon)
+                            imgView.setImageResource(R.drawable.link_icon)
                         else
-                            ImageManager.setPictureWithSplashPlaceHolder(img_view, imageUrl)
+                            ImageManager.setPictureWithSplashPlaceHolder(imgView, imageUrl)
                     }
 
                     if (firstButton == null)
-                        first_btn?.visibility = View.GONE
+                        firstBtn?.visibility = View.GONE
                     else {
-                        first_btn?.text = firstButton.title
+                        firstBtn?.text = firstButton.title
                         actionUrlFirst = firstButton.actionUrl
                     }
 
                     if (secondButton == null)
-                        second_btn?.visibility = View.GONE
+                        secondBtn?.visibility = View.GONE
                     else {
-                        second_btn?.text = secondButton.title
+                        secondBtn?.text = secondButton.title
                         actionUrlSecond = secondButton.actionUrl
                     }
                 }
             } else if(configData.expiryTime == -1L && isComingFromSuccess) {
                 presentNextScreenOrServerMessage()
             } else if (configData.expiryTime == -1L && !isComingFromSuccess) {
-                showNonVideoViewWithErrorLayout()
+                bindingStartup.showNonVideoViewWithErrorLayout()
             }
         }
     }
@@ -273,7 +279,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
         if (startupViewModel.isConnectedToInternet(this@StartupActivity)) {
             startupViewModel.setUpFirebaseEvents()
         } else {
-            showNonVideoViewWithErrorLayout()
+            bindingStartup.showNonVideoViewWithErrorLayout()
         }
         if (startupViewModel.isConnectedToInternet(this@StartupActivity)) {
             configureDashChatServices()
@@ -285,9 +291,9 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
 
     private fun setupLoadingScreen() {
         if (isFirstTime()) {
-            showVideoView()
+            bindingStartup.showVideoView()
         } else {
-            showNonVideoViewWithoutErrorLayout()
+            bindingStartup.showNonVideoViewWithoutErrorLayout()
         }
     }
 
@@ -295,15 +301,15 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
         return startupViewModel.getSessionDao(SessionDao.KEY.SPLASH_VIDEO)
     }
 
-    fun showVideoView() {
-        splashNoVideoView?.visibility = View.GONE
-        splashServerMessageView?.visibility = View.GONE
+    fun ActivityStartupBinding.showVideoView() {
+        splashNoVideoView?.root?.visibility = View.GONE
+        splashServerMessageView?.root?.visibility = View.GONE
         videoViewLayout?.visibility = View.VISIBLE
 
         val randomVideo = startupViewModel.randomVideoPath
         if (randomVideo.isNotEmpty()) {
             val videoUri = Uri.parse(randomVideo)
-            activity_wsplash_screen_videoview?.apply {
+            activityWsplashScreenVideoview?.apply {
                 setVideoURI(videoUri)
                 start()
                 setOnCompletionListener(this@StartupActivity)
@@ -312,23 +318,25 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
         }
     }
 
-    fun showNonVideoViewWithErrorLayout() {
+    fun ActivityStartupBinding.showNonVideoViewWithErrorLayout() {
         Utils.setScreenName(FirebaseManagerAnalyticsProperties.ScreenNames.STARTUP_API_ERROR)
         runOnUiThread {
-            progressBar?.visibility = View.GONE
-            splashNoVideoView?.visibility = View.GONE
-            splashNoVideoView?.visibility = View.VISIBLE
-            splashServerMessageView?.visibility = View.GONE
-            errorLayout?.visibility = View.VISIBLE
+            with(splashNoVideoView) {
+                progressBar?.visibility = View.GONE
+                splashNoVideoView?.root?.visibility = View.GONE
+                splashNoVideoView?.root?.visibility = View.VISIBLE
+                splashServerMessageView?.root?.visibility = View.GONE
+                errorLayout?.visibility = View.VISIBLE
+            }
         }
     }
 
-    fun showNonVideoViewWithoutErrorLayout() {
-        progressBar?.visibility = View.VISIBLE
+    fun ActivityStartupBinding.showNonVideoViewWithoutErrorLayout() {
+        splashNoVideoView.progressBar?.visibility = View.VISIBLE
         videoViewLayout?.visibility = View.GONE
-        errorLayout?.visibility = View.GONE
-        splashNoVideoView?.visibility = View.VISIBLE
-        splashServerMessageView?.visibility = View.GONE
+        splashNoVideoView.errorLayout?.visibility = View.GONE
+        splashNoVideoView?.root?.visibility = View.VISIBLE
+        splashServerMessageView?.root?.visibility = View.GONE
     }
 
     override fun onClick(v: View?) {
@@ -339,44 +347,44 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                         startupViewModel.setupFirebaseUserProperty()
                         getConfig()
                     } else {
-                        showNonVideoViewWithErrorLayout()
+                        bindingStartup.showNonVideoViewWithErrorLayout()
                     }
                 }
-                R.id.first_btn-> handleFirstbuttonClick()
-                R.id.second_btn-> handleSecondbuttonClick()
+                R.id.first_btn-> bindingSplash.handleFirstbuttonClick()
+                R.id.second_btn-> bindingSplash.handleSecondbuttonClick()
             }
         }
     }
 
-    private fun handleSecondbuttonClick() {
-        val text: String = second_btn?.text.toString()
+    private fun ActivitySplashScreenBinding.handleSecondbuttonClick() {
+        val text: String = secondBtn?.text.toString()
         val updatedText: String = Utils.formatAnalyticsButtonText(text)
         if (!text.isEmpty()) {
             Utils.triggerFireBaseEvents(
                     FirebaseManagerAnalyticsProperties.SPLASH_BTN.plus(updatedText),
-                    this
+                    this@StartupActivity
             )
         }
         if (actionUrlSecond.isNullOrEmpty()) {
             presentNextScreen()
         } else {
-            ScreenManager.presentToActionView(this, actionUrlSecond)
+            ScreenManager.presentToActionView(this@StartupActivity, actionUrlSecond)
         }
     }
 
-    private fun handleFirstbuttonClick() {
-        val text: String = first_btn?.text.toString()
+    private fun ActivitySplashScreenBinding.handleFirstbuttonClick() {
+        val text: String = firstBtn?.text.toString()
         val updatedText: String = Utils.formatAnalyticsButtonText(text)
         if (!text.isEmpty()) {
             Utils.triggerFireBaseEvents(
                     FirebaseManagerAnalyticsProperties.SPLASH_BTN.plus(updatedText) ,
-                    this
+                    this@StartupActivity
             )
         }
         if (actionUrlFirst.isNullOrEmpty()) {
             presentNextScreen()
         }  else {
-            ScreenManager.presentToActionView(this, actionUrlFirst)
+            ScreenManager.presentToActionView(this@StartupActivity, actionUrlFirst)
         }
     }
 
@@ -387,7 +395,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                     ConfigResource.persistGlobalConfig(it.data, startupViewModel)
                     startupViewModel.videoPlayerShouldPlay = false
                     if (TextUtils.isEmpty(it.data?.configs?.enviroment?.stsURI)) {
-                        showNonVideoViewWithErrorLayout()
+                        bindingStartup.showNonVideoViewWithErrorLayout()
                         return@observe
                     }
 
@@ -395,7 +403,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                         if (startupViewModel.isConnectedToInternet(this)) {
                             fetchFirebaseConfigData(true)
                         } else {
-                            showNonVideoViewWithErrorLayout()
+                            bindingStartup.showNonVideoViewWithErrorLayout()
                         }
                     }
                 }
@@ -417,14 +425,14 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                 presentNextScreenOrServerMessage()
                 mp?.stop()
             } else {
-                showNonVideoViewWithoutErrorLayout()
+                bindingStartup.showNonVideoViewWithoutErrorLayout()
             }
         }
     }
 
     fun presentNextScreenOrServerMessage() {
         Utils.setScreenName(FirebaseManagerAnalyticsProperties.ScreenNames.SPLASH_WITHOUT_CTA)
-        showNonVideoViewWithoutErrorLayout()
+        bindingStartup.showNonVideoViewWithoutErrorLayout()
         presentNextScreen()
     }
 
@@ -546,7 +554,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
             if (isAppMinimized) {
                 isAppMinimized = false
                 if (isServerMessageShown) {
-                    showNonVideoViewWithoutErrorLayout()
+                    bindingStartup.showNonVideoViewWithoutErrorLayout()
                     getConfig()
                 } else {
                     startActivity(Intent(this@StartupActivity, StartupActivity::class.java))

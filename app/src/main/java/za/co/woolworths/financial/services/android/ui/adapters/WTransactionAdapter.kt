@@ -1,15 +1,17 @@
 package za.co.woolworths.financial.services.android.ui.adapters
 
+import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.awfs.coordination.databinding.TransactionListChildItemBinding
+import com.awfs.coordination.databinding.TransactionListParentItemBinding
 import za.co.woolworths.financial.services.android.models.dto.account.Transaction
 import za.co.woolworths.financial.services.android.models.dto.account.TransactionHeader
 import za.co.woolworths.financial.services.android.models.dto.account.TransactionItem
 import za.co.woolworths.financial.services.android.ui.adapters.holder.TransactionHeaderViewHolder
 import za.co.woolworths.financial.services.android.ui.adapters.holder.TransactionItemViewHolder
-import za.co.woolworths.financial.services.android.ui.adapters.holder.WParentItemViewHolder
 
-class WTransactionAdapter(private val transactionList: MutableList<Transaction>?) : RecyclerView.Adapter<WParentItemViewHolder>() {
+class WTransactionAdapter(private val transactionList: MutableList<Transaction>?) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun getItemViewType(position: Int): Int = if (transactionList?.get(position) is TransactionItem) 1 else 0
 
@@ -17,15 +19,19 @@ class WTransactionAdapter(private val transactionList: MutableList<Transaction>?
 
     override fun getItemId(position: Int): Long = position.toLong()
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WParentItemViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
-            0 -> TransactionHeaderViewHolder(parent)
-            1 -> TransactionItemViewHolder(parent)
+            0 -> TransactionHeaderViewHolder(
+                TransactionListParentItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            )
+            1 -> TransactionItemViewHolder(
+                TransactionListChildItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            )
             else -> throw IllegalStateException("Invalid WTransaction viewType found $viewType")
         }
     }
 
-    override fun onBindViewHolder(holder: WParentItemViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         transactionList?.get(position)?.apply {
             when (this) {
                 is TransactionHeader -> (holder as? TransactionHeaderViewHolder)?.setTransactionHeader(this as? TransactionHeader)

@@ -2,34 +2,33 @@ package za.co.woolworths.financial.services.android.ui.fragments.shop.list
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.util.DisplayMetrics
-import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
-import android.widget.LinearLayout
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.add_to_list_content.*
+import com.awfs.coordination.databinding.AddToListContentBinding
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
-import za.co.woolworths.financial.services.android.ui.adapters.AddToShoppingListAdapter
-import java.util.*
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
+import za.co.woolworths.financial.services.android.ui.adapters.AddToShoppingListAdapter
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.ORDER_ID
 
-class AddToShoppingListFragment : DepartmentExtensionFragment(), View.OnClickListener {
+class AddToShoppingListFragment : DepartmentExtensionFragment(R.layout.add_to_list_content), View.OnClickListener {
+
+    private lateinit var binding: AddToListContentBinding
 
     private var mAddToListArgs: String? = null
     private var mShoppingListGroup: HashMap<String, ShoppingList>? = null
@@ -54,12 +53,10 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLis
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.add_to_list_content, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding = AddToListContentBinding.bind(view)
+
         getBundleArguments()
         initAndConfigureUI()
         setListener()
@@ -67,11 +64,15 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLis
         networkConnectivityStatus()
     }
 
+    override fun noConnectionLayout(isVisible: Boolean) {
+        binding.noConnectionLayout?.visibility = if (isVisible) View.VISIBLE else View.GONE
+    }
+
     private fun initAndConfigureUI() {
         activity?.apply {
-            rclAddToList?.layoutManager = LinearLayoutManager(this)
+            binding.rclAddToList?.layoutManager = LinearLayoutManager(this)
             mAddToShoppingListAdapter = AddToShoppingListAdapter(mutableListOf()) { shoppingListItemClicked() }
-            rclAddToList?.adapter = mAddToShoppingListAdapter
+            binding.rclAddToList?.adapter = mAddToShoppingListAdapter
         }
     }
 
@@ -83,26 +84,26 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLis
     }
 
     private fun setListener() {
-        btnPostShoppingList.setOnClickListener(this)
-        btnRetry.setOnClickListener(this)
-        imCreateList.setOnClickListener(this)
+        binding.btnPostShoppingList.setOnClickListener(this)
+        binding.btnRetry.setOnClickListener(this)
+        binding.imCreateList.setOnClickListener(this)
     }
 
     private fun loadShoppingList(state: Boolean) {
-        recyclerViewMaximumHeight(rclAddToList.layoutParams)
-        relProgressBar.visibility = if (state) VISIBLE else GONE
+        recyclerViewMaximumHeight(binding.rclAddToList.layoutParams)
+        binding.relProgressBar.visibility = if (state) VISIBLE else GONE
         disableCreateListButton(state)
     }
 
     private fun noNetworkConnection(state: Boolean) {
-        no_connection_layout.visibility = if (state) VISIBLE else GONE
-        flCancelButton.visibility = if (state) GONE else VISIBLE
+        binding.noConnectionLayout.visibility = if (state) VISIBLE else GONE
+        binding.flCancelButton.visibility = if (state) GONE else VISIBLE
         disableCreateListButton(state)
     }
 
     private fun disableCreateListButton(state: Boolean) {
-        imCreateList.alpha = if (state) 0.5f else 1.0f
-        imCreateList.isEnabled = !state
+        binding.imCreateList.alpha = if (state) 0.5f else 1.0f
+        binding.imCreateList.isEnabled = !state
     }
 
     private fun retrieveShoppingList() {
@@ -148,7 +149,7 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLis
     private fun bindShoppingListToUI(shoppingList: MutableList<ShoppingList>) {
         activity?.apply {
             // dynamic RecyclerView height
-            setRecyclerViewHeight(shoppingList, rclAddToList.layoutParams)
+            setRecyclerViewHeight(shoppingList, binding.rclAddToList.layoutParams)
             saveShoppingListInstance(shoppingList)
             mAddToShoppingListAdapter?.setShoppingList(shoppingList)
             mAddToShoppingListAdapter?.notifyDataSetChanged()
@@ -168,12 +169,12 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLis
         val displayMetrics = DisplayMetrics()
         activity?.windowManager?.defaultDisplay?.getMetrics(displayMetrics)
         viewGroupParams.height = 2 * displayMetrics.heightPixels / 5
-        rclAddToList.layoutParams = viewGroupParams
+        binding.rclAddToList.layoutParams = viewGroupParams
     }
 
     private fun shoppingListItemClicked() {
         mAddToShoppingListAdapter?.notifyDataSetChanged()
-        btnPostShoppingList.text = if (shoppingListItemWasSelected()) getString(R.string.ok) else getString(R.string.cancel)
+        binding.btnPostShoppingList.text = if (shoppingListItemWasSelected()) getString(R.string.ok) else getString(R.string.cancel)
     }
 
     private fun shoppingListSelectedItemGroup(): HashMap<String, ShoppingList>? {
@@ -250,12 +251,12 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLis
                             when (connect) {
                                 AutoConnect.ADD_PRODUCT_TO_LIST -> {
                                     disableCreateListButton(false)
-                                    btnPostShoppingList.performClick()
+                                    binding.btnPostShoppingList.performClick()
                                 }
 
                                 AutoConnect.ADD_ORDER_TO_LIST -> {
                                     disableCreateListButton(false)
-                                    btnPostShoppingList.performClick()
+                                    binding.btnPostShoppingList.performClick()
                                 }
                             }
                             mAutoConnect = null
@@ -267,11 +268,13 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLis
     }
 
     private fun shoppingListPostProgress(state: Boolean) {
-        btnPostShoppingList.isEnabled = !state
-        rclAddToList.isEnabled = !state
-        pbAddToList.visibility = if (state) VISIBLE else GONE
-        imCreateList.isEnabled = !state
-        imCreateList.alpha = if (state) 0.5f else 1.0f
+        binding.apply {
+            btnPostShoppingList.isEnabled = !state
+            rclAddToList.isEnabled = !state
+            pbAddToList.visibility = if (state) VISIBLE else GONE
+            imCreateList.isEnabled = !state
+            imCreateList.alpha = if (state) 0.5f else 1.0f
+        }
     }
 
     private fun addProductToShoppingList(addToListRequest: MutableList<AddToListRequest>, listId: String) {
@@ -461,8 +464,8 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLis
                 if (it.shoppingListRowWasSelected)
                     atLeastOneShoppingListItemSelected = true
             }
-            btnPostShoppingList.text = cachedShoppingList?.let { if (atLeastOneShoppingListItemSelected) getString(R.string.ok) else getString(R.string.cancel) }
-            cachedShoppingList?.let { setRecyclerViewHeight(it, rclAddToList.layoutParams) }
+            binding.btnPostShoppingList.text = cachedShoppingList?.let { if (atLeastOneShoppingListItemSelected) getString(R.string.ok) else getString(R.string.cancel) }
+            cachedShoppingList?.let { setRecyclerViewHeight(it, binding.rclAddToList.layoutParams) }
             cachedShoppingList?.let { mAddToShoppingListAdapter?.setShoppingList(it) }
             mAddToShoppingListAdapter?.notifyDataSetChanged()
         }

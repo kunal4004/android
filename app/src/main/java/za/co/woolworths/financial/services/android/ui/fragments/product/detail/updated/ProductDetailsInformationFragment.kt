@@ -2,15 +2,13 @@ package za.co.woolworths.financial.services.android.ui.fragments.product.detail.
 
 import android.os.Bundle
 import android.text.TextUtils
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.fragment_prodcut_details_information.*
+import com.awfs.coordination.databinding.FragmentProdcutDetailsInformationBinding
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
+import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 
-class ProductDetailsInformationFragment : Fragment() {
+class ProductDetailsInformationFragment : BaseFragmentBinding<FragmentProdcutDetailsInformationBinding>(FragmentProdcutDetailsInformationBinding::inflate) {
     var description: String = ""
     var productCode: String = ""
 
@@ -31,14 +29,10 @@ class ProductDetailsInformationFragment : Fragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_prodcut_details_information, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setProductDetailsInformation()
-        productCodeText.text = productCode
+        binding.productCodeText.text = productCode
         setUniqueIds()
     }
 
@@ -72,16 +66,16 @@ class ProductDetailsInformationFragment : Fragment() {
                     + descriptionWithoutExtraTag
                     + "</body></html>")
 
-            webDescription.loadDataWithBaseURL("file:///android_res/drawable/",
+            binding.webDescription.loadDataWithBaseURL("file:///android_res/drawable/",
                     htmlData, "text/html; charset=UTF-8", "UTF-8", null)
         }
     }
 
     private fun setUniqueIds() {
         resources?.apply {
-            productCodeText?.contentDescription = getString(R.string.pdp_textProductCode)
-            title?.contentDescription = getString(R.string.pdp_productDetailsTitle)
-            productCodeTitle?.contentDescription = getString(R.string.pdp_productCodeTitle)
+            binding.productCodeText?.contentDescription = getString(R.string.pdp_textProductCode)
+            binding.title?.contentDescription = getString(R.string.pdp_productDetailsTitle)
+            binding.productCodeTitle?.contentDescription = getString(R.string.pdp_productCodeTitle)
         }
     }
 }

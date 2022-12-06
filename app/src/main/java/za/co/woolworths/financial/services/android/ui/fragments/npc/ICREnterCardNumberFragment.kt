@@ -3,15 +3,13 @@ package za.co.woolworths.financial.services.android.ui.fragments.npc
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextUtils
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import androidx.core.content.ContextCompat
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.link_card_fragment.*
+import com.awfs.coordination.databinding.LinkCardFragmentBinding
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
 import za.co.woolworths.financial.services.android.ui.activities.card.InstantStoreCardReplacementActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardActivityExtension
@@ -19,9 +17,9 @@ import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 import za.co.woolworths.financial.services.android.util.*
 
+class ICREnterCardNumberFragment : MyCardExtension(R.layout.link_card_fragment) {
 
-class ICREnterCardNumberFragment : MyCardExtension() {
-
+    private lateinit var binding: LinkCardFragmentBinding
     private var shouldDisableUINavigation = false
     private val mMCSInstantStoreCard = AppConfigSingleton.instantCardReplacement
 
@@ -29,31 +27,43 @@ class ICREnterCardNumberFragment : MyCardExtension() {
         fun newInstance() = ICREnterCardNumberFragment()
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? = inflater.inflate(R.layout.link_card_fragment, container, false)
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        inputTextWatcher()
-        activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_ICR_LINK_START, this) }
-        navigateToEnterOTPFragmentImageView?.setOnClickListener {
-            if (shouldDisableUINavigation) return@setOnClickListener
-            activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_ICR_LINK_CARD, this) }
-            navigateToOTPScreen()
+        binding = LinkCardFragmentBinding.bind(view)
+
+        binding.apply {
+            inputTextWatcher()
+            activity?.apply {
+                Utils.triggerFireBaseEvents(
+                    FirebaseManagerAnalyticsProperties.MYACCOUNTS_ICR_LINK_START,
+                    this
+                )
+            }
+            navigateToEnterOTPFragmentImageView?.setOnClickListener {
+                if (shouldDisableUINavigation) return@setOnClickListener
+                activity?.apply {
+                    Utils.triggerFireBaseEvents(
+                        FirebaseManagerAnalyticsProperties.MYACCOUNTS_ICR_LINK_CARD,
+                        this
+                    )
+                }
+                navigateToOTPScreen()
+            }
+
+            navigateToEnterOTPFragmentImageView?.isEnabled = false
+
+            // Populate card number when navigate back from Enter OTP fragment
+            // TODO:: Communicate via Navigation graph to eliminate activity dependency
+            val cardNumber = MyCardActivityExtension.mCardNumber
+            if (!TextUtils.isEmpty(cardNumber)) {
+                cardNumberEditText.setText(cardNumber)
+            }
+
+            uniqueIdsForEnterCartNumberScreen()
         }
-
-        navigateToEnterOTPFragmentImageView?.isEnabled = false
-
-        // Populate card number when navigate back from Enter OTP fragment
-        // TODO:: Communicate via Navigation graph to eliminate activity dependency
-        val cardNumber = MyCardActivityExtension.mCardNumber
-        if (!TextUtils.isEmpty(cardNumber)) {
-            cardNumberEditText.setText(cardNumber)
-        }
-
-        uniqueIdsForEnterCartNumberScreen()
     }
 
-    private fun uniqueIdsForEnterCartNumberScreen() {
+    private fun LinkCardFragmentBinding.uniqueIdsForEnterCartNumberScreen() {
         activity?.resources?.apply {
             tvLinkNewCardTitle?.contentDescription = bindString(R.string.label_linkICR)
             tvLinkNewCardDesc?.contentDescription = bindString(R.string.label_linkICRCardDescription)
@@ -63,7 +73,7 @@ class ICREnterCardNumberFragment : MyCardExtension() {
         }
     }
 
-    private fun navigateToOTPScreen() {
+    private fun LinkCardFragmentBinding.navigateToOTPScreen() {
         if (shouldDisableUINavigation || activity == null) return
         if (navigateToEnterOTPFragmentImageView?.isEnabled == true) {
             if (NetworkManager().isConnectedToNetwork(activity)) {
@@ -83,7 +93,7 @@ class ICREnterCardNumberFragment : MyCardExtension() {
         }
     }
 
-    private fun inputTextWatcher() {
+    private fun LinkCardFragmentBinding.inputTextWatcher() {
         cardNumberEditText?.addTextChangedListener(object : FourDigitCardFormatWatcher(cardNumberEditText) {
 
             override fun afterTextChanged(s: Editable) {
@@ -106,7 +116,7 @@ class ICREnterCardNumberFragment : MyCardExtension() {
     }
 
 
-    private fun setupCardNumberField(cardNumber: String) {
+    private fun LinkCardFragmentBinding.setupCardNumberField(cardNumber: String) {
         if (cardNumber.length == 16) {
             val validStoreCardBinsArray = mMCSInstantStoreCard?.validStoreCardBins
             val storeCard6DigitBinNumber = cardNumber.substring(0, 6).toInt()
@@ -121,10 +131,26 @@ class ICREnterCardNumberFragment : MyCardExtension() {
         }
     }
 
+    fun LinkCardFragmentBinding.invalidCardNumberUI() {
+        activity?.apply {
+            cardNumberEditText?.background = ContextCompat.getDrawable(this, R.drawable.input_box_error_bg)
+            invalidCardNumberLabel?.visibility = View.VISIBLE
+            navigateToEnterOTPFragmentImageView?.isEnabled = false
+        }
+    }
+
+    fun LinkCardFragmentBinding.validCardNumberUI() {
+        activity?.apply {
+            cardNumberEditText?.background = ContextCompat.getDrawable(this, R.drawable.input_box_active_bg)
+            invalidCardNumberLabel?.visibility = View.GONE
+            navigateToEnterOTPFragmentImageView?.isEnabled = true
+        }
+    }
+
     override fun onResume() {
         super.onResume()
         activity?.let {
-            cardNumberEditText?.apply {
+            binding.cardNumberEditText?.apply {
                 isFocusable = true
                 requestFocus()
                 showSoftKeyboard(it, this)

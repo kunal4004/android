@@ -1,17 +1,15 @@
 package za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.submit_claim_detail
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.bpi_submit_claim_detail_fragment.*
+import com.awfs.coordination.databinding.BpiSubmitClaimDetailFragmentBinding
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.bpi.SubmitClaimReason
 import za.co.woolworths.financial.services.android.ui.adapters.RequiredFormAdapter
@@ -22,8 +20,9 @@ import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
-class BPISubmitClaimDetailFragment : Fragment(), View.OnClickListener {
+class BPISubmitClaimDetailFragment : Fragment(R.layout.bpi_submit_claim_detail_fragment), View.OnClickListener {
 
+    private lateinit var binding: BpiSubmitClaimDetailFragmentBinding
     private val bpiViewModel: BPIViewModel? by activityViewModels()
 
     private var claimReasonArgs : SubmitClaimReason? = null
@@ -33,16 +32,13 @@ class BPISubmitClaimDetailFragment : Fragment(), View.OnClickListener {
         setHasOptionsMenu(true)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.bpi_submit_claim_detail_fragment, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initView()
+        binding = BpiSubmitClaimDetailFragmentBinding.bind(view)
+        binding.initView()
     }
 
-    private fun initView() {
+    private fun BpiSubmitClaimDetailFragmentBinding.initView() {
         arguments?.apply {
             claimReasonArgs = BPISubmitClaimDetailFragmentArgs.fromBundle(this).claimReasonList
             val requiredFormAdapter = RequiredFormAdapter(claimReasonArgs?.requiredForm, true)

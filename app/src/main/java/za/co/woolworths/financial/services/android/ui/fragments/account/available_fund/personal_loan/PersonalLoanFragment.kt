@@ -7,7 +7,6 @@ import androidx.lifecycle.observe
 import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.available_funds_fragment.*
 import kotlinx.coroutines.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.ProductGroupCode
@@ -16,7 +15,6 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.treatmentplan.OutSystemBuilder
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
-
 import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PMA3DSecureProcessRequestFragment.Companion.PMA_TRANSACTION_COMPLETED_RESULT_CODE
@@ -41,18 +39,21 @@ class PersonalLoanFragment : AvailableFundFragment(), View.OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        availableFundBackground?.setBackgroundResource(R.drawable.personal_loan_background)
 
-        navController = Navigation.findNavController(view)
+        binding.apply {
+            availableFundBackground?.setBackgroundResource(R.drawable.personal_loan_background)
 
-        payMyAccountViewModel.queryPaymentMethod.observe(viewLifecycleOwner) {
-            isQueryPayUPaymentMethodComplete = false
-            queryPaymentMethod()
+            navController = Navigation.findNavController(view)
+
+            payMyAccountViewModel.queryPaymentMethod.observe(viewLifecycleOwner) {
+                isQueryPayUPaymentMethodComplete = false
+                queryPaymentMethod()
+            }
+
+            incRecentTransactionButton?.root?.setOnClickListener(this@PersonalLoanFragment)
+            incViewStatementButton?.root?.setOnClickListener(this@PersonalLoanFragment)
+            incPayMyAccountButton?.root?.setOnClickListener(this@PersonalLoanFragment)
         }
-
-        incRecentTransactionButton?.setOnClickListener(this)
-        incViewStatementButton?.setOnClickListener(this)
-        incPayMyAccountButton?.setOnClickListener(this)
 
         navigateToDeepLinkView()
 

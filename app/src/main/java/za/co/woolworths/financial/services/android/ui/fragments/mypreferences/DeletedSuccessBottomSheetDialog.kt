@@ -5,31 +5,28 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.deleted_success_bottom_sheet_dialog.*
+import com.awfs.coordination.databinding.DeletedSuccessBottomSheetDialogBinding
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 
 class DeletedSuccessBottomSheetDialog : WBottomSheetDialogFragment(),
     View.OnClickListener {
 
+    private lateinit var binding: DeletedSuccessBottomSheetDialogBinding
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
-        return inflater.inflate(
-            R.layout.deleted_success_bottom_sheet_dialog,
-            container,
-            false
-        )
-
+        binding = DeletedSuccessBottomSheetDialogBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        initClick()
+        binding.initClick()
     }
 
-    private fun initClick() {
-        gotItButton.setOnClickListener(this)
+    private fun DeletedSuccessBottomSheetDialogBinding.initClick() {
+        gotItButton.setOnClickListener(this@DeletedSuccessBottomSheetDialog)
     }
 
     override fun onClick(v: View?) {
