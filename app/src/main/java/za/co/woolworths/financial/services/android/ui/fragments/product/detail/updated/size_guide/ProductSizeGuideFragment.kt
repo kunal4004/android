@@ -2,16 +2,18 @@ package za.co.woolworths.financial.services.android.ui.fragments.product.detail.
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.view.*
-import androidx.fragment.app.Fragment
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.fragment_prodcut_size_guide.*
-import za.co.woolworths.financial.services.android.ui.extension.bindString
+import com.awfs.coordination.databinding.FragmentProdcutSizeGuideBinding
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorDialogFragment
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 
-class ProductSizeGuideFragment : Fragment(), ProductSizeGuideContract.ProductSizeGuideView, ErrorDialogFragment.IOnErrorDialogDismiss {
+class ProductSizeGuideFragment : BaseFragmentBinding<FragmentProdcutSizeGuideBinding>(FragmentProdcutSizeGuideBinding::inflate), ProductSizeGuideContract.ProductSizeGuideView, ErrorDialogFragment.IOnErrorDialogDismiss {
     private var sizeGuideId: String? = null
     var presenter: ProductSizeGuideContract.ProductSizeGuidePresenter? = null
 
@@ -30,10 +32,6 @@ class ProductSizeGuideFragment : Fragment(), ProductSizeGuideContract.ProductSiz
         presenter = ProductSizeGuidePresenterImpl(this, ProductSizeGuideInteractorImpl())
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_prodcut_size_guide, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         getSizeGuideContent()
@@ -44,11 +42,11 @@ class ProductSizeGuideFragment : Fragment(), ProductSizeGuideContract.ProductSiz
     }
 
     override fun showProgressBar() {
-        progressGetContent?.visibility = View.VISIBLE
+        binding.progressGetContent?.visibility = View.VISIBLE
     }
 
     override fun hideProgressBar() {
-        progressGetContent?.visibility = View.GONE
+        binding.progressGetContent?.visibility = View.GONE
     }
 
     override fun onSizeGuideContentSuccess(sizeGuideHtmlContent: String?) {
@@ -64,7 +62,7 @@ class ProductSizeGuideFragment : Fragment(), ProductSizeGuideContract.ProductSiz
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun loadSizeGuideView(sizeGuideHtmlContent: String?) {
-        sizeGuideContentWebView?.apply {
+        binding.sizeGuideContentWebView?.apply {
             settings?.javaScriptEnabled = true
             loadDataWithBaseURL(null, sizeGuideHtmlContent!!, "text/html", "UTF-8", null)
             visibility = View.VISIBLE

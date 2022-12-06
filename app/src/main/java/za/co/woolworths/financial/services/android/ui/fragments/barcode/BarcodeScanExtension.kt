@@ -2,18 +2,20 @@ package za.co.woolworths.financial.services.android.ui.fragments.barcode
 
 import android.app.Activity
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
+import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
-import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.models.dto.ProductDetailResponse
+import za.co.woolworths.financial.services.android.models.dto.ProductRequest
+import za.co.woolworths.financial.services.android.models.dto.ProductView
+import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
-import za.co.woolworths.financial.services.android.ui.activities.BarcodeScanActivity
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.REQUEST_CODE_BARCODE_ACTIVITY
@@ -21,7 +23,7 @@ import za.co.woolworths.financial.services.android.util.ConnectionBroadcastRecei
 import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.Utils
 
-abstract class BarcodeScanExtension : Fragment() {
+abstract class BarcodeScanExtension(@LayoutRes contentLayoutId: Int) : Fragment(contentLayoutId) {
 
     private var productsRequestParams: ProductsRequestParams? = null
     private var mProductDetailRequest: Call<ProductDetailResponse>? = null

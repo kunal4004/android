@@ -2,25 +2,17 @@ package za.co.woolworths.financial.services.android.ui.adapters.shop.dash
 
 import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.NonNull
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.awfs.coordination.R
+import com.awfs.coordination.databinding.ItemDashCategoryBinding
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DecodeFormat
-import com.bumptech.glide.load.resource.bitmap.CenterCrop
-import com.bumptech.glide.load.resource.bitmap.FitCenter
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.bumptech.glide.load.resource.bitmap.TransformationUtils.fitCenter
 import com.bumptech.glide.request.target.Target
-import kotlinx.android.synthetic.main.item_banner_carousel.view.*
-import kotlinx.android.synthetic.main.item_dash_category.view.*
 import za.co.woolworths.financial.services.android.models.dto.RootCategory
 import za.co.woolworths.financial.services.android.ui.views.shop.dash.OnDemandNavigationListener
-import za.co.woolworths.financial.services.android.util.ImageManager
 
 class OnDemandCategoryAdapter(
     @NonNull val context: Context,
@@ -45,8 +37,7 @@ class OnDemandCategoryAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OnDemandCategoryItemHolder {
         return OnDemandCategoryItemHolder(
-            LayoutInflater.from(context)
-                .inflate(R.layout.item_dash_category, parent, false)
+            ItemDashCategoryBinding.inflate(LayoutInflater.from(context), parent, false)
         )
     }
 
@@ -61,18 +52,18 @@ class OnDemandCategoryAdapter(
     }
 }
 
-class OnDemandCategoryItemHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+class OnDemandCategoryItemHolder(val itemBinding: ItemDashCategoryBinding) : RecyclerView.ViewHolder(itemBinding.root) {
     fun bindItem(
         position: Int,
         categoryItem: RootCategory,
         onDemandNavigationListener: OnDemandNavigationListener
     ) {
-        itemView.apply {
-            itemView.setOnClickListener {
+        itemBinding.apply {
+            root.setOnClickListener {
                 onDemandNavigationListener.onDemandNavigationClicked(it, categoryItem)
             }
             categoryItem.imgUrl?.let{
-                Glide.with(this)
+                Glide.with(imgCategory)
                     .load(it)
                     .format(DecodeFormat.PREFER_ARGB_8888)
                     .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)

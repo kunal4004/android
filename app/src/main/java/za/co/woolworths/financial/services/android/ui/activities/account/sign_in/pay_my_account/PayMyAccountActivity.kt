@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.pay_my_account_activity.*
+import com.awfs.coordination.databinding.PayMyAccountActivityBinding
 import za.co.woolworths.financial.services.android.contracts.IPaymentOptionContract
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl.Companion.ELITE_PLAN_MODEL
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl.Companion.GET_CARD_RESPONSE
@@ -30,6 +30,7 @@ import za.co.woolworths.financial.services.android.util.wenum.PayMyAccountStartD
 
 class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAccountView {
 
+    private lateinit var binding: PayMyAccountActivityBinding
     private var navigationHost: NavController? = null
     private var mPayMyAccountPresenterImpl: PayMyAccountPresenterImpl? = null
     private val payMyAccountViewModel: PayMyAccountViewModel by viewModels()
@@ -42,7 +43,8 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Utils.updateStatusBarBackground(this)
-        setContentView(R.layout.pay_my_account_activity)
+        binding = PayMyAccountActivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         val payMyAccountFragmentContainer = supportFragmentManager.findFragmentById(R.id.payMyAccountNavHostFragmentContainerView) as? NavHostFragment
         navigationHost = payMyAccountFragmentContainer?.navController
@@ -80,7 +82,7 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
     }
 
     private fun configureToolbar() {
-        setSupportActionBar(payMyAccountToolbar)
+        setSupportActionBar(binding.payMyAccountToolbar)
 
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
@@ -94,7 +96,7 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
 
     override fun configureToolbar(title: String?) {
         super.configureToolbar(title)
-        payMyAccountTitleBar?.text = title
+        binding.payMyAccountTitleBar?.text = title
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -149,7 +151,7 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
     }
 
     fun displayToolbarDivider(isDividerVisible: Boolean) {
-        payMyAccountDivider?.visibility = if (isDividerVisible) VISIBLE else GONE
+        binding.payMyAccountDivider?.visibility = if (isDividerVisible) VISIBLE else GONE
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

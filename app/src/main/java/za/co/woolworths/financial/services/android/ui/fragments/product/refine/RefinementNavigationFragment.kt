@@ -1,12 +1,11 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.refine
 
-
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.fragment_refinement.*
+import com.awfs.coordination.databinding.FragmentRefinementBinding
 import za.co.woolworths.financial.services.android.models.dto.ProductView
 import za.co.woolworths.financial.services.android.models.dto.RefinementNavigation
 import za.co.woolworths.financial.services.android.models.dto.RefinementSelectableItem
@@ -17,7 +16,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.RefinementDrawer
 import za.co.woolworths.financial.services.android.ui.fragments.RefinementDrawerFragment.Companion.UPDATED_NAVIGATION_STATE
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.OnRefinementOptionSelected
 import za.co.woolworths.financial.services.android.util.Utils
-
 
 class RefinementNavigationFragment : BaseRefinementFragment() {
 
@@ -59,10 +57,10 @@ class RefinementNavigationFragment : BaseRefinementFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initViews()
+        binding.initViews()
     }
 
-    private fun initViews() {
+    private fun FragmentRefinementBinding.initViews() {
         listener.apply {
             setPageTitle(resources.getString(R.string.filter_results))
             hideBackButton()
@@ -81,7 +79,7 @@ class RefinementNavigationFragment : BaseRefinementFragment() {
             setResultCount(productView?.pagingResponse?.numItemsInTotal)
             dataList = getRefinementSelectableItems(productView?.navigation!!)
             refinementNavigationAdapter = activity?.let { RefinementNavigationAdapter(it, listener, dataList, productView?.history!!) }
-            refinementList.adapter = refinementNavigationAdapter!!
+            binding.refinementList.adapter = refinementNavigationAdapter!!
         }
     }
 
@@ -105,7 +103,7 @@ class RefinementNavigationFragment : BaseRefinementFragment() {
     }
 
     private fun setResultCount(count: Int?) {
-        seeResultCount.text = getString(R.string.see_results_count_start) + count.toString() + getString(R.string.see_results_count_end)
+        binding.seeResultCount.text = getString(R.string.see_results_count_start) + count.toString() + getString(R.string.see_results_count_end)
     }
 
     override fun onBackPressed() {
@@ -117,9 +115,8 @@ class RefinementNavigationFragment : BaseRefinementFragment() {
     }
 
     private fun updateToolBarMenuText() {
-            clearAndResetFilter?.text = getString(R.string.reset_filter)
-            clearAndResetFilter?.isEnabled = !TextUtils.isEmpty(baseNavigationState)
-
+        binding.clearAndResetFilter?.text = getString(R.string.reset_filter)
+        binding.clearAndResetFilter?.isEnabled = !TextUtils.isEmpty(baseNavigationState)
     }
 
 }

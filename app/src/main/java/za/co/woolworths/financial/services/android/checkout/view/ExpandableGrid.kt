@@ -7,11 +7,8 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.CheckoutAddAddressRetuningUserBinding
 import com.facebook.shimmer.Shimmer
-import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.*
-import kotlinx.android.synthetic.main.checkout_delivery_time_slot_selection_fragment.*
-import kotlinx.android.synthetic.main.checkout_grid_layout_other.*
-import kotlinx.android.synthetic.main.checkout_how_would_you_delivered.*
 import za.co.woolworths.financial.services.android.checkout.service.network.ConfirmDeliveryAddressResponse
 import za.co.woolworths.financial.services.android.checkout.service.network.HeaderDate
 import za.co.woolworths.financial.services.android.checkout.service.network.HourSlots
@@ -30,7 +27,7 @@ import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 /**
  * Created by Kunal Uttarwar on 25/07/21.
  */
-class ExpandableGrid(val fragment: Fragment) {
+class ExpandableGrid(val fragment: Fragment, val binding: CheckoutAddAddressRetuningUserBinding) {
 
     private val slotGridList: HashMap<DeliveryFoodOrOther, ArrayList<DeliveryGridModel>> = HashMap()
     var deliverySlotsGridViewAdapter: DeliverySlotsGridViewAdapter? = null
@@ -86,52 +83,52 @@ class ExpandableGrid(val fragment: Fragment) {
             DeliveryType.MIXED_FOOD -> {
                 val deliverySlots =
                     confirmDeliveryAddressResponse?.sortedFoodDeliverySlots?.get(weekNumber)
-                createTimingsGrid(deliverySlots?.hourSlots, fragment.timingsGridViewFood)
-                createDatesGrid(deliverySlots?.headerDates, fragment.dateGridViewFood)
+                createTimingsGrid(deliverySlots?.hourSlots, binding.checkoutTimeSlotSelectionLayout.timingsGridViewFood)
+                createDatesGrid(deliverySlots?.headerDates, binding.checkoutTimeSlotSelectionLayout.dateGridViewFood)
                 createTimeSlotGridView(
                     deliverySlots?.week,
                     deliverySlots?.hourSlots,
                     weekNumber,
-                    fragment.timeSlotsGridViewFood,
+                    binding.checkoutTimeSlotSelectionLayout.timeSlotsGridViewFood,
                     deliveryType
                 )
             }
             DeliveryType.MIXED_OTHER -> {
                 val deliverySlots =
                     confirmDeliveryAddressResponse?.sortedOtherDeliverySlots?.get(weekNumber)
-                createTimingsGrid(deliverySlots?.hourSlots, fragment.timingsGridViewOther)
-                createDatesGrid(deliverySlots?.headerDates, fragment.dateGridViewOther)
+                createTimingsGrid(deliverySlots?.hourSlots, binding.checkoutHowWouldYouDeliveredLayout.gridLayoutDeliveryOptions.timingsGridViewOther)
+                createDatesGrid(deliverySlots?.headerDates, binding.checkoutHowWouldYouDeliveredLayout.gridLayoutDeliveryOptions.dateGridViewOther)
                 createTimeSlotGridView(
                     deliverySlots?.week,
                     deliverySlots?.hourSlots,
                     weekNumber,
-                    fragment.timeSlotsGridViewOther,
+                    binding.checkoutHowWouldYouDeliveredLayout.gridLayoutDeliveryOptions.timeSlotsGridViewOther,
                     deliveryType
                 )
             }
             DeliveryType.ONLY_FOOD -> {
                 val deliverySlots =
                     confirmDeliveryAddressResponse?.sortedJoinDeliverySlots?.get(weekNumber)
-                createTimingsGrid(deliverySlots?.hourSlots, fragment.timingsGridViewFood)
-                createDatesGrid(deliverySlots?.headerDates, fragment.dateGridViewFood)
+                createTimingsGrid(deliverySlots?.hourSlots, binding.checkoutTimeSlotSelectionLayout.timingsGridViewFood)
+                createDatesGrid(deliverySlots?.headerDates, binding.checkoutTimeSlotSelectionLayout.dateGridViewFood)
                 createTimeSlotGridView(
                     deliverySlots?.week,
                     deliverySlots?.hourSlots,
                     weekNumber,
-                    fragment.timeSlotsGridViewFood,
+                    binding.checkoutTimeSlotSelectionLayout.timeSlotsGridViewFood,
                     deliveryType
                 )
             }
             DeliveryType.ONLY_OTHER -> {
                 val deliverySlots =
                     confirmDeliveryAddressResponse?.sortedJoinDeliverySlots?.get(weekNumber)
-                createTimingsGrid(deliverySlots?.hourSlots, fragment.timingsGridViewOther)
-                createDatesGrid(deliverySlots?.headerDates, fragment.dateGridViewOther)
+                createTimingsGrid(deliverySlots?.hourSlots, binding.checkoutHowWouldYouDeliveredLayout.gridLayoutDeliveryOptions.timingsGridViewOther)
+                createDatesGrid(deliverySlots?.headerDates, binding.checkoutHowWouldYouDeliveredLayout.gridLayoutDeliveryOptions.dateGridViewOther)
                 createTimeSlotGridView(
                     deliverySlots?.week,
                     deliverySlots?.hourSlots,
                     weekNumber,
-                    fragment.timeSlotsGridViewOther,
+                    binding.checkoutHowWouldYouDeliveredLayout.gridLayoutDeliveryOptions.timeSlotsGridViewOther,
                     deliveryType
                 )
             }
@@ -393,75 +390,75 @@ class ExpandableGrid(val fragment: Fragment) {
 
     fun setUpShimmerView() {
         val shimmer = Shimmer.AlphaHighlightBuilder().build()
-        fragment.howWouldYouDeliveredShimmerFrameLayout?.setShimmer(shimmer)
-        fragment.selectDeliveryTimeSlotSubTitleShimmerFrameLayout?.setShimmer(shimmer)
+        binding.checkoutHowWouldYouDeliveredLayout.howWouldYouDeliveredShimmerFrameLayout?.setShimmer(shimmer)
+        binding.checkoutHowWouldYouDeliveredLayout.selectDeliveryTimeSlotSubTitleShimmerFrameLayout?.setShimmer(shimmer)
     }
 
     fun showDeliveryTypeShimmerView() {
-        fragment.howWouldYouDeliveredShimmerFrameLayout?.startShimmer()
-        fragment.selectDeliveryTimeSlotSubTitleShimmerFrameLayout?.startShimmer()
-        fragment.howWouldYouDeliveredTitle?.visibility = View.INVISIBLE
-        fragment.selectDeliveryTimeSlotSubTitle?.visibility = View.INVISIBLE
+        binding.checkoutHowWouldYouDeliveredLayout.howWouldYouDeliveredShimmerFrameLayout?.startShimmer()
+        binding.checkoutHowWouldYouDeliveredLayout.selectDeliveryTimeSlotSubTitleShimmerFrameLayout?.startShimmer()
+        binding.checkoutHowWouldYouDeliveredLayout.howWouldYouDeliveredTitle?.visibility = View.INVISIBLE
+        binding.checkoutHowWouldYouDeliveredLayout.selectDeliveryTimeSlotSubTitle?.visibility = View.INVISIBLE
     }
 
     fun hideDeliveryTypeShimmerView() {
-        fragment.howWouldYouDeliveredShimmerFrameLayout?.stopShimmer()
-        fragment.selectDeliveryTimeSlotSubTitleShimmerFrameLayout?.stopShimmer()
-        fragment.howWouldYouDeliveredShimmerFrameLayout?.setShimmer(null)
-        fragment.selectDeliveryTimeSlotSubTitleShimmerFrameLayout?.setShimmer(null)
-        fragment.howWouldYouDeliveredTitle?.visibility = View.VISIBLE
-        fragment.selectDeliveryTimeSlotSubTitle?.visibility = View.VISIBLE
+        binding.checkoutHowWouldYouDeliveredLayout.howWouldYouDeliveredShimmerFrameLayout?.stopShimmer()
+        binding.checkoutHowWouldYouDeliveredLayout.selectDeliveryTimeSlotSubTitleShimmerFrameLayout?.stopShimmer()
+        binding.checkoutHowWouldYouDeliveredLayout.howWouldYouDeliveredShimmerFrameLayout?.setShimmer(null)
+        binding.checkoutHowWouldYouDeliveredLayout.selectDeliveryTimeSlotSubTitleShimmerFrameLayout?.setShimmer(null)
+        binding.checkoutHowWouldYouDeliveredLayout.howWouldYouDeliveredTitle?.visibility = View.VISIBLE
+        binding.checkoutHowWouldYouDeliveredLayout.selectDeliveryTimeSlotSubTitle?.visibility = View.VISIBLE
 
-        fragment.checkoutHowWouldYouDeliveredLayout?.visibility = View.GONE
+        binding.checkoutHowWouldYouDeliveredLayout?.root?.visibility = View.GONE
 
     }
 
     fun enableNextBtnFood() {
-        setEnableBackgroundColor(fragment.nextImgBtnFood, fragment.nextFoodTextView)
+        setEnableBackgroundColor(binding.checkoutTimeSlotSelectionLayout.nextImgBtnFood, binding.checkoutTimeSlotSelectionLayout.nextFoodTextView)
     }
 
     fun enableNextBtnOther() {
-        setEnableBackgroundColor(fragment.nextImgBtnOther, fragment.nextOtherTextView)
+        setEnableBackgroundColor(binding.checkoutHowWouldYouDeliveredLayout.gridLayoutDeliveryOptions.nextImgBtnOther, binding.checkoutHowWouldYouDeliveredLayout.gridLayoutDeliveryOptions.nextOtherTextView)
     }
 
     fun enablePreviousBtnFood() {
-        setEnableBackgroundColor(fragment.previousImgBtnFood, fragment.previousFoodTextView)
+        setEnableBackgroundColor(binding.checkoutTimeSlotSelectionLayout.previousImgBtnFood, binding.checkoutTimeSlotSelectionLayout.previousFoodTextView)
     }
 
     fun enablePreviousBtnOther() {
-        setEnableBackgroundColor(fragment.previousImgBtnOther, fragment.previousOtherTextView)
+        setEnableBackgroundColor(binding.checkoutHowWouldYouDeliveredLayout.gridLayoutDeliveryOptions.previousImgBtnOther, binding.checkoutHowWouldYouDeliveredLayout.gridLayoutDeliveryOptions.previousOtherTextView)
     }
 
     fun disableNextBtnFood() {
-        setDisableBackgroundColor(fragment.nextImgBtnFood, fragment.nextFoodTextView)
+        setDisableBackgroundColor(binding.checkoutTimeSlotSelectionLayout.nextImgBtnFood, binding.checkoutTimeSlotSelectionLayout.nextFoodTextView)
     }
 
     fun disableNextBtnOther() {
-        setDisableBackgroundColor(fragment.nextImgBtnOther, fragment.nextOtherTextView)
+        setDisableBackgroundColor(binding.checkoutHowWouldYouDeliveredLayout.gridLayoutDeliveryOptions.nextImgBtnOther, binding.checkoutHowWouldYouDeliveredLayout.gridLayoutDeliveryOptions.nextOtherTextView)
     }
 
     fun disablePreviousBtnFood() {
-        setDisableBackgroundColor(fragment.previousImgBtnFood, fragment.previousFoodTextView)
+        setDisableBackgroundColor(binding.checkoutTimeSlotSelectionLayout.previousImgBtnFood, binding.checkoutTimeSlotSelectionLayout.previousFoodTextView)
     }
 
     fun disablePreviousBtnOther() {
-        setDisableBackgroundColor(fragment.previousImgBtnOther, fragment.previousOtherTextView)
+        setDisableBackgroundColor(binding.checkoutHowWouldYouDeliveredLayout.gridLayoutDeliveryOptions.previousImgBtnOther, binding.checkoutHowWouldYouDeliveredLayout.gridLayoutDeliveryOptions.previousOtherTextView)
     }
 
     private fun hidePreviousNextOtherBtn() {
-        fragment.previousNextBtnLayoutOther.visibility = View.GONE
+        binding.checkoutHowWouldYouDeliveredLayout.gridLayoutDeliveryOptions.previousNextBtnLayoutOther.visibility = View.GONE
     }
 
     private fun showPreviousNextOtherBtn() {
-        fragment.previousNextBtnLayoutOther.visibility = View.VISIBLE
+        binding.checkoutHowWouldYouDeliveredLayout.gridLayoutDeliveryOptions.previousNextBtnLayoutOther.visibility = View.VISIBLE
     }
 
     private fun hidePreviousNextFoodBtn() {
-        fragment.previousNextBtnLayoutFood.visibility = View.GONE
+        binding.checkoutTimeSlotSelectionLayout.previousNextBtnLayoutFood.visibility = View.GONE
     }
 
     private fun showPreviousNextFoodBtn() {
-        fragment.previousNextBtnLayoutFood.visibility = View.VISIBLE
+        binding.checkoutTimeSlotSelectionLayout.previousNextBtnLayoutFood.visibility = View.VISIBLE
     }
 
     private fun setDisableBackgroundColor(imgBtn: ImageButton, textView: TextView) {

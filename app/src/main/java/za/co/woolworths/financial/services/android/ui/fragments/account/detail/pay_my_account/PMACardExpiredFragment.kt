@@ -7,33 +7,36 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.navArgs
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.pma_card_has_expired_dialog.*
+import com.awfs.coordination.databinding.PmaCardHasExpiredDialogBinding
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
 class PMACardExpiredFragment : WBottomSheetDialogFragment(), View.OnClickListener {
 
+    private lateinit var binding: PmaCardHasExpiredDialogBinding
     val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
-
     val pmaCardExpiredFragmentArgs : PMACardExpiredFragmentArgs by navArgs()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.pma_card_has_expired_dialog, container, false)
+        binding = PmaCardHasExpiredDialogBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mastercardImageView?.setImageResource(payMyAccountViewModel.getVendorCardLargeDrawableId())
+        with(binding) {
+            mastercardImageView?.setImageResource(payMyAccountViewModel.getVendorCardLargeDrawableId())
 
-        removeCardButton?.apply {
-            AnimationUtilExtension.animateViewPushDown(this)
-            setOnClickListener(this@PMACardExpiredFragment)
-        }
+            removeCardButton?.apply {
+                AnimationUtilExtension.animateViewPushDown(this)
+                setOnClickListener(this@PMACardExpiredFragment)
+            }
 
-        addNewCardExpiredButton?.apply {
-            AnimationUtilExtension.animateViewPushDown(this)
-            setOnClickListener(this@PMACardExpiredFragment)
+            addNewCardExpiredButton?.apply {
+                AnimationUtilExtension.animateViewPushDown(this)
+                setOnClickListener(this@PMACardExpiredFragment)
+            }
         }
     }
 

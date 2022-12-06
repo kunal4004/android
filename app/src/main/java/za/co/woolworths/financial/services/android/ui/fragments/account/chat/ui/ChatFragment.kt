@@ -16,8 +16,8 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.ChatFragmentBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.chat_fragment.*
 import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionStateType
@@ -39,7 +39,7 @@ import za.co.woolworths.financial.services.android.util.keyboard.SoftKeyboardObs
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
+class ChatFragment : Fragment(R.layout.chat_fragment), IDialogListener, View.OnClickListener {
 
     companion object {
         const val ACCOUNTS: String = "accounts"
@@ -47,6 +47,7 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
         const val SESSION_TYPE = "SESSION_TYPE"
     }
 
+    private lateinit var binding: ChatFragmentBinding
     @Inject lateinit var connectivityLiveData: ConnectivityLiveData
 
     var mChatAdapter: WChatAdapter? = null
@@ -66,16 +67,9 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.chat_fragment, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding = ChatFragmentBinding.bind(view)
         (activity as? WChatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
         chatNavController = (activity?.supportFragmentManager?.findFragmentById(R.id.chatNavHost) as? NavHostFragment)?.navController
         initView()
@@ -104,14 +98,14 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
             }
             activity?.runOnUiThread {
                 if (isAdded) {
-                    chatLoaderProgressBar?.visibility = GONE
+                    binding.chatLoaderProgressBar?.visibility = GONE
                     subscribeResult(chatList.second, false)
                 }
             }
         }, {
             activity?.runOnUiThread {
                 if (isAdded) {
-                    chatLoaderProgressBar?.visibility = GONE
+                    binding.chatLoaderProgressBar?.visibility = GONE
                 }
             }
         })
@@ -132,14 +126,14 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
                 .listen { isKeyboardVisible ->
                     if (isKeyboardVisible) {
                         mChatAdapter?.itemCount?.minus(1)
-                            ?.let { messageListRecyclerView?.scrollToPosition(it) }
+                            ?.let { binding.messageListRecyclerView?.scrollToPosition(it) }
                     }
                 }
         }
     }
 
     private fun onClickListener() {
-        sendMessageButton?.setOnClickListener(this)
+        binding.sendMessageButton?.setOnClickListener(this)
     }
 
     private fun getUserTokenAndSignIn() {
@@ -157,7 +151,7 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
     @SuppressLint("ResourceType")
     private fun amplifyListener() {
         (activity as? WChatActivity)?.updateToolbarTitle(R.string.chat_title)
-        chatLoaderProgressBar?.visibility = VISIBLE
+        binding.chatLoaderProgressBar?.visibility = VISIBLE
         onChatStart()
     }
 
@@ -166,7 +160,7 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
             // do not allow null messages
             if (result?.content?.isEmpty() == true && result.sessionState == SessionStateType.ONLINE) return@runOnUiThread
 
-            chatLoaderProgressBar?.visibility = GONE
+            binding.chatLoaderProgressBar?.visibility = GONE
 
             if (isAgentMessageVisible)
                 result?.let { showMessage(it) }
@@ -175,33 +169,33 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
                 SessionStateType.CONNECT,
                 SessionStateType.QUEUEING -> {
                     toggleSendMessageButton(false)
-                    chatBoxEditText?.isEnabled = false
+                    binding.chatBoxEditText?.isEnabled = false
                     displayEndSessionButton(true)
                 }
                 SessionStateType.DISCONNECT -> {
                     ServiceTools.stop(activity, LiveChatService::class.java)
-                    chatBoxEditText?.isEnabled = false
+                    binding.chatBoxEditText?.isEnabled = false
                     toggleSendMessageButton(false)
                     displayEndSessionButton(false)
                     isAgentDisconnected(true)
                 }
                 SessionStateType.ONLINE -> {
-                    chatBoxEditText?.isEnabled = true
-                    chatBoxEditText?.setHint(R.string.start_typing)
+                    binding.chatBoxEditText?.isEnabled = true
+                    binding.chatBoxEditText?.setHint(R.string.start_typing)
                     isAgentDisconnected(false)
                     toggleSendMessageButton(true)
                     displayEndSessionButton(true)
                 }
 
                 else -> {
-                    chatLoaderProgressBar?.visibility = GONE
+                    binding.chatLoaderProgressBar?.visibility = GONE
                 }
             }
         }
     }
 
     private fun toggleSendMessageButton(isEnabled: Boolean) {
-        sendMessageButton?.isEnabled = isEnabled
+        binding.sendMessageButton?.isEnabled = isEnabled
     }
 
     private fun displayEndSessionButton(state: Boolean) {
@@ -214,7 +208,7 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
 
     private fun configureRecyclerview() {
         mChatAdapter = WChatAdapter()
-        messageListRecyclerView?.apply {
+        binding.messageListRecyclerView?.apply {
             layoutManager = LinearLayoutManager(activity)
             adapter = mChatAdapter
         }
@@ -224,11 +218,11 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
         when (v?.id) {
             R.id.sendMessageButton -> {
                 if (NetworkManager.getInstance().isConnectedToNetwork(activity)) {
-                    val message = chatBoxEditText?.text?.toString() ?: ""
+                    val message = binding.chatBoxEditText?.text?.toString() ?: ""
                     if (TextUtils.isEmpty(message)) return
                     showMessage(SenderMessage(message))
                     sendMessageImpl.send(SessionStateType.ONLINE, message)
-                    chatBoxEditText?.setText("")
+                    binding.chatBoxEditText?.setText("")
                     try {
                         val imm: InputMethodManager? =
                             activity?.getSystemService(Activity.INPUT_METHOD_SERVICE) as? InputMethodManager
@@ -273,12 +267,12 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
                             }
                             activity.runOnUiThread {
                                 if (isAdded) {
-                                    chatLoaderProgressBar?.visibility = GONE
+                                    binding.chatLoaderProgressBar?.visibility = GONE
                                     subscribeResult(messagesByConversation.second, false)
                                 }
                             }
                         }, {
-                            chatLoaderProgressBar?.visibility = GONE
+                            binding.chatLoaderProgressBar?.visibility = GONE
                         })
                     }
                 } else {
@@ -293,7 +287,7 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
         GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) {
             activity ?: return@doAfterDelay
             ServiceTools.stop(activity, LiveChatService::class.java)
-            chatLoaderProgressBar?.visibility = GONE
+            binding.chatLoaderProgressBar?.visibility = GONE
         }
     }
 
@@ -306,7 +300,7 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
                 }
                 if (!TextUtils.isEmpty(content)) {
                     it.addMessage(activity, message)
-                    messageListRecyclerView?.scrollToPosition(it.itemCount - 1)
+                    binding.messageListRecyclerView?.scrollToPosition(it.itemCount - 1)
                 }
             }
         }

@@ -4,9 +4,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.awfs.coordination.R
+import com.awfs.coordination.databinding.CheckoutAddressConfirmationSelectionDeliveryListBinding
 import com.facebook.shimmer.Shimmer
-import kotlinx.android.synthetic.main.checkout_address_confirmation_selection_delivery_list.view.*
 
 /**
  * Created by Kunal Uttarwar on 11/08/21.
@@ -20,13 +19,8 @@ class CheckoutDeliveryTypeSelectionShimmerAdapter(private var shimmerListCount: 
         viewType: Int
     ): CheckoutDeliveryTypeSelectionShimmerAdapter.CheckoutDeliveryTypeSelectionViewHolder {
         return CheckoutDeliveryTypeSelectionViewHolder(
-            LayoutInflater.from(parent.context)
-                .inflate(
-                    R.layout.checkout_address_confirmation_selection_delivery_list,
-                    parent,
-                    false
-                )
-        )
+            CheckoutAddressConfirmationSelectionDeliveryListBinding.inflate(
+            LayoutInflater.from(parent.context), parent, false))
     }
 
     override fun getItemCount(): Int {
@@ -40,33 +34,31 @@ class CheckoutDeliveryTypeSelectionShimmerAdapter(private var shimmerListCount: 
         holder.bindItem()
     }
 
-    inner class CheckoutDeliveryTypeSelectionViewHolder(itemView: View) :
-        RecyclerView.ViewHolder(itemView) {
+    inner class CheckoutDeliveryTypeSelectionViewHolder(private val binding: CheckoutAddressConfirmationSelectionDeliveryListBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun bindItem() {
             itemView.apply {
-                showShimmer(this)
+                binding.showShimmer()
             }
         }
     }
 
-    private fun showShimmer(view: View) {
-        view.apply {
+    private fun CheckoutAddressConfirmationSelectionDeliveryListBinding.showShimmer() {
             editAddressImageView.visibility = View.GONE
-            selectorShimmerFrameLayout?.setShimmer(shimmer)
-            selectorShimmerFrameLayout?.startShimmer()
+            selectorShimmerFrameLayout.setShimmer(shimmer)
+            selectorShimmerFrameLayout.startShimmer()
             selector.visibility = View.INVISIBLE
 
-            titleShimmerLayout?.setShimmer(shimmer)
-            titleShimmerLayout?.startShimmer()
+            titleShimmerLayout.setShimmer(shimmer)
+            titleShimmerLayout.startShimmer()
             title.visibility = View.INVISIBLE
 
-            subtitleShimmerLayout?.setShimmer(shimmer)
-            subtitleShimmerLayout?.startShimmer()
+            subtitleShimmerLayout.setShimmer(shimmer)
+            subtitleShimmerLayout.startShimmer()
             subTitle.visibility = View.INVISIBLE
 
-            slotPriceButtonShimmerFrameLayout?.setShimmer(shimmer)
-            slotPriceButtonShimmerFrameLayout?.startShimmer()
+            slotPriceButtonShimmerFrameLayout.setShimmer(shimmer)
+            slotPriceButtonShimmerFrameLayout.startShimmer()
             slotPriceButton.visibility = View.INVISIBLE
         }
-    }
 }

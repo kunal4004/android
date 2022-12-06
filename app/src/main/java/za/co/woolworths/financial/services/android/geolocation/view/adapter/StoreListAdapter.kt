@@ -2,13 +2,11 @@ package za.co.woolworths.financial.services.android.geolocation.view.adapter
 
 import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.store_row_layout.view.*
+import com.awfs.coordination.databinding.StoreRowLayoutBinding
 import za.co.woolworths.financial.services.android.common.changeMeterToKM
-import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.geolocation.network.model.Store
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 
@@ -22,7 +20,7 @@ class StoreListAdapter (
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SavedAddressViewHolder {
         return SavedAddressViewHolder(
-            LayoutInflater.from(context).inflate(R.layout.store_row_layout, parent, false)
+            StoreRowLayoutBinding.inflate(LayoutInflater.from(context), parent, false)
         )
     }
 
@@ -37,22 +35,25 @@ class StoreListAdapter (
         holder.bindItems(storeList?.get(position), position)
     }
 
-    inner class SavedAddressViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class SavedAddressViewHolder(val itemBinding: StoreRowLayoutBinding) : RecyclerView.ViewHolder(itemBinding.root) {
         fun bindItems(store: Store?, position: Int) {
-            itemView.tvAddressNickName.text = KotlinUtils.capitaliseFirstLetter(store?.storeName)
-            itemView.tvAddress.text = store?.storeAddress
-            itemView.txtStoreDistance.text = store?.distance?.let { changeMeterToKM(it) }
-            if (lastSelectedPosition == position) {
-                itemView.imgAddressSelector?.isChecked = true
-                itemView.storeSelectorLayout?.setBackgroundResource(R.drawable.bg_select_store)
-            } else {
-                itemView.imgAddressSelector?.isChecked = false
-                itemView.storeSelectorLayout?.setBackgroundResource(R.color.white)
-            }
-            itemView.storeSelectorLayout?.setOnClickListener {
-                lastSelectedPosition = adapterPosition
-                notifyDataSetChanged()
-                listener.onStoreSelected(store)
+            itemBinding.apply {
+                tvAddressNickName.text =
+                    KotlinUtils.capitaliseFirstLetter(store?.storeName)
+                tvAddress.text = store?.storeAddress
+                txtStoreDistance.text = store?.distance?.let { changeMeterToKM(it) }
+                if (lastSelectedPosition == position) {
+                    imgAddressSelector?.isChecked = true
+                    storeSelectorLayout?.setBackgroundResource(R.drawable.bg_select_store)
+                } else {
+                    imgAddressSelector?.isChecked = false
+                    storeSelectorLayout?.setBackgroundResource(R.color.white)
+                }
+                storeSelectorLayout?.setOnClickListener {
+                    lastSelectedPosition = adapterPosition
+                    notifyDataSetChanged()
+                    listener.onStoreSelected(store)
+                }
             }
         }
     }

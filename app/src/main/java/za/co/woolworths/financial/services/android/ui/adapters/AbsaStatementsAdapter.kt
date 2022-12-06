@@ -4,17 +4,15 @@ import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.awfs.coordination.R
+import com.awfs.coordination.databinding.AccountEStatementRowBinding
 import za.co.absa.openbankingapi.woolworths.integration.dto.ArchivedStatement
-import kotlinx.android.synthetic.main.account_e_statement_row.view.*
 import za.co.woolworths.financial.services.android.util.WFormatter
 
 class AbsaStatementsAdapter(var data: List<ArchivedStatement>, var listner: ActionListners) : RecyclerView.Adapter<AbsaStatementsAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
-                LayoutInflater.from(parent.context)
-                        .inflate(R.layout.account_e_statement_row, parent, false)
+            AccountEStatementRowBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         )
     }
 
@@ -22,14 +20,14 @@ class AbsaStatementsAdapter(var data: List<ArchivedStatement>, var listner: Acti
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(data[position])
-        holder.itemView.tvViewStatement.setOnClickListener { listner.onViewStatement(data[position]) }
+        holder.itemBinding.tvViewStatement.setOnClickListener { listner.onViewStatement(data[position]) }
     }
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class ViewHolder(val itemBinding: AccountEStatementRowBinding) : RecyclerView.ViewHolder(itemBinding.root) {
 
         fun bind(item: ArchivedStatement) {
-            itemView.tvStatementName.text = WFormatter.formatStatementsDate(item?.documentWorkingDate)
-            itemView.imCheckItem.visibility = View.GONE
+            itemBinding.tvStatementName.text = WFormatter.formatStatementsDate(item?.documentWorkingDate)
+            itemBinding.imCheckItem.visibility = View.GONE
         }
     }
 

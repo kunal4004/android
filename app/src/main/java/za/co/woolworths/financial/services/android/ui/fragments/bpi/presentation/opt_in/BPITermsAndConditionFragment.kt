@@ -4,21 +4,15 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Handler
 import android.util.Base64
-import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import android.view.ViewGroup
 import android.webkit.WebResourceRequest
 import android.webkit.WebSettings
 import android.webkit.WebView
-import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.BpiTermsConditionsFragmentBinding
 import com.google.gson.JsonParser
-import kotlinx.android.synthetic.main.balance_protection_insurance_activity.*
-import kotlinx.android.synthetic.main.bpi_email_sent_failure_layout.*
-import kotlinx.android.synthetic.main.bpi_email_sent_success_layout.*
-import kotlinx.android.synthetic.main.bpi_terms_conditions_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
@@ -33,85 +27,82 @@ import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
-import java.util.HashMap
+import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 
-class BPITermsAndConditionFragment : Fragment()  {
+class BPITermsAndConditionFragment : BaseFragmentBinding<BpiTermsConditionsFragmentBinding>(BpiTermsConditionsFragmentBinding::inflate)  {
 
     private var productGroupCode: String? = null
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.bpi_terms_conditions_fragment, container, false)
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         activity?.let { Utils.updateStatusBarBackground(it, R.color.white) }
 
-        setUserEmail()
+        binding.apply {
+            setUserEmail()
 
-        hideAllViews()
-        showProcessingView()
+            hideAllViews()
+            showProcessingView()
 
-        productGroupCode = arguments?.getString(BPI_PRODUCT_GROUP_CODE)
+            productGroupCode = arguments?.getString(BPI_PRODUCT_GROUP_CODE)
 
-        setUpWebView()
+            setUpWebView()
 
-        Handler().postDelayed({
-            showTermsAndConditionView()
-        }, AppConstant.DELAY_3000_MS)
+            Handler().postDelayed({
+                showTermsAndConditionView()
+            }, AppConstant.DELAY_3000_MS)
 
 
-        bpiEmailCopyButton?.onClick {
+            bpiEmailCopyButton.onClick {
                 emailTermsAndConditions()
-        }
+            }
 
-        bpiGotItButton?.onClick {
-            (activity as? BalanceProtectionInsuranceActivity)?.onBackPressed()
-        }
+            bpiEmailSuccessInclude.bpiGotItButton.onClick {
+                (activity as? BalanceProtectionInsuranceActivity)?.onBackPressed()
+            }
 
-        bpiRetryButton?.onClick {
-            emailTermsAndConditions()
+            bpiEmailFailureInclude.bpiRetryButton.onClick {
+                emailTermsAndConditions()
+            }
         }
-
     }
 
-    private fun hideAllViews() {
-        bpiScrollView?.visibility = GONE
-        bpiEmailCopyButton?.visibility = GONE
-        bpiProcessingInclude?.visibility = GONE
-        bpiEmailSuccessInclude?.visibility = GONE
-        bpiEmailFailureInclude?.visibility = GONE
+    private fun BpiTermsConditionsFragmentBinding.hideAllViews() {
+        bpiScrollView.visibility = GONE
+        bpiEmailCopyButton.visibility = GONE
+        bpiProcessingInclude.root.visibility = GONE
+        bpiEmailSuccessInclude.root.visibility = GONE
+        bpiEmailFailureInclude.root.visibility = GONE
     }
 
-    private fun showProcessingView() {
+    private fun BpiTermsConditionsFragmentBinding.showProcessingView() {
         (activity as? BalanceProtectionInsuranceActivity)?.setToolbarTitle("")
         hideAllViews()
-        bpiProcessingInclude?.visibility = VISIBLE
+        bpiProcessingInclude.root.visibility = VISIBLE
     }
 
-    private fun showTermsAndConditionView() {
+    private fun BpiTermsConditionsFragmentBinding.showTermsAndConditionView() {
         (activity as? BalanceProtectionInsuranceActivity)?.setToolbarTitle(R.string.bpi_terms_conditions_title)
         hideAllViews()
         bpiScrollView?.visibility = VISIBLE
         bpiEmailCopyButton?.visibility = VISIBLE
     }
 
-    private fun showEmailSuccessView() {
-        (activity as? BalanceProtectionInsuranceActivity)?.apply{
-            btnClose?.visibility = GONE
-            setToolbarTitle("")
+    private fun BpiTermsConditionsFragmentBinding.showEmailSuccessView() {
+        (activity as? BalanceProtectionInsuranceActivity)?.let{ bpiActivity ->
+            bpiActivity.binding.btnClose?.visibility = GONE
+            bpiActivity.setToolbarTitle("")
         }
         hideAllViews()
-        bpiEmailSuccessInclude?.visibility = VISIBLE
+        bpiEmailSuccessInclude.root.visibility = VISIBLE
     }
 
-    private fun showEmailFailureView() {
+    private fun BpiTermsConditionsFragmentBinding.showEmailFailureView() {
         (activity as? BalanceProtectionInsuranceActivity)?.setToolbarTitle("")
         hideAllViews()
-        bpiEmailFailureInclude?.visibility = VISIBLE
+        bpiEmailFailureInclude.root.visibility = VISIBLE
     }
 
-    private fun emailTermsAndConditions() {
+    private fun BpiTermsConditionsFragmentBinding.emailTermsAndConditions() {
         productGroupCode?.let { productGroupCode ->
             var bpiTaggingEventCode: String? = null
             val arguments: MutableMap<String, String> = HashMap()
@@ -158,20 +149,20 @@ class BPITermsAndConditionFragment : Fragment()  {
     }
 
     override fun onResume() {
-        (activity as? BalanceProtectionInsuranceActivity)?.apply {
-            changeActionBarUIForBPITermsConditions()
-            if(bpiScrollView?.visibility == VISIBLE){
-                setToolbarTitle(R.string.bpi_terms_conditions_title)
+        (activity as? BalanceProtectionInsuranceActivity)?.let { bpiActivity ->
+            bpiActivity.changeActionBarUIForBPITermsConditions()
+            if(binding.bpiScrollView?.visibility == VISIBLE){
+                bpiActivity.setToolbarTitle(R.string.bpi_terms_conditions_title)
             }
             else{
-                setToolbarTitle("")
+                bpiActivity.setToolbarTitle("")
             }
         }
         super.onResume()
     }
 
     @SuppressLint("SetJavaScriptEnabled")
-    private fun setUpWebView(){
+    private fun BpiTermsConditionsFragmentBinding.setUpWebView(){
         bpiTermsConditionsWebView?.apply {
             with(settings) {
                 javaScriptEnabled = true
@@ -221,14 +212,14 @@ class BPITermsAndConditionFragment : Fragment()  {
         }
     }
 
-    private fun setUserEmail() {
+    private fun BpiTermsConditionsFragmentBinding.setUserEmail() {
         var email = ""
         val splitToken = OneAppService.getSessionToken().split(".")
         if(splitToken.size > 1){
             val decodedBytes = Base64.decode(splitToken[1], Base64.DEFAULT)
             email = JsonParser.parseString(String(decodedBytes)).asJsonObject["email"].asString
         }
-        mainDescriptionSuccessTextview?.text = bindString(R.string.bpi_sent_email_success, email)
-        mainDescriptionFailureTextview?.text = bindString(R.string.bpi_sent_email_failure, email)
+        bpiEmailSuccessInclude.mainDescriptionSuccessTextview?.text = bindString(R.string.bpi_sent_email_success, email)
+        bpiEmailFailureInclude.mainDescriptionFailureTextview?.text = bindString(R.string.bpi_sent_email_failure, email)
     }
 }

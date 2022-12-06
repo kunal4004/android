@@ -3,10 +3,9 @@ package za.co.woolworths.financial.services.android.ui.fragments.shop.helpandsup
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.layout_help_and_support_fragement.*
+import com.awfs.coordination.databinding.LayoutHelpAndSupportFragementBinding
 import za.co.woolworths.financial.services.android.models.dto.OrderDetailsResponse
 import za.co.woolworths.financial.services.android.ui.activities.CancelOrderProgressActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
@@ -17,8 +16,9 @@ import za.co.woolworths.financial.services.android.ui.fragments.shop.CancelOrder
 import za.co.woolworths.financial.services.android.ui.fragments.shop.TaxInvoiceLIstFragment
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 
-class HelpAndSupportFragment : Fragment(R.layout.layout_help_and_support_fragement), CancelOrderConfirmationDialogFragment.ICancelOrderConfirmation,
+class HelpAndSupportFragment : BaseFragmentBinding<LayoutHelpAndSupportFragementBinding>(LayoutHelpAndSupportFragementBinding::inflate), CancelOrderConfirmationDialogFragment.ICancelOrderConfirmation,
         HelpAndSupportAdapter.HelpAndSupportClickListener {
 
     private var orderDetailsResponse: OrderDetailsResponse? = null
@@ -46,11 +46,14 @@ class HelpAndSupportFragment : Fragment(R.layout.layout_help_and_support_frageme
         val adapter = HelpAndSupportAdapter(context, dataList, this)
         val llm = LinearLayoutManager(context)
         llm.orientation = LinearLayoutManager.VERTICAL
-        rvHelpAndSupport.setLayoutManager(llm)
-        rvHelpAndSupport.setAdapter(adapter)
-        imgDelBack?.setOnClickListener {
+
+        binding.apply {
+            rvHelpAndSupport.setLayoutManager(llm)
+            rvHelpAndSupport.setAdapter(adapter)
+            imgDelBack?.setOnClickListener {
                 requireActivity()?.setResult(CheckOutFragment.REQUEST_CHECKOUT_ON_CONTINUE_SHOPPING)
                 requireActivity()?.finish()
+            }
         }
     }
 

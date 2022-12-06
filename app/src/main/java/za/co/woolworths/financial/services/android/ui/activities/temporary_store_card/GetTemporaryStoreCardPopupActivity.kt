@@ -2,7 +2,7 @@ package za.co.woolworths.financial.services.android.ui.activities.temporary_stor
 
 import android.os.Bundle
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.activity_get_temp_store_card_popup.*
+import com.awfs.coordination.databinding.ActivityGetTempStoreCardPopupBinding
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardActivityExtension
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
@@ -11,9 +11,12 @@ import za.co.woolworths.financial.services.android.util.Utils
 
 class GetTemporaryStoreCardPopupActivity : MyCardActivityExtension() {
 
+    private lateinit var binding: ActivityGetTempStoreCardPopupBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_get_temp_store_card_popup)
+        binding = ActivityGetTempStoreCardPopupBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         Utils.updateStatusBarBackground(this)
         Utils.updateUserVirtualTempCardState(true)
         actionBar()
@@ -27,7 +30,7 @@ class GetTemporaryStoreCardPopupActivity : MyCardActivityExtension() {
     }
 
     private fun actionBar() {
-        setSupportActionBar(tbMyCard)
+        setSupportActionBar(binding.tbMyCard)
         supportActionBar?.apply {
             setDisplayShowTitleEnabled(false)
             setDisplayUseLogoEnabled(false)

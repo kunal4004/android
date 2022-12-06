@@ -6,7 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.view.*
 import androidx.fragment.app.viewModels
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.absa_pin_code_complete_fragment.*
+import com.awfs.coordination.databinding.AbsaPinCodeCompleteFragmentBinding
 import za.co.absa.openbankingapi.woolworths.integration.AbsaContentEncryptionRequest
 import za.co.absa.openbankingapi.woolworths.integration.AbsaSecureCredentials
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
@@ -20,8 +20,9 @@ import za.co.woolworths.financial.services.android.util.OneAppEvents
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
 
-class AbsaPinCodeSuccessFragment : AbsaFragmentExtension() {
+class AbsaPinCodeSuccessFragment : AbsaFragmentExtension(R.layout.absa_pin_code_complete_fragment) {
 
+    private lateinit var binding: AbsaPinCodeCompleteFragmentBinding
     private var mCreditCardNumber: String? = null
     private var mAliasId: String? = null
     private var fiveDigitPin: String? = null
@@ -40,18 +41,24 @@ class AbsaPinCodeSuccessFragment : AbsaFragmentExtension() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.absa_pin_code_complete_fragment, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initView()
-        activity?.apply { (this as ABSAOnlineBankingRegistrationActivity).setPageTitle(getString(R.string.absa_registration_title_step_1)) }
-        observeAbsaResult()
+        binding = AbsaPinCodeCompleteFragmentBinding.bind(view)
+
+        with(binding) {
+            initView()
+            activity?.apply {
+                (this as ABSAOnlineBankingRegistrationActivity).setPageTitle(
+                    getString(
+                        R.string.absa_registration_title_step_1
+                    )
+                )
+            }
+            observeAbsaResult()
+        }
     }
 
-    private fun observeAbsaResult() {
+    private fun AbsaPinCodeCompleteFragmentBinding.observeAbsaResult() {
         with(mViewModel) {
             registerCredentialResponse.observe(viewLifecycleOwner) {
                 val absaSecureCredentials = AbsaSecureCredentials()
@@ -74,7 +81,7 @@ class AbsaPinCodeSuccessFragment : AbsaFragmentExtension() {
         }
     }
 
-    private fun onProgressComplete() {
+    private fun AbsaPinCodeCompleteFragmentBinding.onProgressComplete() {
         progressBar?.visibility = View.GONE
     }
 
@@ -92,18 +99,18 @@ class AbsaPinCodeSuccessFragment : AbsaFragmentExtension() {
         }
     }
 
-    private fun initView() {
+    private fun AbsaPinCodeCompleteFragmentBinding.initView() {
         activity?.apply { (this as ABSAOnlineBankingRegistrationActivity).clearPageTitle() }
         gotItButton.setOnClickListener { navigateToAbsaLoginFragment() }
         registerCredentials(mAliasId, fiveDigitPin)
     }
 
-    private fun registerCredentials(aliasId: String?, fiveDigitPin: String?) {
+    private fun AbsaPinCodeCompleteFragmentBinding.registerCredentials(aliasId: String?, fiveDigitPin: String?) {
         showProgress()
         mViewModel.fetchRegisterCredentials(aliasId, fiveDigitPin)
     }
 
-    private fun onRegistrationSuccess() {
+    private fun AbsaPinCodeCompleteFragmentBinding.onRegistrationSuccess() {
         KotlinUtils.postOneAppEvent(OneAppEvents.AppScreen.ABSA_REGISTRATION_SUCCESS, OneAppEvents.FeatureName.ABSA)
         AbsaContentEncryptionRequest.clearContentEncryptionData()
         val name = SessionUtilities.getInstance().jwt?.name?.get(0)
@@ -147,7 +154,7 @@ class AbsaPinCodeSuccessFragment : AbsaFragmentExtension() {
         super.onCreateOptionsMenu(menu, inflater)
     }
 
-    private fun showProgress() {
+    private fun AbsaPinCodeCompleteFragmentBinding.showProgress() {
         tvTitle?.text = resources.getString(R.string.processing_your_request)
         tvDescription?.text = resources.getString(R.string.absa_registration_in_progress_desc)
         progressBar?.visibility = View.VISIBLE
@@ -158,7 +165,7 @@ class AbsaPinCodeSuccessFragment : AbsaFragmentExtension() {
         if (requestCode == ERROR_PAGE_REQUEST_CODE) {
             when (resultCode) {
                 ErrorHandlerActivity.RESULT_RETRY -> {
-                    registerCredentials(mAliasId, fiveDigitPin!!)
+                    binding.registerCredentials(mAliasId, fiveDigitPin!!)
                 }
             }
         }

@@ -11,8 +11,8 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.AvailableVouchersFragmentBinding
 import com.google.android.material.appbar.AppBarLayout
-import kotlinx.android.synthetic.main.available_vouchers_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.VoucherDetails
@@ -21,21 +21,20 @@ import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_3000_MS
 import za.co.woolworths.financial.services.android.util.Utils
 
-class AvailableVoucherFragment : Fragment(), View.OnClickListener, VoucherAndPromoCodeContract.AvailableVoucherView {
+class AvailableVoucherFragment : Fragment(R.layout.available_vouchers_fragment), View.OnClickListener, VoucherAndPromoCodeContract.AvailableVoucherView {
 
+    private lateinit var binding: AvailableVouchersFragmentBinding
     private var voucherDetails: VoucherDetails? = null
     var presenter: VoucherAndPromoCodeContract.AvailableVoucherPresenter? = null
     var vouchersListAdapter: AvailableVouchersToRedeemListAdapter? = null
     var shoppingCartResponse: ShoppingCartResponse? = null
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.available_vouchers_fragment, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding = AvailableVouchersFragmentBinding.bind(view)
+
         activity?.findViewById<TextView>(R.id.toolbarText)?.text = bindString(R.string.vouchers_available)
-        redeemVoucher?.setOnClickListener(this)
+        binding.redeemVoucher?.setOnClickListener(this)
         showAvailableVouchers()
     }
 
@@ -58,7 +57,7 @@ class AvailableVoucherFragment : Fragment(), View.OnClickListener, VoucherAndPro
     override fun showAvailableVouchers() {
         activity?.let {
             vouchersListAdapter = presenter?.getVouchers()?.let { it1 -> AvailableVouchersToRedeemListAdapter(it1, this@AvailableVoucherFragment) }
-            rcvVoucherList?.apply {
+            binding.rcvVoucherList?.apply {
                 layoutManager = LinearLayoutManager(it)
                 adapter = vouchersListAdapter
             }
@@ -100,26 +99,26 @@ class AvailableVoucherFragment : Fragment(), View.OnClickListener, VoucherAndPro
 
     override fun showRedeemVoucherProgress() {
         activity?.findViewById<AppBarLayout>(R.id.appbar)?.visibility = View.GONE
-        dataLayout?.visibility = View.GONE
-        progressLayout?.visibility = View.VISIBLE
+        binding.dataLayout?.visibility = View.GONE
+        binding.progressLayout?.visibility = View.VISIBLE
     }
 
     override fun hideRedeemVoucherProgress() {
-        progressLayout?.visibility = View.GONE
+        binding.progressLayout?.visibility = View.GONE
         activity?.findViewById<AppBarLayout>(R.id.appbar)?.visibility = View.VISIBLE
-        dataLayout?.visibility = View.VISIBLE
+        binding.dataLayout?.visibility = View.VISIBLE
     }
 
     override fun enableRedeemButton() {
         voucherDetails?.vouchers?.let {
-            redeemVoucher?.isEnabled = presenter?.isVouchersSelectedToRedeem() ?: true
+            binding.redeemVoucher?.isEnabled = presenter?.isVouchersSelectedToRedeem() ?: true
         }
     }
 
     override fun onVoucherRedeemGeneralFailure(message: String) {
         activity?.apply {
             hideRedeemVoucherProgress()
-            errorMessage?.let {
+            binding.errorMessage?.let {
                 it.text = message
                 it.visibility = View.VISIBLE
                 Handler().postDelayed({
@@ -136,7 +135,7 @@ class AvailableVoucherFragment : Fragment(), View.OnClickListener, VoucherAndPro
     }
 
     private fun showGenericErrorMessage() {
-        errorMessage?.let {
+        binding.errorMessage?.let {
             it.text = bindString(R.string.generic_error_message_for_redeem_voucher)
             it.visibility = View.VISIBLE
             Handler().postDelayed({

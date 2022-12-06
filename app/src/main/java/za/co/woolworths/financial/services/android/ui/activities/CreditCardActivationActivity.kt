@@ -8,16 +8,18 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.navigation.findNavController
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.credit_card_activation_activity.*
+import com.awfs.coordination.databinding.CreditCardActivationActivityBinding
 import za.co.woolworths.financial.services.android.util.Utils
 
 class CreditCardActivationActivity : AppCompatActivity() {
 
+    private lateinit var binding: CreditCardActivationActivityBinding
     var bundle: Bundle? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.credit_card_activation_activity)
+        binding = CreditCardActivationActivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         Utils.updateStatusBarBackground(this)
         bundle = intent.getBundleExtra("bundle")
         actionBar()
@@ -25,7 +27,7 @@ class CreditCardActivationActivity : AppCompatActivity() {
     }
 
     private fun actionBar() {
-        setSupportActionBar(toolbar)
+        setSupportActionBar(binding.toolbar)
         supportActionBar?.apply {
             setDisplayShowTitleEnabled(false)
             setDisplayUseLogoEnabled(false)
