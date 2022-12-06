@@ -9,15 +9,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.ui.wfs.component.*
 import za.co.woolworths.financial.services.android.ui.wfs.contact_us.cell.LabelTitle
-import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
 import za.co.woolworths.financial.services.android.ui.wfs.theme.White
 
 sealed class ButtonEvent {
@@ -25,19 +22,6 @@ sealed class ButtonEvent {
     object Dismiss : ButtonEvent()
 }
 
-@Preview
-@Composable
-fun FailureScenarioPreview() {
-    OneAppTheme {
-        FailureScenario(buildAnnotatedString {
-            append(
-                "Please try again, or call our helpline on \n" +
-                        "0861 50 20 20."
-            )
-        } to "0861 50 20 20"
-        ) {}
-    }
-}
 
 @Composable
 fun FailureScenario(item: Pair<AnnotatedString, String?>, onTap: (ButtonEvent) -> Unit) {
