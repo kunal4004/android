@@ -3,8 +3,6 @@ package za.co.woolworths.financial.services.android.checkout.view
 import android.view.View
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.fragment.app.Fragment
-import kotlinx.android.synthetic.main.checkout_new_user_recipient_details.*
-import kotlinx.android.synthetic.main.vehicle_details_layout.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.Assert
 import org.junit.Before
@@ -38,12 +36,15 @@ class CheckoutWhoIsCollectingFragmentTest : Fragment() {
         checkoutWhoIsCollectingFragment = CheckoutWhoIsCollectingFragment()
 
         listOfVehicleInputFields = listOf(
-            recipientNameEditText,
-            cellphoneNumberEditText,
-            vehicleColourEditText,
-            vehicleModelEditText
+            checkoutWhoIsCollectingFragment.binding.whoIsCollectingDetailsLayout.recipientNameEditText,
+            checkoutWhoIsCollectingFragment.binding.whoIsCollectingDetailsLayout.cellphoneNumberEditText,
+            checkoutWhoIsCollectingFragment.binding.vehiclesDetailsLayout.vehicleColourEditText,
+            checkoutWhoIsCollectingFragment.binding.vehiclesDetailsLayout.vehicleModelEditText
         )
-        listOfTaxiInputFields = listOf(recipientNameEditText, cellphoneNumberEditText)
+        listOfTaxiInputFields = listOf(
+            checkoutWhoIsCollectingFragment.binding.whoIsCollectingDetailsLayout.recipientNameEditText,
+            checkoutWhoIsCollectingFragment.binding.whoIsCollectingDetailsLayout.cellphoneNumberEditText
+        )
     }
 
     @Test

@@ -5,17 +5,14 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.core.view.get
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.OrderDetailsFragmentBinding
 import com.google.gson.Gson
 import com.google.gson.JsonElement
 import com.google.gson.JsonSyntaxException
-import kotlinx.android.synthetic.main.order_details_fragment.*
 import org.json.JSONObject
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
@@ -25,21 +22,22 @@ import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.models.network.Parameter
+import za.co.woolworths.financial.services.android.onecartgetstream.OCChatActivity
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity
 import za.co.woolworths.financial.services.android.ui.activities.CancelOrderProgressActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_PRODUCT
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator
 import za.co.woolworths.financial.services.android.ui.adapters.OrderDetailsAdapter
-import za.co.woolworths.financial.services.android.onecartgetstream.OCChatActivity
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.shop.helpandsupport.HelpAndSupportFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 import za.co.woolworths.financial.services.android.util.voc.VoiceOfCustomerManager
 
-class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
+class OrderDetailsFragment : BaseFragmentBinding<OrderDetailsFragmentBinding>(OrderDetailsFragmentBinding::inflate), OrderDetailsAdapter.OnItemClick,
     CancelOrderConfirmationDialogFragment.ICancelOrderConfirmation,
     OrderHistoryErrorDialogFragment.IOrderHistoryErrorDialogDismiss, IToastInterface {
 
@@ -64,13 +62,6 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
     var isNavigatedFromMyAccounts: Boolean = false
     private var mBottomNavigator: BottomNavigator? = null
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View? {
-        return inflater.inflate(R.layout.order_details_fragment, container, false)
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -94,7 +85,6 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
 
 
     private fun initViews() {
-
         when (isNavigatedFromMyAccounts) {
             true -> Utils.triggerFireBaseEvents(
                 FirebaseManagerAnalyticsProperties.Acc_My_Orders_DT,
@@ -106,24 +96,26 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
             )
         }
 
-        mBottomNavigator?.apply {
-            removeToolbar()
+        binding.apply {
+            mBottomNavigator?.apply {
+                removeToolbar()
+            }
+            tvSelectAll?.visibility = View.VISIBLE
+            tvSelectAll?.text = getString(R.string.dash_help)
+            btnBack?.setOnClickListener { requireActivity().onBackPressed() }
+            orderDetails.layoutManager = LinearLayoutManager(activity)
+            orderItemsBtn.setOnClickListener {
+                (requireActivity() as? BottomNavigationActivity)?.pushFragment(
+                    orderDetailsResponse?.let { AddOrderToCartFragment.getInstance(it) }
+                )
+            }
+            tvSelectAll.setOnClickListener {
+                (requireActivity() as? BottomNavigationActivity)?.pushFragment(
+                    HelpAndSupportFragment.newInstance(orderDetailsResponse)
+                )
+            }
+            argOrderId?.let { orderId -> requestOrderDetails(orderId) }
         }
-        tvSelectAll?.visibility = View.VISIBLE
-        tvSelectAll?.text = getString(R.string.dash_help)
-        btnBack?.setOnClickListener { requireActivity().onBackPressed() }
-        orderDetails.layoutManager = LinearLayoutManager(activity)
-        orderItemsBtn.setOnClickListener {
-            (requireActivity() as? BottomNavigationActivity)?.pushFragment(
-                orderDetailsResponse?.let { AddOrderToCartFragment.getInstance(it) }
-            )
-        }
-        tvSelectAll.setOnClickListener {
-            (requireActivity() as? BottomNavigationActivity)?.pushFragment(
-                HelpAndSupportFragment.newInstance(orderDetailsResponse)
-            )
-        }
-        argOrderId?.let { orderId -> requestOrderDetails(orderId) }
     }
 
     private fun requestOrderDetails(orderId: String): Call<OrderDetailsResponse> {
@@ -134,13 +126,13 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
                 if (!isAdded) return
                 when (ordersResponse?.httpCode) {
                     0 -> {
-                        mainLayout?.visibility = View.VISIBLE
-                        loadingBar?.visibility = View.GONE
+                        binding.mainLayout?.visibility = View.VISIBLE
+                        binding.loadingBar?.visibility = View.GONE
                         orderDetailsResponse = ordersResponse
                         bindData(orderDetailsResponse!!)
                     }
                     502 -> {
-                        loadingBar.visibility = View.GONE
+                        binding.loadingBar.visibility = View.GONE
                         showErrorDialog(
                             ordersResponse.response?.desc
                                 ?: getString(R.string.general_error_desc)
@@ -160,7 +152,7 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
 
     private fun bindData(ordersResponse: OrderDetailsResponse) {
         dataList = buildDataForOrderDetailsView(ordersResponse)
-        orderDetails.adapter = requireActivity().let { OrderDetailsAdapter(it, this, dataList) }
+        binding.orderDetails.adapter = requireActivity().let { OrderDetailsAdapter(it, this, dataList) }
         VoiceOfCustomerManager.showVocSurveyIfNeeded(
             activity,
             KotlinUtils.vocShoppingHandling(orderDetailsResponse?.orderSummary?.fulfillmentDetails?.deliveryType)
@@ -403,7 +395,7 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
         ) {
             ToastFactory.buildShoppingListToast(
                 requireActivity(),
-                orderDetails, true, data, this
+                binding.orderDetails, true, data, this
             )
             return
         }

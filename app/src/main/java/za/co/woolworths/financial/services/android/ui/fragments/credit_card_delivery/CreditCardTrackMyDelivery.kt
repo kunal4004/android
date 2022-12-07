@@ -9,7 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.credit_card_track_my_delivery.*
+import com.awfs.coordination.databinding.CreditCardTrackMyDeliveryBinding
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
@@ -22,15 +22,19 @@ import kotlin.math.roundToInt
 
 class CreditCardTrackMyDelivery : WBottomSheetDialogFragment(), View.OnClickListener, ToastInterface {
 
+    private lateinit var binding: CreditCardTrackMyDeliveryBinding
     var bundle: Bundle? = null
     private var envelopeNumber: String? = null
     private var mToastUtils: ToastUtils? = null
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? = inflater.inflate(R.layout.credit_card_track_my_delivery, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        binding = CreditCardTrackMyDeliveryBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        init()
+        binding.init()
     }
 
     companion object {
@@ -47,10 +51,10 @@ class CreditCardTrackMyDelivery : WBottomSheetDialogFragment(), View.OnClickList
         envelopeNumber = arguments?.getString(BundleKeysConstants.ENVELOPE_NUMBER, "")
     }
 
-    private fun init() {
+    private fun CreditCardTrackMyDeliveryBinding.init() {
         referenceNumber.text = envelopeNumber
-        referenceNumberText.setOnClickListener(this)
-        trackMyDelivery.setOnClickListener(this)
+        referenceNumberText.setOnClickListener(this@CreditCardTrackMyDelivery)
+        trackMyDelivery.setOnClickListener(this@CreditCardTrackMyDelivery)
     }
 
     override fun onClick(v: View?) {
@@ -60,14 +64,14 @@ class CreditCardTrackMyDelivery : WBottomSheetDialogFragment(), View.OnClickList
             }
             R.id.referenceNumberText -> {
                 val clipboard = activity?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                val clip = ClipData.newPlainText(referenceNumber.text, referenceNumber.text)
+                val clip = ClipData.newPlainText(binding.referenceNumber.text, binding.referenceNumber.text)
                 clipboard.setPrimaryClip(clip)
 
                 val currentActivity: Activity? = activity
                 mToastUtils?.apply {
                     activity = currentActivity
-                    pixel = ((trackMyDelivery.getHeight() * 2.5).roundToInt())
-                    view = trackMyDelivery
+                    pixel = ((binding.trackMyDelivery.height * 2.5).roundToInt())
+                    view = binding.trackMyDelivery
                     setMessage(bindString(R.string.copied_to_clipboard))
                     viewState = false
                     buildCustomTrackMyDeliveryToast(context)

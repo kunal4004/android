@@ -6,8 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.select_your_quantity_fragment.*
+import com.awfs.coordination.databinding.SelectYourQuantityFragmentBinding
 import za.co.woolworths.financial.services.android.ui.adapters.SelectQuantityAdapter
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 
@@ -18,6 +17,7 @@ class QuantitySelectorFragment(private val listener: IQuantitySelector?) : WBott
         fun onQuantitySelection(quantity: Int)
     }
 
+    private lateinit var binding: SelectYourQuantityFragmentBinding
     private var quantityInStock: Int? = 0
 
     companion object {
@@ -32,7 +32,10 @@ class QuantitySelectorFragment(private val listener: IQuantitySelector?) : WBott
         quantityInStock = arguments?.getInt(QUANTITY_IN_STOCK, 0)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? = inflater.inflate(R.layout.select_your_quantity_fragment, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        binding = SelectYourQuantityFragmentBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -42,24 +45,32 @@ class QuantitySelectorFragment(private val listener: IQuantitySelector?) : WBott
     private fun initQuantityItem() {
         val selectQuantityAdapter = SelectQuantityAdapter { selectedQuantity: Int -> quantityItemClicked(selectedQuantity) }
 
-        quantityInStock?.let {
-            val dividerFactor = when (it) {
-                1 -> 11
-                2 -> 6
-                3 -> 4
-                else -> 3
-            }
+        with(binding) {
+            quantityInStock?.let {
+                val dividerFactor = when (it) {
+                    1 -> 11
+                    2 -> 6
+                    3 -> 4
+                    else -> 3
+                }
 
-            rclSelectYourQuantity?.apply {
-                layoutManager = activity?.let { activity -> LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false) }
-                layoutParams?.height = (Resources.getSystem()?.displayMetrics?.heightPixels
+                rclSelectYourQuantity?.apply {
+                    layoutManager = activity?.let { activity ->
+                        LinearLayoutManager(
+                            activity,
+                            LinearLayoutManager.VERTICAL,
+                            false
+                        )
+                    }
+                    layoutParams?.height = (Resources.getSystem()?.displayMetrics?.heightPixels
                         ?: 0) / dividerFactor
-                adapter = selectQuantityAdapter
+                    adapter = selectQuantityAdapter
+                }
+                selectQuantityAdapter.setItem(it)
             }
-            selectQuantityAdapter.setItem(it)
-        }
 
-        btnCancelQuantity?.setOnClickListener { dismiss() }
+            btnCancelQuantity?.setOnClickListener { dismiss() }
+        }
     }
 
     private fun quantityItemClicked(quantity: Int) {

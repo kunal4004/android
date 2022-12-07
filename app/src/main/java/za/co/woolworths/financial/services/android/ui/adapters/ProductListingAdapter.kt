@@ -1,9 +1,12 @@
 package za.co.woolworths.financial.services.android.ui.adapters
 
+import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.product_listing_price_layout.view.*
+import com.awfs.coordination.databinding.BottomProgressBarBinding
+import com.awfs.coordination.databinding.ItemFoundLayoutBinding
+import com.awfs.coordination.databinding.ProductListingPageRowBinding
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IProductListing
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
@@ -23,9 +26,18 @@ class ProductListingAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerViewViewHolder {
         return when (ProductListingViewType.values()[viewType]) {
-            ProductListingViewType.HEADER -> RecyclerViewViewHolderHeader(parent)
-            ProductListingViewType.FOOTER -> RecyclerViewViewHolderFooter(parent)
-            else -> RecyclerViewViewHolderItems(parent)
+            ProductListingViewType.HEADER ->
+                RecyclerViewViewHolderHeader(
+                    ItemFoundLayoutBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                )
+            ProductListingViewType.FOOTER ->
+                RecyclerViewViewHolderFooter(
+                    BottomProgressBarBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                )
+            else ->
+                RecyclerViewViewHolderItems(
+                    ProductListingPageRowBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                )
         }
     }
 
@@ -52,7 +64,7 @@ class ProductListingAdapter(
                             if (position % 2 == 0) mProductListItems.getOrNull(position - 1) else null
                         )
                     }
-                    view.itemView.imQuickShopAddToCartIcon?.setOnClickListener {
+                    view.itemBinding.includeProductListingPriceLayout.imQuickShopAddToCartIcon?.setOnClickListener {
                         if (!productList.quickShopButtonWasTapped) {
                             activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPQS_ADD_TO_CART, this) }
                             val fulfilmentTypeId = AppConfigSingleton.quickShopDefaultValues?.foodFulfilmentTypeId

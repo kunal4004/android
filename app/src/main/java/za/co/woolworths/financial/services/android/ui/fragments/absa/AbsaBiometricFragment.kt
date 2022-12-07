@@ -2,30 +2,26 @@ package za.co.woolworths.financial.services.android.ui.fragments.absa
 
 import android.graphics.Paint
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.absa_biometric_fragment.*
-import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
+import com.awfs.coordination.databinding.AbsaBiometricFragmentBinding
 
-class AbsaBiometricFragment : AbsaFragmentExtension() {
+class AbsaBiometricFragment : AbsaFragmentExtension(R.layout.absa_biometric_fragment) {
 
     companion object {
         fun newInstance() = AbsaBiometricFragment()
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater!!.inflate(R.layout.absa_biometric_fragment, container, false)
-    }
+    private lateinit var binding: AbsaBiometricFragmentBinding
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setUpViewsAndEvents()
+        binding = AbsaBiometricFragmentBinding.bind(view)
+        binding.setUpViewsAndEvents()
         alwaysHideWindowSoftInputMode()
     }
 
-    private fun setUpViewsAndEvents() {
+    private fun AbsaBiometricFragmentBinding.setUpViewsAndEvents() {
         tvSkipStep.paintFlags = Paint.UNDERLINE_TEXT_FLAG
         swEnableBiometric.setOnCheckedChangeListener { _, isChecked
             ->

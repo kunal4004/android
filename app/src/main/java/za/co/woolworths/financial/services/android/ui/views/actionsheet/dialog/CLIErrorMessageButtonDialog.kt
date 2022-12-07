@@ -6,9 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.StringRes
-import com.awfs.coordination.R
+import com.awfs.coordination.databinding.CliErrorMessageDialogBinding
 import kotlinx.android.parcel.Parcelize
-import kotlinx.android.synthetic.main.loan_withdrawal_minimum_amount_error_fragment.*
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 
@@ -32,33 +31,34 @@ class CLIErrorMessageButtonDialog : WBottomSheetDialogFragment() {
             }
     }
 
+    private lateinit var binding: CliErrorMessageDialogBinding
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(
-            R.layout.cli_error_message_dialog,
-            container,
-            false
-        )
+        binding = CliErrorMessageDialogBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val args = arguments?.getParcelable<ErrorMessageDialog>(CLI_ERROR_MESSAGE_DIALOG)
 
-        args?.apply {
-            titleTextView?.text = getString(title)
-            descriptionTextView?.text = getString(desc)
-            loanWithdrawalGotItButton?.text = getString(buttonLabel)
+        with(binding) {
+            val args = arguments?.getParcelable<ErrorMessageDialog>(CLI_ERROR_MESSAGE_DIALOG)
+
+            args?.apply {
+                titleTextView?.text = getString(title)
+                descriptionTextView?.text = getString(desc)
+                loanWithdrawalGotItButton?.text = getString(buttonLabel)
+            }
+
+            titleTextView?.contentDescription = ""
+            descriptionTextView?.contentDescription = ""
+            loanWithdrawalGotItButton?.contentDescription = ""
+
+            loanWithdrawalGotItButton?.setOnClickListener { dismiss() }
         }
-
-        titleTextView?.contentDescription = ""
-        descriptionTextView?.contentDescription = ""
-        loanWithdrawalGotItButton?.contentDescription = ""
-
-        loanWithdrawalGotItButton?.setOnClickListener { dismiss() }
-
     }
 }

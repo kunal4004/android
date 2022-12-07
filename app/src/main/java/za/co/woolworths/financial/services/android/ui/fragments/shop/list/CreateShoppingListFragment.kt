@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shop.list
 
+import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
@@ -12,15 +13,15 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.create_list_from_shopping_list_view.*
-import kotlinx.android.synthetic.main.create_new_list.btnCancel
-import kotlinx.android.synthetic.main.create_new_list.etNewList
-import kotlinx.android.synthetic.main.create_new_list.imBack
-import kotlinx.android.synthetic.main.create_new_list.imCloseIcon
-import kotlinx.android.synthetic.main.create_new_list.pbCreateList
-import kotlinx.android.synthetic.main.create_new_list.tvOnErrorLabel
+import com.awfs.coordination.databinding.CreateListFromShoppingListViewBinding
+import com.awfs.coordination.databinding.CreateNewListBinding
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
@@ -29,14 +30,19 @@ import za.co.woolworths.financial.services.android.models.network.CompletionHand
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_REQUEST_CODE
+import za.co.woolworths.financial.services.android.ui.adapters.DepartmentAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
+import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.SingleButtonDialogFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_SESSION_TIMEOUT_440
-import java.util.*
 
-class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickListener {
+class CreateShoppingListFragment : Fragment(), View.OnClickListener {
+
+    private lateinit var bindingCreateListFromShoppingView: CreateListFromShoppingListViewBinding
+    private lateinit var bindingCreateList: CreateNewListBinding
 
     private var mShoppingListGroup: HashMap<String, ShoppingList>? = null
     private var mAddToListRequest: MutableList<AddToListRequest>? = null
@@ -86,10 +92,13 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         getBundleArguments()
-        return if (mShouldDisplayCreateListOnly)
-            inflater.inflate(R.layout.create_list_from_shopping_list_view, container, false)
-        else
-            inflater.inflate(R.layout.create_new_list, container, false)
+        return if (mShouldDisplayCreateListOnly) {
+            bindingCreateListFromShoppingView = CreateListFromShoppingListViewBinding.inflate(inflater, container, false)
+            return bindingCreateListFromShoppingView.root
+        } else {
+            bindingCreateList = CreateNewListBinding.inflate(inflater, container, false)
+            return bindingCreateList.root
+        }
 
     }
 
@@ -99,7 +108,11 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
         clickListener()
         textChangeListener()
 
-        mKeyListener = etNewList?.keyListener
+        mKeyListener = if (mShouldDisplayCreateListOnly) {
+            bindingCreateListFromShoppingView.etNewList?.keyListener
+        } else {
+            bindingCreateList.etNewList?.keyListener
+        }
 
         // Disable create list button when tap from create a list row
         if (!mShouldDisplayCreateListOnly) enableCancelButton(true) else enableCancelButton(false)
@@ -114,17 +127,35 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
                         mAutoConnect?.let { connect ->
                             when (connect) {
                                 AutoConnect.CREATE_LIST -> {
-                                    btnCancel.isEnabled = true
-                                    btnCancel.performClick()
+                                    (if (mShouldDisplayCreateListOnly) {
+                                        bindingCreateListFromShoppingView.btnCancel
+                                    } else {
+                                        bindingCreateList.btnCancel
+                                    }).apply {
+                                        isEnabled = true
+                                        performClick()
+                                    }
                                 }
                                 AutoConnect.ADD_PRODUCT_TO_LIST -> {
-                                    btnCancel.isEnabled = true
-                                    btnCancel.performClick()
+                                    (if (mShouldDisplayCreateListOnly) {
+                                        bindingCreateListFromShoppingView.btnCancel
+                                    } else {
+                                        bindingCreateList.btnCancel
+                                    }).apply {
+                                        isEnabled = true
+                                        performClick()
+                                    }
                                 }
 
                                 AutoConnect.ADD_ORDER_TO_LIST -> {
-                                    btnCancel.isEnabled = true
-                                    btnCancel.performClick()
+                                    (if (mShouldDisplayCreateListOnly) {
+                                        bindingCreateListFromShoppingView.btnCancel
+                                    } else {
+                                        bindingCreateList.btnCancel
+                                    }).apply {
+                                        isEnabled = true
+                                        performClick()
+                                    }
                                 }
                             }
                             mAutoConnect = null
@@ -162,39 +193,64 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
     }
 
     private fun clickListener() {
-        imBack?.setOnClickListener(this)
-        imCloseIcon?.setOnClickListener(this)
-        btnCancel?.setOnClickListener(this)
-        etNewList?.setOnEditorActionListener { v, actionId, event ->
-            if ((actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_DONE || event?.action == KeyEvent.ACTION_DOWN && event.keyCode == KeyEvent.KEYCODE_ENTER)) {
-                createListRequest()
+        if (mShouldDisplayCreateListOnly) {
+            bindingCreateListFromShoppingView.apply {
+                imBack?.setOnClickListener(this@CreateShoppingListFragment)
+                imCloseIcon?.setOnClickListener(this@CreateShoppingListFragment)
+                btnCancel?.setOnClickListener(this@CreateShoppingListFragment)
+                etNewList?.setOnEditorActionListener { _, actionId, event ->
+                    if ((actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_DONE || event?.action == KeyEvent.ACTION_DOWN && event.keyCode == KeyEvent.KEYCODE_ENTER)) {
+                        createListRequest()
+                    }
+                    true
+                }
             }
-            true
+        } else {
+            bindingCreateList.apply {
+                imBack?.setOnClickListener(this@CreateShoppingListFragment)
+                imCloseIcon?.setOnClickListener(this@CreateShoppingListFragment)
+                btnCancel?.setOnClickListener(this@CreateShoppingListFragment)
+                etNewList?.setOnEditorActionListener { _, actionId, event ->
+                    if ((actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_DONE || event?.action == KeyEvent.ACTION_DOWN && event.keyCode == KeyEvent.KEYCODE_ENTER)) {
+                        createListRequest()
+                    }
+                    true
+                }
+            }
         }
     }
 
     private fun textChangeListener() {
-        etNewList?.addTextChangedListener(object : TextWatcher {
+        (if (mShouldDisplayCreateListOnly) {
+            bindingCreateListFromShoppingView.etNewList
+        } else {
+            bindingCreateList.etNewList
+        })?.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
 
             override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
-                val isEditTextNotEmpty = etNewList.text.toString().trim { it <= ' ' }.isNotEmpty()
+                val isEditTextNotEmpty = (if (mShouldDisplayCreateListOnly) {
+                    bindingCreateListFromShoppingView.etNewList
+                } else {
+                    bindingCreateList.etNewList
+                }).text.toString().trim { it <= ' ' }.isNotEmpty()
                 if (!mShouldDisplayCreateListOnly) {
-                    clBottomView?.isEnabled = true;
-                    btnCancel.isEnabled = true;
+                    bindingCreateList.clBottomView?.isEnabled = true;
+                    bindingCreateList.btnCancel.isEnabled = true;
                     if (isEditTextNotEmpty) {
-                        clBottomView.background = bindDrawable(R.drawable.black_button_drawable_state)
-                        btnCancel?.text = getString(R.string.create_list_and_add)
-                        btnCancel.setTextColor(Color.WHITE)
+                        bindingCreateList.clBottomView.background = bindDrawable(R.drawable.black_button_drawable_state)
+                        bindingCreateList.btnCancel?.text = getString(R.string.create_list_and_add)
+                        bindingCreateList.btnCancel.setTextColor(Color.WHITE)
                     } else {
-                        clBottomView.setBackgroundColor(Color.TRANSPARENT)
-                        btnCancel.setTextColor(Color.BLACK)
-                        btnCancel?.text = getString(R.string.cancel)
+                        bindingCreateList.clBottomView.setBackgroundColor(Color.TRANSPARENT)
+                        bindingCreateList.btnCancel.setTextColor(Color.BLACK)
+                        bindingCreateList.btnCancel?.text = getString(R.string.cancel)
                     }
+                    bindingCreateList.tvOnErrorLabel?.visibility = GONE
                 } else {
                     enableCancelButton(isEditTextNotEmpty)
+                    bindingCreateListFromShoppingView.tvOnErrorLabel?.visibility = GONE
                 }
-                tvOnErrorLabel?.visibility = GONE
             }
 
             override fun afterTextChanged(editable: Editable) {
@@ -204,7 +260,11 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
 
     override fun onResume() {
         super.onResume()
-        view?.postDelayed({ showKeyboard(etNewList) }, SHOW_KEYBOARD_DELAY_MILIS)
+        view?.postDelayed({ showKeyboard((if (mShouldDisplayCreateListOnly) {
+            bindingCreateListFromShoppingView.etNewList
+        } else {
+            bindingCreateList.etNewList
+        })) }, SHOW_KEYBOARD_DELAY_MILIS)
     }
 
     override fun onDestroy() {
@@ -215,21 +275,41 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
     }
 
     private fun toolbarIconVisibility() {
-
         val entryCount: Int? = getFragmentBackStackEntryCount()
-        imBack.visibility = if (entryCount == 0) GONE else VISIBLE
-        imCloseIcon.visibility = if (entryCount == 0) VISIBLE else GONE
 
-        if (mShouldDisplayCreateListOnly) {
-            imBack.visibility = VISIBLE
-            imCloseIcon.visibility = GONE
-        }
+        (if (mShouldDisplayCreateListOnly) {
+            bindingCreateListFromShoppingView.apply {
+                imBack.visibility = if (entryCount == 0) GONE else VISIBLE
+                imCloseIcon.visibility = if (entryCount == 0) VISIBLE else GONE
 
-        //triggered when add to list is empty
-        if (mDisplayCloseIcon) {
-            imBack.visibility = GONE
-            imCloseIcon.visibility = VISIBLE
-        }
+                if (mShouldDisplayCreateListOnly) {
+                    imBack.visibility = VISIBLE
+                    imCloseIcon.visibility = GONE
+                }
+
+                //triggered when add to list is empty
+                if (mDisplayCloseIcon) {
+                    imBack.visibility = GONE
+                    imCloseIcon.visibility = VISIBLE
+                }
+            }
+        } else {
+            bindingCreateList.apply {
+                imBack.visibility = if (entryCount == 0) GONE else VISIBLE
+                imCloseIcon.visibility = if (entryCount == 0) VISIBLE else GONE
+
+                if (mShouldDisplayCreateListOnly) {
+                    imBack.visibility = VISIBLE
+                    imCloseIcon.visibility = GONE
+                }
+
+                //triggered when add to list is empty
+                if (mDisplayCloseIcon) {
+                    imBack.visibility = GONE
+                    imCloseIcon.visibility = VISIBLE
+                }
+            }
+        })
     }
 
     private fun getFragmentBackStackEntryCount() = activity?.supportFragmentManager?.backStackEntryCount
@@ -264,6 +344,11 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
     }
 
     private fun FragmentActivity.beginCreateListExecution() {
+        val etNewList = (if (mShouldDisplayCreateListOnly) {
+            bindingCreateListFromShoppingView.etNewList
+        } else {
+            bindingCreateList.etNewList
+        })
         shoppingListPostProgress(true)
         val listName = etNewList.text.toString()
         if (listName.isNotEmpty()) {
@@ -281,6 +366,11 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
     }
 
     private fun createShoppingListRequest() {
+        val etNewList = (if (mShouldDisplayCreateListOnly) {
+            bindingCreateListFromShoppingView.etNewList
+        } else {
+            bindingCreateList.etNewList
+        })
         val listName = etNewList?.text?.toString()
         val createListRequest = buildFirstRequest(listName)
         etNewList?.keyListener = null
@@ -329,8 +419,17 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
                         }
                         else -> {
                             shoppingListPostProgress(false)
-                            tvOnErrorLabel.text = response.response?.desc ?: ""
-                            tvOnErrorLabel.visibility = VISIBLE
+                            if (mShouldDisplayCreateListOnly) {
+                                bindingCreateListFromShoppingView.apply {
+                                    tvOnErrorLabel.text = response.response?.desc ?: ""
+                                    tvOnErrorLabel.visibility = VISIBLE
+                                }
+                            } else {
+                                bindingCreateList.apply {
+                                    tvOnErrorLabel.text = response.response?.desc ?: ""
+                                    tvOnErrorLabel.visibility = VISIBLE
+                                }
+                            }
                         }
 
                     }
@@ -413,12 +512,21 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
 
     private fun shoppingListPostProgress(state: Boolean) {
         enableCancelButton(!state)
-        pbCreateList.visibility = if (state) VISIBLE else GONE
+        if (mShouldDisplayCreateListOnly) {
+            bindingCreateListFromShoppingView.pbCreateList.visibility = if (state) VISIBLE else GONE
+        } else {
+            bindingCreateList.pbCreateList.visibility = if (state) VISIBLE else GONE
+        }
     }
 
     private fun enableCancelButton(isEditTextNotEmpty: Boolean) {
-        btnCancel?.isEnabled = isEditTextNotEmpty
-        clBottomView?.isEnabled = isEditTextNotEmpty
+        if (mShouldDisplayCreateListOnly) {
+            bindingCreateListFromShoppingView.btnCancel?.isEnabled = isEditTextNotEmpty
+            bindingCreateListFromShoppingView.clBottomView?.isEnabled = isEditTextNotEmpty
+        } else {
+            bindingCreateList.btnCancel?.isEnabled = isEditTextNotEmpty
+            bindingCreateList.clBottomView?.isEnabled = isEditTextNotEmpty
+        }
     }
 
     private fun buildFirstRequest(listName: String?): CreateList {
@@ -486,4 +594,58 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
         activity?.let { ScreenManager.presentSSOSignin(it) }
         shoppingListPostProgress(false)
     }
+
+    fun showKeyboard(editText: EditText) {
+        editText.requestFocus()
+        activity?.let {
+            editText.requestFocus()
+            editText.isFocusableInTouchMode = true
+            val imm = it.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT)
+        }
+    }
+
+    fun hideKeyboard() {
+        activity?.apply {
+            val inputManager =
+                getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            // check if no view has focus:
+            val currentFocusedView = currentFocus
+            if (currentFocusedView != null) {
+                inputManager.hideSoftInputFromWindow(
+                    currentFocusedView.windowToken,
+                    InputMethodManager.HIDE_NOT_ALWAYS
+                )
+            }
+        }
+    }
+
+    fun convertStringToObject(mAddToListArgs: String?) =
+        Gson().fromJson<MutableList<AddToListRequest>>(
+            mAddToListArgs,
+            object : TypeToken<MutableList<AddToListRequest>>() {}.type
+        )!!
+
+    fun showErrorDialog(message: String) {
+        activity?.let {
+            val fm = it.supportFragmentManager
+            val singleButtonDialogFragment = SingleButtonDialogFragment.newInstance(message)
+            singleButtonDialogFragment?.show(fm, SingleButtonDialogFragment::class.java.simpleName)
+        }
+    }
+
+    fun cancelRequest(call: Call<*>?) {
+        call?.apply {
+            if (!isCanceled)
+                cancel()
+        }
+    }
+
+    fun bindDepartment(mDepartmentAdapter: DepartmentAdapter?, parentFragment: ShopFragment?) {
+        mDepartmentAdapter?.setRootCategories(parentFragment?.getCategoryResponseData()?.rootCategories)
+        mDepartmentAdapter?.notifyDataSetChanged()
+    }
+
+    fun networkConnectionAvailable(it: FragmentActivity) =
+        NetworkManager.getInstance().isConnectedToNetwork(it)
 }

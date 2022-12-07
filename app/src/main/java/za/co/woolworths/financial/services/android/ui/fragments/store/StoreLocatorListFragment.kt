@@ -1,16 +1,14 @@
 package za.co.woolworths.financial.services.android.ui.fragments.store
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.StoreLocatorListFragmentBinding
 import com.google.gson.Gson
-import kotlinx.android.synthetic.main.store_locator_list_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails
 import za.co.woolworths.financial.services.android.ui.adapters.StoreLocatorCardListAdapter
@@ -18,8 +16,9 @@ import za.co.woolworths.financial.services.android.ui.fragments.npc.Participatin
 import za.co.woolworths.financial.services.android.ui.fragments.vtc.SelectStoreDetailsFragment
 import za.co.woolworths.financial.services.android.util.Utils
 
-class StoreLocatorListFragment : Fragment() {
+class StoreLocatorListFragment : Fragment(R.layout.store_locator_list_fragment) {
 
+    private lateinit var binding: StoreLocatorListFragmentBinding
     private var storeDetailsList: MutableList<StoreDetails>? = ArrayList(0)
     private var showStoreSelect: Boolean = false
 
@@ -35,17 +34,15 @@ class StoreLocatorListFragment : Fragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.store_locator_list_fragment, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding = StoreLocatorListFragmentBinding.bind(view)
+
         val storeLocatorAdapter = StoreLocatorCardListAdapter { storeDetails -> storeDetailItemClick(storeDetails) }
         activity?.let { activity ->
-            rvStoreLocator?.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
+            binding.rvStoreLocator?.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
             val locations = storeDetailsList ?: ArrayList(0)
-            rvStoreLocator?.adapter = storeLocatorAdapter
+            binding.rvStoreLocator?.adapter = storeLocatorAdapter
             storeLocatorAdapter.setItem(locations)
         }
     }

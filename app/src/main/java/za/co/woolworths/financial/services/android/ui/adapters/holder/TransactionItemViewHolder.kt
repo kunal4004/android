@@ -1,20 +1,18 @@
 package za.co.woolworths.financial.services.android.ui.adapters.holder
 
 import android.text.SpannableString
-import android.view.LayoutInflater
-import android.view.ViewGroup
-import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.transaction_list_child_item.view.*
+import androidx.recyclerview.widget.RecyclerView
+import com.awfs.coordination.databinding.TransactionListChildItemBinding
 import za.co.woolworths.financial.services.android.models.dto.account.TransactionItem
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser
 import kotlin.math.roundToInt
 
-class TransactionItemViewHolder(parent: ViewGroup) : WParentItemViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.transaction_list_child_item, parent, false)) {
+class TransactionItemViewHolder(val itemBinding: TransactionListChildItemBinding): RecyclerView.ViewHolder(itemBinding.root) {
 
     fun setTransactionContent(transactionItem: TransactionItem?) {
 
-        with(itemView) {
+        itemBinding.apply {
             transactionItem?.apply {
                 transactionDate?.text = date
                 transactionDescription?.text = description

@@ -5,12 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.got_it_dialog_icon_fragment.*
-import kotlinx.android.synthetic.main.root_device_info_fragment.tvDescription
+import com.awfs.coordination.databinding.GotItDialogIconFragmentBinding
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 
 class GotItDialogIconFragment : WBottomSheetDialogFragment() {
 
+    private lateinit var binding: GotItDialogIconFragmentBinding
     private var mButtonText: String? = null
     private var mDescription: String? = null
     private var mTitle: String? = null
@@ -40,14 +40,17 @@ class GotItDialogIconFragment : WBottomSheetDialogFragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
-            = inflater.inflate(R.layout.got_it_dialog_icon_fragment, container, false)
-
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        binding = GotItDialogIconFragmentBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        tvDescription?.text = mDescription
-        gotItButtonTapped?.setOnClickListener { dismissAllowingStateLoss() }
+        with(binding) {
+            tvDescription?.text = mDescription
+            gotItButtonTapped?.setOnClickListener { dismissAllowingStateLoss() }
+        }
     }
 }

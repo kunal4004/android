@@ -7,9 +7,9 @@ import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.ImageView
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.absa_confirm_five_digit_code_fragment.*
 import androidx.appcompat.app.AppCompatActivity
 import android.view.*
+import com.awfs.coordination.databinding.AbsaConfirmFiveDigitCodeFragmentBinding
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IVibrateComplete
 import za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBankingRegistrationActivity
@@ -18,8 +18,9 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.helper.F
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.Utils
 
-class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickListener, IVibrateComplete {
+class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(R.layout.absa_confirm_five_digit_code_fragment), View.OnClickListener, IVibrateComplete {
 
+    private lateinit var binding: AbsaConfirmFiveDigitCodeFragmentBinding
     private var mCreditAccountInfo: String? = null
     private var mPinImageViewList: MutableList<ImageView>? = null
     private var mBundleFiveDigitCodePinCode: Int? = null
@@ -50,24 +51,21 @@ class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickLi
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.absa_confirm_five_digit_code_fragment, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initViewsAndEvents()
-        createTextListener(edtEnterATMPin)
+        binding = AbsaConfirmFiveDigitCodeFragmentBinding.bind(view)
+        binding.initViewsAndEvents()
+        binding.createTextListener(binding.edtEnterATMPin)
         clearPinImage(mPinImageViewList!!)
     }
 
-    private fun initViewsAndEvents() {
+    private fun AbsaConfirmFiveDigitCodeFragmentBinding.initViewsAndEvents() {
         activity?.apply { (this as ABSAOnlineBankingRegistrationActivity).setPageTitle(getString(R.string.absa_registration_title_step_3))  }
         tvEnterYourPin?.text = getString(R.string.absa_confirm_five_digit_code_title)
         mPinImageViewList = mutableListOf(ivPin1, ivPin2, ivPin3, ivPin4, ivPin5)
         ivEnterFiveDigitCode?.visibility = View.GONE
         completeSetupButton?.visibility = View.VISIBLE
-        completeSetupButton?.setOnClickListener(this)
+        completeSetupButton?.setOnClickListener(this@AbsaConfirmFiveDigitCodeFragment)
         edtEnterATMPin?.setOnKeyPreImeListener { activity?.onBackPressed() }
         edtEnterATMPin?.movementMethod = null
         edtEnterATMPin?.setOnEditorActionListener { _, actionId, _ ->
@@ -80,7 +78,7 @@ class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickLi
         }
     }
 
-    private fun navigateToAbsaPinCodeSuccessScreen() {
+    private fun AbsaConfirmFiveDigitCodeFragmentBinding.navigateToAbsaPinCodeSuccessScreen() {
         if ((edtEnterATMPin.length() - 1) == MAXIMUM_PIN_ALLOWED) {
             val fiveDigitPin = edtEnterATMPin.text.toString()
             if (completeSetupButton?.isEnabled == true && fiveDigitPin.toInt() == mBundleFiveDigitCodePinCode) {
@@ -109,7 +107,7 @@ class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickLi
     }
 
 
-    private fun createTextListener(edtEnterATMPin: EditText?) {
+    private fun AbsaConfirmFiveDigitCodeFragmentBinding.createTextListener(edtEnterATMPin: EditText?) {
         var previousLength = 0
         edtEnterATMPin?.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
@@ -128,7 +126,7 @@ class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickLi
         })
     }
 
-    private fun updateEnteredPin(pinEnteredLength: Int, listOfPin: MutableList<ImageView>) {
+    private fun AbsaConfirmFiveDigitCodeFragmentBinding.updateEnteredPin(pinEnteredLength: Int, listOfPin: MutableList<ImageView>) {
         if (pinEnteredLength > -1) {
             listOfPin[pinEnteredLength].setImageResource(R.drawable.pin_fill)
             if (pinEnteredLength == MAXIMUM_PIN_ALLOWED) {
@@ -137,7 +135,7 @@ class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickLi
         }
     }
 
-    private fun deletePin(pinEnteredLength: Int, listOfPin: MutableList<ImageView>) {
+    private fun AbsaConfirmFiveDigitCodeFragmentBinding.deletePin(pinEnteredLength: Int, listOfPin: MutableList<ImageView>) {
         if (pinEnteredLength > -1) {
             listOfPin[pinEnteredLength].setImageResource(R.drawable.pin_empty)
             if (pinEnteredLength <= MAXIMUM_PIN_ALLOWED) {
@@ -155,17 +153,17 @@ class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickLi
     override fun onClick(view: View?) {
         when (view?.id) {
             R.id.completeSetupButton -> {
-                navigateToAbsaPinCodeSuccessScreen()
+                binding.navigateToAbsaPinCodeSuccessScreen()
             }
         }
     }
 
     override fun onResume() {
         super.onResume()
-        clearPin()
+        binding.clearPin()
     }
 
-    private fun clearPin() {
+    private fun AbsaConfirmFiveDigitCodeFragmentBinding.clearPin() {
         edtEnterATMPin?.apply {
             clearPinImage(mPinImageViewList!!)
             text.clear()
@@ -175,7 +173,7 @@ class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickLi
 
 
     override fun onAnimationComplete() {
-        clearPin()
+        binding.clearPin()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

@@ -1,49 +1,63 @@
 package za.co.woolworths.financial.services.android.ui.fragments.credit_card_delivery
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.EditText
 import androidx.core.os.bundleOf
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.credit_card_delivery_recipient_address_layout.*
+import com.awfs.coordination.databinding.CreditCardDeliveryRecipientAddressLayoutBinding
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.*
 import za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity
 import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants
 import za.co.woolworths.financial.services.android.util.Utils
 
-class CreditCardDeliveryAddressDetailsFragment : CreditCardDeliveryBaseFragment(), View.OnClickListener {
+class CreditCardDeliveryAddressDetailsFragment : CreditCardDeliveryBaseFragment(R.layout.credit_card_delivery_recipient_address_layout), View.OnClickListener {
 
+    private lateinit var binding: CreditCardDeliveryRecipientAddressLayoutBinding
     var navController: NavController? = null
     private lateinit var listOfInputFields: List<EditText>
     private var isBusinessAddress: Boolean = false
     private var isEditRecipient: Boolean = false
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.credit_card_delivery_recipient_address_layout, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setUpToolBar()
-        navController = Navigation.findNavController(view)
-        listOfInputFields = listOf(complexOrBuildingName, businessName, streetAddress, suburb, cityOrTown, province, postalCode)
-        submitAddress?.setOnClickListener(this)
-        clearDetails?.setOnClickListener(this)
-        complexOrBuildingName?.apply { afterTextChanged { showErrorInputField(this, View.GONE) } }
-        businessName?.apply { afterTextChanged { showErrorInputField(this, View.GONE) } }
-        streetAddress?.apply { afterTextChanged { showErrorInputField(this, View.GONE) } }
-        suburb?.apply { afterTextChanged { showErrorInputField(this, View.GONE) } }
-        cityOrTown?.apply { afterTextChanged { showErrorInputField(this, View.GONE) } }
-        province?.apply { afterTextChanged { showErrorInputField(this, View.GONE) } }
-        postalCode?.apply { afterTextChanged { showErrorInputField(this, View.GONE) } }
-        configureUI()
-        if (arguments?.containsKey("isEditRecipient") == true) {
-            isEditRecipient = arguments?.get("isEditRecipient") as Boolean
+        binding = CreditCardDeliveryRecipientAddressLayoutBinding.bind(view)
+
+        binding.apply {
+            setUpToolBar()
+            navController = Navigation.findNavController(view)
+            listOfInputFields = listOf(
+                complexOrBuildingName,
+                businessName,
+                streetAddress,
+                suburb,
+                cityOrTown,
+                province,
+                postalCode
+            )
+            submitAddress?.setOnClickListener(this@CreditCardDeliveryAddressDetailsFragment)
+            clearDetails?.setOnClickListener(this@CreditCardDeliveryAddressDetailsFragment)
+            complexOrBuildingName?.apply {
+                afterTextChanged {
+                    showErrorInputField(
+                        this,
+                        View.GONE
+                    )
+                }
+            }
+            businessName?.apply { afterTextChanged { showErrorInputField(this, View.GONE) } }
+            streetAddress?.apply { afterTextChanged { showErrorInputField(this, View.GONE) } }
+            suburb?.apply { afterTextChanged { showErrorInputField(this, View.GONE) } }
+            cityOrTown?.apply { afterTextChanged { showErrorInputField(this, View.GONE) } }
+            province?.apply { afterTextChanged { showErrorInputField(this, View.GONE) } }
+            postalCode?.apply { afterTextChanged { showErrorInputField(this, View.GONE) } }
+            configureUI()
+            if (arguments?.containsKey("isEditRecipient") == true) {
+                isEditRecipient = arguments?.get("isEditRecipient") as Boolean
+            }
         }
     }
 
@@ -56,7 +70,7 @@ class CreditCardDeliveryAddressDetailsFragment : CreditCardDeliveryBaseFragment(
         }
     }
 
-    fun configureUI() {
+    fun CreditCardDeliveryRecipientAddressLayoutBinding.configureUI() {
         statusResponse?.addressDetails?.let {
             complexOrBuildingName?.setText(it.complexName ?: "")
             businessName?.setText(it.businessName ?: "")
@@ -72,21 +86,23 @@ class CreditCardDeliveryAddressDetailsFragment : CreditCardDeliveryBaseFragment(
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.submitAddress -> {
-                onSubmit()
+                binding.onSubmit()
             }
             R.id.clearDetails -> {
-                businessName.text.clear()
-                complexOrBuildingName.text.clear()
-                streetAddress.text.clear()
-                suburb.text.clear()
-                province.text.clear()
-                cityOrTown.text.clear()
-                postalCode.text.clear()
+                binding.apply {
+                    businessName.text.clear()
+                    complexOrBuildingName.text.clear()
+                    streetAddress.text.clear()
+                    suburb.text.clear()
+                    province.text.clear()
+                    cityOrTown.text.clear()
+                    postalCode.text.clear()
+                }
             }
         }
     }
 
-    private fun onSubmit() {
+    private fun CreditCardDeliveryRecipientAddressLayoutBinding.onSubmit() {
         if (complexOrBuildingName?.text.toString().trim().isNotEmpty() && streetAddress?.text.toString().trim().isNotEmpty() && suburb?.text.toString().trim().isNotEmpty() && province?.text.toString().trim().isNotEmpty() && postalCode?.text.toString().trim().isNotEmpty() && if (isBusinessAddress) businessName?.text.toString().trim().isNotEmpty() else true) {
             val recipientDetails = RecipientDetails()
             val addressDetails = AddressDetails()
@@ -144,7 +160,7 @@ class CreditCardDeliveryAddressDetailsFragment : CreditCardDeliveryBaseFragment(
         }
     }
 
-    private fun showErrorInputField(editText: EditText, visible: Int) {
+    private fun CreditCardDeliveryRecipientAddressLayoutBinding.showErrorInputField(editText: EditText, visible: Int) {
         if (editText.id == R.id.businessName && !isBusinessAddress)
             return
 

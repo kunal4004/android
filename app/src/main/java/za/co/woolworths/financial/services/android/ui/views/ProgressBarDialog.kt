@@ -11,8 +11,7 @@ import android.view.WindowManager
 import androidx.annotation.NonNull
 import androidx.core.content.res.ResourcesCompat
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.progress_bar.view.*
-import java.lang.IllegalStateException
+import com.awfs.coordination.databinding.ProgressBarBinding
 
 class ProgressBarDialog {
 
@@ -20,9 +19,9 @@ class ProgressBarDialog {
 
     fun show(context: Context?): Dialog? {
         context?.apply {
-            val view = (getSystemService(Context.LAYOUT_INFLATER_SERVICE) as? LayoutInflater)?.inflate(R.layout.progress_bar, null)
-            view?.apply {
-                resources?.apply { setColorFilter(cp_pbar.indeterminateDrawable, ResourcesCompat.getColor(this, R.color.black, null)) } //Progress Bar Color
+            val binding = ProgressBarBinding.inflate(getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater, null, false)
+            binding.apply {
+                resources?.apply { setColorFilter(cpPbar.indeterminateDrawable, ResourcesCompat.getColor(this, R.color.black, null)) } //Progress Bar Color
             }
             dialog = Dialog(this, R.style.CustomProgressBarTheme)
             dialog?.window?.clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM)
@@ -31,14 +30,12 @@ class ProgressBarDialog {
                 dialog?.window?.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
                 dialog?.window?.statusBarColor = Color.TRANSPARENT
             }
-            view?.let { view ->
-                dialog?.setContentView(view)
+            dialog?.setContentView(binding.root)
 
-                try {
-                    dialog?.show()
-                } catch (ex: IllegalStateException) {
-                    return null
-                }
+            try {
+                dialog?.show()
+            } catch (ex: IllegalStateException) {
+                return null
             }
         }
         return dialog

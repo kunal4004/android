@@ -6,11 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.header_more_review_recycler_view.view.*
-import kotlinx.android.synthetic.main.pdp_rating_layout.view.*
-import kotlinx.android.synthetic.main.ratings_ratingdetails.view.*
-import kotlinx.android.synthetic.main.review_count_layout.view.*
-import kotlinx.android.synthetic.main.sort_and_refine_selection_layout.view.*
+import com.awfs.coordination.databinding.HeaderMoreReviewRecyclerViewBinding
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.RatingDistribution
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.ReviewStatistics
 import za.co.woolworths.financial.services.android.util.Utils
@@ -33,15 +29,15 @@ class MoreReviewHeaderAdapter(var reviewStatistics: List<ReviewStatistics>,
         this.totalPage = totalPage
     }
 
-    inner class HeaderViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
+    inner class HeaderViewHolder(val itemBinding: HeaderMoreReviewRecyclerViewBinding): RecyclerView.ViewHolder(itemBinding.root) {
         fun bindView() {
-            itemView.apply {
-                close_top.visibility = View.GONE
-                rating_details.text = context.getString(R.string.customer_reviews)
-                pdpratings.visibility = View.VISIBLE
-                sort_and_refine.visibility = View.VISIBLE
-                refineProducts.setOnClickListener({ sortAndRefineListener.openRefineDrawer() })
-                sortProducts.setOnClickListener( { sortAndRefineListener.openSortDrawer() })
+            itemBinding.apply {
+                ratingstatics.closeTop.visibility = View.GONE
+                ratingstatics.ratingDetails.text = root.context.getString(R.string.customer_reviews)
+                ratingstatics.pdpratings.root.visibility = View.VISIBLE
+                sortAndRefine.root.visibility = View.VISIBLE
+                sortAndRefine.refineProducts.setOnClickListener({ sortAndRefineListener.openRefineDrawer() })
+                sortAndRefine.sortProducts.setOnClickListener( { sortAndRefineListener.openSortDrawer() })
 
 
                 if (reviewStatistics.isEmpty()) {
@@ -50,19 +46,19 @@ class MoreReviewHeaderAdapter(var reviewStatistics: List<ReviewStatistics>,
                 reviewStatistics[0].apply {
                     val recommend= recommendedPercentage.split("%")
                     if (recommend.size == 2) {
-                        tvRecommendPercent.text = "${recommend[0]}% "
-                        tvRecommendTxtValue.text = recommend[1]
+                        ratingstatics.tvRecommendPercent.text = "${recommend[0]}% "
+                        ratingstatics.tvRecommendTxtValue.text = recommend[1]
                     }
-                    pdpratings.apply {
+                    ratingstatics.pdpratings.apply {
                         ratingBarTop.visibility = View.VISIBLE
                         tvTotalReviews.visibility = View.VISIBLE
                         ratingBarTop.rating = averageRating
-                        tvTotalReviews.text = resources.getQuantityString(R.plurals.no_review, reviewCount, reviewCount)
+                        tvTotalReviews.text = root.resources.getQuantityString(R.plurals.no_review, reviewCount, reviewCount)
                         tvTotalReviews.paintFlags = Paint.UNDERLINE_TEXT_FLAG
                     }
-                    view_2.visibility = View.GONE
-                    close.visibility = View.INVISIBLE
-                    setRatingDistributionUI(ratingDistribution, reviewCount, itemView)
+                    ratingstatics.view2.visibility = View.GONE
+                    ratingstatics.close.visibility = View.INVISIBLE
+                    setRatingDistributionUI(ratingDistribution, reviewCount, itemBinding)
                 }
             }
         }
@@ -70,35 +66,35 @@ class MoreReviewHeaderAdapter(var reviewStatistics: List<ReviewStatistics>,
 
     private fun setRatingDistributionUI(ratingDistribution: List<RatingDistribution>,
                                         reviewCount: Int,
-                                        itemView: View) {
-        itemView.apply {
+                                        itemBinding: HeaderMoreReviewRecyclerViewBinding) {
+        itemBinding.apply {
             for (rating in ratingDistribution) {
                 when (rating.ratingValue) {
                     1 -> {
-                        progressbar_1.progress =
+                        ratingstatics.progressbar1.progress =
                                 Utils.calculatePercentage(rating.count, reviewCount)
-                        tv_1_starRating_count.text = rating.count.toString()
+                        ratingstatics.tv1StarRatingCount.text = rating.count.toString()
                     }
                     2 -> {
-                        progressbar_2.progress =
+                        ratingstatics.progressbar2.progress =
                                 Utils.calculatePercentage(rating.count, reviewCount)
-                        tv_2_starRating_count.text = rating.count.toString()
+                        ratingstatics.tv2StarRatingCount.text = rating.count.toString()
                     }
                     3 -> {
-                        progressbar_3.progress =
+                        ratingstatics.progressbar3.progress =
                                 Utils.calculatePercentage(rating.count, reviewCount)
-                        tv_3_starRating_count.text = rating.count.toString()
+                        ratingstatics.tv3StarRatingCount.text = rating.count.toString()
                     }
                     4 -> {
-                        progressbar_4.progress =
+                        ratingstatics.progressbar4.progress =
                                 Utils.calculatePercentage(rating.count, reviewCount)
-                        tv_4_starRating_count.text = rating.count.toString()
+                        ratingstatics.tv4StarRatingCount.text = rating.count.toString()
 
                     }
                     5 -> {
-                        progressbar_5.progress =
+                        ratingstatics.progressbar5.progress =
                                 Utils.calculatePercentage(rating.count, reviewCount)
-                        tv_5_starRating_count.text = rating.count.toString()
+                        ratingstatics.tv5StarRatingCount.text = rating.count.toString()
                     }
                 }
             }
@@ -107,9 +103,9 @@ class MoreReviewHeaderAdapter(var reviewStatistics: List<ReviewStatistics>,
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int):
             MoreReviewHeaderAdapter.HeaderViewHolder {
-        val itemView = LayoutInflater.from(parent.context)
-                .inflate(R.layout.header_more_review_recycler_view, parent, false)
-        return HeaderViewHolder(itemView)
+        return HeaderViewHolder(
+            HeaderMoreReviewRecyclerViewBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        )
     }
 
     override fun getItemCount(): Int {

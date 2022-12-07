@@ -11,13 +11,14 @@ import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.contact_us_customer_service.*
+import com.awfs.coordination.databinding.ContactUsCustomerServiceBinding
 import za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator
 
-class ContactUsCustomerServiceFragment : Fragment() {
+class ContactUsCustomerServiceFragment : Fragment(R.layout.contact_us_customer_service) {
 
+    private lateinit var binding: ContactUsCustomerServiceBinding
     private val customerServicesModel = ContactUsModel()
 
     private var mBottomNavigator: BottomNavigator? = null
@@ -28,16 +29,13 @@ class ContactUsCustomerServiceFragment : Fragment() {
             mBottomNavigator = context
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.contact_us_customer_service, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding = ContactUsCustomerServiceBinding.bind(view)
         setupToolbar()
 
         customerServicesModel.contactUsCustomerServicesOptions()?.forEachIndexed { index, contactUsOptions ->
-            val customerServiceItem = layoutInflater.inflate(R.layout.contact_us_customer_services_landing_item, customerServicesLinearLayout, false)
+            val customerServiceItem = layoutInflater.inflate(R.layout.contact_us_customer_services_landing_item, binding.customerServicesLinearLayout, false)
             val customerServicesTextView = customerServiceItem.findViewById<TextView>(R.id.customerServicesTextView)
             val customerServicesDescriptionTextView = customerServiceItem.findViewById<TextView>(R.id.customerServicesDescriptionTextView)
             val customerServicesDivider = customerServiceItem.findViewById<View>(R.id.customerServicesDivider)
@@ -57,7 +55,7 @@ class ContactUsCustomerServiceFragment : Fragment() {
                 customerServicesDivider.visibility = View.GONE
             }
             customerServiceItem?.setOnClickListener { openFragment(ContactUsCallCenterDetailFragment.newInstance(contactUsOptions)) }
-            customerServicesLinearLayout?.addView(customerServiceItem)
+            binding.customerServicesLinearLayout?.addView(customerServiceItem)
         }
     }
 

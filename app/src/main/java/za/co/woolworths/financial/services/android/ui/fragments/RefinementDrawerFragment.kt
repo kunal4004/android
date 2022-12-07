@@ -1,14 +1,15 @@
 package za.co.woolworths.financial.services.android.ui.fragments
 
 import android.content.Intent
-import android.os.Bundle
 import android.text.TextUtils
-import android.view.*
+import android.view.Gravity
+import android.view.View
+import android.view.WindowManager
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.fragment_drawer.*
+import com.awfs.coordination.databinding.FragmentDrawerBinding
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.ProductView
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
@@ -24,8 +25,9 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.refine.S
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.OnRefineProductsResult
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.OnRefinementOptionSelected
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 
-class RefinementDrawerFragment : Fragment(), OnRefinementOptionSelected, OnRefineProductsResult {
+class RefinementDrawerFragment : BaseFragmentBinding<FragmentDrawerBinding>(FragmentDrawerBinding::inflate), OnRefinementOptionSelected, OnRefineProductsResult {
 
     private var mDrawerToggle: ActionBarDrawerToggle? = null
     private var mDrawerLayout: DrawerLayout? = null
@@ -46,10 +48,6 @@ class RefinementDrawerFragment : Fragment(), OnRefinementOptionSelected, OnRefin
         const val NAVIGATION_STATE = "NAVIGATION_STATE"
         const val UPDATED_NAVIGATION_STATE = "UPDATED_NAVIGATION_STATE"
 
-    }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_drawer, container, false)
     }
 
     public fun setUpDrawer(drawerLayout: DrawerLayout, productsResponse: ProductView, productsRequestParams: ProductsRequestParams) {
@@ -119,7 +117,7 @@ class RefinementDrawerFragment : Fragment(), OnRefinementOptionSelected, OnRefin
     }
 
     override fun onBackPressedWithOutRefinement() {
-        if (progressBar.visibility == View.VISIBLE)
+        if (binding.progressBar.visibility == View.VISIBLE)
             return
         if (childFragmentManager.backStackEntryCount > 0) {
             childFragmentManager.popBackStack()
@@ -174,14 +172,14 @@ class RefinementDrawerFragment : Fragment(), OnRefinementOptionSelected, OnRefin
     }
 
     private fun hideProgressBar() {
-        progressBar?.visibility = View.INVISIBLE
+        binding.progressBar?.visibility = View.INVISIBLE
         activity?.apply {
             window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
         }
     }
 
     private fun showProgressBar() {
-        progressBar?.visibility = View.VISIBLE
+        binding.progressBar?.visibility = View.VISIBLE
         activity?.apply {
             window.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                     WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
@@ -260,23 +258,23 @@ class RefinementDrawerFragment : Fragment(), OnRefinementOptionSelected, OnRefin
 
     override fun hideBackButton() {
         super.hideBackButton()
-        backButton.visibility = View.GONE
-        closeButton.visibility = View.VISIBLE
+        binding.backButton.visibility = View.GONE
+        binding.closeButton.visibility = View.VISIBLE
     }
 
     override fun hideCloseButton() {
         super.hideCloseButton()
-        backButton.visibility = View.VISIBLE
-        closeButton.visibility = View.INVISIBLE
+        binding.backButton.visibility = View.VISIBLE
+        binding.closeButton.visibility = View.INVISIBLE
     }
 
     override fun setPageTitle(title: String) {
         super.setPageTitle(title)
-        toolbarText.text = title
+        binding.toolbarText.text = title
     }
 
     fun removeAllFragments() {
-        fragment_container?.removeAllViewsInLayout()
+        binding.fragmentContainer?.removeAllViewsInLayout()
     }
 
     private fun resetRefinementData() {
@@ -290,8 +288,8 @@ class RefinementDrawerFragment : Fragment(), OnRefinementOptionSelected, OnRefin
 
     fun setUniqueIds(){
         resources?.apply {
-            toolbarText?.contentDescription = getString(R.string.plp_testViewFilterResult)
-            closeButton?.contentDescription = getString(R.string.plp_buttonClose)
+            binding.toolbarText?.contentDescription = getString(R.string.plp_testViewFilterResult)
+            binding.closeButton?.contentDescription = getString(R.string.plp_buttonClose)
         }
     }
 

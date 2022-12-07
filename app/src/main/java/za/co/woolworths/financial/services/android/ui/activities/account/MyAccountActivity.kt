@@ -7,7 +7,7 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.my_account_activity.*
+import com.awfs.coordination.databinding.MyAccountActivityBinding
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragmentSafely
 import za.co.woolworths.financial.services.android.ui.fragments.account.AccountMasterCache
@@ -27,10 +27,13 @@ class MyAccountActivity : AppCompatActivity() {
         const val RESULT_CODE_MY_ACCOUNT_FRAGMENT = 4444
     }
 
+    lateinit var binding: MyAccountActivityBinding
+
     @SuppressLint("DefaultLocale")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.my_account_activity)
+        binding = MyAccountActivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         Utils.updateStatusBarBackground(this)
         actionBar()
         if (savedInstanceState == null) {
@@ -56,7 +59,7 @@ class MyAccountActivity : AppCompatActivity() {
     }
 
     private fun actionBar() {
-        setSupportActionBar(myAccountToolbar)
+        setSupportActionBar(binding.myAccountToolbar)
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
             setDisplayShowTitleEnabled(false)
@@ -101,7 +104,7 @@ class MyAccountActivity : AppCompatActivity() {
     }
 
     fun setToolbarTitle(title: String?) {
-        accountToolbarTitle?.text = title
+        binding.accountToolbarTitle?.text = title
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

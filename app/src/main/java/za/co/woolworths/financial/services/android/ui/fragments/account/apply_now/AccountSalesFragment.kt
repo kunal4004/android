@@ -3,24 +3,17 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.apply_n
 import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
-import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.AccountSalesDetailFragmentBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.gson.Gson
-
-import kotlinx.android.synthetic.main.account_sales_card_benefit_layout.*
-import kotlinx.android.synthetic.main.account_sales_card_collection_layout.*
-import kotlinx.android.synthetic.main.account_sales_detail_fragment.*
-import kotlinx.android.synthetic.main.account_sales_more_benefit_layout.*
-import kotlinx.android.synthetic.main.account_sales_qualify_criteria_layout.*
 import za.co.woolworths.financial.services.android.models.dto.account.*
 import za.co.woolworths.financial.services.android.ui.activities.account.apply_now.AccountSalesActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.apply_now.AccountSalesPresenterImpl.Companion.ACCOUNT_SALES_CREDIT_CARD
@@ -28,7 +21,7 @@ import za.co.woolworths.financial.services.android.ui.adapters.MoreBenefitAdapte
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 
 
-class AccountSalesFragment : Fragment() {
+class AccountSalesFragment : Fragment(R.layout.account_sales_detail_fragment) {
 
     companion object {
         fun newInstance(hashMap: AccountSales?) = AccountSalesFragment().withArgs {
@@ -36,13 +29,13 @@ class AccountSalesFragment : Fragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.account_sales_detail_fragment, container, false)
-    }
+    private lateinit var binding: AccountSalesDetailFragmentBinding
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding = AccountSalesDetailFragmentBinding.bind(view)
+
         val storeCardItem = arguments?.getString(ACCOUNT_SALES_CREDIT_CARD, "")
         val accountSales: AccountSales? = Gson().fromJson(storeCardItem, AccountSales::class.java)
 
@@ -52,7 +45,7 @@ class AccountSalesFragment : Fragment() {
             // setNestedScrollingEnabled will unlock the ability of NestedScrollView to scroll inside ViewPager2
             isCreditCardProduct = mAccountSalesModelImpl?.isCreditCardProduct()
 
-            applyNowCardDetailScrollView?.apply {
+            binding.applyNowCardDetailScrollView?.apply {
                 setScrollingEnabled(
                         when (mBottomSheetBehaviorState) {
                             BottomSheetBehavior.STATE_COLLAPSED -> {
@@ -79,7 +72,7 @@ class AccountSalesFragment : Fragment() {
             cardBenefits?.forEach { cardBenefit ->
                 // Personal Loan title is Benefits instead of Card Benefits in other sections
                 if (cardBenefit.cardBenefitTitle?.isNotEmpty() == true) {
-                    salesBenefitTitleTextView?.text = cardBenefit.cardBenefitTitle
+                    binding.includeAccountSalesCardBenefit.salesBenefitTitleTextView?.text = cardBenefit.cardBenefitTitle
                 }
                 val view = View.inflate(activity, R.layout.account_sales_card_benefits_item, null)
                 val titleTextView: TextView? = view?.findViewById(R.id.salesBenefitTitleTextView)
@@ -89,14 +82,14 @@ class AccountSalesFragment : Fragment() {
                 titleTextView?.text = cardBenefit.title
                 descriptionTextView?.text = cardBenefit.description
                 salesItemImageView?.setImageResource(cardBenefit.drawableId)
-                cardBenefitLinearLayout?.addView(view)
+                binding.includeAccountSalesCardBenefit.cardBenefitLinearLayout?.addView(view)
             }
         }
     }
 
     private fun displayMoreBenefits(moreBenefits: MutableList<MoreBenefit>) {
         val accountSalesMoreBenefitAdapter = MoreBenefitAdapter(moreBenefits)
-        moreBenefitRecyclerView?.apply {
+        binding.includeAccountSalesMoreBenefit.moreBenefitRecyclerView?.apply {
             isNestedScrollingEnabled = false
             clipToPadding = true
             layoutManager = activity?.let { activity -> LinearLayoutManager(activity) }
@@ -110,15 +103,15 @@ class AccountSalesFragment : Fragment() {
                 val view = View.inflate(activity, R.layout.account_sales_bullet_item, null)
                 val titleTextView: TextView? = view?.findViewById(R.id.bulletTitleTextView)
                 titleTextView?.text = items.title
-                qualifyCriteriaLinearLayout?.addView(view)
+                binding.includeAccountSalesQualifyCriteria.qualifyCriteriaLinearLayout?.addView(view)
             }
         }
     }
 
     private fun displayCardCollection(cardCollection: MutableList<CardCollection>, isCreditCardProduct: Boolean?) {
         if (cardCollection.isEmpty()) {
-            cardCollectionConstraintLayout?.visibility = GONE
-            qualifyCriteriaSpaceView?.setBackgroundColor(Color.WHITE)
+            binding.cardCollectionConstraintLayout?.root?.visibility = GONE
+            binding.includeAccountSalesQualifyCriteria.qualifyCriteriaSpaceView?.setBackgroundColor(Color.WHITE)
             return
         }
         activity?.let { activity ->
@@ -134,16 +127,16 @@ class AccountSalesFragment : Fragment() {
                 val view = View.inflate(activity, R.layout.account_sales_bullet_item, null)
                 val titleTextView: TextView? = view?.findViewById(R.id.bulletTitleTextView)
                 titleTextView?.text = items.title
-                cardCollectionItemLinearLayout?.addView(view)
+                binding.cardCollectionConstraintLayout.cardCollectionItemLinearLayout?.addView(view)
             }
         }
     }
 
     fun smoothScrollToTop() {
-        applyNowCardDetailScrollView?.smoothScrollTo(0, 0)
+        binding.applyNowCardDetailScrollView?.smoothScrollTo(0, 0)
     }
 
     fun setScrollingEnabled(isEnabled: Boolean) {
-        applyNowCardDetailScrollView?.setScrollingEnabled(isEnabled)
+        binding.applyNowCardDetailScrollView?.setScrollingEnabled(isEnabled)
     }
 }

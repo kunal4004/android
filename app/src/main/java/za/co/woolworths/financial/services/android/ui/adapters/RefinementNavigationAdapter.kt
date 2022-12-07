@@ -1,16 +1,15 @@
 package za.co.woolworths.financial.services.android.ui.adapters
 
 import android.app.Activity
-import android.content.Context
-import androidx.recyclerview.widget.RecyclerView
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.refinements_on_promotion_layout.view.*
-import kotlinx.android.synthetic.main.refinements_options_layout.view.*
-import kotlinx.android.synthetic.main.refinements_section_header_layout.view.*
+import com.awfs.coordination.databinding.RefinementsOnPromotionLayoutBinding
+import com.awfs.coordination.databinding.RefinementsOptionsLayoutBinding
+import com.awfs.coordination.databinding.RefinementsSectionHeaderLayoutBinding
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.BreadCrumb
 import za.co.woolworths.financial.services.android.models.dto.RefinementHistory
@@ -18,7 +17,6 @@ import za.co.woolworths.financial.services.android.models.dto.RefinementNavigati
 import za.co.woolworths.financial.services.android.models.dto.RefinementSelectableItem
 import za.co.woolworths.financial.services.android.ui.adapters.holder.RefinementBaseViewHolder
 import za.co.woolworths.financial.services.android.ui.fragments.product.refine.RefinementNavigationFragment
-import za.co.woolworths.financial.services.android.ui.fragments.product.utils.BaseFragmentListner
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.OnRefinementOptionSelected
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -27,15 +25,23 @@ class RefinementNavigationAdapter(val context: Activity, val listner: OnRefineme
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RefinementBaseViewHolder {
         return when (viewType) {
             RefinementSelectableItem.ViewType.SECTION_HEADER.value -> {
-                SectionHeaderHolder(LayoutInflater.from(context).inflate(R.layout.refinements_section_header_layout, parent, false))
+                SectionHeaderHolder(
+                    RefinementsSectionHeaderLayoutBinding.inflate(LayoutInflater.from(context), parent, false)
+                )
             }
             RefinementSelectableItem.ViewType.PROMOTION.value -> {
-                PromotionHolder(LayoutInflater.from(context).inflate(R.layout.refinements_on_promotion_layout, parent, false))
+                PromotionHolder(
+                    RefinementsOnPromotionLayoutBinding.inflate(LayoutInflater.from(context), parent, false)
+                )
             }
             RefinementSelectableItem.ViewType.OPTIONS.value -> {
-                OptionsHolder(LayoutInflater.from(context).inflate(R.layout.refinements_options_layout, parent, false))
+                OptionsHolder(
+                    RefinementsOptionsLayoutBinding.inflate(LayoutInflater.from(context), parent, false)
+                )
             }
-            else -> SectionHeaderHolder(LayoutInflater.from(context).inflate(R.layout.refinements_section_header_layout, parent, false))
+            else -> SectionHeaderHolder(
+                RefinementsSectionHeaderLayoutBinding.inflate(LayoutInflater.from(context), parent, false)
+            )
         }
     }
 
@@ -47,18 +53,18 @@ class RefinementNavigationAdapter(val context: Activity, val listner: OnRefineme
         holder.bind(position)
     }
 
-    inner class SectionHeaderHolder(itemView: View) : RefinementBaseViewHolder(itemView) {
+    inner class SectionHeaderHolder(val itemBinding: RefinementsSectionHeaderLayoutBinding) : RefinementBaseViewHolder(itemBinding.root) {
         override fun bind(position: Int) {
             var item = dataList[position].item as RefinementNavigation
-            itemView.refinementSectionHeader.text = if (item.displayName.contentEquals(RefinementNavigationFragment.ON_PROMOTION)) context.resources.getString(R.string.refinement_show_me) else context.resources.getString(R.string.refinement_filter_by)
+            itemBinding.refinementSectionHeader.text = if (item.displayName.contentEquals(RefinementNavigationFragment.ON_PROMOTION)) context.resources.getString(R.string.refinement_show_me) else context.resources.getString(R.string.refinement_filter_by)
         }
     }
 
-    inner class PromotionHolder(itemView: View) : RefinementBaseViewHolder(itemView) {
+    inner class PromotionHolder(val itemBinding: RefinementsOnPromotionLayoutBinding) : RefinementBaseViewHolder(itemBinding.root) {
         override fun bind(position: Int) {
             val refinementSelectableItem = dataList[position]
-            itemView.promotionSwitch.isChecked = refinementSelectableItem.isSelected
-            itemView.promotionSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
+            itemBinding.promotionSwitch.isChecked = refinementSelectableItem.isSelected
+            itemBinding.promotionSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
                 refinementSelectableItem.isSelected = isChecked
                 notifyDataSetChanged()
                 val navigationItem = refinementSelectableItem.item as RefinementNavigation
@@ -69,31 +75,31 @@ class RefinementNavigationAdapter(val context: Activity, val listner: OnRefineme
         }
     }
 
-    inner class OptionsHolder(itemView: View) : RefinementBaseViewHolder(itemView) {
+    inner class OptionsHolder(val itemBinding: RefinementsOptionsLayoutBinding) : RefinementBaseViewHolder(itemBinding.root) {
         override fun bind(position: Int) {
             var item = dataList[position].item as RefinementNavigation
             var isBreadCrumbsExist = history.categoryDimensions.size > 0 && history.categoryDimensions[0].breadCrumbs.size > 0
             if ((item.displayName.contentEquals(RefinementNavigationFragment.CATEGORY) && isBreadCrumbsExist) || (TextUtils.isEmpty(item.displayName) && isBreadCrumbsExist)) {
                 val breadCrumbs: ArrayList<BreadCrumb>? = history.categoryDimensions[0].breadCrumbs
-                itemView.label.text = breadCrumbs!![breadCrumbs.size - 1].label
+                itemBinding.label.text = breadCrumbs!![breadCrumbs.size - 1].label
                 if (item.refinements.size > 0) {
-                    itemView.displayName.text = item.displayName
-                    itemView.rightArrow.visibility = View.VISIBLE
-                    itemView.isClickable = true
+                    itemBinding.displayName.text = item.displayName
+                    itemBinding.rightArrow.visibility = View.VISIBLE
+                    itemBinding.root.isClickable = true
                 } else {
-                    itemView.displayName.text = RefinementNavigationFragment.CATEGORY
-                    itemView.rightArrow.visibility = View.GONE
-                    itemView.isClickable = false
+                    itemBinding.displayName.text = RefinementNavigationFragment.CATEGORY
+                    itemBinding.rightArrow.visibility = View.GONE
+                    itemBinding.root.isClickable = false
                 }
 
             } else {
-                itemView.displayName.text = item.displayName
-                itemView.rightArrow.visibility = View.VISIBLE
+                itemBinding.displayName.text = item.displayName
+                itemBinding.rightArrow.visibility = View.VISIBLE
                 if (item.refinementCrumbs.size > 0) {
-                    itemView.label.text = item.refinementCrumbs.joinToString(",")
+                    itemBinding.label.text = item.refinementCrumbs.joinToString(",")
                 }
             }
-            itemView.refinementOptions.setOnClickListener {
+            itemBinding.refinementOptions.setOnClickListener {
                 listner.onRefinementOptionSelected(item)
             }
         }
