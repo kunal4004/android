@@ -8,19 +8,21 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.lifecycle.lifecycleScope
+import com.awfs.coordination.R
 import com.awfs.coordination.databinding.ActivityApplyNowBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
+import za.co.woolworths.financial.services.android.models.dto.account.ServerErrorResponse
 import za.co.woolworths.financial.services.android.models.dto.account.applynow.ApplyNowSectionReference
 import za.co.woolworths.financial.services.android.models.dto.account.applynow.Content
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.applynow.adapters.ApplyNowFragAdapter
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.ViewState
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.showErrorDialog
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
@@ -108,7 +110,13 @@ class ApplyNowActivity : AppCompatActivity(), View.OnClickListener {
                             }
                         }
                     }
-                    is ViewState.RenderFailure -> {}
+                    is ViewState.RenderFailure -> {
+                        runOnUiThread{
+                            val serverErrorResponse = ServerErrorResponse()
+                            serverErrorResponse.desc = getString(R.string.general_error_desc) ?: ""
+                            showErrorDialog(this@ApplyNowActivity, serverErrorResponse)
+                        }
+                    }
                     is ViewState.Loading -> {}
                     is ViewState.RenderEmpty -> {}
                     else -> Unit
