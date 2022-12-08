@@ -2739,6 +2739,7 @@
     <string name="edit_address_button">EDIT ADDRESS</string>
     <string name="promotional_text_banner">Extra 5% off when you pay with your Woolies card.\nThis offer is available on selected items. Offer valid for a limited time only. Subject to availability. Discount applies at checkout.T\'s &amp; C\'s apply.</string>
 
+    <string name="unfortunately_something_went_wrong">Unfortunately,\nSomething Went Wrong.</string>
     <string name="already_have_a_wrewards_card">Already have a wrewards card?</string>
     <string name="add_it_now">Add it now</string>
     <string name="sign_up">SIGN UP</string>
@@ -2814,6 +2815,5 @@
     <string name="cancelled">Cancelled</string>
     <string name="order">Order\u0020</string>
     <string name="a_report_for_this_review_has_already_been_submitted">A report for this review has already been submitted.</string>
-
 
 </resources>
