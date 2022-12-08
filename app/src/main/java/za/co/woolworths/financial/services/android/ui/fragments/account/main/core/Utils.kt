@@ -1,9 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.core
 
-import android.net.Network
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
-import retrofit2.Retrofit
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.CoreDataSource.IOTaskResult
 
 /**
