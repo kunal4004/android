@@ -157,6 +157,7 @@ import za.co.woolworths.financial.services.android.ui.activities.rating_and_revi
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.network.apihelper.RatingAndReviewApiHelper
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.viewmodel.RatingAndReviewViewModel
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.viewmodel.RatingAndReviewViewModelFactory
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.FoodProductNotAvailableForCollectionDialog
 import za.co.woolworths.financial.services.android.ui.vto.utils.VirtualTryOnUtil
 import za.co.woolworths.financial.services.android.ui.vto.ui.PfSDKInitialCallback
 import za.co.woolworths.financial.services.android.ui.vto.utils.PermissionUtil
@@ -169,6 +170,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     ILocationProvider, View.OnClickListener,
     OutOfStockMessageDialogFragment.IOutOfStockMessageDialogDismissListener,
     ProductNotAvailableForCollectionDialog.IProductNotAvailableForCollectionDialogListener,
+    FoodProductNotAvailableForCollectionDialog.IProductNotAvailableForCollectionDialogListener,
     VtoSelectOptionListener, WMaterialShowcaseView.IWalkthroughActionListener, VtoTryAgainListener,View.OnTouchListener,ReviewThumbnailAdapter.ThumbnailClickListener, ViewTreeObserver.OnScrollChangedListener {
 
     var productDetails: ProductDetails? = null
@@ -1071,7 +1073,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 //Food only
                 if(this.productDetails?.fulfillmentType == StoreUtils.Companion.FulfillmentType.FOOD_ITEMS?.type && Utils.retrieveStoreId(this.productDetails?.fulfillmentType) == "") {
                     showProductUnavailable()
-                    showProductNotAvailableForCollection()
+                    foodProductNotAvailableForCollection()
                     return
                 }  //FBH only
                 else if((this.productDetails?.fulfillmentType == StoreUtils.Companion.FulfillmentType.CLOTHING_ITEMS?.type || this.productDetails?.fulfillmentType == StoreUtils.Companion.FulfillmentType.CRG_ITEMS?.type) &&
@@ -2926,6 +2928,16 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 ProductNotAvailableForCollectionDialog.newInstance().show(
                     this@ProductDetailsFragment.childFragmentManager,
                     ProductNotAvailableForCollectionDialog::class.java.simpleName
+                )
+        }
+    }
+
+    override fun foodProductNotAvailableForCollection() {
+        activity?.apply {
+            if (!FoodProductNotAvailableForCollectionDialog.dialogInstance.isVisible)
+                FoodProductNotAvailableForCollectionDialog.newInstance().show(
+                        this@ProductDetailsFragment.childFragmentManager,
+                        FoodProductNotAvailableForCollectionDialog::class.java.simpleName
                 )
         }
     }
