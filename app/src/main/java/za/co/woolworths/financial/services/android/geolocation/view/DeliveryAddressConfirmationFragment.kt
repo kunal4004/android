@@ -429,7 +429,7 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
             if (placeId == null) {
                 return
             }
-            val confirmLocationAddress = ConfirmLocationAddress(placeId,"",address2)
+            val confirmLocationAddress = ConfirmLocationAddress(placeId,null,address2)
             val confirmLocationRequest = when (deliveryType) {
                 Delivery.STANDARD.name -> {
                     mStoreId = ""
