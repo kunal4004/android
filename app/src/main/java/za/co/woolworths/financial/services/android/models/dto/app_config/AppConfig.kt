@@ -6,7 +6,6 @@ import za.co.woolworths.financial.services.android.models.dto.RatingsAndReviews
 import za.co.woolworths.financial.services.android.models.dto.app_config.account_options.ConfigAccountOptions
 import za.co.woolworths.financial.services.android.models.dto.app_config.balance_protection_insurance.ConfigBalanceProtectionInsurance
 import za.co.woolworths.financial.services.android.models.dto.app_config.chat.ConfigInAppChat
-import za.co.woolworths.financial.services.android.models.dto.app_config.contact_us.ConfigContactUs
 import za.co.woolworths.financial.services.android.models.dto.app_config.credit_limit_increase.ConfigCreditLimitIncrease
 import za.co.woolworths.financial.services.android.models.dto.app_config.defaults.ConfigDefaults
 import za.co.woolworths.financial.services.android.models.dto.app_config.device_security.ConfigDeviceSecurity
@@ -31,7 +30,6 @@ data class AppConfig(
     var creditCardActivation: ConfigCreditCardActivation?,
     var creditCardDelivery: ConfigCreditCardDelivery?,
     var whatsApp: ConfigWhatsApp?,
-    var contactUs: ArrayList<ConfigContactUs>?,
     var clickAndCollect: ConfigClickAndCollect?,
     var inAppChat: ConfigInAppChat?,
     var productDetailsPage: ConfigProductDetailsPage?,
