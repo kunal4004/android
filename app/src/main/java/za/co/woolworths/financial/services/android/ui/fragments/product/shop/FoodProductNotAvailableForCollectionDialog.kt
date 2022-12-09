@@ -25,7 +25,7 @@ class FoodProductNotAvailableForCollectionDialog : WBottomSheetDialogFragment() 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         try {
-            listener = parentFragment as IProductNotAvailableForCollectionDialogListener?
+            listener = parentFragment as? IProductNotAvailableForCollectionDialogListener?
         } catch (e: ClassCastException) {
             throw ClassCastException("Calling fragment must implement Callback interface")
         }
