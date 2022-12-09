@@ -732,6 +732,8 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
             BundleKeysConstants.REQUEST_CODE -> {
              if (resultCode == Activity.RESULT_OK) {
                  initViews()
+                 viewModel.getOnDemandCategories()
+                 viewModel.getDashLandingDetails()
                }
             }
         }

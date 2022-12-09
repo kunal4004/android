@@ -6,17 +6,14 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RootCategories {
-
-    @SerializedName("rootCategories")
+public class DashRootCategories {
+    @SerializedName("onDemandCategories")
     @Expose
-    public List<RootCategory> rootCategories = null;
+    public ArrayList<RootCategory> onDemandCategories = null;
     @SerializedName("response")
     @Expose
     public Response response;
     @SerializedName("httpCode")
     @Expose
     public Integer httpCode;
-    @SerializedName("dash")
-    public Dash dash;
 }

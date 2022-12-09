@@ -1080,6 +1080,10 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
         return postItemToCart.make(addItemToCart, new IResponseListener<AddItemToCartResponse>() {
             @Override
             public void onSuccess(AddItemToCartResponse addItemToCartResponse) {
+                Activity activity = getActivity();
+                if (activity == null || !isAdded()) return;
+                pbLoadingIndicator.setVisibility(GONE);
+
                 switch (addItemToCartResponse.httpCode) {
                     case HTTP_OK:
                         onAddToCartSuccess(addItemToCartResponse, getTotalItemQuantity(addItemToCart));
@@ -1107,6 +1111,8 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
                                     getContext()
                             );
                             enableAddToCartButton(VISIBLE);
+                        } else {
+                            otherHttpCode(addItemToCartResponse.response);
                         }
                         break;
                     default:
@@ -1122,12 +1128,9 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
                 addedToCartFail(true);
                 Activity activity = getActivity();
                 if (activity == null || !isAdded()) return;
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        pbLoadingIndicator.setVisibility(GONE);
-                        btnCheckOut.setVisibility(VISIBLE);
-                    }
+                activity.runOnUiThread(() -> {
+                    pbLoadingIndicator.setVisibility(GONE);
+                    btnCheckOut.setVisibility(VISIBLE);
                 });
             }
         });
