@@ -7,7 +7,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.account.RefreshStatus
-import za.co.woolworths.financial.services.android.models.dto.app_config.account_options.FicaRefresh
 import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils

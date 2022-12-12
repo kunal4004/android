@@ -18,11 +18,9 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.AvailableFundsFragmentBinding
 import com.facebook.shimmer.Shimmer
 import com.google.gson.Gson
-import kotlinx.android.synthetic.main.available_funds_fragment.*
-import kotlinx.android.synthetic.main.view_pay_my_account_button.*
-import kotlinx.android.synthetic.main.view_statement_button.*
 import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IAvailableFundsContract
@@ -41,7 +39,6 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.loan.LoanWithdrawalActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
-
 import za.co.woolworths.financial.services.android.ui.extension.navigateSafelyWithNavController
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFragment.Companion.ACCOUNTS
@@ -60,8 +57,9 @@ import za.co.woolworths.financial.services.android.util.analytics.FirebaseManage
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 import java.net.ConnectException
 
+open class AvailableFundFragment : Fragment(R.layout.available_funds_fragment), IAvailableFundsContract.AvailableFundsView {
 
-open class AvailableFundFragment : Fragment(), IAvailableFundsContract.AvailableFundsView {
+    protected lateinit var binding: AvailableFundsFragmentBinding
     private lateinit var mAvailableFundPresenter: AvailableFundsPresenterImpl
     private lateinit var bottomSheetBehaviourPeekHeightListener: IBottomSheetBehaviourPeekHeightListener
     var isQueryPayUPaymentMethodComplete: Boolean = false
@@ -96,42 +94,59 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setUpView()
+        binding = AvailableFundsFragmentBinding.bind(view)
 
-        setPushViewDownAnimation(incRecentTransactionButton)
-        setPushViewDownAnimation(incViewStatementButton)
-        setPushViewDownAnimation(incPayMyAccountButton)
+        binding.apply {
+            setUpView()
 
-        val bottomViewGuideline = view.findViewById<Guideline>(R.id.bottomSliderGuideline)
-        val constParam: ConstraintLayout.LayoutParams = bottomViewGuideline.layoutParams as ConstraintLayout.LayoutParams
+            setPushViewDownAnimation(incRecentTransactionButton.root)
+            setPushViewDownAnimation(incViewStatementButton.root)
+            setPushViewDownAnimation(incPayMyAccountButton.root)
 
-        val sliderGuidelineArrearsTypeValue = TypedValue()
-        activity?.resources?.getValue(R.dimen.slider_guideline_percent_for_arrears_account_product, sliderGuidelineArrearsTypeValue, true)
-        val sliderGuidelineForArrears : Float = sliderGuidelineArrearsTypeValue.float
+            val bottomViewGuideline = view.findViewById<Guideline>(R.id.bottomSliderGuideline)
+            val constParam: ConstraintLayout.LayoutParams =
+                bottomViewGuideline.layoutParams as ConstraintLayout.LayoutParams
 
-        val sliderGuidelineTypeValue = TypedValue()
-        activity?.resources?.getValue(R.dimen.slider_guideline_percent_for_account_product, sliderGuidelineTypeValue, true)
-        val sliderGuidelineForGoodStanding : Float = sliderGuidelineTypeValue.float
+            val sliderGuidelineArrearsTypeValue = TypedValue()
+            activity?.resources?.getValue(
+                R.dimen.slider_guideline_percent_for_arrears_account_product,
+                sliderGuidelineArrearsTypeValue,
+                true
+            )
+            val sliderGuidelineForArrears: Float = sliderGuidelineArrearsTypeValue.float
 
-        constParam.guidePercent = if ((activity as? AccountSignedInActivity)?.mAccountSignedInPresenter?.isAccountInArrearsState() == true) {
-            paymentOverdueGroup?.visibility = VISIBLE
-            sliderGuidelineForArrears
-        } else {
-            paymentOverdueGroup?.visibility = INVISIBLE
-            sliderGuidelineForGoodStanding
-        }
-        bottomViewGuideline.layoutParams = constParam
+            val sliderGuidelineTypeValue = TypedValue()
+            activity?.resources?.getValue(
+                R.dimen.slider_guideline_percent_for_account_product,
+                sliderGuidelineTypeValue,
+                true
+            )
+            val sliderGuidelineForGoodStanding: Float = sliderGuidelineTypeValue.float
 
-        availableFundBackground?.post {
-            val dm = DisplayMetrics()
-            (activity as? AppCompatActivity)?.windowManager?.defaultDisplay?.getMetrics(dm)
-            val deviceHeight = dm.heightPixels
-            val location = IntArray(2)
-            bottomSliderGuideline?.getLocationOnScreen(location)
-            val bottomGuidelineVerticalPosition = location[1]
-            val displayBottomSheetBehaviorWithinRemainingHeight = deviceHeight - bottomGuidelineVerticalPosition + Utils.dp2px(20f)
-            bottomSheetBehaviourPeekHeightListener?.onBottomSheetPeekHeight(displayBottomSheetBehaviorWithinRemainingHeight)
+            constParam.guidePercent =
+                if ((activity as? AccountSignedInActivity)?.mAccountSignedInPresenter?.isAccountInArrearsState() == true) {
+                    paymentOverdueGroup?.visibility = VISIBLE
+                    sliderGuidelineForArrears
+                } else {
+                    paymentOverdueGroup?.visibility = INVISIBLE
+                    sliderGuidelineForGoodStanding
+                }
+            bottomViewGuideline.layoutParams = constParam
 
+            availableFundBackground?.post {
+                val dm = DisplayMetrics()
+                (activity as? AppCompatActivity)?.windowManager?.defaultDisplay?.getMetrics(dm)
+                val deviceHeight = dm.heightPixels
+                val location = IntArray(2)
+                bottomSliderGuideline?.getLocationOnScreen(location)
+                val bottomGuidelineVerticalPosition = location[1]
+                val displayBottomSheetBehaviorWithinRemainingHeight =
+                    deviceHeight - bottomGuidelineVerticalPosition + Utils.dp2px(20f)
+                bottomSheetBehaviourPeekHeightListener?.onBottomSheetPeekHeight(
+                    displayBottomSheetBehaviorWithinRemainingHeight
+                )
+
+            }
         }
 
         activity?.let { act ->
@@ -162,8 +177,8 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
     fun queryPaymentMethod() {
         when (!payMyAccountViewModel.isQueryPayUPaymentMethodComplete) {
             true -> {
-                initShimmer()
-                startProgress()
+                binding.initShimmer()
+                binding.startProgress()
 
                 val cardInfo = payMyAccountViewModel.getCardDetail()
                 val account = mAvailableFundPresenter.getAccountDetail()
@@ -177,27 +192,27 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
                 payMyAccountViewModel.queryServicePayUPaymentMethod(
                     { // onSuccessResult
                         if (!isAdded) return@queryServicePayUPaymentMethod
-                        stopProgress()
+                        binding.stopProgress()
                         (activity as? AccountSignedInActivity)?.mAccountSignedInPresenter?.pmaStatusImpl?.pmaSuccess()
                         payMyAccountViewModel.isQueryPayUPaymentMethodComplete = true
-                        navigateToDeepLinkView(DP_LINKING_MY_ACCOUNTS_PRODUCT_PAY_MY_ACCOUNT, incPayMyAccountButton)
+                        navigateToDeepLinkView(DP_LINKING_MY_ACCOUNTS_PRODUCT_PAY_MY_ACCOUNT, binding.incPayMyAccountButton.root)
                     }, { onSessionExpired ->
                         if (!isAdded) return@queryServicePayUPaymentMethod
                         activity?.let {
-                            stopProgress()
+                            binding.stopProgress()
                             payMyAccountViewModel.isQueryPayUPaymentMethodComplete = true
                             SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, onSessionExpired, it)
 
                         }
                     }, { // on unknown http error / general error
                         if (!isAdded) return@queryServicePayUPaymentMethod
-                        stopProgress()
+                        binding.stopProgress()
                         payMyAccountViewModel.isQueryPayUPaymentMethodComplete = true
 
                     }, { throwable ->
                         if (!isAdded) return@queryServicePayUPaymentMethod
                         activity?.runOnUiThread {
-                            stopProgress()
+                            binding.stopProgress()
                         }
                         payMyAccountViewModel.isQueryPayUPaymentMethodComplete = true
                         if (throwable is ConnectException) {
@@ -236,12 +251,14 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
 
                 val totalAmountDueAmount = Utils.removeNegativeSymbol(CurrencyFormatter.formatAmountToRandAndCentWithSpace(totalAmountDue))
 
-                availableFundAmountTextView?.text = availableFund
-                currentBalanceAmountTextView?.text = currentBalance
-                creditLimitAmountTextView?.text = creditLimit
-                totalAmountDueAmountTextView?.text = totalAmountDueAmount
-                nextPaymentDueDateTextView?.text = paymentDueDate
-                amountPayableNowAmountTextView?.text = amountOverdue
+                binding.apply {
+                    availableFundAmountTextView?.text = availableFund
+                    currentBalanceAmountTextView?.text = currentBalance
+                    creditLimitAmountTextView?.text = creditLimit
+                    totalAmountDueAmountTextView?.text = totalAmountDueAmount
+                    nextPaymentDueDateTextView?.text = paymentDueDate
+                    amountPayableNowAmountTextView?.text = amountOverdue
+                }
             }
         }
     }
@@ -314,13 +331,13 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
 
     override fun showABSAServiceGetUserCreditCardTokenProgressBar() {
         if (fragmentAlreadyAdded()) return
-        statementProgressBarGroup?.visibility = VISIBLE
+        binding.incViewStatementButton.statementProgressBarGroup?.visibility = VISIBLE
     }
 
     override fun hideABSAServiceGetUserCreditCardTokenProgressBar() {
         if (fragmentAlreadyAdded()) return
         activity?.runOnUiThread {
-            statementProgressBarGroup?.visibility = GONE
+            binding.incViewStatementButton.statementProgressBarGroup?.visibility = GONE
         }
     }
 
@@ -370,23 +387,23 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
         }
     }
 
-    fun initShimmer() {
+    fun AvailableFundsFragmentBinding.initShimmer() {
         val shimmer = Shimmer.AlphaHighlightBuilder().build()
-        viewPaymentOptionImageShimmerLayout?.setShimmer(shimmer)
-        viewPaymentOptionTextShimmerLayout?.setShimmer(shimmer)
+        incPayMyAccountButton.viewPaymentOptionImageShimmerLayout?.setShimmer(shimmer)
+        incPayMyAccountButton.viewPaymentOptionTextShimmerLayout?.setShimmer(shimmer)
     }
 
-    private fun startProgress() {
-        viewPaymentOptionImageShimmerLayout?.startShimmer()
-        viewPaymentOptionTextShimmerLayout?.startShimmer()
+    private fun AvailableFundsFragmentBinding.startProgress() {
+        incPayMyAccountButton.viewPaymentOptionImageShimmerLayout?.startShimmer()
+        incPayMyAccountButton.viewPaymentOptionTextShimmerLayout?.startShimmer()
     }
 
-    fun stopProgress() {
-        viewPaymentOptionImageShimmerLayout?.setShimmer(null)
-        viewPaymentOptionImageShimmerLayout?.stopShimmer()
+    fun AvailableFundsFragmentBinding.stopProgress() {
+        incPayMyAccountButton.viewPaymentOptionImageShimmerLayout?.setShimmer(null)
+        incPayMyAccountButton.viewPaymentOptionImageShimmerLayout?.stopShimmer()
 
-        viewPaymentOptionTextShimmerLayout?.setShimmer(null)
-        viewPaymentOptionTextShimmerLayout?.stopShimmer()
+        incPayMyAccountButton.viewPaymentOptionTextShimmerLayout?.setShimmer(null)
+        incPayMyAccountButton.viewPaymentOptionTextShimmerLayout?.stopShimmer()
     }
 
     fun navigateToPayMyAccount(openCardOptionsDialog: () -> Unit) {
@@ -407,7 +424,7 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
                     when (deepLinkingObject?.get("feature")?.asString) {
                         DP_LINKING_MY_ACCOUNTS_PRODUCT_STATEMENT -> {
                             deleteDeepLinkData()
-                            incViewStatementButton?.performClick()
+                            binding.incViewStatementButton?.root?.performClick()
                         }
                     }
                 }
@@ -433,7 +450,7 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
     }
 
     fun onPayMyAccountButtonTap(eventName: String?, directions: NavDirections?) {
-        if (viewPaymentOptionImageShimmerLayout?.isShimmerStarted == true) return
+        if (binding.incPayMyAccountButton.viewPaymentOptionImageShimmerLayout?.isShimmerStarted == true) return
 
         payMyAccountViewModel.apply {
             //Redirect to payment options when  ABSA cards array is empty for credit card products

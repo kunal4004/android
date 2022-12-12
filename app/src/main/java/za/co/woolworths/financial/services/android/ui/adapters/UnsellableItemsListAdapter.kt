@@ -4,10 +4,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.cart_product_item.view.*
+import com.awfs.coordination.databinding.CartProductItemBinding
 import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
-import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -23,39 +21,42 @@ class UnsellableItemsListAdapter(var commerceItems: ArrayList<UnSellableCommerce
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.cart_product_item, parent, false))
+        return ViewHolder(
+            CartProductItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        )
     }
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class ViewHolder(val itemBinding: CartProductItemBinding) : RecyclerView.ViewHolder(itemBinding.root) {
         fun bind(commerceItem: UnSellableCommerceItem) {
+            itemBinding.apply {
+                swipe.isSwipeEnabled = false
+                tvTitle.text = commerceItem.productDisplayName ?: ""
+                Utils.truncateMaxLine(tvTitle)
+                llQuantity.visibility = View.INVISIBLE
+                price.text = commerceItem.price.amount.let { CurrencyFormatter.formatAmountToRandAndCentWithSpace(it) }
+                rlDeleteButton.visibility = View.GONE
+                rlDelete.visibility = View.GONE
+                cartProductImage.setImageURI(commerceItem.externalImageRefV2 ?: "")
+                if (commerceItem.price.getDiscountedAmount() > 0) {
+                    promotionalText.text = " ${CurrencyFormatter.formatAmountToRandAndCentWithSpace(commerceItem.price.getDiscountedAmount())}"
+                    promotionalTextLayout.visibility = View.VISIBLE
+                } else {
+                    promotionalTextLayout.visibility = View.GONE
+                }
 
-            itemView.swipe.isSwipeEnabled = false
-            itemView.tvTitle.text = commerceItem.productDisplayName ?: ""
-            Utils.truncateMaxLine(itemView.tvTitle)
-            itemView.llQuantity.visibility = View.INVISIBLE
-            itemView.price.text = commerceItem.price.amount.let { CurrencyFormatter.formatAmountToRandAndCentWithSpace(it) }
-            itemView.rlDeleteButton.visibility = View.GONE
-            itemView.rlDelete.visibility = View.GONE
-            itemView.cartProductImage.setImageURI(commerceItem.externalImageRefV2 ?: "")
-            if (commerceItem.price.getDiscountedAmount() > 0) {
-                itemView.promotionalText.text = " ${CurrencyFormatter.formatAmountToRandAndCentWithSpace(commerceItem.price.getDiscountedAmount())}"
-                itemView.promotionalTextLayout.visibility = View.VISIBLE
-            } else {
-                itemView.promotionalTextLayout.visibility = View.GONE
-            }
-
-            if (commerceItem.commerceItemClassType == "foodCommerceItem") {
-                itemView.tvSize.visibility = View.INVISIBLE
-            } else {
-                var sizeAndColor = commerceItem.colour ?: ""
-                commerceItem.apply {
-                    if (sizeAndColor.isEmpty() && !size.isNullOrEmpty() && !size.equals("NO SZ", true))
-                        sizeAndColor = size
-                    else if (sizeAndColor.isNotEmpty() && !size.isNullOrEmpty() && !size.equals("NO SZ", true)) {
-                        sizeAndColor = "$sizeAndColor, $size"
+                if (commerceItem.commerceItemClassType == "foodCommerceItem") {
+                    tvSize.visibility = View.INVISIBLE
+                } else {
+                    var sizeAndColor = commerceItem.colour ?: ""
+                    commerceItem.apply {
+                        if (sizeAndColor.isEmpty() && !size.isNullOrEmpty() && !size.equals("NO SZ", true))
+                            sizeAndColor = size
+                        else if (sizeAndColor.isNotEmpty() && !size.isNullOrEmpty() && !size.equals("NO SZ", true)) {
+                            sizeAndColor = "$sizeAndColor, $size"
+                        }
+                        tvSize.text = sizeAndColor
+                        tvSize.visibility = View.VISIBLE
                     }
-                    itemView.tvSize.text = sizeAndColor
-                    itemView.tvSize.visibility = View.VISIBLE
                 }
             }
         }

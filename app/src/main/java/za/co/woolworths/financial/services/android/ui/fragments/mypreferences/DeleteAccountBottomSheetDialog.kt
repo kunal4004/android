@@ -15,35 +15,31 @@ import android.text.style.ClickableSpan
 import android.widget.TextView
 import androidx.fragment.app.setFragmentResult
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.delete_account_bottom_sheet_dialog.*
+import com.awfs.coordination.databinding.DeleteAccountBottomSheetDialogBinding
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
-
 
 class DeleteAccountBottomSheetDialog : WBottomSheetDialogFragment() ,
     View.OnClickListener{
+
+    private lateinit var binding: DeleteAccountBottomSheetDialogBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
-        return inflater.inflate(
-            R.layout.delete_account_bottom_sheet_dialog,
-            container,
-            false
-        )
-
+        binding = DeleteAccountBottomSheetDialogBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        actionButton?.paint?.isUnderlineText = true
-        initClick()
+        binding.actionButton?.paint?.isUnderlineText = true
+        binding.initClick()
     }
 
-    private fun initClick() {
-        cancelButton?.setOnClickListener(this)
-        actionButton?.setOnClickListener(this)
-        setMessageWithClickableLink(deleteDescription_2)
+    private fun DeleteAccountBottomSheetDialogBinding.initClick() {
+        cancelButton?.setOnClickListener(this@DeleteAccountBottomSheetDialog)
+        actionButton?.setOnClickListener(this@DeleteAccountBottomSheetDialog)
+        setMessageWithClickableLink(deleteDescription2)
     }
     private fun setMessageWithClickableLink(textView: TextView?) {
         val content =

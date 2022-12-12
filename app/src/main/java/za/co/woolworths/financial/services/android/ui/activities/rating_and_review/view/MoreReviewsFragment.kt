@@ -2,9 +2,7 @@ package za.co.woolworths.financial.services.android.ui.activities.rating_and_rev
 
 import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
@@ -12,18 +10,10 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.ConcatAdapter
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.FragmentMoreReviewsBinding
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.common_toolbar.view.*
-import kotlinx.android.synthetic.main.fragment_more_reviews.*
-import kotlinx.android.synthetic.main.fragment_report_review.*
-import kotlinx.android.synthetic.main.no_connection_handler.*
-import kotlinx.android.synthetic.main.no_connection_handler.view.*
-import kotlinx.android.synthetic.main.review_detail_layout.*
-import kotlinx.android.synthetic.main.review_helpful_and_report_layout.*
-import kotlinx.android.synthetic.main.skin_profile_layout.view.*
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
@@ -44,9 +34,9 @@ import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 
-
-class MoreReviewsFragment : Fragment(),
+class MoreReviewsFragment : BaseFragmentBinding<FragmentMoreReviewsBinding>(FragmentMoreReviewsBinding::inflate),
         MoreReviewsAdapter.ReviewItemClickListener,
         MoreReviewHeaderAdapter.SortAndRefineListener,
         MoreReviewLoadStateAdapter.HandlePaginationError {
@@ -70,27 +60,18 @@ class MoreReviewsFragment : Fragment(),
 
     private var productId: String = "-1"
 
-    override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_more_reviews, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        toolbar_more_review.btn_back.setOnClickListener {
+        binding.toolbarMoreReview.btnBack.setOnClickListener {
             activity?.onBackPressed()
             reportPosiionList.clear()
             RatingAndReviewUtil.isSuccessFullyReported = false
         }
         arguments?.apply {
-
             productId = getString(KotlinUtils.PROD_ID, "-1")
             setupViewModel()
             setReviewsList(null, null)
-            btnRetry?.setOnClickListener {
+            binding.errorLayout.btnRetry?.setOnClickListener {
                 setReviewsList(null, null)
             }
         }
@@ -130,7 +111,7 @@ class MoreReviewsFragment : Fragment(),
                 }, this@MoreReviewsFragment)
         )
         val concatAdapter = ConcatAdapter(headerAdapter, footerLoadStateAdapter)
-        rv_more_reviews.apply {
+        binding.rvMoreReviews.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = concatAdapter
         }
@@ -155,17 +136,17 @@ class MoreReviewsFragment : Fragment(),
 
         moreReviewsAdapter?.addLoadStateListener {
             if (it.refresh == LoadState.Loading) {
-                progress_bar?.visibility = View.VISIBLE
+                binding.progressBar?.visibility = View.VISIBLE
             } else {
                 // show error
-                progress_bar?.visibility = View.GONE
+                binding.progressBar?.visibility = View.GONE
                 when {
                     it.prepend is LoadState.Error -> it.prepend as LoadState.Error
                     it.append is LoadState.Error -> it.append as LoadState.Error
                     it.refresh is LoadState.Error -> {
                         it.refresh as LoadState.Error
-                        error_layout?.visibility = View.VISIBLE
-                        error_layout?.no_connection_layout?.visibility = View.VISIBLE
+                        binding.errorLayout.root.visibility = View.VISIBLE
+                        binding.errorLayout.noConnectionLayout.visibility = View.VISIBLE
                     }
                     else -> null
                 }
@@ -227,7 +208,7 @@ class MoreReviewsFragment : Fragment(),
         }else {
             lifecycleScope.launch {
                 try {
-                    progress_bar.visibility = View.VISIBLE
+                    binding.progressBar.visibility = View.VISIBLE
                     val response = moreReviewViewModel.reviewFeedback(
                         ReviewFeedback(
                             review.id.toString(),
@@ -238,14 +219,14 @@ class MoreReviewsFragment : Fragment(),
                             null
                         )
                     )
-                    progress_bar.visibility = View.GONE
+                    binding.progressBar.visibility = View.GONE
                     if (response.httpCode == 200) {
                         RatingAndReviewUtil.likedReviews.add(review.id.toString())
                         moreReviewsAdapter?.notifyDataSetChanged()
                     }
                 } catch (e: HttpException) {
                     e.printStackTrace()
-                    progress_bar.visibility = View.GONE
+                    binding.progressBar.visibility = View.GONE
                     if (e.code() != 502) {
                         activity?.supportFragmentManager?.let {
                                 fragmentManager -> Utils.showGeneralErrorDialog(fragmentManager, getString(R.string.statement_send_email_false_desc))
@@ -326,7 +307,7 @@ class MoreReviewsFragment : Fragment(),
 
     override fun showFooterErrorMessage() {
         val actionTextColor = ContextCompat.getColor(requireContext(), R.color.white)
-        Snackbar.make(more_review_layout, R.string.failed_more_reviews, Snackbar.LENGTH_INDEFINITE)
+        Snackbar.make(binding.moreReviewLayout, R.string.failed_more_reviews, Snackbar.LENGTH_INDEFINITE)
                 .setAction(R.string.retry_txt, {
                     setReviewsList(null, null)
                 }).setActionTextColor(actionTextColor)

@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.checkout.view
 
 import android.os.Bundle
+import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.SAVED_ADDRESS_KEY
@@ -9,7 +10,7 @@ import za.co.woolworths.financial.services.android.util.Utils
 /**
  * Created by Kunal Uttarwar on 15/09/21.
  */
-open class CheckoutAddressManagementBaseFragment : Fragment() {
+open class CheckoutAddressManagementBaseFragment(@LayoutRes contentLayoutId: Int) : Fragment(contentLayoutId) {
 
     companion object {
         var baseFragBundle: Bundle? = Bundle()

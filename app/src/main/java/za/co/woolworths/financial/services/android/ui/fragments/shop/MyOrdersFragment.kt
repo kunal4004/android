@@ -1,21 +1,16 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shop
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.empty_state_template.*
-import za.co.woolworths.financial.services.android.models.dto.OrderItem
-import za.co.woolworths.financial.services.android.models.dto.OrdersResponse
-import kotlinx.android.synthetic.main.fragment_shop_my_orders.*
+import com.awfs.coordination.databinding.FragmentShopMyOrdersBinding
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.IPresentOrderDetailInterface
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.Order
+import za.co.woolworths.financial.services.android.models.dto.OrderItem
+import za.co.woolworths.financial.services.android.models.dto.OrdersResponse
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
@@ -24,11 +19,14 @@ import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.OnChildFragmentEvents
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorMessageDialogFragment
-import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView
+import za.co.woolworths.financial.services.android.util.QueryBadgeCounter
+import za.co.woolworths.financial.services.android.util.ScreenManager
+import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
-import java.lang.IllegalStateException
+import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 
-class MyOrdersFragment : Fragment(), OrderHistoryErrorDialogFragment.IOrderHistoryErrorDialogDismiss, IPresentOrderDetailInterface {
+class MyOrdersFragment : BaseFragmentBinding<FragmentShopMyOrdersBinding>(FragmentShopMyOrdersBinding::inflate), OrderHistoryErrorDialogFragment.IOrderHistoryErrorDialogDismiss, IPresentOrderDetailInterface {
 
     private var dataList = arrayListOf<OrderItem>()
     private var mErrorHandlerView: ErrorHandlerView? = null
@@ -46,12 +44,6 @@ class MyOrdersFragment : Fragment(), OrderHistoryErrorDialogFragment.IOrderHisto
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_shop_my_orders, container, false)
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -66,16 +58,26 @@ class MyOrdersFragment : Fragment(), OrderHistoryErrorDialogFragment.IOrderHisto
     }
 
     fun initViews() {
-        parentFragment = (activity as BottomNavigationActivity).currentFragment as ShopFragment
-        mErrorHandlerView = ErrorHandlerView(activity, relEmptyStateHandler, imgEmpyStateIcon, txtEmptyStateTitle, txtEmptyStateDesc, btnGoToProduct)
-        myOrdersList?.layoutManager = LinearLayoutManager(activity)
-        btnGoToProduct.setOnClickListener { onActionClick() }
+        binding.apply {
+            parentFragment = (activity as BottomNavigationActivity).currentFragment as ShopFragment
+            // TODO SYNTHETIC: views below cannot be found on layout. TBC if this class is even still being used, since there's no usage of it
+//            mErrorHandlerView = ErrorHandlerView(
+//                activity,
+//                emptyStateTemplate.relEmptyStateHandler,
+//                emptyStateTemplate.imgEmpyStateIcon,
+//                emptyStateTemplate.txtEmptyStateTitle,
+//                emptyStateTemplate.txtEmptyStateDesc,
+//                emptyStateTemplate.btnGoToProduct
+//            )
+//            myOrdersList?.layoutManager = LinearLayoutManager(activity)
+//            emptyStateTemplate.btnGoToProduct.setOnClickListener { onActionClick() }
 
-        swipeToRefresh?.setOnRefreshListener {
-            swipeToRefresh?.isRefreshing = true
-            executeOrdersRequest(true)
+            swipeToRefresh?.setOnRefreshListener {
+                swipeToRefresh?.isRefreshing = true
+                executeOrdersRequest(true)
+            }
+            configureUI(false)
         }
-        configureUI(false)
     }
 
     fun configureUI(isNewSession: Boolean) {
@@ -108,34 +110,55 @@ class MyOrdersFragment : Fragment(), OrderHistoryErrorDialogFragment.IOrderHisto
     }
 
     private fun showEmptyOrdersView() {
-        myOrdersList.visibility = View.GONE
-        swipeToRefresh.isEnabled = true
-        mErrorHandlerView?.setEmptyStateWithAction(6, R.string.start_shopping, ErrorHandlerView.ACTION_TYPE.REDIRECT)
+        binding.apply {
+            myOrdersList.visibility = View.GONE
+            swipeToRefresh.isEnabled = true
+            mErrorHandlerView?.setEmptyStateWithAction(
+                6,
+                R.string.start_shopping,
+                ErrorHandlerView.ACTION_TYPE.REDIRECT
+            )
+        }
     }
 
     private fun showSignOutView() {
-        myOrdersList.visibility = View.GONE
-        swipeToRefresh.isEnabled = false
-        mErrorHandlerView?.setEmptyStateWithAction(7, R.string.sign_in, ErrorHandlerView.ACTION_TYPE.SIGN_IN)
+        binding.apply {
+            myOrdersList.visibility = View.GONE
+            swipeToRefresh.isEnabled = false
+            mErrorHandlerView?.setEmptyStateWithAction(
+                7,
+                R.string.sign_in,
+                ErrorHandlerView.ACTION_TYPE.SIGN_IN
+            )
+        }
 
     }
 
     private fun showErrorView() {
-        myOrdersList?.visibility = View.GONE
-        swipeToRefresh?.isEnabled = false
-        mErrorHandlerView?.setEmptyStateWithAction(8, R.string.retry, ErrorHandlerView.ACTION_TYPE.RETRY)
+        binding.apply {
+            myOrdersList?.visibility = View.GONE
+            swipeToRefresh?.isEnabled = false
+            mErrorHandlerView?.setEmptyStateWithAction(
+                8,
+                R.string.retry,
+                ErrorHandlerView.ACTION_TYPE.RETRY
+            )
+        }
 
     }
 
     private fun showSignInView(ordersResponse: OrdersResponse) {
-        dataList = buildDataToDisplayOrders(ordersResponse)
-            if (dataList.size > 0) {
-            mErrorHandlerView?.hideEmpyState()
-            myOrdersList?.adapter = activity?.let { OrdersAdapter(it, this, dataList) }
-            myOrdersList?.visibility = View.VISIBLE
-            swipeToRefresh?.isEnabled = true
-        } else
-            showEmptyOrdersView()
+        binding.apply {
+            dataList = buildDataToDisplayOrders(ordersResponse)
+                if (dataList.size > 0) {
+                mErrorHandlerView?.hideEmpyState()
+                myOrdersList?.adapter = activity?.let { OrdersAdapter(it, this@MyOrdersFragment, dataList) }
+                myOrdersList?.visibility = View.VISIBLE
+                swipeToRefresh?.isEnabled = true
+            } else {
+                showEmptyOrdersView()
+            }
+        }
     }
 
     private fun executeOrdersRequest(isPullToRefresh: Boolean) {
@@ -146,7 +169,7 @@ class MyOrdersFragment : Fragment(), OrderHistoryErrorDialogFragment.IOrderHisto
                 enqueue(CompletionHandler(object : IResponseListener<OrdersResponse> {
                     override fun onSuccess(ordersResponse: OrdersResponse?) {
                         if (isAdded) {
-                            if (isPullToRefresh) swipeToRefresh?.isRefreshing = false
+                            if (isPullToRefresh) binding.swipeToRefresh?.isRefreshing = false
                             parentFragment?.setOrdersResponseData(ordersResponse)
                             updateUI()
                         }
@@ -156,7 +179,7 @@ class MyOrdersFragment : Fragment(), OrderHistoryErrorDialogFragment.IOrderHisto
                         if (isAdded) {
                             activity?.apply {
                                 runOnUiThread {
-                                    loadingBar?.visibility = View.GONE
+                                    binding.loadingBar?.visibility = View.GONE
                                     showErrorView()
                                 }
                             }
@@ -183,36 +206,45 @@ class MyOrdersFragment : Fragment(), OrderHistoryErrorDialogFragment.IOrderHisto
     }
 
     fun updateUI() {
-        // Proceed with onPostExecute block code if UI exist
-        if (myOrdersList == null) return
-        val ordersResponse = parentFragment?.getOrdersResponseData()
-        loadingBar?.visibility = View.GONE
-        when (ordersResponse?.httpCode) {
-            0 -> {
-                showSignInView(ordersResponse)
-            }
-            440 -> {
-                SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE)
-                showSignOutView()
-                QueryBadgeCounter.instance.clearBadge()
-            }
-            502->{
-                showErrorDialog(ordersResponse.response?.desc ?: bindString(R.string.general_error_desc))
-            }
-            else -> {
-                showErrorView()
+        binding.apply {
+            // Proceed with onPostExecute block code if UI exist
+            if (myOrdersList == null) return
+            val ordersResponse = parentFragment?.getOrdersResponseData()
+            loadingBar?.visibility = View.GONE
+            when (ordersResponse?.httpCode) {
+                0 -> {
+                    showSignInView(ordersResponse)
+                }
+                440 -> {
+                    SessionUtilities.getInstance()
+                        .setSessionState(SessionDao.SESSION_STATE.INACTIVE)
+                    showSignOutView()
+                    QueryBadgeCounter.instance.clearBadge()
+                }
+                502 -> {
+                    showErrorDialog(
+                        ordersResponse.response?.desc ?: bindString(R.string.general_error_desc)
+                    )
+                }
+                else -> {
+                    showErrorView()
+                }
             }
         }
     }
 
     private fun showLoading() {
-        loadingBar?.visibility = View.VISIBLE
-        myOrdersList?.visibility = View.GONE
+        binding.apply {
+            loadingBar?.visibility = View.VISIBLE
+            myOrdersList?.visibility = View.GONE
+        }
     }
 
     fun scrollToTop() {
-        if (myOrdersList != null)
-            myOrdersList.scrollToPosition(0)
+        binding.apply {
+            if (myOrdersList != null)
+                myOrdersList.scrollToPosition(0)
+        }
     }
 
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {

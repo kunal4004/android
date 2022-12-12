@@ -1,15 +1,13 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.fragment_prodcut_ingredients_information.*
+import com.awfs.coordination.databinding.FragmentProdcutIngredientsInformationBinding
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
+import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 
-class ProductIngredientsInformationFragment : Fragment() {
+class ProductIngredientsInformationFragment : BaseFragmentBinding<FragmentProdcutIngredientsInformationBinding>(FragmentProdcutIngredientsInformationBinding::inflate) {
     var ingredients: String = ""
 
     companion object {
@@ -27,20 +25,16 @@ class ProductIngredientsInformationFragment : Fragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_prodcut_ingredients_information, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        ingredientText.text = ingredients
+        binding.ingredientText.text = ingredients
         setUniqueIds()
     }
 
     private fun setUniqueIds() {
         resources?.apply {
-            title?.contentDescription = getString(R.string.pdp_productIngredientsTitle)
-            ingredientText?.contentDescription = getString(R.string.pdp_textViewIngredient)
+            binding.title?.contentDescription = getString(R.string.pdp_productIngredientsTitle)
+            binding.ingredientText?.contentDescription = getString(R.string.pdp_textViewIngredient)
         }
     }
 }

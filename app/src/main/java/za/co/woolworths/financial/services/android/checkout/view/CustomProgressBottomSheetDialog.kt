@@ -5,8 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.adding_tip_progress_dialog.*
-import za.co.woolworths.financial.services.android.ui.extension.bindString
+import com.awfs.coordination.databinding.AddingTipProgressDialogBinding
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.opt_in.otp.ProgressIndicator
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
@@ -16,6 +15,7 @@ import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomS
  */
 class CustomProgressBottomSheetDialog : WBottomSheetDialogFragment() {
 
+    private lateinit var binding: AddingTipProgressDialogBinding
     private lateinit var mTipValue: String
 
     companion object {
@@ -39,20 +39,21 @@ class CustomProgressBottomSheetDialog : WBottomSheetDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
-        return inflater.inflate(R.layout.adding_tip_progress_dialog, container, false)
+        binding = AddingTipProgressDialogBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        showProgressBar()
-        progressTitleTextView?.text = requireContext().getString(R.string.amt_tip_added, mTipValue.toDoubleOrNull())
+        binding.showProgressBar()
+        binding.progressTitleTextView?.text = requireContext().getString(R.string.amt_tip_added, mTipValue.toDoubleOrNull())
     }
 
-    private fun showProgressBar() {
+    private fun AddingTipProgressDialogBinding.showProgressBar() {
         gotItActionButton?.visibility = View.VISIBLE
-        success_tick?.colorCode = R.color.color_4ABB77
+        successTick?.colorCode = R.color.color_4ABB77
         val circularProgressIndicator =
-            ProgressIndicator(circularProgressIndicator, success_frame, imFailureIcon, success_tick)
+            ProgressIndicator(circularProgressIndicator, successFrame, imFailureIcon, successTick)
         circularProgressIndicator.apply {
             progressIndicatorListener {}
             stopSpinning()

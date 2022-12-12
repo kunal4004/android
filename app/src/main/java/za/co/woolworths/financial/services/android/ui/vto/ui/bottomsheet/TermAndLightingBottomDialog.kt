@@ -6,10 +6,9 @@ import android.net.Uri
 import android.view.View
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.VtoTermAndLightingBottomDialogBinding
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import kotlinx.android.synthetic.main.vto_term_and_lighting_bottom_dialog.view.*
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import javax.inject.Inject
 
 
@@ -26,24 +25,24 @@ class TermAndLightingBottomDialog @Inject constructor(
 
         val lightingTipMessage = AppConfigSingleton.virtualTryOn?.lightingTipText
         val dialog = BottomSheetDialog(context, R.style.BottomSheetDialogTheme)
-        val view = dialog.layoutInflater.inflate(R.layout.vto_term_and_lighting_bottom_dialog, null)
-        view.txtLightingTips.text = context.getString(R.string.vto_try_it_on_tips)
-        view.btnLightingGotIt.setOnClickListener {
+        val binding = VtoTermAndLightingBottomDialogBinding.inflate(dialog.layoutInflater, null, false)
+        binding.txtLightingTips.text = context.getString(R.string.vto_try_it_on_tips)
+        binding.btnLightingGotIt.setOnClickListener {
 
             dialog.dismiss()
         }
         if (fromListingPage) {
-            view.imgLighting.visibility = View.GONE
-            view.txtLightingTips.text = context.getString(R.string.vto_terms_conditions)
-            view.txtLightingDescription.setOnClickListener {
+            binding.imgLighting.visibility = View.GONE
+            binding.txtLightingTips.text = context.getString(R.string.vto_terms_conditions)
+            binding.txtLightingDescription.setOnClickListener {
                 openVtoTermAndConditionUrl(context)
                 dialog.dismiss()
             }
         } else {
-            view.txtLightingDescription.text = lightingTipMessage
+            binding.txtLightingDescription.text = lightingTipMessage
 
         }
-        dialog.setContentView(view)
+        dialog.setContentView(binding.root)
         dialog.show()
     }
 

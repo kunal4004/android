@@ -8,7 +8,6 @@ import za.co.woolworths.financial.services.android.models.dto.app_config.balance
 import za.co.woolworths.financial.services.android.models.dto.app_config.chat.ConfigCollections
 import za.co.woolworths.financial.services.android.models.dto.app_config.chat.ConfigCustomerService
 import za.co.woolworths.financial.services.android.models.dto.app_config.chat.ConfigInAppChat
-import za.co.woolworths.financial.services.android.models.dto.app_config.contact_us.ConfigContactUs
 import za.co.woolworths.financial.services.android.models.dto.app_config.credit_limit_increase.ConfigCreditLimitIncrease
 import za.co.woolworths.financial.services.android.models.dto.app_config.defaults.ConfigUserPropertiesForDelinquentCodes
 import za.co.woolworths.financial.services.android.models.dto.app_config.device_security.ConfigDeviceSecurity
@@ -23,7 +22,6 @@ import java.util.*
 object AppConfigSingleton {
     var storeCardBlockReasons: List<Map<String, String>>? = null
     var whatsApp: ConfigWhatsApp? = null
-    var mContactUs: MutableList<ConfigContactUs>? = null
     var mPayMyAccount: ConfigPayMyAccount? = null
     var inAppChat: ConfigInAppChat? = null
     var isProductItemForLiquorInventoryPending = false
@@ -166,8 +164,6 @@ object AppConfigSingleton {
             if (virtualTempCard != null) {
                 virtualTempCard?.isEnabled = Utils.isFeatureEnabled(virtualTempCard?.minimumSupportedAppBuildNumber)
             }
-
-            mContactUs = appConfig.contactUs
 
             absaBankingOpenApiServices = appConfig.absaBankingOpenApiServices
 

@@ -5,12 +5,13 @@ import android.view.Gravity
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.activity_reviewer_info_details.*
+import com.awfs.coordination.databinding.ActivityReviewerInfoDetailsBinding
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.RatingReviewResponse
 
 class MoreReviewActivity : AppCompatActivity(),
         MoreReviewsFragment.OnSortRefineFragmentListener {
 
+    private lateinit var binding: ActivityReviewerInfoDetailsBinding
     private var moreReviewsFragment: MoreReviewsFragment? = null
     private var sortAndFilterReviewFragment: SortAndFilterReviewFragment? = null
 
@@ -21,7 +22,9 @@ class MoreReviewActivity : AppCompatActivity(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_reviewer_info_details)
+        binding = ActivityReviewerInfoDetailsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
         moreReviewsFragment = MoreReviewsFragment.newInstance()
         sortAndFilterReviewFragment = SortAndFilterReviewFragment.newInstance()
         if (intent.extras != null)
@@ -41,11 +44,11 @@ class MoreReviewActivity : AppCompatActivity(),
     }
 
     override fun openDrawer() {
-        dlSortRefine.openDrawer(Gravity.RIGHT)
+        binding.dlSortRefine.openDrawer(Gravity.RIGHT)
     }
 
     override fun closeDrawer() {
-        dlSortRefine.closeDrawers()
+        binding.dlSortRefine.closeDrawers()
     }
 
     override fun setupDrawer(isShortClicked: Boolean, ratingReviewResponse: RatingReviewResponse) {
