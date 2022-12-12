@@ -1,6 +1,8 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.petinsurance
 
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.animation.Animation
 import android.view.animation.RotateAnimation
 import android.widget.ImageView
@@ -48,8 +50,8 @@ class PetInsuranceHandler constructor(
                         val featureEnablementModel = response.body()
                         featureEnablementModel?.featureEnabled?.let {
                             for (feature in it) {
-                                when(feature.featureName){
-                                    PET_INSURANCE->{
+                                when (feature.featureName) {
+                                    PET_INSURANCE -> {
                                         if (feature.enabled) {
                                             petInsuranceRequest()
                                         }
@@ -78,12 +80,18 @@ class PetInsuranceHandler constructor(
                 if (activity != null) {
                     val petInsuranceModel = response.body()
                     if (petInsuranceModel != null) {
-                        for (insuranceProduct in petInsuranceModel.insuranceProducts) {
-                            if (insuranceProduct.type == PET) {
-                                insuranceProducts = insuranceProduct
+//                        petInsuranceModel.insuranceProducts = listOf()
+                        if (petInsuranceModel.insuranceProducts.isEmpty()) {
+                            applyPetInsuranceCardView.visibility = GONE
+                        } else {
+                            applyPetInsuranceCardView.visibility = VISIBLE
+                            for (insuranceProduct in petInsuranceModel.insuranceProducts) {
+                                if (insuranceProduct.type == PET) {
+                                    insuranceProducts = insuranceProduct
+                                }
                             }
+                            petInsuranceCheck(insuranceProducts)
                         }
-                        petInsuranceCheck(insuranceProducts)
                     }
                 }
             }
@@ -101,9 +109,11 @@ class PetInsuranceHandler constructor(
                 val appGUIDModel = response.body()
                 if (appGUIDModel != null) {
                     if (activity != null && appGUIDModel.httpCode == 200) {
-                        when(appGUIDModel.appGuid.isNullOrEmpty()){
-                            true->{petInsuranceCheck()}
-                            false->{
+                        when (appGUIDModel.appGuid.isNullOrEmpty()) {
+                            true -> {
+                                petInsuranceCheck()
+                            }
+                            false -> {
                                 val (_, renderMode, petInsuranceUrl, exitUrl) = accountOptions!!.insuranceProducts
                                 petInsuranceRedirect(
                                     activity, petInsuranceUrl + appGUIDModel.appGuid,
@@ -122,8 +132,7 @@ class PetInsuranceHandler constructor(
     }
 
     private fun petInsuranceShowLoading(animateProgress: Boolean) {
-        applyPetInsuranceCardView.visibility = View.VISIBLE
-        ivPetInsuranceProgress.visibility = View.VISIBLE
+        ivPetInsuranceProgress.visibility = VISIBLE
         if (animateProgress) {
             val rotateAnimation: RotateAnimation = mUpdateMyAccount.rotateViewAnimation()
             rotateAnimation.setAnimationListener(object : Animation.AnimationListener {
@@ -139,13 +148,13 @@ class PetInsuranceHandler constructor(
             })
             ivPetInsuranceProgress.startAnimation(rotateAnimation)
         }
-        tvPetInsuranceApply.visibility = View.GONE
-        tvPetInsuranceCovered.visibility = View.GONE
-        tvPetInsuranceHelped.visibility = View.GONE
+        tvPetInsuranceApply.visibility = GONE
+        tvPetInsuranceCovered.visibility = GONE
+        tvPetInsuranceHelped.visibility = GONE
     }
 
     private fun petInsuranceCheck(insuranceProduct: InsuranceProducts? = null) {
-        ivPetInsuranceProgress.visibility = View.GONE
+        ivPetInsuranceProgress.visibility = GONE
         ivPetInsuranceProgress.clearAnimation()
         if (insuranceProduct == null) {
             petInsuranceShowLoading(false)
@@ -153,24 +162,25 @@ class PetInsuranceHandler constructor(
         }
         when (CoveredStatus.valueOf(insuranceProduct.status)) {
             CoveredStatus.COVERED -> {
-                tvPetInsuranceApply.visibility = View.GONE
-                tvPetInsuranceCovered.visibility = View.VISIBLE
-                tvPetInsuranceHelped.visibility = View.VISIBLE
+                tvPetInsuranceApply.visibility = GONE
+                tvPetInsuranceCovered.visibility = VISIBLE
+                tvPetInsuranceHelped.visibility = VISIBLE
                 tvPetInsuranceCovered.text = activity!!.getString(R.string.pet_insurance_covered)
             }
             CoveredStatus.NOT_COVERED -> {
-                tvPetInsuranceApply.visibility = View.VISIBLE
-                tvPetInsuranceCovered.visibility = View.GONE
-                tvPetInsuranceHelped.visibility = View.GONE
+                tvPetInsuranceApply.visibility = VISIBLE
+                tvPetInsuranceCovered.visibility = GONE
+                tvPetInsuranceHelped.visibility = GONE
             }
             CoveredStatus.PENDING -> {
-                tvPetInsuranceApply.visibility = View.GONE
-                tvPetInsuranceCovered.visibility = View.VISIBLE
-                tvPetInsuranceHelped.visibility = View.VISIBLE
+                tvPetInsuranceApply.visibility = GONE
+                tvPetInsuranceCovered.visibility = VISIBLE
+                tvPetInsuranceHelped.visibility = VISIBLE
                 tvPetInsuranceCovered.text = activity!!.getString(R.string.pet_insurance_pending)
             }
         }
     }
+
     fun navigateToPetInsurance() {
         insuranceProducts?.apply {
             if (CoveredStatus.valueOf(status) == CoveredStatus.PENDING) {

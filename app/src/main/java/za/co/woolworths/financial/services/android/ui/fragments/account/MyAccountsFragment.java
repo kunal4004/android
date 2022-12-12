@@ -542,7 +542,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
 
     private void initialize() {
         ficaRequest();
-        petInsuranceHandler.featureEnablementRequest();
+        petInsuranceHandler.petInsuranceRequest();
         this.mAccountResponse = null;
         new AppStateRepository().saveLinkedDevices(new ArrayList(0));
         this.hideAllLayers();
