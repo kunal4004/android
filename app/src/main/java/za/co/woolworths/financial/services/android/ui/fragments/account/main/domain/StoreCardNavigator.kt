@@ -58,7 +58,7 @@ class StoreCardNavigator @Inject constructor() : IStoreCardNavigator {
         if (cardType == AccountsProductGroupCode.CREDIT_CARD.groupCode && product.accountNumber?.isNotEmpty() == true) {
             intent.putExtra("accountNumber", product.accountNumber.toString())
         }
-        intent.putExtra(ChatFragment.ACCOUNTS, Gson().toJson(Pair(applyNowState, this)))
+        intent.putExtra(ChatFragment.ACCOUNTS, Gson().toJson(Pair(applyNowState, product)))
         intent.putExtra("cardType", cardType)
         activity.startActivityForResult(intent, 0)
         activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)

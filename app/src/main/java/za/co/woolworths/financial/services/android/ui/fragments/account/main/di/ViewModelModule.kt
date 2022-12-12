@@ -14,7 +14,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.dat
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.AccountProductLandingDao
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.ManageCardFunctionalRequirementImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.creditcard.CreditCardDataSource
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.creditcard.CreditCardService
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.feature_pay_my_account.PaymentsPayuMethodsDataSource
 
 @Module
@@ -35,12 +34,6 @@ object ViewModelModule {
 
     @Provides
     fun provideRepository(remoteDataSource: StoreCardDataSource) = StoreCardRepository(remoteDataSource)
-
-    @Provides
-    fun provideCreditCardRemoteService(retrofit: Retrofit) = retrofit.create(CreditCardService::class.java)
-
-    @Provides
-    fun provideCreditCardDataSource(creditCardService: CreditCardService) = CreditCardDataSource(creditCardService)
 
     @Provides
     fun provideTreatmentPlanDataSource() = TreatmentPlanDataSource()
