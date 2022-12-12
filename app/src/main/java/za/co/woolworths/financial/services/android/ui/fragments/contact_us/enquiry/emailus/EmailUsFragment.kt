@@ -9,33 +9,31 @@ import android.text.TextWatcher
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentEmailUsBinding
-import com.google.firebase.perf.session.SessionManager
 import dagger.hilt.android.AndroidEntryPoint
-import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator
 import za.co.woolworths.financial.services.android.ui.extension.bindString
-import za.co.woolworths.financial.services.android.ui.fragments.contact_us.enquiry.list.EnquiriesListFragment
 import za.co.woolworths.financial.services.android.ui.fragments.contact_us.enquiry.list.EnquiriesListViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.contact_us.enquiry.list.EnquiriesListViewModel.Companion.EMAIL_US_REQUEST
 import za.co.woolworths.financial.services.android.ui.fragments.contact_us.enquiry.list.ValidationErrors
 import za.co.woolworths.financial.services.android.ui.fragments.contact_us.enquiry.loading.EmailUsLoadingActivity
+import za.co.woolworths.financial.services.android.ui.wfs.contact_us.fragment.ContactUsSelectEmailEnquiryTypeFragment
+import za.co.woolworths.financial.services.android.ui.wfs.contact_us.viewmodel.ContactUsViewModel
+import za.co.woolworths.financial.services.android.util.KeyboardUtils
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 
 @AndroidEntryPoint
 class EmailUsFragment : Fragment(), View.OnClickListener, TextWatcher {
     private var _binding: FragmentEmailUsBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: EnquiriesListViewModel by activityViewModels()
-
+    val viewModel: EnquiriesListViewModel by activityViewModels()
+    val contactUsViewModel : ContactUsViewModel by activityViewModels()
     private var mBottomNavigator: BottomNavigator? = null
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -61,7 +59,7 @@ class EmailUsFragment : Fragment(), View.OnClickListener, TextWatcher {
         observers()
         binding.btnEmailUs.setOnClickListener(this)
         binding.etEmailUsEnquiry.setOnClickListener(this)
-        if (SessionUtilities.getInstance().isUserAuthenticated()) {
+        if (SessionUtilities.getInstance().isUserAuthenticated) {
             binding.etEmailUsEmail.setText(viewModel.userEmailAddress())
             binding.etEmailUsName.setText(viewModel.userName())
         }
@@ -151,10 +149,11 @@ class EmailUsFragment : Fragment(), View.OnClickListener, TextWatcher {
                 }
             }
             binding.etEmailUsEnquiry -> {
+                KeyboardUtils.hideKeyboardIfVisible(requireActivity())
                 if (activity is BottomNavigationActivity)
-                    mBottomNavigator?.pushFragmentSlideUp(EnquiriesListFragment())
+                    mBottomNavigator?.pushFragmentSlideUp(ContactUsSelectEmailEnquiryTypeFragment())
                 else
-                    (activity as? MyAccountActivity)?.replaceFragment(EnquiriesListFragment())
+                    (activity as? MyAccountActivity)?.replaceFragment(ContactUsSelectEmailEnquiryTypeFragment())
             }
         }
     }

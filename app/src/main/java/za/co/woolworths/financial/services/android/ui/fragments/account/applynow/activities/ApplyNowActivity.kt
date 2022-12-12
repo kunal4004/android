@@ -14,7 +14,6 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.dto.account.applynow.ApplyNowSectionReference
 import za.co.woolworths.financial.services.android.models.dto.account.applynow.Content
@@ -175,6 +174,7 @@ class ApplyNowActivity : AppCompatActivity(), View.OnClickListener {
                             )
                         }
                 }
+
                 navigateBackImageButton -> onBackPressed()
 
                 incAccountSalesFrontLayout.viewApplicationStatusTextView -> {
