@@ -78,6 +78,7 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.extension.*
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.Constants.IS_PET_INSURANCE
 import za.co.woolworths.financial.services.android.ui.fragments.account.petinsurance.PetInsurancePendingFragment
 import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.AbsaApiFailureHandler
 import za.co.woolworths.financial.services.android.ui.fragments.onboarding.OnBoardingFragment.Companion.ON_BOARDING_SCREEN_TYPE
@@ -1492,6 +1493,26 @@ class KotlinUtils {
                 fragmentManager,
                 PetInsurancePendingFragment::class.java.simpleName
             )
+        }
+        fun petInsuranceRedirect(
+            activity: Activity?,
+            url: String?,
+            isWebView: Boolean,
+            collectionsExitUrl: String?
+        ) {
+            activity?.apply {
+                val openInternalWebView = Intent(this, WInternalWebPageActivity::class.java)
+                openInternalWebView.putExtra("externalLink", url)
+                openInternalWebView.putExtra(IS_PET_INSURANCE, true)
+                if (isWebView) {
+                    openInternalWebView.putExtra(COLLECTIONS_EXIT_URL, collectionsExitUrl)
+                    startActivityForResult(openInternalWebView,
+                        MyAccountsFragment.PET_INSURANCE_REQUEST_CODE)
+                } else {
+                    openUrlInPhoneBrowser(url, activity)
+                    activity.finish()
+                }
+            }
         }
     }
 }
