@@ -21,6 +21,7 @@ import za.co.woolworths.financial.services.android.models.dto.account.applynow.A
 import za.co.woolworths.financial.services.android.models.dto.account.applynow.Content
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.applynow.adapters.ApplyNowFragAdapter
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.ToastFactory
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.ViewState
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.showErrorDialog
 import za.co.woolworths.financial.services.android.util.KotlinUtils
@@ -110,18 +111,20 @@ class ApplyNowActivity : AppCompatActivity(), View.OnClickListener {
                             }
                         }
                     }
-                    is ViewState.RenderFailure -> {
-                        runOnUiThread{
-                            val serverErrorResponse = ServerErrorResponse()
-                            serverErrorResponse.desc = getString(R.string.general_error_desc) ?: ""
-                            showErrorDialog(this@ApplyNowActivity, serverErrorResponse)
-                        }
-                    }
-                    is ViewState.Loading -> {}
+                    is ViewState.RenderFailure,
+                    is ViewState.RenderErrorFromResponse-> {errorDialog()}
+                    is ViewState.Loading,
                     is ViewState.RenderEmpty -> {}
-                    else -> Unit
+                    is ViewState.RenderNoConnection->{ ToastFactory.showNoConnectionFound(this@ApplyNowActivity) }
                 }
             }
+        }
+    }
+    private fun errorDialog(){
+        runOnUiThread{
+            val serverErrorResponse = ServerErrorResponse()
+            serverErrorResponse.desc = getString(R.string.general_error_desc) ?: ""
+            showErrorDialog(this@ApplyNowActivity, serverErrorResponse)
         }
     }
 
