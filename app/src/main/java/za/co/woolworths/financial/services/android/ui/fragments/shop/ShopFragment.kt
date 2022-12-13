@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.shop
 
 import android.app.Activity.RESULT_OK
 import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.Typeface
 import android.os.Bundle
 import android.os.CountDownTimer
@@ -21,6 +22,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.viewpager.widget.ViewPager
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentShopBinding
@@ -46,6 +48,9 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingListsRespo
 import za.co.woolworths.financial.services.android.models.dto.dash.LastOrderDetailsResponse
 import za.co.woolworths.financial.services.android.models.network.Parameter
 import za.co.woolworths.financial.services.android.onecartgetstream.OCChatActivity
+import za.co.woolworths.financial.services.android.onecartgetstream.service.DashChatMessageListeningService
+import za.co.woolworths.financial.services.android.receivers.DashOrderReceiver
+import za.co.woolworths.financial.services.android.receivers.DashOrderReceiverListener
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.activities.BarcodeScanActivity
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
@@ -82,8 +87,11 @@ import za.co.woolworths.financial.services.android.viewmodels.shop.ShopViewModel
 @AndroidEntryPoint
 class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBinding::inflate), PermissionResultCallback,
     OnChildFragmentEvents,
-    WMaterialShowcaseView.IWalkthroughActionListener, View.OnClickListener {
+    WMaterialShowcaseView.IWalkthroughActionListener, View.OnClickListener,
+    DashOrderReceiverListener {
 
+    private var isRetrievedUnreadMessagesOnLaunch: Boolean = false
+    private var dashOrderReceiver: DashOrderReceiver? = null
     val confirmAddressViewModel : ConfirmAddressViewModel by activityViewModels()
 
     private var timer: CountDownTimer? = null
@@ -137,6 +145,24 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
     protected val shopViewModel: ShopViewModel by viewModels(
         ownerProducer = { this }
     )
+
+    override fun onStart() {
+        super.onStart()
+        dashOrderReceiver = DashOrderReceiver()
+        dashOrderReceiver?.setDashOrderReceiverListener(this)
+        dashOrderReceiver?.let {
+            LocalBroadcastManager.getInstance(requireContext()).registerReceiver(
+                it, IntentFilter(DashOrderReceiver.ACTION_LAST_DASH_ORDER)
+            )
+        }
+    }
+
+    override fun onStop() {
+        dashOrderReceiver?.let {
+            LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(it)
+        }
+        super.onStop()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -252,8 +278,8 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
 
     private fun removeNotificationToast() {
         // Remove view
-        if (inAppNotificationViewBinding != null && binding.fragmentShop?.contains(inAppNotificationViewBinding!!.root) == true)
-            binding.fragmentShop?.removeView(inAppNotificationViewBinding!!.root)
+        if (inAppNotificationViewBinding != null && binding.fragmentShop.contains(inAppNotificationViewBinding!!.root))
+            binding.fragmentShop.removeView(inAppNotificationViewBinding!!.root)
     }
 
     fun addInappNotificationToast(params: LastOrderDetailsResponse) {
@@ -336,6 +362,15 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                 visibility = View.VISIBLE
                 setImageResource(R.drawable.ic_chat_icon)
                 setOnClickListener(this@ShopFragment)
+                if (!isRetrievedUnreadMessagesOnLaunch) {
+                    isRetrievedUnreadMessagesOnLaunch = true
+                    params.orderId?.let {
+                        DashChatMessageListeningService.getUnreadMessageForOrder(
+                            requireContext(),
+                            it
+                        )
+                    }
+                }
             }
             // Driver tracking enabled STATUS == EN-ROUTE
             else if (params.isDriverTrackingEnabled) {
@@ -1454,5 +1489,15 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                 R.anim.slide_out_to_left
             )
         }
+    }
+
+    override fun updateUnreadMessageCount(unreadMsgCount: Int) {
+        inAppNotificationViewBinding?.inappOrderNotificationChatCount?.text = unreadMsgCount.toString()
+        inAppNotificationViewBinding?.inappOrderNotificationChatCount?.visibility =
+            if (unreadMsgCount <= 0) View.GONE else VISIBLE
+    }
+
+    override fun updateLastDashOrder() {
+        makeLastDashOrderDetailsCall()
     }
 }
