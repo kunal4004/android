@@ -234,15 +234,15 @@ class ChatFloatingActionButtonBubbleView(
 
     private fun onFABVisibilityChangeListener() {
         floatingActionButton?.addOnHideAnimationListener(object : AnimatorListenerAdapter() {
-            override fun onAnimationStart(animator: Animator?) {
-                // react to the fab being hidden
+            override fun onAnimationStart(animation: Animator) {
                 showOnlineIconIndicator(false)
+                super.onAnimationStart(animation)
             }
         })
 
         floatingActionButton?.addOnShowAnimationListener(object : AnimatorListenerAdapter() {
-            override fun onAnimationStart(animator: Animator?) {
-                // react to the fab being shown
+            override fun onAnimationStart(animation: Animator) {
+                super.onAnimationStart(animation)
                 showOnlineIconIndicator(true)
             }
         })

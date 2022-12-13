@@ -107,8 +107,8 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
     private fun setUpFirebaseconfig() {
         firebaseRemoteConfig = startupViewModel.getFirebaseRemoteConfigData()
         configBuilder = FirebaseRemoteConfigSettings.Builder()
-                .setMinimumFetchIntervalInSeconds(AppConstant.FIREBASE_REMOTE_CONFIG_FETCH_INTERVAL)
-                .setFetchTimeoutInSeconds(AppConstant.FIREBASE_REMOTE_CONFIG_TIMEOUT_INTERVAL)
+            .setMinimumFetchIntervalInSeconds(AppConstant.FIREBASE_REMOTE_CONFIG_FETCH_INTERVAL)
+            .setFetchTimeoutInSeconds(AppConstant.FIREBASE_REMOTE_CONFIG_TIMEOUT_INTERVAL)
         val defaultJsonString = FirebaseConfigUtils.getJsonDataFromAsset(this, FirebaseConfigUtils.FILE_NAME)
         val defaultValues = mutableMapOf( FirebaseConfigUtils.CONFIG_KEY to defaultJsonString)
         firebaseRemoteConfig.setConfigSettingsAsync(configBuilder.build())
@@ -117,65 +117,65 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
 
     private fun fetchFirebaseConfigData(isComingFromSuccess:Boolean) {
         firebaseRemoteConfig
-                .fetch(AppConstant.FIREBASE_REMOTE_CONFIG_FETCH_INTERVAL).addOnCompleteListener { task ->
-            run {
-                if (task.isSuccessful) {
-                    //set dynamic ui here
-                    firebaseRemoteConfig.activate()
-                    remoteConfigJsonString = startupViewModel.fetchFirebaseRemoteConifgData()
+            .fetch(AppConstant.FIREBASE_REMOTE_CONFIG_FETCH_INTERVAL).addOnCompleteListener { task ->
+                run {
+                    if (task.isSuccessful) {
+                        //set dynamic ui here
+                        firebaseRemoteConfig.activate()
+                        remoteConfigJsonString = startupViewModel.fetchFirebaseRemoteConifgData()
 
-                    if (isComingFromSuccess) {
-                         //success of api
-                        if (remoteConfigJsonString.isEmpty()) {
-                            // api successfull but firebase not configured so navigate with normal flow
-                            presentNextScreenOrServerMessage()
-                        } else {
-                            // api successfull and  firebase also configured so display sunsetting ui
-                            bindingSplash = ActivitySplashScreenBinding.inflate(layoutInflater)
-                            setContentView(bindingSplash.root)
-                            val configData:ConfigData? = startupViewModel.parseRemoteconfigData(remoteConfigJsonString)
-                            if (configData?.expiryTime == -1L || configData == null) {
-                                // in case we get json exception while parsing then we navigate with normal flow
-                                bindingSplash.progressBar?.visibility = View.GONE
+                        if (isComingFromSuccess) {
+                            //success of api
+                            if (remoteConfigJsonString.isEmpty()) {
+                                // api successfull but firebase not configured so navigate with normal flow
                                 presentNextScreenOrServerMessage()
                             } else {
-                                bindingSplash.setDataOnUI(configData, true)
+                                // api successfull and  firebase also configured so display sunsetting ui
+                                bindingSplash = ActivitySplashScreenBinding.inflate(layoutInflater)
+                                setContentView(bindingSplash.root)
+                                val configData:ConfigData? = startupViewModel.parseRemoteconfigData(remoteConfigJsonString)
+                                if (configData?.expiryTime == -1L || configData == null) {
+                                    // in case we get json exception while parsing then we navigate with normal flow
+                                    bindingSplash.progressBar?.visibility = View.GONE
+                                    presentNextScreenOrServerMessage()
+                                } else {
+                                    bindingSplash.setDataOnUI(configData, true)
+                                }
+                            }
+                        } else {
+                            // error  of api
+                            if (remoteConfigJsonString.isEmpty()) {
+                                //api is  failed and firebase not configured so show error screen of api reposne
+                                bindingStartup.showNonVideoViewWithErrorLayout()
+                            } else {
+                                // api is failed and sunsetting is cofigured then show sunsetting ui
+
+                                val configData:ConfigData? = startupViewModel.parseRemoteconfigData(remoteConfigJsonString)
+                                if (configData?.expiryTime == -1L || configData == null) {
+                                    // in case we get json exception while parsing then show error screen of api
+                                    bindingSplash.progressBar?.visibility = View.GONE
+                                    bindingStartup.showNonVideoViewWithErrorLayout()
+                                } else {
+                                    bindingSplash = ActivitySplashScreenBinding.inflate(layoutInflater)
+                                    setContentView(bindingSplash.root)
+                                    bindingSplash.setDataOnUI(configData, false)
+                                }
                             }
                         }
                     } else {
-                        // error  of api
-                        if (remoteConfigJsonString.isEmpty()) {
-                            //api is  failed and firebase not configured so show error screen of api reposne
+                        // firebase fail
+                        if (isComingFromSuccess) {
+                            // api is success and firebase  is failed so navigate to next screen
+                            bindingSplash.progressBar?.visibility = View.GONE
+                            presentNextScreenOrServerMessage()
+                        } else  {
+                            // api is failed and firebase  is failed so display error layout
+                            bindingSplash.progressBar?.visibility = View.GONE
                             bindingStartup.showNonVideoViewWithErrorLayout()
-                        } else {
-                             // api is failed and sunsetting is cofigured then show sunsetting ui
-
-                            val configData:ConfigData? = startupViewModel.parseRemoteconfigData(remoteConfigJsonString)
-                            if (configData?.expiryTime == -1L || configData == null) {
-                                // in case we get json exception while parsing then show error screen of api
-                                bindingSplash.progressBar?.visibility = View.GONE
-                                bindingStartup.showNonVideoViewWithErrorLayout()
-                            } else {
-                                bindingSplash = ActivitySplashScreenBinding.inflate(layoutInflater)
-                                setContentView(bindingSplash.root)
-                                bindingSplash.setDataOnUI(configData, false)
-                            }
                         }
-                    }
-                } else {
-                    // firebase fail
-                    if (isComingFromSuccess) {
-                        // api is success and firebase  is failed so navigate to next screen
-                        bindingSplash.progressBar?.visibility = View.GONE
-                        presentNextScreenOrServerMessage()
-                    } else  {
-                        // api is failed and firebase  is failed so display error layout
-                        bindingSplash.progressBar?.visibility = View.GONE
-                        bindingStartup.showNonVideoViewWithErrorLayout()
                     }
                 }
             }
-        }
     }
 
     private fun ActivitySplashScreenBinding.setDataOnUI(configData: ConfigData?, isComingFromSuccess: Boolean) {
@@ -285,7 +285,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
             configureDashChatServices()
         }
         //Remove old usage of SharedPreferences data.
-     //   startupViewModel.clearSharedPreference(this@StartupActivity)
+        //   startupViewModel.clearSharedPreference(this@StartupActivity)
         AuthenticateUtils.getInstance(this@StartupActivity).enableBiometricForCurrentSession(true)
     }
 
@@ -361,8 +361,8 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
         val updatedText: String = Utils.formatAnalyticsButtonText(text)
         if (!text.isEmpty()) {
             Utils.triggerFireBaseEvents(
-                    FirebaseManagerAnalyticsProperties.SPLASH_BTN.plus(updatedText),
-                    this@StartupActivity
+                FirebaseManagerAnalyticsProperties.SPLASH_BTN.plus(updatedText),
+                this@StartupActivity
             )
         }
         if (actionUrlSecond.isNullOrEmpty()) {
@@ -377,8 +377,8 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
         val updatedText: String = Utils.formatAnalyticsButtonText(text)
         if (!text.isEmpty()) {
             Utils.triggerFireBaseEvents(
-                    FirebaseManagerAnalyticsProperties.SPLASH_BTN.plus(updatedText) ,
-                    this@StartupActivity
+                FirebaseManagerAnalyticsProperties.SPLASH_BTN.plus(updatedText) ,
+                this@StartupActivity
             )
         }
         if (actionUrlFirst.isNullOrEmpty()) {

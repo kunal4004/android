@@ -122,7 +122,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.detail.c
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountCardDetailPresenterImpl;
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.account.fica.FicaActivity;
-import za.co.woolworths.financial.services.android.ui.fragments.contact_us.ContactUsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.credit_card_delivery.SetUpDeliveryNowDialog;
 import za.co.woolworths.financial.services.android.ui.fragments.help.HelpSectionFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.mypreferences.DeletedSuccessBottomSheetDialog;
@@ -136,6 +135,7 @@ import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.AccountsErrorHandlerFragment;
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.RootedDeviceInfoFragment;
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SignOutFragment;
+import za.co.woolworths.financial.services.android.ui.wfs.contact_us.fragment.ContactUsFragment;
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants;
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
