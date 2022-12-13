@@ -196,6 +196,7 @@ class ApplyNowActivity : AppCompatActivity(), View.OnClickListener {
                             )
                         }
                 }
+
                 navigateBackImageButton -> onBackPressed()
 
                 incAccountSalesFrontLayout.viewApplicationStatusTextView -> {
