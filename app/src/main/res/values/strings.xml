@@ -1588,8 +1588,11 @@
     <string name="select_your_delivery_location">Select your delivery location:</string>
     <string name="remove_these_items_continue">remove these items &amp; continue</string>
     <string name="item_not_available_for_collection_title">Item not available</string>
+    <string name="food_item_not_available_for_collection_title">Food Items Can’t Be Collected From a Pargo Pickup Point.</string>
     <string name="item_not_available_for_collection_desc">To purchase, please try \'Find In Store\', or change delivery option to Standard.</string>
+    <string name="food_item_not_available_for_collection_desc">To shop this item, change your collection store or delivery method.</string>
     <string name="change_delivery_option">CHANGE DELIVERY OPTION</string>
+    <string name="change_collection_location">CHANGE COLLECTION LOCATION</string>
     <string name="remove_items_dialog_title">These items will be removed</string>
     <string name="remove_items_dialog_desc">We always show you items available at the store closest to your location. When you change this location, the items you see may change too.</string>
     <string name="no_stores_for_province_message">Sorry, we currently do not have stores that support this feature in\u0020</string>
