@@ -28,7 +28,7 @@ sealed class StoreCardType {
 
 interface IStoreCardDataSource {
     var account: Account?
-    suspend fun getCreditCardToken(): Flow<CoreDataSource.IOTaskResult<CreditCardTokenResponse>>
+    suspend fun queryServiceCreditCardToken(): Flow<CoreDataSource.IOTaskResult<CreditCardTokenResponse>>
     suspend fun getPaymentPAYUMethod(): Flow<CoreDataSource.IOTaskResult<PaymentMethodsResponse>>
     suspend fun queryServiceGetStoreCards(): Flow<CoreDataSource.IOTaskResult<StoreCardsResponse>>
     suspend fun queryServiceBlockStoreCard(blockReason: Int? = 6, position: Int = 0,storeCardType :StoreCardType): Flow<CoreDataSource.IOTaskResult<BlockMyCardResponse>>
@@ -48,7 +48,7 @@ class StoreCardDataSource @Inject constructor(
 
     override var account: Account? = product
 
-    override suspend fun getCreditCardToken() = performSafeNetworkApiCall {
+    override suspend fun queryServiceCreditCardToken() = performSafeNetworkApiCall {
         getCreditCardToken(
             "", "",
             getSessionToken(),

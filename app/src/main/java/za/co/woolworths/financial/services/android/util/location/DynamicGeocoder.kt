@@ -17,7 +17,7 @@ object DynamicGeocoder {
                     Utils.isGooglePlayServicesAvailable() -> {
                         val geoCoderService = Geocoder(context, Locale.getDefault())
                         val addresses = geoCoderService.getFromLocation(latitude, longitude, 1)
-                        addresses.firstOrNull()?.let {
+                        addresses?.firstOrNull()?.let {
                             callback.invoke(
                                 DynamicGeocoderAddress(
                                     addressLine = it.getAddressLine(0),
