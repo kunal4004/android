@@ -250,7 +250,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private var isRnRAPICalled = false
     private var prodId: String = "-1"
     private lateinit var moreReviewViewModel: RatingAndReviewViewModel
-
+    private val dialogInstance = FoodProductNotAvailableForCollectionDialog.newInstance()
     @OpenTermAndLighting
     @Inject
     lateinit var vtoBottomSheetDialog: VtoBottomSheetDialog
@@ -2934,8 +2934,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     override fun foodProductNotAvailableForCollection() {
         activity?.apply {
-            if (!FoodProductNotAvailableForCollectionDialog.dialogInstance.isVisible)
-                FoodProductNotAvailableForCollectionDialog.newInstance().show(
+            if (dialogInstance != null && !dialogInstance.isVisible)
+                dialogInstance.show(
                         this@ProductDetailsFragment.childFragmentManager,
                         FoodProductNotAvailableForCollectionDialog::class.java.simpleName
                 )
