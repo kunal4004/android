@@ -14,14 +14,13 @@ import android.view.View.*
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.Navigation
 import androidx.navigation.findNavController
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.EnterPaymentAmountFragmentBinding
 import com.google.gson.Gson
-import kotlinx.android.synthetic.main.enter_payment_amount_fragment.*
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity.Companion.PAYMENT_DETAIL_CARD_UPDATE
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl.Companion.IS_DONE_BUTTON_ENABLED
@@ -29,12 +28,12 @@ import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.getFuturaMediumFont
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel.Companion.DEFAULT_RAND_CURRENCY
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.InfoDialogFragment
-
 import za.co.woolworths.financial.services.android.util.CurrencySymbols
 import za.co.woolworths.financial.services.android.util.KeyboardUtils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
+import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 
-class EnterPaymentAmountFragment : Fragment(), OnClickListener {
+class EnterPaymentAmountFragment : BaseFragmentBinding<EnterPaymentAmountFragmentBinding>(EnterPaymentAmountFragmentBinding::inflate), OnClickListener {
 
     private var isDoneButtonEnabled: Boolean = false
     private var isAmountSelected =
@@ -50,38 +49,32 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.enter_payment_amount_fragment, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         configureToolbar()
-        configureButton()
-        configureCurrencyEditText()
-        setListeners()
 
-        paymentAmountInputEditText?.requestFocus()
+        binding.apply {
+            configureButton()
+            configureCurrencyEditText()
+            setListeners()
 
-        with(payMyAccountViewModel) {
-            totalAmountDueValueTextView?.text = getTotalAmountDue()
-            paymentAmountInputEditText?.setText(getAmountEntered())
-            if (isAccountChargedOff()) {
-                if (elitePlanModel?.scope.isNullOrEmpty()){
-                    amountOverdueLabelTextView?.text = getString(R.string.current_balance_label)
-                    amountOutstandingValueTextView?.text = getCurrentBalance()
-                }else{
-                    setViewsForElitePlan(this)
+            paymentAmountInputEditText?.requestFocus()
+
+            with(payMyAccountViewModel) {
+                totalAmountDueValueTextView?.text = getTotalAmountDue()
+                paymentAmountInputEditText?.setText(getAmountEntered())
+                if (isAccountChargedOff()) {
+                    if (elitePlanModel?.scope.isNullOrEmpty()) {
+                        amountOverdueLabelTextView?.text = getString(R.string.current_balance_label)
+                        amountOutstandingValueTextView?.text = getCurrentBalance()
+                    } else {
+                        setViewsForElitePlan(this)
+                    }
+                } else {
+                    amountOverdueLabelTextView?.text = getString(R.string.overdue_amount_label)
+                    amountOutstandingValueTextView?.text = getOverdueAmount()
                 }
-            } else {
-                amountOverdueLabelTextView?.text = getString(R.string.overdue_amount_label)
-                amountOutstandingValueTextView?.text = getOverdueAmount()
             }
-
         }
 
         setFragmentResultListener(InfoDialogFragment::class.java.simpleName) { _, _ ->
@@ -90,7 +83,7 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
         }
     }
 
-    private fun setViewsForElitePlan(payMyAccountViewModel: PayMyAccountViewModel) {
+    private fun EnterPaymentAmountFragmentBinding.setViewsForElitePlan(payMyAccountViewModel: PayMyAccountViewModel) {
         amountOverdueLabelTextView?.text = getString(R.string.overdue_amount_label)
         enterPaymentAmountTextView?.text = getString(R.string.amount_payable)
         amountOutstandingValueTextView?.text = payMyAccountViewModel.getDiscountAmount()
@@ -103,10 +96,10 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
         amountYouSaveGroup.visibility = VISIBLE
     }
 
-    private fun setListeners() {
-        currentBalanceDescImageButton?.setOnClickListener(this)
-        totalAmountDueInfoDescImageButton?.setOnClickListener(this)
-        amountYouSaveImageButton?.setOnClickListener(this)
+    private fun EnterPaymentAmountFragmentBinding.setListeners() {
+        currentBalanceDescImageButton?.setOnClickListener(this@EnterPaymentAmountFragment)
+        totalAmountDueInfoDescImageButton?.setOnClickListener(this@EnterPaymentAmountFragment)
+        amountYouSaveImageButton?.setOnClickListener(this@EnterPaymentAmountFragment)
 
         totalAmountDueValueTextView?.apply {
             if (isZeroAmount(payMyAccountViewModel.getTotalAmountDue())) return
@@ -134,7 +127,7 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
         }
     }
 
-    private fun configureButton() {
+    private fun EnterPaymentAmountFragmentBinding.configureButton() {
         continueToPaymentButton?.apply {
             text =
                 if (isDoneButtonEnabled) bindString(R.string.done) else bindString(R.string.continue_to_payment)
@@ -144,7 +137,7 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
         continueToPaymentButton?.isEnabled = false
     }
 
-    private fun configureCurrencyEditText() {
+    private fun EnterPaymentAmountFragmentBinding.configureCurrencyEditText() {
         paymentAmountInputEditText?.apply {
 
             setCurrencySymbol(CurrencySymbols.NONE)
@@ -199,14 +192,14 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
         when (v?.id) {
             R.id.continueToPaymentButton -> {
                 with(payMyAccountViewModel) {
-                    val inputValue = paymentAmountInputEditText?.text?.toString()
+                    val inputValue = binding.paymentAmountInputEditText?.text?.toString()
 
                     validateAmountEntered(convertRandFormatToDouble(inputValue), {
                         // Minimum amount excess error
-                        enteredAmountValidationError(bindString(R.string.enter_payment_amount_min_input_error))
+                        binding.enteredAmountValidationError(bindString(R.string.enter_payment_amount_min_input_error))
                     }, {
                         // Maximum amount excess error
-                        enteredAmountValidationError(bindString(R.string.enter_payment_amount_max_input_error))
+                        binding.enteredAmountValidationError(bindString(R.string.enter_payment_amount_max_input_error))
                     }, {
                         // Amount is valid
                         val cardInfo = getCardDetail()
@@ -214,7 +207,7 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
                         setPMACardInfo(cardInfo)
 
                         switchToConfirmPaymentOrDoneButton(
-                            continueToPaymentButton?.text?.toString(),
+                            binding.continueToPaymentButton?.text?.toString(),
                             {
                                 //Done button
                                 hideKeyboard()
@@ -243,23 +236,23 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
 
             R.id.totalAmountDueValueTextView -> {
                 if (isZeroAmount(payMyAccountViewModel.getTotalAmountDue())) return
-                enterPaymentAmountTextView?.tag = R.id.totalAmountDueValueTextView
+                binding.enterPaymentAmountTextView?.tag = R.id.totalAmountDueValueTextView
                 isAmountSelected = true
-                selectTotalAmountDue()
-                paymentAmountInputEditText?.setText(payMyAccountViewModel.getTotalAmountDue())
+                binding.selectTotalAmountDue()
+                binding.paymentAmountInputEditText?.setText(payMyAccountViewModel.getTotalAmountDue())
             }
 
             R.id.amountOutstandingValueTextView -> {
                 if (payMyAccountViewModel.isAccountChargedOff()) {
                     if (isZeroAmount(payMyAccountViewModel.getCurrentBalance())) return
-                    selectCurrentBalance()
-                    paymentAmountInputEditText?.setText(payMyAccountViewModel.getCurrentBalance())
+                    binding.selectCurrentBalance()
+                    binding.paymentAmountInputEditText?.setText(payMyAccountViewModel.getCurrentBalance())
                 } else {
                     if (isZeroAmount(payMyAccountViewModel.getOverdueAmount())) return
-                    selectOutstandingAmount()
-                    paymentAmountInputEditText?.setText(payMyAccountViewModel.getOverdueAmount())
+                    binding.selectOutstandingAmount()
+                    binding.paymentAmountInputEditText?.setText(payMyAccountViewModel.getOverdueAmount())
                 }
-                enterPaymentAmountTextView?.tag = R.id.amountOutstandingValueTextView
+                binding.enterPaymentAmountTextView?.tag = R.id.amountOutstandingValueTextView
                 isAmountSelected = true
 
             }
@@ -303,7 +296,7 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
         }
     }
 
-    private fun selectOutstandingAmount() {
+    private fun EnterPaymentAmountFragmentBinding.selectOutstandingAmount() {
         when (isZeroAmount(payMyAccountViewModel.getOverdueAmount())) {
             true -> clearSelection()
             else -> {
@@ -313,7 +306,7 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
         }
     }
 
-    private fun selectCurrentBalance() {
+    private fun EnterPaymentAmountFragmentBinding.selectCurrentBalance() {
         when (isZeroAmount(payMyAccountViewModel.getCurrentBalance())) {
             true -> clearSelection()
             else -> {
@@ -323,7 +316,7 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
         }
     }
 
-    private fun selectTotalAmountDue() {
+    private fun EnterPaymentAmountFragmentBinding.selectTotalAmountDue() {
         when (isZeroAmount(payMyAccountViewModel.getTotalAmountDue())) {
             true -> clearSelection()
             else -> {
@@ -336,12 +329,12 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
     private fun isZeroAmount(amount: String?) =
         payMyAccountViewModel.convertRandFormatToInt(amount) == 0
 
-    private fun clearSelection() {
+    private fun EnterPaymentAmountFragmentBinding.clearSelection() {
         totalAmountDueValueTextView?.isSelected = false
         amountOutstandingValueTextView?.isSelected = false
     }
 
-    private fun enteredAmountValidationError(amount: String) {
+    private fun EnterPaymentAmountFragmentBinding.enteredAmountValidationError(amount: String) {
         continueToPaymentButton?.isEnabled = false
         reducePaymentAmountTextView?.visibility = VISIBLE
         reducePaymentAmountTextView?.text = amount
@@ -374,7 +367,7 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
     fun showKeyboard() {
         // hide keyboard for elite plans
         if (payMyAccountViewModel.elitePlanModel?.scope.isNullOrEmpty()) {
-            paymentAmountInputEditText?.requestFocus()
+            binding.paymentAmountInputEditText?.requestFocus()
             val imm: InputMethodManager? =
                 activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             imm?.toggleSoftInput(
@@ -399,7 +392,7 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
         showKeyboard()
     }
 
-    fun highlightAmountBlock() {
+    fun EnterPaymentAmountFragmentBinding.highlightAmountBlock() {
         val inputFieldAmount =
             payMyAccountViewModel.convertRandFormatToDouble(paymentAmountInputEditText?.text?.toString())
         val totalAmountDue = totalAmountDueValueTextView?.text?.toString()

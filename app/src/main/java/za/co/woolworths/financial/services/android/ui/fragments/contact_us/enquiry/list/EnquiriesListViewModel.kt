@@ -1,11 +1,9 @@
 package za.co.woolworths.financial.services.android.ui.fragments.contact_us.enquiry.list
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigOptions
-import za.co.woolworths.financial.services.android.ui.fragments.contact_us.ContactUsModel
 import za.co.woolworths.financial.services.android.ui.fragments.contact_us.enquiry.EmailUsRequest
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import java.util.regex.Pattern
@@ -15,8 +13,6 @@ import javax.inject.Inject
 @HiltViewModel
 class EnquiriesListViewModel @Inject constructor() : ViewModel() {
 
-    private val _contactUsModel: MutableLiveData<ContactUsModel> = MutableLiveData(ContactUsModel())
-    val contactUsModel: LiveData<ContactUsModel> get() = _contactUsModel
     var selectedEnquiry: MutableLiveData<ConfigOptions>? = MutableLiveData<ConfigOptions>()
     var validationErrors: MutableLiveData<ValidationErrors>? = MutableLiveData<ValidationErrors>()
     var emailUsRequest: MutableLiveData<EmailUsRequest> = MutableLiveData<EmailUsRequest>()

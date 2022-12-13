@@ -1,20 +1,19 @@
 package za.co.woolworths.financial.services.android.onecartgetstream.service
 
-import android.app.*
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.awfs.coordination.R
-import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.ChatEventListener
-import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.channel.ChannelClient
@@ -27,10 +26,8 @@ import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.pushprovider.firebase.FirebasePushDeviceGenerator
 import io.getstream.chat.android.pushprovider.huawei.HuaweiPushDeviceGenerator
-import kotlinx.android.synthetic.main.fragment_shop_my_orders.*
-import kotlinx.android.synthetic.main.oc_chat_toast_notification.view.*
-import kotlinx.android.synthetic.main.order_details_fragment.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
@@ -40,13 +37,10 @@ import za.co.woolworths.financial.services.android.models.dto.OrderSummary
 import za.co.woolworths.financial.services.android.models.dto.OrdersResponse
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
-import za.co.woolworths.financial.services.android.onecartgetstream.OCChatActivity
 import za.co.woolworths.financial.services.android.onecartgetstream.common.constant.OCConstant.Companion.ORDER_PENDING_PICKING
 import za.co.woolworths.financial.services.android.onecartgetstream.common.constant.OCConstant.Companion.isOCChatBackgroundServiceRunning
 import za.co.woolworths.financial.services.android.onecartgetstream.model.OCAuthenticationResponse
 import za.co.woolworths.financial.services.android.onecartgetstream.repository.OCToastNotification
-import za.co.woolworths.financial.services.android.receivers.DashOrderReceiver.Companion.ACTION_LAST_DASH_ORDER
-import za.co.woolworths.financial.services.android.receivers.DashOrderReceiver.Companion.EXTRA_UNREAD_MESSAGE_COUNT
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.util.Utils
 import javax.inject.Inject
@@ -55,18 +49,16 @@ import javax.inject.Inject
 class DashChatMessageListeningService : LifecycleService(), ChatEventListener<NewMessageEvent> {
 
     private lateinit var chatClient: ChatClient
-
     // Controllers for observing data changes within the channel, where key is orderId
     private var chatChannelClients = HashMap<String, ChannelClient>()
     private var ordersSummary = ArrayList<OrderSummary>()
     private var channelIdToOrderIdMap = HashMap<String, String>()
     private var isServiceRunning = true
-
     @Inject
     lateinit var ocToastNotification: OCToastNotification
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        if (isServiceRunning) {
+        if (isServiceRunning){
             lifecycleScope.launch(Dispatchers.IO) {
                 isOCChatBackgroundServiceRunning = true
                 isServiceRunning = false
@@ -90,10 +82,8 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
             manager?.createNotificationChannel(serviceChannel)
 
             val notificationIntent = Intent()
-            val pendingIntentFlag =
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) PendingIntent.FLAG_IMMUTABLE else 0
-            val pendingIntent =
-                PendingIntent.getActivity(context, 0, notificationIntent, pendingIntentFlag)
+            val pendingIntentFlag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) PendingIntent.FLAG_IMMUTABLE else 0
+            val pendingIntent = PendingIntent.getActivity(context, 0, notificationIntent, pendingIntentFlag)
             return context?.let {
                 NotificationCompat.Builder(it, CHANNEL_ID)
                     .setSmallIcon(R.drawable.ic_notification)
@@ -140,19 +130,11 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
                                                     chatClient,
                                                     channel.cid,
                                                     onSuccess = { member ->
-                                                        ordersSummary.firstOrNull {
-                                                            !it.shopperId.isNullOrEmpty() && member.id.contains(
-                                                                it.shopperId!!
-                                                            )
-                                                        }?.let { orderForChannel ->
+                                                        ordersSummary.firstOrNull { !it.shopperId.isNullOrEmpty() && member.id.contains(it.shopperId!!) }?.let { orderForChannel ->
                                                             orderForChannel.orderId?.let { orderId ->
-                                                                channelIdToOrderIdMap[channel.cid] =
-                                                                    orderId ?: ""
+                                                                channelIdToOrderIdMap[channel.cid] = orderId ?: ""
                                                                 // Append channel and start listening to it through delegate
-                                                                getChatChannelClient(
-                                                                    orderId,
-                                                                    channel.cid
-                                                                )
+                                                                getChatChannelClient(orderId, channel.cid)
                                                             }
                                                         }
                                                     },
@@ -211,8 +193,7 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
         }
     }
 
-    private fun getChatChannelClient(orderId: String): ChannelClient? =
-        chatChannelClients.get(orderId)
+    private fun getChatChannelClient(orderId: String): ChannelClient? = chatChannelClients.get(orderId)
 
     private fun appendChatChannelClient(orderId: String, channelClient: ChannelClient) {
         chatChannelClients[orderId] = channelClient
@@ -231,7 +212,6 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
                 val orderId = channelIdToOrderIdMap[event.cid]
                 val orderSummary = ordersSummary.firstOrNull { it.orderId == orderId }
 
-                sendBroadCastEvent(event.totalUnreadCount)
                 //TODO:
                 /*
                   Hiding Toast as per requirement. currently not needed.
@@ -267,96 +247,7 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
     companion object {
         const val CHANNEL_ID = "ForegroundServiceChannelId"
 
-        fun getUnreadMessageForOrder(
-            context: Context,
-            orderId: String
-        ) {
-            val chatClient = getOneCartStreamChatClient(context)
-            authenticateOneCart(
-                onSuccess = { userId, displayName, token ->
-                    connectUser(
-                        userId,
-                        displayName,
-                        token,
-                        onSuccess = {
-                            fetchOrderDetails(
-                                orderId,
-                                onSuccess = { orderSummary ->
-                                    fetchChannels(
-                                        chatClient,
-                                        onSuccess = { channels ->
-                                            if (channels.isEmpty()) {
-                                                return@fetchChannels
-                                            }
-
-                                            channels.forEach { channel ->
-                                                getRecipientChannelMember(
-                                                    chatClient,
-                                                    channel.cid,
-                                                    onSuccess = { member ->
-                                                        if (!orderSummary.shopperId.isNullOrEmpty() && member.id.contains(
-                                                                orderSummary.shopperId!!
-                                                            )
-                                                        ) {
-                                                            // Get channel
-                                                            val queryChannelRequest =
-                                                                QueryChannelRequest().withState()
-                                                            chatClient.queryChannel(
-                                                                channel.type,
-                                                                channel.id,
-                                                                queryChannelRequest
-                                                            ).enqueue { result ->
-                                                                if (result.isSuccess) {
-                                                                    // Unread count for current user
-                                                                    val unreadCount: Int =
-                                                                        result.data().unreadCount
-                                                                            ?: 0
-                                                                    sendBroadCastEvent(
-                                                                        unreadCount
-                                                                    )
-                                                                }
-                                                            }
-                                                        }
-                                                    },
-                                                    onFailure = {
-                                                        // Ignored for now
-                                                    }
-                                                )
-                                            }
-                                        },
-                                        onFailure = {}
-                                    )
-                                },
-                                onFailure = {}
-                            )
-                        },
-                        onFailure = {}
-                    )
-                },
-                onFailure = {}
-            )
-        }
-
-        fun sendBroadCastEvent(totalUnreadCount: Int) {
-
-            if (WoolworthsApplication.getInstance().currentActivity != null &&
-                WoolworthsApplication.getInstance().currentActivity::class != OCChatActivity::class
-            ) {
-                WoolworthsApplication.getInstance()?.currentActivity?.let {
-                    val broadCastIntent = Intent()
-                    broadCastIntent.action = ACTION_LAST_DASH_ORDER
-                    broadCastIntent.putExtra(EXTRA_UNREAD_MESSAGE_COUNT, totalUnreadCount)
-                    LocalBroadcastManager.getInstance(it).sendBroadcast(broadCastIntent)
-                }
-            }
-        }
-
-        fun getChannelForOrder(
-            context: Context,
-            orderId: String,
-            onSuccess: (Channel) -> Unit,
-            onFailure: () -> Unit
-        ) {
+        fun getChannelForOrder(context: Context, orderId: String, onSuccess: (Channel) -> Unit, onFailure: () -> Unit) {
             val chatClient = getOneCartStreamChatClient(context)
             authenticateOneCart(
                 onSuccess = { userId, displayName, token ->
@@ -381,10 +272,7 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
                                                     chatClient,
                                                     channel.cid,
                                                     onSuccess = { member ->
-                                                        if (!orderSummary.shopperId.isNullOrEmpty() && member.id.contains(
-                                                                orderSummary.shopperId!!
-                                                            )
-                                                        ) {
+                                                        if (!orderSummary.shopperId.isNullOrEmpty() && member.id.contains(orderSummary.shopperId!!)) {
                                                             onSuccess(channel)
                                                         }
                                                     },
@@ -413,12 +301,7 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
             )
         }
 
-        fun getOrderIdForChannel(
-            context: Context,
-            channelId: String,
-            onSuccess: (String) -> Unit,
-            onFailure: () -> Unit
-        ) {
+        fun getOrderIdForChannel(context: Context, channelId: String, onSuccess: (String) -> Unit, onFailure: () -> Unit) {
             val chatClient = getOneCartStreamChatClient(context)
             authenticateOneCart(
                 onSuccess = { userId, displayName, token ->
@@ -441,11 +324,7 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
                                                 chatClient,
                                                 channelId,
                                                 onSuccess = { member ->
-                                                    ordersSummary.firstOrNull {
-                                                        !it.shopperId.isNullOrEmpty() && member.id.contains(
-                                                            it.shopperId!!
-                                                        )
-                                                    }?.let { orderForChannel ->
+                                                    ordersSummary.firstOrNull { !it.shopperId.isNullOrEmpty() && member.id.contains(it.shopperId!!) }?.let { orderForChannel ->
                                                         orderForChannel.orderId?.let { orderId ->
                                                             onSuccess(orderId)
                                                         } ?: kotlin.run {
@@ -486,8 +365,7 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
                             }
 
                             // Check cached orders first
-                            val cachedOrderSummaryPendingPicking =
-                                Utils.getCachedOrdersPendingPicking()
+                            val cachedOrderSummaryPendingPicking = Utils.getCachedOrdersPendingPicking()
                             if (!cachedOrderSummaryPendingPicking.isNullOrEmpty()) {
                                 getRecipientChannelMember(
                                     chatClient,
@@ -541,17 +419,9 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
                 )
             )
 
-            val chatClient = ChatClient.Builder(
-                AppConfigSingleton.dashConfig?.inAppChat?.apiKey.toString(),
-                WoolworthsApplication.getAppContext()
-            )
+            val chatClient = ChatClient.Builder(AppConfigSingleton.dashConfig?.inAppChat?.apiKey.toString(), WoolworthsApplication.getAppContext())
                 .logLevel(ChatLogLevel.ALL)
-                .notifications(
-                    ChatNotificationHandler(
-                        WoolworthsApplication.getAppContext(),
-                        notificationConfig
-                    )
-                )
+                .notifications(ChatNotificationHandler(WoolworthsApplication.getAppContext(), notificationConfig))
                 .build()
 
             ChatDomain.Builder(chatClient, WoolworthsApplication.getAppContext())
@@ -562,10 +432,7 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
             return chatClient
         }
 
-        private fun authenticateOneCart(
-            onSuccess: (String, String, String) -> Unit,
-            onFailure: () -> Unit
-        ) {
+        private fun authenticateOneCart(onSuccess: (String, String, String) -> Unit, onFailure: () -> Unit) {
             OneAppService.authenticateOneCart().apply {
                 enqueue(CompletionHandler(object : IResponseListener<OCAuthenticationResponse> {
                     override fun onSuccess(response: OCAuthenticationResponse?) {
@@ -585,13 +452,7 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
             }
         }
 
-        private fun connectUser(
-            userId: String,
-            displayName: String,
-            token: String,
-            onSuccess: () -> Unit,
-            onFailure: () -> Unit
-        ) {
+        private fun connectUser(userId: String, displayName: String, token: String, onSuccess: () -> Unit, onFailure: () -> Unit) {
             val currentUser = ChatClient.instance().getCurrentUser()
             currentUser?.let {
                 onFailure()
@@ -621,7 +482,7 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
                                                 PushProvider.FIREBASE
                                             )
                                         else
-                                            Device(
+                                            Device (
                                                 Utils.getOCFCMToken(), // Since Stream uses Woolworths details for Huawei, we can use our own HMS cached token
                                                 PushProvider.HUAWEI
                                             )
@@ -643,11 +504,7 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
             OneAppService.getOrders().apply {
                 enqueue(CompletionHandler(object : IResponseListener<OrdersResponse> {
                     override fun onSuccess(ordersResponse: OrdersResponse?) {
-                        ordersResponse?.upcomingOrders?.filter {
-                            it.deliveryStatus?.Food?.equals(
-                                ORDER_PENDING_PICKING
-                            ) == true
-                        }?.let {
+                        ordersResponse?.upcomingOrders?.filter { it.deliveryStatus?.Food?.equals(ORDER_PENDING_PICKING) == true }?.let {
                             onCompletion(ArrayList(it))
                         } ?: kotlin.run {
                             onCompletion(null)
@@ -661,11 +518,7 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
             }
         }
 
-        private fun fetchChannels(
-            chatClient: ChatClient,
-            onSuccess: (List<Channel>) -> Unit,
-            onFailure: () -> Unit
-        ) {
+        private fun fetchChannels(chatClient: ChatClient, onSuccess: (List<Channel>) -> Unit, onFailure: () -> Unit) {
             chatClient.getCurrentUser()?.let { currentUser ->
                 val filter = Filters.and(
                     Filters.`in`("members", listOf<String>(currentUser.id))
@@ -692,11 +545,7 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
             }
         }
 
-        private fun fetchOrderDetails(
-            orderId: String,
-            onSuccess: (OrderSummary) -> Unit,
-            onFailure: () -> Unit
-        ) {
+        private fun fetchOrderDetails(orderId: String, onSuccess: (OrderSummary) -> Unit, onFailure: () -> Unit) {
             OneAppService.getOrderDetails(orderId).enqueue(CompletionHandler(object :
                 IResponseListener<OrderDetailsResponse> {
                 override fun onSuccess(ordersResponse: OrderDetailsResponse?) {
@@ -714,12 +563,7 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
             }, OrderDetailsResponse::class.java))
         }
 
-        private fun getRecipientChannelMember(
-            chatClient: ChatClient,
-            channelId: String,
-            onSuccess: (User) -> Unit,
-            onFailure: () -> Unit
-        ) {
+        private fun getRecipientChannelMember(chatClient: ChatClient, channelId: String, onSuccess: (User) -> Unit, onFailure: () -> Unit) {
             chatClient.getCurrentUser()?.let { currentUser ->
                 chatClient
                     .channel(channelId)
@@ -739,7 +583,7 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
 
     override fun onDestroy() {
         super.onDestroy()
-        if (::chatClient.isInitialized) {
+        if (::chatClient.isInitialized){
             chatClient.disconnect()
         }
         isOCChatBackgroundServiceRunning = false

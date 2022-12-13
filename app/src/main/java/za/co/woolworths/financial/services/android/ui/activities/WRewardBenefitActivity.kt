@@ -17,9 +17,9 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.RewardBenefitActivityBinding
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
-import kotlinx.android.synthetic.main.reward_benefit_activity.*
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.RewardBenefitFragment
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.VIPExclusiveFragment
 import za.co.woolworths.financial.services.android.util.Utils
@@ -27,6 +27,7 @@ import za.co.woolworths.financial.services.android.util.Utils
 
 class WRewardBenefitActivity : AppCompatActivity() {
 
+    private lateinit var binding: RewardBenefitActivityBinding
     private var benefitTabPosition: Int = 0
 
     companion object {
@@ -48,15 +49,16 @@ class WRewardBenefitActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-        setContentView(R.layout.reward_benefit_activity)
+        binding = RewardBenefitActivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         Utils.updateStatusBarBackground(this)
         benefitTabPosition = intent.getIntExtra("benefitTabPosition", 0)
-        init()
-        closeIcon.setOnClickListener { onBackPressed() }
+        binding.init()
+        binding.closeIcon.setOnClickListener { onBackPressed() }
     }
 
-    private fun init() {
-        vpRewardBenefit?.adapter = object : FragmentStateAdapter(this) {
+    private fun RewardBenefitActivityBinding.init() {
+        vpRewardBenefit?.adapter = object : FragmentStateAdapter(this@WRewardBenefitActivity) {
             override fun createFragment(position: Int): Fragment {
                 return when (position) {
                     0 -> RewardBenefitFragment.newInstance()
@@ -78,7 +80,7 @@ class WRewardBenefitActivity : AppCompatActivity() {
 
         vpRewardBenefit?.currentItem = benefitTabPosition
 
-       updateTabFont(benefitTabPosition, true)
+        updateTabFont(benefitTabPosition, true)
 
         tabs?.addOnTabSelectedListener(
                 object : TabLayout.OnTabSelectedListener {
@@ -95,7 +97,7 @@ class WRewardBenefitActivity : AppCompatActivity() {
                 })
     }
 
-    private fun updateTabFont(position: Int, tabIsSelected: Boolean) {
+    private fun RewardBenefitActivityBinding.updateTabFont(position: Int, tabIsSelected: Boolean) {
         val tabLayout =
                 (tabs.getChildAt(0) as? ViewGroup)?.getChildAt(position) as? LinearLayout
         val tabTextView = tabLayout?.getChildAt(1) as? AppCompatTextView

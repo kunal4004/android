@@ -1,17 +1,8 @@
 package za.co.woolworths.financial.services.android.ui.fragments.wreward.logged_in;
 
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.FragmentActivity;
-import androidx.lifecycle.ViewModelProviders;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.viewpager.widget.ViewPager;
-
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
@@ -20,6 +11,13 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.viewpager.widget.ViewPager;
 
 import com.awfs.coordination.BR;
 import com.awfs.coordination.R;
@@ -40,18 +38,17 @@ import za.co.woolworths.financial.services.android.ui.activities.WRewardsErrorFr
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.WRewardsFragmentPagerAdapter;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
-import za.co.woolworths.financial.services.android.ui.base.ViewBindingFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsOverviewFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsSavingsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsVouchersFragment;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
-import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager;
 import za.co.woolworths.financial.services.android.util.KotlinUtils;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.OneAppEvents;
 import za.co.woolworths.financial.services.android.util.Utils;
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager;
 
 /**
  * Created by W7099877 on 05/01/2017.

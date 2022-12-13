@@ -4,16 +4,13 @@ import android.graphics.Paint
 import android.os.Bundle
 import android.text.InputType
 import android.text.TextUtils
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.fragment_enter_otp.*
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
 
 class EnterOTPFragment : EnterOTPFragmentExtension(), ResendOTPDialogFragment.IResendOTPOptionSelection {
@@ -25,16 +22,12 @@ class EnterOTPFragment : EnterOTPFragmentExtension(), ResendOTPDialogFragment.IR
     lateinit var numberToOTPSent: String
     lateinit var otpValue: String
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        activity?.runOnUiThread { activity?.window?.addFlags(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE) }
-        return inflater.inflate(R.layout.fragment_enter_otp, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        activity?.runOnUiThread { activity?.window?.addFlags(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE) }
         navController = Navigation.findNavController(view)
-        buttonNext?.isEnabled = false
-        setupInputListeners()
+        binding.buttonNext?.isEnabled = false
+        binding.setupInputListeners()
         clickEvent()
         configureUI()
     }
@@ -50,17 +43,17 @@ class EnterOTPFragment : EnterOTPFragmentExtension(), ResendOTPDialogFragment.IR
     }
 
     fun configureUI() {
-        enterOTPDescriptionScreen?.text = activity?.resources?.getString(R.string.sent_otp_desc, otpSentTo)
-        didNotReceiveOTPTextView?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
+        binding.enterOTPDescriptionScreen?.text = activity?.resources?.getString(R.string.sent_otp_desc, otpSentTo)
+        binding.didNotReceiveOTPTextView?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
         if (otpValue.isNotEmpty())
             showWrongOTP()
     }
 
     private fun clickEvent() {
-        buttonNext?.setOnClickListener {
+        binding.buttonNext?.setOnClickListener {
             navigateToValidateOTP()
         }
-        didNotReceiveOTPTextView?.setOnClickListener {
+        binding.didNotReceiveOTPTextView?.setOnClickListener {
             hideKeyboard()
             (activity as? AppCompatActivity)?.apply {
                 mResendOTPDialogFragment = ResendOTPDialogFragment.newInstance(this@EnterOTPFragment, numberToOTPSent)
@@ -70,14 +63,19 @@ class EnterOTPFragment : EnterOTPFragmentExtension(), ResendOTPDialogFragment.IR
     }
 
     private fun navigateToValidateOTP() {
-        hideKeyboard()
-        val otpValue = getNumberFromEditText(edtVerificationCode1)
+        binding.apply {
+            hideKeyboard()
+            val otpValue = getNumberFromEditText(edtVerificationCode1)
                 .plus(getNumberFromEditText(edtVerificationCode2))
                 .plus(getNumberFromEditText(edtVerificationCode3))
                 .plus(getNumberFromEditText(edtVerificationCode4))
                 .plus(getNumberFromEditText(edtVerificationCode5))
-        bundle?.putString("otpValue", otpValue)
-        navController?.navigate(R.id.action_to_validateOTPFragment, bundleOf("bundle" to bundle))
+            bundle?.putString("otpValue", otpValue)
+            navController?.navigate(
+                R.id.action_to_validateOTPFragment,
+                bundleOf("bundle" to bundle)
+            )
+        }
     }
 
     override fun onOTPMethodSelected(otpMethodType: OTPMethodType) {
@@ -92,7 +90,7 @@ class EnterOTPFragment : EnterOTPFragmentExtension(), ResendOTPDialogFragment.IR
 
     private fun requestEditTextFocus() {
         (activity as? AppCompatActivity)?.let { activity ->
-            edtVerificationCode1?.apply {
+            binding.edtVerificationCode1?.apply {
                 requestFocus()
                 showSoftKeyboard(activity, this)
                 inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
@@ -101,18 +99,20 @@ class EnterOTPFragment : EnterOTPFragmentExtension(), ResendOTPDialogFragment.IR
     }
 
     private fun showWrongOTP() {
-        if (!TextUtils.isEmpty(otpValue)) {
-            with(otpValue.split("")) {
-                edtVerificationCode1?.setText(this[1])
-                edtVerificationCode2?.setText(this[2])
-                edtVerificationCode3?.setText(this[3])
-                edtVerificationCode4?.setText(this[4])
-                edtVerificationCode5?.setText(this[5])
+        binding.apply {
+            if (!TextUtils.isEmpty(otpValue)) {
+                with(otpValue.split("")) {
+                    edtVerificationCode1?.setText(this[1])
+                    edtVerificationCode2?.setText(this[2])
+                    edtVerificationCode3?.setText(this[3])
+                    edtVerificationCode4?.setText(this[4])
+                    edtVerificationCode5?.setText(this[5])
+                }
+                edtVerificationCode1?.setSelection(0)
             }
-            edtVerificationCode1?.setSelection(0)
+            otpErrorTextView?.visibility = View.VISIBLE
+            setOtpErrorBackground(R.drawable.otp_box_error_background)
         }
-        otpErrorTextView?.visibility = View.VISIBLE
-        setOtpErrorBackground(R.drawable.otp_box_error_background)
     }
 
     override fun onResume() {

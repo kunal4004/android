@@ -57,9 +57,13 @@
             android:indeterminateTint="@color/black"
             android:visibility="gone" />
 
-        <include layout="@layout/empty_state_template" />
+        <include
+            android:id="@+id/includeEmptyStateTemplate"
+            layout="@layout/empty_state_template" />
 
-        <include layout="@layout/chat_collect_agent_floating_button_layout" />
+        <include
+            android:id="@+id/includeChatCollectAgentFloatingButton"
+            layout="@layout/chat_collect_agent_floating_button_layout" />
 
     </FrameLayout>
 

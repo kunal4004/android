@@ -30,7 +30,9 @@
             app:layout_anchor="@+id/availableFundFragmentFrameLayout"
             app:layout_anchorGravity="center" />
 
-        <include layout="@layout/my_account_product_landing_toolbar" />
+        <include
+            android:id="@+id/includeAccountProductLandingToolbarAvailableFund"
+            layout="@layout/my_account_product_landing_toolbar" />
 
     </FrameLayout>
 
@@ -93,7 +95,9 @@
         android:layout_height="match_parent"
         android:visibility="gone">
 
-        <include layout="@layout/my_account_product_landing_toolbar" />
+        <include
+            android:id="@+id/includeAccountProductLandingToolbarRemoveBlockOnCollection"
+            layout="@layout/my_account_product_landing_toolbar" />
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/removeBlockOnCollectionFragmentContainerView"
@@ -106,6 +110,8 @@
             app:navGraph="@navigation/remove_block_on_collection_customer_nav_host" />
     </FrameLayout>
 
-    <include layout="@layout/chat_collect_agent_floating_button_layout" />
+    <include
+        android:id="@+id/includeChatCollectAgentFloatingButton"
+        layout="@layout/chat_collect_agent_floating_button_layout" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

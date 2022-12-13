@@ -9,16 +9,18 @@ import androidx.appcompat.widget.Toolbar
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.activity_link_device_confirmation.*
+import com.awfs.coordination.databinding.ActivityLinkDeviceConfirmationBinding
 import za.co.woolworths.financial.services.android.util.Utils
 
 class LinkDeviceConfirmationActivity : AppCompatActivity(), LinkDeviceConfirmationInterface {
 
+    private lateinit var binding: ActivityLinkDeviceConfirmationBinding
     private var linkDeviceNavHost: NavController? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_link_device_confirmation)
+        binding = ActivityLinkDeviceConfirmationBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         val navHost = supportFragmentManager.findFragmentById(R.id.linkDeviceConfirmationNavHost) as? NavHostFragment
         linkDeviceNavHost = navHost?.navController
@@ -28,7 +30,7 @@ class LinkDeviceConfirmationActivity : AppCompatActivity(), LinkDeviceConfirmati
     }
 
     private fun configureToolbar() {
-        setSupportActionBar(linkDeviceConfirmToolbar)
+        setSupportActionBar(binding.linkDeviceConfirmToolbar)
         Utils.updateStatusBarBackground(this)
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
@@ -72,15 +74,15 @@ class LinkDeviceConfirmationActivity : AppCompatActivity(), LinkDeviceConfirmati
     }
 
     override fun setToolbarTitle(title: String) {
-        linkDeviceConfirmToolbarTitle?.text = title
+        binding.linkDeviceConfirmToolbarTitle?.text = title
     }
 
     override fun hideToolbarButton() {
-        linkDeviceConfirmToolbarRightButton?.visibility = View.GONE
+        binding.linkDeviceConfirmToolbarRightButton?.visibility = View.GONE
     }
 
     override fun showToolbarButton() {
-        linkDeviceConfirmToolbarRightButton?.visibility = View.VISIBLE
+        binding.linkDeviceConfirmToolbarRightButton?.visibility = View.VISIBLE
     }
 
     override fun hideBackButton() {
@@ -101,6 +103,6 @@ class LinkDeviceConfirmationActivity : AppCompatActivity(), LinkDeviceConfirmati
     }
 
     override fun getToolbar(): Toolbar {
-        return linkDeviceConfirmToolbar
+        return binding.linkDeviceConfirmToolbar
     }
 }

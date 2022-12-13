@@ -3,7 +3,7 @@ package za.co.woolworths.financial.services.android.ui.activities.store_card
 import android.os.Bundle
 import android.view.MenuItem
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.my_card_activity.*
+import com.awfs.coordination.databinding.ActivityRequestOtpBinding
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardActivityExtension
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.fragments.npc.EnterOtpFragment
@@ -16,10 +16,14 @@ class RequestOTPActivity : MyCardActivityExtension() {
         const val OTP_VALUE = "OTP_VALUE"
         const val OTP_REQUEST_CODE = 1983
     }
+
+    private lateinit var binding: ActivityRequestOtpBinding
     var otpSentTo: String? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_request_otp)
+        binding = ActivityRequestOtpBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         Utils.updateStatusBarBackground(this)
         actionBar()
 
@@ -45,7 +49,7 @@ class RequestOTPActivity : MyCardActivityExtension() {
     }
 
     private fun actionBar() {
-        setSupportActionBar(tbMyCard)
+        setSupportActionBar(binding.tbMyCard)
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
             setDisplayShowTitleEnabled(false)

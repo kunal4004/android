@@ -15,7 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.cli_phase2_activity.*
+import com.awfs.coordination.databinding.CliPhase2ActivityBinding
 import za.co.woolworths.financial.services.android.analytic.FirebaseCreditLimitIncreaseEvent
 import za.co.woolworths.financial.services.android.contracts.ICreditLimitDecrease
 import za.co.woolworths.financial.services.android.contracts.IEditAmountSlider
@@ -38,6 +38,7 @@ import za.co.woolworths.financial.services.android.util.controller.IncreaseLimit
 
 class CLIPhase2Activity : AppCompatActivity(), View.OnClickListener, ICreditLimitDecrease, DeclineOfferInterface, IEditAmountSlider, MaritalStatusListener {
 
+    private lateinit var binding: CliPhase2ActivityBinding
     private var mFirebaseCreditLimitIncreaseEvent: FirebaseCreditLimitIncreaseEvent? = null
     private var maritalStatus: ConfigMaritalStatus? = null
     private var mCLICreateOfferResponse: OfferActive? = null
@@ -61,7 +62,8 @@ class CLIPhase2Activity : AppCompatActivity(), View.OnClickListener, ICreditLimi
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.cli_phase2_activity)
+        binding = CliPhase2ActivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         Utils.updateStatusBarBackground(this)
         hideDeclineOffer()
         actionBar()
@@ -81,12 +83,12 @@ class CLIPhase2Activity : AppCompatActivity(), View.OnClickListener, ICreditLimi
     }
 
     private fun listener() {
-        tvDeclineOffer?.setOnClickListener(this)
-        imBack?.setOnClickListener(this)
+        binding.tvDeclineOffer?.setOnClickListener(this)
+        binding.imBack?.setOnClickListener(this)
     }
 
     private fun actionBar() {
-        mToolbar?.let { toolbar -> setSupportActionBar(toolbar) }
+        binding.mToolbar?.let { toolbar -> setSupportActionBar(toolbar) }
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(false)
         }
@@ -95,12 +97,12 @@ class CLIPhase2Activity : AppCompatActivity(), View.OnClickListener, ICreditLimi
     private fun loadFragment(nextStep: String?) {
         when (nextStep) {
             bindString(R.string.status_consents) -> {
-                showView(imBack)
+                showView(binding.imBack)
                 openNextFragment(CLIEligibilityAndPermissionFragment())
             }
             bindString(R.string.status_poi_problem) -> {
                 hideBurgerButton()
-                hideView(imBack)
+                hideView(binding.imBack)
                 openNextFragment(CLIPOIProblemFragment())
             }
 
@@ -109,7 +111,7 @@ class CLIPhase2Activity : AppCompatActivity(), View.OnClickListener, ICreditLimi
                     openNextFragment(CLIMaritalStatusFragment.newInstance())
                     return
                 }
-                showView(imBack)
+                showView(binding.imBack)
                 moveToCLIAllStepsContainerFragment()
             }
         }
@@ -199,46 +201,56 @@ class CLIPhase2Activity : AppCompatActivity(), View.OnClickListener, ICreditLimi
 
     fun actionBarCloseIcon() {
         setCloseButtonEnabled(true)
-        imBack?.setImageResource(R.drawable.close_24)
+        binding.imBack?.setImageResource(R.drawable.close_24)
     }
 
     fun performClicked() {
-        imBack?.performClick()
+        binding.imBack?.performClick()
     }
 
     fun actionBarBackIcon() {
         setCloseButtonEnabled(false)
-        imBack?.setImageResource(R.drawable.back24)
+        binding.imBack?.setImageResource(R.drawable.back24)
     }
 
     fun showDeclineOffer() {
-        tvDeclineOffer?.visibility = View.VISIBLE
-        pbDecline?.visibility = View.GONE
-        tvDeclineOffer?.alpha = 1.0f
-        pbDecline?.alpha = 1.0f
+        with(binding) {
+            tvDeclineOffer?.visibility = View.VISIBLE
+            pbDecline?.visibility = View.GONE
+            tvDeclineOffer?.alpha = 1.0f
+            pbDecline?.alpha = 1.0f
+        }
     }
 
     fun hideDeclineOffer() {
-        tvDeclineOffer?.visibility = View.GONE
-        pbDecline?.visibility = View.GONE
-        tvDeclineOffer?.alpha = 0.0f
-        pbDecline?.alpha = 0.0f
+        with(binding) {
+            tvDeclineOffer?.visibility = View.GONE
+            pbDecline?.visibility = View.GONE
+            tvDeclineOffer?.alpha = 0.0f
+            pbDecline?.alpha = 0.0f
+        }
     }
 
     fun disableDeclineButton() {
-        tvDeclineOffer!!.alpha = 0.5f
-        tvDeclineOffer!!.isEnabled = false
+        with(binding) {
+            tvDeclineOffer!!.alpha = 0.5f
+            tvDeclineOffer!!.isEnabled = false
+        }
     }
 
     fun enableDeclineButton() {
-        tvDeclineOffer?.alpha = 1.0f
-        tvDeclineOffer?.isEnabled = true
+        with(binding) {
+            tvDeclineOffer?.alpha = 1.0f
+            tvDeclineOffer?.isEnabled = true
+        }
     }
 
     private fun showDeclineProgressBar() {
-        pbDecline?.visibility = View.VISIBLE
-        tvDeclineOffer?.visibility = View.GONE
-        pbDecline?.indeterminateDrawable?.setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY)
+        with(binding) {
+            pbDecline?.visibility = View.VISIBLE
+            tvDeclineOffer?.visibility = View.GONE
+            pbDecline?.indeterminateDrawable?.setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY)
+        }
     }
 
     fun offerActiveObject(): OfferActive {
@@ -322,7 +334,7 @@ class CLIPhase2Activity : AppCompatActivity(), View.OnClickListener, ICreditLimi
     }
 
     fun hideCloseIcon() {
-        imBack?.visibility = View.INVISIBLE
+        binding.imBack?.visibility = View.INVISIBLE
     }
 
     override fun onLoad() {
