@@ -17,7 +17,6 @@ android {
     def fix = "0"
     def jobNumberProduction = 209
     def jobNumberQa = 657
-    def jobNumberFeature = 669
 
     buildFeatures {
         dataBinding true
@@ -73,13 +72,13 @@ android {
 
     def secureProps = new Properties()
     def productionKeystoreProperties = new Properties()
-    def isQaRelease = false
-    if (System.env.IS_QA_RELEASE != null) {
-        isQaRelease = System.env.IS_QA_RELEASE.toBoolean()
+    def JobNumberFeature = null
+    if (System.env.Job_Number_Feature != null) {
+        JobNumberFeature = System.env.Job_Number_Feature
     }
 
     signingConfigs {
-           woneappQa {
+        woneappQa {
             keyAlias 'woneapp_qa'
             keyPassword 'woneapp_qa'
             storeFile file('key/woneapp_qa-release-key.keystore')
@@ -140,7 +139,7 @@ android {
             }
 
             applicationIdSuffix ".qa"
-            versionCode isQaRelease ? jobNumberQa : jobNumberFeature
+            versionCode JobNumberFeature ? JobNumberFeature : jobNumberQa
             manifestPlaceholders = [appLabel: "Woolworths Q"]
             manifestPlaceholders = [app_links_host: "www-win-qa.woolworths.co.za"]
             buildConfigField("String", "ENV", '"QA"')
@@ -188,7 +187,7 @@ android {
             }
 
             applicationIdSuffix ".qa"
-            versionCode isQaRelease ? jobNumberQa : jobNumberFeature
+            versionCode JobNumberFeature ? JobNumberFeature : jobNumberQa
             manifestPlaceholders = [appLabel: "Woolworths Q"]
             manifestPlaceholders = [app_links_host: "www-win-qa.woolworths.co.za"]
             buildConfigField("String", "ENV", '"QA"')
