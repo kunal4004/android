@@ -5,6 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.setFragmentResult
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentSecondaryDeviceBottomSheetBinding
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.UserDevice
@@ -48,11 +50,8 @@ class SecondaryDeviceBottomSheetFragment : WBottomSheetDialogFragment(), View.On
 
         when (v?.id) {
             R.id.deleteDeviceLayout -> {
-                dismissAllowingStateLoss()
-                AnimationUtilExtension.animateViewPushDown(v)
-
+                this.findNavController().popBackStack()
                 setFragmentResult(ViewAllLinkedDevicesFragment.CONFIRM_DELETE_SECONDARY_DEVICE, Bundle.EMPTY)
-
             }
             R.id.changePrimaryDeviceLayout -> {
                 val bundle = Bundle()
