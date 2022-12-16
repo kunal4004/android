@@ -72,9 +72,9 @@ android {
 
     def secureProps = new Properties()
     def productionKeystoreProperties = new Properties()
-    def JobNumberFeature = -1
-    if (System.env.Job_Number_Feature != null) {
-        JobNumberFeature = System.env.Job_Number_Feature.toInteger()
+    def jobNumberFeature = -1
+    if (System.env.JOB_NUMBER_FEATURE != null) {
+        jobNumberFeature = System.env.JOB_NUMBER_FEATURE.toInteger()
     }
 
     signingConfigs {
@@ -139,7 +139,7 @@ android {
             }
 
             applicationIdSuffix ".qa"
-            versionCode JobNumberFeature > 0 ? JobNumberFeature : jobNumberQa
+            versionCode jobNumberFeature > 0 ? jobNumberFeature : jobNumberQa
             manifestPlaceholders = [appLabel: "Woolworths Q"]
             manifestPlaceholders = [app_links_host: "www-win-qa.woolworths.co.za"]
             buildConfigField("String", "ENV", '"QA"')
@@ -187,7 +187,7 @@ android {
             }
 
             applicationIdSuffix ".qa"
-            versionCode JobNumberFeature  > 0 ? JobNumberFeature : jobNumberQa
+            versionCode jobNumberFeature  > 0 ? jobNumberFeature : jobNumberQa
             manifestPlaceholders = [appLabel: "Woolworths Q"]
             manifestPlaceholders = [app_links_host: "www-win-qa.woolworths.co.za"]
             buildConfigField("String", "ENV", '"QA"')
