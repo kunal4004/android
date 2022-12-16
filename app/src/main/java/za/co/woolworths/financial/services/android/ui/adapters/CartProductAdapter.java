@@ -82,6 +82,8 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 
         void onViewVouchers();
 
+        void onViewCashBackVouchers();
+
         void updateOrderTotal();
 
         void onGiftItemClicked(CommerceItem commerceItem);
@@ -324,24 +326,41 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
                             Utils.triggerFireBaseEvents(getAppliedVouchersCount() > 0 ? FirebaseManagerAnalyticsProperties.Cart_ovr_edit : FirebaseManagerAnalyticsProperties.Cart_ovr_view, mContext);
                         }
                 );
+                priceHolder.viewCashVouchers.setOnClickListener(v -> {
+                            onItemClick.onViewCashBackVouchers();
+                            Utils.triggerFireBaseEvents(getAppliedVouchersCount() > 0 ? FirebaseManagerAnalyticsProperties.Cart_ovr_edit : FirebaseManagerAnalyticsProperties.Cart_ovr_view, mContext);
+                        }
+                );
+
                 if (voucherDetails == null) {
                     return;
                 }
+
+                int activeCashVouchersCount = voucherDetails.getActiveCashVouchersCount();
+                if (activeCashVouchersCount > 0) {
+                    String availableVouchersLabel = activeCashVouchersCount + mContext.getString(voucherDetails.getActiveVouchersCount() == 1 ? R.string.available_cash_voucher_message : R.string.available_cash_vouchers_message) + mContext.getString(R.string.available);
+                    priceHolder.availableCashVouchersCount.setText(availableVouchersLabel);
+                    priceHolder.viewCashVouchers.setEnabled(true);
+                } else {
+                    priceHolder.availableCashVouchersCount.setText(mContext.getString(R.string.zero_cash_vouchers_available));
+                    priceHolder.viewCashVouchers.setEnabled(false);
+                }
+
                 int activeVouchersCount = voucherDetails.getActiveVouchersCount();
                 if (activeVouchersCount > 0) {
                     if (getAppliedVouchersCount() > 0) {
-                        String availableVouchersLabel = getAppliedVouchersCount() + mContext.getString(getAppliedVouchersCount() == 1 ? R.string.available_voucher_toast_message : R.string.available_vouchers_toast_message) + mContext.getString(R.string.applied);
+                        String availableVouchersLabel = getAppliedVouchersCount() + mContext.getString(getAppliedVouchersCount() == 1 ? R.string.available_voucher_message : R.string.available_vouchers_message) + mContext.getString(R.string.applied);
                         priceHolder.availableVouchersCount.setText(availableVouchersLabel);
                         priceHolder.viewVouchers.setText(mContext.getString(R.string.edit));
                         priceHolder.viewVouchers.setEnabled(true);
                     } else {
-                        String availableVouchersLabel = activeVouchersCount + mContext.getString(voucherDetails.getActiveVouchersCount() == 1 ? R.string.available_voucher_toast_message : R.string.available_vouchers_toast_message) + mContext.getString(R.string.available);
+                        String availableVouchersLabel = activeVouchersCount + mContext.getString(voucherDetails.getActiveVouchersCount() == 1 ? R.string.available_voucher_message : R.string.available_vouchers_message) + mContext.getString(R.string.available);
                         priceHolder.availableVouchersCount.setText(availableVouchersLabel);
                         priceHolder.viewVouchers.setText(mContext.getString(R.string.view));
                         priceHolder.viewVouchers.setEnabled(true);
                     }
                 } else {
-                    priceHolder.availableVouchersCount.setText(mContext.getString(R.string.no_vouchers_available));
+                    priceHolder.availableVouchersCount.setText(mContext.getString(R.string.zero_wrewards_vouchers_available));
                     priceHolder.viewVouchers.setText(mContext.getString(R.string.view));
                     priceHolder.viewVouchers.setEnabled(false);
                 }
@@ -641,6 +660,8 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
         private ImageView promoDiscountInfo;
         private ConstraintLayout liquorBannerRootConstraintLayout;
         private ImageView imgLiBanner;
+        private TextView availableCashVouchersCount;
+        private TextView viewCashVouchers;
 
 
         public CartPricesViewHolder(View view) {
@@ -666,6 +687,8 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
             liquorBannerRootConstraintLayout = view.findViewById(R.id.liquorBannerRootConstraintLayout);
             imgLiBanner = view.findViewById(R.id.imgLiquorBanner);
             orderTotal = view.findViewById(R.id.orderTotal);
+            availableCashVouchersCount = view.findViewById(R.id.availableCashVouchersCount);
+            viewCashVouchers = view.findViewById(R.id.viewCashVouchers);
 
         }
     }

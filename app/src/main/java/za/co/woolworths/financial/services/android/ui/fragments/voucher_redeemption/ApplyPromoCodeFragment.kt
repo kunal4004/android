@@ -35,7 +35,7 @@ class ApplyPromoCodeFragment : Fragment(R.layout.apply_promo_code_fragment), Vou
         binding.apply {
             activity?.apply {
                 etPromoCode?.let {
-                    it.showKeyboard(this@ApplyPromoCodeFragment as AppCompatActivity)
+                    it.showKeyboard(requireActivity() as AppCompatActivity)
                     it.afterTextChanged { onPromoCodeTextChanged(it) }
                     it.filters = it.filters + InputFilter.AllCaps()
                 }
