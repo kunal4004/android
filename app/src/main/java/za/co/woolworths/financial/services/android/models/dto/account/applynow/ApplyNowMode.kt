@@ -76,5 +76,7 @@ enum class ApplyNowSectionType(val value: String) {
 }
 enum class ApplyNowSectionReference(val value: String) {
     CREDIT_CARD_GOLD("CREDIT_CARD_GOLD"),
-    CREDIT_CARD_BLACK("CREDIT_CARD_BLACK")
+    CREDIT_CARD_BLACK("CREDIT_CARD_BLACK"),
+    PERSONAL_LOAN("PERSONAL_LOAN"),
+    STORE_CARD("STORE_CARD")
 }
