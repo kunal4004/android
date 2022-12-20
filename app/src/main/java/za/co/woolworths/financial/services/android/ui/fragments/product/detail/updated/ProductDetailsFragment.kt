@@ -291,6 +291,21 @@ class ProductDetailsFragment : BaseFragmentBinding<ProductDetailsFragmentBinding
         addFragmentListner()
         setUniqueIds()
         productDetails?.let { addViewItemEvent(it) }
+        setUpCartCountPDP()
+    }
+
+    private fun setUpCartCountPDP() {
+        //  openCart.setImageResource(R.drawable.ic_cart_icon_pdp)
+         if (SessionUtilities.getInstance().isUserAuthenticated && QueryBadgeCounter.instance.cartCount <= 0) {
+             binding.openCart.cartCountTextView?.visibility = View.GONE
+         }
+
+        if (SessionUtilities.getInstance().isUserAuthenticated && QueryBadgeCounter.instance.cartCount > 0) {
+            // openCart.setImageResource(R.drawable.ic_pdp_cart_count_icon)
+            binding.openCart.cartCountTextView?.visibility = View.VISIBLE
+          //  binding.openCart.cartCountTextView?.background = resources.getDrawable(R.drawable.round_corner_black_bg)
+            binding.openCart.cartCountTextView?.text = QueryBadgeCounter.instance.cartCount.toString()
+        }
     }
 
     private fun addFragmentListner() {
@@ -333,7 +348,7 @@ class ProductDetailsFragment : BaseFragmentBinding<ProductDetailsFragmentBinding
     }
 
     private fun ProductDetailsFragmentBinding.initViews() {
-        openCart?.setOnClickListener(this@ProductDetailsFragment)
+        openCart.root.setOnClickListener(this@ProductDetailsFragment)
         backArrow?.setOnClickListener(this@ProductDetailsFragment)
         share?.setOnClickListener(this@ProductDetailsFragment)
         imgVTOOpen?.setOnClickListener(this@ProductDetailsFragment)
@@ -345,6 +360,11 @@ class ProductDetailsFragment : BaseFragmentBinding<ProductDetailsFragmentBinding
         hideRatingAndReview()
         setupViewModel()
         updateReportLikeStatus()
+
+        /*openCart.apply {
+            cartCountPDPLayout?.setOnClickListener(this@ProductDetailsFragment)
+
+        }*/
 
         toCartAndFindInStoreLayout.apply {
             addToCartAction?.setOnClickListener(this@ProductDetailsFragment)
@@ -642,7 +662,7 @@ class ProductDetailsFragment : BaseFragmentBinding<ProductDetailsFragmentBinding
             sizeColorSelectorLayout.colourUnavailableError?.visibility = View.GONE
             share?.visibility = View.VISIBLE
             productImagesViewPagerIndicator?.visibility = View.VISIBLE
-            openCart?.visibility = View.VISIBLE
+            openCart.root.visibility = View.VISIBLE
             backArrow?.visibility = View.VISIBLE
             productImagesViewPager?.visibility = View.VISIBLE
             imgVTOOpen?.visibility = View.VISIBLE
@@ -740,7 +760,7 @@ class ProductDetailsFragment : BaseFragmentBinding<ProductDetailsFragmentBinding
             if (ChanelUtils.isCategoryPresentInConfig(it.brandText)) {
                 brandView.root.visibility = View.VISIBLE
                 backArrow?.visibility = View.GONE
-                openCart?.visibility = View.GONE
+                openCart.root.visibility = View.GONE
                 share?.visibility = View.GONE
                 imgVTOOpen?.visibility = View.GONE
                 if (!TextUtils.isEmpty(bannerLabel)) {
@@ -764,7 +784,7 @@ class ProductDetailsFragment : BaseFragmentBinding<ProductDetailsFragmentBinding
             } else {
                 brandView.root.visibility = View.GONE
                 backArrow?.visibility = View.VISIBLE
-                openCart?.visibility = View.VISIBLE
+                openCart.root.visibility = View.VISIBLE
                 share?.visibility = View.VISIBLE
                 imgVTOOpen?.visibility = View.VISIBLE
             }
@@ -1004,6 +1024,11 @@ class ProductDetailsFragment : BaseFragmentBinding<ProductDetailsFragmentBinding
             }
             productDetailsPresenter?.postAddItemToCart(listOfItems)
         }
+       /* val cartCountValue : String = QueryBadgeCounter.instance.cartCount.toString()
+        binding.openCart.cartCountTextView.visibility = View.VISIBLE
+        binding.openCart.cartCountTextView?.text = cartCountValue*/
+        setUpCartCountPDP()
+
     }
 
     override fun onSessionTokenExpired() {
@@ -2866,7 +2891,7 @@ class ProductDetailsFragment : BaseFragmentBinding<ProductDetailsFragmentBinding
                 productLayout.contentDescription = getString(R.string.pdp_layout)
                 productImagesViewPagerIndicator.contentDescription =
                     getString(R.string.store_card_image)
-                openCart.contentDescription = getString(R.string.pdp_layout)
+                openCart.root.contentDescription = getString(R.string.pdp_layout)
                 productName.contentDescription = getString(R.string.pdp_textViewProductName)
                 priceLayout.root.contentDescription = getString(R.string.pdp_textViewPrice)
                 binding.sizeColorSelectorLayout.apply {
@@ -3143,7 +3168,7 @@ class ProductDetailsFragment : BaseFragmentBinding<ProductDetailsFragmentBinding
                     vtoLayout.root.visibility = View.GONE
                     share?.visibility = View.VISIBLE
                     productImagesViewPagerIndicator?.visibility = View.VISIBLE
-                    openCart?.visibility = View.VISIBLE
+                    openCart.root.visibility = View.VISIBLE
                     backArrow?.visibility = View.VISIBLE
                     productImagesViewPager?.visibility = View.VISIBLE
                     imgVTOOpen?.visibility = View.VISIBLE
@@ -3184,7 +3209,7 @@ class ProductDetailsFragment : BaseFragmentBinding<ProductDetailsFragmentBinding
         vtoLayout.root.visibility = View.VISIBLE
         share?.visibility = View.GONE
         productImagesViewPagerIndicator?.visibility = View.GONE
-        openCart?.visibility = View.GONE
+        openCart.root.visibility = View.GONE
         backArrow?.visibility = View.GONE
         productImagesViewPager?.visibility = View.GONE
         vtoLayout.imgDownloadVTO.visibility = View.GONE
@@ -3395,7 +3420,7 @@ class ProductDetailsFragment : BaseFragmentBinding<ProductDetailsFragmentBinding
         vtoLayout.root.visibility = View.VISIBLE
         share?.visibility = View.GONE
         productImagesViewPagerIndicator?.visibility = View.GONE
-        openCart?.visibility = View.GONE
+        openCart.root.visibility = View.GONE
         backArrow?.visibility = View.GONE
         productImagesViewPager?.visibility = View.GONE
         vtoLayout.apply {
