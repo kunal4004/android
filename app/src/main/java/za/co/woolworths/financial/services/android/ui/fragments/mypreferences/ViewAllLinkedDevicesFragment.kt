@@ -126,7 +126,7 @@ class ViewAllLinkedDevicesFragment : Fragment(R.layout.fragment_view_all_linked_
 
         setFragmentResultListener(CONFIRM_DELETE_SECONDARY_DEVICE) { requestKey, bundle ->
             val navController = view?.findNavController()
-            navController?.navigate(R.id.action_confirm_delete_device, bundleOf(
+            navController?.navigate(R.id.action_viewAllLinkedDevicesFragment_to_deletePrimaryDeviceFragment, bundleOf(
                 DEVICE_LIST to null
             ))
         }
