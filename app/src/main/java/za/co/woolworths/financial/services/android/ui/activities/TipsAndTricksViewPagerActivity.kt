@@ -292,14 +292,7 @@ import kotlin.properties.Delegates
     }
 
      private fun redirectToMyAccountsCardsActivity(applyNowState: ApplyNowState) {
-         val intent = when(applyNowState){
-             ApplyNowState.BLACK_CREDIT_CARD,ApplyNowState.GOLD_CREDIT_CARD,ApplyNowState.SILVER_CREDIT_CARD->{
-                 Intent(this@TipsAndTricksViewPagerActivity, ApplyNowActivity::class.java)
-             }
-             else->{
-                 Intent(this@TipsAndTricksViewPagerActivity, AccountSalesActivity::class.java)
-             }
-         }
+         val intent = Intent(this@TipsAndTricksViewPagerActivity, ApplyNowActivity::class.java)
          val bundle = Bundle()
          bundle.putSerializable("APPLY_NOW_STATE", applyNowState)
          bundle.putString("ACCOUNT_INFO", Gson().toJson(accountsResponse))
