@@ -9,6 +9,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.viewbinding.ViewBinding
 import com.awfs.coordination.R
+import za.co.woolworths.financial.services.android.models.dto.account.ServerErrorResponse
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.showErrorDialog
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -49,6 +51,13 @@ abstract class BindingBaseActivity<B : ViewBinding>(val bindingFactory: (LayoutI
     protected fun setClickListeners(vararg views: View){
         for (v in views){
             v.setOnClickListener(this)
+        }
+    }
+    protected fun errorDialog(){
+        runOnUiThread{
+            val serverErrorResponse = ServerErrorResponse()
+            serverErrorResponse.desc = getString(R.string.general_error_desc) ?: ""
+            showErrorDialog(this, serverErrorResponse)
         }
     }
 }
