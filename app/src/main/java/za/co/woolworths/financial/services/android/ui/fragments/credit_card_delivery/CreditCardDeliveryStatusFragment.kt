@@ -1,16 +1,13 @@
 package za.co.woolworths.financial.services.android.ui.fragments.credit_card_delivery
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.credit_card_delivery_status_layout.*
-import kotlinx.android.synthetic.main.credit_card_delivery_status_layout.imgCreditCard
+import com.awfs.coordination.databinding.CreditCardDeliveryStatusLayoutBinding
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dto.account.CreditCardDeliveryStatus
 import za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity
@@ -21,16 +18,13 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.WFormatter
 
-class CreditCardDeliveryStatusFragment : CreditCardDeliveryBaseFragment(), View.OnClickListener {
+class CreditCardDeliveryStatusFragment : CreditCardDeliveryBaseFragment(R.layout.credit_card_delivery_status_layout), View.OnClickListener {
 
     enum class DateType(val value: Int) { TODAY(0), TOMORROW(1) }
 
+    private lateinit var binding: CreditCardDeliveryStatusLayoutBinding
     var navController: NavController? = null
     var accountBinNumber: String? = null
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.credit_card_delivery_status_layout, container, false)
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,22 +36,26 @@ class CreditCardDeliveryStatusFragment : CreditCardDeliveryBaseFragment(), View.
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Utils.updateStatusBarBackground(activity, R.color.grey_bg)
-        navController = Navigation.findNavController(view)
-        callTheCallCenter?.setOnClickListener { Utils.makeCall(AppConfigSingleton.creditCardDelivery?.callCenterNumber) }
-        if (activity is CreditCardDeliveryActivity) {
-            (activity as? CreditCardDeliveryActivity)?.apply {
-                changeToolbarBackground(R.color.grey_bg)
-                setToolbarTitle(bindString(R.string.my_card_title))
+        binding = CreditCardDeliveryStatusLayoutBinding.bind(view)
+
+        binding.apply {
+            Utils.updateStatusBarBackground(activity, R.color.grey_bg)
+            navController = Navigation.findNavController(view)
+            callTheCallCenter?.setOnClickListener { Utils.makeCall(AppConfigSingleton.creditCardDelivery?.callCenterNumber) }
+            if (activity is CreditCardDeliveryActivity) {
+                (activity as? CreditCardDeliveryActivity)?.apply {
+                    changeToolbarBackground(R.color.grey_bg)
+                    setToolbarTitle(bindString(R.string.my_card_title))
+                }
             }
+            manageDeliveryLayout.setOnClickListener(this@CreditCardDeliveryStatusFragment)
+            trackDeliveryLayout.setOnClickListener(this@CreditCardDeliveryStatusFragment)
+            init()
+            configureUI()
         }
-        manageDeliveryLayout.setOnClickListener(this)
-        trackDeliveryLayout.setOnClickListener(this)
-        init()
-        configureUI()
     }
 
-    private fun init() {
+    private fun CreditCardDeliveryStatusLayoutBinding.init() {
         if (accountBinNumber.equals(Utils.GOLD_CARD, true)) {
             imgCreditCard.setImageDrawable(bindDrawable(R.drawable.gold_cc_envelope))
         } else if (accountBinNumber.equals(Utils.SILVER_CARD, true)) {
@@ -67,7 +65,7 @@ class CreditCardDeliveryStatusFragment : CreditCardDeliveryBaseFragment(), View.
         }
     }
 
-    fun configureUI() {
+    fun CreditCardDeliveryStatusLayoutBinding.configureUI() {
         when (statusResponse?.deliveryStatus?.statusDescription?.asEnumOrDefault(CreditCardDeliveryStatus.DEFAULT)) {
             CreditCardDeliveryStatus.CARD_RECEIVED -> {
                 cardReceivedOrAppointmentScheduled()
@@ -76,13 +74,13 @@ class CreditCardDeliveryStatusFragment : CreditCardDeliveryBaseFragment(), View.
                 progressIcon.setBackgroundResource(R.drawable.ic_delivered)
                 deliveryDate.text = bindString(R.string.card_delivery_delivered)
                 deliveryStatusTitle.text = bindString(R.string.delivered_cc_delivery_desc)
-                val deliveryDayTimeDrawable = ContextCompat.getDrawable(this.requireContext(), R.drawable.ic_time24)
+                val deliveryDayTimeDrawable = ContextCompat.getDrawable(requireContext(), R.drawable.ic_time24)
                 deliveryDayAndTime.setCompoundDrawablesWithIntrinsicBounds(deliveryDayTimeDrawable, null, null, null)
                 statusResponse?.slotDetails?.appointmentDate?.let {
                     if (it.isEmpty()) {
                         deliveryDayAndTime.text = ""
                     } else {
-                        val deliveryDayTimeDrawable = ContextCompat.getDrawable(this.requireContext(), R.drawable.ic_time24)
+                        val deliveryDayTimeDrawable = ContextCompat.getDrawable(requireContext(), R.drawable.ic_time24)
                         deliveryDayAndTime.setCompoundDrawablesWithIntrinsicBounds(deliveryDayTimeDrawable, null, null, null)
                         deliveryDayAndTime.text = WFormatter.convertDayShortToLong(it).plus(", ").plus(statusResponse?.slotDetails?.slot)
                     }
@@ -98,7 +96,7 @@ class CreditCardDeliveryStatusFragment : CreditCardDeliveryBaseFragment(), View.
                     if (it == "" || it == null) {
                         deliveryDayAndTime.text = ""
                     } else {
-                        val deliveryDayTimeDrawable = ContextCompat.getDrawable(this.requireContext(), R.drawable.ic_time24)
+                        val deliveryDayTimeDrawable = ContextCompat.getDrawable(requireContext(), R.drawable.ic_time24)
                         deliveryDayAndTime.setCompoundDrawablesWithIntrinsicBounds(deliveryDayTimeDrawable, null, null, null)
                         deliveryDayAndTime.text = WFormatter.convertDayToShortDay(it).plus(", ").plus(statusResponse?.slotDetails?.slot)
                     }
@@ -119,18 +117,18 @@ class CreditCardDeliveryStatusFragment : CreditCardDeliveryBaseFragment(), View.
         deliveryStatusDescription.text = statusResponse?.deliveryStatus?.displayCopy
     }
 
-    private fun cardReceivedOrAppointmentScheduled() {
+    private fun CreditCardDeliveryStatusLayoutBinding.cardReceivedOrAppointmentScheduled() {
         manageDeliveryLayout.visibility = View.VISIBLE
         trackDeliveryLayout.visibility = View.VISIBLE
         statusResponse?.slotDetails?.appointmentDate?.let { splitAndApplyFormatedDate(it) }
-        val manageDeliveryDrawable = ContextCompat.getDrawable(this.requireContext(), R.drawable.ic_delivery_truck)
+        val manageDeliveryDrawable = ContextCompat.getDrawable(requireContext(), R.drawable.ic_delivery_truck)
         manageDeliveryDrawable?.alpha = 77
-        manageDeliveryText.setCompoundDrawablesWithIntrinsicBounds(manageDeliveryDrawable, null, ContextCompat.getDrawable(this.requireContext(), R.drawable.ic_caret_black), null)
-        val trackDeliveryDrawable = ContextCompat.getDrawable(this.requireContext(), R.drawable.ic_directions)
-        trackDeliveryText.setCompoundDrawablesWithIntrinsicBounds(trackDeliveryDrawable, null, ContextCompat.getDrawable(this.requireContext(), R.drawable.ic_caret_black), null)
+        manageDeliveryText.setCompoundDrawablesWithIntrinsicBounds(manageDeliveryDrawable, null, ContextCompat.getDrawable(requireContext(), R.drawable.ic_caret_black), null)
+        val trackDeliveryDrawable = ContextCompat.getDrawable(requireContext(), R.drawable.ic_directions)
+        trackDeliveryText.setCompoundDrawablesWithIntrinsicBounds(trackDeliveryDrawable, null, ContextCompat.getDrawable(requireContext(), R.drawable.ic_caret_black), null)
     }
 
-    private fun splitAndApplyFormatedDate(appointmentDate: String?) {
+    private fun CreditCardDeliveryStatusLayoutBinding.splitAndApplyFormatedDate(appointmentDate: String?) {
         if (appointmentDate.isNullOrBlank()) return
         val parts: List<String>? = appointmentDate?.split("-")
         deliveryDayAndTime.text = WFormatter.convertDayShortToLong(appointmentDate).plus(", ").plus(statusResponse?.slotDetails?.slot)

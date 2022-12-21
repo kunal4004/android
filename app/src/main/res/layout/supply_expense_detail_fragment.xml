@@ -186,6 +186,7 @@
 
 
     <include
+        android:id="@+id/includeCliNextButton"
         layout="@layout/cli_next_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

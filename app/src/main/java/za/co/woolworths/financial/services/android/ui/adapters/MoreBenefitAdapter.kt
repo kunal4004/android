@@ -2,7 +2,8 @@ package za.co.woolworths.financial.services.android.ui.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import com.awfs.coordination.R
+import com.awfs.coordination.databinding.MoreBenefitChildItemBinding
+import com.awfs.coordination.databinding.MoreBenefitParentItemBinding
 import za.co.woolworths.financial.services.android.models.dto.account.MoreBenefit
 import za.co.woolworths.financial.services.android.ui.adapters.holder.MoreBenefitChildViewHolder
 import za.co.woolworths.financial.services.android.ui.adapters.holder.MoreBenefitParentViewHolder
@@ -12,13 +13,15 @@ import za.co.woolworths.financial.services.android.util.expand.ParentListItem
 class MoreBenefitAdapter(parentItemList: List<ParentListItem?>?) : ExpandableAdapter<MoreBenefitParentViewHolder?, MoreBenefitChildViewHolder?>(parentItemList) {
 
     override fun onCreateParentViewHolder(parentViewGroup: ViewGroup, viewType: Int): MoreBenefitParentViewHolder {
-        val parentCategoryView = LayoutInflater.from(parentViewGroup.context).inflate(R.layout.more_benefit_parent_item, parentViewGroup, false)
-        return MoreBenefitParentViewHolder(parentCategoryView)
+        return MoreBenefitParentViewHolder(
+            MoreBenefitParentItemBinding.inflate(LayoutInflater.from(parentViewGroup.context), parentViewGroup, false)
+        )
     }
 
     override fun onCreateChildViewHolder(childViewGroup: ViewGroup, viewType: Int): MoreBenefitChildViewHolder {
-        val childView = LayoutInflater.from(childViewGroup.context).inflate(R.layout.more_benefit_child_item, childViewGroup, false)
-        return MoreBenefitChildViewHolder(childView)
+        return MoreBenefitChildViewHolder(
+            MoreBenefitChildItemBinding.inflate(LayoutInflater.from(childViewGroup.context), childViewGroup, false)
+        )
     }
 
     override fun onBindParentViewHolder(holder: MoreBenefitParentViewHolder?, position: Int, parentListItem: ParentListItem?) {

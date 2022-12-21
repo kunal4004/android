@@ -4,22 +4,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.awfs.coordination.R
+import com.awfs.coordination.databinding.DepartmentRowBinding
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DecodeFormat
-import com.bumptech.glide.load.resource.bitmap.FitCenter
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
-import kotlinx.android.synthetic.main.department_dash_banner.view.*
-import kotlinx.android.synthetic.main.department_row.view.*
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidatePlace
-import za.co.woolworths.financial.services.android.models.dto.Dash
 import za.co.woolworths.financial.services.android.models.dto.RootCategory
 import za.co.woolworths.financial.services.android.ui.adapters.holder.DepartmentsBaseViewHolder
-import za.co.woolworths.financial.services.android.ui.adapters.holder.RootCategoryViewType
-import za.co.woolworths.financial.services.android.util.*
-
 
 class DepartmentAdapter(var mlRootCategories: MutableList<RootCategory>?,
                         private val clickListener: (RootCategory) -> Unit,
@@ -27,7 +20,9 @@ class DepartmentAdapter(var mlRootCategories: MutableList<RootCategory>?,
     : RecyclerView.Adapter<DepartmentsBaseViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DepartmentsBaseViewHolder {
-        return DepartmentViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.department_row, parent, false))
+        return DepartmentViewHolder(
+            DepartmentRowBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        )
     }
 
     override fun onBindViewHolder(holder: DepartmentsBaseViewHolder, position: Int) {
@@ -42,7 +37,7 @@ class DepartmentAdapter(var mlRootCategories: MutableList<RootCategory>?,
         mlRootCategories = rootCategories
     }
 
-    inner class DepartmentViewHolder(itemView: View) : DepartmentsBaseViewHolder(itemView) {
+    inner class DepartmentViewHolder(val itemBinding: DepartmentRowBinding) : DepartmentsBaseViewHolder(itemBinding.root) {
         override fun bind(position: Int) {
             val rootCategory: RootCategory? = mlRootCategories?.get(position)
             bindText(rootCategory!!, clickListener)
@@ -50,13 +45,13 @@ class DepartmentAdapter(var mlRootCategories: MutableList<RootCategory>?,
         }
 
         private fun bindText(rootCategory: RootCategory, clickListener: (RootCategory) -> Unit) {
-            itemView.tvDepartmentTitle.text = rootCategory.categoryName
-            itemView.setOnClickListener { clickListener(rootCategory) }
+            itemBinding.tvDepartmentTitle.text = rootCategory.categoryName
+            itemBinding.root.setOnClickListener { clickListener(rootCategory) }
         }
 
         private fun loadImage(rootCategory: RootCategory) {
-            itemView.imProductCategory.visibility = if (rootCategory.imgUrl.isEmpty()) View.GONE else View.VISIBLE
-            itemView.imProductCategory.context?.apply {
+            itemBinding.imProductCategory.visibility = if (rootCategory.imgUrl.isEmpty()) View.GONE else View.VISIBLE
+            itemBinding.imProductCategory.context?.apply {
                 Glide.with(this)
                     .load(rootCategory.imgUrl)
                     .format(DecodeFormat.PREFER_ARGB_8888)
@@ -64,7 +59,7 @@ class DepartmentAdapter(var mlRootCategories: MutableList<RootCategory>?,
                     .fitCenter()
                     .apply(RequestOptions.bitmapTransform(RoundedCorners(6)))
                     .dontAnimate()
-                    .into(itemView.imProductCategory)
+                    .into(itemBinding.imProductCategory)
             }
         }
     }

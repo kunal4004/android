@@ -8,32 +8,32 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.activity_credit_report_tu.*
+import com.awfs.coordination.databinding.ActivityCreditReportTuBinding
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.adapters.CreditReportTUAdapter
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.openUrlInPhoneBrowser
 import za.co.woolworths.financial.services.android.util.Utils
 
-
 class CreditReportTUActivity : AppCompatActivity(), View.OnClickListener {
 
+    private lateinit var binding: ActivityCreditReportTuBinding
     private lateinit var creditReportAdapter: CreditReportTUAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_credit_report_tu)
+        binding = ActivityCreditReportTuBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         Utils.updateStatusBarBackground(this, R.color.bg_e6e6e6)
         setUpActionBar()
-        setupRecyclerView()
-        register_login_now_btn?.setOnClickListener(this)
+        binding.setupRecyclerView()
+        binding.registerLoginNowBtn?.setOnClickListener(this)
     }
 
-    private fun setupRecyclerView() {
-        creditReportAdapter = CreditReportTUAdapter(this)
-        recycler_view_credit_report_details.apply {
+    private fun ActivityCreditReportTuBinding.setupRecyclerView() {
+        creditReportAdapter = CreditReportTUAdapter(this@CreditReportTUActivity)
+        recyclerViewCreditReportDetails.apply {
             adapter = creditReportAdapter
             layoutManager = LinearLayoutManager(this@CreditReportTUActivity, RecyclerView.VERTICAL, false)
             isNestedScrollingEnabled = false
@@ -41,7 +41,7 @@ class CreditReportTUActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun setUpActionBar() {
-        setSupportActionBar(toolbarCreditReport)
+        setSupportActionBar(binding.toolbarCreditReport)
         supportActionBar?.apply {
             setDisplayShowTitleEnabled(false)
             setDisplayUseLogoEnabled(false)

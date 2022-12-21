@@ -1,31 +1,30 @@
 package za.co.woolworths.financial.services.android.ui.fragments.barcode
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
-import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import android.view.ViewGroup
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.BarcodeScanFragmentBinding
 import com.google.zxing.BarcodeFormat
-import kotlinx.android.synthetic.main.barcode_scan_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
 import za.co.woolworths.financial.services.android.ui.activities.BarcodeScanActivity
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
+import za.co.woolworths.financial.services.android.ui.views.alert.OnHideAlertListener
+import za.co.woolworths.financial.services.android.util.DeepLinkingUtils
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.barcode.AutoFocusMode
 import za.co.woolworths.financial.services.android.util.barcode.CodeScanner
 import za.co.woolworths.financial.services.android.util.barcode.CodeScannerView
-import android.net.Uri
-import za.co.woolworths.financial.services.android.ui.views.alert.OnHideAlertListener
-import za.co.woolworths.financial.services.android.util.DeepLinkingUtils
-import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 
+open class BarcodeScanFragment : BarcodeScanExtension(R.layout.barcode_scan_fragment), OnHideAlertListener {
 
-open class BarcodeScanFragment : BarcodeScanExtension(), OnHideAlertListener {
+    private lateinit var binding: BarcodeScanFragmentBinding
     private var mCodeScanner: CodeScanner? = null
 
     companion object {
@@ -35,16 +34,15 @@ open class BarcodeScanFragment : BarcodeScanExtension(), OnHideAlertListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        (activity as? BarcodeScanActivity)?.setHomeIndicator(false)
-
-    }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater?.inflate(R.layout.barcode_scan_fragment, container, false)
+        activity?.apply {
+            (this as? BarcodeScanActivity)?.binding?.setHomeIndicator(false)
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding = BarcodeScanFragmentBinding.bind(view)
+
         Handler().postDelayed({
             activity?.apply {
                 val codeScannerView = view?.findViewById<CodeScannerView>(R.id.codeScannerView)
@@ -94,7 +92,7 @@ open class BarcodeScanFragment : BarcodeScanExtension(), OnHideAlertListener {
             }
         }, SHOW_CODE_SCAN_AFTER_DELAY)
 
-        btnBarcodeManualScan?.setOnClickListener {
+        binding.btnBarcodeManualScan?.setOnClickListener {
             stopPreview()
             replaceFragment(
                     fragment = BarcodeManualScanFragment.newInstance(),
@@ -114,8 +112,8 @@ open class BarcodeScanFragment : BarcodeScanExtension(), OnHideAlertListener {
     private fun stopPreview() = mCodeScanner?.releaseResources()
 
     override fun progressBarVisibility(progressBarIsVisible: Boolean) {
-        ppBar?.visibility = if (progressBarIsVisible) VISIBLE else GONE
-        tvTitle?.visibility = if (progressBarIsVisible) GONE else VISIBLE
+        binding.ppBar?.visibility = if (progressBarIsVisible) VISIBLE else GONE
+        binding.tvTitle?.visibility = if (progressBarIsVisible) GONE else VISIBLE
     }
 
     override fun onSuccess() {

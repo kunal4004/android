@@ -2,13 +2,14 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.detail.
 
 import android.os.Bundle
 import android.view.View
-import kotlinx.android.synthetic.main.processing_request_fragment.*
 
 class CardProcessYourRequestFragment : ProcessYourRequestFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        processRequestTitleTextView?.visibility=View.GONE
-        processRequestDescriptionTextView?.visibility = View.GONE
+        binding.processRequestNavHostFragment.includePMAProcessing.apply {
+            processRequestTitleTextView?.visibility = View.GONE
+            processRequestDescriptionTextView?.visibility = View.GONE
+        }
     }
 }

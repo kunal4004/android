@@ -6,9 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.awfs.coordination.R
+import com.awfs.coordination.databinding.SelectYourQuantityFragmentBinding
 import com.google.gson.Gson
-import kotlinx.android.synthetic.main.select_your_quantity_fragment.*
 import za.co.woolworths.financial.services.android.contracts.IProductListing
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart
 import za.co.woolworths.financial.services.android.ui.adapters.SelectQuantityAdapter
@@ -16,6 +15,7 @@ import za.co.woolworths.financial.services.android.ui.extension.withArgs
 
 class SelectYourQuantityFragment(private val productListing: IProductListing?) : WBottomSheetDialogFragment() {
 
+    private lateinit var binding: SelectYourQuantityFragmentBinding
     private var mAddItemToCart: AddItemToCart? = null
 
     companion object {
@@ -31,14 +31,17 @@ class SelectYourQuantityFragment(private val productListing: IProductListing?) :
         mAddItemToCart = Gson().fromJson(addItemToCart, AddItemToCart::class.java)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? = inflater.inflate(R.layout.select_your_quantity_fragment, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        binding = SelectYourQuantityFragmentBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initQuantityItem()
+        binding.initQuantityItem()
     }
 
-    private fun initQuantityItem() {
+    private fun SelectYourQuantityFragmentBinding.initQuantityItem() {
         val selectQuantityAdapter = SelectQuantityAdapter { selectedQuantity: Int -> quantityItemClicked(selectedQuantity) }
         val quantityInStock = mAddItemToCart?.quantity ?: 0
         rclSelectYourQuantity?.apply {

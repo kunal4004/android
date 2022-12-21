@@ -1,18 +1,16 @@
 package za.co.woolworths.financial.services.android.ui.fragments.npc
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import android.view.ViewGroup
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.circle_progress_layout.*
+import com.awfs.coordination.databinding.CircleProgressLayoutBinding
 import za.co.woolworths.financial.services.android.contracts.IProgressAnimationState
 import za.co.woolworths.financial.services.android.ui.views.tick_animation.AnimationState
+import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 
-class ProgressStateFragment : Fragment() {
+class ProgressStateFragment : BaseFragmentBinding<CircleProgressLayoutBinding>(CircleProgressLayoutBinding::inflate) {
 
     private var isSuccess: Boolean = false
     private var stateAnimation: IProgressAnimationState? = null
@@ -23,22 +21,18 @@ class ProgressStateFragment : Fragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.circle_progress_layout, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        circularProgressIndicator?.setOnAnimationStateChangedListener { _animationState ->
+        binding.circularProgressIndicator?.setOnAnimationStateChangedListener { _animationState ->
             _animationState?.apply {
                 if (this == AnimationState.ANIMATING) {
                     if (isSuccess) {
-                        success_tick?.apply {
+                        binding.successTick?.apply {
                             visibility = VISIBLE
                             startTickAnim()
                         }
                     } else {
-                        imFailureIcon?.visibility = VISIBLE
+                        binding.imFailureIcon?.visibility = VISIBLE
                     }
                     stateAnimation?.onAnimationEnd(isSuccess)
 
@@ -50,23 +44,25 @@ class ProgressStateFragment : Fragment() {
 
     private fun uniqueIdsForProgressIndicator() {
         activity?.resources?.apply {
-            success_frame?.contentDescription = getString(R.string.progress_indicator_state)
+            binding.successFrame?.contentDescription = getString(R.string.progress_indicator_state)
         }
     }
 
     fun animateSuccessEnd(isSuccess: Boolean) {
         this.isSuccess = isSuccess
-        circularProgressIndicator?.apply {
+        binding.circularProgressIndicator?.apply {
             stopSpinning()
             setValueAnimated(100f)
         }
     }
 
     fun restartSpinning() {
-        imFailureIcon?.visibility = GONE
-        success_tick?.visibility = GONE
-        circularProgressIndicator?.apply {
-            spin()
+        binding.apply {
+            imFailureIcon?.visibility = GONE
+            successTick?.visibility = GONE
+            circularProgressIndicator?.apply {
+                spin()
+            }
         }
     }
 }

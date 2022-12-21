@@ -7,8 +7,8 @@ import android.view.View
 import android.view.View.GONE
 import android.view.ViewGroup
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.LoanWithdrawalMinimumAmountErrorFragmentBinding
 import kotlinx.android.parcel.Parcelize
-import kotlinx.android.synthetic.main.loan_withdrawal_minimum_amount_error_fragment.*
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.LoanWithdrawalPopupDialog.LoanWithdrawalPopupType.*
@@ -37,16 +37,15 @@ class LoanWithdrawalPopupDialog : WBottomSheetDialogFragment() {
             }
     }
 
+    private lateinit var binding: LoanWithdrawalMinimumAmountErrorFragmentBinding
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(
-            R.layout.loan_withdrawal_minimum_amount_error_fragment,
-            container,
-            false
-        )
+        binding = LoanWithdrawalMinimumAmountErrorFragmentBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -72,21 +71,22 @@ class LoanWithdrawalPopupDialog : WBottomSheetDialogFragment() {
             else -> "" to "responseDescription"
         }
 
-        titleTextView?.contentDescription = contentDescription.first
-        descriptionTextView?.contentDescription = contentDescription.second
+        with(binding) {
+            titleTextView?.contentDescription = contentDescription.first
+            descriptionTextView?.contentDescription = contentDescription.second
 
-        titleDescPair?.apply {
-            if (first.isEmpty()) {
-                titleTextView?.visibility = GONE
-                loanWithdrawalGotItButton?.text = getString(R.string.ok)
+            titleDescPair?.apply {
+                if (first.isEmpty()) {
+                    titleTextView?.visibility = GONE
+                    loanWithdrawalGotItButton?.text = getString(R.string.ok)
+                    descriptionTextView?.text = second
+                    return@apply
+                }
+                titleTextView?.text = first
                 descriptionTextView?.text = second
-                return@apply
             }
-            titleTextView?.text = first
-            descriptionTextView?.text = second
+
+            loanWithdrawalGotItButton?.setOnClickListener { dismiss() }
         }
-
-        loanWithdrawalGotItButton?.setOnClickListener { dismiss() }
-
     }
 }

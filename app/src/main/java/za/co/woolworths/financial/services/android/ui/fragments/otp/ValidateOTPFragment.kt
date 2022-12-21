@@ -1,15 +1,13 @@
 package za.co.woolworths.financial.services.android.ui.fragments.otp
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.validate_otp_fragment.*
+import com.awfs.coordination.databinding.ValidateOtpFragmentBinding
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
 import za.co.woolworths.financial.services.android.models.dto.otp.ValidateOTPRequest
@@ -18,8 +16,9 @@ import za.co.woolworths.financial.services.android.models.network.CompletionHand
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants
 
-class ValidateOTPFragment : Fragment() {
+class ValidateOTPFragment : Fragment(R.layout.validate_otp_fragment) {
 
+    private lateinit var binding: ValidateOtpFragmentBinding
     var navController: NavController? = null
     var bundle: Bundle? = null
     lateinit var otpValue: String
@@ -28,14 +27,11 @@ class ValidateOTPFragment : Fragment() {
     lateinit var otpSentTo: String
     var validateOTPResponse: ValidateOTPResponse? = null
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.validate_otp_fragment, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding = ValidateOtpFragmentBinding.bind(view)
         navController = Navigation.findNavController(view)
-        description.text = activity?.resources?.getString(R.string.icr_otp_phone_desc, otpSentTo)
+        binding.description.text = activity?.resources?.getString(R.string.icr_otp_phone_desc, otpSentTo)
         initValidateOTP()
     }
 
