@@ -1,6 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.petinsurance
 
-import android.view.View
+import android.content.Intent
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.animation.Animation
@@ -14,14 +14,17 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton.accountOptions
+import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.account.*
 import za.co.woolworths.financial.services.android.models.network.OneAppService.getAppGUIDResponse
 import za.co.woolworths.financial.services.android.models.network.OneAppService.getFeatureEnablementResponse
 import za.co.woolworths.financial.services.android.models.network.OneAppService.getPetInsuranceResponse
+import za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.UpdateMyAccount
 import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.Constants.PET
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.Constants.PET_INSURANCE
+import za.co.woolworths.financial.services.android.ui.fragments.account.petinsurance.apply.PetInsuranceApplyNowActivity
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.isPetInsuranceEnabled
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.petInsuranceRedirect
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.showPetInsurancePendingDialog
@@ -176,6 +179,11 @@ class PetInsuranceHandler constructor(
                 tvPetInsuranceApply.visibility = VISIBLE
                 tvPetInsuranceCovered.visibility = GONE
                 tvPetInsuranceHelped.visibility = GONE
+                if(Utils.getSessionDaoValue(SessionDao.KEY.PET_INSURANCE_INTRODUCTION_SHOWED).isNullOrEmpty()){
+                    activity?.apply {
+                        startActivity(Intent(this, PetInsuranceApplyNowActivity::class.java))
+                    }
+                }
             }
             CoveredStatus.PENDING -> {
                 tvPetInsuranceApply.visibility = GONE

@@ -126,6 +126,11 @@
         tools:ignore="GoogleAppIndexingWarning,UnusedAttribute"
         tools:replace="label,android:name">
         <activity
+            android:name="za.co.woolworths.financial.services.android.ui.fragments.account.petinsurance.apply.PetInsuranceApplyNowActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/FaqStyle"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
             android:name="za.co.woolworths.financial.services.android.onecartgetstream.OCChatActivity"
             android:exported="false"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
