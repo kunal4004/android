@@ -78,7 +78,7 @@
                         android:layout_toLeftOf="@+id/editLocation"
                         android:layout_toRightOf="@+id/deliverLocationIcon"
                         android:gravity="center_vertical"
-                        android:orientation="horizontal">
+                        android:orientation="vertical">
 
                         <za.co.woolworths.financial.services.android.ui.views.WTextView
                             android:id="@+id/tvDeliveringTo"
@@ -97,7 +97,6 @@
                             android:drawablePadding="@dimen/sixteen_dp"
                             android:ellipsize="end"
                             android:gravity="center_vertical"
-                            android:singleLine="true"
                             android:visibility="gone" />
                     </LinearLayout>
 

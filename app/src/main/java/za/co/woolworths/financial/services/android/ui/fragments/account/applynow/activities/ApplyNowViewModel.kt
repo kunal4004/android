@@ -24,13 +24,13 @@ class ApplyNowViewModel @Inject constructor(val bottomSheet: ApplyNowBottomSheet
     suspend fun applyNowResponse(contentId:String) = getViewStateFlowForNetworkCall { queryServiceApplyNow(contentId) }
 
     var applyNowResponse: MutableStateFlow<ApplyNowModel?> = MutableStateFlow(null)
-    var applyNowState = ApplyNowState.GOLD_CREDIT_CARD
+    var applyNowState = ApplyNowState.BLACK_CREDIT_CARD
 
     fun contentID():String {
         return when(applyNowState){
             //TODO:future usage for SC&PL
-            ApplyNowState.STORE_CARD -> ""
-            ApplyNowState.PERSONAL_LOAN -> ""
+            ApplyNowState.STORE_CARD -> "storeCardApplyNow"
+            ApplyNowState.PERSONAL_LOAN -> "personalLoanApplyNow"
             else -> "creditCardApplyNow"
         }
     }
@@ -70,6 +70,12 @@ class ApplyNowViewModel @Inject constructor(val bottomSheet: ApplyNowBottomSheet
             }
             ApplyNowSectionReference.CREDIT_CARD_BLACK->{
                 ApplyNowState.BLACK_CREDIT_CARD
+            }
+            ApplyNowSectionReference.STORE_CARD->{
+                ApplyNowState.STORE_CARD
+            }
+            ApplyNowSectionReference.PERSONAL_LOAN->{
+                ApplyNowState.PERSONAL_LOAN
             }
         }
     }

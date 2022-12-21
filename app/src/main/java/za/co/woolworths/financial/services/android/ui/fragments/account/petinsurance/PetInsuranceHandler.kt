@@ -63,43 +63,48 @@ class PetInsuranceHandler constructor(
                 }
 
                 override fun onFailure(call: Call<FeatureEnablementModel?>, t: Throwable) {
-                    Utils.hideView(applyPetInsuranceCardView)
+                    applyPetInsuranceCardView.visibility = GONE
                     petInsuranceCheck()
                 }
             })
+        }else{
+            applyPetInsuranceCardView.visibility = GONE
         }
     }
 
     fun petInsuranceRequest() {
-        petInsuranceShowLoading(true)
-        getPetInsuranceResponse().enqueue(object : Callback<PetInsuranceModel?> {
-            override fun onResponse(
-                call: Call<PetInsuranceModel?>,
-                response: Response<PetInsuranceModel?>
-            ) {
-                if (activity != null) {
-                    val petInsuranceModel = response.body()
-                    if (petInsuranceModel != null) {
-//                        petInsuranceModel.insuranceProducts = listOf()
-                        if (petInsuranceModel.insuranceProducts.isEmpty()) {
-                            applyPetInsuranceCardView.visibility = GONE
-                        } else {
-                            applyPetInsuranceCardView.visibility = VISIBLE
-                            for (insuranceProduct in petInsuranceModel.insuranceProducts) {
-                                if (insuranceProduct.type == PET) {
-                                    insuranceProducts = insuranceProduct
+        if (SessionUtilities.getInstance().isUserAuthenticated && isPetInsuranceEnabled()) {
+            petInsuranceShowLoading(true)
+            getPetInsuranceResponse().enqueue(object : Callback<PetInsuranceModel?> {
+                override fun onResponse(
+                    call: Call<PetInsuranceModel?>,
+                    response: Response<PetInsuranceModel?>
+                ) {
+                    if (activity != null) {
+                        val petInsuranceModel = response.body()
+                        if (petInsuranceModel != null) {
+                            if (petInsuranceModel.insuranceProducts.isEmpty()) {
+                                applyPetInsuranceCardView.visibility = GONE
+                            } else {
+                                applyPetInsuranceCardView.visibility = VISIBLE
+                                for (insuranceProduct in petInsuranceModel.insuranceProducts) {
+                                    if (insuranceProduct.type == PET) {
+                                        insuranceProducts = insuranceProduct
+                                    }
                                 }
+                                petInsuranceCheck(insuranceProducts)
                             }
-                            petInsuranceCheck(insuranceProducts)
                         }
                     }
                 }
-            }
 
-            override fun onFailure(call: Call<PetInsuranceModel?>, t: Throwable) {
-                petInsuranceCheck()
-            }
-        })
+                override fun onFailure(call: Call<PetInsuranceModel?>, t: Throwable) {
+                    petInsuranceCheck()
+                }
+            })
+        }else{
+            applyPetInsuranceCardView.visibility = GONE
+        }
     }
 
     fun appGUIDRequest(appGUIDRequestType: AppGUIDRequestType?) {
