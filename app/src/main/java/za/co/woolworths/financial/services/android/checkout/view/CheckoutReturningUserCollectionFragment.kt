@@ -13,7 +13,6 @@ import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
-import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.ViewModelProviders
@@ -30,7 +29,6 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.*
 import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.loadingBar
-import kotlinx.android.synthetic.main.fragment_cart.*
 import kotlinx.android.synthetic.main.fragment_checkout_returning_user_collection.*
 import kotlinx.android.synthetic.main.layout_collection_details.*
 import kotlinx.android.synthetic.main.layout_collection_time_details.*
@@ -73,14 +71,13 @@ import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
-import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.retriveFulfillmentStoreIdList
 import za.co.woolworths.financial.services.android.util.WFormatter.DATE_FORMAT_EEEE_COMMA_dd_MMMM
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.pushnotification.NotificationUtils
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.viewmodels.ShoppingCartLiveData
 import java.util.regex.Pattern
-import za.co.woolworths.financial.services.android.util.StoreUtils as StoreUtils1
+import za.co.woolworths.financial.services.android.util.StoreUtils
 
 class CheckoutReturningUserCollectionFragment : Fragment(),
     ShoppingBagsRadioGroupAdapter.EventListner, View.OnClickListener, CollectionTimeSlotsListener,
@@ -679,7 +676,10 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         checkoutCollectingUserInfoLayout.setOnClickListener(this)
     }
 
-    private fun collectionDetailsMessage() {
+    /**
+     * collection label message for FBH item into cart
+     */
+    private fun collectionMessageForFBHItem() {
         val deliveryInDays = storePickupInfoResponse?.openDayDeliverySlots?.get(0)?.deliveryInDays
         checkoutCollectionDetailsInfoLayout?.visibility = View.VISIBLE
 
@@ -694,12 +694,12 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
     }
     private fun collectionDetails() {
         //FBH only
-        if(storePickupInfoResponse?.fulfillmentTypes?.join == StoreUtils1.Companion.FulfillmentType.CLOTHING_ITEMS?.type
+        if(storePickupInfoResponse?.fulfillmentTypes?.join == StoreUtils.Companion.FulfillmentType.CLOTHING_ITEMS?.type
                 && storePickupInfoResponse?.openDayDeliverySlots?.isNullOrEmpty() == false
-                && storePickupInfoResponse?.fulfillmentTypes?.join != StoreUtils1.Companion.FulfillmentType.FOOD_ITEMS?.type
-                && storePickupInfoResponse?.fulfillmentTypes?.food != StoreUtils1.Companion.FulfillmentType.FOOD_ITEMS?.type) {
+                && storePickupInfoResponse?.fulfillmentTypes?.join != StoreUtils.Companion.FulfillmentType.FOOD_ITEMS?.type
+                && storePickupInfoResponse?.fulfillmentTypes?.food != StoreUtils.Companion.FulfillmentType.FOOD_ITEMS?.type) {
 
-            collectionDetailsMessage()
+            collectionMessageForFBHItem()
             checkoutCollectingTimeDetailsLayout?.visibility = View.GONE
             viewHorizontalCollectionBottomSeparator?.visibility = View.VISIBLE
             nativeCheckoutReturningFoodSubstitutionLayout?.visibility = View.GONE
@@ -711,15 +711,15 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
             viewGiftHorizontalSeparator?.visibility = View.GONE
 
         } //mixed cart - FBH + Food
-        else if((storePickupInfoResponse?.fulfillmentTypes?.other == StoreUtils1.Companion.FulfillmentType.CLOTHING_ITEMS?.type
+        else if((storePickupInfoResponse?.fulfillmentTypes?.other == StoreUtils.Companion.FulfillmentType.CLOTHING_ITEMS?.type
                         && storePickupInfoResponse?.openDayDeliverySlots?.isNullOrEmpty() == false
                         && storePickupInfoResponse?.sortedFoodDeliverySlots?.isNullOrEmpty() == false
-                        && storePickupInfoResponse?.fulfillmentTypes?.food == StoreUtils1.Companion.FulfillmentType.FOOD_ITEMS?.type
-                        && storePickupInfoResponse?.fulfillmentTypes?.join == StoreUtils1.Companion.FulfillmentType.CLOTHING_ITEMS?.type)) {
+                        && storePickupInfoResponse?.fulfillmentTypes?.food == StoreUtils.Companion.FulfillmentType.FOOD_ITEMS?.type
+                        && storePickupInfoResponse?.fulfillmentTypes?.join == StoreUtils.Companion.FulfillmentType.CLOTHING_ITEMS?.type)) {
 
-            collectionDetailsMessage()
-            tvCollectionTimeDetailsTitle?.text = bindString(R.string.collection_1)
-            tvCollectionDetailsTitle?.text = bindString(R.string.collection_2)
+            collectionMessageForFBHItem()
+            tvCollectionTimeDetailsTitle?.text = bindString(R.string.mixed_cart_food_item_title)
+            tvCollectionDetailsTitle?.text = bindString(R.string.mixed_cart_other_item_title)
 
             specialInstructionSwitchShimmerFrameLayout?.visibility = View.GONE
             viewGiftHorizontalSeparator?.visibility = View.GONE
@@ -746,8 +746,8 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
 
         }   //Food only
         else if(storePickupInfoResponse?.sortedJoinDeliverySlots?.isNullOrEmpty() == false
-                && storePickupInfoResponse?.fulfillmentTypes?.other != StoreUtils1.Companion.FulfillmentType.CLOTHING_ITEMS?.type
-                && storePickupInfoResponse?.fulfillmentTypes?.join == StoreUtils1.Companion.FulfillmentType.FOOD_ITEMS?.type) {
+                && storePickupInfoResponse?.fulfillmentTypes?.other != StoreUtils.Companion.FulfillmentType.CLOTHING_ITEMS?.type
+                && storePickupInfoResponse?.fulfillmentTypes?.join == StoreUtils.Companion.FulfillmentType.FOOD_ITEMS?.type) {
 
             storePickupInfoResponse?.sortedJoinDeliverySlots?.apply {
                 val firstAvailableDateSlot = getFirstAvailableSlot(this)
