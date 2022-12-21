@@ -13,7 +13,6 @@ import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
-import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.ViewModelProviders
@@ -30,7 +29,6 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.*
 import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.loadingBar
-import kotlinx.android.synthetic.main.fragment_cart.*
 import kotlinx.android.synthetic.main.fragment_checkout_returning_user_collection.*
 import kotlinx.android.synthetic.main.layout_collection_details.*
 import kotlinx.android.synthetic.main.layout_collection_time_details.*
@@ -73,14 +71,13 @@ import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
-import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.retriveFulfillmentStoreIdList
 import za.co.woolworths.financial.services.android.util.WFormatter.DATE_FORMAT_EEEE_COMMA_dd_MMMM
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.pushnotification.NotificationUtils
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.viewmodels.ShoppingCartLiveData
 import java.util.regex.Pattern
-import za.co.woolworths.financial.services.android.util.StoreUtils as StoreUtils1
+import za.co.woolworths.financial.services.android.util.StoreUtils
 
 class CheckoutReturningUserCollectionFragment : Fragment(),
     ShoppingBagsRadioGroupAdapter.EventListner, View.OnClickListener, CollectionTimeSlotsListener,
@@ -398,7 +395,6 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                         when (response.httpCode ?: AppConstant.HTTP_SESSION_TIMEOUT_400) {
                             AppConstant.HTTP_OK -> {
                                 storePickupInfoResponse = response
-                                collectionDetails()
                                 if (!isAdded) {
                                     return@observe
                                 }
@@ -426,20 +422,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                                     }
                                 }
                                 initializeOrderSummary(response.orderSummary)
-                                response.sortedJoinDeliverySlots?.apply {
-                                    val firstAvailableDateSlot = getFirstAvailableSlot(this)
-                                    initializeDatesAndTimeSlots(firstAvailableDateSlot)
-                                    // Set default time slot selected
-                                    var selectedSlotIndex = 0
-                                    firstAvailableDateSlot?.let { week ->
-                                        ArrayList(week?.slots).forEachIndexed { index, slot ->
-                                            if (slot?.slotId.equals(selectedTimeSlot?.slotId)) {
-                                                selectedSlotIndex = index
-                                            }
-                                        }
-                                        collectionTimeSlotsAdapter.setSelectedItem(selectedSlotIndex)
-                                    }
-                                }
+                                updateCollectionItemsForCheckout()
                                 if(response.orderSummary?.hasMinimumBasketAmount == false) {
                                    KotlinUtils.showMinCartValueError(
                                        requireActivity() as AppCompatActivity,
@@ -522,6 +505,25 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                 sortedJoinDeliverySlot.week?.forEach { weekDay ->
                     if (!weekDay.slots.isNullOrEmpty()) {
                         return weekDay
+                    }
+                }
+            }
+        }
+        return null
+    }
+    fun getFirstAvailableFoodSlot(list: List<SortedFoodDeliverySlot>): Week? {
+        if (list.isNullOrEmpty()) {
+            return null
+        }
+        list.forEach { sortedFoodDeliverySlot ->
+            if (!sortedFoodDeliverySlot.week.isNullOrEmpty()) {
+                sortedFoodDeliverySlot.week?.forEach { weekDay ->
+                    if (!weekDay.slots.isNullOrEmpty()) {
+                        weekDay.slots?.forEach { slot ->
+                            if(slot.available == true) {
+                                return weekDay
+                            }
+                        }
                     }
                 }
             }
@@ -674,33 +676,96 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         checkoutCollectingUserInfoLayout.setOnClickListener(this)
     }
 
-    private fun collectionDetails() {
-        val fulfillmentStoreType = retriveFulfillmentStoreIdList()
-        if (fulfillmentStoreType != null) {
-            if((fulfillmentStoreType.containsKey(StoreUtils1.Companion.FulfillmentType.CLOTHING_ITEMS?.type)
-                            || fulfillmentStoreType.containsKey(StoreUtils1.Companion.FulfillmentType.CRG_ITEMS?.type))
-                    && storePickupInfoResponse?.openDayDeliverySlots?.isNullOrEmpty() == false) {
+    /**
+     * collection label message for FBH item into cart
+     */
+    private fun collectionMessageForFBHItem() {
+        val deliveryInDays = storePickupInfoResponse?.openDayDeliverySlots?.get(0)?.deliveryInDays
+        checkoutCollectionDetailsInfoLayout?.visibility = View.VISIBLE
 
-                val deliveryInDays = storePickupInfoResponse?.openDayDeliverySlots?.get(0)?.deliveryInDays
-                checkoutCollectionDetailsInfoLayout?.visibility = View.VISIBLE
+        val collectionDetailsTextString  = context?.resources?.getString(R.string.collection_details_text).toString() +
+                " " + deliveryInDays?.lowercase() + ". " + (context?.resources?.getString(R.string.notify_text_label))
+        val spannableStringBuilder = SpannableStringBuilder(collectionDetailsTextString)
+        val styleSpam = StyleSpan(android.graphics.Typeface.BOLD)
+        spannableStringBuilder.setSpan(styleSpam, (collectionDetailsTextString.length - 41),
+                collectionDetailsTextString.length, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
 
-                val collectionDetailsTextString  = context?.resources?.getString(R.string.collection_details_text).toString() +
-                        " " + deliveryInDays?.lowercase() + ". " + (context?.resources?.getString(R.string.notify_text_label))
-                val spannableStringBuilder = SpannableStringBuilder(collectionDetailsTextString)
-                val styleSpam = StyleSpan(android.graphics.Typeface.BOLD)
-                spannableStringBuilder.setSpan(styleSpam, (collectionDetailsTextString.length - 41),
-                        collectionDetailsTextString.length, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
+        tvCollectionDetailsText?.text = spannableStringBuilder
+    }
+    /**
+     * Update collection item view according to Food, FBH and mixed item with title on checkout
+     * screen
+     */
+    private fun updateCollectionItemsForCheckout() {
+        //FBH only
+        if(storePickupInfoResponse?.fulfillmentTypes?.join == StoreUtils.Companion.FulfillmentType.CLOTHING_ITEMS?.type
+                && storePickupInfoResponse?.openDayDeliverySlots?.isNullOrEmpty() == false
+                && storePickupInfoResponse?.fulfillmentTypes?.join != StoreUtils.Companion.FulfillmentType.FOOD_ITEMS?.type
+                && storePickupInfoResponse?.fulfillmentTypes?.food != StoreUtils.Companion.FulfillmentType.FOOD_ITEMS?.type) {
 
-                tvCollectionDetailsText?.text = spannableStringBuilder
+            collectionMessageForFBHItem()
+            checkoutCollectingTimeDetailsLayout?.visibility = View.GONE
+            viewHorizontalCollectionBottomSeparator?.visibility = View.VISIBLE
+            nativeCheckoutReturningFoodSubstitutionLayout?.visibility = View.GONE
+            txtNeedBags?.visibility = View.GONE
+            instructionTxtShimmerFrameLayout?.visibility = View.GONE
+            switchNeedBags?.visibility = View.GONE
+            specialInstructionSwitchShimmerFrameLayout?.visibility = View.GONE
+            shoppingBagSeparator?.visibility = View.GONE
+            viewGiftHorizontalSeparator?.visibility = View.GONE
 
-                checkoutCollectingTimeDetailsLayout?.visibility = View.GONE
-                nativeCheckoutReturningFoodSubstitutionLayout?.visibility = View.GONE
-                txtNeedBags?.visibility = View.GONE
-                instructionTxtShimmerFrameLayout?.visibility = View.GONE
-                switchNeedBags?.visibility = View.GONE
-                specialInstructionSwitchShimmerFrameLayout?.visibility = View.GONE
-                shoppingBagSeparator?.visibility = View.GONE
-                viewGiftHorizontalSeparator?.visibility = View.GONE
+        } //mixed cart - FBH + Food
+        else if((storePickupInfoResponse?.fulfillmentTypes?.other == StoreUtils.Companion.FulfillmentType.CLOTHING_ITEMS?.type
+                        && storePickupInfoResponse?.openDayDeliverySlots?.isNullOrEmpty() == false
+                        && storePickupInfoResponse?.sortedFoodDeliverySlots?.isNullOrEmpty() == false
+                        && storePickupInfoResponse?.fulfillmentTypes?.food == StoreUtils.Companion.FulfillmentType.FOOD_ITEMS?.type
+                        && storePickupInfoResponse?.fulfillmentTypes?.join == StoreUtils.Companion.FulfillmentType.CLOTHING_ITEMS?.type)) {
+
+            collectionMessageForFBHItem()
+            tvCollectionTimeDetailsTitle?.text = bindString(R.string.mixed_cart_food_item_title)
+            tvCollectionDetailsTitle?.text = bindString(R.string.mixed_cart_other_item_title)
+
+            specialInstructionSwitchShimmerFrameLayout?.visibility = View.GONE
+            viewGiftHorizontalSeparator?.visibility = View.GONE
+            instructionTxtShimmerFrameLayout?.visibility = View.GONE
+            shoppingBagSeparator?.visibility = View.GONE
+
+            viewHorizontalCollectionSeparator?.visibility = View.VISIBLE
+            viewHorizontalCollectionBottomSeparator?.visibility = View.VISIBLE
+
+            storePickupInfoResponse?.sortedFoodDeliverySlots?.apply {
+                val firstAvailableDateSlot = getFirstAvailableFoodSlot(this)
+                initializeDatesAndTimeSlots(firstAvailableDateSlot)
+                // Set default time slot selected
+                var selectedSlotIndex = 0
+                firstAvailableDateSlot?.let { week ->
+                    ArrayList(week?.slots).forEachIndexed { index, slot ->
+                        if (slot?.slotId.equals(selectedTimeSlot?.slotId)) {
+                            selectedSlotIndex = index
+                        }
+                    }
+                    collectionTimeSlotsAdapter.setSelectedItem(selectedSlotIndex)
+                }
+            }
+
+        }   //Food only
+        else if(storePickupInfoResponse?.sortedJoinDeliverySlots?.isNullOrEmpty() == false
+                && storePickupInfoResponse?.fulfillmentTypes?.other != StoreUtils.Companion.FulfillmentType.CLOTHING_ITEMS?.type
+                && storePickupInfoResponse?.fulfillmentTypes?.join == StoreUtils.Companion.FulfillmentType.FOOD_ITEMS?.type) {
+
+            storePickupInfoResponse?.sortedJoinDeliverySlots?.apply {
+                val firstAvailableDateSlot = getFirstAvailableSlot(this)
+                initializeDatesAndTimeSlots(firstAvailableDateSlot)
+                // Set default time slot selected
+                var selectedSlotIndex = 0
+                firstAvailableDateSlot?.let { week ->
+                    ArrayList(week?.slots).forEachIndexed { index, slot ->
+                        if (slot?.slotId.equals(selectedTimeSlot?.slotId)) {
+                            selectedSlotIndex = index
+                        }
+                    }
+                    collectionTimeSlotsAdapter.setSelectedItem(selectedSlotIndex)
+                }
             }
         }
     }
@@ -891,6 +956,8 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                         GeoUtils.getPlaceId(),
                         false,
                         true,
+                        false,
+                        false,
                         true,
                         savedAddressResponse,
                         defaultAddress,

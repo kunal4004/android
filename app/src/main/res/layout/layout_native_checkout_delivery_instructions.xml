@@ -131,6 +131,35 @@
         android:background="@color/color_12000000"
         app:layout_constraintTop_toBottomOf="@id/edtTxtInputLayoutSpecialDeliveryInstruction" />
 
+    <View
+        android:id="@+id/viewHorizontalCollectionSeparator"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/eight_dp"
+        android:layout_marginTop="@dimen/twenty_four_dp"
+        android:background="@color/color_F3F3F3"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/viewGiftHorizontalSeparator" />
+
+    <include
+        android:id="@+id/checkoutCollectionDetailsInfoLayout"
+        layout="@layout/layout_collection_details"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/eight_dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/viewHorizontalCollectionSeparator" />
+
+    <View
+        android:id="@+id/viewHorizontalCollectionBottomSeparator"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/eight_dp"
+        android:layout_marginTop="@dimen/twenty_dp"
+        android:visibility="gone"
+        android:background="@color/color_F3F3F3"
+        app:layout_constraintTop_toBottomOf="@id/checkoutCollectionDetailsInfoLayout" />
+
     <com.facebook.shimmer.ShimmerFrameLayout
         android:id="@+id/giftInstructionTxtShimmerFrameLayout"
         android:layout_width="wrap_content"
@@ -138,7 +167,7 @@
         android:layout_margin="@dimen/twenty_four_dp"
         android:background="@color/shimmer_view_background"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/viewGiftHorizontalSeparator">
+        app:layout_constraintTop_toBottomOf="@id/viewHorizontalCollectionBottomSeparator">
 
         <TextView
             android:id="@+id/txtGiftInstructions"
@@ -158,7 +187,7 @@
         android:layout_margin="@dimen/twenty_four_dp"
         android:background="@color/shimmer_view_background"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/viewGiftHorizontalSeparator">
+        app:layout_constraintTop_toBottomOf="@id/viewHorizontalCollectionBottomSeparator">
 
         <Switch
             android:id="@+id/switchGiftInstructions"
