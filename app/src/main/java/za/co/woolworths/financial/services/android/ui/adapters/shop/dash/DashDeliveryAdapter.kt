@@ -152,6 +152,7 @@ class DashDeliveryAdapter(
                 )
             }
             is BannerGridLayoutViewHolder -> {
+                if(position < categoryList.size && position >= 0)
                 holder.bindView(
                     context,
                     position,
