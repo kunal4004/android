@@ -422,7 +422,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                                     }
                                 }
                                 initializeOrderSummary(response.orderSummary)
-                                collectionDetails()
+                                updateCollectionItemsForCheckout()
                                 if(response.orderSummary?.hasMinimumBasketAmount == false) {
                                    KotlinUtils.showMinCartValueError(
                                        requireActivity() as AppCompatActivity,
@@ -692,7 +692,11 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
 
         tvCollectionDetailsText?.text = spannableStringBuilder
     }
-    private fun collectionDetails() {
+    /**
+     * Update collection item view according to Food, FBH and mixed item with title on checkout
+     * screen
+     */
+    private fun updateCollectionItemsForCheckout() {
         //FBH only
         if(storePickupInfoResponse?.fulfillmentTypes?.join == StoreUtils.Companion.FulfillmentType.CLOTHING_ITEMS?.type
                 && storePickupInfoResponse?.openDayDeliverySlots?.isNullOrEmpty() == false
