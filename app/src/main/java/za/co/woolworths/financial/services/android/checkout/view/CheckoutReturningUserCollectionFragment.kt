@@ -398,7 +398,6 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                         when (response.httpCode ?: AppConstant.HTTP_SESSION_TIMEOUT_400) {
                             AppConstant.HTTP_OK -> {
                                 storePickupInfoResponse = response
-                                collectionDetails()
                                 if (!isAdded) {
                                     return@observe
                                 }
@@ -426,20 +425,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                                     }
                                 }
                                 initializeOrderSummary(response.orderSummary)
-                                response.sortedJoinDeliverySlots?.apply {
-                                    val firstAvailableDateSlot = getFirstAvailableSlot(this)
-                                    initializeDatesAndTimeSlots(firstAvailableDateSlot)
-                                    // Set default time slot selected
-                                    var selectedSlotIndex = 0
-                                    firstAvailableDateSlot?.let { week ->
-                                        ArrayList(week?.slots).forEachIndexed { index, slot ->
-                                            if (slot?.slotId.equals(selectedTimeSlot?.slotId)) {
-                                                selectedSlotIndex = index
-                                            }
-                                        }
-                                        collectionTimeSlotsAdapter.setSelectedItem(selectedSlotIndex)
-                                    }
-                                }
+                                collectionDetails()
                                 if(response.orderSummary?.hasMinimumBasketAmount == false) {
                                    KotlinUtils.showMinCartValueError(
                                        requireActivity() as AppCompatActivity,
@@ -522,6 +508,25 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                 sortedJoinDeliverySlot.week?.forEach { weekDay ->
                     if (!weekDay.slots.isNullOrEmpty()) {
                         return weekDay
+                    }
+                }
+            }
+        }
+        return null
+    }
+    fun getFirstAvailableFoodSlot(list: List<SortedFoodDeliverySlot>): Week? {
+        if (list.isNullOrEmpty()) {
+            return null
+        }
+        list.forEach { sortedFoodDeliverySlot ->
+            if (!sortedFoodDeliverySlot.week.isNullOrEmpty()) {
+                sortedFoodDeliverySlot.week?.forEach { weekDay ->
+                    if (!weekDay.slots.isNullOrEmpty()) {
+                        weekDay.slots?.forEach { slot ->
+                            if(slot.available == true) {
+                                return weekDay
+                            }
+                        }
                     }
                 }
             }
@@ -674,33 +679,89 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         checkoutCollectingUserInfoLayout.setOnClickListener(this)
     }
 
+    private fun collectionDetailsMessage() {
+        val deliveryInDays = storePickupInfoResponse?.openDayDeliverySlots?.get(0)?.deliveryInDays
+        checkoutCollectionDetailsInfoLayout?.visibility = View.VISIBLE
+
+        val collectionDetailsTextString  = context?.resources?.getString(R.string.collection_details_text).toString() +
+                " " + deliveryInDays?.lowercase() + ". " + (context?.resources?.getString(R.string.notify_text_label))
+        val spannableStringBuilder = SpannableStringBuilder(collectionDetailsTextString)
+        val styleSpam = StyleSpan(android.graphics.Typeface.BOLD)
+        spannableStringBuilder.setSpan(styleSpam, (collectionDetailsTextString.length - 41),
+                collectionDetailsTextString.length, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
+
+        tvCollectionDetailsText?.text = spannableStringBuilder
+    }
     private fun collectionDetails() {
-        val fulfillmentStoreType = retriveFulfillmentStoreIdList()
-        if (fulfillmentStoreType != null) {
-            if((fulfillmentStoreType.containsKey(StoreUtils1.Companion.FulfillmentType.CLOTHING_ITEMS?.type)
-                            || fulfillmentStoreType.containsKey(StoreUtils1.Companion.FulfillmentType.CRG_ITEMS?.type))
-                    && storePickupInfoResponse?.openDayDeliverySlots?.isNullOrEmpty() == false) {
+        //FBH only
+        if(storePickupInfoResponse?.fulfillmentTypes?.join == StoreUtils1.Companion.FulfillmentType.CLOTHING_ITEMS?.type
+                && storePickupInfoResponse?.openDayDeliverySlots?.isNullOrEmpty() == false
+                && storePickupInfoResponse?.fulfillmentTypes?.join != StoreUtils1.Companion.FulfillmentType.FOOD_ITEMS?.type
+                && storePickupInfoResponse?.fulfillmentTypes?.food != StoreUtils1.Companion.FulfillmentType.FOOD_ITEMS?.type) {
 
-                val deliveryInDays = storePickupInfoResponse?.openDayDeliverySlots?.get(0)?.deliveryInDays
-                checkoutCollectionDetailsInfoLayout?.visibility = View.VISIBLE
+            collectionDetailsMessage()
+            checkoutCollectingTimeDetailsLayout?.visibility = View.GONE
+            viewHorizontalCollectionBottomSeparator?.visibility = View.VISIBLE
+            nativeCheckoutReturningFoodSubstitutionLayout?.visibility = View.GONE
+            txtNeedBags?.visibility = View.GONE
+            instructionTxtShimmerFrameLayout?.visibility = View.GONE
+            switchNeedBags?.visibility = View.GONE
+            specialInstructionSwitchShimmerFrameLayout?.visibility = View.GONE
+            shoppingBagSeparator?.visibility = View.GONE
+            viewGiftHorizontalSeparator?.visibility = View.GONE
 
-                val collectionDetailsTextString  = context?.resources?.getString(R.string.collection_details_text).toString() +
-                        " " + deliveryInDays?.lowercase() + ". " + (context?.resources?.getString(R.string.notify_text_label))
-                val spannableStringBuilder = SpannableStringBuilder(collectionDetailsTextString)
-                val styleSpam = StyleSpan(android.graphics.Typeface.BOLD)
-                spannableStringBuilder.setSpan(styleSpam, (collectionDetailsTextString.length - 41),
-                        collectionDetailsTextString.length, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
+        } //mixed cart - FBH + Food
+        else if((storePickupInfoResponse?.fulfillmentTypes?.other == StoreUtils1.Companion.FulfillmentType.CLOTHING_ITEMS?.type
+                        && storePickupInfoResponse?.openDayDeliverySlots?.isNullOrEmpty() == false
+                        && storePickupInfoResponse?.sortedFoodDeliverySlots?.isNullOrEmpty() == false
+                        && storePickupInfoResponse?.fulfillmentTypes?.food == StoreUtils1.Companion.FulfillmentType.FOOD_ITEMS?.type
+                        && storePickupInfoResponse?.fulfillmentTypes?.join == StoreUtils1.Companion.FulfillmentType.CLOTHING_ITEMS?.type)) {
 
-                tvCollectionDetailsText?.text = spannableStringBuilder
+            collectionDetailsMessage()
+            tvCollectionTimeDetailsTitle?.text = bindString(R.string.collection_1)
+            tvCollectionDetailsTitle?.text = bindString(R.string.collection_2)
 
-                checkoutCollectingTimeDetailsLayout?.visibility = View.GONE
-                nativeCheckoutReturningFoodSubstitutionLayout?.visibility = View.GONE
-                txtNeedBags?.visibility = View.GONE
-                instructionTxtShimmerFrameLayout?.visibility = View.GONE
-                switchNeedBags?.visibility = View.GONE
-                specialInstructionSwitchShimmerFrameLayout?.visibility = View.GONE
-                shoppingBagSeparator?.visibility = View.GONE
-                viewGiftHorizontalSeparator?.visibility = View.GONE
+            specialInstructionSwitchShimmerFrameLayout?.visibility = View.GONE
+            viewGiftHorizontalSeparator?.visibility = View.GONE
+            instructionTxtShimmerFrameLayout?.visibility = View.GONE
+            shoppingBagSeparator?.visibility = View.GONE
+
+            viewHorizontalCollectionSeparator?.visibility = View.VISIBLE
+            viewHorizontalCollectionBottomSeparator?.visibility = View.VISIBLE
+
+            storePickupInfoResponse?.sortedFoodDeliverySlots?.apply {
+                val firstAvailableDateSlot = getFirstAvailableFoodSlot(this)
+                initializeDatesAndTimeSlots(firstAvailableDateSlot)
+                // Set default time slot selected
+                var selectedSlotIndex = 0
+                firstAvailableDateSlot?.let { week ->
+                    ArrayList(week?.slots).forEachIndexed { index, slot ->
+                        if (slot?.slotId.equals(selectedTimeSlot?.slotId)) {
+                            selectedSlotIndex = index
+                        }
+                    }
+                    collectionTimeSlotsAdapter.setSelectedItem(selectedSlotIndex)
+                }
+            }
+
+        }   //Food only
+        else if(storePickupInfoResponse?.sortedJoinDeliverySlots?.isNullOrEmpty() == false
+                && storePickupInfoResponse?.fulfillmentTypes?.other != StoreUtils1.Companion.FulfillmentType.CLOTHING_ITEMS?.type
+                && storePickupInfoResponse?.fulfillmentTypes?.join == StoreUtils1.Companion.FulfillmentType.FOOD_ITEMS?.type) {
+
+            storePickupInfoResponse?.sortedJoinDeliverySlots?.apply {
+                val firstAvailableDateSlot = getFirstAvailableSlot(this)
+                initializeDatesAndTimeSlots(firstAvailableDateSlot)
+                // Set default time slot selected
+                var selectedSlotIndex = 0
+                firstAvailableDateSlot?.let { week ->
+                    ArrayList(week?.slots).forEachIndexed { index, slot ->
+                        if (slot?.slotId.equals(selectedTimeSlot?.slotId)) {
+                            selectedSlotIndex = index
+                        }
+                    }
+                    collectionTimeSlotsAdapter.setSelectedItem(selectedSlotIndex)
+                }
             }
         }
     }
@@ -891,6 +952,8 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                         GeoUtils.getPlaceId(),
                         false,
                         true,
+                        false,
+                        false,
                         true,
                         savedAddressResponse,
                         defaultAddress,

@@ -91,6 +91,8 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_CNC_SELETION
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_SLOT_SELECTION
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_FROM_DASH_TAB
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_MIXED_BASKET
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_FBH_ONLY
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.PLACE_ID
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.SAVED_ADDRESS_RESPONSE
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
@@ -433,6 +435,8 @@ class KotlinUtils {
             placeId: String? = null,
             isFromDashTab: Boolean = false,
             isComingFromCheckout: Boolean = false,
+            isMixedBasket: Boolean = false,
+            isFBHOnly: Boolean = false,
             isComingFromSlotSelection: Boolean = false,
             savedAddressResponse: SavedAddressResponse? = null,
             defaultAddress: Address? = null,
@@ -453,6 +457,8 @@ class KotlinUtils {
                 mBundle.putBoolean(IS_FROM_DASH_TAB, isFromDashTab)
                 mBundle.putBoolean(IS_COMING_FROM_CHECKOUT, isComingFromCheckout)
                 mBundle.putBoolean(IS_COMING_FROM_CNC_SELETION, isComingFromCheckout)
+                mBundle.putBoolean(IS_MIXED_BASKET, isMixedBasket)
+                mBundle.putBoolean(IS_FBH_ONLY, isFBHOnly)
                 mBundle.putBoolean(IS_COMING_FROM_SLOT_SELECTION, isComingFromSlotSelection)
                 mBundle.putSerializable(SAVED_ADDRESS_RESPONSE, savedAddressResponse)
                 mBundle.putSerializable(DEFAULT_ADDRESS, defaultAddress)

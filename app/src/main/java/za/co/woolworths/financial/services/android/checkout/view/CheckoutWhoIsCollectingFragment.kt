@@ -31,6 +31,8 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.shop.Che
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_CNC_SELETION
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_FBH_ONLY
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_MIXED_BASKET
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.SAVED_ADDRESS_RESPONSE
 import java.util.regex.Pattern
 
@@ -45,6 +47,8 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(),
     private var isMyVehicle = true
     private var navController: NavController? = null
     private var isComingFromCnc: Boolean? = false
+    private var isMixBasket: Boolean? = false
+    private var isFBHOnly: Boolean? = false
 
     companion object {
         const val REGEX_VEHICLE_TEXT: String = "^\$|^[a-zA-Z0-9\\s<!>@\$&().+,-/\\\"']+\$"
@@ -65,6 +69,8 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(),
         val bundle = arguments?.getBundle(BUNDLE)
         bundle?.apply {
             isComingFromCnc = getBoolean(IS_COMING_FROM_CNC_SELETION, false)
+            isMixBasket = getBoolean(IS_MIXED_BASKET, false)
+            isFBHOnly = getBoolean(IS_FBH_ONLY, false)
         }
 
         initView()
@@ -325,15 +331,18 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(),
 
     private fun showFBHView() {
         if(isComingFromCnc == true) {
-            if(Utils.retrieveStoreId(StoreUtils.Companion.FulfillmentType.CRG_ITEMS?.type) !="" || Utils.retrieveStoreId(StoreUtils.Companion.FulfillmentType.CLOTHING_ITEMS?.type) !="") {
-                recipientDetailsTitle?.visibility = View.GONE
-                collectingPartition?.visibility = View.GONE
-                vehiclesDetailsLayout?.visibility = View.GONE
-                vehicleDetailsPartition?.visibility = View.GONE
-                isMyVehicle = false
+                if(isFBHOnly == true) {
+                    collectingPartition?.visibility = View.GONE
+                    vehiclesDetailsLayout?.visibility = View.GONE
+                    vehicleDetailsPartition?.visibility = View.GONE
+                    isMyVehicle = false
 
-                whoIsCollectingDetailsInfoLayout?.visibility = View.VISIBLE
-            }
+                    recipientDetailsTitle?.visibility = View.GONE
+                    whoIsCollectingDetailsInfoLayout?.visibility = View.VISIBLE
+                } else if(isMixBasket == true) {
+                    recipientDetailsTitle?.visibility = View.GONE
+                    whoIsCollectingDetailsInfoLayout?.visibility = View.VISIBLE
+                }
         }
     }
     private fun setEditText(whoIsCollectingDetails: WhoIsCollectingDetails) {
