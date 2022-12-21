@@ -253,6 +253,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     private TextView tvPetInsuranceHelped;
     private TextView tvPetInsuranceApply;
     private PetInsuranceHandler petInsuranceHandler = null;
+
     public MyAccountsFragment() {
         // Required empty public constructor
         this.unavailableAccounts = new ArrayList<>();
@@ -1995,10 +1996,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     private void redirectToMyAccountsCardsActivity(ApplyNowState applyNowState) {
         Activity activity = getActivity();
         if (activity == null) return;
-        Intent intent = new Intent(getActivity(), AccountSalesActivity.class);
-        if (applyNowState == ApplyNowState.BLACK_CREDIT_CARD || applyNowState == ApplyNowState.GOLD_CREDIT_CARD || applyNowState == ApplyNowState.SILVER_CREDIT_CARD) {
-            intent = new Intent(getActivity(), ApplyNowActivity.class);
-        }
+        Intent intent = new Intent(getActivity(), ApplyNowActivity.class);
         Bundle bundle = new Bundle();
         bundle.putSerializable("APPLY_NOW_STATE", applyNowState);
         HashMap<String, Account> accountHashMap = new HashMap<>();
