@@ -3065,4 +3065,24 @@
         <item name="android:scaleType">fitCenter</item>
         <item name="srcCompat">@drawable/close</item>
     </style>
+
+    <style name="wfsVoucherStyle" parent="Widget.Design.TabLayout">
+        <item name="tabBackground">@drawable/rewards_voucher</item>
+        <item name="tabIndicator">@null</item>
+        <item name="android:background">@drawable/rounded_view_grey_tab_bg</item>
+        <item name="tabSelectedTextColor">@color/offer_title</item>
+        <item name="tabTextColor">@color/offer_title</item>
+        <item name="tabRippleColor">@null</item>
+        <item name="android:fontFamily">@font/myriad_pro_regular</item>
+        <item name="tabTextAppearance">@style/TabText</item>
+    </style>
+
+    <style name="TabText" parent="TextAppearance.AppCompat.Button">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/color_444444</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:fontFamily">@font/myriad_pro_regular</item>
+
+    </style>
+
 </resources>

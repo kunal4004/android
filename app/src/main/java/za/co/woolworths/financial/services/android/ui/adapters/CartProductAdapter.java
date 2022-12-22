@@ -338,7 +338,7 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 
                 int activeCashVouchersCount = voucherDetails.getActiveCashVouchersCount();
                 if (activeCashVouchersCount > 0) {
-                    String availableVouchersLabel = activeCashVouchersCount + mContext.getString(voucherDetails.getActiveVouchersCount() == 1 ? R.string.available_cash_voucher_message : R.string.available_cash_vouchers_message) + mContext.getString(R.string.available);
+                    String availableVouchersLabel = mContext.getResources().getQuantityString(R.plurals.available_cash_vouchers_message,activeCashVouchersCount,activeCashVouchersCount);
                     priceHolder.availableCashVouchersCount.setText(availableVouchersLabel);
                     priceHolder.viewCashVouchers.setEnabled(true);
                 } else {
@@ -349,12 +349,12 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
                 int activeVouchersCount = voucherDetails.getActiveVouchersCount();
                 if (activeVouchersCount > 0) {
                     if (getAppliedVouchersCount() > 0) {
-                        String availableVouchersLabel = getAppliedVouchersCount() + mContext.getString(getAppliedVouchersCount() == 1 ? R.string.available_voucher_message : R.string.available_vouchers_message) + mContext.getString(R.string.applied);
+                        String availableVouchersLabel =   mContext.getResources().getQuantityString(R.plurals._rewards_vouchers_message_applied,getAppliedVouchersCount(),getAppliedVouchersCount());
                         priceHolder.availableVouchersCount.setText(availableVouchersLabel);
                         priceHolder.viewVouchers.setText(mContext.getString(R.string.edit));
                         priceHolder.viewVouchers.setEnabled(true);
                     } else {
-                        String availableVouchersLabel = activeVouchersCount + mContext.getString(voucherDetails.getActiveVouchersCount() == 1 ? R.string.available_voucher_message : R.string.available_vouchers_message) + mContext.getString(R.string.available);
+                        String availableVouchersLabel = mContext.getResources().getQuantityString(R.plurals.available_rewards_vouchers_message,activeVouchersCount,activeVouchersCount);
                         priceHolder.availableVouchersCount.setText(availableVouchersLabel);
                         priceHolder.viewVouchers.setText(mContext.getString(R.string.view));
                         priceHolder.viewVouchers.setEnabled(true);

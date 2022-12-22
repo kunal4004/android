@@ -1813,14 +1813,24 @@
     <string name="apply_promo_code_title">Promo Code</string>
     <string name="apply">apply</string>
     <string name="enter_promo_code_hint">Enter promo code</string>
-    <string name="available_voucher_message">\u0020wrewards voucher</string>
-    <string name="available_vouchers_message">\u0020wrewards vouchers</string>
-    <string name="available_cash_voucher_message">\u0020cash back voucher</string>
-    <string name="available_cash_vouchers_message">\u0020cash back vouchers</string>
+    <plurals name="available_rewards_vouchers_message">
+        <item quantity="one">%d wrewards voucher available</item>
+        <item quantity="other">%d wrewards vouchers available</item>
+    </plurals>
+    <plurals name="_rewards_vouchers_message_applied">
+        <item quantity="one">%d wrewards voucher Applied</item>
+        <item quantity="other">%d wrewards vouchers Applied</item>
+    </plurals>
+    <plurals name="available_cash_vouchers_message">
+        <item quantity="one">%d cash back voucher available</item>
+        <item quantity="other">%d cash back vouchers available</item>
+    </plurals>
     <string name="zero_wrewards_vouchers_available">no wrewards vouchers available</string>
     <string name="zero_cash_vouchers_available">no cash back vouchers available</string>
-    <string name="vouchers_available">vouchers available:</string>
-    <string name="voucher_available">voucher available:</string>
+    <plurals name="vouchers_available">
+        <item quantity="one">voucher available:</item>
+        <item quantity="other">vouchers available:</item>
+    </plurals>
     <string name="available">\u0020available</string>
     <string name="applying_your_vouchers">Applying Your Vouchers</string>
     <string name="redeem">Redeem</string>
@@ -2818,5 +2828,16 @@
     <string name="cancelled">Cancelled</string>
     <string name="order">Order\u0020</string>
     <string name="a_report_for_this_review_has_already_been_submitted">A report for this review has already been submitted.</string>
-
+    <string name="apply_for_credit_card">apply for credit card</string>
+    <string name="available_vouchers">vouchers available</string>
+    <string name="wrewards_voucher">WRewards Vouchers</string>
+    <string name="cash_back_vouchers">Cash Back Vouchers</string>
+    <string name="your_cash_back_vouchers">Your Cash Back Vouchers</string>
+    <string name="cash_back_vouchers_desc">These are your quarterly Cash Back Vouchers. You can redeem these Vouchers when selecting a payment method in Checkout.</string>
+    <string name="select_wvouchers_redeem">Select Vouchers to redeem</string>
+    <string name="select_wvouchers_desc">Save even more - Redeem your WRewards Vouchers now.</string>
+    <string name="vouchers_redeemable_at_checkout">Redeemable at Checkout</string>
+    <string name="expires_vouchers">"Expires %s"</string>
+    <string name="you_don_t_qualify_for_cash_back">You Don’t Qualify For Cash Back Vouchers Yet</string>
+    <string name="apply_for_a_woolworths_credit_card">Apply for a Woolworths Credit Card today to qualify to unlock these amazing vouchers.</string>
 </resources>
