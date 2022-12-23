@@ -1691,7 +1691,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         }
         if (binding.btnCheckOut.isEnabled == false && isAllInventoryAPICallSucceed && !isAnyItemNeedsQuantityUpdate) {
             fadeCheckoutButton(false)
-            if (isAdded) showAvailableVouchersToast(voucherDetails?.activeVouchersCount ?: 0)
+            if (isAdded) showAvailableVouchersToast(voucherDetails?.activeTotalVouchersCount ?: 0)
         }
         if (itemsTobeRemovedFromCart.size > 0) {
             if (activity != null && isAdded) {
@@ -1813,7 +1813,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
 
     override fun onPromptDismiss(feature: WMaterialShowcaseView.Feature) {
         isMaterialPopUpClosed = true
-        if (isAdded) showAvailableVouchersToast(voucherDetails?.activeVouchersCount ?: 0)
+        if (isAdded) showAvailableVouchersToast(voucherDetails?.activeTotalVouchersCount ?: 0)
     }
 
     private fun displayUpSellMessage(data: Data?) {
@@ -1875,13 +1875,13 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         mToastUtils?.apply {
             activity = requireActivity()
             currentState = TAG_AVAILABLE_VOUCHERS_TOAST
-            cartText = requireContext().getString(R.string.available)
+            cartText = availableVouchersCount.toString()
             pixel = (binding.btnCheckOut.height ?: 0 * 2.5).toInt()
             view = binding.btnCheckOut
             message =
-                availableVouchersCount.toString() + requireContext().getString(
-                    if (availableVouchersCount > 1) R.string.available_vouchers_toast_message
-                    else R.string.available_voucher_toast_message
+                requireContext().getString(
+                    if (availableVouchersCount > 1) R.string.vouchers_available
+                    else R.string.voucher_available
                 )
             setAllCapsUpperCase(true)
             viewState = true
@@ -1905,6 +1905,10 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
 
     override fun onViewVouchers() {
         navigateToAvailableVouchersPage()
+    }
+
+    override fun onViewCashBackVouchers() {
+        // TODO: Open cash back vouchers
     }
 
     private fun navigateToAvailableVouchersPage() {
