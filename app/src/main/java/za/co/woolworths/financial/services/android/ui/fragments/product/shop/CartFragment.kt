@@ -557,6 +557,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     }
 
     override fun totalItemInBasket(total: Int) {}
+
     override fun onOpenProductDetail(commerceItem: CommerceItem) {
         val activity = requireActivity()
         if (activity !is BottomNavigationActivity) {
@@ -1512,7 +1513,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             return
         }
         if (changeQuantityWasClicked) {
-            cartProductAdapter?.onChangeQuantityLoad(mCommerceItem)
+            mCommerceItem?.let { cartProductAdapter?.onChangeQuantityLoad(it) }
             queryServiceChangeQuantity()
             changeQuantityWasClicked = false
         }
