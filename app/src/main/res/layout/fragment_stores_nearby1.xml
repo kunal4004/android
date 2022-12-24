@@ -80,6 +80,14 @@
                         />
                 </RelativeLayout>
 
+                <ImageButton
+                    android:id="@+id/storeCardBackButton"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="@color/transparent"
+                    android:src="@drawable/back24"
+                    android:textAlignment="center"></ImageButton>
+
                 <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -91,7 +99,7 @@
                         android:id="@+id/cardPager"
                         android:layout_width="match_parent"
                         android:layout_height="145dp"
-                        android:paddingBottom="2dp"
+                        android:paddingBottom="12dp"
                         />
 
                     <ProgressBar

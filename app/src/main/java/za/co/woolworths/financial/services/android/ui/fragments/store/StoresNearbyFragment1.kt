@@ -18,6 +18,7 @@ import android.text.TextUtils
 import android.util.Log
 import android.view.*
 import android.view.animation.AccelerateInterpolator
+import android.widget.ImageButton
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.annotation.DrawableRes
@@ -124,7 +125,7 @@ class StoresNearbyFragment1 : Fragment(R.layout.fragment_stores_nearby1), Dynami
             mErrorHandlerView?.setMargin(relNoConnectionLayout, 0, 0, 0, 0)
 
             setupToolbar()
-
+            setupBackButtonUI()
             selectUnSelectMarkerDrawable()
 
             cardPager?.addOnPageChangeListener(this@StoresNearbyFragment1)
@@ -240,6 +241,13 @@ class StoresNearbyFragment1 : Fragment(R.layout.fragment_stores_nearby1), Dynami
                 is Event.Location -> handleLocationEvent(locationEvent)
                 is Event.Permission -> handlePermissionEvent(locationEvent)
             }
+        }
+    }
+
+    fun setupBackButtonUI() {
+        val backButtton = activity?.findViewById<ImageButton>(R.id.storeCardBackButton)
+        backButtton?.setOnClickListener {
+            mBottomNavigator?.popFragment()
         }
     }
 
