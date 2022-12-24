@@ -39,6 +39,9 @@ import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getDeliveryType
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
+import za.co.woolworths.financial.services.android.geolocation.network.model.PlaceDetails
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.TAG_CHANGEFULLFILMENT_COLLECTION_STORE_FRAGMENT
+import za.co.woolworths.financial.services.android.geolocation.view.PargoStoreInfoBottomSheetDialog
 
 class ChangeFullfilmentCollectionStoreFragment :
     DepartmentExtensionFragment(R.layout.layout_dash_collection_store), DynamicMapDelegate,
@@ -54,6 +57,7 @@ class ChangeFullfilmentCollectionStoreFragment :
     private var parentFragment: ShopFragment? = null
     private var mDepartmentAdapter: DepartmentAdapter? = null
     private var saveInstanceState: Bundle? = null
+    private var updatedPlace:PlaceDetails?=null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -137,7 +141,7 @@ class ChangeFullfilmentCollectionStoreFragment :
             }
             return
         }
-        if (validatePlace.stores?.isNullOrEmpty() == true) {
+        if (validatePlace.stores.isNullOrEmpty()) {
             showNoCollectionStoresUi()
             return
         }
@@ -167,10 +171,21 @@ class ChangeFullfilmentCollectionStoreFragment :
                                 validateLocationResponse?.validatePlace?.stores?.size
                             )
                             updatedAddressStoreList = validateLocationResponse?.validatePlace?.stores
+                            updatedPlace=validateLocationResponse?.validatePlace?.placeDetails
                             binding.layoutClickAndCollectStore.tvAddress?.text =
                                 KotlinUtils.capitaliseFirstLetter(validateLocationResponse?.validatePlace?.placeDetails?.address1)
                             placeId = validateLocationResponse?.validatePlace?.placeDetails?.placeId
                             setStoreList(validateLocationResponse?.validatePlace?.stores)
+                            if(placeId != null) {
+                                val store = GeoUtils.getStoreDetails(
+                                        placeId,
+                                        validateLocationResponse?.validatePlace?.stores
+                                )
+                                if (store?.locationId != "" && store?.storeName?.contains(StoreUtils.PARGO, true) == false) {
+                                    Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.storeName = StoreUtils.pargoStoreName(store?.storeName)
+                                    Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.locationId = store?.locationId.toString()
+                                }
+                            }
                         }
                     }
                 }
@@ -190,12 +205,19 @@ class ChangeFullfilmentCollectionStoreFragment :
         binding.layoutClickAndCollectStore?.ivCross?.visibility = View.GONE
         binding.layoutClickAndCollectStore.rvStoreList.layoutManager =
             activity?.let { activity -> LinearLayoutManager(activity) }
-        binding.layoutClickAndCollectStore.rvStoreList.adapter = activity?.let { activity ->
-            StoreListAdapter(
-                activity,
-                stores,
-                this
-            )
+        if (stores?.isNotEmpty() == true) {
+            val storesListWithHeaders =
+                StoreUtils.getStoresListWithHeaders(StoreUtils.sortedStoreList(stores))
+            if (storesListWithHeaders.isNotEmpty()) {
+                binding.layoutClickAndCollectStore.rvStoreList.adapter = activity?.let { activity ->
+                    StoreListAdapter(
+                        activity,
+                        storesListWithHeaders,
+                        this
+                    )
+                }
+            }
+
         }
         binding.layoutClickAndCollectStore.rvStoreList.adapter?.notifyDataSetChanged()
     }
@@ -255,10 +277,19 @@ class ChangeFullfilmentCollectionStoreFragment :
     override fun onMapReady() {
         binding.layoutClickAndCollectStore.dynamicMapView?.setAllGesturesEnabled(false)
         val addressStoreList = WoolworthsApplication.getCncBrowsingValidatePlaceDetails()?.stores
-        if (addressStoreList?.isNullOrEmpty() == false) {
-            GeoUtils.showFirstFourLocationInMap(addressStoreList, binding.layoutClickAndCollectStore.dynamicMapView, context)
-        } else if (updatedAddressStoreList?.isEmpty() == false)  {
-            GeoUtils.showFirstFourLocationInMap(updatedAddressStoreList, binding.layoutClickAndCollectStore.dynamicMapView, context)
+        val placeDetails = WoolworthsApplication.getCncBrowsingValidatePlaceDetails()?.placeDetails
+        if (addressStoreList?.isNotEmpty() == true && placeDetails != null) {
+            GeoUtils.showFirstFourLocationInMap(
+                StoreUtils.sortedStoreListBasedOnDistance(
+                    addressStoreList
+                ), placeDetails, binding.layoutClickAndCollectStore.dynamicMapView, context
+            )
+        } else if (updatedAddressStoreList?.isNotEmpty() == true && updatedPlace != null) {
+            GeoUtils.showFirstFourLocationInMap(
+                StoreUtils.sortedStoreListBasedOnDistance(
+                    updatedAddressStoreList
+                ), updatedPlace, binding.layoutClickAndCollectStore.dynamicMapView, context
+            )
         }
     }
 
@@ -491,4 +522,11 @@ class ChangeFullfilmentCollectionStoreFragment :
         binding.layoutClickAndCollectStore.dynamicMapView?.onDestroy()
         super.onDestroyView()
     }
+    override fun onFirstTimePargo() {
+        PargoStoreInfoBottomSheetDialog().show(
+            parentFragmentManager,
+            TAG_CHANGEFULLFILMENT_COLLECTION_STORE_FRAGMENT
+        )
+    }
+
 }

@@ -2814,4 +2814,27 @@
     <string name="order">Order\u0020</string>
     <string name="a_report_for_this_review_has_already_been_submitted">A report for this review has already been submitted.</string>
 
+    <string name="food_item_not_available_for_collection_title">Food Items Can’t Be Collected From a Pargo Pickup Point.</string>
+    <string name="quick">QUICK</string>
+    <string name="convenient">CONVENIENT</string>
+    <string name="alarm_text">We\’ll notify you when your order is ready for collection.</string>
+    <string name="calender_detail">Orders will be ready to collect within 1-5 working days.</string>
+
+    <string name="introducing_pargo_our_new_collection_partner">Introducing Pargo, Our New Collection Partner!</string>
+    <string name="new_fbh_cnc_text">Introducing Click &amp; Collect for Fashion, Beauty &amp; Homeware</string>
+    <string name="we_ve_expanded_our_collection_locations_with_pargo_to_offer_you_more_flexibility_and_choice_in_your_shopping_experience">We’ve expanded our collection locations with Pargo, to offer you more flexibility and choice in your shopping experience.</string>
+    <string name="fashion_beauty_home_ware">Fashion, Beauty &amp; Homeware Only</string>
+    <string name="these_stores_stock">THESE STORES STOCK</string>
+    <string name="food_items_only">Food Items Only</string>
+    <string name="all_woolworths_products">All Woolworths Products</string>
+    <string name="collection_details_text">Your order will be ready for collection in </string>
+    <string name="notify_text_label"> We\'ll notify you via SMS when it\'s ready.</string>
+    <string name="who_is_collecting_label">Upon collection, the recipient will have to show proof of identification using their <b>ID, passport or drivers license.</b></string>
+    <string name="mixed_cart_food_item_title">Collection 1 - Food Items</string>
+    <string name="mixed_cart_other_item_title">Collection 2 - Other Items</string>
+    <string name="food_item_not_available_for_collection_desc">To shop this item, change your collection store or delivery method.</string>
+    <string name="change_collection_location">CHANGE COLLECTION LOCATION</string>
+    <string name="who_is_collecting_header_title">Who Is Collecting?</string>
+    <string name="recipient_name_hint">As displayed on identification document</string>
+
 </resources>

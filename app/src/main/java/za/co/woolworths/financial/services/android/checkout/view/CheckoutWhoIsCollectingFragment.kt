@@ -28,6 +28,12 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.Constant
 import za.co.woolworths.financial.services.android.util.Utils
 import java.util.regex.Pattern
+import androidx.fragment.app.FragmentActivity
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment
+import za.co.woolworths.financial.services.android.util.AppConstant
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_FBH_ONLY
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_MIXED_BASKET
+
 
 /**
  * Created by Kunal Uttarwar on 26/10/21.
@@ -41,6 +47,8 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(R.
     private var isMyVehicle = true
     private var navController: NavController? = null
     private var isComingFromCnc: Boolean? = false
+    private var isMixBasket: Boolean? = false
+    private var isFBHOnly: Boolean? = false
 
     companion object {
         const val REGEX_VEHICLE_TEXT: String = "^\$|^[a-zA-Z0-9\\s<!>@\$&().+,-/\\\"']+\$"
@@ -54,6 +62,8 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(R.
         val bundle = arguments?.getBundle(BUNDLE)
         bundle?.apply {
             isComingFromCnc = getBoolean(IS_COMING_FROM_CNC_SELETION, false)
+            isMixBasket = getBoolean(IS_MIXED_BASKET, false)
+            isFBHOnly = getBoolean(IS_FBH_ONLY, false)
         }
 
         initView()
@@ -69,6 +79,20 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(R.
             }
             R.id.myVehicleText -> {
                 onVehicleSelected()
+            }
+
+            R.id.backArrow -> {
+                activity ?.apply{
+                    setResult(CheckOutFragment.RESULT_RELOAD_CART)
+                    view?.let{
+                        closeFragment(it)
+                    }
+                    overridePendingTransition(
+                        R.anim.slide_in_from_left,
+                        R.anim.slide_out_to_right
+                    )
+                }
+
             }
         }
     }
@@ -238,6 +262,8 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(R.
         binding.confirmDetails?.setOnClickListener(this)
         binding.vehiclesDetailsLayout.myVehicleText?.setOnClickListener(this)
         binding.vehiclesDetailsLayout.taxiText?.setOnClickListener(this)
+        showFBHView()
+        binding.backArrow?.setOnClickListener(this)
 
         binding.whoIsCollectingDetailsLayout.recipientNameEditText?.apply {
             afterTextChanged {
@@ -296,6 +322,22 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(R.
         listOfTaxiInputFields = listOf(binding.whoIsCollectingDetailsLayout.recipientNameEditText, binding.whoIsCollectingDetailsLayout.cellphoneNumberEditText)
     }
 
+    private fun showFBHView() {
+        if (isComingFromCnc == true) {
+            if (isFBHOnly == true) {
+                binding.collectingPartition?.visibility = View.GONE
+                binding.vehiclesDetailsLayout?.root?.visibility = View.GONE
+                binding.vehicleDetailsPartition?.visibility = View.GONE
+                isMyVehicle = false
+
+                binding.whoIsCollectingDetailsLayout?.recipientDetailsTitle?.visibility = View.GONE
+                binding.whoIsCollectingDetailsInfoLayout?.root?.visibility = View.VISIBLE
+            } else if (isMixBasket == true) {
+                binding.whoIsCollectingDetailsLayout?.recipientDetailsTitle?.visibility = View.GONE
+                binding.whoIsCollectingDetailsInfoLayout?.root?.visibility = View.VISIBLE
+            }
+        }
+    }
     private fun setEditText(whoIsCollectingDetails: WhoIsCollectingDetails) {
         if (whoIsCollectingDetails != null) {
             if (whoIsCollectingDetails.isMyVehicle) {
@@ -365,4 +407,10 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(R.
     fun testGetTaxiList(): List<View> {
         return listOfTaxiInputFields
     }
+
+    private fun FragmentActivity.closeFragment(view: View) {
+        view.postDelayed({ onBackPressed() }, AppConstant.DELAY_500_MS)
+    }
+
+
 }

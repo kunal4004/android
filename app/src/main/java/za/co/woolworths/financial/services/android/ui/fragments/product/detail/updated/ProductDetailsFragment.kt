@@ -95,7 +95,6 @@ import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.listene
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.listener.VtoTryAgainListener
 import za.co.woolworths.financial.services.android.ui.vto.ui.camera.CameraMonitor
 import za.co.woolworths.financial.services.android.ui.vto.ui.gallery.ImageResultContract
-import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_1000_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_1500_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_500_MS
@@ -118,11 +117,9 @@ import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManag
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.logException
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.setCrashlyticsString
-import java.net.SocketTimeoutException
 import javax.inject.Inject
 import kotlin.collections.get
 import kotlin.collections.set
-import android.util.Log
 import android.widget.*
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
@@ -130,7 +127,6 @@ import com.awfs.coordination.databinding.ProductDetailsFragmentBinding
 import com.awfs.coordination.databinding.PromotionalImageBinding
 import retrofit2.HttpException
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.*
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.*
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.network.apihelper.RatingAndReviewApiHelper
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.viewmodel.RatingAndReviewViewModel
@@ -140,7 +136,8 @@ import za.co.woolworths.financial.services.android.ui.vto.ui.PfSDKInitialCallbac
 import za.co.woolworths.financial.services.android.ui.vto.utils.PermissionUtil
 import za.co.woolworths.financial.services.android.ui.vto.utils.SdkUtility
 import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
-
+import za.co.woolworths.financial.services.android.geolocation.GeoUtils
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.FoodProductNotAvailableForCollectionDialog
 
 @AndroidEntryPoint
 class ProductDetailsFragment : BaseFragmentBinding<ProductDetailsFragmentBinding>(ProductDetailsFragmentBinding::inflate), ProductDetailsContract.ProductDetailsView,
@@ -148,6 +145,7 @@ class ProductDetailsFragment : BaseFragmentBinding<ProductDetailsFragmentBinding
     ILocationProvider, View.OnClickListener,
     OutOfStockMessageDialogFragment.IOutOfStockMessageDialogDismissListener,
     ProductNotAvailableForCollectionDialog.IProductNotAvailableForCollectionDialogListener,
+    FoodProductNotAvailableForCollectionDialog.IProductNotAvailableForCollectionDialogListener,
     VtoSelectOptionListener, WMaterialShowcaseView.IWalkthroughActionListener, VtoTryAgainListener,View.OnTouchListener,ReviewThumbnailAdapter.ThumbnailClickListener, ViewTreeObserver.OnScrollChangedListener {
 
     var productDetails: ProductDetails? = null
@@ -227,7 +225,7 @@ class ProductDetailsFragment : BaseFragmentBinding<ProductDetailsFragmentBinding
     private var isRnRAPICalled = false
     private var prodId: String = "-1"
     private lateinit var moreReviewViewModel: RatingAndReviewViewModel
-
+    private val dialogInstance = FoodProductNotAvailableForCollectionDialog.newInstance()
     @OpenTermAndLighting
     @Inject
     lateinit var vtoBottomSheetDialog: VtoBottomSheetDialog
@@ -806,6 +804,17 @@ class ProductDetailsFragment : BaseFragmentBinding<ProductDetailsFragmentBinding
                                     navigateToUnsellableItemsFragment(it as java.util.ArrayList<UnSellableCommerceItem>,
                                         KotlinUtils.browsingDeliveryType?.name)
                                 }
+                                val placeId = validateLocationResponse?.validatePlace?.placeDetails?.placeId
+                                if(placeId != null) {
+                                    val store = GeoUtils.getStoreDetails(
+                                            placeId,
+                                            validateLocationResponse?.validatePlace?.stores
+                                    )
+                                    if (store?.locationId != "" && store?.storeName?.contains(StoreUtils.PARGO, true) == false) {
+                                        Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.storeName = StoreUtils.pargoStoreName(store?.storeName)
+                                        Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.locationId = store?.locationId.toString()
+                                    }
+                                }
                             } else
                                 callConfirmPlace()
                         }
@@ -1043,12 +1052,24 @@ class ProductDetailsFragment : BaseFragmentBinding<ProductDetailsFragmentBinding
             if (!this.productDetails?.productType.equals(
                     getString(R.string.food_product_type),
                     ignoreCase = true
-                ) && (KotlinUtils.getPreferredDeliveryType() == Delivery.CNC
-                        || KotlinUtils.getPreferredDeliveryType() == Delivery.DASH)
+                ) && (KotlinUtils.getPreferredDeliveryType() == Delivery.DASH)
             ) {
                 showProductUnavailable()
                 showProductNotAvailableForCollection()
                 return
+            } else if(KotlinUtils.getPreferredDeliveryType() == Delivery.CNC) {
+                //Food only
+                if(this.productDetails?.fulfillmentType == StoreUtils.Companion.FulfillmentType.FOOD_ITEMS?.type && Utils.retrieveStoreId(this.productDetails?.fulfillmentType) == "") {
+                    showProductUnavailable()
+                    foodProductNotAvailableForCollection()
+                    return
+                }  //FBH only
+                else if((this.productDetails?.fulfillmentType == StoreUtils.Companion.FulfillmentType.CLOTHING_ITEMS?.type || this.productDetails?.fulfillmentType == StoreUtils.Companion.FulfillmentType.CRG_ITEMS?.type) &&
+                        (Utils.retrieveStoreId(this.productDetails?.fulfillmentType) == "")) {
+                    showProductUnavailable()
+                    showProductNotAvailableForCollection()
+                    return
+                }
             }
         }
 
@@ -2170,7 +2191,7 @@ class ProductDetailsFragment : BaseFragmentBinding<ProductDetailsFragmentBinding
                             if (!this.productDetails?.productType.equals(
                                     getString(R.string.food_product_type),
                                     ignoreCase = true
-                                ) && KotlinUtils.getPreferredDeliveryType() == Delivery.CNC
+                                )
                             ) {
                                 storeIdForInventory = ""
                                 clearStockAvailability()
@@ -2956,6 +2977,15 @@ class ProductDetailsFragment : BaseFragmentBinding<ProductDetailsFragmentBinding
         }
     }
 
+    override fun foodProductNotAvailableForCollection() {
+        activity?.apply {
+            if (dialogInstance != null && !dialogInstance.isVisible)
+                dialogInstance.show(
+                    this@ProductDetailsFragment.childFragmentManager,
+                    FoodProductNotAvailableForCollectionDialog::class.java.simpleName
+                )
+        }
+    }
     override fun onChangeDeliveryOption() {
         this.updateDeliveryLocation()
     }
