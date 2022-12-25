@@ -24,20 +24,17 @@ class GeoUtils {
         fun getSelectedPlaceId(savedAddresses: SavedAddressResponse): String {
             savedAddresses.addresses?.forEach { address ->
                 if (savedAddresses.defaultAddressNickname.equals(address.nickname)) {
-                    return address.placesId.toString()
+                   return address.placesId.toString()
                 }
             }
-            return ""
+            return  ""
         }
 
         fun getSelectedDefaultName(
             savedAddresses: SavedAddressResponse?,
             selectedAddressPosition: Int,
         ): Boolean {
-            if (savedAddresses?.addresses?.getOrNull(selectedAddressPosition)?.nickname.equals(
-                    savedAddresses?.defaultAddressNickname,
-                    true
-                )
+            if (savedAddresses?.addresses?.getOrNull(selectedAddressPosition)?.nickname.equals(savedAddresses?.defaultAddressNickname,true)
             ) {
                 return true
             }
@@ -75,8 +72,8 @@ class GeoUtils {
                     }
                     if (i == 0) {
                         dynamicMapView?.moveCamera(
-                            addressStoreList.getOrNull(i)?.latitude,
-                            addressStoreList.getOrNull(i)?.longitude,
+                            addressStoreList?.getOrNull(i)?.latitude,
+                            addressStoreList?.getOrNull(i)?.longitude,
                             11f
                         )
                     }

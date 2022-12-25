@@ -34,7 +34,6 @@ import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_FBH_ONLY
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_MIXED_BASKET
 
-
 /**
  * Created by Kunal Uttarwar on 26/10/21.
  */
