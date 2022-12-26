@@ -61,7 +61,7 @@
                         android:layout_height="@dimen/_300sdp"
                         android:layout_marginTop="0dp"
                         android:scaleType="fitXY"
-                        android:src="@drawable/header_image" />
+                        android:src="@drawable/pet_insurance_bg" />
 
                     <androidx.appcompat.widget.Toolbar
                         android:layout_marginTop="@dimen/fifteen_dp"
