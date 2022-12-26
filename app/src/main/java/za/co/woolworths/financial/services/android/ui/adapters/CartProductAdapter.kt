@@ -78,7 +78,7 @@ class CartProductAdapter(
             }
             CartRowType.PRODUCT.value -> {
                 ProductHolder(LayoutInflater.from(mContext)
-                    .inflate(R.layout.cart_product_item, parent, false))
+                    .inflate(R.layout.layout_cart_list_product_item, parent, false))
             }
             CartRowType.GIFT.value -> {
                 GiftProductHolder(LayoutInflater.from(mContext)
@@ -125,17 +125,12 @@ class CartProductAdapter(
                 setPicture(productHolder.productImage, productImageUrl)
                 productHolder.btnDeleteRow.visibility = if (editMode) View.VISIBLE else View.GONE
                 productHolder.rlDeleteButton.visibility = if (editMode) View.VISIBLE else View.GONE
-                productHolder.rlDelete.visibility = if (editMode) View.GONE else View.VISIBLE
                 onRemoveSingleItemInEditMode(productHolder, commerceItem)
                 onRemoveSingleItem(productHolder, commerceItem)
                 //enable/disable change quantity click
                 productHolder.llQuantity.isEnabled = !editMode
                 Utils.fadeInFadeOutAnimation(productHolder.llQuantity, editMode)
                 productHolder.llQuantity.isEnabled = !commerceItem.isDeletePressed
-                productHolder.btnDelete.visibility =
-                    if (!commerceItem.isDeletePressed) View.VISIBLE else View.GONE
-                productHolder.pbDelete.visibility =
-                    if (commerceItem.isDeletePressed) View.VISIBLE else View.GONE
                 // prevent triggering animation on first load
                 if (firstLoadWasCompleted()) animateOnDeleteButtonVisibility(productHolder.llCartItems,
                     editMode)
@@ -143,8 +138,6 @@ class CartProductAdapter(
                 productHolder.pbQuantity.visibility =
                     if (quantityIsLoading) View.VISIBLE else View.GONE
                 productHolder.quantity.visibility =
-                    if (quantityIsLoading) View.GONE else View.VISIBLE
-                productHolder.imPrice.visibility =
                     if (quantityIsLoading) View.GONE else View.VISIBLE
 
                 //Set Promotion Text START
@@ -188,7 +181,6 @@ class CartProductAdapter(
                             productHolder.price.visibility = View.VISIBLE
                             productHolder.llQuantity.isEnabled = false
                             productHolder.quantity.alpha = DISABLE_VIEW_VALUE
-                            productHolder.imPrice.alpha = DISABLE_VIEW_VALUE
                         }
                         else -> {
                             productHolder.price.visibility = View.VISIBLE
@@ -214,10 +206,13 @@ class CartProductAdapter(
                     setFirstLoadCompleted(false)
                     onItemClick.onChangeQuantity(commerceItem)
                 }
-                productHolder.btnDelete.setOnClickListener {
-                    commerceItem.commerceItemDeletedId(commerceItem)
+                productHolder.minusDeleteCountImage.setOnClickListener {
+                    //add minus and delete logic
+
+                    // delete logic
+                    /*commerceItem.commerceItemDeletedId(commerceItem)
                     commerceItem.isDeletePressed = true
-                    notifyItemRangeChanged(productHolder.adapterPosition, cartItems?.size ?: 0)
+                    notifyItemRangeChanged(productHolder.adapterPosition, cartItems?.size ?: 0)*/
                 }
                 productHolder.swipeLayout.setOnClickListener {
                     onItemClick.onOpenProductDetail(commerceItem)
@@ -415,10 +410,6 @@ class CartProductAdapter(
             animateRowToDelete.setAnimationListener(object : Animation.AnimationListener {
                 override fun onAnimationStart(animation: Animation) {}
                 override fun onAnimationEnd(animation: Animation) {
-                    productHolder.pbDelete.visibility =
-                        if (commerceItem.isDeletePressed) View.VISIBLE else View.GONE
-                    productHolder.btnDelete.visibility =
-                        if (commerceItem.isDeletePressed) View.GONE else View.VISIBLE
                     onItemClick.onItemDeleteClick(commerceItem.deletedCommerceItemId)
                 }
 
@@ -558,44 +549,38 @@ class CartProductAdapter(
         val price: WTextView
         val promotionalText: WTextView
         val btnDeleteRow: ImageView
-        val imPrice: ImageView
-        val llQuantity: RelativeLayout
+        val llQuantity: LinearLayout
         val productImage: ImageView
-        val llCartItems: LinearLayout
+        val llCartItems: ConstraintLayout
         val llPromotionalText: LinearLayout
         private val tvDelete: WTextView
         val pbQuantity: ProgressBar
         val pbDeleteProgress: ProgressBar
         val rlDeleteButton: RelativeLayout
-        val tvProductAvailability: WTextView
+        val tvProductAvailability: TextView
         val swipeLayout: SwipeLayout
-        val btnDelete: ImageView
-        val pbDelete: ProgressBar
-        val rlDelete: RelativeLayout
         val cartLowStock: View
         val txtCartLowStock: TextView
+        val minusDeleteCountImage: ImageView
 
         init {
             tvTitle = view.findViewById(R.id.tvTitle)
-            tvColorSize = view.findViewById(R.id.tvSize)
+            tvColorSize = view.findViewById(R.id.tvColorSize)
             quantity = view.findViewById(R.id.tvQuantity)
-            price = view.findViewById(R.id.price)
+            price = view.findViewById(R.id.tvPrice)
             btnDeleteRow = view.findViewById(R.id.btnDeleteRow)
             productImage = view.findViewById(R.id.cartProductImage)
             llQuantity = view.findViewById(R.id.llQuantity)
-            pbQuantity = view.findViewById(R.id.pbQuantity)
+            pbQuantity = view.findViewById(R.id.pbQuantityLoader)
             pbDeleteProgress = view.findViewById(R.id.pbDeleteProgress)
-            imPrice = view.findViewById(R.id.imPrice)
-            llCartItems = view.findViewById(R.id.llCartItems)
+            llCartItems = view.findViewById(R.id.clCartItems)
             tvDelete = view.findViewById(R.id.tvDelete)
             promotionalText = view.findViewById(R.id.promotionalText)
             llPromotionalText = view.findViewById(R.id.promotionalTextLayout)
             rlDeleteButton = view.findViewById(R.id.rlDeleteButton)
             tvProductAvailability = view.findViewById(R.id.tvProductAvailability)
             swipeLayout = view.findViewById(R.id.swipe)
-            btnDelete = view.findViewById(R.id.btnDelete)
-            rlDelete = view.findViewById(R.id.rlDelete)
-            pbDelete = view.findViewById(R.id.pbDelete)
+            minusDeleteCountImage = view.findViewById(R.id.minusDeleteCountImage)
             cartLowStock = view.findViewById(R.id.cartLowStock)
             txtCartLowStock = view.findViewById(R.id.txtCartLowStock)
         }
