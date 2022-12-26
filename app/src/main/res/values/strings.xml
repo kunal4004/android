@@ -2813,5 +2813,7 @@
     <string name="cancelled">Cancelled</string>
     <string name="order">Order\u0020</string>
     <string name="a_report_for_this_review_has_already_been_submitted">A report for this review has already been submitted.</string>
+    <string name="reduce_count_button">Reduce Count Button</string>
+    <string name="add_item_count">Add item count</string>
 
 </resources>
