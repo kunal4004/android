@@ -54,7 +54,7 @@
             android:layout_width="@dimen/twenty_four_dp"
             android:layout_height="@dimen/twenty_four_dp"
             android:layout_centerVertical="true"
-            android:layout_marginHorizontal="@dimen/eighteen_dp"
+            android:layout_marginStart="@dimen/eighteen_dp"
             android:indeterminateTint="@color/black"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -67,7 +67,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginHorizontal="@dimen/eighteen_dp"
+            android:layout_marginStart="@dimen/eighteen_dp"
             android:button="@drawable/shopping_list_item_selector"
             android:checked="false"
             android:gravity="center"
@@ -111,11 +111,12 @@
             android:id="@+id/clCartItems"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/sixty_dp"
+            android:layout_marginStart="@dimen/eighteen_dp"
             android:orientation="horizontal"
+            app:layout_constrainedWidth="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/cbShoppingList"
+            app:layout_constraintStart_toEndOf="@id/pbLoadProduct"
             app:layout_constraintTop_toTopOf="parent">
 
             <za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
@@ -131,7 +132,6 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_goneMarginStart="@dimen/fifty_six_dp"
                 fresco:fadeDuration="10"
                 fresco:failureImage="@drawable/woolworth_logo_icon"
                 tools:src="@drawable/woolworth_logo_icon" />

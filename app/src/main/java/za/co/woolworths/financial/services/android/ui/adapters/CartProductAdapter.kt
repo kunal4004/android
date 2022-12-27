@@ -99,7 +99,9 @@ class CartProductAdapter(
             CartRowType.HEADER -> {
                 val headerHolder = holder as CartHeaderViewHolder
                 val commerceItems = itemRow.commerceItems
-                headerHolder.tvHeaderTitle.setText(if (commerceItems?.size ?: 0 > 1) commerceItems?.size.toString() + " " + itemRow.category + " Items" else commerceItems?.size.toString() + " " + itemRow.category + " Item")
+                headerHolder.tvHeaderTitle.setText(if ((commerceItems?.size
+                        ?: 0) > 1
+                ) commerceItems?.size.toString() + " " + itemRow.category + " Items" else commerceItems?.size.toString() + " " + itemRow.category + " Item")
                 headerHolder.addToListListener(commerceItems)
                 if (itemRow.category?.uppercase(Locale.getDefault())
                         .equals(GIFT_ITEM, ignoreCase = true)
@@ -218,7 +220,7 @@ class CartProductAdapter(
                 productHolder.minusDeleteCountImage.setOnClickListener {
                     if (commerceItem.quantityInStock == 0) return@setOnClickListener
 
-                    if (commerceItem.commerceItemInfo?.getQuantity() ?: 0 > 1) {
+                    if ((commerceItem.commerceItemInfo?.getQuantity() ?: 0) > 1) {
                         // This will reduce the product quantity.
                         commerceItem.quantityUploading = true
                         setFirstLoadCompleted(false)
@@ -317,34 +319,34 @@ class CartProductAdapter(
                 if (activeVouchersCount > 0) {
                     if (appliedVouchersCount > 0) {
                         val availableVouchersLabel =
-                            appliedVouchersCount.toString() + mContext!!.getString(if (appliedVouchersCount == 1) R.string.available_voucher_toast_message else R.string.available_vouchers_toast_message) + mContext.getString(
+                            appliedVouchersCount.toString() + mContext?.getString(if (appliedVouchersCount == 1) R.string.available_voucher_toast_message else R.string.available_vouchers_toast_message) + mContext?.getString(
                                 R.string.applied)
                         priceHolder.availableVouchersCount.text = availableVouchersLabel
-                        priceHolder.viewVouchers.text = mContext.getString(R.string.edit)
+                        priceHolder.viewVouchers.text = mContext?.getString(R.string.edit)
                         priceHolder.viewVouchers.isEnabled = true
                     } else {
                         val availableVouchersLabel =
-                            activeVouchersCount.toString() + mContext!!.getString(if (voucherDetails!!.activeVouchersCount == 1) R.string.available_voucher_toast_message else R.string.available_vouchers_toast_message) + mContext.getString(
+                            activeVouchersCount.toString() + mContext?.getString(if (voucherDetails?.activeVouchersCount == 1) R.string.available_voucher_toast_message else R.string.available_vouchers_toast_message) + mContext?.getString(
                                 R.string.available)
                         priceHolder.availableVouchersCount.text = availableVouchersLabel
-                        priceHolder.viewVouchers.text = mContext.getString(R.string.view)
+                        priceHolder.viewVouchers.text = mContext?.getString(R.string.view)
                         priceHolder.viewVouchers.isEnabled = true
                     }
                 } else {
                     priceHolder.availableVouchersCount.text =
-                        mContext!!.getString(R.string.no_vouchers_available)
-                    priceHolder.viewVouchers.text = mContext.getString(R.string.view)
+                        mContext?.getString(R.string.no_vouchers_available)
+                    priceHolder.viewVouchers.text = mContext?.getString(R.string.view)
                     priceHolder.viewVouchers.isEnabled = false
                 }
                 priceHolder.promoCodeAction.text =
-                    mContext.getString(if (voucherDetails!!.promoCodes != null && voucherDetails!!.promoCodes.size > 0) R.string.remove else R.string.enter)
+                    mContext?.getString(if (voucherDetails?.promoCodes != null && voucherDetails!!.promoCodes.size > 0) R.string.remove else R.string.enter)
                 if (voucherDetails!!.promoCodes != null && voucherDetails!!.promoCodes.size > 0) {
                     val appliedPromoCodeText =
-                        mContext.getString(R.string.promo_code_applied) + voucherDetails!!.promoCodes[0].promoCode
+                        mContext?.getString(R.string.promo_code_applied) + voucherDetails!!.promoCodes[0].promoCode
                     priceHolder.promoCodeLabel.text = appliedPromoCodeText
                 } else {
                     priceHolder.promoCodeLabel.text =
-                        mContext.getString(R.string.do_you_have_a_promo_code)
+                        mContext?.getString(R.string.do_you_have_a_promo_code)
                 }
                 priceHolder.promoCodeAction.setOnClickListener {
                     if (voucherDetails!!.promoCodes != null && voucherDetails!!.promoCodes.size > 0) onItemClick.onRemovePromoCode(
@@ -353,9 +355,8 @@ class CartProductAdapter(
                 priceHolder.promoDiscountInfo.setOnClickListener { onItemClick.onPromoDiscountInfo() }
                 if (liquorComplianceInfo != null && liquorComplianceInfo!!.isLiquorOrder) {
                     priceHolder.liquorBannerRootConstraintLayout.visibility = VISIBLE
-                    if (liquor!!.noLiquorImgUrl != null && liquor!!.noLiquorImgUrl.isNotEmpty()) setPicture(
-                        priceHolder.imgLiBanner,
-                        liquor!!.noLiquorImgUrl)
+                    if (!liquor?.noLiquorImgUrl.isNullOrEmpty()) setPicture(priceHolder.imgLiBanner,
+                        liquor?.noLiquorImgUrl)
                 } else {
                     priceHolder.liquorBannerRootConstraintLayout.visibility = GONE
                 }
@@ -371,23 +372,23 @@ class CartProductAdapter(
      */
     private fun showLowStockIndicator(productHolder: ProductHolder) {
         productHolder.cartLowStock.visibility = VISIBLE
-        productHolder.txtCartLowStock.text = lowStock!!.lowStockCopy
+        productHolder.txtCartLowStock.text = lowStock?.lowStockCopy
     }
 
     private fun showMinusOrDeleteButton(productHolder: ProductHolder, commerceItem: CommerceItem) {
         val userQuantity = commerceItem.commerceItemInfo?.getQuantity() ?: 0
         productHolder.llQuantity.visibility =
-            if (commerceItem.quantityInStock === 0) GONE else VISIBLE
+            if (commerceItem.quantityInStock == 0) GONE else VISIBLE
         productHolder.minusDeleteCountImage.setImageResource(
-            if (userQuantity === 1
+            if (userQuantity == 1
             ) R.drawable.delete_24 else R.drawable.ic_minus_black
         )
         val padding = productHolder.minusDeleteCountImage.context
-            .resources.getDimension(if (userQuantity === 1) R.dimen.seven_dp else R.dimen.ten_dp)
+            .resources.getDimension(if (userQuantity == 1) R.dimen.seven_dp else R.dimen.ten_dp)
             .toInt()
         productHolder.minusDeleteCountImage.setPadding(padding, padding, padding, padding)
-        productHolder.addCountImage.visibility = if (commerceItem.quantityInStock === 1 ||
-            userQuantity === commerceItem.quantityInStock
+        productHolder.addCountImage.visibility = if (commerceItem.quantityInStock == 1 ||
+            userQuantity == commerceItem.quantityInStock
         ) GONE else VISIBLE
     }
 
@@ -461,9 +462,11 @@ class CartProductAdapter(
     }
 
     override fun getItemCount(): Int {
-        var size = cartItems!!.size
-        for (collection in cartItems!!) {
-            size += collection.getCommerceItems().size
+        var size = cartItems?.size ?: 0
+        if (!cartItems.isNullOrEmpty()) {
+            for (collection in cartItems!!) {
+                size += collection.getCommerceItems().size
+            }
         }
         return if (editMode) {
             // returns sum of headers + product items
@@ -480,6 +483,7 @@ class CartProductAdapter(
 
     private fun getItemTypeAtPosition(position: Int): CartCommerceItemRow {
         var currentPosition = 0
+        if (!cartItems.isNullOrEmpty()) {
         for (entry in cartItems!!) {
             if (currentPosition == position) {
                 return CartCommerceItemRow(CartRowType.HEADER,
@@ -504,6 +508,7 @@ class CartProductAdapter(
                     null)
             }
         }
+        }
         // last row is for prices
         return CartCommerceItemRow(CartRowType.PRICES, null, null, null)
     }
@@ -521,17 +526,19 @@ class CartProductAdapter(
     }
 
     fun toggleDeleteSingleItem(commerceItem: CommerceItem) {
-        for (cartItemGroup in cartItems!!) {
-            val commerceItemList = cartItemGroup.commerceItems
-            if (commerceItemList != null) {
-                for (cm in commerceItemList) {
-                    if (cm.commerceItemInfo.getCommerceId()
-                            .equals(commerceItem.commerceItemInfo.getCommerceId(),
-                                ignoreCase = true)
-                    ) {
-                        val deleteSingleItem = !commerceItem.deleteSingleItem()
-                        commerceItem.setDeleteSingleItem(deleteSingleItem)
-                        notifyDataSetChanged()
+        if (!cartItems.isNullOrEmpty()) {
+            for (cartItemGroup in cartItems!!) {
+                val commerceItemList = cartItemGroup.commerceItems
+                if (commerceItemList != null) {
+                    for (cm in commerceItemList) {
+                        if (cm.commerceItemInfo.getCommerceId()
+                                .equals(commerceItem.commerceItemInfo.getCommerceId(),
+                                    ignoreCase = true)
+                        ) {
+                            val deleteSingleItem = !commerceItem.deleteSingleItem()
+                            commerceItem.setDeleteSingleItem(deleteSingleItem)
+                            notifyDataSetChanged()
+                        }
                     }
                 }
             }
@@ -539,7 +546,7 @@ class CartProductAdapter(
     }
 
     fun clear() {
-        cartItems!!.clear()
+        cartItems?.clear()
         orderSummary = null
         notifyDataSetChanged()
     }
@@ -556,14 +563,16 @@ class CartProductAdapter(
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYCARTADDTOLIST,
                     mContext)
                 val addToListRequests = ArrayList<AddToListRequest>()
-                for (commerceItem in commerceItems!!) {
-                    val listItem = AddToListRequest()
-                    val commerceItemInfo = commerceItem.commerceItemInfo
-                    listItem.catalogRefId = commerceItemInfo.catalogRefId
-                    listItem.skuID = commerceItemInfo.catalogRefId
-                    listItem.giftListId = commerceItemInfo.catalogRefId
-                    listItem.quantity = "1"
-                    addToListRequests.add(listItem)
+                if (!commerceItems.isNullOrEmpty()) {
+                    for (commerceItem in commerceItems!!) {
+                        val listItem = AddToListRequest()
+                        val commerceItemInfo = commerceItem.commerceItemInfo
+                        listItem.catalogRefId = commerceItemInfo.catalogRefId
+                        listItem.skuID = commerceItemInfo.catalogRefId
+                        listItem.giftListId = commerceItemInfo.catalogRefId
+                        listItem.quantity = "1"
+                        addToListRequests.add(listItem)
+                    }
                 }
                 openShoppingList(mContext, addToListRequests, "", false)
             }
@@ -712,17 +721,19 @@ class CartProductAdapter(
     }
 
     fun onChangeQuantityLoad(mCommerceItem: CommerceItem) {
-        for (cartItemGroup in cartItems!!) {
-            val commerceItemList = cartItemGroup.commerceItems
-            if (commerceItemList != null) {
-                for (cm in commerceItemList) {
-                    if (cm === mCommerceItem) {
-                        cm.quantityUploading = true
+        if (!cartItems.isNullOrEmpty()) {
+            for (cartItemGroup in cartItems!!) {
+                val commerceItemList = cartItemGroup.commerceItems
+                if (commerceItemList != null) {
+                    for (cm in commerceItemList) {
+                        if (cm === mCommerceItem) {
+                            cm.quantityUploading = true
+                        }
                     }
                 }
             }
+            notifyDataSetChanged()
         }
-        notifyDataSetChanged()
     }
 
     fun onChangeQuantityError() {
@@ -764,12 +775,14 @@ class CartProductAdapter(
     }
 
     private fun resetQuantityState(refreshQuantity: Boolean) {
-        for (cartItemGroup in cartItems!!) {
-            val commerceItemList = cartItemGroup.commerceItems
-            if (commerceItemList != null) {
-                for (cm in commerceItemList) {
-                    if (refreshQuantity) cm.quantityUploading = false
-                    setFirstLoadCompleted(false)
+        if (!cartItems.isNullOrEmpty()) {
+            for (cartItemGroup in cartItems!!) {
+                val commerceItemList = cartItemGroup.commerceItems
+                if (commerceItemList != null) {
+                    for (cm in commerceItemList) {
+                        if (refreshQuantity) cm.quantityUploading = false
+                        setFirstLoadCompleted(false)
+                    }
                 }
             }
         }
