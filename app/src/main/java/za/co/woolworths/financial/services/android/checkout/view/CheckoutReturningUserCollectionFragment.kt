@@ -1189,7 +1189,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(R.layout.fragment_check
 
             binding?.apply {
                 checkoutCollectingTimeDetailsLayout.tvCollectionTimeDetailsTitle?.text = bindString(R.string.mixed_cart_food_item_title)
-                layoutCollectionInstructions.checkoutCollectionDetailsInfoLayout?.tvCollectionDetailsText?.text = bindString(R.string.mixed_cart_other_item_title)
+                layoutCollectionInstructions.checkoutCollectionDetailsInfoLayout?.tvCollectionDetailsTitle?.text = bindString(R.string.mixed_cart_other_item_title)
 
                layoutCollectionInstructions.specialInstructionSwitchShimmerFrameLayout?.visibility = View.GONE
                 layoutCollectionInstructions.viewGiftHorizontalSeparator?.visibility = View.GONE
