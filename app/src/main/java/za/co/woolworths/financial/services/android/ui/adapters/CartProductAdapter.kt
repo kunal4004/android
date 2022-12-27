@@ -7,6 +7,8 @@ import android.graphics.PorterDuff
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
@@ -102,11 +104,11 @@ class CartProductAdapter(
                 if (itemRow.category?.uppercase(Locale.getDefault())
                         .equals(GIFT_ITEM, ignoreCase = true)
                 ) {
-                    headerHolder.tvAddToList.visibility = View.GONE
+                    headerHolder.tvAddToList.visibility = GONE
                 } else {
-                    headerHolder.tvAddToList.visibility = View.VISIBLE
+                    headerHolder.tvAddToList.visibility = VISIBLE
                     headerHolder.tvAddToList.visibility =
-                        if (editMode) View.INVISIBLE else View.VISIBLE
+                        if (editMode) View.INVISIBLE else VISIBLE
                 }
             }
             CartRowType.PRODUCT -> {
@@ -123,30 +125,36 @@ class CartProductAdapter(
                 val productImageUrl =
                     if (commerceItemInfo == null) "" else commerceItemInfo.externalImageRefV2
                 setPicture(productHolder.productImage, productImageUrl)
-                productHolder.btnDeleteRow.visibility = if (editMode) View.VISIBLE else View.GONE
-                productHolder.rlDeleteButton.visibility = if (editMode) View.VISIBLE else View.GONE
+                productHolder.btnDeleteRow.visibility = if (editMode) VISIBLE else GONE
+                productHolder.rlDeleteButton.visibility = if (editMode) VISIBLE else GONE
                 onRemoveSingleItemInEditMode(productHolder, commerceItem)
                 onRemoveSingleItem(productHolder, commerceItem)
+                val quantityIsLoading = commerceItem.quantityUploading
                 //enable/disable change quantity click
-                productHolder.llQuantity.isEnabled = !editMode
-                Utils.fadeInFadeOutAnimation(productHolder.llQuantity, editMode)
-                productHolder.llQuantity.isEnabled = !commerceItem.isDeletePressed
+                if (editMode) {
+                    productHolder.llQuantity.isEnabled = !editMode
+                    Utils.fadeInFadeOutAnimation(productHolder.llQuantity, editMode)
+                    productHolder.llQuantity.isEnabled = !commerceItem.isDeletePressed
+                } else if (quantityIsLoading) {
+                    productHolder.llQuantity.isEnabled = false
+                    Utils.fadeInFadeOutAnimation(productHolder.llQuantity, true)
+                }
                 // prevent triggering animation on first load
                 if (firstLoadWasCompleted()) animateOnDeleteButtonVisibility(productHolder.llCartItems,
                     editMode)
-                val quantityIsLoading = commerceItem.quantityUploading
+
                 productHolder.pbQuantity.visibility =
-                    if (quantityIsLoading) View.VISIBLE else View.GONE
+                    if (quantityIsLoading) VISIBLE else GONE
                 productHolder.quantity.visibility =
-                    if (quantityIsLoading) View.GONE else View.VISIBLE
+                    if (quantityIsLoading) GONE else VISIBLE
 
                 //Set Promotion Text START
                 if (commerceItem.getPriceInfo().discountedAmount > 0) {
                     productHolder.promotionalText.setText(" " + formatAmountToRandAndCentWithSpace(
                         commerceItem.getPriceInfo().discountedAmount))
-                    productHolder.llPromotionalText.visibility = View.VISIBLE
+                    productHolder.llPromotionalText.visibility = VISIBLE
                 } else {
-                    productHolder.llPromotionalText.visibility = View.GONE
+                    productHolder.llPromotionalText.visibility = GONE
                 }
                 //Set Promotion Text END
 
@@ -156,7 +164,7 @@ class CartProductAdapter(
                 } else {
                     val sizeColor = getSizeColor(commerceItemInfo)
                     productHolder.tvColorSize.setText(sizeColor)
-                    productHolder.tvColorSize.visibility = View.VISIBLE
+                    productHolder.tvColorSize.visibility = VISIBLE
                 }
                 // Set Color and Size END
                 productHolder.pbQuantity.indeterminateDrawable.setColorFilter(Color.BLACK,
@@ -167,28 +175,29 @@ class CartProductAdapter(
                     productHolder.llQuantity.alpha =
                         if (commerceItem.quantityInStock == 0) 0.0f else 1.0f
                     productHolder.tvProductAvailability.visibility =
-                        if (commerceItem.quantityInStock == 0) View.VISIBLE else View.GONE
+                        if (commerceItem.quantityInStock == 0) VISIBLE else GONE
                     Utils.setBackgroundColor(productHolder.tvProductAvailability,
                         R.drawable.round_amber_corner,
                         R.string.out_of_stock)
                     when (commerceItem.quantityInStock) {
                         0 -> {
-                            productHolder.llPromotionalText.visibility = View.GONE
-                            productHolder.price.visibility = View.VISIBLE
+                            productHolder.llPromotionalText.visibility = GONE
+                            productHolder.price.visibility = VISIBLE
                         }
                         -1 -> {
                             productHolder.llQuantity.alpha = DISABLE_VIEW_VALUE
-                            productHolder.price.visibility = View.VISIBLE
+                            productHolder.price.visibility = VISIBLE
                             productHolder.llQuantity.isEnabled = false
                             productHolder.quantity.alpha = DISABLE_VIEW_VALUE
                         }
                         else -> {
-                            productHolder.price.visibility = View.VISIBLE
+                            productHolder.price.visibility = VISIBLE
+                            showMinusOrDeleteButton(productHolder, commerceItem)
                         }
                     }
                 } else {
-                    productHolder.llQuantity.visibility = View.VISIBLE
-                    productHolder.tvProductAvailability.visibility = View.GONE
+                    productHolder.llQuantity.visibility = VISIBLE
+                    productHolder.tvProductAvailability.visibility = GONE
                 }
                 productHolder.btnDeleteRow.setOnClickListener {
                     setFirstLoadCompleted(false)
@@ -196,7 +205,7 @@ class CartProductAdapter(
                     commerceItem.setDeleteIconWasPressed(true)
                     notifyItemRangeChanged(productHolder.adapterPosition, cartItems?.size ?: 0)
                 }
-                productHolder.llQuantity.setOnClickListener {
+                productHolder.addCountImage.setOnClickListener {
                     if (commerceItem.quantityInStock == 0) return@setOnClickListener
                     if (!NetworkManager.getInstance().isConnectedToNetwork(mContext)) {
                         ErrorHandlerView(mContext).showToast()
@@ -207,12 +216,19 @@ class CartProductAdapter(
                     onItemClick.onChangeQuantity(commerceItem)
                 }
                 productHolder.minusDeleteCountImage.setOnClickListener {
-                    //add minus and delete logic
+                    if (commerceItem.quantityInStock == 0) return@setOnClickListener
 
-                    // delete logic
-                    /*commerceItem.commerceItemDeletedId(commerceItem)
-                    commerceItem.isDeletePressed = true
-                    notifyItemRangeChanged(productHolder.adapterPosition, cartItems?.size ?: 0)*/
+                    if (commerceItem.commerceItemInfo?.getQuantity() ?: 0 > 1) {
+                        // This will reduce the product quantity.
+                        commerceItem.quantityUploading = true
+                        setFirstLoadCompleted(false)
+                        onItemClick.onChangeQuantity(commerceItem)
+                    } else {
+                        // This will remove the product
+                        commerceItem.commerceItemDeletedId(commerceItem)
+                        commerceItem.isDeletePressed = true
+                        notifyItemRangeChanged(productHolder.adapterPosition, cartItems?.size ?: 0)
+                    }
                 }
                 productHolder.swipeLayout.setOnClickListener {
                     onItemClick.onOpenProductDetail(commerceItem)
@@ -241,7 +257,7 @@ class CartProductAdapter(
             CartRowType.PRICES -> {
                 val priceHolder = holder as CartPricesViewHolder
                 if (orderSummary != null) {
-                    priceHolder.orderSummeryLayout.visibility = View.VISIBLE
+                    priceHolder.orderSummeryLayout.visibility = VISIBLE
                     orderSummary?.basketTotal?.let {
                         setPriceValue(priceHolder.txtYourCartPrice, it)
                     }
@@ -253,41 +269,41 @@ class CartProductAdapter(
                         if (discountDetails.companyDiscount > 0) {
                             setDiscountPriceValue(priceHolder.txtCompanyDiscount,
                                 discountDetails.companyDiscount)
-                            priceHolder.rlCompanyDiscount.visibility = View.VISIBLE
+                            priceHolder.rlCompanyDiscount.visibility = VISIBLE
                         } else {
-                            priceHolder.rlCompanyDiscount.visibility = View.GONE
+                            priceHolder.rlCompanyDiscount.visibility = GONE
                         }
                         if (discountDetails.totalOrderDiscount > 0) {
                             setDiscountPriceValue(priceHolder.txtTotalDiscount,
                                 discountDetails.totalOrderDiscount)
-                            priceHolder.rlTotalDiscount.visibility = View.VISIBLE
+                            priceHolder.rlTotalDiscount.visibility = VISIBLE
                         } else {
-                            priceHolder.rlTotalDiscount.visibility = View.GONE
+                            priceHolder.rlTotalDiscount.visibility = GONE
                         }
                         if (discountDetails.otherDiscount > 0) {
                             setDiscountPriceValue(priceHolder.txtDiscount,
                                 discountDetails.otherDiscount)
-                            priceHolder.rlDiscount.visibility = View.VISIBLE
+                            priceHolder.rlDiscount.visibility = VISIBLE
                         } else {
-                            priceHolder.rlDiscount.visibility = View.GONE
+                            priceHolder.rlDiscount.visibility = GONE
                         }
                         if (discountDetails.voucherDiscount > 0) {
                             setDiscountPriceValue(priceHolder.txtWrewardsDiscount,
                                 discountDetails.voucherDiscount)
-                            priceHolder.rlWrewardsDiscount.visibility = View.VISIBLE
+                            priceHolder.rlWrewardsDiscount.visibility = VISIBLE
                         } else {
-                            priceHolder.rlWrewardsDiscount.visibility = View.GONE
+                            priceHolder.rlWrewardsDiscount.visibility = GONE
                         }
                         if (discountDetails.promoCodeDiscount > 0) {
                             setDiscountPriceValue(priceHolder.txtPromoCodeDiscount,
                                 discountDetails.promoCodeDiscount)
-                            priceHolder.rlPromoCodeDiscount.visibility = View.VISIBLE
+                            priceHolder.rlPromoCodeDiscount.visibility = VISIBLE
                         } else {
-                            priceHolder.rlPromoCodeDiscount.visibility = View.GONE
+                            priceHolder.rlPromoCodeDiscount.visibility = GONE
                         }
                     }
                 } else {
-                    priceHolder.orderSummeryLayout.visibility = View.GONE
+                    priceHolder.orderSummeryLayout.visibility = GONE
                 }
                 priceHolder.viewVouchers.setOnClickListener {
                     onItemClick.onViewVouchers()
@@ -336,12 +352,12 @@ class CartProductAdapter(
                 }
                 priceHolder.promoDiscountInfo.setOnClickListener { onItemClick.onPromoDiscountInfo() }
                 if (liquorComplianceInfo != null && liquorComplianceInfo!!.isLiquorOrder) {
-                    priceHolder.liquorBannerRootConstraintLayout.visibility = View.VISIBLE
+                    priceHolder.liquorBannerRootConstraintLayout.visibility = VISIBLE
                     if (liquor!!.noLiquorImgUrl != null && liquor!!.noLiquorImgUrl.isNotEmpty()) setPicture(
                         priceHolder.imgLiBanner,
                         liquor!!.noLiquorImgUrl)
                 } else {
-                    priceHolder.liquorBannerRootConstraintLayout.visibility = View.GONE
+                    priceHolder.liquorBannerRootConstraintLayout.visibility = GONE
                 }
             }
         }
@@ -354,8 +370,25 @@ class CartProductAdapter(
      * @param productHolder
      */
     private fun showLowStockIndicator(productHolder: ProductHolder) {
-        productHolder.cartLowStock.visibility = View.VISIBLE
+        productHolder.cartLowStock.visibility = VISIBLE
         productHolder.txtCartLowStock.text = lowStock!!.lowStockCopy
+    }
+
+    private fun showMinusOrDeleteButton(productHolder: ProductHolder, commerceItem: CommerceItem) {
+        val userQuantity = commerceItem.commerceItemInfo?.getQuantity() ?: 0
+        productHolder.llQuantity.visibility =
+            if (commerceItem.quantityInStock === 0) GONE else VISIBLE
+        productHolder.minusDeleteCountImage.setImageResource(
+            if (userQuantity === 1
+            ) R.drawable.delete_24 else R.drawable.ic_minus_black
+        )
+        val padding = productHolder.minusDeleteCountImage.context
+            .resources.getDimension(if (userQuantity === 1) R.dimen.seven_dp else R.dimen.ten_dp)
+            .toInt()
+        productHolder.minusDeleteCountImage.setPadding(padding, padding, padding, padding)
+        productHolder.addCountImage.visibility = if (commerceItem.quantityInStock === 1 ||
+            userQuantity === commerceItem.quantityInStock
+        ) GONE else VISIBLE
     }
 
     private fun getSizeColor(commerceItemInfo: CommerceItemInfo?): String? {
@@ -386,9 +419,9 @@ class CartProductAdapter(
                     override fun onAnimationStart(animation: Animation) {}
                     override fun onAnimationEnd(animation: Animation) {
                         productHolder.pbDeleteProgress.visibility =
-                            if (commerceItem.deleteIconWasPressed()) View.VISIBLE else View.GONE
+                            if (commerceItem.deleteIconWasPressed()) VISIBLE else GONE
                         productHolder.btnDeleteRow.visibility =
-                            if (commerceItem.deleteIconWasPressed()) View.GONE else View.VISIBLE
+                            if (commerceItem.deleteIconWasPressed()) GONE else VISIBLE
                         onItemClick.onItemDeleteClickInEditMode(commerceItem.deletedCommerceItemId)
                     }
 
@@ -396,10 +429,10 @@ class CartProductAdapter(
                 })
                 productHolder.llCartItems.startAnimation(animateRowToDelete)
             } else {
-                productHolder.pbDeleteProgress.visibility = View.GONE
+                productHolder.pbDeleteProgress.visibility = GONE
             }
         } else {
-            productHolder.pbDeleteProgress.visibility = View.GONE
+            productHolder.pbDeleteProgress.visibility = GONE
         }
     }
 
@@ -562,6 +595,7 @@ class CartProductAdapter(
         val cartLowStock: View
         val txtCartLowStock: TextView
         val minusDeleteCountImage: ImageView
+        val addCountImage: ImageView
 
         init {
             tvTitle = view.findViewById(R.id.tvTitle)
@@ -581,6 +615,7 @@ class CartProductAdapter(
             tvProductAvailability = view.findViewById(R.id.tvProductAvailability)
             swipeLayout = view.findViewById(R.id.swipe)
             minusDeleteCountImage = view.findViewById(R.id.minusDeleteCountImage)
+            addCountImage = view.findViewById(R.id.addCountImage)
             cartLowStock = view.findViewById(R.id.cartLowStock)
             txtCartLowStock = view.findViewById(R.id.txtCartLowStock)
         }

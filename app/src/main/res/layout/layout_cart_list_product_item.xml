@@ -73,9 +73,11 @@
             android:gravity="center"
             android:padding="@dimen/seven_dp"
             android:saveEnabled="false"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible" />
 
         <RelativeLayout
             android:id="@+id/rlDeleteButton"
