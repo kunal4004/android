@@ -693,16 +693,21 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         tvCollectionDetailsText?.text = spannableStringBuilder
     }
     /**
+     * check if cart items have only FBH products
+     */
+    private fun isFBHOnly() : Boolean {
+        return storePickupInfoResponse?.fulfillmentTypes?.join == StoreUtils.Companion.FulfillmentType.CLOTHING_ITEMS?.type
+                && storePickupInfoResponse?.openDayDeliverySlots?.isNullOrEmpty() == false
+                && storePickupInfoResponse?.fulfillmentTypes?.join != StoreUtils.Companion.FulfillmentType.FOOD_ITEMS?.type
+                && storePickupInfoResponse?.fulfillmentTypes?.food != StoreUtils.Companion.FulfillmentType.FOOD_ITEMS?.type
+    }
+    /**
      * Update collection item view according to Food, FBH and mixed item with title on checkout
      * screen
      */
     private fun updateCollectionItemsForCheckout() {
         //FBH only
-        if(storePickupInfoResponse?.fulfillmentTypes?.join == StoreUtils.Companion.FulfillmentType.CLOTHING_ITEMS?.type
-                && storePickupInfoResponse?.openDayDeliverySlots?.isNullOrEmpty() == false
-                && storePickupInfoResponse?.fulfillmentTypes?.join != StoreUtils.Companion.FulfillmentType.FOOD_ITEMS?.type
-                && storePickupInfoResponse?.fulfillmentTypes?.food != StoreUtils.Companion.FulfillmentType.FOOD_ITEMS?.type) {
-
+        if(isFBHOnly()) {
             collectionMessageForFBHItem()
             checkoutCollectingTimeDetailsLayout?.visibility = View.GONE
             viewHorizontalCollectionBottomSeparator?.visibility = View.VISIBLE
@@ -1065,7 +1070,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
 
         val body = getShipmentDetailsBody()
         if (TextUtils.isEmpty(body.oddDeliverySlotId) && TextUtils.isEmpty(body.foodDeliverySlotId)
-            && TextUtils.isEmpty(body.otherDeliverySlotId)
+            && TextUtils.isEmpty(body.otherDeliverySlotId) && !isFBHOnly()
         ) {
             return
         }
@@ -1142,11 +1147,11 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         if (liquorOrder == true) {
             ageConsentConfirmed = true
         }
-        foodShipOnDate = selectedTimeSlot?.stringShipOnDate
+        foodShipOnDate = if(selectedTimeSlot?.stringShipOnDate != null) selectedTimeSlot?.stringShipOnDate else ""
         otherShipOnDate = ""
-        foodDeliverySlotId = selectedTimeSlot?.slotId
+        foodDeliverySlotId = if(selectedTimeSlot?.slotId !=null) selectedTimeSlot?.slotId else ""
         otherDeliverySlotId = ""
-        oddDeliverySlotId = ""
+        oddDeliverySlotId = if(storePickupInfoResponse?.openDayDeliverySlots?.size!! > 0 && storePickupInfoResponse?.openDayDeliverySlots?.get(0)?.deliverySlotId != null) storePickupInfoResponse?.openDayDeliverySlots?.get(0)?.deliverySlotId else ""
         foodDeliveryStartHour = selectedTimeSlot?.intHourFrom?.toLong() ?: 0
         otherDeliveryStartHour = 0
         substituesAllowed = selectedFoodSubstitution.rgb
@@ -1208,15 +1213,16 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
     }
 
     private fun isRequiredFieldsMissing(): Boolean {
-        if (!TextUtils.isEmpty(selectedTimeSlot?.slotId)) {
+        if (!TextUtils.isEmpty(selectedTimeSlot?.slotId) || isFBHOnly()) {
             txtSelectCollectionTimeSlotFoodError?.visibility = View.GONE
             return false
         }
         // scroll to slot selection layout
-        checkoutReturningCollectionScrollView?.smoothScrollTo(
-            0,
-            checkoutCollectingTimeDetailsLayout?.top ?: 0
-        )
+        if(!isFBHOnly())
+            checkoutReturningCollectionScrollView?.smoothScrollTo(
+                    0,
+                    checkoutCollectingTimeDetailsLayout?.top ?: 0
+            )
         txtSelectCollectionTimeSlotFoodError?.visibility = View.VISIBLE
         return true
     }
