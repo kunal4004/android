@@ -142,16 +142,14 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                 .subscribe { stateObject ->
                     if (stateObject != null) {
                         if (stateObject is CartState) {
-                            val cartState = stateObject
-                            if (!TextUtils.isEmpty(cartState.state)) {
+                            if (!TextUtils.isEmpty(stateObject.state)) {
                                 //setDeliveryLocation(cartState.getState());
-                            } else if (cartState.indexState == CartState.CHANGE_QUANTITY) {
-                                mChangeQuantity!!.quantity = cartState.quantity
+                            } else if (stateObject.indexState == CartState.CHANGE_QUANTITY) {
+                                mChangeQuantity!!.quantity = stateObject.quantity
                                 queryServiceChangeQuantity()
                             }
                         } else if (stateObject is ProductState) {
-                            val productState = stateObject
-                            when (productState.state) {
+                            when (stateObject.state) {
                                 ProductState.CANCEL_DIALOG_TAPPED ->
                                     cartProductAdapter?.onPopUpCancel(ProductState.CANCEL_DIALOG_TAPPED)
 
@@ -160,7 +158,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                                         activity = requireActivity()
                                         currentState = TAG_ADDED_TO_LIST_TOAST
                                         val shoppingList = getString(R.string.shopping_list)
-                                        mNumberOfListSelected = productState.count
+                                        mNumberOfListSelected = stateObject.count
                                         // shopping list vs shopping lists
                                         cartText =
                                             if ((mNumberOfListSelected > 1)) shoppingList + "s"
@@ -320,7 +318,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             }
             R.id.btnCheckOut -> {
 
-                if (binding.btnCheckOut.isEnabled == true && orderSummary != null) {
+                if (binding.btnCheckOut.isEnabled && orderSummary != null) {
                     val deliveryType =
                         getType(Utils.getPreferredDeliveryLocation().fulfillmentDetails.deliveryType)
 
@@ -456,7 +454,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                 putExtra(CheckoutAddressConfirmationFragment.IS_EDIT_ADDRESS_SCREEN, true)
                 putExtra(CheckoutAddressManagementBaseFragment.GEO_SLOT_SELECTION, true)
             }
-            if ((liquorCompliance != null) && liquorCompliance!!.isLiquorOrder && (AppConfigSingleton.liquor!!.noLiquorImgUrl != null) && !AppConfigSingleton.liquor!!.noLiquorImgUrl.isEmpty()) {
+            if ((liquorCompliance != null) && liquorCompliance!!.isLiquorOrder && (AppConfigSingleton.liquor!!.noLiquorImgUrl != null) && AppConfigSingleton.liquor!!.noLiquorImgUrl.isNotEmpty()) {
                 checkoutActivityIntent.putExtra(
                     Constant.LIQUOR_ORDER,
                     liquorCompliance!!.isLiquorOrder
@@ -484,7 +482,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                 putExtra(CheckoutAddressManagementBaseFragment.DASH_SLOT_SELECTION, true)
                 putExtra(CheckoutAddressManagementBaseFragment.CART_ITEM_LIST, cartItemList)
                 liquorCompliance.let {
-                    if ((it != null) && it.isLiquorOrder && (AppConfigSingleton.liquor!!.noLiquorImgUrl != null) && !AppConfigSingleton.liquor!!.noLiquorImgUrl.isEmpty()) {
+                    if ((it != null) && it.isLiquorOrder && (AppConfigSingleton.liquor!!.noLiquorImgUrl != null) && AppConfigSingleton.liquor!!.noLiquorImgUrl.isNotEmpty()) {
                         putExtra(Constant.LIQUOR_ORDER, it.isLiquorOrder)
                         putExtra(
                             Constant.NO_LIQUOR_IMAGE_URL,
@@ -537,23 +535,13 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         removeItemAPI(commerceId)
     }
 
-    override fun onChangeQuantity(commerceId: CommerceItem) {
+    override fun onChangeQuantity(commerceId: CommerceItem, quantity: Int) {
         mCommerceItem = commerceId
         mChangeQuantity?.commerceId = commerceId.commerceItemInfo.getCommerceId()
+        mChangeQuantity?.quantity = quantity
         if (WoolworthsApplication.getInstance() != null) {
-            val wGlobalState = WoolworthsApplication.getInstance().wGlobalState
-            wGlobalState?.navigateFromQuantity(1)
+            Utils.sendBus(CartState(CartState.CHANGE_QUANTITY, quantity))
         }
-        val editQuantityIntent = Intent(activity, ConfirmColorSizeActivity::class.java).also {
-            it.putExtra(
-                ConfirmColorSizeActivity.SELECT_PAGE,
-                ConfirmColorSizeActivity.QUANTITY
-            )
-            it.putExtra("CART_QUANTITY_In_STOCK", commerceId.quantityInStock)
-        }
-        val activity: Activity = requireActivity()
-        activity.startActivity(editQuantityIntent)
-        activity.overridePendingTransition(0, 0)
     }
 
     override fun totalItemInBasket(total: Int) {}
@@ -692,7 +680,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                 )
             }
         setItemLimitsBanner()
-        if (cartResponse?.cartItems?.size ?: 0 > 0 && cartProductAdapter != null) {
+        if ((cartResponse?.cartItems?.size ?: 0) > 0 && cartProductAdapter != null) {
             val emptyCartItemGroups = ArrayList<CartItemGroup>(0)
             cartItems?.forEach { cartItemGroup: CartItemGroup ->
                 if (commerceItemToRemove != null) {
@@ -773,7 +761,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     }
 
     fun changeQuantity(cartResponse: CartResponse?, changeQuantity: ChangeQuantity?) {
-        if (cartResponse?.cartItems?.size ?: 0 > 0 && cartProductAdapter != null) {
+        if ((cartResponse?.cartItems?.size ?: 0) > 0 && cartProductAdapter != null) {
             val updatedCommerceItem =
                 cartResponse?.cartItems?.let { cartItems ->
                     changeQuantity?.commerceId?.let { commerceId ->
@@ -1143,7 +1131,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                     override fun onFailure(error: Throwable?) {
                         requireActivity().runOnUiThread {
                             if (cartProductAdapter != null) {
-                                onRemoveItemLoadFail(commerceItem, true)
+                                onRemoveItemLoadFail(commerceItem)
                                 onRemoveItemFailed = true
                                 enableItemDelete(false)
                             }
@@ -1196,7 +1184,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         return shoppingCartResponseCall
     }
 
-    private fun onRemoveItemLoadFail(commerceItem: CommerceItem, state: Boolean) {
+    private fun onRemoveItemLoadFail(commerceItem: CommerceItem) {
         mCommerceItem = commerceItem
         resetItemDelete(true)
     }
@@ -1690,7 +1678,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                 }
             }
         }
-        if (binding.btnCheckOut.isEnabled == false && isAllInventoryAPICallSucceed && !isAnyItemNeedsQuantityUpdate) {
+        if (!binding.btnCheckOut.isEnabled && isAllInventoryAPICallSucceed && !isAnyItemNeedsQuantityUpdate) {
             fadeCheckoutButton(false)
             if (isAdded) showAvailableVouchersToast(voucherDetails?.activeVouchersCount ?: 0)
         }

@@ -54,7 +54,7 @@ class CartProductAdapter(
 
     interface OnItemClick {
         fun onItemDeleteClickInEditMode(commerceId: CommerceItem)
-        fun onChangeQuantity(commerceId: CommerceItem)
+        fun onChangeQuantity(commerceId: CommerceItem, quantity: Int)
         fun totalItemInBasket(total: Int)
         fun onOpenProductDetail(commerceItem: CommerceItem)
         fun onViewVouchers()
@@ -213,19 +213,23 @@ class CartProductAdapter(
                         ErrorHandlerView(mContext).showToast()
                         return@setOnClickListener
                     }
-                    commerceItem.quantityUploading = true
-                    setFirstLoadCompleted(false)
-                    onItemClick.onChangeQuantity(commerceItem)
+                    val userQuantity = commerceItem.commerceItemInfo?.getQuantity() ?: 0
+                    if (userQuantity < commerceItem.quantityInStock) {
+                        commerceItem.quantityUploading = true
+                        setFirstLoadCompleted(false)
+                        onItemClick.onChangeQuantity(commerceItem, userQuantity + 1)
+                    }
                 }
                 productHolder.minusDeleteCountImage.setOnClickListener {
                     if (commerceItem.quantityInStock == 0) return@setOnClickListener
-
-                    if ((commerceItem.commerceItemInfo?.getQuantity() ?: 0) > 1) {
+                    val userQuantity = commerceItem.commerceItemInfo?.getQuantity() ?: 0
+                    if (userQuantity > 1) {
                         // This will reduce the product quantity.
                         commerceItem.quantityUploading = true
                         setFirstLoadCompleted(false)
-                        onItemClick.onChangeQuantity(commerceItem)
-                    } else {
+                        //notifyItemChanged(position, commerceItem);
+                        onItemClick.onChangeQuantity(commerceItem, userQuantity - 1)
+                    } else if (userQuantity == 1) {
                         // This will remove the product
                         commerceItem.commerceItemDeletedId(commerceItem)
                         commerceItem.isDeletePressed = true
@@ -484,30 +488,30 @@ class CartProductAdapter(
     private fun getItemTypeAtPosition(position: Int): CartCommerceItemRow {
         var currentPosition = 0
         if (!cartItems.isNullOrEmpty()) {
-        for (entry in cartItems!!) {
-            if (currentPosition == position) {
-                return CartCommerceItemRow(CartRowType.HEADER,
-                    entry.type,
-                    null,
-                    entry.getCommerceItems())
-            }
+            for (entry in cartItems!!) {
+                if (currentPosition == position) {
+                    return CartCommerceItemRow(CartRowType.HEADER,
+                        entry.type,
+                        null,
+                        entry.getCommerceItems())
+                }
 
-            // increment position for header
-            currentPosition++
-            val productCollection = entry.commerceItems
-            currentPosition += if (position > currentPosition + productCollection.size - 1) {
-                productCollection.size
-            } else {
-                return if (entry.type.equals(GIFT_ITEM, ignoreCase = true)) CartCommerceItemRow(
-                    CartRowType.GIFT,
-                    entry.type,
-                    productCollection[position - currentPosition],
-                    null) else CartCommerceItemRow(CartRowType.PRODUCT,
-                    entry.type,
-                    productCollection[position - currentPosition],
-                    null)
+                // increment position for header
+                currentPosition++
+                val productCollection = entry.commerceItems
+                currentPosition += if (position > currentPosition + productCollection.size - 1) {
+                    productCollection.size
+                } else {
+                    return if (entry.type.equals(GIFT_ITEM, ignoreCase = true)) CartCommerceItemRow(
+                        CartRowType.GIFT,
+                        entry.type,
+                        productCollection[position - currentPosition],
+                        null) else CartCommerceItemRow(CartRowType.PRODUCT,
+                        entry.type,
+                        productCollection[position - currentPosition],
+                        null)
+                }
             }
-        }
         }
         // last row is for prices
         return CartCommerceItemRow(CartRowType.PRICES, null, null, null)
