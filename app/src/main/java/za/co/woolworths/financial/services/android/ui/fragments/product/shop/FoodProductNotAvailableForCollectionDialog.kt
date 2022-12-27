@@ -5,13 +5,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.product_not_available_for_collection_dialog.*
+import com.awfs.coordination.databinding.FoodProductNotAvailableFromFbhStoreDialogBinding
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 
 class FoodProductNotAvailableForCollectionDialog : WBottomSheetDialogFragment() {
 
     private var listener: IProductNotAvailableForCollectionDialogListener? = null
+    private lateinit var binding: FoodProductNotAvailableFromFbhStoreDialogBinding
     interface IProductNotAvailableForCollectionDialogListener {
         fun onChangeDeliveryOption()
         fun onFindInStore()
@@ -31,21 +31,24 @@ class FoodProductNotAvailableForCollectionDialog : WBottomSheetDialogFragment() 
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.food_product_not_available_from_fbh_store_dialog, container, false)
+
+        binding = FoodProductNotAvailableFromFbhStoreDialogBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        findInStore?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
-        findInStore?.setOnClickListener {
-            listener?.onFindInStore()
-            dismissAllowingStateLoss()
-        }
 
-        changeDeliveryOption?.setOnClickListener {
-            listener?.onChangeDeliveryOption()
-            dismissAllowingStateLoss()
-        }
-
+       binding.apply {
+          findInStore?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
+          findInStore?.setOnClickListener {
+               listener?.onFindInStore()
+               dismissAllowingStateLoss()
+           }
+          changeDeliveryOption?.setOnClickListener {
+               listener?.onChangeDeliveryOption()
+               dismissAllowingStateLoss()
+           }
+       }
     }
 }

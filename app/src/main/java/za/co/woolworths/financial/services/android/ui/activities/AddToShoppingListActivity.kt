@@ -8,7 +8,7 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.view.animation.TranslateAnimation
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.add_to_shopping_list_activity.*
+import com.awfs.coordination.databinding.AddToShoppingListActivityBinding
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.ANIM_DOWN_DURATION
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList
@@ -22,6 +22,7 @@ import za.co.woolworths.financial.services.android.util.Utils
 
 class AddToShoppingListActivity : AppCompatActivity(), IDialogListener {
 
+    private lateinit var binding: AddToShoppingListActivityBinding
     private var mPopEnterAnimation: Animation? = null
     private var exitAnimationHasStarted: Boolean = false
     private var mShoppingList: MutableList<ShoppingList>? = null
@@ -33,7 +34,8 @@ class AddToShoppingListActivity : AppCompatActivity(), IDialogListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.add_to_shopping_list_activity)
+        binding = AddToShoppingListActivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         if (savedInstanceState == null) {
             Utils.updateStatusBarBackground(this)
             val addToListRequestBundle: String? = intent?.getStringExtra("addToListRequest")
@@ -110,13 +112,13 @@ class AddToShoppingListActivity : AppCompatActivity(), IDialogListener {
 
     private fun setAnimation() {
         mPopEnterAnimation = AnimationUtils.loadAnimation(this, R.anim.popup_enter)
-        flShoppingListContainer.startAnimation(mPopEnterAnimation)
+        binding.flShoppingListContainer.startAnimation(mPopEnterAnimation)
     }
 
     fun exitActivityAnimation() {
         if (!exitAnimationHasStarted) {
             exitAnimationHasStarted = true
-            val animation = TranslateAnimation(0f, 0f, 0f, flShoppingListContainer.height.toFloat())
+            val animation = TranslateAnimation(0f, 0f, 0f, binding.flShoppingListContainer.height.toFloat())
             animation.fillAfter = true
             animation.duration = ANIM_DOWN_DURATION.toLong()
             animation.setAnimationListener(object : Animation.AnimationListener {
@@ -131,7 +133,7 @@ class AddToShoppingListActivity : AppCompatActivity(), IDialogListener {
                     overridePendingTransition(0, 0)
                 }
             })
-            flShoppingListContainer.startAnimation(animation)
+            binding.flShoppingListContainer.startAnimation(animation)
         }
     }
 

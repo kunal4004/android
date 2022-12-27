@@ -163,7 +163,9 @@
                     android:id="@+id/wRewardsBenefitsRelativeLayout"
                     style="@style/wreward_virtual_card_number_style">
 
-                    <include layout="@layout/wrewards_virtual_card_number_row" />
+                    <include
+                        android:id="@+id/includeWrewardsVirtualCardNumberRow"
+                        layout="@layout/wrewards_virtual_card_number_row" />
                 </RelativeLayout>
 
                 <View
@@ -313,6 +315,8 @@
             />
     </RelativeLayout>
 
-    <include layout="@layout/no_connection_handler"/>
+    <include
+        android:id="@+id/includeNoConnectionHandler"
+        layout="@layout/no_connection_handler"/>
 
 </FrameLayout>

@@ -13,9 +13,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
-
-import kotlinx.android.synthetic.main.pma_process_detail_layout.*
-import kotlinx.android.synthetic.main.processing_request_failure_fragment.*
+import com.awfs.coordination.databinding.ProcessRequestFragmentBinding
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
@@ -45,46 +43,52 @@ class PMAProcessRequestFragment : ProcessYourRequestFragment(), View.OnClickList
 
         circularProgressListener({}, {}) // onSuccess(), onFailure()
 
-        btnRetryProcessPayment?.apply {
-            setOnClickListener(this@PMAProcessRequestFragment)
-            AnimationUtilExtension.animateViewPushDown(this)
-        }
+        binding.processRequestNavHostFragment.includePMAProcessingFailure.apply {
+            btnRetryProcessPayment?.apply {
+                setOnClickListener(this@PMAProcessRequestFragment)
+                AnimationUtilExtension.animateViewPushDown(this)
+            }
 
-        callCenterNumberTextView?.apply {
-            setOnClickListener(this@PMAProcessRequestFragment)
-            AnimationUtilExtension.animateViewPushDown(this)
-            paintFlags = paintFlags or Paint.UNDERLINE_TEXT_FLAG
+            callCenterNumberTextView?.apply {
+                setOnClickListener(this@PMAProcessRequestFragment)
+                AnimationUtilExtension.animateViewPushDown(this)
+                paintFlags = paintFlags or Paint.UNDERLINE_TEXT_FLAG
+            }
         }
 
         autoConnection()
     }
 
-    private fun updateUIOnFailure(desc: String?) {
+    private fun ProcessRequestFragmentBinding.updateUIOnFailure(desc: String?) {
         menuItem?.isVisible = true
         desc?.apply {
             // keep numeric characters only
             val number = this.replace("[^0-9]".toRegex(), "")
             if (number.isNotEmpty()) {
-                callCenterNumberTextView?.visibility = VISIBLE
+                processRequestNavHostFragment.includePMAProcessingFailure.callCenterNumberTextView?.visibility = VISIBLE
                 callUsNumber = number
             } else {
                 callUsNumber = "0861 50 20 20"
-                callCenterNumberTextView?.visibility = GONE
+                processRequestNavHostFragment.includePMAProcessingFailure.callCenterNumberTextView?.visibility = GONE
             }
         }
         stopSpinning(false)
-        processResultFailureTextView?.text = desc
-        includePMAProcessingSuccess?.visibility = GONE
-        includePMAProcessingFailure?.visibility = VISIBLE
-        includePMAProcessing?.visibility = GONE
+        processRequestNavHostFragment.apply {
+            includePMAProcessingFailure.processResultFailureTextView?.text = desc
+            includePMAProcessingSuccess?.root?.visibility = GONE
+            includePMAProcessingFailure?.root?.visibility = VISIBLE
+            includePMAProcessing?.root?.visibility = GONE
+        }
     }
 
-    private fun showPMAProcess() {
+    private fun ProcessRequestFragmentBinding.showPMAProcess() {
         menuItem?.isVisible = false
-        includePMAProcessingSuccess?.visibility = GONE
-        includePMAProcessingFailure?.visibility = GONE
-        includePMAProcessing?.visibility = VISIBLE
-        processRequestTitleTextView?.text = bindString(R.string.processing_your_request)
+        processRequestNavHostFragment.apply {
+            includePMAProcessingSuccess?.root?.visibility = GONE
+            includePMAProcessingFailure?.root?.visibility = GONE
+            includePMAProcessing?.root?.visibility = VISIBLE
+            includePMAProcessing?.processRequestTitleTextView?.text = bindString(R.string.processing_your_request)
+        }
     }
 
     private fun autoConnection() {
@@ -103,7 +107,7 @@ class PMAProcessRequestFragment : ProcessYourRequestFragment(), View.OnClickList
     private fun setupToolbar() {
         (activity as? PayMyAccountActivity)?.apply {
             supportActionBar?.setDisplayHomeAsUpEnabled(false)
-            showPMAProcess()
+            binding.showPMAProcess()
             configureToolbar("")
             displayToolbarDivider(false)
         }
@@ -128,7 +132,7 @@ class PMAProcessRequestFragment : ProcessYourRequestFragment(), View.OnClickList
         }, { errorDesc ->
             //Display popup message
             fragmentIsVisible()
-            updateUIOnFailure(errorDesc)
+            binding.updateUIOnFailure(errorDesc)
 
         }, { error ->
             fragmentIsVisible()
@@ -149,7 +153,7 @@ class PMAProcessRequestFragment : ProcessYourRequestFragment(), View.OnClickList
         when (view?.id) {
             R.id.btnRetryProcessPayment -> {
                 if (NetworkManager.getInstance().isConnectedToNetwork(activity)) {
-                    showPMAProcess()
+                    binding.showPMAProcess()
                     queryServicePostPayU()
                 } else {
                     ErrorHandlerView(activity).showToast()

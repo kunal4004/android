@@ -1,11 +1,11 @@
 package za.co.woolworths.financial.services.android.ui.adapters
 
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.pma_manage_card_item.view.*
+import com.awfs.coordination.databinding.PmaManageCardItemBinding
 import za.co.woolworths.financial.services.android.models.dto.GetPaymentMethod
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import java.util.*
@@ -13,8 +13,9 @@ import java.util.*
 class PMACardsAdapter(private var paymentMethodList: MutableList<GetPaymentMethod>?, val onClickListener: (GetPaymentMethod, Int) -> Unit) : RecyclerView.Adapter<PMACardsAdapter.PMAManageCardItemViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PMAManageCardItemViewHolder {
-        val v: View = LayoutInflater.from(parent.context).inflate(R.layout.pma_manage_card_item, parent, false)
-        return PMAManageCardItemViewHolder(v)
+        return PMAManageCardItemViewHolder(
+            PmaManageCardItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        )
     }
 
     override fun onBindViewHolder(holder: PMAManageCardItemViewHolder, position: Int) {
@@ -22,7 +23,7 @@ class PMACardsAdapter(private var paymentMethodList: MutableList<GetPaymentMetho
             val paymentMethod = paymentMethodList?.get(position)
             bindItems(paymentMethod)
 
-            itemView.setOnClickListener {
+            itemBinding.root.setOnClickListener {
                 paymentMethod?.apply {
                     if (!cardExpired) {
                         paymentMethodList?.forEach { it.isCardChecked = false }
@@ -33,7 +34,7 @@ class PMACardsAdapter(private var paymentMethodList: MutableList<GetPaymentMetho
                 }
             }
 
-            itemView.pmaSaveCardImageView?.setImageResource(if (paymentMethod?.isCardChecked == true) R.drawable.checked_item else R.drawable.uncheck_item)
+            itemBinding.pmaSaveCardImageView?.setImageResource(if (paymentMethod?.isCardChecked == true) R.drawable.checked_item else R.drawable.uncheck_item)
         }
     }
 
@@ -43,9 +44,9 @@ class PMACardsAdapter(private var paymentMethodList: MutableList<GetPaymentMetho
         return if (size >= 10) 10 else size
     }
 
-    class PMAManageCardItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class PMAManageCardItemViewHolder(val itemBinding: PmaManageCardItemBinding) : RecyclerView.ViewHolder(itemBinding.root) {
         fun bindItems(paymentMethod: GetPaymentMethod?) {
-            with(itemView) {
+            itemBinding.apply {
                 paymentMethod?.apply {
                     showCardVendor(vendor)
                     showCardNumber(cardNumber)
@@ -54,7 +55,7 @@ class PMACardsAdapter(private var paymentMethodList: MutableList<GetPaymentMetho
             }
         }
 
-        private fun View.showExpiredTag(expirationDate: Boolean?) {
+        private fun PmaManageCardItemBinding.showExpiredTag(expirationDate: Boolean?) {
             cardExpiredTextView?.apply {
                 visibility = when (expirationDate) {
                     true -> View.VISIBLE
@@ -64,11 +65,11 @@ class PMACardsAdapter(private var paymentMethodList: MutableList<GetPaymentMetho
             }
         }
 
-        private fun View.showCardNumber(cardNumber: String?) {
+        private fun PmaManageCardItemBinding.showCardNumber(cardNumber: String?) {
             cardNumberTextView?.text = cardNumber
         }
 
-        private fun View.showCardVendor(vendor: String?) {
+        private fun PmaManageCardItemBinding.showCardVendor(vendor: String?) {
             cardTypeImageView?.setImageResource(when (vendor?.toLowerCase(Locale.getDefault())) {
                 "visa" -> R.drawable.card_visa
                 "mastercard" -> R.drawable.card_mastercard

@@ -6,23 +6,24 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.pay_my_account_retry_on_error_dialog_fragment.*
+import com.awfs.coordination.databinding.PayMyAccountRetryOnErrorDialogFragmentBinding
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
-
 class PayMyAccountRetryErrorFragment : WBottomSheetDialogFragment(), View.OnClickListener {
 
+    private lateinit var binding: PayMyAccountRetryOnErrorDialogFragmentBinding
     val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.pay_my_account_retry_on_error_dialog_fragment, container, false)
+        binding = PayMyAccountRetryOnErrorDialogFragmentBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        pmaErrorRetryButton?.apply {
+        binding.pmaErrorRetryButton?.apply {
             setOnClickListener(this@PayMyAccountRetryErrorFragment)
             AnimationUtilExtension.animateViewPushDown(this)
         }

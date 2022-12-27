@@ -32,7 +32,6 @@ import static za.co.woolworths.financial.services.android.ui.fragments.wreward.W
 import static za.co.woolworths.financial.services.android.util.AppConstant.DP_LINKING_MY_ACCOUNTS_ORDER_DETAILS;
 import static za.co.woolworths.financial.services.android.util.AppConstant.REQUEST_CODE_BARCODE_ACTIVITY;
 import static za.co.woolworths.financial.services.android.util.AppConstant.REQUEST_CODE_ORDER_DETAILS_PAGE;
-import static za.co.woolworths.financial.services.android.util.AppConstant.TAG_FBH_CNC_FRAGMENT;
 import static za.co.woolworths.financial.services.android.util.FuseLocationAPISingleton.REQUEST_CHECK_SETTINGS;
 import static za.co.woolworths.financial.services.android.util.ScreenManager.CART_LAUNCH_VALUE;
 import static za.co.woolworths.financial.services.android.util.ScreenManager.SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE;
@@ -91,10 +90,8 @@ import dagger.hilt.android.AndroidEntryPoint;
 import io.reactivex.functions.Consumer;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.IToastInterface;
-import za.co.woolworths.financial.services.android.geolocation.view.FBHInfoBottomSheetDialog;
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
 import za.co.woolworths.financial.services.android.models.BrandNavigationDetails;
-import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dto.CartSummary;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetails;
@@ -122,7 +119,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.grid.Pro
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.MyListsFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.shop.MyOrdersAccountFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.OrderDetailsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList;
@@ -156,6 +152,9 @@ import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager;
 import za.co.woolworths.financial.services.android.util.nav.FragNavController;
 import za.co.woolworths.financial.services.android.util.nav.FragNavTransactionOptions;
+import static za.co.woolworths.financial.services.android.util.AppConstant.TAG_FBH_CNC_FRAGMENT;
+import za.co.woolworths.financial.services.android.geolocation.view.FBHInfoBottomSheetDialog;
+import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 
 @AndroidEntryPoint
 public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigationBinding, BottomNavigationViewModel>
@@ -450,13 +449,15 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         }
 
         BottomNavigationMenuView bottomNavigationMenu = getBottomNavigationById().getBottomNavigationMenuView();
-        accountNavigationView = (BottomNavigationItemView) bottomNavigationMenu.getChildAt(INDEX_ACCOUNT);
-        notificationBadgeOne = LayoutInflater.from(this).inflate(R.layout.green_circle_icon, accountNavigationView, false);
-        onlineIconImageView = notificationBadgeOne.findViewById(R.id.onlineIconImageView);
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
-        params.addRule(RelativeLayout.ALIGN_END, RelativeLayout.TRUE);
-        params.addRule(RelativeLayout.ALIGN_BOTTOM, RelativeLayout.TRUE);
-        notificationBadgeOne.setLayoutParams(params);
+        if (bottomNavigationMenu != null && bottomNavigationMenu.getChildAt(INDEX_ACCOUNT) instanceof BottomNavigationItemView) {
+            accountNavigationView = (BottomNavigationItemView) bottomNavigationMenu.getChildAt(INDEX_ACCOUNT);
+            notificationBadgeOne = LayoutInflater.from(this).inflate(R.layout.green_circle_icon, accountNavigationView, false);
+            onlineIconImageView = notificationBadgeOne.findViewById(R.id.onlineIconImageView);
+            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+            params.addRule(RelativeLayout.ALIGN_END, RelativeLayout.TRUE);
+            params.addRule(RelativeLayout.ALIGN_BOTTOM, RelativeLayout.TRUE);
+            notificationBadgeOne.setLayoutParams(params);
+        }
     }
 
     private void deepLinkToOrderDetails(Parameter params) {

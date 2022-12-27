@@ -13,20 +13,17 @@ import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.received_message_item.view.*
-import kotlinx.android.synthetic.main.sent_message_item.view.*
+import com.awfs.coordination.databinding.ReceivedMessageItemBinding
+import com.awfs.coordination.databinding.SentMessageItemBinding
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.ChatMessage
-
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.SendMessageResponse
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.SenderMessage
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 
-
 private const val VIEW_TYPE_RECEIVED_MESSAGE = 1
 private const val VIEW_TYPE_SENT_MESSAGE = 2
 
-class WChatAdapter : RecyclerView.Adapter<MessageViewHolder>() {
+class WChatAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val chatMessageList: MutableList<ChatMessage> = mutableListOf()
 
     fun getMessageList() = chatMessageList
@@ -50,16 +47,14 @@ class WChatAdapter : RecyclerView.Adapter<MessageViewHolder>() {
         activity?.runOnUiThread { notifyDataSetChanged()  }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return if (viewType == VIEW_TYPE_RECEIVED_MESSAGE) {
             AgentMessageViewHolder(
-                LayoutInflater.from(parent.context)
-                    .inflate(R.layout.received_message_item, parent, false)
+                ReceivedMessageItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
             )
         } else {
             SenderMessageViewHolder(
-                LayoutInflater.from(parent.context)
-                    .inflate(R.layout.sent_message_item, parent, false)
+                SentMessageItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
             )
         }
     }
@@ -68,8 +63,15 @@ class WChatAdapter : RecyclerView.Adapter<MessageViewHolder>() {
         return chatMessageList.size
     }
 
-    override fun onBindViewHolder(holder: MessageViewHolder, position: Int) {
-        holder.bind(chatMessageList[position])
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        when (holder) {
+            is AgentMessageViewHolder -> {
+                holder.bind(chatMessageList[position])
+            }
+            is SenderMessageViewHolder -> {
+                holder.bind(chatMessageList[position])
+            }
+        }
     }
 
 
@@ -84,9 +86,9 @@ class WChatAdapter : RecyclerView.Adapter<MessageViewHolder>() {
         chatMessageList.clear()
     }
 
-    inner class AgentMessageViewHolder(view: View) : MessageViewHolder(view) {
+    inner class AgentMessageViewHolder(val itemBinding: ReceivedMessageItemBinding) : RecyclerView.ViewHolder(itemBinding.root) {
 
-        override fun bind(chatMessage: ChatMessage) {
+        fun bind(chatMessage: ChatMessage) {
             val agentMessage = chatMessage as? SendMessageResponse
             val sendEmail = agentMessage?.sendEmailIntentInfo
             val emailAddress = sendEmail?.emailAddress ?: ""
@@ -95,7 +97,7 @@ class WChatAdapter : RecyclerView.Adapter<MessageViewHolder>() {
                     val spannableMessage = SpannableString(agentMessage?.content)
                     val clickableSpan: ClickableSpan = object : ClickableSpan() {
                         override fun onClick(textView: View) {
-                            (itemView.context as? Activity)?.let { activity ->
+                            (itemBinding.root.context as? Activity)?.let { activity ->
                                 KotlinUtils.sendEmail(
                                     activity,
                                     emailAddress,
@@ -117,7 +119,7 @@ class WChatAdapter : RecyclerView.Adapter<MessageViewHolder>() {
                         spannableMessage.indexOf(emailAddress) + emailAddress.length,
                         Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
                     )
-                    itemView.received_message_text?.apply {
+                    itemBinding.receivedMessageText?.apply {
                         text = spannableMessage
                         movementMethod = LinkMovementMethod.getInstance()
                         highlightColor = Color.GRAY
@@ -125,7 +127,7 @@ class WChatAdapter : RecyclerView.Adapter<MessageViewHolder>() {
 
                 }
                 false -> {
-                    itemView.received_message_text?.apply {
+                    itemBinding.receivedMessageText?.apply {
                         text = agentMessage?.content
                         movementMethod = null
                         highlightColor = Color.WHITE
@@ -133,20 +135,16 @@ class WChatAdapter : RecyclerView.Adapter<MessageViewHolder>() {
                 }
             }
 
-            itemView.image_message_profile?.visibility =
+            itemBinding.imageMessageProfile?.visibility =
                 if (agentMessage?.isWoolworthIconVisible == true) VISIBLE else INVISIBLE
         }
     }
 
-    inner class SenderMessageViewHolder(view: View) : MessageViewHolder(view) {
+    inner class SenderMessageViewHolder(val itemBinding: SentMessageItemBinding) : RecyclerView.ViewHolder(itemBinding.root) {
 
-        override fun bind(chatMessage: ChatMessage) {
+        fun bind(chatMessage: ChatMessage) {
             val userMessage = chatMessage as? SenderMessage
-            itemView.sent_message_text?.text = userMessage?.message
+            itemBinding.sentMessageText?.text = userMessage?.message
         }
     }
-}
-
-open class MessageViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-    open fun bind(message: ChatMessage) {}
 }

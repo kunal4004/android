@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.error_bottom_sheet_dialog.*
+import com.awfs.coordination.databinding.ErrorBottomSheetDialogBinding
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 
@@ -18,6 +18,7 @@ import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomS
 class ErrorHandlerBottomSheetDialog : WBottomSheetDialogFragment(),
     View.OnClickListener {
 
+    private lateinit var binding: ErrorBottomSheetDialogBinding
     private var mclickListener: ClickListener? = null
 
     companion object {
@@ -53,26 +54,23 @@ class ErrorHandlerBottomSheetDialog : WBottomSheetDialogFragment(),
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(
-            R.layout.error_bottom_sheet_dialog,
-            container,
-            false
-        )
+        binding = ErrorBottomSheetDialogBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        init()
-        initErrorView()
+        binding.init()
+        binding.initErrorView()
     }
 
-    private fun init() {
+    private fun ErrorBottomSheetDialogBinding.init() {
         cancelButton.paintFlags = Paint.UNDERLINE_TEXT_FLAG
-        cancelButton.setOnClickListener(this)
-        actionButton.setOnClickListener(this)
+        cancelButton.setOnClickListener(this@ErrorHandlerBottomSheetDialog)
+        actionButton.setOnClickListener(this@ErrorHandlerBottomSheetDialog)
     }
 
-    private fun initErrorView() {
+    private fun ErrorBottomSheetDialogBinding.initErrorView() {
         arguments?.apply {
             if (containsKey(ERROR_TYPE)){
                 errorType = arguments?.getInt(ERROR_TYPE, ERROR_TYPE_ADD_ADDRESS)
@@ -88,7 +86,7 @@ class ErrorHandlerBottomSheetDialog : WBottomSheetDialogFragment(),
 
         errorLogo.setImageResource(R.drawable.ic_error_icon)
         cancelButton?.visibility = View.VISIBLE
-        incSwipeCloseIndicator.visibility = View.VISIBLE
+        incSwipeCloseIndicator.root.visibility = View.VISIBLE
         actionButton.text = getString(R.string.retry)
     }
 

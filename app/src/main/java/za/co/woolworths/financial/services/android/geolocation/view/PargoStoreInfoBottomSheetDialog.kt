@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.pargo_store_info_bottom_sheet_dialog.*
+import com.awfs.coordination.databinding.PargoStoreInfoBottomSheetDialogBinding
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.util.Utils
@@ -13,16 +13,14 @@ import za.co.woolworths.financial.services.android.util.Utils
 class PargoStoreInfoBottomSheetDialog : WBottomSheetDialogFragment() ,
 View.OnClickListener{
 
+    private lateinit var binding: PargoStoreInfoBottomSheetDialogBinding
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
-        return inflater.inflate(
-            R.layout.pargo_store_info_bottom_sheet_dialog,
-            container,
-            false
-        )
+        binding = PargoStoreInfoBottomSheetDialogBinding.inflate(inflater, container, false)
+        return binding.root
 
     }
 
@@ -31,7 +29,7 @@ View.OnClickListener{
     }
 
     private fun initClick() {
-        gotItButton?.setOnClickListener(this)
+        binding.gotItButton?.setOnClickListener(this)
 
     }
 

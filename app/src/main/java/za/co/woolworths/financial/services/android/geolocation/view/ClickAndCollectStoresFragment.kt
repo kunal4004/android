@@ -3,27 +3,19 @@ package za.co.woolworths.financial.services.android.geolocation.view
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.core.os.bundleOf
-import androidx.core.text.HtmlCompat
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.FragmentClickAndCollectStoresBinding
 import com.google.gson.JsonSyntaxException
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.fragment_click_and_collect_stores.*
-import kotlinx.android.synthetic.main.fragment_click_and_collect_stores.dynamicMapView
-import kotlinx.android.synthetic.main.geo_location_delivery_address.*
-import kotlinx.android.synthetic.main.no_connection.view.*
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.geolocation.network.model.Store
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
 import za.co.woolworths.financial.services.android.geolocation.view.adapter.StoreListAdapter
@@ -39,14 +31,16 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_FROM_STORE_LOCATOR
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_PLACE_ID
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.VALIDATE_RESPONSE
-import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.KotlinUtils
-import za.co.woolworths.financial.services.android.util.StoreUtils
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
+import za.co.woolworths.financial.services.android.util.binding.BaseDialogFragmentBinding
 import javax.inject.Inject
+import za.co.woolworths.financial.services.android.geolocation.GeoUtils
+import za.co.woolworths.financial.services.android.util.StoreUtils
 
 @AndroidEntryPoint
-class ClickAndCollectStoresFragment : DialogFragment(), DynamicMapDelegate,
+class ClickAndCollectStoresFragment : BaseDialogFragmentBinding<FragmentClickAndCollectStoresBinding>(FragmentClickAndCollectStoresBinding::inflate), DynamicMapDelegate,
     StoreListAdapter.OnStoreSelected, View.OnClickListener, TextWatcher, VtoTryAgainListener {
 
     private var mValidateLocationResponse: ValidateLocationResponse? = null
@@ -85,71 +79,71 @@ class ClickAndCollectStoresFragment : DialogFragment(), DynamicMapDelegate,
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_click_and_collect_stores, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        dynamicMapView?.initializeMap(savedInstanceState, this)
-        tvConfirmStore?.setOnClickListener(this)
-        ivCross?.setOnClickListener(this)
-        btChange?.setOnClickListener(this)
-        etEnterNewAddress?.addTextChangedListener(this)
-        dialog?.window
-            ?.attributes?.windowAnimations = R.style.DialogFragmentAnimation
-        if (isComingFromConfirmAddress == true) {
-            placeId?.let {
-                if (confirmAddressViewModel.isConnectedToInternet(requireActivity())) {
-                    getDeliveryDetailsFromValidateLocation(it)
-                    noClickAndCollectConnectionLayout?.no_connection_layout?.visibility = View.GONE
-                } else {
-                    noClickAndCollectConnectionLayout?.no_connection_layout?.visibility = View.VISIBLE
+
+        binding.apply {
+            dynamicMapView?.initializeMap(savedInstanceState, this@ClickAndCollectStoresFragment)
+            tvConfirmStore?.setOnClickListener(this@ClickAndCollectStoresFragment)
+            ivCross?.setOnClickListener(this@ClickAndCollectStoresFragment)
+            btChange?.setOnClickListener(this@ClickAndCollectStoresFragment)
+            etEnterNewAddress?.addTextChangedListener(this@ClickAndCollectStoresFragment)
+            dialog?.window
+                ?.attributes?.windowAnimations = R.style.DialogFragmentAnimation
+            if (isComingFromConfirmAddress == true) {
+                placeId?.let {
+                    if (confirmAddressViewModel.isConnectedToInternet(requireActivity())) {
+                        getDeliveryDetailsFromValidateLocation(it)
+                        noClickAndCollectConnectionLayout?.noConnectionLayout?.visibility =
+                            View.GONE
+                    } else {
+                        noClickAndCollectConnectionLayout?.noConnectionLayout?.visibility =
+                            View.VISIBLE
+                    }
                 }
+            } else {
+                setAddressUI(
+                    mValidateLocationResponse?.validatePlace?.stores,
+                    mValidateLocationResponse
+                )
             }
-        } else {
-            setAddressUI(mValidateLocationResponse?.validatePlace?.stores,
-                mValidateLocationResponse)
         }
     }
+
+
 
     private fun setAddressUI(
         address: List<Store>?,
         mValidateLocationResponse: ValidateLocationResponse?
     ) {
-        tvStoresNearMe?.text = resources.getString(R.string.near_stores, address?.size)
-        tvAddress?.text = KotlinUtils.capitaliseFirstLetter(mValidateLocationResponse?.validatePlace?.placeDetails?.address1)
-        setStoreList(address)
+        binding.apply {
+            tvStoresNearMe?.text = resources.getString(R.string.near_stores, address?.size)
+            tvAddress?.text =
+                KotlinUtils.capitaliseFirstLetter(mValidateLocationResponse?.validatePlace?.placeDetails?.address1)
+            setStoreList(address)
+        }
     }
 
     private fun setStoreList(address: List<Store>?) {
-        rvStoreList.layoutManager =
-            activity?.let { activity -> LinearLayoutManager(activity) }
-        val storesListWithHeaders=StoreUtils.getStoresListWithHeaders(StoreUtils.sortedStoreList(address))
+        binding.apply {
+            rvStoreList.layoutManager =
+                activity?.let { activity -> LinearLayoutManager(activity) }
+            val storesListWithHeaders=StoreUtils.getStoresListWithHeaders(StoreUtils.sortedStoreList(address))
 
-        if(storesListWithHeaders?.isNotEmpty()){
-            rvStoreList.adapter = activity?.let { activity ->
-                StoreListAdapter(
-                    activity,
-                    storesListWithHeaders,
-                    this
-                )
+            if(storesListWithHeaders.isNotEmpty()){
+                rvStoreList.adapter = activity?.let { activity ->
+                    StoreListAdapter(
+                        activity,
+                        storesListWithHeaders,
+                        this@ClickAndCollectStoresFragment
+                    )
+                }
+            }
         }
-       }
-
-        rvStoreList.adapter?.notifyDataSetChanged()
     }
-
     override fun onStoreSelected(mStore: Store?) {
         dataStore = mStore
-        tvConfirmStore?.isEnabled = true
-    }
-
-    override fun onFirstTimePargo() {
-        findNavController().navigate( R.id.action_clickAndCollectStoresFragment_to_pargoStoreInfoBottomSheetDialog)
+        binding.tvConfirmStore?.isEnabled = true
     }
 
     override fun onClick(v: View?) {
@@ -219,8 +213,7 @@ class ClickAndCollectStoresFragment : DialogFragment(), DynamicMapDelegate,
                 }
             }
         }
-
-        if(list?.isNotEmpty()){
+        if(list.isNotEmpty()){
             setStoreList(list)
         }
     }
@@ -229,38 +222,40 @@ class ClickAndCollectStoresFragment : DialogFragment(), DynamicMapDelegate,
         if (placeId.isNullOrEmpty())
             return
         viewLifecycleOwner.lifecycleScope.launch {
-            clickCollectProgress?.visibility = View.VISIBLE
-            try {
-                validateLocationResponse =
-                    confirmAddressViewModel.getValidateLocation(placeId)
-                clickCollectProgress?.visibility = View.GONE
-                geoDeliveryView?.visibility = View.VISIBLE
-                if (validateLocationResponse != null) {
-                    when (validateLocationResponse?.httpCode) {
-                        AppConstant.HTTP_OK -> {
-                                val store = GeoUtils.getStoreDetails(
-                                        placeId,
-                                        validateLocationResponse?.validatePlace?.stores
+            binding.apply {
+                clickCollectProgress?.visibility = View.VISIBLE
+                try {
+                    validateLocationResponse =
+                        confirmAddressViewModel.getValidateLocation(placeId)
+                    clickCollectProgress?.visibility = View.GONE
+                    //geoDel.visibility = View.VISIBLE
+                    if (validateLocationResponse != null) {
+                        when (validateLocationResponse?.httpCode) {
+                            AppConstant.HTTP_OK -> {
+                               val store = GeoUtils.getStoreDetails(
+                                    placeId,
+                                    validateLocationResponse?.validatePlace?.stores
                                 )
                                 if (store?.locationId != "" && store?.storeName?.contains(StoreUtils.PARGO, true) == false) {
                                     Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.storeName = StoreUtils.pargoStoreName(store?.storeName)
                                     Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.locationId = store?.locationId.toString()
                                 }
-                            setAddressUI(validateLocationResponse?.validatePlace?.stores, validateLocationResponse)
-                        }
-                        else -> {
-                         showErrorDialog()
+                                setAddressUI(validateLocationResponse?.validatePlace?.stores, validateLocationResponse)
+                            }
+                            else -> {
+                                showErrorDialog()
+                            }
                         }
                     }
+                } catch (e: Exception) {
+                    FirebaseManager.logException(e)
+                    clickCollectProgress?.visibility = View.GONE
+                    showErrorDialog()
+                } catch (e: JsonSyntaxException) {
+                    FirebaseManager.logException(e)
+                    clickCollectProgress?.visibility = View.GONE
+                    showErrorDialog()
                 }
-            } catch (e: Exception) {
-                FirebaseManager.logException(e)
-                clickCollectProgress?.visibility = View.GONE
-                showErrorDialog()
-            } catch (e:JsonSyntaxException) {
-                FirebaseManager.logException(e)
-                clickCollectProgress?.visibility = View.GONE
-                showErrorDialog()
             }
         }
     }
@@ -282,34 +277,38 @@ class ClickAndCollectStoresFragment : DialogFragment(), DynamicMapDelegate,
     }
 
     override fun onMapReady() {
-        dynamicMapView?.setAllGesturesEnabled(false)
-        GeoUtils.showFirstFourLocationInMap(StoreUtils.sortedStoreListBasedOnDistance(mValidateLocationResponse?.validatePlace?.stores),mValidateLocationResponse?.validatePlace?.placeDetails, dynamicMapView, context)
+        binding.dynamicMapView?.setAllGesturesEnabled(false)
+        GeoUtils.showFirstFourLocationInMap(StoreUtils.sortedStoreListBasedOnDistance(mValidateLocationResponse?.validatePlace?.stores),mValidateLocationResponse?.validatePlace?.placeDetails, binding.dynamicMapView, context)
     }
 
     override fun onMarkerClicked(marker: DynamicMapMarker) { }
 
     override fun onResume() {
         super.onResume()
-        dynamicMapView?.onResume()
+        binding.dynamicMapView?.onResume()
     }
 
     override fun onPause() {
-        dynamicMapView?.onPause()
+        binding.dynamicMapView?.onPause()
         super.onPause()
     }
 
     override fun onLowMemory() {
         super.onLowMemory()
-        dynamicMapView?.onLowMemory()
+        binding.dynamicMapView?.onLowMemory()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        dynamicMapView?.onSaveInstanceState(outState)
+        binding.dynamicMapView?.onSaveInstanceState(outState)
     }
 
     override fun onDestroyView() {
-        dynamicMapView?.onDestroy()
+        binding.dynamicMapView?.onDestroy()
         super.onDestroyView()
     }
+    override fun onFirstTimePargo() {
+        findNavController().navigate( R.id.action_clickAndCollectStoresFragment_to_pargoStoreInfoBottomSheetDialog)
+    }
+
 }

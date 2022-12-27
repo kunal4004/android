@@ -2,12 +2,11 @@ package za.co.woolworths.financial.services.android.ui.adapters
 
 import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.product_size_selector_list_item.view.*
+import com.awfs.coordination.databinding.ProductSizeSelectorListItemBinding
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsContract
 
@@ -28,8 +27,7 @@ class ProductSizeSelectorAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
-                LayoutInflater.from(parent.context)
-                        .inflate(R.layout.product_size_selector_list_item, parent, false)
+            ProductSizeSelectorListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         )
     }
 
@@ -42,32 +40,32 @@ class ProductSizeSelectorAdapter(
     }
 
 
-    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class ViewHolder(val itemBinding: ProductSizeSelectorListItemBinding) : RecyclerView.ViewHolder(itemBinding.root) {
 
         fun bind(otherSku: OtherSkus) {
             with(otherSku) {
-                itemView.size.text = size
+                itemBinding.size.text = size
                 when {
                     quantity == 0 -> {
-                        itemView.size.setTextColor(ContextCompat.getColor(context, R.color.black))
-                        itemView.size.setBackgroundResource(if (selectedSize?.sku.equals(otherSku.sku)) R.drawable.product_no_stock_size_selected_background else R.drawable.product_no_stock_size_un_selected_background)
+                        itemBinding.size.setTextColor(ContextCompat.getColor(context, R.color.black))
+                        itemBinding.size.setBackgroundResource(if (selectedSize?.sku.equals(otherSku.sku)) R.drawable.product_no_stock_size_selected_background else R.drawable.product_no_stock_size_un_selected_background)
                     }
                     lowStock > quantity && quantity != -1 && selectedSize?.sku.equals(otherSku.sku) -> {
-                        itemView.size.setTextColor(ContextCompat.getColor(context,
+                        itemBinding.size.setTextColor(ContextCompat.getColor(context,
                             R.color.low_stock_indicator))
-                        itemView.size.setBackgroundResource(R.drawable.ic_rectangle_low_stock)
+                        itemBinding.size.setBackgroundResource(R.drawable.ic_rectangle_low_stock)
                     }
                     quantity == -1 -> {
-                        itemView.size.setTextColor(ContextCompat.getColor(context, R.color.black))
-                        itemView.size.setBackgroundResource(if (selectedSize?.sku.equals(otherSku.sku)) R.drawable.product_available_size_selected_background else R.drawable.product_available_size_un_selected_background)
+                        itemBinding.size.setTextColor(ContextCompat.getColor(context, R.color.black))
+                        itemBinding.size.setBackgroundResource(if (selectedSize?.sku.equals(otherSku.sku)) R.drawable.product_available_size_selected_background else R.drawable.product_available_size_un_selected_background)
                     }
                     else -> {
-                        itemView.size.setTextColor(ContextCompat.getColor(context, R.color.black))
-                        itemView.size.setBackgroundResource(if (selectedSize?.sku.equals(otherSku.sku)) R.drawable.product_available_size_selected_background else R.drawable.product_available_size_un_selected_background)
+                        itemBinding.size.setTextColor(ContextCompat.getColor(context, R.color.black))
+                        itemBinding.size.setBackgroundResource(if (selectedSize?.sku.equals(otherSku.sku)) R.drawable.product_available_size_selected_background else R.drawable.product_available_size_un_selected_background)
                     }
                 }
             }
-            itemView.setOnClickListener {
+            itemBinding.root.setOnClickListener {
                 selectedSize = otherSku
                 selectedSize?.let {
                     listener.onSizeSelection(it)

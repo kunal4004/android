@@ -4,19 +4,21 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.gift_with_purchase_dialog_fragment.*
+import com.awfs.coordination.databinding.GiftWithPurchaseDialogFragmentBinding
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 
 class GiftWithPurchaseDialogDetailFragment : WBottomSheetDialogFragment() {
 
+    private lateinit var binding: GiftWithPurchaseDialogFragmentBinding
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.gift_with_purchase_dialog_fragment, container, false)
+        binding = GiftWithPurchaseDialogFragmentBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        gotItButton?.setOnClickListener { dismiss() }
+        binding.gotItButton?.setOnClickListener { dismiss() }
     }
 }

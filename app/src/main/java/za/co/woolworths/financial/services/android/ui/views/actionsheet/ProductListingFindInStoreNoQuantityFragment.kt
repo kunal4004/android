@@ -6,8 +6,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.no_quantity_find_store_fragment.*
 import za.co.woolworths.financial.services.android.contracts.ILocationProvider
 import za.co.woolworths.financial.services.android.contracts.IProductListing
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
@@ -16,9 +14,11 @@ import za.co.woolworths.financial.services.android.util.FuseLocationAPISingleton
 import za.co.woolworths.financial.services.android.util.Utils
 import androidx.annotation.NonNull
 import android.content.pm.PackageManager
-
+import com.awfs.coordination.databinding.NoQuantityFindStoreFragmentBinding
 
 class ProductListingFindInStoreNoQuantityFragment(private val mProductListing: IProductListing?) : WBottomSheetDialogFragment() {
+
+    private lateinit var binding: NoQuantityFindStoreFragmentBinding
     private var mSkuId: String? = null
 
     companion object {
@@ -37,7 +37,8 @@ class ProductListingFindInStoreNoQuantityFragment(private val mProductListing: I
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.no_quantity_find_store_fragment, container, false)
+        binding = NoQuantityFindStoreFragmentBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -55,7 +56,7 @@ class ProductListingFindInStoreNoQuantityFragment(private val mProductListing: I
             }
         })
 
-        btnNavigateToFindInStore?.setOnClickListener {
+        binding.btnNavigateToFindInStore?.setOnClickListener {
             activity?.apply {
                 if (!Utils.isLocationEnabled(this)) {
                     Utils.displayValidationMessage(this, CustomPopUpWindow.MODAL_LAYOUT.LOCATION_OFF, "")

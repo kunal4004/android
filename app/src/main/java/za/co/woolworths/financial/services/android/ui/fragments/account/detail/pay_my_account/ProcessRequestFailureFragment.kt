@@ -1,19 +1,13 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.processing_request_failure_fragment.*
+import com.awfs.coordination.databinding.ProcessingRequestFailureFragmentBinding
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
+import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 
-class ProcessRequestFailureFragment : Fragment(), View.OnClickListener {
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.processing_request_failure_fragment, container, false)
-    }
+class ProcessRequestFailureFragment : BaseFragmentBinding<ProcessingRequestFailureFragmentBinding>(ProcessingRequestFailureFragmentBinding::inflate), View.OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -22,7 +16,7 @@ class ProcessRequestFailureFragment : Fragment(), View.OnClickListener {
     }
 
     private fun setupOnClickListener() {
-        callCenterNumberTextView?.apply {
+        binding.callCenterNumberTextView?.apply {
             setOnClickListener(this@ProcessRequestFailureFragment)
             AnimationUtilExtension.animateViewPushDown(this)
         }

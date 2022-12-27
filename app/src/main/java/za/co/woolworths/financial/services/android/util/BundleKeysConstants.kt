@@ -22,8 +22,6 @@ class BundleKeysConstants {
         const val ADDRESS = "address"
         const val VALIDATE_RESPONSE = "ValidateResponse"
         const val IS_COMING_FROM_CNC_SELETION = "cnc_slection"
-        const val IS_MIXED_BASKET = "is_mix_basket"
-        const val IS_FBH_ONLY = "is_fbh_only"
         const val STANDARD_DELIVERY = "StandardDelivery"
         const val STANDARD = "Standard"
         const val CNC = "CnC"
@@ -44,6 +42,8 @@ class BundleKeysConstants {
         const val IS_LIQUOR = "IS_LIQUOR"
         const val NICK_NAME = "nickname"
         const val KEY_ADDRESS2 = "ADDRESS2"
+        const val IS_MIXED_BASKET = "is_mix_basket"
+        const val IS_FBH_ONLY = "is_fbh_only"
 
     }
 

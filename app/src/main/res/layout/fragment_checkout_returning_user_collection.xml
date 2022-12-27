@@ -51,7 +51,7 @@
                 app:layout_constraintTop_toBottomOf="@id/checkoutCollectingUserInfoLayout" />
 
             <include
-                android:id="@+id/nativeCheckoutReturningFoodSubstitutionLayout"
+                android:id="@+id/nativeCheckoutFoodSubstitutionLayout"
                 layout="@layout/layout_native_checkout_delivery_food_substitution"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -66,7 +66,7 @@
                 android:layout_marginTop="@dimen/eight_dp"
                 android:visibility="gone"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/nativeCheckoutReturningFoodSubstitutionLayout"
+                app:layout_constraintTop_toBottomOf="@+id/nativeCheckoutFoodSubstitutionLayout"
                 tools:visibility="visible" />
 
             <include

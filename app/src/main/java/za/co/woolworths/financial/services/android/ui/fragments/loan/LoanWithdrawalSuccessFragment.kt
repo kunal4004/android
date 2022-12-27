@@ -1,11 +1,12 @@
 package za.co.woolworths.financial.services.android.ui.fragments.loan
 
 import android.os.Bundle
-import android.util.Log
-import android.view.*
+import android.view.LayoutInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.loan_withdrawal_success.*
-import kotlinx.android.synthetic.main.view_floating_action_button.view.*
+import com.awfs.coordination.databinding.LoanWithdrawalSuccessBinding
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.ui.activities.loan.LoanWithdrawalActivity
 import za.co.woolworths.financial.services.android.util.Utils
@@ -15,6 +16,8 @@ class LoanWithdrawalSuccessFragment : LoanBaseFragment() {
     companion object {
         fun newInstance() = LoanWithdrawalSuccessFragment()
     }
+
+    private lateinit var binding: LoanWithdrawalSuccessBinding
 
     override fun onStart() {
         super.onStart()
@@ -26,7 +29,8 @@ class LoanWithdrawalSuccessFragment : LoanBaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater?.inflate(R.layout.loan_withdrawal_success, container, false)
+        binding = LoanWithdrawalSuccessBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -34,14 +38,14 @@ class LoanWithdrawalSuccessFragment : LoanBaseFragment() {
 
         activity?.let { (it as? LoanWithdrawalActivity)?.setHomeIndicatorIcon(R.drawable.close_white) }
 
-        btnOk?.setOnClickListener {
+        binding.btnOk?.setOnClickListener {
             onBackPressed()
         }
 
-        uniqueIdsForPLDDModule()
+        binding.uniqueIdsForPLDDModule()
     }
 
-    private fun uniqueIdsForPLDDModule() {
+    private fun LoanWithdrawalSuccessBinding.uniqueIdsForPLDDModule() {
         linLoanWithdrawalSuccess?.contentDescription = getString(R.string.loan_withdrawal_success_layout)
         btnOk?.contentDescription = getString(R.string.on_success_button_tapped)
     }

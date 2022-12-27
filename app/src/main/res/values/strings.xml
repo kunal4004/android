@@ -1289,11 +1289,11 @@
 
     <string name="black_credit_card_account_in_arrears_information_desc">Account in arrears is when the minimum payment due is not paid in full by the due date.</string>
     <string name="black_credit_card_amount_due_information_desc">This is the minimum amount that is due for the payment, by the due date for that month.</string>
-    <string name="black_credit_card_amount_overdue_arrears_information_desc">The amount that is outstanding from the previous billing due date</string>
+    <string name="black_credit_card_amount_overdue_arrears_information_desc">The amount that is outstanding from the previous billing due date.</string>
     <string name="black_credit_card_total_amount_due_arrears_desc">The total amount due, is the total of that months due amount plus any previous over due amounts.</string>
     <string name="black_credit_card_next_payment_due_arrears_desc">This is the date the Total Amount Due is to be paid by.</string>
     <string name="black_credit_card_balance_at_statement_date_desc">Balance as at the date when you are billed.</string>
-    <string name="black_credit_card_current_balance_arrears_information_desc">Balance as at the current date</string>
+    <string name="black_credit_card_current_balance_arrears_information_desc">Balance as at the current date.</string>
     <string name="black_credit_card_available_fund_arrears_information_desc">Funds available for you to use.</string>
     <string name="black_credit_card_current_information_arrears_information_desc">This is the total amount of credit offered to you by Woolies.</string>
     <string name="silver_credit_card">silver credit card</string>
@@ -1588,11 +1588,8 @@
     <string name="select_your_delivery_location">Select your delivery location:</string>
     <string name="remove_these_items_continue">remove these items &amp; continue</string>
     <string name="item_not_available_for_collection_title">Item not available</string>
-    <string name="food_item_not_available_for_collection_title">Food Items Can’t Be Collected From a Pargo Pickup Point.</string>
     <string name="item_not_available_for_collection_desc">To purchase, please try \'Find In Store\', or change delivery option to Standard.</string>
-    <string name="food_item_not_available_for_collection_desc">To shop this item, change your collection store or delivery method.</string>
     <string name="change_delivery_option">CHANGE DELIVERY OPTION</string>
-    <string name="change_collection_location">CHANGE COLLECTION LOCATION</string>
     <string name="remove_items_dialog_title">These items will be removed</string>
     <string name="remove_items_dialog_desc">We always show you items available at the store closest to your location. When you change this location, the items you see may change too.</string>
     <string name="no_stores_for_province_message">Sorry, we currently do not have stores that support this feature in\u0020</string>
@@ -1697,6 +1694,7 @@
     <string name="select_an_option">Please Select an Option</string>
     <string name="collection_location">Collection Location:</string>
     <string name="collection_date">Collection Date:</string>
+    <string name="store">Store\u0020</string>
     <string name="my_orders_title">My Orders</string>
     <string name="click_and_collect_max_items">Click &amp; Collect orders have a maximum limit of between %1$s and %2$s food items, store dependent.</string>
     <string name="click_and_collect_dialog_items_limit">UP TO %1$s ITEMS\n STORE DEPENDENT</string>
@@ -2080,7 +2078,6 @@
 
     <string name="select_store">Select Store</string>
     <string name="confirm_store_header_title">Collection Details</string>
-    <string name="who_is_collecting_header_title">Who Is Collecting?</string>
     <string name="confirm_store_header_desc">Please confirm your collection store details below.</string>
     <string name="store_address_header">Where would you like your card to be delivered?</string>
     <string name="store_address_left_tab">To Me</string>
@@ -2340,8 +2337,7 @@
     </plurals>
 
     <!--Native Checkout-->
-    <string name="name_colon_text_view">Recipient Name: *</string>
-    <string name="recipient_name_hint">As displayed on identification document</string>
+    <string name="name_colon_text_view">Name: *</string>
     <string name="mobile_number_text_view">Mobile Number: *</string>
     <string name="my_address_details">My Address Details</string>
     <string name="address_nickname_text_view">Address Nickname: *</string>
@@ -2420,9 +2416,6 @@
     <string name="native_checkout_collecting_from">Collecting From</string>
     <string name="collection_time_detail_title">When Would You Like To Collect?</string>
     <string name="native_checkout_collection_date">Collection Date</string>
-    <string name="collection_details_text">Your order will be ready for collection in </string>
-    <string name="notify_text_label"> We\'ll notify you via SMS when it\'s ready.</string>
-    <string name="who_is_collecting_label">Upon collection, the recipient will have to show proof of identification using their <b>ID, passport or drivers license.</b></string>
     <string name="native_checkout_collection_timeslot">Collection Timeslot</string>
     <string name="choose_date">Choose Date</string>
     <string name="confirm_date">CONFIRM DATE</string>
@@ -2517,8 +2510,6 @@
     <string name="dash_title_text_1">R%1$s Delivery Fee. \n </string>
     <string name="dash_title_text_2">Limited shop of %1$s Items.</string>
     <string name="dash_delivery">Dash Delivery</string>
-    <string name="mixed_cart_food_item_title">Collection 1 - Food Items</string>
-    <string name="mixed_cart_other_item_title">Collection 2 - Other Items</string>
     <string name="dash_delivery_bold"><b>Dash Delivery</b></string>
     <string name="dash_product_search">Search name, product code or brand</string>
     <string name="default_location">Default Location</string>
@@ -2746,6 +2737,7 @@
     <string name="edit_address_button">EDIT ADDRESS</string>
     <string name="promotional_text_banner">Extra 5% off when you pay with your Woolies card.\nThis offer is available on selected items. Offer valid for a limited time only. Subject to availability. Discount applies at checkout.T\'s &amp; C\'s apply.</string>
 
+    <string name="unfortunately_something_went_wrong">Unfortunately,\nSomething Went Wrong.</string>
     <string name="already_have_a_wrewards_card">Already have a wrewards card?</string>
     <string name="add_it_now">Add it now</string>
     <string name="sign_up">SIGN UP</string>
@@ -2822,6 +2814,7 @@
     <string name="order">Order\u0020</string>
     <string name="a_report_for_this_review_has_already_been_submitted">A report for this review has already been submitted.</string>
 
+    <string name="food_item_not_available_for_collection_title">Food Items Can’t Be Collected From a Pargo Pickup Point.</string>
     <string name="quick">QUICK</string>
     <string name="convenient">CONVENIENT</string>
     <string name="alarm_text">We\’ll notify you when your order is ready for collection.</string>
@@ -2834,4 +2827,14 @@
     <string name="these_stores_stock">THESE STORES STOCK</string>
     <string name="food_items_only">Food Items Only</string>
     <string name="all_woolworths_products">All Woolworths Products</string>
+    <string name="collection_details_text">Your order will be ready for collection in </string>
+    <string name="notify_text_label"> We\'ll notify you via SMS when it\'s ready.</string>
+    <string name="who_is_collecting_label">Upon collection, the recipient will have to show proof of identification using their <b>ID, passport or drivers license.</b></string>
+    <string name="mixed_cart_food_item_title">Collection 1 - Food Items</string>
+    <string name="mixed_cart_other_item_title">Collection 2 - Other Items</string>
+    <string name="food_item_not_available_for_collection_desc">To shop this item, change your collection store or delivery method.</string>
+    <string name="change_collection_location">CHANGE COLLECTION LOCATION</string>
+    <string name="who_is_collecting_header_title">Who Is Collecting?</string>
+    <string name="recipient_name_hint">As displayed on identification document</string>
+
 </resources>

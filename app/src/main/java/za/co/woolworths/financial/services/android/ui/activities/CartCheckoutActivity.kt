@@ -5,15 +5,19 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.activity_cart_checkout.*
+import com.awfs.coordination.databinding.ActivityCartCheckoutBinding
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.REQUEST_CHECKOUT_ON_DESTROY
 import za.co.woolworths.financial.services.android.util.Utils
 
 class CartCheckoutActivity : AppCompatActivity(), View.OnClickListener {
+
+    private lateinit var binding: ActivityCartCheckoutBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_cart_checkout)
+        binding = ActivityCartCheckoutBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         Utils.updateStatusBarBackground(this)
         val checkOutFragment = CheckOutFragment()
         val fragmentManager = supportFragmentManager
@@ -23,9 +27,6 @@ class CartCheckoutActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onClick(view: View) {
         when (view.id) {
-            R.id.btnCloseCart  -> {
-                onBackPressed()
-            }
             R.id.btnClose -> {
                 setResult(REQUEST_CHECKOUT_ON_DESTROY)
                 finish()
@@ -48,12 +49,12 @@ class CartCheckoutActivity : AppCompatActivity(), View.OnClickListener {
         return false
     }
 
-    fun showTitleWithCrossButton(titleText: String) {
-        cart_appbar?.visibility = View.VISIBLE
-        cart_toolbar?.visibility = View.VISIBLE
-        setSupportActionBar(cart_toolbar)
+    fun ActivityCartCheckoutBinding.showTitleWithCrossButton(titleText: String) {
+        cartAppbar?.visibility = View.VISIBLE
+        cartToolbar?.visibility = View.VISIBLE
+        setSupportActionBar(cartToolbar)
         btnClose?.visibility = View.VISIBLE
-        btnClose.setOnClickListener(this)
+        btnClose.setOnClickListener(this@CartCheckoutActivity)
         toolbarText.text = titleText
         supportActionBar?.apply {
             title = ""

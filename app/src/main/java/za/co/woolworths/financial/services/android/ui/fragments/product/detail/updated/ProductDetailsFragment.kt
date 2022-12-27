@@ -34,30 +34,11 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import kotlinx.android.synthetic.main.pdp_rating_layout.*
 import com.perfectcorp.perfectlib.CameraView
 import com.perfectcorp.perfectlib.MakeupCam
-import kotlinx.android.synthetic.main.chanel_logo_view.view.*
-import kotlinx.android.synthetic.main.layout_product_details_chanel.view.*
-import kotlinx.android.synthetic.main.low_stock_product_details.*
-import kotlinx.android.synthetic.main.low_stock_product_details.view.*
-import kotlinx.android.synthetic.main.product_details_add_to_cart_and_find_in_store_button_layout.*
-import kotlinx.android.synthetic.main.product_details_delivery_location_layout.*
-import kotlinx.android.synthetic.main.product_details_fragment.*
-import kotlinx.android.synthetic.main.product_details_gift_with_purchase.*
-import kotlinx.android.synthetic.main.product_details_options_and_information_layout.*
-import kotlinx.android.synthetic.main.product_details_options_and_information_layout.ratingBar
-import kotlinx.android.synthetic.main.product_details_price_layout.*
-import kotlinx.android.synthetic.main.product_details_size_and_color_layout.*
-import kotlinx.android.synthetic.main.promotional_image.view.*
-import kotlinx.android.synthetic.main.vto_layout.*
 import kotlinx.coroutines.*
 import za.co.woolworths.financial.services.android.chanel.utils.ChanelUtils
 import za.co.woolworths.financial.services.android.common.SingleMessageCommonToast
-import kotlinx.android.synthetic.main.ratings_ratingdetails.*
-import kotlinx.android.synthetic.main.review_row_layout.*
-import kotlinx.android.synthetic.main.select_vto_option.*
-import kotlinx.android.synthetic.main.select_vto_option.view.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.ILocationProvider
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
@@ -97,7 +78,6 @@ import za.co.woolworths.financial.services.android.util.*
 import java.util.*
 import kotlin.collections.ArrayList
 import com.facebook.FacebookSdk.getApplicationContext
-import kotlinx.android.synthetic.main.review_helpful_and_report_layout.*
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.featureutils.RatingAndReviewUtil
 import za.co.woolworths.financial.services.android.ui.adapters.*
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView
@@ -115,7 +95,6 @@ import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.listene
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.listener.VtoTryAgainListener
 import za.co.woolworths.financial.services.android.ui.vto.ui.camera.CameraMonitor
 import za.co.woolworths.financial.services.android.ui.vto.ui.gallery.ImageResultContract
-import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_1000_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_1500_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_500_MS
@@ -138,34 +117,30 @@ import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManag
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.logException
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.setCrashlyticsString
-import java.net.SocketTimeoutException
 import javax.inject.Inject
 import kotlin.collections.get
 import kotlin.collections.set
-import android.util.Log
 import android.widget.*
-import androidx.core.text.HtmlCompat
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
+import com.awfs.coordination.databinding.ProductDetailsFragmentBinding
+import com.awfs.coordination.databinding.PromotionalImageBinding
 import retrofit2.HttpException
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.fragment_select_store_details.*
-import kotlinx.android.synthetic.main.review_helpful_and_report_layout.view.*
-import kotlinx.coroutines.*
-import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.*
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.network.apihelper.RatingAndReviewApiHelper
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.viewmodel.RatingAndReviewViewModel
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.viewmodel.RatingAndReviewViewModelFactory
-import za.co.woolworths.financial.services.android.ui.fragments.product.shop.FoodProductNotAvailableForCollectionDialog
 import za.co.woolworths.financial.services.android.ui.vto.utils.VirtualTryOnUtil
 import za.co.woolworths.financial.services.android.ui.vto.ui.PfSDKInitialCallback
 import za.co.woolworths.financial.services.android.ui.vto.utils.PermissionUtil
 import za.co.woolworths.financial.services.android.ui.vto.utils.SdkUtility
-
+import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
+import za.co.woolworths.financial.services.android.geolocation.GeoUtils
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.FoodProductNotAvailableForCollectionDialog
 
 @AndroidEntryPoint
-class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetailsView,
+class ProductDetailsFragment : BaseFragmentBinding<ProductDetailsFragmentBinding>(ProductDetailsFragmentBinding::inflate), ProductDetailsContract.ProductDetailsView,
     MultipleImageInterface, IOnConfirmDeliveryLocationActionListener, PermissionResultCallback,
     ILocationProvider, View.OnClickListener,
     OutOfStockMessageDialogFragment.IOutOfStockMessageDialogDismissListener,
@@ -309,7 +284,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mFuseLocationAPISingleton = FuseLocationAPISingleton
-        initViews()
+        binding.initViews()
         setUpConfirmAddressViewModel()
         addFragmentListner()
         setUniqueIds()
@@ -319,7 +294,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private fun addFragmentListner() {
         setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_CLICK_RESULT) { _, _ ->
             // As User selects to change the delivery location. So we will call confirm place API and will change the users location.
-            getUpdatedValidateResponse()
+            binding.getUpdatedValidateResponse()
         }
     }
 
@@ -355,77 +330,90 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         ).get(ConfirmAddressViewModel::class.java)
     }
 
-    private fun initViews() {
-        addToCartAction?.setOnClickListener(this)
-        quantitySelector?.setOnClickListener(this)
-        addToShoppingList?.setOnClickListener(this)
-        checkInStoreAvailability?.setOnClickListener(this)
-        editDeliveryLocation?.setOnClickListener(this)
-        findInStoreAction?.setOnClickListener(this)
-        productDetailsInformation?.setOnClickListener(this)
-        productIngredientsInformation?.setOnClickListener(this)
-        nutritionalInformation?.setOnClickListener(this)
-        dietaryInformation?.setOnClickListener(this)
-        allergensInformation?.setOnClickListener(this)
-        moreColor?.setOnClickListener(this)
-        imgCloseVTO?.setOnClickListener(this)
-        imgVTORefresh?.setOnClickListener(this)
-        openCart?.setOnClickListener(this)
-        brand_view?.brand_openCart?.setOnClickListener(this)
-        backArrow?.setOnClickListener(this)
-        brand_view?.brand_backArrow?.setOnClickListener(this)
-        share?.setOnClickListener(this)
-        sizeGuide?.setOnClickListener(this)
-        imgVTOOpen?.setOnClickListener(this)
-        retakeCamera?.setOnClickListener(this)
-        changeImage?.setOnClickListener(this)
-        changeImageFiles?.setOnClickListener(this)
-        imgDownloadVTO?.setOnClickListener(this)
-        imgVTOSplit?.setOnClickListener(this)
-        captureImage?.setOnClickListener(this)
+    private fun ProductDetailsFragmentBinding.initViews() {
+        openCart?.setOnClickListener(this@ProductDetailsFragment)
+        backArrow?.setOnClickListener(this@ProductDetailsFragment)
+        share?.setOnClickListener(this@ProductDetailsFragment)
+        imgVTOOpen?.setOnClickListener(this@ProductDetailsFragment)
         isOutOfStockFragmentAdded = false
         configureDefaultUI()
-        cameraSurfaceView.setOnTouchListener { _, event ->
-            pinchZoomOnVtoLiveCamera(event)
-            true
-        }
-        scrollView.setOnTouchListener(this)
-        scrollView.viewTreeObserver.addOnScrollChangedListener(this)
+        scrollView.setOnTouchListener(this@ProductDetailsFragment)
+        scrollView.viewTreeObserver.addOnScrollChangedListener(this@ProductDetailsFragment)
 
         hideRatingAndReview()
         setupViewModel()
         updateReportLikeStatus()
-        tvSkinProfile.setOnClickListener(this)
-        btViewMoreReview.setOnClickListener(this)
-        tvTotalReviews.setOnClickListener(this)
-        tvRatingDetails.setOnClickListener(this)
-        tvReport.setOnClickListener(this)
+
+        toCartAndFindInStoreLayout.apply {
+            addToCartAction?.setOnClickListener(this@ProductDetailsFragment)
+            quantitySelector?.setOnClickListener(this@ProductDetailsFragment)
+            findInStoreAction?.setOnClickListener(this@ProductDetailsFragment)
+        }
+        productDetailOptionsAndInformation.apply {
+            addToShoppingList?.setOnClickListener(this@ProductDetailsFragment)
+            checkInStoreAvailability?.setOnClickListener(this@ProductDetailsFragment)
+            productDetailsInformation?.setOnClickListener(this@ProductDetailsFragment)
+            productIngredientsInformation?.setOnClickListener(this@ProductDetailsFragment)
+            nutritionalInformation?.setOnClickListener(this@ProductDetailsFragment)
+            dietaryInformation?.setOnClickListener(this@ProductDetailsFragment)
+            allergensInformation?.setOnClickListener(this@ProductDetailsFragment)
+            btViewMoreReview.setOnClickListener(this@ProductDetailsFragment)
+            tvRatingDetails.setOnClickListener(this@ProductDetailsFragment)
+        }
+        deliveryLocationLayout.apply {
+            editDeliveryLocation?.setOnClickListener(this@ProductDetailsFragment)
+        }
+        sizeColorSelectorLayout.apply {
+            moreColor?.setOnClickListener(this@ProductDetailsFragment)
+            sizeGuide?.setOnClickListener(this@ProductDetailsFragment)
+        }
+        vtoLayout.apply {
+            imgCloseVTO?.setOnClickListener(this@ProductDetailsFragment)
+            imgVTORefresh?.setOnClickListener(this@ProductDetailsFragment)
+            brandView?.brandOpenCart?.setOnClickListener(this@ProductDetailsFragment)
+            brandView?.brandBackArrow?.setOnClickListener(this@ProductDetailsFragment)
+            retakeCamera?.setOnClickListener(this@ProductDetailsFragment)
+            changeImage?.setOnClickListener(this@ProductDetailsFragment)
+            changeImageFiles?.setOnClickListener(this@ProductDetailsFragment)
+            imgDownloadVTO?.setOnClickListener(this@ProductDetailsFragment)
+            imgVTOSplit?.setOnClickListener(this@ProductDetailsFragment)
+            captureImage?.setOnClickListener(this@ProductDetailsFragment)
+            cameraSurfaceView.setOnTouchListener { _, event ->
+                pinchZoomOnVtoLiveCamera(event)
+                true
+            }
+        }
+        productDetailOptionsAndInformation.customerReview.tvSkinProfile.setOnClickListener(this@ProductDetailsFragment)
+        ratingLayout.tvTotalReviews.setOnClickListener(this@ProductDetailsFragment)
+        productDetailOptionsAndInformation.customerReview.reviewHelpfulReport.tvReport.setOnClickListener(this@ProductDetailsFragment)
     }
 
 
-        private fun setupViewModel() {
-            moreReviewViewModel = ViewModelProvider(
-                this,
-                RatingAndReviewViewModelFactory(RatingAndReviewApiHelper())
-            ).get(RatingAndReviewViewModel::class.java)
-        }
+    private fun setupViewModel() {
+        moreReviewViewModel = ViewModelProvider(
+            this,
+            RatingAndReviewViewModelFactory(RatingAndReviewApiHelper())
+        ).get(RatingAndReviewViewModel::class.java)
+    }
 
-        private fun updateReportLikeStatus() {
-            if (ratingReviewResponse?.reviews?.isNotEmpty() == true) {
-                ratingReviewResponse?.reviews?.get(0)?.let {
-                    if (RatingAndReviewUtil.likedReviews.contains(it.id.toString())) {
-                        iv_like?.setImageResource(R.drawable.iv_like_selected)
-                    }
-                    if (RatingAndReviewUtil.reportedReviews.contains(it.id.toString())) {
+    private fun ProductDetailsFragmentBinding.updateReportLikeStatus() {
+        if (ratingReviewResponse?.reviews?.isNotEmpty() == true) {
+            ratingReviewResponse?.reviews?.get(0)?.let {
+                if (RatingAndReviewUtil.likedReviews.contains(it.id.toString())) {
+                    productDetailOptionsAndInformation.customerReview.reviewHelpfulReport.ivLike?.setImageResource(R.drawable.iv_like_selected)
+                }
+                if (RatingAndReviewUtil.reportedReviews.contains(it.id.toString())) {
+                    productDetailOptionsAndInformation.customerReview.reviewHelpfulReport.apply {
                         tvReport?.setTextColor(Color.RED)
                         tvReport?.text = resources?.getString(R.string.reported)
                         tvReport?.setTypeface(tvReport.typeface, Typeface.BOLD)
                         tvReport?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
                     }
                 }
-
             }
+
         }
+    }
 
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
@@ -445,7 +433,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     private fun pinchZoomOnVtoLiveCamera(event: MotionEvent?) {
-        scrollView.requestDisallowInterceptTouchEvent(true)
+        binding.scrollView.requestDisallowInterceptTouchEvent(true)
         val cameraMonitor =
             CameraMonitor(requireActivity(), makeupCamera, lifecycle)
         cameraMonitor.pinchZoom(requireActivity(), event!!)
@@ -453,13 +441,13 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     private fun showVTOTryItOn() {
-        imgVTOOpen?.setImageResource(R.drawable.ic_camera_vto)
+        binding.imgVTOOpen?.setImageResource(R.drawable.ic_camera_vto)
         if (isTryIt) {
             dataPrefViewModel?.isTryItOn?.observe(
                 viewLifecycleOwner,
                 Observer { isTryItOn ->
                     if (isTryItOn && isTryIt) {
-                        imgVTOOpen?.setImageResource(R.drawable.ic_try_on_camera)
+                        binding.imgVTOOpen?.setImageResource(R.drawable.ic_try_on_camera)
                         isTryIt = false
                         dataPrefViewModel?.disableTryItOn(false)
                     }
@@ -468,100 +456,102 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
     }
 
-            override fun onClick(v: View?) {
-                KotlinUtils.avoidDoubleClicks(v)
-                if (isApiCallInProgress)
-                    return
-                when (v?.id) {
-                    R.id.addToCartAction -> addItemToCart()
-                    R.id.quantitySelector -> onQuantitySelector()
-                    R.id.addToShoppingList -> addItemToShoppingList()
-                    R.id.checkInStoreAvailability, R.id.findInStoreAction -> findItemInStore()
-                    R.id.editDeliveryLocation -> updateDeliveryLocation()
-                    R.id.productDetailsInformation -> showDetailsInformation(
-                        ProductInformationActivity.ProductInformationType.DETAILS
-                    )
-                    R.id.productIngredientsInformation -> showDetailsInformation(
-                        ProductInformationActivity.ProductInformationType.INGREDIENTS
-                    )
-                    R.id.nutritionalInformation -> showDetailsInformation(ProductInformationActivity.ProductInformationType.NUTRITIONAL_INFO)
-                    R.id.allergensInformation -> showDetailsInformation(ProductInformationActivity.ProductInformationType.ALLERGEN_INFO)
-                    R.id.dietaryInformation -> showDetailsInformation(ProductInformationActivity.ProductInformationType.DIETARY_INFO)
-                    R.id.moreColor -> showMoreColors()
-                    R.id.share -> shareProduct()
-                    R.id.sizeGuide -> showDetailsInformation(ProductInformationActivity.ProductInformationType.SIZE_GUIDE)
-                    R.id.imgVTOOpen -> vtoOptionSelectBottomDialog.showBottomSheetDialog(
-                        this@ProductDetailsFragment,
-                        requireActivity(),
-                        false
-                    )
-                    R.id.openCart -> openCart()
-                    R.id.brand_openCart -> openCart()
-                    R.id.backArrow -> (activity as? BottomNavigationActivity)?.popFragment()
-                    R.id.brand_backArrow -> (activity as? BottomNavigationActivity)?.popFragment()
-                    R.id.imgCloseVTO -> closeVto()
-                    R.id.imgVTORefresh -> clearEffect()
-                    R.id.retakeCamera -> reOpenCamera()
-                    R.id.changeImage -> pickPhotoLauncher.launch("image/*")
-                    R.id.changeImageFiles -> pickPhotoFromFile.launch("image/*")
-                    R.id.imgDownloadVTO -> saveVtoApplyImage?.let {
-                        savePhoto(it)
-                    }
-                    R.id.imgVTOSplit -> compareWithLiveCamera()
-                    R.id.captureImage -> captureImageFromVtoLiveCamera()
-                    R.id.tvRatingDetails -> showRatingDetailsDailog()
-                    R.id.tvSkinProfile -> viewSkinProfileDialog()
-                    R.id.btViewMoreReview -> navigateToMoreReviewsScreen()
-                    R.id.tvTotalReviews -> {
-                        if (tvTotalReviews?.text != ZERO_REVIEWS) navigateToMoreReviewsScreen()
-                    }
-                    R.id.tvReport -> navigateToReportReviewScreen()
-                    R.id.iv_like -> likeButtonClicked()
-                }
+    override fun onClick(v: View?) {
+        KotlinUtils.avoidDoubleClicks(v)
+        if (isApiCallInProgress)
+            return
+        when (v?.id) {
+            R.id.addToCartAction -> addItemToCart()
+            R.id.quantitySelector -> onQuantitySelector()
+            R.id.addToShoppingList -> addItemToShoppingList()
+            R.id.checkInStoreAvailability, R.id.findInStoreAction -> findItemInStore()
+            R.id.editDeliveryLocation -> updateDeliveryLocation()
+            R.id.productDetailsInformation -> showDetailsInformation(
+                ProductInformationActivity.ProductInformationType.DETAILS
+            )
+            R.id.productIngredientsInformation -> showDetailsInformation(
+                ProductInformationActivity.ProductInformationType.INGREDIENTS
+            )
+            R.id.nutritionalInformation -> showDetailsInformation(ProductInformationActivity.ProductInformationType.NUTRITIONAL_INFO)
+            R.id.allergensInformation -> showDetailsInformation(ProductInformationActivity.ProductInformationType.ALLERGEN_INFO)
+            R.id.dietaryInformation -> showDetailsInformation(ProductInformationActivity.ProductInformationType.DIETARY_INFO)
+            R.id.moreColor -> showMoreColors()
+            R.id.share -> shareProduct()
+            R.id.sizeGuide -> showDetailsInformation(ProductInformationActivity.ProductInformationType.SIZE_GUIDE)
+            R.id.imgVTOOpen -> vtoOptionSelectBottomDialog.showBottomSheetDialog(
+                this@ProductDetailsFragment,
+                requireActivity(),
+                false
+            )
+            R.id.openCart -> openCart()
+            R.id.brand_openCart -> openCart()
+            R.id.backArrow -> (activity as? BottomNavigationActivity)?.popFragment()
+            R.id.brand_backArrow -> (activity as? BottomNavigationActivity)?.popFragment()
+            R.id.imgCloseVTO -> binding.closeVto()
+            R.id.imgVTORefresh -> clearEffect()
+            R.id.retakeCamera -> binding.reOpenCamera()
+            R.id.changeImage -> pickPhotoLauncher.launch("image/*")
+            R.id.changeImageFiles -> pickPhotoFromFile.launch("image/*")
+            R.id.imgDownloadVTO -> saveVtoApplyImage?.let {
+                savePhoto(it)
             }
+            R.id.imgVTOSplit -> binding.compareWithLiveCamera()
+            R.id.captureImage -> binding.captureImageFromVtoLiveCamera()
+            R.id.tvRatingDetails -> showRatingDetailsDailog()
+            R.id.tvSkinProfile -> viewSkinProfileDialog()
+            R.id.btViewMoreReview -> navigateToMoreReviewsScreen()
+            R.id.tvTotalReviews -> {
+                if (binding.ratingLayout.tvTotalReviews?.text != ZERO_REVIEWS) navigateToMoreReviewsScreen()
+            }
+            R.id.tvReport -> navigateToReportReviewScreen()
+            R.id.iv_like -> likeButtonClicked()
+        }
+    }
 
     private fun savePhoto(bitmap: Bitmap) {
         ImageResultContract.saveImageToStorage(requireContext(), bitmap)
         vtoSavedPhotoToast.showMessage(requireActivity(), getString(R.string.saved_to_photos), 250)
     }
 
-    private fun captureImageFromVtoLiveCamera() {
+    private fun ProductDetailsFragmentBinding.captureImageFromVtoLiveCamera() {
         try {
-            viewLifecycleOwner.lifecycleScope.launch {
-                makeupCamera?.let {
-                    job.cancel()
-                }
-                var countText = 3
-                while (countText >= 1) {
-                    delay(DELAY_1000_MS)
-                    txtCountCameraCaptureImage?.visibility = View.VISIBLE
-                    txtCountCameraCaptureImage?.text = countText.toString()
-                    countText--
-                }
-                isTakePicture = true
-                liveCameraViewModel?.takenPicture()
-                liveCameraViewModel?.takenPicture?.observe(
-                    viewLifecycleOwner,
-                    Observer { result ->
-                        if (null != result?.originalPicture) {
-                            takenOriginalPicture = result?.originalPicture as Bitmap
-                            saveVtoApplyImage = result.resultPicture as Bitmap
-                            setPickedImage(null, result.originalPicture, true)
-                            imgVTOEffect?.setImageBitmap(result.resultPicture as Bitmap)
-                        }
-                        isPickedImageFromLiveCamera = true
-                        txtCountCameraCaptureImage?.visibility = View.GONE
-                        isLiveCameraResumeState = false
-                        retakeCamera?.visibility = View.VISIBLE
-                        imgVTOSplit?.visibility = View.GONE
-                        captureImage?.visibility = View.GONE
-                        imgDownloadVTO?.visibility = View.VISIBLE
-                        isColorAppliedWithLiveCamera = false
-                        isRefreshImageEffectLiveCamera = false
-                        stopVtoLiveCamera()
-                        cameraSurfaceView?.visibility = View.GONE
-                    })
+            vtoLayout.apply {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    makeupCamera?.let {
+                        job.cancel()
+                    }
+                    var countText = 3
+                    while (countText >= 1) {
+                        delay(DELAY_1000_MS)
+                        txtCountCameraCaptureImage?.visibility = View.VISIBLE
+                        txtCountCameraCaptureImage?.text = countText.toString()
+                        countText--
+                    }
+                    isTakePicture = true
+                    liveCameraViewModel?.takenPicture()
+                    liveCameraViewModel?.takenPicture?.observe(
+                        viewLifecycleOwner,
+                        Observer { result ->
+                            if (null != result?.originalPicture) {
+                                takenOriginalPicture = result?.originalPicture as Bitmap
+                                saveVtoApplyImage = result.resultPicture as Bitmap
+                                setPickedImage(null, result.originalPicture, true)
+                                imgVTOEffect?.setImageBitmap(result.resultPicture as Bitmap)
+                            }
+                            isPickedImageFromLiveCamera = true
+                            txtCountCameraCaptureImage?.visibility = View.GONE
+                            isLiveCameraResumeState = false
+                            retakeCamera?.visibility = View.VISIBLE
+                            imgVTOSplit?.visibility = View.GONE
+                            captureImage?.visibility = View.GONE
+                            imgDownloadVTO?.visibility = View.VISIBLE
+                            isColorAppliedWithLiveCamera = false
+                            isRefreshImageEffectLiveCamera = false
+                            stopVtoLiveCamera()
+                            cameraSurfaceView?.visibility = View.GONE
+                        })
 
+                }
             }
         } catch (e: Exception) {
             handleException(e)
@@ -575,7 +565,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
 
-    private fun reOpenCamera() {
+    private fun ProductDetailsFragmentBinding.reOpenCamera() {
         if (isLiveCamera) {
             liveCameraViewHandle()
             handleLiveCamera()
@@ -583,13 +573,15 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 makeupCamera, productDetails?.productId,
                 getSelectedSku()?.sku
             )
-            retakeCamera?.visibility = View.GONE
-            imgVTORefresh?.visibility = View.VISIBLE
-            imgVTOSplit?.visibility = View.VISIBLE
-            captureImage?.visibility = View.VISIBLE
-            noFaceDetected?.visibility = View.GONE
-            imgDownloadVTO?.visibility = View.GONE
-            colourUnavailableError?.visibility = View.GONE
+            vtoLayout.apply {
+                retakeCamera?.visibility = View.GONE
+                imgVTORefresh?.visibility = View.VISIBLE
+                imgVTOSplit?.visibility = View.VISIBLE
+                captureImage?.visibility = View.VISIBLE
+                noFaceDetected?.visibility = View.GONE
+                imgDownloadVTO?.visibility = View.GONE
+            }
+            sizeColorSelectorLayout.colourUnavailableError?.visibility = View.GONE
             isColorAppliedWithLiveCamera = true
             isRefreshImageEffectLiveCamera = true
             isLiveCameraOpened = true
@@ -599,30 +591,30 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
     }
 
-    private fun compareWithLiveCamera() {
-
-        if (comparisonView?.isCompareModeEnable() == true) {
-            captureImage?.visibility = View.VISIBLE
-            imgVTOSplit?.setImageResource(R.drawable.ic_vto_split_screen)
-            vtoDividerLayout?.visibility = View.GONE
-            imgDownloadVTO?.visibility = View.GONE
-            imgVTORefresh?.visibility = View.VISIBLE
-            comparisonView?.leaveComparisonMode()
-            isDividerVtoEffect = false
-            scrollView?.setScrollingEnabled(true)
-        } else {
-            captureImage?.visibility = View.GONE
-            imgVTOSplit?.setImageResource(R.drawable.ic_vto_icon_compare)
-            comparisonView?.enterComparisonMode()
-            imgDownloadVTO?.visibility = View.GONE
-            imgVTORefresh?.visibility = View.GONE
-            isDividerVtoEffect = true
-            scrollView?.setScrollingEnabled(false)
-
+    private fun ProductDetailsFragmentBinding.compareWithLiveCamera() {
+        vtoLayout.apply {
+            if (comparisonView?.isCompareModeEnable() == true) {
+                captureImage?.visibility = View.VISIBLE
+                imgVTOSplit?.setImageResource(R.drawable.ic_vto_split_screen)
+                vtoDividerLayout?.visibility = View.GONE
+                imgDownloadVTO?.visibility = View.GONE
+                imgVTORefresh?.visibility = View.VISIBLE
+                comparisonView?.leaveComparisonMode()
+                isDividerVtoEffect = false
+                scrollView?.setScrollingEnabled(true)
+            } else {
+                captureImage?.visibility = View.GONE
+                imgVTOSplit?.setImageResource(R.drawable.ic_vto_icon_compare)
+                comparisonView?.enterComparisonMode()
+                imgDownloadVTO?.visibility = View.GONE
+                imgVTORefresh?.visibility = View.GONE
+                isDividerVtoEffect = true
+                scrollView?.setScrollingEnabled(false)
+            }
         }
     }
 
-    private fun closeVto() {
+    private fun ProductDetailsFragmentBinding.closeVto() {
         try {
             isColorAppliedWithLiveCamera = false
             isVtoImage = false
@@ -632,18 +624,20 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             isDividerVtoEffect = false
             scrollView?.setScrollingEnabled(true)
             resetColorSelectionLayout()
-            comparisonView?.leaveComparisonMode()
-            cameraSurfaceView?.visibility = View.GONE
-            colourUnavailableError?.visibility = View.GONE
-            imgDownloadVTO?.visibility = View.GONE
-            imgVTOSplit?.visibility = View.GONE
-            imgVTORefresh?.visibility = View.GONE
-            captureImage?.visibility = View.GONE
-            retakeCamera?.visibility = View.GONE
-            changeImage?.visibility = View.GONE
-            changeImageFiles?.visibility = View.GONE
-            noFaceDetected?.visibility = View.GONE
-            txtCountCameraCaptureImage?.visibility = View.GONE
+            vtoLayout.apply {
+                comparisonView?.leaveComparisonMode()
+                cameraSurfaceView?.visibility = View.GONE
+                imgDownloadVTO?.visibility = View.GONE
+                imgVTOSplit?.visibility = View.GONE
+                imgVTORefresh?.visibility = View.GONE
+                captureImage?.visibility = View.GONE
+                retakeCamera?.visibility = View.GONE
+                changeImage?.visibility = View.GONE
+                changeImageFiles?.visibility = View.GONE
+                noFaceDetected?.visibility = View.GONE
+                txtCountCameraCaptureImage?.visibility = View.GONE
+            }
+            sizeColorSelectorLayout.colourUnavailableError?.visibility = View.GONE
             share?.visibility = View.VISIBLE
             productImagesViewPagerIndicator?.visibility = View.VISIBLE
             openCart?.visibility = View.VISIBLE
@@ -654,7 +648,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 job?.cancel()
                 stopVtoLiveCamera()
             }
-            vtoLayout?.visibility = View.GONE
+            vtoLayout.root.visibility = View.GONE
         } catch (e: Exception) {
             handleException(e)
         }
@@ -673,7 +667,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
         activity?.supportFragmentManager?.apply {
             if (getSelectedSku() == null) {
-                requestSelectSize()
+                binding.requestSelectSize()
                 return
             }
             getSelectedSku()?.quantity?.let {
@@ -685,29 +679,23 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View? {
-        return inflater.inflate(R.layout.product_details_fragment, container, false)
-    }
-
-    private fun configureDefaultUI() {
+    private fun ProductDetailsFragmentBinding.configureDefaultUI() {
 
         updateStockAvailabilityLocation()
 
         productDetails?.let {
             setupBrandView()
-            BaseProductUtils.displayPrice(
-                fromPricePlaceHolder,
-                textPrice,
-                textActualPrice,
-                it.price,
-                it.wasPrice,
-                it.priceType,
-                it.kilogramPrice
-            )
+            priceLayout.apply {
+                BaseProductUtils.displayPrice(
+                    fromPricePlaceHolder,
+                    textPrice,
+                    textActualPrice,
+                    it.price,
+                    it.wasPrice,
+                    it.priceType,
+                    it.kilogramPrice
+                )
+            }
             auxiliaryImages.add(activity?.let { it1 -> getImageByWidth(it.externalImageRefV2, it1) }
                 .toString())
             updateAuxiliaryImages(auxiliaryImages)
@@ -719,7 +707,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
         if (mFetchFromJson) {
             val productDetails = Utils.stringToJson(activity, defaultProductResponse)!!.product
-            this.onProductDetailsSuccess(productDetails)
+            this@ProductDetailsFragment.onProductDetailsSuccess(productDetails)
         } else {
             //loadProductDetails.
             productDetailsPresenter?.loadProductDetails(
@@ -732,7 +720,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
     }
 
-    private fun setupBrandView() {
+    private fun ProductDetailsFragmentBinding.setupBrandView() {
 
         productDetails?.let {
             productName?.text = it.productName
@@ -748,31 +736,31 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             }
 
             if (ChanelUtils.isCategoryPresentInConfig(it.brandText)) {
-                brand_view?.visibility = View.VISIBLE
+                brandView.root.visibility = View.VISIBLE
                 backArrow?.visibility = View.GONE
                 openCart?.visibility = View.GONE
                 share?.visibility = View.GONE
                 imgVTOOpen?.visibility = View.GONE
                 if (!TextUtils.isEmpty(bannerLabel)) {
-                    brand_view?.brand_pdp_logo_header?.tv_logo_name?.text = bannerLabel
+                    brandView?.brandPdpLogoHeader?.tvLogoName?.text = bannerLabel
                 } else {
                     if (TextUtils.isEmpty(bannerImage)) {
                         // Apply logo image from config if not present
                         ImageManager.loadImage(
-                            brand_view?.brand_pdp_img_banner,
+                            brandView?.brandPdpImgBanner,
                             ChanelUtils.getBrandCategory(
                                 it.brandText
                             )?.externalImageRefV2 ?: ""
                         )
                     } else {
                         ImageManager.loadImage(
-                            brand_view?.brand_pdp_img_banner,
+                            brandView?.brandPdpImgBanner,
                             bannerImage ?: ""
                         )
                     }
                 }
             } else {
-                brand_view?.visibility = View.GONE
+                brandView.root.visibility = View.GONE
                 backArrow?.visibility = View.VISIBLE
                 openCart?.visibility = View.VISIBLE
                 share?.visibility = View.VISIBLE
@@ -781,7 +769,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
     }
 
-    private fun getUpdatedValidateResponse() {
+    private fun ProductDetailsFragmentBinding.getUpdatedValidateResponse() {
         val placeId = when (KotlinUtils.browsingDeliveryType) {
             Delivery.STANDARD ->
                 WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.placeId
@@ -842,7 +830,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
     }
 
-    private fun callConfirmPlace() {
+    private fun ProductDetailsFragmentBinding.callConfirmPlace() {
         // Confirm the location
         lifecycleScope.launch {
             progressBar?.visibility = View.VISIBLE
@@ -905,7 +893,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         UnSellableItemsLiveData.observe(viewLifecycleOwner) {
             isUnSellableItemsRemoved = it
             if (isUnSellableItemsRemoved == true && (activity as? BottomNavigationActivity)?.mNavController?.currentFrag is ProductDetailsFragment) {
-                callConfirmPlace()
+                binding.callConfirmPlace()
                 UnSellableItemsLiveData.value = false
             }
         }
@@ -953,9 +941,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
         if (getSelectedSku() == null) {
             if (getSelectedGroupKey().isNullOrEmpty())
-                requestSelectColor()
+                binding.requestSelectColor()
             else
-                requestSelectSize()
+                binding.requestSelectSize()
             return
         }
 
@@ -1054,7 +1042,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             updateAddToCartButtonForSelectedSKU()
         }
 
-        setupBrandView()
+        binding.setupBrandView()
 
         if (hasSize)
             setSelectedGroupKey(defaultGroupKey)
@@ -1194,16 +1182,16 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     private fun loadSizeAndColor() {
         if (hasColor)
-            showColors()
+            binding.showColors()
         if (hasSize)
-            showSize()
+            binding.showSize()
 
         if (productDetailsPresenter?.isSizeGuideApplicable(
                 productDetails?.colourSizeVariants,
                 productDetails?.sizeGuideId
             ) == true
         ) {
-            sizeGuide?.apply {
+            binding.sizeColorSelectorLayout.sizeGuide?.apply {
                 underline()
                 visibility = View.VISIBLE
             }
@@ -1211,56 +1199,59 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     }
 
-    private fun showColors() {
+    private fun ProductDetailsFragmentBinding.showColors() {
         val spanCount = Utils.calculateNoOfColumns(activity, 50F)
-        colorSelectorRecycleView.layoutManager = GridLayoutManager(activity, spanCount)
-        if (otherSKUsByGroupKey.size == 1 && !hasSize) {
-            onColorSelection(this.defaultGroupKey, true)
-        }
-        productColorSelectorAdapter = ProductColorSelectorAdapter(
-            otherSKUsByGroupKey,
-            this,
-            spanCount,
-            getSelectedGroupKey()
-        ).apply {
-            colorSelectorRecycleView.adapter = this
-            showSelectedColor()
-        }
-
-        otherSKUsByGroupKey.size.let {
-            if (it > spanCount) {
-                val moreColorCount = otherSKUsByGroupKey.size - spanCount
-                moreColor?.text =
-                    requireContext().getString(R.string.product_details_color_count,
-                        moreColorCount)
-                moreColor?.visibility = View.VISIBLE
+        sizeColorSelectorLayout.apply {
+            colorSelectorRecycleView.layoutManager = GridLayoutManager(activity, spanCount)
+            if (otherSKUsByGroupKey.size == 1 && !hasSize) {
+                onColorSelection(this@ProductDetailsFragment.defaultGroupKey, true)
             }
-        }
+            productColorSelectorAdapter = ProductColorSelectorAdapter(
+                otherSKUsByGroupKey,
+                this@ProductDetailsFragment,
+                spanCount,
+                getSelectedGroupKey()
+            ).apply {
+                colorSelectorRecycleView.adapter = this
+                showSelectedColor()
+            }
 
-        colorSelectorLayout?.visibility = View.VISIBLE
+            otherSKUsByGroupKey.size.let {
+                if (it > spanCount) {
+                    val moreColorCount = otherSKUsByGroupKey.size - spanCount
+                    moreColor?.text =
+                        requireContext().getString(R.string.product_details_color_count,
+                            moreColorCount)
+                    moreColor?.visibility = View.VISIBLE
+                }
+            }
+
+            colorSelectorLayout?.visibility = View.VISIBLE
+        }
     }
 
-    private fun showSize() {
-        productSizeSelectorAdapter = ProductSizeSelectorAdapter(
-
-            requireActivity(),
-            otherSKUsByGroupKey[getSelectedGroupKey()]!!,
-            productDetails?.lowStockIndicator ?: 0,
-            this
-        )
-        sizeSelectorRecycleView?.apply {
-            adapter = productSizeSelectorAdapter
-            layoutManager = GridLayoutManager(activity, 4)
-        }
-
-        otherSKUsByGroupKey[getSelectedGroupKey()]?.let {
-            if (it.size == 1) {
-                productSizeSelectorAdapter?.setSelection(it[0])
-                onSizeSelection(it[0])
+    private fun ProductDetailsFragmentBinding.showSize() {
+        sizeColorSelectorLayout.apply {
+            productSizeSelectorAdapter = ProductSizeSelectorAdapter(
+                requireActivity(),
+                otherSKUsByGroupKey[getSelectedGroupKey()]!!,
+                productDetails?.lowStockIndicator ?: 0,
+                this@ProductDetailsFragment
+            )
+            sizeSelectorRecycleView?.apply {
+                adapter = productSizeSelectorAdapter
+                layoutManager = GridLayoutManager(activity, 4)
             }
-        }
 
-        sizeSelectorLayout?.visibility = View.VISIBLE
+            otherSKUsByGroupKey[getSelectedGroupKey()]?.let {
+                if (it.size == 1) {
+                    productSizeSelectorAdapter?.setSelection(it[0])
+                    onSizeSelection(it[0])
+                }
+            }
+
+            sizeSelectorLayout?.visibility = View.VISIBLE
+        }
     }
 
     private fun groupOtherSKUsByColor(otherSKUsList: ArrayList<OtherSkus>?): HashMap<String, ArrayList<OtherSkus>> {
@@ -1316,134 +1307,149 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     override fun updateDefaultUI(isInventoryCalled: Boolean) {
-        loadSizeAndColor()
-        loadPromotionalImages()
-        updateAuxiliaryImages(getAuxiliaryImagesByGroupKey())
-        if (!TextUtils.isEmpty(this.productDetails?.ingredients))
-            productIngredientsInformation?.visibility = View.VISIBLE
-        if (this.productDetails?.nutritionalInformationDetails != null)
-            nutritionalInformation?.visibility = View.VISIBLE
-        if (!this.productDetails?.dietary.isNullOrEmpty())
-            dietaryInformation?.visibility = View.VISIBLE
-        if (!this.productDetails?.allergens.isNullOrEmpty())
-            allergensInformation?.visibility = View.VISIBLE
+        binding.apply {
+            loadSizeAndColor()
+            loadPromotionalImages()
+            updateAuxiliaryImages(getAuxiliaryImagesByGroupKey())
+            productDetailOptionsAndInformation.apply {
+                if (!TextUtils.isEmpty(this@ProductDetailsFragment.productDetails?.ingredients))
+                    productIngredientsInformation?.visibility = View.VISIBLE
+                if (this@ProductDetailsFragment.productDetails?.nutritionalInformationDetails != null)
+                    nutritionalInformation?.visibility = View.VISIBLE
+                if (!this@ProductDetailsFragment.productDetails?.dietary.isNullOrEmpty())
+                    dietaryInformation?.visibility = View.VISIBLE
+                if (!this@ProductDetailsFragment.productDetails?.allergens.isNullOrEmpty())
+                    allergensInformation?.visibility = View.VISIBLE
+            }
 
 
-        productDetails?.let {
-            BaseProductUtils.displayPrice(
-                fromPricePlaceHolder,
-                textPrice,
-                textActualPrice,
-                it.price,
-                it.wasPrice,
-                it.priceType,
-                it.kilogramPrice
-            )
-            brandName?.apply {
-                if (!it.brandText.isNullOrEmpty()) {
-                    text = it.brandText
-                    visibility = View.VISIBLE
+            productDetails?.let {
+                priceLayout.apply {
+                    BaseProductUtils.displayPrice(
+                        fromPricePlaceHolder,
+                        textPrice,
+                        textActualPrice,
+                        it.price,
+                        it.wasPrice,
+                        it.priceType,
+                        it.kilogramPrice
+                    )
+}
+                brandName?.apply {
+                    if (!it.brandText.isNullOrEmpty()) {
+                        text = it.brandText
+                        visibility = View.VISIBLE
+                    }
+                }
+                if (!it.freeGiftText.isNullOrEmpty()) {
+                    freeGiftWithPurchaseLayout.freeGiftText.text = it.freeGiftText
+                    freeGiftWithPurchaseLayout.root.visibility = View.VISIBLE
+                }
+                if (productDetails?.promotionsList?.isEmpty() == false) {
+                    productDetails?.promotionsList?.forEachIndexed { i, it ->
+                        var editedPromotionalText: String? = it.promotionalText
+                        if (it.promotionalText?.contains(":") == true) {
+                            val beforeColon: String? = it.promotionalText?.substringBefore(":")
+                            val afterColon: String? = it.promotionalText?.substringAfter(":")
+                            editedPromotionalText = "<b>" + beforeColon + ":" + "</b>" + afterColon
+                        }
+                        when (i) {
+                            0 -> {
+                                onlinePromotionalTextView1?.visibility = View.VISIBLE
+                                onlinePromotionalTextView1?.text =
+                                    Html.fromHtml(editedPromotionalText)
+                            }
+                            1 -> {
+                                onlinePromotionalTextView2?.visibility = View.VISIBLE
+                                onlinePromotionalTextView2?.text =
+                                    Html.fromHtml(editedPromotionalText)
+                            }
+                            2 -> {
+                                onlinePromotionalTextView3?.visibility = View.VISIBLE
+                                onlinePromotionalTextView3?.text =
+                                    Html.fromHtml(editedPromotionalText)
+                            }
+                        }
+                        val arguments = HashMap<String, String>()
+                        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_ID] =
+                            productDetails?.productId
+                                ?: ""
+                        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_NAME] =
+                            productDetails?.productName
+                                ?: ""
+                        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_PRICE] =
+                            productDetails?.price
+                                ?: ""
+                        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.CREATIVE_NAME] =
+                            FirebaseManagerAnalyticsProperties.PropertyValues.CREATIVE_NAME_VALUE
+                        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.PROMOTION_NAME] =
+                            Html.fromHtml(editedPromotionalText).toString()
+                        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.INDEX] =
+                            FirebaseManagerAnalyticsProperties.PropertyValues.INDEX_VALUE
+                        Utils.triggerFireBaseEvents(
+                            FirebaseManagerAnalyticsProperties.SELECT_PROMOTION,
+                            arguments,
+                            activity
+                        )
+                    }
+                } else {
+                    onlinePromotionalTextView1?.text = ""
+                    onlinePromotionalTextView2?.text = ""
+                    onlinePromotionalTextView3?.text = ""
+                    onlinePromotionalTextView1?.visibility = View.GONE
+                    onlinePromotionalTextView2?.visibility = View.GONE
+                    onlinePromotionalTextView3?.visibility = View.GONE
+                }
+                if (true == it.isRnREnabled && RatingAndReviewUtil.isRatingAndReviewConfigavailbel()) {
+                    ratingLayout.apply {
+                        ratingBarTop?.rating = it.averageRating
+                        tvTotalReviews?.text = resources.getQuantityString(
+                            R.plurals.no_review,
+                            it.reviewCount,
+                            it.reviewCount
+                        )
+                        ratingBarTop?.visibility = View.VISIBLE
+                        tvTotalReviews?.visibility = View.VISIBLE
+                        prodId = it.productId
+                        tvTotalReviews?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
+                    }
+                } else {
+                    hideRatingAndReview()
                 }
             }
-            if (!it.freeGiftText.isNullOrEmpty()) {
-                freeGiftText?.text = it.freeGiftText
-                freeGiftWithPurchaseLayout?.visibility = View.VISIBLE
-            }
-            if (productDetails?.promotionsList?.isEmpty() == false) {
-                productDetails?.promotionsList?.forEachIndexed { i, it ->
-                    var editedPromotionalText: String? = it.promotionalText
-                    if (it.promotionalText?.contains(":") == true) {
-                        val beforeColon: String? = it.promotionalText?.substringBefore(":")
-                        val afterColon: String? = it.promotionalText?.substringAfter(":")
-                        editedPromotionalText = "<b>" + beforeColon + ":" + "</b>" + afterColon
-                    }
-                    when (i) {
-                        0 -> {
-                            onlinePromotionalTextView1?.visibility = View.VISIBLE
-                            onlinePromotionalTextView1?.text =
-                                Html.fromHtml(editedPromotionalText)
-                        }
-                        1 -> {
-                            onlinePromotionalTextView2?.visibility = View.VISIBLE
-                            onlinePromotionalTextView2?.text =
-                                Html.fromHtml(editedPromotionalText)
-                        }
-                        2 -> {
-                            onlinePromotionalTextView3?.visibility = View.VISIBLE
-                            onlinePromotionalTextView3?.text =
-                                Html.fromHtml(editedPromotionalText)
-                        }
-                    }
-                    val arguments = HashMap<String, String>()
-                    arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_ID] =
-                        productDetails?.productId
-                            ?: ""
-                    arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_NAME] =
-                        productDetails?.productName
-                            ?: ""
-                    arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_PRICE] =
-                        productDetails?.price
-                            ?: ""
-                    arguments[FirebaseManagerAnalyticsProperties.PropertyNames.CREATIVE_NAME] =
-                        FirebaseManagerAnalyticsProperties.PropertyValues.CREATIVE_NAME_VALUE
-                    arguments[FirebaseManagerAnalyticsProperties.PropertyNames.PROMOTION_NAME] =
-                        Html.fromHtml(editedPromotionalText).toString()
-                    arguments[FirebaseManagerAnalyticsProperties.PropertyNames.INDEX] =
-                        FirebaseManagerAnalyticsProperties.PropertyValues.INDEX_VALUE
-                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SELECT_PROMOTION,
-                        arguments,
-                        activity)
-                }
-            } else {
-                onlinePromotionalTextView1?.text = ""
-                onlinePromotionalTextView2?.text = ""
-                onlinePromotionalTextView3?.text = ""
-                onlinePromotionalTextView1?.visibility = View.GONE
-                onlinePromotionalTextView2?.visibility = View.GONE
-                onlinePromotionalTextView3?.visibility = View.GONE
-            }
-            if (true == it.isRnREnabled && RatingAndReviewUtil.isRatingAndReviewConfigavailbel()) {
-                ratingBarTop?.rating = it.averageRating
-                tvTotalReviews?.text = resources.getQuantityString(
-                    R.plurals.no_review,
-                    it.reviewCount,
-                    it.reviewCount
-                )
-                ratingBarTop?.visibility = View.VISIBLE
-                tvTotalReviews?.visibility = View.VISIBLE
-                prodId = it.productId
-                tvTotalReviews?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
-            } else {
-                hideRatingAndReview()
+
+            if (isAllProductsOutOfStock() && isInventoryCalled) {
+                showProductOutOfStock()
+                return
             }
         }
-
-        if (isAllProductsOutOfStock() && isInventoryCalled) {
-            showProductOutOfStock()
-            return
-        }
-
     }
 
-            private fun hideRatingAndReview() {
-                headerCustomerReview?.visibility = View.GONE
-                reviewDetailsInformation?.visibility = View.GONE
-                customerReview?.visibility = View.GONE
-                rlViewMoreReview?.visibility = View.GONE
-            }
+    private fun ProductDetailsFragmentBinding.hideRatingAndReview() {
+        productDetailOptionsAndInformation.apply {
+            headerCustomerReview?.visibility = View.GONE
+            reviewDetailsInformation?.visibility = View.GONE
+            customerReview.root.visibility = View.GONE
+            rlViewMoreReview?.visibility = View.GONE
+        }
+    }
 
-            private fun showRatingAndReview() {
-                headerCustomerReview?.visibility = View.VISIBLE
-                reviewDetailsInformation?.visibility = View.VISIBLE
-                customerReview?.visibility = View.VISIBLE
-                rlViewMoreReview?.visibility = View.VISIBLE
-            }
+    private fun ProductDetailsFragmentBinding.showRatingAndReview() {
+        productDetailOptionsAndInformation.apply {
+            headerCustomerReview?.visibility = View.VISIBLE
+            reviewDetailsInformation?.visibility = View.VISIBLE
+            customerReview.root.visibility = View.VISIBLE
+            rlViewMoreReview?.visibility = View.VISIBLE
+        }
+    }
 
-            private fun setReviewUI(ratingNReviewResponse: RatingReviewResponse) {
-                ratingNReviewResponse.apply {
-                    reviewStatistics.apply {
-                        ratingBar?.rating = averageRating
-                        ratingBarTop?.rating = averageRating
+    private fun ProductDetailsFragmentBinding.setReviewUI(ratingNReviewResponse: RatingReviewResponse) {
+        ratingNReviewResponse.apply {
+            reviewStatistics.apply {
+                productDetailOptionsAndInformation.customerReview.apply {
+                    ratingBar?.rating = averageRating
+                    ratingLayout.ratingBarTop?.rating = averageRating
+                    productDetailOptionsAndInformation.apply {
                         tvCustomerReviewCount?.text = resources.getQuantityString(
                             R.plurals.customer_review,
                             reviewCount,
@@ -1463,159 +1469,173 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                         else {
                             btViewMoreReview?.visibility = View.GONE
                         }
-                        tvTotalReviews?.text =
-                            resources.getQuantityString(
-                                R.plurals.no_review,
-                                reviewCount,
-                                reviewCount
-                            )
                     }
-                    tvReport?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
-                    tvSkinProfile?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
-                    tvRatingDetails?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
-                    if (reviews?.isNotEmpty()) {
-                        reviews[0].apply {
-                            tvName?.text = userNickname
-                            if (isVerifiedBuyer)
-                                tvVerifiedBuyer?.visibility = View.VISIBLE
-                            else
-                                tvVerifiedBuyer?.visibility = View.GONE
-                            if (isStaffMember)
-                                tvVerifiedStaffMember?.visibility = View.VISIBLE
-                            else
-                                tvVerifiedStaffMember?.visibility = View.GONE
-                            ratingBar?.rating = rating
-                            tvReviewHeading?.text = title
-                            tvCustomerReview?.text = reviewText
-                            tvReviewPostedOn?.text = syndicatedSource
-                            tvDate?.text = submissionTime
-                            tvLikes?.text = totalPositiveFeedbackCount.toString()
-                            setReviewAdditionalFields(additionalFields)
-                            setSecondaryRatingsUI(secondaryRatings)
-                            setReviewThumbnailUI(photos.thumbnails)
-                            if (contextDataValue.isEmpty() && tagDimensions.isEmpty()) {
-                                tvSkinProfile.visibility = View.GONE
-                            }
-                            if (RatingAndReviewUtil.likedReviews.contains(id.toString())) {
-                                iv_like.setImageResource(R.drawable.iv_like_selected)
-                            }
+                    ratingLayout.tvTotalReviews?.text =
+                        resources.getQuantityString(
+                            R.plurals.no_review,
+                            reviewCount,
+                            reviewCount
+                        )
+                }
+            }
+            productDetailOptionsAndInformation.customerReview.apply {
+                reviewHelpfulReport.tvReport?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
+                tvSkinProfile?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
+                productDetailOptionsAndInformation.tvRatingDetails?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
+                if (reviews?.isNotEmpty() == true) {
+                    reviews[0].apply {
+                        tvName?.text = userNickname
+                        if (isVerifiedBuyer)
+                            tvVerifiedBuyer?.visibility = View.VISIBLE
+                        else
+                            tvVerifiedBuyer?.visibility = View.GONE
+                        if (isStaffMember)
+                            tvVerifiedStaffMember?.visibility = View.VISIBLE
+                        else
+                            tvVerifiedStaffMember?.visibility = View.GONE
+                        ratingBar?.rating = rating
+                        tvReviewHeading?.text = title
+                        tvCustomerReview?.text = reviewText
+                        tvReviewPostedOn?.text = syndicatedSource
+                        tvDate?.text = submissionTime
+                        productDetailOptionsAndInformation.customerReview.reviewHelpfulReport.tvLikes?.text =
+                            totalPositiveFeedbackCount.toString()
+                        setReviewAdditionalFields(additionalFields)
+                        setSecondaryRatingsUI(secondaryRatings)
+                        setReviewThumbnailUI(photos.thumbnails)
+                        if (contextDataValue.isEmpty() && tagDimensions.isEmpty()) {
+                            tvSkinProfile.visibility = View.GONE
+                        }
+                        if (RatingAndReviewUtil.likedReviews.contains(id.toString())) {
+                            reviewHelpfulReport.ivLike.setImageResource(R.drawable.iv_like_selected)
+                        }
 
-                            if (RatingAndReviewUtil.reportedReviews.contains(id.toString())) {
+                        if (RatingAndReviewUtil.reportedReviews.contains(id.toString())) {
+                            productDetailOptionsAndInformation.customerReview.reviewHelpfulReport.apply {
                                 tvReport.setTextColor(Color.RED)
                                 tvReport.setText(resources.getString(R.string.reported))
                                 tvReport?.setTypeface(tvReport.typeface, Typeface.BOLD)
                                 tvReport.paintFlags = Paint.UNDERLINE_TEXT_FLAG
                             }
                         }
-                    } else {
-                        customerReview.visibility = View.GONE
+                    }
+                } else {
+                    productDetailOptionsAndInformation.apply {
+                        customerReview.root.visibility = View.GONE
                         tvRatingDetails.visibility = View.GONE
                     }
                 }
-
-                linear_layout_customer_review?.setOnClickListener {
-                    sendReviewDataToReviewDetailScreen(ratingNReviewResponse)
-                }
             }
+        }
 
-            private fun sendReviewDataToReviewDetailScreen(ratingNReviewResponse: RatingReviewResponse) {
-                ScreenManager.presentReviewDetail(requireActivity(), ratingNReviewResponse)
+        productDetailOptionsAndInformation.customerReview.linearLayoutCustomerReview?.setOnClickListener {
+            sendReviewDataToReviewDetailScreen(ratingNReviewResponse)
+        }
+    }
+
+    private fun sendReviewDataToReviewDetailScreen(ratingNReviewResponse: RatingReviewResponse) {
+        ScreenManager.presentReviewDetail(requireActivity(), ratingNReviewResponse)
+    }
+
+    private fun setReviewAdditionalFields(additionalFields: List<AdditionalFields>) {
+        for (additionalField in additionalFields) {
+            val rootView = LinearLayout(context)
+            rootView.layoutParams =
+                LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+                )
+            rootView.orientation = LinearLayout.HORIZONTAL
+
+            val tvAdditionalFieldLabel = TextView(context)
+            tvAdditionalFieldLabel.alpha = 0.5F
+            val tvAdditionalFieldValue = TextView(context)
+            tvAdditionalFieldValue.alpha = 0.5F
+            val ivCircle = ImageView(context)
+            val tvParam: LinearLayout.LayoutParams =
+                LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+                )
+            tvParam.setMargins(25, 0, 0, 8)
+            tvAdditionalFieldValue.layoutParams = tvParam
+            val ivParam: LinearLayout.LayoutParams =
+                LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+                )
+            ivParam.setMargins(25, 15, 0, 0)
+            ivCircle.layoutParams = ivParam
+            if (Build.VERSION.SDK_INT < 23) {
+                tvAdditionalFieldLabel.setTextAppearance(
+                    getApplicationContext(),
+                    R.style.myriad_pro_regular_black_15_text_style
+                );
+                tvAdditionalFieldValue.setTextAppearance(
+                    getApplicationContext(),
+                    R.style.myriad_pro_semi_bold_black_15_text_style
+                );
+            } else {
+                tvAdditionalFieldLabel.setTextAppearance(R.style.myriad_pro_regular_black_15_text_style);
+                tvAdditionalFieldValue.setTextAppearance(R.style.myriad_pro_semi_bold_black_15_text_style);
             }
+            tvAdditionalFieldLabel.text = additionalField.label
+            ivCircle.setImageResource(R.drawable.ic_circle)
+            tvAdditionalFieldValue.text = additionalField.valueLabel
 
-            private fun setReviewAdditionalFields(additionalFields: List<AdditionalFields>) {
-                for (additionalField in additionalFields) {
-                    val rootView = LinearLayout(context)
-                    rootView.layoutParams =
-                        LinearLayout.LayoutParams(
-                            ViewGroup.LayoutParams.MATCH_PARENT,
-                            ViewGroup.LayoutParams.WRAP_CONTENT
-                        )
-                    rootView.orientation = LinearLayout.HORIZONTAL
+            rootView.addView(tvAdditionalFieldLabel)
+            rootView.addView(ivCircle)
+            rootView.addView(tvAdditionalFieldValue)
+            binding.productDetailOptionsAndInformation.customerReview.llAdditionalFields?.addView(rootView)
+        }
+    }
 
-                    val tvAdditionalFieldLabel = TextView(context)
-                    tvAdditionalFieldLabel.alpha = 0.5F
-                    val tvAdditionalFieldValue = TextView(context)
-                    tvAdditionalFieldValue.alpha = 0.5F
-                    val ivCircle = ImageView(context)
-                    val tvParam: LinearLayout.LayoutParams =
-                        LinearLayout.LayoutParams(
-                            ViewGroup.LayoutParams.WRAP_CONTENT,
-                            ViewGroup.LayoutParams.WRAP_CONTENT
-                        )
-                    tvParam.setMargins(25, 0, 0, 8)
-                    tvAdditionalFieldValue.layoutParams = tvParam
-                    val ivParam: LinearLayout.LayoutParams =
-                        LinearLayout.LayoutParams(
-                            ViewGroup.LayoutParams.WRAP_CONTENT,
-                            ViewGroup.LayoutParams.WRAP_CONTENT
-                        )
-                    ivParam.setMargins(25, 15, 0, 0)
-                    ivCircle.layoutParams = ivParam
-                    if (Build.VERSION.SDK_INT < 23) {
-                        tvAdditionalFieldLabel.setTextAppearance(
-                            getApplicationContext(),
-                            R.style.myriad_pro_regular_black_15_text_style
-                        );
-                        tvAdditionalFieldValue.setTextAppearance(
-                            getApplicationContext(),
-                            R.style.myriad_pro_semi_bold_black_15_text_style
-                        );
-                    } else {
-                        tvAdditionalFieldLabel.setTextAppearance(R.style.myriad_pro_regular_black_15_text_style);
-                        tvAdditionalFieldValue.setTextAppearance(R.style.myriad_pro_semi_bold_black_15_text_style);
-                    }
-                    tvAdditionalFieldLabel.text = additionalField.label
-                    ivCircle.setImageResource(R.drawable.ic_circle)
-                    tvAdditionalFieldValue.text = additionalField.valueLabel
+    private fun ProductDetailsFragmentBinding.setSecondaryRatingsUI(secondaryRatings: List<SecondaryRatings>) {
+        productDetailOptionsAndInformation.customerReview.apply {
+            rvSecondaryRatings.layoutManager = GridLayoutManager(requireContext(), 2)
+            secondaryRatingAdapter = SecondaryRatingAdapter()
+            rvSecondaryRatings.adapter = secondaryRatingAdapter
+            secondaryRatingAdapter.setDataList(secondaryRatings)
+        }
+    }
 
-                    rootView.addView(tvAdditionalFieldLabel)
-                    rootView.addView(ivCircle)
-                    rootView.addView(tvAdditionalFieldValue)
-                    llAdditionalFields?.addView(rootView)
-                }
-            }
-
-            private fun setSecondaryRatingsUI(secondaryRatings: List<SecondaryRatings>) {
-                rvSecondaryRatings.layoutManager = GridLayoutManager(requireContext(), 2)
-                secondaryRatingAdapter = SecondaryRatingAdapter()
-                rvSecondaryRatings.adapter = secondaryRatingAdapter
-                secondaryRatingAdapter.setDataList(secondaryRatings)
-            }
-
-            private fun setReviewThumbnailUI(thumbnails: List<Thumbnails>) {
-                rvThumbnail?.layoutManager = GridLayoutManager(requireContext(), 3)
-                reviewThumbnailAdapter = ReviewThumbnailAdapter(requireContext(), this)
-                rvThumbnail?.adapter = reviewThumbnailAdapter
-                thumbnailFullList = thumbnails
-                if (thumbnails.size > 2) {
-                    reviewThumbnailAdapter.setDataList(thumbnailFullList.subList(0, 2))
-                } else
-                    reviewThumbnailAdapter.setDataList(thumbnailFullList)
-            }
-
-            override fun thumbnailClicked() {
+    private fun ProductDetailsFragmentBinding.setReviewThumbnailUI(thumbnails: List<Thumbnails>) {
+        productDetailOptionsAndInformation.customerReview.apply {
+            rvThumbnail?.layoutManager = GridLayoutManager(requireContext(), 3)
+            reviewThumbnailAdapter = ReviewThumbnailAdapter(requireContext(), this@ProductDetailsFragment)
+            rvThumbnail?.adapter = reviewThumbnailAdapter
+            thumbnailFullList = thumbnails
+            if (thumbnails.size > 2) {
+                reviewThumbnailAdapter.setDataList(thumbnailFullList.subList(0, 2))
+            } else {
                 reviewThumbnailAdapter.setDataList(thumbnailFullList)
-                reviewThumbnailAdapter.notifyDataSetChanged()
             }
+        }
+    }
 
-            private fun setBrandText(it: ProductDetails) {
-                brandName.apply {
-                    if (!it.brandText.isNullOrEmpty()) {
-                        text = it.brandText
-                        visibility = View.VISIBLE
-                    }
+    override fun thumbnailClicked() {
+        reviewThumbnailAdapter.setDataList(thumbnailFullList)
+        reviewThumbnailAdapter.notifyDataSetChanged()
+    }
+
+    private fun ProductDetailsFragmentBinding.setBrandText(it: ProductDetails) {
+        brandName.apply {
+            if (!it.brandText.isNullOrEmpty()) {
+                text = it.brandText
+                visibility = View.VISIBLE
+            }
+        }
+    }
+
+    private fun getDefaultSku(otherSKUsList: HashMap<String, ArrayList<OtherSkus>>): OtherSkus? {
+        otherSKUsList?.keys?.forEach { key ->
+            otherSKUsList[key]?.forEach { otherSku ->
+                if (otherSku.sku.equals(this.productDetails?.sku, ignoreCase = true)) {
+                    defaultGroupKey = key
+                    return otherSku
                 }
             }
-
-            private fun getDefaultSku(otherSKUsList: HashMap<String, ArrayList<OtherSkus>>): OtherSkus? {
-                otherSKUsList?.keys?.forEach { key ->
-                    otherSKUsList[key]?.forEach { otherSku ->
-                        if (otherSku.sku.equals(this.productDetails?.sku, ignoreCase = true)) {
-                            defaultGroupKey = key
-                            return otherSku
-                        }
-                    }
-                }
+        }
 
         return null
 
@@ -1623,25 +1643,25 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     override fun updateAuxiliaryImages(imagesList: List<String>) {
         ProductViewPagerAdapter(activity, imagesList, this@ProductDetailsFragment).apply {
-            productImagesViewPager?.let { pager ->
+            binding.productImagesViewPager?.let { pager ->
                 pager.adapter = this
-                productImagesViewPagerIndicator.setViewPager(pager)
+                binding.productImagesViewPagerIndicator.setViewPager(pager)
             }
         }
     }
 
     override fun onSizeSelection(selectedSku: OtherSkus) {
         setSelectedSku(selectedSku)
-        showSelectedSize(selectedSku)
-        updateUIForSelectedSKU(getSelectedSku())
+        binding.showSelectedSize(selectedSku)
+        binding.updateUIForSelectedSKU(getSelectedSku())
     }
 
     override fun onColorSelection(selectedColor: String?, isFeature: Boolean) {
         setSelectedGroupKey(selectedColor)
-        showSelectedColor()
+        binding.showSelectedColor()
         if (hasSize) updateSizesOnColorSelection() else {
             setSelectedSku(otherSKUsByGroupKey[getSelectedGroupKey()]?.get(0))
-            updateUIForSelectedSKU(getSelectedSku())
+            binding.updateUIForSelectedSKU(getSelectedSku())
         }
         updateAuxiliaryImages(getAuxiliaryImagesByGroupKey())
 
@@ -1654,10 +1674,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         if (productDetails?.lowStockIndicator ?: 0 > getSelectedSku()?.quantity ?: 0
             && !hasSize && getSelectedSku()?.quantity!! > 0 && AppConfigSingleton.lowStock?.isEnabled == true
         ) {
-            showLowStockForSelectedColor()
-            colorPlaceholder?.text = ""
+            binding.showLowStockForSelectedColor()
+            binding.sizeColorSelectorLayout.colorPlaceholder?.text = ""
         } else {
-            hideLowStockFromSelectedColor()
+            binding.hideLowStockFromSelectedColor()
 
         }
     }
@@ -1670,7 +1690,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         liveCameraViewModel?.selectedSkuResult?.observe(
             viewLifecycleOwner,
             Observer { result ->
-                applyColorVtoMappedResult(result)
+                binding.applyColorVtoMappedResult(result)
             })
     }
 
@@ -1679,43 +1699,49 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             productDetails?.productId,
             getSelectedSku()?.sku
         )
-        getApplyResultSelectColor()
+        binding.getApplyResultSelectColor()
 
     }
 
-    private fun getApplyResultSelectColor() {
+    private fun ProductDetailsFragmentBinding.getApplyResultSelectColor() {
 
         vtoApplyEffectOnImageViewModel?.applyEffectImage?.observe(
             viewLifecycleOwner,
             Observer { result ->
                 when {
                     result.equals(VTO_COLOR_NOT_MATCH) -> {
-                        colourUnavailableError?.visibility = View.VISIBLE
-                        imgVTORefresh?.visibility = View.GONE
-                        imgDownloadVTO?.visibility = View.GONE
-                        if (isPickedImageFromLiveCamera) {
-                            imgVTOEffect?.setImageBitmap(takenOriginalPicture)
-                        } else {
-                            setBitmapFromUri(selectedImageUri)
-                        }
+                        sizeColorSelectorLayout.colourUnavailableError?.visibility = View.VISIBLE
+                        vtoLayout.apply {
+                            imgVTORefresh?.visibility = View.GONE
+                            imgDownloadVTO?.visibility = View.GONE
+                            if (isPickedImageFromLiveCamera) {
+                                imgVTOEffect?.setImageBitmap(takenOriginalPicture)
+                            } else {
+                                setBitmapFromUri(selectedImageUri)
+                            }
+                            }
                     }
                     null != result -> {
-                        colourUnavailableError?.visibility = View.GONE
-                        imgVTORefresh?.visibility = View.VISIBLE
-                        imgDownloadVTO?.visibility = View.VISIBLE
-                        if (!result.equals("")) {
-                            imgVTOEffect?.setImageBitmap(result as Bitmap?)
-                            saveVtoApplyImage = result as Bitmap?
+                        sizeColorSelectorLayout.colourUnavailableError?.visibility = View.GONE
+                        vtoLayout.apply {
+                            imgVTORefresh?.visibility = View.VISIBLE
+                            imgDownloadVTO?.visibility = View.VISIBLE
+                            if (!result.equals("")) {
+                                imgVTOEffect?.setImageBitmap(result as Bitmap?)
+                                saveVtoApplyImage = result as Bitmap?
+                            }
                         }
                     }
                     else -> {
-                        colourUnavailableError?.visibility = View.GONE
-                        imgVTORefresh?.visibility = View.GONE
-                        imgDownloadVTO?.visibility = View.GONE
-                        if (isPickedImageFromLiveCamera) {
-                            imgVTOEffect?.setImageBitmap(takenOriginalPicture)
-                        } else {
-                            setBitmapFromUri(uri)
+                        sizeColorSelectorLayout.colourUnavailableError?.visibility = View.GONE
+                        vtoLayout.apply {
+                            imgVTORefresh?.visibility = View.GONE
+                            imgDownloadVTO?.visibility = View.GONE
+                            if (isPickedImageFromLiveCamera) {
+                                imgVTOEffect?.setImageBitmap(takenOriginalPicture)
+                            } else {
+                                setBitmapFromUri(uri)
+                            }
                         }
                     }
                 }
@@ -1758,17 +1784,17 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     )
                     if (getSelectedSku() == null) defaultSku =
                         otherSKUsByGroupKey[getSelectedGroupKey()]?.get(0)
-                    if (getSelectedSku() == null) updateUIForSelectedSKU(defaultSku) else updateUIForSelectedSKU(
+                    if (getSelectedSku() == null) binding.updateUIForSelectedSKU(defaultSku) else binding.updateUIForSelectedSKU(
                         getSelectedSku()
                     )
                 }
                 else -> {
                     setSelectedSku(otherSKUsByGroupKey[getSelectedGroupKey()]?.get(index))
                     productSizeSelectorAdapter?.setSelection(getSelectedSku())
-                    updateUIForSelectedSKU(getSelectedSku())
+                    binding.updateUIForSelectedSKU(getSelectedSku())
                 }
             }
-            showSelectedSize(selectedSku)
+            binding.showSelectedSize(selectedSku)
 
         }
 
@@ -1777,22 +1803,22 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private fun updateAddToCartButtonForSelectedSKU() {
 
         if (!SessionUtilities.getInstance().isUserAuthenticated || Utils.getPreferredDeliveryLocation() == null) {
-            showAddToCart()
+            binding.showAddToCart()
             return
         }
 
         when (getSelectedSku()) {
-            null -> showAddToCart()
+            null -> binding.showAddToCart()
             else -> {
                 getSelectedSku()?.quantity?.let {
                     when (it) {
-                        0, -1 -> showFindInStore()
+                        0, -1 -> binding.showFindInStore()
                         else -> {
                             getSelectedQuantity()?.apply {
                                 if (it < this)
                                     onQuantitySelection(1)
                             }
-                            showAddToCart()
+                            binding.showAddToCart()
                         }
                     }
                 }
@@ -1801,42 +1827,48 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     }
 
-    private fun showFindInStore() {
+    private fun ProductDetailsFragmentBinding.showFindInStore() {
         productDetails?.isnAvailable?.toBoolean()?.apply {
             if (!this) {
-                toCartAndFindInStoreLayout?.visibility = View.GONE
-                checkInStoreAvailability?.visibility = View.GONE
+                toCartAndFindInStoreLayout.root.visibility = View.GONE
+                productDetailOptionsAndInformation.checkInStoreAvailability?.visibility = View.GONE
                 return
             }
         }
 
-        toCartAndFindInStoreLayout?.visibility = View.VISIBLE
-        groupAddToCartAction?.visibility = View.GONE
-        findInStoreAction?.visibility = View.VISIBLE
+        toCartAndFindInStoreLayout.root.visibility = View.VISIBLE
+        toCartAndFindInStoreLayout.apply {
+            groupAddToCartAction?.visibility = View.GONE
+            findInStoreAction?.visibility = View.VISIBLE
+        }
         if (hasColor) hideLowStockFromSelectedColor()
         if (hasSize) hideLowStockForSize()
     }
 
-    private fun showAddToCart() {
-        toCartAndFindInStoreLayout?.visibility = View.VISIBLE
-        groupAddToCartAction?.visibility = View.VISIBLE
-        findInStoreAction?.visibility = View.GONE
+    private fun ProductDetailsFragmentBinding.showAddToCart() {
+        toCartAndFindInStoreLayout.root.visibility = View.VISIBLE
+        toCartAndFindInStoreLayout.apply {
+            groupAddToCartAction?.visibility = View.VISIBLE
+            findInStoreAction?.visibility = View.GONE
+        }
         if (isAllProductsOutOfStock() && SessionUtilities.getInstance().isUserAuthenticated && Utils.getPreferredDeliveryLocation() != null) {
             showFindInStore()
         }
     }
 
-    private fun updateUIForSelectedSKU(otherSku: OtherSkus?) {
+    private fun ProductDetailsFragmentBinding.updateUIForSelectedSKU(otherSku: OtherSkus?) {
         otherSku?.let {
-            BaseProductUtils.displayPrice(
-                fromPricePlaceHolder,
-                textPrice,
-                textActualPrice,
-                it.price,
-                it.wasPrice,
-                "",
-                it.kilogramPrice
-            )
+            priceLayout.apply {
+                BaseProductUtils.displayPrice(
+                    fromPricePlaceHolder,
+                    textPrice,
+                    textActualPrice,
+                    it.price,
+                    it.wasPrice,
+                    "",
+                    it.kilogramPrice
+                )
+            }
         }
         updateAddToCartButtonForSelectedSKU()
     }
@@ -1865,7 +1897,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             )
         }
         setSelectedQuantity(quantity)
-        quantityText?.text = quantity.toString()
+        binding.toCartAndFindInStoreLayout.quantityText?.text = quantity.toString()
     }
 
     override fun setSelectedQuantity(selectedQuantity: Int?) {
@@ -1939,7 +1971,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     override fun responseFailureHandler(response: Response) {
         if (response.code.equals(HTTP_EXPECTATION_FAILED_417)) {
-            getUpdatedValidateResponse()
+            binding.getUpdatedValidateResponse()
             return
         }
         activity?.apply {
@@ -2067,9 +2099,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
         if (getSelectedSku() == null) {
             if (getSelectedGroupKey().isNullOrEmpty())
-                requestSelectColor()
+                binding.requestSelectColor()
             else
-                requestSelectSize()
+                binding.requestSelectSize()
             return
         }
 
@@ -2092,7 +2124,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 item.let {
                     listOfItems.add(it)
                 }
-                scrollView?.fullScroll(View.FOCUS_UP)
+                binding.scrollView?.fullScroll(View.FOCUS_UP)
                 NavigateToShoppingList.openShoppingList(activity, listOfItems, "", false)
             }
 
@@ -2285,9 +2317,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
         if (getSelectedSku() == null) {
             if (getSelectedGroupKey().isNullOrEmpty())
-                requestSelectColor()
+                binding.requestSelectColor()
             else
-                requestSelectSize()
+                binding.requestSelectSize()
             return
         }
 
@@ -2423,13 +2455,13 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     }
 
-    private fun requestSelectSize() {
+    private fun ProductDetailsFragmentBinding.requestSelectSize() {
         activity?.apply {
             resources.displayMetrics?.let {
-                val mid: Int = it.heightPixels / 2 - selectedSizePlaceholder.height
+                val mid: Int = it.heightPixels / 2 - sizeColorSelectorLayout.selectedSizePlaceholder.height
                 ObjectAnimator.ofInt(scrollView, "scrollY", mid).setDuration(500).start()
             }
-            selectedSizePlaceholder?.let {
+            sizeColorSelectorLayout.selectedSizePlaceholder?.let {
                 it.setTextColor(Color.RED)
                 it.postDelayed({
                     it.setTextColor(ContextCompat.getColor(this, R.color.black))
@@ -2438,13 +2470,13 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
     }
 
-    private fun requestSelectColor() {
+    private fun ProductDetailsFragmentBinding.requestSelectColor() {
         activity?.apply {
             resources.displayMetrics?.let {
-                val mid: Int = it.heightPixels / 2 - colorPlaceholder.height
+                val mid: Int = it.heightPixels / 2 - sizeColorSelectorLayout.colorPlaceholder.height
                 ObjectAnimator.ofInt(scrollView, "scrollY", mid).setDuration(500).start()
             }
-            colorPlaceholder?.let {
+            sizeColorSelectorLayout.colorPlaceholder?.let {
                 it.setTextColor(Color.RED)
                 it.postDelayed({
                     it.setTextColor(ContextCompat.getColor(this, R.color.black))
@@ -2499,15 +2531,15 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     override fun showProductDetailsLoading() {
         activity?.apply {
             showProgressBar()
-            viewsToHideOnProductLoading?.visibility = View.GONE
-            toCartAndFindInStoreLayout?.visibility = View.GONE
+            binding.viewsToHideOnProductLoading.visibility = View.GONE
+            binding.toCartAndFindInStoreLayout.root.visibility = View.GONE
         }
     }
 
     override fun hideProductDetailsLoading() {
         activity?.apply {
             hideProgressBar()
-            viewsToHideOnProductLoading?.visibility = View.VISIBLE
+            binding.viewsToHideOnProductLoading?.visibility = View.VISIBLE
             updateAddToCartButtonForSelectedSKU()
         }
 
@@ -2531,7 +2563,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     WMaterialShowcaseView.Feature.VTO_TRY_IT,
                     true
                 )
-                    .setTarget(imgVTOOpen)
+                    .setTarget(binding.imgVTOOpen)
                     .setTitle(R.string.try_on_intro_txt)
                     .setDescription(R.string.try_on_intro_desc)
                     .setActionText(R.string.got_it)
@@ -2556,21 +2588,21 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     override fun onPromptDismiss(feature: WMaterialShowcaseView.Feature) {
-        imgVTOOpen?.setImageResource(R.drawable.ic_camera_vto)
+        binding.imgVTOOpen?.setImageResource(R.drawable.ic_camera_vto)
     }
 
 
     override fun showProgressBar() {
         activity?.apply {
             isApiCallInProgress = true
-            progressBar?.visibility = View.VISIBLE
+            binding.progressBar?.visibility = View.VISIBLE
         }
     }
 
     override fun hideProgressBar() {
         activity?.apply {
             isApiCallInProgress = false
-            progressBar?.visibility = View.GONE
+            binding.progressBar?.visibility = View.GONE
         }
     }
 
@@ -2586,29 +2618,29 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     @SuppressLint("SetTextI18n")
-    private fun showSelectedColor() {
+    private fun ProductDetailsFragmentBinding.showSelectedColor() {
         activity?.apply {
             getSelectedGroupKey()?.let {
-                colorPlaceholder?.setTextColor(ContextCompat.getColor(this, R.color.black))
-                selectedColor?.text = "  -  $it"
+                sizeColorSelectorLayout.colorPlaceholder?.setTextColor(ContextCompat.getColor(this, R.color.black))
+                sizeColorSelectorLayout.selectedColor?.text = "  -  $it"
             }
         }
     }
 
     @SuppressLint("SetTextI18n")
-    private fun showSelectedSize(selectedSku: OtherSkus?) {
+    private fun ProductDetailsFragmentBinding.showSelectedSize(selectedSku: OtherSkus?) {
         if (productDetails?.lowStockIndicator ?: 0 > selectedSku?.quantity ?: 0
             && selectedSku?.quantity!! > 0 && AppConfigSingleton.lowStock?.isEnabled == true
         ) {
             showLowStockForSelectedSize()
-            selectedSizePlaceholder?.text = ""
+            sizeColorSelectorLayout.selectedSizePlaceholder?.text = ""
         } else {
             hideLowStockForSize()
         }
         getSelectedSku().let {
-            selectedSize?.text = if (it != null) "  -  ${it.size}" else ""
+            sizeColorSelectorLayout.selectedSize?.text = if (it != null) "  -  ${it.size}" else ""
             if (it != null)
-                selectedSizePlaceholder?.setTextColor(
+                sizeColorSelectorLayout.selectedSizePlaceholder?.setTextColor(
                     ContextCompat.getColor(
                         requireContext(),
                         R.color.black
@@ -2634,39 +2666,43 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     override fun updateStockAvailabilityLocation() {
-        activity?.apply {
-            //If user is not authenticated or Preferred DeliveryAddress is not available hide this view
-            if (!SessionUtilities.getInstance().isUserAuthenticated || getDeliveryLocation() == null) {
-                deliveryLocationLayout.visibility = View.GONE
-                return
-            } else
-                deliveryLocationLayout.visibility = View.VISIBLE
+        binding.apply {
+            activity?.apply {
+                //If user is not authenticated or Preferred DeliveryAddress is not available hide this view
+                if (!SessionUtilities.getInstance().isUserAuthenticated || getDeliveryLocation() == null) {
+                    deliveryLocationLayout.root.visibility = View.GONE
+                    return
+                } else
+                    deliveryLocationLayout.root.visibility = View.VISIBLE
 
-            getDeliveryLocation()?.fulfillmentDetails?.let {
-                when (Delivery.getType(it.deliveryType)) {
-                    Delivery.CNC -> {
-                        currentDeliveryLocation.text =
-                             it.storeName?.let {
-                                convertToTitleCase(it)
-                            } ?: ""
-                        defaultLocationPlaceholder.text =
-                            getString(R.string.collecting_from) + " "
-                    }
-                    Delivery.STANDARD -> {
-                        currentDeliveryLocation.text =
-                            it.address?.address1?.let { convertToTitleCase(it) } ?: ""
-                        defaultLocationPlaceholder.text =
-                            getString(R.string.delivering_to_pdp)
-                    }
-                    Delivery.DASH -> {
-                        currentDeliveryLocation.text =
-                            it.address?.address1 ?: ""
-                        defaultLocationPlaceholder.text =
-                            getString(R.string.dashing_to_space)
-                    }
-                    else -> {
-                    }
+                getDeliveryLocation()?.fulfillmentDetails?.let {
+                    deliveryLocationLayout.apply {
+                        when (Delivery.getType(it.deliveryType)) {
+                            Delivery.CNC -> {
+                                currentDeliveryLocation.text =
+                                    resources?.getString(R.string.store) + it.storeName?.let {
+                                        convertToTitleCase(it)
+                                    } ?: ""
+                                defaultLocationPlaceholder.text =
+                                    getString(R.string.collecting_from) + " "
+                            }
+                            Delivery.STANDARD -> {
+                                currentDeliveryLocation.text =
+                                    it.address?.address1?.let { convertToTitleCase(it) } ?: ""
+                                defaultLocationPlaceholder.text =
+                                    getString(R.string.delivering_to_pdp)
+                            }
+                            Delivery.DASH -> {
+                                currentDeliveryLocation.text =
+                                    it.address?.address1 ?: ""
+                                defaultLocationPlaceholder.text =
+                                    getString(R.string.dashing_to_space)
+                            }
+                            else -> {
+                            }
 
+                        }
+                    }
                 }
             }
         }
@@ -2693,7 +2729,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         productDetails?.otherSkus?.get(0)?.let { otherSku -> setSelectedSku(otherSku) }
         getSelectedSku()?.quantity = -1
         hideProductDetailsLoading()
-        toCartAndFindInStoreLayout?.visibility = View.GONE
+        binding.toCartAndFindInStoreLayout.root.visibility = View.GONE
         updateAddToCartButtonForSelectedSKU()
         //hideProgressBar()
     }
@@ -2701,75 +2737,72 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private fun showMoreColors() {
         productColorSelectorAdapter?.apply {
             showMoreColors()
-            moreColor?.visibility = View.INVISIBLE
+            binding.sizeColorSelectorLayout.moreColor?.visibility = View.INVISIBLE
         }
     }
 
     override fun loadPromotionalImages() {
-        val images = ArrayList<String>()
-        activity?.apply {
-            productDetails?.promotionImages?.let {
-                if (!it.save.isNullOrEmpty()) images.add(it.save ?: "")
-                if (!it.wRewards.isNullOrEmpty()) images.add(it.wRewards ?: "")
-                if (!it.vitality.isNullOrEmpty()) images.add(it.vitality ?: "")
-                if (!it.newImage.isNullOrEmpty()) images.add(it.newImage ?: "")
-                if (!it.reduced.isNullOrEmpty()) images.add(it.reduced ?: "")
-
-            }
-
-            promotionalImages?.removeAllViews()
-
-            mFreeGiftPromotionalImage?.let { freeGiftImage -> images.add(freeGiftImage) }
-
-            val promoImages = productDetails?.promotionImages
-            images.forEach { image ->
-                when (image) {
-                    promoImages?.reduced -> {
-                        val width = deviceWidth() / 5
-                        layoutInflater.inflate(R.layout.promotional_image, null)?.let { view ->
-                            val promotionImageView =
-                                view.findViewById<ImageView>(R.id.promotionImage)
-                            promotionImageView?.apply {
-                                adjustViewBounds = true
-                                scaleType = ImageView.ScaleType.FIT_CENTER
-                                layoutParams?.width = width
-                                ImageManager.setPictureOverrideWidthHeight(
-                                    view.promotionImage,
-                                    image
-                                )
-                                promotionalImages?.addView(view)
-                            }
-                        }
-                    }
-                    promoImages?.save -> {
-                        val width = deviceWidth() / 10
-                        layoutInflater.inflate(R.layout.promotional_image, null)?.let { view ->
-                            val promotionImageView =
-                                view.findViewById<ImageView>(R.id.promotionImage)
-                            promotionImageView?.apply {
-                                adjustViewBounds = true
-                                scaleType = ImageView.ScaleType.FIT_CENTER
-                                layoutParams?.width = width
-                                ImageManager.setPictureOverrideWidthHeight(
-                                    view.promotionImage,
-                                    image
-                                )
-                                promotionalImages?.addView(view)
-                            }
-                        }
-                    }
-                    else -> {
-                        layoutInflater.inflate(R.layout.promotional_image, null)?.let { view ->
-                            ImageManager.loadImage(view.promotionImage, image)
-                            promotionalImages?.addView(view)
-                        }
-                    }
+        binding.apply {
+            val images = ArrayList<String>()
+            activity?.apply {
+                productDetails?.promotionImages?.let {
+                    if (!it.save.isNullOrEmpty()) images.add(it.save ?: "")
+                    if (!it.wRewards.isNullOrEmpty()) images.add(it.wRewards ?: "")
+                    if (!it.vitality.isNullOrEmpty()) images.add(it.vitality ?: "")
+                    if (!it.newImage.isNullOrEmpty()) images.add(it.newImage ?: "")
+                    if (!it.reduced.isNullOrEmpty()) images.add(it.reduced ?: "")
 
                 }
 
+                priceLayout.promotionalImages?.removeAllViews()
+
+                mFreeGiftPromotionalImage?.let { freeGiftImage -> images.add(freeGiftImage) }
+
+                val promoImages = productDetails?.promotionImages
+                images.forEach { image ->
+                    when (image) {
+                        promoImages?.reduced -> {
+                            val width = deviceWidth() / 5
+                            PromotionalImageBinding.inflate(layoutInflater).let { view ->
+                                val promotionImageView = view.promotionImage
+                                promotionImageView?.apply {
+                                    adjustViewBounds = true
+                                    scaleType = ImageView.ScaleType.FIT_CENTER
+                                    layoutParams?.width = width
+                                    ImageManager.setPictureOverrideWidthHeight(
+                                        view.promotionImage,
+                                        image
+                                    )
+                                    priceLayout.promotionalImages.addView(view.root)
+                                }
+                            }
+                        }
+                        promoImages?.save -> {
+                            val width = deviceWidth() / 10
+                            PromotionalImageBinding.inflate(layoutInflater).let { view ->
+                                val promotionImageView = view.promotionImage
+                                promotionImageView.apply {
+                                    adjustViewBounds = true
+                                    scaleType = ImageView.ScaleType.FIT_CENTER
+                                    layoutParams?.width = width
+                                    ImageManager.setPictureOverrideWidthHeight(
+                                        view.promotionImage,
+                                        image
+                                    )
+                                    priceLayout.promotionalImages.addView(view.root)
+                                }
+                            }
+                        }
+                        else -> {
+                            PromotionalImageBinding.inflate(layoutInflater).let { view ->
+                                ImageManager.loadImage(view.promotionImage, image)
+                                priceLayout.promotionalImages.addView(view.root)
+                            }
+                        }
+                    }
+                }
             }
         }
-
     }
 
     override fun onPause() {
@@ -2795,7 +2828,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             Utils.setScreenName(this,
                 FirebaseManagerAnalyticsProperties.ScreenNames.PRODUCT_DETAIL)
         }
-        updateReportLikeStatus()
+        binding.updateReportLikeStatus()
     }
 
     private fun isAllProductsOutOfStock(): Boolean {
@@ -2849,55 +2882,67 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     override fun setUniqueIds() {
-        resources?.apply {
-            productLayout?.contentDescription = getString(R.string.pdp_layout)
-            productImagesViewPagerIndicator?.contentDescription =
-                getString(R.string.store_card_image)
-            openCart?.contentDescription = getString(R.string.pdp_layout)
-            productName?.contentDescription = getString(R.string.pdp_textViewProductName)
-            priceLayout?.contentDescription = getString(R.string.pdp_textViewPrice)
-            colorPlaceholder?.contentDescription =
-                getString(R.string.pdp_textViewColourPlaceHolder)
-            selectedColor?.contentDescription = getString(R.string.pdp_textSelectedColour)
-            colorSelectorRecycleView?.contentDescription =
-                getString(R.string.pdp_colorSelectorRecycleView)
-            addToCartAction?.contentDescription = getString(R.string.pdp_buttonAddToCart)
-            quantitySelector?.contentDescription = getString(R.string.pdp_quantitySelector)
-            quantityText?.contentDescription = getString(R.string.pdp_quantitySelected)
-            sizeColorSelectorLayout?.contentDescription =
-                getString(R.string.pdp_sizeColourSelectorLayout)
-            sizeSelectorRecycleView?.contentDescription =
-                getString(R.string.pdp_sizeSelectorRecycleView)
-            selectedSizePlaceholder?.contentDescription =
-                getString(R.string.pdp_selectedSizePlaceholder)
-            selectedSize?.contentDescription = getString(R.string.pdp_textViewSelectedSize)
-            stockAvailabilityPlaceholder?.contentDescription =
-                getString(R.string.pdp_stockAvailabilityPlaceholder)
-            deliveryLocationLayout?.contentDescription =
-                getString(R.string.pdp_deliveryLocationLayout)
-            currentDeliveryLocation?.contentDescription =
-                getString(R.string.pdp_txtCurrentDeliveryLocation)
-            defaultLocationPlaceholder?.contentDescription =
-                getString(R.string.pdp_defaultLocationPlaceholder)
-            editDeliveryLocation?.contentDescription =
-                getString(R.string.pdp_buttoneditDeliveryLocationn)
-            productDetailOptionsAndInformation?.contentDescription =
-                getString(R.string.pdp_productDetailOptionsAndInformationLayout)
-            headerProductOptions?.contentDescription =
-                getString(R.string.pdp_headerProductOptionsLayout)
-            checkInStoreAvailability?.contentDescription =
-                getString(R.string.pdp_checkInStoreAvailabilityLayout)
-            buttonView?.contentDescription = getString(R.string.pdp_buttonView)
-            addToShoppingList?.contentDescription =
-                getString(R.string.pdp_addToShoppingListLayout)
-            headerProductInformation?.contentDescription =
-                getString(R.string.pdp_headerProductInformationLayout)
-            productDetailsInformation?.contentDescription =
-                getString(R.string.pdp_productDetailsInformationLayout)
-            nutritionalInformation?.contentDescription =
-                getString(R.string.pdp_productIngredientsInformationLayout)
-            productIngredientsInformation?.contentDescription =
-                getString(R.string.pdp_nutritionalInformationLayout)
+        binding.apply {
+            resources?.apply {
+                productLayout.contentDescription = getString(R.string.pdp_layout)
+                productImagesViewPagerIndicator.contentDescription =
+                    getString(R.string.store_card_image)
+                openCart.contentDescription = getString(R.string.pdp_layout)
+                productName.contentDescription = getString(R.string.pdp_textViewProductName)
+                priceLayout.root.contentDescription = getString(R.string.pdp_textViewPrice)
+                binding.sizeColorSelectorLayout.apply {
+                    colorPlaceholder.contentDescription =
+                        getString(R.string.pdp_textViewColourPlaceHolder)
+                    selectedColor.contentDescription = getString(R.string.pdp_textSelectedColour)
+                    colorSelectorRecycleView.contentDescription =
+                        getString(R.string.pdp_colorSelectorRecycleView)
+                }
+                binding.toCartAndFindInStoreLayout.apply {
+                    addToCartAction.contentDescription = getString(R.string.pdp_buttonAddToCart)
+                    quantitySelector.contentDescription = getString(R.string.pdp_quantitySelector)
+                    quantityText.contentDescription = getString(R.string.pdp_quantitySelected)
+                }
+                sizeColorSelectorLayout.root.contentDescription =
+                    getString(R.string.pdp_sizeColourSelectorLayout)
+                binding.sizeColorSelectorLayout.apply {
+                    sizeSelectorRecycleView.contentDescription =
+                        getString(R.string.pdp_sizeSelectorRecycleView)
+                    selectedSizePlaceholder.contentDescription =
+                        getString(R.string.pdp_selectedSizePlaceholder)
+                    selectedSize.contentDescription = getString(R.string.pdp_textViewSelectedSize)
+                }
+                deliveryLocationLayout.root.contentDescription =
+                    getString(R.string.pdp_deliveryLocationLayout)
+                binding.deliveryLocationLayout.apply {
+                    stockAvailabilityPlaceholder.contentDescription =
+                        getString(R.string.pdp_stockAvailabilityPlaceholder)
+                    currentDeliveryLocation.contentDescription =
+                        getString(R.string.pdp_txtCurrentDeliveryLocation)
+                    defaultLocationPlaceholder.contentDescription =
+                        getString(R.string.pdp_defaultLocationPlaceholder)
+                    editDeliveryLocation.contentDescription =
+                        getString(R.string.pdp_buttoneditDeliveryLocationn)
+                }
+                productDetailOptionsAndInformation.root.contentDescription =
+                    getString(R.string.pdp_productDetailOptionsAndInformationLayout)
+                binding.productDetailOptionsAndInformation.apply {
+                    headerProductOptions.contentDescription =
+                        getString(R.string.pdp_headerProductOptionsLayout)
+                    checkInStoreAvailability.contentDescription =
+                        getString(R.string.pdp_checkInStoreAvailabilityLayout)
+                    buttonView.contentDescription = getString(R.string.pdp_buttonView)
+                    addToShoppingList.contentDescription =
+                        getString(R.string.pdp_addToShoppingListLayout)
+                    headerProductInformation.contentDescription =
+                        getString(R.string.pdp_headerProductInformationLayout)
+                    productDetailsInformation.contentDescription =
+                        getString(R.string.pdp_productDetailsInformationLayout)
+                    nutritionalInformation.contentDescription =
+                        getString(R.string.pdp_productIngredientsInformationLayout)
+                    productIngredientsInformation.contentDescription =
+                        getString(R.string.pdp_nutritionalInformationLayout)
+                }
+            }
         }
     }
 
@@ -2917,8 +2962,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     override fun clearSelectedOnLocationChange() {
         if (!(!hasColor && !hasSize)) {
             setSelectedSku(null)
-            selectedSize?.text = ""
-            selectedColor?.text = ""
+            binding.sizeColorSelectorLayout.selectedSize?.text = ""
+            binding.sizeColorSelectorLayout.selectedColor?.text = ""
         }
     }
 
@@ -2936,12 +2981,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         activity?.apply {
             if (dialogInstance != null && !dialogInstance.isVisible)
                 dialogInstance.show(
-                        this@ProductDetailsFragment.childFragmentManager,
-                        FoodProductNotAvailableForCollectionDialog::class.java.simpleName
+                    this@ProductDetailsFragment.childFragmentManager,
+                    FoodProductNotAvailableForCollectionDialog::class.java.simpleName
                 )
         }
     }
-
     override fun onChangeDeliveryOption() {
         this.updateDeliveryLocation()
     }
@@ -2998,18 +3042,18 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     override fun onGetRatingNReviewSuccess(ratingNReview: RatingAndReviewData) {
         hideProgressBar()
         if(ratingNReview.data.isNotEmpty()) {
-            showRatingAndReview()
-            setReviewUI(ratingNReview.data[0])
+            binding.showRatingAndReview()
+            binding.setReviewUI(ratingNReview.data[0])
             ratingReviewResponse = ratingNReview.data[0]
-            scrollView?.post {
-                scrollView?.fullScroll(View.FOCUS_DOWN)
+            binding.scrollView?.post {
+                binding.scrollView?.fullScroll(View.FOCUS_DOWN)
             }
         } else
-            hideRatingAndReview()
+            binding.hideRatingAndReview()
     }
 
     override fun onGetRatingNReviewFailed(response: Response, httpCode: Int) {
-        hideRatingAndReview()
+        binding.hideRatingAndReview()
     }
 
     /**
@@ -3105,7 +3149,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         val mime = MimeTypeMap.getSingleton()
         val type = mime.getExtensionFromMimeType(cR.getType(uri!!))
         if (type.equals("jpg") || type.equals("png")) {
-            setPickedImage(uri, null, false)
+            binding.setPickedImage(uri, null, false)
         } else {
             requireContext().apply {
                 vtoErrorBottomSheetDialog.showErrorBottomSheetDialog(
@@ -3122,16 +3166,18 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     private val takePhoto =
         registerForActivityResult(ActivityResultContracts.TakePicture()) { isPicked ->
-            if (isPicked) {
-                setPickedImage(uri, null, false)
-            } else {
-                vtoLayout?.visibility = View.GONE
-                share?.visibility = View.VISIBLE
-                productImagesViewPagerIndicator?.visibility = View.VISIBLE
-                openCart?.visibility = View.VISIBLE
-                backArrow?.visibility = View.VISIBLE
-                productImagesViewPager?.visibility = View.VISIBLE
-                imgVTOOpen?.visibility = View.VISIBLE
+            binding.apply {
+                if (isPicked) {
+                    setPickedImage(uri, null, false)
+                } else {
+                    vtoLayout.root.visibility = View.GONE
+                    share?.visibility = View.VISIBLE
+                    productImagesViewPagerIndicator?.visibility = View.VISIBLE
+                    openCart?.visibility = View.VISIBLE
+                    backArrow?.visibility = View.VISIBLE
+                    productImagesViewPager?.visibility = View.VISIBLE
+                    imgVTOOpen?.visibility = View.VISIBLE
+                }
             }
         }
 
@@ -3140,12 +3186,12 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             if (isGranted) {
                 if (liveCamera) {
                     // open live camera
-                    liveCameraViewHandle()
+                    binding.liveCameraViewHandle()
                     isLiveCamera = true
                     isColorAppliedWithLiveCamera = true
                     isRefreshImageEffectLiveCamera = true
-                    openPfLiveCamera()
-                    moveColorSelectionLayout()
+                    binding.openPfLiveCamera()
+                    binding.moveColorSelectionLayout()
                 } else {
                     openDefaultCamera()
                 }
@@ -3164,86 +3210,88 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             }
         }
 
-    private fun liveCameraViewHandle() {
-        vtoLayout?.visibility = View.VISIBLE
+    private fun ProductDetailsFragmentBinding.liveCameraViewHandle() {
+        vtoLayout.root.visibility = View.VISIBLE
         share?.visibility = View.GONE
         productImagesViewPagerIndicator?.visibility = View.GONE
         openCart?.visibility = View.GONE
         backArrow?.visibility = View.GONE
         productImagesViewPager?.visibility = View.GONE
-        imgDownloadVTO?.visibility = View.GONE
+        vtoLayout.imgDownloadVTO.visibility = View.GONE
         imgVTOOpen?.visibility = View.GONE
     }
 
 
-    private fun openPfLiveCamera() {
+    private fun ProductDetailsFragmentBinding.openPfLiveCamera() {
+        vtoLayout.apply {
+            showLightingTipsFirstTime()
+            SdkUtility.initSdk(
+                requireActivity(),
+                object : PfSDKInitialCallback {
+                    override fun onInitialized() {
+                        MakeupCam.create(
+                            cameraSurfaceView,
+                            object : MakeupCam.CreateCallback {
+                                override fun onSuccess(
+                                    makeupCam: MakeupCam,
+                                ) {
+                                    makeupCamera = makeupCam
+                                    comparisonView?.init(makeupCamera)
+                                    liveCameraViewModel?.liveCameraVtoApplier(
+                                        makeupCamera, productDetails?.productId,
+                                        getSelectedSku()?.sku
+                                    )
+                                    liveCameraViewModel?.colorMappedResult?.observe(
+                                        viewLifecycleOwner,
+                                        Observer { result ->
+                                            applyColorVtoMappedResult(result)
+                                        })
+                                    handleLiveCamera()
+                                }
 
-        showLightingTipsFirstTime()
-        SdkUtility.initSdk(
-            requireActivity(),
-            object : PfSDKInitialCallback {
-                override fun onInitialized() {
-                    MakeupCam.create(
-                        cameraSurfaceView,
-                        object : MakeupCam.CreateCallback {
-                            override fun onSuccess(
-                                makeupCam: MakeupCam,
-                            ) {
-                                makeupCamera = makeupCam
-                                comparisonView?.init(makeupCamera)
-                                liveCameraViewModel?.liveCameraVtoApplier(
-                                    makeupCamera, productDetails?.productId,
-                                    getSelectedSku()?.sku
-                                )
-                                liveCameraViewModel?.colorMappedResult?.observe(
-                                    viewLifecycleOwner,
-                                    Observer { result ->
-                                        applyColorVtoMappedResult(result)
-                                    })
-                                handleLiveCamera()
-                            }
-
-                            override fun onFailure(
-                                throwable: Throwable,
-                            ) {
-                                handleException(throwable)
-                            }
-                        })
-                }
-
-                override fun onFailure(
-                    throwable: Throwable?,
-                ) {
-                    retakeCamera?.visibility = View.GONE
-                    imgVTOSplit?.visibility = View.GONE
-                    captureImage?.visibility = View.GONE
-                    imgVTORefresh?.visibility = View.GONE
-                    requireContext().apply {
-                        vtoErrorBottomSheetDialog.showErrorBottomSheetDialog(
-                            this@ProductDetailsFragment,
-                            requireActivity(),
-                            getString(R.string.vto_generic_error),
-                            getString(R.string.vto_generic_error_description),
-                            getString(R.string.try_again)
-                        )
+                                override fun onFailure(
+                                    throwable: Throwable,
+                                ) {
+                                    handleException(throwable)
+                                }
+                            })
                     }
-                }
-            })
+
+                    override fun onFailure(
+                        throwable: Throwable?,
+                    ) {
+                        retakeCamera?.visibility = View.GONE
+                        imgVTOSplit?.visibility = View.GONE
+                        captureImage?.visibility = View.GONE
+                        imgVTORefresh?.visibility = View.GONE
+                        requireContext().apply {
+                            vtoErrorBottomSheetDialog.showErrorBottomSheetDialog(
+                                this@ProductDetailsFragment,
+                                requireActivity(),
+                                getString(R.string.vto_generic_error),
+                                getString(R.string.vto_generic_error_description),
+                                getString(R.string.try_again)
+                            )
+                        }
+                    }
+                })
+        }
     }
 
-    private fun handleLiveCamera() {
-        cameraSurfaceView?.visibility = View.VISIBLE
-        val cameraMonitor =
-            CameraMonitor(requireActivity(), makeupCamera, lifecycle)
-        lifecycle.addObserver(cameraMonitor)
-        isLiveCameraOpened = true
-        cameraSurfaceView?.scaleType = CameraView.ScaleType.CENTER_CROP
-        initCoroutine()
-        viewLifecycleOwner.lifecycleScope.launch {
-            delay(DELAY_1500_MS)
-            job = detectFaceLiveCamera()
+    private fun ProductDetailsFragmentBinding.handleLiveCamera() {
+        vtoLayout.apply {
+            cameraSurfaceView?.visibility = View.VISIBLE
+            val cameraMonitor =
+                CameraMonitor(requireActivity(), makeupCamera, lifecycle)
+            lifecycle.addObserver(cameraMonitor)
+            isLiveCameraOpened = true
+            cameraSurfaceView?.scaleType = CameraView.ScaleType.CENTER_CROP
+            initCoroutine()
+            viewLifecycleOwner.lifecycleScope.launch {
+                delay(DELAY_1500_MS)
+                job = detectFaceLiveCamera()
+            }
         }
-
     }
 
     private fun detectFaceLiveCamera(): Job {
@@ -3254,10 +3302,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     makeupCamera?.getCurrentFrameInfo(MakeupCam.FrameInfo.OPTION_FACE_RECT)
 
                 if (getFaceCount?.faceRect!!.isEmpty() && (!isFaceNotDetect)) {
-                    showFaceNotDetectLiveCamera(true)
+                    binding.showFaceNotDetectLiveCamera(true)
                     isFaceNotDetect = true
                 } else
-                    showFaceNotDetectLiveCamera(false)
+                    binding.showFaceNotDetectLiveCamera(false)
                 isFaceNotDetect = false
                 isFaceDetect = true
 
@@ -3265,33 +3313,35 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
     }
 
-    private fun showFaceNotDetectLiveCamera(isFaceNotDetect: Boolean) {
-        if (isFaceNotDetect) {
-            noFaceDetected?.visibility = View.VISIBLE
-            retakeCamera?.visibility = View.GONE
-            imgVTOSplit?.visibility = View.GONE
-            captureImage?.visibility = View.GONE
-            imgVTORefresh?.visibility = View.GONE
-            scrollView?.setScrollingEnabled(true)
-            if (comparisonView?.isCompareModeEnable() == true) {
-                vtoDividerLayout?.visibility = View.GONE
-                isDividerVtoEffect = false
-                comparisonView?.leaveComparisonMode()
-            }
-
-        } else {
-            noFaceDetected?.visibility = View.GONE
-            if (!isColorNotMatch) {
-                imgVTOSplit?.visibility = View.VISIBLE
-                if (!isDividerVtoEffect) {
-                    captureImage?.visibility = View.VISIBLE
-
+    private fun ProductDetailsFragmentBinding.showFaceNotDetectLiveCamera(isFaceNotDetect: Boolean) {
+        vtoLayout.apply {
+            if (isFaceNotDetect) {
+                noFaceDetected?.visibility = View.VISIBLE
+                retakeCamera?.visibility = View.GONE
+                imgVTOSplit?.visibility = View.GONE
+                captureImage?.visibility = View.GONE
+                imgVTORefresh?.visibility = View.GONE
+                scrollView?.setScrollingEnabled(true)
+                if (comparisonView?.isCompareModeEnable() == true) {
+                    vtoDividerLayout?.visibility = View.GONE
+                    isDividerVtoEffect = false
+                    comparisonView?.leaveComparisonMode()
                 }
-            }
-            if (comparisonView?.isCompareModeEnable() == false && !isColorNotMatch) {
-                captureImage?.visibility = View.VISIBLE
-                imgVTORefresh?.visibility = View.VISIBLE
-                imgVTOSplit?.setImageResource(R.drawable.ic_vto_split_screen)
+
+            } else {
+                noFaceDetected?.visibility = View.GONE
+                if (!isColorNotMatch) {
+                    imgVTOSplit?.visibility = View.VISIBLE
+                    if (!isDividerVtoEffect) {
+                        captureImage?.visibility = View.VISIBLE
+
+                    }
+                }
+                if (comparisonView?.isCompareModeEnable() == false && !isColorNotMatch) {
+                    captureImage?.visibility = View.VISIBLE
+                    imgVTORefresh?.visibility = View.VISIBLE
+                    imgVTOSplit?.setImageResource(R.drawable.ic_vto_split_screen)
+                }
             }
         }
     }
@@ -3301,41 +3351,42 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         coroutineScope = CoroutineScope(Dispatchers.Main + job)
     }
 
-    private fun applyColorVtoMappedResult(result: Any?) {
-        when (result) {
-            VTO_COLOR_NOT_MATCH -> {
-                colourUnavailableError?.visibility = View.VISIBLE
-                imgVTORefresh?.visibility = View.GONE
-                imgVTOSplit?.visibility = View.GONE
-                captureImage?.visibility = View.GONE
-                imgDownloadVTO?.visibility = View.GONE
-                liveCameraViewModel?.clearLiveCameraEffect()
-                isColorNotMatch = true
-                if (isDividerVtoEffect) {
-                    comparisonView?.leaveComparisonMode()
-                    vtoDividerLayout?.visibility = View.GONE
-                    scrollView?.setScrollingEnabled(true)
-                }
-            }
-            VTO_COLOR_LIVE_CAMERA -> {
-                colourUnavailableError?.visibility = View.GONE
-                imgVTORefresh?.visibility = View.VISIBLE
-                imgVTOSplit?.visibility = View.VISIBLE
-                imgDownloadVTO?.visibility = View.GONE
-                if (isDividerVtoEffect) {
-                    captureImage?.visibility = View.GONE
-                } else {
-                    captureImage?.visibility = View.VISIBLE
-                }
-                isColorNotMatch = false
-                if (isDividerVtoEffect) {
+    private fun ProductDetailsFragmentBinding.applyColorVtoMappedResult(result: Any?) {
+        vtoLayout.apply {
+            when (result) {
+                VTO_COLOR_NOT_MATCH -> {
+                    sizeColorSelectorLayout.colourUnavailableError?.visibility = View.VISIBLE
                     imgVTORefresh?.visibility = View.GONE
-                    scrollView?.setScrollingEnabled(false)
-                    comparisonView?.enterComparisonMode()
+                    imgVTOSplit?.visibility = View.GONE
+                    captureImage?.visibility = View.GONE
+                    imgDownloadVTO?.visibility = View.GONE
+                    liveCameraViewModel?.clearLiveCameraEffect()
+                    isColorNotMatch = true
+                    if (isDividerVtoEffect) {
+                        comparisonView?.leaveComparisonMode()
+                        vtoDividerLayout?.visibility = View.GONE
+                        scrollView?.setScrollingEnabled(true)
+                    }
+                }
+                VTO_COLOR_LIVE_CAMERA -> {
+                    sizeColorSelectorLayout.colourUnavailableError?.visibility = View.GONE
+                    imgVTORefresh?.visibility = View.VISIBLE
+                    imgVTOSplit?.visibility = View.VISIBLE
+                    imgDownloadVTO?.visibility = View.GONE
+                    if (isDividerVtoEffect) {
+                        captureImage?.visibility = View.GONE
+                    } else {
+                        captureImage?.visibility = View.VISIBLE
+                    }
+                    isColorNotMatch = false
+                    if (isDividerVtoEffect) {
+                        imgVTORefresh?.visibility = View.GONE
+                        scrollView?.setScrollingEnabled(false)
+                        comparisonView?.enterComparisonMode()
+                    }
                 }
             }
         }
-
     }
 
 
@@ -3356,7 +3407,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
 
-    private fun setPickedImage(
+    private fun ProductDetailsFragmentBinding.setPickedImage(
         uri: Uri?,
         captureLiveCameraImg: Bitmap?,
         isFromLiveCamera: Boolean,
@@ -3371,47 +3422,49 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         )
         showLightingTipsFirstTime()
         setChangePickedImage()
-        vtoLayout?.visibility = View.VISIBLE
+        vtoLayout.root.visibility = View.VISIBLE
         share?.visibility = View.GONE
         productImagesViewPagerIndicator?.visibility = View.GONE
         openCart?.visibility = View.GONE
         backArrow?.visibility = View.GONE
         productImagesViewPager?.visibility = View.GONE
-        captureImage?.visibility = View.GONE
-        imgVTOSplit?.visibility = View.GONE
-        noFaceDetected?.visibility = View.GONE
-        isVtoImage = true
-        uri?.let {
-            selectedImageUri = it
-            imgVTOEffect?.setPhotoUri(it)
+        vtoLayout.apply {
+            captureImage?.visibility = View.GONE
+            imgVTOSplit?.visibility = View.GONE
+            noFaceDetected?.visibility = View.GONE
+            isVtoImage = true
+            uri?.let {
+                selectedImageUri = it
+                imgVTOEffect?.setPhotoUri(it)
+            }
         }
         if (!isObserveImageData) {
             isObserveImageData = true
             getApplyResult()
-
         }
     }
 
-    private fun setChangePickedImage() {
-
-        when {
-            isFromFile -> {
-                changeImage?.visibility = View.GONE
-                retakeCamera?.visibility = View.GONE
-                changeImageFiles?.visibility = View.VISIBLE
-                imgVTOOpen?.visibility = View.GONE
-            }
-            isPhotoPickedFromDefaultCamera -> {
-                changeImage?.visibility = View.GONE
-                retakeCamera?.visibility = View.VISIBLE
-                changeImageFiles?.visibility = View.GONE
-                imgVTOOpen?.visibility = View.GONE
-            }
-            isPhotoPickedFromGallery -> {
-                changeImage?.visibility = View.VISIBLE
-                retakeCamera?.visibility = View.GONE
-                changeImageFiles?.visibility = View.GONE
-                imgVTOOpen?.visibility = View.GONE
+    private fun ProductDetailsFragmentBinding.setChangePickedImage() {
+        vtoLayout.apply {
+            when {
+                isFromFile -> {
+                    changeImage?.visibility = View.GONE
+                    retakeCamera?.visibility = View.GONE
+                    changeImageFiles?.visibility = View.VISIBLE
+                    imgVTOOpen?.visibility = View.GONE
+                }
+                isPhotoPickedFromDefaultCamera -> {
+                    changeImage?.visibility = View.GONE
+                    retakeCamera?.visibility = View.VISIBLE
+                    changeImageFiles?.visibility = View.GONE
+                    imgVTOOpen?.visibility = View.GONE
+                }
+                isPhotoPickedFromGallery -> {
+                    changeImage?.visibility = View.VISIBLE
+                    retakeCamera?.visibility = View.GONE
+                    changeImageFiles?.visibility = View.GONE
+                    imgVTOOpen?.visibility = View.GONE
+                }
             }
         }
     }
@@ -3438,58 +3491,62 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
     }
 
-    private fun getApplyResult() {
+    private fun ProductDetailsFragmentBinding.getApplyResult() {
         vtoApplyEffectOnImageViewModel?.applyEffectResult?.observe(
             viewLifecycleOwner,
             Observer { result ->
-                when {
-                    result.equals(VTO_FACE_NOT_DETECT) -> {
-                        noFaceDetected?.visibility = View.VISIBLE
-                        imgVTORefresh?.visibility = View.GONE
-                        imgDownloadVTO?.visibility = View.GONE
-                        colourUnavailableError?.visibility = View.GONE
-                        setBitmapFromUri(selectedImageUri)
-                    }
-                    result.equals(VTO_COLOR_NOT_MATCH) -> {
-                        colourUnavailableError?.visibility = View.VISIBLE
-                        imgVTORefresh?.visibility = View.GONE
-                        imgDownloadVTO?.visibility = View.GONE
-                        setBitmapFromUri(selectedImageUri)
-                    }
-                    result.equals(SDK_INIT_FAIL) -> {
-                        isVtoSdkInitFail = true
-                        vtoImageLoadFail()
+                vtoLayout.apply {
+                    when {
+                        result.equals(VTO_FACE_NOT_DETECT) -> {
+                            noFaceDetected?.visibility = View.VISIBLE
+                            imgVTORefresh?.visibility = View.GONE
+                            imgDownloadVTO?.visibility = View.GONE
+                            sizeColorSelectorLayout.colourUnavailableError?.visibility = View.GONE
+                            setBitmapFromUri(selectedImageUri)
+                        }
+                        result.equals(VTO_COLOR_NOT_MATCH) -> {
+                            sizeColorSelectorLayout.colourUnavailableError?.visibility = View.VISIBLE
+                            imgVTORefresh?.visibility = View.GONE
+                            imgDownloadVTO?.visibility = View.GONE
+                            setBitmapFromUri(selectedImageUri)
+                        }
+                        result.equals(SDK_INIT_FAIL) -> {
+                            isVtoSdkInitFail = true
+                            vtoImageLoadFail()
 
-                    }
-                    result.equals(VTO_FAIL_IMAGE_LOAD) -> {
-                        isVtoSdkInitFail = false
-                        vtoImageLoadFail()
-                    }
-                    else -> {
-                        colourUnavailableError?.visibility = View.GONE
-                        noFaceDetected?.visibility = View.GONE
-                        imgVTORefresh?.visibility = View.VISIBLE
-                        imgDownloadVTO?.visibility = View.VISIBLE
-                        imgVTOEffect?.setImageBitmap(result as Bitmap?)
-                        saveVtoApplyImage = result as Bitmap?
+                        }
+                        result.equals(VTO_FAIL_IMAGE_LOAD) -> {
+                            isVtoSdkInitFail = false
+                            vtoImageLoadFail()
+                        }
+                        else -> {
+                            sizeColorSelectorLayout.colourUnavailableError?.visibility = View.GONE
+                            noFaceDetected?.visibility = View.GONE
+                            imgVTORefresh?.visibility = View.VISIBLE
+                            imgDownloadVTO?.visibility = View.VISIBLE
+                            imgVTOEffect?.setImageBitmap(result as Bitmap?)
+                            saveVtoApplyImage = result as Bitmap?
+                        }
                     }
                 }
             })
     }
 
-    private fun vtoImageLoadFail() {
-        noFaceDetected?.visibility = View.GONE
-        colourUnavailableError?.visibility = View.GONE
-        imgVTORefresh?.visibility = View.GONE
-        imgDownloadVTO?.visibility = View.GONE
-        requireContext().apply {
-            vtoErrorBottomSheetDialog.showErrorBottomSheetDialog(
-                this@ProductDetailsFragment,
-                requireActivity(),
-                getString(R.string.vto_generic_error),
-                getString(R.string.vto_generic_error_description),
-                getString(R.string.try_again)
-            )
+    private fun ProductDetailsFragmentBinding.vtoImageLoadFail() {
+        vtoLayout.apply {
+            noFaceDetected?.visibility = View.GONE
+            sizeColorSelectorLayout.colourUnavailableError?.visibility = View.GONE
+            imgVTORefresh?.visibility = View.GONE
+            imgDownloadVTO?.visibility = View.GONE
+            requireContext().apply {
+                vtoErrorBottomSheetDialog.showErrorBottomSheetDialog(
+                    this@ProductDetailsFragment,
+                    requireActivity(),
+                    getString(R.string.vto_generic_error),
+                    getString(R.string.vto_generic_error_description),
+                    getString(R.string.try_again)
+                )
+            }
         }
     }
 
@@ -3517,7 +3574,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                         if (bitmap != selectedImage) {
                             bitmap.recycle()
                         }
-                        imgVTOEffect?.setImageBitmap(selectedImage)
+                        binding.vtoLayout.imgVTOEffect?.setImageBitmap(selectedImage)
 
                     }
             } catch (e: Exception) {
@@ -3530,14 +3587,14 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         if (isRefreshImageEffectLiveCamera) {
             clearLiveCameraEffect()
         } else {
-            clearImageEffect()
+            binding.clearImageEffect()
         }
     }
 
-    private fun clearImageEffect() {
+    private fun ProductDetailsFragmentBinding.clearImageEffect() {
         if (isTakePicture) {
             isTakePicture = false
-            imgVTOEffect?.setImageBitmap(takenOriginalPicture)
+            binding.vtoLayout.imgVTOEffect?.setImageBitmap(takenOriginalPicture)
             setPickedImage(null, takenOriginalPicture, true)
         } else {
             vtoApplyEffectOnImageViewModel?.clearEffect()
@@ -3545,7 +3602,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 viewLifecycleOwner,
                 Observer { bitmap ->
                     if (null != bitmap) {
-                        imgVTOEffect?.setImageBitmap(bitmap)
+                        binding.vtoLayout.imgVTOEffect?.setImageBitmap(bitmap)
                     } else {
                         setBitmapFromUri(selectedImageUri)
                     }
@@ -3562,10 +3619,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     override fun tryAgain() {
         when {
-            isVtoSdkInitFail -> closeVto()
+            isVtoSdkInitFail -> binding.closeVto()
             isFromFile -> pickPhotoFromFile.launch("image/*")
             isPhotoPickedFromGallery -> pickPhotoLauncher.launch("image/*")
-            else -> closeVto()
+            else -> binding.closeVto()
         }
     }
 
@@ -3612,38 +3669,38 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         return getSelectedSku()
     }
 
-    private fun moveColorSelectionLayout() {
+    private fun ProductDetailsFragmentBinding.moveColorSelectionLayout() {
         selectDefaultColor()
-        (sizeColorSelectorLayout?.layoutParams as ConstraintLayout.LayoutParams).let {
+        (sizeColorSelectorLayout.root.layoutParams as ConstraintLayout.LayoutParams).let {
             it.topToBottom = R.id.space
-            sizeColorSelectorLayout?.layoutParams = it
-            divider1?.visibility = View.GONE
+            sizeColorSelectorLayout.root.layoutParams = it
+            sizeColorSelectorLayout.divider1?.visibility = View.GONE
         }
         (styleBy.layoutParams as ConstraintLayout.LayoutParams).let {
             it.topToBottom = R.id.sizeColorSelectorLayout
             styleBy?.layoutParams = it
         }
-        (deliveryLocationLayout?.layoutParams as ConstraintLayout.LayoutParams).let {
+        (deliveryLocationLayout.root.layoutParams as ConstraintLayout.LayoutParams).let {
             it.topToBottom = R.id.freeGiftWithPurchaseLayout
-            deliveryLocationLayout?.layoutParams = it
+            deliveryLocationLayout.root.layoutParams = it
         }
 
         isColorSelectionLayoutOnTop = true
     }
 
-    private fun resetColorSelectionLayout() {
-        (sizeColorSelectorLayout?.layoutParams as ConstraintLayout.LayoutParams).let {
+    private fun ProductDetailsFragmentBinding.resetColorSelectionLayout() {
+        (sizeColorSelectorLayout.root.layoutParams as ConstraintLayout.LayoutParams).let {
             it.topToBottom = R.id.freeGiftWithPurchaseLayout
-            sizeColorSelectorLayout?.layoutParams = it
-            divider1?.visibility = View.VISIBLE
+            sizeColorSelectorLayout.root.layoutParams = it
+            sizeColorSelectorLayout.divider1?.visibility = View.VISIBLE
         }
         (styleBy?.layoutParams as ConstraintLayout.LayoutParams).let {
             it.topToBottom = R.id.space
             styleBy?.layoutParams = it
         }
-        (deliveryLocationLayout?.layoutParams as ConstraintLayout.LayoutParams).let {
+        (deliveryLocationLayout.root.layoutParams as ConstraintLayout.LayoutParams).let {
             it.topToBottom = R.id.sizeColorSelectorLayout
-            deliveryLocationLayout?.layoutParams = it
+            deliveryLocationLayout.root.layoutParams = it
         }
         isColorSelectionLayoutOnTop = false
     }
@@ -3657,28 +3714,30 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
      * This method used for show low stock indicator when user select size or product have single size
      * lowStockThreshold > quantity
      */
-    private fun showLowStockForSelectedSize() {
+    private fun ProductDetailsFragmentBinding.showLowStockForSelectedSize() {
         if (hasColor) {
             hideLowStockFromSelectedColor()
         }
-        (selectedSize?.layoutParams as ConstraintLayout.LayoutParams).let {
-            it.startToEnd = R.id.layoutLowStockIndicator
-            it.topToTop = R.id.layoutLowStockIndicator
-            it.bottomToBottom = R.id.layoutLowStockIndicator
-            layoutLowStockIndicator?.visibility = View.VISIBLE
-            selectedSizePlaceholder?.visibility = View.GONE
-            selectedSize?.layoutParams = it
-            layoutLowStockIndicator?.txtLowStockIndicator?.text =
-                AppConfigSingleton.lowStock?.lowStockCopy
-        }
-        (sizeSelectorRecycleView?.layoutParams as ConstraintLayout.LayoutParams).let {
-            it.topToBottom = R.id.layoutLowStockIndicator
-            sizeSelectorRecycleView?.layoutParams = it
-        }
-        (sizeGuide?.layoutParams as ConstraintLayout.LayoutParams).let {
-            it.topToTop = R.id.layoutLowStockIndicator
-            it.bottomToBottom = R.id.layoutLowStockIndicator
-            sizeGuide?.layoutParams = it
+        sizeColorSelectorLayout.apply {
+            (selectedSize?.layoutParams as ConstraintLayout.LayoutParams).let {
+                it.startToEnd = R.id.layoutLowStockIndicator
+                it.topToTop = R.id.layoutLowStockIndicator
+                it.bottomToBottom = R.id.layoutLowStockIndicator
+                layoutLowStockIndicator.root.visibility = View.VISIBLE
+                selectedSizePlaceholder?.visibility = View.GONE
+                selectedSize?.layoutParams = it
+                layoutLowStockIndicator?.txtLowStockIndicator?.text =
+                    AppConfigSingleton.lowStock?.lowStockCopy
+            }
+            (sizeSelectorRecycleView?.layoutParams as ConstraintLayout.LayoutParams).let {
+                it.topToBottom = R.id.layoutLowStockIndicator
+                sizeSelectorRecycleView?.layoutParams = it
+            }
+            (sizeGuide?.layoutParams as ConstraintLayout.LayoutParams).let {
+                it.topToTop = R.id.layoutLowStockIndicator
+                it.bottomToBottom = R.id.layoutLowStockIndicator
+                sizeGuide?.layoutParams = it
+            }
         }
     }
 
@@ -3687,27 +3746,28 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
      *  use selected size have not low stock
      *  not have lowStockThreshold > quantity
      */
-    private fun hideLowStockForSize() {
-        selectedSizePlaceholder?.text =
-            requireContext().getString(R.string.product_placeholder_selected_size)
-        (selectedSize?.layoutParams as ConstraintLayout.LayoutParams).let {
-            it.startToEnd = R.id.selectedSizePlaceholder
-            it.topToTop = R.id.selectedSizePlaceholder
-            it.bottomToBottom = R.id.selectedSizePlaceholder
-            selectedSize?.layoutParams = it
-            layoutLowStockIndicator?.visibility = View.GONE
-            selectedSizePlaceholder?.visibility = View.VISIBLE
+    private fun ProductDetailsFragmentBinding.hideLowStockForSize() {
+        sizeColorSelectorLayout.apply {
+            selectedSizePlaceholder?.text =
+                requireContext().getString(R.string.product_placeholder_selected_size)
+            (selectedSize?.layoutParams as ConstraintLayout.LayoutParams).let {
+                it.startToEnd = R.id.selectedSizePlaceholder
+                it.topToTop = R.id.selectedSizePlaceholder
+                it.bottomToBottom = R.id.selectedSizePlaceholder
+                selectedSize?.layoutParams = it
+                layoutLowStockIndicator.root.visibility = View.GONE
+                selectedSizePlaceholder?.visibility = View.VISIBLE
+            }
+            (sizeSelectorRecycleView?.layoutParams as ConstraintLayout.LayoutParams).let {
+                it.topToBottom = R.id.selectedSizePlaceholder
+                sizeSelectorRecycleView?.layoutParams = it
+            }
+            (sizeGuide?.layoutParams as ConstraintLayout.LayoutParams).let {
+                it.topToTop = R.id.selectedSizePlaceholder
+                it.bottomToBottom = R.id.selectedSizePlaceholder
+                sizeGuide?.layoutParams = it
+            }
         }
-        (sizeSelectorRecycleView?.layoutParams as ConstraintLayout.LayoutParams).let {
-            it.topToBottom = R.id.selectedSizePlaceholder
-            sizeSelectorRecycleView?.layoutParams = it
-        }
-        (sizeGuide?.layoutParams as ConstraintLayout.LayoutParams).let {
-            it.topToTop = R.id.selectedSizePlaceholder
-            it.bottomToBottom = R.id.selectedSizePlaceholder
-            sizeGuide?.layoutParams = it
-        }
-
     }
 
 
@@ -3716,24 +3776,26 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
      * This method used for show low stock when selected color have
      * lowStockThreshold > quantity
      */
-    private fun showLowStockForSelectedColor() {
-        (selectedColor?.layoutParams as ConstraintLayout.LayoutParams).let {
-            it.startToEnd = R.id.layoutLowStockColor
-            it.topToTop = R.id.layoutLowStockColor
-            it.bottomToBottom = R.id.layoutLowStockColor
-            selectedColor?.layoutParams = it
-            layoutLowStockColor?.visibility = View.VISIBLE
-            txtLowStockIndicator?.text = AppConfigSingleton.lowStock?.lowStockCopy
-            colorPlaceholder?.visibility = View.GONE
-        }
-        (colorSelectorRecycleView?.layoutParams as ConstraintLayout.LayoutParams).let {
-            it.topToBottom = R.id.layoutLowStockColor
-            colorSelectorRecycleView?.layoutParams = it
-        }
-        (moreColor?.layoutParams as ConstraintLayout.LayoutParams).let {
-            it.topToTop = R.id.layoutLowStockColor
-            it.bottomToBottom = R.id.layoutLowStockColor
-            moreColor?.layoutParams = it
+    private fun ProductDetailsFragmentBinding.showLowStockForSelectedColor() {
+        sizeColorSelectorLayout.apply {
+            (selectedColor?.layoutParams as ConstraintLayout.LayoutParams).let {
+                it.startToEnd = R.id.layoutLowStockColor
+                it.topToTop = R.id.layoutLowStockColor
+                it.bottomToBottom = R.id.layoutLowStockColor
+                selectedColor?.layoutParams = it
+                layoutLowStockColor.root.visibility = View.VISIBLE
+                layoutLowStockIndicator.txtLowStockIndicator?.text = AppConfigSingleton.lowStock?.lowStockCopy
+                colorPlaceholder?.visibility = View.GONE
+            }
+            (colorSelectorRecycleView?.layoutParams as ConstraintLayout.LayoutParams).let {
+                it.topToBottom = R.id.layoutLowStockColor
+                colorSelectorRecycleView?.layoutParams = it
+            }
+            (moreColor?.layoutParams as ConstraintLayout.LayoutParams).let {
+                it.topToTop = R.id.layoutLowStockColor
+                it.bottomToBottom = R.id.layoutLowStockColor
+                moreColor?.layoutParams = it
+            }
         }
     }
 
@@ -3742,24 +3804,26 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
      * This method used hide low stock when selected color have not
      * not have lowStockThreshold > quantity
      */
-    private fun hideLowStockFromSelectedColor() {
-        colorPlaceholder?.text = requireContext().getString(R.string.selected_colour)
-        (selectedColor?.layoutParams as ConstraintLayout.LayoutParams).let {
-            it.startToEnd = R.id.colorPlaceholder
-            it.topToTop = R.id.colorPlaceholder
-            it.bottomToBottom = R.id.colorPlaceholder
-            selectedColor?.layoutParams = it
-            layoutLowStockColor?.visibility = View.GONE
-            colorPlaceholder?.visibility = View.VISIBLE
-        }
-        (colorSelectorRecycleView?.layoutParams as ConstraintLayout.LayoutParams).let {
-            it.topToBottom = R.id.selectedColor
-            colorSelectorRecycleView?.layoutParams = it
-        }
-        (moreColor?.layoutParams as ConstraintLayout.LayoutParams).let {
-            it.topToTop = R.id.selectedColor
-            it.bottomToBottom = R.id.selectedColor
-            moreColor?.layoutParams = it
+    private fun ProductDetailsFragmentBinding.hideLowStockFromSelectedColor() {
+        sizeColorSelectorLayout.apply {
+            colorPlaceholder?.text = requireContext().getString(R.string.selected_colour)
+            (selectedColor?.layoutParams as ConstraintLayout.LayoutParams).let {
+                it.startToEnd = R.id.colorPlaceholder
+                it.topToTop = R.id.colorPlaceholder
+                it.bottomToBottom = R.id.colorPlaceholder
+                selectedColor?.layoutParams = it
+                layoutLowStockColor.root.visibility = View.GONE
+                colorPlaceholder?.visibility = View.VISIBLE
+            }
+            (colorSelectorRecycleView?.layoutParams as ConstraintLayout.LayoutParams).let {
+                it.topToBottom = R.id.selectedColor
+                colorSelectorRecycleView?.layoutParams = it
+            }
+            (moreColor?.layoutParams as ConstraintLayout.LayoutParams).let {
+                it.topToTop = R.id.selectedColor
+                it.bottomToBottom = R.id.selectedColor
+                moreColor?.layoutParams = it
+            }
         }
     }
 
@@ -3768,7 +3832,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     override fun onScrollChanged() {
-        scrollView?.let {
+        binding.scrollView?.let {
             if (!it.canScrollVertically(1) && !isRnRAPICalled) {
                 productDetails?.isRnREnabled?.let {
                     if (productDetails?.isRnREnabled == true && RatingAndReviewUtil.isRatingAndReviewConfigavailbel())
@@ -3833,7 +3897,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     )
                     hideProgressBar()
                     if (response.httpCode == 200) {
-                        iv_like.setImageResource(R.drawable.iv_like_selected)
+                        binding.productDetailOptionsAndInformation.customerReview.reviewHelpfulReport.ivLike.setImageResource(R.drawable.iv_like_selected)
                         RatingAndReviewUtil.likedReviews.add(ratingReviewResponse?.reviews?.get(0)?.id.toString())
                     }
                 } catch (e: Exception) {

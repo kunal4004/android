@@ -7,8 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.account_in_arrears_fragment_dialog.*
-import kotlinx.android.synthetic.main.account_in_arrears_fragment_dialog.accountInArrearsDescriptionTextView
+import com.awfs.coordination.databinding.AccountInArrearsFragmentDialogBinding
 import za.co.woolworths.financial.services.android.contracts.IShowChatBubble
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
@@ -21,6 +20,7 @@ import za.co.woolworths.financial.services.android.util.animation.AnimationUtilE
 
 class CreditCardAccountInArrearsBottomSheetDialogFragment : WBottomSheetDialogFragment(), View.OnClickListener {
 
+    private lateinit var binding: AccountInArrearsFragmentDialogBinding
     private val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
     private var showChatBubbleInterface: IShowChatBubble? = null
 
@@ -31,20 +31,31 @@ class CreditCardAccountInArrearsBottomSheetDialogFragment : WBottomSheetDialogFr
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.account_in_arrears_fragment_dialog, container, false)
+        binding = AccountInArrearsFragmentDialogBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        accountInArrearsDescriptionTextView?.text = payMyAccountViewModel.getCardDetail()?.account?.second?.totalAmountDue?.let { totalAmountDue -> bindString(R.string.payment_options_desc, Utils.removeNegativeSymbol(CurrencyFormatter.formatAmountToRandAndCent(totalAmountDue))) }
-        paymentOptionButton?.apply {
-            setOnClickListener(this@CreditCardAccountInArrearsBottomSheetDialogFragment)
-            AnimationUtilExtension.animateViewPushDown(this)
-        }
-        gotItButton?.apply {
-            setOnClickListener(this@CreditCardAccountInArrearsBottomSheetDialogFragment)
-            AnimationUtilExtension.animateViewPushDown(this)
+        with(binding) {
+            accountInArrearsDescriptionTextView?.text =
+                payMyAccountViewModel.getCardDetail()?.account?.second?.totalAmountDue?.let { totalAmountDue ->
+                    bindString(
+                        R.string.payment_options_desc,
+                        Utils.removeNegativeSymbol(
+                            CurrencyFormatter.formatAmountToRandAndCent(totalAmountDue)
+                        )
+                    )
+                }
+            paymentOptionButton?.apply {
+                setOnClickListener(this@CreditCardAccountInArrearsBottomSheetDialogFragment)
+                AnimationUtilExtension.animateViewPushDown(this)
+            }
+            gotItButton?.apply {
+                setOnClickListener(this@CreditCardAccountInArrearsBottomSheetDialogFragment)
+                AnimationUtilExtension.animateViewPushDown(this)
+            }
         }
     }
 

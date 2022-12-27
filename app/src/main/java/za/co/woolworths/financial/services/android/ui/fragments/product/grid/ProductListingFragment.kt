@@ -10,9 +10,12 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Parcelable
 import android.text.method.LinkMovementMethod
-import android.view.*
+import android.view.Gravity
+import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import android.view.Window
+import android.view.WindowManager
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -20,23 +23,17 @@ import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentTransaction
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.GridLayoutBinding
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.gson.JsonSyntaxException
 import com.skydoves.balloon.balloon
-import kotlinx.android.synthetic.main.blp_error_layout.view.*
-import kotlinx.android.synthetic.main.fragment_brand_landing.view.*
-import kotlinx.android.synthetic.main.grid_layout.*
-import kotlinx.android.synthetic.main.no_connection_handler.*
-import kotlinx.android.synthetic.main.no_connection_handler.view.*
-import kotlinx.android.synthetic.main.promotional_text_plp.*
-import kotlinx.android.synthetic.main.sort_and_refine_selection_layout.*
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.chanel.utils.ChanelUtils
 import za.co.woolworths.financial.services.android.chanel.views.ChanelNavigationClickListener
@@ -45,9 +42,7 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.IProductListing
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils
-import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
-import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.UnSellableItemsLiveData
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.BrandNavigationDetails
@@ -89,12 +84,12 @@ import za.co.woolworths.financial.services.android.util.analytics.FirebaseManage
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.setCrashlyticsString
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.net.ConnectException
-import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import java.util.*
 
 
-open class ProductListingFragment : ProductListingExtensionFragment(), GridNavigator,
+open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBinding::inflate),
+    GridNavigator,
     IProductListing, View.OnClickListener, SortOptionsAdapter.OnSortOptionSelected,
     WMaterialShowcaseView.IWalkthroughActionListener,
     IOnConfirmDeliveryLocationActionListener, ChanelNavigationClickListener {
@@ -131,7 +126,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     private var deliveryType: Delivery? = null
     private var placeId: String? = null
     private var isUnSellableItemsRemoved: Boolean? = false
-    private lateinit var confirmAddressViewModel: ConfirmAddressViewModel
+    private val confirmAddressViewModel: ConfirmAddressViewModel by activityViewModels()
     private var localDeliveryType: String? = null
     private var localDeliveryTypeForHiddenChange: String? = null
 
@@ -170,14 +165,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View? {
-        return inflater.inflate(R.layout.grid_layout, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         navigator = this
@@ -192,13 +179,19 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             }
             showBottomNavigationMenu()
             localDeliveryTypeForHiddenChange = Delivery.STANDARD.name
-            mErrorHandlerView = ErrorHandlerView(this, no_connection_layout)
-            mErrorHandlerView?.setMargin(no_connection_layout, 0, 0, 0, 0)
+            mErrorHandlerView =
+                ErrorHandlerView(this, binding.incNoConnectionHandler.noConnectionLayout)
+            mErrorHandlerView?.setMargin(
+                binding.incNoConnectionHandler.noConnectionLayout,
+                0,
+                0,
+                0,
+                0
+            )
 
             toolbarTitleText =
                 if (mSubCategoryName?.isEmpty() == true) mSearchTerm else mSubCategoryName
             updateToolbarTitle()
-            setUpConfirmAddressViewModel()
             startProductRequest()
             setUniqueIds()
             addFragmentListner()
@@ -208,33 +201,30 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
         }
 
-        toolbarPLPAddress?.setOnClickListener(this)
-        toolbarPLPTitle?.setOnClickListener(this)
-        plpSearchIcon?.setOnClickListener(this)
-        plpBackIcon?.setOnClickListener(this)
+        binding.apply {
+            toolbarPLPAddress.setOnClickListener(this@ProductListingFragment)
+            toolbarPLPTitle.setOnClickListener(this@ProductListingFragment)
+            plpSearchIcon.setOnClickListener(this@ProductListingFragment)
+            plpBackIcon.setOnClickListener(this@ProductListingFragment)
+        }
 
-        layout_error_blp?.blp_error_back_btn?.setOnClickListener {
+        binding.layoutErrorBlp.blpErrorBackBtn.setOnClickListener {
             (activity as? BottomNavigationActivity)?.popFragment()
         }
 
-        layout_error_blp?.btn_retry_it?.setOnClickListener {
+        binding.layoutErrorBlp.blpErrorBackBtn.setOnClickListener {
             startProductRequest()
         }
     }
 
-    private fun setUpConfirmAddressViewModel() {
-        confirmAddressViewModel = ViewModelProvider(
-            this,
-            GeoLocationViewModelFactory(GeoLocationApiHelper())
-        ).get(ConfirmAddressViewModel::class.java)
-    }
-
     private fun showPromotionalBanner(response: ProductView) {
-        promotionalTextBannerLayout?.visibility = VISIBLE
+        binding.promotionalTextBannerLayout.root.visibility = VISIBLE
         val htmlDataPromotionalText = response.richText
-        promotionalTextDesc?.text =
-            HtmlCompat.fromHtml(htmlDataPromotionalText, HtmlCompat.FROM_HTML_MODE_LEGACY)
-        promotionalTextDesc.movementMethod = LinkMovementMethod.getInstance()
+        binding.promotionalTextBannerLayout.apply {
+            promotionalTextDesc.text =
+                HtmlCompat.fromHtml(htmlDataPromotionalText, HtmlCompat.FROM_HTML_MODE_LEGACY)
+            promotionalTextDesc.movementMethod = LinkMovementMethod.getInstance()
+        }
     }
 
     private fun addFragmentListner() {
@@ -283,7 +273,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                                         KotlinUtils.browsingDeliveryType?.name
                                     )
                                 }
-
                                 val placeId = validateLocationResponse?.validatePlace?.placeDetails?.placeId
                                 if(placeId != null) {
                                     val store = GeoUtils.getStoreDetails(
@@ -403,9 +392,11 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        incNoConnectionHandler?.btnRetry?.setOnClickListener(this@ProductListingFragment)
-        refineProducts?.setOnClickListener(this@ProductListingFragment)
-        sortProducts?.setOnClickListener(this@ProductListingFragment)
+        binding.incNoConnectionHandler.btnRetry.setOnClickListener(this@ProductListingFragment)
+        binding.sortAndRefineLayout.apply {
+            refineProducts.setOnClickListener(this@ProductListingFragment)
+            sortProducts.setOnClickListener(this@ProductListingFragment)
+        }
     }
 
     override fun onResume() {
@@ -485,7 +476,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         if (!isAdded || !isVisible) {
             return
         }
-        toolbarPLPTitle.text =
+        binding.toolbarPLPTitle.text =
             if (mSubCategoryName?.isEmpty() == true) mSearchTerm else mSubCategoryName
 
         // set delivery type and icon
@@ -505,8 +496,9 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         when (deliveryType) {
             Delivery.STANDARD.type -> {
                 this.deliveryType = Delivery.STANDARD
-                toolbarPLPAddress.text = requireContext().getString(R.string.standard_delivery)
-                toolbarPLPIcon?.setImageDrawable(
+                binding.toolbarPLPAddress.text =
+                    requireContext().getString(R.string.standard_delivery)
+                binding.toolbarPLPIcon.setImageDrawable(
                     ContextCompat.getDrawable(
                         requireContext(),
                         R.drawable.ic_delivery_circle
@@ -515,8 +507,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             }
             Delivery.CNC.type -> {
                 this.deliveryType = Delivery.CNC
-                toolbarPLPAddress.text = requireContext().getString(R.string.click_collect)
-                toolbarPLPIcon?.setImageDrawable(
+                binding.toolbarPLPAddress.text = requireContext().getString(R.string.click_collect)
+                binding.toolbarPLPIcon.setImageDrawable(
                     ContextCompat.getDrawable(
                         requireContext(),
                         R.drawable.ic_collection_circle
@@ -525,8 +517,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             }
             Delivery.DASH.type -> {
                 this.deliveryType = Delivery.DASH
-                toolbarPLPAddress.text = requireContext().getString(R.string.dash_delivery)
-                toolbarPLPIcon?.setImageDrawable(
+                binding.toolbarPLPAddress.text = requireContext().getString(R.string.dash_delivery)
+                binding.toolbarPLPIcon.setImageDrawable(
                     ContextCompat.getDrawable(
                         requireContext(),
                         R.drawable.ic_dash_delivery_circle
@@ -535,8 +527,9 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             }
             else -> {
                 this.deliveryType = Delivery.STANDARD
-                toolbarPLPAddress.text = requireContext().getString(R.string.standard_delivery)
-                toolbarPLPIcon?.setImageDrawable(
+                binding.toolbarPLPAddress.text =
+                    requireContext().getString(R.string.standard_delivery)
+                binding.toolbarPLPIcon.setImageDrawable(
                     ContextCompat.getDrawable(
                         requireContext(),
                         R.drawable.ic_delivery_circle
@@ -554,7 +547,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             }
             return
         }
-        plp_relativeLayout?.visibility = VISIBLE
+        binding.plpRelativeLayout.visibility = VISIBLE
 
         if (!response.richText.isNullOrEmpty()) {
             showPromotionalBanner(response)
@@ -575,7 +568,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         }
 
         if (productLists?.isEmpty() == true) {
-            sortAndRefineLayout?.visibility = GONE
+            binding.sortAndRefineLayout.root.visibility = GONE
             if (!listContainHeader()) {
                 val headerProduct = ProductList()
                 headerProduct.rowType = ProductListingViewType.HEADER
@@ -589,7 +582,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             this.productView = response
             hideFooterView()
             if (!loadMoreData) {
-                sortAndRefineLayout?.visibility = VISIBLE
+                binding.sortAndRefineLayout.root.visibility = VISIBLE
                 (activity as? BottomNavigationActivity)?.setUpDrawerFragment(
                     productView,
                     productRequestBody
@@ -627,17 +620,20 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     }
 
     private fun onChanelSuccess(response: ProductView) {
-        chanel_layout?.visibility = VISIBLE
-        plp_relativeLayout?.visibility = GONE
+        binding.chanelLayout.root.visibility = VISIBLE
+        binding.plpRelativeLayout.visibility = GONE
         val brandLandingAdapter = BrandLandingAdapter(
             context,
             response.dynamicBanners as List<DynamicBanner?>, this
         )
         val layoutManager = LinearLayoutManager(context)
         layoutManager.orientation = LinearLayoutManager.VERTICAL
-        chanel_layout?.rv_chanel?.layoutManager = layoutManager
-        chanel_layout?.rv_chanel?.setHasFixedSize(true)
-        chanel_layout?.rv_chanel?.adapter = brandLandingAdapter
+        binding.chanelLayout.rvChanel.apply {
+            this.layoutManager = layoutManager
+            setHasFixedSize(true)
+            adapter = brandLandingAdapter
+        }
+
 
         mSearchTerm = response.pageHeading ?: mSearchTerm
         updateToolbarTitle()
@@ -707,9 +703,9 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                 hideBottomNavigationMenu()
                 Handler().postDelayed({ hideToolbar() }, AppConstant.DELAY_300_MS)
             }
-            chanel_layout?.visibility = GONE
-            plp_relativeLayout?.visibility = GONE
-            layout_error_blp?.visibility = VISIBLE
+            binding.chanelLayout.root.visibility = GONE
+            binding.plpRelativeLayout.visibility = GONE
+            binding.layoutErrorBlp.root.visibility = VISIBLE
             return
         }
         val fragmentTransaction: FragmentTransaction? =
@@ -809,7 +805,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     mIsComingFromBLP
                 )
             }
-        productsRecyclerView?.apply {
+        binding.productsRecyclerView.apply {
             if (visibility == View.INVISIBLE)
                 visibility = VISIBLE
             layoutManager = mRecyclerViewLayoutManager
@@ -944,14 +940,14 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     override fun onLoadStart(isLoadMore: Boolean) {
         setIsLoading(true)
         if (!isLoadMore) {
-            incCenteredProgress?.visibility = VISIBLE
+            binding.incCenteredProgress.root.visibility = VISIBLE
         }
     }
 
     override fun onLoadComplete(isLoadMore: Boolean) {
         setIsLoading(false)
         if (!isLoadMore) {
-            incCenteredProgress?.visibility = GONE
+            binding.incCenteredProgress.root.visibility = GONE
         }
 
 
@@ -1039,7 +1035,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             when (hidden) {
                 true -> lockDrawerFragment()
                 else -> {
-                    setSupportActionBar(toolbarPLP)
+                    setSupportActionBar(binding.toolbarPLP)
                     showBottomNavigationMenu()
                     supportActionBar?.apply {
                         showBackNavigationIcon(false)
@@ -1203,8 +1199,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     }
 
     private fun reloadProductsWithSortAndFilter() {
-        productsRecyclerView?.visibility = View.INVISIBLE
-        sortAndRefineLayout?.visibility = GONE
+        binding.apply {
+            productsRecyclerView.visibility = View.INVISIBLE
+            sortAndRefineLayout.root.visibility = GONE
+        }
         startProductRequest()
     }
 
@@ -1220,7 +1218,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             )
             it.walkThroughPromtView =
                 WMaterialShowcaseView.Builder(it, WMaterialShowcaseView.Feature.REFINE)
-                    .setTarget(refineDownArrow)
+                    .setTarget(binding.sortAndRefineLayout.refineDownArrow)
                     .setTitle(R.string.walkthrough_refine_title)
                     .setDescription(R.string.walkthrough_refine_desc)
                     .setActionText(R.string.walkthrough_refine_action)
@@ -1236,8 +1234,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     }
 
     override fun onWalkthroughActionButtonClick(feature: WMaterialShowcaseView.Feature) {
-        if (refineProducts?.isClickable == true)
-            refineProducts?.let { refineProducts -> onClick(refineProducts) }
+        binding.sortAndRefineLayout.apply {
+            if (refineProducts?.isClickable == true)
+                refineProducts?.let { refineProducts -> onClick(refineProducts) }
+        }
     }
 
     override fun onPromptDismiss(feature: WMaterialShowcaseView.Feature) {
@@ -1258,9 +1258,11 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     }
 
     private fun setRefinementViewState(refinementViewState: Boolean) {
-        refineProducts?.isEnabled = refinementViewState
-        refineDownArrow?.isEnabled = refinementViewState
-        refinementText?.isEnabled = refinementViewState
+        binding.sortAndRefineLayout.apply {
+            refineProducts.isEnabled = refinementViewState
+            refineDownArrow.isEnabled = refinementViewState
+            refinementText.isEnabled = refinementViewState
+        }
         (activity as? BottomNavigationActivity)?.apply {
             when (refinementViewState) {
                 true -> unLockDrawerFragment()
@@ -1272,7 +1274,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
     override fun openProductDetailView(productList: ProductList) {
         //firebase event select_item
-        state = productsRecyclerView.layoutManager?.onSaveInstanceState()
+        state = binding.productsRecyclerView.layoutManager?.onSaveInstanceState()
         val selectItemParams = Bundle()
         selectItemParams.putString(
             FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_LIST_NAME,
@@ -1314,7 +1316,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         bannerLabel: String?,
         bannerImage: String?,
     ) {
-        state = productsRecyclerView.layoutManager?.onSaveInstanceState()
+        state = binding.productsRecyclerView.layoutManager?.onSaveInstanceState()
         val title = if (mSearchTerm?.isNotEmpty() == true) mSearchTerm else mSubCategoryName
         (activity as? BottomNavigationActivity)?.openProductDetailFragment(
             title,
@@ -1332,7 +1334,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         productList: ProductList,
     ) {
         this.mFulfilmentTypeId = fulfilmentTypeId
-        if (incCenteredProgress?.visibility == VISIBLE) return // ensure one api runs at a time
+        if (binding.incCenteredProgress.root.visibility == VISIBLE) return // ensure one api runs at a time
         this.mStoreId =
             fulfilmentTypeId.let { it1 -> RecyclerViewViewHolderItems.getFulFillmentStoreId(it1) }
                 ?: ""
@@ -1501,12 +1503,12 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
     private fun showProgressBar() {
         // Show progress bar
-        incCenteredProgress?.visibility = VISIBLE
+        binding.incCenteredProgress.root.visibility = VISIBLE
     }
 
     private fun dismissProgressBar() {
         // hide progress bar
-        incCenteredProgress?.visibility = GONE
+        binding.incCenteredProgress.root.visibility = GONE
         mProductAdapter?.resetQuickShopButton()
     }
 
@@ -1553,7 +1555,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                                 addItemToCartResponse.data[0]?.productCountMap?.let {
                                     addItemToCart?.quantity?.let { it1 ->
                                         ToastFactory.showItemsLimitToastOnAddToCart(
-                                            productsRecyclerView,
+                                            binding.productsRecyclerView,
                                             it,
                                             this,
                                             it1
@@ -1833,9 +1835,12 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
     private fun setUniqueIds() {
         resources.apply {
-            refineProducts?.contentDescription = getString(R.string.plp_buttonRefine)
-            sortProducts?.contentDescription = getString(R.string.plp_buttonSort)
-            productsRecyclerView?.contentDescription = getString(R.string.plp_productListLayout)
+            binding.sortAndRefineLayout.apply {
+                refineProducts.contentDescription = getString(R.string.plp_buttonRefine)
+                sortProducts.contentDescription = getString(R.string.plp_buttonSort)
+            }
+            binding.productsRecyclerView.contentDescription =
+                getString(R.string.plp_productListLayout)
         }
     }
 

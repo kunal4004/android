@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.circle_progress_layout.*
+import com.awfs.coordination.databinding.AbsaSecurityCheckSuccessfulLayoutBinding
 import kotlinx.coroutines.*
 import za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBankingRegistrationActivity
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
@@ -13,8 +13,9 @@ import za.co.woolworths.financial.services.android.ui.fragments.absa.AbsaFiveDig
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.opt_in.otp.ProgressIndicator
 import za.co.woolworths.financial.services.android.util.AppConstant
 
-class AbsaSecurityCheckSuccessfulFragment : Fragment() {
+class AbsaSecurityCheckSuccessfulFragment : Fragment(R.layout.absa_security_check_successful_layout) {
 
+    private lateinit var binding: AbsaSecurityCheckSuccessfulLayoutBinding
     private var mAliasId: String? = null
     companion object {
         private var mCreditCardToken: String? = null
@@ -28,19 +29,12 @@ class AbsaSecurityCheckSuccessfulFragment : Fragment() {
             }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.absa_security_check_successful_layout, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding = AbsaSecurityCheckSuccessfulLayoutBinding.bind(view)
         (activity as? ABSAOnlineBankingRegistrationActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
         getArgs()
-        showLockedPinIconResult()
+        binding.showLockedPinIconResult()
         navigateToFiveDigitOtpNumber()
     }
 
@@ -69,12 +63,12 @@ class AbsaSecurityCheckSuccessfulFragment : Fragment() {
         }
     }
 
-    private fun showLockedPinIconResult() {
+    private fun AbsaSecurityCheckSuccessfulLayoutBinding.showLockedPinIconResult() {
         imFailureIcon?.apply {
             visibility = View.VISIBLE
             setImageResource(R.drawable.ic_lock_purple)
         }
-        val circularProgressIndicator = ProgressIndicator(circularProgressIndicator, success_frame, imFailureIcon, success_tick)
+        val circularProgressIndicator = ProgressIndicator(circularProgressIndicator, progressBar, imFailureIcon, successTick)
         circularProgressIndicator?.apply {
             animationStatus = ProgressIndicator.AnimationStatus.Failure
             progressIndicatorListener { }
