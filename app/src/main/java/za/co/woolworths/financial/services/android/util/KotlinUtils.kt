@@ -895,6 +895,7 @@ class KotlinUtils {
         }
 
         fun String.capitaliseFirstLetterInEveryWord(): String = split(" ").map { it.lowercase().replaceFirstChar { it -> it.titlecase() } }.joinToString(" ")
+
         fun showGeneralInfoDialog(
             fragmentManager: FragmentManager,
             description: String,
@@ -905,17 +906,12 @@ class KotlinUtils {
         ) {
             val dialog =
                 GeneralInfoDialogFragment.newInstance(description, title, actionText, infoIcon, isFromCheckoutScreen)
+            dialog.isCancelable = !isFromCheckoutScreen
             fragmentManager.let { fragmentTransaction ->
                 dialog.show(
                     fragmentTransaction,
                     GeneralInfoDialogFragment::class.java.simpleName
                 )
-            }
-
-            if (isFromCheckoutScreen) {
-                dialog.isCancelable = false
-            } else {
-                dialog.isCancelable = true
             }
         }
 
