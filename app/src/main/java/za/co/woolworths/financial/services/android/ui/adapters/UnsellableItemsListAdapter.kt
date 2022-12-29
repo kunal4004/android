@@ -40,7 +40,7 @@ class UnsellableItemsListAdapter(var commerceItems: ArrayList<UnSellableCommerce
                 tvPrice.text = commerceItem.price.amount.let {
                     CurrencyFormatter.formatAmountToRandAndCentWithSpace(it)
                 }
-                rlDeleteButton.visibility = View.GONE
+                cbShoppingList.visibility = View.GONE
                 minusDeleteCountImage.visibility = View.GONE
                 cartProductImage.setImageURI(commerceItem.externalImageRefV2 ?: "")
                 if (commerceItem.price.getDiscountedAmount() > 0) {

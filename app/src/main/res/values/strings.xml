@@ -209,6 +209,7 @@
     <string name="edit">EDIT</string>
     <string name="done">DONE</string>
     <string name="remove_all">REMOVE ALL</string>
+    <string name="remove_selected">REMOVE SELECTED</string>
     <string name="checkout">CHECKOUT</string>
     <string name="unlinked_account_copy">We see that your Woolies Card is not yet linked. To conveniently view your available funds, next payment due, recent transactions and so much more, please link your Woolies Card now.</string>
     <string name="added_to_shopping_list">added to shopping list</string>

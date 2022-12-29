@@ -38,7 +38,7 @@ class ItemsListToRemoveFromCartAdapter(var commerceItems: ArrayList<CommerceItem
                 llQuantity.visibility = View.INVISIBLE
                 tvPrice.text =
                     CurrencyFormatter.formatAmountToRandAndCentWithSpace(commerceItem.priceInfo.amount)
-                rlDeleteButton.visibility = View.GONE
+                cbShoppingList.visibility = View.GONE
                 cartProductImage.setImageURI(commerceItem.commerceItemInfo.externalImageRefV2
                     ?: "")
                 if (commerceItem.priceInfo.discountedAmount > 0) {

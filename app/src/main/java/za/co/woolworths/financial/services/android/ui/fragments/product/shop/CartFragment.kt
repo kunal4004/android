@@ -108,7 +108,6 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     private var mSkuInventories: HashMap<String, List<SkuInventory>>? = null
     private var mapStoreIdWithCommerceItems: Map<String, Collection<CommerceItem>>? = null
     var cartItems: ArrayList<CartItemGroup>? = null
-        private set
     private var mErrorHandlerView: ErrorHandlerView? = null
     private var cartProductAdapter: CartProductAdapter? = null
     private var orderSummary: OrderSummary? = null
@@ -296,12 +295,27 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                 dismissProgress()
             }
             R.id.btnClearCart -> {
-                Utils.triggerFireBaseEvents(
-                    FirebaseManagerAnalyticsProperties.MYCARTREMOVEALL,
-                    requireActivity()
-                )
-                removeAllCartItem(null)
+                if (binding.btnClearCart.text.equals(getString(R.string.remove_all))) {
+                    Utils.triggerFireBaseEvents(
+                        FirebaseManagerAnalyticsProperties.MYCARTREMOVEALL,
+                        requireActivity()
+                    )
+                    removeAllCartItem(null)
+                } else {
+                    cartItems?.let { cartItems ->
+                        for (cartItemGroup: CartItemGroup in cartItems) {
+                            val commerceItemList = cartItemGroup.commerceItems
+                            for (cm: CommerceItem in commerceItemList) {
+                                if (cm.isDeletePressed) {
+                                    cm.commerceItemDeletedId(cm)
+                                    onItemDeleteClick(cm)
+                                }
+                            }
+                        }
+                    }
+                }
             }
+
             R.id.deliveryLocationConstLayout -> locationSelectionClicked()
             R.id.btn_dash_set_address -> {
                 (requireActivity() as? BottomNavigator)?.navigateToTabIndex(
@@ -364,7 +378,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
 
     private fun toggleCartMode() {
         val isEditMode = toggleEditMode()
-        binding.btnEditCart.setText(if (isEditMode) R.string.done else R.string.edit)
+        binding.btnEditCart.setText(if (isEditMode) R.string.cancel else R.string.edit)
         binding.btnClearCart.visibility = if (isEditMode) View.VISIBLE else View.GONE
         setDeliveryLocationEnabled(!isEditMode)
         if (!isEditMode)
@@ -533,6 +547,33 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     override fun onItemDeleteClick(commerceId: CommerceItem) {
         enableItemDelete(true)
         removeItemAPI(commerceId)
+    }
+
+    override fun onCheckBoxChange(isChecked: Boolean, commerceItem: CommerceItem) {
+        var listSelectionCounter = 0
+        var cartItemCount = 0
+        cartItems?.let { cartItems ->
+            for (cartItemGroup: CartItemGroup in cartItems) {
+                val commerceItemList = cartItemGroup.commerceItems
+                for (cm: CommerceItem in commerceItemList) {
+                    if (cm.commerceItemInfo.commerceId.equals(commerceItem.commerceItemInfo.commerceId)) {
+                        cm.isDeletePressed = isChecked
+                    }
+                    if (cm.isDeletePressed) {
+                        listSelectionCounter++
+                    }
+                }
+                cartItemCount += cartItemGroup.commerceItems.size
+            }
+        }
+        binding.btnClearCart.text =
+            if (listSelectionCounter == 0 || (listSelectionCounter > 0 && listSelectionCounter == cartItemCount)) {
+                getString(R.string.remove_all)
+            } else if (listSelectionCounter in 1 until cartItemCount) {
+                getString(R.string.remove_selected)
+            } else {
+                getString(R.string.remove_all)
+            }
     }
 
     override fun onChangeQuantity(commerceId: CommerceItem, quantity: Int) {

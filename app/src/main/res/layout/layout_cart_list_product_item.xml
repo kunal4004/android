@@ -79,34 +79,6 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:visibility="visible" />
 
-        <RelativeLayout
-            android:id="@+id/rlDeleteButton"
-            android:layout_width="@dimen/thirty_two_dp"
-            android:layout_height="match_parent"
-            android:layout_marginHorizontal="@dimen/eighteen_dp"
-            android:gravity="center"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <ProgressBar
-                android:id="@+id/pbDeleteProgress"
-                style="?android:attr/progressBarStyleSmall"
-                android:layout_width="@dimen/twenty_four_dp"
-                android:layout_height="@dimen/twenty_four_dp"
-                android:layout_gravity="center_vertical"
-                android:indeterminateTint="@color/black"
-                android:visibility="gone" />
-
-            <ImageView
-                android:id="@+id/btnDeleteRow"
-                android:layout_width="@dimen/twenty_four_dp"
-                android:layout_height="@dimen/twenty_four_dp"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/delete" />
-        </RelativeLayout>
-
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/clCartItems"
             android:layout_width="match_parent"
