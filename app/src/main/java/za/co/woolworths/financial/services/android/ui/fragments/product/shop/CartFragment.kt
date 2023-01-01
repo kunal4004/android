@@ -1154,9 +1154,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                                 val cartResponse =
                                     convertResponseToCartResponseObject(response)
                                 updateCart(cartResponse, commerceItem)
-                                if (cartResponse?.cartItems != null) {
-                                    if (cartResponse.cartItems.isEmpty()) onRemoveSuccess()
-                                } else {
+                                if (cartResponse?.cartItems.isNullOrEmpty()) {
                                     onRemoveSuccess()
                                 }
                             } else {

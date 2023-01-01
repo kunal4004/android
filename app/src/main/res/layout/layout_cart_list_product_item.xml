@@ -54,7 +54,7 @@
             android:layout_width="@dimen/twenty_four_dp"
             android:layout_height="@dimen/twenty_four_dp"
             android:layout_centerVertical="true"
-            android:layout_marginStart="@dimen/eighteen_dp"
+            android:layout_marginHorizontal="@dimen/eighteen_dp"
             android:indeterminateTint="@color/black"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -67,7 +67,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginStart="@dimen/eighteen_dp"
+            android:layout_marginHorizontal="@dimen/eighteen_dp"
             android:button="@drawable/shopping_list_item_selector"
             android:checked="false"
             android:gravity="center"
@@ -79,16 +79,43 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:visibility="visible" />
 
+        <RelativeLayout
+            android:id="@+id/rlDeleteButton"
+            android:layout_width="@dimen/thirty_two_dp"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="@dimen/eighteen_dp"
+            android:gravity="center"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ProgressBar
+                android:id="@+id/pbDeleteProgress"
+                style="?android:attr/progressBarStyleSmall"
+                android:layout_width="@dimen/twenty_four_dp"
+                android:layout_height="@dimen/twenty_four_dp"
+                android:layout_gravity="center_vertical"
+                android:indeterminateTint="@color/black"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/btnDeleteRow"
+                android:layout_width="@dimen/twenty_four_dp"
+                android:layout_height="@dimen/twenty_four_dp"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/delete" />
+        </RelativeLayout>
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/clCartItems"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/eighteen_dp"
+            android:layout_marginStart="@dimen/sixty_dp"
             android:orientation="horizontal"
-            app:layout_constrainedWidth="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/pbLoadProduct"
+            app:layout_constraintStart_toEndOf="@id/cbShoppingList"
             app:layout_constraintTop_toTopOf="parent">
 
             <za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
