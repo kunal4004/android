@@ -7,8 +7,7 @@ import android.graphics.PorterDuff
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
+import android.view.View.*
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
@@ -35,6 +34,7 @@ import za.co.woolworths.financial.services.android.util.ImageManager.Companion.s
 import za.co.woolworths.financial.services.android.util.NetworkManager
 import za.co.woolworths.financial.services.android.util.Utils
 import java.util.*
+
 
 class CartProductAdapter(
     var cartItems: ArrayList<CartItemGroup>?,
@@ -113,14 +113,23 @@ class CartProductAdapter(
                 } else {
                     headerHolder.tvAddToList.visibility = VISIBLE
                     headerHolder.tvAddToList.visibility =
-                        if (editMode) View.INVISIBLE else VISIBLE
+                        if (editMode) INVISIBLE else VISIBLE
                 }
             }
             CartRowType.PRODUCT -> {
                 val productHolder = holder as ProductHolder
                 val commerceItem = itemRow.commerceItem ?: return
-                productHolder.swipeLayout.isRightSwipeEnabled = false
-                productHolder.swipeLayout.isLeftSwipeEnabled = false
+                productHolder.swipeLayout.apply {
+                    isRightSwipeEnabled = !editMode
+                    addDrag(SwipeLayout.DragEdge.Right,
+                        productHolder.swipeRight)
+                }
+                val param = productHolder.clCartItems.layoutParams as ViewGroup.MarginLayoutParams
+                param.marginStart =
+                    if (editMode) mContext?.resources?.getDimension(R.dimen.sixty_dp)?.toInt()
+                        ?: 0 else mContext?.resources?.getDimension(R.dimen.twenty_four_dp)?.toInt()
+                        ?: 0
+                productHolder.clCartItems.layoutParams = param
                 val commerceItemInfo: CommerceItemInfo? = commerceItem.commerceItemInfo
                 //setListCheckBoxVisibility(editMode, productHolder)
                 productHolder.tvTitle.setText(if (commerceItemInfo == null) "" else commerceItemInfo.getProductDisplayName())
@@ -166,7 +175,7 @@ class CartProductAdapter(
 
                 // Set Color and Size START
                 if (itemRow.category.equals("FOOD", ignoreCase = true)) {
-                    productHolder.tvColorSize.visibility = View.INVISIBLE
+                    productHolder.tvColorSize.visibility = INVISIBLE
                 } else {
                     val sizeColor = getSizeColor(commerceItemInfo)
                     productHolder.tvColorSize.setText(sizeColor)
@@ -209,7 +218,7 @@ class CartProductAdapter(
                     setFirstLoadCompleted(false)
                     commerceItem.commerceItemDeletedId(commerceItem)
                     commerceItem.setDeleteIconWasPressed(true)
-                    notifyItemRangeChanged(productHolder.adapterPosition, cartItems?.size ?: 0)
+                    onRemoveSingleItemInEditMode(productHolder, commerceItem)
                 }
                 productHolder.cbShoppingList.setOnCheckedChangeListener { button, isChecked ->
                     commerceItem.isDeletePressed = isChecked
@@ -235,16 +244,21 @@ class CartProductAdapter(
                         // This will reduce the product quantity.
                         commerceItem.quantityUploading = true
                         setFirstLoadCompleted(false)
-                        //notifyItemChanged(position, commerceItem);
                         onItemClick.onChangeQuantity(commerceItem, userQuantity - 1)
                     } else if (userQuantity == 1) {
                         // This will remove the product
                         commerceItem.commerceItemDeletedId(commerceItem)
                         commerceItem.isDeletePressed = true
-                        notifyItemRangeChanged(productHolder.adapterPosition, cartItems?.size ?: 0)
+                        onRemoveSingleItem(productHolder, commerceItem)
                     }
                 }
-                productHolder.swipeLayout.setOnClickListener {
+                productHolder.swipeRight.setOnClickListener {
+                    commerceItem.commerceItemDeletedId(commerceItem)
+                    commerceItem.isDeletePressed = true
+                    productHolder.pbDeleteIndicator.visibility = VISIBLE
+                    onRemoveSingleItem(productHolder, commerceItem)
+                }
+                productHolder.clCartItems.setOnClickListener {
                     onItemClick.onOpenProductDetail(commerceItem)
                 }
                 if (commerceItem.lowStockThreshold > commerceItem.quantityInStock && commerceItem.quantityInStock > 0 && lowStock?.isEnabled == true) {
@@ -468,18 +482,20 @@ class CartProductAdapter(
             val animateRowToDelete =
                 AnimationUtils.loadAnimation(mContext, R.anim.animate_layout_delete)
             animateRowToDelete.setAnimationListener(object : Animation.AnimationListener {
-                override fun onAnimationStart(animation: Animation) {}
-                override fun onAnimationEnd(animation: Animation) {
-                    productHolder.pbDelete.visibility =
-                        if (commerceItem.isDeletePressed) VISIBLE else GONE
-                    productHolder.btnDeleteRow.visibility =
-                        if (commerceItem.isDeletePressed) GONE else VISIBLE
+                override fun onAnimationStart(animation: Animation) {
                     onItemClick.onItemDeleteClick(commerceItem.deletedCommerceItemId)
                 }
 
-                override fun onAnimationRepeat(animation: Animation) {}
+                override fun onAnimationEnd(animation: Animation) {
+                }
+
+                override fun onAnimationRepeat(animation: Animation) {
+                }
             })
             productHolder.clCartItems.startAnimation(animateRowToDelete)
+        } else {
+            productHolder.pbDeleteIndicator.visibility = GONE
+            productHolder.swipeLayout.close(true, true)
         }
     }
 
@@ -637,6 +653,8 @@ class CartProductAdapter(
         val addCountImage: ImageView
         val cbShoppingList: CheckBox
         val pbLoadProduct: ProgressBar
+        val swipeRight: RelativeLayout
+        val pbDeleteIndicator: ProgressBar
 
         init {
             tvTitle = view.findViewById(R.id.tvTitle)
@@ -661,6 +679,8 @@ class CartProductAdapter(
             txtCartLowStock = view.findViewById(R.id.txtCartLowStock)
             cbShoppingList = view.findViewById(R.id.cbShoppingList)
             pbLoadProduct = view.findViewById(R.id.pbLoadProduct)
+            swipeRight = view.findViewById(R.id.swipeRight)
+            pbDeleteIndicator = view.findViewById(R.id.pbDeleteIndicator)
         }
     }
 

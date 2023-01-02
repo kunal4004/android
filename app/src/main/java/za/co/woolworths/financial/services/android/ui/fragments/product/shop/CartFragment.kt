@@ -545,7 +545,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     }
 
     override fun onItemDeleteClick(commerceId: CommerceItem) {
-        enableItemDelete(true)
+        enableItemDelete(false)
         removeItemAPI(commerceId)
     }
 
@@ -961,7 +961,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             }
             binding.btnCheckOut.isEnabled = false
             fadeCheckoutButton(true)
-            enableEditCart()
+            enableEditCart(false)
         } else {
             binding.txtMinSpendErrorMsg.visibility = View.GONE
             if (binding.btnEditCart.text?.equals(R.string.edit) == false)
@@ -1160,7 +1160,8 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                             } else {
                                 resetItemDelete(true)
                             }
-                            enableItemDelete(false)
+                            fadeCheckoutButton(false)
+                            setDeliveryLocationEnabled(true)
                             setMinimumCartErrorMessage()
                         } catch (ex: Exception) {
                             logException(ex)
@@ -1662,7 +1663,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                     cartProductAdapter?.updateStockAvailability(cartItems)
                 }
             }
-            enableEditCart()
+            enableEditCart(false)
             binding.btnCheckOut.isEnabled = false
             binding.rlCheckOut.isEnabled = false
         }
@@ -1799,11 +1800,6 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     private fun enableEditCart(enable: Boolean) {
         Utils.fadeInFadeOutAnimation(binding.btnEditCart, enable)
         binding.btnEditCart.isEnabled = !enable
-    }
-
-    private fun enableEditCart() {
-        Utils.fadeInFadeOutAnimation(binding.btnEditCart, false)
-        binding.btnEditCart.isEnabled = true
     }
 
     private fun showEditDeliveryLocationFeatureWalkthrough() {
@@ -2061,7 +2057,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
 
     fun enableItemDelete(enable: Boolean) {
         fadeCheckoutButton(!enable)
-        enableEditCart(enable)
+        enableEditCart(!enable)
         setDeliveryLocationEnabled(enable)
     }
 
