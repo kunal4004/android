@@ -123,7 +123,10 @@ class CartProductAdapter(
                     isRightSwipeEnabled = !editMode
                     addDrag(SwipeLayout.DragEdge.Right,
                         productHolder.swipeRight)
+                    if (!editMode) close(true, true)
                 }
+                productHolder.pbDeleteIndicator.visibility = GONE
+                productHolder.pbDeleteProgress.visibility = GONE
                 val param = productHolder.clCartItems.layoutParams as ViewGroup.MarginLayoutParams
                 param.marginStart =
                     if (editMode) mContext?.resources?.getDimension(R.dimen.sixty_dp)?.toInt()

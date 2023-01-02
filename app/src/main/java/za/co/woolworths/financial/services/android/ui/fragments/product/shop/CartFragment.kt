@@ -544,13 +544,13 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
 
     override fun onItemDeleteClickInEditMode(commerceItem: CommerceItem) {
         // TODO: Make API call to remove item + show loading before removing from list
-        removeItemAPI(commerceItem)
+        mCommerceItem = commerceItem
+        showDeleteConfirmationDialog(ON_CONFIRM_REMOVE_WITH_DELETE_ICON_PRESSED)
     }
 
     override fun onItemDeleteClick(commerceItem: CommerceItem) {
-        //showDeleteConfirmationDialog()
-        enableItemDelete(false)
-        removeItemAPI(commerceItem)
+        mCommerceItem = commerceItem
+        showDeleteConfirmationDialog(ON_CONFIRM_REMOVE_WITH_DELETE_PRESSED)
     }
 
     override fun onCheckBoxChange(isChecked: Boolean, commerceItem: CommerceItem) {
@@ -1166,6 +1166,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                             }
                             fadeCheckoutButton(false)
                             setDeliveryLocationEnabled(true)
+                            enableRemoveAllButton(true)
                             setMinimumCartErrorMessage()
                         } catch (ex: Exception) {
                             logException(ex)
@@ -1806,6 +1807,11 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         binding.btnEditCart.isEnabled = !enable
     }
 
+    private fun enableRemoveAllButton(enable: Boolean) {
+        binding.btnClearCart.isEnabled = !enable
+        binding.btnClearCart.isClickable = enable
+    }
+
     private fun showEditDeliveryLocationFeatureWalkthrough() {
         if ((!AppInstanceObject.get().featureWalkThrough.showTutorials
                     || AppInstanceObject.get().featureWalkThrough.deliveryLocation
@@ -2076,19 +2082,27 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             fadeCheckoutButton(false)
             setDeliveryLocationEnabled(true)
             setMinimumCartErrorMessage()
-            cartProductAdapter?.notifyDataSetChanged()
+            resetItemDelete(true)
         }
         setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_DISMISS_RESULT) { _, _ ->
             fadeCheckoutButton(false)
             setDeliveryLocationEnabled(true)
             setMinimumCartErrorMessage()
-            cartProductAdapter?.notifyDataSetChanged()
+            resetItemDelete(true)
+        }
+        setFragmentResultListener(ON_CONFIRM_REMOVE_WITH_DELETE_PRESSED) { _, _ ->
+            enableItemDelete(false)
+            mCommerceItem?.let { removeItemAPI(it) }
+        }
+        setFragmentResultListener(ON_CONFIRM_REMOVE_WITH_DELETE_ICON_PRESSED) { _, _ ->
+            enableItemDelete(false)
+            enableRemoveAllButton(false)
+            mCommerceItem?.let { removeItemAPI(it) }
         }
     }
 
     fun enableItemDelete(enable: Boolean) {
         fadeCheckoutButton(!enable)
-        enableEditCart(!enable)
         setDeliveryLocationEnabled(enable)
     }
 
@@ -2105,5 +2119,10 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         private const val TAG_AVAILABLE_VOUCHERS_TOAST = "AVAILABLE_VOUCHERS"
         private const val GENERAL_ITEM = "GENERAL"
         private const val GIFT_ITEM = "GIFT"
+
+        // constants for deletion confirmation.
+        private const val ON_CONFIRM_REMOVE_WITH_DELETE_PRESSED = "remove_with_delete_pressed"
+        private const val ON_CONFIRM_REMOVE_WITH_DELETE_ICON_PRESSED =
+            "remove_with_delete_icon_pressed"
     }
 }
