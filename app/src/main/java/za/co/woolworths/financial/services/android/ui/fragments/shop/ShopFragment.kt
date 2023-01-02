@@ -16,6 +16,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.constraintlayout.widget.ConstraintSet.*
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.core.view.contains
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
@@ -33,6 +34,9 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.Companion.DASH_DELIVERY_BROWSE_MODE
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyNames.Companion.BROWSE_MODE
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyNames.Companion.DELIVERY_MODE
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
@@ -151,29 +155,33 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         }
     }
 
-    fun setEventForDeliveryTypeAndBrowsingType() {
+    private fun setEventForDeliveryTypeAndBrowsingType() {
         if (getDeliveryType()?.deliveryType == null) {
             return
         }
 
-        val dashParams = Bundle()
-        dashParams.putString(FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_MODE,
-            KotlinUtils.getPreferredDeliveryType()?.type)
-        dashParams.putString(FirebaseManagerAnalyticsProperties.PropertyNames.BROWSE_MODE,
-            KotlinUtils.browsingDeliveryType?.type)
-        AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.DASH_DELIVERY_BROWSE_MODE, dashParams)
+        val dashParams = bundleOf(
+            DELIVERY_MODE to KotlinUtils.getPreferredDeliveryType()?.type,
+            BROWSE_MODE to KotlinUtils.browsingDeliveryType?.type
+        )
+
+        AnalyticsManager.setUserProperty(DELIVERY_MODE, KotlinUtils.getPreferredDeliveryType()?.type)
+        AnalyticsManager.setUserProperty(BROWSE_MODE, KotlinUtils.browsingDeliveryType?.type)
+        AnalyticsManager.logEvent(DASH_DELIVERY_BROWSE_MODE, dashParams)
     }
 
     private fun setEventsForSwitchingBrowsingType(browsingType: String?) {
         if (KotlinUtils.getPreferredDeliveryType() == null) {
             return
         }
-        val dashParams = Bundle()
-        dashParams.putString(FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_MODE,
-            KotlinUtils.getPreferredDeliveryType()?.name)
-        dashParams.putString(FirebaseManagerAnalyticsProperties.PropertyNames.BROWSE_MODE,
-            browsingType)
+        val dashParams = bundleOf(
+            DELIVERY_MODE to KotlinUtils.getPreferredDeliveryType()?.name,
+            BROWSE_MODE to browsingType
+        )
+        AnalyticsManager.setUserProperty(DELIVERY_MODE, KotlinUtils.getPreferredDeliveryType()?.type)
+        AnalyticsManager.setUserProperty(BROWSE_MODE, KotlinUtils.browsingDeliveryType?.type)
         AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.DASH_SWITCH_BROWSE_MODE, dashParams)
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
