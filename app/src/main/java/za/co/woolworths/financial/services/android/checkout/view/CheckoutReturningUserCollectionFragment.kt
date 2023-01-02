@@ -654,11 +654,14 @@ class CheckoutReturningUserCollectionFragment : Fragment(R.layout.fragment_check
      * check if cart items have only FBH products
      */
     private fun isFBHOnly() : Boolean {
-        return storePickupInfoResponse?.fulfillmentTypes?.join == StoreUtils.Companion.FulfillmentType.CLOTHING_ITEMS?.type
-                && storePickupInfoResponse?.openDayDeliverySlots?.isNullOrEmpty() == false
-                && storePickupInfoResponse?.fulfillmentTypes?.join != StoreUtils.Companion.FulfillmentType.FOOD_ITEMS?.type
-                && storePickupInfoResponse?.fulfillmentTypes?.food != StoreUtils.Companion.FulfillmentType.FOOD_ITEMS?.type
-    }
+         storePickupInfoResponse?.let {
+           return it.fulfillmentTypes?.join == StoreUtils.Companion.FulfillmentType.CLOTHING_ITEMS?.type
+                    && it.openDayDeliverySlots?.isNullOrEmpty() == false
+                    && it.fulfillmentTypes?.join != StoreUtils.Companion.FulfillmentType.FOOD_ITEMS?.type
+                    && it.fulfillmentTypes?.food != StoreUtils.Companion.FulfillmentType.FOOD_ITEMS?.type
+            }
+            return false
+        }
     /**
      * Update collection item view according to Food, FBH and mixed item with title on checkout
      * screen
@@ -669,35 +672,37 @@ class CheckoutReturningUserCollectionFragment : Fragment(R.layout.fragment_check
             collectionMessageForFBHItem()
             binding.apply {
                 checkoutCollectingTimeDetailsLayout?.root?.visibility = View.GONE
-                layoutCollectionInstructions.viewHorizontalCollectionBottomSeparator?.visibility = View.VISIBLE
-                nativeCheckoutFoodSubstitutionLayout?.root?.visibility = View.GONE
-                layoutCollectionInstructions.txtNeedBags?.visibility = View.GONE
-                layoutCollectionInstructions.instructionTxtShimmerFrameLayout?.visibility = View.GONE
-                layoutCollectionInstructions.switchNeedBags?.visibility = View.GONE
-                layoutCollectionInstructions.specialInstructionSwitchShimmerFrameLayout?.visibility = View.GONE
-                layoutCollectionInstructions.shoppingBagSeparator?.visibility = View.GONE
-                layoutCollectionInstructions.viewGiftHorizontalSeparator?.visibility = View.GONE
+                with(layoutCollectionInstructions) {
+                    txtNeedBags?.visibility = View.GONE
+                    nativeCheckoutFoodSubstitutionLayout?.root?.visibility = View.GONE
+                    viewHorizontalCollectionBottomSeparator?.visibility = View.VISIBLE
+                    instructionTxtShimmerFrameLayout?.visibility = View.GONE
+                    switchNeedBags?.visibility = View.GONE
+                    specialInstructionSwitchShimmerFrameLayout?.visibility = View.GONE
+                    shoppingBagSeparator?.visibility = View.GONE
+                    viewGiftHorizontalSeparator?.visibility = View.GONE
+                }
             }
-
         } //mixed cart - FBH + Food
         else if((storePickupInfoResponse?.fulfillmentTypes?.other == StoreUtils.Companion.FulfillmentType.CLOTHING_ITEMS?.type
                         && storePickupInfoResponse?.openDayDeliverySlots?.isNullOrEmpty() == false
                         && storePickupInfoResponse?.sortedFoodDeliverySlots?.isNullOrEmpty() == false
                         && storePickupInfoResponse?.fulfillmentTypes?.food == StoreUtils.Companion.FulfillmentType.FOOD_ITEMS?.type
                         && storePickupInfoResponse?.fulfillmentTypes?.join == StoreUtils.Companion.FulfillmentType.CLOTHING_ITEMS?.type)) {
-
             collectionMessageForFBHItem()
             binding?.apply {
                 checkoutCollectingTimeDetailsLayout.tvCollectionTimeDetailsTitle?.text = bindString(R.string.mixed_cart_food_item_title)
-                layoutCollectionInstructions.checkoutCollectionDetailsInfoLayout?.tvCollectionDetailsTitle?.text = bindString(R.string.mixed_cart_other_item_title)
+                with(layoutCollectionInstructions) {
+                    checkoutCollectionDetailsInfoLayout?.tvCollectionDetailsTitle?.text = bindString(R.string.mixed_cart_other_item_title)
 
-                layoutCollectionInstructions.specialInstructionSwitchShimmerFrameLayout?.visibility = View.GONE
-                layoutCollectionInstructions.viewGiftHorizontalSeparator?.visibility = View.GONE
-                layoutCollectionInstructions.instructionTxtShimmerFrameLayout?.visibility = View.GONE
-                layoutCollectionInstructions.shoppingBagSeparator?.visibility = View.GONE
+                    specialInstructionSwitchShimmerFrameLayout?.visibility = View.GONE
+                    viewGiftHorizontalSeparator?.visibility = View.GONE
+                    instructionTxtShimmerFrameLayout?.visibility = View.GONE
+                    shoppingBagSeparator?.visibility = View.GONE
 
-                layoutCollectionInstructions.viewHorizontalCollectionSeparator?.visibility = View.VISIBLE
-                layoutCollectionInstructions.viewHorizontalCollectionBottomSeparator?.visibility = View.VISIBLE
+                    viewHorizontalCollectionSeparator?.visibility = View.VISIBLE
+                    viewHorizontalCollectionBottomSeparator?.visibility = View.VISIBLE
+                }
             }
             storePickupInfoResponse?.sortedFoodDeliverySlots?.apply {
                 val firstAvailableDateSlot = getFirstAvailableFoodSlot(this)
