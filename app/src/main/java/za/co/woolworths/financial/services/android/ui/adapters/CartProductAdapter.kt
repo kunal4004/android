@@ -142,8 +142,6 @@ class CartProductAdapter(
                 setPicture(productHolder.productImage, productImageUrl)
                 productHolder.btnDeleteRow.visibility = if (editMode) VISIBLE else GONE
                 productHolder.rlDeleteButton.visibility = if (editMode) VISIBLE else GONE
-                onRemoveSingleItemInEditMode(productHolder, commerceItem)
-                onRemoveSingleItem(productHolder, commerceItem)
                 val quantityIsLoading = commerceItem.quantityUploading
                 //enable/disable change quantity click
                 if (editMode) {
@@ -493,9 +491,6 @@ class CartProductAdapter(
                 }
             })
             productHolder.clCartItems.startAnimation(animateRowToDelete)
-        } else {
-            productHolder.pbDeleteIndicator.visibility = GONE
-            productHolder.swipeLayout.close(true, true)
         }
     }
 

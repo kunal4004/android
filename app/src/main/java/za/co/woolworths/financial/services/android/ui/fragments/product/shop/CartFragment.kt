@@ -13,6 +13,7 @@ import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.setFragmentResultListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentCartBinding
@@ -60,6 +61,7 @@ import za.co.woolworths.financial.services.android.ui.adapters.CartProductAdapte
 import za.co.woolworths.financial.services.android.ui.fragments.cart.GiftWithPurchaseDialogDetailFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.RemoveProductsFromCartDialogFragment.Companion.newInstance
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.RemoveProductsFromCartDialogFragment.IRemoveProductsFromCartDialog
+import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory.Companion.buildAddToCartSuccessToast
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory.Companion.showItemsLimitToastOnAddToCart
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView
@@ -126,6 +128,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         setupToolbar()
         initViews()
         hideEditCart()
+        addFragmentListener()
         mChangeQuantityList = ArrayList(0)
         mChangeQuantity = ChangeQuantity()
         mConnectionBroadcast = Utils.connectionBroadCast(
@@ -544,9 +547,10 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         removeItemAPI(commerceItem)
     }
 
-    override fun onItemDeleteClick(commerceId: CommerceItem) {
+    override fun onItemDeleteClick(commerceItem: CommerceItem) {
+        //showDeleteConfirmationDialog()
         enableItemDelete(false)
-        removeItemAPI(commerceId)
+        removeItemAPI(commerceItem)
     }
 
     override fun onCheckBoxChange(isChecked: Boolean, commerceItem: CommerceItem) {
@@ -2052,6 +2056,33 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                     showBanner = (getPreferredDeliveryType() === Delivery.CNC || getPreferredDeliveryType() === Delivery.DASH)
                 )
             }
+        }
+    }
+
+    private fun showDeleteConfirmationDialog(resultCode: String) {
+        val customBottomSheetDialogFragment =
+            CustomBottomSheetDialogFragment.newInstance(
+                getString(R.string.are_you_sure),
+                getString(R.string.delete_confirmation_text),
+                getString(R.string.remove),
+                getString(R.string.cancel),
+                resultCode)
+        customBottomSheetDialogFragment.show(requireFragmentManager(),
+            CustomBottomSheetDialogFragment::class.java.simpleName)
+    }
+
+    private fun addFragmentListener() {
+        setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_CLICK_RESULT) { _, _ ->
+            fadeCheckoutButton(false)
+            setDeliveryLocationEnabled(true)
+            setMinimumCartErrorMessage()
+            cartProductAdapter?.notifyDataSetChanged()
+        }
+        setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_DISMISS_RESULT) { _, _ ->
+            fadeCheckoutButton(false)
+            setDeliveryLocationEnabled(true)
+            setMinimumCartErrorMessage()
+            cartProductAdapter?.notifyDataSetChanged()
         }
     }
 
