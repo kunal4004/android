@@ -221,7 +221,6 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         binding.apply {
             btnEditCart.setText(R.string.edit)
             btnClearCart.visibility = View.GONE
-            pbRemoveAllItem.visibility = View.GONE
             btnEditCart.setOnClickListener(this@CartFragment)
             btnClearCart.setOnClickListener(this@CartFragment)
         }
@@ -255,7 +254,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
 
     fun onRemoveItem(visibility: Boolean) {
         binding.apply {
-            pbRemoveAllItem.visibility =
+            cartProgressBar.visibility =
                 if (visibility) View.VISIBLE else View.GONE
             btnClearCart.visibility = if (visibility) View.GONE else View.VISIBLE
             btnEditCart.isEnabled = !visibility
@@ -264,7 +263,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
 
     fun onRemoveSuccess() {
         binding.apply {
-            pbRemoveAllItem.visibility = View.GONE
+            cartProgressBar.visibility = View.GONE
             btnClearCart.visibility = View.GONE
         }
     }
@@ -303,7 +302,8 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                         FirebaseManagerAnalyticsProperties.MYCARTREMOVEALL,
                         requireActivity()
                     )
-                    removeAllCartItem(null)
+
+                    showDeleteConfirmationDialog(ON_CONFIRM_REMOVE_ALL)
                 } else {
                     cartItems?.let { cartItems ->
                         for (cartItemGroup: CartItemGroup in cartItems) {
@@ -389,7 +389,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     }
 
     private fun dismissProgress() {
-        binding.pbRemoveAllItem.visibility = View.GONE
+        binding.cartProgressBar.visibility = View.GONE
     }
 
     private fun callSavedAddress() {
@@ -2099,6 +2099,10 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             enableRemoveAllButton(false)
             mCommerceItem?.let { removeItemAPI(it) }
         }
+        setFragmentResultListener(ON_CONFIRM_REMOVE_ALL) { _, _ ->
+            enableItemDelete(false)
+            removeAllCartItem(null)
+        }
     }
 
     fun enableItemDelete(enable: Boolean) {
@@ -2124,5 +2128,6 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         private const val ON_CONFIRM_REMOVE_WITH_DELETE_PRESSED = "remove_with_delete_pressed"
         private const val ON_CONFIRM_REMOVE_WITH_DELETE_ICON_PRESSED =
             "remove_with_delete_icon_pressed"
+        private const val ON_CONFIRM_REMOVE_ALL = "on_confirm_remove_all"
     }
 }
