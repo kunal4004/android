@@ -5,11 +5,16 @@ import static za.co.woolworths.financial.services.android.util.AppConstant.Keys.
 
 import android.app.Activity;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.ViewGroup;
 
-import androidx.fragment.app.Fragment;
+import androidx.annotation.NonNull;
+
+import com.awfs.coordination.databinding.GridLayoutBinding;
 
 import java.util.List;
 
+import kotlin.jvm.functions.Function3;
 import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.IResponseListener;
 import za.co.woolworths.financial.services.android.models.dto.PagingResponse;
@@ -19,8 +24,9 @@ import za.co.woolworths.financial.services.android.models.dto.ProductsRequestPar
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
 import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.util.Utils;
+import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding;
 
-public class ProductListingExtensionFragment extends Fragment {
+public class ProductListingExtensionFragment extends BaseFragmentBinding<GridLayoutBinding> {
 
     private int mNumItemsInTotal;
     private boolean loadMoreData = false;
@@ -33,6 +39,10 @@ public class ProductListingExtensionFragment extends Fragment {
     private Call<ProductView> retrieveProduct;
 
     private GridNavigator mNavigator;
+
+    public ProductListingExtensionFragment(@NonNull Function3<? super LayoutInflater, ? super ViewGroup, ? super Boolean, ? extends GridLayoutBinding> inflate) {
+        super(inflate);
+    }
 
     public void setNavigator(GridNavigator navigator) {
         this.mNavigator = navigator;

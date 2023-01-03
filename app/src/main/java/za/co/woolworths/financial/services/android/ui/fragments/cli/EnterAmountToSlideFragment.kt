@@ -6,14 +6,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.cli_slider_error_dialog.*
+import com.awfs.coordination.databinding.CliSliderErrorDialogBinding
 import za.co.woolworths.financial.services.android.contracts.IEditAmountSlider
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 
 class EnterAmountToSlideFragment : WBottomSheetDialogFragment() {
 
+    private lateinit var binding: CliSliderErrorDialogBinding
     private var mTitle: String? = null
     private var mProgressValue: Int? = null
     private var mDrawnDownAmount: Int? = null
@@ -56,15 +56,19 @@ class EnterAmountToSlideFragment : WBottomSheetDialogFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.cli_slider_error_dialog, container, false)
+        binding = CliSliderErrorDialogBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        tvTitle?.text = mTitle
-        tvDescription?.text = mDescription
-        gotItButton?.setOnClickListener {
-            dismiss()
+
+        with(binding) {
+            tvTitle?.text = mTitle
+            tvDescription?.text = mDescription
+            gotItButton?.setOnClickListener {
+                dismiss()
+            }
         }
     }
 

@@ -8,7 +8,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.checkout_address_confirmation_selection_delivery_list.view.*
+import com.awfs.coordination.databinding.CheckoutAddressConfirmationSelectionDeliveryListBinding
 import za.co.woolworths.financial.services.android.checkout.service.network.Address
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
@@ -49,12 +49,7 @@ class CheckoutAddressConfirmationListAdapter(
         viewType: Int
     ): CheckoutAddressConfirmationListAdapter.CheckoutAddressConfirmationViewHolder {
         return CheckoutAddressConfirmationViewHolder(
-            LayoutInflater.from(parent.context)
-                .inflate(
-                    R.layout.checkout_address_confirmation_selection_delivery_list,
-                    parent,
-                    false
-                )
+            CheckoutAddressConfirmationSelectionDeliveryListBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         )
     }
 
@@ -69,73 +64,80 @@ class CheckoutAddressConfirmationListAdapter(
         holder.bindItem(position)
     }
 
-    inner class CheckoutAddressConfirmationViewHolder(itemView: View) :
-        RecyclerView.ViewHolder(itemView) {
+    inner class CheckoutAddressConfirmationViewHolder(val binding: CheckoutAddressConfirmationSelectionDeliveryListBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun bindItem(position: Int) {
-            itemView.apply {
-                hideShimmer(this)
-                savedAddress?.addresses?.get(position)?.let {
+            with(binding) {
+                itemView.apply {
+                    hideShimmer(this)
+                    savedAddress?.addresses?.get(position)?.let {
+                        title.text = it.nickname
+                        subTitle.text = it.address1
+                        selector.isChecked = checkedItemPosition == position
+                        addressSelectionLayout.setBackgroundColor(
+                            if (selector.isChecked) bindColor(R.color.selected_address_background_color) else bindColor(
+                                R.color.white
+                            )
+                        )
+                        title.setBackgroundColor(
+                            if (selector.isChecked) bindColor(R.color.selected_address_background_color) else bindColor(
+                                R.color.white
+                            )
+                        )
+                        subTitle.setBackgroundColor(
+                            if (selector.isChecked) bindColor(R.color.selected_address_background_color) else bindColor(
+                                R.color.white
+                            )
+                        )
+                        if (selector.isChecked) {
+                            listner.hideErrorView()
+                        }
+                    }
 
-                    title.text = it.nickname
-                    subTitle.text = it.address1
-                    selector.isChecked = checkedItemPosition == position
-                    addressSelectionLayout.setBackgroundColor(
-                        if (selector.isChecked) bindColor(R.color.selected_address_background_color) else bindColor(
-                            R.color.white
+                    setOnClickListener {
+                        onItemClick(adapterPosition)
+                    }
+                    editAddressImageView.setOnClickListener {
+                        val bundle = Bundle()
+                        Utils.triggerFireBaseEvents(
+                            FirebaseManagerAnalyticsProperties.CHANGE_FULFILLMENT_EDIT_ADDRESS,
+                            hashMapOf(
+                                FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                                        FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_EDIT_ADDRESS
+                            ),
+                            activity
                         )
-                    )
-                    title.setBackgroundColor(
-                        if (selector.isChecked) bindColor(R.color.selected_address_background_color) else bindColor(
-                            R.color.white
+                        bundle.putString(
+                            EDIT_SAVED_ADDRESS_RESPONSE_KEY,
+                            Utils.toJson(savedAddress)
                         )
-                    )
-                    subTitle.setBackgroundColor(
-                        if (selector.isChecked) bindColor(R.color.selected_address_background_color) else bindColor(
-                            R.color.white
+                        bundle.putInt(EDIT_ADDRESS_POSITION_KEY, position)
+                        navController?.navigate(
+                            R.id.action_checkoutAddressConfirmationFragment_to_CheckoutAddAddressNewUserFragment,
+                            bundle
                         )
-                    )
-                    if (selector.isChecked) {
-                        listner.hideErrorView()
                     }
                 }
-
-                setOnClickListener {
-                    onItemClick(adapterPosition)
-                }
-                editAddressImageView.setOnClickListener {
-                    val bundle = Bundle()
-                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHANGE_FULFILLMENT_EDIT_ADDRESS, hashMapOf(
-                        FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
-                                FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_EDIT_ADDRESS
-                    ), activity)
-                    bundle.putString(EDIT_SAVED_ADDRESS_RESPONSE_KEY, Utils.toJson(savedAddress))
-                    bundle.putInt(EDIT_ADDRESS_POSITION_KEY, position)
-                    navController?.navigate(
-                        R.id.action_checkoutAddressConfirmationFragment_to_CheckoutAddAddressNewUserFragment,
-                        bundle
-                    )
-                }
             }
-
         }
     }
 
-    private fun hideShimmer(view: View) {
+    private fun CheckoutAddressConfirmationSelectionDeliveryListBinding.hideShimmer(view: View) {
         view.apply {
-            selectorShimmerFrameLayout?.setShimmer(null)
-            selectorShimmerFrameLayout?.stopShimmer()
+            selectorShimmerFrameLayout.setShimmer(null)
+            selectorShimmerFrameLayout.stopShimmer()
             selector.visibility = View.VISIBLE
 
-            titleShimmerLayout?.setShimmer(null)
-            titleShimmerLayout?.stopShimmer()
+            titleShimmerLayout.setShimmer(null)
+            titleShimmerLayout.stopShimmer()
             title.visibility = View.VISIBLE
 
-            subtitleShimmerLayout?.setShimmer(null)
-            subtitleShimmerLayout?.stopShimmer()
+            subtitleShimmerLayout.setShimmer(null)
+            subtitleShimmerLayout.stopShimmer()
             subTitle.visibility = View.VISIBLE
 
-            slotPriceButtonShimmerFrameLayout?.setShimmer(null)
-            slotPriceButtonShimmerFrameLayout?.stopShimmer()
+            slotPriceButtonShimmerFrameLayout.setShimmer(null)
+            slotPriceButtonShimmerFrameLayout.stopShimmer()
             slotPriceButton.visibility = View.GONE
         }
     }

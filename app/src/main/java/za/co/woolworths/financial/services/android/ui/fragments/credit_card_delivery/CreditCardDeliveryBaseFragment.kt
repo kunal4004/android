@@ -1,13 +1,14 @@
 package za.co.woolworths.financial.services.android.ui.fragments.credit_card_delivery
 
 import android.os.Bundle
+import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.ScheduleDeliveryRequest
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.StatusResponse
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants
 import za.co.woolworths.financial.services.android.util.Utils
 
-open class CreditCardDeliveryBaseFragment : Fragment() {
+open class CreditCardDeliveryBaseFragment(@LayoutRes contentLayoutId: Int) : Fragment(contentLayoutId) {
 
     var bundle: Bundle? = null
     lateinit var envelopeNumber: String

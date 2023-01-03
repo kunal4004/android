@@ -3,7 +3,6 @@ package za.co.woolworths.financial.services.android.checkout.view.adapter
 import android.graphics.Paint
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
@@ -11,7 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.checkout_address_confirmation_selection_delivery_list.view.*
+import com.awfs.coordination.databinding.CheckoutStoreSelectionListBinding
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment
 import za.co.woolworths.financial.services.android.models.dto.ValidateStoreList
 import za.co.woolworths.financial.services.android.ui.extension.bindColor
@@ -38,11 +37,8 @@ class CheckoutStoreSelectionAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StoreViewHolder {
         return StoreViewHolder(
-            LayoutInflater.from(parent.context).inflate(
-                R.layout.checkout_store_selection_list,
-                parent,
-                false
-            )
+            CheckoutStoreSelectionListBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+
         )
     }
 
@@ -54,9 +50,9 @@ class CheckoutStoreSelectionAdapter(
         holder.bindItem(position)
     }
 
-    inner class StoreViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class StoreViewHolder(private val binding: CheckoutStoreSelectionListBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bindItem(position: Int) {
-            itemView.apply {
+            binding.apply {
                 storeFilterList[position].let {
                     title.text = it.storeName
                     subTitle.text = it.storeAddress
@@ -81,7 +77,8 @@ class CheckoutStoreSelectionAdapter(
                         )
                     }
                 }
-                setOnClickListener {
+
+                this.root.setOnClickListener {
                     if (storeFilterList[position].deliverable == false) return@setOnClickListener
 
                     val bundle = Bundle()

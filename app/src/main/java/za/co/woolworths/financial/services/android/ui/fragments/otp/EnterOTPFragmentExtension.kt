@@ -2,23 +2,21 @@ package za.co.woolworths.financial.services.android.ui.fragments.otp
 
 import android.app.Activity
 import android.content.Context
-import android.text.InputType
 import android.view.KeyEvent
 import android.view.View
 import android.view.View.FOCUS_DOWN
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.fragment_enter_otp.*
+import com.awfs.coordination.databinding.FragmentEnterOtpBinding
 import za.co.woolworths.financial.services.android.ui.fragments.npc.OTPViewTextWatcher
 import za.co.woolworths.financial.services.android.util.KeyboardUtil
 import za.co.woolworths.financial.services.android.util.KotlinUtils
+import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 
-open class EnterOTPFragmentExtension : Fragment() {
-    fun setupInputListeners() {
-
+open class EnterOTPFragmentExtension : BaseFragmentBinding<FragmentEnterOtpBinding>(FragmentEnterOtpBinding::inflate) {
+    fun FragmentEnterOtpBinding.setupInputListeners() {
         KotlinUtils.lowercaseEditText(edtVerificationCode1)
         KotlinUtils.lowercaseEditText(edtVerificationCode2)
         KotlinUtils.lowercaseEditText(edtVerificationCode3)
@@ -107,7 +105,7 @@ open class EnterOTPFragmentExtension : Fragment() {
     }
 
 
-    private fun validateVerificationCode() {
+    private fun FragmentEnterOtpBinding.validateVerificationCode() {
         when ((edtVerificationCode1?.length() == 1)
                 && (edtVerificationCode2?.length() == 1)
                 && (edtVerificationCode3?.length() == 1)
@@ -147,7 +145,7 @@ open class EnterOTPFragmentExtension : Fragment() {
         activity?.apply { KeyboardUtil.hideSoftKeyboard(this) }
     }
 
-    fun clearOTP() {
+    fun FragmentEnterOtpBinding.clearOTP() {
         edtVerificationCode1?.text?.clear()
         edtVerificationCode2?.text?.clear()
         edtVerificationCode3?.text?.clear()
@@ -155,7 +153,7 @@ open class EnterOTPFragmentExtension : Fragment() {
         edtVerificationCode5?.text?.clear()
     }
 
-    fun setOtpErrorBackground(drawableId: Int) {
+    fun FragmentEnterOtpBinding.setOtpErrorBackground(drawableId: Int) {
         context?.let { context ->
             ContextCompat.getDrawable(context, drawableId)?.apply {
                 edtVerificationCode1?.setBackgroundResource(drawableId)

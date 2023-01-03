@@ -1,23 +1,17 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.TextView
-import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.pay_my_account_learn_more_fragment.*
+import com.awfs.coordination.databinding.PayMyAccountLearnMoreFragmentBinding
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.util.KotlinUtils
+import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 
-class PayMyAccountLearnMoreFragment : Fragment() {
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.pay_my_account_learn_more_fragment, container, false)
-    }
+class PayMyAccountLearnMoreFragment : BaseFragmentBinding<PayMyAccountLearnMoreFragmentBinding>(PayMyAccountLearnMoreFragmentBinding::inflate) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -27,7 +21,7 @@ class PayMyAccountLearnMoreFragment : Fragment() {
 
     private fun noteStringBuilder() {
         val note = KotlinUtils.highlightText(bindString(R.string.atm_payment_note), mutableListOf("Note:"))
-        atmPaymentNoteTextView?.text = note
+        binding.atmPaymentNoteTextView?.text = note
     }
 
     private fun populateATMPaymentItem() {
@@ -44,7 +38,7 @@ class PayMyAccountLearnMoreFragment : Fragment() {
                 val atmTitleTextView: TextView? = view?.findViewById(R.id.atmTitleTextView)
                 indexTextView?.text = index.plus(1).toString()
                 atmTitleTextView?.text = bindString(description)
-                atmPaymentItemLinearLayout?.addView(view)
+                binding.atmPaymentItemLinearLayout?.addView(view)
             }
         }
     }

@@ -11,7 +11,7 @@ import android.view.View.VISIBLE
 import android.view.inputmethod.EditorInfo
 import androidx.annotation.RequiresApi
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.barcode_manual_scan_fragment.*
+import com.awfs.coordination.databinding.BarcodeManualScanFragmentBinding
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
 import za.co.woolworths.financial.services.android.ui.activities.BarcodeScanActivity
@@ -20,28 +20,28 @@ import za.co.woolworths.financial.services.android.ui.extension.showKeyboard
 import za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView
 import za.co.woolworths.financial.services.android.util.Utils
 
-class BarcodeManualScanFragment : BarcodeScanExtension() {
+class BarcodeManualScanFragment : BarcodeScanExtension(R.layout.barcode_manual_scan_fragment) {
 
     companion object {
         fun newInstance() = BarcodeManualScanFragment()
     }
 
+    private lateinit var binding: BarcodeManualScanFragmentBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
         activity?.apply {
-            (this as? BarcodeScanActivity)?.setHomeIndicator(true)
+            (this as? BarcodeScanActivity)?.binding?.setHomeIndicator(true)
             window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
         }
-    }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater?.inflate(R.layout.barcode_manual_scan_fragment, container, false)
     }
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding = BarcodeManualScanFragmentBinding.bind(view)
+
         showKeyboard()
         setEventAndListener()
     }
@@ -49,7 +49,7 @@ class BarcodeManualScanFragment : BarcodeScanExtension() {
     override fun onResume() {
         super.onResume()
         activity?.let { Utils.setScreenName(it, FirebaseManagerAnalyticsProperties.ScreenNames.SHOP_BARCODE_MANUAL) }
-        edtBarcodeNumber?.apply {
+        binding.edtBarcodeNumber?.apply {
             clearFocus()
             requestFocus()
         }
@@ -57,11 +57,11 @@ class BarcodeManualScanFragment : BarcodeScanExtension() {
     }
 
     private fun setEventAndListener() {
-        edtBarcodeNumber?.apply {
+        binding.edtBarcodeNumber?.apply {
             setOnKeyPreImeListener(onKeyPreImeListener)
             setOnEditorActionListener { v, actionId, event ->
                 if ((actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_DONE || event?.action == KeyEvent.ACTION_DOWN && event.keyCode == KeyEvent.KEYCODE_ENTER)) {
-                    if (edtBarcodeNumber.text.isNotEmpty())
+                    if (binding.edtBarcodeNumber.text.isNotEmpty())
                         setAndRetrieveProductDetail()
                 }
                 true
@@ -76,28 +76,28 @@ class BarcodeManualScanFragment : BarcodeScanExtension() {
                 }
 
                 override fun afterTextChanged(s: Editable) {
-                    confirmedBarcodeGroup?.visibility = if (s.isNotEmpty()) VISIBLE else GONE
+                    binding.confirmedBarcodeGroup?.visibility = if (s.isNotEmpty()) VISIBLE else GONE
                 }
             })
         }
-        btnBarcodeConfirm?.setOnClickListener {
+        binding.btnBarcodeConfirm?.setOnClickListener {
             setAndRetrieveProductDetail()
         }
     }
 
     private fun setAndRetrieveProductDetail() {
-        if (edtBarcodeNumber.text.isEmpty()) return
+        if (binding.edtBarcodeNumber.text.isEmpty()) return
         if (!getProductDetailAsyncTaskIsRunning)
-            edtBarcodeNumber?.text?.toString()?.let { barcodeText ->
+            binding.edtBarcodeNumber?.text?.toString()?.let { barcodeText ->
                 sendResultBack(ProductsRequestParams.SearchType.BARCODE.name, barcodeText)
             }
     }
 
-    private fun showKeyboard() = (activity as? AppCompatActivity)?.let { edtBarcodeNumber?.showKeyboard(it) }
+    private fun showKeyboard() = (activity as? AppCompatActivity)?.let { binding.edtBarcodeNumber?.showKeyboard(it) }
 
     override fun progressBarVisibility(progressBarIsVisible: Boolean) {
-        mProgressBar?.visibility = if (progressBarIsVisible) VISIBLE else GONE
-        tvTitle?.visibility = if (progressBarIsVisible) GONE else VISIBLE
+        binding.mProgressBar?.visibility = if (progressBarIsVisible) VISIBLE else GONE
+        binding.tvTitle?.visibility = if (progressBarIsVisible) GONE else VISIBLE
     }
 
     private val onKeyPreImeListener = WLoanEditTextView.OnKeyPreImeListener { onBackPressed() }
@@ -116,7 +116,7 @@ class BarcodeManualScanFragment : BarcodeScanExtension() {
         super.onDetach()
         (activity as? AppCompatActivity)?.apply {
             window?.clearFlags(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
-            edtBarcodeNumber?.hideKeyboard(this)
+            binding.edtBarcodeNumber?.hideKeyboard(this)
         }
     }
 }

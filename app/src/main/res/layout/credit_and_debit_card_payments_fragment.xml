@@ -109,6 +109,7 @@
 </androidx.core.widget.NestedScrollView>
 
     <include
+        android:id="@+id/chat_collect_agent_floating_button_layout"
         layout="@layout/chat_collect_agent_floating_button_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
