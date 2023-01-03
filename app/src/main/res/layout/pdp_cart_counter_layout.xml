@@ -11,14 +11,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/six_dp"
-        android:paddingEnd="3dp"
+        android:layout_marginTop="@dimen/two_dp"
         android:elevation="@dimen/two_dp"
-        android:layout_marginTop="2dp"
-        app:srcCompat="@drawable/ic_cart_icon"
+        android:paddingEnd="@dimen/three_dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/ic_cart_icon" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/cartCountTextView"
@@ -26,21 +25,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/twenty_five_dp"
+        android:layout_marginTop="@dimen/three_dp"
         android:layout_marginEnd="@dimen/four_dp"
-        android:layout_marginTop="3dp"
-        android:layout_marginBottom="3dp"
+        android:layout_marginBottom="@dimen/three_dp"
         android:background="@drawable/round_corner_black_bg"
         android:gravity="center_vertical|center_horizontal"
-        android:paddingStart="@dimen/eight_dp"
-        android:paddingTop="@dimen/eight_dp"
-        android:paddingEnd="@dimen/eight_dp"
-        android:paddingBottom="@dimen/eight_dp"
-
+        android:padding="@dimen/eight_dp"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="@+id/cartCountImage"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

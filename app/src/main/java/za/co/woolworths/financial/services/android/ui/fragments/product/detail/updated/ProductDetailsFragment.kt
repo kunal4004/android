@@ -295,16 +295,12 @@ class ProductDetailsFragment : BaseFragmentBinding<ProductDetailsFragmentBinding
     }
 
     private fun setUpCartCountPDP() {
-        //  openCart.setImageResource(R.drawable.ic_cart_icon_pdp)
-         if (SessionUtilities.getInstance().isUserAuthenticated && QueryBadgeCounter.instance.cartCount <= 0) {
-             binding.openCart.cartCountTextView?.visibility = View.GONE
-         }
-
-        if (SessionUtilities.getInstance().isUserAuthenticated && QueryBadgeCounter.instance.cartCount > 0) {
-            // openCart.setImageResource(R.drawable.ic_pdp_cart_count_icon)
+        if (SessionUtilities.getInstance().isUserAuthenticated && QueryBadgeCounter.instance.cartCount <= 0) {
+            binding.openCart.cartCountTextView?.visibility = View.GONE
+        } else if (SessionUtilities.getInstance().isUserAuthenticated && QueryBadgeCounter.instance.cartCount > 0) {
             binding.openCart.cartCountTextView?.visibility = View.VISIBLE
-          //  binding.openCart.cartCountTextView?.background = resources.getDrawable(R.drawable.round_corner_black_bg)
-            binding.openCart.cartCountTextView?.text = QueryBadgeCounter.instance.cartCount.toString()
+            binding.openCart.cartCountTextView?.text =
+                QueryBadgeCounter.instance.cartCount.toString()
         }
     }
 
@@ -360,12 +356,6 @@ class ProductDetailsFragment : BaseFragmentBinding<ProductDetailsFragmentBinding
         hideRatingAndReview()
         setupViewModel()
         updateReportLikeStatus()
-
-        /*openCart.apply {
-            cartCountPDPLayout?.setOnClickListener(this@ProductDetailsFragment)
-
-        }*/
-
         toCartAndFindInStoreLayout.apply {
             addToCartAction?.setOnClickListener(this@ProductDetailsFragment)
             quantitySelector?.setOnClickListener(this@ProductDetailsFragment)
@@ -1024,11 +1014,7 @@ class ProductDetailsFragment : BaseFragmentBinding<ProductDetailsFragmentBinding
             }
             productDetailsPresenter?.postAddItemToCart(listOfItems)
         }
-       /* val cartCountValue : String = QueryBadgeCounter.instance.cartCount.toString()
-        binding.openCart.cartCountTextView.visibility = View.VISIBLE
-        binding.openCart.cartCountTextView?.text = cartCountValue*/
         setUpCartCountPDP()
-
     }
 
     override fun onSessionTokenExpired() {

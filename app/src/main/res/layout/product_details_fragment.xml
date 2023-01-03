@@ -44,17 +44,6 @@
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/brand_view" />
 
-              <!--  <ImageView
-                    android:id="@+id/openCart"
-                    android:layout_width="@dimen/thirty_dp"
-                    android:layout_height="@dimen/thirty_dp"
-                    android:layout_gravity="end"
-                    android:layout_margin="@dimen/default_margin"
-                    android:elevation="@dimen/two_dp"
-                    android:src="@drawable/cart_icon"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/brand_view" />
--->
                 <include
                     android:id="@+id/vtoLayout"
                     layout="@layout/vto_layout"
