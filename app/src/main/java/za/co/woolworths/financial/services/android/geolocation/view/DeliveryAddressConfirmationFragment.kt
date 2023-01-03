@@ -443,8 +443,7 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
                     ConfirmLocationRequest(STANDARD, confirmLocationAddress, "")
                 }
             }
-            deliveryType?.let { setEventsForSwitchingDeliveryType(it) }
-                ?: setEventsForSwitchingDeliveryType(Delivery.STANDARD.name)
+            setEventsForSwitchingDeliveryType(deliveryType ?: Delivery.STANDARD.name)
 
             viewLifecycleOwner.lifecycleScope.launch {
                 progressBar.visibility = View.VISIBLE
