@@ -5,7 +5,7 @@ import android.content.IntentFilter
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.loan_withdrawal_container.*
+import com.awfs.coordination.databinding.LoanWithdrawalContainerBinding
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.extension.findFragmentByTag
@@ -17,13 +17,15 @@ import za.co.woolworths.financial.services.android.util.Utils
 
 class LoanWithdrawalActivity : AppCompatActivity(), IDialogListener, NetworkChangeListener {
 
+    private lateinit var binding: LoanWithdrawalContainerBinding
     private var mConnectionBroadCast: BroadcastReceiver? = null
     private var accountInfo: String? = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Utils.updateStatusBarBackground(this@LoanWithdrawalActivity, R.color.purple)
-        setContentView(R.layout.loan_withdrawal_container)
+        binding = LoanWithdrawalContainerBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         setActionBar()
 
         intent?.extras?.apply {
@@ -44,8 +46,7 @@ class LoanWithdrawalActivity : AppCompatActivity(), IDialogListener, NetworkChan
     }
 
     private fun uniqueIdsForPLDDModule() {
-        toolbar?.contentDescription = getString(R.string.PLDD_toolbar_layout)
-
+        binding.toolbar?.contentDescription = getString(R.string.PLDD_toolbar_layout)
     }
 
     private fun connectionDetector() {
@@ -53,7 +54,7 @@ class LoanWithdrawalActivity : AppCompatActivity(), IDialogListener, NetworkChan
     }
 
     private fun setActionBar() {
-        setSupportActionBar(toolbar)
+        setSupportActionBar(binding.toolbar)
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
             setDisplayShowTitleEnabled(false)

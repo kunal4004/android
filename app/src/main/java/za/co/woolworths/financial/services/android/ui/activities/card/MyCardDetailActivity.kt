@@ -3,22 +3,19 @@ package za.co.woolworths.financial.services.android.ui.activities.card
 import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
-import androidx.fragment.app.Fragment
-import androidx.core.content.ContextCompat
-import androidx.appcompat.app.AppCompatActivity
 import android.view.MenuItem
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.MyCardActivityBinding
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.my_card_activity.*
-import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.contracts.IStoreCardListener
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
-import za.co.woolworths.financial.services.android.ui.activities.WPdfViewerActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.BlockMyCardActivity.Companion.REQUEST_CODE_BLOCK_MY_CARD
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.TemporaryFreezeStoreCard
@@ -29,10 +26,8 @@ import za.co.woolworths.financial.services.android.ui.fragments.npc.MyCardExtens
 import za.co.woolworths.financial.services.android.ui.fragments.npc.ProcessBlockCardFragment.Companion.RESULT_CODE_BLOCK_CODE_SUCCESS
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.Utils.PRIMARY_CARD_POSITION
-import za.co.woolworths.financial.services.android.util.WFormatter
 import za.co.woolworths.financial.services.android.util.wenum.StoreCardViewType
 import java.util.*
-
 
 @AndroidEntryPoint
 class MyCardDetailActivity : AppCompatActivity(), IStoreCardListener {
@@ -47,6 +42,7 @@ class MyCardDetailActivity : AppCompatActivity(), IStoreCardListener {
         const val REQUEST_CODE_GET_REPLACEMENT_CARD = 3214
     }
 
+    private lateinit var binding: MyCardActivityBinding
     private var mStoreCardScreenType: StoreCardViewType? = StoreCardViewType.DEFAULT
     var shouldActivateUnblockCardOnLanding: Boolean = false
     var shouldNotifyStateChanged = false
@@ -54,7 +50,8 @@ class MyCardDetailActivity : AppCompatActivity(), IStoreCardListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.my_card_activity)
+        binding = MyCardActivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         Utils.updateStatusBarBackground(this)
         actionBar()
 
@@ -70,8 +67,7 @@ class MyCardDetailActivity : AppCompatActivity(), IStoreCardListener {
     }
 
     private fun uniqueIdsForCardDetails() {
-        tbMyCard?.contentDescription = getString(R.string.toolbar_title)
-
+        binding.tbMyCard?.contentDescription = getString(R.string.toolbar_title)
     }
 
     private fun addCardDetailFragment() {
@@ -118,7 +114,7 @@ class MyCardDetailActivity : AppCompatActivity(), IStoreCardListener {
     }
 
     private fun actionBar() {
-        setSupportActionBar(tbMyCard)
+        setSupportActionBar(binding.tbMyCard)
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
             setDisplayShowTitleEnabled(false)
@@ -183,14 +179,14 @@ class MyCardDetailActivity : AppCompatActivity(), IStoreCardListener {
     private fun getCurrentFragment(): Fragment? = supportFragmentManager?.findFragmentById(R.id.flMyCard)
 
     private fun showToolbarTitle() {
-        toolbarText?.visibility = VISIBLE
+        binding.toolbarText?.visibility = VISIBLE
     }
 
     fun hideToolbarTitle() {
-        toolbarText?.visibility = GONE
+        binding.toolbarText?.visibility = GONE
     }
 
-    fun changeToolbarBackground(colorId: Int) = tbMyCard?.setBackgroundColor(ContextCompat.getColor(this, colorId))
+    fun changeToolbarBackground(colorId: Int) = binding.tbMyCard?.setBackgroundColor(ContextCompat.getColor(this, colorId))
 
     private fun getMyStoreCardDetail(): String? = mStoreCardDetail ?: ""
 

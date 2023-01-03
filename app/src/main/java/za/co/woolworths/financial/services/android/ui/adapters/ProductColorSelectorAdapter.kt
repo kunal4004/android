@@ -6,14 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.product_color_selector_list_item.view.*
+import com.awfs.coordination.databinding.ProductColorSelectorListItemBinding
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsContract
 import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
 import za.co.woolworths.financial.services.android.util.DrawImage
 import java.util.*
-
 
 class ProductColorSelectorAdapter(val otherSKUsByGroupKey: HashMap<String, ArrayList<OtherSkus>>, var listener: ProductDetailsContract.ProductDetailsView, spanCount: Int, selectedGroupKey: String?) : RecyclerView.Adapter<ProductColorSelectorAdapter.ViewHolder>() {
 
@@ -38,8 +37,7 @@ class ProductColorSelectorAdapter(val otherSKUsByGroupKey: HashMap<String, Array
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
-                LayoutInflater.from(parent.context)
-                        .inflate(R.layout.product_color_selector_list_item, parent, false)
+            ProductColorSelectorListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         )
     }
 
@@ -52,23 +50,34 @@ class ProductColorSelectorAdapter(val otherSKUsByGroupKey: HashMap<String, Array
     }
 
 
-    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class ViewHolder(val itemBinding: ProductColorSelectorListItemBinding) : RecyclerView.ViewHolder(itemBinding.root) {
 
         fun bind(color: String?) {
-            if (otherSKUsByGroupKey[color]?.getOrNull(0)?.styleIdOnSale == true) {
-                itemView.saveLabelImage.visibility = View.VISIBLE
-            } else
-                itemView.saveLabelImage.visibility = View.GONE
-            itemView.setOnClickListener {
-                selectedColor = color
-                listener.onColorSelection(selectedColor,false)
-                notifyDataSetChanged()
-            }
+            itemBinding.apply {
+                if (otherSKUsByGroupKey[color]?.getOrNull(0)?.styleIdOnSale == true) {
+                    saveLabelImage.visibility = View.VISIBLE
+                } else
+                    saveLabelImage.visibility = View.GONE
+                root.setOnClickListener {
+                    selectedColor = color
+                    listener.onColorSelection(selectedColor, false)
+                    notifyDataSetChanged()
+                }
 
-            color?.let {
-                setSelectedColorIcon(itemView.color, otherSKUsByGroupKey[color]?.get(0)?.externalColourRef)
-                itemView.border.apply {
-                    setBackgroundResource(if (it.equals(selectedColor, true)) R.drawable.product_color_selected_background else R.drawable.product_color_un_selected_background)
+                color?.let {
+                    setSelectedColorIcon(
+                        itemBinding.color,
+                        otherSKUsByGroupKey[color]?.get(0)?.externalColourRef
+                    )
+                    border.apply {
+                        setBackgroundResource(
+                            if (it.equals(
+                                    selectedColor,
+                                    true
+                                )
+                            ) R.drawable.product_color_selected_background else R.drawable.product_color_un_selected_background
+                        )
+                    }
                 }
             }
         }

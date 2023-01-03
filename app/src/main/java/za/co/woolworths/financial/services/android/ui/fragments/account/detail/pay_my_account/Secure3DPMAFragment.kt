@@ -5,16 +5,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.*
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
-
-import kotlinx.android.synthetic.main.secure_3d_webview_fragment.*
+import com.awfs.coordination.databinding.Secure3dWebviewFragmentBinding
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 
 class Secure3DPMAFragment : PMAFragment() {
 
+    private lateinit var binding: Secure3dWebviewFragmentBinding
     val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,7 +24,8 @@ class Secure3DPMAFragment : PMAFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.secure_3d_webview_fragment, container, false)
+        binding = Secure3dWebviewFragmentBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -36,7 +38,7 @@ class Secure3DPMAFragment : PMAFragment() {
     @SuppressLint("SetJavaScriptEnabled")
     private fun setupWebView() {
 
-        secureWebView?.apply {
+        binding.secureWebView?.apply {
             with(settings) {
                 javaScriptEnabled = true
                 webViewClient = object : WebViewClient() {

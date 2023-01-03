@@ -1,11 +1,9 @@
 package za.co.woolworths.financial.services.android.ui.adapters
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.province_and_suburb_list_item.view.*
+import com.awfs.coordination.databinding.ProvinceAndSuburbListItemBinding
 import za.co.woolworths.financial.services.android.models.dto.Province
 
 class ProvinceListAdapter(private var provinceList: ArrayList<Province>, var listener: IProvinceSelector) : RecyclerView.Adapter<ProvinceListAdapter.ProvinceViewHolder>() {
@@ -13,7 +11,9 @@ class ProvinceListAdapter(private var provinceList: ArrayList<Province>, var lis
     var checkedItemPosition = -1
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProvinceListAdapter.ProvinceViewHolder {
-        return ProvinceViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.province_and_suburb_list_item, parent, false))
+        return ProvinceViewHolder(
+            ProvinceAndSuburbListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        )
     }
 
     override fun getItemCount(): Int {
@@ -24,13 +24,13 @@ class ProvinceListAdapter(private var provinceList: ArrayList<Province>, var lis
         holder.bindItem(position)
     }
 
-    inner class ProvinceViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class ProvinceViewHolder(val itemBinding: ProvinceAndSuburbListItemBinding) : RecyclerView.ViewHolder(itemBinding.root) {
         fun bindItem(position: Int) {
             itemView.apply {
 
                 provinceList[position].let {
-                    name.text = it.name
-                    selector.isChecked = checkedItemPosition == position
+                    itemBinding.name.text = it.name
+                    itemBinding.selector.isChecked = checkedItemPosition == position
                 }
 
                 setOnClickListener {

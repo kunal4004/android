@@ -6,6 +6,7 @@
               tools:context="za.co.woolworths.financial.services.android.ui.fragments.cli.CLIAllStepsContainerFragment">
 
     <include
+        android:id="@+id/includeCliStepIndicator"
         layout="@layout/cli_step_indicator_layout"
         />
 

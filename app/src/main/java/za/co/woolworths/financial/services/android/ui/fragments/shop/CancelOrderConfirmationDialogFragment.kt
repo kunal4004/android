@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.cancel_order_confirmation_dialog.*
+import com.awfs.coordination.databinding.CancelOrderConfirmationDialogBinding
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
@@ -16,6 +16,7 @@ import za.co.woolworths.financial.services.android.util.Utils
 
 class CancelOrderConfirmationDialogFragment : WBottomSheetDialogFragment() {
 
+    private lateinit var binding: CancelOrderConfirmationDialogBinding
     private var listener: ICancelOrderConfirmation? = null
     var isNavigatedFromMyAccounts: Boolean = false
 
@@ -32,7 +33,8 @@ class CancelOrderConfirmationDialogFragment : WBottomSheetDialogFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.cancel_order_confirmation_dialog, container, false)
+        binding = CancelOrderConfirmationDialogBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,22 +49,25 @@ class CancelOrderConfirmationDialogFragment : WBottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        cancel?.apply {
+        with(binding) {
+            cancel?.apply {
 
-            triggerFirebaseEvent(FirebaseManagerAnalyticsProperties.PropertyNames.CANCEL_CANCEL)
-            paintFlags = Paint.UNDERLINE_TEXT_FLAG
-            setOnClickListener { dismissAllowingStateLoss() }
-        }
-        confirmCancelOrder.setOnClickListener {
-            triggerFirebaseEvent(FirebaseManagerAnalyticsProperties.PropertyNames.CONFIRM_CANCEL)
-            listener?.onCancelOrderConfirmation()
-            dismissAllowingStateLoss()
-        }
+                triggerFirebaseEvent(FirebaseManagerAnalyticsProperties.PropertyNames.CANCEL_CANCEL)
+                paintFlags = Paint.UNDERLINE_TEXT_FLAG
+                setOnClickListener { dismissAllowingStateLoss() }
+            }
+            confirmCancelOrder.setOnClickListener {
+                triggerFirebaseEvent(FirebaseManagerAnalyticsProperties.PropertyNames.CONFIRM_CANCEL)
+                listener?.onCancelOrderConfirmation()
+                dismissAllowingStateLoss()
+            }
 
-        arguments?.apply {
-            isNavigatedFromMyAccounts = getBoolean(AppConstant.NAVIGATED_FROM_MY_ACCOUNTS, false)
+            arguments?.apply {
+                isNavigatedFromMyAccounts =
+                    getBoolean(AppConstant.NAVIGATED_FROM_MY_ACCOUNTS, false)
+            }
+            initializeCancelReasonColor()
         }
-        initializeCancelReasonColor()
     }
 
 
@@ -72,7 +77,7 @@ class CancelOrderConfirmationDialogFragment : WBottomSheetDialogFragment() {
         Utils.triggerFireBaseEvents(if (isNavigatedFromMyAccounts) FirebaseManagerAnalyticsProperties.Acc_My_Orders_Cancel_Order else FirebaseManagerAnalyticsProperties.SHOP_MY_ORDERS_CANCEL_ORDER, arguments, requireActivity())
     }
 
-    private fun setCancelButtonUI(activated: Boolean) {
+    private fun CancelOrderConfirmationDialogBinding.setCancelButtonUI(activated: Boolean) {
         if (activated) {
             confirmCancelOrder.setBackgroundColor(ContextCompat.getColor(requireActivity(), R.color.black))
             confirmCancelOrder.isEnabled = true
@@ -82,7 +87,7 @@ class CancelOrderConfirmationDialogFragment : WBottomSheetDialogFragment() {
         }
     }
 
-    private fun initializeCancelReasonColor() {
+    private fun CancelOrderConfirmationDialogBinding.initializeCancelReasonColor() {
         cancelReasons?.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {
                 R.id.radioBtnNeedItems -> {

@@ -5,10 +5,9 @@ import android.graphics.Paint
 import android.os.Bundle
 import android.view.*
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.awfs.coordination.R
+import com.awfs.coordination.databinding.RemoveItemsFromCartFragmentBinding
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import kotlinx.android.synthetic.main.remove_items_from_cart_fragment.*
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dto.CommerceItem
 import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse
@@ -20,6 +19,7 @@ import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomS
 
 class RemoveProductsFromCartDialogFragment : WBottomSheetDialogFragment() {
 
+    private lateinit var binding: RemoveItemsFromCartFragmentBinding
     private var listener: IRemoveProductsFromCartDialog? = null
     private var isItemsRemoved = false
 
@@ -48,25 +48,29 @@ class RemoveProductsFromCartDialogFragment : WBottomSheetDialogFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.remove_items_from_cart_fragment, container, false)
+        binding = RemoveItemsFromCartFragmentBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        rcvItemsList?.setOnTouchListener { v, event ->
-            v?.parent?.requestDisallowInterceptTouchEvent(true)
-            v?.onTouchEvent(event)
-            true
+
+        with(binding) {
+            rcvItemsList?.setOnTouchListener { v, event ->
+                v?.parent?.requestDisallowInterceptTouchEvent(true)
+                v?.onTouchEvent(event)
+                true
+            }
+            removeItems?.setOnClickListener { removeItemsFromCart() }
+            cancel?.apply {
+                paintFlags = Paint.UNDERLINE_TEXT_FLAG
+                setOnClickListener { dismissAllowingStateLoss() }
+            }
+            showListItems()
         }
-        removeItems?.setOnClickListener { removeItemsFromCart() }
-        cancel?.apply {
-            paintFlags = Paint.UNDERLINE_TEXT_FLAG
-            setOnClickListener { dismissAllowingStateLoss() }
-        }
-        showListItems()
     }
 
-    private fun showListItems() {
+    private fun RemoveItemsFromCartFragmentBinding.showListItems() {
         rcvItemsList?.layoutManager = LinearLayoutManager(activity)
         commerceItems?.let { rcvItemsList?.adapter = ItemsListToRemoveFromCartAdapter(it) }
     }
@@ -121,14 +125,14 @@ class RemoveProductsFromCartDialogFragment : WBottomSheetDialogFragment() {
     }
 
     fun hideRemoveItemsProgressBar() {
-        progressRemoveItems?.visibility = View.INVISIBLE
+        binding.progressRemoveItems?.visibility = View.INVISIBLE
         activity?.apply {
             window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
         }
     }
 
     fun showRemoveItemsProgressBar() {
-        progressRemoveItems?.visibility = View.VISIBLE
+        binding.progressRemoveItems?.visibility = View.VISIBLE
         activity?.apply {
             window.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                     WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);

@@ -2,14 +2,13 @@ package za.co.woolworths.financial.services.android.ui.fragments.shop.list
 
 import android.content.Context
 import android.location.Location
-import android.view.View
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import androidx.annotation.LayoutRes
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import kotlinx.android.synthetic.main.fragment_shop_department.*
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
@@ -23,7 +22,7 @@ import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.NetworkManager
 import za.co.woolworths.financial.services.android.util.Utils
 
-open class DepartmentExtensionFragment : Fragment() {
+abstract class DepartmentExtensionFragment(@LayoutRes contentLayoutId: Int) : Fragment(contentLayoutId) {
 
     private var rootCategoryCall: Call<RootCategories>? = null
     var version: String? = ""
@@ -78,10 +77,7 @@ open class DepartmentExtensionFragment : Fragment() {
         activity?.let { NetworkManager.getInstance().isConnectedToNetwork(it) }
             ?: false
 
-
-    fun noConnectionLayout(isVisible: Boolean) {
-        incConnectionLayout?.visibility = if (isVisible) View.VISIBLE else View.GONE
-    }
+    abstract fun noConnectionLayout(isVisible: Boolean)
 
     fun executeDepartmentRequest(mDepartmentAdapter: DepartmentAdapter?, parentFragment: ShopFragment?, location: Location?=null) {
         if (networkConnectionStatus()) {

@@ -425,7 +425,7 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
             if (placeId == null) {
                 return
             }
-            val confirmLocationAddress = ConfirmLocationAddress(placeId,"",address2)
+            val confirmLocationAddress = ConfirmLocationAddress(placeId,null,address2)
             val confirmLocationRequest = when (deliveryType) {
                 Delivery.STANDARD.name -> {
                     mStoreId = ""
@@ -449,6 +449,7 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
                     val confirmLocationResponse =
                         confirmAddressViewModel.postConfirmAddress(confirmLocationRequest)
                     progressBar.visibility = View.GONE
+                    if(!isAdded || !isVisible) return@launch
                     if (confirmLocationResponse != null) {
                         when (confirmLocationResponse.httpCode) {
                             HTTP_OK -> {

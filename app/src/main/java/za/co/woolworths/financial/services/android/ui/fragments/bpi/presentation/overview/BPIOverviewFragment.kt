@@ -8,15 +8,16 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.balance_protection_insurance_overview_fragment.*
+import com.awfs.coordination.databinding.BalanceProtectionInsuranceOverviewFragmentBinding
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.BalanceProtectionInsuranceOverview
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.viewmodel.BPIViewModel
 import za.co.woolworths.financial.services.android.util.Utils
 
-class BPIOverviewFragment : Fragment() {
+class BPIOverviewFragment : Fragment(R.layout.balance_protection_insurance_overview_fragment) {
 
+    private lateinit var binding: BalanceProtectionInsuranceOverviewFragmentBinding
     private val bpiViewModel: BPIViewModel? by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,12 +25,9 @@ class BPIOverviewFragment : Fragment() {
         setHasOptionsMenu(true)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.balance_protection_insurance_overview_fragment, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding = BalanceProtectionInsuranceOverviewFragmentBinding.bind(view)
         activity?.let { Utils.updateStatusBarBackground(it, R.color.white) }
         initRecyclerview(bpiViewModel?.bpiPresenter?.coveredUncoveredList())
 
@@ -41,7 +39,7 @@ class BPIOverviewFragment : Fragment() {
 
     private fun initRecyclerview(coveredUncoveredList: MutableList<BalanceProtectionInsuranceOverview>?) {
         activity ?: return
-        bpiOverviewRecyclerview?.apply {
+        binding.bpiOverviewRecyclerview?.apply {
             layoutManager = LinearLayoutManager(activity)
             adapter = BalanceProtectionInsuranceAdapter(coveredUncoveredList) { overview ->
                 view?.findNavController()?.navigate(BPIOverviewFragmentDirections.actionOverviewToOverViewDetail(overview))

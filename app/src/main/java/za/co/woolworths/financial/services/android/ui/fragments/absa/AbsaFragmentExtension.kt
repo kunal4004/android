@@ -1,16 +1,15 @@
 package za.co.woolworths.financial.services.android.ui.fragments.absa
 
 import android.content.Context
-import androidx.appcompat.app.AppCompatActivity
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
-import za.co.absa.openbankingapi.woolworths.integration.service.VolleySingleton
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.OkButtonErrorMessageFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SingleButtonDialogFragment
 
-open class AbsaFragmentExtension : Fragment() {
+open class AbsaFragmentExtension(@LayoutRes contentLayoutId: Int) : Fragment(contentLayoutId) {
 
     fun showKeyboard(editText: EditText) {
         editText.requestFocus()

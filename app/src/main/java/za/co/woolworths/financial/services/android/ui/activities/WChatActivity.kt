@@ -17,16 +17,16 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.ChatActivityBinding
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.chat_activity.*
-import kotlinx.android.synthetic.main.chat_fragment.*
 import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionType
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.*
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatAWSAmplify
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.APP_SCREEN
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.CHAT_TO_COLLECTION_AGENT
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.CHAT_TYPE
@@ -34,20 +34,22 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.Wha
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.FEATURE_WHATSAPP
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.SendMessageResponse
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.*
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView.Companion.LIVE_CHAT_NO_INTERNET_RESULT
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView.Companion.LIVE_CHAT_PACKAGE
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView.Companion.LIVE_CHAT_SUBSCRIPTION_RESULT
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFragment
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatOfflineFragment
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatRetrieveABSACardTokenFragment
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.WhatsAppChatToUsFragment
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.ServiceTools
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
-import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
-import java.util.*
 
 @AndroidEntryPoint
 class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener {
 
+    lateinit var binding: ChatActivityBinding
     private var mSubscribeToMessageReceiver: BroadcastReceiver? = null
     private var isChatToCollectionAgent: Boolean = false
     private var sessionType: SessionType? = null
@@ -70,7 +72,8 @@ class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.chat_activity)
+        binding = ChatActivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         Utils.updateStatusBarBackground(this)
         getArguments()
         actionBar()
@@ -192,7 +195,7 @@ class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener
         }
         chatNavGraph?.let { graph -> chatNavHostController?.setGraph(graph, bundle) }
 
-        endSessionTextView?.apply {
+        binding.endSessionTextView?.apply {
             setOnClickListener(this@WChatActivity)
             AnimationUtilExtension.animateViewPushDown(this)
         }
@@ -209,7 +212,7 @@ class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener
     }
 
     fun actionBar() {
-        setSupportActionBar(mToolbar)
+        setSupportActionBar(binding.mToolbar)
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
             setDisplayShowTitleEnabled(false)
@@ -220,13 +223,13 @@ class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener
 
     fun displayEndSessionButton(isOnline: Boolean) {
         runOnUiThread {
-            endSessionTextView?.visibility = if (isOnline) VISIBLE else GONE
+            binding.endSessionTextView?.visibility = if (isOnline) VISIBLE else GONE
         }
     }
 
 
     fun chatDisconnectedByAgent(isDisconnected: Boolean) {
-        endSessionTextView?.apply {
+        binding.endSessionTextView?.apply {
             visibility = VISIBLE
             alpha = if (isDisconnected) 0.3f else 1.0f
             isEnabled = !isDisconnected
@@ -300,6 +303,6 @@ class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener
     }
 
     fun updateToolbarTitle(@IntegerRes title: Int?) {
-        agentNameTextView?.text = title?.let { name -> bindString(name) }
+        binding.agentNameTextView?.text = title?.let { name -> bindString(name) }
     }
 }
