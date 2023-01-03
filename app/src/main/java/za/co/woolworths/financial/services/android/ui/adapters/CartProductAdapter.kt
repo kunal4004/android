@@ -418,7 +418,7 @@ class CartProductAdapter(
             ) R.drawable.delete_24 else R.drawable.ic_minus_black
         )
         val padding = productHolder.minusDeleteCountImage.context
-            .resources.getDimension(if (userQuantity == 1) R.dimen.seven_dp else R.dimen.ten_dp)
+            .resources.getDimension(if (userQuantity == 1) R.dimen.six_dp else R.dimen.ten_dp)
             .toInt()
         productHolder.minusDeleteCountImage.setPadding(padding, padding, padding, padding)
         productHolder.addCountImage.visibility = if (commerceItem.quantityInStock == 1 ||
