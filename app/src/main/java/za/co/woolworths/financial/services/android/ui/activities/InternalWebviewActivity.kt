@@ -20,8 +20,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.internal_webview_layout.*
-import kotlinx.android.synthetic.main.no_connection_handler.*
+import com.awfs.coordination.databinding.InternalWebviewLayoutBinding
 import za.co.woolworths.financial.services.android.util.NetworkManager
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -31,6 +30,7 @@ class InternalWebViewActivity : AppCompatActivity() {
         private const val REQUEST_CODE = 123
     }
 
+    private lateinit var binding: InternalWebviewLayoutBinding
     private var mLink: String = ""
     private var downLoadUrl: String? = null
     private var downLoadMimeType: String? = null
@@ -44,37 +44,43 @@ class InternalWebViewActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.internal_webview_layout)
+        binding = InternalWebviewLayoutBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         Utils.updateStatusBarBackground(this, R.color.black)
 
         mLink = intent?.extras?.getString("externalLink", "") ?: ""
 
-        loadingInProgressWebView?.indeterminateDrawable?.setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY)
+        with(binding) {
+            loadingInProgressWebView?.indeterminateDrawable?.setColorFilter(
+                Color.BLACK,
+                PorterDuff.Mode.MULTIPLY
+            )
 
-        when (hasNetworkConnection()) {
-            true -> {
-                showProgressBar()
-                configureWebSettings()
-                linkLoaderWebView?.loadUrl(mLink)
+            when (hasNetworkConnection()) {
+                true -> {
+                    showProgressBar()
+                    configureWebSettings()
+                    linkLoaderWebView?.loadUrl(mLink)
+                }
+                false -> includeNoConnectionLayout?.root?.visibility = VISIBLE
             }
-            false -> includeNoConnectionLayout?.visibility = VISIBLE
-        }
 
-        btnRetry?.setOnClickListener {
-            if (hasNetworkConnection()) {
-                showProgressBar()
-                hideConnectionLayout()
-                linkLoaderWebView?.loadUrl(mLink)
+            includeNoConnectionLayout.btnRetry?.setOnClickListener {
+                if (hasNetworkConnection()) {
+                    showProgressBar()
+                    hideConnectionLayout()
+                    linkLoaderWebView?.loadUrl(mLink)
+                }
             }
-        }
 
-        imBackButton?.setOnClickListener { closeActivity() }
+            imBackButton?.setOnClickListener { closeActivity() }
+        }
     }
 
     private fun hasNetworkConnection() = NetworkManager.getInstance().isConnectedToNetwork(this@InternalWebViewActivity)
 
     @SuppressLint("SetJavaScriptEnabled")
-    private fun configureWebSettings() {
+    private fun InternalWebviewLayoutBinding.configureWebSettings() {
         linkLoaderWebView?.apply {
             with(settings) {
                 javaScriptEnabled = true
@@ -131,19 +137,19 @@ class InternalWebViewActivity : AppCompatActivity() {
 
     }
 
-    private fun showConnectionLayout() {
-        includeNoConnectionLayout?.visibility = VISIBLE
+    private fun InternalWebviewLayoutBinding.showConnectionLayout() {
+        includeNoConnectionLayout?.root?.visibility = VISIBLE
     }
 
-    private fun hideConnectionLayout() {
-        includeNoConnectionLayout?.visibility = GONE
+    private fun InternalWebviewLayoutBinding.hideConnectionLayout() {
+        includeNoConnectionLayout?.root?.visibility = GONE
     }
 
-    private fun hideProgressBar() {
+    private fun InternalWebviewLayoutBinding.hideProgressBar() {
         loadingInProgressWebView?.visibility = GONE
     }
 
-    private fun showProgressBar() {
+    private fun InternalWebviewLayoutBinding.showProgressBar() {
         loadingInProgressWebView?.visibility = VISIBLE
     }
 
@@ -155,11 +161,9 @@ class InternalWebViewActivity : AppCompatActivity() {
         }
     }
 
-
     override fun onBackPressed() {
-        goBackInWebView()
+        binding.goBackInWebView()
     }
-
 
     private fun downloadFile(url: String?, mimeType: String?, userAgent: String?, contentDisposition: String?) {
         val request = DownloadManager.Request(Uri.parse(url))
@@ -204,7 +208,7 @@ class InternalWebViewActivity : AppCompatActivity() {
     }
 
 
-    fun goBackInWebView() {
+    fun InternalWebviewLayoutBinding.goBackInWebView() {
         if (NetworkManager.getInstance().isConnectedToNetwork(this@InternalWebViewActivity)) {
             val history: WebBackForwardList = linkLoaderWebView.copyBackForwardList()
             var index = -1
@@ -237,7 +241,7 @@ class InternalWebViewActivity : AppCompatActivity() {
         overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
     }
 
-    private fun handleError(errorCode: Int) = when (errorCode) {
+    private fun InternalWebviewLayoutBinding.handleError(errorCode: Int) = when (errorCode) {
         WebViewClient.ERROR_CONNECT, WebViewClient.ERROR_TIMEOUT ->{
             hideProgressBar()
             aboutBlank()
@@ -246,7 +250,7 @@ class InternalWebViewActivity : AppCompatActivity() {
         else -> {}
     }
 
-    private fun aboutBlank() {
+    private fun InternalWebviewLayoutBinding.aboutBlank() {
         linkLoaderWebView?.loadUrl("about:blank")
     }
 

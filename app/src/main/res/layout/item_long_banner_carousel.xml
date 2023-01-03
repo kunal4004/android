@@ -4,5 +4,7 @@
     android:layout_height="wrap_content"
     android:layout_gravity="center">
 
-    <include layout="@layout/item_long_banner_list" />
+    <include
+        android:id="@+id/includeItemLongBannerList"
+        layout="@layout/item_long_banner_list" />
 </androidx.constraintlayout.widget.ConstraintLayout>

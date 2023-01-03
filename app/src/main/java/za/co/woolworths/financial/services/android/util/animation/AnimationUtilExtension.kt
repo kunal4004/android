@@ -5,9 +5,7 @@ import android.view.animation.RotateAnimation
 import android.view.animation.TranslateAnimation
 import androidx.core.content.ContextCompat
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.account_sales_activity.*
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
-import za.co.woolworths.financial.services.android.ui.activities.account.apply_now.AccountSalesActivity
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 
 class AnimationUtilExtension {

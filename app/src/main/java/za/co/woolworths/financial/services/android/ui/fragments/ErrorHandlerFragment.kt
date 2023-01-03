@@ -4,17 +4,15 @@ import android.app.Activity
 import android.graphics.Paint
 import android.os.Bundle
 import android.text.TextUtils
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.error_handler_fragment.*
+import com.awfs.coordination.databinding.ErrorHandlerFragmentBinding
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
+import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 
-class ErrorHandlerFragment : Fragment(), View.OnClickListener, IDialogListener {
+class ErrorHandlerFragment : BaseFragmentBinding<ErrorHandlerFragmentBinding>(ErrorHandlerFragmentBinding::inflate), View.OnClickListener, IDialogListener {
     override fun onDialogDismissed() {
 
     }
@@ -28,14 +26,6 @@ class ErrorHandlerFragment : Fragment(), View.OnClickListener, IDialogListener {
             putInt(ErrorHandlerActivity.ERROR_TYPE, errorType)
             putString(ErrorHandlerActivity.ERROR_MESSAGE, errorMessage)
         }
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.error_handler_fragment, container, false)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,19 +47,19 @@ class ErrorHandlerFragment : Fragment(), View.OnClickListener, IDialogListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setViewOnErrorType()
-        initListeners()
+        binding.setViewOnErrorType()
+        binding.initListeners()
     }
 
-    private fun initListeners() {
+    private fun ErrorHandlerFragmentBinding.initListeners() {
         if (errorType != ErrorHandlerActivity.ERROR_STORE_CARD_DUPLICATE_CARD_REPLACEMENT) {
             cancelButton.paintFlags = Paint.UNDERLINE_TEXT_FLAG
         }
-        cancelButton.setOnClickListener(this)
-        actionButton.setOnClickListener(this)
+        cancelButton.setOnClickListener(this@ErrorHandlerFragment)
+        actionButton.setOnClickListener(this@ErrorHandlerFragment)
     }
 
-    private fun setViewOnErrorType() {
+    private fun ErrorHandlerFragmentBinding.setViewOnErrorType() {
         when (errorType) {
             ErrorHandlerActivity.ATM_PIN_LOCKED -> {
                 errorLogo.setImageResource(R.drawable.ic_passcode_locked_icon)

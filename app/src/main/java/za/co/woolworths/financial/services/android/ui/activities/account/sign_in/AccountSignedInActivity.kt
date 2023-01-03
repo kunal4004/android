@@ -18,12 +18,10 @@ import androidx.core.os.bundleOf
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.AccountSignedInActivityBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.account_in_arrears_layout.*
-import kotlinx.android.synthetic.main.account_signed_in_activity.*
-import kotlinx.android.synthetic.main.chat_collect_agent_floating_button_layout.*
 import za.co.woolworths.financial.services.android.contracts.IAccountSignedInContract
 import za.co.woolworths.financial.services.android.contracts.IBottomSheetBehaviourPeekHeightListener
 import za.co.woolworths.financial.services.android.contracts.IShowChatBubble
@@ -70,6 +68,7 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
         const val REQUEST_CODE_ACCOUNT_INFORMATION = 2112
     }
 
+    private lateinit var binding: AccountSignedInActivityBinding
     private var isReloadCacheAccountDataEnabled: Boolean = false
     private var mAccountOptionsNavHost: NavHostFragment? = null
     private var mAvailableFundsNavHost: NavHostFragment? = null
@@ -85,7 +84,8 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-        setContentView(R.layout.account_signed_in_activity)
+        binding = AccountSignedInActivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         KotlinUtils.setTransparentStatusBar(this)
         mAccountSignedInPresenter = AccountSignedInPresenterImpl(this, AccountSignedInModelImpl())
         mAccountSignedInPresenter?.apply {
@@ -105,12 +105,23 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
             setToolbarTopMargin()
         }
 
-        KotlinUtils.roundCornerDrawable(accountInArrearsTextView, "#e41f1f")
-        AnimationUtilExtension.animateViewPushDown(accountInArrearsTextView)
+        with(binding.includeAccountProductLandingToolbarAvailableFund.includeAccountInArrears) {
+            KotlinUtils.roundCornerDrawable(accountInArrearsTextView, "#e41f1f")
+            AnimationUtilExtension.animateViewPushDown(accountInArrearsTextView)
 
-        accountInArrearsTextView?.setOnClickListener(this)
-        infoIconImageView?.setOnClickListener(this)
-        navigateBackImageButton?.setOnClickListener(this)
+            accountInArrearsTextView?.setOnClickListener(this@AccountSignedInActivity)
+            infoIconImageView?.setOnClickListener(this@AccountSignedInActivity)
+            navigateBackImageButton?.setOnClickListener(this@AccountSignedInActivity)
+        }
+
+        with(binding.includeAccountProductLandingToolbarRemoveBlockOnCollection.includeAccountInArrears) {
+            KotlinUtils.roundCornerDrawable(accountInArrearsTextView, "#e41f1f")
+            AnimationUtilExtension.animateViewPushDown(accountInArrearsTextView)
+
+            accountInArrearsTextView?.setOnClickListener(this@AccountSignedInActivity)
+            infoIconImageView?.setOnClickListener(this@AccountSignedInActivity)
+            navigateBackImageButton?.setOnClickListener(this@AccountSignedInActivity)
+        }
     }
 
     private fun setToolbarTopMargin() {
@@ -133,7 +144,8 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
             override fun onStateChanged(bottomSheet: View, newState: Int) {}
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
                 transitionBottomSheetBackgroundColor(slideOffset)
-                navigateBackImageButton?.rotation = slideOffset * -90
+                binding.includeAccountProductLandingToolbarAvailableFund.includeAccountInArrears.navigateBackImageButton?.rotation = slideOffset * -90
+                binding.includeAccountProductLandingToolbarRemoveBlockOnCollection.includeAccountInArrears.navigateBackImageButton?.rotation = slideOffset * -90
             }
         })
     }
@@ -157,12 +169,19 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
     }
 
     override fun toolbarTitle(title: String) {
-        toolbarTitleTextView?.text = title
+        binding.includeAccountProductLandingToolbarAvailableFund.includeAccountInArrears.toolbarTitleTextView?.text = title
+        binding.includeAccountProductLandingToolbarRemoveBlockOnCollection.includeAccountInArrears.toolbarTitleTextView?.text = title
     }
 
     override fun showAccountInArrears(account: Account?) {
-        toolbarTitleTextView?.visibility = GONE
-        accountInArrearsTextView?.visibility = VISIBLE
+        with(binding.includeAccountProductLandingToolbarAvailableFund.includeAccountInArrears) {
+            toolbarTitleTextView?.visibility = GONE
+            accountInArrearsTextView?.visibility = VISIBLE
+        }
+        with(binding.includeAccountProductLandingToolbarRemoveBlockOnCollection.includeAccountInArrears) {
+            toolbarTitleTextView?.visibility = GONE
+            accountInArrearsTextView?.visibility = VISIBLE
+        }
         mAccountSignedInPresenter?.getMyAccountCardInfo()
             ?.let { accountKeyPair -> showAccountInArrearsDialog(accountKeyPair) }
     }
@@ -176,8 +195,14 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
     }
 
     override fun hideAccountInArrears(account: Account) {
-        toolbarTitleTextView?.visibility = VISIBLE
-        accountInArrearsTextView?.visibility = GONE
+        with(binding.includeAccountProductLandingToolbarAvailableFund.includeAccountInArrears) {
+            toolbarTitleTextView?.visibility = VISIBLE
+            accountInArrearsTextView?.visibility = GONE
+        }
+        with(binding.includeAccountProductLandingToolbarRemoveBlockOnCollection.includeAccountInArrears) {
+            toolbarTitleTextView?.visibility = VISIBLE
+            accountInArrearsTextView?.visibility = GONE
+        }
     }
 
     override fun showAccountHelp(informationModelAccount: MutableList<AccountHelpInformation>) {
@@ -211,9 +236,9 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
     }
 
     override fun removeBlocksWhenChargedOff() {
-        availableFundFragmentFrameLayout?.visibility = GONE
-        bottomSheetBehaviourLinearLayout?.visibility = GONE
-        removeBlockOnCollectionCustomerFrameLayout?.visibility = VISIBLE
+        binding.availableFundFragmentFrameLayout?.visibility = GONE
+        binding.bottomSheetBehaviourLinearLayout?.visibility = GONE
+        binding.removeBlockOnCollectionCustomerFrameLayout?.visibility = VISIBLE
         val removeBlockOnCollectionFragmentContainerView =
             supportFragmentManager.findFragmentById(R.id.removeBlockOnCollectionFragmentContainerView) as? NavHostFragment
         val navigationController: NavController? =
@@ -236,9 +261,9 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
     }
 
     override fun removeBlocksOnCollectionCustomer() {
-        availableFundFragmentFrameLayout?.visibility = GONE
-        bottomSheetBehaviourLinearLayout?.visibility = GONE
-        removeBlockOnCollectionCustomerFrameLayout?.visibility = VISIBLE
+        binding.availableFundFragmentFrameLayout?.visibility = GONE
+        binding.bottomSheetBehaviourLinearLayout?.visibility = GONE
+        binding.removeBlockOnCollectionCustomerFrameLayout?.visibility = VISIBLE
         val removeBlockOnCollectionFragmentContainerView =
             supportFragmentManager.findFragmentById(R.id.removeBlockOnCollectionFragmentContainerView) as? NavHostFragment
         val navigationController: NavController? =
@@ -285,10 +310,10 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
         val chatToCollectionAgentView = ChatFloatingActionButtonBubbleView(
             this@AccountSignedInActivity,
             ChatBubbleVisibility(accountList, this@AccountSignedInActivity),
-            chatBubbleFloatingButton,
+            binding.includeChatCollectAgentFloatingButton.chatBubbleFloatingButton,
             applyNowState,
-            notificationBadge = badge,
-            onlineChatImageViewIndicator = onlineIndicatorImageView,
+            notificationBadge = binding.includeChatCollectAgentFloatingButton.badge,
+            onlineChatImageViewIndicator = binding.includeChatCollectAgentFloatingButton.onlineIndicatorImageView,
             vocTriggerEvent = payMyAccountViewModel.getVocTriggerEventMyAccounts()
         )
         chatToCollectionAgentView.build()
@@ -339,7 +364,7 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
     private fun transitionBottomSheetBackgroundColor(slideOffset: Float) {
         val colorFrom = ContextCompat.getColor(this, android.R.color.transparent)
         val colorTo = ContextCompat.getColor(this, R.color.black_99)
-        dimView?.setBackgroundColor(KotlinUtils.interpolateColor(slideOffset, colorFrom, colorTo))
+        binding.dimView?.setBackgroundColor(KotlinUtils.interpolateColor(slideOffset, colorFrom, colorTo))
     }
 
     override fun onBottomSheetPeekHeight(pixel: Int) {
@@ -427,9 +452,9 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
     }
 
     override fun removeBlocksWhenChargedOff(isViewTreatmentPlanActive: Boolean) {
-        availableFundFragmentFrameLayout?.visibility = GONE
-        bottomSheetBehaviourLinearLayout?.visibility = GONE
-        removeBlockOnCollectionCustomerFrameLayout?.visibility = VISIBLE
+        binding.availableFundFragmentFrameLayout?.visibility = GONE
+        binding.bottomSheetBehaviourLinearLayout?.visibility = GONE
+        binding.removeBlockOnCollectionCustomerFrameLayout?.visibility = VISIBLE
         val removeBlockOnCollectionFragmentContainerView =
             supportFragmentManager.findFragmentById(R.id.removeBlockOnCollectionFragmentContainerView) as? NavHostFragment
         val navigationController: NavController? =

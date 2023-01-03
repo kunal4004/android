@@ -8,7 +8,6 @@ import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser
 import za.co.woolworths.financial.services.android.util.Utils
-import za.co.woolworths.financial.services.android.util.WFormatter
 
 open class LoanBaseFragment : Fragment() {
 

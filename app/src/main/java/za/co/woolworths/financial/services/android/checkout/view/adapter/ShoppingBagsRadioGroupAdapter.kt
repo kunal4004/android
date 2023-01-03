@@ -6,9 +6,8 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.shopping_bags_radio_button.view.*
+import com.awfs.coordination.databinding.ShoppingBagsRadioButtonBinding
 import za.co.woolworths.financial.services.android.models.dto.app_config.native_checkout.ConfigShoppingBagsOptions
-import za.co.woolworths.financial.services.android.ui.extension.bindColor
 
 /**
  * Created by Kunal Uttarwar on 12/10/21.
@@ -40,12 +39,7 @@ class ShoppingBagsRadioGroupAdapter(
         viewType: Int,
     ): ShoppingBagsRadioGroupAdapter.ShoppingBagsRadioGroupAdapterViewHolder {
         return ShoppingBagsRadioGroupAdapterViewHolder(
-            LayoutInflater.from(parent.context)
-                .inflate(
-                    R.layout.shopping_bags_radio_button,
-                    parent,
-                    false
-                )
+            ShoppingBagsRadioButtonBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         )
     }
 
@@ -60,17 +54,17 @@ class ShoppingBagsRadioGroupAdapter(
         holder.bindItem(position)
     }
 
-    inner class ShoppingBagsRadioGroupAdapterViewHolder(itemView: View) :
-        RecyclerView.ViewHolder(itemView) {
+    inner class ShoppingBagsRadioGroupAdapterViewHolder(val itemBinding: ShoppingBagsRadioButtonBinding) :
+        RecyclerView.ViewHolder(itemBinding.root) {
         fun bindItem(position: Int) {
-            itemView.apply {
+            itemBinding.apply {
                 shoppingBagsOptionsList?.get(position)?.let { it ->
                     title?.text = it.title
                     subTitle?.text = it.description
                     radioSelector?.isChecked = checkedItemPosition == position
 
                     shoppingBagsSelectionLayout?.background = ContextCompat.getDrawable(
-                        context,
+                        root.context,
                         if (radioSelector?.isChecked == true)
                             R.drawable.bg_shopping_bags_selected
                         else
@@ -78,7 +72,7 @@ class ShoppingBagsRadioGroupAdapter(
                     )
                     subTitle?.visibility = if (radioSelector.isChecked) View.VISIBLE else View.GONE
                 }
-                setOnClickListener {
+                root.setOnClickListener {
                     onItemClicked(position)
                 }
             }

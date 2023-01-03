@@ -9,12 +9,13 @@ import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.ImageView
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.absa_five_digit_code_fragment.*
+import com.awfs.coordination.databinding.AbsaFiveDigitCodeFragmentBinding
 import za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBankingRegistrationActivity
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 
-class AbsaFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickListener {
+class AbsaFiveDigitCodeFragment : AbsaFragmentExtension(R.layout.absa_five_digit_code_fragment), View.OnClickListener {
 
+    private lateinit var binding: AbsaFiveDigitCodeFragmentBinding
     private var mPinImageViewList: MutableList<ImageView>? = null
     private var mAliasId: String? = null
 
@@ -42,21 +43,21 @@ class AbsaFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickListener 
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.absa_five_digit_code_fragment, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initViewsAndEvents()
-        createTextListener(edtEnterATMPin)
-        clearPinImage(mPinImageViewList!!)
+        binding = AbsaFiveDigitCodeFragmentBinding.bind(view)
+
+        with(binding) {
+            initViewsAndEvents()
+            createTextListener(edtEnterATMPin)
+            clearPinImage(mPinImageViewList!!)
+        }
     }
 
-    private fun initViewsAndEvents() {
+    private fun AbsaFiveDigitCodeFragmentBinding.initViewsAndEvents() {
         (activity as? ABSAOnlineBankingRegistrationActivity)?.setPageTitle(getString(R.string.absa_registration_title_step_2))
         mPinImageViewList = mutableListOf(ivPin1, ivPin2, ivPin3, ivPin4, ivPin5)
-        ivEnterFiveDigitCode?.setOnClickListener(this)
+        ivEnterFiveDigitCode?.setOnClickListener(this@AbsaFiveDigitCodeFragment)
         edtEnterATMPin?.setOnKeyPreImeListener { activity?.onBackPressed() }
         edtEnterATMPin?.movementMethod = null
         edtEnterATMPin?.setOnEditorActionListener { _, actionId, _ ->
@@ -70,7 +71,7 @@ class AbsaFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickListener 
 
     }
 
-    private fun navigateToConfirmFiveDigitCodeFragment() {
+    private fun AbsaFiveDigitCodeFragmentBinding.navigateToConfirmFiveDigitCodeFragment() {
         if ((edtEnterATMPin.length() - 1) == MAXIMUM_PIN_ALLOWED) {
             val enteredPin = edtEnterATMPin.text.toString()
             replaceFragment(
@@ -86,7 +87,7 @@ class AbsaFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickListener 
         }
     }
 
-    private fun createTextListener(edtEnterATMPin: EditText?) {
+    private fun AbsaFiveDigitCodeFragmentBinding.createTextListener(edtEnterATMPin: EditText?) {
         var previousLength = 0
         edtEnterATMPin?.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
@@ -107,7 +108,7 @@ class AbsaFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickListener 
         })
     }
 
-    private fun updateEnteredPin(pinEnteredLength: Int, listOfPin: MutableList<ImageView>) {
+    private fun AbsaFiveDigitCodeFragmentBinding.updateEnteredPin(pinEnteredLength: Int, listOfPin: MutableList<ImageView>) {
         if (pinEnteredLength > -1) {
             listOfPin[pinEnteredLength].setImageResource(R.drawable.pin_fill)
             if (pinEnteredLength == MAXIMUM_PIN_ALLOWED) {
@@ -117,7 +118,7 @@ class AbsaFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickListener 
         }
     }
 
-    private fun deletePin(pinEnteredLength: Int, listOfPin: MutableList<ImageView>) {
+    private fun AbsaFiveDigitCodeFragmentBinding.deletePin(pinEnteredLength: Int, listOfPin: MutableList<ImageView>) {
         if (pinEnteredLength > -1) {
             listOfPin[pinEnteredLength].setImageResource(R.drawable.pin_empty)
             if (pinEnteredLength <= MAXIMUM_PIN_ALLOWED) {
@@ -127,7 +128,7 @@ class AbsaFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickListener 
         }
     }
 
-    private fun clearPinImage(listOfPin: MutableList<ImageView>) {
+    private fun AbsaFiveDigitCodeFragmentBinding.clearPinImage(listOfPin: MutableList<ImageView>) {
         listOfPin.forEach {
             it.setImageResource(R.drawable.pin_empty)
         }
@@ -136,15 +137,15 @@ class AbsaFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickListener 
     override fun onClick(view: View?) {
         when (view?.id) {
             R.id.ivEnterFiveDigitCode -> {
-                navigateToConfirmFiveDigitCodeFragment()
+                binding.navigateToConfirmFiveDigitCodeFragment()
             }
         }
     }
 
     override fun onResume() {
         super.onResume()
-        edtEnterATMPin?.apply {
-            clearPinImage(mPinImageViewList!!)
+        binding.edtEnterATMPin?.apply {
+            binding.clearPinImage(mPinImageViewList!!)
             text.clear()
             requestFocus()
             showKeyboard(this)

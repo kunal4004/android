@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.setFragmentResultListener
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.available_funds_fragment.*
 import kotlinx.coroutines.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
@@ -21,16 +20,20 @@ class SilverCreditCardFragment : AvailableFundFragment(), View.OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        availableFundBackground?.setBackgroundResource(R.drawable.silver_credit_card_background)
 
-        initShimmer()
-        stopProgress()
+        binding.apply {
+            availableFundBackground?.setBackgroundResource(R.drawable.silver_credit_card_background)
 
-        incViewStatementButton?.visibility = if (AppConfigSingleton.absaBankingOpenApiServices?.isEnabled == true) View.VISIBLE else View.GONE
+            binding.initShimmer()
+            binding.stopProgress()
 
-        incRecentTransactionButton?.setOnClickListener(this)
-        incViewStatementButton?.setOnClickListener(this)
-        incPayMyAccountButton?.setOnClickListener(this)
+            incViewStatementButton?.root?.visibility =
+                if (AppConfigSingleton.absaBankingOpenApiServices?.isEnabled == true) View.VISIBLE else View.GONE
+
+            incRecentTransactionButton?.root?.setOnClickListener(this@SilverCreditCardFragment)
+            incViewStatementButton?.root?.setOnClickListener(this@SilverCreditCardFragment)
+            incPayMyAccountButton?.root?.setOnClickListener(this@SilverCreditCardFragment)
+        }
 
         navigateToDeepLinkView()
 

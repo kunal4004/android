@@ -1,16 +1,12 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.chat_retrieve_absa_card_token_fragment.*
-import kotlinx.android.synthetic.main.chat_retrieve_absa_card_token_fragment.chatLoaderProgressBar
+import com.awfs.coordination.databinding.ChatRetrieveAbsaCardTokenFragmentBinding
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.ui.activities.WChatActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatViewModel
@@ -21,9 +17,10 @@ import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.NetworkManager
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
+import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 import java.net.ConnectException
 
-class ChatRetrieveABSACardTokenFragment : Fragment(), View.OnClickListener {
+class ChatRetrieveABSACardTokenFragment : BaseFragmentBinding<ChatRetrieveAbsaCardTokenFragmentBinding>(ChatRetrieveAbsaCardTokenFragmentBinding::inflate), View.OnClickListener {
 
     private val chatViewModel: ChatViewModel by activityViewModels()
 
@@ -35,14 +32,10 @@ class ChatRetrieveABSACardTokenFragment : Fragment(), View.OnClickListener {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.chat_retrieve_absa_card_token_fragment, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        retryErrorButton?.apply {
+        binding.retryErrorButton?.apply {
             setOnClickListener(this@ChatRetrieveABSACardTokenFragment)
             AnimationUtilExtension.animateViewPushDown(this)
         }
@@ -87,13 +80,13 @@ class ChatRetrieveABSACardTokenFragment : Fragment(), View.OnClickListener {
     }
 
     private fun stopProgress() {
-        chatLoaderProgressBar?.visibility = GONE
-        groupRetryErrorUI?.visibility = VISIBLE
+        binding.chatLoaderProgressBar?.visibility = GONE
+        binding.groupRetryErrorUI?.visibility = VISIBLE
     }
 
     private fun showProgress() {
-        chatLoaderProgressBar?.visibility = VISIBLE
-        groupRetryErrorUI?.visibility = GONE
+        binding.chatLoaderProgressBar?.visibility = VISIBLE
+        binding.groupRetryErrorUI?.visibility = GONE
     }
 
     private fun noConnectionToast() {

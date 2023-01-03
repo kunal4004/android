@@ -6,10 +6,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.WtransactionsActivityBinding
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import kotlinx.android.synthetic.main.chat_collect_agent_floating_button_layout.*
-import kotlinx.android.synthetic.main.wtransactions_activity.*
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
@@ -36,6 +35,7 @@ import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
 
 class WTransactionsActivity : AppCompatActivity(), View.OnClickListener {
 
+    private lateinit var binding: WtransactionsActivityBinding
     private var applyNowAccountHashPair: Pair<ApplyNowState, Account>? = null
     private var chatAccountProductLandingPage: String? = null
     var productOfferingId: String? = null
@@ -47,7 +47,8 @@ class WTransactionsActivity : AppCompatActivity(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Utils.updateStatusBarBackground(this)
-        setContentView(R.layout.wtransactions_activity)
+        binding = WtransactionsActivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         intent?.extras?.apply {
             productOfferingId = getString(BundleKeysConstants.PRODUCT_OFFERINGID)
@@ -65,15 +66,15 @@ class WTransactionsActivity : AppCompatActivity(), View.OnClickListener {
 
         mErrorHandlerView = ErrorHandlerView(
             this, woolworthApplication,
-            findViewById(R.id.relEmptyStateHandler),
-            findViewById(R.id.imgEmpyStateIcon),
-            findViewById(R.id.txtEmptyStateTitle),
-            findViewById(R.id.txtEmptyStateDesc),
-            findViewById(R.id.no_connection_layout)
+            binding.includeEmptyStateTemplate.relEmptyStateHandler,
+            binding.includeEmptyStateTemplate.imgEmpyStateIcon,
+            binding.includeEmptyStateTemplate.txtEmptyStateTitle,
+            binding.includeEmptyStateTemplate.txtEmptyStateDesc,
+            binding.includeNoConnectionHandler.noConnectionLayout
         )
 
 
-        closeTransactionImageButton?.let { closeIcon ->
+        binding.closeTransactionImageButton?.let { closeIcon ->
             AnimationUtilExtension.animateViewPushDown(closeIcon)
             closeIcon.setOnClickListener(this)
         }
@@ -98,7 +99,7 @@ class WTransactionsActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun loadTransactionHistory(prOfferId: String?) {
-        pbTransaction?.visibility = View.VISIBLE
+        binding.pbTransaction?.visibility = View.VISIBLE
         transactionAsyncAPI(prOfferId)
     }
 
@@ -120,7 +121,7 @@ class WTransactionsActivity : AppCompatActivity(), View.OnClickListener {
                                 mErrorHandlerView?.hideEmpyState()
                                 setupTransactionRecyclerview(response)
                             } else {
-                                transactionRecyclerview?.visibility = View.GONE
+                                binding.transactionRecyclerview?.visibility = View.GONE
                                 mErrorHandlerView?.showEmptyState(3)
                             }
                         }
@@ -171,7 +172,7 @@ class WTransactionsActivity : AppCompatActivity(), View.OnClickListener {
         val linearLayoutManager: LinearLayoutManager? =
             LinearLayoutManager(this@WTransactionsActivity)
         linearLayoutManager?.orientation = LinearLayoutManager.VERTICAL
-        transactionRecyclerview?.apply {
+        binding.transactionRecyclerview?.apply {
             layoutManager = linearLayoutManager
             adapter = transactionsAdapter
             visibility = View.VISIBLE
@@ -184,7 +185,7 @@ class WTransactionsActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun dismissProgress() {
-        pbTransaction?.visibility = View.GONE
+        binding.pbTransaction?.visibility = View.GONE
     }
 
     fun networkFailureHandler(errorMessage: String?) {
@@ -227,11 +228,11 @@ class WTransactionsActivity : AppCompatActivity(), View.OnClickListener {
         ChatFloatingActionButtonBubbleView(
             activity = this@WTransactionsActivity,
             chatBubbleVisibility = ChatBubbleVisibility(accountList, this@WTransactionsActivity),
-            floatingActionButton = chatBubbleFloatingButton,
+            floatingActionButton = binding.includeChatCollectAgentFloatingButton.chatBubbleFloatingButton,
             applyNowState = applyNowState,
-            scrollableView = transactionRecyclerview,
-            notificationBadge = badge,
-            onlineChatImageViewIndicator = onlineIndicatorImageView,
+            scrollableView = binding.transactionRecyclerview,
+            notificationBadge = binding.includeChatCollectAgentFloatingButton.badge,
+            onlineChatImageViewIndicator = binding.includeChatCollectAgentFloatingButton.onlineIndicatorImageView,
             vocTriggerEvent = vocTriggerEvent
         )
             .build()

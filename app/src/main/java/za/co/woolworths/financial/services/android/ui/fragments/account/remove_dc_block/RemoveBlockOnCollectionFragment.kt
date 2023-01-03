@@ -5,23 +5,21 @@ import android.graphics.Color
 import android.os.Bundle
 import android.text.Spannable
 import android.text.method.LinkMovementMethod
-import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import android.view.ViewGroup
 import android.widget.TextView
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.RemoveBlockDcFragmentBinding
 import com.google.gson.Gson
-import kotlinx.android.synthetic.main.account_in_arrears_layout.*
-import kotlinx.android.synthetic.main.remove_block_dc_fragment.*
-import kotlinx.android.synthetic.main.view_pay_my_account_button.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dto.Account
@@ -46,27 +44,20 @@ import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.V
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
+import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 import za.co.woolworths.financial.services.android.util.eliteplan.EligibilityImpl
 import za.co.woolworths.financial.services.android.util.eliteplan.PMApiStatusImpl
 import za.co.woolworths.financial.services.android.util.eliteplan.TakeUpPlanUtil
 import za.co.woolworths.financial.services.android.util.spannable.WSpannableStringBuilder
 import za.co.woolworths.financial.services.android.util.wenum.LinkType
 
-class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener, EligibilityImpl,PMApiStatusImpl {
+class RemoveBlockOnCollectionFragment : BaseFragmentBinding<RemoveBlockDcFragmentBinding>(RemoveBlockDcFragmentBinding::inflate), View.OnClickListener, EligibilityImpl,PMApiStatusImpl {
 
     lateinit var navController: NavController
     private val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
 
     private var accountData: Pair<ApplyNowState, Account>? = null
     private var mAccountPresenter: AccountSignedInPresenterImpl? = null
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.remove_block_dc_fragment, container, false)
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -76,39 +67,49 @@ class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener, Eligib
         mAccountPresenter?.eligibilityImpl = this
         mAccountPresenter?.pmaStatusImpl = this
 
-        when (accountData?.first) {
-            ApplyNowState.PERSONAL_LOAN -> {
-                removeBlockBackgroundConstraintLayout?.setBackgroundResource(R.drawable.personal_loan_background)
+        binding.apply {
+            when (accountData?.first) {
+                ApplyNowState.PERSONAL_LOAN -> {
+                    removeBlockBackgroundConstraintLayout?.setBackgroundResource(R.drawable.personal_loan_background)
+                }
+                ApplyNowState.STORE_CARD -> {
+                    removeBlockBackgroundConstraintLayout?.setBackgroundResource(R.drawable.store_card_background)
+                }
+                else -> Unit
             }
-            ApplyNowState.STORE_CARD -> {
-                removeBlockBackgroundConstraintLayout?.setBackgroundResource(R.drawable.store_card_background)
-            }
-            else -> Unit
+
+            val account = accountData?.second
+            currentBalanceAmountTextview?.text =
+                Utils.removeNegativeSymbol(
+                    CurrencyFormatter.formatAmountToRandAndCentWithSpace(
+                        account?.currentBalance
+                    )
+                )
+            totalAmountDueAmountTextview?.text =
+                Utils.removeNegativeSymbol(
+                    CurrencyFormatter.formatAmountToRandAndCentWithSpace(
+                        account?.totalAmountDue
+                    )
+                )
+
+            setPushViewDownAnimation(incRecentTransactionButton.root)
+            setPushViewDownAnimation(incViewStatementButton.root)
+            setPushViewDownAnimation(incPayMyAccountButton.root)
+            setPushViewDownAnimation(accountInArrearsTextview)
+            setPushViewDownAnimation(include.includeAccountInArrears.navigateBackImageButton)
+            setPushViewDownAnimation(include.includeAccountInArrears.toolbarTitleTextView)
+            setPushViewDownAnimation(include.includeAccountInArrears.infoIconImageView)
+            setPushViewDownAnimation(helpWithPayment)
+            helpWithPaymentView.visibility =
+                if (mAccountPresenter?.getEligibilityPlan()?.planType.equals(ELITE_PLAN)) VISIBLE else GONE
+            val contactCallCenter =
+                WSpannableStringBuilder(bindString(R.string.contact_the_call_centre_now))
+            contactCallCenter.makeStringInteractable("0861502020", LinkType.PHONE)
+            contactCallCenter.makeStringUnderlined("0861502020")
+            setUnderlineText(contactCallCenter.build(), contactCallCenterNowTextview)
+
+            stopProgress()
         }
-
-        val account = accountData?.second
-        currentBalanceAmountTextview?.text =
-            Utils.removeNegativeSymbol(CurrencyFormatter.formatAmountToRandAndCentWithSpace(account?.currentBalance))
-        totalAmountDueAmountTextview?.text =
-            Utils.removeNegativeSymbol(CurrencyFormatter.formatAmountToRandAndCentWithSpace(account?.totalAmountDue))
-
-        setPushViewDownAnimation(incRecentTransactionButton)
-        setPushViewDownAnimation(incViewStatementButton)
-        setPushViewDownAnimation(incPayMyAccountButton)
-        setPushViewDownAnimation(accountInArrearsTextView)
-        setPushViewDownAnimation(navigateBackImageButton)
-        setPushViewDownAnimation(toolbarTitleTextView)
-        setPushViewDownAnimation(infoIconImageView)
-        setPushViewDownAnimation(helpWithPayment)
-        helpWithPaymentView.visibility =
-            if (mAccountPresenter?.getEligibilityPlan()?.planType.equals(ELITE_PLAN)) VISIBLE else GONE
-        val contactCallCenter =
-            WSpannableStringBuilder(bindString(R.string.contact_the_call_centre_now))
-        contactCallCenter.makeStringInteractable("0861502020", LinkType.PHONE)
-        contactCallCenter.makeStringUnderlined("0861502020")
-        setUnderlineText(contactCallCenter.build(), contactCallCenterNowTextview)
-
-        stopProgress()
 
         setFragmentResultListener(RemoveBlockOnCollectionDialogFragment::class.java.simpleName) { _, bundle ->
             CoroutineScope(Dispatchers.Main).launch {
@@ -202,7 +203,7 @@ class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener, Eligib
                     when (deepLinkingObject?.get("feature")?.asString) {
                         AppConstant.DP_LINKING_MY_ACCOUNTS_PRODUCT_PAY_MY_ACCOUNT -> {
                             deleteDeepLinkData()
-                            incPayMyAccountButton?.performClick()
+                            binding.incPayMyAccountButton.root.performClick()
                         }
                     }
                 }
@@ -362,29 +363,31 @@ class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener, Eligib
     }
 
     fun stopProgress() {
-        viewPaymentOptionImageShimmerLayout?.setShimmer(null)
-        viewPaymentOptionImageShimmerLayout?.stopShimmer()
+        binding.incPayMyAccountButton.apply {
+            viewPaymentOptionImageShimmerLayout?.setShimmer(null)
+            viewPaymentOptionImageShimmerLayout?.stopShimmer()
 
-        viewPaymentOptionTextShimmerLayout?.setShimmer(null)
-        viewPaymentOptionTextShimmerLayout?.stopShimmer()
+            viewPaymentOptionTextShimmerLayout?.setShimmer(null)
+            viewPaymentOptionTextShimmerLayout?.stopShimmer()
+        }
     }
 
     override fun eligibilityResponse(eligibilityPlan: EligibilityPlan?) {
         eligibilityPlan.let { plan ->
-            helpWithPayment.text =  when (plan?.actionText.equals(ActionText.VIEW_ELITE_PLAN.value, ignoreCase = true)) {
+            binding.helpWithPayment.text =  when (plan?.actionText.equals(ActionText.VIEW_ELITE_PLAN.value, ignoreCase = true)) {
                 true -> requireContext().displayLabel()
                 false ->   bindString( R.string.get_help_repayment)
             }
 
             viewLifecycleOwner.lifecycleScope.launch {
                 delay(AppConstant.DELAY_1000_MS)
-                helpWithPaymentView.visibility = if (plan?.planType.equals(ELITE_PLAN)) VISIBLE else GONE
+                binding.helpWithPaymentView.visibility = if (plan?.planType.equals(ELITE_PLAN)) VISIBLE else GONE
             }
         }
     }
 
     override fun eligibilityFailed() {
-        helpWithPaymentView.visibility = GONE
+        binding.helpWithPaymentView.visibility = GONE
     }
 
     override fun pmaSuccess() {
