@@ -1879,10 +1879,9 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             pixel = (binding.btnCheckOut.height ?: 0 * 2.5).toInt()
             view = binding.btnCheckOut
             message =
-                requireContext().getString(
-                    if (availableVouchersCount > 1) R.string.vouchers_available
-                    else R.string.voucher_available
-                )
+                requireContext().resources.getQuantityString(R.plurals.vouchers_available,
+                    availableVouchersCount,
+                    availableVouchersCount)
             setAllCapsUpperCase(true)
             viewState = true
             build()
@@ -1908,14 +1907,24 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     }
 
     override fun onViewCashBackVouchers() {
-        // TODO: Open cash back vouchers
+        val intent = Intent(context, AvailableVouchersToRedeemInCart::class.java)
+        intent.putExtra(
+            VOUCHER_DETAILS, Utils.toJson(voucherDetails)
+        )
+        intent.putExtra(
+            CASH_BACK_VOUCHERS, true)
+        startActivityForResult(
+            intent, REDEEM_VOUCHERS_REQUEST_CODE
+        )
     }
 
     private fun navigateToAvailableVouchersPage() {
         val intent = Intent(context, AvailableVouchersToRedeemInCart::class.java)
         intent.putExtra(
-            "VoucherDetails", Utils.toJson(voucherDetails)
+            VOUCHER_DETAILS, Utils.toJson(voucherDetails)
         )
+        intent.putExtra(
+            CASH_BACK_VOUCHERS, false)
         startActivityForResult(
             intent, REDEEM_VOUCHERS_REQUEST_CODE
         )
@@ -2054,5 +2063,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         private const val TAG_AVAILABLE_VOUCHERS_TOAST = "AVAILABLE_VOUCHERS"
         private const val GENERAL_ITEM = "GENERAL"
         private const val GIFT_ITEM = "GIFT"
+        const val VOUCHER_DETAILS = "VoucherDetails"
+        const val CASH_BACK_VOUCHERS = "cash_back_vouchers"
     }
 }

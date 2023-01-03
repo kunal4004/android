@@ -1,36 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/vouchersLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white"
-    android:paddingStart="@dimen/thirty_two_dp"
-    android:paddingEnd="@dimen/thirty_two_dp">
+    android:layout_marginTop="@dimen/_12sdp"
+    android:background="@drawable/bg_un_selected_voucher"
+    android:layout_marginEnd="@dimen/twenty_four_dp"
+    android:layout_marginStart="@dimen/twenty_four_dp">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineEnd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="@dimen/twenty_dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineStart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="@dimen/twenty_dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineTop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="@dimen/ten_dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineBottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_end="@dimen/ten_dp" />
+
 
     <CheckBox
         android:id="@+id/voucherSelector"
         android:layout_width="@dimen/twenty_four_dp"
         android:layout_height="@dimen/twenty_four_dp"
-        android:button="@drawable/refine_multi_selector"
+        android:button="@drawable/wrewards_selector"
         android:clickable="false"
-        app:layout_constraintBottom_toBottomOf="@id/bottom_guideline"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/top_guideline" />
+        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+        app:layout_constraintTop_toTopOf="@id/guidelineTop" />
+
 
     <TextView
         android:id="@+id/voucherDetails"
-        style="@style/myriad_pro_regular_black_15_text_style"
+        style="@style/futura_semi_bold_black"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/ten_dp"
+        android:layout_marginEnd="@dimen/ten_dp"
+        android:lineSpacingMultiplier="1.33"
+        android:textSize="@dimen/eighteen_sp"
+        app:layout_constraintEnd_toStartOf="@id/voucherSelector"
+        app:layout_constraintStart_toStartOf="@id/guidelineStart"
+        app:layout_constraintTop_toTopOf="@id/guidelineTop" />
+
+
+    <TextView
+        android:id="@+id/voucherDescription"
+        style="@style/myriad_pro_regular"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/five_dp"
-        android:layout_marginEnd="@dimen/ten_dp"
+        android:layout_marginEnd="@dimen/five_dp"
         android:lineSpacingMultiplier="1.33"
-        android:textSize="@dimen/fifteen_sp"
-        app:layout_constraintEnd_toStartOf="@id/voucherSelector"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/top_guideline"
+        android:textSize="@dimen/eleven_sp"
+        android:textColor="@color/color_444444"
+        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+        app:layout_constraintTop_toBottomOf="@+id/voucherDetails"
         app:layout_constraintBottom_toTopOf="@id/errorMessage"
-        />
+        app:layout_constraintStart_toStartOf="@id/guidelineStart" />
 
     <TextView
         android:id="@+id/errorMessage"
@@ -40,34 +85,26 @@
         android:layout_marginTop="@dimen/five_dp"
         android:textSize="@dimen/twelve_sp"
         android:textColor="@color/input_error_color_code"
+        app:layout_constraintBottom_toTopOf="@id/guidelineBottom"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@id/bottom_guideline"
-        app:layout_constraintEnd_toStartOf="@id/voucherSelector"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+        app:layout_constraintStart_toStartOf="@id/guidelineStart"
+        app:layout_constraintTop_toBottomOf="@id/voucherDetails" />
+
+    <TextView
+        android:id="@+id/expireVoucherDate"
+        style="@style/myriad_pro_regular"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/seven_dp"
+        android:textSize="@dimen/twelve_sp"
+        android:textColor="@color/color_444444"
+        app:layout_constraintBottom_toTopOf="@id/guidelineBottom"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+        app:layout_constraintStart_toStartOf="@id/guidelineStart"
         app:layout_constraintTop_toBottomOf="@id/voucherDetails" />
 
 
-    <View
-        android:id="@+id/divider"
-        android:layout_width="0dp"
-        android:layout_height="@dimen/one_dp"
-        android:background="@color/light_gray_background"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/bottom_guideline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_end="@dimen/twenty_dp" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/top_guideline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_begin="@dimen/twenty_dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
