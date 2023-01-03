@@ -212,12 +212,16 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                                     FirebaseManagerAnalyticsProperties.SHOP_CATEGORIES,
                                     this
                                 )
+                                var response: String? = null
+                                response!!.toString()
                                 showBlackToolTip(Delivery.STANDARD)
                                 setEventsForSwitchingBrowsingType(Delivery.STANDARD.name)
                                 KotlinUtils.browsingDeliveryType = Delivery.STANDARD
                             }
                             CLICK_AND_COLLECT_TAB.index -> {
                                 //Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMYLISTS, this)
+                                var response: String? = null
+                                response!!.toString()
                                 showBlackToolTip(Delivery.CNC)
                                 setEventsForSwitchingBrowsingType(Delivery.CNC.name)
                                 KotlinUtils.browsingDeliveryType = Delivery.CNC
