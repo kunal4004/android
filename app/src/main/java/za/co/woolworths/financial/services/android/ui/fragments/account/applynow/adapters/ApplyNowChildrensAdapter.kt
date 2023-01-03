@@ -42,6 +42,7 @@ class ApplyNowChildrensAdapter(var type: ApplyNowSectionType, var data: List<Chi
     override fun onBindViewHolder(holder: ApplyNowChildrensViewHolder, position: Int) {
         when (type) {
             ApplyNowSectionType.LEFT_ICON_WITH_CONTENT -> {holder.bindLeftIconContent(data[position])}
+            ApplyNowSectionType.LIST_UNORDERED -> {holder.bindListUnordered(data[position])}
             else -> {holder.bindListUnordered(data[position])}
         }
     }

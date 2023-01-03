@@ -1,15 +1,13 @@
 package za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.fragment_report_review.*
+import com.awfs.coordination.databinding.FragmentReportReviewBinding
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.featureutils.RatingAndReviewUtil
@@ -22,7 +20,9 @@ import za.co.woolworths.financial.services.android.ui.activities.rating_and_revi
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 
-class ReportReviewFragment : Fragment(), ReportReviewsAdapter.ReportItemClick {
+class ReportReviewFragment : Fragment(R.layout.fragment_report_review), ReportReviewsAdapter.ReportItemClick {
+
+    private lateinit var binding: FragmentReportReviewBinding
     private lateinit var moreReviewViewModel: RatingAndReviewViewModel
     private var selectedFeedbacks = mutableListOf<String>()
     private var apiCallInProgress = false
@@ -37,17 +37,11 @@ class ReportReviewFragment : Fragment(), ReportReviewsAdapter.ReportItemClick {
     private lateinit var reportReviewsAdapter: ReportReviewsAdapter
     var reportSuccessFragment: ReportSuccessFragment? = null
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View? {
-        return inflater.inflate(R.layout.fragment_report_review, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        toolbar?.setOnClickListener {
+        binding = FragmentReportReviewBinding.bind(view)
+
+        binding.toolbar.root.setOnClickListener {
             activity?.onBackPressed()
         }
         init()
@@ -72,14 +66,14 @@ class ReportReviewFragment : Fragment(), ReportReviewsAdapter.ReportItemClick {
     }
 
     private fun showProgressBar() {
-        progressBar.visibility = View.VISIBLE
+        binding.progressBar.visibility = View.VISIBLE
         apiCallInProgress = true
         /*activity?.window?.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
             WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)*/
     }
 
     private fun hideProgressBar() {
-        progressBar.visibility = View.GONE
+        binding.progressBar.visibility = View.GONE
         apiCallInProgress = false
         /*activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)*/
     }
@@ -87,10 +81,10 @@ class ReportReviewFragment : Fragment(), ReportReviewsAdapter.ReportItemClick {
     private fun setDefaultUi(review: Reviews, reportReviewList: List<String>) {
         val llm = LinearLayoutManager(requireContext())
         llm.orientation = LinearLayoutManager.VERTICAL
-        recyler_report.setLayoutManager(llm)
+        binding.recylerReport.setLayoutManager(llm)
         reportReviewsAdapter = ReportReviewsAdapter(reportReviewList, this)
-        recyler_report.setAdapter(reportReviewsAdapter)
-        btn_submit_report.setOnClickListener {
+        binding.recylerReport.setAdapter(reportReviewsAdapter)
+        binding.btnSubmitReport.setOnClickListener {
             if (!apiCallInProgress) {
                 showProgressBar()
                 lifecycleScope.launch {
@@ -103,7 +97,7 @@ class ReportReviewFragment : Fragment(), ReportReviewsAdapter.ReportItemClick {
                                 else
                                     "$feedbackText|$feedback"
                             } else
-                                "$feedbackText|${edt_txt_feedback.text}"
+                                "$feedbackText|${binding.edtTxtFeedback.text}"
                         }
                         val response = moreReviewViewModel.reviewFeedback(
                             ReviewFeedback(
@@ -124,7 +118,7 @@ class ReportReviewFragment : Fragment(), ReportReviewsAdapter.ReportItemClick {
                         e.printStackTrace()
                         hideProgressBar()
                         if(e.code() == 502){
-                            tv_duplicate_report.visibility = View.VISIBLE
+                            binding.tvDuplicateReport.visibility = View.VISIBLE
                         }
                        // RatingAndReviewUtil.reportedReviews.add(review.id.toString())
 
@@ -150,20 +144,23 @@ class ReportReviewFragment : Fragment(), ReportReviewsAdapter.ReportItemClick {
             selectedFeedbacks.add(reportItem)
         else
             selectedFeedbacks.remove(reportItem)
-        if (reportItem.equals(OTHERS) && isChecked) {
-            edt_txt_feedback.visibility = View.VISIBLE
-            review_write_report_label.visibility = View.VISIBLE
-        } else if (reportItem.equals(OTHERS) && !isChecked) {
-            edt_txt_feedback.visibility = View.INVISIBLE
-            review_write_report_label.visibility = View.INVISIBLE
-        }
 
-        if (reportReviewsAdapter.getAllCheckBoxCount() != 0) {
-            btn_submit_report.setBackgroundColor(resources.getColor(R.color.black))
-            btn_submit_report.isEnabled = true
-        } else {
-            btn_submit_report.setBackgroundColor(resources.getColor(R.color.gray))
-            btn_submit_report.isEnabled = false
+        binding.apply {
+            if (reportItem.equals(OTHERS) && isChecked) {
+                edtTxtFeedback.visibility = View.VISIBLE
+                reviewWriteReportLabel.visibility = View.VISIBLE
+            } else if (reportItem.equals(OTHERS) && !isChecked) {
+                edtTxtFeedback.visibility = View.INVISIBLE
+                reviewWriteReportLabel.visibility = View.INVISIBLE
+            }
+
+            if (reportReviewsAdapter.getAllCheckBoxCount() != 0) {
+                btnSubmitReport.setBackgroundColor(resources.getColor(R.color.black))
+                btnSubmitReport.isEnabled = true
+            } else {
+                btnSubmitReport.setBackgroundColor(resources.getColor(R.color.gray))
+                btnSubmitReport.isEnabled = false
+            }
         }
     }
 

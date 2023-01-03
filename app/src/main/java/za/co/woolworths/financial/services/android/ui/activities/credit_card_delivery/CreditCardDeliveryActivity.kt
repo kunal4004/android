@@ -8,7 +8,7 @@ import androidx.core.os.bundleOf
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.credit_card_delivery_activity.*
+import com.awfs.coordination.databinding.CreditCardDeliveryActivityBinding
 import za.co.woolworths.financial.services.android.analytic.FirebaseCreditCardDeliveryEvent
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.dto.account.CreditCardDeliveryStatus
@@ -21,6 +21,7 @@ import za.co.woolworths.financial.services.android.util.Utils
 
 class CreditCardDeliveryActivity : AppCompatActivity() {
 
+    private lateinit var binding: CreditCardDeliveryActivityBinding
     var bundle: Bundle? = null
     var accountBinNumber: String? = null
     var statusResponse: StatusResponse? = null
@@ -29,7 +30,8 @@ class CreditCardDeliveryActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.credit_card_delivery_activity)
+        binding = CreditCardDeliveryActivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         Utils.updateStatusBarBackground(this, R.color.grey_bg)
         bundle = intent.getBundleExtra(BundleKeysConstants.BUNDLE)
         bundle?.apply {
@@ -47,7 +49,7 @@ class CreditCardDeliveryActivity : AppCompatActivity() {
     enum class DeliveryStatus(val value: Int) { CANCEL_DELIVERY(0), EDIT_ADDRESS(1) }
 
     private fun actionBar() {
-        setSupportActionBar(toolbar)
+        setSupportActionBar(binding.toolbar)
         supportActionBar?.apply {
             setDisplayShowTitleEnabled(false)
             setDisplayUseLogoEnabled(false)
@@ -57,21 +59,23 @@ class CreditCardDeliveryActivity : AppCompatActivity() {
     }
 
     fun setToolbarTitle(title: String?) {
-        toolbarText?.text = title
+        binding.toolbarText?.text = title
     }
 
     fun hideToolbar() {
-        toolbar?.visibility = View.GONE
+        binding.toolbar?.visibility = View.GONE
     }
 
     fun changeToolbarBackground(color: Int) {
-        toolbar?.visibility = View.VISIBLE
-        toolbar.setBackgroundColor(bindColor(color))
-        Utils.updateStatusBarBackground(this, color)
+        with(binding) {
+            toolbar?.visibility = View.VISIBLE
+            toolbar.setBackgroundColor(bindColor(color))
+            Utils.updateStatusBarBackground(this@CreditCardDeliveryActivity, color)
+        }
     }
 
     private fun loadNavHostFragment() {
-        val navHostFragment = nav_host_fragment as NavHostFragment
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val graph = navHostFragment.navController.navInflater.inflate(R.navigation.nav_graph_credit_card_delivery)
 
         if (setUpDeliveryNowClicked)

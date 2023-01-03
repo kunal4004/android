@@ -2,31 +2,15 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.detail.
 
 import android.graphics.Color
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.observe
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.card_payment_option_header_item.*
-import kotlinx.android.synthetic.main.chat_collect_agent_floating_button_layout.*
-import kotlinx.android.synthetic.main.credit_and_debit_card_payments_fragment.*
-import kotlinx.android.synthetic.main.payment_options_activity.*
-import kotlinx.android.synthetic.main.payment_options_activity.whatsAppIconImageView
-import kotlinx.android.synthetic.main.pma_at_your_nearest_woolies_store_item.*
-import kotlinx.android.synthetic.main.pma_by_electronic_fund_transfer_eft_item.*
-import kotlinx.android.synthetic.main.pma_by_electronic_fund_transfer_eft_item.byElectronicFundTransferDescTextView
-import kotlinx.android.synthetic.main.pma_credit_card_item.*
-import kotlinx.android.synthetic.main.pma_debit_card_item.*
-import kotlinx.android.synthetic.main.pma_pay_at_any_atm.*
-import kotlinx.android.synthetic.main.pma_pay_by_debit_order_item.*
-import kotlinx.android.synthetic.main.pma_personal_loan_electronic_fund_transfer.*
-import kotlinx.android.synthetic.main.pma_whatsapp_chat_with_us.*
+import com.awfs.coordination.databinding.CreditAndDebitCardPaymentsFragmentBinding
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
@@ -43,26 +27,25 @@ import za.co.woolworths.financial.services.android.ui.extension.navigateSafelyWi
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleVisibility
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WhatsAppUnavailableFragment
-import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.KotlinUtils
+import za.co.woolworths.financial.services.android.util.ScreenManager
+import za.co.woolworths.financial.services.android.util.SessionUtilities
+import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
+import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 import java.net.ConnectException
 
-class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
+class CreditAndDebitCardPaymentsFragment :
+    BaseFragmentBinding<CreditAndDebitCardPaymentsFragmentBinding>(
+        CreditAndDebitCardPaymentsFragmentBinding::inflate
+    ), View.OnClickListener {
 
     private var mChatFloatingActionButtonBubbleView: ChatFloatingActionButtonBubbleView? = null
     private var payMyAccountPresenter: PayMyAccountPresenterImpl? = null
     private var navController: NavController? = null
-    private var layout: View? = null
     private val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
     private var payMyAccountOption: ConfigPayMyAccount? = null
     private var isQueryPayUPaymentMethodComplete: Boolean = false
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        // Prevent layout to reload when fragment refresh
-        if (layout == null)
-            layout = inflater.inflate(R.layout.credit_and_debit_card_payments_fragment, container, false)
-        return layout
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -76,10 +59,14 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
             onRetry()
         }
 
-        creditCardDescTextView?.text = KotlinUtils.highlightText(bindString(R.string.credit_and_combination_desc),  mutableListOf("Note:"))
+        binding.incCreditCardButton.creditCardDescTextView.text = KotlinUtils.highlightText(
+            bindString(R.string.credit_and_combination_desc),
+            mutableListOf("Note:")
+        )
 
-        creditDebitCardPaymentsScrollView?.background = bindDrawable(R.drawable.black_white_gradient_bg)
-        pmaBottomView?.visibility = VISIBLE
+        binding.creditDebitCardPaymentsScrollView.background =
+            bindDrawable(R.drawable.black_white_gradient_bg)
+        binding.pmaBottomView.visibility = VISIBLE
 
         navController = Navigation.findNavController(view)
 
@@ -87,15 +74,17 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
 
         val payMyCardHeaderItem = payMyAccountPresenter?.getPayMyCardCardItem()
         payMyCardHeaderItem?.apply {
-            payMyAccountTitleTextView?.text = bindString(title)
-            payMyAccountDescTextView?.text = bindString(description)
-            pmaCardImageView?.setImageResource(card)
+            binding.incStoreCardHeaderItem.apply {
+                payMyAccountTitleTextView.text = bindString(title)
+                payMyAccountDescTextView.text = bindString(description)
+                pmaCardImageView.setImageResource(card)
+            }
         }
 
         setWhatsAppChatWithUsVisibility(payMyAccountPresenter?.getWhatsAppVisibility() ?: false)
 
         if (payMyAccountViewModel.isAccountChargedOff()) {
-            chatBubbleFloatingButton.visibility = GONE
+            binding.chatCollectAgentFloatingButtonLayout.chatBubbleFloatingButton.visibility = GONE
         } else {
             val account = payMyAccountViewModel.getAccountWithApplyNowState()
             account?.apply { chatToCollectionAgent(first, mutableListOf(second)) }
@@ -117,26 +106,31 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
         when (payMyAccountPresenter?.getPayMyAccountSection()) {
 
             ApplyNowState.STORE_CARD -> {
-                incAtAnyAbsaBranchButton?.visibility = VISIBLE
-                byElectronicFundTransferDescTextView?.text = bindString(R.string.by_electronic_fund_transfer_store_card_desc)
+                binding.incAtAnyAbsaBranchButton.root.visibility = VISIBLE
+                binding.incByElectronicFundTransferEFTButton.byElectronicFundTransferDescTextView.text =
+                    bindString(R.string.by_electronic_fund_transfer_store_card_desc)
             }
             ApplyNowState.PERSONAL_LOAN -> {
-                incSetupMyDebitOrder?.visibility = GONE
-                incAtAnyAbsaBranchButton?.visibility = VISIBLE
-                incByElectronicFundTransferEFTButton?.visibility = GONE
-                incPersonalLoanElectronicFundTransfer?.visibility = VISIBLE
-                byElectronicFundTransferDescTextView?.text = bindString(R.string.by_electronic_fund_trasfer_personal_loan_desc)
+                binding.incSetupMyDebitOrder.root.visibility = GONE
+                binding.incAtAnyAbsaBranchButton.root.visibility = VISIBLE
+                binding.incByElectronicFundTransferEFTButton.root.visibility = GONE
+                binding.incPersonalLoanElectronicFundTransfer.root.visibility = VISIBLE
+                binding.incByElectronicFundTransferEFTButton.byElectronicFundTransferDescTextView.text =
+                    bindString(R.string.by_electronic_fund_trasfer_personal_loan_desc)
             }
             else -> {
-                incAtAnyAbsaBranchButton?.visibility = VISIBLE
-                byElectronicFundTransferDescTextView?.text = bindString(R.string.by_electronic_fund_transfer_store_card_desc)
+                binding.incAtAnyAbsaBranchButton.root.visibility = VISIBLE
+                binding.incByElectronicFundTransferEFTButton.byElectronicFundTransferDescTextView.text =
+                    bindString(R.string.by_electronic_fund_transfer_store_card_desc)
 
                 // Hide debit and credit card payment item  when  ABSA cards is null or empty
                 if (payMyAccountViewModel.getAccount()?.cards?.isEmpty() == true) {
-                    incDebitCardButton?.visibility = GONE
-                    easilyPayYourWooliesAccountTextView?.visibility = GONE
-                    payYourWooliesAccountTextView?.visibility = GONE
-                    incCreditCardButton?.visibility = GONE
+                    binding.apply {
+                        incDebitCardButton.root.visibility = GONE
+                        easilyPayYourWooliesAccountTextView.visibility = GONE
+                        payYourWooliesAccountTextView.visibility = GONE
+                        incCreditCardButton.root.visibility = GONE
+                    }
                 }
             }
         }
@@ -148,12 +142,15 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
     }
 
     private fun hidePaymentMethod() {
-        incSetupMyDebitOrder?.visibility = GONE
-        easilyPayYourWooliesAccountTextView?.visibility = GONE
-        incDebitCardButton?.visibility = GONE
-        incCreditCardButton?.visibility = GONE
-        payYourWooliesAccountTextView?.visibility = VISIBLE
-        incAtAnyAbsaBranchButton?.visibility = VISIBLE
+        binding.apply {
+            incSetupMyDebitOrder.root.visibility = GONE
+            easilyPayYourWooliesAccountTextView.visibility = GONE
+            incDebitCardButton.root.visibility = GONE
+            incCreditCardButton.root.visibility = GONE
+            payYourWooliesAccountTextView.visibility = VISIBLE
+            incAtAnyAbsaBranchButton.root.visibility = VISIBLE
+        }
+
     }
 
     private fun queryServicePaymentMethod() {
@@ -164,61 +161,72 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
         val payUMethodType = PayMyAccountViewModel.PAYUMethodType.CREATE_USER
         val paymentMethodList = cardInfo?.paymentMethodList
         val selectedCardPosition = cardInfo?.selectedCardPosition ?: 0
-        val card = PMACardPopupModel(amountEntered, paymentMethodList, account, payUMethodType, selectedCardPosition = selectedCardPosition)
+        val card = PMACardPopupModel(
+            amountEntered,
+            paymentMethodList,
+            account,
+            payUMethodType,
+            selectedCardPosition = selectedCardPosition
+        )
         payMyAccountViewModel.setPMACardInfo(card)
 
         payMyAccountViewModel.queryServicePayUPaymentMethod(
-                { // onSuccessResult
-                    if (!isAdded) return@queryServicePayUPaymentMethod
-                    isQueryPayUPaymentMethodComplete = true
-                    debitOrCreditButtonIsEnabled(true)
-                }, { onSessionExpired ->
-            if (!isAdded) return@queryServicePayUPaymentMethod
-            activity?.let {
+            { // onSuccessResult
+                if (!isAdded) return@queryServicePayUPaymentMethod
                 isQueryPayUPaymentMethodComplete = true
                 debitOrCreditButtonIsEnabled(true)
-                SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, onSessionExpired, it)
-            }
-        }, { // on unknown http error / general error
-            if (!isAdded) return@queryServicePayUPaymentMethod
-            isQueryPayUPaymentMethodComplete = true
+            }, { onSessionExpired ->
+                if (!isAdded) return@queryServicePayUPaymentMethod
+                activity?.let {
+                    isQueryPayUPaymentMethodComplete = true
+                    debitOrCreditButtonIsEnabled(true)
+                    SessionUtilities.getInstance()
+                        .setSessionState(SessionDao.SESSION_STATE.INACTIVE, onSessionExpired, it)
+                }
+            }, { // on unknown http error / general error
+                if (!isAdded) return@queryServicePayUPaymentMethod
+                isQueryPayUPaymentMethodComplete = true
 
-        }, { throwable ->
-            if (!isAdded) return@queryServicePayUPaymentMethod
-            activity?.runOnUiThread {
-                debitOrCreditButtonIsEnabled(true)
-            }
-            isQueryPayUPaymentMethodComplete = true
-            if (throwable is ConnectException) {
-                isQueryPayUPaymentMethodComplete = false
-            }
-        })
+            }, { throwable ->
+                if (!isAdded) return@queryServicePayUPaymentMethod
+                activity?.runOnUiThread {
+                    debitOrCreditButtonIsEnabled(true)
+                }
+                isQueryPayUPaymentMethodComplete = true
+                if (throwable is ConnectException) {
+                    isQueryPayUPaymentMethodComplete = false
+                }
+            })
     }
 
     private fun debitOrCreditButtonIsEnabled(isEnabled: Boolean) {
-        payByDebitCardNowButton?.isEnabled = isEnabled
-        payByCreditCardNowButton?.isEnabled = isEnabled
+        binding.apply {
+            incDebitCardButton.payByDebitCardNowButton.isEnabled = isEnabled
+            incCreditCardButton.payByCreditCardNowButton.isEnabled = isEnabled
+        }
     }
 
     private fun configureClickEvent() {
-        setViewListener(pmaCardImageView)
-        setViewListener(setUpDebitOrderButton)
-        setViewListener(setupMyDebitOrderContainer)
-        setViewListener(payByDebitCardNowButton)
-        setViewListener(payByCreditCardNowButton)
-        setViewListener(viewBankingDetailButton)
-        setViewListener(payAtAnyATMButton)
-        setViewListener(findAWooliesStoreButton)
-        setViewListener(incCreditCardButton)
-        setViewListener(incSetupMyDebitOrder)
-        setViewListener(incDebitCardButton)
-        setViewListener(incByElectronicFundTransferEFTButton)
-        setViewListener(incAtAnyAbsaBranchButton)
-        setViewListener(incAtYourNearestWoolworthsStoreButton)
-        setViewListener(incPayAtAnyATMButton)
-        setViewListener(incWhatsAppAnyQuestions)
-        setViewListener(incPersonalLoanElectronicFundTransfer)
-        setViewListener(plViewBankingDetailButton)
+        binding.apply {
+            setViewListener(incStoreCardHeaderItem.pmaCardImageView)
+            setViewListener(incSetupMyDebitOrder.setUpDebitOrderButton)
+            setViewListener(incSetupMyDebitOrder.setupMyDebitOrderContainer)
+            setViewListener(incDebitCardButton.payByDebitCardNowButton)
+            setViewListener(incCreditCardButton.payByCreditCardNowButton)
+            setViewListener(incByElectronicFundTransferEFTButton.viewBankingDetailButton)
+            setViewListener(incPayAtAnyATMButton.payAtAnyATMButton)
+            setViewListener(incAtYourNearestWoolworthsStoreButton.findAWooliesStoreButton)
+            setViewListener(incCreditCardButton.root)
+            setViewListener(incSetupMyDebitOrder.root)
+            setViewListener(incDebitCardButton.root)
+            setViewListener(incByElectronicFundTransferEFTButton.root)
+            setViewListener(incAtAnyAbsaBranchButton.root)
+            setViewListener(incAtYourNearestWoolworthsStoreButton.root)
+            setViewListener(incPayAtAnyATMButton.root)
+            setViewListener(incWhatsAppAnyQuestions.root)
+            setViewListener(incPersonalLoanElectronicFundTransfer.root)
+            setViewListener(incPersonalLoanElectronicFundTransfer.plViewBankingDetailButton)
+        }
     }
 
     override fun onClick(v: View?) {
@@ -238,7 +246,11 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
                         navController?.navigate(R.id.payMyAccountRetryErrorFragment)
                     }
                     (payUMethodType == PayMyAccountViewModel.PAYUMethodType.CREATE_USER) -> {
-                        navigateSafelyWithNavController(CreditAndDebitCardPaymentsFragmentDirections.goToEnterPaymentAmountFragmentAction(true))
+                        navigateSafelyWithNavController(
+                            CreditAndDebitCardPaymentsFragmentDirections.goToEnterPaymentAmountFragmentAction(
+                                true
+                            )
+                        )
                     }
 
                     (payUMethodType == PayMyAccountViewModel.PAYUMethodType.CARD_UPDATE) -> {
@@ -265,33 +277,51 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
             R.id.incWhatsAppAnyQuestions -> {
                 if (!WhatsAppChatToUs().isCustomerServiceAvailable) {
                     val whatsAppUnavailableFragment = WhatsAppUnavailableFragment()
-                    whatsAppUnavailableFragment.show(childFragmentManager, WhatsAppUnavailableFragment::class.java.simpleName)
+                    whatsAppUnavailableFragment.show(
+                        childFragmentManager,
+                        WhatsAppUnavailableFragment::class.java.simpleName
+                    )
                     return
                 }
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WHATSAPP_PAYMENT_OPTION, activity)
-                ScreenManager.presentWhatsAppChatToUsActivity(activity, WhatsAppChatToUs.FEATURE_WHATSAPP, payMyAccountPresenter?.getAppScreenName())
+                Utils.triggerFireBaseEvents(
+                    FirebaseManagerAnalyticsProperties.WHATSAPP_PAYMENT_OPTION,
+                    activity
+                )
+                ScreenManager.presentWhatsAppChatToUsActivity(
+                    activity,
+                    WhatsAppChatToUs.FEATURE_WHATSAPP,
+                    payMyAccountPresenter?.getAppScreenName()
+                )
             }
         }
     }
 
     private fun setWhatsAppChatWithUsVisibility(isVisible: Boolean) {
-        if (isVisible) {
-            incWhatsAppAnyQuestions?.visibility = VISIBLE
-            // Customer service availability
-            if (WhatsAppChatToUs().isCustomerServiceAvailable) {
-                whatsAppIconImageView?.setImageResource(R.drawable.icon_whatsapp)
-                anyQuestionsTextView?.setTextColor(Color.BLACK)
-                chatToUsOnWhatsAppTextView?.setTextColor(Color.BLACK)
-                whatsAppNextIconImageView?.alpha = 1f
+        binding.apply {
+            if (isVisible) {
+
+                incWhatsAppAnyQuestions.root.visibility = VISIBLE
+                // Customer service availability
+                incWhatsAppAnyQuestions.apply {
+                    if (WhatsAppChatToUs().isCustomerServiceAvailable) {
+                        whatsAppIconImageView.setImageResource(R.drawable.icon_whatsapp)
+                        anyQuestionsTextView.setTextColor(Color.BLACK)
+                        chatToUsOnWhatsAppTextView.setTextColor(Color.BLACK)
+                    } else {
+                        whatsAppIconImageView.setImageResource(R.drawable.whatsapp_offline)
+                        anyQuestionsTextView.setTextColor(Color.BLACK)
+                        chatToUsOnWhatsAppTextView.setTextColor(Color.BLACK)
+                    }
+                    //TODO:: confirm usage and delete
+//                    root.whatsAppNextIconImageView?.alpha = 1f
+
+                }
+
             } else {
-                whatsAppIconImageView?.setImageResource(R.drawable.whatsapp_offline)
-                whatsAppNextIconImageView?.alpha = 1.0f
-                anyQuestionsTextView?.setTextColor(Color.BLACK)
-                chatToUsOnWhatsAppTextView?.setTextColor(Color.BLACK)
+                incWhatsAppAnyQuestions.root.visibility = GONE
             }
-        } else {
-            incWhatsAppAnyQuestions?.visibility = GONE
         }
+
     }
 
     private fun setViewListener(view: View?) {
@@ -314,11 +344,11 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
             mChatFloatingActionButtonBubbleView = ChatFloatingActionButtonBubbleView(
                 activity = this as? PayMyAccountActivity,
                 chatBubbleVisibility = ChatBubbleVisibility(accountList, this),
-                floatingActionButton = chatBubbleFloatingButton,
+                floatingActionButton = binding.chatCollectAgentFloatingButtonLayout.chatBubbleFloatingButton,
                 applyNowState = applyNowState,
-                scrollableView = creditDebitCardPaymentsScrollView,
-                notificationBadge = badge,
-                onlineChatImageViewIndicator = onlineIndicatorImageView,
+                scrollableView = binding.creditDebitCardPaymentsScrollView,
+                notificationBadge = binding.chatCollectAgentFloatingButtonLayout.badge,
+                onlineChatImageViewIndicator = binding.chatCollectAgentFloatingButtonLayout.onlineIndicatorImageView,
                 vocTriggerEvent = payMyAccountViewModel.getVocTriggerEventPaymentOptions()
             )
 

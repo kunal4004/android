@@ -1,29 +1,27 @@
 package za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.opt_in.otp
 
 import android.os.Bundle
-import android.view.*
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
 import androidx.core.os.bundleOf
-import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.bpi_validate_otp_error_fragment.*
-import kotlinx.android.synthetic.main.circle_progress_layout.*
+import com.awfs.coordination.databinding.BpiValidateOtpErrorFragmentBinding
 import za.co.woolworths.financial.services.android.ui.extension.onClick
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity
+import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 
-class BpiValidateOTPErrorFragment : Fragment() {
+class BpiValidateOTPErrorFragment : BaseFragmentBinding<BpiValidateOtpErrorFragmentBinding>(BpiValidateOtpErrorFragmentBinding::inflate) {
 
     private var mCircularProgressIndicator: ProgressIndicator? = null
     var bundle: Bundle? = null
     var navController: NavController? = null
 
     val args: BpiValidateOTPErrorFragmentArgs by navArgs()
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.bpi_validate_otp_error_fragment, container, false)
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -32,7 +30,7 @@ class BpiValidateOTPErrorFragment : Fragment() {
 
         failureProgressIndicator()
 
-        retry.onClick {
+        binding.retry.onClick {
            val navigateTo =  when (bundle?.getString("screenType", "")) {
                 BpiValidateOTPFragment::class.java.simpleName -> R.id.action_bpiValidateOTPErrorFragment_to_bpiValidateOTPFragment
                 BPIProcessingRequestFragment::class.java.simpleName ->  R.id.action_bpiValidateOTPErrorFragment_to_BPIProcessingRequestFragment
@@ -46,12 +44,19 @@ class BpiValidateOTPErrorFragment : Fragment() {
     }
 
     private fun failureProgressIndicator() {
-        mCircularProgressIndicator = ProgressIndicator(circularProgressIndicator, success_frame, imFailureIcon, success_tick)
-        mCircularProgressIndicator?.apply {
-            progressIndicatorListener {  }
-            animationStatus = ProgressIndicator.AnimationStatus.Failure
-            spin()
-            stopSpinning()
+        binding.errorIcon.apply {
+            mCircularProgressIndicator = ProgressIndicator(
+                circularProgressIndicator,
+                successFrame,
+                imFailureIcon,
+                successTick
+            )
+            mCircularProgressIndicator?.apply {
+                progressIndicatorListener { }
+                animationStatus = ProgressIndicator.AnimationStatus.Failure
+                spin()
+                stopSpinning()
+            }
         }
     }
 

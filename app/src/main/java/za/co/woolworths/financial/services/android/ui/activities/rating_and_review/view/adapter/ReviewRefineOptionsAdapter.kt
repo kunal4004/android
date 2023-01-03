@@ -2,12 +2,10 @@ package za.co.woolworths.financial.services.android.ui.activities.rating_and_rev
 
 import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import androidx.recyclerview.widget.RecyclerView
-import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.review_refine_selection_layout.view.*
+import com.awfs.coordination.databinding.ReviewRefineSelectionLayoutBinding
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.Refinements
 import za.co.woolworths.financial.services.android.ui.views.WTextView
 
@@ -17,7 +15,7 @@ class ReviewRefineOptionsAdapter (
 ) : RecyclerView.Adapter<ReviewRefineOptionsAdapter.ReviewRefineOptionViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReviewRefineOptionViewHolder {
         return ReviewRefineOptionViewHolder(
-            LayoutInflater.from(context).inflate(R.layout.review_refine_selection_layout, parent, false)
+            ReviewRefineSelectionLayoutBinding.inflate(LayoutInflater.from(context), parent, false)
         )
     }
 
@@ -34,11 +32,11 @@ class ReviewRefineOptionsAdapter (
         }
     }
 
-    inner class ReviewRefineOptionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class ReviewRefineOptionViewHolder(val itemBinding: ReviewRefineSelectionLayoutBinding) : RecyclerView.ViewHolder(itemBinding.root) {
 
-        val tvRefineOption: WTextView = itemView.tvRefineOption
+        val tvRefineOption: WTextView = itemBinding.tvRefineOption
         val view = itemView
-        val cbRefineSelector: CheckBox = itemView.cbRefineSelector
+        val cbRefineSelector: CheckBox = itemBinding.cbRefineSelector
     }
 
     fun clearRefinement() {

@@ -1289,11 +1289,11 @@
 
     <string name="black_credit_card_account_in_arrears_information_desc">Account in arrears is when the minimum payment due is not paid in full by the due date.</string>
     <string name="black_credit_card_amount_due_information_desc">This is the minimum amount that is due for the payment, by the due date for that month.</string>
-    <string name="black_credit_card_amount_overdue_arrears_information_desc">The amount that is outstanding from the previous billing due date</string>
+    <string name="black_credit_card_amount_overdue_arrears_information_desc">The amount that is outstanding from the previous billing due date.</string>
     <string name="black_credit_card_total_amount_due_arrears_desc">The total amount due, is the total of that months due amount plus any previous over due amounts.</string>
     <string name="black_credit_card_next_payment_due_arrears_desc">This is the date the Total Amount Due is to be paid by.</string>
     <string name="black_credit_card_balance_at_statement_date_desc">Balance as at the date when you are billed.</string>
-    <string name="black_credit_card_current_balance_arrears_information_desc">Balance as at the current date</string>
+    <string name="black_credit_card_current_balance_arrears_information_desc">Balance as at the current date.</string>
     <string name="black_credit_card_available_fund_arrears_information_desc">Funds available for you to use.</string>
     <string name="black_credit_card_current_information_arrears_information_desc">This is the total amount of credit offered to you by Woolies.</string>
     <string name="silver_credit_card">silver credit card</string>
@@ -2737,6 +2737,7 @@
     <string name="edit_address_button">EDIT ADDRESS</string>
     <string name="promotional_text_banner">Extra 5% off when you pay with your Woolies card.\nThis offer is available on selected items. Offer valid for a limited time only. Subject to availability. Discount applies at checkout.T\'s &amp; C\'s apply.</string>
 
+    <string name="unfortunately_something_went_wrong">Unfortunately,\nSomething Went Wrong.</string>
     <string name="already_have_a_wrewards_card">Already have a wrewards card?</string>
     <string name="add_it_now">Add it now</string>
     <string name="sign_up">SIGN UP</string>
@@ -2809,7 +2810,8 @@
     <string name="failed_more_reviews">FAILED TO LOAD MORE REVIEWS</string>
     <string name="retry_txt">RETRY</string>
     <string name="reported">REPORTED</string>
+    <string name="cancelled">Cancelled</string>
+    <string name="order">Order\u0020</string>
     <string name="a_report_for_this_review_has_already_been_submitted">A report for this review has already been submitted.</string>
-
 
 </resources>

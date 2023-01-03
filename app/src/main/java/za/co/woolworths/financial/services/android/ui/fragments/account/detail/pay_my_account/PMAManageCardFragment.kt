@@ -20,13 +20,18 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.PmaManageCardFragmentBinding
 import com.google.gson.Gson
-import kotlinx.android.synthetic.main.pma_manage_card_fragment.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.models.dto.GetPaymentMethod
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity.Companion.PAYMENT_DETAIL_CARD_UPDATE
 import za.co.woolworths.financial.services.android.ui.adapters.PMACardsAdapter
-import za.co.woolworths.financial.services.android.ui.extension.*
+import za.co.woolworths.financial.services.android.ui.extension.bindColor
+import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.ui.extension.getMyriadProSemiBoldFont
 import za.co.woolworths.financial.services.android.ui.views.card_swipe.RecyclerViewSwipeDecorator
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
@@ -36,20 +41,19 @@ import za.co.woolworths.financial.services.android.util.wenum.LifecycleType
 
 class PMAManageCardFragment : PMAFragment(), View.OnClickListener {
 
+    private lateinit var binding: PmaManageCardFragmentBinding
     private var mDeletedPaymentMethodPosition: Int = 0
     private var mTemporarySelectedPosition: Int = 0
     private var manageCardAdapter: PMACardsAdapter? = null
     private var mPaymentMethodList: MutableList<GetPaymentMethod>? = null
     private var navController: NavController? = null
     private var deletedPaymentMethod: GetPaymentMethod? = null
-    private var root: View? = null
     private val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
     private var mLifecycleType: LifecycleType = LifecycleType.INIT
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        if (root == null)
-            root = inflater.inflate(R.layout.pma_manage_card_fragment, container, false)
-        return root
+        binding = PmaManageCardFragmentBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -58,12 +62,12 @@ class PMAManageCardFragment : PMAFragment(), View.OnClickListener {
         navController = Navigation.findNavController(view)
         mTemporarySelectedPosition = payMyAccountViewModel.getSelectedPosition()
         configureToolbar(true, R.string.credit_debit_cards_label)
-        useThisCardButton?.apply {
+        binding.useThisCardButton?.apply {
             setOnClickListener(this@PMAManageCardFragment)
             AnimationUtilExtension.animateViewPushDown(this)
         }
         swipeToRefreshList()
-        addCardTextView?.apply {
+        binding.addCardTextView?.apply {
             setOnClickListener(this@PMAManageCardFragment)
             AnimationUtilExtension.animateViewPushDown(this)
         }
@@ -96,7 +100,7 @@ class PMAManageCardFragment : PMAFragment(), View.OnClickListener {
     }
 
     private fun swipeToRefreshList() {
-        swipeToRefreshList?.setOnRefreshListener {
+        binding.swipeToRefreshList?.setOnRefreshListener {
             queryGetPaymentMethod(mLifecycleType)
         }
     }
@@ -106,14 +110,14 @@ class PMAManageCardFragment : PMAFragment(), View.OnClickListener {
 
         mPaymentMethodList = payMyAccountViewModel.getPaymentMethodList()
 
-        pmaManageCardRecyclerView?.apply {
+        binding.pmaManageCardRecyclerView?.apply {
             layoutManager = activity?.let { LinearLayoutManager(it, LinearLayoutManager.VERTICAL, false) }
 
             manageCardAdapter = PMACardsAdapter(mPaymentMethodList) { paymentMethod, position ->
 
                 val isCardSelected = manageCardAdapter?.getList()?.any { it.isCardChecked }
 
-                useThisCardButton?.isEnabled = isCardSelected ?: false
+                binding.useThisCardButton?.isEnabled = isCardSelected ?: false
 
                 when (paymentMethod.cardExpired) {
                     true -> {
@@ -184,7 +188,7 @@ class PMAManageCardFragment : PMAFragment(), View.OnClickListener {
             })
 
             // Disable use this card button when no item is selected
-            useThisCardButton?.isEnabled = !payMyAccountViewModel.isPaymentMethodListChecked()
+            binding.useThisCardButton?.isEnabled = !payMyAccountViewModel.isPaymentMethodListChecked()
 
             // Set and display add new card as start destination in graph
             if (mPaymentMethodList?.isEmpty() == true) {
@@ -204,8 +208,8 @@ class PMAManageCardFragment : PMAFragment(), View.OnClickListener {
     private fun deleteProgressVisibility(isVisible: Boolean) {
        CoroutineScope(Dispatchers.Main).launch {
            delay(AppConstant.DELAY_100_MS)
-            deleteProgressBar?.visibility = if (isVisible) VISIBLE else GONE
-            useThisCardButton?.isEnabled = !isVisible
+           binding.deleteProgressBar?.visibility = if (isVisible) VISIBLE else GONE
+           binding.useThisCardButton?.isEnabled = !isVisible
         }
     }
 
@@ -238,7 +242,7 @@ class PMAManageCardFragment : PMAFragment(), View.OnClickListener {
             mPaymentMethodList = manageCardAdapter?.getList()
 
             val itemTouchHelper = ItemTouchHelper(paymentMethodItemSwipeLeft)
-            itemTouchHelper.attachToRecyclerView(pmaManageCardRecyclerView)
+            itemTouchHelper.attachToRecyclerView(binding.pmaManageCardRecyclerView)
 
             onGetPaymentMethodProgress(type, false)
 
@@ -256,14 +260,14 @@ class PMAManageCardFragment : PMAFragment(), View.OnClickListener {
         if (!isAdded) return
         when (type) {
             LifecycleType.INIT -> {
-                paymentMethodsListProgressBar?.visibility = if (isRefreshing) VISIBLE else GONE
-                pmaManageCardRecyclerView?.visibility = if (isRefreshing) GONE else VISIBLE
+                binding.paymentMethodsListProgressBar?.visibility = if (isRefreshing) VISIBLE else GONE
+                binding.pmaManageCardRecyclerView?.visibility = if (isRefreshing) GONE else VISIBLE
             }
             LifecycleType.RESUME -> {
-                swipeToRefreshList?.isRefreshing = isRefreshing
+                binding.swipeToRefreshList?.isRefreshing = isRefreshing
             }
         }
-        useThisCardButton?.isEnabled = !isRefreshing
+        binding.useThisCardButton?.isEnabled = !isRefreshing
     }
 
     private val paymentMethodItemSwipeLeft: ItemTouchHelper.SimpleCallback = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
@@ -294,7 +298,7 @@ class PMAManageCardFragment : PMAFragment(), View.OnClickListener {
 
         override fun onChildDraw(canvas: Canvas, recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, dX: Float, dY: Float, actionState: Int, isCurrentlyActive: Boolean) {
 
-            RecyclerViewSwipeDecorator.Builder(canvas, pmaManageCardRecyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+            RecyclerViewSwipeDecorator.Builder(canvas, binding.pmaManageCardRecyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
                     .addSwipeLeftLabel(bindString(R.string.delete))
                     .setSwipeLeftLabelTextSize(TypedValue.COMPLEX_UNIT_SP, 12.0f)
                     .addBackgroundColor(bindColor(R.color.delete_red_bg))

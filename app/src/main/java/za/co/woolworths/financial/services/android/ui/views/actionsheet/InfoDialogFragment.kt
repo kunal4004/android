@@ -9,27 +9,31 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
 import androidx.navigation.fragment.navArgs
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.got_it_desc_info_dialog_fragment.*
+import com.awfs.coordination.databinding.GotItDescInfoDialogFragmentBinding
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
 class InfoDialogFragment : WBottomSheetDialogFragment(), View.OnClickListener {
 
+    private lateinit var binding: GotItDescInfoDialogFragmentBinding
     val args: InfoDialogFragmentArgs by navArgs()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.got_it_desc_info_dialog_fragment, container, false)
+        binding = GotItDescInfoDialogFragmentBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        tvTitleTextView?.text = bindString(args.infoWindowTitle)
-        tvDescriptionTextView?.text =  bindString(args.infoWindowDesc)
+        with(binding) {
+            tvTitleTextView?.text = bindString(args.infoWindowTitle)
+            tvDescriptionTextView?.text = bindString(args.infoWindowDesc)
 
-        gotItButton?.apply {
-            AnimationUtilExtension.animateViewPushDown(this)
-            setOnClickListener(this@InfoDialogFragment)
+            gotItButton?.apply {
+                AnimationUtilExtension.animateViewPushDown(this)
+                setOnClickListener(this@InfoDialogFragment)
+            }
         }
     }
 

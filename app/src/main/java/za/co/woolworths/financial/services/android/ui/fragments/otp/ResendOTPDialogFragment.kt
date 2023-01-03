@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.npc_resend_otp_fragment.*
+import com.awfs.coordination.databinding.NpcResendOtpFragmentBinding
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardActivityExtension
 import za.co.woolworths.financial.services.android.ui.adapters.ResendOTPAdapter
@@ -22,6 +22,7 @@ class ResendOTPDialogFragment : WBottomSheetDialogFragment() {
         fun onOTPMethodSelected(otpMethodType: OTPMethodType)
     }
 
+    private lateinit var binding: NpcResendOtpFragmentBinding
     private var listener: IResendOTPOptionSelection? = null
     private var mOtpSentTo: String = ""
 
@@ -42,7 +43,8 @@ class ResendOTPDialogFragment : WBottomSheetDialogFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.npc_resend_otp_fragment, container, false)
+        binding = NpcResendOtpFragmentBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -58,15 +60,20 @@ class ResendOTPDialogFragment : WBottomSheetDialogFragment() {
             }
         }
 
-        activity?.let { activity -> rvResendOTPContent?.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false) }
-        rvResendOTPContent?.adapter = resendOtpAdapter
-        resendOtpAdapter.setItem(resendOTPOption())
-        tvCancel?.setOnClickListener { dismissView(OTPMethodType.NONE) }
+        with(binding) {
+            activity?.let { activity ->
+                rvResendOTPContent?.layoutManager =
+                    LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
+            }
+            rvResendOTPContent?.adapter = resendOtpAdapter
+            resendOtpAdapter.setItem(resendOTPOption())
+            tvCancel?.setOnClickListener { dismissView(OTPMethodType.NONE) }
 
-        uniqueIdForResendOTP()
+            uniqueIdForResendOTP()
+        }
     }
 
-    private fun uniqueIdForResendOTP() {
+    private fun NpcResendOtpFragmentBinding.uniqueIdForResendOTP() {
         activity?.resources?.apply {
             resendOtpRootConstraintLayout?.contentDescription = getString(R.string.resend_otp_layout)
             tvResendOTP?.contentDescription = getString(R.string.resend_otp_title)

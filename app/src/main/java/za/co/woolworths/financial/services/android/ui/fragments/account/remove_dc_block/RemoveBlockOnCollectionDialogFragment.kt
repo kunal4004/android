@@ -3,19 +3,14 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.remove_
 import android.content.Intent
 import android.graphics.Paint
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.remove_block_on_collection_dialog.*
-import kotlinx.android.synthetic.main.remove_block_on_collection_dialog.cannotAffordPaymentButton
-import kotlinx.android.synthetic.main.remove_block_on_collection_dialog.closeIconImageButton
-import kotlinx.android.synthetic.main.view_treatment_plan_dialog_fragment.*
+import com.awfs.coordination.databinding.RemoveBlockOnCollectionDialogBinding
 import za.co.woolworths.financial.services.android.models.dto.ActionText
 import za.co.woolworths.financial.services.android.models.dto.EligibilityPlan
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
@@ -30,8 +25,9 @@ import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 import za.co.woolworths.financial.services.android.util.eliteplan.TakeUpPlanUtil
 
-class RemoveBlockOnCollectionDialogFragment : AppCompatDialogFragment(), View.OnClickListener {
+class RemoveBlockOnCollectionDialogFragment : AppCompatDialogFragment(R.layout.remove_block_on_collection_dialog), View.OnClickListener {
 
+    private lateinit var binding: RemoveBlockOnCollectionDialogBinding
     private lateinit var mTreatmentPlanImpl: ViewTreatmentPlanImpl
     private val mClassName = RemoveBlockOnCollectionDialogFragment::class.java.simpleName
     private var eligibilityPlan: EligibilityPlan? = null
@@ -41,16 +37,10 @@ class RemoveBlockOnCollectionDialogFragment : AppCompatDialogFragment(), View.On
         const val ARREARS_PAY_NOW_BUTTON = "payNowButton"
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.remove_block_on_collection_dialog, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding = RemoveBlockOnCollectionDialogBinding.bind(view)
+
         state =
             arguments?.getSerializable(ViewTreatmentPlanDialogFragment.APPLY_NOW_STATE) as? ApplyNowState
         eligibilityPlan =
@@ -63,10 +53,10 @@ class RemoveBlockOnCollectionDialogFragment : AppCompatDialogFragment(), View.On
             applyNowState = state)
 
         val titleDesc = mTreatmentPlanImpl.getTitleAndDescription()
-        accountInArrearsTitleTextView?.text = bindString(titleDesc.first)
-        accountInArrearsDescriptionTextView?.text = titleDesc.second
+        binding.accountInArrearsTitleTextView?.text = bindString(titleDesc.first)
+        binding.accountInArrearsDescriptionTextView?.text = titleDesc.second
 
-        cannotAffordPaymentButton?.apply {
+        binding.cannotAffordPaymentButton?.apply {
             setOnClickListener(this@RemoveBlockOnCollectionDialogFragment)
             when (eligibilityPlan?.planType) {
                 ELITE_PLAN -> visibility = when (state) {
@@ -75,23 +65,23 @@ class RemoveBlockOnCollectionDialogFragment : AppCompatDialogFragment(), View.On
                 }
             }
         }
-        payNowButton?.apply {
+        binding.payNowButton?.apply {
             setOnClickListener(this@RemoveBlockOnCollectionDialogFragment)
             AnimationUtilExtension.animateViewPushDown(this)
             if (enableElitePlanForCC()) {
                 when (eligibilityPlan?.actionText) {
                     ActionText.VIEW_ELITE_PLAN.value -> {
-                        payNowButton.text = bindString(R.string.view_your_payment_plan)
+                        text = bindString(R.string.view_your_payment_plan)
                     }
                     ActionText.START_NEW_ELITE_PLAN.value -> {
-                        payNowButton.text = bindString(R.string.get_help_repayment)
+                        text = bindString(R.string.get_help_repayment)
                     }
                 }
             }
 
         }
 
-        closeIconImageButton?.apply {
+        binding.closeIconImageButton?.apply {
             setOnClickListener(this@RemoveBlockOnCollectionDialogFragment)
             AnimationUtilExtension.animateViewPushDown(this)
         }
@@ -153,7 +143,7 @@ class RemoveBlockOnCollectionDialogFragment : AppCompatDialogFragment(), View.On
     }
 
     private fun setupMakePaymentButton() {
-        makePaymentButton?.apply {
+        binding.payNowButton?.apply {
             paintFlags = Paint.UNDERLINE_TEXT_FLAG
             visibility = mTreatmentPlanImpl.isMakePaymentButtonVisible()
             setOnClickListener(this@RemoveBlockOnCollectionDialogFragment)

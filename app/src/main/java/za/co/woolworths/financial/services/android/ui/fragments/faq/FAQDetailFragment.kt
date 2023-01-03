@@ -3,22 +3,20 @@ package za.co.woolworths.financial.services.android.ui.fragments.faq
 import android.content.Context
 import android.os.Bundle
 import android.text.Html
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.webkit.URLUtil
-import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.faq_detail.*
+import com.awfs.coordination.databinding.FaqDetailBinding
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator
 import za.co.woolworths.financial.services.android.ui.fragments.faq.web.WebFragment
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 
 @Suppress("DEPRECATION")
-class FAQDetailFragment : Fragment() {
+class FAQDetailFragment : BaseFragmentBinding<FaqDetailBinding>(FaqDetailBinding::inflate) {
 
     private var mQuestion: String? = null
     private var mAnswer: String? = null
@@ -38,14 +36,10 @@ class FAQDetailFragment : Fragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.faq_detail, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupToolbar()
-        populateTextView()
+        binding.populateTextView()
     }
 
     private fun setupToolbar() {
@@ -64,7 +58,7 @@ class FAQDetailFragment : Fragment() {
     }
 
 
-    private fun populateTextView() {
+    private fun FaqDetailBinding.populateTextView() {
         title?.setText(mQuestion)
         description?.text = Html.fromHtml(mAnswer)
         description?.setOnClickListener {

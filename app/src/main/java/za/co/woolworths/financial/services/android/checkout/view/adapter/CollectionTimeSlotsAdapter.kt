@@ -1,12 +1,11 @@
 package za.co.woolworths.financial.services.android.checkout.view.adapter
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.where_are_we_delivering_items.view.*
+import com.awfs.coordination.databinding.WhereAreWeDeliveringItemsBinding
 import za.co.woolworths.financial.services.android.checkout.service.network.Slot
 import za.co.woolworths.financial.services.android.checkout.view.CollectionTimeSlotsListener
 
@@ -20,8 +19,7 @@ class CollectionTimeSlotsAdapter(val listener: CollectionTimeSlotsListener?) :
         viewType: Int
     ): CollectionTimeSlotViewHolder {
         return CollectionTimeSlotViewHolder(
-            LayoutInflater.from(parent.context)
-                .inflate(R.layout.where_are_we_delivering_items, parent, false)
+            WhereAreWeDeliveringItemsBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         )
     }
 
@@ -34,11 +32,11 @@ class CollectionTimeSlotsAdapter(val listener: CollectionTimeSlotsListener?) :
 
     override fun getItemCount(): Int = list.size
 
-    inner class CollectionTimeSlotViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class CollectionTimeSlotViewHolder(val itemBinding: WhereAreWeDeliveringItemsBinding) : RecyclerView.ViewHolder(itemBinding.root) {
 
         fun bindItemView(adapterPosition: Int, list: ArrayList<Slot>) {
             val slot = list[adapterPosition]
-            itemView.apply {
+            itemBinding.apply {
                 titleTv?.text = slot.hourSlot
                 titleTv?.setTextColor(
                     ContextCompat.getColor(

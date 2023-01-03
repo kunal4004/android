@@ -1,46 +1,41 @@
 package za.co.woolworths.financial.services.android.ui.adapters.holder
 
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.FragmentActivity
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.chanel_logo_view.view.*
-import kotlinx.android.synthetic.main.item_found_layout.view.*
+import com.awfs.coordination.databinding.ItemFoundLayoutBinding
 import za.co.woolworths.financial.services.android.contracts.IProductListing
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.util.ImageManager
 
-class RecyclerViewViewHolderHeader(parent: ViewGroup) : RecyclerViewViewHolder(
-    LayoutInflater.from(parent.context).inflate(R.layout.item_found_layout, parent, false)
-) {
+class RecyclerViewViewHolderHeader(val itemBinding: ItemFoundLayoutBinding) : RecyclerViewViewHolder(itemBinding.root) {
     fun setNumberOfItems(activity: FragmentActivity?, productList: ProductList?) {
 
         when (productList?.numberOfItems) {
             1 -> productList?.numberOfItems?.toString()?.let { numberOfItems ->
-                itemView.tvNumberOfItem.text = numberOfItems; itemView.tvFoundItem.text =
+                itemBinding.tvNumberOfItem.text = numberOfItems; itemBinding.tvFoundItem.text =
                 activity?.getString(R.string.product_item)
             }
             else -> productList?.numberOfItems?.toString()?.let { numberOfItems ->
-                itemView.tvNumberOfItem.text = numberOfItems
+                itemBinding.tvNumberOfItem.text = numberOfItems
             }
         }
     }
 
     fun setChanelBanner(mBannerLabel: String?, mBannerImage: String?, mIsComingFromBLP: Boolean, navigator: IProductListing?) {
         if (mIsComingFromBLP) {
-            itemView.view_plp_seperator.visibility = View.VISIBLE
+            itemBinding.viewPlpSeperator.root.visibility = View.VISIBLE
             if (mBannerImage?.isNullOrEmpty() == true) {
-                itemView.chanel_logo_header?.visibility = View.VISIBLE
-                itemView.chanel_logo_header?.tv_logo_name?.text = mBannerLabel
-                itemView.chanel_logo_header?.setOnClickListener {
+                itemBinding.chanelLogoHeader?.root?.visibility = View.VISIBLE
+                itemBinding.chanelLogoHeader?.tvLogoName?.text = mBannerLabel
+                itemBinding.chanelLogoHeader?.root?.setOnClickListener {
 
                     navigator?.openBrandLandingPage()
                 }
             } else {
-                itemView.chanel_img_banner.visibility = View.VISIBLE
-                ImageManager.loadImage(itemView.chanel_img_banner, mBannerImage)
-                itemView.chanel_img_banner?.setOnClickListener {
+                itemBinding.chanelImgBanner.visibility = View.VISIBLE
+                ImageManager.loadImage(itemBinding.chanelImgBanner, mBannerImage)
+                itemBinding.chanelImgBanner?.setOnClickListener {
                     navigator?.openBrandLandingPage()
                 }
             }

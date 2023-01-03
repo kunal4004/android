@@ -2,10 +2,8 @@ package za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet
 
 import android.content.Context
 import androidx.fragment.app.Fragment
-import com.awfs.coordination.R
+import com.awfs.coordination.databinding.SelectVtoOptionBinding
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import kotlinx.android.synthetic.main.select_vto_option.view.*
-
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.listener.VtoSelectOptionListener
 import javax.inject.Inject
 
@@ -22,33 +20,33 @@ class VtoOptionSelectBottomDialog @Inject constructor(
         }
 
         val dialog = BottomSheetDialog(context)
-        val view = dialog.layoutInflater.inflate(R.layout.select_vto_option, null)
+        val binding = SelectVtoOptionBinding.inflate(dialog.layoutInflater, null, false)
 
-        view.cancelVTO.setOnClickListener {
+        binding.cancelVTO.setOnClickListener {
             dialog.dismiss()
         }
-        view.browseFiles.setOnClickListener {
+        binding.browseFiles.setOnClickListener {
             listener.browseFiles()
             dialog.dismiss()
 
         }
-        view.choosePhoto.setOnClickListener {
+        binding.choosePhoto.setOnClickListener {
             listener.openGallery()
             dialog.dismiss()
         }
 
-        view.openLiveCamera.setOnClickListener {
+        binding.openLiveCamera.setOnClickListener {
             listener.openLiveCamera()
             dialog.dismiss()
         }
 
-        view.takePhoto.setOnClickListener {
+        binding.takePhoto.setOnClickListener {
             listener.openCamera()
             dialog.dismiss()
         }
 
         dialog.setCancelable(false)
-        dialog.setContentView(view)
+        dialog.setContentView(binding.root)
         dialog.show()
 
     }

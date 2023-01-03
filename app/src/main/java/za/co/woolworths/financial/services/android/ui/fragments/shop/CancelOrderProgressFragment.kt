@@ -3,20 +3,16 @@ package za.co.woolworths.financial.services.android.ui.fragments.shop
 import android.graphics.Paint
 import android.os.Bundle
 import android.os.Handler
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.CancelOrderProgressFragmentBinding
 import com.google.firebase.analytics.FirebaseAnalytics
-import kotlinx.android.synthetic.main.cancel_order_failure_layout.*
-import kotlinx.android.synthetic.main.cancel_order_progress_fragment.*
-import kotlinx.android.synthetic.main.npc_processing_request_layout.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IProgressAnimationState
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
-import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.models.dto.CancelOrderResponse
+import za.co.woolworths.financial.services.android.models.dto.CommerceItem
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.CancelOrderProgressActivity
@@ -28,8 +24,9 @@ import za.co.woolworths.financial.services.android.ui.fragments.npc.ProgressStat
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
+import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 
-class CancelOrderProgressFragment : Fragment(), IProgressAnimationState, View.OnClickListener {
+class CancelOrderProgressFragment : BaseFragmentBinding<CancelOrderProgressFragmentBinding>(CancelOrderProgressFragmentBinding::inflate), IProgressAnimationState, View.OnClickListener {
 
     private var orderId: String? = null
     private var commarceItemList: ArrayList<CommerceItem>? = null
@@ -50,10 +47,6 @@ class CancelOrderProgressFragment : Fragment(), IProgressAnimationState, View.On
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.cancel_order_progress_fragment, container, false)
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.apply {
@@ -68,20 +61,25 @@ class CancelOrderProgressFragment : Fragment(), IProgressAnimationState, View.On
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         orderId?.let { requestCancelOrder(it) }
-        retry?.setOnClickListener(this)
-        callTheCallCenter?.apply {
-            paintFlags = Paint.UNDERLINE_TEXT_FLAG
-            setOnClickListener(this@CancelOrderProgressFragment)
-        }
 
-        (activity as? AppCompatActivity)?.addFragment(
-                fragment = ProgressStateFragment.newInstance(this),
+        binding.apply {
+            cancelOrderFailureView.retry.setOnClickListener(this@CancelOrderProgressFragment)
+            cancelOrderFailureView.callTheCallCenter.apply {
+                paintFlags = Paint.UNDERLINE_TEXT_FLAG
+                setOnClickListener(this@CancelOrderProgressFragment)
+            }
+
+            (activity as? AppCompatActivity)?.addFragment(
+                fragment = ProgressStateFragment.newInstance(this@CancelOrderProgressFragment),
                 tag = ProgressStateFragment::class.java.simpleName,
                 containerViewId = R.id.flProgressIndicator
-        )
-        closeButton?.setOnClickListener {
-            (activity as? CancelOrderProgressActivity)?.triggerFirebaseEvent(FirebaseManagerAnalyticsProperties.PropertyNames.CLOSE_FAILURE_CANCEL)
-            activity?.onBackPressed()
+            )
+            closeButton?.setOnClickListener {
+                (activity as? CancelOrderProgressActivity)?.triggerFirebaseEvent(
+                    FirebaseManagerAnalyticsProperties.PropertyNames.CLOSE_FAILURE_CANCEL
+                )
+                activity?.onBackPressed()
+            }
         }
     }
 
@@ -104,8 +102,10 @@ class CancelOrderProgressFragment : Fragment(), IProgressAnimationState, View.On
     }
 
     private fun requestCancelOrder(orderId: String) {
-        cancelOrderFailureView?.visibility = View.GONE
-        cancelOrderProcessingLayout?.visibility = View.VISIBLE
+        binding.apply {
+            cancelOrderFailureView.root.visibility = View.GONE
+            cancelOrderProcessingLayout.root.visibility = View.VISIBLE
+        }
 
         val orderDetailRequest = OneAppService.queryServiceCancelOrder(orderId)
         orderDetailRequest.enqueue(CompletionHandler(object : IResponseListener<CancelOrderResponse> {
@@ -129,8 +129,10 @@ class CancelOrderProgressFragment : Fragment(), IProgressAnimationState, View.On
     fun onCancelOrderSuccess() {
         setEventForCancelOrderForRefund()
         getProgressState()?.animateSuccessEnd(true)
-        processRequestDescriptionTextView.visibility = View.GONE
-        processRequestTitleTextView?.text = bindString(R.string.cancel_order_success_title)
+        binding.apply {
+            cancelOrderProcessingLayout.processRequestDescriptionTextView.visibility = View.GONE
+            cancelOrderProcessingLayout.processRequestTitleTextView?.text = bindString(R.string.cancel_order_success_title)
+        }
         (activity as? CancelOrderProgressActivity)?.triggerFirebaseEvent(FirebaseManagerAnalyticsProperties.PropertyNames.CANCEL_API_SUCCESS)
     }
 
@@ -205,8 +207,10 @@ class CancelOrderProgressFragment : Fragment(), IProgressAnimationState, View.On
     fun onCancelOrderFailure() {
         closeButton?.visibility = View.VISIBLE
         getProgressState()?.animateSuccessEnd(false)
-        cancelOrderProcessingLayout?.visibility = View.GONE
-        cancelOrderFailureView?.visibility = View.VISIBLE
+        binding.apply {
+            cancelOrderProcessingLayout.root.visibility = View.GONE
+            cancelOrderFailureView.root.visibility = View.VISIBLE
+        }
         (activity as? CancelOrderProgressActivity)?.triggerFirebaseEvent(FirebaseManagerAnalyticsProperties.PropertyNames.CANCEL_API_FAILURE)
     }
 

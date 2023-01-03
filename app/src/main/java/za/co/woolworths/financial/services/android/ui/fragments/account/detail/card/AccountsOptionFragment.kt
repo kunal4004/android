@@ -6,26 +6,17 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
 import android.view.View.*
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.AccountCardDetailFragmentBinding
 import com.facebook.shimmer.Shimmer
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.account_activate_credit_card_layout.*
-import kotlinx.android.synthetic.main.account_card_detail_fragment.*
-import kotlinx.android.synthetic.main.account_cart_item.*
-import kotlinx.android.synthetic.main.account_detail_header_fragment.*
-import kotlinx.android.synthetic.main.account_options_layout.*
-import kotlinx.android.synthetic.main.bpi_covered_tag_layout.*
-import kotlinx.android.synthetic.main.common_account_detail.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyNames.Companion.ACTION_LOWER_CASE
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyNames.Companion.activationInitiated
@@ -34,11 +25,7 @@ import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.*
-import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
-import za.co.woolworths.financial.services.android.models.dto.account.BpiInsuranceApplication
-import za.co.woolworths.financial.services.android.models.dto.account.BpiInsuranceApplicationStatusType
-import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
-import za.co.woolworths.financial.services.android.models.dto.account.CreditCardActivationState
+import za.co.woolworths.financial.services.android.models.dto.account.*
 import za.co.woolworths.financial.services.android.models.dto.account.CreditCardDeliveryStatus.*
 import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigCreditCardDeliveryCardTypes
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.CreditCardDeliveryStatusResponse
@@ -64,9 +51,11 @@ import za.co.woolworths.financial.services.android.ui.fragments.credit_card_acti
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanDialogFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
+import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
+
 
 @AndroidEntryPoint
-open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDetailsContract.AccountCardDetailView {
+open class AccountsOptionFragment : BaseFragmentBinding<AccountCardDetailFragmentBinding>(AccountCardDetailFragmentBinding::inflate), OnClickListener, IAccountCardDetailsContract.AccountCardDetailView {
 
     private var userOfferActiveCallWasCompleted = false
     var mCardPresenterImpl: AccountCardDetailPresenterImpl? = null
@@ -95,102 +84,108 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
         mCardPresenterImpl?.setAccountDetailBundle(arguments)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.account_card_detail_fragment, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        balanceProtectionInsuranceView?.setOnClickListener(this)
-        cardImageRootView?.setOnClickListener(this)
-        debitOrderView?.setOnClickListener(this)
-        tvIncreaseLimit?.setOnClickListener(this)
-        relIncreaseMyLimit?.setOnClickListener(this)
-        llIncreaseLimitContainer?.setOnClickListener(this)
-        withdrawCashView?.setOnClickListener(this)
-        viewPaymentOptions?.setOnClickListener(this)
-        setUpPaymentPlanOptions?.setOnClickListener(this)
-        viewTreatmentPlanOptions?.setOnClickListener(this)
-        activateCreditCard?.setOnClickListener(this)
-        scheduleOrManageCreditCardDelivery?.setOnClickListener(this)
-        AnimationUtilExtension.animateViewPushDown(cardDetailImageView)
+        binding.apply {
+            includeCommonAccountDetails.includeAccountPaymentOption.balanceProtectionInsuranceView?.setOnClickListener(this@AccountsOptionFragment)
+            includeAccountDetailHeaderView.cardImageRootView?.setOnClickListener(this@AccountsOptionFragment)
+            includeCommonAccountDetails.includeAccountPaymentOption.debitOrderView?.setOnClickListener(this@AccountsOptionFragment)
+            tvIncreaseLimit?.setOnClickListener(this@AccountsOptionFragment)
+            relIncreaseMyLimit?.setOnClickListener(this@AccountsOptionFragment)
+            llIncreaseLimitContainer?.setOnClickListener(this@AccountsOptionFragment)
+            includeCommonAccountDetails.includeAccountPaymentOption.withdrawCashView?.setOnClickListener(this@AccountsOptionFragment)
+            includeCommonAccountDetails.includeAccountPaymentOption.viewPaymentOptions?.setOnClickListener(this@AccountsOptionFragment)
+            includeCommonAccountDetails.includeAccountPaymentOption.setUpPaymentPlanOptions?.setOnClickListener(this@AccountsOptionFragment)
+            includeCommonAccountDetails.includeAccountPaymentOption.viewTreatmentPlanOptions?.setOnClickListener(this@AccountsOptionFragment)
+            creditCardActivationView.activateCreditCard?.setOnClickListener(this@AccountsOptionFragment)
+            creditCardActivationView.scheduleOrManageCreditCardDelivery?.setOnClickListener(this@AccountsOptionFragment)
+            AnimationUtilExtension.animateViewPushDown(includeAccountDetailHeaderView.cardDetailImageView)
 
-        mCardPresenterImpl?.apply {
-            getBpiInsuranceApplication()
-            displayCardHolderName()
-            creditLimitIncrease()?.showCLIProgress(logoIncreaseLimit, llCommonLayer, tvIncreaseLimit)
-            showBalanceProtectionInsuranceLead()
-        }
+            mCardPresenterImpl?.apply {
+                getBpiInsuranceApplication()
+                displayCardHolderName()
+                creditLimitIncrease()?.showCLIProgress(
+                    logoIncreaseLimit,
+                    llCommonLayer,
+                    tvIncreaseLimit
+                )
+                showBalanceProtectionInsuranceLead()
+            }
 
-        disposable?.add(WoolworthsApplication.getInstance()
-            .bus()
-            .toObservable()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { item ->
-                if (item is BusStation) {
-                    val offerActive = item.offerActive
-                    if (offerActive != null) {
-                        hideCLIView()
-                        handleCreditLimitIncreaseTagStatus(offerActive)
-                    } else if (item.makeApiCall()) {
-                        hideCLIView()
-                        userOfferActiveCallWasCompleted = false
-                        retryConnect()
+            disposable?.add(WoolworthsApplication.getInstance()
+                .bus()
+                .toObservable()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { item ->
+                    if (item is BusStation) {
+                        val offerActive = item.offerActive
+                        if (offerActive != null) {
+                            hideCLIView()
+                            handleCreditLimitIncreaseTagStatus(offerActive)
+                        } else if (item.makeApiCall()) {
+                            hideCLIView()
+                            userOfferActiveCallWasCompleted = false
+                            retryConnect()
+                        }
                     }
-                }
-            })
+                })
 
-        autoConnectToNetwork()
+            autoConnectToNetwork()
 
-        initCreditCardActivation()
+            initCreditCardActivation()
 
-        //Disable shimmer for non store card
-        if (mCardPresenterImpl?.isProductCodeStoreCard() != true) {
-            disableShimmer()
+            //Disable shimmer for non store card
+            if (mCardPresenterImpl?.isProductCodeStoreCard() != true) {
+                disableShimmer()
+            }
         }
     }
 
     override fun onResume() {
         super.onResume()
-        activity?.apply {
-            if (NetworkManager.getInstance().isConnectedToNetwork(this)) {
-                mCardPresenterImpl?.apply {
-                    logoIncreaseLimit?.visibility = GONE
-                    llCommonLayer?.visibility = GONE
-                    tvIncreaseLimit?.text = ""
-                    tvIncreaseLimit?.visibility = GONE
-                    logoIncreaseLimit?.visibility = GONE
-                    tvIncreaseLimitDescription?.visibility = GONE
-                    getUserCLIOfferActive()
+
+        binding.apply {
+            activity?.apply {
+                if (NetworkManager.getInstance().isConnectedToNetwork(this)) {
+                    mCardPresenterImpl?.apply {
+                        logoIncreaseLimit?.visibility = GONE
+                        llCommonLayer?.visibility = GONE
+                        tvIncreaseLimit?.text = ""
+                        tvIncreaseLimit?.visibility = GONE
+                        logoIncreaseLimit?.visibility = GONE
+                        tvIncreaseLimitDescription?.visibility = GONE
+                        getUserCLIOfferActive()
+                    }
                 }
             }
-        }
 
-        if(PersonalLoanFragment.SHOW_PL_WITHDRAW_FUNDS_SCREEN){
-            PersonalLoanFragment.SHOW_PL_WITHDRAW_FUNDS_SCREEN = false
-            mCardPresenterImpl?.apply {
-                cancelRequest()
-                navigateToLoanWithdrawalActivity()
+            if (PersonalLoanFragment.SHOW_PL_WITHDRAW_FUNDS_SCREEN) {
+                PersonalLoanFragment.SHOW_PL_WITHDRAW_FUNDS_SCREEN = false
+                mCardPresenterImpl?.apply {
+                    cancelRequest()
+                    navigateToLoanWithdrawalActivity()
+                }
+            } else if (SHOW_CREDIT_CARD_ACTIVATION_SCREEN) {
+                SHOW_CREDIT_CARD_ACTIVATION_SCREEN = false
+                if (Utils.isCreditCardActivationEndpointAvailable())
+                    navigateToCreditCardActivation()
+                else
+                    showCreditCardActivationUnavailableDialog()
+            } else if (SHOW_CREDIT_CARD_SHECULE_OR_MANAGE) {
+                SHOW_CREDIT_CARD_SHECULE_OR_MANAGE = false
+                navigateToScheduleOrManage()
             }
-        }
-        else if (SHOW_CREDIT_CARD_ACTIVATION_SCREEN) {
-            SHOW_CREDIT_CARD_ACTIVATION_SCREEN = false
-            if (Utils.isCreditCardActivationEndpointAvailable())
-                navigateToCreditCardActivation()
-            else
-                showCreditCardActivationUnavailableDialog()
-        }else if (SHOW_CREDIT_CARD_SHECULE_OR_MANAGE){
-            SHOW_CREDIT_CARD_SHECULE_OR_MANAGE = false
-            navigateToScheduleOrManage()
         }
     }
 
     fun disableShimmer() {
-        cardDetailImageShimmerFrameLayout?.setShimmer(null)
-        myCardTextViewShimmerFrameLt?.setShimmer(null)
-        tempFreezeTextViewShimmerFrameLayout?.setShimmer(null)
+        binding.includeAccountDetailHeaderView.apply {
+            cardDetailImageShimmerFrameLayout?.setShimmer(null)
+            myCardTextViewShimmerFrameLt?.setShimmer(null)
+            tempFreezeTextViewShimmerFrameLayout?.setShimmer(null)
+        }
     }
 
     private fun autoConnectToNetwork() {
@@ -216,41 +211,48 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
     }
 
     override fun showStoreCardProgress() {
-        val shimmer = Shimmer.AlphaHighlightBuilder().build()
-        cardDetailImageShimmerFrameLayout?.setShimmer(shimmer)
-        myCardTextViewShimmerFrameLt?.setShimmer(shimmer)
-        tempFreezeTextViewShimmerFrameLayout?.setShimmer(shimmer)
-        manageCardGroup?.visibility = GONE
-        manageLinkNewCardGroup?.visibility = GONE
-        bottomView?.visibility = VISIBLE
-        manageMyCardTextView?.visibility = VISIBLE
-        cardDetailImageShimmerFrameLayout?.startShimmer()
-        myCardTextViewShimmerFrameLt?.startShimmer()
-        tempFreezeTextViewShimmerFrameLayout?.startShimmer()
-        storeCardTagTextView?.visibility = GONE
-        storeCardLoaderView?.visibility = VISIBLE
-        includeManageMyCard?.isEnabled = false
-        cardImageRootView?.isEnabled = false
+        binding.apply {
+            val shimmer = Shimmer.AlphaHighlightBuilder().build()
+            includeAccountDetailHeaderView.includeManageMyCard.manageMyCardTextView?.visibility = VISIBLE
+            includeAccountDetailHeaderView.apply {
+                cardDetailImageShimmerFrameLayout?.setShimmer(shimmer)
+                myCardTextViewShimmerFrameLt?.setShimmer(shimmer)
+                tempFreezeTextViewShimmerFrameLayout?.setShimmer(shimmer)
+                manageCardGroup?.visibility = GONE
+                manageLinkNewCardGroup?.visibility = GONE
+                bottomView?.visibility = VISIBLE
+                cardDetailImageShimmerFrameLayout?.startShimmer()
+                myCardTextViewShimmerFrameLt?.startShimmer()
+                tempFreezeTextViewShimmerFrameLayout?.startShimmer()
+                storeCardTagTextView?.visibility = GONE
+                storeCardLoaderView?.visibility = VISIBLE
+                includeManageMyCard.root.isEnabled = false
+                cardImageRootView?.isEnabled = false
+            }
+        }
     }
 
     @SuppressLint("DefaultLocale")
     override fun hideStoreCardProgress() {
-        storeCardLoaderView?.visibility = GONE
-        manageCardGroup?.visibility = VISIBLE
-        cardDetailImageShimmerFrameLayout?.stopShimmer()
-        cardDetailImageShimmerFrameLayout?.setShimmer(null)
-        myCardTextViewShimmerFrameLt?.stopShimmer()
-        myCardTextViewShimmerFrameLt?.setShimmer(null)
-        tempFreezeTextViewShimmerFrameLayout?.stopShimmer()
-        tempFreezeTextViewShimmerFrameLayout?.setShimmer(null)
+        binding.includeAccountDetailHeaderView.apply {
+            storeCardLoaderView?.visibility = GONE
+            manageCardGroup?.visibility = VISIBLE
+            cardDetailImageShimmerFrameLayout?.stopShimmer()
+            cardDetailImageShimmerFrameLayout?.setShimmer(null)
+            myCardTextViewShimmerFrameLt?.stopShimmer()
+            myCardTextViewShimmerFrameLt?.setShimmer(null)
+            tempFreezeTextViewShimmerFrameLayout?.stopShimmer()
+            tempFreezeTextViewShimmerFrameLayout?.setShimmer(null)
 
-        cardDetailImageShimmerFrameLayout?.invalidate()
-        myCardTextViewShimmerFrameLt?.invalidate()
-        tempFreezeTextViewShimmerFrameLayout?.invalidate()
+            cardDetailImageShimmerFrameLayout?.invalidate()
+            myCardTextViewShimmerFrameLt?.invalidate()
+            tempFreezeTextViewShimmerFrameLayout?.invalidate()
 
-        // Boolean check will enable clickable event only when text is "view card"
-        includeManageMyCard?.isEnabled = true
-        cardImageRootView?.isEnabled = myCardDetailTextView?.text?.toString()?.toLowerCase()?.contains("view") == true
+            // Boolean check will enable clickable event only when text is "view card"
+            includeManageMyCard.root.isEnabled = true
+            cardImageRootView?.isEnabled =
+                myCardDetailTextView?.text?.toString()?.toLowerCase()?.contains("view") == true
+        }
     }
 
     override fun handleUnknownHttpCode(description: String?) {
@@ -266,14 +268,14 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
         mCardPresenterImpl?.apply {
             when (v?.id) {
                 R.id.balanceProtectionInsuranceView -> {
-                    if(bpiCoveredTextView?.text != bindString(R.string.status_in_progress)){
+                    if(binding.includeCommonAccountDetails.includeAccountPaymentOption.includeBPICoveredTag.bpiCoveredTextView?.text != bindString(R.string.status_in_progress)){
                         navigateToBalanceProtectionInsurance()
                     }
                 }
                 R.id.cardImageRootView -> navigateToTemporaryStoreCard()
                 R.id.debitOrderView -> navigateToDebitOrderActivity()
                 R.id.includeManageMyCard, R.id.cardDetailImageView -> {
-                    if (cardDetailImageShimmerFrameLayout?.isShimmerVisible == true) return
+                    if (binding.includeAccountDetailHeaderView.cardDetailImageShimmerFrameLayout?.isShimmerVisible == true) return
                     cancelRetrofitRequest(mOfferActiveCall)
                     navigateToTemporaryStoreCard()
                 }
@@ -385,16 +387,18 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
     }
 
     override fun showBalanceProtectionInsurance(insuranceCovered: Boolean?) {
-        when (insuranceCovered){
-            true -> {
-                bpiCoveredTextView?.visibility = VISIBLE
-                bpiNotCoveredGroup?.visibility = GONE
+        binding.includeCommonAccountDetails.includeAccountPaymentOption.includeBPICoveredTag.apply {
+            when (insuranceCovered) {
+                true -> {
+                    bpiCoveredTextView?.visibility = VISIBLE
+                    bpiNotCoveredGroup?.visibility = GONE
+                }
+                false -> {
+                    bpiCoveredTextView?.visibility = GONE
+                    bpiNotCoveredGroup?.visibility = VISIBLE
+                }
+                else -> {}
             }
-            false -> {
-                bpiCoveredTextView?.visibility = GONE
-                bpiNotCoveredGroup?.visibility = VISIBLE
-            }
-            else -> {}
         }
     }
 
@@ -407,62 +411,91 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
     }
 
     override fun showBalanceProtectionInsuranceLead(bpiInsuranceApplication: BpiInsuranceApplication?) {
-        when (bpiInsuranceApplication?.status) {
-            BpiInsuranceApplicationStatusType.COVERED ,
-            BpiInsuranceApplicationStatusType.OPTED_IN,
-            BpiInsuranceApplicationStatusType.NOT_OPTED_IN-> {
-                bpiCoveredTextView?.text = bpiInsuranceApplication.displayLabel
-                KotlinUtils.roundCornerDrawable(bpiCoveredTextView, bpiInsuranceApplication.displayLabelColor)
-                bpiCoveredTextView?.visibility = VISIBLE
-                bpiNotCoveredGroup?.visibility = GONE
-            }
-            else  -> {
-                bpiCoveredTextView?.visibility = GONE
-                bpiNotCoveredGroup?.visibility = VISIBLE
+        binding.includeCommonAccountDetails.includeAccountPaymentOption.includeBPICoveredTag.apply {
+            when (bpiInsuranceApplication?.status) {
+                BpiInsuranceApplicationStatusType.COVERED,
+                BpiInsuranceApplicationStatusType.OPTED_IN,
+                BpiInsuranceApplicationStatusType.NOT_OPTED_IN -> {
+                    bpiCoveredTextView?.text = bpiInsuranceApplication.displayLabel
+                    KotlinUtils.roundCornerDrawable(
+                        bpiCoveredTextView,
+                        bpiInsuranceApplication.displayLabelColor
+                    )
+                    bpiCoveredTextView?.visibility = VISIBLE
+                    bpiNotCoveredGroup?.visibility = GONE
+                }
+                else -> {
+                    bpiCoveredTextView?.visibility = GONE
+                    bpiNotCoveredGroup?.visibility = VISIBLE
+                }
             }
         }
     }
 
     override fun displayCardHolderName(name: String?) {
-        userNameTextView?.text = name
+        binding.includeAccountDetailHeaderView.userNameTextView?.text = name
     }
 
     override fun hideUserOfferActiveProgress() {
-        llIncreaseLimitContainer?.isEnabled = true
-        relIncreaseMyLimit?.isEnabled = true
-        progressCreditLimit?.visibility = GONE
-        tvIncreaseLimit?.visibility = VISIBLE
+        binding.apply {
+            llIncreaseLimitContainer?.isEnabled = true
+            relIncreaseMyLimit?.isEnabled = true
+            progressCreditLimit?.visibility = GONE
+            tvIncreaseLimit?.visibility = VISIBLE
+        }
     }
 
     override fun showUserOfferActiveProgress() {
-        cancelRetrofitRequest(mCardPresenterImpl?.mOfferActiveCall)
-        llIncreaseLimitContainer?.isEnabled = false
-        relIncreaseMyLimit?.isEnabled = false
-        progressCreditLimit?.visibility = VISIBLE
-        progressCreditLimit?.indeterminateDrawable?.setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY)
-        tvApplyNowIncreaseLimit?.visibility = GONE
-        tvIncreaseLimit?.visibility = VISIBLE
+        binding.apply {
+            cancelRetrofitRequest(mCardPresenterImpl?.mOfferActiveCall)
+            llIncreaseLimitContainer?.isEnabled = false
+            relIncreaseMyLimit?.isEnabled = false
+            progressCreditLimit?.visibility = VISIBLE
+            progressCreditLimit?.indeterminateDrawable?.setColorFilter(
+                Color.BLACK,
+                PorterDuff.Mode.MULTIPLY
+            )
+            tvApplyNowIncreaseLimit?.visibility = GONE
+            tvIncreaseLimit?.visibility = VISIBLE
+        }
     }
 
     override fun disableContentStatusUI() {
-        relIncreaseMyLimit?.isEnabled = false
-        llIncreaseLimitContainer?.isEnabled = false
-        tvIncreaseLimit?.isEnabled = false
+        binding.apply {
+            relIncreaseMyLimit?.isEnabled = false
+            llIncreaseLimitContainer?.isEnabled = false
+            tvIncreaseLimit?.isEnabled = false
+        }
     }
 
     override fun enableContentStatusUI() {
-        relIncreaseMyLimit?.isEnabled = true
-        llIncreaseLimitContainer?.isEnabled = true
-        tvIncreaseLimit?.isEnabled = true
+        binding.apply {
+            relIncreaseMyLimit?.isEnabled = true
+            llIncreaseLimitContainer?.isEnabled = true
+            tvIncreaseLimit?.isEnabled = true
+        }
     }
 
     override fun handleCreditLimitIncreaseTagStatus(offerActive: OfferActive) {
-        activity?.runOnUiThread { mCardPresenterImpl?.creditLimitIncrease()?.cliStatus(llCommonLayer, tvIncreaseLimit, tvApplyNowIncreaseLimit, tvIncreaseLimitDescription, logoIncreaseLimit, offerActive) }
+        binding.apply {
+            activity?.runOnUiThread {
+                mCardPresenterImpl?.creditLimitIncrease()?.cliStatus(
+                    llCommonLayer,
+                    tvIncreaseLimit,
+                    tvApplyNowIncreaseLimit,
+                    tvIncreaseLimitDescription,
+                    logoIncreaseLimit,
+                    offerActive
+                )
+            }
+        }
     }
 
     override fun hideProductNotInGoodStanding() {
-        llIncreaseLimitContainer?.visibility = GONE
-        increaseMyLimitSepartorView?.visibility = GONE
+        binding.apply {
+            llIncreaseLimitContainer?.visibility = GONE
+            includeCommonAccountDetails.increaseMyLimitSepartorView?.visibility = GONE
+        }
     }
 
     override fun onOfferActiveSuccessResult() {
@@ -488,22 +521,27 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
     }
 
     private fun hideCLIView() {
-        mCardPresenterImpl?.creditLimitIncrease()?.showCLIProgress(llCommonLayer, tvIncreaseLimitDescription)
+        binding.apply {
+            mCardPresenterImpl?.creditLimitIncrease()
+                ?.showCLIProgress(llCommonLayer, tvIncreaseLimitDescription)
+        }
     }
 
     override fun executeCreditCardTokenService() {
         if (!mCardPresenterImpl?.getAccount()?.productGroupCode.equals(AccountsProductGroupCode.CREDIT_CARD.groupCode, true) || mCardPresenterImpl?.getAccount()?.productOfferingGoodStanding != true){
             // WOP-12148 - Hide manage my card option for credit card when productOfferingGoodStanding false
-            manageCardGroup?.visibility  = GONE
+            binding.includeAccountDetailHeaderView.manageCardGroup?.visibility  = GONE
             return
         }
 
-        activity?.apply {
-            includeAccountDetailHeaderView?.visibility = GONE
-            creditCardActivationView?.visibility = GONE
-            creditCardActivationPlaceHolder?.visibility = VISIBLE
-            creditCardActivationPlaceHolder?.startShimmer()
-            mCardPresenterImpl?.getCreditCardToken()
+        binding.apply {
+            activity?.apply {
+                includeAccountDetailHeaderView.root.visibility = GONE
+                creditCardActivationView.root.visibility = GONE
+                creditCardActivationPlaceHolder.visibility = VISIBLE
+                creditCardActivationPlaceHolder.startShimmer()
+                mCardPresenterImpl?.getCreditCardToken()
+            }
         }
     }
 
@@ -542,36 +580,45 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
     }
 
     override fun showGetCreditCardActivationStatus(status: CreditCardActivationState) {
-        when (status) {
-            CreditCardActivationState.FAILED,
-            CreditCardActivationState.ACTIVATED -> {
-                stopCardActivationShimmer()
-                includeAccountDetailHeaderView?.visibility = VISIBLE
-                includeManageMyCard?.visibility = GONE
-                myCardDetailTextView?.visibility = VISIBLE
-            }
-            CreditCardActivationState.UNAVAILABLE,
-            CreditCardActivationState.AVAILABLE -> {
-                stopCardActivationShimmer()
-                creditCardActivationView?.visibility = VISIBLE
-                activateCreditCard?.visibility = VISIBLE
-                KotlinUtils.roundCornerDrawable(creditCardStatusTextView, if (status == CreditCardActivationState.AVAILABLE) "#bad110" else "#b2b2b2")
-                creditCardStatusTextView?.text = status.value
+        binding.apply {
+            when (status) {
+                CreditCardActivationState.FAILED,
+                CreditCardActivationState.ACTIVATED -> {
+                    stopCardActivationShimmer()
+                    includeAccountDetailHeaderView.root.visibility = VISIBLE
+                    includeAccountDetailHeaderView.includeManageMyCard.root.visibility = GONE
+                    includeAccountDetailHeaderView.myCardDetailTextView?.visibility = VISIBLE
+                }
+                CreditCardActivationState.UNAVAILABLE,
+                CreditCardActivationState.AVAILABLE -> {
+                    stopCardActivationShimmer()
+                    creditCardActivationView.root.visibility = VISIBLE
+                    creditCardActivationView.activateCreditCard?.visibility = VISIBLE
+                    KotlinUtils.roundCornerDrawable(
+                        creditCardActivationView.creditCardStatusTextView,
+                        if (status == CreditCardActivationState.AVAILABLE) "#bad110" else "#b2b2b2"
+                    )
+                    creditCardActivationView.creditCardStatusTextView?.text = status.value
+                }
             }
         }
     }
 
     private fun showOnlyCardVisibleState() {
-        stopCardActivationShimmer()
-        includeAccountDetailHeaderView?.visibility = VISIBLE
-        includeManageMyCard?.visibility = GONE
-        myCardDetailTextView?.visibility = VISIBLE
+        binding.apply {
+            stopCardActivationShimmer()
+            includeAccountDetailHeaderView.root.visibility = VISIBLE
+            includeAccountDetailHeaderView.includeManageMyCard.root.visibility = GONE
+            includeAccountDetailHeaderView.myCardDetailTextView?.visibility = VISIBLE
+        }
     }
 
     override fun stopCardActivationShimmer() {
-        creditCardActivationPlaceHolder?.apply {
-            stopShimmer()
-            visibility = GONE
+        binding.apply {
+            creditCardActivationPlaceHolder?.apply {
+                stopShimmer()
+                visibility = GONE
+            }
         }
     }
 
@@ -686,10 +733,12 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
     }
 
     override fun onGetCreditCardDeliveryStatusFailure() {
-        stopCardActivationShimmer()
-        includeAccountDetailHeaderView?.visibility = VISIBLE
-        includeManageMyCard?.visibility = GONE
-        myCardDetailTextView?.visibility = VISIBLE
+        binding.apply {
+            stopCardActivationShimmer()
+            includeAccountDetailHeaderView.root.visibility = VISIBLE
+            includeAccountDetailHeaderView.includeManageMyCard.root.visibility = GONE
+            includeAccountDetailHeaderView. myCardDetailTextView?.visibility = VISIBLE
+        }
     }
 
     override fun showGetCreditCardDeliveryStatus(deliveryStatus: DeliveryStatus) {
@@ -714,15 +763,19 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
             }
         }
 
-
-        deliveryStatus.apply {
-            if (!statusDescription.isNullOrEmpty() && !displayColour.isNullOrEmpty()) {
-                KotlinUtils.roundCornerDrawable(creditCardStatusTextView, displayColour)
-                creditCardStatusTextView?.text = displayTitle
-            } else if (!statusDescription.isNullOrEmpty() && (deliveryStatus.statusDescription?.equals(CARD_DELIVERED.name) == true)) {
-                KotlinUtils.roundCornerDrawable(creditCardStatusTextView, "#bad110")
-                creditCardStatusTextView?.text = bindString(R.string.activate)
-            } else creditCardStatusTextView?.visibility = INVISIBLE
+        binding.creditCardActivationView.apply {
+            deliveryStatus.apply {
+                if (!statusDescription.isNullOrEmpty() && !displayColour.isNullOrEmpty()) {
+                    KotlinUtils.roundCornerDrawable(creditCardStatusTextView, displayColour)
+                    creditCardStatusTextView?.text = displayTitle
+                } else if (!statusDescription.isNullOrEmpty() && (deliveryStatus.statusDescription?.equals(
+                        CARD_DELIVERED.name
+                    ) == true)
+                ) {
+                    KotlinUtils.roundCornerDrawable(creditCardStatusTextView, "#bad110")
+                    creditCardStatusTextView?.text = bindString(R.string.activate)
+                } else creditCardStatusTextView?.visibility = INVISIBLE
+            }
         }
     }
 
@@ -741,41 +794,53 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
     }
 
     private fun showManageMyDelivery() {
-        stopCardActivationShimmer()
-        creditCardActivationView?.visibility = VISIBLE
-        scheduleOrManageCreditCardDelivery?.visibility = VISIBLE
-        tvScheduleOrMangeDelivery?.text = bindString(R.string.manage_my_delivery)
+        binding.apply {
+            stopCardActivationShimmer()
+            creditCardActivationView.root.visibility = VISIBLE
+            creditCardActivationView.scheduleOrManageCreditCardDelivery?.visibility = VISIBLE
+            creditCardActivationView.tvScheduleOrMangeDelivery?.text = bindString(R.string.manage_my_delivery)
+        }
     }
 
     private fun showDefaultCreditCardStatusView() {
-        stopCardActivationShimmer()
-        includeAccountDetailHeaderView?.visibility = VISIBLE
+        binding.apply {
+            stopCardActivationShimmer()
+            includeAccountDetailHeaderView.root.visibility = VISIBLE
+        }
     }
 
     private fun showScheduleYourDelivery() {
-        stopCardActivationShimmer()
-        creditCardActivationView?.visibility = VISIBLE
-        scheduleOrManageCreditCardDelivery?.visibility = VISIBLE
-        tvScheduleOrMangeDelivery?.text = bindString(R.string.schedule_your_delivery)
+        binding.apply {
+            stopCardActivationShimmer()
+            creditCardActivationView.root.visibility = VISIBLE
+            creditCardActivationView.scheduleOrManageCreditCardDelivery?.visibility = VISIBLE
+            creditCardActivationView.tvScheduleOrMangeDelivery?.text = bindString(R.string.schedule_your_delivery)
+        }
     }
 
     fun hideTreatmentPlanButtons() {
-        setUpPaymentPlanGroup?.visibility = GONE
-        viewTreatmentPlanGroup?.visibility = GONE
+        binding.includeCommonAccountDetails.includeAccountPaymentOption.apply {
+            setUpPaymentPlanGroup?.visibility = GONE
+            viewTreatmentPlanGroup?.visibility = GONE
+        }
     }
 
     fun showSetUpPaymentPlanButton(state: ApplyNowState,
                                    eligibilityPlan: EligibilityPlan?) {
-        setUpPaymentPlanGroup?.visibility = VISIBLE
-        setUpPaymentPlanTextView?.text = eligibilityPlan?.displayText
+        binding.includeCommonAccountDetails.includeAccountPaymentOption.apply {
+            setUpPaymentPlanGroup?.visibility = VISIBLE
+            setUpPaymentPlanTextView?.text = eligibilityPlan?.displayText
+        }
 
         this.state = state
         this.eligibilityPlan = eligibilityPlan
     }
 
     fun showViewTreatmentPlanButton(state: ApplyNowState, eligibilityPlan: EligibilityPlan?) {
-        viewTreatmentPlanGroup?.visibility = VISIBLE
-        viewTreatmentPlanTextView?.text = eligibilityPlan?.displayText
+        binding.includeCommonAccountDetails.includeAccountPaymentOption.apply {
+            viewTreatmentPlanGroup?.visibility = VISIBLE
+            viewTreatmentPlanTextView?.text = eligibilityPlan?.displayText
+        }
 
         this.state = state
         this.eligibilityPlan = eligibilityPlan

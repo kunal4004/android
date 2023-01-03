@@ -7,17 +7,19 @@ import android.view.MenuItem
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.general_error_handler_activity.*
 import za.co.woolworths.financial.services.android.util.Utils
 import android.content.Intent
+import com.awfs.coordination.databinding.GeneralErrorHandlerActivityBinding
 
 class GeneralErrorHandlerActivity : AppCompatActivity() {
 
+    private lateinit var binding: GeneralErrorHandlerActivityBinding
     private var navigationHost: NavController? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.general_error_handler_activity)
+        binding = GeneralErrorHandlerActivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         Utils.updateStatusBarBackground(this)
         actionBar()
 
@@ -33,7 +35,7 @@ class GeneralErrorHandlerActivity : AppCompatActivity() {
     }
 
     private fun actionBar() {
-        setSupportActionBar(tbErrorHandler)
+        setSupportActionBar(binding.tbErrorHandler)
         supportActionBar?.apply {
             setDisplayShowTitleEnabled(false)
             setDisplayUseLogoEnabled(false)

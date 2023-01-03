@@ -1,19 +1,17 @@
 package za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
 import com.awfs.coordination.R
-import com.google.gson.Gson
-import kotlinx.android.synthetic.main.activity_more_review.*
-import kotlinx.android.synthetic.main.common_toolbar.view.*
-import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.RatingReviewResponse
+import com.awfs.coordination.databinding.ActivityReportReviewBinding
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.Reviews
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
-import java.io.Serializable
 
 class ReportReviewActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityReportReviewBinding
     var reportReviewFragment: ReportReviewFragment? = null
 
     companion object{
@@ -22,7 +20,9 @@ class ReportReviewActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_report_review)
+        binding = ActivityReportReviewBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
         reportReviewFragment = ReportReviewFragment.newInstance()
         if (intent != null)
             //goToReportReviewFragment(intent.extras?.getStringArrayList(KotlinUtils.REVIEW_REPORT) as ArrayList<String>, intent.extras?.get(KotlinUtils.REVIEW_DATA) as Reviews)
