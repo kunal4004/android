@@ -224,6 +224,8 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                             }
                             DASH_TAB.index -> {
                                 // Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMYORDERS, this)
+                                var response: String? = null
+                                response!!.toString()
                                 showBlackToolTip(Delivery.DASH)
                                 setEventsForSwitchingBrowsingType(Delivery.DASH.name)
                                 KotlinUtils.browsingDeliveryType = Delivery.DASH
