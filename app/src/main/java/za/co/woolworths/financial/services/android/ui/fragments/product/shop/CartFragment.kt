@@ -1148,6 +1148,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
 
     private fun removeCartItem(commerceItem: CommerceItem): Call<ShoppingCartResponse> {
         mCommerceItem = commerceItem
+        showProgressBar()
         val shoppingCartResponseCall = removeCartItem(commerceItem.commerceItemInfo.getCommerceId())
         shoppingCartResponseCall.enqueue(
             CompletionHandler(
@@ -1164,6 +1165,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                             } else {
                                 resetItemDelete(true)
                             }
+                            hideProgressBar()
                             fadeCheckoutButton(false)
                             setDeliveryLocationEnabled(true)
                             enableRemoveAllButton(true)
@@ -1179,6 +1181,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                                 onRemoveItemLoadFail(commerceItem)
                                 onRemoveItemFailed = true
                                 enableItemDelete(false)
+                                hideProgressBar()
                             }
                             mErrorHandlerView?.showToast()
                         }
@@ -1191,6 +1194,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
 
     private fun removeAllCartItem(commerceItem: CommerceItem?): Call<ShoppingCartResponse> {
         mRemoveAllItemFromCartTapped = true
+        showProgressBar()
         onRemoveItem(true)
         val shoppingCartResponseCall = removeAllCartItems()
         shoppingCartResponseCall.enqueue(
@@ -1208,7 +1212,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                             } else {
                                 onRemoveItem(false)
                             }
-
+                            hideProgressBar()
                             setDeliveryLocationEnabled(true)
                         } catch (ex: Exception) {
                             ex.message?.let { Log.e(TAG, it) }
@@ -1221,6 +1225,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                             onRemoveItem(false)
                             mErrorHandlerView?.hideErrorHandler()
                             mErrorHandlerView?.showToast()
+                            hideProgressBar()
                         }
                     }
                 }), ShoppingCartResponse::class.java
