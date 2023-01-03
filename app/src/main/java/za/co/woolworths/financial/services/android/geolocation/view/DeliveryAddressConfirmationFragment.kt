@@ -239,7 +239,6 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
                     return
                 else {
                     lastDeliveryType = deliveryType
-                    setEventsForSwitchingDeliveryType(Delivery.CNC.name)
                     binding.openCollectionTab()
                 }
             }
@@ -248,7 +247,6 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
                     return
                 else {
                     lastDeliveryType = deliveryType
-                    setEventsForSwitchingDeliveryType( Delivery.STANDARD.name)
                     binding.openGeoDeliveryTab()
                 }
             }
@@ -257,7 +255,6 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
                     return
                 else {
                     lastDeliveryType = deliveryType
-                    setEventsForSwitchingDeliveryType(Delivery.DASH.name)
                     binding.openDashTab()
                 }
             }
@@ -446,6 +443,8 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
                     ConfirmLocationRequest(STANDARD, confirmLocationAddress, "")
                 }
             }
+            deliveryType?.let { setEventsForSwitchingDeliveryType(it) }
+                ?: setEventsForSwitchingDeliveryType(Delivery.STANDARD.name)
 
             viewLifecycleOwner.lifecycleScope.launch {
                 progressBar.visibility = View.VISIBLE
