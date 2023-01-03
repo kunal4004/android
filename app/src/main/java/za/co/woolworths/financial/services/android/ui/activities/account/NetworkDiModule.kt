@@ -4,8 +4,6 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 
-import za.co.woolworths.financial.services.android.ui.fragments.contact_us.enquiry.ContactUsDataSource
-import za.co.woolworths.financial.services.android.ui.fragments.contact_us.enquiry.IContactUsDataSource
 import dagger.hilt.android.components.ViewModelComponent
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.storecard.WfsApiService
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.storecard.IStoreCardDataSource
@@ -37,10 +35,5 @@ class NetworkDiModule {
         landingDao: AccountProductLandingDao,
     ): ICreditLimitIncrease {
         return CreditLimitIncreaseDataSource(wfsApiService, landingDao)
-    }
-
-    @Provides
-    fun provideContactUsDataSource(): IContactUsDataSource {
-        return ContactUsDataSource()
     }
 }

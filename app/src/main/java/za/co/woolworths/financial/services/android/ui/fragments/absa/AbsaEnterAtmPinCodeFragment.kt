@@ -3,18 +3,19 @@ package za.co.woolworths.financial.services.android.ui.fragments.absa
 import android.content.Intent
 import android.graphics.Paint
 import android.os.Bundle
-import androidx.core.content.ContextCompat
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.KeyEvent
-import android.view.LayoutInflater
 import android.view.View
 import android.view.View.*
-import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.viewModels
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.absa_pin_atm_fragment.*
+import com.awfs.coordination.databinding.AbsaPinAtmFragmentBinding
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
 import za.co.woolworths.financial.services.android.contracts.IValidatePinCodeDialogInterface
@@ -24,17 +25,15 @@ import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerAct
 import za.co.woolworths.financial.services.android.ui.activities.account.GeneralErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.helper.FirebaseEventDetailManager
+import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.AbsaApiFailureHandler
+import za.co.woolworths.financial.services.android.ui.fragments.integration.viewmodel.AbsaIntegrationViewModel
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.GotITDialogFragment
 import za.co.woolworths.financial.services.android.util.AsteriskPasswordTransformationMethod
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
-import androidx.fragment.app.viewModels
-import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.AbsaApiFailureHandler
-import za.co.woolworths.financial.services.android.ui.fragments.integration.viewmodel.AbsaIntegrationViewModel
 
-class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), OnClickListener, IValidatePinCodeDialogInterface, IDialogListener {
+class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(R.layout.absa_pin_atm_fragment), OnClickListener, IValidatePinCodeDialogInterface, IDialogListener {
 
+    private lateinit var binding: AbsaPinAtmFragmentBinding
     private lateinit var mActivityResultLaunch: ActivityResultLauncher<Intent>
     private var mCreditCardToken: String? = ""
     private val mViewModel: AbsaIntegrationViewModel by viewModels()
@@ -57,31 +56,30 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), OnClickListener, IV
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        alwaysShowWindowSoftInputMode()
-        return inflater.inflate(R.layout.absa_pin_atm_fragment, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initViewsAndEvents()
-        createTextListener(edtEnterATMPin)
+        binding = AbsaPinAtmFragmentBinding.bind(view)
 
-        mActivityResultLaunch = registerForActivityResult(
-            StartActivityForResult()
-        ) { result ->
-            if (result.resultCode == -1){ // finish activity when we  navigate back from blocked pin dialog
-                activity?.apply{
-                    finish()
-                    overridePendingTransition(0,0)
+        with(binding) {
+            initViewsAndEvents()
+            createTextListener(binding.edtEnterATMPin)
+
+            mActivityResultLaunch = registerForActivityResult(
+                StartActivityForResult()
+            ) { result ->
+                if (result.resultCode == -1) { // finish activity when we  navigate back from blocked pin dialog
+                    activity?.apply {
+                        finish()
+                        overridePendingTransition(0, 0)
+                    }
                 }
             }
-        }
 
-        absaApiResultObservers()
+            absaApiResultObservers()
+        }
     }
 
-    private fun absaApiResultObservers() {
+    private fun AbsaPinAtmFragmentBinding.absaApiResultObservers() {
         with(mViewModel) {
             failureHandler.observe(viewLifecycleOwner) { failure ->
                 progressIndicator(GONE)
@@ -160,11 +158,11 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), OnClickListener, IV
         }
     }
 
-    private fun initViewsAndEvents() {
+    private fun AbsaPinAtmFragmentBinding.initViewsAndEvents() {
         activity?.apply { (this as ABSAOnlineBankingRegistrationActivity).clearPageTitle()  }
         tvForgotPin.paintFlags = Paint.UNDERLINE_TEXT_FLAG
-        tvForgotPin.setOnClickListener(this)
-        ivNavigateToDigitFragment.setOnClickListener(this)
+        tvForgotPin.setOnClickListener(this@AbsaEnterAtmPinCodeFragment)
+        ivNavigateToDigitFragment.setOnClickListener(this@AbsaEnterAtmPinCodeFragment)
         edtEnterATMPin.transformationMethod = AsteriskPasswordTransformationMethod()
         edtEnterATMPin.setOnKeyPreImeListener { activity?.onBackPressed() }
         edtEnterATMPin.setOnEditorActionListener { _, actionId, _ ->
@@ -185,7 +183,7 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), OnClickListener, IV
         })
     }
 
-    private fun navigateToFiveDigitCodeFragment() {
+    private fun AbsaPinAtmFragmentBinding.navigateToFiveDigitCodeFragment() {
         if ((edtEnterATMPin.length() - 1) >= MAXIMUM_PIN_ALLOWED && pbEnterAtmPin.visibility != VISIBLE) {
             activity?.let {
                 val pinCode = edtEnterATMPin.text.toString()
@@ -194,13 +192,13 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), OnClickListener, IV
         }
     }
 
-    private fun progressIndicator(state: Int) {
+    private fun AbsaPinAtmFragmentBinding.progressIndicator(state: Int) {
         pbEnterAtmPin?.visibility = state
         mViewModel.inProgress(false)
         activity?.let { pbEnterAtmPin?.indeterminateDrawable?.setColorFilter(ContextCompat.getColor(it, R.color.black), android.graphics.PorterDuff.Mode.SRC_IN) }
     }
 
-    private fun createTextListener(edtEnterATMPin: EditText?) {
+    private fun AbsaPinAtmFragmentBinding.createTextListener(edtEnterATMPin: EditText?) {
         var previousLength = 0
         edtEnterATMPin?.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
@@ -221,7 +219,7 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), OnClickListener, IV
         })
     }
 
-    private fun updateEnteredPin(pinEnteredLength: Int) {
+    private fun AbsaPinAtmFragmentBinding.updateEnteredPin(pinEnteredLength: Int) {
         //Submit button will be enabled when the pin length is 4 & above(at most 5 : As EditText maxLength="5" )
         if (pinEnteredLength > -1) {
             if (pinEnteredLength >= MAXIMUM_PIN_ALLOWED) {
@@ -231,7 +229,7 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), OnClickListener, IV
         }
     }
 
-    private fun deletePin(pinEnteredLength: Int) {
+    private fun AbsaPinAtmFragmentBinding.deletePin(pinEnteredLength: Int) {
         if (pinEnteredLength > -1) {
             if (pinEnteredLength <= MAXIMUM_PIN_ALLOWED) {
                 ivNavigateToDigitFragment.alpha = 0.5f
@@ -245,7 +243,7 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), OnClickListener, IV
         when (view?.id) {
             R.id.tvForgotPin -> {
                 activity?.let {
-                    if (pbEnterAtmPin.visibility == VISIBLE) return
+                    if (binding.pbEnterAtmPin.visibility == VISIBLE) return
 
                     hideKeyboard()
                     val openDialogFragment =
@@ -258,7 +256,7 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), OnClickListener, IV
             }
 
             R.id.ivNavigateToDigitFragment -> {
-                navigateToFiveDigitCodeFragment()
+                binding.navigateToFiveDigitCodeFragment()
             }
         }
     }
@@ -299,7 +297,7 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), OnClickListener, IV
     }
 
     override fun onFatalError() {
-        progressIndicator(GONE)
+        binding.progressIndicator(GONE)
         clearPin()
         showErrorScreen(ErrorHandlerActivity.COMMON)
     }
@@ -310,7 +308,7 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), OnClickListener, IV
     }
 
     private fun clearPin() {
-        edtEnterATMPin?.apply {
+        binding.edtEnterATMPin?.apply {
             text.clear()
             showKeyboard(this)
         }

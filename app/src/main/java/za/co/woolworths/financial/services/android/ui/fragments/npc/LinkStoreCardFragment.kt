@@ -7,23 +7,25 @@ import android.graphics.Paint
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Handler
-import android.view.*
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.LinkStoreCardProcessFragmentBinding
 import com.google.gson.Gson
-import kotlinx.android.synthetic.main.link_store_card_process_fragment.*
-import kotlinx.android.synthetic.main.npc_card_linked_successful_layout.*
-import kotlinx.android.synthetic.main.npc_link_store_card_failure.*
-import kotlinx.android.synthetic.main.process_block_card_fragment.incLinkCardSuccessFulView
-import kotlinx.android.synthetic.main.process_block_card_fragment.incProcessingTextLayout
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IOTPLinkStoreCard
+import za.co.woolworths.financial.services.android.contracts.IProgressAnimationState
 import za.co.woolworths.financial.services.android.contracts.IStoreCardListener
 import za.co.woolworths.financial.services.android.models.dto.Account
+import za.co.woolworths.financial.services.android.models.dto.account.ServerErrorResponse
 import za.co.woolworths.financial.services.android.models.dto.npc.LinkCardType
 import za.co.woolworths.financial.services.android.models.dto.npc.LinkNewCardResponse
 import za.co.woolworths.financial.services.android.models.dto.npc.LinkStoreCard
@@ -32,18 +34,18 @@ import za.co.woolworths.financial.services.android.models.dto.temporary_store_ca
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.ui.activities.card.InstantStoreCardReplacementActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardActivityExtension
+import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.ACTIVATE_VIRTUAL_TEMP_CARD_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.STORE_CARD_DETAIL
 import za.co.woolworths.financial.services.android.ui.activities.temporary_store_card.GetTemporaryStoreCardPopupActivity
+import za.co.woolworths.financial.services.android.ui.extension.addFragment
+import za.co.woolworths.financial.services.android.ui.extension.findFragmentByTag
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.Utils
-import kotlinx.android.synthetic.main.npc_virtual_temp_card_staff_layout.*
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import za.co.woolworths.financial.services.android.models.dto.account.ServerErrorResponse
-import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.ACTIVATE_VIRTUAL_TEMP_CARD_RESULT_CODE
 
-class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListener {
+class LinkStoreCardFragment : MyCardExtension(R.layout.link_store_card_process_fragment), View.OnClickListener,
+    IProgressAnimationState {
 
+    private lateinit var binding: LinkStoreCardProcessFragmentBinding
     private var mStoreCardRequest: StoreCardOTPRequest? = null
     private var mStoreCardsResponse: StoreCardsResponse? = null
     private var storeDetails: StoreCardsData? = null
@@ -56,42 +58,45 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
         fun newInstance() = LinkStoreCardFragment()
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? = inflater.inflate(R.layout.link_store_card_process_fragment, container, false)
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        showLoader()
-        linkStoreCardRequest()
+        binding = LinkStoreCardProcessFragmentBinding.bind(view)
 
-        tvCallCenterNumber?.paintFlags = tvCallCenterNumber.paintFlags or Paint.UNDERLINE_TEXT_FLAG
+        binding.apply {
+            showLoader()
+            linkStoreCardRequest()
 
-        tvCallCenterNumber?.setOnClickListener(this)
-        btnRetryOnFailure?.setOnClickListener(this)
-        closeIconImageView?.setOnClickListener(this)
-        ibBack?.setOnClickListener(this)
-        okGotItButton?.setOnClickListener(this)
-        okGotItStaffButton?.setOnClickListener(this)
-        uniqueIdsForLinkStoreCard()
+            incLinkCardFailure.tvCallCenterNumber?.paintFlags =
+                incLinkCardFailure.tvCallCenterNumber.paintFlags or Paint.UNDERLINE_TEXT_FLAG
+
+            incLinkCardFailure.tvCallCenterNumber?.setOnClickListener(this@LinkStoreCardFragment)
+            incLinkCardFailure.btnRetryOnFailure?.setOnClickListener(this@LinkStoreCardFragment)
+            closeIconImageView?.setOnClickListener(this@LinkStoreCardFragment)
+            ibBack?.setOnClickListener(this@LinkStoreCardFragment)
+            incLinkCardSuccessFulView.okGotItButton?.setOnClickListener(this@LinkStoreCardFragment)
+            includeVirtualTempCardSuccessStaffMessage.okGotItStaffButton?.setOnClickListener(this@LinkStoreCardFragment)
+            uniqueIdsForLinkStoreCard()
+        }
     }
 
-    private fun uniqueIdsForLinkStoreCard() {
+    private fun LinkStoreCardProcessFragmentBinding.uniqueIdsForLinkStoreCard() {
         activity?.resources?.apply {
-            incProcessingTextLayout?.contentDescription =
+            incProcessingTextLayout?.root?.contentDescription =
                     getString(R.string.process_your_request_text_indicator)
             closeIconImageView?.contentDescription = getString(R.string.close_icon_tapped)
             ibBack?.contentDescription = getString(R.string.back_button_tapped)
-            incLinkCardSuccessFulView?.contentDescription = getString(R.string.card_success_layout)
-            successTitleTextView?.contentDescription = getString(R.string.success_link_card_title)
-            successLinkCardDescriptionTextView?.contentDescription =
+            incLinkCardSuccessFulView?.root?.contentDescription = getString(R.string.card_success_layout)
+            incLinkCardSuccessFulView.successTitleTextView?.contentDescription = getString(R.string.success_link_card_title)
+            incLinkCardSuccessFulView.successLinkCardDescriptionTextView?.contentDescription =
                     getString(R.string.success_link_card_description)
-            okGotItButton?.contentDescription = getString(R.string.success_got_it_button_tapped)
-            incLinkCardFailure?.contentDescription = getString(R.string.link_card_failure_layout)
-            failureTitleTextView?.contentDescription =
+            incLinkCardSuccessFulView.okGotItButton?.contentDescription = getString(R.string.success_got_it_button_tapped)
+            incLinkCardFailure?.root?.contentDescription = getString(R.string.link_card_failure_layout)
+            incLinkCardFailure.failureTitleTextView?.contentDescription =
                     getString(R.string.link_card_failure_title_label)
-            failureLinkCardDescriptionTextView?.contentDescription =
+            incLinkCardFailure.failureLinkCardDescriptionTextView?.contentDescription =
                     getString(R.string.link_card_failure_description)
-            btnRetryOnFailure?.contentDescription = getString(R.string.retry_on_failure_button)
-            tvCallCenterNumber?.contentDescription = getString(R.string.call_center_number_tapped)
+            incLinkCardFailure.btnRetryOnFailure?.contentDescription = getString(R.string.retry_on_failure_button)
+            incLinkCardFailure.tvCallCenterNumber?.contentDescription = getString(R.string.call_center_number_tapped)
         }
     }
 
@@ -134,7 +139,7 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
                 mStoreCardRequest?.linkStoreCardRequest(object : IOTPLinkStoreCard<LinkNewCardResponse> {
                     override fun showProgress() {
                         super.showProgress()
-                        linkStoreCardProgress()
+                        binding.linkStoreCardProgress()
                     }
 
                     override fun onSuccessHandler(response: LinkNewCardResponse) {
@@ -165,11 +170,11 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
                                         when (mLinkCardType) {
                                             LinkCardType.LINK_NEW_CARD.type -> {
                                                 progressState()?.animateSuccessEnd(true)
-                                                linkStoreCardSuccess()
+                                                binding.linkStoreCardSuccess()
                                             }
 
                                             LinkCardType.VIRTUAL_TEMP_CARD.type -> {
-                                                virtualStoreCardSuccess()
+                                                binding.virtualStoreCardSuccess()
                                                 handleStoreCardResponse(response)
                                             }
                                         }
@@ -220,12 +225,12 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
         }
     }
 
-    private fun virtualStoreCardSuccess() {
+    private fun LinkStoreCardProcessFragmentBinding.virtualStoreCardSuccess() {
         progressState()?.animateSuccessEnd(true)
         ibBack?.visibility = GONE
         closeIconImageView?.visibility = VISIBLE
-        incProcessingTextLayout?.visibility = GONE
-        includeVirtualTempCardSuccessMessage?.visibility = VISIBLE
+        incProcessingTextLayout?.root?.visibility = GONE
+        includeVirtualTempCardSuccessMessage?.root?.visibility = VISIBLE
     }
 
     private fun onFailure() {
@@ -236,31 +241,31 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
             }
 
             override fun onFinish() {
-                linkStoreCardFailure()
+                binding.linkStoreCardFailure()
             }
         }.start()
     }
 
-    private fun linkStoreCardSuccess() {
+    private fun LinkStoreCardProcessFragmentBinding.linkStoreCardSuccess() {
         progressState()?.animateSuccessEnd(true)
         ibBack?.visibility = GONE
         closeIconImageView?.visibility = GONE
-        incLinkCardSuccessFulView?.visibility = VISIBLE
-        incProcessingTextLayout?.visibility = GONE
+        incLinkCardSuccessFulView?.root?.visibility = VISIBLE
+        incProcessingTextLayout?.root?.visibility = GONE
     }
 
-    private fun linkStoreCardProgress() {
+    private fun LinkStoreCardProcessFragmentBinding.linkStoreCardProgress() {
         ibBack?.visibility = GONE
         closeIconImageView?.visibility = GONE
-        incLinkCardSuccessFulView?.visibility = GONE
-        incProcessingTextLayout?.visibility = VISIBLE
+        incLinkCardSuccessFulView?.root?.visibility = GONE
+        incProcessingTextLayout?.root?.visibility = VISIBLE
     }
 
-    private fun linkStoreCardFailure() {
+    private fun LinkStoreCardProcessFragmentBinding.linkStoreCardFailure() {
         ibBack?.visibility = GONE
         closeIconImageView?.visibility = VISIBLE
-        incLinkCardFailure?.visibility = VISIBLE
-        incProcessingTextLayout?.visibility = GONE
+        incLinkCardFailure?.root?.visibility = VISIBLE
+        incProcessingTextLayout?.root?.visibility = GONE
     }
 
     override fun onClick(view: View?) {
@@ -304,6 +309,11 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
 
     override fun onDestroy() {
         super.onDestroy()
+        activity?.supportFragmentManager?.apply {
+            if (findFragmentById(R.id.flProgressIndicator) != null) {
+                findFragmentById(R.id.flProgressIndicator)?.let { beginTransaction().remove(it).commitAllowingStateLoss() }
+            }
+        }
         (activity as? AppCompatActivity)?.supportActionBar?.show()
     }
 
@@ -340,14 +350,14 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
                         && virtualCardStaffMemberMessage?.title != null
                         && virtualCardStaffMemberMessage.paragraphs.isNotEmpty()
                     ){//show staff discount congratulations view
-                        flProgressIndicator.visibility = GONE
-                        includeVirtualTempCardSuccessMessage?.visibility = GONE
-                        includeVirtualTempCardSuccessStaffMessage?.visibility = VISIBLE
-                        titleStaffTextView?.text = virtualCardStaffMemberMessage.title
+                        binding.flProgressIndicator.visibility = GONE
+                        binding.includeVirtualTempCardSuccessMessage?.root?.visibility = GONE
+                        binding.includeVirtualTempCardSuccessStaffMessage?.root?.visibility = VISIBLE
+                        binding.includeVirtualTempCardSuccessStaffMessage.titleStaffTextView?.text = virtualCardStaffMemberMessage.title
                         if(virtualCardStaffMemberMessage.paragraphs.size >= 3){
-                            staffMessage1CheckBox.text = virtualCardStaffMemberMessage.paragraphs[0]
-                            staffMessage2CheckBox.text = virtualCardStaffMemberMessage.paragraphs[1]
-                            staffMessage3CheckBox.text = virtualCardStaffMemberMessage.paragraphs[2]
+                            binding.includeVirtualTempCardSuccessStaffMessage.staffMessage1CheckBox.text = virtualCardStaffMemberMessage.paragraphs[0]
+                            binding.includeVirtualTempCardSuccessStaffMessage.staffMessage2CheckBox.text = virtualCardStaffMemberMessage.paragraphs[1]
+                            binding.includeVirtualTempCardSuccessStaffMessage.staffMessage3CheckBox.text = virtualCardStaffMemberMessage.paragraphs[2]
                         }
                     }
                     else{
@@ -436,4 +446,15 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
         activity.overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
     }
 
+    fun showLoader() {
+        (activity as? AppCompatActivity)?.addFragment(
+            fragment = ProgressStateFragment.newInstance(this),
+            tag = ProgressStateFragment::class.java.simpleName,
+            containerViewId = R.id.flProgressIndicator
+        )
+    }
+
+    fun progressState(): ProgressStateFragment? = (activity as? AppCompatActivity)?.findFragmentByTag(ProgressStateFragment::class.java.simpleName) as? ProgressStateFragment
+
+    override fun onAnimationEnd(isAnimationFinished: Boolean) {}
 }

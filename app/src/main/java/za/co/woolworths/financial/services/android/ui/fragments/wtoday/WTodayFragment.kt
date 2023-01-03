@@ -9,17 +9,13 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Message
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import android.view.ViewGroup
 import android.webkit.*
 import android.webkit.WebViewClient.ERROR_CONNECT
 import android.webkit.WebViewClient.ERROR_TIMEOUT
-import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.add_to_list_content.*
-import kotlinx.android.synthetic.main.wtoday_main_fragment.*
+import com.awfs.coordination.databinding.WtodayMainFragmentBinding
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IWTodayInterface
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
@@ -40,18 +36,14 @@ class WTodayFragment : WTodayExtension(), IWTodayInterface {
 
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.wtoday_main_fragment, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        configureUI()
-        setClient()
+        binding.configureUI()
+        binding.setClient()
     }
 
     @SuppressLint("SetJavaScriptEnabled")
-    private fun configureUI() {
+    private fun WtodayMainFragmentBinding.configureUI() {
         webWToday?.apply {
             settings?.apply {
                 javaScriptEnabled = true
@@ -67,7 +59,7 @@ class WTodayFragment : WTodayExtension(), IWTodayInterface {
             loadUrl(wTodayUrl)
         }
 
-        btnRetry?.setOnClickListener {
+        incNoConnectionHandler.btnRetry?.setOnClickListener {
             if (isConnectedToNetwork()!!) {
                 webWToday?.reload()
                 noConnectionLayoutVisibility(GONE)
@@ -78,7 +70,7 @@ class WTodayFragment : WTodayExtension(), IWTodayInterface {
 
     }
 
-    private fun setClient() {
+    private fun WtodayMainFragmentBinding.setClient() {
 
         webWToday?.webViewClient = object : WebViewClient() {
             @TargetApi(Build.VERSION_CODES.M)
@@ -116,7 +108,7 @@ class WTodayFragment : WTodayExtension(), IWTodayInterface {
 
     }
 
-    fun scrollToTop() = webWToday?.apply {
+    fun scrollToTop() = binding.webWToday?.apply {
         ObjectAnimator.ofInt(this, "scrollY", scrollY, 0)?.run {
             setDuration(SCROLL_UP_ANIM_DURATION).start()
         }
@@ -130,7 +122,7 @@ class WTodayFragment : WTodayExtension(), IWTodayInterface {
 
 
     private fun noConnectionLayoutVisibility(state: Int) {
-        incNoConnectionHandler?.visibility = state
+        binding.incNoConnectionHandler?.root?.visibility = state
     }
 
     override fun onShowProductListing(categoryId: String, categoryName: String) {
@@ -179,6 +171,6 @@ class WTodayFragment : WTodayExtension(), IWTodayInterface {
     }
 
     override fun progressBarVisibility(isDisplayed: Boolean) {
-        flProgressContainer?.visibility = if (isDisplayed) VISIBLE else GONE
+        binding.flProgressContainer?.visibility = if (isDisplayed) VISIBLE else GONE
     }
 }

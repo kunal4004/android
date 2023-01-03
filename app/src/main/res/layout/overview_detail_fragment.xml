@@ -8,7 +8,9 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <include layout="@layout/bpi_overview_detail_content" />
+        <include
+            android:id="@+id/includeBpiOverviewDetailContent"
+            layout="@layout/bpi_overview_detail_content" />
     </androidx.core.widget.NestedScrollView>
 
     <LinearLayout

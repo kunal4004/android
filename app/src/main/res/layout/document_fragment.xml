@@ -363,5 +363,6 @@
     </RelativeLayout>
 
     <include
+        android:id="@+id/includeNoConnectionLayout"
         layout="@layout/no_connection_layout"/>
 </FrameLayout>

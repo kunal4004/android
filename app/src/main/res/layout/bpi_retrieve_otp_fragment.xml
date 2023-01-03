@@ -7,6 +7,7 @@
     android:paddingTop="?android:attr/actionBarSize">
 
     <include
+        android:id="@+id/includeInsuranceLeadRetrieveOtp"
         layout="@layout/insurance_lead_retrieve_otp_fragment"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

@@ -3,15 +3,17 @@ package za.co.woolworths.financial.services.android.ui.fragments.product.detail.
 import android.app.Dialog
 import android.content.res.Resources
 import android.os.Bundle
-import android.view.*
-import androidx.fragment.app.Fragment
+import android.view.Gravity
+import android.view.View
+import android.view.Window
+import android.view.WindowManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.FragmentProdcutNutritionalInformationBinding
 import com.daasuu.bl.BubbleLayout
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import kotlinx.android.synthetic.main.fragment_prodcut_nutritional_information.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.NutritionalInformationDetails
 import za.co.woolworths.financial.services.android.models.dto.NutritionalInformationFilterOption
@@ -19,10 +21,11 @@ import za.co.woolworths.financial.services.android.models.dto.NutritionalTableIt
 import za.co.woolworths.financial.services.android.ui.adapters.NutritionalInformationFilterAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.NutritionalInformationListAdapter
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
-import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
+import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 
-class ProductNutritionalInformationFragment : Fragment(), NutritionalInformationFilterAdapter.FilterOptionSelection {
+class ProductNutritionalInformationFragment : BaseFragmentBinding<FragmentProdcutNutritionalInformationBinding>(FragmentProdcutNutritionalInformationBinding::inflate), NutritionalInformationFilterAdapter.FilterOptionSelection {
     var nutritionalInfo: NutritionalInformationDetails? = null
     private var nutritionalDataList: HashMap<String, List<NutritionalTableItem>> = HashMap()
     private var adapter: NutritionalInformationListAdapter = NutritionalInformationListAdapter()
@@ -44,10 +47,6 @@ class ProductNutritionalInformationFragment : Fragment(), NutritionalInformation
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_prodcut_nutritional_information, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViews()
@@ -56,10 +55,11 @@ class ProductNutritionalInformationFragment : Fragment(), NutritionalInformation
 
     fun initViews() {
         activity?.apply {
-            nutritionalInformationList.layoutManager = LinearLayoutManager(this)
+            binding.nutritionalInformationList.layoutManager = LinearLayoutManager(this)
         }
-        filterOptionSelector.setOnClickListener {
-            showFilterOption() }
+        binding.filterOptionSelector.setOnClickListener {
+            showFilterOption()
+        }
         configureUI()
     }
 
@@ -69,7 +69,7 @@ class ProductNutritionalInformationFragment : Fragment(), NutritionalInformation
         filterOptions = buildFilterOptions(nutritionalDataList)
 
         if (filterOptions.isNotEmpty()) {
-            nutritionalInformationList.adapter = adapter
+            binding.nutritionalInformationList.adapter = adapter
             filterOptions[0].isSelected = true
             onOptionSelected(filterOptions[0])
         }
@@ -104,7 +104,7 @@ class ProductNutritionalInformationFragment : Fragment(), NutritionalInformation
         arguments[FirebaseManagerAnalyticsProperties.PropertyNames.NUTRITIONAL_INFORMATION_FILTER_OPTION] = selectedSortedOption.name
         activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_PRODUCTDETAIL_NUTRITIONAL_INFORMATION, arguments, this) }
         filterOptionDialog?.dismiss()
-        filterOptionSelector?.text = selectedSortedOption.name
+        binding.filterOptionSelector?.text = selectedSortedOption.name
         nutritionalDataList[selectedSortedOption.name]?.let { adapter.updateData(it) }
     }
 
@@ -133,7 +133,7 @@ class ProductNutritionalInformationFragment : Fragment(), NutritionalInformation
     }
 
     private fun setUniqueIds() {
-        resources?.apply {
+        binding.apply {
             pageTitle?.contentDescription = getString(R.string.pdp_nutritionalInformationTitle)
             description?.contentDescription = getString(R.string.pdp_descriptionTitle)
             filterOptionSelector?.contentDescription = getString(R.string.pdp_filterOptionSelector)

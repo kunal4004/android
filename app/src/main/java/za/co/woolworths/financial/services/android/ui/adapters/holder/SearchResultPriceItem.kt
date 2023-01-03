@@ -3,14 +3,13 @@ package za.co.woolworths.financial.services.android.ui.adapters.holder
 import android.annotation.SuppressLint
 import android.util.Log
 import android.view.View
-import kotlinx.android.synthetic.main.price_item.view.*
+import com.awfs.coordination.databinding.ShopSearchProductItemBinding
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
-import za.co.woolworths.financial.services.android.util.WFormatter
 
 class SearchResultPriceItem {
 
-    fun setPrice(productList: ProductList?, itemView: View, shopFromItem: Boolean = false) {
+    fun setPrice(productList: ProductList?, itemBinding: ShopSearchProductItemBinding, shopFromItem: Boolean = false) {
         val wasPrice: String = productList?.wasPrice?.toString() ?: ""
         val price: String = productList?.price?.toString() ?: ""
         val kilogramPrice: String = productList?.kilogramPrice?.toString() ?: ""
@@ -18,7 +17,7 @@ class SearchResultPriceItem {
         if (productList?.productName?.toLowerCase()?.contains("short sleeve khaki sch") == true) {
             Log.e("productListValue", "productListValue")
         }
-        with(itemView) {
+        itemBinding.includePriceItem.apply {
             fromPriceLabelTextView?.text = ""
             if (wasPrice.isNullOrEmpty()) {
                 if (price!!.isEmpty()) {
@@ -57,7 +56,7 @@ class SearchResultPriceItem {
                     }
                 }
             }
-            showFromPriceLabel(priceType)
+            showFromPriceLabel(itemBinding, priceType)
         }
     }
 
@@ -80,14 +79,16 @@ class SearchResultPriceItem {
     }
 
     @SuppressLint("DefaultLocale")
-    private fun View.showFromPriceLabel(priceType: String?) {
-        priceType?.let {
-            if (it.toLowerCase().contains("from", true)) {
-                fromPriceLabelTextView?.visibility = View.VISIBLE
-                fromPriceLabelTextView?.text = "From " // add space on StrikeThrough only
-            } else {
-                fromPriceLabelTextView?.visibility = View.GONE
-                fromPriceLabelTextView?.text = ""
+    private fun showFromPriceLabel(itemBinding: ShopSearchProductItemBinding, priceType: String?) {
+        itemBinding.includePriceItem.apply {
+            priceType?.let {
+                if (it.toLowerCase().contains("from", true)) {
+                    fromPriceLabelTextView?.visibility = View.VISIBLE
+                    fromPriceLabelTextView?.text = "From " // add space on StrikeThrough only
+                } else {
+                    fromPriceLabelTextView?.visibility = View.GONE
+                    fromPriceLabelTextView?.text = ""
+                }
             }
         }
     }

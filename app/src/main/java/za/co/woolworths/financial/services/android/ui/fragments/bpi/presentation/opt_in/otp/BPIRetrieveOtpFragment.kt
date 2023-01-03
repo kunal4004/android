@@ -1,15 +1,15 @@
 package za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.opt_in.otp
 
 import android.os.Bundle
-import android.view.*
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
 import androidx.core.os.bundleOf
-import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.circle_progress_layout.*
-import kotlinx.android.synthetic.main.retrieve_otp_error_fragment.*
-import kotlinx.android.synthetic.main.insurance_lead_retrieve_otp_fragment.*
+import com.awfs.coordination.databinding.BpiRetrieveOtpFragmentBinding
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
 import za.co.woolworths.financial.services.android.models.dto.otp.RetrieveOTPResponse
@@ -18,8 +18,9 @@ import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 
-open class BPIRetrieveOtpFragment : Fragment(),View.OnClickListener {
+open class BPIRetrieveOtpFragment : BaseFragmentBinding<BpiRetrieveOtpFragmentBinding>(BpiRetrieveOtpFragmentBinding::inflate),View.OnClickListener {
 
     private var menuCloseIcon: MenuItem? = null
     private var mCircularProgressIndicator: ProgressIndicator? = null
@@ -35,10 +36,6 @@ open class BPIRetrieveOtpFragment : Fragment(),View.OnClickListener {
     private val numberToOTPSentKey = "numberToOTPSent"
     private val otpSentToKey = "otpSentTo"
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.bpi_retrieve_otp_fragment, container, false)
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
@@ -53,13 +50,23 @@ open class BPIRetrieveOtpFragment : Fragment(),View.OnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         navController = Navigation.findNavController(view)
-        retry?.setOnClickListener(this)
-        needHelp?.setOnClickListener(this)
 
-        if(!BpiEnterOtpFragment.shouldBackPressed){
-            mCircularProgressIndicator = ProgressIndicator(circularProgressIndicator,success_frame,imFailureIcon,success_tick)
-            mCircularProgressIndicator?.progressIndicatorListener {}
-            initRetrieveOTP(otpMethodType)
+        binding.includeInsuranceLeadRetrieveOtp.apply {
+            errorView.retry?.setOnClickListener(this@BPIRetrieveOtpFragment)
+            errorView.needHelp?.setOnClickListener(this@BPIRetrieveOtpFragment)
+
+            if (!BpiEnterOtpFragment.shouldBackPressed) {
+                includeCircleProgressLayout.apply {
+                    mCircularProgressIndicator = ProgressIndicator(
+                        circularProgressIndicator,
+                        successFrame,
+                        imFailureIcon,
+                        successTick
+                    )
+                }
+                mCircularProgressIndicator?.progressIndicatorListener {}
+                initRetrieveOTP(otpMethodType)
+            }
         }
     }
 
@@ -115,9 +122,11 @@ open class BPIRetrieveOtpFragment : Fragment(),View.OnClickListener {
 
 
     private fun onRequestOTPRetry() {
-        errorView?.visibility = View.GONE
-        pageHeader?.visibility = View.VISIBLE
-        processingLayout?.visibility = View.VISIBLE
+        binding.includeInsuranceLeadRetrieveOtp.apply {
+            errorView.root.visibility = View.GONE
+            pageHeader?.visibility = View.VISIBLE
+            processingLayout.root.visibility = View.VISIBLE
+        }
         mCircularProgressIndicator?.spin()
         menuCloseIconVisibility(false)
         initRetrieveOTP(otpMethodType)
@@ -128,15 +137,17 @@ open class BPIRetrieveOtpFragment : Fragment(),View.OnClickListener {
         mCircularProgressIndicator?.animationStatus = ProgressIndicator.AnimationStatus.InProgress
         mCircularProgressIndicator?.spin()
         menuCloseIconVisibility(false)
-        processingLayout?.visibility = View.VISIBLE
+        binding.includeInsuranceLeadRetrieveOtp.processingLayout.root.visibility = View.VISIBLE
         showBackArrow(true)
 
     }
 
     private fun showErrorView() {
-        pageHeader?.visibility = View.INVISIBLE
-        processingLayout?.visibility = View.GONE
-        errorView?.visibility = View.VISIBLE
+        binding.includeInsuranceLeadRetrieveOtp.apply {
+            pageHeader.visibility = View.INVISIBLE
+            processingLayout.root.visibility = View.GONE
+            errorView.root.visibility = View.VISIBLE
+        }
         menuCloseIconVisibility(true)
         showBackArrow(false)
 

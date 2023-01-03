@@ -6,18 +6,20 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.balance_protection_insurance_activity.*
+import com.awfs.coordination.databinding.ViewGetPaymentPlanActivityBinding
 import za.co.woolworths.financial.services.android.models.dto.EligibilityPlan
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanDialogFragment
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 
 class GetAPaymentPlanActivity : AppCompatActivity(){
 
+    private lateinit var binding: ViewGetPaymentPlanActivityBinding
     private var eligibilityPlan: EligibilityPlan? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.view_get_payment_plan_activity)
+        binding = ViewGetPaymentPlanActivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         actionBar()
         eligibilityPlan = intent.getSerializableExtra(ViewTreatmentPlanDialogFragment.ELIGIBILITY_PLAN) as? EligibilityPlan
 
@@ -27,7 +29,7 @@ class GetAPaymentPlanActivity : AppCompatActivity(){
     }
 
     fun actionBar() {
-        setSupportActionBar(bpiToolbar)
+        setSupportActionBar(binding.bpiToolbar)
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
             setDisplayShowTitleEnabled(false)

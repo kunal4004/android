@@ -1,9 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.carousel
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -11,11 +9,8 @@ import androidx.navigation.findNavController
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.BpiOptInCarouselFragmentBinding
 import com.google.android.material.tabs.TabLayoutMediator
-import kotlinx.android.synthetic.main.balance_protection_insurance_activity.*
-import kotlinx.android.synthetic.main.bpi_more_info_fragment.*
-import kotlinx.android.synthetic.main.bpi_opt_in_carousel_fragment.*
-import kotlinx.android.synthetic.main.on_boarding_fragment.*
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dto.BPITermsConditionsResponse
 import za.co.woolworths.financial.services.android.models.dto.bpi.BPITermsConditions
@@ -29,18 +24,15 @@ import za.co.woolworths.financial.services.android.ui.fragments.bpi.viewmodel.BP
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.viewmodel.InsuranceLeadCarousel
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 
-class BPIOptInCarouselFragment : Fragment() {
+class BPIOptInCarouselFragment : BaseFragmentBinding<BpiOptInCarouselFragmentBinding>(BpiOptInCarouselFragmentBinding::inflate) {
 
     private val bpiViewModel: BPIViewModel? by activityViewModels()
     private var productGroupCode: String? = null
 
     companion object{
         var htmlContent: BPITermsConditions? = null
-    }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.bpi_opt_in_carousel_fragment, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -63,7 +55,7 @@ class BPIOptInCarouselFragment : Fragment() {
                 override fun getItemCount(): Int = carouselSize
             }
 
-        findOutCarouselViewPager?.apply {
+        binding.findOutCarouselViewPager?.apply {
             adapter = insuranceLeadGenCarouselAdapter
 
             clipToPadding = false
@@ -73,10 +65,10 @@ class BPIOptInCarouselFragment : Fragment() {
             configurePageIndicator(carouselList)
         }
 
-        nextButton?.onClick {
-            findOutPageIndicatorTabLayout.let { tabLayout ->
-                findOutCarouselViewPager?.let { viewPager ->
-                    when(nextButton?.text){
+        binding.nextButton?.onClick {
+            binding.findOutPageIndicatorTabLayout.let { tabLayout ->
+                binding.findOutCarouselViewPager?.let { viewPager ->
+                    when(binding.nextButton?.text){
                         bindString(R.string.continueLabel) -> {
                             if(htmlContent == null){
                                 getOptInHTMLContent()
@@ -132,14 +124,14 @@ class BPIOptInCarouselFragment : Fragment() {
     }
 
     private fun configurePageIndicator(carouselList: Array<InsuranceLeadCarousel>?) {
-        findOutPageIndicatorTabLayout.let { tabLayout ->
-            findOutCarouselViewPager?.let { viewPager ->
+        binding.findOutPageIndicatorTabLayout.let { tabLayout ->
+            binding.findOutCarouselViewPager?.let { viewPager ->
                 TabLayoutMediator(tabLayout, viewPager) { tab, _ -> tab.text = "" }.attach()
 
                 viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
                     override fun onPageSelected(position: Int) {
                         carouselList?.get(position)?.let {
-                            nextButton?.text = bindString(it.buttonCaption)
+                            binding.nextButton?.text = bindString(it.buttonCaption)
                         }
                         super.onPageSelected(position)
                     }

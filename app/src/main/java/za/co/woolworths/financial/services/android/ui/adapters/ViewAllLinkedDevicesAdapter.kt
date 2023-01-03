@@ -8,7 +8,7 @@ import android.view.View.GONE
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.item_view_all_linked_device_layout.view.*
+import com.awfs.coordination.databinding.ItemViewAllLinkedDeviceLayoutBinding
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.UserDevice
 import java.net.URLDecoder
 
@@ -21,13 +21,19 @@ class ViewAllLinkedDevicesAdapter(val context: Context, val onClickListener: Vie
 
         return when (viewType) {
             DeviceListViewType.PRIMARY_DEVICE.value -> {
-                PrimaryDeviceViewHolder(LayoutInflater.from(context).inflate(R.layout.item_view_all_linked_device_layout, parent, false))
+                PrimaryDeviceViewHolder(
+                    ItemViewAllLinkedDeviceLayoutBinding.inflate(LayoutInflater.from(context), parent, false)
+                )
             }
             DeviceListViewType.OTHER_DEVICE.value -> {
-                OtherDevicesViewHolder(LayoutInflater.from(context).inflate(R.layout.item_view_all_linked_device_layout, parent, false))
+                OtherDevicesViewHolder(
+                    ItemViewAllLinkedDeviceLayoutBinding.inflate(LayoutInflater.from(context), parent, false)
+                )
             }
             else -> {
-                OtherDevicesViewHolder(LayoutInflater.from(context).inflate(R.layout.item_view_all_linked_device_layout, parent, false))
+                OtherDevicesViewHolder(
+                    ItemViewAllLinkedDeviceLayoutBinding.inflate(LayoutInflater.from(context), parent, false)
+                )
             }
         }
     }
@@ -55,9 +61,9 @@ class ViewAllLinkedDevicesAdapter(val context: Context, val onClickListener: Vie
         notifyDataSetChanged()
     }
 
-    inner class PrimaryDeviceViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class PrimaryDeviceViewHolder(val itemBinding: ItemViewAllLinkedDeviceLayoutBinding) : RecyclerView.ViewHolder(itemBinding.root) {
         fun bind() {
-            itemView.apply {
+            itemBinding.apply {
                 val primaryDevice = getPrimaryDevice()
                 viewAllDevicesDescTextView?.visibility =  View.VISIBLE
                 viewAllDevicesTitleTextView?.text = context?.getString(R.string.view_all_preferred_device_title)
@@ -81,14 +87,14 @@ class ViewAllLinkedDevicesAdapter(val context: Context, val onClickListener: Vie
         return null
     }
 
-    inner class OtherDevicesViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class OtherDevicesViewHolder(val itemBinding: ItemViewAllLinkedDeviceLayoutBinding) : RecyclerView.ViewHolder(itemBinding.root) {
         fun bind() {
-            itemView.apply {
+            itemBinding.apply {
                 var isDisplayedTitle = false
                 val layoutInflater = LayoutInflater.from(context)
                 deviceList?.forEach {
 
-                    val listItem = layoutInflater.inflate(R.layout.item_view_all_linked_device_layout, null, false)
+                    val listItem = ItemViewAllLinkedDeviceLayoutBinding.inflate(layoutInflater, null, false)
                     if (it.primarydDevice == false) {
                         if (isDisplayedTitle) {
                             listItem.viewAllDevicesTitleGroup?.visibility = View.GONE
@@ -108,7 +114,7 @@ class ViewAllLinkedDevicesAdapter(val context: Context, val onClickListener: Vie
                         listItem.viewAllDeviceEditImageView?.visibility =  View.VISIBLE
                         listItem.viewAllDeviceEditImageView?.setTag(R.id.viewAllDeviceEditImageView, it)
                         listItem.viewAllDeviceEditImageView?.setOnClickListener(onClickListener)
-                        itemView.viewAllOtherDevicesContainer.addView(listItem)
+                        viewAllOtherDevicesContainer.addView(listItem.root)
 
                     }
                 }
