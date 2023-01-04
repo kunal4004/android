@@ -57,8 +57,9 @@ class ChatFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        val orderId = (activity as? OCChatActivity)?.getOrderId()
         setupInputLayout()
-        startActivity(OCChatActivity.newIntent(requireActivity(), (activity as? OCChatActivity)?.getOrderId() ?: ""))
+        startActivity(OCChatActivity.newIntent(requireActivity(),  orderId ?: ""))
     }
 
     override fun onDestroyView() {
