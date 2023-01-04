@@ -299,21 +299,16 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
         }
 
         private fun onFetchChannelsSuccess(
-            channels: List<Channel>,
-            chatClient: ChatClient,
-            shopperId: String?
+            channels: List<Channel>, chatClient: ChatClient, shopperId: String?
         ) {
             channels.forEach { channel ->
-                getRecipientChannelMember(
-                    chatClient,
-                    channel.cid,
-                    onSuccess = { member ->
-                        shopperId?.let {
-                            if (member.id.contains(it)) {
-                                queryChannelRequestForUnreadCount(chatClient, channel)
-                            }
+                getRecipientChannelMember(chatClient, channel.cid, onSuccess = { member ->
+                    shopperId?.let {
+                        if (member.id.contains(it)) {
+                            queryChannelRequestForUnreadCount(chatClient, channel)
                         }
-                    },
+                    }
+                },
                     onFailure = {
                         // Ignored for now
                     }
@@ -323,32 +318,26 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
 
         private fun queryChannelRequestForUnreadCount(chatClient: ChatClient, channel: Channel) {
             // Get channel
-            val queryChannelRequest =
-                QueryChannelRequest().withState()
-            chatClient.queryChannel(
-                channel.type,
-                channel.id,
-                queryChannelRequest
-            ).enqueue { result ->
-                if (result.isSuccess) {
-                    // Unread count for current user
-                    val unreadCount: Int = result.data().unreadCount ?: 0
-                    sendBroadCastEvent(unreadCount)
+            val queryChannelRequest = QueryChannelRequest().withState()
+            chatClient.queryChannel(channel.type, channel.id, queryChannelRequest)
+                .enqueue { result ->
+                    if (result.isSuccess) {
+                        // Unread count for current user
+                        val unreadCount: Int = result.data().unreadCount ?: 0
+                        sendBroadCastEvent(unreadCount)
+                    }
                 }
-            }
         }
 
         fun sendBroadCastEvent(totalUnreadCount: Int) {
-
-            if (WoolworthsApplication.getInstance().currentActivity != null &&
-                WoolworthsApplication.getInstance().currentActivity::class != OCChatActivity::class
-            ) {
-                WoolworthsApplication.getInstance()?.currentActivity?.let {
-                    val broadCastIntent = Intent()
-                    broadCastIntent.action = DashOrderReceiver.ACTION_LAST_DASH_ORDER
-                    broadCastIntent.putExtra(DashOrderReceiver.EXTRA_UNREAD_MESSAGE_COUNT, totalUnreadCount)
-                    LocalBroadcastManager.getInstance(it).sendBroadcast(broadCastIntent)
-                }
+            WoolworthsApplication.getInstance()?.currentActivity?.let {
+                val broadCastIntent = Intent()
+                broadCastIntent.action = DashOrderReceiver.ACTION_LAST_DASH_ORDER
+                broadCastIntent.putExtra(
+                    DashOrderReceiver.EXTRA_UNREAD_MESSAGE_COUNT,
+                    totalUnreadCount
+                )
+                LocalBroadcastManager.getInstance(it).sendBroadcast(broadCastIntent)
             }
         }
 
