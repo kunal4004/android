@@ -27,7 +27,6 @@ class ChatFragment : Fragment() {
     companion object{
         const val ARG_CHANNEL_ID = "channelId"
         const val AUXILIARY_IMAGE = "auxiliaryImages"
-
     }
 
     private val viewModel: ChatViewModel by activityViewModels()
@@ -59,6 +58,7 @@ class ChatFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         setupInputLayout()
+        startActivity(OCChatActivity.newIntent(requireActivity(), (activity as? OCChatActivity)?.getOrderId() ?: ""))
     }
 
     override fun onDestroyView() {
