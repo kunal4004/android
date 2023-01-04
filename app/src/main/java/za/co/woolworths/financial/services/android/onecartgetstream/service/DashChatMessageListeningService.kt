@@ -332,12 +332,8 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
             ).enqueue { result ->
                 if (result.isSuccess) {
                     // Unread count for current user
-                    val unreadCount: Int =
-                        result.data().unreadCount
-                            ?: 0
-                    sendBroadCastEvent(
-                        unreadCount
-                    )
+                    val unreadCount: Int = result.data().unreadCount ?: 0
+                    sendBroadCastEvent(unreadCount)
                 }
             }
         }
