@@ -93,7 +93,7 @@
         tools:visibility="visible" />
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/inappOrderNotificationChatCount"
+        android:id="@+id/inAppOrderNotificationChatCount"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/twenty_dp"
         android:background="@drawable/circle_red_notification"

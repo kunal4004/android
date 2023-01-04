@@ -1534,10 +1534,13 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
     }
 
     override fun updateUnreadMessageCount(unreadMsgCount: Int) {
-        inAppNotificationViewBinding?.inappOrderNotificationChatCount?.text =
-            unreadMsgCount.toString()
-        inAppNotificationViewBinding?.inappOrderNotificationChatCount?.visibility =
-            if (unreadMsgCount <= 0) View.GONE else VISIBLE
+        if (unreadMsgCount <= 0) {
+            inAppNotificationViewBinding?.inAppOrderNotificationChatCount?.visibility = GONE
+        } else {
+            inAppNotificationViewBinding?.inAppOrderNotificationChatCount?.text =
+                unreadMsgCount.toString()
+            inAppNotificationViewBinding?.inAppOrderNotificationChatCount?.visibility = VISIBLE
+        }
     }
 
     override fun updateLastDashOrder() {
