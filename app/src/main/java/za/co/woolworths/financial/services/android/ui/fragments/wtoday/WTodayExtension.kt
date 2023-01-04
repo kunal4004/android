@@ -1,8 +1,10 @@
 package za.co.woolworths.financial.services.android.ui.fragments.wtoday
 
 import android.os.Bundle
+import android.view.View
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.WtodayMainFragmentBinding
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.gson.Gson
 import retrofit2.Call
@@ -18,7 +20,7 @@ import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.Utils
 import java.util.HashMap
 
-abstract class WTodayExtension : Fragment() {
+abstract class WTodayExtension : Fragment(R.layout.wtoday_main_fragment) {
 
     companion object {
         const val SCROLL_UP_ANIM_DURATION: Long = 300
@@ -28,7 +30,13 @@ abstract class WTodayExtension : Fragment() {
 
     abstract fun progressBarVisibility(isDisplayed: Boolean)
 
+    protected lateinit var binding: WtodayMainFragmentBinding
     var mGetProductDetail: Call<ProductDetailResponse>? = null
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding = WtodayMainFragmentBinding.bind(view)
+    }
 
     fun retrieveProduct(productId: String, skuId: String) {
         progressBarVisibility(true)

@@ -8,7 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.sign_out_fragment.*
+import com.awfs.coordination.databinding.SignOutFragmentBinding
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
@@ -17,28 +17,32 @@ import za.co.woolworths.financial.services.android.util.ServiceTools
 
 class SignOutFragment : WBottomSheetDialogFragment(), View.OnClickListener {
 
+    private lateinit var binding: SignOutFragmentBinding
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.sign_out_fragment, container, false)
+        binding = SignOutFragmentBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        okaySignOutButton?.setOnClickListener(this@SignOutFragment)
-        cancelSignOutButton?.setOnClickListener(this@SignOutFragment)
-
+        with(binding) {
+            okaySignOutButton?.setOnClickListener(this@SignOutFragment)
+            cancelSignOutButton?.setOnClickListener(this@SignOutFragment)
+        }
     }
 
     override fun onClick(view: View?) {
         when (view?.id) {
             R.id.cancelSignOutButton -> {
-                convertButtonBackgroundToBlack(cancelSignOutButton)
+                convertButtonBackgroundToBlack(binding.cancelSignOutButton)
                 val cancelHandler: Handler? = Handler()
                 cancelHandler?.postDelayed({ dismiss() }, 200)
             }
 
             R.id.okaySignOutButton -> {
-                convertButtonBackgroundToBlack(okaySignOutButton)
+                convertButtonBackgroundToBlack(binding.okaySignOutButton)
                 val cancelHandler: Handler? = Handler()
                 WoolworthsApplication.setValidatedSuburbProducts(null)
                 WoolworthsApplication.setCncBrowsingValidatePlaceDetails(null)

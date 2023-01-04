@@ -7,9 +7,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
@@ -17,9 +15,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.FragmentShopDepartmentBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.fragment_shop_department.*
-import kotlinx.android.synthetic.main.no_connection_layout.*
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
@@ -45,7 +42,9 @@ import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.viewmodels.shop.ShopViewModel
 
 @AndroidEntryPoint
-class StandardDeliveryFragment : DepartmentExtensionFragment() {
+class StandardDeliveryFragment : DepartmentExtensionFragment(R.layout.fragment_shop_department) {
+
+    private lateinit var binding: FragmentShopDepartmentBinding
 
     private var locator: Locator? = null
     private var location: Location? = null
@@ -71,22 +70,20 @@ class StandardDeliveryFragment : DepartmentExtensionFragment() {
                 ?: false
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View? {
-        return inflater.inflate(R.layout.fragment_shop_department, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding = FragmentShopDepartmentBinding.bind(view)
+
         view.viewTreeObserver?.addOnWindowFocusChangeListener { hasFocus ->
             onWindowFocusChanged(
                 hasFocus
             )
         }
         initView()
+    }
+
+    override fun noConnectionLayout(isVisible: Boolean) {
+        binding.incConnectionLayout?.root?.visibility = if (isVisible) View.VISIBLE else View.GONE
     }
 
     fun initView() {
@@ -157,7 +154,7 @@ class StandardDeliveryFragment : DepartmentExtensionFragment() {
     }
 
     private fun setListener() {
-        btnRetry.setOnClickListener {
+        binding.incConnectionLayout.btnRetry.setOnClickListener {
             if (networkConnectionStatus()) {
                 executeDepartmentRequest(mDepartmentAdapter, parentFragment, location)
             }
@@ -190,7 +187,7 @@ class StandardDeliveryFragment : DepartmentExtensionFragment() {
             categories,
             ::departmentItemClicked) //{ rootCategory: RootCategory -> departmentItemClicked(rootCategory)}
         activity?.let {
-            rclDepartment?.apply {
+            binding.rclDepartment?.apply {
                 layoutManager = LinearLayoutManager(it, LinearLayoutManager.VERTICAL, false)
                 adapter = mDepartmentAdapter
             }
@@ -312,7 +309,7 @@ class StandardDeliveryFragment : DepartmentExtensionFragment() {
     }
 
     fun scrollToTop() {
-        rclDepartment?.scrollToPosition(0)
+        binding.rclDepartment?.scrollToPosition(0)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

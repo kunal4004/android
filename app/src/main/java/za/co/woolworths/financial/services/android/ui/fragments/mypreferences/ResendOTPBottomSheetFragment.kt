@@ -7,11 +7,12 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.fragment_link_device_resend_otp.*
+import com.awfs.coordination.databinding.FragmentLinkDeviceResendOtpBinding
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 
 class ResendOTPBottomSheetFragment : WBottomSheetDialogFragment(), View.OnClickListener {
 
+    private lateinit var binding: FragmentLinkDeviceResendOtpBinding
     private var otpSMSNumber: String? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,18 +23,20 @@ class ResendOTPBottomSheetFragment : WBottomSheetDialogFragment(), View.OnClickL
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_link_device_resend_otp, container, false)
+        binding = FragmentLinkDeviceResendOtpBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        context?.let {resendSMSto.text =  it.getString(R.string.resend_sms_to, otpSMSNumber)}
-        resendSMSto.setOnClickListener(this)
-        resendEmailOTP.setOnClickListener(this)
-        resendCallCenter.setOnClickListener(this)
-        resendDialogCancel.setOnClickListener(this)
+        with(binding) {
+            context?.let { resendSMSto.text = it.getString(R.string.resend_sms_to, otpSMSNumber) }
+            resendSMSto.setOnClickListener(this@ResendOTPBottomSheetFragment)
+            resendEmailOTP.setOnClickListener(this@ResendOTPBottomSheetFragment)
+            resendCallCenter.setOnClickListener(this@ResendOTPBottomSheetFragment)
+            resendDialogCancel.setOnClickListener(this@ResendOTPBottomSheetFragment)
+        }
     }
 
     companion object {

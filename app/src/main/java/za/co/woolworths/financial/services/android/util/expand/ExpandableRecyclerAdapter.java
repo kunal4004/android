@@ -282,7 +282,7 @@ public abstract class ExpandableRecyclerAdapter<HVH extends HeaderViewHolder, PV
 		PVH viewHolder;
 		for (RecyclerView recyclerView : mAttachedRecyclerViewPool) {
 			viewHolder = (PVH) recyclerView.findViewHolderForAdapterPosition(parentIndex);
-			if (viewHolder != null && !viewHolder.isExpanded()) {
+			if (viewHolder != null && !viewHolder.isRowExpanded()) {
 				viewHolder.setExpanded(true);
 				viewHolder.onExpansionToggled(false);
 			}
@@ -295,7 +295,7 @@ public abstract class ExpandableRecyclerAdapter<HVH extends HeaderViewHolder, PV
 		PVH viewHolder;
 		for (RecyclerView recyclerView : mAttachedRecyclerViewPool) {
 			viewHolder = (PVH) recyclerView.findViewHolderForAdapterPosition(parentIndex);
-			if (viewHolder != null && viewHolder.isExpanded()) {
+			if (viewHolder != null && viewHolder.isRowExpanded()) {
 				viewHolder.setExpanded(false);
 				viewHolder.onExpansionToggled(true);
 			}

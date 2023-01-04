@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.fragment_unlink_primary_device_bottom_sheet.*
+import com.awfs.coordination.databinding.FragmentUnlinkPrimaryDeviceBottomSheetBinding
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.UserDevice
 import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesActivity
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
@@ -15,11 +15,13 @@ import za.co.woolworths.financial.services.android.util.animation.AnimationUtilE
 
 class UnlinkPrimaryDeviceBottomSheetFragment : WBottomSheetDialogFragment(), View.OnClickListener {
 
+    private lateinit var binding: FragmentUnlinkPrimaryDeviceBottomSheetBinding
     private var deviceList: ArrayList<UserDevice>? = ArrayList(0)
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_unlink_primary_device_bottom_sheet, container, false)
+        binding = FragmentUnlinkPrimaryDeviceBottomSheetBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -31,15 +33,16 @@ class UnlinkPrimaryDeviceBottomSheetFragment : WBottomSheetDialogFragment(), Vie
             }
         }
 
-        unlinkDeviceCancel.setOnClickListener {
-            dismissAllowingStateLoss()
-            AnimationUtilExtension.animateViewPushDown(it)
+        with(binding) {
+            unlinkDeviceCancel.setOnClickListener {
+                dismissAllowingStateLoss()
+                AnimationUtilExtension.animateViewPushDown(it)
+            }
+            choosePrimaryDeviceContinue.setOnClickListener(this@UnlinkPrimaryDeviceBottomSheetFragment)
         }
-        choosePrimaryDeviceContinue.setOnClickListener(this)
     }
 
     override fun onClick(v: View?) {
-
         when (v?.id) {
             R.id.choosePrimaryDeviceContinue -> {
                 if(hasNoOtherDevices() == true) {

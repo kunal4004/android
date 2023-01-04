@@ -7,6 +7,7 @@
     android:paddingTop="?android:attr/actionBarSize">
 
     <include
+        android:id="@+id/includeEnterOtpFragment"
         layout="@layout/fragment_enter_otp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

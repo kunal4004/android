@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.IdRes
@@ -21,7 +20,8 @@ import za.co.woolworths.financial.services.android.models.dto.account.ServerErro
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.error_handler.GeneralErrorDialogPopupFragment
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils.mContext
 import za.co.woolworths.financial.services.android.util.Utils
-
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 fun Fragment.setupGraph(
     @NavigationRes graphResId: Int,
@@ -72,4 +72,23 @@ fun setToast(v: View?, messageId: Int) {
     toast.view = layout
     toast.setGravity(Gravity.BOTTOM,  0, Utils.dp2px(24f))
     toast.show()
+}
+
+fun extractPhoneNumberFromSentence(sentence : String?): Pair<Pair<Int, Int>, String>? {
+    sentence ?: return null
+    val listOfNumbers = mutableListOf<String>()
+    var (startIndex, endIndex) = -1 to -1
+    val pattern: Pattern = Pattern.compile("\\d+")
+    val matcher: Matcher = pattern.matcher(sentence)
+    while (matcher.find()) { listOfNumbers.add(matcher.group()) }
+    val phoneNumber = listOfNumbers.joinToString(" ")
+
+    if (listOfNumbers.isNotEmpty()){
+        val first = listOfNumbers[0]
+        val last = listOfNumbers.last()
+        startIndex = sentence.indexOf(first)
+        endIndex = sentence.lastIndexOf(last).plus(last.length)
+    }
+
+    return startIndex to endIndex to phoneNumber
 }

@@ -1,6 +1,9 @@
 package za.co.woolworths.financial.services.android.onecartgetstream.service
 
-import android.app.*
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -23,9 +26,8 @@ import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.pushprovider.firebase.FirebasePushDeviceGenerator
 import io.getstream.chat.android.pushprovider.huawei.HuaweiPushDeviceGenerator
-import kotlinx.android.synthetic.main.fragment_shop_my_orders.*
-import kotlinx.android.synthetic.main.order_details_fragment.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
@@ -35,10 +37,8 @@ import za.co.woolworths.financial.services.android.models.dto.OrderSummary
 import za.co.woolworths.financial.services.android.models.dto.OrdersResponse
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
-import za.co.woolworths.financial.services.android.onecartgetstream.OCChatActivity
 import za.co.woolworths.financial.services.android.onecartgetstream.common.constant.OCConstant.Companion.ORDER_PENDING_PICKING
 import za.co.woolworths.financial.services.android.onecartgetstream.common.constant.OCConstant.Companion.isOCChatBackgroundServiceRunning
-import za.co.woolworths.financial.services.android.onecartgetstream.common.constant.OCConstant.Companion.ocObserveCountMessage
 import za.co.woolworths.financial.services.android.onecartgetstream.model.OCAuthenticationResponse
 import za.co.woolworths.financial.services.android.onecartgetstream.repository.OCToastNotification
 import za.co.woolworths.financial.services.android.ui.extension.bindString
