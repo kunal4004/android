@@ -7,7 +7,6 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
@@ -253,74 +252,94 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
     companion object {
         const val CHANNEL_ID = "ForegroundServiceChannelId"
 
-        fun getUnreadMessageForOrder(
-            context: Context,
+        fun getUnreadMessageForOrder(context: Context, orderId: String) {
+            val chatClient = getOneCartStreamChatClient(context)
+            authenticateOneCart(onSuccess = { userId, displayName, token ->
+                onAuthenticationSuccess(userId, displayName, token, chatClient, orderId)
+            },
+                onFailure = {}
+            )
+        }
+        
+        private fun onAuthenticationSuccess(
+            userId: String,
+            displayName: String,
+            token: String,
+            chatClient: ChatClient,
             orderId: String
         ) {
-            val chatClient = getOneCartStreamChatClient(context)
-            authenticateOneCart(
-                onSuccess = { userId, displayName, token ->
-                    connectUser(
-                        userId,
-                        displayName,
-                        token,
-                        onSuccess = {
-                            fetchOrderDetails(
-                                orderId,
-                                onSuccess = { orderSummary ->
-                                    fetchChannels(
-                                        chatClient,
-                                        onSuccess = { channels ->
-                                            if (channels.isEmpty()) {
-                                                return@fetchChannels
-                                            }
+            connectUser(userId, displayName, token, onSuccess = {
+                onConnectUserSuccess(chatClient, orderId)
+            },
+                onFailure = {}
+            )
+        }
 
-                                            channels.forEach { channel ->
-                                                getRecipientChannelMember(
-                                                    chatClient,
-                                                    channel.cid,
-                                                    onSuccess = { member ->
-                                                        if (!orderSummary.shopperId.isNullOrEmpty() && member.id.contains(
-                                                                orderSummary.shopperId!!
-                                                            )
-                                                        ) {
-                                                            // Get channel
-                                                            val queryChannelRequest =
-                                                                QueryChannelRequest().withState()
-                                                            chatClient.queryChannel(
-                                                                channel.type,
-                                                                channel.id,
-                                                                queryChannelRequest
-                                                            ).enqueue { result ->
-                                                                if (result.isSuccess) {
-                                                                    // Unread count for current user
-                                                                    val unreadCount: Int =
-                                                                        result.data().unreadCount
-                                                                            ?: 0
-                                                                    sendBroadCastEvent(
-                                                                        unreadCount
-                                                                    )
-                                                                }
-                                                            }
-                                                        }
-                                                    },
-                                                    onFailure = {
-                                                        // Ignored for now
-                                                    }
-                                                )
-                                            }
-                                        },
-                                        onFailure = {}
-                                    )
-                                },
-                                onFailure = {}
-                            )
-                        },
-                        onFailure = {}
-                    )
+        private fun onConnectUserSuccess(chatClient: ChatClient, orderId: String) {
+            fetchOrderDetails(
+                orderId,
+                onSuccess = { orderSummary ->
+                    onFetchOrderDetailsSuccess(chatClient, orderSummary.shopperId)
                 },
                 onFailure = {}
             )
+        }
+
+        private fun onFetchOrderDetailsSuccess(chatClient: ChatClient, shopperId: String?) {
+            fetchChannels(
+                chatClient,
+                onSuccess = { channels ->
+                    if (channels.isEmpty()) {
+                        return@fetchChannels
+                    }
+                    onFetchChannelsSuccess(channels, chatClient, shopperId)
+                },
+                onFailure = {}
+            )
+        }
+
+        private fun onFetchChannelsSuccess(
+            channels: List<Channel>,
+            chatClient: ChatClient,
+            shopperId: String?
+        ) {
+            channels.forEach { channel ->
+                getRecipientChannelMember(
+                    chatClient,
+                    channel.cid,
+                    onSuccess = { member ->
+                        shopperId?.let {
+                            if (member.id.contains(it)) {
+                                queryChannelRequest(chatClient, channel)
+                            }
+                        }
+                    },
+                    onFailure = {
+                        // Ignored for now
+                    }
+                )
+            }
+        }
+
+        private fun queryChannelRequest(chatClient: ChatClient, channel: Channel) {
+            // Get channel
+            val queryChannelRequest =
+                QueryChannelRequest().withState()
+            chatClient.queryChannel(
+                channel.type,
+                channel.id,
+                queryChannelRequest
+            ).enqueue { result ->
+                if (result.isSuccess) {
+                    // Unread count for current user
+                    val unreadCount: Int =
+                        result.data().unreadCount
+                            ?: 0
+                    sendBroadCastEvent(
+                        unreadCount
+                    )
+                }
+            }
         }
 
         fun sendBroadCastEvent(totalUnreadCount: Int) {
