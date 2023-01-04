@@ -310,7 +310,7 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
                     onSuccess = { member ->
                         shopperId?.let {
                             if (member.id.contains(it)) {
-                                queryChannelRequest(chatClient, channel)
+                                queryChannelRequestForUnreadCount(chatClient, channel)
                             }
                         }
                     },
@@ -321,7 +321,7 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
             }
         }
 
-        private fun queryChannelRequest(chatClient: ChatClient, channel: Channel) {
+        private fun queryChannelRequestForUnreadCount(chatClient: ChatClient, channel: Channel) {
             // Get channel
             val queryChannelRequest =
                 QueryChannelRequest().withState()
