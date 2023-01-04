@@ -2840,4 +2840,17 @@
     <string name="expires_vouchers">"Expires %s"</string>
     <string name="you_don_t_qualify_for_cash_back">You Don’t Qualify For Cash Back Vouchers Yet</string>
     <string name="apply_for_a_woolworths_credit_card">Apply for a Woolworths Credit Card today to qualify to unlock these amazing vouchers.</string>
+    <string name="no_wrewords_right_now">" You Have No WRewards Vouchers \n Right Now"</string>
+    <string name="unable_load_wrewards">"Unable to load WRewards vouchers"</string>
+    <string name="load_fail_wrewards_vouchers">"We are experiencing technical issues with our Voucher system. We’re working on it, please try  again later."</string>
+    <string name="no_cash_back_right_now">"You have no Cash Back vouchers  right now"</string>
+    <string name="unable_load_cash_back_vouchers">"Unable to load Cash Back vouchers"</string>
+    <string name="load_fail_cask_back_vouchers">"We are experiencing technical issues with our Voucher system. Please try  again later."</string>
+    <string name="using_cash_back_vouchers">Using Cash back vouchers</string>
+    <string name="cash_back_cancellation">Due to a cancellation or reversal of a previous order we are reactivating this Voucher.It will be available soon.</string>
+    <string name="cash_back_vouchers_info_one">You can only use one Voucher at a time.</string>
+    <string name="cash_back_vouchers_info_two">Make sure your cart total is higher than the voucher value.</string>
+    <string name="cash_back_vouchers_info_three">You can use a Cash Back Voucher when your cart has either only food items or a mix of fashion, beauty and/or homeware items.</string>
+    <string name="cash_back_vouchers_info_four">These Vouchers are only redeemable at checkout as a payment method.</string>
+
 </resources>
