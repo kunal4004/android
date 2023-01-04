@@ -35,6 +35,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.Companion.DASH_DELIVERY_BROWSE_MODE
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.Companion.DASH_SWITCH_BROWSE_MODE
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyNames.Companion.BROWSE_MODE
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyNames.Companion.DELIVERY_MODE
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils
@@ -179,8 +180,10 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
             BROWSE_MODE to browsingType
         )
         AnalyticsManager.setUserProperty(DELIVERY_MODE, KotlinUtils.getPreferredDeliveryType()?.type)
-        AnalyticsManager.setUserProperty(BROWSE_MODE, KotlinUtils.browsingDeliveryType?.type)
-        AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.DASH_SWITCH_BROWSE_MODE, dashParams)
+        browsingType?.let {
+            AnalyticsManager.setUserProperty(BROWSE_MODE, browsingType)
+        }
+        AnalyticsManager.logEvent(DASH_SWITCH_BROWSE_MODE, dashParams)
 
     }
 

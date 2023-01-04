@@ -269,7 +269,7 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
             DELIVERY_MODE to deliveryType,
             BROWSE_MODE to KotlinUtils.browsingDeliveryType?.name
         )
-        AnalyticsManager.setUserProperty(DELIVERY_MODE, KotlinUtils.getPreferredDeliveryType()?.type)
+        AnalyticsManager.setUserProperty(DELIVERY_MODE, deliveryType)
         AnalyticsManager.setUserProperty(BROWSE_MODE, KotlinUtils.browsingDeliveryType?.type)
         AnalyticsManager.logEvent(DASH_SWITCH_DELIVERY_MODE, dashParams)
     }
