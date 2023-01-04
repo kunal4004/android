@@ -1129,8 +1129,10 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
                 Activity activity = getActivity();
                 if (activity == null || !isAdded()) return;
                 activity.runOnUiThread(() -> {
-                    pbLoadingIndicator.setVisibility(GONE);
-                    btnCheckOut.setVisibility(VISIBLE);
+                    if(pbLoadingIndicator != null)
+                        pbLoadingIndicator.setVisibility(GONE);
+                    if(btnCheckOut != null)
+                        btnCheckOut.setVisibility(VISIBLE);
                 });
             }
         });
