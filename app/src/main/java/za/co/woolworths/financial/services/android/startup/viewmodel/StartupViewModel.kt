@@ -5,7 +5,6 @@ import android.content.pm.PackageManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import com.awfs.coordination.BuildConfig
-import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
@@ -18,6 +17,7 @@ import za.co.woolworths.financial.services.android.startup.service.repository.St
 import za.co.woolworths.financial.services.android.startup.utils.ConfigResource
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import java.util.*
 
 /**
@@ -78,11 +78,13 @@ class StartupViewModel(private val startUpRepository: StartUpRepository, private
                 token.AtgId?.apply {
                     val atgId = if (this.isJsonArray) this.asJsonArray.first().asString else this.asString
                     setUserId(atgId)
+                    FirebaseManager.setCrashLyticsUserId(atgId)
                     setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.ATGId, atgId)
                 }
 
                 token.C2Id?.apply {
                     setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.C2ID, this)
+                    FirebaseManager.setCrashLyticsCustomKeyValue(FirebaseManagerAnalyticsProperties.PropertyNames.C2ID, this)
                 }
             }
         }
