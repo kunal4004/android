@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.util.analytics
 
 import android.app.Activity
 import android.os.Bundle
-import androidx.annotation.Size
 import com.google.firebase.FirebaseApp
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
@@ -40,6 +39,14 @@ class FirebaseManager {
 
         fun setUserId(id: String) {
             getInstance().getAnalytics().setUserId(id)
+        }
+
+        fun setCrashLyticsUserId(userId: String) {
+            WFirebaseCrashlytics().setUserId(userId)
+        }
+
+        fun setCrashLyticsCustomKeyValue(keyId: String, valueId: String) {
+            WFirebaseCrashlytics().setCustomKeyValue(keyId, valueId)
         }
 
         fun setCurrentScreen(activity: Activity, screenName: String?) {
