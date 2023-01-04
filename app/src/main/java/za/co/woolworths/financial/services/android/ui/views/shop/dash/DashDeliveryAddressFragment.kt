@@ -452,12 +452,14 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
 
                             HTTP_EXPECTATION_FAILED_502 -> {
                                 if (response.response.code == AppConstant.RESPONSE_ERROR_CODE_1235) {
-                                    KotlinUtils.showQuantityLimitErrror(
-                                        activity?.supportFragmentManager,
-                                        response.response.desc,
-                                        "",
-                                        context
-                                    )
+                                    response.response.desc?.let { it1 ->
+                                        KotlinUtils.showQuantityLimitErrror(
+                                            activity?.supportFragmentManager,
+                                            it1,
+                                            "",
+                                            context
+                                        )
+                                    }
                                 }
                             }
                             else -> response?.response?.desc?.let { desc ->
@@ -732,6 +734,8 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
             BundleKeysConstants.REQUEST_CODE -> {
              if (resultCode == Activity.RESULT_OK) {
                  initViews()
+                 viewModel.getOnDemandCategories()
+                 viewModel.getDashLandingDetails()
                }
             }
         }
