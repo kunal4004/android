@@ -93,12 +93,7 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 		switch (getItemViewType(position)) {
 			case ITEM_VIEW_TYPE_HEADER:
 				HeaderViewHolder headerViewHolder = (HeaderViewHolder) viewHolder;
-				headerViewHolder.tvSearchText.setOnClickListener(new View.OnClickListener() {
-					@Override
-					public void onClick(View view) {
-						navigator.onShoppingSearchClick();
-					}
-				});
+				headerViewHolder.tvSearchText.setOnClickListener(view -> navigator.onShoppingSearchClick());
 				break;
 
 			case ITEM_VIEW_TYPE_BASIC:
@@ -117,38 +112,6 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 
 				holder.swipeLayout.addDrag(SwipeLayout.DragEdge.Right, holder.swipeRight);
 
-				// show/hide delete button on edit item click from toolbar
-				holder.swipeLayout.close(true,!shoppingListItem.editButtonIsEnabled);
-				holder.deleteButton.setVisibility(shoppingListItem.editButtonIsEnabled  ? VISIBLE : GONE);
-				holder.cbxSelectShoppingListItem.setClickable(!shoppingListItem.editButtonIsEnabled);
-				holder.cbxSelectShoppingListItem.setEnabled(!shoppingListItem.editButtonIsEnabled);
-				holder.cbxSelectShoppingListItem.setAlpha(shoppingListItem.editButtonIsEnabled ? 0.5f : 1.0f);
-				holder.swipeLayout.setSwipeEnabled(!shoppingListItem.editButtonIsEnabled);
-
-				animateOnDeleteButtonVisibility(holder.deleteButton,shoppingListItem.editButtonIsEnabled);
-
-				holder.deleteButton.setOnClickListener(new View.OnClickListener() {
-					@Override
-					public void onClick(View view) {
-						navigator.onItemDeleteClick(shoppingListItem.Id,shoppingListItem.productId, shoppingListItem.catalogRefId, false);
-						mShoppingListItem.remove(shoppingListItem);
-						notifyItemRemoved(position);
-						notifyItemRangeChanged(position, getItemCount() - position);
-					}
-				});
-
-				holder.llQuantity.setEnabled(!shoppingListItem.editButtonIsEnabled);
-
-				holder.llShopList.setOnClickListener(new View.OnClickListener() {
-					@Override
-					public void onClick(View view) {
-						if (!mAdapterIsClickable || shoppingListItem.editButtonIsEnabled) return;
-						int position = holder.getAdapterPosition();
-						ShoppingListItem shoppingListItem = getItem(position);
-						ProductList productList = createProductList(shoppingListItem);
-						navigator.openProductDetailFragment(shoppingListItem.displayName, productList);
-					}
-				});
 				// Set Color and Size START
 				String sizeColor = shoppingListItem.color;
 				if (sizeColor == null)
@@ -192,14 +155,14 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 							holder.tvColorSize.setVisibility(GONE);
 							holder.tvProductAvailability.setVisibility(VISIBLE);
 							holder.price.setAlpha(0f);
-holder.price.setVisibility(GONE);
-Utils.setBackgroundColor(holder.tvProductAvailability, R.drawable.round_amber_corner, R.string.out_of_stock);
+							holder.price.setVisibility(GONE);
+							Utils.setBackgroundColor(holder.tvProductAvailability, R.drawable.round_amber_corner, R.string.out_of_stock);
 						} else {
 							holder.llQuantity.setVisibility((shoppingListItem.quantityInStock == 0) ? GONE : VISIBLE);
 							holder.tvProductAvailability.setVisibility((shoppingListItem.quantityInStock == 0) ? VISIBLE : GONE);
 							holder.cbxSelectShoppingListItem.setVisibility((shoppingListItem.quantityInStock == 0) ? GONE : VISIBLE);
-holder.price.setVisibility((shoppingListItem.quantityInStock == 0) ? GONE : VISIBLE);
-holder.price.setAlpha(1f);
+							holder.price.setVisibility((shoppingListItem.quantityInStock == 0) ? GONE : VISIBLE);
+							holder.price.setAlpha(1f);
 							holder.tvColorSize.setVisibility(VISIBLE);
 							Utils.setBackgroundColor(holder.tvProductAvailability, R.drawable.round_amber_corner, R.string.out_of_stock);
 						}
@@ -218,58 +181,36 @@ holder.price.setAlpha(1f);
 					}
 
 				// Set Color and Size END
-				holder.cbxSelectShoppingListItem.setOnClickListener(new View.OnClickListener() {
-					@Override
-					public void onClick(View view) {
-						ShoppingListItem shoppingListItem = getItem(position);
-						int currentPosition = position - 1;
-						if (enableClickEvent(shoppingListItem)|| shoppingListItem.editButtonIsEnabled) return;
-						if (!mAdapterIsClickable) return;
-						if (!shoppingListItem.isSelected) {
-							if (userShouldSetSuburb()) {
-								shoppingListItem.isSelected = false;
-								notifyItemRangeChanged(currentPosition, mShoppingListItem.size());
-								navigator.openSetSuburbProcess(shoppingListItem);
-								return;
-							}
-						}
-						if (shoppingListItem.quantityInStock == 0) return;
-						/*
-						 1. By default quantity will be ZERO.
-						 2. On Selection it will change to ONE.
-						 */
-						shoppingListItem.userQuantity = shoppingListItem.isSelected ? 0 : 1;
-						shoppingListItem.isSelected = !shoppingListItem.isSelected;
-						mShoppingListItem.set(currentPosition,shoppingListItem);
-						navigator.onItemSelectionChange(mShoppingListItem);
-						notifyDataSetChanged();
-					}
-				});
-
-				holder.delete.setOnClickListener(new View.OnClickListener() {
-					@Override
-					public void onClick(View view) {
-						if (!mAdapterIsClickable) return;
-						holder.delete.setVisibility(View.INVISIBLE);
-						holder.progressBar.setVisibility(VISIBLE);
-						navigator.onItemDeleteClick(getItem(position).Id, getItem(position).productId, getItem(position).catalogRefId, true);
-					}
-				});
-				holder.llQuantity.setOnClickListener(new View.OnClickListener() {
-					@Override
-					public void onClick(View view) {
-						ShoppingListItem shoppingListItem = getItem(position);
-						if (shoppingListItem.editButtonIsEnabled || enableClickEvent(shoppingListItem)) return;
-						if (!mAdapterIsClickable) return;
+				holder.cbxSelectShoppingListItem.setOnClickListener(view -> {
+					ShoppingListItem shoppingListItem1 = getItem(position);
+					int currentPosition = position - 1;
+					if (enableClickEvent(shoppingListItem1)) return;
+					if (!mAdapterIsClickable) return;
+					if (!shoppingListItem1.isSelected) {
 						if (userShouldSetSuburb()) {
-							navigator.openSetSuburbProcess(shoppingListItem);
+							shoppingListItem1.isSelected = false;
+							notifyItemRangeChanged(currentPosition, mShoppingListItem.size());
+							navigator.openSetSuburbProcess(shoppingListItem1);
 							return;
 						}
-						if (shoppingListItem.quantityInStock == 0) return;
-						int index = position;
-						index -= 1;
-						navigator.onQuantityChangeClick(index, shoppingListItem);
 					}
+					if (shoppingListItem1.quantityInStock == 0) return;
+					/*
+					 1. By default quantity will be ZERO.
+					 2. On Selection it will change to ONE.
+					 */
+					shoppingListItem1.userQuantity = shoppingListItem1.isSelected ? 0 : 1;
+					shoppingListItem1.isSelected = !shoppingListItem1.isSelected;
+					mShoppingListItem.set(currentPosition, shoppingListItem1);
+					navigator.onItemSelectionChange(mShoppingListItem);
+					notifyDataSetChanged();
+				});
+
+				holder.delete.setOnClickListener(view -> {
+					if (!mAdapterIsClickable) return;
+					holder.delete.setVisibility(View.INVISIBLE);
+					holder.progressBar.setVisibility(VISIBLE);
+					navigator.onItemDeleteClick(getItem(position).Id, getItem(position).productId, getItem(position).catalogRefId, true);
 				});
 				mItemManger.bindView(holder.itemView, position);
 				break;
@@ -375,7 +316,6 @@ holder.price.setAlpha(1f);
 						updatedList.inventoryCallCompleted = shoppinglistItem.inventoryCallCompleted;
 						updatedList.userQuantity = shoppinglistItem.userQuantity;
 						updatedList.quantityInStock = shoppinglistItem.quantityInStock;
-						updatedList.delivery_location = shoppinglistItem.delivery_location;
 						updatedList.isSelected = shoppinglistItem.isSelected;
 					}
 				}
@@ -424,23 +364,6 @@ holder.price.setAlpha(1f);
 	}
 
 	public void editButtonEnabled(boolean isEditMode) {
-		for (ShoppingListItem shoppinglistItem : mShoppingListItem) {
-			shoppinglistItem.editButtonIsEnabled = isEditMode;
-		}
-		notifyDataSetChanged();
 	}
 
-	private void animateOnDeleteButtonVisibility(View view, boolean animate) {
-			int width = getWidthAndHeight((Activity) view.getContext());
-			ObjectAnimator animator = ObjectAnimator.ofFloat(view, "translationX", animate ? -width : width, 1f);
-			animator.setInterpolator(new DecelerateInterpolator());
-			animator.setDuration(300);
-			animator.start();
-	}
-
-	private int getWidthAndHeight(Activity activity) {
-		DisplayMetrics dm = new DisplayMetrics();
-		activity.getWindowManager().getDefaultDisplay().getMetrics(dm);
-		return dm.widthPixels / 10;
-	}
 }
