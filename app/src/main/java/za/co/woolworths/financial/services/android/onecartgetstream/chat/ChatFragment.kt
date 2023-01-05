@@ -29,6 +29,7 @@ class ChatFragment : Fragment() {
         const val AUXILIARY_IMAGE = "auxiliaryImages"
     }
 
+    private var isPaused: Boolean = false
     private val viewModel: ChatViewModel by activityViewModels()
     private var _binding: FragmentOneCartChatBinding? = null
     private val binding get() = _binding!!
@@ -59,7 +60,15 @@ class ChatFragment : Fragment() {
         super.onResume()
         val orderId = (activity as? OCChatActivity)?.getOrderId()
         setupInputLayout()
-        startActivity(OCChatActivity.newIntent(requireActivity(),  orderId ?: ""))
+        if (isPaused) {
+            isPaused = false
+            startActivity(OCChatActivity.newIntent(requireActivity(),  orderId ?: ""))
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        isPaused = true
     }
 
     override fun onDestroyView() {
