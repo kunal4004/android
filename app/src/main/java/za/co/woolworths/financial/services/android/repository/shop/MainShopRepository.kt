@@ -40,7 +40,7 @@ class MainShopRepository : ShopRepository {
         }
     }
 
-    override suspend fun fetchOnDemandCategories(location: Location?): Resource<RootCategories> {
+    override suspend fun fetchOnDemandCategories(location: Location?): Resource<DashRootCategories> {
         return try {
 
             val response = OneAppService.getDashCategoryNavigation(location)
