@@ -14,6 +14,7 @@ import android.view.animation.AnimationUtils
 import android.view.animation.DecelerateInterpolator
 import android.widget.*
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import com.daimajia.swipe.SwipeLayout
@@ -160,8 +161,16 @@ class CartProductAdapter(
                     productHolder.promotionalText.setText(" " + formatAmountToRandAndCentWithSpace(
                         commerceItem.getPriceInfo().discountedAmount))
                     productHolder.llPromotionalText.visibility = VISIBLE
+                    mContext?.let {
+                        productHolder.price.setTextColor(ContextCompat.getColor(it,
+                            R.color.promotional_text_red))
+                    }
                 } else {
                     productHolder.llPromotionalText.visibility = GONE
+                    mContext?.let {
+                        productHolder.price.setTextColor(ContextCompat.getColor(it,
+                            R.color.black))
+                    }
                 }
                 //Set Promotion Text END
 
@@ -262,12 +271,11 @@ class CartProductAdapter(
                     productHolder.llQuantity.isEnabled = !editMode
                     Utils.fadeInFadeOutAnimation(productHolder.llQuantity, editMode)
                     disableItemClickListener(productHolder)
-                } else if(quantityIsLoading){
+                } else if (quantityIsLoading) {
                     productHolder.llQuantity.isEnabled = false
                     Utils.fadeInFadeOutAnimation(productHolder.llQuantity, true)
                     disableItemClickListener(productHolder)
-                }
-                else if (isQuantityUploading) {
+                } else if (isQuantityUploading) {
                     disableItemClickListener(productHolder)
                 } else {
                     productHolder.llQuantity.isEnabled = true
@@ -777,7 +785,7 @@ class CartProductAdapter(
         }
     }
 
-    private fun isQuantityUploading() : Boolean {
+    private fun isQuantityUploading(): Boolean {
         var isUploading = false
         if (!cartItems.isNullOrEmpty()) {
             for (cartItemGroup in cartItems!!) {
@@ -785,7 +793,7 @@ class CartProductAdapter(
                 if (commerceItemList != null) {
                     for (cm in commerceItemList) {
                         if (cm.quantityUploading) {
-                             isUploading = true
+                            isUploading = true
                             break
                         }
                     }
