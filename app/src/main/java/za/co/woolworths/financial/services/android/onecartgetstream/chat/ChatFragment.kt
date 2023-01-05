@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentOneCartChatBinding
@@ -29,7 +28,6 @@ class ChatFragment : Fragment() {
         const val AUXILIARY_IMAGE = "auxiliaryImages"
     }
 
-    private var isPaused: Boolean = false
     private val viewModel: ChatViewModel by activityViewModels()
     private var _binding: FragmentOneCartChatBinding? = null
     private val binding get() = _binding!!
@@ -58,17 +56,7 @@ class ChatFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        val orderId = (activity as? OCChatActivity)?.getOrderId()
         setupInputLayout()
-        if (isPaused) {
-            isPaused = false
-            startActivity(OCChatActivity.newIntent(requireActivity(),  orderId ?: ""))
-        }
-    }
-
-    override fun onPause() {
-        super.onPause()
-        isPaused = true
     }
 
     override fun onDestroyView() {
