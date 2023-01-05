@@ -50,6 +50,7 @@ import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
 import java.net.URLEncoder
 import retrofit2.adapter.rxjava2.Result.response
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.dash.LastOrderDetailsResponse
 
 object OneAppService : RetrofitConfig() {
@@ -325,18 +326,20 @@ object OneAppService : RetrofitConfig() {
         )
     }
 
-    suspend fun getDashCategoryNavigation(location: Location?): retrofit2.Response<RootCategories> {
+    suspend fun getDashCategoryNavigation(location: Location?): retrofit2.Response<DashRootCategories> {
         return withContext(Dispatchers.IO) {
-            val (suburbId: String?, storeId: String?) = getSuburbOrStoreId()
+            val storeId =  WoolworthsApplication.getDashBrowsingValidatePlaceDetails()?.onDemand?.storeId
+                ?: WoolworthsApplication.getValidatePlaceDetails()?.onDemand?.storeId ?: ""
 
             mApiInterface.getDashCategoriesNavigation(
                 getSessionToken(),
                 getDeviceIdentityToken(),
                 location?.latitude,
                 location?.longitude,
-                suburbId,
+                null,
                 storeId,
-                "OnDemand"
+                Delivery.DASH.type,
+                storeId
             )
         }
     }

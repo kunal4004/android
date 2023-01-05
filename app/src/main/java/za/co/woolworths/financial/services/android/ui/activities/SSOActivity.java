@@ -67,6 +67,7 @@ import za.co.woolworths.financial.services.android.util.ServiceTools;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager;
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager;
 import za.co.woolworths.financial.services.android.util.wenum.ConfirmLocation;
 
 @AndroidEntryPoint
@@ -709,6 +710,7 @@ public class SSOActivity extends WebViewActivity {
 		AnalyticsManager.Companion.setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.ATGId, atgId);
 		AnalyticsManager.Companion.setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.C2ID, jwtDecodedModel.C2Id);
 		AnalyticsManager.Companion.setUserId(atgId);
+		FirebaseManager.Companion.setCrashLyticsUserId(atgId);
 	}
 
 	private void unknownNetworkFailure(WebView webView, String description) {

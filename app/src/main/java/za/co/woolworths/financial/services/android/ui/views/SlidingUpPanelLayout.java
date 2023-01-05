@@ -644,6 +644,9 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
 
 	void dispatchOnPanelSlide(View panel) {
+		if(mPanelSlideListeners.isEmpty()) {
+			return;
+		}
 		synchronized (mPanelSlideListeners) {
 			for (PanelSlideListener l : mPanelSlideListeners) {
 				l.onPanelSlide(panel, mSlideOffset);
@@ -653,6 +656,9 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
 
 	void dispatchOnPanelStateChanged(View panel, PanelState previousState, PanelState newState) {
+		if(mPanelSlideListeners.isEmpty()) {
+			return;
+		}
 		synchronized (mPanelSlideListeners) {
 			for (PanelSlideListener l : mPanelSlideListeners) {
 				l.onPanelStateChanged(panel, previousState, newState);
