@@ -24,10 +24,10 @@ class NoStoreCardFragment : Fragment(R.layout.instant_store_card_replacement_car
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val binding = InstantStoreCardReplacementCardFragmentBinding.bind(view)
-        binding.storeCardImageView.contentDescription = getString(R.string.active_store_card_image_on_overlay)
+        binding.storeCardImageView.contentDescription = context?.getString(R.string.active_store_card_image_on_overlay)
         binding.accountHolderNameTextView.text = KotlinUtils.getCardHolderNameSurname()
         binding.accountHolderNameTextView.setTextColor(Color.WHITE)
-        binding.accountHolderNameTextView.contentDescription = getString(R.string.active_store_card_image_embossed_user_name_on_overlay)
+        binding.accountHolderNameTextView.contentDescription = context?.getString(R.string.active_store_card_image_embossed_user_name_on_overlay)
     }
 
 }

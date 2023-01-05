@@ -63,21 +63,21 @@ class FreezeUnFreezeStoreCardFragment : Fragment(R.layout.freeze_unfreeze_card_f
         storeCard: StoreCardFeatureType.StoreCardIsTemporaryFreeze?,
         binding: FreezeUnfreezeCardFragmentBinding
     ) {
-        binding.accountHolderNameTextView.contentDescription = getString(R.string.active_store_card_image_embossed_user_name_on_overlay)
+        binding.accountHolderNameTextView.contentDescription = context?.getString(R.string.active_store_card_image_embossed_user_name_on_overlay)
         binding.accountHolderNameTextView.setTextColor(Color.WHITE)
         when (storeCard?.isStoreCardFrozen){
             true -> {
                 binding.accountHolderNameTextView.visibility =View.GONE
                 binding.storeCardImageView.setImageDrawable(ContextCompat.getDrawable(
                     requireContext(),R.drawable.store_card_frozen))
-                binding.storeCardImageView.contentDescription = getString(R.string.frozen_store_card_image_on_overlay)
+                binding.storeCardImageView.contentDescription = context?.getString(R.string.frozen_store_card_image_on_overlay)
             }
             else -> {
                 binding.accountHolderNameTextView.visibility = View.VISIBLE
                 binding.storeCardImageView.setImageDrawable( ContextCompat.getDrawable(
                     requireContext(),R.drawable.store_card_active))
-                binding.accountHolderNameTextView.text = getString(R.string.active_store_card_image_embossed_user_name_on_overlay)
-                binding.storeCardImageView.contentDescription = getString(R.string.active_store_card_image_on_overlay)
+                binding.accountHolderNameTextView.text = context?.getString(R.string.active_store_card_image_embossed_user_name_on_overlay)
+                binding.storeCardImageView.contentDescription = context?.getString(R.string.active_store_card_image_on_overlay)
             }
         }
     }

@@ -31,7 +31,7 @@ class InstantStoreCardReplacementCardFragment : Fragment(R.layout.instant_store_
         val card = arguments?.getParcelable<StoreCardFeatureType?>(STORE_CARD_FEATURE_TYPE) as? StoreCardFeatureType.StoreCardIsInstantReplacementCardAndInactive
         binding.accountHolderNameTextView.visibility = View.GONE
         binding.storeCardImageView.setImageResource(R.drawable.store_card_inactive)
-        binding.storeCardImageView.contentDescription = getString(R.string.inactive_store_card_image_on_overlay)
+        binding.storeCardImageView.contentDescription = context?.getString(R.string.inactive_store_card_image_on_overlay)
         setLabel(binding)
         binding.storeCardImageView.onClick {
             (requireActivity() as? StoreCardActivity)?.apply {
@@ -45,7 +45,7 @@ class InstantStoreCardReplacementCardFragment : Fragment(R.layout.instant_store_
         binding.cardLabel.visibility = View.GONE
         binding.tempCardLabel.setTextColor(ContextCompat.getColor(requireContext(),R.color.inactive_label_color))
         binding.cardLabel.setTextColor(ContextCompat.getColor(requireContext(),R.color.inactive_label_color))
-        binding.tempCardLabel.text = getString(R.string.inactive)
-        binding.tempCardLabel.text = getString(R.string.inactive_store_card_image_text_label_on_overlay)
+        binding.tempCardLabel.text = context?.getString(R.string.inactive)
+        binding.tempCardLabel.text = context?.getString(R.string.inactive_store_card_image_text_label_on_overlay)
     }
 }
