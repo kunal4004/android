@@ -1876,7 +1876,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             activity = requireActivity()
             currentState = TAG_AVAILABLE_VOUCHERS_TOAST
             cartText = availableVouchersCount.toString()
-            pixel = (binding.btnCheckOut.height ?: 0 * 2.5).toInt()
+            pixel = (binding.btnCheckOut.height * 3.0).toInt()
             view = binding.btnCheckOut
             message =
                 requireContext().resources.getQuantityString(R.plurals.vouchers_available,
