@@ -137,10 +137,7 @@ class ChatFloatingActionButtonBubbleView(
     private  fun isUserInPaymentOptionScreen(): Boolean  {
         val creditDebitCardNestedScrollView = activity?.findViewById<NestedScrollView>(R.id.creditDebitCardPaymentsScrollView)
         val nestedScrollView = scrollableView as? NestedScrollView
-        if (nestedScrollView?.id == creditDebitCardNestedScrollView?.id) {
-            return  true
-        }
-        return  false
+        return (nestedScrollView?.id == creditDebitCardNestedScrollView?.id)
     }
 
     private fun animateChatIcon() {
