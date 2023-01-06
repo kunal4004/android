@@ -266,5 +266,6 @@
     <dimen name="three_sp">3sp</dimen>
     <dimen name="one_hundred_eight_dp">108dp</dimen>
     <dimen name="twenty_five_sp">25sp</dimen>
+    <dimen name="hundred_and_twelve_dp">112dp</dimen>
 </resources>
 
