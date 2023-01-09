@@ -12,6 +12,7 @@ import com.awfs.coordination.R
 import com.awfs.coordination.databinding.AvailableVouchersFragmentBinding
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.tabs.TabLayout
+import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.VoucherDetails
@@ -20,9 +21,12 @@ import za.co.woolworths.financial.services.android.ui.adapters.CashBackVouchersA
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment.Companion.CASH_BACK_VOUCHERS
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment.Companion.VOUCHER_DETAILS
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.vouchersBottomDialog.VouchersBottomDialog
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_3000_MS
 import za.co.woolworths.financial.services.android.util.Utils
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class AvailableVoucherFragment : Fragment(R.layout.available_vouchers_fragment), View.OnClickListener, VoucherAndPromoCodeContract.AvailableVoucherView {
 
     private lateinit var binding: AvailableVouchersFragmentBinding
@@ -34,6 +38,8 @@ class AvailableVoucherFragment : Fragment(R.layout.available_vouchers_fragment),
     private var isFromCashBackVoucher: Boolean = false
     private var wrewardsListVisiblePosition = 0
     private var cashBackListVisiblePosition = 0
+    @Inject
+    lateinit var vouchersBottomDialog: VouchersBottomDialog
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -41,6 +47,7 @@ class AvailableVoucherFragment : Fragment(R.layout.available_vouchers_fragment),
 
         activity?.findViewById<TextView>(R.id.toolbarText)?.text = bindString(R.string.available_vouchers)
         binding.redeemVoucher?.setOnClickListener(this)
+        binding.cashBackVouchersInfo.setOnClickListener(this)
         binding.noVoucherLayout.applyForCreditCard?.setOnClickListener(this)
         cashBackVouchersAdapter = CashBackVouchersAdapter(ArrayList())
         voucherTabSelection()
@@ -67,8 +74,12 @@ class AvailableVoucherFragment : Fragment(R.layout.available_vouchers_fragment),
                 when (tab?.position) {
                     0 -> {
                         showWrewardsVouchers()
-                        cashBackListVisiblePosition =
-                       (binding.rcCashBackVoucherList.layoutManager as LinearLayoutManager).findFirstCompletelyVisibleItemPosition()
+                        presenter?.getCashBackVouchers()?.let {
+                            if (it.size > 0) {
+                                cashBackListVisiblePosition =
+                                    (binding.rcCashBackVoucherList.layoutManager as LinearLayoutManager).findFirstCompletelyVisibleItemPosition()
+                            }
+                        }
                     }
                     1 -> {
                         showCashBackVouchers()
@@ -98,6 +109,7 @@ class AvailableVoucherFragment : Fragment(R.layout.available_vouchers_fragment),
                     }
                     rcvVoucherList.visibility = View.GONE
                     redeemVoucher.visibility = View.GONE
+                    cashBackVouchersInfo.visibility = View.VISIBLE
                     vouchersTitle.text = bindString(R.string.your_cash_back_vouchers)
                     vouchersSubTitle.text = bindString(R.string.cash_back_vouchers_desc)
                     cashBackVouchersAdapter.renderCashBackVouchers(it)
@@ -112,6 +124,7 @@ class AvailableVoucherFragment : Fragment(R.layout.available_vouchers_fragment),
                     dataLayout.visibility = View.GONE
                     redeemVoucher.visibility = View.GONE
                     noVoucherLayout.noVouchersAvailable.visibility = View.VISIBLE
+                    noVoucherLayout.title.text = getString(R.string.no_cash_back_right_now)
                 }
             }
         }
@@ -126,6 +139,7 @@ class AvailableVoucherFragment : Fragment(R.layout.available_vouchers_fragment),
                     dataLayout.visibility = View.VISIBLE
                     noVoucherLayout.noVouchersAvailable.visibility = View.GONE
                     redeemVoucher.visibility = View.VISIBLE
+                    cashBackVouchersInfo.visibility = View.GONE
                     vouchersTitle.text = bindString(R.string.select_wvouchers_redeem)
                     vouchersSubTitle.text = bindString(R.string.select_wvouchers_desc)
                     showAvailableVouchers()
@@ -136,7 +150,7 @@ class AvailableVoucherFragment : Fragment(R.layout.available_vouchers_fragment),
                 } else {
                     dataLayout.visibility = View.GONE
                     noVoucherLayout.noVouchersAvailable.visibility = View.VISIBLE
-
+                    noVoucherLayout.title.text = getString(R.string.no_wrewords_right_now)
                 }
             }
         }
@@ -150,8 +164,20 @@ class AvailableVoucherFragment : Fragment(R.layout.available_vouchers_fragment),
             R.id.applyForCreditCard -> {
                 //TODO: add apply for credit card
             }
+            R.id.cashBackVouchersInfo -> {
+                showCashBackInfo()
+            }
 
         }
+    }
+
+    private fun showCashBackInfo() {
+        vouchersBottomDialog.showCashBackVouchersInfo(
+            requireActivity(),
+            getString(R.string.using_cash_back_vouchers),
+            getString(R.string.cash_back_cancellation),
+            true
+        )
     }
 
     override fun showAvailableVouchers() {
@@ -199,16 +225,23 @@ class AvailableVoucherFragment : Fragment(R.layout.available_vouchers_fragment),
 
     override fun showRedeemVoucherProgress() {
         activity?.findViewById<AppBarLayout>(R.id.appbar)?.visibility = View.GONE
-        binding.dataLayout.visibility = View.GONE
-        binding.redeemVoucher.visibility = View.GONE
-        binding.progressLayout.visibility = View.VISIBLE
+        binding.apply {
+            dataLayout.visibility = View.GONE
+            redeemVoucher.visibility = View.GONE
+            voucherTabLayout.visibility = View.GONE
+            progressLayout.visibility = View.VISIBLE
+        }
+
     }
 
     override fun hideRedeemVoucherProgress() {
-        binding.progressLayout.visibility = View.GONE
         activity?.findViewById<AppBarLayout>(R.id.appbar)?.visibility = View.VISIBLE
-        binding.dataLayout.visibility = View.VISIBLE
-        binding.redeemVoucher.visibility = View.VISIBLE
+        binding.apply {
+            progressLayout.visibility = View.GONE
+            dataLayout.visibility = View.VISIBLE
+            voucherTabLayout.visibility = View.VISIBLE
+            redeemVoucher.visibility = View.VISIBLE
+        }
     }
 
     override fun enableRedeemButton() {
