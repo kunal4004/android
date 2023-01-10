@@ -314,7 +314,7 @@
             android:name="za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow"
             android:theme="@style/Theme.AppCompat.Transparent.NoActionBar" />
         <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity"
+            android:name="za.co.woolworths.financial.services.android.ui.activities.webview.activities.WInternalWebPageActivity"
             android:screenOrientation="portrait"
             android:theme="@style/FaqStyle" />
         <activity

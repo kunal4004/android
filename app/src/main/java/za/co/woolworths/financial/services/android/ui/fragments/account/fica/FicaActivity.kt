@@ -37,7 +37,7 @@ class FicaActivity : BindingBaseActivity<ActivityFicaBinding>(ActivityFicaBindin
         binding.ficaDialog.let {
         when (view) {
             it.btnFicaMaybeLater -> {
-                onBackPressed()
+                onBackPressedDispatcher.onBackPressed()
             }
             it.btnFicaVerify -> {
                 Utils.triggerFireBaseEvents(
@@ -54,7 +54,7 @@ class FicaActivity : BindingBaseActivity<ActivityFicaBinding>(ActivityFicaBindin
             FirebaseManagerAnalyticsProperties.FICA_VERIFY_SKIP,
             this
         )
-        super.onBackPressed()
+        onBackPressedDispatcher.onBackPressed()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
