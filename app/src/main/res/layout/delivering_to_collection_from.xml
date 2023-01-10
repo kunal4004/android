@@ -156,7 +156,7 @@
         android:gravity="end"
         android:text="@string/weekends_and_public_holidays_excluded"
         android:textColor="@color/color_444444"
-        android:textSize="@dimen/twelve_sp"
+        android:textSize="@dimen/ten_sp"
         android:visibility="gone"
         android:layout_marginTop="@dimen/zero_dp"
         app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
