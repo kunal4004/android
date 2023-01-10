@@ -189,12 +189,11 @@ class OrderConfirmationFragment :
                         binding.deliveryCollectionDetailsConstraintLayout.apply {
                             val other: Int = response?.items?.other?.size ?: 0
                             val food: Int = response?.items?.food?.size ?: 0
-                            if(other>0 && food==0){
+                            if (other > 0 && food == 0) {
                                 deliveryTextView.text = it.getText(R.string.collection_semicolon)
                                 infoDeliveryDateTimeTextView.visibility = VISIBLE
                                 binding.dashOrderDetailsLayout.root.visibility = GONE
-                            }
-                            else{
+                            } else {
                                 deliveryTextView.text = it.getText(R.string.food_items_semicolon)
                                 infoDeliveryDateTimeTextView.visibility = GONE
                             }
@@ -533,8 +532,6 @@ class OrderConfirmationFragment :
             cncFoodItemsOrderListAdapter = ItemsOrderListAdapter(cncOtherItemsOrder!!)
         }
         binding.cncOrderDetailsLayout.itemsRecyclerView.adapter = cncFoodItemsOrderListAdapter
-
-
     }
 
     private fun initCncFoodRecyclerView() {
