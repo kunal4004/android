@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentOneCartChatBinding
@@ -27,7 +26,6 @@ class ChatFragment : Fragment() {
     companion object{
         const val ARG_CHANNEL_ID = "channelId"
         const val AUXILIARY_IMAGE = "auxiliaryImages"
-
     }
 
     private val viewModel: ChatViewModel by activityViewModels()

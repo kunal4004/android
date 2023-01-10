@@ -268,5 +268,6 @@
     <dimen name="twenty_five_sp">25sp</dimen>
     <dimen name="hundred_and_fifty_five_dp">155dp</dimen>
     <dimen name="hundred_and_sixty_dp">160dp</dimen>
+    <dimen name="hundred_and_twelve_dp">112dp</dimen>
 </resources>
 
