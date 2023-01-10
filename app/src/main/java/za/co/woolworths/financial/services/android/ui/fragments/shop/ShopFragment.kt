@@ -618,7 +618,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
             it.toFloat()
         }
         shopCustomTabBinding?.tvTitle?.text = tabTitle?.get(pos)
-        shopCustomTabBinding?.foodOnlyText?.visibility = if (pos == 0) View.GONE else View.VISIBLE
+        shopCustomTabBinding?.foodOnlyText?.visibility = if (pos == 2) View.VISIBLE else View.GONE
         if (tabLayout.getTabAt(pos)?.view?.isSelected == true) {
             val myRiadFont =
                 Typeface.createFromAsset(requireActivity().assets, "fonts/MyriadPro-Semibold.otf")
