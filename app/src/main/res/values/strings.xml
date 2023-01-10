@@ -2837,4 +2837,8 @@
     <string name="who_is_collecting_header_title">Who Is Collecting?</string>
     <string name="recipient_name_hint">As displayed on identification document</string>
 
+    <string name="fashion_items">%1$s Fashion Items</string>
+    <string name="fashion_item">%1$s Fashion Item</string>
+    <string name="weekends_and_public_holidays_excluded">Weekends and public holidays excluded.</string>
+
 </resources>
