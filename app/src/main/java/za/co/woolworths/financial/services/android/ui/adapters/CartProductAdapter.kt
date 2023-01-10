@@ -107,7 +107,8 @@ class CartProductAdapter(
                 val commerceItems = itemRow.commerceItems
                 headerHolder.tvHeaderTitle.setText(if ((commerceItems?.size
                         ?: 0) > 1
-                ) commerceItems?.size.toString() + " " + capitaliseFirstLetter(itemRow.category) + " Items" else commerceItems?.size.toString() + " " + capitaliseFirstLetter(itemRow.category) + " Item")
+                ) commerceItems?.size.toString() + " " + capitaliseFirstLetter(itemRow.category) + " Items" else commerceItems?.size.toString() + " " + capitaliseFirstLetter(
+                    itemRow.category) + " Item")
                 headerHolder.addToListListener(commerceItems)
                 if (itemRow.category?.uppercase(Locale.getDefault())
                         .equals(GIFT_ITEM, ignoreCase = true)
@@ -226,7 +227,7 @@ class CartProductAdapter(
                     commerceItem.isDeletePressed = isChecked
                     onItemClick.onCheckBoxChange(isChecked, commerceItem)
                 }
-                productHolder.addCountImage.setOnClickListener {
+                productHolder.addCountImageLayout.setOnClickListener {
                     if (commerceItem.quantityInStock == 0) return@setOnClickListener
                     if (!NetworkManager.getInstance().isConnectedToNetwork(mContext)) {
                         ErrorHandlerView(mContext).showToast()
@@ -239,7 +240,7 @@ class CartProductAdapter(
                         onItemClick.onChangeQuantity(commerceItem, userQuantity + 1)
                     }
                 }
-                productHolder.minusDeleteCountImage.setOnClickListener {
+                productHolder.minusDeleteCountImageLayout.setOnClickListener {
                     if (commerceItem.quantityInStock == 0) return@setOnClickListener
                     val userQuantity = commerceItem.commerceItemInfo?.getQuantity() ?: 0
                     if (userQuantity > 1) {
@@ -259,7 +260,10 @@ class CartProductAdapter(
                     commerceItem.isDeletePressed = true
                     onRemoveSingleItem(productHolder, commerceItem)
                 }
-                productHolder.clCartItems.setOnClickListener {
+                productHolder.productImage.setOnClickListener {
+                    onItemClick.onOpenProductDetail(commerceItem)
+                }
+                productHolder.tvTitle.setOnClickListener {
                     onItemClick.onOpenProductDetail(commerceItem)
                 }
                 if (commerceItem.lowStockThreshold > commerceItem.quantityInStock && commerceItem.quantityInStock > 0 && lowStock?.isEnabled == true) {
@@ -430,21 +434,21 @@ class CartProductAdapter(
             .resources.getDimension(if (userQuantity == 1) R.dimen.six_dp else R.dimen.ten_dp)
             .toInt()
         productHolder.minusDeleteCountImage.setPadding(padding, padding, padding, padding)
-        productHolder.addCountImage.visibility = if (commerceItem.quantityInStock == 1 ||
+        productHolder.addCountImageLayout.visibility = if (commerceItem.quantityInStock == 1 ||
             userQuantity == commerceItem.quantityInStock
         ) INVISIBLE else VISIBLE
     }
 
     private fun disableItemClickListener(productHolder: ProductHolder) {
         productHolder.clCartItems.isClickable = false
-        productHolder.minusDeleteCountImage.isClickable = false
-        productHolder.addCountImage.isClickable = false
+        productHolder.minusDeleteCountImageLayout.isClickable = false
+        productHolder.addCountImageLayout.isClickable = false
     }
 
     private fun enableItemClickListener(productHolder: ProductHolder) {
         productHolder.clCartItems.isClickable = true
-        productHolder.minusDeleteCountImage.isClickable = true
-        productHolder.addCountImage.isClickable = true
+        productHolder.minusDeleteCountImageLayout.isClickable = true
+        productHolder.addCountImageLayout.isClickable = true
     }
 
     private fun getSizeColor(commerceItemInfo: CommerceItemInfo?): String? {
@@ -647,7 +651,8 @@ class CartProductAdapter(
         val cartLowStock: View
         val txtCartLowStock: TextView
         val minusDeleteCountImage: ImageView
-        val addCountImage: ImageView
+        val minusDeleteCountImageLayout: RelativeLayout
+        val addCountImageLayout: RelativeLayout
         val cbShoppingList: CheckBox
         val pbLoadProduct: ProgressBar
         val swipeRight: RelativeLayout
@@ -669,7 +674,8 @@ class CartProductAdapter(
             tvProductAvailability = view.findViewById(R.id.tvProductAvailability)
             swipeLayout = view.findViewById(R.id.swipe)
             minusDeleteCountImage = view.findViewById(R.id.minusDeleteCountImage)
-            addCountImage = view.findViewById(R.id.addCountImage)
+            minusDeleteCountImageLayout = view.findViewById(R.id.minusDeleteCountImageLayout)
+            addCountImageLayout = view.findViewById(R.id.addCountImageLayout)
             cartLowStock = view.findViewById(R.id.cartLowStock)
             txtCartLowStock = view.findViewById(R.id.txtCartLowStock)
             cbShoppingList = view.findViewById(R.id.cbShoppingList)
