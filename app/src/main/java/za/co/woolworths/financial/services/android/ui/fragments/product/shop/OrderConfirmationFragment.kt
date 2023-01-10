@@ -279,14 +279,14 @@ class OrderConfirmationFragment :
                     otherDeliveryDateTimeTextView.visibility = VISIBLE
                     foodDeliveryDateTimeTextView.text = applyBoldBeforeComma(
                         response
-                            .deliveryDetails?.deliveryInfos?.get(0)?.deliveryDateAndTime
+                            .deliveryDetails?.deliveryInfos?.getOrNull(0)?.deliveryDateAndTime
                     )
                     otherDeliveryDateTimeTextView.text = applyBoldBeforeComma(
-                        response.deliveryDetails?.deliveryInfos?.get(1)?.deliveryDateAndTime
+                        response.deliveryDetails?.deliveryInfos?.getOrNull(1)?.deliveryDateAndTime
                     )
                     if(Delivery.getType(response?.orderSummary?.fulfillmentDetails?.deliveryType)==Delivery.CNC){
                         otherDeliveryDateTimeTextView.text = applyBoldBeforeComma(
-                            response.deliveryDetails?.deliveryInfos?.get(1)?.time?.removeRange(0,6)
+                            response.deliveryDetails?.deliveryInfos?.getOrNull(1)?.time?.removeRange(0,6)
                         )
                         infoDeliveryDateTimeTextView.visibility = VISIBLE
                     }
@@ -303,7 +303,7 @@ class OrderConfirmationFragment :
                     if(other>0 && food==0){
                         deliveryDateTimeTextView.text = applyBoldBeforeComma(
                             response
-                                .deliveryDetails?.deliveryInfos?.get(0)?.time?.removeRange(0,6)
+                                .deliveryDetails?.deliveryInfos?.getOrNull(0)?.time?.removeRange(0,6)
                         )
                         infoDeliveryDateTimeTextView.visibility = VISIBLE
                     }
@@ -547,20 +547,20 @@ class OrderConfirmationFragment :
     }
 
     private fun initialiseItemsOrder(items: OrderItems?) {
-        if (items?.other != null && items.other!!.isNotEmpty()) {
-            itemsOrder?.addAll(items.other!!)
+        if (!items?.other.isNullOrEmpty()) {
+            itemsOrder?.addAll(items?.other!!)
         }
-        if (items?.food != null && items.food!!.isNotEmpty()) {
-            itemsOrder?.addAll(items.food!!)
+        if (!items?.food.isNullOrEmpty()) {
+            itemsOrder?.addAll(items?.food!!)
         }
     }
 
     private fun initialiseCncItemsOrder(items: OrderItems?) {
-        if (items?.other != null && items.other!!.isNotEmpty()) {
-            cncOtherItemsOrder?.addAll(items.other!!)
+        if (!items?.other.isNullOrEmpty()) {
+            cncOtherItemsOrder?.addAll(items?.other!!)
         }
-        if (items?.food != null && items.food!!.isNotEmpty()) {
-            cncFoodItemsOrder?.addAll(items.food!!)
+        if (!items?.food.isNullOrEmpty()) {
+            cncFoodItemsOrder?.addAll(items?.food!!)
         }
     }
 
