@@ -229,6 +229,7 @@ class ShoppingListDetailViewModel @Inject constructor(
     }
 
     /**
+     * //TODO: not fixed requirement.
      * Requirement: Sort list as Unavailable -> Out of stock -> Available products.
      */
     fun sortList() {
