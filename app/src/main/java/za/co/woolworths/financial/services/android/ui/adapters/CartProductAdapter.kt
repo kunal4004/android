@@ -105,10 +105,11 @@ class CartProductAdapter(
             CartRowType.HEADER -> {
                 val headerHolder = holder as CartHeaderViewHolder
                 val commerceItems = itemRow.commerceItems
-                headerHolder.tvHeaderTitle.setText(if ((commerceItems?.size
-                        ?: 0) > 1
-                ) commerceItems?.size.toString() + " " + capitaliseFirstLetter(itemRow.category) + " Items" else commerceItems?.size.toString() + " " + capitaliseFirstLetter(
-                    itemRow.category) + " Item")
+                headerHolder.tvHeaderTitle.setText(mContext?.resources?.getQuantityString(
+                    R.plurals.category_item,
+                    commerceItems?.size ?: 0,
+                    commerceItems?.size ?: 0,
+                    capitaliseFirstLetter(itemRow.category)))
                 headerHolder.addToListListener(commerceItems)
                 if (itemRow.category?.uppercase(Locale.getDefault())
                         .equals(GIFT_ITEM, ignoreCase = true)
