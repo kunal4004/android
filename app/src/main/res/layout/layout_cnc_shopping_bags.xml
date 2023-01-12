@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cncShoppingBagsConstraintLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/tvShoppingBagsTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/futura_semi_bold"
+            android:paddingTop="@dimen/sixteen_dp"
+            android:paddingBottom="@dimen/sixteen_dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:text="@string/your_shopping_bags"
+            android:textColor="@color/black"
+            android:textSize="@dimen/twenty_sp"/>
+
+        <TextView
+            android:id="@+id/shoppingBagsDec"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/shopping_bags_dec"
+            android:fontFamily="@font/myriad_pro_regular"
+            android:lineSpacingExtra="@dimen/two_dp"
+            android:layout_marginEnd="@dimen/twenty_four_dp"
+            android:layout_marginTop="@dimen/thirty_dp"
+            android:textColor="@color/black"
+            android:textSize="@dimen/fourteen_sp"
+            app:layout_constraintTop_toBottomOf="@id/tvShoppingBagsTitle">
+
+        </TextView>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/noBagsOrFreeBagsConstraintLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/twenty_two_dp"
+            android:paddingBottom="@dimen/nineteen_dp"
+            android:layout_marginTop="@dimen/twenty_four_dp"
+            android:background="@drawable/bg_select_store"
+            app:layout_constraintTop_toBottomOf="@id/shoppingBagsDec">
+
+            <ImageView
+                android:id="@+id/check_mark_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/fourteen_dp"
+                android:contentDescription="@string/placeholder"
+                android:src="@drawable/check_mark_icon"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_no_bags_or_free_bags"
+                app:layout_constraintTop_toTopOf="@+id/free_bag_desc"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_no_bags_or_free_bags"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/fourteen_dp"
+                android:layout_marginTop="@dimen/ten_dp"
+                android:fontFamily="@font/myriad_pro_semi_bold"
+                android:text="@string/no_bags_or_free_bags"
+                android:textSize="@dimen/fifteen_sp"
+                app:layout_constraintStart_toEndOf="@+id/check_mark_icon" />
+
+            <TextView
+                android:id="@+id/free_bag_desc"
+                android:layout_width="0dp"
+                android:text="@string/free_bag_desc"
+                android:gravity="top"
+                android:fontFamily="@font/myriad_pro_regular"
+                android:textSize="@dimen/fourteen_sp"
+                android:layout_marginStart="@dimen/fourteen_dp"
+                android:layout_marginTop="@dimen/two_dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_no_bags_or_free_bags"
+                app:layout_constraintStart_toEndOf="@+id/check_mark_icon"
+                android:layout_height="wrap_content"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
