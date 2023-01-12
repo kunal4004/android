@@ -15,10 +15,13 @@ import com.google.android.material.tabs.TabLayout
 import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse
+import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.VoucherDetails
 import za.co.woolworths.financial.services.android.ui.adapters.AvailableVouchersToRedeemListAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.CashBackVouchersAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.ui.fragments.account.applynow.activities.ApplyNowActivity
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment.Companion.BLACK_CARD_HOLDER
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment.Companion.CASH_BACK_VOUCHERS
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment.Companion.VOUCHER_DETAILS
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.vouchersBottomDialog.VouchersBottomDialog
@@ -38,6 +41,8 @@ class AvailableVoucherFragment : Fragment(R.layout.available_vouchers_fragment),
     private var isFromCashBackVoucher: Boolean = false
     private var wrewardsListVisiblePosition = 0
     private var cashBackListVisiblePosition = 0
+    private var isBlackCardHolder : Boolean = false
+
     @Inject
     lateinit var vouchersBottomDialog: VouchersBottomDialog
 
@@ -64,6 +69,7 @@ class AvailableVoucherFragment : Fragment(R.layout.available_vouchers_fragment),
         presenter = AvailableVoucherPresenterImpl(this, AvailableVoucherInteractorImpl())
         voucherDetails = Utils.strToJson(activity?.intent?.getStringExtra(VOUCHER_DETAILS), VoucherDetails::class.java) as VoucherDetails?
         isFromCashBackVoucher = checkNotNull(activity?.intent?.getBooleanExtra(CASH_BACK_VOUCHERS,false))
+        isBlackCardHolder = checkNotNull(activity?.intent?.getBooleanExtra(BLACK_CARD_HOLDER,false))
         voucherDetails?.vouchers?.let { presenter?.setVouchers(it) }
         voucherDetails?.cashBack?.let { presenter?.setCashBackVouchers(it) }
     }
@@ -83,6 +89,13 @@ class AvailableVoucherFragment : Fragment(R.layout.available_vouchers_fragment),
                     }
                     1 -> {
                         showCashBackVouchers()
+                        presenter?.getVouchers()?.let {
+                            if (it.size > 0) {
+                                wrewardsListVisiblePosition =
+                                    (binding.rcvVoucherList.layoutManager as LinearLayoutManager).findFirstCompletelyVisibleItemPosition()
+                            }
+                        }
+
                     }
                 }
             }
@@ -107,6 +120,14 @@ class AvailableVoucherFragment : Fragment(R.layout.available_vouchers_fragment),
                         layoutManager = LinearLayoutManager(requireActivity())
                         adapter = cashBackVouchersAdapter
                     }
+                    cashBackVouchersAdapter.onItemClick = {
+                        vouchersBottomDialog.showCashBackVouchersInfo(
+                            requireActivity(),
+                            getString(R.string.can_not_redeem_cash_back_vouchers),
+                            getString(R.string.cash_back_cancellation),
+                            false
+                        )
+                    }
                     rcvVoucherList.visibility = View.GONE
                     redeemVoucher.visibility = View.GONE
                     cashBackVouchersInfo.visibility = View.VISIBLE
@@ -114,8 +135,7 @@ class AvailableVoucherFragment : Fragment(R.layout.available_vouchers_fragment),
                     vouchersSubTitle.text = bindString(R.string.cash_back_vouchers_desc)
                     cashBackVouchersAdapter.renderCashBackVouchers(it)
                     cashBackVouchersAdapter.notifyDataSetChanged()
-                    wrewardsListVisiblePosition =
-                        (rcvVoucherList.layoutManager as LinearLayoutManager).findFirstCompletelyVisibleItemPosition()
+
                     (rcCashBackVoucherList.layoutManager as LinearLayoutManager).scrollToPosition(
                         cashBackListVisiblePosition)
                     cashBackListVisiblePosition = 0
@@ -124,7 +144,15 @@ class AvailableVoucherFragment : Fragment(R.layout.available_vouchers_fragment),
                     dataLayout.visibility = View.GONE
                     redeemVoucher.visibility = View.GONE
                     noVoucherLayout.noVouchersAvailable.visibility = View.VISIBLE
-                    noVoucherLayout.title.text = getString(R.string.no_cash_back_right_now)
+                    if (isBlackCardHolder) {
+                        noVoucherLayout.subTitle.visibility = View.VISIBLE
+                        noVoucherLayout.applyForCreditCard.visibility = View.VISIBLE
+                        noVoucherLayout.title.text =
+                            getString(R.string.you_don_t_qualify_for_cash_back)
+                    } else {
+                        noVoucherLayout.title.text = getString(R.string.no_cash_back_right_now)
+                    }
+
                 }
             }
         }
@@ -148,6 +176,8 @@ class AvailableVoucherFragment : Fragment(R.layout.available_vouchers_fragment),
                     wrewardsListVisiblePosition = 0
 
                 } else {
+                    noVoucherLayout.subTitle.visibility = View.GONE
+                    noVoucherLayout.applyForCreditCard.visibility = View.GONE
                     dataLayout.visibility = View.GONE
                     noVoucherLayout.noVouchersAvailable.visibility = View.VISIBLE
                     noVoucherLayout.title.text = getString(R.string.no_wrewords_right_now)
@@ -162,7 +192,7 @@ class AvailableVoucherFragment : Fragment(R.layout.available_vouchers_fragment),
                 redeemVouchers()
             }
             R.id.applyForCreditCard -> {
-                //TODO: add apply for credit card
+                redirectToMyAccountsCardsActivity(ApplyNowState.BLACK_CREDIT_CARD)
             }
             R.id.cashBackVouchersInfo -> {
                 showCashBackInfo()
@@ -277,6 +307,16 @@ class AvailableVoucherFragment : Fragment(R.layout.available_vouchers_fragment),
                 it.visibility = View.GONE
             }, DELAY_3000_MS)
         }
+    }
+
+    private fun redirectToMyAccountsCardsActivity(applyNowState: ApplyNowState) {
+        val activity = activity ?: return
+        val intent = Intent(requireActivity(), ApplyNowActivity::class.java)
+        val bundle = Bundle()
+        bundle.putSerializable("APPLY_NOW_STATE", applyNowState)
+        intent.putExtras(bundle)
+        startActivity(intent)
+        activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
     }
 
 }

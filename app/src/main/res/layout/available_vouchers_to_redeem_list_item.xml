@@ -28,14 +28,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="@dimen/ten_dp" />
+        app:layout_constraintGuide_begin="@dimen/fifteen_dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guidelineBottom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_end="@dimen/ten_dp" />
+        app:layout_constraintGuide_end="@dimen/fifteen_dp" />
 
 
     <CheckBox
@@ -53,7 +53,7 @@
         style="@style/futura_semi_bold_black"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/ten_dp"
+        android:layout_marginTop="@dimen/eight_dp"
         android:layout_marginEnd="@dimen/ten_dp"
         android:lineSpacingMultiplier="1.33"
         android:textSize="@dimen/eighteen_sp"
@@ -69,8 +69,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/five_dp"
         android:layout_marginEnd="@dimen/five_dp"
-        android:lineSpacingMultiplier="1.33"
-        android:textSize="@dimen/eleven_sp"
+        android:visibility="gone"
+        android:textSize="@dimen/twelve_sp"
         android:textColor="@color/color_444444"
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
         app:layout_constraintTop_toBottomOf="@+id/voucherDetails"
@@ -86,7 +86,6 @@
         android:textSize="@dimen/twelve_sp"
         android:textColor="@color/input_error_color_code"
         app:layout_constraintBottom_toTopOf="@id/guidelineBottom"
-        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
         app:layout_constraintStart_toStartOf="@id/guidelineStart"
         app:layout_constraintTop_toBottomOf="@id/voucherDetails" />
@@ -96,14 +95,12 @@
         style="@style/myriad_pro_regular"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/seven_dp"
         android:textSize="@dimen/twelve_sp"
         android:textColor="@color/color_444444"
-        app:layout_constraintBottom_toTopOf="@id/guidelineBottom"
-        android:visibility="gone"
+        android:layout_marginTop="@dimen/two_dp"
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
         app:layout_constraintStart_toStartOf="@id/guidelineStart"
-        app:layout_constraintTop_toBottomOf="@id/voucherDetails" />
+        app:layout_constraintTop_toBottomOf="@id/voucherDescription" />
 
 
 

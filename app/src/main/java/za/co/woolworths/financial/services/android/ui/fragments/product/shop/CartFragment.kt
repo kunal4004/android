@@ -121,6 +121,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     var productCountMap: ProductCountMap? = null
     private var liquorCompliance: LiquorCompliance? = null
     private var cartItemList = ArrayList<CommerceItem>()
+    private var isBlackCardHolder : Boolean = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -640,6 +641,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                     cartItems = cartResponse.cartItems
                     orderSummary = cartResponse.orderSummary
                     voucherDetails = cartResponse.voucherDetails
+                    isBlackCardHolder = cartResponse.blackCardHolder
                     productCountMap = cartResponse.productCountMap
                     liquorCompliance = LiquorCompliance(
                         cartResponse.liquorOrder,
@@ -682,6 +684,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     fun updateCart(cartResponse: CartResponse?, commerceItemToRemove: CommerceItem?) {
         orderSummary = cartResponse?.orderSummary
         voucherDetails = cartResponse?.voucherDetails
+       isBlackCardHolder = cartResponse?.blackCardHolder ?: false
         productCountMap = cartResponse?.productCountMap
         liquorCompliance =
             (if (cartResponse?.noLiquorImageUrl != null) cartResponse?.noLiquorImageUrl else "")?.let {
@@ -841,6 +844,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
 
                 orderSummary = cartResponse.orderSummary
                 voucherDetails = cartResponse.voucherDetails
+                isBlackCardHolder = cartResponse.blackCardHolder
                 productCountMap = cartResponse.productCountMap
                 liquorCompliance = LiquorCompliance(
                     cartResponse.liquorOrder,
@@ -881,6 +885,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                 if (shouldEnableCheckOutAndEditButton) {
                     orderSummary = cartResponse?.orderSummary
                     voucherDetails = cartResponse?.voucherDetails
+                    isBlackCardHolder = cartResponse?.blackCardHolder ?: false
                     productCountMap = cartResponse?.productCountMap
                     liquorCompliance = LiquorCompliance(
                         cartResponse?.liquorOrder ?: false,
@@ -1747,7 +1752,10 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                     FirebaseManagerAnalyticsProperties.Cart_ovr_popup_view,
                     requireActivity()
                 )
-                navigateToAvailableVouchersPage()
+                when {
+                    voucherDetails?.activeVouchersCount?.let { it > 0 } == true -> navigateToAvailableVouchersPage()
+                    voucherDetails?.activeCashVouchersCount?.let { it > 0 } == true -> navigateToCashBackVouchers()
+                }
             }
             else -> {}
         }
@@ -1876,7 +1884,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             activity = requireActivity()
             currentState = TAG_AVAILABLE_VOUCHERS_TOAST
             cartText = availableVouchersCount.toString()
-            pixel = (binding.btnCheckOut.height * 3.0).toInt()
+            pixel = (binding.btnCheckOut.height * 3.5).toInt()
             view = binding.btnCheckOut
             message =
                 requireContext().resources.getQuantityString(R.plurals.vouchers_available,
@@ -1907,12 +1915,19 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     }
 
     override fun onViewCashBackVouchers() {
+        navigateToCashBackVouchers()
+    }
+
+    private fun navigateToCashBackVouchers() {
         val intent = Intent(context, AvailableVouchersToRedeemInCart::class.java)
         intent.putExtra(
             VOUCHER_DETAILS, Utils.toJson(voucherDetails)
         )
         intent.putExtra(
             CASH_BACK_VOUCHERS, true)
+        intent.putExtra(
+            BLACK_CARD_HOLDER,  isBlackCardHolder)
+
         startActivityForResult(
             intent, REDEEM_VOUCHERS_REQUEST_CODE
         )
@@ -2065,5 +2080,6 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         private const val GIFT_ITEM = "GIFT"
         const val VOUCHER_DETAILS = "VoucherDetails"
         const val CASH_BACK_VOUCHERS = "cash_back_vouchers"
+        const val BLACK_CARD_HOLDER = "black_card"
     }
 }
