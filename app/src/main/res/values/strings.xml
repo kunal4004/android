@@ -2854,6 +2854,7 @@
     <string name="cash_back_vouchers_info_four">These Vouchers are only redeemable at checkout as a payment method.</string>
     <string name="quarterly_voucher">Quarterly Voucher</string>
     <string name="can_not_redeem_cash_back_vouchers">Can’t redeem this voucher</string>
+    <string name="learn_more">Learn More</string>
 
 
 </resources>

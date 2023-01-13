@@ -79,7 +79,7 @@
         android:letterSpacing="@integer/point_two"
         android:minHeight="@dimen/fifty_dp"
         android:visibility="gone"
-        android:text="@string/apply_for_credit_card"
+        android:text="@string/learn_more"
         android:textAllCaps="true"
         android:textColor="@color/white"
         android:textSize="@dimen/twelve_sp"
