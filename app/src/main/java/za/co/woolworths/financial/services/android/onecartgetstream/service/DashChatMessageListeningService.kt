@@ -216,8 +216,9 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
                 val orderId = channelIdToOrderIdMap[event.cid]
                 val orderSummary = ordersSummary.firstOrNull { it.orderId == orderId }
 
-                sendBroadCastEvent(event.totalUnreadCount)
-                //TODO:
+                //TODO: Later requirements for Chat bubble
+//                sendBroadCastEvent(event.totalUnreadCount)
+
                 /*
                   Hiding Toast as per requirement. currently not needed.
                    if again requirement come will enable.
@@ -324,7 +325,7 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
                     if (result.isSuccess) {
                         // Unread count for current user
                         val unreadCount: Int = result.data().unreadCount ?: 0
-                        sendBroadCastEvent(unreadCount)
+//                        sendBroadCastEvent(unreadCount)
                     }
                 }
         }
