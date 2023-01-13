@@ -2819,4 +2819,9 @@
     <string name="reduce_count_button">Reduce Count Button</string>
     <string name="add_item_count">Add item count</string>
     <string name="get_replacement_card_action_button_text_label_on_overlay">get_replacement_card_action_button_text_label_on_overlay</string>
+    <plurals name="category_item">
+        <item quantity="one">%1$s %2$s Item</item>
+        <item quantity="other">%1$s %2$s Items</item>
+    </plurals>
+    <string name="select_your_marital_status">Select your marital status</string>
 </resources>

@@ -202,14 +202,21 @@
                 app:layout_constraintTop_toBottomOf="@id/cartLowStock"
                 app:layout_goneMarginTop="@dimen/twenty_four_dp">
 
-                <ImageView
-                    android:id="@+id/minusDeleteCountImage"
-                    android:layout_width="@dimen/thirty_two_dp"
-                    android:layout_height="@dimen/thirty_two_dp"
-                    android:background="@drawable/circle_grey"
-                    android:contentDescription="@string/reduce_count_button"
-                    android:padding="@dimen/ten_dp"
-                    android:src="@drawable/ic_minus_black" />
+                <RelativeLayout
+                    android:id="@+id/minusDeleteCountImageLayout"
+                    android:layout_width="@dimen/fourty_eight_dp"
+                    android:layout_height="@dimen/fourty_eight_dp"
+                    android:gravity="end|center">
+
+                    <ImageView
+                        android:id="@+id/minusDeleteCountImage"
+                        android:layout_width="@dimen/thirty_two_dp"
+                        android:layout_height="@dimen/thirty_two_dp"
+                        android:background="@drawable/circle_grey"
+                        android:contentDescription="@string/reduce_count_button"
+                        android:padding="@dimen/ten_dp"
+                        android:src="@drawable/ic_minus_black" />
+                </RelativeLayout>
 
                 <RelativeLayout
                     android:id="@+id/rlQuantitySelector"
@@ -236,14 +243,21 @@
                         tools:visibility="visible" />
                 </RelativeLayout>
 
-                <ImageView
-                    android:id="@+id/addCountImage"
-                    android:layout_width="@dimen/thirty_two_dp"
-                    android:layout_height="@dimen/thirty_two_dp"
-                    android:background="@drawable/circle_grey"
-                    android:contentDescription="@string/add_item_count"
-                    android:padding="@dimen/seven_dp"
-                    android:src="@drawable/add_black" />
+                <RelativeLayout
+                    android:id="@+id/addCountImageLayout"
+                    android:layout_width="@dimen/fourty_eight_dp"
+                    android:layout_height="@dimen/fourty_eight_dp"
+                    android:gravity="start|center">
+
+                    <ImageView
+                        android:id="@+id/addCountImage"
+                        android:layout_width="@dimen/thirty_two_dp"
+                        android:layout_height="@dimen/thirty_two_dp"
+                        android:background="@drawable/circle_grey"
+                        android:contentDescription="@string/add_item_count"
+                        android:padding="@dimen/seven_dp"
+                        android:src="@drawable/add_black" />
+                </RelativeLayout>
 
             </LinearLayout>
 
