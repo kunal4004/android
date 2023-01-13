@@ -56,11 +56,14 @@ class AvailableVoucherFragment : Fragment(R.layout.available_vouchers_fragment),
         binding.noVoucherLayout.applyForCreditCard?.setOnClickListener(this)
         cashBackVouchersAdapter = CashBackVouchersAdapter(ArrayList())
         voucherTabSelection()
-        showWrewardsVouchers()
         if (isFromCashBackVoucher) {
             val tab: TabLayout.Tab? = binding.voucherTabLayout.getTabAt(1)
             tab?.select()
             showCashBackVouchers()
+        } else {
+            val tab: TabLayout.Tab? = binding.voucherTabLayout.getTabAt(0)
+            tab?.select()
+            showWrewardsVouchers()
         }
     }
 
@@ -114,7 +117,9 @@ class AvailableVoucherFragment : Fragment(R.layout.available_vouchers_fragment),
         presenter?.getCashBackVouchers()?.let {
             binding.apply {
                 if (it.size > 0) {
-
+                    rcvVoucherList.visibility = View.GONE
+                    dataLayout.visibility = View.VISIBLE
+                    noVoucherLayout.noVouchersAvailable.visibility = View.GONE
                     rcCashBackVoucherList.apply {
                         visibility = View.VISIBLE
                         layoutManager = LinearLayoutManager(requireActivity())
@@ -128,7 +133,6 @@ class AvailableVoucherFragment : Fragment(R.layout.available_vouchers_fragment),
                             false
                         )
                     }
-                    rcvVoucherList.visibility = View.GONE
                     redeemVoucher.visibility = View.GONE
                     cashBackVouchersInfo.visibility = View.VISIBLE
                     vouchersTitle.text = bindString(R.string.your_cash_back_vouchers)
