@@ -83,7 +83,7 @@ class AvailableVoucherFragment : Fragment(R.layout.available_vouchers_fragment),
                         presenter?.getCashBackVouchers()?.let {
                             if (it.size > 0) {
                                 cashBackListVisiblePosition =
-                                    (binding.rcCashBackVoucherList.layoutManager as LinearLayoutManager).findFirstCompletelyVisibleItemPosition()
+                                    (binding.rcCashBackVoucherList.layoutManager as? LinearLayoutManager)?.findFirstCompletelyVisibleItemPosition()!!
                             }
                         }
                     }
@@ -92,7 +92,7 @@ class AvailableVoucherFragment : Fragment(R.layout.available_vouchers_fragment),
                         presenter?.getVouchers()?.let {
                             if (it.size > 0) {
                                 wrewardsListVisiblePosition =
-                                    (binding.rcvVoucherList.layoutManager as LinearLayoutManager).findFirstCompletelyVisibleItemPosition()
+                                    (binding.rcvVoucherList.layoutManager as? LinearLayoutManager)?.findFirstCompletelyVisibleItemPosition()!!
                             }
                         }
 
@@ -136,7 +136,7 @@ class AvailableVoucherFragment : Fragment(R.layout.available_vouchers_fragment),
                     cashBackVouchersAdapter.renderCashBackVouchers(it)
                     cashBackVouchersAdapter.notifyDataSetChanged()
 
-                    (rcCashBackVoucherList.layoutManager as LinearLayoutManager).scrollToPosition(
+                    (rcCashBackVoucherList.layoutManager as? LinearLayoutManager)?.scrollToPosition(
                         cashBackListVisiblePosition)
                     cashBackListVisiblePosition = 0
 
@@ -171,7 +171,7 @@ class AvailableVoucherFragment : Fragment(R.layout.available_vouchers_fragment),
                     vouchersTitle.text = bindString(R.string.select_wvouchers_redeem)
                     vouchersSubTitle.text = bindString(R.string.select_wvouchers_desc)
                     showAvailableVouchers()
-                    (rcvVoucherList.layoutManager as LinearLayoutManager).scrollToPosition(
+                    (rcvVoucherList.layoutManager as? LinearLayoutManager)?.scrollToPosition(
                         wrewardsListVisiblePosition)
                     wrewardsListVisiblePosition = 0
 
@@ -310,13 +310,13 @@ class AvailableVoucherFragment : Fragment(R.layout.available_vouchers_fragment),
     }
 
     private fun redirectToMyAccountsCardsActivity(applyNowState: ApplyNowState) {
-        val activity = activity ?: return
-        val intent = Intent(requireActivity(), ApplyNowActivity::class.java)
-        val bundle = Bundle()
-        bundle.putSerializable("APPLY_NOW_STATE", applyNowState)
-        intent.putExtras(bundle)
-        startActivity(intent)
-        activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
+        Intent(requireActivity(), ApplyNowActivity::class.java).apply {
+            val bundle = Bundle()
+            bundle.putSerializable("APPLY_NOW_STATE", applyNowState)
+            putExtras(bundle)
+            startActivity(this)
+            requireActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
+        }
     }
 
 }
