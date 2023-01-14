@@ -2835,6 +2835,10 @@
     <string name="food_item_not_available_for_collection_desc">To shop this item, change your collection store or delivery method.</string>
     <string name="change_collection_location">CHANGE COLLECTION LOCATION</string>
     <string name="who_is_collecting_header_title">Who Is Collecting?</string>
+    <string name="your_shopping_bags">Your Shopping Bags</string>
+    <string name="no_bags_or_free_bags">No Bags | Free</string>
+    <string name="shopping_bags_dec">To be part of the solution, we’re going plastic bag free!</string>
+    <string name="free_bag_desc">Please bring your own bags to collect your order.</string>
     <string name="recipient_name_hint">As displayed on identification document</string>
 
     <string name="fashion_items">%1$s Fashion Items</string>
