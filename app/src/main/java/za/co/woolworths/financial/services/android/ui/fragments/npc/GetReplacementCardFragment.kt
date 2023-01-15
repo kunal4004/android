@@ -63,8 +63,8 @@ class GetReplacementCardFragment : MyCardExtension(R.layout.replace_card_fragmen
 
         binding.apply {
             setActionBar()
-            tvAlreadyHaveCard?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
-            pbParticipatingStore?.indeterminateDrawable?.setColorFilter(
+            tvAlreadyHaveCard.paintFlags = Paint.UNDERLINE_TEXT_FLAG
+            pbParticipatingStore.indeterminateDrawable?.setColorFilter(
                 Color.WHITE,
                 PorterDuff.Mode.MULTIPLY
             )
