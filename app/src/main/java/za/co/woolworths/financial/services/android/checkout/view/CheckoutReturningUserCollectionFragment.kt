@@ -699,8 +699,13 @@ class CheckoutReturningUserCollectionFragment : Fragment(R.layout.fragment_check
                     viewGiftHorizontalSeparator?.visibility = View.GONE
                     instructionTxtShimmerFrameLayout?.visibility = View.GONE
                     shoppingBagSeparator?.visibility = View.GONE
+                    switchNeedBags?.visibility = View.GONE
+                    txtNeedBags?.visibility = View.GONE
 
-                    viewHorizontalCollectionSeparator?.visibility = View.VISIBLE
+                    checkoutCNCShoppingBagsInfoLayout?.root?.visibility = View.VISIBLE
+
+                    viewHorizontalCollectionSeparator?.visibility = View.GONE
+                    shoppingBagsSeparator?.visibility = View.VISIBLE
                     viewHorizontalCollectionBottomSeparator?.visibility = View.VISIBLE
                 }
             }
@@ -724,6 +729,21 @@ class CheckoutReturningUserCollectionFragment : Fragment(R.layout.fragment_check
                 && storePickupInfoResponse?.fulfillmentTypes?.other != StoreUtils.Companion.FulfillmentType.CLOTHING_ITEMS?.type
                 && storePickupInfoResponse?.fulfillmentTypes?.join == StoreUtils.Companion.FulfillmentType.FOOD_ITEMS?.type) {
 
+            binding.apply {
+                with(layoutCollectionInstructions) {
+                    txtNeedBags?.visibility = View.GONE
+                    instructionTxtShimmerFrameLayout?.visibility = View.GONE
+                    switchNeedBags?.visibility = View.GONE
+                    specialInstructionSwitchShimmerFrameLayout?.visibility = View.GONE
+                    shoppingBagSeparator?.visibility = View.GONE
+                    viewGiftHorizontalSeparator?.visibility = View.GONE
+
+                    checkoutCNCShoppingBagsInfoLayout?.root?.visibility = View.VISIBLE
+
+                    viewHorizontalCollectionSeparator?.visibility = View.GONE
+                    viewHorizontalCollectionBottomSeparator?.visibility = View.VISIBLE
+                }
+            }
             storePickupInfoResponse?.sortedJoinDeliverySlots?.apply {
                 val firstAvailableDateSlot = getFirstAvailableSlot(this)
                 initializeDatesAndTimeSlots(firstAvailableDateSlot)
