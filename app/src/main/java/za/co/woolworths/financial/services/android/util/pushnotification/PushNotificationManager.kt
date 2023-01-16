@@ -10,12 +10,16 @@ import android.graphics.Color
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
+import android.util.Log
 import androidx.core.app.NotificationCompat
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.receivers.DashOrderReceiver.Companion.ACTION_LAST_DASH_ORDER
+import za.co.woolworths.financial.services.android.receivers.DashOrderReceiver.Companion.EXTRA_UPDATE_LAST_DASH_ORDER
 import za.co.woolworths.financial.services.android.startup.view.StartupActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.util.AppConstant
@@ -56,6 +60,11 @@ class PushNotificationManager {
             // This function will get called only when app is in Foreground
             // else it will send data to activity extras.
             if (payloadFeature != null && payloadFeature == FEATURE_ORDER_DETAILS && payloadParameters != null) {
+                val broadCastIntent = Intent()
+                broadCastIntent.action = ACTION_LAST_DASH_ORDER
+                broadCastIntent.putExtra(EXTRA_UPDATE_LAST_DASH_ORDER, true)
+                LocalBroadcastManager.getInstance(context).sendBroadcast(broadCastIntent)
+
                 intent = Intent(context, BottomNavigationActivity::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 for (item in payload.entries) {
