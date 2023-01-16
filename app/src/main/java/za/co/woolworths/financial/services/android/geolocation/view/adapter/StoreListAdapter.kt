@@ -74,20 +74,8 @@ class StoreListAdapter(
         fun bindItems(storeRow: StoreListRow.StoreRow, position: Int) {
             itemBinding.apply {
                 storeRow?.apply {
-                    if (store?.locationId != "" && store?.storeName?.contains(
-                            StoreUtils.PARGO,
-                            true
-                        ) == false
-                    ) {
-                        var pargoStoreName = store.storeName
-                        pargoStoreName =
-                            KotlinUtils.capitaliseFirstLetter(pargoStoreName).toString() +
-                                    StoreUtils.BULLET + StoreUtils.PARGO
-                        tvAddressNickName?.text = pargoStoreName
-                    } else {
                         tvAddressNickName?.text =
                             KotlinUtils.capitaliseFirstLetter(store?.storeName)
-                    }
                     tvAddress?.text = store.storeAddress
                     txtStoreDistance?.text = store.distance?.let { changeMeterToKM(it) }
                     if (lastSelectedPosition == position) {

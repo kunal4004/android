@@ -43,15 +43,6 @@ class GeoUtils {
 
         fun getStoreDetails(storeId: String?, stores: List<Store>?): Store? {
             stores?.forEach {
-
-                if (it?.locationId != "" && it?.storeName?.contains(
-                        StoreUtils.PARGO,
-                        true
-                    ) == false
-                ) {
-                    it.storeName = StoreUtils.pargoStoreName(it?.storeName)
-                }
-
                 if (it.storeId == storeId) {
                     return it
                 }
