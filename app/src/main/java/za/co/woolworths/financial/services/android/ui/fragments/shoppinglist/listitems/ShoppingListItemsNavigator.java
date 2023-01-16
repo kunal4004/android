@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
@@ -12,7 +13,7 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsR
 
 public interface ShoppingListItemsNavigator {
 
-    void onItemSelectionChange(List<ShoppingListItem> items);
+    void onItemSelectionChange();
 
     void onShoppingListItemDelete(ShoppingListItemsResponse shoppingListItemsResponse);
 
@@ -22,11 +23,13 @@ public interface ShoppingListItemsNavigator {
 
     void openProductDetailFragment(String productName, ProductList productList);
 
-    void requestDeliveryLocation(String requestMessage);
-
     void onQuantityChangeClick(int position, ShoppingListItem shoppingListItem);
 
     void onDeleteItemFailed();
 
     void openSetSuburbProcess(ShoppingListItem shoppingListItem);
+
+    void onAddListItemCount(ShoppingListItem shoppingListItem);
+
+    void onSubstractListItemCount(ShoppingListItem listItem);
 }
