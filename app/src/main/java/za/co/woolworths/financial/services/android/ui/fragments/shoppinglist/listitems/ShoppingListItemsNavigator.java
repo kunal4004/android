@@ -27,4 +27,6 @@ public interface ShoppingListItemsNavigator {
     void onAddListItemCount(ShoppingListItem shoppingListItem);
 
     void onSubstractListItemCount(ShoppingListItem listItem);
+
+    void showListBlackToolTip();
 }

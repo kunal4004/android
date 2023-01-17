@@ -3,7 +3,6 @@ package za.co.woolworths.financial.services.android.ui.adapters;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
-import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.text.TextUtils;
@@ -248,9 +247,12 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 					}
 				});
 
-				holder.llItemContainer.setOnClickListener(view -> {
-					// TODO: open black tooltip To be implemented..
-				});
+                holder.llItemContainer.setOnClickListener(view -> {
+                    if (!mAdapterIsClickable) return;
+                    ShoppingListItem shoppingListItem14 = getItem(position);
+                    if (shoppingListItem14.unavailable)
+                        navigator.showListBlackToolTip();
+                });
 
 				holder.cartProductImage.setOnClickListener(view -> {
 					if (!mAdapterIsClickable) return;
