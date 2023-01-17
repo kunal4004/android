@@ -752,11 +752,11 @@ interface ApiInterface {
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("wfs/app/v4/list/{id}")
-    fun getShoppingListItems(
-
-            @Header("sessionToken") sessionToken: String,
-            @Header("deviceIdentityToken") deviceIdentityToken: String,
-            @Path("id") id: String): Call<ShoppingListItemsResponse>
+    suspend fun getShoppingListItems(
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Path("id") id: String
+    ): retrofit2.Response<ShoppingListItemsResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("wfs/app/v4/list/{productId}/item")
@@ -795,29 +795,37 @@ interface ApiInterface {
             @Path("multipleSku") multipleSku: String): Call<SkuInventoryResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("wfs/app/v4/isninventory/multi/{store_id}/{multipleSku}")
-    fun getDashInventorySKUForStore(
+    @GET("wfs/app/v4/inventory/store/{store_id}/multiSku/{multipleSku}")
+    suspend fun getInventorySKUForStore(
+
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Path("store_id") store_id: String,
+        @Path("multipleSku") multipleSku: String): retrofit2.Response<SkusInventoryForStoreResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @GET("wfs/app/v4/inventory/store/{store_id}/multiSku/{multipleSku}")
+    fun getInventorySKUsForStore(
         @Header("sessionToken") sessionToken: String,
         @Header("deviceIdentityToken") deviceIdentityToken: String,
         @Path("store_id") store_id: String,
         @Path("multipleSku") multipleSku: String): Call<SkusInventoryForStoreResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("wfs/app/v4/inventory/store/{store_id}/multiSku/{multipleSku}")
-    fun getInventorySKUForStore(
-
-            @Header("sessionToken") sessionToken: String,
-            @Header("deviceIdentityToken") deviceIdentityToken: String,
-            @Path("store_id") store_id: String,
-            @Path("multipleSku") multipleSku: String): Call<SkusInventoryForStoreResponse>
+    @GET("wfs/app/v4/isninventory/multi/{store_id}/{multipleSku}")
+    suspend fun fetchDashInventorySKUForStore(
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Path("store_id") store_id: String,
+        @Path("multipleSku") multipleSku: String): retrofit2.Response<SkusInventoryForStoreResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("wfs/app/v4/isninventory/multi/{store_id}/{multipleSku}")
-   suspend fun fetchDashInventorySKUForStore(
-            @Header("sessionToken") sessionToken: String,
-            @Header("deviceIdentityToken") deviceIdentityToken: String,
-            @Path("store_id") store_id: String,
-            @Path("multipleSku") multipleSku: String): retrofit2.Response<SkusInventoryForStoreResponse>
+    fun fetchDashInventorySKUsForStore(
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Path("store_id") store_id: String,
+        @Path("multipleSku") multipleSku: String): Call<SkusInventoryForStoreResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip")
     @GET("wfs/app/v4/searchSortAndFilterV2")

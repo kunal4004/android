@@ -2,6 +2,8 @@ package za.co.woolworths.financial.services.android.models.dto;
 
 import com.google.gson.annotations.SerializedName;
 
+import javax.annotation.Nullable;
+
 /**
  * Created by W7099877 on 2018/03/13.
  */
@@ -43,9 +45,9 @@ public class ShoppingListItem {
 	//Grey out the quantity counter so it cannot be clicked until inventory call done
 	public boolean inventoryCallCompleted = false;
 
-	//select your delivery location address
-	public String delivery_location;
+	@Nullable
+	public String visibility;
 
-	public boolean editButtonIsEnabled = false;
+	public boolean unavailable = true;
 
 }

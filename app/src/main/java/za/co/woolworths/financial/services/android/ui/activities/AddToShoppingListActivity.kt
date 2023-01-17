@@ -2,24 +2,26 @@ package za.co.woolworths.financial.services.android.ui.activities
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
-import androidx.appcompat.app.AppCompatActivity
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.view.animation.TranslateAnimation
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.AddToShoppingListActivityBinding
-import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.ANIM_DOWN_DURATION
+import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.ANIM_DOWN_DURATION
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToShoppingListFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.list.CreateShoppingListFragment
-import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.ORDER_ID
+import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.Utils
 
+@AndroidEntryPoint
 class AddToShoppingListActivity : AppCompatActivity(), IDialogListener {
 
     private lateinit var binding: AddToShoppingListActivityBinding
