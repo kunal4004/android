@@ -342,6 +342,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
 
     override fun onItemSelectionChange() {
         if (!isAdded || !isVisible) return
+        hideBlackToolTip()
         updateCartCountButton()
         manageSelectAllMenuVisibility()
     }
@@ -746,13 +747,13 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
 
     private fun getInventoryForStoreSuccess(skusInventoryForStoreResponse: SkusInventoryForStoreResponse?) {
         if (skusInventoryForStoreResponse?.httpCode == HTTP_OK) {
+            updateList()
+            enableAdapterClickEvent(true)
             if (!viewModel.mShoppingListItems.filter { item ->
                     item.unavailable
                 }.isNullOrEmpty()) {
                 showBlackToolTip()
             }
-            updateList()
-            enableAdapterClickEvent(true)
         } else {
             onInventoryError(skusInventoryForStoreResponse)
         }
