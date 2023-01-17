@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems
 
 import android.app.Activity
+import android.app.Activity.RESULT_OK
 import android.content.BroadcastReceiver
 import android.content.Intent
 import android.content.IntentFilter
@@ -86,9 +87,9 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
         arguments?.apply {
-            listId = getString("listId", "")
-            listName = getString("listName", "")
-            openFromMyList = getBoolean("openFromMyList", false)
+            listId = getString(ARG_LIST_ID, "")
+            listName = getString(ARG_LIST_NAME, "")
+            openFromMyList = getBoolean(ARG_OPEN_FROM_MY_LIST, false)
         }
         Utils.updateStatusBarBackground(activity)
     }
@@ -124,10 +125,12 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             when (it.peekContent().status) {
                 Status.LOADING -> {
                     mErrorHandlerView?.hideErrorHandler()
-                    bindingListDetails.rlEmptyListView.visibility = GONE
-                    bindingListDetails.rcvShoppingListItems.visibility = GONE
-                    bindingListDetails.loadingBar.visibility = VISIBLE
-                    bindingListDetails.rlCheckOut.visibility = GONE
+                    bindingListDetails.apply {
+                        rlEmptyListView.visibility = GONE
+                        rcvShoppingListItems.visibility = GONE
+                        loadingBar.visibility = VISIBLE
+                        rlCheckOut.visibility = GONE
+                    }
                 }
                 Status.SUCCESS -> {
                     onShoppingListItemsResponse(response)
@@ -182,23 +185,24 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
     private fun initViewAndEvent() {
         mConnectionBroadcast = Utils.connectionBroadCast(activity, this)
         setUpAddToCartButton()
+        with(bindingListDetails) {
+            initList(rcvShoppingListItems)
 
-        initList(bindingListDetails.rcvShoppingListItems)
+            selectDeselectAllTextView.setOnClickListener(this@ShoppingListDetailFragment)
+            deliveryLocationConstLayout.setOnClickListener(this@ShoppingListDetailFragment)
+            textProductSearch.setOnClickListener(this@ShoppingListDetailFragment)
+            btnRetry.setOnClickListener(this@ShoppingListDetailFragment)
 
-        bindingListDetails.selectDeselectAllTextView.setOnClickListener(this)
-        bindingListDetails.deliveryLocationConstLayout.setOnClickListener(this)
-        bindingListDetails.textProductSearch.setOnClickListener(this)
-        bindingListDetails.btnRetry.setOnClickListener(this)
-
-        mErrorHandlerView = ErrorHandlerView(activity, bindingListDetails.noConnectionLayout)
-        mErrorHandlerView?.setMargin(bindingListDetails.noConnectionLayout, 0, 0, 0, 0)
-        val emptyCartView = EmptyCartView(bindingListDetails.root, this)
-        emptyCartView.setView(
-            getString(R.string.title_empty_shopping_list),
-            getString(R.string.description_empty_shopping_list),
-            getString(R.string.button_empty_shopping_list),
-            R.drawable.empty_list_icon
-        )
+            mErrorHandlerView = ErrorHandlerView(activity, noConnectionLayout)
+            mErrorHandlerView?.setMargin(noConnectionLayout, 0, 0, 0, 0)
+            val emptyCartView = EmptyCartView(root, this@ShoppingListDetailFragment)
+            emptyCartView.setView(
+                getString(R.string.title_empty_shopping_list),
+                getString(R.string.description_empty_shopping_list),
+                getString(R.string.button_empty_shopping_list),
+                R.drawable.empty_list_icon
+            )
+        }
 
         // Show Bottom Navigation Menu
         (activity as? BottomNavigationActivity)?.showBottomNavigationMenu()
@@ -224,19 +228,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
 
     override fun onClick(view: View) {
         when (view.id) {
-            R.id.deliveryLocationConstLayout -> presentEditDeliveryGeoLocationActivity(
-                requireActivity(),
-                REQUEST_SUBURB_CHANGE,
-                getPreferredDeliveryType(),
-                getPreferredPlaceId(),
-                isFromDashTab = false,
-                isComingFromCheckout = false,
-                isComingFromSlotSelection = false,
-                savedAddressResponse = null,
-                defaultAddress = null,
-                whoISCollecting = "",
-                liquorCompliance = null
-            )
+            R.id.deliveryLocationConstLayout -> deliverySelectionIntent(DELIVERY_LOCATION_REQUEST)
             R.id.selectDeselectAllTextView -> onOptionsItemSelected()
             R.id.textProductSearch -> openProductSearchActivity()
             R.id.btnRetry -> if (NetworkManager.getInstance().isConnectedToNetwork(
@@ -273,6 +265,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             HTTP_OK -> {
                 bindingListDetails.loadingBar.visibility = GONE
                 viewModel.makeInventoryCalls()
+                updateList()
             }
             HTTP_SESSION_TIMEOUT_440 -> SessionUtilities.getInstance().setSessionState(
                 SessionDao.SESSION_STATE.INACTIVE,
@@ -737,7 +730,6 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
 
     override fun openSetSuburbProcess(shoppingListItem: ShoppingListItem) {
         viewModel.mOpenShoppingListItem = shoppingListItem
-        navigateFromQuantity()
         deliverySelectionIntent(DELIVERY_LOCATION_REQUEST)
     }
 
@@ -751,14 +743,6 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         viewModel.mOpenShoppingListItem = listItem
         viewModel.setItem(listItem)
         updateCartCountButton()
-    }
-
-    private fun navigateFromQuantity() {
-        val woolworthsApplication = WoolworthsApplication.getInstance()
-        if (woolworthsApplication != null) {
-            val wGlobalState = woolworthsApplication.wGlobalState
-            wGlobalState?.navigateFromQuantity(QUANTITY_CHANGED_FROM_LIST)
-        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -784,28 +768,18 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             return
             // response from search product from shopping list
         }
-        if (requestCode == DELIVERY_LOCATION_REQUEST && resultCode == Activity.RESULT_OK) { // on suburb selection successful
-            viewModel.makeInventoryCalls()
-        }
-        if (requestCode == REQUEST_SUBURB_CHANGE) {
-            setDeliveryLocation()
-            viewModel.makeInventoryCalls()
-        }
-        if (requestCode == QUANTITY_CHANGED_FROM_LIST) {
-            if (resultCode == QUANTITY_CHANGED_FROM_LIST) {
-                val bundleUpdatedQuantity = data?.extras
-                var updatedQuantity = 0
-                if (bundleUpdatedQuantity != null) {
-                    updatedQuantity = bundleUpdatedQuantity.getInt("QUANTITY_CHANGED_FROM_LIST")
+
+        when(requestCode) {
+            DELIVERY_LOCATION_REQUEST_CODE_FROM_SELECT_ALL,
+            DELIVERY_LOCATION_REQUEST -> {
+                if(resultCode == RESULT_OK) {
+                    setDeliveryLocation()
+                    viewModel.makeInventoryCalls()
                 }
             }
         }
-        if (requestCode == DELIVERY_LOCATION_REQUEST_CODE_FROM_SELECT_ALL) {
-            if (resultCode == Activity.RESULT_OK) { // on suburb selection successful
-                viewModel.makeInventoryCalls()
-            }
-        }
-        if (requestCode == BottomNavigationActivity.PDP_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+
+        if (requestCode == BottomNavigationActivity.PDP_REQUEST_CODE && resultCode == RESULT_OK) {
             val activity = activity ?: return
             val productCountMap = Utils.jsonStringToObject(
                 data?.getStringExtra("ProductCountMap"), ProductCountMap::class.java
@@ -846,7 +820,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
     private fun deliverySelectionIntent(resultCode: Int) {
         val activity = activity ?: return
         presentEditDeliveryGeoLocationActivity(
-            activity, resultCode, null, null,
+            activity, resultCode, getPreferredDeliveryType(), getPlaceId(),
             isFromDashTab = false,
             isComingFromCheckout = false,
             isComingFromSlotSelection = false,
@@ -935,18 +909,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
     }
 
     override fun onSetNewLocation() {
-        presentEditDeliveryGeoLocationActivity(
-            this.activity,
-            REQUEST_SUBURB_CHANGE,
-            getPreferredDeliveryType(),
-            getPlaceId(),
-            isFromDashTab = false,
-            isComingFromCheckout = false,
-            isComingFromSlotSelection = false,
-            savedAddressResponse = null,
-            defaultAddress = null,
-            whoISCollecting = null, liquorCompliance = null
-        )
+        deliverySelectionIntent(DELIVERY_LOCATION_REQUEST)
     }
 
     fun getTotalItemQuantity(addItemToCart: ArrayList<AddItemToCart>): Int {
@@ -966,8 +929,10 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         const val QUANTITY_CHANGED_FROM_LIST = 2010
         const val ADD_TO_CART_SUCCESS_RESULT = 2000
         private const val DELIVERY_LOCATION_REQUEST_CODE_FROM_SELECT_ALL = 1222
-        private const val REQUEST_SUBURB_CHANGE = 12345
         private const val DELIVERY_LOCATION_REQUEST = 2
         private const val TOOLBAR_SELECT_ALL: String = "SELECT ALL"
+        private const val ARG_LIST_ID: String = "listId"
+        private const val ARG_LIST_NAME: String = "listName"
+        private const val ARG_OPEN_FROM_MY_LIST: String = "openFromMyList"
     }
 }
