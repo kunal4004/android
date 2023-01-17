@@ -14,6 +14,7 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsR
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse
 import za.co.woolworths.financial.services.android.models.network.Event
 import za.co.woolworths.financial.services.android.models.network.Resource
+import za.co.woolworths.financial.services.android.util.DeliveryType
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import javax.inject.Inject
@@ -61,7 +62,14 @@ class ShoppingListDetailViewModel @Inject constructor(
             val storeId = Utils.retrieveStoreId(fulfillmentType)
                 ?.replace("\"", "") ?: ""
             if (TextUtils.isEmpty(storeId)) {
-                setAllUnavailable(multiSkuList)
+                val type = Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.deliveryType?.let {
+                    Delivery.getType(it)
+                } ?: Delivery.STANDARD
+                if(Delivery.STANDARD == type){
+                    setOutOfStock()
+                } else {
+                    setAllUnavailable(multiSkuList)
+                }
             } else {
                 fulfillmentStoreMapArrayList?.add(
                     FulfillmentStoreMap(fulfillmentType, storeId, false)
