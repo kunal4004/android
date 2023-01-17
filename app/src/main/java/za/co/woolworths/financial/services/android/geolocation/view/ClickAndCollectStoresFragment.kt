@@ -82,7 +82,6 @@ class ClickAndCollectStoresFragment : BaseDialogFragmentBinding<FragmentClickAnd
 
         binding.apply {
             tvConfirmStore?.setOnClickListener(this@ClickAndCollectStoresFragment)
-            ivCross?.setOnClickListener(this@ClickAndCollectStoresFragment)
             btChange?.setOnClickListener(this@ClickAndCollectStoresFragment)
             backButton?.setOnClickListener(this@ClickAndCollectStoresFragment)
             etEnterNewAddress?.addTextChangedListener(this@ClickAndCollectStoresFragment)
@@ -156,7 +155,7 @@ class ClickAndCollectStoresFragment : BaseDialogFragmentBinding<FragmentClickAnd
                     activity)
                 navigateToFulfillmentScreen()
             }
-            R.id.ivCross,R.id.backButton -> {
+            R.id.backButton -> {
                dismiss()
             }
             R.id.btChange -> {

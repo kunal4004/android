@@ -197,7 +197,6 @@ class ChangeFullfilmentCollectionStoreFragment :
     private fun setStoreList(stores: List<Store>?) {
         binding.layoutEdgeCaseScreen?.root?.visibility = View.GONE
         binding.layoutClickAndCollectStore?.root?.visibility = View.VISIBLE
-        binding.layoutClickAndCollectStore?.ivCross?.visibility = View.GONE
         binding.layoutClickAndCollectStore?.backButton?.visibility = View.GONE
         binding.layoutClickAndCollectStore.rvStoreList.layoutManager =
             activity?.let { activity -> LinearLayoutManager(activity) }
