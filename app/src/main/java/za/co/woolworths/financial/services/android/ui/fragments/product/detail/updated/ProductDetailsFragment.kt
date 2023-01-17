@@ -810,10 +810,6 @@ class ProductDetailsFragment : BaseFragmentBinding<ProductDetailsFragmentBinding
                                             placeId,
                                             validateLocationResponse?.validatePlace?.stores
                                     )
-                                    if (store?.locationId != "" && store?.storeName?.contains(StoreUtils.PARGO, true) == false) {
-                                        Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.storeName = StoreUtils.pargoStoreName(store?.storeName)
-                                        Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.locationId = store?.locationId.toString()
-                                    }
                                 }
                             } else
                                 callConfirmPlace()
