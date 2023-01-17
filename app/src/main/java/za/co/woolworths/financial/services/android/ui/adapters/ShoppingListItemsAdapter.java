@@ -54,7 +54,7 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 	private boolean mAdapterIsClickable;
 
 
-	public ShoppingListItemsAdapter(List<ShoppingListItem> shoppingListItems, ShoppingListItemsNavigator navigator) {
+	public ShoppingListItemsAdapter(ArrayList<ShoppingListItem> shoppingListItems, ShoppingListItemsNavigator navigator) {
 		this.mShoppingListItem = shoppingListItems;
 		this.navigator = navigator;
 
