@@ -261,28 +261,28 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 
 				// Set Color and Size END
 				holder.cbxSelectShoppingListItem.setOnClickListener(view -> {
-					ShoppingListItem shoppingListItem13 = getItem(position);
-					if (enableClickEvent(shoppingListItem13))
+					ShoppingListItem item = getItem(position);
+					if (enableClickEvent(item))
 						return;
 					if (!mAdapterIsClickable) return;
-					if (!shoppingListItem13.isSelected) {
+					if (!item.isSelected) {
 						if (userShouldSetSuburb()) {
-							shoppingListItem13.isSelected = false;
+							item.isSelected = false;
 							notifyItemChanged(position, mShoppingListItem.size());
-							navigator.openSetSuburbProcess(shoppingListItem13);
+							navigator.openSetSuburbProcess(item);
 							return;
 						}
 					}
-					if (shoppingListItem13.quantityInStock == 0) return;
+					if (item.quantityInStock == 0) return;
                     /*
                      1. By default quantity will be ZERO.
                      2. On Selection it will change to ONE.
                      */
-					shoppingListItem13.userQuantity = Math.max(shoppingListItem13.userQuantity, 1);
-					shoppingListItem13.isSelected = !shoppingListItem13.isSelected;
-					mShoppingListItem.set((position - 1), shoppingListItem13);
+					item.userQuantity = Math.max(item.userQuantity, 1);
+					item.isSelected = !item.isSelected;
+					mShoppingListItem.set((position - 1), item);
 					navigator.onItemSelectionChange();
-					notifyItemChanged(position, shoppingListItem13);
+					notifyItemChanged(position, item);
 				});
 
 				holder.delete.setOnClickListener(view -> {
