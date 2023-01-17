@@ -1,10 +1,10 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card_slider
 
 import android.graphics.Color
-import androidx.fragment.app.Fragment
 import android.os.Bundle
 import android.view.View
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FreezeUnfreezeCardFragmentBinding
@@ -76,7 +76,7 @@ class FreezeUnFreezeStoreCardFragment : Fragment(R.layout.freeze_unfreeze_card_f
                 binding.accountHolderNameTextView.visibility = View.VISIBLE
                 binding.storeCardImageView.setImageDrawable( ContextCompat.getDrawable(
                     requireContext(),R.drawable.store_card_active))
-                binding.accountHolderNameTextView.text = context?.getString(R.string.active_store_card_image_embossed_user_name_on_overlay)
+                binding.accountHolderNameTextView.text = KotlinUtils.getCardHolderNameSurname()
                 binding.storeCardImageView.contentDescription = context?.getString(R.string.active_store_card_image_on_overlay)
             }
         }
