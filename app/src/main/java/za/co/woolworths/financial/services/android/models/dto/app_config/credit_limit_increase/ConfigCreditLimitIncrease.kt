@@ -7,5 +7,5 @@ import kotlinx.android.parcel.Parcelize
 data class ConfigCreditLimitIncrease(
         val eligibilityQuestions: ConfigEligibilityQuestions? = null,
         val permissions: ConfigPermissions? = null,
-        var maritalStatus: ArrayList<ConfigMaritalStatus>? = null
+        var maritalStatus: MutableList<ConfigMaritalStatus>? = null
 ) : Parcelable

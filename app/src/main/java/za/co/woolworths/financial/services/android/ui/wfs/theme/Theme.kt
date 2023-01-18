@@ -20,16 +20,6 @@ private val LightColorScheme = lightColorScheme(
     primary = White,
     secondary = Black,
     tertiary = DarkGrey
-
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
 )
 
 @Composable
@@ -51,7 +41,7 @@ fun OneAppTheme(
         val currentWindow = (view.context as? Activity)?.window
         SideEffect {
             currentWindow ?: return@SideEffect
-            currentWindow.statusBarColor = colorScheme.primary.toArgb()
+            currentWindow.statusBarColor = White.toArgb()
             // accessing the insets controller to change appearance of the status bar
             WindowCompat.getInsetsController(currentWindow, view).isAppearanceLightStatusBars = darkTheme
         }
