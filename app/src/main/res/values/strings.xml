@@ -2487,7 +2487,7 @@
     <string name="confirm_collection_location_desc">Your current collection store is set to </string>
     <string name="confirm_btn">Confirm</string>
     <string name="edt_location">EDIT LOCATION </string>
-    <string name="please_select_the_store_you_are_collecting_from">Please select the location that you would like to collect from.</string>
+    <string name="please_select_the_store_you_are_collecting_from">Please select the store you\nare collecting from.</string>
     <string name="search_by_store_or_location">Search by store or location</string>
     <string name="change">change</string>
     <string name="near_stores">%d Stores Near Me</string>
