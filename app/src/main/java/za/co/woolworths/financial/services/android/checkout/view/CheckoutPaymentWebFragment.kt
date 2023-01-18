@@ -45,6 +45,7 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
     }
 
     private lateinit var binding: FragmentCheckoutPaymentWebBinding
+    private var currentSuccessURI = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -121,6 +122,7 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
 
     private fun onStatusChanged(url: String) {
         val uri = Uri.parse(url)
+        currentSuccessURI =  if (currentSuccessURI.isEmpty()) url else ""
         when (uri.getQueryParameter(KEY_STATUS)) {
             PaymentStatus.PAYMENT_SUCCESS.type -> {
                 val paymentType = uri.getQueryParameter(PAYMENT_TYPE)
@@ -156,6 +158,13 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
             val intent = Intent(this, ErrorHandlerActivity::class.java)
             intent.putExtra(ErrorHandlerActivity.ERROR_TYPE, errorType)
             startActivityForResult(intent, ErrorHandlerActivity.ERROR_PAGE_REQUEST_CODE)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (currentSuccessURI.isNotEmpty() && isAdded) {
+            onStatusChanged(currentSuccessURI)
         }
     }
 
