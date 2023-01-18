@@ -209,6 +209,7 @@
     <string name="edit">EDIT</string>
     <string name="done">DONE</string>
     <string name="remove_all">REMOVE ALL</string>
+    <string name="remove_selected">REMOVE SELECTED</string>
     <string name="checkout">CHECKOUT</string>
     <string name="unlinked_account_copy">We see that your Woolies Card is not yet linked. To conveniently view your available funds, next payment due, recent transactions and so much more, please link your Woolies Card now.</string>
     <string name="added_to_shopping_list">added to shopping list</string>
@@ -474,6 +475,8 @@
     <string name="empty_cart_desc">We see that you currently have no items in\n your cart. Would you like to start shopping?</string>
     <string name="start_shopping">start shopping</string>
     <string name="delete">DELETE</string>
+    <string name="are_you_sure">Are You Sure?</string>
+    <string name="delete_confirmation_text">If you remove these products from your cart, you can still shop for them in the app.</string>
 
     <!-- new list item-->
     <string name="create_list">create list</string>
@@ -482,7 +485,7 @@
     <string name="total_item">Total*</string>
     <string name="rlOtherDiscounts"><![CDATA[WRewards Savings & Other Discounts]]></string>
     <string name="out_of_stock">out of stock</string>
-    <string name="promotional_text">You saved </string>
+    <string name="promotional_text">You Saved </string>
     <string name="labelPromotionOne">labelPromotionOne</string>
     <string name="labelPromotionTwo">labelPromotionTwo</string>
     <string name="labelPromotionThree">labelPromotionThree</string>
@@ -2813,5 +2816,12 @@
     <string name="cancelled">Cancelled</string>
     <string name="order">Order\u0020</string>
     <string name="a_report_for_this_review_has_already_been_submitted">A report for this review has already been submitted.</string>
-
+    <string name="reduce_count_button">Reduce Count Button</string>
+    <string name="add_item_count">Add item count</string>
+    <string name="get_replacement_card_action_button_text_label_on_overlay">get_replacement_card_action_button_text_label_on_overlay</string>
+    <plurals name="category_item">
+        <item quantity="one">%1$s %2$s Item</item>
+        <item quantity="other">%1$s %2$s Items</item>
+    </plurals>
+    <string name="select_your_marital_status">Select your marital status</string>
 </resources>
