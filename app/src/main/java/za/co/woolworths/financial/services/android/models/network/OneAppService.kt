@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.models.network
 
 import android.location.Location
-import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.ResponseBody
@@ -11,6 +10,7 @@ import za.co.woolworths.financial.services.android.checkout.service.network.*
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
 import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.Response
 import za.co.woolworths.financial.services.android.models.dto.account.*
@@ -23,6 +23,7 @@ import za.co.woolworths.financial.services.android.models.dto.credit_card_delive
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.CreditCardDeliveryStatusResponse
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.PossibleAddressResponse
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.ScheduleDeliveryRequest
+import za.co.woolworths.financial.services.android.models.dto.dash.LastOrderDetailsResponse
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.LinkDeviceBody
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.LinkedDeviceResponse
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.ViewAllLinkedDeviceResponse
@@ -33,7 +34,6 @@ import za.co.woolworths.financial.services.android.models.dto.otp.ValidateOTPRes
 import za.co.woolworths.financial.services.android.models.dto.pma.DeleteResponse
 import za.co.woolworths.financial.services.android.models.dto.pma.PaymentMethodsResponse
 import za.co.woolworths.financial.services.android.models.dto.shop.DashCategories
-import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.RatingAndReviewData
 import za.co.woolworths.financial.services.android.models.dto.size_guide.SizeGuideResponse
 import za.co.woolworths.financial.services.android.models.dto.statement.*
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsRequestBody
@@ -44,14 +44,12 @@ import za.co.woolworths.financial.services.android.models.dto.voc.*
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.CouponClaimCode
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.SelectedVoucher
 import za.co.woolworths.financial.services.android.onecartgetstream.model.OCAuthenticationResponse
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.RatingAndReviewData
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
 import java.net.URLEncoder
-import retrofit2.adapter.rxjava2.Result.response
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
-import za.co.woolworths.financial.services.android.models.dto.dash.LastOrderDetailsResponse
 
 object OneAppService : RetrofitConfig() {
 
