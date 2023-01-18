@@ -2840,10 +2840,10 @@
     <string name="expires_vouchers">"Expires %s"</string>
     <string name="you_don_t_qualify_for_cash_back">You Don’t Qualify For Cash Back Vouchers Yet</string>
     <string name="apply_for_a_woolworths_credit_card">To qualify for Cash back Vouchers, apply for a Woolworths Black Credit Card today.</string>
-    <string name="no_wrewords_right_now">"You Have No WRewards Vouchers \n Right Now"</string>
+    <string name="no_wrewords_right_now">"You Have No WRewards Vouchers \nRight Now"</string>
     <string name="unable_load_wrewards">"Unable to load WRewards vouchers"</string>
     <string name="load_fail_wrewards_vouchers">"We are experiencing technical issues with our Voucher system. We’re working on it, please try  again later."</string>
-    <string name="no_cash_back_right_now">"You Have No Cash Back Vouchers \n Right Now"</string>
+    <string name="no_cash_back_right_now">"You Have No Cash Back Vouchers \nRight Now"</string>
     <string name="unable_load_cash_back_vouchers">"Unable to load Cash Back vouchers"</string>
     <string name="load_fail_cask_back_vouchers">"We are experiencing technical issues with our Voucher system. Please try  again later."</string>
     <string name="using_cash_back_vouchers">Using Cash back vouchers</string>

@@ -1219,6 +1219,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             cartResponse.productCountMap = data.productCountMap // set delivery location
             cartResponse.liquorOrder = data.liquorOrder
             cartResponse.noLiquorImageUrl = data.noLiquorImageUrl
+            cartResponse.blackCardHolder = data.blackCardHolder
             val fulfillmentDetailsObj = cartResponse.orderSummary.fulfillmentDetails
             if (fulfillmentDetailsObj?.address?.placeId != null) {
                 val shoppingDeliveryLocation = ShoppingDeliveryLocation(fulfillmentDetailsObj)
@@ -1940,6 +1941,8 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         )
         intent.putExtra(
             CASH_BACK_VOUCHERS, false)
+        intent.putExtra(
+            BLACK_CARD_HOLDER,  isBlackCardHolder)
         startActivityForResult(
             intent, REDEEM_VOUCHERS_REQUEST_CODE
         )
