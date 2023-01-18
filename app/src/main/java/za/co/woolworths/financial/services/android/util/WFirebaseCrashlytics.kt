@@ -20,6 +20,14 @@ class WFirebaseCrashlytics {
         FirebaseCrashlytics.getInstance().setCustomKey(key, value ?: "")
     }
 
+    fun setUserId(userId: String) {
+        FirebaseCrashlytics.getInstance().setUserId(userId)
+    }
+
+    fun setCustomKeyValue(keyId: String, valueId: String) {
+        FirebaseCrashlytics.getInstance().setCustomKey(keyId, valueId)
+    }
+
     companion object {
         const val ETag = "E/TAG:"
     }

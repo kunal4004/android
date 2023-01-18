@@ -12,7 +12,7 @@ import za.co.woolworths.financial.services.android.models.network.Resource
 interface ShopRepository {
 
     suspend fun fetchDashLandingDetails(): Resource<DashCategories>
-    suspend fun fetchOnDemandCategories(location: Location?): Resource<RootCategories>
+    suspend fun fetchOnDemandCategories(location: Location?): Resource<DashRootCategories>
     suspend fun fetchInventorySkuForStore(mStoreId: String, referenceId: String): Resource<SkusInventoryForStoreResponse>
     suspend fun addItemsToCart(mAddItemsToCart: MutableList<AddItemToCart>): Resource<AddItemToCartResponse>
     suspend fun validateLocation(placeId: String): Resource<ValidateLocationResponse>
