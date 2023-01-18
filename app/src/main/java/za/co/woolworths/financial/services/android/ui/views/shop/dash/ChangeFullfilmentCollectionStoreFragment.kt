@@ -33,8 +33,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.grid.Pro
 import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.list.DepartmentExtensionFragment
-import za.co.woolworths.financial.services.android.ui.views.maps.DynamicMapDelegate
-import za.co.woolworths.financial.services.android.ui.views.maps.model.DynamicMapMarker
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getDeliveryType
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
@@ -44,7 +42,7 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.TA
 import za.co.woolworths.financial.services.android.geolocation.view.PargoStoreInfoBottomSheetDialog
 
 class ChangeFullfilmentCollectionStoreFragment :
-    DepartmentExtensionFragment(R.layout.layout_dash_collection_store), DynamicMapDelegate,
+    DepartmentExtensionFragment(R.layout.layout_dash_collection_store),
     StoreListAdapter.OnStoreSelected, View.OnClickListener, TextWatcher {
 
     private lateinit var binding: LayoutDashCollectionStoreBinding
@@ -70,14 +68,11 @@ class ChangeFullfilmentCollectionStoreFragment :
 
         parentFragment = (activity as? BottomNavigationActivity)?.currentFragment as? ShopFragment
         this.saveInstanceState = savedInstanceState
-        binding.layoutClickAndCollectStore.dynamicMapView?.initializeMap(savedInstanceState, this)
     }
 
     override fun onResume() {
         super.onResume()
         binding.layoutClickAndCollectStore.apply {
-            dynamicMapView?.initializeMap(saveInstanceState, this@ChangeFullfilmentCollectionStoreFragment)
-            dynamicMapView?.onResume()
             etEnterNewAddress?.addTextChangedListener(this@ChangeFullfilmentCollectionStoreFragment)
         }
         init()
@@ -198,7 +193,7 @@ class ChangeFullfilmentCollectionStoreFragment :
     private fun setStoreList(stores: List<Store>?) {
         binding.layoutEdgeCaseScreen?.root?.visibility = View.GONE
         binding.layoutClickAndCollectStore?.root?.visibility = View.VISIBLE
-        binding.layoutClickAndCollectStore?.ivCross?.visibility = View.GONE
+        binding.layoutClickAndCollectStore?.backButton?.visibility = View.GONE
         binding.layoutClickAndCollectStore.rvStoreList.layoutManager =
             activity?.let { activity -> LinearLayoutManager(activity) }
         if (stores?.isNotEmpty() == true) {
@@ -270,28 +265,8 @@ class ChangeFullfilmentCollectionStoreFragment :
         binding.layoutClickAndCollectStore.tvConfirmStore?.isEnabled = true
     }
 
-    override fun onMapReady() {
-        binding.layoutClickAndCollectStore.dynamicMapView?.setAllGesturesEnabled(false)
-        val addressStoreList = WoolworthsApplication.getCncBrowsingValidatePlaceDetails()?.stores
-        val placeDetails = WoolworthsApplication.getCncBrowsingValidatePlaceDetails()?.placeDetails
-        if (addressStoreList?.isNotEmpty() == true && placeDetails != null) {
-            GeoUtils.showFirstFourLocationInMap(
-                StoreUtils.sortedStoreListBasedOnDistance(
-                    addressStoreList
-                ), placeDetails, binding.layoutClickAndCollectStore.dynamicMapView, context
-            )
-        } else if (updatedAddressStoreList?.isNotEmpty() == true && updatedPlace != null) {
-            GeoUtils.showFirstFourLocationInMap(
-                StoreUtils.sortedStoreListBasedOnDistance(
-                    updatedAddressStoreList
-                ), updatedPlace, binding.layoutClickAndCollectStore.dynamicMapView, context
-            )
-        }
-    }
 
-    override fun onMarkerClicked(marker: DynamicMapMarker) {
 
-    }
 
     override fun onClick(v: View?) {
         when (v?.id) {
@@ -498,26 +473,11 @@ class ChangeFullfilmentCollectionStoreFragment :
         setStoreList(list)
     }
 
-    override fun onPause() {
-        binding.layoutClickAndCollectStore.dynamicMapView?.onPause()
-        super.onPause()
-    }
-
-    override fun onLowMemory() {
-        super.onLowMemory()
-        binding.layoutClickAndCollectStore.dynamicMapView?.onLowMemory()
-    }
-
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         this.saveInstanceState = outState
-        binding.layoutClickAndCollectStore.dynamicMapView?.onSaveInstanceState(outState)
     }
 
-    override fun onDestroyView() {
-        binding.layoutClickAndCollectStore.dynamicMapView?.onDestroy()
-        super.onDestroyView()
-    }
     override fun onFirstTimePargo() {
         PargoStoreInfoBottomSheetDialog().show(
             parentFragmentManager,

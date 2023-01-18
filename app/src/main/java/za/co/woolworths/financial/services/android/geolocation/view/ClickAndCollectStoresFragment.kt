@@ -21,8 +21,6 @@ import za.co.woolworths.financial.services.android.geolocation.network.model.Val
 import za.co.woolworths.financial.services.android.geolocation.view.adapter.StoreListAdapter
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
-import za.co.woolworths.financial.services.android.ui.views.maps.DynamicMapDelegate
-import za.co.woolworths.financial.services.android.ui.views.maps.model.DynamicMapMarker
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.VtoErrorBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.listener.VtoTryAgainListener
 import za.co.woolworths.financial.services.android.util.AppConstant
@@ -40,7 +38,7 @@ import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.util.StoreUtils
 
 @AndroidEntryPoint
-class ClickAndCollectStoresFragment : BaseDialogFragmentBinding<FragmentClickAndCollectStoresBinding>(FragmentClickAndCollectStoresBinding::inflate), DynamicMapDelegate,
+class ClickAndCollectStoresFragment : BaseDialogFragmentBinding<FragmentClickAndCollectStoresBinding>(FragmentClickAndCollectStoresBinding::inflate),
     StoreListAdapter.OnStoreSelected, View.OnClickListener, TextWatcher, VtoTryAgainListener {
 
     private var mValidateLocationResponse: ValidateLocationResponse? = null
@@ -83,10 +81,9 @@ class ClickAndCollectStoresFragment : BaseDialogFragmentBinding<FragmentClickAnd
         super.onViewCreated(view, savedInstanceState)
 
         binding.apply {
-            dynamicMapView?.initializeMap(savedInstanceState, this@ClickAndCollectStoresFragment)
             tvConfirmStore?.setOnClickListener(this@ClickAndCollectStoresFragment)
-            ivCross?.setOnClickListener(this@ClickAndCollectStoresFragment)
             btChange?.setOnClickListener(this@ClickAndCollectStoresFragment)
+            backButton?.setOnClickListener(this@ClickAndCollectStoresFragment)
             etEnterNewAddress?.addTextChangedListener(this@ClickAndCollectStoresFragment)
             dialog?.window
                 ?.attributes?.windowAnimations = R.style.DialogFragmentAnimation
@@ -158,7 +155,7 @@ class ClickAndCollectStoresFragment : BaseDialogFragmentBinding<FragmentClickAnd
                     activity)
                 navigateToFulfillmentScreen()
             }
-            R.id.ivCross -> {
+            R.id.backButton -> {
                dismiss()
             }
             R.id.btChange -> {
@@ -272,37 +269,6 @@ class ClickAndCollectStoresFragment : BaseDialogFragmentBinding<FragmentClickAnd
         placeId?.let { getDeliveryDetailsFromValidateLocation(it) }
     }
 
-    override fun onMapReady() {
-        binding.dynamicMapView?.setAllGesturesEnabled(false)
-        GeoUtils.showFirstFourLocationInMap(StoreUtils.sortedStoreListBasedOnDistance(mValidateLocationResponse?.validatePlace?.stores),mValidateLocationResponse?.validatePlace?.placeDetails, binding.dynamicMapView, context)
-    }
-
-    override fun onMarkerClicked(marker: DynamicMapMarker) { }
-
-    override fun onResume() {
-        super.onResume()
-        binding.dynamicMapView?.onResume()
-    }
-
-    override fun onPause() {
-        binding.dynamicMapView?.onPause()
-        super.onPause()
-    }
-
-    override fun onLowMemory() {
-        super.onLowMemory()
-        binding.dynamicMapView?.onLowMemory()
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        binding.dynamicMapView?.onSaveInstanceState(outState)
-    }
-
-    override fun onDestroyView() {
-        binding.dynamicMapView?.onDestroy()
-        super.onDestroyView()
-    }
     override fun onFirstTimePargo() {
         findNavController().navigate( R.id.action_clickAndCollectStoresFragment_to_pargoStoreInfoBottomSheetDialog)
     }
