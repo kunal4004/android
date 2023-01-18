@@ -252,6 +252,14 @@
             </intent-filter>
         </receiver>
         <receiver
+            android:name="za.co.woolworths.financial.services.android.receivers.DashOrderReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="za.co.woolworths.financial.services.android.receivers.DashOrderReceiver.RECEIVE_ORDER_UPDATE" />
+            </intent-filter>
+        </receiver>
+
+        <receiver
             android:name="com.google.android.gms.analytics.CampaignTrackingReceiver"
             android:enabled="true"
             android:exported="true">
