@@ -2,16 +2,14 @@ package za.co.woolworths.financial.services.android.ui.fragments.click_and_colle
 
 import android.graphics.Paint
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.UnsellableItemsFragmentBinding
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import kotlinx.android.synthetic.main.unsellable_items_fragment.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.UnSellableItemsLiveData
 import za.co.woolworths.financial.services.android.models.dto.Province
@@ -20,8 +18,9 @@ import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerce
 import za.co.woolworths.financial.services.android.ui.adapters.UnsellableItemsListAdapter
 import za.co.woolworths.financial.services.android.util.Utils
 
-class UnsellableItemsFragment : AppCompatDialogFragment(), View.OnClickListener {
+class UnsellableItemsFragment : AppCompatDialogFragment(R.layout.unsellable_items_fragment), View.OnClickListener {
 
+    private lateinit var binding: UnsellableItemsFragmentBinding
     private var selectedSuburb: Suburb? = null
     private var selectedProvince: Province? = null
     var bundle: Bundle? = null
@@ -50,19 +49,17 @@ class UnsellableItemsFragment : AppCompatDialogFragment(), View.OnClickListener 
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.unsellable_items_fragment, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        removeItems?.setOnClickListener(this)
+        binding = UnsellableItemsFragmentBinding.bind(view)
+
+        binding.removeItems?.setOnClickListener(this)
         dialog?.window
             ?.attributes?.windowAnimations = R.style.DialogFragmentAnimation
         if(activity is CheckoutActivity) {
             initCheckoutUnsellableItemsView()
         } else {
-            changeStore?.apply {
+            binding.changeStore?.apply {
                 visibility = View.VISIBLE
                 paintFlags = Paint.UNDERLINE_TEXT_FLAG
                 setOnClickListener(this@UnsellableItemsFragment)
@@ -76,14 +73,14 @@ class UnsellableItemsFragment : AppCompatDialogFragment(), View.OnClickListener 
      * This function will get called when navigated from checkout page
      */
     private fun initCheckoutUnsellableItemsView() {
-        changeStore?.visibility = View.INVISIBLE
-        unsellableItemsFragmentRelativeLayout?.background =
+        binding.changeStore?.visibility = View.INVISIBLE
+        binding.unsellableItemsFragmentRelativeLayout?.background =
             context?.let { ContextCompat.getDrawable(it, R.color.white) }
     }
 
     private fun loadUnsellableItems() {
-        rcvItemsList?.layoutManager = LinearLayoutManager(activity)
-        commerceItems?.let { rcvItemsList?.adapter = UnsellableItemsListAdapter(it) }
+        binding.rcvItemsList?.layoutManager = LinearLayoutManager(activity)
+        commerceItems?.let { binding.rcvItemsList?.adapter = UnsellableItemsListAdapter(it) }
     }
 
     override fun onClick(v: View?) {

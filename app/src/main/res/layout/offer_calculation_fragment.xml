@@ -234,10 +234,13 @@
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
 
-        <include layout="@layout/no_connection_layout"/>
+        <include
+            android:id="@+id/includeNoConnectionLayout"
+            layout="@layout/no_connection_layout"/>
     </FrameLayout>
 
     <include
+        android:id="@+id/includeCliNextButton"
         layout="@layout/cli_next_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

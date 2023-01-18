@@ -6,7 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.select_store_activity.*
+import com.awfs.coordination.databinding.SelectStoreActivityBinding
 import za.co.woolworths.financial.services.android.util.Utils
 
 class SelectStoreActivity : AppCompatActivity() {
@@ -15,6 +15,7 @@ class SelectStoreActivity : AppCompatActivity() {
         const val STORE_DETAILS = "STORE_DETAILS"
     }
 
+    internal lateinit var binding: SelectStoreActivityBinding
     private var navController: NavController? = null
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -26,13 +27,14 @@ class SelectStoreActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Utils.updateStatusBarBackground(this)
-        setContentView(R.layout.select_store_activity)
+        binding = SelectStoreActivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         setActionBar()
         setNavHostStartDestination()
     }
 
     private fun setActionBar() {
-        setSupportActionBar(vtcReplacementToolbar)
+        setSupportActionBar(binding.vtcReplacementToolbar)
         supportActionBar?.apply{
             setDisplayHomeAsUpEnabled(true)
             setDisplayShowTitleEnabled(false)

@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.layout_help_and_support_item_cell.view.*
+import com.awfs.coordination.databinding.LayoutHelpAndSupportItemCellBinding
 
 class HelpAndSupportAdapter(
     val context: Context?,
@@ -14,36 +14,46 @@ class HelpAndSupportAdapter(
     var helpAndSupportListener: HelpAndSupportClickListener
 ) : RecyclerView.Adapter<HelpAndSupportAdapter.HelpAndSupportViewHolder>() {
 
-   inner class HelpAndSupportViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+   inner class HelpAndSupportViewHolder(val itemBinding: LayoutHelpAndSupportItemCellBinding) : RecyclerView.ViewHolder(itemBinding.root) {
         fun bind(position: Int) {
-            val item = helpAndSupportList.get(position)
-            itemView.imgHelpIcon?.setImageResource(item.icon)
-            itemView.txtHelpTitle?.text = item.title
-            itemView.txtHelpSubTitle?.visibility =
-                if (item.subTitle?.isNullOrEmpty() == true)
-                    View.GONE
-                else
-                    View.VISIBLE
-            itemView.txtHelpSubTitle?.text = item.subTitle
-            itemView.setOnClickListener {
-                when {
-                    itemView.txtHelpTitle?.text.toString().equals(context?.getString(R.string.dash_call_customer_care), true) -> {
-                        helpAndSupportListener.openCallSupport(itemView?.txtHelpSubTitle?.text.toString())
-                    }
-                    itemView.txtHelpTitle?.text.toString().equals(context?.getString(R.string.cancel_order), true) -> {
-                        helpAndSupportListener.onCancelOrder()
-                    }
-                    itemView.txtHelpTitle?.text.toString().equals(context?.getString(R.string.dash_send_us_an_email), true) -> {
-                        helpAndSupportListener.openEmailSupport(itemView?.txtHelpSubTitle?.text.toString())
-                    }
-                    itemView.txtHelpTitle?.text.toString().equals(context?.getString(R.string.dash_Chat_to_your_shopper), true) -> {
-                        helpAndSupportListener.openChatSupport()
-                    }
-                    itemView.txtHelpTitle?.text.toString().equals(context?.getString(R.string.dash_track_your_order), true) -> {
-                        helpAndSupportListener.openTrackYourOrder()
-                    }
-                    itemView.txtHelpTitle?.text.toString().equals(context?.getString(R.string.view_tax_invoice), true) -> {
-                        helpAndSupportListener.openTaxInvoice()
+            itemBinding.apply {
+                val item = helpAndSupportList.get(position)
+                imgHelpIcon?.setImageResource(item.icon)
+                txtHelpTitle?.text = item.title
+                txtHelpSubTitle?.visibility =
+                    if (item.subTitle?.isNullOrEmpty() == true)
+                        View.GONE
+                    else
+                        View.VISIBLE
+                txtHelpSubTitle?.text = item.subTitle
+                root.setOnClickListener {
+                    when {
+                        txtHelpTitle?.text.toString()
+                            .equals(context?.getString(R.string.dash_call_customer_care), true) -> {
+                            helpAndSupportListener.openCallSupport(txtHelpSubTitle?.text.toString())
+                        }
+                        txtHelpTitle?.text.toString()
+                            .equals(context?.getString(R.string.cancel_order), true) -> {
+                            helpAndSupportListener.onCancelOrder()
+                        }
+                        txtHelpTitle?.text.toString()
+                            .equals(context?.getString(R.string.dash_send_us_an_email), true) -> {
+                            helpAndSupportListener.openEmailSupport(txtHelpSubTitle?.text.toString())
+                        }
+                        txtHelpTitle?.text.toString().equals(
+                            context?.getString(R.string.dash_Chat_to_your_shopper),
+                            true
+                        ) -> {
+                            helpAndSupportListener.openChatSupport()
+                        }
+                        txtHelpTitle?.text.toString()
+                            .equals(context?.getString(R.string.dash_track_your_order), true) -> {
+                            helpAndSupportListener.openTrackYourOrder()
+                        }
+                        txtHelpTitle?.text.toString()
+                            .equals(context?.getString(R.string.view_tax_invoice), true) -> {
+                            helpAndSupportListener.openTaxInvoice()
+                        }
                     }
                 }
             }
@@ -52,7 +62,7 @@ class HelpAndSupportAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HelpAndSupportViewHolder {
         return HelpAndSupportViewHolder(
-            LayoutInflater.from(context).inflate(R.layout.layout_help_and_support_item_cell, parent, false)
+            LayoutHelpAndSupportItemCellBinding.inflate(LayoutInflater.from(context), parent, false)
         )
     }
 

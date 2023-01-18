@@ -2,39 +2,37 @@ package za.co.woolworths.financial.services.android.ui.fragments.npc
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-import android.view.LayoutInflater
+import android.os.CountDownTimer
 import android.view.Menu
-import android.view.View
-import android.view.ViewGroup
 import android.view.MenuInflater
+import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import androidx.appcompat.app.AppCompatActivity
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.npc_card_linked_successful_layout.*
-import kotlinx.android.synthetic.main.process_block_card_fragment.*
-import za.co.woolworths.financial.services.android.ui.extension.addFragment
-import za.co.woolworths.financial.services.android.ui.extension.findFragmentByTag
-import za.co.woolworths.financial.services.android.ui.extension.withArgs
-import android.os.CountDownTimer
-import kotlinx.android.synthetic.main.npc_block_card_failure.*
+import com.awfs.coordination.databinding.ProcessBlockCardFragmentBinding
+import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.IProgressAnimationState
+import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.npc.BlockCardRequestBody
 import za.co.woolworths.financial.services.android.models.dto.npc.BlockMyCardResponse
+import za.co.woolworths.financial.services.android.models.network.CompletionHandler
+import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.card.BlockMyCardActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
-import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.STORE_CARD_DETAIL
-import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.TemporaryFreezeStoreCard.Companion.PERMANENT
-import za.co.woolworths.financial.services.android.ui.views.actionsheet.EnableLocationSettingsFragment.Companion.ACCESS_MY_LOCATION_REQUEST_CODE
-
+import za.co.woolworths.financial.services.android.ui.extension.addFragment
+import za.co.woolworths.financial.services.android.ui.extension.findFragmentByTag
+import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.util.NetworkManager
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 
-class ProcessBlockCardFragment : BlockMyCardRequestExtension(), IProgressAnimationState {
+class ProcessBlockCardFragment : MyCardExtension(R.layout.process_block_card_fragment), IProgressAnimationState {
 
+    private lateinit var binding: ProcessBlockCardFragmentBinding
     private var mBlockCardReason: Int = 0
     private var mCardWasBlocked: Boolean = false
+    private var mPostBlockMyCard: Call<BlockMyCardResponse>? = null
 
     companion object {
         const val CARD_BLOCKED = "CARD_BLOCKED"
@@ -55,12 +53,9 @@ class ProcessBlockCardFragment : BlockMyCardRequestExtension(), IProgressAnimati
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.process_block_card_fragment, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding = ProcessBlockCardFragmentBinding.bind(view)
 
         (activity as? AppCompatActivity)?.addFragment(
                 fragment = ProgressStateFragment.newInstance(this),
@@ -68,7 +63,7 @@ class ProcessBlockCardFragment : BlockMyCardRequestExtension(), IProgressAnimati
                 containerViewId = R.id.flProgressIndicator
         )
 
-        okGotItButton?.setOnClickListener {
+        binding.incLinkCardSuccessFulView.okGotItButton?.setOnClickListener {
             (activity as? AppCompatActivity)?.let {
                 it.setResult(MyCardDetailActivity.TEMPORARY_FREEZE_STORE_CARD_RESULT_CODE)
                 it.finish()
@@ -79,11 +74,11 @@ class ProcessBlockCardFragment : BlockMyCardRequestExtension(), IProgressAnimati
         if (!mCardWasBlocked)
             executeBlockCard()
 
-        btnRetry?.setOnClickListener {
+        binding.incNPCBlockCardFailure.btnRetry?.setOnClickListener {
             if (NetworkManager.getInstance().isConnectedToNetwork(activity)) {
                 progressState()?.restartSpinning()
-                incNPCBlockCardFailure?.visibility = GONE
-                incProcessingTextLayout?.visibility = VISIBLE
+                binding.incNPCBlockCardFailure?.root?.visibility = GONE
+                binding.incProcessingTextLayout?.root?.visibility = VISIBLE
                 (activity as? BlockMyCardActivity)?.iconVisibility(GONE)
                 executeBlockCard()
             }
@@ -104,8 +99,8 @@ class ProcessBlockCardFragment : BlockMyCardRequestExtension(), IProgressAnimati
 
 
     private fun displayUnblockCardSuccess() {
-        incLinkCardSuccessFulView?.visibility = VISIBLE
-        incProcessingTextLayout?.visibility = GONE
+        binding.incLinkCardSuccessFulView?.root?.visibility = VISIBLE
+        binding.incProcessingTextLayout?.root?.visibility = GONE
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -118,11 +113,30 @@ class ProcessBlockCardFragment : BlockMyCardRequestExtension(), IProgressAnimati
     override fun onAnimationEnd(cardIsBlocked: Boolean) {
         when (mCardWasBlocked) {
             true -> displayUnblockCardSuccess()
-            false -> displayBlockedCardSuccess(cardIsBlocked)
+            false -> binding.displayBlockedCardSuccess(cardIsBlocked)
         }
     }
 
-    override fun blockCardSuccessResponse(blockMyCardResponse: BlockMyCardResponse?) {
+    fun blockMyCardRequest(blockMyCardRequest: BlockCardRequestBody, productOfferingId: String?) {
+        productOfferingId?.let {
+            mPostBlockMyCard = OneAppService.postBlockMyCard(blockMyCardRequest, it)
+            mPostBlockMyCard?.enqueue(CompletionHandler(object : IResponseListener<BlockMyCardResponse> {
+                override fun onSuccess(blockMyCardResponse: BlockMyCardResponse?) {
+                    blockCardSuccessResponse(blockMyCardResponse)
+                }
+
+                override fun onFailure(error: Throwable?) {
+                    activity?.apply {
+                        runOnUiThread {
+                            blockMyCardFailure()
+                        }
+                    }
+                }
+            }, BlockMyCardResponse::class.java))
+        }
+    }
+
+    fun blockCardSuccessResponse(blockMyCardResponse: BlockMyCardResponse?) {
         blockMyCardResponse?.apply {
             when (httpCode) {
                 200 -> progressState()?.animateSuccessEnd(true)
@@ -132,15 +146,15 @@ class ProcessBlockCardFragment : BlockMyCardRequestExtension(), IProgressAnimati
         }
     }
 
-    override fun blockMyCardFailure() {
+    fun blockMyCardFailure() {
         progressState()?.animateSuccessEnd(false)
-        displayBlockedCardSuccess(false)
+        binding.displayBlockedCardSuccess(false)
     }
 
-    private fun displayBlockedCardSuccess(cardIsBlocked: Boolean) {
+    private fun ProcessBlockCardFragmentBinding.displayBlockedCardSuccess(cardIsBlocked: Boolean) {
         if (cardIsBlocked) {
-            incBlockCardSuccess?.visibility = VISIBLE
-            incProcessingTextLayout?.visibility = GONE
+            incBlockCardSuccess?.root?.visibility = VISIBLE
+            incProcessingTextLayout?.root?.visibility = GONE
             object : CountDownTimer(1500, 100) {
                 override fun onTick(millisUntilFinished: Long) {}
                 override fun onFinish() {
@@ -153,14 +167,18 @@ class ProcessBlockCardFragment : BlockMyCardRequestExtension(), IProgressAnimati
                 }
             }.start()
         } else {
-            incNPCBlockCardFailure?.visibility = VISIBLE
-            incProcessingTextLayout?.visibility = GONE
+            incNPCBlockCardFailure?.root?.visibility = VISIBLE
+            incProcessingTextLayout?.root?.visibility = GONE
             (activity as? BlockMyCardActivity)?.iconVisibility(VISIBLE)
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        mPostBlockMyCard?.apply {
+            if (!isCanceled)
+                cancel()
+        }
         activity?.supportFragmentManager?.apply {
             if (findFragmentById(R.id.flProgressIndicator) != null) {
                 findFragmentById(R.id.flProgressIndicator)?.let { beginTransaction().remove(it).commitAllowingStateLoss() }

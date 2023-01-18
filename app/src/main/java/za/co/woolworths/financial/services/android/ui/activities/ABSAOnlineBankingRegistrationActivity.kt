@@ -10,7 +10,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.absa_online_banking_to_device_activity.*
+import com.awfs.coordination.databinding.AbsaOnlineBankingToDeviceActivityBinding
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragmentSafely
@@ -21,6 +21,7 @@ import za.co.woolworths.financial.services.android.util.Utils
 
 class ABSAOnlineBankingRegistrationActivity : AppCompatActivity(), IDialogListener {
 
+    private lateinit var binding: AbsaOnlineBankingToDeviceActivityBinding
     private var mAccounts: String? = null
     private var mShouldDisplayABSALogin: Boolean? = false
     private var mCreditAccountInfo: String? = ""
@@ -33,7 +34,8 @@ class ABSAOnlineBankingRegistrationActivity : AppCompatActivity(), IDialogListen
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.absa_online_banking_to_device_activity)
+        binding = AbsaOnlineBankingToDeviceActivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         Utils.updateStatusBarBackground(this)
 
         actionBar()
@@ -66,7 +68,7 @@ class ABSAOnlineBankingRegistrationActivity : AppCompatActivity(), IDialogListen
     }
 
     private fun actionBar() {
-        setSupportActionBar(tbOnlineBanking)
+        setSupportActionBar(binding.tbOnlineBanking)
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
             setDisplayShowTitleEnabled(false)
@@ -170,10 +172,10 @@ class ABSAOnlineBankingRegistrationActivity : AppCompatActivity(), IDialogListen
     }
 
     fun setPageTitle(title: String) {
-        toolbarText.text = title
+        binding.toolbarText.text = title
     }
 
     fun clearPageTitle(){
-        toolbarText.text = ""
+        binding.toolbarText.text = ""
     }
 }

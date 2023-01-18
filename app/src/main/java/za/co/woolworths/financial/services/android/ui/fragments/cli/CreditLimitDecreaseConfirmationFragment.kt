@@ -7,13 +7,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.credit_limit_decrease_bottom_sheet_fragment.*
+import com.awfs.coordination.databinding.CreditLimitDecreaseBottomSheetFragmentBinding
 import za.co.woolworths.financial.services.android.contracts.ICreditLimitDecrease
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 
 class CreditLimitDecreaseConfirmationFragment : WBottomSheetDialogFragment() {
 
+    private lateinit var binding: CreditLimitDecreaseBottomSheetFragmentBinding
     private var mCreditLimitDecreaseListener: ICreditLimitDecrease? = null
 
     companion object {
@@ -40,20 +41,25 @@ class CreditLimitDecreaseConfirmationFragment : WBottomSheetDialogFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.credit_limit_decrease_bottom_sheet_fragment, container, false)
+        binding = CreditLimitDecreaseBottomSheetFragmentBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        tvGotIt?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
-        tvDescriptionPart2?.text = getString(R.string.credit_limit_decrease_desc_part_2, mTrackedAmount)
-        btnProceedWithMaximum?.setOnClickListener {
-            mCreditLimitDecreaseListener?.apply {
-                dismissAllowingStateLoss()
-                onCreditDecreaseProceedWithMaximum()
+
+        with(binding) {
+            tvGotIt?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
+            tvDescriptionPart2?.text =
+                getString(R.string.credit_limit_decrease_desc_part_2, mTrackedAmount)
+            btnProceedWithMaximum?.setOnClickListener {
+                mCreditLimitDecreaseListener?.apply {
+                    dismissAllowingStateLoss()
+                    onCreditDecreaseProceedWithMaximum()
+                }
             }
+            tvGotIt?.setOnClickListener { dismissAllowingStateLoss() }
         }
-        tvGotIt?.setOnClickListener { dismissAllowingStateLoss() }
     }
 
     override fun onDetach() {

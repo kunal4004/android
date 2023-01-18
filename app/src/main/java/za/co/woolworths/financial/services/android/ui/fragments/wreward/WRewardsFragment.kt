@@ -3,13 +3,10 @@ package za.co.woolworths.financial.services.android.ui.fragments.wreward
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.wreward_logout_fragment.*
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
@@ -20,13 +17,9 @@ import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
 
-class WRewardsFragment : Fragment() {
+class WRewardsFragment : Fragment(R.layout.wrewards_fragment) {
 
     private var bottomNav: BottomNavigationActivity? = (activity as? BottomNavigationActivity)
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.wrewards_fragment, container, false)
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

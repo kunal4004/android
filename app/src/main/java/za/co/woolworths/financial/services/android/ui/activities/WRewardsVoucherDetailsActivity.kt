@@ -6,11 +6,10 @@ import android.text.TextUtils
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.WrewardsVoucherDetailsBinding
 import com.google.gson.Gson
-import kotlinx.android.synthetic.main.wrewards_voucher_details.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.Voucher
 import za.co.woolworths.financial.services.android.models.dto.VoucherCollection
 import za.co.woolworths.financial.services.android.ui.adapters.WRewardsVouchersAdapter
@@ -22,6 +21,7 @@ import java.util.*
 
 class WRewardsVoucherDetailsActivity : AppCompatActivity(), View.OnClickListener {
 
+    private lateinit var binding: WrewardsVoucherDetailsBinding
     private lateinit var wRewardsVoucherAdapter: WRewardsVouchersAdapter
     private var voucherCollection: VoucherCollection? = null
     private var position = 0
@@ -37,41 +37,45 @@ class WRewardsVoucherDetailsActivity : AppCompatActivity(), View.OnClickListener
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         KotlinUtils.setTransparentStatusBar(this)
-        setContentView(R.layout.wrewards_voucher_details)
-        closeVoucherImageButton.setOnClickListener(this)
-        intent?.extras?.apply {
-            voucherCollection = Gson().fromJson(getString(VOUCHERS), VoucherCollection::class.java)
-            position = getInt(POSITION)
-            vouchers = voucherCollection?.vouchers
-            Collections.rotate(vouchers, -position)
+        binding = WrewardsVoucherDetailsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        with(binding) {
+            closeVoucherImageButton.setOnClickListener(this@WRewardsVoucherDetailsActivity)
+            intent?.extras?.apply {
+                voucherCollection = Gson().fromJson(getString(VOUCHERS), VoucherCollection::class.java)
+                position = getInt(POSITION)
+                vouchers = voucherCollection?.vouchers
+                Collections.rotate(vouchers, -position)
+            }
+            termsCondition?.setOnClickListener(this@WRewardsVoucherDetailsActivity)
+            setVoucherAdapter()
+            cardSwipeStackView?.setCardEventListener(object : CardEventListener {
+                override fun onCardDragging(percentX: Float, percentY: Float) {
+                    if ((percentX > 0 && percentY < 0) || (percentX < 0 && percentY < 0)) { // Detects left and right dragging
+                        closeVoucherImageButton?.alpha =
+                                if (KotlinUtils.isNumberPositive(percentX)) percentX.plus(1) else 1.minus(percentX)
+                    } else if ((percentX > 0 && percentY > 0) || (percentX < 0 && percentY > 0)) { // Detects bottom dragging
+                        termsCondition?.alpha = if (percentY > 0.1) 0f else 1f
+                    } else {
+                        termsCondition?.alpha = 1f
+                        closeVoucherImageButton?.alpha = 1f
+                    }
+                }
+
+                override fun onCardSwiped(direction: SwipeDirection?) {
+                    if (direction === SwipeDirection.Bottom) {
+                        moveVoucherItemToLastPosition()
+                        setVoucherAdapter()
+                    }
+                }
+            })
+
+            tagVoucherDescription()
         }
-        termsCondition?.setOnClickListener(this)
-        setVoucherAdapter()
-        cardSwipeStackView?.setCardEventListener(object : CardEventListener {
-            override fun onCardDragging(percentX: Float, percentY: Float) {
-                if ((percentX > 0 && percentY < 0) || (percentX < 0 && percentY < 0)) { // Detects left and right dragging
-                    closeVoucherImageButton?.alpha =
-                            if (KotlinUtils.isNumberPositive(percentX)) percentX.plus(1) else 1.minus(percentX)
-                } else if ((percentX > 0 && percentY > 0) || (percentX < 0 && percentY > 0)) { // Detects bottom dragging
-                    termsCondition?.alpha = if (percentY > 0.1) 0f else 1f
-                } else {
-                    termsCondition?.alpha = 1f
-                    closeVoucherImageButton?.alpha = 1f
-                }
-            }
-
-            override fun onCardSwiped(direction: SwipeDirection?) {
-                if (direction === SwipeDirection.Bottom) {
-                    moveVoucherItemToLastPosition()
-                    setVoucherAdapter()
-                }
-            }
-        })
-
-        tagVoucherDescription()
     }
 
-    private fun moveVoucherItemToLastPosition() {
+    private fun WrewardsVoucherDetailsBinding.moveVoucherItemToLastPosition() {
         tagVoucherDescription()
         vouchers?.apply {
             val item = vouchers?.get(0)
@@ -80,7 +84,7 @@ class WRewardsVoucherDetailsActivity : AppCompatActivity(), View.OnClickListener
         }
     }
 
-    private fun setVoucherAdapter() {
+    private fun WrewardsVoucherDetailsBinding.setVoucherAdapter() {
         wRewardsVoucherAdapter =
                 WRewardsVouchersAdapter(this@WRewardsVoucherDetailsActivity, vouchers)
         cardSwipeStackView?.setAdapter(wRewardsVoucherAdapter)
@@ -92,7 +96,7 @@ class WRewardsVoucherDetailsActivity : AppCompatActivity(), View.OnClickListener
         Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.WREWARDS_VOUCHERS_BARCODE)
     }
 
-    private fun tagVoucherDescription() {
+    private fun WrewardsVoucherDetailsBinding.tagVoucherDescription() {
         val position = if (vouchers?.size == 1) 0 else cardSwipeStackView?.topIndex ?: 0
         vouchers?.get(position)?.description?.apply {
             val arguments: MutableMap<String, String> = HashMap()
@@ -104,11 +108,11 @@ class WRewardsVoucherDetailsActivity : AppCompatActivity(), View.OnClickListener
     override fun onClick(v: View) {
         when (v.id) {
             R.id.closeVoucherImageButton -> onBackPressed()
-            R.id.termsCondition -> viewTermsAndConditions()
+            R.id.termsCondition -> binding.viewTermsAndConditions()
         }
     }
 
-    private fun viewTermsAndConditions() {
+    private fun WrewardsVoucherDetailsBinding.viewTermsAndConditions() {
         val terms = vouchers?.get(cardSwipeStackView?.topIndex ?: 0)?.termsAndConditions
         if (TextUtils.isEmpty(terms)) {
             Utils.openLinkInInternalWebView(AppConfigSingleton.wrewardsTCLink, true)

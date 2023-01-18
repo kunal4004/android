@@ -1,10 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.opt_in.otp
 
-
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -12,7 +9,7 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.findNavController
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.validate_otp_fragment.*
+import com.awfs.coordination.databinding.ValidateOtpFragmentBinding
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
 import za.co.woolworths.financial.services.android.models.dto.otp.ValidateOTPRequest
@@ -24,8 +21,9 @@ import za.co.woolworths.financial.services.android.ui.fragments.bpi.viewmodel.BP
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants
 
-class BpiValidateOTPFragment: Fragment() {
+class BpiValidateOTPFragment: Fragment(R.layout.validate_otp_fragment) {
 
+    private lateinit var binding: ValidateOtpFragmentBinding
     private val bpiViewModel: BPIViewModel? by activityViewModels()
 
     var navController: NavController? = null
@@ -36,16 +34,12 @@ class BpiValidateOTPFragment: Fragment() {
     lateinit var otpSentTo: String
     var validateOTPResponse: ValidateOTPResponse? = null
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        setHasOptionsMenu(true)
-        return inflater.inflate(R.layout.validate_otp_fragment, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding = ValidateOtpFragmentBinding.bind(view)
         (activity as? BalanceProtectionInsuranceActivity)?.hideDisplayHomeAsUpEnabled()
         navController = Navigation.findNavController(view)
-        description.text = activity?.resources?.getString(R.string.icr_otp_phone_desc, otpSentTo)
+        binding.description.text = activity?.resources?.getString(R.string.icr_otp_phone_desc, otpSentTo)
         initValidateOTP()
     }
 

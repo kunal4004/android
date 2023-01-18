@@ -4,13 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.npc_card_linked_successful_layout.*
-import kotlinx.android.synthetic.main.root_device_info_fragment.*
+import com.awfs.coordination.databinding.RootDeviceInfoFragmentBinding
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 
 class RootedDeviceInfoFragment : WBottomSheetDialogFragment() {
 
+    private lateinit var binding: RootDeviceInfoFragmentBinding
     private var mDescription: String? = null
 
     companion object {
@@ -28,14 +27,17 @@ class RootedDeviceInfoFragment : WBottomSheetDialogFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.root_device_info_fragment, container, false)
+        binding = RootDeviceInfoFragmentBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        tvDescription?.text = mDescription
 
-        okGotItButton?.setOnClickListener { finishActivity() }
+        with(binding) {
+            tvDescription?.text = mDescription
+            gotItButton?.setOnClickListener { finishActivity() }
+        }
     }
 
     override fun onDetach() {

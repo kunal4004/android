@@ -36,6 +36,9 @@ import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddress
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutReturningUserCollectionFragment
 import za.co.woolworths.financial.services.android.checkout.viewmodel.WhoIsCollectingDetails
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.Companion.DASH_SWITCH_DELIVERY_MODE
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyNames.Companion.BROWSE_MODE
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyNames.Companion.DELIVERY_MODE
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
@@ -236,7 +239,6 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
                     return
                 else {
                     lastDeliveryType = deliveryType
-                    setEventsForSwitchingDeliveryType(Delivery.CNC.name)
                     binding.openCollectionTab()
                 }
             }
@@ -245,7 +247,6 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
                     return
                 else {
                     lastDeliveryType = deliveryType
-                    setEventsForSwitchingDeliveryType( Delivery.STANDARD.name)
                     binding.openGeoDeliveryTab()
                 }
             }
@@ -254,7 +255,6 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
                     return
                 else {
                     lastDeliveryType = deliveryType
-                    setEventsForSwitchingDeliveryType(Delivery.DASH.name)
                     binding.openDashTab()
                 }
             }
@@ -265,12 +265,13 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
     }
 
     private fun setEventsForSwitchingDeliveryType(deliveryType: String) {
-        val dashParams = Bundle()
-        dashParams.putString(FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_MODE,
-            deliveryType)
-        dashParams.putString(FirebaseManagerAnalyticsProperties.PropertyNames.BROWSE_MODE,
-            KotlinUtils.browsingDeliveryType?.name)
-        AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.DASH_SWITCH_DELIVERY_MODE, dashParams)
+        val dashParams = bundleOf(
+            DELIVERY_MODE to deliveryType,
+            BROWSE_MODE to KotlinUtils.browsingDeliveryType?.name
+        )
+        AnalyticsManager.setUserProperty(DELIVERY_MODE, deliveryType)
+        AnalyticsManager.setUserProperty(BROWSE_MODE, KotlinUtils.browsingDeliveryType?.type)
+        AnalyticsManager.logEvent(DASH_SWITCH_DELIVERY_MODE, dashParams)
     }
 
 
@@ -425,7 +426,7 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
             if (placeId == null) {
                 return
             }
-            val confirmLocationAddress = ConfirmLocationAddress(placeId,"",address2)
+            val confirmLocationAddress = ConfirmLocationAddress(placeId,null,address2)
             val confirmLocationRequest = when (deliveryType) {
                 Delivery.STANDARD.name -> {
                     mStoreId = ""
@@ -442,6 +443,7 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
                     ConfirmLocationRequest(STANDARD, confirmLocationAddress, "")
                 }
             }
+            setEventsForSwitchingDeliveryType(deliveryType ?: Delivery.STANDARD.name)
 
             viewLifecycleOwner.lifecycleScope.launch {
                 progressBar.visibility = View.VISIBLE

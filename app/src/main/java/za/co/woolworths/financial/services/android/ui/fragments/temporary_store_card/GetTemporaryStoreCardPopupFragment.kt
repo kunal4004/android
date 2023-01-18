@@ -2,12 +2,14 @@ package za.co.woolworths.financial.services.android.ui.fragments.temporary_store
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.*
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.GetTempStoreCardPopupFragmentBinding
 import com.google.gson.Gson
-import kotlinx.android.synthetic.main.get_temp_store_card_popup_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.npc.Transition
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
@@ -20,8 +22,9 @@ import za.co.woolworths.financial.services.android.ui.fragments.npc.EnterOtpFrag
 import za.co.woolworths.financial.services.android.ui.fragments.npc.LinkStoreCardFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorDialogFragment
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 
-class GetTemporaryStoreCardPopupFragment : Fragment(), View.OnClickListener {
+class GetTemporaryStoreCardPopupFragment : BaseFragmentBinding<GetTempStoreCardPopupFragmentBinding>(GetTempStoreCardPopupFragmentBinding::inflate), View.OnClickListener {
     private var mStoreCardDetail: String? = null
     private var mStoreCardsResponse: StoreCardsResponse? = null
 
@@ -47,14 +50,10 @@ class GetTemporaryStoreCardPopupFragment : Fragment(), View.OnClickListener {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.get_temp_store_card_popup_fragment, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        getTempStoreCardButton.setOnClickListener(this)
+        binding.getTempStoreCardButton.setOnClickListener(this)
         (activity as? MyCardActivityExtension)?.apply {
             Utils.updateStatusBarBackground(this)
             supportActionBar?.apply {

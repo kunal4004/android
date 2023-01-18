@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.my_card_activity.*
+import com.awfs.coordination.databinding.BlockMyCardActivityBinding
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.CARD_NUMBER
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.STORE_CARD_DETAIL
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
@@ -15,9 +15,12 @@ import za.co.woolworths.financial.services.android.util.Utils
 
 class InstantStoreCardReplacementActivity : MyCardActivityExtension() {
 
+    private lateinit var binding: BlockMyCardActivityBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.block_my_card_activity)
+        binding = BlockMyCardActivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         Utils.updateStatusBarBackground(this)
         actionBar()
 
@@ -35,8 +38,8 @@ class InstantStoreCardReplacementActivity : MyCardActivityExtension() {
     }
 
     private fun actionBar() {
-        toolbarText?.text = ""
-        setSupportActionBar(tbMyCard)
+        binding.toolbarText?.text = ""
+        setSupportActionBar(binding.tbMyCard)
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(false)
             setDisplayShowTitleEnabled(false)

@@ -2,11 +2,9 @@ package za.co.woolworths.financial.services.android.ui.activities.rating_and_rev
 
 import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.sort_opitions_item.view.*
+import com.awfs.coordination.databinding.ReviewSortSelectionLayoutBinding
 import za.co.woolworths.financial.services.android.models.dto.SortOption
 
 class ReviewSortOptionsAdapter(
@@ -16,7 +14,7 @@ class ReviewSortOptionsAdapter(
 ) : RecyclerView.Adapter<ReviewSortOptionsAdapter.ReviewSortOptionViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReviewSortOptionViewHolder {
         return ReviewSortOptionViewHolder(
-            LayoutInflater.from(context).inflate(R.layout.review_sort_selection_layout, parent, false)
+            ReviewSortSelectionLayoutBinding.inflate(LayoutInflater.from(context), parent, false)
         )
     }
 
@@ -34,11 +32,11 @@ class ReviewSortOptionsAdapter(
         }
     }
 
-    inner class ReviewSortOptionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class ReviewSortOptionViewHolder(val itemBinding: ReviewSortSelectionLayoutBinding) : RecyclerView.ViewHolder(itemBinding.root) {
 
-        val tvSortOption = itemView.sortOptionType
-        val view = itemView
-        val rbsortSelector = itemView.sortSelector
+        val tvSortOption = itemBinding.sortOptionType
+        val view = itemBinding.root
+        val rbsortSelector = itemBinding.sortSelector
     }
 
     interface OnSortOptionSelected {

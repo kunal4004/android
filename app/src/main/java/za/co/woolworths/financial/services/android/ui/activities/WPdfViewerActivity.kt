@@ -7,8 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ShareCompat
 import androidx.core.content.FileProvider
 import com.awfs.coordination.BuildConfig
-import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.activity_oreder_tax_invoice.*
+import com.awfs.coordination.databinding.ActivityOrederTaxInvoiceBinding
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import java.io.File
@@ -16,6 +15,7 @@ import java.io.FileOutputStream
 
 class WPdfViewerActivity : AppCompatActivity(), PermissionResultCallback {
 
+    private lateinit var binding: ActivityOrederTaxInvoiceBinding
     private var pageTitle: String? = null
     private var fileName: String? = null
     private var fileData: ByteArray? = null
@@ -34,12 +34,13 @@ class WPdfViewerActivity : AppCompatActivity(), PermissionResultCallback {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_oreder_tax_invoice)
+        binding = ActivityOrederTaxInvoiceBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         getBundleArgument()
         //https://wigroup2.atlassian.net/browse/WOP-6922
         Utils.updateStatusBarBackground(this)
 
-        initView()
+        binding.initView()
 
         permissionUtils = PermissionUtils(this, this)
         permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -55,13 +56,13 @@ class WPdfViewerActivity : AppCompatActivity(), PermissionResultCallback {
         }
     }
 
-    private fun initView() {
+    private fun ActivityOrederTaxInvoiceBinding.initView() {
         done.setOnClickListener { onBackPressed() }
         share.setOnClickListener { checkPermissionBeforeSharing() }
         configureUI()
     }
 
-    private fun configureUI() {
+    private fun ActivityOrederTaxInvoiceBinding.configureUI() {
         toolbarText.text = pageTitle
         pdfView.fromBytes(fileData)
                 .enableDoubletap(true)

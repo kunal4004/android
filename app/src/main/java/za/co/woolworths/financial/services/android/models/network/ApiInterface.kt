@@ -375,8 +375,9 @@ interface ApiInterface {
         @Header("longitude") long: Double?,
         @Query("suburbId") suburbId: String?,
         @Query("storeId") storeId: String?,
-        @Query("deliveryType") deliveryType: String?
-    ): retrofit2.Response<RootCategories>
+        @Query("deliveryType") deliveryType: String?,
+        @Query("fulFillmentStoreId01") fulFillmentStoreId01: String?
+    ): retrofit2.Response<DashRootCategories>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "Accept-Encoding: gzip")
     @GET("wfs/app/v4/search/department/landingPage")
@@ -1408,16 +1409,6 @@ interface ApiInterface {
         @Body saveAddressLocationRequest: SaveAddressLocationRequest
     ): Call<GenericResponse>
 
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @POST("wfs/app/v4/user/email/{emailId}")
-    suspend fun makeEnquiry(
-        @Header("userAgent") userAgent: String,
-        @Header("userAgentVersion") userAgentVersion: String,
-        @Header("sessionToken") sessionToken: String,
-        @Path("emailId") emailId: String = "contactUs",
-        @Header("deviceIdentityToken") deviceIdentityToken: String,
-        @Body emailUsRequest: EmailUsRequest
-    ): GenericResponse
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @DELETE("wfs/app/v4/user/deleteProfile")

@@ -14,14 +14,9 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getColor
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.layout_credit_report_app_feature_list.view.*
-import kotlinx.android.synthetic.main.layout_credit_report_app_feature_list_item.view.*
-import kotlinx.android.synthetic.main.layout_credit_report_privacy_policy.view.*
-import kotlinx.android.synthetic.main.layout_credit_report_privacy_policy_list_item.view.*
+import com.awfs.coordination.databinding.*
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.util.KotlinUtils
-
 
 class CreditReportTUAdapter(val context: Activity) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -43,12 +38,18 @@ class CreditReportTUAdapter(val context: Activity) : RecyclerView.Adapter<Recycl
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
             CreditReportViewType.HEADER_TITLE.value -> {
-                HeaderTitleViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.layout_credit_report_header, parent, false))
+                HeaderTitleViewHolder(
+                    LayoutCreditReportHeaderBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                )
             }
             CreditReportViewType.APP_FEATURE_LIST.value -> {
-                AppFeatureViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.layout_credit_report_app_feature_list, parent, false))
+                AppFeatureViewHolder(
+                    LayoutCreditReportAppFeatureListBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                )
             }
-            else -> PrivacyPolicyViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.layout_credit_report_privacy_policy, parent, false))
+            else -> PrivacyPolicyViewHolder(
+                LayoutCreditReportPrivacyPolicyBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            )
         }
     }
 
@@ -92,29 +93,29 @@ class CreditReportTUAdapter(val context: Activity) : RecyclerView.Adapter<Recycl
     }
 
 
-    inner class HeaderTitleViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
-    inner class AppFeatureViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class HeaderTitleViewHolder(val itemBinding: LayoutCreditReportHeaderBinding) : RecyclerView.ViewHolder(itemBinding.root)
+    inner class AppFeatureViewHolder(val itemBinding: LayoutCreditReportAppFeatureListBinding) : RecyclerView.ViewHolder(itemBinding.root) {
 
         fun bind() {
             for ((i, feature) in featureList.withIndex()) {
-                val listItem = LayoutInflater.from(context).inflate(R.layout.layout_credit_report_app_feature_list_item, null, false)
-                listItem.app_feature_list_title_text.text = context.getString(feature)
-                listItem.app_feature_list_title_text.setCompoundDrawablesWithIntrinsicBounds(ContextCompat.getDrawable(context, featureDrawableList[i]), null, null, null)
+                val listItem = LayoutCreditReportAppFeatureListItemBinding.inflate(LayoutInflater.from(context), null, false)
+                listItem.appFeatureListTitleText.text = context.getString(feature)
+                listItem.appFeatureListTitleText.setCompoundDrawablesWithIntrinsicBounds(ContextCompat.getDrawable(context, featureDrawableList[i]), null, null, null)
                 if (i == (featureList.size - 1))
                     listItem.layoutDivider.visibility = View.GONE
-                itemView.app_feature_list_container.addView(listItem)
+                itemBinding.appFeatureListContainer.addView(listItem.root)
             }
         }
     }
 
-    inner class PrivacyPolicyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class PrivacyPolicyViewHolder(val itemBinding: LayoutCreditReportPrivacyPolicyBinding) : RecyclerView.ViewHolder(itemBinding.root) {
         fun bind() {
             val layoutInflater = LayoutInflater.from(context)
             for (policy in privacyPolicy) {
-                val listItem = layoutInflater.inflate(R.layout.layout_credit_report_privacy_policy_list_item, null, false)
-                listItem.privacy_policy_list_title_text.text = policy
-                listItem.privacy_policy_list_title_text.movementMethod = LinkMovementMethod.getInstance()
-                itemView.credit_report_privacy_policy_list_container.addView(listItem)
+                val listItem = LayoutCreditReportPrivacyPolicyListItemBinding.inflate(layoutInflater, null, false)
+                listItem.privacyPolicyListTitleText.text = policy
+                listItem.privacyPolicyListTitleText.movementMethod = LinkMovementMethod.getInstance()
+                itemBinding.creditReportPrivacyPolicyListContainer.addView(listItem.root)
             }
         }
     }

@@ -113,7 +113,7 @@ public class ProductDetails {
 
 	@SerializedName("isRnREnabled")
 	@Expose
-	public Boolean isRnREnabled;
+	public Boolean isRnREnabled = null;
 	@SerializedName("averageRating")
 	@Expose
 	public float averageRating;

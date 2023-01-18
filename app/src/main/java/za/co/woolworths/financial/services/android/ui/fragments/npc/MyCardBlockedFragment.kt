@@ -3,27 +3,24 @@ package za.co.woolworths.financial.services.android.ui.fragments.npc
 import android.content.Intent
 import android.graphics.Paint
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import android.view.ViewGroup
-import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.my_card_blocked_fragment.*
-import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
-import za.co.woolworths.financial.services.android.util.Utils
 import androidx.appcompat.app.AppCompatActivity
+import com.awfs.coordination.R
+import com.awfs.coordination.databinding.MyCardBlockedFragmentBinding
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.SelectStoreActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
+import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
-class MyCardBlockedFragment : MyCardExtension() {
+class MyCardBlockedFragment : MyCardExtension(R.layout.my_card_blocked_fragment) {
 
+    private lateinit var binding: MyCardBlockedFragmentBinding
     private var mStoreCardDetail: String? = null
 
     companion object {
@@ -39,45 +36,52 @@ class MyCardBlockedFragment : MyCardExtension() {
         }
     }
 
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.my_card_blocked_fragment, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding = MyCardBlockedFragmentBinding.bind(view)
+
         activity?.let { Utils.updateStatusBarBackground(it, R.color.grey_background_color) }
 
-        AnimationUtilExtension.animateViewPushDown(btnGetReplacementCard)
-        AnimationUtilExtension.animateViewPushDown(btnLinkACard)
+        binding.apply {
+            AnimationUtilExtension.animateViewPushDown(btnGetReplacementCard)
+            AnimationUtilExtension.animateViewPushDown(btnLinkACard)
 
-        btnGetReplacementCard?.setOnClickListener { navigateToReplacementCard() }
-        btnLinkACard?.setOnClickListener { (activity as? AppCompatActivity)?.apply { navigateToLinkNewCardActivity(this, mStoreCardDetail) } }
-        btnLinkACard?.paintFlags = btnLinkACard.paintFlags or Paint.UNDERLINE_TEXT_FLAG
+            btnGetReplacementCard?.setOnClickListener { navigateToReplacementCard() }
+            btnLinkACard?.setOnClickListener {
+                (activity as? AppCompatActivity)?.apply {
+                    navigateToLinkNewCardActivity(
+                        this,
+                        mStoreCardDetail
+                    )
+                }
+            }
+            btnLinkACard?.paintFlags = btnLinkACard.paintFlags or Paint.UNDERLINE_TEXT_FLAG
 
-        // Hide Replacement card if MC config is true
-        when (AppConfigSingleton.instantCardReplacement?.isEnabled == true) {
-            true -> {
-                tvNoActiveCardDesc?.text = bindString(R.string.card_block_desc)
-                btnGetReplacementCard?.visibility = VISIBLE
-                btnLinkACard?.visibility = VISIBLE
-                callUsNowButton?.visibility = GONE
+            // Hide Replacement card if MC config is true
+            when (AppConfigSingleton.instantCardReplacement?.isEnabled == true) {
+                true -> {
+                    tvNoActiveCardDesc?.text = bindString(R.string.card_block_desc)
+                    btnGetReplacementCard?.visibility = VISIBLE
+                    btnLinkACard?.visibility = VISIBLE
+                    callUsNowButton?.visibility = GONE
+                }
+                else -> {
+                    tvNoActiveCardDesc?.text =
+                        bindString(R.string.card_block_replacement_card_disabled_desc)
+                    btnGetReplacementCard?.visibility = GONE
+                    btnLinkACard?.visibility = GONE
+                    callUsNowButton?.visibility = VISIBLE
+                    cardStatusTagTextView?.text = bindString(R.string.active)
+                    imStoreCard?.setImageResource(R.drawable.w_store_card)
+                }
             }
-            else -> {
-                tvNoActiveCardDesc?.text = bindString(R.string.card_block_replacement_card_disabled_desc)
-                btnGetReplacementCard?.visibility = GONE
-                btnLinkACard?.visibility = GONE
-                callUsNowButton?.visibility = VISIBLE
-                cardStatusTagTextView?.text = bindString(R.string.active)
-                imStoreCard?.setImageResource(R.drawable.w_store_card)
-            }
+
+            callUsNowButton?.setOnClickListener { Utils.makeCall("0861502020") }
+            uniqueIdsForBlockCard()
         }
-
-        callUsNowButton?.setOnClickListener {  Utils.makeCall( "0861502020") }
-        uniqueIdsForBlockCard()
     }
 
-    private fun uniqueIdsForBlockCard() {
+    private fun MyCardBlockedFragmentBinding.uniqueIdsForBlockCard() {
         activity?.resources?.apply {
             imStoreCard?.contentDescription = getString(R.string.image_card)
             tvNoActiveCard?.contentDescription = getString(R.string.label_noActiveCard)
