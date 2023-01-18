@@ -9,6 +9,7 @@ import android.view.*
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -40,6 +41,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.detail.I
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.ConfirmDeliveryLocationFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment
+import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory.Companion.buildAddToCartSuccessToast
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory.Companion.buildShoppingListFromSearchResultToast
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory.Companion.showItemsLimitToastOnAddToCart
@@ -77,6 +79,11 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
     private var mPostAddToCart: Call<AddItemToCartResponse>? = null
 
     private var _bindingListDetails: ShoppingListDetailFragmentBinding? = null
+
+    private var mId: String ? = null
+    private var mProductId: String? = null
+    private var mCatalogRefId: String? = null
+    private var mShouldUpdateShoppingList: Boolean = false
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -316,15 +323,13 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         enableAdapterClickEvent(true)
     }
 
-    override fun onItemDeleteClick(
-        id: String,
-        productId: String,
-        catalogRefId: String,
-        shouldUpdateShoppingList: Boolean
-    ) {
+    private fun onItemDeleteAPICall() {
+        if (mId?.isEmpty() == true || mProductId?.isEmpty() == true || mCatalogRefId?.isEmpty() == true) {
+            return
+        }
         val listSize = shoppingListItemsAdapter?.shoppingListItems?.size ?: 0
         if (listSize == 1) {
-            if (!shouldUpdateShoppingList) {
+            if (!mShouldUpdateShoppingList) {
                 bindingListDetails.rlEmptyListView.visibility = VISIBLE
                 bindingListDetails.rcvShoppingListItems.visibility = GONE
                 showMenu = false
@@ -334,12 +339,14 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             }
         }
         val shoppingListItemsResponseCall = deleteShoppingListItem(
-            listId!!, id, productId, catalogRefId
+            listId!!, mId!!, mProductId!!, mCatalogRefId!!
         )
+        bindingListDetails.loadingBar.visibility = VISIBLE
         shoppingListItemsResponseCall.enqueue(
             CompletionHandler(
                 object : IResponseListener<ShoppingListItemsResponse> {
                     override fun onSuccess(response: ShoppingListItemsResponse?) {
+                        bindingListDetails.loadingBar.visibility = GONE
 
                         val currentList =
                             shoppingListItemsAdapter?.shoppingListItems ?: ArrayList(0)
@@ -376,11 +383,37 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                     }
 
                     override fun onFailure(error: Throwable?) {
-                        if (shouldUpdateShoppingList) onDeleteItemFailed()
+                        bindingListDetails.loadingBar.visibility = GONE
+                        if (mShouldUpdateShoppingList) onDeleteItemFailed()
                     }
                 }, ShoppingListItemsResponse::class.java
             )
         )
+    }
+
+    override fun onItemDeleteClick(
+        id: String,
+        productId: String,
+        catalogRefId: String,
+        shouldUpdateShoppingList: Boolean
+    ) {
+        mId = id
+        mProductId = productId
+        mCatalogRefId = catalogRefId
+        mShouldUpdateShoppingList = shouldUpdateShoppingList
+        showDeleteConfirmationDialog(ON_CONFIRM_REMOVE_WITH_DELETE_ICON_PRESSED)
+    }
+
+    private fun showDeleteConfirmationDialog(resultCode: String) {
+        val customBottomSheetDialogFragment =
+            CustomBottomSheetDialogFragment.newInstance(
+                getString(R.string.are_you_sure),
+                getString(R.string.delete_confirmation_list_text),
+                getString(R.string.remove),
+                getString(R.string.cancel),
+                resultCode)
+        customBottomSheetDialogFragment.show(requireFragmentManager(),
+            CustomBottomSheetDialogFragment::class.java.simpleName)
     }
 
     private fun getIsStockAvailable(list: ArrayList<ShoppingListItem?>): Boolean {
@@ -531,6 +564,10 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                 )
             }
             initGetShoppingListItems()
+        }
+
+        setFragmentResultListener(ON_CONFIRM_REMOVE_WITH_DELETE_ICON_PRESSED) { _, _ ->
+           onItemDeleteAPICall()
         }
     }
 
@@ -969,5 +1006,9 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         private const val REQUEST_SUBURB_CHANGE = 12345
         private const val DELIVERY_LOCATION_REQUEST = 2
         private const val TOOLBAR_SELECT_ALL: String = "SELECT ALL"
+
+        // constants for deletion confirmation.
+        private const val ON_CONFIRM_REMOVE_WITH_DELETE_SWIPE = "remove_with_delete_swipe_pressed"
+        private const val ON_CONFIRM_REMOVE_WITH_DELETE_ICON_PRESSED = "remove_with_delete_icon_pressed"
     }
 }
