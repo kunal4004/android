@@ -52,7 +52,7 @@ class PayWithCardListFragment : Fragment(R.layout.pay_with_card_list_fragment) {
     private fun PayWithCardListFragmentBinding.subscribeObserver() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.payWithCardTap.collectLatest { wasTapped ->
-                if (wasTapped) {
+                if (wasTapped && isAdded) {
                     Utils.triggerFireBaseEvents(
                         FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_VTC_PAY,
                         requireActivity()
