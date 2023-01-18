@@ -481,7 +481,7 @@
     <!-- new list item-->
     <string name="create_list">create list</string>
     <string name="new_list">new list</string>
-    <string name="shopping_search_hint">Search products to add to your list</string>
+    <string name="shopping_search_hint">Add Items To Your List</string>
     <string name="total_item">Total*</string>
     <string name="rlOtherDiscounts"><![CDATA[WRewards Savings & Other Discounts]]></string>
     <string name="out_of_stock">out of stock</string>
@@ -2816,12 +2816,20 @@
     <string name="cancelled">Cancelled</string>
     <string name="order">Order\u0020</string>
     <string name="a_report_for_this_review_has_already_been_submitted">A report for this review has already been submitted.</string>
+
+    <plurals name="plural_add_to_cart">
+        <item quantity="one">ADD %d ITEM TO CART</item>
+        <item quantity="other">ADD %d ITEMS TO CART</item>
+    </plurals>
     <string name="reduce_count_button">Reduce Count Button</string>
     <string name="add_item_count">Add item count</string>
+    <string name="unavailable">Unavailable</string>
+    <string name="unavailable_with_dash">Unavailable With Dash</string>
     <string name="get_replacement_card_action_button_text_label_on_overlay">get_replacement_card_action_button_text_label_on_overlay</string>
     <plurals name="category_item">
         <item quantity="one">%1$s %2$s Item</item>
         <item quantity="other">%1$s %2$s Items</item>
     </plurals>
     <string name="select_your_marital_status">Select your marital status</string>
+
 </resources>
