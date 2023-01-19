@@ -9,6 +9,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
@@ -43,20 +44,40 @@ fun FontsPreview(){
 @Composable
 fun LabelTitleLarge(params: LabelProperties) {
     var label = params.label ?: params.stringId?.let { stringResource(id = it) }
-    if (params.isUpperCased){
+    if (params.isUpperCased) {
         label = label?.uppercase()
     }
     label?.let {
         Text(
             color = params.textColor ?: Color.Black,
             text = it,
-            modifier = params.modifier,
+            modifier = params.modifier.testTag(label),
             letterSpacing = params.letterSpacing ?: 0.sp,
             textAlign = params.textAlign,
             style = MaterialTheme.typography.titleLarge,
             fontSize = params.fontSize ?: 18.sp
         )
     }
+}
+
+    @Composable
+    fun LabelTitleCustomStyleLarge(params: LabelProperties) {
+        var label = params.label ?: params.stringId?.let { stringResource(id = it) }
+        if (params.isUpperCased){
+            label = label?.uppercase()
+        }
+        label?.let {
+            Text(
+                color = params.textColor ?: Color.Black,
+                text = it,
+                modifier = params.modifier.testTag(label),
+                letterSpacing = params.letterSpacing ?: 0.sp,
+                textAlign = params.textAlign,
+                style =  params.style,
+                fontSize = params.fontSize ?: 18.sp,
+
+            )
+        }
 }
 
 @Composable
@@ -69,7 +90,7 @@ fun LabelMedium(params: LabelProperties = LabelProperties()) {
         Text(
             color = params.textColor ?: Color.Black,
             text = it,
-            modifier = params.modifier,
+            modifier = params.modifier.testTag(label),
             textDecoration = params.textDecoration,
             letterSpacing = params.letterSpacing ?: 0.sp,
             textAlign = params.textAlign,
@@ -81,15 +102,20 @@ fun LabelMedium(params: LabelProperties = LabelProperties()) {
 
 @Composable
 fun LabelSmall(params: LabelProperties = LabelProperties()) {
-    val label = params.label ?: params.stringId?.let { stringResource(id = it) }
+    var label = params.label ?: params.stringId?.let { stringResource(id = it) }
+    if (params.isUpperCased){
+        label = label?.uppercase()
+    }
     label?.let {
         Text(
             text = it,
             textAlign = params.textAlign,
+            textDecoration = params.textDecoration,
             style = MaterialTheme.typography.titleSmall,
             fontSize = params.fontSize ?: 14.sp,
-            modifier = params.modifier.fillMaxWidth()
-        )
+            modifier = params.modifier.fillMaxWidth().testTag(label),
+            letterSpacing = params.letterSpacing ?: 0.sp
+            )
     }
 }
 
@@ -111,7 +137,9 @@ fun LabelPhoneNumber(params: LabelProperties = LabelProperties()) {
         ClickableText(
             text = label,
             style = params.style,
-            modifier = params.modifier.fillMaxWidth().padding(start = 24.dp, end = 24.dp),
+            modifier = params.modifier
+                .fillMaxWidth()
+                .padding(start = 24.dp, end = 24.dp),
             onClick = {
                 label
                     .getStringAnnotations(phoneNumber, it, it)
@@ -131,6 +159,7 @@ data class LabelProperties(
     val fontSize: TextUnit? = null,
     val letterSpacing: TextUnit? = null,
     val textColor: Color? = null,
+    val testTag : String? = null,
     val isUpperCased : Boolean = false,
     val annotatedString: AnnotatedString? = null,
     val annotatedPhoneNumber : String? = null,

@@ -163,10 +163,10 @@
             android:id="@+id/btn_pet_insurance_apply"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@null"
             android:fontFamily="@font/futura_semi_bold"
             android:letterSpacing="0.13"
-            android:background="@null"
-            android:text="@string/apply_now"
+            android:text="@string/pay_at_any_atm_button_label"
             android:textAllCaps="true"
             android:textColor="@color/white"
             android:textSize="@dimen/_12ssp" />

@@ -134,6 +134,12 @@ class ChatFloatingActionButtonBubbleView(
         }
     }
 
+    private  fun isUserInPaymentOptionScreen(): Boolean  {
+        val creditDebitCardNestedScrollView = activity?.findViewById<NestedScrollView>(R.id.creditDebitCardPaymentsScrollView)
+        val nestedScrollView = scrollableView as? NestedScrollView
+        return (nestedScrollView?.id == creditDebitCardNestedScrollView?.id)
+    }
+
     private fun animateChatIcon() {
         val shouldAnimateChatIcon = when (activity) {
             is BottomNavigationActivity -> chatBubbleVisibility?.isChatVisibleForAccountLanding() == true
@@ -151,7 +157,9 @@ class ChatFloatingActionButtonBubbleView(
                         val getScrollY: Double = scrollY.toDouble()
                         val scrollPosition = getScrollY / scrollViewHeight * 100.0
                         if (scrollPosition.toInt() > 30) {
-                            floatingActionButton?.hide()
+                            if (!isUserInPaymentOptionScreen()) {
+                                floatingActionButton?.hide()
+                            }
                         } else {
                             floatingActionButton?.show()
                         }

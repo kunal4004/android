@@ -1173,6 +1173,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
             }
             BundleKeysConstants.REQUEST_CODE -> {
                 updateToolbarTitle()
+                callConfirmPlace()
             }
             else -> return
         }
@@ -1344,6 +1345,11 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
             KotlinUtils.setLiquorModalShown()
             showLiquorDialog()
             AppConfigSingleton.productItemForLiquorInventory = productList
+            return
+        }
+
+        if (KotlinUtils.getDeliveryType() == null ){
+            presentEditDeliveryActivity()
             return
         }
 
@@ -1599,12 +1605,14 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
                         }
 
                         AppConstant.HTTP_EXPECTATION_FAILED_502 -> {
-                            KotlinUtils.showQuantityLimitErrror(
-                                activity?.supportFragmentManager,
-                                addItemToCartResponse.response.desc,
-                                "",
-                                context
-                            )
+                            addItemToCartResponse.response.desc?.let {
+                                KotlinUtils.showQuantityLimitErrror(
+                                    activity?.supportFragmentManager,
+                                    it,
+                                    "",
+                                    context
+                                )
+                            }
                         }
 
                         else -> addItemToCartResponse?.response?.desc?.let { desc ->

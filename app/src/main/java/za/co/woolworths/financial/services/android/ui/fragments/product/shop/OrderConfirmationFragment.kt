@@ -117,11 +117,11 @@ class OrderConfirmationFragment :
         val purchaseItem = Bundle()
         purchaseItem.putString(
             FirebaseAnalytics.Param.ITEM_ID,
-            response.items?.other?.get(0)?.productId
+            response.items?.other?.get(0)?.commerceItemInfo?.productId
         )
         purchaseItem.putString(
             FirebaseAnalytics.Param.ITEM_NAME,
-            response.items?.other?.get(0)?.productDisplayName
+            response.items?.other?.get(0)?.commerceItemInfo?.productDisplayName
         )
         purchaseItem.putString(
             FirebaseAnalytics.Param.QUANTITY,
