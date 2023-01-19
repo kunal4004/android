@@ -197,6 +197,7 @@ class ChangeFullfilmentCollectionStoreFragment :
         binding.layoutClickAndCollectStore.rvStoreList.layoutManager =
             activity?.let { activity -> LinearLayoutManager(activity) }
         if (stores?.isNotEmpty() == true) {
+            binding.layoutClickAndCollectStore.tvConfirmStore?.isEnabled = false
             val storesListWithHeaders =
                 StoreUtils.getStoresListWithHeaders(StoreUtils.sortedStoreList(stores))
             if (storesListWithHeaders.isNotEmpty()) {
