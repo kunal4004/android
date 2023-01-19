@@ -70,7 +70,7 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(R.
             isMixBasket = getBoolean(IS_MIXED_BASKET, false)
             isFBHOnly = getBoolean(IS_FBH_ONLY, false)
             placeId = getString(PLACE_ID,"")
-            savedAddressResponse = getSerializable(SAVED_ADDRESS_RESPONSE, SavedAddressResponse::class.java)
+            savedAddressResponse = getSerializable(SAVED_ADDRESS_KEY) as? SavedAddressResponse
         }
 
         initView()
