@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.checkout.view
 
 import android.animation.ObjectAnimator
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.EditText
@@ -70,7 +71,10 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(R.
             isMixBasket = getBoolean(IS_MIXED_BASKET, false)
             isFBHOnly = getBoolean(IS_FBH_ONLY, false)
             placeId = getString(PLACE_ID,"")
-            savedAddressResponse = getSerializable(SAVED_ADDRESS_RESPONSE, SavedAddressResponse::class.java)
+            savedAddressResponse = if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+                getSerializable(SAVED_ADDRESS_RESPONSE, SavedAddressResponse::class.java)
+            else
+                getSerializable(SAVED_ADDRESS_RESPONSE) as? SavedAddressResponse
         }
 
         initView()
