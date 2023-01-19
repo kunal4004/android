@@ -128,6 +128,7 @@ class ClickAndCollectStoresFragment : BaseDialogFragmentBinding<FragmentClickAnd
             val storesListWithHeaders=StoreUtils.getStoresListWithHeaders(StoreUtils.sortedStoreList(address))
 
             if(storesListWithHeaders.isNotEmpty()){
+                tvConfirmStore?.isEnabled = false
                 rvStoreList.adapter = activity?.let { activity ->
                     StoreListAdapter(
                         activity,
