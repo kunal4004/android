@@ -19,7 +19,6 @@ import za.co.woolworths.financial.services.android.models.dto.account.*
 import za.co.woolworths.financial.services.android.models.network.OneAppService.getAppGUIDResponse
 import za.co.woolworths.financial.services.android.models.network.OneAppService.getFeatureEnablementResponse
 import za.co.woolworths.financial.services.android.models.network.OneAppService.getPetInsuranceResponse
-import za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.UpdateMyAccount
 import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.Constants.PET
