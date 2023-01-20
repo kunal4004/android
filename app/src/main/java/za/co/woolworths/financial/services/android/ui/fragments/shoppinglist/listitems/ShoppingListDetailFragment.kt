@@ -309,6 +309,10 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             HTTP_OK -> {
                 bindingListDetails.loadingBar.visibility = GONE
                 viewModel.makeInventoryCalls()
+                if (viewModel.isShoppingListContainsUnavailableItems())
+                    showBlackToolTip()
+                else
+                    hideBlackToolTip()
                 updateList()
             }
             HTTP_SESSION_TIMEOUT_440 -> SessionUtilities.getInstance().setSessionState(
@@ -340,8 +344,9 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         shoppingListItemsAdapter?.adapterClickable(clickable)
     }
 
-    override fun onItemSelectionChange() {
+    override fun onItemSelectionChange(isSelected: Boolean) {
         if (!isAdded || !isVisible) return
+        if (isSelected)
         hideBlackToolTip()
         updateCartCountButton()
         manageSelectAllMenuVisibility()
@@ -352,9 +357,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             shoppingListItemsResponse.listItems?.let { ArrayList(it) } ?: ArrayList(0)
         updateList()
         enableAdapterClickEvent(true)
-        if (viewModel.mShoppingListItems.filter { item ->
-                item.unavailable
-            }.isNullOrEmpty()) {
+        if (!viewModel.isShoppingListContainsUnavailableItems()) {
             hideBlackToolTip()
         }
     }
@@ -702,13 +705,17 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             }
             notifyDataSetChanged()
             viewModel.mShoppingListItems = shoppingListItems
-            onItemSelectionChange()
+            onItemSelectionChange(setSelection)
         }
     }
 
     override fun onConnectionChanged() {
         if (viewModel.inventoryCallFailed) {
             viewModel.makeInventoryCalls()
+            if (viewModel.isShoppingListContainsUnavailableItems())
+                showBlackToolTip()
+            else
+                hideBlackToolTip()
         }
         if (addedToCart()) {
             addItemsToCart()
@@ -749,11 +756,6 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         if (skusInventoryForStoreResponse?.httpCode == HTTP_OK) {
             updateList()
             enableAdapterClickEvent(true)
-            if (!viewModel.mShoppingListItems.filter { item ->
-                    item.unavailable
-                }.isNullOrEmpty()) {
-                showBlackToolTip()
-            }
         } else {
             onInventoryError(skusInventoryForStoreResponse)
         }
@@ -828,12 +830,16 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             // response from search product from shopping list
         }
 
-        when(requestCode) {
+        when (requestCode) {
             DELIVERY_LOCATION_REQUEST_CODE_FROM_SELECT_ALL,
-            DELIVERY_LOCATION_REQUEST -> {
-                if(resultCode == RESULT_OK) {
-                    hideBlackToolTip()
+            DELIVERY_LOCATION_REQUEST,
+            -> {
+                if (resultCode == RESULT_OK) {
                     setDeliveryLocation()
+                    if (viewModel.isShoppingListContainsUnavailableItems())
+                        showBlackToolTip()
+                    else
+                        hideBlackToolTip()
                     viewModel.makeInventoryCalls()
                 }
             }

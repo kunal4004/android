@@ -10,7 +10,7 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsR
 
 public interface ShoppingListItemsNavigator {
 
-    void onItemSelectionChange();
+    void onItemSelectionChange(Boolean isSelected);
 
     void onShoppingListItemDelete(ShoppingListItemsResponse shoppingListItemsResponse);
 

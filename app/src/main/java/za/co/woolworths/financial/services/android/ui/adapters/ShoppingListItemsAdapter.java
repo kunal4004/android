@@ -248,7 +248,6 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 				});
 
                 holder.llItemContainer.setOnClickListener(view -> {
-                    if (!mAdapterIsClickable) return;
                     ShoppingListItem shoppingListItem14 = getItem(position);
                     if (shoppingListItem14.unavailable)
                         navigator.showListBlackToolTip();
@@ -283,7 +282,7 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 					item.userQuantity = Math.max(item.userQuantity, 1);
 					item.isSelected = !item.isSelected;
 					mShoppingListItem.set((position - 1), item);
-					navigator.onItemSelectionChange();
+					navigator.onItemSelectionChange(item.isSelected);
 					notifyItemChanged(position, item);
 				});
 
@@ -423,7 +422,7 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 				}
 			}
 			this.mShoppingListItem = updatedListItems;
-			navigator.onItemSelectionChange();
+			navigator.onItemSelectionChange(false); // default value
 			notifyDataSetChanged();
 			closeAllItems();
 		} catch (IllegalArgumentException ex) {
@@ -462,6 +461,6 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 			shoppinglistItem.isSelected = false;
 		}
 		notifyDataSetChanged();
-		navigator.onItemSelectionChange();
+		navigator.onItemSelectionChange(false);
 	}
 }
