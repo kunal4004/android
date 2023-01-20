@@ -863,7 +863,7 @@
     <string name="food_product_type">foodProducts</string>
     <string name="select_your_quantity">Select Your Quantity</string>
     <string name="no_stock_available">No Stock Available Online</string>
-    <string name="no_stock_available_desc">Use our find in-store feature to see if there is stock available at a Woolies store near you.</string>
+    <string name="no_stock_available_desc">Try our find-in-store feature, or change the details around your delivery or collection method, to see if stock is available at another Woolies store near you.</string>
     <string name="no_of_items_added">%1$Item%2$</string>
     <string name="npc_already_have_your_card_link">ALREADY HAVE your card? LINK it NOW</string>
     <string name="npc_participating_store">Can’t find a participating store close to you? Tap here to arrange delivery and we will issue you a virtual temp card to get shopping today.</string>
@@ -2183,6 +2183,8 @@
     <string name="app_version_info">App Version %s (%s)</string>
     <string name="fsp_number_info">Woolworths Financial Services (FSP15289 and NCRCP49)</string>
     <string name="product_details_out_of_stock">Unfortunately this item is out of stock in %s. Try changing your delivery location and try again.</string>
+    <string name="out_of_stock_dialog_title">This Item Is Out Of Stock</string>
+    <string name="change_delivery_or_collection_out_of_stock" tools:ignore="ButtonCase"><u>Change Delivery or collection details</u></string>
 
     <!--  Voice of Customer  -->
     <string name="voc_question_slider_desc">Please rate your experience, %1$d being poor and %2$d being excellent</string>

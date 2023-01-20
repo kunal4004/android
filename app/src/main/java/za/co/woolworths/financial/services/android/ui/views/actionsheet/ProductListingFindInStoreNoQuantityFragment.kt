@@ -16,7 +16,8 @@ import androidx.annotation.NonNull
 import android.content.pm.PackageManager
 import com.awfs.coordination.databinding.NoQuantityFindStoreFragmentBinding
 
-class ProductListingFindInStoreNoQuantityFragment(private val mProductListing: IProductListing?) : WBottomSheetDialogFragment() {
+class ProductListingFindInStoreNoQuantityFragment(private val mProductListing: IProductListing?) :
+    WBottomSheetDialogFragment() {
 
     private lateinit var binding: NoQuantityFindStoreFragmentBinding
     private var mSkuId: String? = null
@@ -24,9 +25,10 @@ class ProductListingFindInStoreNoQuantityFragment(private val mProductListing: I
     companion object {
         private const val SKU_ID = "SKU_ID"
         const val REQUEST_PERMISSION_LOCATION = 100
-        fun newInstance(sku_id: String, mProductListing: IProductListing?) = ProductListingFindInStoreNoQuantityFragment(mProductListing).withArgs {
-            putString(SKU_ID, sku_id)
-        }
+        fun newInstance(sku_id: String, mProductListing: IProductListing?) =
+            ProductListingFindInStoreNoQuantityFragment(mProductListing).withArgs {
+                putString(SKU_ID, sku_id)
+            }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,7 +38,11 @@ class ProductListingFindInStoreNoQuantityFragment(private val mProductListing: I
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?,
+    ): View? {
         binding = NoQuantityFindStoreFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -59,17 +65,28 @@ class ProductListingFindInStoreNoQuantityFragment(private val mProductListing: I
         binding.btnNavigateToFindInStore?.setOnClickListener {
             activity?.apply {
                 if (!Utils.isLocationEnabled(this)) {
-                    Utils.displayValidationMessage(this, CustomPopUpWindow.MODAL_LAYOUT.LOCATION_OFF, "")
+                    Utils.displayValidationMessage(this,
+                        CustomPopUpWindow.MODAL_LAYOUT.LOCATION_OFF,
+                        "")
                     return@apply
                 }
             }
-            requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), REQUEST_PERMISSION_LOCATION)
+            requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                REQUEST_PERMISSION_LOCATION)
+        }
+        binding.tvChangeFulfillment?.setOnClickListener {
+            dismiss()
+            mProductListing?.openChangeFulfillmentScreen()
         }
     }
 
     private fun startLocationUpdate() = FuseLocationAPISingleton.startLocationUpdate()
 
-    override fun onRequestPermissionsResult(requestCode: Int, @NonNull permissions: Array<String>, @NonNull grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        @NonNull permissions: Array<String>,
+        @NonNull grantResults: IntArray,
+    ) {
         when (requestCode) {
             REQUEST_PERMISSION_LOCATION -> if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 startLocationUpdate()
