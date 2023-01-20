@@ -10,7 +10,6 @@ import za.co.woolworths.financial.services.android.common.changeMeterToKM
 import za.co.woolworths.financial.services.android.geolocation.network.model.Store
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.StoreListRow
-import za.co.woolworths.financial.services.android.util.StoreUtils
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import com.awfs.coordination.databinding.StoreRowHeaderLayoutBinding
 
