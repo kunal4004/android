@@ -1731,6 +1731,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
         }
     }
 
+    override fun openChangeFulfillmentScreen() {
+        presentEditDeliveryActivity()
+    }
+
     fun onRefined(navigationState: String, isMultiSelectCategoryRefined: Boolean) {
         if (isMultiSelectCategoryRefined)
             updateProductRequestBodyForRefinement(navigationState)
