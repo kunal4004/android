@@ -48,14 +48,18 @@ class ActivateVirtualTempCardFragment :
     ) {
         if (activateVTC?.isTemporaryCardEnabled == true) {
             binding.storeCardImageView.setImageResource(R.drawable.store_card_virtual_temp)
+            binding.storeCardImageView.contentDescription = context?.getString(R.string.active_vtsc_card_image_on_overlay)
             binding.tempCardLabel.visibility = View.GONE
             binding.cardLabel.visibility = View.GONE
             binding.accountHolderNameTextView.text = KotlinUtils.getCardHolderNameSurname()
             binding.accountHolderNameTextView.visibility = View.VISIBLE
+            binding.accountHolderNameTextView.contentDescription = context?.getString(R.string.active_vtsc_card_image_embossed_name_label_text_on_overlay)
         } else {
             binding.storeCardImageView.setImageResource(R.drawable.ic_sc_inactive)
+            binding.storeCardImageView.contentDescription = context?.getString(R.string.inactive_store_card_image_on_overlay)
             binding.tempCardLabel.visibility = View.VISIBLE
             binding.cardLabel.visibility = View.VISIBLE
+            binding.storeCardImageView.contentDescription = context?.getString(R.string.active_vtsc_card_image_on_overlay)
             binding.tempCardLabel.setTextColor(ContextCompat.getColor(requireContext(), R.color.inactive_label_color))
             binding.cardLabel.setTextColor(ContextCompat.getColor(requireContext(), R.color.inactive_label_color))
             binding.tempCardLabel.text = getString(R.string.inactive)

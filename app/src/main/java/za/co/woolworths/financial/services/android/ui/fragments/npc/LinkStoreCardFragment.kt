@@ -335,17 +335,6 @@ class LinkStoreCardFragment : MyCardExtension(R.layout.link_store_card_process_f
             storeCardData?.productOfferingId = tempProductOfferingId ?: ""
 
             storeCardData?.apply {
-                if(generateVirtualCard){
-                    Handler().postDelayed({
-                        val intent = Intent(activity, GetTemporaryStoreCardPopupActivity::class.java)
-                        intent.putExtra(STORE_CARD_DETAIL, Gson().toJson(storeCardsResponse))
-                        activity.startActivity(intent)
-                        activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
-                        activity.finish()
-                        activity.overridePendingTransition(0, 0)
-                    }, AppConstant.DELAY_3000_MS)
-                }
-                else {
                     if(isStaffMember
                         && virtualCardStaffMemberMessage?.title != null
                         && virtualCardStaffMemberMessage.paragraphs.isNotEmpty()
@@ -366,10 +355,8 @@ class LinkStoreCardFragment : MyCardExtension(R.layout.link_store_card_process_f
                             refreshProductLandingPage(storeCardsResponse)
                         }
                     }
-                }
             }
         }
-
     }
 
     private fun onAPIFailureRetry() {
