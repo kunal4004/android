@@ -3,20 +3,15 @@ package za.co.woolworths.financial.services.android.ui.fragments.bpi.presentatio
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
-import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.BpiProcessingYourRequestFragmentBinding
 import com.google.gson.Gson
-import kotlinx.android.synthetic.main.credit_card_activation_progress_layout.*
-import kotlinx.android.synthetic.main.credit_card_activation_success_layout.*
-import kotlinx.android.synthetic.main.my_accounts_fragment.*
 import za.co.woolworths.financial.services.android.contracts.IProgressAnimationState
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.Account
@@ -27,32 +22,29 @@ import za.co.woolworths.financial.services.android.ui.extension.findFragmentByTa
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.viewmodel.BPIViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.viewmodel.FailureHandler
-
 import za.co.woolworths.financial.services.android.ui.fragments.npc.ProgressStateFragment
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.SessionUtilities
+import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 
 
-class BPIProcessingRequestFragment : Fragment(), IProgressAnimationState {
+class BPIProcessingRequestFragment : BaseFragmentBinding<BpiProcessingYourRequestFragmentBinding>(BpiProcessingYourRequestFragmentBinding::inflate), IProgressAnimationState {
 
     private var mAccounts: Account? = null
     private val bpiViewModel: BPIViewModel? by activityViewModels()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.bpi_processing_your_request_fragment, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        successTitleTextView?.text = bindString(R.string.bpi_you_have_opted_in_success)
+
+        binding.activationSuccessView.successTitleTextView?.text = bindString(R.string.bpi_you_have_opted_in_success)
 
         (activity as? BalanceProtectionInsuranceActivity)?.hideDisplayHomeAsUpEnabled()
 
         fetchInsuranceLeadGenOptIn(activity)
         observeInsuranceLeadOptInResult()
 
-        okGotItButton?.setOnClickListener {
+        binding.activationSuccessView.okGotItButton?.setOnClickListener {
            activity?.apply {
                val intent  = Intent()
                intent.putExtra(BalanceProtectionInsuranceActivity.ACCOUNT_RESPONSE,  Gson().toJson(mAccounts))
@@ -65,13 +57,12 @@ class BPIProcessingRequestFragment : Fragment(), IProgressAnimationState {
 
     private fun observeInsuranceLeadOptInResult() {
         bpiViewModel?.apply {
-            insuranceLeadGenOptIn.observe(viewLifecycleOwner, { accounts ->
+            insuranceLeadGenOptIn.observe(viewLifecycleOwner) { accounts ->
                 mAccounts = accounts
                 isApiResultSuccess(true)
-                activationProcessingLayout?.visibility = View.GONE
-                activationSuccessView?.visibility = View.VISIBLE
-
-            })
+                binding.activationProcessingLayout.root.visibility = View.GONE
+                binding.activationSuccessView.root.visibility = View.VISIBLE
+            }
 
             failureHandler.observe(viewLifecycleOwner) { result ->
                 when (result) {
@@ -111,7 +102,7 @@ class BPIProcessingRequestFragment : Fragment(), IProgressAnimationState {
                 tag = ProgressStateFragment::class.java.simpleName,
                 containerViewId = R.id.flProgressIndicator
             )
-            activationProcessingLayout?.visibility = View.VISIBLE
+            binding.activationProcessingLayout.root.visibility = View.VISIBLE
     }
 
     private fun getProgressState(): ProgressStateFragment? = (activity as? AppCompatActivity)?.findFragmentByTag(ProgressStateFragment::class.java.simpleName) as? ProgressStateFragment

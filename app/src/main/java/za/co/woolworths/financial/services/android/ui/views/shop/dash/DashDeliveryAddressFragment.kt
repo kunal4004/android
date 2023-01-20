@@ -16,11 +16,10 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.FragmentDashDeliveryBinding
 import com.google.gson.Gson
 import com.skydoves.balloon.balloon
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.fragment_dash_delivery.*
-import kotlinx.android.synthetic.main.layout_dash_set_address_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IProductListing
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
@@ -73,6 +72,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
         ownerProducer = { requireParentFragment() }
     )
 
+    private lateinit var binding: FragmentDashDeliveryBinding
     private lateinit var dashDeliveryAdapter: DashDeliveryAdapter
     private var isQuickShopClicked = false
     private var isUnSellableItemsRemoved: Boolean? = false
@@ -89,6 +89,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding = FragmentDashDeliveryBinding.bind(view)
 
         if (!isVisible) {
             return
@@ -169,22 +170,22 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
 
     private fun showSetAddressScreen() {
         hideSearchBar()
-        layoutDashSetAddress?.visibility = View.VISIBLE
-        img_view?.setImageResource(R.drawable.img_dash_delivery)
-        txt_dash_title?.text = getString(R.string.dash_delivery_msg)
-        txt_dash_sub_title?.text = getString(R.string.dash_delivery_title)
-        btn_dash_set_address?.text = getString(R.string.set_address)
-        btn_dash_set_address?.setOnClickListener(this)
+        binding.layoutDashSetAddress?.root?.visibility = View.VISIBLE
+        binding.layoutDashSetAddress.imgView?.setImageResource(R.drawable.img_dash_delivery)
+        binding.layoutDashSetAddress.txtDashTitle?.text = getString(R.string.dash_delivery_msg)
+        binding.layoutDashSetAddress.txtDashSubTitle?.text = getString(R.string.dash_delivery_title)
+        binding.layoutDashSetAddress.btnDashSetAddress?.text = getString(R.string.set_address)
+        binding.layoutDashSetAddress.btnDashSetAddress?.setOnClickListener(this)
     }
 
     private fun showChangeLocationScreen() {
         hideSearchBar()
-        layoutDashSetAddress?.visibility = View.VISIBLE
-        img_view?.setImageResource(R.drawable.location_disabled)
-        txt_dash_title?.text = getString(R.string.no_location_title)
-        txt_dash_sub_title?.text = getString(R.string.no_location_desc)
-        btn_dash_set_address?.text = getString(R.string.change_location)
-        btn_dash_set_address?.setOnClickListener(this)
+        binding.layoutDashSetAddress?.root?.visibility = View.VISIBLE
+        binding.layoutDashSetAddress.imgView?.setImageResource(R.drawable.location_disabled)
+        binding.layoutDashSetAddress.txtDashTitle?.text = getString(R.string.no_location_title)
+        binding.layoutDashSetAddress.txtDashSubTitle?.text = getString(R.string.no_location_desc)
+        binding.layoutDashSetAddress.btnDashSetAddress?.text = getString(R.string.change_location)
+        binding.layoutDashSetAddress.btnDashSetAddress?.setOnClickListener(this)
     }
 
     private fun initData() {
@@ -195,8 +196,8 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                     viewModel.isOnDemandCategoriesAvailable.value == true -> {
 
                 // set data to views
-                layoutDashSetAddress?.visibility = View.GONE
-                progressBar?.visibility = View.GONE
+                binding.layoutDashSetAddress?.root?.visibility = View.GONE
+                binding.progressBar?.visibility = View.GONE
                 dashDeliveryAdapter.setData(
                     viewModel.onDemandCategories.value?.peekContent()?.data?.onDemandCategories,
                     viewModel.dashLandingDetails.value?.peekContent()?.data?.productCatalogues
@@ -206,7 +207,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
             viewModel.isDashCategoriesAvailable.value == true ||
                     viewModel.isOnDemandCategoriesAvailable.value == true -> {
                 // set data to views
-                layoutDashSetAddress?.visibility = View.GONE
+                binding.layoutDashSetAddress?.root?.visibility = View.GONE
 
                 // Data will be set in observers when api successful/failure
                 when (viewModel.isDashCategoriesAvailable.value) {
@@ -231,10 +232,10 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                 when (resource.status) {
                     Status.LOADING -> {
                         //TODO need to confirm loading screens between shimmer view or progressbar
-                        progressBar.visibility = View.VISIBLE
+                        binding.progressBar.visibility = View.VISIBLE
                     }
                     Status.SUCCESS -> {
-                        layoutDashSetAddress?.visibility = View.GONE
+                        binding.layoutDashSetAddress?.root?.visibility = View.GONE
                         if (viewModel.isOnDemandCategoriesAvailable.value == true) {
                             dashDeliveryAdapter.setData(
                                 viewModel.onDemandCategories.value?.peekContent()?.data?.onDemandCategories,
@@ -246,10 +247,10 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                                 resource.data?.productCatalogues
                             )
                         }
-                        progressBar.visibility = View.GONE
+                        binding.progressBar.visibility = View.GONE
                     }
                     Status.ERROR -> {
-                        progressBar.visibility = View.GONE
+                        binding.progressBar.visibility = View.GONE
                         showErrorView(requireContext().getString(resource.message), resource.data)
                     }
                 }
@@ -261,17 +262,17 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
             it.getContentIfNotHandled()?.let { resource ->
                 when (resource.status) {
                     Status.LOADING -> {
-                        progressBar.visibility = View.VISIBLE
+                        binding.progressBar.visibility = View.VISIBLE
                     }
                     Status.SUCCESS -> {
-                        layoutDashSetAddress?.visibility = View.GONE
+                        binding.layoutDashSetAddress?.root?.visibility = View.GONE
                         if (viewModel.isDashCategoriesAvailable.value == true) {
                             dashDeliveryAdapter.setData(
                                 resource.data?.onDemandCategories,
                                 viewModel.dashLandingDetails.value?.peekContent()?.data?.productCatalogues,
                             )
                         }
-                        progressBar.visibility = View.GONE
+                        binding.progressBar.visibility = View.GONE
                     }
                     Status.ERROR -> {
                         //Ignore error view for On Demand Categories,
@@ -283,7 +284,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                                 viewModel.dashLandingDetails.value?.peekContent()?.data?.productCatalogues,
                             )
                         }
-                        progressBar.visibility = View.GONE
+                        binding.progressBar.visibility = View.GONE
                     }
                 }
             }
@@ -294,11 +295,11 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
             it.getContentIfNotHandled()?.let { resource ->
                 when (resource.status) {
                     Status.LOADING -> {
-                        progressBar.visibility = View.VISIBLE
+                        binding.progressBar.visibility = View.VISIBLE
                     }
                     Status.SUCCESS -> {
-                        layoutDashSetAddress?.visibility = View.GONE
-                        progressBar.visibility = View.GONE
+                        binding.layoutDashSetAddress?.root?.visibility = View.GONE
+                        binding.progressBar.visibility = View.GONE
                         val skuInventoryList = resource.data?.skuInventory
                         val addItemToCart = viewModel.addItemToCart.value
                         when {
@@ -344,7 +345,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                         }
                     }
                     Status.ERROR -> {
-                        progressBar.visibility = View.GONE
+                        binding.progressBar.visibility = View.GONE
                         resource.data?.response?.desc?.let { desc ->
                             Utils.displayValidationMessage(
                                 activity,
@@ -406,9 +407,9 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                 val response = resource.data
                 when (resource.status) {
                     Status.LOADING ->
-                        progressBar.visibility = View.VISIBLE
+                        binding.progressBar.visibility = View.VISIBLE
                     Status.ERROR -> {
-                        progressBar.visibility = View.GONE
+                        binding.progressBar.visibility = View.GONE
                         // Preferred Delivery Location has been reset on server
                         // As such, we give the user the ability to set their location again
                         val addToCartList = response?.data
@@ -451,12 +452,14 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
 
                             HTTP_EXPECTATION_FAILED_502 -> {
                                 if (response.response.code == AppConstant.RESPONSE_ERROR_CODE_1235) {
-                                    KotlinUtils.showQuantityLimitErrror(
-                                        activity?.supportFragmentManager,
-                                        response.response.desc,
-                                        "",
-                                        context
-                                    )
+                                    response.response.desc?.let { it1 ->
+                                        KotlinUtils.showQuantityLimitErrror(
+                                            activity?.supportFragmentManager,
+                                            it1,
+                                            "",
+                                            context
+                                        )
+                                    }
                                 }
                             }
                             else -> response?.response?.desc?.let { desc ->
@@ -469,7 +472,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                         }
                     }
                     else -> {
-                        progressBar.visibility = View.GONE
+                        binding.progressBar.visibility = View.GONE
                         when (response?.httpCode) {
                             AppConstant.HTTP_OK -> {
                                 when {
@@ -479,7 +482,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                                         response.data?.get(0)?.productCountMap?.let {
                                             viewModel.addItemToCart.value?.quantity?.let { count ->
                                                 ToastFactory.showItemsLimitToastOnAddToCart(
-                                                    rvDashDelivery,
+                                                    binding.rvDashDelivery,
                                                     it,
                                                     requireActivity(),
                                                     count
@@ -600,7 +603,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
             it.getContentIfNotHandled()?.let { resource ->
                 when (resource.status) {
                     Status.LOADING -> {
-                        progressBar.visibility = View.VISIBLE
+                        binding.progressBar.visibility = View.VISIBLE
                     }
                     Status.SUCCESS -> {
                         resource.data?.validatePlace?.let { validatePlaceResponse ->
@@ -621,10 +624,10 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                                 initViews()
                             }
                         }
-                        progressBar.visibility = View.GONE
+                        binding.progressBar.visibility = View.GONE
                     }
                     Status.ERROR -> {
-                        progressBar.visibility = View.GONE
+                        binding.progressBar.visibility = View.GONE
                     }
                 }
             }
@@ -656,14 +659,14 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
     }
 
     private fun setupRecyclerView() {
-        rvDashDelivery?.apply {
+        binding.rvDashDelivery?.apply {
             adapter = dashDeliveryAdapter
             layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
         }
     }
 
     fun scrollToTop() {
-        rvDashDelivery?.scrollToPosition(0)
+        binding.rvDashDelivery?.scrollToPosition(0)
     }
 
     private fun navigateToConfirmAddressScreen() {
@@ -731,6 +734,8 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
             BundleKeysConstants.REQUEST_CODE -> {
              if (resultCode == Activity.RESULT_OK) {
                  initViews()
+                 viewModel.getOnDemandCategories()
+                 viewModel.getDashLandingDetails()
                }
             }
         }
@@ -776,10 +781,10 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
     }
 
     private fun requestCartSummary() {
-        progressBar?.visibility = View.VISIBLE
+        binding.progressBar?.visibility = View.VISIBLE
         GetCartSummary().getCartSummary(object : IResponseListener<CartSummaryResponse> {
             override fun onSuccess(response: CartSummaryResponse?) {
-                progressBar?.visibility = View.GONE
+                binding.progressBar?.visibility = View.GONE
                 when (response?.httpCode) {
                     AppConstant.HTTP_OK -> {
                         // If user have location then add to cart else go to geoLocation Flow.
@@ -795,7 +800,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
             }
 
             override fun onFailure(error: Throwable?) {
-                progressBar?.visibility = View.GONE
+                binding.progressBar?.visibility = View.GONE
             }
         })
     }

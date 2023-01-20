@@ -5,14 +5,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.error_dialog_with_ok_button_fragment.*
-import kotlinx.android.synthetic.main.root_device_info_fragment.tvDescription
+import com.awfs.coordination.databinding.ErrorDialogWithOkButtonFragmentBinding
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 
 class AccountsErrorHandlerFragment : WBottomSheetDialogFragment() {
 
+    private lateinit var binding: ErrorDialogWithOkButtonFragmentBinding
     private var mDescription: String? = null
 
     companion object {
@@ -30,13 +30,17 @@ class AccountsErrorHandlerFragment : WBottomSheetDialogFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.error_dialog_with_ok_button_fragment, container, false)
+        binding = ErrorDialogWithOkButtonFragmentBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        tvDescription?.text = mDescription
-        okButton?.setOnClickListener { dismiss() }
+
+        with(binding) {
+            tvDescription?.text = mDescription
+            okButton?.setOnClickListener { dismiss() }
+        }
     }
 
     override fun onDestroy() {

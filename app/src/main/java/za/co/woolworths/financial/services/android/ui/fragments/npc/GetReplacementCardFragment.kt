@@ -11,20 +11,16 @@ import android.graphics.PorterDuff
 import android.location.Location
 import android.os.Build
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.navigation.findNavController
 import com.awfs.coordination.R
-import com.google.gson.Gson
-import kotlinx.android.synthetic.main.replace_card_fragment.*
-import kotlinx.android.synthetic.main.select_store_activity.*
+import com.awfs.coordination.databinding.ReplaceCardFragmentBinding
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dto.LocationResponse
@@ -51,8 +47,9 @@ import za.co.woolworths.financial.services.android.util.location.EventType
 import za.co.woolworths.financial.services.android.util.location.Locator
 import za.co.woolworths.financial.services.android.util.location.Logger
 
-class GetReplacementCardFragment : MyCardExtension() {
+class GetReplacementCardFragment : MyCardExtension(R.layout.replace_card_fragment) {
 
+    private lateinit var binding: ReplaceCardFragmentBinding
     private lateinit var locator: Locator
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,42 +57,49 @@ class GetReplacementCardFragment : MyCardExtension() {
         setHasOptionsMenu(true)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.replace_card_fragment, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding = ReplaceCardFragmentBinding.bind(view)
         activity?.let { Utils.updateStatusBarBackground(it) }
 
-        setActionBar()
-        tvAlreadyHaveCard?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
-        pbParticipatingStore?.indeterminateDrawable?.setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY)
-        locator = Locator(activity as AppCompatActivity)
+        binding.apply {
+            setActionBar()
+            tvAlreadyHaveCard.paintFlags = Paint.UNDERLINE_TEXT_FLAG
+            pbParticipatingStore.indeterminateDrawable?.setColorFilter(
+                Color.WHITE,
+                PorterDuff.Mode.MULTIPLY
+            )
+            locator = Locator(activity as AppCompatActivity)
 
-        AnimationUtilExtension.animateViewPushDown(btnParticipatingStores)
-        AnimationUtilExtension.animateViewPushDown(tvAlreadyHaveCard)
+            AnimationUtilExtension.animateViewPushDown(btnParticipatingStores)
+            AnimationUtilExtension.animateViewPushDown(tvAlreadyHaveCard)
 
-        val storeCardResponse = arguments?.getString(SelectStoreActivity.STORE_DETAILS) /*(activity as? MyCardDetailActivity)?.getStoreCardDetail()*/
-        tvAlreadyHaveCard?.setOnClickListener {
-            navigateToLinkNewCardActivity(activity, storeCardResponse)
-        }
-        btnParticipatingStores?.setOnClickListener {
+            val storeCardResponse =
+                arguments?.getString(SelectStoreActivity.STORE_DETAILS) /*(activity as? MyCardDetailActivity)?.getStoreCardDetail()*/
+            tvAlreadyHaveCard?.setOnClickListener {
+                navigateToLinkNewCardActivity(activity, storeCardResponse)
+            }
+            btnParticipatingStores?.setOnClickListener {
 
-            context?.let {
-                if (ContextCompat.checkSelfPermission(it, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    navigateToParticipatingStores(null)
-                    return@setOnClickListener
+                context?.let {
+                    if (ContextCompat.checkSelfPermission(
+                            it,
+                            android.Manifest.permission.ACCESS_FINE_LOCATION
+                        ) != PackageManager.PERMISSION_GRANTED
+                    ) {
+                        navigateToParticipatingStores(null)
+                        return@setOnClickListener
+                    }
                 }
+
+                startLocationDiscoveryProcess()
             }
 
-            startLocationDiscoveryProcess()
+            uniqueIdsForReplacementCard()
         }
-
-        uniqueIdsForReplacementCard()
     }
 
-    private fun uniqueIdsForReplacementCard() {
+    private fun ReplaceCardFragmentBinding.uniqueIdsForReplacementCard() {
         imReplacementCard?.contentDescription = bindString(R.string.image_card)
         tvReplacementCardTitle?.contentDescription = bindString(R.string.label_getICR)
         tvPermanentBlockDescPart1?.contentDescription = bindString(R.string.label_getICRCardDescription)
@@ -105,8 +109,8 @@ class GetReplacementCardFragment : MyCardExtension() {
 
     private fun setActionBar() {
         (activity as? SelectStoreActivity)?.apply {
-            vtcReplacementToolbarTextView?.text = ""
-             supportActionBar?.apply {
+            (activity as? SelectStoreActivity)?.binding?.vtcReplacementToolbarTextView?.text = ""
+            supportActionBar?.apply {
                 setDisplayHomeAsUpEnabled(true)
                 setDisplayShowTitleEnabled(false)
                 setDisplayUseLogoEnabled(false)
@@ -204,7 +208,7 @@ class GetReplacementCardFragment : MyCardExtension() {
     }
 
     private fun enableAlreadyHaveALink(enableLink: Boolean) {
-        tvAlreadyHaveCard?.isEnabled = enableLink
+        binding.tvAlreadyHaveCard?.isEnabled = enableLink
     }
 
     override fun onResume() {
@@ -244,9 +248,11 @@ class GetReplacementCardFragment : MyCardExtension() {
     }
 
     private fun progressVisibility(state: Boolean) = activity?.runOnUiThread {
-        pbParticipatingStore?.visibility = if (state) VISIBLE else GONE
-        btnParticipatingStores?.setTextColor(if (state) Color.BLACK else Color.WHITE)
-        btnParticipatingStores?.isClickable = !state
+        binding.apply {
+            pbParticipatingStore?.visibility = if (state) VISIBLE else GONE
+            btnParticipatingStores?.setTextColor(if (state) Color.BLACK else Color.WHITE)
+            btnParticipatingStores?.isClickable = !state
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

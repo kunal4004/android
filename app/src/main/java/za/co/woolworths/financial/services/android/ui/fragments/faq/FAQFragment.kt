@@ -2,13 +2,10 @@ package za.co.woolworths.financial.services.android.ui.fragments.faq
 
 import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.faq_fragment.*
+import com.awfs.coordination.databinding.FaqFragmentBinding
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
@@ -27,8 +24,9 @@ import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRe
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.NetworkManager
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 
-class FAQFragment : Fragment(), ISelectQuestionListener {
+class FAQFragment : BaseFragmentBinding<FaqFragmentBinding>(FaqFragmentBinding::inflate), ISelectQuestionListener {
 
     var mBottomNavigator: BottomNavigator? = null
 
@@ -42,19 +40,15 @@ class FAQFragment : Fragment(), ISelectQuestionListener {
     private var mErrorHandlerView: ErrorHandlerView? = null
     private var mFAQAdapter: FAQAdapter? = null
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.faq_fragment, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         setupToolbar()
 
-        mErrorHandlerView = ErrorHandlerView(activity, no_connection_layout)
+        mErrorHandlerView = ErrorHandlerView(activity, binding.noConnectionLayout)
 
         executeFAQRequest()
-        btnRetry?.setOnClickListener {
+        binding.btnRetry?.setOnClickListener {
             if (NetworkManager.getInstance().isConnectedToNetwork(activity)) {
                 executeFAQRequest()
             }
@@ -81,36 +75,38 @@ class FAQFragment : Fragment(), ISelectQuestionListener {
 
     private fun executeFAQRequest() {
         mErrorHandlerView?.hideErrorHandler()
-        progressCreditLimit?.visibility = View.VISIBLE
+        binding.progressCreditLimit?.visibility = View.VISIBLE
         mFAQRequest = faqRequest()
     }
 
     fun faqSuccessResponse(list: List<FAQDetail>) {
-        if (list.isNotEmpty()) {
-            mFAQAdapter = FAQAdapter(list, this)
-            val mLayoutManager = LinearLayoutManager(activity)
-            mLayoutManager.orientation = LinearLayoutManager.VERTICAL
-            faqList?.layoutManager = mLayoutManager
-            faqList?.isNestedScrollingEnabled = false
-            faqList?.adapter = mFAQAdapter
-            textNotFound?.visibility = View.GONE
-            faqList?.visibility = View.VISIBLE
-        } else {
-            textNotFound?.visibility = View.VISIBLE
-            faqList?.visibility = View.GONE
+        binding.apply {
+            if (list.isNotEmpty()) {
+                mFAQAdapter = FAQAdapter(list, this@FAQFragment)
+                val mLayoutManager = LinearLayoutManager(activity)
+                mLayoutManager.orientation = LinearLayoutManager.VERTICAL
+                faqList?.layoutManager = mLayoutManager
+                faqList?.isNestedScrollingEnabled = false
+                faqList?.adapter = mFAQAdapter
+                textNotFound?.visibility = View.GONE
+                faqList?.visibility = View.VISIBLE
+            } else {
+                textNotFound?.visibility = View.VISIBLE
+                faqList?.visibility = View.GONE
+            }
+            progressCreditLimit?.visibility = View.GONE
         }
-        progressCreditLimit?.visibility = View.GONE
     }
 
     fun unhandledResponseCode(response: Response) {
-        progressCreditLimit?.visibility = View.GONE
+        binding.progressCreditLimit?.visibility = View.GONE
         response.desc?.let { Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, it) }
 
     }
 
     fun failureResponseHandler(errorMessage: String) {
         activity?.runOnUiThread { mErrorHandlerView?.networkFailureHandler(errorMessage) }
-        progressCreditLimit?.visibility = View.GONE
+        binding.progressCreditLimit?.visibility = View.GONE
     }
 
     override fun onDetach() {

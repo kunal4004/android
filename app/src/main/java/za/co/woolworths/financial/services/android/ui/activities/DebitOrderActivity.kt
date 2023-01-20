@@ -5,7 +5,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import android.view.MenuItem
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.activity_debit_order.*
+import com.awfs.coordination.databinding.ActivityDebitOrderBinding
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.DebitOrder
 import za.co.woolworths.financial.services.android.ui.extension.bindString
@@ -14,12 +14,14 @@ import za.co.woolworths.financial.services.android.util.Utils
 
 class DebitOrderActivity : AppCompatActivity() {
 
+    private lateinit var binding: ActivityDebitOrderBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_debit_order)
+        binding = ActivityDebitOrderBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         Utils.updateStatusBarBackground(this)
-        setSupportActionBar(toolbar)
+        setSupportActionBar(binding.toolbar)
 
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
@@ -39,10 +41,12 @@ class DebitOrderActivity : AppCompatActivity() {
             amountToBeDebited = "- " + amountToBeDebited.replace("-", "")
         }
 
-        tvDebitOrderTitle.setText(title)
-        tvDebitOrderDescription.setText(description)
-        tvDeductionDay.setText(debitOrder?.debitOrderDeductionDay)
-        tvAmountToBeDebited.setText(amountToBeDebited)
+        with(binding) {
+            tvDebitOrderTitle.setText(title)
+            tvDebitOrderDescription.setText(description)
+            tvDeductionDay.setText(debitOrder?.debitOrderDeductionDay)
+            tvAmountToBeDebited.setText(amountToBeDebited)
+        }
     }
 
     override fun onResume() {

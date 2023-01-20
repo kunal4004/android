@@ -1,20 +1,19 @@
 package za.co.woolworths.financial.services.android.ui.adapters
 
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.tax_invoice_list_item.view.*
+import androidx.recyclerview.widget.RecyclerView
+import com.awfs.coordination.databinding.TaxInvoiceListItemBinding
 
 class TaxInvoiceAdapter(var taxNoteNumbers: ArrayList<String>?, val listner: OnItemClick) : RecyclerView.Adapter<TaxInvoiceAdapter.ViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaxInvoiceAdapter.ViewHolder {
-        val v: View = LayoutInflater.from(parent.context).inflate(R.layout.tax_invoice_list_item, parent, false)
-        return ViewHolder(v)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        return ViewHolder(
+            TaxInvoiceListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        )
     }
 
-    override fun onBindViewHolder(holder: TaxInvoiceAdapter.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val taxNumber = taxNoteNumbers?.get(position)
         holder.bindText(taxNumber!!, listner)
     }
@@ -23,10 +22,10 @@ class TaxInvoiceAdapter(var taxNoteNumbers: ArrayList<String>?, val listner: OnI
         return taxNoteNumbers?.size ?: 0
     }
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class ViewHolder(val itemBinding: TaxInvoiceListItemBinding) : RecyclerView.ViewHolder(itemBinding.root) {
         fun bindText(taxNumber: String, listner: OnItemClick) {
-            itemView.taxNumber.text = taxNumber
-            itemView.setOnClickListener { listner.onItemSelection(taxNumber) }
+            itemBinding.taxNumber.text = taxNumber
+            itemBinding.root.setOnClickListener { listner.onItemSelection(taxNumber) }
         }
 
     }

@@ -6,9 +6,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.CompoundButton
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatActivity
@@ -24,24 +22,11 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.FragmentCheckoutReturningUserCollectionBinding
 import com.facebook.shimmer.Shimmer
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.*
-import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.loadingBar
-import kotlinx.android.synthetic.main.fragment_cart.*
-import kotlinx.android.synthetic.main.fragment_checkout_returning_user_collection.*
-import kotlinx.android.synthetic.main.layout_collection_time_details.*
-import kotlinx.android.synthetic.main.layout_collection_user_information.*
-import kotlinx.android.synthetic.main.layout_delivering_to_details.*
-import kotlinx.android.synthetic.main.layout_native_checkout_age_confirmation.*
-import kotlinx.android.synthetic.main.layout_native_checkout_delivery_food_substitution.*
-import kotlinx.android.synthetic.main.layout_native_checkout_delivery_instructions.*
-import kotlinx.android.synthetic.main.layout_native_checkout_delivery_order_summary.*
-import kotlinx.android.synthetic.main.liquor_compliance_banner.*
-import kotlinx.android.synthetic.main.new_shopping_bags_layout.*
-import kotlinx.android.synthetic.main.where_are_we_delivering_items.view.*
 import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor
 import za.co.woolworths.financial.services.android.checkout.service.network.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.Companion.REGEX_DELIVERY_INSTRUCTIONS
@@ -79,10 +64,13 @@ import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.viewmodels.ShoppingCartLiveData
 import java.util.regex.Pattern
 
-class CheckoutReturningUserCollectionFragment : Fragment(),
+class CheckoutReturningUserCollectionFragment :
+    Fragment(R.layout.fragment_checkout_returning_user_collection),
     ShoppingBagsRadioGroupAdapter.EventListner, View.OnClickListener, CollectionTimeSlotsListener,
     CompoundButton.OnCheckedChangeListener {
 
+    private var isItemLimitExceeded: Boolean = false
+    private lateinit var binding: FragmentCheckoutReturningUserCollectionBinding
     private var selectedTimeSlot: Slot? = null
     private var selectedPosition: Int = 0
     private var selectedShoppingBagType: Double? = null
@@ -126,20 +114,10 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         collectionTimeSlotsAdapter = CollectionTimeSlotsAdapter(this)
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(
-            R.layout.fragment_checkout_returning_user_collection,
-            container,
-            false
-        )
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding = FragmentCheckoutReturningUserCollectionBinding.bind(view)
+
         if (navController == null)
             navController = Navigation.findNavController(view)
         (activity as? CheckoutActivity)?.apply {
@@ -152,20 +130,24 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         isUnSellableLiquorItemRemoved()
         getLiquorComplianceDetails()
         callStorePickupInfoAPI()
-        txtContinueToPaymentCollection?.setOnClickListener(this)
-        radioBtnAgeConfirmation?.setOnCheckedChangeListener(this)
+        binding.txtContinueToPaymentCollection?.setOnClickListener(this)
+        binding.ageConfirmationLayoutCollection.radioBtnAgeConfirmation?.setOnCheckedChangeListener(
+            this
+        )
         setFragmentResults()
     }
 
     private fun isUnSellableLiquorItemRemoved() {
         ShoppingCartLiveData.observe(viewLifecycleOwner) { isLiquorOrder ->
             if (isLiquorOrder == false) {
-                ageConfirmationLayout?.visibility = View.GONE
-                liquorComplianceBannerLayout?.visibility = View.GONE
+                binding.ageConfirmationLayoutCollection?.root?.visibility = View.GONE
+                binding.ageConfirmationLayoutCollection.liquorComplianceBannerLayout?.root?.visibility =
+                    View.GONE
                 ShoppingCartLiveData.value = true
             }
         }
     }
+
     private fun setFragmentResults() {
 
         setFragmentResultListener(ErrorHandlerBottomSheetDialog.RESULT_ERROR_CODE_RETRY) { _, args ->
@@ -184,161 +166,171 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
 
         shimmerComponentArray = listOf(
             Pair<ShimmerFrameLayout, View>(
-                deliveringTitleShimmerFrameLayout,
-                tvNativeCheckoutDeliveringTitle
+                binding.checkoutCollectingFromLayout.deliveringTitleShimmerFrameLayout,
+                binding.checkoutCollectingFromLayout.tvNativeCheckoutDeliveringTitle
             ),
             Pair<ShimmerFrameLayout, View>(
-                deliveringTitleValueShimmerFrameLayout,
-                tvNativeCheckoutDeliveringValue
-            ),
-            Pair<ShimmerFrameLayout, View>(forwardImgViewShimmerFrameLayout, imageViewCaretForward),
-            Pair<ShimmerFrameLayout, View>(
-                foodSubstitutionTitleShimmerFrameLayout,
-                txtFoodSubstitutionTitle
+                binding.checkoutCollectingFromLayout.deliveringTitleValueShimmerFrameLayout,
+                binding.checkoutCollectingFromLayout.tvNativeCheckoutDeliveringValue
             ),
             Pair<ShimmerFrameLayout, View>(
-                radioGroupFoodSubstitutionShimmerFrameLayout,
-                radioGroupFoodSubstitution
+                binding.checkoutCollectingFromLayout.forwardImgViewShimmerFrameLayout,
+                binding.checkoutCollectingFromLayout.imageViewCaretForward
             ),
-
             Pair<ShimmerFrameLayout, View>(
-                ageConfirmationTitleShimmerFrameLayout,
-                txtAgeConfirmationTitle
+                binding.nativeCheckoutFoodSubstitutionLayout.foodSubstitutionTitleShimmerFrameLayout,
+                binding.nativeCheckoutFoodSubstitutionLayout.txtFoodSubstitutionTitle
+            ),
+            Pair<ShimmerFrameLayout, View>(
+                binding.nativeCheckoutFoodSubstitutionLayout.radioGroupFoodSubstitutionShimmerFrameLayout,
+                binding.nativeCheckoutFoodSubstitutionLayout.radioGroupFoodSubstitution
             ),
 
             Pair<ShimmerFrameLayout, View>(
-                ageConfirmationDescShimmerFrameLayout,
-                txtAgeConfirmationDesc
+                binding.ageConfirmationLayoutCollection.ageConfirmationTitleShimmerFrameLayout,
+                binding.ageConfirmationLayoutCollection.txtAgeConfirmationTitle
             ),
 
             Pair<ShimmerFrameLayout, View>(
-                ageConfirmationDescNoteShimmerFrameLayout,
-                txtAgeConfirmationDescNote
+                binding.ageConfirmationLayoutCollection.ageConfirmationDescShimmerFrameLayout,
+                binding.ageConfirmationLayoutCollection.txtAgeConfirmationDesc
             ),
 
             Pair<ShimmerFrameLayout, View>(
-                radioGroupAgeConfirmationShimmerFrameLayout,
-                radioBtnAgeConfirmation
+                binding.ageConfirmationLayoutCollection.ageConfirmationDescNoteShimmerFrameLayout,
+                binding.ageConfirmationLayoutCollection.txtAgeConfirmationDescNote
             ),
 
             Pair<ShimmerFrameLayout, View>(
-                ageConfirmationTitleShimmerFrameLayout,
-                txtAgeConfirmationTitle
+                binding.ageConfirmationLayoutCollection.radioGroupAgeConfirmationShimmerFrameLayout,
+                binding.ageConfirmationLayoutCollection.radioBtnAgeConfirmation
             ),
 
             Pair<ShimmerFrameLayout, View>(
-                ageConfirmationDescShimmerFrameLayout,
-                txtAgeConfirmationDesc
+                binding.ageConfirmationLayoutCollection.ageConfirmationTitleShimmerFrameLayout,
+                binding.ageConfirmationLayoutCollection.txtAgeConfirmationTitle
             ),
 
             Pair<ShimmerFrameLayout, View>(
-                ageConfirmationDescNoteShimmerFrameLayout,
-                txtAgeConfirmationDescNote
+                binding.ageConfirmationLayoutCollection.ageConfirmationDescShimmerFrameLayout,
+                binding.ageConfirmationLayoutCollection.txtAgeConfirmationDesc
             ),
 
             Pair<ShimmerFrameLayout, View>(
-                radioGroupAgeConfirmationShimmerFrameLayout,
-                radioBtnAgeConfirmation
+                binding.ageConfirmationLayoutCollection.ageConfirmationDescNoteShimmerFrameLayout,
+                binding.ageConfirmationLayoutCollection.txtAgeConfirmationDescNote
             ),
 
             Pair<ShimmerFrameLayout, View>(
-                collectionTimeDetailsShimmerLayout,
-                collectionTimeDetailsConstraintLayout
-            ),
-            Pair<ShimmerFrameLayout, View>(
-                foodSubstitutionDescShimmerFrameLayout,
-                txtFoodSubstitutionDesc
-            ),
-            Pair<ShimmerFrameLayout, View>(
-                radioGroupFoodSubstitutionShimmerFrameLayout,
-                radioGroupFoodSubstitution
-            ),
-            Pair<ShimmerFrameLayout, View>(
-                liquorComplianceBannerShimmerFrameLayout,
-                liquorComplianceBannerLayout
+                binding.ageConfirmationLayoutCollection.radioGroupAgeConfirmationShimmerFrameLayout,
+                binding.ageConfirmationLayoutCollection.radioBtnAgeConfirmation
             ),
 
             Pair<ShimmerFrameLayout, View>(
-                instructionTxtShimmerFrameLayout,
-                txtSpecialDeliveryInstruction
+                binding.checkoutCollectingTimeDetailsLayout.collectionTimeDetailsShimmerLayout,
+                binding.checkoutCollectingTimeDetailsLayout.collectionTimeDetailsConstraintLayout
             ),
             Pair<ShimmerFrameLayout, View>(
-                specialInstructionSwitchShimmerFrameLayout,
-                switchSpecialDeliveryInstruction
+                binding.nativeCheckoutFoodSubstitutionLayout.foodSubstitutionDescShimmerFrameLayout,
+                binding.nativeCheckoutFoodSubstitutionLayout.txtFoodSubstitutionDesc
             ),
             Pair<ShimmerFrameLayout, View>(
-                giftInstructionTxtShimmerFrameLayout,
-                txtGiftInstructions
+                binding.nativeCheckoutFoodSubstitutionLayout.radioGroupFoodSubstitutionShimmerFrameLayout,
+                binding.nativeCheckoutFoodSubstitutionLayout.radioGroupFoodSubstitution
             ),
             Pair<ShimmerFrameLayout, View>(
-                giftInstructionSwitchShimmerFrameLayout,
-                switchGiftInstructions
+                binding.ageConfirmationLayoutCollection.liquorComplianceBannerShimmerFrameLayout,
+                binding.ageConfirmationLayoutCollection.liquorComplianceBannerLayout.root
             ),
-            Pair<ShimmerFrameLayout, View>(txtYourCartShimmerFrameLayout, txtOrderSummaryYourCart),
+
             Pair<ShimmerFrameLayout, View>(
-                yourCartValueShimmerFrameLayout,
-                txtOrderSummaryYourCartValue
-            ),
-            Pair<ShimmerFrameLayout, View>(
-                deliveryFeeTxtShimmerFrameLayout,
-                txtOrderSummaryDeliveryFee
+                binding.layoutCollectionInstructions.instructionTxtShimmerFrameLayout,
+                binding.layoutCollectionInstructions.txtSpecialDeliveryInstruction
             ),
             Pair<ShimmerFrameLayout, View>(
-                deliveryFeeValueShimmerFrameLayout,
-                txtOrderSummaryDeliveryFeeValue
-            ),
-            Pair<ShimmerFrameLayout, View>(summaryNoteShimmerFrameLayout, txtOrderSummaryNote),
-            Pair<ShimmerFrameLayout, View>(
-                txtOrderTotalShimmerFrameLayout,
-                txtOrderTotalTitle
+                binding.layoutCollectionInstructions.specialInstructionSwitchShimmerFrameLayout,
+                binding.layoutCollectionInstructions.switchSpecialDeliveryInstruction
             ),
             Pair<ShimmerFrameLayout, View>(
-                orderTotalValueShimmerFrameLayout,
-                txtOrderTotalValue
+                binding.layoutCollectionInstructions.giftInstructionTxtShimmerFrameLayout,
+                binding.layoutCollectionInstructions.txtGiftInstructions
             ),
             Pair<ShimmerFrameLayout, View>(
-                continuePaymentTxtCollectionShimmerFrameLayout,
-                txtContinueToPaymentCollection
+                binding.layoutCollectionInstructions.giftInstructionSwitchShimmerFrameLayout,
+                binding.layoutCollectionInstructions.switchGiftInstructions
             ),
             Pair<ShimmerFrameLayout, View>(
-                newShoppingBagsTitleShimmerFrameLayout,
-                newShoppingBagsTitle
+                binding.layoutCheckoutDeliveryOrderSummary.txtYourCartShimmerFrameLayout,
+                binding.layoutCheckoutDeliveryOrderSummary.txtOrderSummaryYourCart
             ),
             Pair<ShimmerFrameLayout, View>(
-                newShoppingBagsDescShimmerFrameLayout,
-                txtNewShoppingBagsDesc
+                binding.layoutCheckoutDeliveryOrderSummary.yourCartValueShimmerFrameLayout,
+                binding.layoutCheckoutDeliveryOrderSummary.txtOrderSummaryYourCartValue
             ),
             Pair<ShimmerFrameLayout, View>(
-                radioGroupShoppingBagsShimmerFrameLayout,
-                radioGroupShoppingBags
+                binding.layoutCheckoutDeliveryOrderSummary.deliveryFeeTxtShimmerFrameLayout,
+                binding.layoutCheckoutDeliveryOrderSummary.txtOrderSummaryDeliveryFee
             ),
             Pair<ShimmerFrameLayout, View>(
-                imgUserProfileShimmerFrameLayout,
-                imgUserProfile
+                binding.layoutCheckoutDeliveryOrderSummary.deliveryFeeValueShimmerFrameLayout,
+                binding.layoutCheckoutDeliveryOrderSummary.txtOrderSummaryDeliveryFeeValue
             ),
             Pair<ShimmerFrameLayout, View>(
-                tvCollectionUserNameShimmerFrameLayout,
-                tvCollectionUserName
+                binding.layoutCheckoutDeliveryOrderSummary.summaryNoteShimmerFrameLayout,
+                binding.layoutCheckoutDeliveryOrderSummary.txtOrderSummaryNote
             ),
             Pair<ShimmerFrameLayout, View>(
-                tvCollectionUserPhoneNumberShimmerFrameLayout,
-                tvCollectionUserPhoneNumber
+                binding.layoutCheckoutDeliveryOrderSummary.txtOrderTotalShimmerFrameLayout,
+                binding.layoutCheckoutDeliveryOrderSummary.txtOrderTotalTitle
             ),
             Pair<ShimmerFrameLayout, View>(
-                imageViewCaretForwardCollectionShimmerFrameLayout,
-                imageViewCaretForwardCollection
+                binding.layoutCheckoutDeliveryOrderSummary.orderTotalValueShimmerFrameLayout,
+                binding.layoutCheckoutDeliveryOrderSummary.txtOrderTotalValue
+            ),
+            Pair<ShimmerFrameLayout, View>(
+                binding.continuePaymentTxtCollectionShimmerFrameLayout,
+                binding.txtContinueToPaymentCollection
+            ),
+            Pair<ShimmerFrameLayout, View>(
+                binding.layoutCollectionInstructions.newShoppingBagsLayout.newShoppingBagsTitleShimmerFrameLayout,
+                binding.layoutCollectionInstructions.newShoppingBagsLayout.newShoppingBagsTitle
+            ),
+            Pair<ShimmerFrameLayout, View>(
+                binding.layoutCollectionInstructions.newShoppingBagsLayout.newShoppingBagsDescShimmerFrameLayout,
+                binding.layoutCollectionInstructions.newShoppingBagsLayout.txtNewShoppingBagsDesc
+            ),
+            Pair<ShimmerFrameLayout, View>(
+                binding.layoutCollectionInstructions.newShoppingBagsLayout.radioGroupShoppingBagsShimmerFrameLayout,
+                binding.layoutCollectionInstructions.newShoppingBagsLayout.radioGroupShoppingBags
+            ),
+            Pair<ShimmerFrameLayout, View>(
+                binding.checkoutCollectingUserInfoLayout.imgUserProfileShimmerFrameLayout,
+                binding.checkoutCollectingUserInfoLayout.imgUserProfile
+            ),
+            Pair<ShimmerFrameLayout, View>(
+                binding.checkoutCollectingUserInfoLayout.tvCollectionUserNameShimmerFrameLayout,
+                binding.checkoutCollectingUserInfoLayout.tvCollectionUserName
+            ),
+            Pair<ShimmerFrameLayout, View>(
+                binding.checkoutCollectingUserInfoLayout.tvCollectionUserPhoneNumberShimmerFrameLayout,
+                binding.checkoutCollectingUserInfoLayout.tvCollectionUserPhoneNumber
+            ),
+            Pair<ShimmerFrameLayout, View>(
+                binding.checkoutCollectingUserInfoLayout.imageViewCaretForwardCollectionShimmerFrameLayout,
+                binding.checkoutCollectingUserInfoLayout.imageViewCaretForwardCollection
             )
         )
         startShimmerView()
     }
 
     fun startShimmerView() {
-        txtNeedBags?.visibility = View.GONE
-        switchNeedBags?.visibility = View.GONE
-        edtTxtSpecialDeliveryInstruction?.visibility = View.GONE
-        edtTxtGiftInstructions?.visibility = View.GONE
-        switchSpecialDeliveryInstruction?.isChecked = false
-        switchGiftInstructions?.isChecked = false
+        binding.layoutCollectionInstructions.txtNeedBags?.visibility = View.GONE
+        binding.layoutCollectionInstructions.switchNeedBags?.visibility = View.GONE
+        binding.layoutCollectionInstructions.edtTxtSpecialDeliveryInstruction?.visibility =
+            View.GONE
+        binding.layoutCollectionInstructions.edtTxtGiftInstructions?.visibility = View.GONE
+        binding.layoutCollectionInstructions.switchSpecialDeliveryInstruction?.isChecked = false
+        binding.layoutCollectionInstructions.switchGiftInstructions?.isChecked = false
 
         val shimmer = Shimmer.AlphaHighlightBuilder().build()
         shimmerComponentArray.forEach {
@@ -357,8 +349,8 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
             }
         }
 
-        txtNeedBags?.visibility = View.VISIBLE
-        switchNeedBags?.visibility = View.VISIBLE
+        binding.layoutCollectionInstructions.txtNeedBags?.visibility = View.VISIBLE
+        binding.layoutCollectionInstructions.switchNeedBags?.visibility = View.VISIBLE
 
         initializeFoodSubstitution()
         initializeDeliveryInstructions()
@@ -378,6 +370,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
     private fun callStorePickupInfoAPI() {
         initShimmerView()
 
+        isItemLimitExceeded = false
         checkoutAddAddressNewUserViewModel?.getStorePickupInfo(getStorePickupInfoBody())
             ?.observe(viewLifecycleOwner) { response ->
                 stopShimmerView()
@@ -403,7 +396,9 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                                     showEmptyCart()
                                     return@observe
                                 }
+                                var maxItemLimit = -1
                                 response.orderSummary?.fulfillmentDetails?.let {
+                                    maxItemLimit = it.foodMaximumQuantity ?: -1
                                     if (!it.deliveryType.isNullOrEmpty()) {
                                         Utils.savePreferredDeliveryLocation(
                                             ShoppingDeliveryLocation(
@@ -412,6 +407,13 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                                         )
                                     }
                                 }
+
+                                isItemLimitExceeded =
+                                    (response.orderSummary?.totalItemsCount ?: 0) > maxItemLimit
+                                if (isItemLimitExceeded) {
+                                    showMaxItemView()
+                                }
+
                                 initializeOrderSummary(response.orderSummary)
                                 response.sortedJoinDeliverySlots?.apply {
                                     val firstAvailableDateSlot = getFirstAvailableSlot(this)
@@ -425,11 +427,11 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                                     }
                                     collectionTimeSlotsAdapter.setSelectedItem(selectedSlotIndex)
                                 }
-                                if(response.orderSummary?.hasMinimumBasketAmount == false) {
-                                   KotlinUtils.showMinCartValueError(
-                                       requireActivity() as AppCompatActivity,
-                                       response.orderSummary?.minimumBasketAmount
-                                   )
+                                if (response.orderSummary?.hasMinimumBasketAmount == false) {
+                                    KotlinUtils.showMinCartValueError(
+                                        requireActivity() as AppCompatActivity,
+                                        response.orderSummary?.minimumBasketAmount
+                                    )
                                 }
                             }
                             else -> {
@@ -461,33 +463,37 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
             return
         }
 
-        firstAvailableDateLayout?.titleTv?.text = selectedWeekSlot?.date ?: try {
-            WFormatter.convertDateToFormat(
-                slots[0].stringShipOnDate,
-                DATE_FORMAT_EEEE_COMMA_dd_MMMM
-            )
-        } catch (e: Exception) {
-            FirebaseManager.logException(e)
-            ""
-        }
+        binding.checkoutCollectingTimeDetailsLayout.firstAvailableDateLayout?.titleTv?.text =
+            selectedWeekSlot?.date ?: try {
+                WFormatter.convertDateToFormat(
+                    slots[0].stringShipOnDate,
+                    DATE_FORMAT_EEEE_COMMA_dd_MMMM
+                )
+            } catch (e: Exception) {
+                FirebaseManager.logException(e)
+                ""
+            }
         context?.let { context ->
-            firstAvailableDateLayout?.titleTv?.setTextColor(
+            binding.checkoutCollectingTimeDetailsLayout.firstAvailableDateLayout?.titleTv?.setTextColor(
                 ContextCompat.getColor(
                     context,
                     R.color.white
                 )
             )
-            firstAvailableDateLayout?.titleTv?.background =
+            binding.checkoutCollectingTimeDetailsLayout.firstAvailableDateLayout?.titleTv?.background =
                 ContextCompat.getDrawable(
                     context,
                     R.drawable.checkout_delivering_title_round_button_pressed
                 )
-            chooseDateLayout?.titleTv?.text = context.getString(R.string.choose_date)
+            binding.checkoutCollectingTimeDetailsLayout.chooseDateLayout?.titleTv?.text =
+                context.getString(R.string.choose_date)
         }
 
         setSelectedDateTimeSlots(slots)
-        chooseDateLayout?.setOnClickListener(this@CheckoutReturningUserCollectionFragment)
-        firstAvailableDateLayout?.setOnClickListener(this@CheckoutReturningUserCollectionFragment)
+        binding.checkoutCollectingTimeDetailsLayout.chooseDateLayout?.root?.setOnClickListener(this@CheckoutReturningUserCollectionFragment)
+        binding.checkoutCollectingTimeDetailsLayout.firstAvailableDateLayout?.root?.setOnClickListener(
+            this@CheckoutReturningUserCollectionFragment
+        )
     }
 
     private fun setSelectedDateTimeSlots(slots: List<Slot>?) {
@@ -539,7 +545,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
     }
 
     private fun initializeCollectionTimeSlots() {
-        recyclerViewCollectionTimeSlots?.apply {
+        binding.checkoutCollectingTimeDetailsLayout.recyclerViewCollectionTimeSlots?.apply {
             layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
             adapter = collectionTimeSlotsAdapter
             collectionTimeSlotsAdapter.setCollectionTimeSlotData(null)
@@ -566,27 +572,36 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                 liquorOrder = getBoolean(Constant.LIQUOR_ORDER)
                 if (liquorOrder == true && containsKey(Constant.NO_LIQUOR_IMAGE_URL)) {
                     liquorImageUrl = getString(Constant.NO_LIQUOR_IMAGE_URL)
-                    ageConfirmationLayoutCollection?.visibility = View.VISIBLE
-                    liquorComplianceBannerLayout?.visibility = View.VISIBLE
-                    ImageManager.setPicture(imgLiquorBanner, liquorImageUrl)
+                    binding.ageConfirmationLayoutCollection?.root?.visibility = View.VISIBLE
+                    binding.ageConfirmationLayoutCollection.liquorComplianceBannerLayout?.root?.visibility =
+                        View.VISIBLE
+                    ImageManager.setPicture(
+                        binding.ageConfirmationLayoutCollection.liquorComplianceBannerLayout.imgLiquorBanner,
+                        liquorImageUrl
+                    )
 
-                    ageConfirmationLayoutCollection?.visibility = View.VISIBLE
-                    liquorComplianceBannerSeparator?.visibility = View.VISIBLE
-                    liquorComplianceBannerLayout?.visibility = View.VISIBLE
+                    binding.ageConfirmationLayoutCollection?.root?.visibility = View.VISIBLE
+                    binding.ageConfirmationLayoutCollection.liquorComplianceBannerSeparator?.visibility =
+                        View.VISIBLE
+                    binding.ageConfirmationLayoutCollection.liquorComplianceBannerLayout?.root?.visibility =
+                        View.VISIBLE
 
-                    if (!radioBtnAgeConfirmation.isChecked) {
-                        Utils.fadeInFadeOutAnimation(txtContinueToPaymentCollection, true)
-                        radioBtnAgeConfirmation?.isChecked = false
-                        txtContinueToPaymentCollection?.isClickable = false
+                    if (!binding.ageConfirmationLayoutCollection.radioBtnAgeConfirmation.isChecked) {
+                        Utils.fadeInFadeOutAnimation(binding.txtContinueToPaymentCollection, true)
+                        binding.ageConfirmationLayoutCollection.radioBtnAgeConfirmation?.isChecked =
+                            false
+                        binding.txtContinueToPaymentCollection?.isClickable = false
                     } else {
-                        Utils.fadeInFadeOutAnimation(txtContinueToPaymentCollection, false)
-                        txtContinueToPaymentCollection?.isClickable = true
-                        radioBtnAgeConfirmation?.isChecked = true
+                        Utils.fadeInFadeOutAnimation(binding.txtContinueToPaymentCollection, false)
+                        binding.txtContinueToPaymentCollection?.isClickable = true
+                        binding.ageConfirmationLayoutCollection.radioBtnAgeConfirmation?.isChecked =
+                            true
                     }
                 }
             } else {
-                ageConfirmationLayoutCollection?.visibility = View.GONE
-                liquorComplianceBannerLayout?.visibility = View.GONE
+                binding.ageConfirmationLayoutCollection?.root?.visibility = View.GONE
+                binding.ageConfirmationLayoutCollection.liquorComplianceBannerLayout?.root?.visibility =
+                    View.GONE
             }
         }
     }
@@ -594,11 +609,11 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
     override fun onCheckedChanged(buttonView: CompoundButton?, isChecked: Boolean) {
         //single checkbox age confirmation
         if (!isChecked) {
-            Utils.fadeInFadeOutAnimation(txtContinueToPaymentCollection, true)
-            radioBtnAgeConfirmation?.isChecked = false
+            Utils.fadeInFadeOutAnimation(binding.txtContinueToPaymentCollection, true)
+            binding.ageConfirmationLayoutCollection.radioBtnAgeConfirmation?.isChecked = false
         } else {
-            Utils.fadeInFadeOutAnimation(txtContinueToPaymentCollection, false)
-            radioBtnAgeConfirmation?.isChecked = true
+            Utils.fadeInFadeOutAnimation(binding.txtContinueToPaymentCollection, false)
+            binding.ageConfirmationLayoutCollection.radioBtnAgeConfirmation?.isChecked = true
         }
     }
 
@@ -609,24 +624,25 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
 
     private fun initializeCollectingFromView() {
         val location = Utils.getPreferredDeliveryLocation()
-        checkoutCollectingFromLayout.setOnClickListener(this)
+        binding.checkoutCollectingFromLayout.root.setOnClickListener(this)
         if (location != null) {
             val selectedStore =
                 if (KotlinUtils.getPreferredDeliveryType() == Delivery.CNC) location.fulfillmentDetails?.storeName else ""
             if (!selectedStore.isNullOrEmpty()) {
-                tvNativeCheckoutDeliveringTitle?.text =
+                binding.checkoutCollectingFromLayout.tvNativeCheckoutDeliveringTitle?.text =
                     context?.getString(R.string.native_checkout_collecting_from)
-                tvNativeCheckoutDeliveringValue.setTextColor(
+                binding.checkoutCollectingFromLayout.tvNativeCheckoutDeliveringValue.setTextColor(
                     ContextCompat.getColor(
                         requireContext(),
                         R.color.black
                     )
                 )
-                tvNativeCheckoutDeliveringValue?.text = convertToTitleCase(selectedStore)
+                binding.checkoutCollectingFromLayout.tvNativeCheckoutDeliveringValue?.text =
+                    convertToTitleCase(selectedStore)
             } else
-                checkoutCollectingFromLayout.visibility = View.GONE
+                binding.checkoutCollectingFromLayout.root.visibility = View.GONE
         } else
-            checkoutCollectingFromLayout.visibility = View.GONE
+            binding.checkoutCollectingFromLayout.root.visibility = View.GONE
     }
 
     private fun initializeCollectingDetailsView() {
@@ -643,7 +659,8 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
             ) as? SavedAddressResponse ?: SavedAddressResponse()
         }
         if (whoIsCollectingDetails != null) {
-            tvCollectionUserName.text = whoIsCollectingDetails?.recipientName
+            binding.checkoutCollectingUserInfoLayout.tvCollectionUserName.text =
+                whoIsCollectingDetails?.recipientName
             val star = "***"
             val phoneNo = whoIsCollectingDetails?.phoneNumber
             val beforeStar =
@@ -652,58 +669,62 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                 if (beforeStar.length + star.length < phoneNo.length) beforeStar.length + star.length else beforeStar.length,
                 phoneNo.length
             )
-            tvCollectionUserPhoneNumber.text = beforeStar.plus(star).plus(afterStar)
+            binding.checkoutCollectingUserInfoLayout.tvCollectionUserPhoneNumber.text =
+                beforeStar.plus(star).plus(afterStar)
         } else {
-            checkoutCollectingUserInfoLayout.visibility = View.GONE
+            binding.checkoutCollectingUserInfoLayout.root.visibility = View.GONE
         }
-        checkoutCollectingUserInfoLayout.setOnClickListener(this)
+        binding.checkoutCollectingUserInfoLayout.root.setOnClickListener(this)
     }
 
     fun initializeDeliveryInstructions() {
-        edtTxtSpecialDeliveryInstruction?.addTextChangedListener(deliveryInstructionsTextWatcher)
-        edtTxtGiftInstructions?.addTextChangedListener(deliveryInstructionsTextWatcher)
-        edtTxtInputLayoutSpecialDeliveryInstruction?.visibility = View.GONE
-        edtTxtInputLayoutSpecialDeliveryInstruction?.isCounterEnabled = false
-        edtTxtInputLayoutGiftInstructions?.visibility = View.GONE
-        edtTxtInputLayoutGiftInstructions?.isCounterEnabled = false
-        deliveryInstructionClickListener(switchSpecialDeliveryInstruction.isChecked)
-        giftClickListener(switchGiftInstructions.isChecked)
+        with(binding.layoutCollectionInstructions) {
+            edtTxtSpecialDeliveryInstruction?.addTextChangedListener(deliveryInstructionsTextWatcher)
+            edtTxtGiftInstructions?.addTextChangedListener(deliveryInstructionsTextWatcher)
+            edtTxtInputLayoutSpecialDeliveryInstruction?.visibility = View.GONE
+            edtTxtInputLayoutSpecialDeliveryInstruction?.isCounterEnabled = false
+            edtTxtInputLayoutGiftInstructions?.visibility = View.GONE
+            edtTxtInputLayoutGiftInstructions?.isCounterEnabled = false
+            deliveryInstructionClickListener(switchSpecialDeliveryInstruction.isChecked)
+            giftClickListener(switchGiftInstructions.isChecked)
 
-        switchSpecialDeliveryInstruction?.setOnCheckedChangeListener { _, isChecked ->
-            if (loadingBar.visibility == View.VISIBLE) {
-                return@setOnCheckedChangeListener
-            }
-            deliveryInstructionClickListener(isChecked)
-        }
-
-        switchGiftInstructions?.setOnCheckedChangeListener { _, isChecked ->
-            if (loadingBar?.visibility == View.VISIBLE) {
-                return@setOnCheckedChangeListener
-            }
-            giftClickListener(isChecked)
-        }
-        if (AppConfigSingleton.nativeCheckout?.currentShoppingBag?.isEnabled == true) {
-            switchNeedBags?.visibility = View.VISIBLE
-            txtNeedBags?.text = AppConfigSingleton.nativeCheckout?.currentShoppingBag?.title.plus(
-                AppConfigSingleton.nativeCheckout?.currentShoppingBag?.description
-            )
-            txtNeedBags?.visibility = View.VISIBLE
-            viewHorizontalSeparator?.visibility = View.GONE
-            newShoppingBagsLayout?.visibility = View.GONE
-            switchNeedBags?.setOnCheckedChangeListener { _, isChecked ->
-                if (isChecked) {
-                    Utils.triggerFireBaseEvents(
-                        FirebaseManagerAnalyticsProperties.CHECKOUT_SHOPPING_BAGS_INFO,
-                        activity
-                    )
+            switchSpecialDeliveryInstruction?.setOnCheckedChangeListener { _, isChecked ->
+                if (binding.loadingBar.visibility == View.VISIBLE) {
+                    return@setOnCheckedChangeListener
                 }
+                deliveryInstructionClickListener(isChecked)
             }
-        } else if (AppConfigSingleton.nativeCheckout?.newShoppingBag?.isEnabled == true) {
-            switchNeedBags?.visibility = View.GONE
-            txtNeedBags?.visibility = View.GONE
-            viewHorizontalSeparator?.visibility = View.VISIBLE
-            newShoppingBagsLayout?.visibility = View.VISIBLE
-            addShoppingBagsRadioButtons()
+
+            switchGiftInstructions?.setOnCheckedChangeListener { _, isChecked ->
+                if (binding.loadingBar?.visibility == View.VISIBLE) {
+                    return@setOnCheckedChangeListener
+                }
+                giftClickListener(isChecked)
+            }
+            if (AppConfigSingleton.nativeCheckout?.currentShoppingBag?.isEnabled == true) {
+                switchNeedBags?.visibility = View.VISIBLE
+                txtNeedBags?.text =
+                    AppConfigSingleton.nativeCheckout?.currentShoppingBag?.title.plus(
+                        AppConfigSingleton.nativeCheckout?.currentShoppingBag?.description
+                    )
+                txtNeedBags?.visibility = View.VISIBLE
+                viewHorizontalSeparator?.visibility = View.GONE
+                newShoppingBagsLayout?.root?.visibility = View.GONE
+                switchNeedBags?.setOnCheckedChangeListener { _, isChecked ->
+                    if (isChecked) {
+                        Utils.triggerFireBaseEvents(
+                            FirebaseManagerAnalyticsProperties.CHECKOUT_SHOPPING_BAGS_INFO,
+                            activity
+                        )
+                    }
+                }
+            } else if (AppConfigSingleton.nativeCheckout?.newShoppingBag?.isEnabled == true) {
+                switchNeedBags?.visibility = View.GONE
+                txtNeedBags?.visibility = View.GONE
+                viewHorizontalSeparator?.visibility = View.VISIBLE
+                newShoppingBagsLayout?.root?.visibility = View.VISIBLE
+                addShoppingBagsRadioButtons()
+            }
         }
     }
 
@@ -713,11 +734,13 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                 FirebaseManagerAnalyticsProperties.CHECKOUT_SPECIAL_COLLECTION_INSTRUCTION,
                 activity
             )
-        edtTxtInputLayoutSpecialDeliveryInstruction?.visibility =
-            if (isChecked) View.VISIBLE else View.GONE
-        edtTxtInputLayoutSpecialDeliveryInstruction?.isCounterEnabled = isChecked
-        edtTxtSpecialDeliveryInstruction?.visibility =
-            if (isChecked) View.VISIBLE else View.GONE
+        with(binding.layoutCollectionInstructions) {
+            edtTxtInputLayoutSpecialDeliveryInstruction?.visibility =
+                if (isChecked) View.VISIBLE else View.GONE
+            edtTxtInputLayoutSpecialDeliveryInstruction?.isCounterEnabled = isChecked
+            edtTxtSpecialDeliveryInstruction?.visibility =
+                if (isChecked) View.VISIBLE else View.GONE
+        }
     }
 
     private fun giftClickListener(isChecked: Boolean) {
@@ -726,22 +749,27 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                 FirebaseManagerAnalyticsProperties.CHECKOUT_IS_THIS_GIFT,
                 activity
             )
-        edtTxtInputLayoutGiftInstructions?.visibility =
-            if (isChecked) View.VISIBLE else View.GONE
-        edtTxtInputLayoutGiftInstructions?.isCounterEnabled = isChecked
-        edtTxtGiftInstructions?.visibility =
-            if (isChecked) View.VISIBLE else View.GONE
+        with(binding.layoutCollectionInstructions) {
+            edtTxtInputLayoutGiftInstructions?.visibility =
+                if (isChecked) View.VISIBLE else View.GONE
+            edtTxtInputLayoutGiftInstructions?.isCounterEnabled = isChecked
+            edtTxtGiftInstructions?.visibility =
+                if (isChecked) View.VISIBLE else View.GONE
+        }
     }
 
     private fun addShoppingBagsRadioButtons() {
-        txtNewShoppingBagsSubDesc?.visibility = View.VISIBLE
+        binding.layoutCollectionInstructions.newShoppingBagsLayout.txtNewShoppingBagsSubDesc?.visibility =
+            View.VISIBLE
         val newShoppingBags = AppConfigSingleton.nativeCheckout?.newShoppingBag
-        txtNewShoppingBagsDesc?.text = newShoppingBags?.title
-        txtNewShoppingBagsSubDesc?.text = newShoppingBags?.description
+        binding.layoutCollectionInstructions.newShoppingBagsLayout.txtNewShoppingBagsDesc?.text =
+            newShoppingBags?.title
+        binding.layoutCollectionInstructions.newShoppingBagsLayout.txtNewShoppingBagsSubDesc?.text =
+            newShoppingBags?.description
 
         val shoppingBagsAdapter =
             ShoppingBagsRadioGroupAdapter(newShoppingBags?.options, this, selectedShoppingBagType)
-        shoppingBagsRecyclerView.apply {
+        binding.layoutCollectionInstructions.newShoppingBagsLayout.shoppingBagsRecyclerView.apply {
             layoutManager = activity?.let { LinearLayoutManager(it) }
             shoppingBagsAdapter.let { adapter = it }
         }
@@ -754,7 +782,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
      */
     fun initializeFoodSubstitution() {
         selectedFoodSubstitution = FoodSubstitution.SIMILAR_SUBSTITUTION
-        radioGroupFoodSubstitution?.setOnCheckedChangeListener { _, checkedId ->
+        binding.nativeCheckoutFoodSubstitutionLayout.radioGroupFoodSubstitution?.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {
                 R.id.radioBtnPhoneConfirmation -> {
                     Utils.triggerFireBaseEvents(
@@ -782,33 +810,35 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
      */
     private fun initializeOrderSummary(orderSummary: OrderSummary?) {
         orderSummary?.let { it ->
-            txtOrderSummaryYourCartValue?.text =
+            binding.layoutCheckoutDeliveryOrderSummary.txtOrderSummaryYourCartValue?.text =
                 CurrencyFormatter.formatAmountToRandAndCentWithSpace(it.basketTotal)
             it.discountDetails?.let { discountDetails ->
-                groupOrderSummaryDiscount?.visibility =
-                    if (discountDetails.otherDiscount == 0.0) View.GONE else View.VISIBLE
-                groupPromoCodeDiscount?.visibility =
-                    if (discountDetails.promoCodeDiscount == 0.0) View.GONE else View.VISIBLE
-                groupWRewardsDiscount?.visibility =
-                    if (discountDetails.voucherDiscount == 0.0) View.GONE else View.VISIBLE
-                groupCompanyDiscount?.visibility =
-                    if (discountDetails.companyDiscount == 0.0) View.GONE else View.VISIBLE
-                groupTotalDiscount?.visibility =
-                    if (discountDetails.totalDiscount == 0.0) View.GONE else View.VISIBLE
+                with(binding.layoutCheckoutDeliveryOrderSummary) {
+                    groupOrderSummaryDiscount?.visibility =
+                        if (discountDetails.otherDiscount == 0.0) View.GONE else View.VISIBLE
+                    groupPromoCodeDiscount?.visibility =
+                        if (discountDetails.promoCodeDiscount == 0.0) View.GONE else View.VISIBLE
+                    groupWRewardsDiscount?.visibility =
+                        if (discountDetails.voucherDiscount == 0.0) View.GONE else View.VISIBLE
+                    groupCompanyDiscount?.visibility =
+                        if (discountDetails.companyDiscount == 0.0) View.GONE else View.VISIBLE
+                    groupTotalDiscount?.visibility =
+                        if (discountDetails.totalDiscount == 0.0) View.GONE else View.VISIBLE
 
-                txtOrderSummaryDiscountValue?.text =
-                    "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.otherDiscount)
-                txtOrderSummaryTotalDiscountValue?.text =
-                    "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.totalDiscount)
-                txtOrderSummaryWRewardsVouchersValue?.text =
-                    "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.voucherDiscount)
-                txtOrderSummaryCompanyDiscountValue?.text =
-                    "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.companyDiscount)
-                txtOrderSummaryPromoCodeDiscountValue?.text =
-                    "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.promoCodeDiscount)
+                    txtOrderSummaryDiscountValue?.text =
+                        "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.otherDiscount)
+                    txtOrderSummaryTotalDiscountValue?.text =
+                        "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.totalDiscount)
+                    txtOrderSummaryWRewardsVouchersValue?.text =
+                        "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.voucherDiscount)
+                    txtOrderSummaryCompanyDiscountValue?.text =
+                        "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.companyDiscount)
+                    txtOrderSummaryPromoCodeDiscountValue?.text =
+                        "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.promoCodeDiscount)
 
-                txtOrderTotalValue?.text =
-                    CurrencyFormatter.formatAmountToRandAndCentWithSpace(it.total)
+                    txtOrderTotalValue?.text =
+                        CurrencyFormatter.formatAmountToRandAndCentWithSpace(it.total)
+                }
             }
         }
     }
@@ -840,21 +870,21 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                 }
 
                 KotlinUtils.presentEditDeliveryGeoLocationActivity(
-                        requireActivity(),
-                        COLLECTION_SLOT_SLECTION_REQUEST_CODE,
-                        GeoUtils.getDelivertyType(),
-                        GeoUtils.getPlaceId(),
-                        false,
-                        true,
-                        true,
-                        savedAddressResponse,
-                        defaultAddress,
-                        Utils.toJson(whoIsCollectingDetails),
-                        liquorOrder?.let { liquorOrder ->
-                            liquorImageUrl?.let { liquorImageUrl ->
-                                LiquorCompliance(liquorOrder, liquorImageUrl)
-                            }
+                    requireActivity(),
+                    COLLECTION_SLOT_SLECTION_REQUEST_CODE,
+                    GeoUtils.getDelivertyType(),
+                    GeoUtils.getPlaceId(),
+                    false,
+                    true,
+                    true,
+                    savedAddressResponse,
+                    defaultAddress,
+                    Utils.toJson(whoIsCollectingDetails),
+                    liquorOrder?.let { liquorOrder ->
+                        liquorImageUrl?.let { liquorImageUrl ->
+                            LiquorCompliance(liquorOrder, liquorImageUrl)
                         }
+                    }
                 )
                 activity?.finish()
             }
@@ -920,7 +950,8 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                     Activity.RESULT_CANCELED, ErrorHandlerActivity.RESULT_RETRY -> {
                         (activity as? CheckoutActivity)?.apply {
                             //set BR to update cart fragment in CNC flow
-                            LocalBroadcastManager.getInstance(this).sendBroadcast(Intent(CheckOutFragment.TAG_CART_BROADCAST_RECEIVER))
+                            LocalBroadcastManager.getInstance(this)
+                                .sendBroadcast(Intent(CheckOutFragment.TAG_CART_BROADCAST_RECEIVER))
                             setResult(CheckOutFragment.RESULT_EMPTY_CART)
                             closeActivity()
                         }
@@ -936,14 +967,20 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
     }
 
     private fun isAgeConfirmationLiquorCompliance(): Boolean {
-        layoutCollectionInstructions.parent.requestChildFocus(
-            layoutCollectionInstructions,
-            layoutCollectionInstructions
+        binding.layoutCollectionInstructions.root.parent.requestChildFocus(
+            binding.layoutCollectionInstructions.root,
+            binding.layoutCollectionInstructions.root
         )
-        return liquorOrder == true && !radioBtnAgeConfirmation.isChecked
+        return liquorOrder == true && !binding.ageConfirmationLayoutCollection.radioBtnAgeConfirmation.isChecked
     }
 
     private fun onCheckoutPaymentClick() {
+
+        if (isItemLimitExceeded) {
+            showMaxItemView()
+            return
+        }
+
         if (isRequiredFieldsMissing() || isGiftMessage()) {
             return
         }
@@ -957,11 +994,11 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         ) {
             return
         }
-        loadingBar?.visibility = View.VISIBLE
+        binding.loadingBar?.visibility = View.VISIBLE
         setScreenClickEvents(false)
         checkoutAddAddressNewUserViewModel.getShippingDetails(body)
             .observe(viewLifecycleOwner) { response ->
-                loadingBar.visibility = View.GONE
+                binding.loadingBar.visibility = View.GONE
                 setScreenClickEvents(true)
                 when (response) {
                     is ShippingDetailsResponse -> {
@@ -985,15 +1022,28 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                 }
             }
         //liquor compliance: age confirmation
-        if (liquorOrder == true && !radioBtnAgeConfirmation.isChecked) {
-            ageConfirmationLayout?.visibility = View.VISIBLE
-            liquorComplianceBannerSeparator?.visibility = View.VISIBLE
-            liquorComplianceBannerLayout?.visibility = View.VISIBLE
+        if (liquorOrder == true && !binding.ageConfirmationLayoutCollection.radioBtnAgeConfirmation.isChecked) {
+            binding.ageConfirmationLayoutCollection?.root?.visibility = View.VISIBLE
+            binding.ageConfirmationLayoutCollection.liquorComplianceBannerSeparator?.visibility =
+                View.VISIBLE
+            binding.ageConfirmationLayoutCollection.liquorComplianceBannerLayout?.root?.visibility =
+                View.VISIBLE
 
-            Utils.fadeInFadeOutAnimation(txtContinueToPaymentCollection, false)
+            Utils.fadeInFadeOutAnimation(binding.txtContinueToPaymentCollection, false)
         } else {
-            Utils.fadeInFadeOutAnimation(txtContinueToPaymentCollection, true)
+            Utils.fadeInFadeOutAnimation(binding.txtContinueToPaymentCollection, true)
         }
+    }
+
+    private fun showMaxItemView() {
+        KotlinUtils.showGeneralInfoDialog(
+            requireActivity().supportFragmentManager,
+            getString(R.string.unable_process_checkout_desc),
+            getString(R.string.unable_process_checkout_title),
+            getString(R.string.got_it),
+            R.drawable.payment_overdue_icon,
+            isFromCheckoutScreen = true
+        )
     }
 
     private fun presentErrorDialog(title: String, subTitle: String, errorType: Int) {
@@ -1017,11 +1067,14 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
     }
 
     private fun setScreenClickEvents(isClickable: Boolean) {
-        radioGroupFoodSubstitution?.isClickable = isClickable
-        checkoutDeliveryDetailsLayout?.isClickable = isClickable
-        switchNeedBags?.isClickable = isClickable
-        switchGiftInstructions?.isClickable = isClickable
-        switchSpecialDeliveryInstruction?.isClickable = isClickable
+        binding.nativeCheckoutFoodSubstitutionLayout.radioGroupFoodSubstitution?.isClickable =
+            isClickable
+        binding.checkoutCollectingFromLayout?.root?.isClickable = isClickable
+        with(binding.layoutCollectionInstructions) {
+            switchNeedBags?.isClickable = isClickable
+            switchGiftInstructions?.isClickable = isClickable
+            switchSpecialDeliveryInstruction?.isClickable = isClickable
+        }
     }
 
     private fun getShipmentDetailsBody() = ShippingDetailsBody().apply {
@@ -1038,13 +1091,14 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         foodDeliveryStartHour = selectedTimeSlot?.intHourFrom?.toLong() ?: 0
         otherDeliveryStartHour = 0
         substituesAllowed = selectedFoodSubstitution.rgb
-        plasticBags = switchNeedBags?.isChecked ?: false
+        plasticBags = binding.layoutCollectionInstructions.switchNeedBags?.isChecked ?: false
         shoppingBagType = selectedShoppingBagType
-        giftNoteSelected = switchGiftInstructions?.isChecked ?: false
+        giftNoteSelected =
+            binding.layoutCollectionInstructions.switchGiftInstructions?.isChecked ?: false
         deliverySpecialInstructions =
-            if (switchSpecialDeliveryInstruction?.isChecked == true) edtTxtSpecialDeliveryInstruction?.text.toString() else ""
+            if (binding.layoutCollectionInstructions.switchSpecialDeliveryInstruction?.isChecked == true) binding.layoutCollectionInstructions.edtTxtSpecialDeliveryInstruction?.text.toString() else ""
         giftMessage =
-            if (switchGiftInstructions?.isChecked == true) edtTxtGiftInstructions?.text.toString() else ""
+            if (binding.layoutCollectionInstructions.switchGiftInstructions?.isChecked == true) binding.layoutCollectionInstructions.edtTxtGiftInstructions?.text.toString() else ""
         suburbId = ""
         storeId = Utils.getPreferredDeliveryLocation()?.let {
             it.fulfillmentDetails.storeId
@@ -1055,18 +1109,19 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         KotlinUtils.getUniqueDeviceID {
             pushNotificationToken = Utils.getToken()
             appInstanceId = it
-            tokenProvider = if (Utils.isGooglePlayServicesAvailable()) NotificationUtils.TOKEN_PROVIDER_FIREBASE else NotificationUtils.TOKEN_PROVIDER_HMS
+            tokenProvider =
+                if (Utils.isGooglePlayServicesAvailable()) NotificationUtils.TOKEN_PROVIDER_FIREBASE else NotificationUtils.TOKEN_PROVIDER_HMS
         }
     }
 
     private fun isGiftMessage(): Boolean {
-        return when (switchGiftInstructions?.isChecked) {
+        return when (binding.layoutCollectionInstructions.switchGiftInstructions?.isChecked) {
             true -> {
-                if (TextUtils.isEmpty(edtTxtGiftInstructions?.text?.toString())) {
+                if (TextUtils.isEmpty(binding.layoutCollectionInstructions.edtTxtGiftInstructions?.text?.toString())) {
 
-                    deliverySummaryScrollView?.smoothScrollTo(
+                    binding.checkoutReturningCollectionScrollView?.smoothScrollTo(
                         0,
-                        layoutDeliveryInstructions?.top ?: 0
+                        binding.layoutCollectionInstructions?.root?.top ?: 0
                     )
                     true
                 } else false
@@ -1076,13 +1131,13 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
     }
 
     private fun isInstructionsMissing(): Boolean {
-        return when (switchSpecialDeliveryInstruction?.isChecked) {
+        return when (binding.layoutCollectionInstructions.switchSpecialDeliveryInstruction?.isChecked) {
             true -> {
-                if (TextUtils.isEmpty(edtTxtSpecialDeliveryInstruction?.text.toString())) {
+                if (TextUtils.isEmpty(binding.layoutCollectionInstructions.edtTxtSpecialDeliveryInstruction?.text.toString())) {
                     // scroll to instructions layout
-                    checkoutReturningCollectionScrollView?.smoothScrollTo(
+                    binding.checkoutReturningCollectionScrollView?.smoothScrollTo(
                         0,
-                        layoutCollectionInstructions?.top ?: 0
+                        binding.layoutCollectionInstructions?.root?.top ?: 0
                     )
                     /**
                      * New requirement to have instructions optional
@@ -1097,15 +1152,17 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
 
     private fun isRequiredFieldsMissing(): Boolean {
         if (!TextUtils.isEmpty(selectedTimeSlot?.slotId)) {
-            txtSelectCollectionTimeSlotFoodError?.visibility = View.GONE
+            binding.checkoutCollectingTimeDetailsLayout.txtSelectCollectionTimeSlotFoodError?.visibility =
+                View.GONE
             return false
         }
         // scroll to slot selection layout
-        checkoutReturningCollectionScrollView?.smoothScrollTo(
+        binding.checkoutReturningCollectionScrollView?.smoothScrollTo(
             0,
-            checkoutCollectingTimeDetailsLayout?.top ?: 0
+            binding.checkoutCollectingTimeDetailsLayout?.root?.top ?: 0
         )
-        txtSelectCollectionTimeSlotFoodError?.visibility = View.VISIBLE
+        binding.checkoutCollectingTimeDetailsLayout.txtSelectCollectionTimeSlotFoodError?.visibility =
+            View.VISIBLE
         return true
     }
 

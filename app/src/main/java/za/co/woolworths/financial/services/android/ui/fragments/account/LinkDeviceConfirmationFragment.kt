@@ -6,20 +6,16 @@ import android.content.Intent
 import android.graphics.Paint
 import android.os.Build
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
-import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.fragment_link_device_from_account_prod.*
-import kotlinx.android.synthetic.main.layout_link_device_result.*
+import com.awfs.coordination.databinding.FragmentLinkDeviceFromAccountProdBinding
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
@@ -31,12 +27,12 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.
 import za.co.woolworths.financial.services.android.ui.fragments.statement.StatementFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.EnableLocationSettingsFragment
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 import za.co.woolworths.financial.services.android.util.location.Event
 import za.co.woolworths.financial.services.android.util.location.EventType
 import za.co.woolworths.financial.services.android.util.location.Locator
 
-
-class LinkDeviceConfirmationFragment : Fragment(), View.OnClickListener {
+class LinkDeviceConfirmationFragment : BaseFragmentBinding<FragmentLinkDeviceFromAccountProdBinding>(FragmentLinkDeviceFromAccountProdBinding::inflate), View.OnClickListener {
 
     private lateinit var locator: Locator
     private var mApplyNowState: ApplyNowState? = null
@@ -51,16 +47,12 @@ class LinkDeviceConfirmationFragment : Fragment(), View.OnClickListener {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        activity?.runOnUiThread { activity?.window?.clearFlags(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE) }
-        activity?.runOnUiThread { activity?.window?.addFlags(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN) }
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_link_device_from_account_prod, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        activity?.runOnUiThread { activity?.window?.clearFlags(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE) }
+        activity?.runOnUiThread { activity?.window?.addFlags(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN) }
+
         locator = Locator(activity as AppCompatActivity)
         activity?.let {
             if (it is LinkDeviceConfirmationInterface) {
@@ -71,32 +63,39 @@ class LinkDeviceConfirmationFragment : Fragment(), View.OnClickListener {
         val skipButton: TextView = toolbar?.findViewById(R.id.linkDeviceConfirmToolbarRightButton) as TextView
         skipButton.setOnClickListener(this)
 
-        linkDeviceConfirmationButton.setOnClickListener {
-            checkForLocationPermissionAndNavigateToLinkDevice()
-        }
+        binding.apply {
+            linkDeviceConfirmationButton.setOnClickListener {
+                checkForLocationPermissionAndNavigateToLinkDevice()
+            }
 
-        context?.let {
-            val deviceSecurity = AppConfigSingleton.deviceSecurity
-            when(mApplyNowState){
-                ApplyNowState.STORE_CARD ->{
-                    linkDeviceConfirmationHeaderIcon?.setImageResource(R.drawable.sc_asset)
-                    linkDeviceConfirmationTitle?.text = deviceSecurity?.storeCard?.primaryDeviceConfirmation?.title
-                    linkDeviceConfirmationDesc?.text = deviceSecurity?.storeCard?.primaryDeviceConfirmation?.description
+            context?.let {
+                val deviceSecurity = AppConfigSingleton.deviceSecurity
+                when (mApplyNowState) {
+                    ApplyNowState.STORE_CARD -> {
+                        linkDeviceConfirmationHeaderIcon?.setImageResource(R.drawable.sc_asset)
+                        linkDeviceConfirmationTitle?.text =
+                            deviceSecurity?.storeCard?.primaryDeviceConfirmation?.title
+                        linkDeviceConfirmationDesc?.text =
+                            deviceSecurity?.storeCard?.primaryDeviceConfirmation?.description
+                    }
+                    ApplyNowState.PERSONAL_LOAN -> {
+                        linkDeviceConfirmationHeaderIcon?.setImageResource(R.drawable.pl_asset)
+                        linkDeviceConfirmationTitle?.text =
+                            deviceSecurity?.personalLoan?.primaryDeviceConfirmation?.title
+                        linkDeviceConfirmationDesc?.text =
+                            deviceSecurity?.personalLoan?.primaryDeviceConfirmation?.description
+                    }
+                    ApplyNowState.SILVER_CREDIT_CARD,
+                    ApplyNowState.GOLD_CREDIT_CARD,
+                    ApplyNowState.BLACK_CREDIT_CARD -> {
+                        linkDeviceConfirmationHeaderIcon?.setImageResource(R.drawable.cc_asset)
+                        linkDeviceConfirmationTitle?.text =
+                            deviceSecurity?.creditCard?.primaryDeviceConfirmation?.title
+                        linkDeviceConfirmationDesc?.text =
+                            deviceSecurity?.creditCard?.primaryDeviceConfirmation?.description
+                    }
+                    else -> {}
                 }
-                ApplyNowState.PERSONAL_LOAN ->{
-                    linkDeviceConfirmationHeaderIcon?.setImageResource(R.drawable.pl_asset)
-                    linkDeviceConfirmationTitle?.text = deviceSecurity?.personalLoan?.primaryDeviceConfirmation?.title
-                    linkDeviceConfirmationDesc?.text = deviceSecurity?.personalLoan?.primaryDeviceConfirmation?.description
-                }
-                ApplyNowState.SILVER_CREDIT_CARD,
-                ApplyNowState.GOLD_CREDIT_CARD,
-                ApplyNowState.BLACK_CREDIT_CARD ->
-                {
-                    linkDeviceConfirmationHeaderIcon?.setImageResource(R.drawable.cc_asset)
-                    linkDeviceConfirmationTitle?.text = deviceSecurity?.creditCard?.primaryDeviceConfirmation?.title
-                    linkDeviceConfirmationDesc?.text = deviceSecurity?.creditCard?.primaryDeviceConfirmation?.description
-                }
-                else -> {}
             }
         }
     }
@@ -123,44 +122,54 @@ class LinkDeviceConfirmationFragment : Fragment(), View.OnClickListener {
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.linkDeviceConfirmToolbarRightButton -> {
-                onSkipPressed()
+                binding.onSkipPressed()
             }
         }
     }
 
-    private fun onSkipPressed() {
+    private fun FragmentLinkDeviceFromAccountProdBinding.onSkipPressed() {
         activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.DEVICESECURITY_LINK_SKIP, hashMapOf(Pair(FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE, FirebaseManagerAnalyticsProperties.PropertyNames.linkDeviceSkipped)), this) }
 
-        context?.let {
-            linkDeviceResultIcon?.setImageDrawable(ContextCompat.getDrawable(it, R.drawable.ic_skip))
+        linkDeviceResultLayout.apply {
+            context?.let {
+                linkDeviceResultIcon?.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        it,
+                        R.drawable.ic_skip
+                    )
+                )
 
-            linkDeviceResultTitle?.text = it.getString(R.string.device_not_linked)
-            linkDeviceResultSubitle?.text = it.getString(R.string.not_linked_device_desc)
+                linkDeviceResultTitle?.text = it.getString(R.string.device_not_linked)
+                linkDeviceResultSubitle?.text = it.getString(R.string.not_linked_device_desc)
 
-            gotItLinkDeviceConfirmationButton.apply {
-                visibility = View.VISIBLE
-                setOnClickListener {
-                    val intent = Intent()
-                    intent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, mApplyNowState)
-                    if(StoreCardActivity.FREEZE_CARD_DETAIL){
-                        activity?.setResult(Activity.RESULT_CANCELED, intent)
-                    }else {
-                        activity?.setResult(MyAccountsFragment.RESULT_CODE_LINK_DEVICE, intent)
+                gotItLinkDeviceConfirmationButton.apply {
+                    visibility = View.VISIBLE
+                    setOnClickListener {
+                        val intent = Intent()
+                        intent.putExtra(
+                            AccountSignedInPresenterImpl.APPLY_NOW_STATE,
+                            mApplyNowState
+                        )
+                        if (StoreCardActivity.FREEZE_CARD_DETAIL) {
+                            activity?.setResult(Activity.RESULT_CANCELED, intent)
+                        } else {
+                            activity?.setResult(MyAccountsFragment.RESULT_CODE_LINK_DEVICE, intent)
+                        }
+                        clearAllFlags()
+                        activity?.finish()
+
                     }
-                    clearAllFlags()
-                    activity?.finish()
-
                 }
-            }
-            linkMyDeviceConfirmationButton.apply {
-                visibility = View.VISIBLE
-                paintFlags = Paint.UNDERLINE_TEXT_FLAG
-                setOnClickListener {
-                    checkForLocationPermissionAndNavigateToLinkDevice()
+                linkMyDeviceConfirmationButton.apply {
+                    visibility = View.VISIBLE
+                    paintFlags = Paint.UNDERLINE_TEXT_FLAG
+                    setOnClickListener {
+                        checkForLocationPermissionAndNavigateToLinkDevice()
+                    }
                 }
             }
         }
-        linkDeviceResultLayout.visibility = View.VISIBLE
+        linkDeviceResultLayout.root.visibility = View.VISIBLE
         linkDeviceConfirmationScrollLayout.visibility = View.GONE
 
         activity?.apply {

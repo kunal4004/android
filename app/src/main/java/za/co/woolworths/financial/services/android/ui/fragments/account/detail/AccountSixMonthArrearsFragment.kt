@@ -3,18 +3,14 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.detail
 import android.content.Intent
 import android.graphics.Paint
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
 import android.view.View.*
-import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.AccountSixMonthArrearsFragmentBinding
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import kotlinx.android.synthetic.main.account_cart_item.*
-import kotlinx.android.synthetic.main.account_detail_header_fragment.*
-import kotlinx.android.synthetic.main.account_six_month_arrears_fragment.*
 import za.co.woolworths.financial.services.android.models.dto.ActionText
 import za.co.woolworths.financial.services.android.models.dto.EligibilityPlan
 import za.co.woolworths.financial.services.android.models.dto.ProductGroupCode
@@ -32,8 +28,9 @@ import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.eliteplan.EligibilityImpl
 import za.co.woolworths.financial.services.android.util.eliteplan.TakeUpPlanUtil
 
-class AccountSixMonthArrearsFragment : Fragment(), EligibilityImpl {
+class AccountSixMonthArrearsFragment : Fragment(R.layout.account_six_month_arrears_fragment), EligibilityImpl {
 
+    private lateinit var binding: AccountSixMonthArrearsFragmentBinding
     private var mApplyNowAccountKeyPair: Pair<Int, Int>? = null
     private var isViewTreatmentPlanSupported: Boolean = false
     private var mAccountPresenter: AccountSignedInPresenterImpl? = null
@@ -50,64 +47,61 @@ class AccountSixMonthArrearsFragment : Fragment(), EligibilityImpl {
 
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.account_six_month_arrears_fragment, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding = AccountSixMonthArrearsFragmentBinding.bind(view)
         mAccountPresenter = (activity as? AccountSignedInActivity)?.mAccountSignedInPresenter
         mAccountPresenter?.eligibilityImpl = this
 
-        hideCardTextViews()
-        setTitleAndCardTypeAndButton()
-        callTheCallCenterButton?.setOnClickListener { Utils.makeCall("0861502020") }
-        callTheCallCenterUnderlinedButton?.setOnClickListener { Utils.makeCall("0861502020") }
-        viewTreatmentPlansButton?.setOnClickListener {
-            when (mAccountPresenter?.getEligibilityPlan()?.planType) {
-                ELITE_PLAN -> {
-                    elitePlanHandling()
-                }
-                else -> {
-                    val outSystemBuilder = OutSystemBuilder(activity, ProductGroupCode.CC)
-                    outSystemBuilder.build()
+        with(binding) {
+            hideCardTextViews()
+            setTitleAndCardTypeAndButton()
+            callTheCallCenterButton?.setOnClickListener { Utils.makeCall("0861502020") }
+            callTheCallCenterUnderlinedButton?.setOnClickListener { Utils.makeCall("0861502020") }
+            viewTreatmentPlansButton?.setOnClickListener {
+                when (mAccountPresenter?.getEligibilityPlan()?.planType) {
+                    ELITE_PLAN -> {
+                        elitePlanHandling()
+                    }
+                    else -> {
+                        val outSystemBuilder = OutSystemBuilder(activity, ProductGroupCode.CC)
+                        outSystemBuilder.build()
+                    }
                 }
             }
-        }
-        navigateBackImageButton?.setOnClickListener { activity?.onBackPressed() }
+            navigateBackImageButton?.setOnClickListener { activity?.onBackPressed() }
 
-        bottomView?.visibility = INVISIBLE
+            includeAccountDetailHeaderView.bottomView?.visibility = INVISIBLE
+        }
     }
 
     override fun onResume() {
         super.onResume()
         when (mAccountPresenter?.getEligibilityPlan()?.planType) {
-            ELITE_PLAN -> setElitePlanViews(mAccountPresenter?.getEligibilityPlan())
+            ELITE_PLAN -> binding.setElitePlanViews(mAccountPresenter?.getEligibilityPlan())
         }
     }
 
-    private fun hideCardTextViews() {
-        context?.let { color -> ContextCompat.getColor(color, R.color.white) }
-            ?.let { color -> includeAccountDetailHeaderView?.setBackgroundColor(color) }
-        myCardTextView?.visibility = GONE
-        myCardDetailTextView?.visibility = GONE
-        userNameTextView?.visibility = GONE
-        imLogoIncreaseLimit?.visibility = GONE
-        manageMyCardTextView?.visibility = GONE
-        manageMyCardImageView?.visibility = GONE
-        manageCardDivider?.background = null
-        includeManageMyCard?.layoutParams?.apply {
-            height = 0
+    private fun AccountSixMonthArrearsFragmentBinding.hideCardTextViews() {
+        with(includeAccountDetailHeaderView) {
+            context?.let { color -> ContextCompat.getColor(color, R.color.white) }
+                ?.let { color -> includeAccountDetailHeaderView?.root?.setBackgroundColor(color) }
+            myCardTextView?.visibility = GONE
+            myCardDetailTextView?.visibility = GONE
+            userNameTextView?.visibility = GONE
+            includeManageMyCard.imLogoIncreaseLimit?.visibility = GONE
+            includeManageMyCard.manageMyCardTextView?.visibility = GONE
+            includeManageMyCard.manageMyCardImageView?.visibility = GONE
+            manageCardDivider?.background = null
+            includeManageMyCard?.root?.layoutParams?.apply {
+                height = 0
+            }
         }
     }
 
-    private fun setTitleAndCardTypeAndButton() {
+    private fun AccountSixMonthArrearsFragmentBinding.setTitleAndCardTypeAndButton() {
         mApplyNowAccountKeyPair?.first?.let { resourceId ->
-            cardDetailImageView?.setImageResource(
+            includeAccountDetailHeaderView.cardDetailImageView?.setImageResource(
                 resourceId
             )
         }
@@ -133,16 +127,16 @@ class AccountSixMonthArrearsFragment : Fragment(), EligibilityImpl {
     override fun eligibilityResponse(eligibilityPlan: EligibilityPlan?) {
         eligibilityPlan.let {
             if (it?.planType.equals(ELITE_PLAN)) {
-                setElitePlanViews(eligibilityPlan)
+                binding.setElitePlanViews(eligibilityPlan)
             }
         }
     }
 
     override fun eligibilityFailed() {
-        showCallUsButton()
+        binding.showCallUsButton()
     }
 
-    private fun showCallUsButton() {
+    private fun AccountSixMonthArrearsFragmentBinding.showCallUsButton() {
         arrearsDescTextView?.text =
             activity?.resources?.getString(R.string.account_arrears_description)
         callTheCallCenterButton?.visibility = VISIBLE
@@ -150,7 +144,7 @@ class AccountSixMonthArrearsFragment : Fragment(), EligibilityImpl {
         callTheCallCenterUnderlinedButton?.visibility = GONE
     }
 
-    private fun setElitePlanViews(eligibilityPlan: EligibilityPlan?) {
+    private fun AccountSixMonthArrearsFragmentBinding.setElitePlanViews(eligibilityPlan: EligibilityPlan?) {
         arrearsDescTextView?.text = bindString(R.string.account_arrears_description)
         callTheCallCenterButton?.visibility = GONE
         viewTreatmentPlansButton.visibility = VISIBLE

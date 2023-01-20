@@ -16,11 +16,7 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.fragment_enter_otp.buttonNext
-import kotlinx.android.synthetic.main.fragment_enter_otp.didNotReceiveOTPTextView
-import kotlinx.android.synthetic.main.fragment_unlink_device_otp.*
-import kotlinx.android.synthetic.main.fragment_view_all_linked_devices.*
-import kotlinx.android.synthetic.main.layout_unlink_device_result.*
+import com.awfs.coordination.databinding.FragmentViewAllLinkedDevicesBinding
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
@@ -35,8 +31,9 @@ import za.co.woolworths.financial.services.android.util.analytics.FirebaseManage
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
 
-class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
+class ViewAllLinkedDevicesFragment : Fragment(R.layout.fragment_view_all_linked_devices), View.OnClickListener {
 
+    private lateinit var binding: FragmentViewAllLinkedDevicesBinding
     private var deviceIdentityId: String = ""
     private var viewAllDevicesAdapter: ViewAllLinkedDevicesAdapter? = null
     private var deviceList: ArrayList<UserDevice>? = ArrayList(0)
@@ -51,40 +48,6 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        setFragmentResultListener(CONFIRM_DELETE_SECONDARY_DEVICE) { requestKey, bundle ->
-            val navController = view?.findNavController()
-            navController?.navigate(R.id.action_confirm_delete_device, bundleOf(
-                DEVICE_LIST to null
-            ))
-        }
-
-        setFragmentResultListener(DELETE_DEVICE_NO_OTP) { requestKey, bundle ->
-            val isUnlinkSuccess = bundle.getBoolean(KEY_BOOLEAN_UNLINK_DEVICE)
-            if (isUnlinkSuccess) {
-                unlinkDevice()
-            }
-        }
-
-        setFragmentResultListener(CHOOSE_PRIMARY_DEVICE_FRAGMENT) { requestKey, bundle ->
-            val navController = view?.findNavController()
-            navController?.navigate(R.id.action_to_selectPrimaryDeviceFragment,
-                bundleOf(
-                    DEVICE_LIST to deviceList?.filter { it.primarydDevice != true }
-                ))
-        }
-
-        setFragmentResultListener(CHANGE_PRIMARY_DEVICE_OTP) { requestKey, bundle ->
-            val navController = view?.findNavController()
-            bundle.putBoolean(DELETE_PRIMARY_DEVICE, false)
-            navController?.navigate(R.id.action_change_to_primary_device, bundle)
-        }
-
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_view_all_linked_devices, container, false)
-    }
-
     private fun unlinkDevice() {
         OneAppService.deleteDevice(deviceIdentityId, null, null, null)
             .enqueue(CompletionHandler(
@@ -97,17 +60,17 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
 
                                 deviceList = response.userDevices
 
-                                showDeviceUnlinked()
+                                binding.showDeviceUnlinked()
 
                                 Handler().postDelayed({
                                     if (!isAdded) return@postDelayed
 
                                     setupToolbar()
                                     context?.let { it ->
-                                        viewAllDeviceConstraintLayout?.background = AppCompatResources.getDrawable(it, R.color.default_background)
+                                        binding.viewAllDeviceConstraintLayout?.background = AppCompatResources.getDrawable(it, R.color.default_background)
                                     }
-                                    unlinkDeviceConfirmationConstraintLayout?.visibility = View.GONE
-                                    viewAllLinkedDevicesRecyclerView?.visibility = View.VISIBLE
+                                    binding.unlinkDeviceConfirmationConstraintLayout?.root?.visibility = View.GONE
+                                    binding.viewAllLinkedDevicesRecyclerView?.visibility = View.VISIBLE
 
                                     setFragmentResult(MyPreferencesFragment.RESULT_LISTENER_LINK_DEVICE, bundleOf(
                                         IS_UPDATE to true
@@ -118,21 +81,21 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
                                         return@postDelayed
                                     }
 
-                                    initRecyclerView()
+                                    binding.initRecyclerView()
                                 }, AppConstant.DELAY_1000_MS)
                             }
                         }
                     }
 
                     override fun onFailure(error: Throwable?) {
-                        unlinkDeviceOTPScreenConstraintLayout?.visibility = View.VISIBLE
-                        buttonNext?.visibility = View.VISIBLE
-                        didNotReceiveOTPTextView?.visibility = View.VISIBLE
+                        binding.apply {
+                            progressLoadDevices?.visibility = View.GONE
+                        }
                     }
                 }, ViewAllLinkedDeviceResponse::class.java))
     }
 
-    private fun callRetrieveDevices() {
+    private fun FragmentViewAllLinkedDevicesBinding.callRetrieveDevices() {
         progressLoadDevices?.visibility = View.VISIBLE
         val mViewAllLinkedDevices: Call<ViewAllLinkedDeviceResponse> = OneAppService.getAllLinkedDevices(true)
         mViewAllLinkedDevices.enqueue(CompletionHandler(object : IResponseListener<ViewAllLinkedDeviceResponse> {
@@ -159,11 +122,40 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding = FragmentViewAllLinkedDevicesBinding.bind(view)
+
+        setFragmentResultListener(CONFIRM_DELETE_SECONDARY_DEVICE) { requestKey, bundle ->
+            val navController = view?.findNavController()
+            navController?.navigate(R.id.action_viewAllLinkedDevicesFragment_to_deletePrimaryDeviceFragment, bundleOf(
+                DEVICE_LIST to null
+            ))
+        }
+
+        setFragmentResultListener(DELETE_DEVICE_NO_OTP) { requestKey, bundle ->
+            val isUnlinkSuccess = bundle.getBoolean(KEY_BOOLEAN_UNLINK_DEVICE)
+            if (isUnlinkSuccess) {
+                unlinkDevice()
+            }
+        }
+
+        setFragmentResultListener(CHOOSE_PRIMARY_DEVICE_FRAGMENT) { requestKey, bundle ->
+            val navController = view?.findNavController()
+            navController?.navigate(R.id.action_to_selectPrimaryDeviceFragment,
+                bundleOf(
+                    DEVICE_LIST to deviceList?.filter { it.primarydDevice != true }
+                ))
+        }
+
+        setFragmentResultListener(CHANGE_PRIMARY_DEVICE_OTP) { requestKey, bundle ->
+            val navController = view?.findNavController()
+            bundle.putBoolean(DELETE_PRIMARY_DEVICE, false)
+            navController?.navigate(R.id.action_change_to_primary_device, bundle)
+        }
 
         setupToolbar()
-        callRetrieveDevices()
+        binding.callRetrieveDevices()
         if (viewAllDevicesAdapter == null) {
-            initRecyclerView()
+            binding.initRecyclerView()
         }
     }
 
@@ -192,28 +184,28 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
         }
     }
 
-    private fun initRecyclerView() {
+    private fun FragmentViewAllLinkedDevicesBinding.initRecyclerView() {
 
         if (deviceList.isNullOrEmpty()) {
             return
         }
         context?.let {
             viewAllLinkedDevicesRecyclerView?.layoutManager = LinearLayoutManager(it, RecyclerView.VERTICAL, false)
-            viewAllDevicesAdapter = ViewAllLinkedDevicesAdapter(it, this)
+            viewAllDevicesAdapter = ViewAllLinkedDevicesAdapter(it, this@ViewAllLinkedDevicesFragment)
             deviceList?.sortByDescending { userDevice -> userDevice.primarydDevice }
             viewAllDevicesAdapter?.setDeviceList(deviceList)
         }
         viewAllLinkedDevicesRecyclerView?.adapter = viewAllDevicesAdapter
     }
 
-    private fun showDeviceUnlinked() {
+    private fun FragmentViewAllLinkedDevicesBinding.showDeviceUnlinked() {
         clearToolbar()
         viewAllLinkedDevicesRecyclerView?.visibility = View.GONE
-        unlinkDeviceConfirmationConstraintLayout?.visibility = View.VISIBLE
-        unlinkDeviceResultSubtitle?.visibility = View.GONE
+        unlinkDeviceConfirmationConstraintLayout?.root?.visibility = View.VISIBLE
+        unlinkDeviceConfirmationConstraintLayout.unlinkDeviceResultSubtitle?.visibility = View.GONE
         context?.let { it ->
             viewAllDeviceConstraintLayout?.background = AppCompatResources.getDrawable(it, R.color.white)
-            unlinkDeviceResultTitle?.text = it.getString(R.string.unlink_device_result_success)
+            unlinkDeviceConfirmationConstraintLayout.unlinkDeviceResultTitle?.text = it.getString(R.string.unlink_device_result_success)
         }
     }
 

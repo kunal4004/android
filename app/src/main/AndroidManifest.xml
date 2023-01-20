@@ -21,11 +21,13 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.FLASHLIGHT" />
-    <uses-permission android:name="android.permission.WRITE_SETTINGS" tools:ignore="ProtectedPermissions" />
+    <uses-permission
+        android:name="android.permission.WRITE_SETTINGS"
+        tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="com.sonyericsson.home.permission.BROADCAST_BADGE" /> <!-- To check application on background or not for KITKAT -->
     <uses-permission android:name="android.permission.GET_TASKS" /> <!-- Don't require camera, as this requires a rear camera. This allows it to work on the Nexus 7 -->
-    <uses-permission
-        android:name="com.huawei.appmarket.service.commondata.permission.GET_COMMON_DATA"/>
+    <uses-permission android:name="com.huawei.appmarket.service.commondata.permission.GET_COMMON_DATA" />
+
     <uses-feature
         android:name="android.hardware.camera"
         android:required="false" />
@@ -81,8 +83,24 @@
     <queries>
         <intent>
             <action android:name="android.intent.action.SENDTO" />
+            <data android:scheme="mailto" />
         </intent>
 
+        <!-- Gallery -->
+        <intent>
+            <action android:name="android.intent.action.GET_CONTENT" />
+        </intent>
+        <!-- Camera -->
+        <intent>
+            <action android:name="android.media.action.IMAGE_CAPTURE" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+
+            <category android:name="android.intent.category.BROWSABLE" />
+
+            <data android:scheme="https" />
+        </intent>
     </queries>
 
     <application
@@ -126,9 +144,7 @@
             android:resource="@color/black" />
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
-            android:value="@string/default_notification_channel_id" />
-
-        <!-- Use this flag to disable automatic screen reporting -->
+            android:value="@string/default_notification_channel_id" /> <!-- Use this flag to disable automatic screen reporting -->
         <meta-data
             android:name="google_analytics_automatic_screen_reporting_enabled"
             android:value="false" />
@@ -219,17 +235,23 @@
         <!-- Google Maps API Key -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="@string/maps_google_api_key" />
-        <!-- Huawei HMS App ID -->
+            android:value="@string/maps_google_api_key" /> <!-- Huawei HMS App ID -->
         <meta-data
             android:name="com.huawei.hms.client.appid"
             android:value="@string/huawei_app_id" />
-
         <receiver
             android:name="za.co.woolworths.financial.services.android.util.SMSReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="com.google.android.gms.auth.api.phone.SMS_RETRIEVED" />
+            </intent-filter>
+        </receiver>
+
+        <receiver
+            android:name="za.co.woolworths.financial.services.android.receivers.DashOrderReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="za.co.woolworths.financial.services.android.receivers.DashOrderReceiver.RECEIVE_ORDER_UPDATE" />
             </intent-filter>
         </receiver>
 
@@ -402,13 +424,11 @@
             android:screenOrientation="portrait"
             android:theme="@style/DebitOrder" />
         <activity android:name="za.co.woolworths.financial.services.android.ui.activities.PortraitAppCompatActivity" />
-
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.maintenance.MaintenanceMessageActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/RuntimeExceptionActivityStyle" />
-
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity"
             android:theme="@style/Theme.AppCompat.Transparent.NoActionBar"
@@ -519,6 +539,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/ShoppingListDetailActivityStyle"
             android:windowSoftInputMode="adjustResize" />
+
         <service
             android:name="za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService"
             android:enabled="true"
@@ -600,6 +621,7 @@
         <activity android:name="za.co.woolworths.financial.services.android.ui.activities.StoreDetailsActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar"
             android:screenOrientation="portrait" />
+
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.fragments.account.fica.FicaActivity"
             android:screenOrientation="portrait"
@@ -655,5 +677,4 @@
             <action android:name="com.huawei.hms.core.aidlservice" />
         </intent>
     </queries>
-
 </manifest>

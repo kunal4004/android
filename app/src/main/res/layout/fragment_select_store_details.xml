@@ -60,7 +60,9 @@
             android:background="@color/white"
             android:orientation="vertical">
 
-            <include layout="@layout/store_details_layout_common" />
+            <include
+                android:id="@+id/store_details_layout_common"
+                layout="@layout/store_details_layout_common" />
 
         </LinearLayout>
     </za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout>

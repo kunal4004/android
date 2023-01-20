@@ -10,8 +10,7 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.account_in_arrears_alert_dialog_fragment.*
-import kotlinx.android.synthetic.main.account_in_arrears_fragment_dialog.accountInArrearsDescriptionTextView
+import com.awfs.coordination.databinding.AccountInArrearsAlertDialogFragmentBinding
 import za.co.woolworths.financial.services.android.contracts.IShowChatBubble
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
@@ -22,6 +21,7 @@ import za.co.woolworths.financial.services.android.util.animation.AnimationUtilE
 
 class AccountInArrearsDialogFragment : AppCompatDialogFragment(), View.OnClickListener {
 
+    private lateinit var binding: AccountInArrearsAlertDialogFragmentBinding
     private val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
     private var showChatBubbleInterface: IShowChatBubble? = null
     private val mClassName = AccountInArrearsDialogFragment::class.java.simpleName
@@ -38,37 +38,48 @@ class AccountInArrearsDialogFragment : AppCompatDialogFragment(), View.OnClickLi
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.account_in_arrears_alert_dialog_fragment, container, false)
+        binding = AccountInArrearsAlertDialogFragmentBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        accountInArrearsDescriptionTextView?.text = payMyAccountViewModel.getCardDetail()?.account?.second?.amountOverdue?.let { totalAmountDue -> activity?.resources?.getString(R.string.payment_overdue_error_desc, Utils.removeNegativeSymbol(CurrencyFormatter.formatAmountToRandAndCent(totalAmountDue))) }
+        with(binding) {
+            accountInArrearsDescriptionTextView?.text =
+                payMyAccountViewModel.getCardDetail()?.account?.second?.amountOverdue?.let { totalAmountDue ->
+                    activity?.resources?.getString(
+                        R.string.payment_overdue_error_desc,
+                        Utils.removeNegativeSymbol(
+                            CurrencyFormatter.formatAmountToRandAndCent(totalAmountDue)
+                        )
+                    )
+                }
 
-        payNowButton?.apply {
-            setOnClickListener(this@AccountInArrearsDialogFragment)
-            AnimationUtilExtension.animateViewPushDown(this)
-        }
+            payNowButton?.apply {
+                setOnClickListener(this@AccountInArrearsDialogFragment)
+                AnimationUtilExtension.animateViewPushDown(this)
+            }
 
-        chatToUsButton?.apply {
-            setOnClickListener(this@AccountInArrearsDialogFragment)
-            AnimationUtilExtension.animateViewPushDown(this)
-        }
+            chatToUsButton?.apply {
+                setOnClickListener(this@AccountInArrearsDialogFragment)
+                AnimationUtilExtension.animateViewPushDown(this)
+            }
 
-        closeIconImageButton?.apply {
-            setOnClickListener(this@AccountInArrearsDialogFragment)
-            AnimationUtilExtension.animateViewPushDown(this)
-        }
+            closeIconImageButton?.apply {
+                setOnClickListener(this@AccountInArrearsDialogFragment)
+                AnimationUtilExtension.animateViewPushDown(this)
+            }
 
-        chatToUsButton?.apply {
-            setOnClickListener(this@AccountInArrearsDialogFragment)
-            AnimationUtilExtension.animateViewPushDown(this)
+            chatToUsButton?.apply {
+                setOnClickListener(this@AccountInArrearsDialogFragment)
+                AnimationUtilExtension.animateViewPushDown(this)
+            }
+            handleChargedOff()
         }
-        handleChargedOff()
     }
 
-    private fun handleChargedOff() {
+    private fun AccountInArrearsAlertDialogFragmentBinding.handleChargedOff() {
         if(payMyAccountViewModel.isAccountChargedOff()){
             accountInArrearsTitleTextView?.text = bindString(R.string.remove_block_on_collection_dialog_title)
             accountInArrearsDescriptionTextView?.text = bindString(R.string.remove_block_on_collection_dialog_desc)

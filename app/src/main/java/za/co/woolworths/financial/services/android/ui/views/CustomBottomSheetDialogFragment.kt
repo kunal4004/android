@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.fragment_custom_bottomsheet_dialog.*
+import com.awfs.coordination.databinding.FragmentCustomBottomsheetDialogBinding
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 
@@ -35,7 +35,7 @@ class CustomBottomSheetDialogFragment : WBottomSheetDialogFragment(),
             subTitle: CharSequence,
             dialog_button_text: String,
             dialog_title_img: Int,
-            dismissLinkText: String?
+            dismissLinkText: String?,
         ) =
             CustomBottomSheetDialogFragment().withArgs {
                 putString(DIALOG_TITLE, title)
@@ -44,26 +44,39 @@ class CustomBottomSheetDialogFragment : WBottomSheetDialogFragment(),
                 putInt(DIALOG_TITLE_IMG, dialog_title_img)
                 putString(DIALOG_DISMISS_LINK_TEXT, dismissLinkText)
             }
+
+        fun newInstance(
+            title: String,
+            subTitle: CharSequence,
+            dialog_button_text: String,
+            dismissLinkText: String?,
+            dialogResultCode: String,
+        ) =
+            CustomBottomSheetDialogFragment().withArgs {
+                putString(DIALOG_TITLE, title)
+                putCharSequence(DIALOG_SUB_TITLE, subTitle)
+                putString(DIALOG_BUTTON_TEXT, dialog_button_text)
+                putString(DIALOG_DISMISS_LINK_TEXT, dismissLinkText)
+                putString(DIALOG_BUTTON_CLICK_RESULT, dialogResultCode)
+            }
     }
+
+    private lateinit var binding: FragmentCustomBottomsheetDialogBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(
-            R.layout.fragment_custom_bottomsheet_dialog,
-            container,
-            false
-        )
+        binding = FragmentCustomBottomsheetDialogBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        init()
+        binding.init()
     }
 
-    private fun init() {
+    private fun FragmentCustomBottomsheetDialogBinding.init() {
         arguments?.apply {
             val title = getString(DIALOG_TITLE, "")
             if (title.isNullOrEmpty()) {
@@ -88,24 +101,25 @@ class CustomBottomSheetDialogFragment : WBottomSheetDialogFragment(),
             }
             val dialogImg = getInt(DIALOG_TITLE_IMG)
             if (dialogImg != null) {
-                img_view.visibility = View.VISIBLE
-                img_view.setImageResource(dialogImg)
+                imgView.visibility = View.VISIBLE
+                imgView.setImageResource(dialogImg)
             } else
-                img_view.visibility = View.GONE
+                imgView.visibility = View.GONE
 
             val linkText = getString(DIALOG_DISMISS_LINK_TEXT)
             if (!linkText.isNullOrEmpty())
                 tvDismiss?.text = linkText
         }
 
-        tvDismiss.setOnClickListener(this)
-        buttonAction.setOnClickListener(this)
+        tvDismiss.setOnClickListener(this@CustomBottomSheetDialogFragment)
+        buttonAction.setOnClickListener(this@CustomBottomSheetDialogFragment)
     }
 
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.buttonAction -> {
-                setFragmentResult(DIALOG_BUTTON_CLICK_RESULT, bundleOf())
+                setFragmentResult(arguments?.getString(DIALOG_BUTTON_CLICK_RESULT)
+                    ?: DIALOG_BUTTON_CLICK_RESULT, bundleOf())
                 dismiss()
             }
             R.id.tvDismiss -> {

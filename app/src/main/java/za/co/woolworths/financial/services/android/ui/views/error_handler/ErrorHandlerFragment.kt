@@ -3,23 +3,17 @@ package za.co.woolworths.financial.services.android.ui.views.error_handler
 import android.graphics.Color
 import android.os.Bundle
 import android.text.method.LinkMovementMethod
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.TextView
-import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.absa_error_fragment_layout.*
+import com.awfs.coordination.databinding.AbsaErrorFragmentLayoutBinding
 import za.co.woolworths.financial.services.android.util.LocalConstant
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
+import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 import za.co.woolworths.financial.services.android.util.spannable.WSpannableStringBuilder
 import za.co.woolworths.financial.services.android.util.wenum.LinkType
 
-class ErrorHandlerFragment : Fragment(), View.OnClickListener {
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.absa_error_fragment_layout, container, false)
-    }
+class ErrorHandlerFragment : BaseFragmentBinding<AbsaErrorFragmentLayoutBinding>(AbsaErrorFragmentLayoutBinding::inflate), View.OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -47,7 +41,7 @@ class ErrorHandlerFragment : Fragment(), View.OnClickListener {
             makeTextFontColor(textLabel)
         }
 
-        setTextWithSpanBuilder(errorDescriptionBlock1TextView, descBlock1Text)
+        setTextWithSpanBuilder(binding.errorDescriptionBlock1TextView, descBlock1Text)
 
         val descBlock2Text = WSpannableStringBuilder(getString(R.string.absa_mobile_app_pin_blocked_desc_block_2))
 
@@ -55,7 +49,7 @@ class ErrorHandlerFragment : Fragment(), View.OnClickListener {
             makeStringUnderlined(appPinLabel)
             makeTextFontColor(appPinLabel)
         }
-        setTextWithSpanBuilder(errorDescriptionBlock2TextView, descBlock2Text)
+        setTextWithSpanBuilder(binding.errorDescriptionBlock2TextView, descBlock2Text)
     }
 
     private fun setTextWithSpanBuilder(textView: TextView?, spannableBuilder: WSpannableStringBuilder) {
@@ -67,7 +61,7 @@ class ErrorHandlerFragment : Fragment(), View.OnClickListener {
     }
 
     private fun initListener() {
-        actionButton?.apply {
+        binding.actionButton?.apply {
             AnimationUtilExtension.animateViewPushDown(this)
             setOnClickListener(this@ErrorHandlerFragment)
         }

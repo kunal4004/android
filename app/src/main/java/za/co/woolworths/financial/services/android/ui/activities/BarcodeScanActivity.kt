@@ -5,7 +5,7 @@ import android.os.Bundle
 import androidx.core.content.ContextCompat
 import android.view.MenuItem
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.barcode_scan_activity.*
+import com.awfs.coordination.databinding.BarcodeScanActivityBinding
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
@@ -17,11 +17,14 @@ import za.co.woolworths.financial.services.android.util.Utils
 
 class BarcodeScanActivity : RuntimePermissionActivity() {
 
+    lateinit var binding: BarcodeScanActivityBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.barcode_scan_activity)
+        binding = BarcodeScanActivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         Utils.updateStatusBarBackground(this, R.color.black, true)
-        configureActionBar()
+        binding.configureActionBar()
         if (savedInstanceState == null) {
             addFragment(
                     fragment = BarcodeScanFragment.newInstance(),
@@ -31,7 +34,7 @@ class BarcodeScanActivity : RuntimePermissionActivity() {
         setUpRuntimePermission(arrayListOf(android.Manifest.permission.CAMERA))
     }
 
-    private fun configureActionBar() {
+    private fun BarcodeScanActivityBinding.configureActionBar() {
         toolbar?.apply { setSupportActionBar(this) }
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
@@ -40,17 +43,17 @@ class BarcodeScanActivity : RuntimePermissionActivity() {
         }
     }
 
-    internal fun setHomeIndicator(isManualScanFragment: Boolean) {
+    internal fun BarcodeScanActivityBinding.setHomeIndicator(isManualScanFragment: Boolean) {
         supportActionBar?.setHomeAsUpIndicator(if (isManualScanFragment) R.drawable.back_white else R.drawable.close_white)
         tvToolbarTitle?.text = if (isManualScanFragment) getString(R.string.enter_barcode) else getString(R.string.scan_product)
-        toolbar?.setBackgroundColor(ContextCompat.getColor(this, if (isManualScanFragment) R.color.black else R.color.sem_per_black))
+        toolbar?.setBackgroundColor(ContextCompat.getColor(this@BarcodeScanActivity, if (isManualScanFragment) R.color.black else R.color.sem_per_black))
     }
 
     override fun onBackPressed() {
         supportFragmentManager?.apply {
             if (backStackEntryCount > 0) {
                 popBackStack()
-                setHomeIndicator(backStackEntryCount == 0)
+                binding.setHomeIndicator(backStackEntryCount == 0)
             } else {
                 finish()
                 overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)

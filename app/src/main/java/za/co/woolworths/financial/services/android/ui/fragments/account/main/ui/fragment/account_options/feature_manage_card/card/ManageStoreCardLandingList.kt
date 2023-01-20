@@ -6,6 +6,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.AccountOptionsManageCardListFragmentBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCard
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardItemActions
@@ -95,7 +97,9 @@ class ManageStoreCardLandingList(
         featureType: StoreCardFeatureType.TemporaryCardEnabled,
         callback: (ListCallback) -> Unit
     ) {
-        includeListOptions.payWithCardFragmentContainerView.visibility = VISIBLE
+        CoroutineScope(Dispatchers.Main).launch {
+            includeListOptions.payWithCardFragmentContainerView.visibility = VISIBLE
+        }
         callback(
             ListCallback.CardNotReceived(
                 isCardNotReceivedFlowNeeded = cardFreezeViewModel.isCardNotReceivedFlowNeeded(
@@ -163,8 +167,8 @@ class ManageStoreCardLandingList(
         return storeCard?.actions?.let { action ->
             action.forEach {  actionButton ->
                 when(actionButton.action){
-                    StoreCardItemActions.LINK_STORE_CARD -> showLinkNewCardItem(true, actionButton.label)
-                    StoreCardItemActions.ACTIVATE_VIRTUAL_CARD -> showActivateVirtualCardItem(true, actionButton.label)
+                    StoreCardItemActions.LINK_STORE_CARD -> showLinkNewCardItem(true)
+                    StoreCardItemActions.ACTIVATE_VIRTUAL_CARD -> showActivateVirtualCardItem(true)
                     null -> Unit
                 }
             }

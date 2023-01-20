@@ -2,13 +2,12 @@ package za.co.woolworths.financial.services.android.ui.adapters
 
 import android.graphics.Paint
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.province_and_suburb_list_item.view.*
+import com.awfs.coordination.databinding.ProvinceAndSuburbListItemBinding
 import za.co.woolworths.financial.services.android.models.dto.Suburb
 import za.co.woolworths.financial.services.android.ui.extension.bindColor
 import za.co.woolworths.financial.services.android.util.DeliveryType
@@ -27,8 +26,9 @@ class SuburbListAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SuburbViewHolder {
-        return SuburbViewHolder(LayoutInflater.from(parent.context)
-            .inflate(R.layout.province_and_suburb_list_item, parent, false))
+        return SuburbViewHolder(
+            ProvinceAndSuburbListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        )
     }
 
     override fun getItemCount(): Int {
@@ -40,9 +40,9 @@ class SuburbListAdapter(
     }
 
 
-    inner class SuburbViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class SuburbViewHolder(val itemBinding: ProvinceAndSuburbListItemBinding) : RecyclerView.ViewHolder(itemBinding.root) {
         fun bindItem(position: Int) {
-            itemView.apply {
+            itemBinding.apply {
                 if (suburbFilterList.size > position) {
                     suburbFilterList[position].let {
                         name.text = it.name
@@ -67,7 +67,7 @@ class SuburbListAdapter(
                         }
                     }
                 }
-                setOnClickListener {
+                root.setOnClickListener {
                     if (deliveryType == DeliveryType.DELIVERY) {
                         if (!suburbFilterList[position].suburbDeliverable) return@setOnClickListener
                     } else {
