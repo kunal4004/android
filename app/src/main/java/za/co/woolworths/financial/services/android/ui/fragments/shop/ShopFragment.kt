@@ -1126,7 +1126,6 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
             validateLocationResponse?.validatePlace?.let { validatePlace ->
                 blackToolTipLayout.deliveryCollectionTitle?.visibility = View.VISIBLE
                 blackToolTipLayout.foodItemDateText?.visibility = View.VISIBLE
-                blackToolTipLayout.deliveryCollectionTitle?.text = getString(R.string.earliest_collection_Date)
                 blackToolTipLayout.foodItemTitle?.visibility = View.GONE
                 blackToolTipLayout.fashionItemDateText?.visibility = View.GONE
                 blackToolTipLayout.fashionItemTitle?.visibility = View.GONE
@@ -1136,6 +1135,10 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                     getStoreId(isStoreSelectedForBrowsing, browsingStoreId),
                     validatePlace.stores
                 )
+                if(store?.storeDeliveryType == StoreUtils.Companion.StoreDeliveryType.FOOD_AND_OTHER.type) {
+                    blackToolTipLayout.deliveryCollectionTitle?.text = getString(R.string.food_items_beauty_home)
+                } else
+                    blackToolTipLayout.deliveryCollectionTitle?.text = getString(R.string.earliest_collection_Date)
                 blackToolTipLayout.foodItemDateText?.text = store?.firstAvailableFoodDeliveryDate
                 blackToolTipLayout.productAvailableText?.text = resources.getString(
                     R.string.dash_item_limit,
