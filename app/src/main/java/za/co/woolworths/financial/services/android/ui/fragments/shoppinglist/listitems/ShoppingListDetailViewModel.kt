@@ -21,7 +21,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ShoppingListDetailViewModel @Inject constructor(
-    private val shoppingListDetailRepository: ShoppingListDetailRepository
+    private val shoppingListDetailRepository: ShoppingListDetailRepository,
 ) : ViewModel() {
 
     var inventoryCallFailed: Boolean = false
@@ -62,10 +62,11 @@ class ShoppingListDetailViewModel @Inject constructor(
             val storeId = Utils.retrieveStoreId(fulfillmentType)
                 ?.replace("\"", "") ?: ""
             if (TextUtils.isEmpty(storeId)) {
-                val type = Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.deliveryType?.let {
-                    Delivery.getType(it)
-                } ?: Delivery.STANDARD
-                if(Delivery.STANDARD == type){
+                val type =
+                    Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.deliveryType?.let {
+                        Delivery.getType(it)
+                    } ?: Delivery.STANDARD
+                if (Delivery.STANDARD == type) {
                     setOutOfStock()
                 } else {
                     setAllUnavailable(multiSkuList)
@@ -181,7 +182,7 @@ class ShoppingListDetailViewModel @Inject constructor(
      */
     fun setUnavailable(
         shoppingListItemsCollection: MutableCollection<ShoppingListItem>,
-        availableSkuIds: List<String>
+        availableSkuIds: List<String>,
     ) {
         for (shoppingItem in shoppingListItemsCollection) {
             val index = mShoppingListItems.indexOf(shoppingItem)
@@ -201,7 +202,7 @@ class ShoppingListDetailViewModel @Inject constructor(
 
     fun setUnavailable(
         shoppingListItemsCollection: List<ShoppingListItem>,
-        availableSkuIds: List<String>
+        availableSkuIds: List<String>,
     ) {
         for (shoppingItem in shoppingListItemsCollection) {
             val index = mShoppingListItems.indexOf(shoppingItem)
@@ -217,6 +218,15 @@ class ShoppingListDetailViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun isShoppingListContainsUnavailableItems(): Boolean {
+        if (mShoppingListItems.filter { item ->
+                item.unavailable
+            }.isNullOrEmpty()) {
+            return false
+        }
+        return true
     }
 
     fun setItem(updatedItem: ShoppingListItem) {

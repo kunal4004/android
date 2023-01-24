@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.view.*
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -24,7 +25,7 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.contracts.IToastInterface
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils.Companion.getPlaceId
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.item_limits.ProductCountMap
@@ -32,7 +33,6 @@ import za.co.woolworths.financial.services.android.models.network.CompletionHand
 import za.co.woolworths.financial.services.android.models.network.OneAppService.deleteShoppingListItem
 import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity
-import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity
@@ -49,7 +49,6 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_SESSION_TIMEOUT_440
 import za.co.woolworths.financial.services.android.util.EmptyCartView.EmptyCartInterface
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getPreferredDeliveryType
-import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getPreferredPlaceId
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.presentEditDeliveryGeoLocationActivity
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.setDeliveryAddressView
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.showQuantityLimitErrror
@@ -78,6 +77,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
     private var mPostAddToCart: Call<AddItemToCartResponse>? = null
 
     private var _bindingListDetails: ShoppingListDetailFragmentBinding? = null
+    private var timer: CountDownTimer? = null
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -97,7 +97,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         _bindingListDetails = ShoppingListDetailFragmentBinding.inflate(inflater, container, false)
         return _bindingListDetails?.root
@@ -191,6 +191,9 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             selectDeselectAllTextView.setOnClickListener(this@ShoppingListDetailFragment)
             deliveryLocationConstLayout.setOnClickListener(this@ShoppingListDetailFragment)
             textProductSearch.setOnClickListener(this@ShoppingListDetailFragment)
+            blackToolTipLayout.closeWhiteBtn.setOnClickListener(this@ShoppingListDetailFragment)
+            blackToolTipLayout.changeLocationButton.setOnClickListener(this@ShoppingListDetailFragment)
+
             btnRetry.setOnClickListener(this@ShoppingListDetailFragment)
 
             mErrorHandlerView = ErrorHandlerView(activity, noConnectionLayout)
@@ -206,6 +209,45 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
 
         // Show Bottom Navigation Menu
         (activity as? BottomNavigationActivity)?.showBottomNavigationMenu()
+    }
+
+    private fun showBlackToolTip() {
+        when (getPreferredDeliveryType()) {
+            Delivery.STANDARD -> {
+                bindingListDetails.blackToolTipLayout.deliveryCollectionTitle.text =
+                    getText(R.string.title_mylist_standard_tooltip)
+            }
+            Delivery.CNC -> {
+                bindingListDetails.blackToolTipLayout.deliveryCollectionTitle.text =
+                    getText(R.string.title_mylist_collection_tooltip)
+            }
+            Delivery.DASH -> {
+                bindingListDetails.blackToolTipLayout.deliveryCollectionTitle.text =
+                    getText(R.string.title_mylist_dash_tooltip)
+            }
+            else -> {
+                return
+                // No need to change anything.
+            }
+        }
+        bindingListDetails.blackToolTipLayout?.root?.visibility = VISIBLE
+        timer?.cancel()
+        // Check the time from the config for blackToolTip dismiss.
+        if (AppConfigSingleton.tooltipSettings?.isAutoDismissEnabled == true) {
+            val timeDuration =
+                AppConfigSingleton.tooltipSettings?.autoDismissDuration?.times(1000) ?: return
+            timer = object : CountDownTimer(timeDuration, 100) {
+                override fun onTick(millisUntilFinished: Long) {}
+                override fun onFinish() {
+                    hideBlackToolTip()
+                }
+            }.start()
+        }
+    }
+
+    private fun hideBlackToolTip() {
+        bindingListDetails?.blackToolTipLayout?.root?.visibility = GONE
+        timer?.cancel()
     }
 
     private fun setUpView() {
@@ -239,6 +281,8 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                 initGetShoppingListItems()
             }
             R.id.btnCheckOut -> addItemsToCart()
+            R.id.changeLocationButton -> deliverySelectionIntent(DELIVERY_LOCATION_REQUEST)
+            R.id.closeWhiteBtn -> hideBlackToolTip()
             else -> {}
         }
     }
@@ -265,6 +309,10 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             HTTP_OK -> {
                 bindingListDetails.loadingBar.visibility = GONE
                 viewModel.makeInventoryCalls()
+                if (viewModel.isShoppingListContainsUnavailableItems())
+                    showBlackToolTip()
+                else
+                    hideBlackToolTip()
                 updateList()
             }
             HTTP_SESSION_TIMEOUT_440 -> SessionUtilities.getInstance().setSessionState(
@@ -296,8 +344,10 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         shoppingListItemsAdapter?.adapterClickable(clickable)
     }
 
-    override fun onItemSelectionChange() {
+    override fun onItemSelectionChange(isSelected: Boolean) {
         if (!isAdded || !isVisible) return
+        if (isSelected)
+        hideBlackToolTip()
         updateCartCountButton()
         manageSelectAllMenuVisibility()
     }
@@ -307,13 +357,16 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             shoppingListItemsResponse.listItems?.let { ArrayList(it) } ?: ArrayList(0)
         updateList()
         enableAdapterClickEvent(true)
+        if (!viewModel.isShoppingListContainsUnavailableItems()) {
+            hideBlackToolTip()
+        }
     }
 
     override fun onItemDeleteClick(
         id: String,
         productId: String,
         catalogRefId: String,
-        shouldUpdateShoppingList: Boolean
+        shouldUpdateShoppingList: Boolean,
     ) {
         val listSize = shoppingListItemsAdapter?.shoppingListItems?.size ?: 0
         if (listSize == 1) {
@@ -652,13 +705,17 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             }
             notifyDataSetChanged()
             viewModel.mShoppingListItems = shoppingListItems
-            onItemSelectionChange()
+            onItemSelectionChange(setSelection)
         }
     }
 
     override fun onConnectionChanged() {
         if (viewModel.inventoryCallFailed) {
             viewModel.makeInventoryCalls()
+            if (viewModel.isShoppingListContainsUnavailableItems())
+                showBlackToolTip()
+            else
+                hideBlackToolTip()
         }
         if (addedToCart()) {
             addItemsToCart()
@@ -745,6 +802,10 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         updateCartCountButton()
     }
 
+    override fun showListBlackToolTip() {
+        showBlackToolTip()
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -769,11 +830,16 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             // response from search product from shopping list
         }
 
-        when(requestCode) {
+        when (requestCode) {
             DELIVERY_LOCATION_REQUEST_CODE_FROM_SELECT_ALL,
-            DELIVERY_LOCATION_REQUEST -> {
-                if(resultCode == RESULT_OK) {
+            DELIVERY_LOCATION_REQUEST,
+            -> {
+                if (resultCode == RESULT_OK) {
                     setDeliveryLocation()
+                    if (viewModel.isShoppingListContainsUnavailableItems())
+                        showBlackToolTip()
+                    else
+                        hideBlackToolTip()
                     viewModel.makeInventoryCalls()
                 }
             }
