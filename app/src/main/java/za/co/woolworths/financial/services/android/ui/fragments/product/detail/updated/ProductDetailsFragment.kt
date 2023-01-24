@@ -22,23 +22,36 @@ import android.view.*
 import android.webkit.MimeTypeMap
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
-import androidx.fragment.app.*
+import androidx.fragment.app.FragmentTransaction
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.setFragmentResultListener
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.ProductDetailsFragmentBinding
+import com.awfs.coordination.databinding.PromotionalImageBinding
+import com.facebook.FacebookSdk.getApplicationContext
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.gson.Gson
+import com.google.gson.JsonSyntaxException
 import com.google.gson.reflect.TypeToken
 import com.perfectcorp.perfectlib.CameraView
 import com.perfectcorp.perfectlib.MakeupCam
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
+import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.chanel.utils.ChanelUtils
 import za.co.woolworths.financial.services.android.common.SingleMessageCommonToast
+import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.ILocationProvider
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
@@ -59,8 +72,13 @@ import za.co.woolworths.financial.services.android.ui.activities.WStockFinderAct
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_CART
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductInformationActivity
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.featureutils.RatingAndReviewUtil
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.*
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.network.apihelper.RatingAndReviewApiHelper
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.viewmodel.RatingAndReviewViewModel
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.viewmodel.RatingAndReviewViewModelFactory
+import za.co.woolworths.financial.services.android.ui.adapters.*
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerAdapter.MultipleImageInterface
-import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.deviceWidth
 import za.co.woolworths.financial.services.android.ui.extension.underline
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener
@@ -74,13 +92,8 @@ import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.Navig
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListDetailFragment.ADD_TO_CART_SUCCESS_RESULT
 import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.UnsellableItemsBottomSheetDialog
-import za.co.woolworths.financial.services.android.util.*
-import java.util.*
-import kotlin.collections.ArrayList
-import com.facebook.FacebookSdk.getApplicationContext
-import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.featureutils.RatingAndReviewUtil
-import za.co.woolworths.financial.services.android.ui.adapters.*
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.ProductDetailsFindInStoreDialog
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.QuantitySelectorFragment
 import za.co.woolworths.financial.services.android.ui.vto.di.qualifier.OpenSelectOption
 import za.co.woolworths.financial.services.android.ui.vto.di.qualifier.OpenTermAndLighting
@@ -89,12 +102,16 @@ import za.co.woolworths.financial.services.android.ui.vto.presentation.LiveCamer
 import za.co.woolworths.financial.services.android.ui.vto.presentation.PermissionViewModel
 import za.co.woolworths.financial.services.android.ui.vto.presentation.VtoApplyEffectOnImageViewModel
 import za.co.woolworths.financial.services.android.ui.vto.ui.PermissionAction
+import za.co.woolworths.financial.services.android.ui.vto.ui.PfSDKInitialCallback
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.VtoBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.VtoErrorBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.listener.VtoSelectOptionListener
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.listener.VtoTryAgainListener
 import za.co.woolworths.financial.services.android.ui.vto.ui.camera.CameraMonitor
 import za.co.woolworths.financial.services.android.ui.vto.ui.gallery.ImageResultContract
+import za.co.woolworths.financial.services.android.ui.vto.utils.PermissionUtil
+import za.co.woolworths.financial.services.android.ui.vto.utils.SdkUtility
+import za.co.woolworths.financial.services.android.ui.vto.utils.VirtualTryOnUtil
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_1000_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_1500_MS
@@ -106,49 +123,30 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_FACE_NOT_DETECT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_FAIL_IMAGE_LOAD
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.saveAnonymousUserLocationDetails
+import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.logException
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.setCrashlyticsString
+import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 import za.co.woolworths.financial.services.android.util.pickimagecontract.PickImageFileContract
 import za.co.woolworths.financial.services.android.util.pickimagecontract.PickImageGalleryContract
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.io.File
-import android.graphics.Bitmap
-import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.gson.JsonSyntaxException
-import za.co.woolworths.financial.services.android.common.convertToTitleCase
-import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
-import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
-import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.logException
-import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.setCrashlyticsString
-import java.net.SocketTimeoutException
 import javax.inject.Inject
 import kotlin.collections.get
 import kotlin.collections.set
-import android.util.Log
-import android.widget.*
-import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.ViewModelProvider
-import com.awfs.coordination.databinding.ProductDetailsFragmentBinding
-import com.awfs.coordination.databinding.PromotionalImageBinding
-import retrofit2.HttpException
-import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.*
-import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.*
-import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.network.apihelper.RatingAndReviewApiHelper
-import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.viewmodel.RatingAndReviewViewModel
-import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.viewmodel.RatingAndReviewViewModelFactory
-import za.co.woolworths.financial.services.android.ui.vto.utils.VirtualTryOnUtil
-import za.co.woolworths.financial.services.android.ui.vto.ui.PfSDKInitialCallback
-import za.co.woolworths.financial.services.android.ui.vto.utils.PermissionUtil
-import za.co.woolworths.financial.services.android.ui.vto.utils.SdkUtility
-import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 
 
 @AndroidEntryPoint
-class ProductDetailsFragment : BaseFragmentBinding<ProductDetailsFragmentBinding>(ProductDetailsFragmentBinding::inflate), ProductDetailsContract.ProductDetailsView,
+class ProductDetailsFragment :
+    BaseFragmentBinding<ProductDetailsFragmentBinding>(ProductDetailsFragmentBinding::inflate),
+    ProductDetailsContract.ProductDetailsView,
     MultipleImageInterface, IOnConfirmDeliveryLocationActionListener, PermissionResultCallback,
     ILocationProvider, View.OnClickListener,
     OutOfStockMessageDialogFragment.IOutOfStockMessageDialogDismissListener,
     ProductNotAvailableForCollectionDialog.IProductNotAvailableForCollectionDialogListener,
-    VtoSelectOptionListener, WMaterialShowcaseView.IWalkthroughActionListener, VtoTryAgainListener,View.OnTouchListener,ReviewThumbnailAdapter.ThumbnailClickListener, ViewTreeObserver.OnScrollChangedListener {
+    VtoSelectOptionListener, WMaterialShowcaseView.IWalkthroughActionListener, VtoTryAgainListener,
+    View.OnTouchListener, ReviewThumbnailAdapter.ThumbnailClickListener,
+    ViewTreeObserver.OnScrollChangedListener {
 
     var productDetails: ProductDetails? = null
     private var subCategoryTitle: String? = null
@@ -291,6 +289,17 @@ class ProductDetailsFragment : BaseFragmentBinding<ProductDetailsFragmentBinding
         addFragmentListner()
         setUniqueIds()
         productDetails?.let { addViewItemEvent(it) }
+        setUpCartCountPDP()
+    }
+
+    private fun setUpCartCountPDP() {
+        if (SessionUtilities.getInstance().isUserAuthenticated && QueryBadgeCounter.instance.cartCount <= 0) {
+            binding.openCart.cartCountTextView?.visibility = View.GONE
+        } else if (SessionUtilities.getInstance().isUserAuthenticated && QueryBadgeCounter.instance.cartCount > 0) {
+            binding.openCart.cartCountTextView?.visibility = View.VISIBLE
+            binding.openCart.cartCountTextView?.text =
+                QueryBadgeCounter.instance.cartCount.toString()
+        }
     }
 
     private fun addFragmentListner() {
@@ -312,12 +321,15 @@ class ProductDetailsFragment : BaseFragmentBinding<ProductDetailsFragmentBinding
             productDetails?.price?.toDouble()
                 ?.let { viewItem.putDouble(FirebaseAnalytics.Param.PRICE, it) }
             viewItem.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, productDetails?.categoryName)
-            viewItem.putString(FirebaseAnalytics.Param.ITEM_VARIANT, productDetails?.colourSizeVariants)
+            viewItem.putString(FirebaseAnalytics.Param.ITEM_VARIANT,
+                productDetails?.colourSizeVariants)
             viewItem.putString(FirebaseAnalytics.Param.ITEM_BRAND, productDetails?.brandText)
-            viewItemListParams.putString(FirebaseAnalytics.Param.ITEM_LIST_NAME, productDetails?.categoryName)
+            viewItemListParams.putString(FirebaseAnalytics.Param.ITEM_LIST_NAME,
+                productDetails?.categoryName)
             viewItemListParams.putParcelableArray(FirebaseAnalytics.Param.ITEMS, arrayOf(viewItem))
         }
-        AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.VIEW_ITEM_EVENT, viewItemListParams)
+        AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.VIEW_ITEM_EVENT,
+            viewItemListParams)
     }
 
     override fun onAttach(context: Context) {
@@ -333,7 +345,7 @@ class ProductDetailsFragment : BaseFragmentBinding<ProductDetailsFragmentBinding
     }
 
     private fun ProductDetailsFragmentBinding.initViews() {
-        openCart?.setOnClickListener(this@ProductDetailsFragment)
+        openCart.root.setOnClickListener(this@ProductDetailsFragment)
         backArrow?.setOnClickListener(this@ProductDetailsFragment)
         share?.setOnClickListener(this@ProductDetailsFragment)
         imgVTOOpen?.setOnClickListener(this@ProductDetailsFragment)
@@ -345,7 +357,6 @@ class ProductDetailsFragment : BaseFragmentBinding<ProductDetailsFragmentBinding
         hideRatingAndReview()
         setupViewModel()
         updateReportLikeStatus()
-
         toCartAndFindInStoreLayout.apply {
             addToCartAction?.setOnClickListener(this@ProductDetailsFragment)
             quantitySelector?.setOnClickListener(this@ProductDetailsFragment)
@@ -387,7 +398,8 @@ class ProductDetailsFragment : BaseFragmentBinding<ProductDetailsFragmentBinding
         }
         productDetailOptionsAndInformation.customerReview.tvSkinProfile.setOnClickListener(this@ProductDetailsFragment)
         ratingLayout.tvTotalReviews.setOnClickListener(this@ProductDetailsFragment)
-        productDetailOptionsAndInformation.customerReview.reviewHelpfulReport.tvReport.setOnClickListener(this@ProductDetailsFragment)
+        productDetailOptionsAndInformation.customerReview.reviewHelpfulReport.tvReport.setOnClickListener(
+            this@ProductDetailsFragment)
     }
 
 
@@ -402,7 +414,8 @@ class ProductDetailsFragment : BaseFragmentBinding<ProductDetailsFragmentBinding
         if (ratingReviewResponse?.reviews?.isNotEmpty() == true) {
             ratingReviewResponse?.reviews?.get(0)?.let {
                 if (RatingAndReviewUtil.likedReviews.contains(it.id.toString())) {
-                    productDetailOptionsAndInformation.customerReview.reviewHelpfulReport.ivLike?.setImageResource(R.drawable.iv_like_selected)
+                    productDetailOptionsAndInformation.customerReview.reviewHelpfulReport.ivLike?.setImageResource(
+                        R.drawable.iv_like_selected)
                 }
                 if (RatingAndReviewUtil.reportedReviews.contains(it.id.toString())) {
                     productDetailOptionsAndInformation.customerReview.reviewHelpfulReport.apply {
@@ -642,7 +655,7 @@ class ProductDetailsFragment : BaseFragmentBinding<ProductDetailsFragmentBinding
             sizeColorSelectorLayout.colourUnavailableError?.visibility = View.GONE
             share?.visibility = View.VISIBLE
             productImagesViewPagerIndicator?.visibility = View.VISIBLE
-            openCart?.visibility = View.VISIBLE
+            openCart.root.visibility = View.VISIBLE
             backArrow?.visibility = View.VISIBLE
             productImagesViewPager?.visibility = View.VISIBLE
             imgVTOOpen?.visibility = View.VISIBLE
@@ -740,7 +753,7 @@ class ProductDetailsFragment : BaseFragmentBinding<ProductDetailsFragmentBinding
             if (ChanelUtils.isCategoryPresentInConfig(it.brandText)) {
                 brandView.root.visibility = View.VISIBLE
                 backArrow?.visibility = View.GONE
-                openCart?.visibility = View.GONE
+                openCart.root.visibility = View.GONE
                 share?.visibility = View.GONE
                 imgVTOOpen?.visibility = View.GONE
                 if (!TextUtils.isEmpty(bannerLabel)) {
@@ -764,7 +777,7 @@ class ProductDetailsFragment : BaseFragmentBinding<ProductDetailsFragmentBinding
             } else {
                 brandView.root.visibility = View.GONE
                 backArrow?.visibility = View.VISIBLE
-                openCart?.visibility = View.VISIBLE
+                openCart.root.visibility = View.VISIBLE
                 share?.visibility = View.VISIBLE
                 imgVTOOpen?.visibility = View.VISIBLE
             }
@@ -812,10 +825,10 @@ class ProductDetailsFragment : BaseFragmentBinding<ProductDetailsFragmentBinding
                     }
                 }
             } catch (e: Exception) {
-                FirebaseManager.logException(e)
+                logException(e)
                 progressBar?.visibility = View.GONE
             } catch (e: JsonSyntaxException) {
-                FirebaseManager.logException(e)
+                logException(e)
                 progressBar?.visibility = View.GONE
             }
         }
@@ -858,7 +871,7 @@ class ProductDetailsFragment : BaseFragmentBinding<ProductDetailsFragmentBinding
                     }
                 }
             } catch (e: Exception) {
-                FirebaseManager.logException(e)
+                logException(e)
                 progressBar?.visibility = View.GONE
             }
         }
@@ -1004,6 +1017,7 @@ class ProductDetailsFragment : BaseFragmentBinding<ProductDetailsFragmentBinding
             }
             productDetailsPresenter?.postAddItemToCart(listOfItems)
         }
+        setUpCartCountPDP()
     }
 
     override fun onSessionTokenExpired() {
@@ -1068,7 +1082,8 @@ class ProductDetailsFragment : BaseFragmentBinding<ProductDetailsFragmentBinding
                 false -> {
                     showProductDetailsLoading()
                     val multiSKUs =
-                        productDetails?.otherSkus?.joinToString(separator = "-") { it.sku.toString() } ?: ""
+                        productDetails?.otherSkus?.joinToString(separator = "-") { it.sku.toString() }
+                            ?: ""
                     productDetailsPresenter?.loadStockAvailability(
                         storeIdForInventory!!,
                         multiSKUs,
@@ -1079,7 +1094,7 @@ class ProductDetailsFragment : BaseFragmentBinding<ProductDetailsFragmentBinding
             }
 
         } else if (productDetails?.otherSkus.isNullOrEmpty()) {
-            showProductOutOfStock()
+            productOutOfStockErrorMessage()
         } else {
             showErrorWhileLoadingProductDetails()
         }
@@ -1313,7 +1328,7 @@ class ProductDetailsFragment : BaseFragmentBinding<ProductDetailsFragmentBinding
                         it.priceType,
                         it.kilogramPrice
                     )
-}
+                }
                 brandName?.apply {
                     if (!it.brandText.isNullOrEmpty()) {
                         text = it.brandText
@@ -1398,7 +1413,7 @@ class ProductDetailsFragment : BaseFragmentBinding<ProductDetailsFragmentBinding
             }
 
             if (isAllProductsOutOfStock() && isInventoryCalled) {
-                showProductOutOfStock()
+                productOutOfStockErrorMessage()
                 return
             }
         }
@@ -1460,7 +1475,8 @@ class ProductDetailsFragment : BaseFragmentBinding<ProductDetailsFragmentBinding
             productDetailOptionsAndInformation.customerReview.apply {
                 reviewHelpfulReport.tvReport?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
                 tvSkinProfile?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
-                productDetailOptionsAndInformation.tvRatingDetails?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
+                productDetailOptionsAndInformation.tvRatingDetails?.paintFlags =
+                    Paint.UNDERLINE_TEXT_FLAG
                 if (reviews?.isNotEmpty() == true) {
                     reviews[0].apply {
                         tvName?.text = userNickname
@@ -1565,7 +1581,8 @@ class ProductDetailsFragment : BaseFragmentBinding<ProductDetailsFragmentBinding
             rootView.addView(tvAdditionalFieldLabel)
             rootView.addView(ivCircle)
             rootView.addView(tvAdditionalFieldValue)
-            binding.productDetailOptionsAndInformation.customerReview.llAdditionalFields?.addView(rootView)
+            binding.productDetailOptionsAndInformation.customerReview.llAdditionalFields?.addView(
+                rootView)
         }
     }
 
@@ -1581,7 +1598,8 @@ class ProductDetailsFragment : BaseFragmentBinding<ProductDetailsFragmentBinding
     private fun ProductDetailsFragmentBinding.setReviewThumbnailUI(thumbnails: List<Thumbnails>) {
         productDetailOptionsAndInformation.customerReview.apply {
             rvThumbnail?.layoutManager = GridLayoutManager(requireContext(), 3)
-            reviewThumbnailAdapter = ReviewThumbnailAdapter(requireContext(), this@ProductDetailsFragment)
+            reviewThumbnailAdapter =
+                ReviewThumbnailAdapter(requireContext(), this@ProductDetailsFragment)
             rvThumbnail?.adapter = reviewThumbnailAdapter
             thumbnailFullList = thumbnails
             if (thumbnails.size > 2) {
@@ -1698,7 +1716,7 @@ class ProductDetailsFragment : BaseFragmentBinding<ProductDetailsFragmentBinding
                             } else {
                                 setBitmapFromUri(selectedImageUri)
                             }
-                            }
+                        }
                     }
                     null != result -> {
                         sizeColorSelectorLayout.colourUnavailableError?.visibility = View.GONE
@@ -2038,7 +2056,10 @@ class ProductDetailsFragment : BaseFragmentBinding<ProductDetailsFragmentBinding
         val addToCartParams = Bundle()
         addToCartParams.putString(FirebaseAnalytics.Param.CURRENCY,
             FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE)
-        productDetails?.price?.let { addToCartParams.putDouble(FirebaseAnalytics.Param.VALUE, it.toDouble()) }
+        productDetails?.price?.let {
+            addToCartParams.putDouble(FirebaseAnalytics.Param.VALUE,
+                it.toDouble())
+        }
         for (products in 0..(productDetails?.otherSkus?.size ?: 0)) {
             val addToCartItem = Bundle()
             addToCartItem.putString(FirebaseAnalytics.Param.ITEM_ID, productDetails?.productId)
@@ -2065,7 +2086,8 @@ class ProductDetailsFragment : BaseFragmentBinding<ProductDetailsFragmentBinding
             addToCartParams.putParcelableArray(FirebaseAnalytics.Param.ITEMS,
                 arrayOf(addToCartItem))
         }
-        AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.ADD_TO_CART_PDP, addToCartParams)
+        AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.ADD_TO_CART_PDP,
+            addToCartParams)
     }
 
     private fun addItemToShoppingList() {
@@ -2115,20 +2137,33 @@ class ProductDetailsFragment : BaseFragmentBinding<ProductDetailsFragmentBinding
 
     private fun addToWishlistItemEvent(productDetails: ProductDetails) {
         val addToWishlistParam = Bundle()
-        addToWishlistParam.putString(FirebaseAnalytics.Param.CURRENCY, FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE)
-        productDetails?.price?.let { addToWishlistParam.putDouble(FirebaseAnalytics.Param.VALUE, it.toDouble()) }
+        addToWishlistParam.putString(FirebaseAnalytics.Param.CURRENCY,
+            FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE)
+        productDetails?.price?.let {
+            addToWishlistParam.putDouble(FirebaseAnalytics.Param.VALUE,
+                it.toDouble())
+        }
         for (products in 0..(productDetails?.otherSkus?.size ?: 0)) {
             val addToWishlistParams = Bundle()
-            addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_ID, productDetails?.productId)
-            addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_NAME, productDetails?.productName)
-            addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, productDetails?.categoryName)
-            addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_BRAND, productDetails?.brandText)
-            addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_VARIANT, productDetails?.colourSizeVariants)
-            addToWishlistParams.putString(FirebaseAnalytics.Param.PRICE, productDetails?.price.toString())
-            addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_LIST_NAME, productDetails?.categoryName)
-            addToWishlistParam.putParcelableArray(FirebaseAnalytics.Param.ITEMS, arrayOf(addToWishlistParams))
+            addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_ID,
+                productDetails?.productId)
+            addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_NAME,
+                productDetails?.productName)
+            addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_CATEGORY,
+                productDetails?.categoryName)
+            addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_BRAND,
+                productDetails?.brandText)
+            addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_VARIANT,
+                productDetails?.colourSizeVariants)
+            addToWishlistParams.putString(FirebaseAnalytics.Param.PRICE,
+                productDetails?.price.toString())
+            addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_LIST_NAME,
+                productDetails?.categoryName)
+            addToWishlistParam.putParcelableArray(FirebaseAnalytics.Param.ITEMS,
+                arrayOf(addToWishlistParams))
         }
-        AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.ADD_TO_WISHLIST, addToWishlistParam)
+        AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.ADD_TO_WISHLIST,
+            addToWishlistParam)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -2437,7 +2472,8 @@ class ProductDetailsFragment : BaseFragmentBinding<ProductDetailsFragmentBinding
     private fun ProductDetailsFragmentBinding.requestSelectSize() {
         activity?.apply {
             resources.displayMetrics?.let {
-                val mid: Int = it.heightPixels / 2 - sizeColorSelectorLayout.selectedSizePlaceholder.height
+                val mid: Int =
+                    it.heightPixels / 2 - sizeColorSelectorLayout.selectedSizePlaceholder.height
                 ObjectAnimator.ofInt(scrollView, "scrollY", mid).setDuration(500).start()
             }
             sizeColorSelectorLayout.selectedSizePlaceholder?.let {
@@ -2600,7 +2636,8 @@ class ProductDetailsFragment : BaseFragmentBinding<ProductDetailsFragmentBinding
     private fun ProductDetailsFragmentBinding.showSelectedColor() {
         activity?.apply {
             getSelectedGroupKey()?.let {
-                sizeColorSelectorLayout.colorPlaceholder?.setTextColor(ContextCompat.getColor(this, R.color.black))
+                sizeColorSelectorLayout.colorPlaceholder?.setTextColor(ContextCompat.getColor(this,
+                    R.color.black))
                 sizeColorSelectorLayout.selectedColor?.text = "  -  $it"
             }
         }
@@ -2821,23 +2858,23 @@ class ProductDetailsFragment : BaseFragmentBinding<ProductDetailsFragmentBinding
         return isAllProductsOutOfStock
     }
 
-    private fun showProductOutOfStock() {
+    private fun productOutOfStockErrorMessage() {
         if (!isOutOfStockFragmentAdded) {
             isOutOfStockFragmentAdded = true
-            activity?.apply {
-                getDeliveryLocation()?.fulfillmentDetails?.let {
-                    val message =
-                        bindString(
-                            R.string.product_details_out_of_stock,
-                            KotlinUtils.getPreferredDeliveryAddressOrStoreName()
+            updateAddToCartButtonForSelectedSKU()
+            try {
+                activity?.supportFragmentManager?.beginTransaction()?.apply {
+                    val productDetailsFindInStoreDialog =
+                        ProductDetailsFindInStoreDialog.newInstance(
+                            this@ProductDetailsFragment
                         )
-                    OutOfStockMessageDialogFragment.newInstance(message).show(
-                        this@ProductDetailsFragment.childFragmentManager,
-                        OutOfStockMessageDialogFragment::class.java.simpleName
+                    productDetailsFindInStoreDialog.show(
+                        this,
+                        ProductDetailsFindInStoreDialog::class.java.simpleName
                     )
-
-                    updateAddToCartButtonForSelectedSKU()
                 }
+            } catch (ex: IllegalStateException) {
+                logException(ex)
             }
         }
     }
@@ -2866,7 +2903,7 @@ class ProductDetailsFragment : BaseFragmentBinding<ProductDetailsFragmentBinding
                 productLayout.contentDescription = getString(R.string.pdp_layout)
                 productImagesViewPagerIndicator.contentDescription =
                     getString(R.string.store_card_image)
-                openCart.contentDescription = getString(R.string.pdp_layout)
+                openCart.root.contentDescription = getString(R.string.pdp_layout)
                 productName.contentDescription = getString(R.string.pdp_textViewProductName)
                 priceLayout.root.contentDescription = getString(R.string.pdp_textViewPrice)
                 binding.sizeColorSelectorLayout.apply {
@@ -2964,6 +3001,10 @@ class ProductDetailsFragment : BaseFragmentBinding<ProductDetailsFragmentBinding
         this.findItemInStore()
     }
 
+    override fun openChangeFulfillmentScreen() {
+        this.updateDeliveryLocation()
+    }
+
     override fun clearStockAvailability() {
         productDetails?.otherSkus?.forEach {
             it.quantity = -1
@@ -3011,7 +3052,7 @@ class ProductDetailsFragment : BaseFragmentBinding<ProductDetailsFragmentBinding
 
     override fun onGetRatingNReviewSuccess(ratingNReview: RatingAndReviewData) {
         hideProgressBar()
-        if(ratingNReview.data.isNotEmpty()) {
+        if (ratingNReview.data.isNotEmpty()) {
             binding.showRatingAndReview()
             binding.setReviewUI(ratingNReview.data[0])
             ratingReviewResponse = ratingNReview.data[0]
@@ -3143,7 +3184,7 @@ class ProductDetailsFragment : BaseFragmentBinding<ProductDetailsFragmentBinding
                     vtoLayout.root.visibility = View.GONE
                     share?.visibility = View.VISIBLE
                     productImagesViewPagerIndicator?.visibility = View.VISIBLE
-                    openCart?.visibility = View.VISIBLE
+                    openCart.root.visibility = View.VISIBLE
                     backArrow?.visibility = View.VISIBLE
                     productImagesViewPager?.visibility = View.VISIBLE
                     imgVTOOpen?.visibility = View.VISIBLE
@@ -3184,7 +3225,7 @@ class ProductDetailsFragment : BaseFragmentBinding<ProductDetailsFragmentBinding
         vtoLayout.root.visibility = View.VISIBLE
         share?.visibility = View.GONE
         productImagesViewPagerIndicator?.visibility = View.GONE
-        openCart?.visibility = View.GONE
+        openCart.root.visibility = View.GONE
         backArrow?.visibility = View.GONE
         productImagesViewPager?.visibility = View.GONE
         vtoLayout.imgDownloadVTO.visibility = View.GONE
@@ -3395,7 +3436,7 @@ class ProductDetailsFragment : BaseFragmentBinding<ProductDetailsFragmentBinding
         vtoLayout.root.visibility = View.VISIBLE
         share?.visibility = View.GONE
         productImagesViewPagerIndicator?.visibility = View.GONE
-        openCart?.visibility = View.GONE
+        openCart.root.visibility = View.GONE
         backArrow?.visibility = View.GONE
         productImagesViewPager?.visibility = View.GONE
         vtoLayout.apply {
@@ -3475,7 +3516,8 @@ class ProductDetailsFragment : BaseFragmentBinding<ProductDetailsFragmentBinding
                             setBitmapFromUri(selectedImageUri)
                         }
                         result.equals(VTO_COLOR_NOT_MATCH) -> {
-                            sizeColorSelectorLayout.colourUnavailableError?.visibility = View.VISIBLE
+                            sizeColorSelectorLayout.colourUnavailableError?.visibility =
+                                View.VISIBLE
                             imgVTORefresh?.visibility = View.GONE
                             imgDownloadVTO?.visibility = View.GONE
                             setBitmapFromUri(selectedImageUri)
@@ -3676,7 +3718,7 @@ class ProductDetailsFragment : BaseFragmentBinding<ProductDetailsFragmentBinding
     }
 
     private fun handleException(e: Any?) {
-        FirebaseManager.logException(e)
+        logException(e)
     }
 
     /**
@@ -3754,7 +3796,8 @@ class ProductDetailsFragment : BaseFragmentBinding<ProductDetailsFragmentBinding
                 it.bottomToBottom = R.id.layoutLowStockColor
                 selectedColor?.layoutParams = it
                 layoutLowStockColor.root.visibility = View.VISIBLE
-                layoutLowStockIndicator.txtLowStockIndicator?.text = AppConfigSingleton.lowStock?.lowStockCopy
+                layoutLowStockIndicator.txtLowStockIndicator?.text =
+                    AppConfigSingleton.lowStock?.lowStockCopy
                 colorPlaceholder?.visibility = View.GONE
             }
             (colorSelectorRecycleView?.layoutParams as ConstraintLayout.LayoutParams).let {
@@ -3831,6 +3874,7 @@ class ProductDetailsFragment : BaseFragmentBinding<ProductDetailsFragmentBinding
                 }
         }
     }
+
     private fun viewSkinProfileDialog() {
         val dialog = ratingReviewResponse?.reviews?.get(0)?.let { SkinProfileDialog(it) }
         activity?.apply {
@@ -3843,11 +3887,13 @@ class ProductDetailsFragment : BaseFragmentBinding<ProductDetailsFragmentBinding
                 }
         }
     }
+
     private fun navigateToMoreReviewsScreen() {
         ScreenManager.presentRatingAndReviewDetail(activity, prodId)
         RatingAndReviewUtil.likedReviews.clear()
         RatingAndReviewUtil.reportedReviews.clear()
     }
+
     private fun likeButtonClicked() {
         if (!SessionUtilities.getInstance().isUserAuthenticated) {
             ScreenManager.presentSSOSignin(activity)
@@ -3867,7 +3913,8 @@ class ProductDetailsFragment : BaseFragmentBinding<ProductDetailsFragmentBinding
                     )
                     hideProgressBar()
                     if (response.httpCode == 200) {
-                        binding.productDetailOptionsAndInformation.customerReview.reviewHelpfulReport.ivLike.setImageResource(R.drawable.iv_like_selected)
+                        binding.productDetailOptionsAndInformation.customerReview.reviewHelpfulReport.ivLike.setImageResource(
+                            R.drawable.iv_like_selected)
                         RatingAndReviewUtil.likedReviews.add(ratingReviewResponse?.reviews?.get(0)?.id.toString())
                     }
                 } catch (e: Exception) {
@@ -3886,6 +3933,7 @@ class ProductDetailsFragment : BaseFragmentBinding<ProductDetailsFragmentBinding
             }
         }
     }
+
     private fun navigateToReportReviewScreen() {
         if (!SessionUtilities.getInstance().isUserAuthenticated) {
             ScreenManager.presentSSOSignin(activity)

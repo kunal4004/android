@@ -35,7 +35,7 @@ class CustomBottomSheetDialogFragment : WBottomSheetDialogFragment(),
             subTitle: CharSequence,
             dialog_button_text: String,
             dialog_title_img: Int,
-            dismissLinkText: String?
+            dismissLinkText: String?,
         ) =
             CustomBottomSheetDialogFragment().withArgs {
                 putString(DIALOG_TITLE, title)
@@ -43,6 +43,21 @@ class CustomBottomSheetDialogFragment : WBottomSheetDialogFragment(),
                 putString(DIALOG_BUTTON_TEXT, dialog_button_text)
                 putInt(DIALOG_TITLE_IMG, dialog_title_img)
                 putString(DIALOG_DISMISS_LINK_TEXT, dismissLinkText)
+            }
+
+        fun newInstance(
+            title: String,
+            subTitle: CharSequence,
+            dialog_button_text: String,
+            dismissLinkText: String?,
+            dialogResultCode: String,
+        ) =
+            CustomBottomSheetDialogFragment().withArgs {
+                putString(DIALOG_TITLE, title)
+                putCharSequence(DIALOG_SUB_TITLE, subTitle)
+                putString(DIALOG_BUTTON_TEXT, dialog_button_text)
+                putString(DIALOG_DISMISS_LINK_TEXT, dismissLinkText)
+                putString(DIALOG_BUTTON_CLICK_RESULT, dialogResultCode)
             }
     }
 
@@ -103,7 +118,8 @@ class CustomBottomSheetDialogFragment : WBottomSheetDialogFragment(),
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.buttonAction -> {
-                setFragmentResult(DIALOG_BUTTON_CLICK_RESULT, bundleOf())
+                setFragmentResult(arguments?.getString(DIALOG_BUTTON_CLICK_RESULT)
+                    ?: DIALOG_BUTTON_CLICK_RESULT, bundleOf())
                 dismiss()
             }
             R.id.tvDismiss -> {

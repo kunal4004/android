@@ -59,12 +59,13 @@ class GetReplacementCardFragment : MyCardExtension(R.layout.replace_card_fragmen
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding = ReplaceCardFragmentBinding.bind(view)
         activity?.let { Utils.updateStatusBarBackground(it) }
 
         binding.apply {
             setActionBar()
-            tvAlreadyHaveCard?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
-            pbParticipatingStore?.indeterminateDrawable?.setColorFilter(
+            tvAlreadyHaveCard.paintFlags = Paint.UNDERLINE_TEXT_FLAG
+            pbParticipatingStore.indeterminateDrawable?.setColorFilter(
                 Color.WHITE,
                 PorterDuff.Mode.MULTIPLY
             )

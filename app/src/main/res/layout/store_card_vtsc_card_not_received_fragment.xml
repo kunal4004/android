@@ -101,6 +101,7 @@
         android:id="@+id/myCardHasArrivedTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:contentDescription="@string/button_my_card_has_arrived"
         android:gravity="center"
         android:paddingTop="@dimen/_16sdp"
         android:text="@string/my_card_has_arrived"

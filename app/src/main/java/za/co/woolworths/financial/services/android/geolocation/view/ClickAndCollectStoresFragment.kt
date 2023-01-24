@@ -38,7 +38,9 @@ import za.co.woolworths.financial.services.android.util.binding.BaseDialogFragme
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class ClickAndCollectStoresFragment : BaseDialogFragmentBinding<FragmentClickAndCollectStoresBinding>(FragmentClickAndCollectStoresBinding::inflate), DynamicMapDelegate,
+class ClickAndCollectStoresFragment :
+    BaseDialogFragmentBinding<FragmentClickAndCollectStoresBinding>(
+        FragmentClickAndCollectStoresBinding::inflate), DynamicMapDelegate,
     StoreListAdapter.OnStoreSelected, View.OnClickListener, TextWatcher, VtoTryAgainListener {
 
     private var mValidateLocationResponse: ValidateLocationResponse? = null
@@ -47,6 +49,7 @@ class ClickAndCollectStoresFragment : BaseDialogFragmentBinding<FragmentClickAnd
     private var validateLocationResponse: ValidateLocationResponse? = null
     private var placeId: String? = null
     private var isComingFromConfirmAddress: Boolean? = false
+
     @Inject
     lateinit var vtoErrorBottomSheetDialog: VtoErrorBottomSheetDialog
 
@@ -65,8 +68,8 @@ class ClickAndCollectStoresFragment : BaseDialogFragmentBinding<FragmentClickAnd
         bundle = arguments?.getBundle(BUNDLE)
         bundle?.apply {
             placeId = this.getString(KEY_PLACE_ID, "")
-            isComingFromConfirmAddress = getBoolean(IS_COMING_CONFIRM_ADD,false)
-            if(containsKey(VALIDATE_RESPONSE)){
+            isComingFromConfirmAddress = getBoolean(IS_COMING_CONFIRM_ADD, false)
+            if (containsKey(VALIDATE_RESPONSE)) {
                 getSerializable(VALIDATE_RESPONSE)?.let {
                     mValidateLocationResponse =
                         it as ValidateLocationResponse
@@ -110,21 +113,24 @@ class ClickAndCollectStoresFragment : BaseDialogFragmentBinding<FragmentClickAnd
 
     private fun showFirstFourLocationInMap(addressStoreList: List<Store>?) {
         addressStoreList?.let {
-            for (i in 0..3) {
-                binding.dynamicMapView?.addMarker(
-                    requireContext(),
-                    latitude = addressStoreList?.getOrNull(i)?.latitude,
-                    longitude = addressStoreList?.getOrNull(i)?.longitude,
-                    icon = R.drawable.pin
-                )
+            it.forEachIndexed { position, store ->
+                if (position <= 3) {
+                    binding.dynamicMapView?.addMarker(
+                        requireContext(),
+                        latitude = store?.latitude,
+                        longitude = store?.longitude,
+                        icon = R.drawable.pin
+                    )
+                } else
+                    return@forEachIndexed
             }
         }
         //after plotting all the markers pointing the camera to nearest store
-        val store:Store?=addressStoreList?.get(0)
-        store?.let{
+        val store: Store? = addressStoreList?.getOrNull(0)
+        store?.let {
             binding.dynamicMapView?.moveCamera(
                 latitude = it.latitude,
-                longitude =it.longitude,
+                longitude = it.longitude,
                 zoom = 11f
             )
         }
@@ -132,7 +138,7 @@ class ClickAndCollectStoresFragment : BaseDialogFragmentBinding<FragmentClickAnd
 
     private fun setAddressUI(
         address: List<Store>?,
-        mValidateLocationResponse: ValidateLocationResponse?
+        mValidateLocationResponse: ValidateLocationResponse?,
     ) {
         binding.apply {
             tvStoresNearMe?.text = resources.getString(R.string.near_stores, address?.size)
@@ -175,7 +181,7 @@ class ClickAndCollectStoresFragment : BaseDialogFragmentBinding<FragmentClickAnd
                 navigateToFulfillmentScreen()
             }
             R.id.ivCross -> {
-               dismiss()
+                dismiss()
             }
             R.id.btChange -> {
                 IS_FROM_STORE_LOCATOR = true
@@ -224,7 +230,9 @@ class ClickAndCollectStoresFragment : BaseDialogFragmentBinding<FragmentClickAnd
         val list = ArrayList<Store>()
         mValidateLocationResponse?.validatePlace?.stores?.let {
             for (store in it) {
-                if (store.storeName?.contains(s.toString(), true) == true || store.storeAddress?.contains(s.toString(), true)==true) {
+                if (store.storeName?.contains(s.toString(),
+                        true) == true || store.storeAddress?.contains(s.toString(), true) == true
+                ) {
                     list.add(store)
                 }
             }
@@ -279,9 +287,10 @@ class ClickAndCollectStoresFragment : BaseDialogFragmentBinding<FragmentClickAnd
             )
         }
     }
+
     override fun tryAgain() {
-        if(confirmAddressViewModel.isConnectedToInternet(requireActivity()))
-        placeId?.let { getDeliveryDetailsFromValidateLocation(it) }
+        if (confirmAddressViewModel.isConnectedToInternet(requireActivity()))
+            placeId?.let { getDeliveryDetailsFromValidateLocation(it) }
     }
 
     override fun onMapReady() {
@@ -289,7 +298,7 @@ class ClickAndCollectStoresFragment : BaseDialogFragmentBinding<FragmentClickAnd
         showFirstFourLocationInMap(mValidateLocationResponse?.validatePlace?.stores)
     }
 
-    override fun onMarkerClicked(marker: DynamicMapMarker) { }
+    override fun onMarkerClicked(marker: DynamicMapMarker) {}
 
     override fun onResume() {
         super.onResume()
