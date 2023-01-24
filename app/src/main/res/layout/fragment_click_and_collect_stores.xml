@@ -3,8 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/color_F5F5F5"
-    android:paddingTop="@dimen/eight_dp">
+    >
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -20,6 +19,15 @@
             android:layout_height="wrap_content"
             tools:context="za.co.woolworths.financial.services.android.geolocation.view.ClickAndCollectStoresFragment">
 
+            <View
+                android:id="@+id/top_padding_view"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/eight_dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:background="@color/color_F5F5F5"
+                android:visibility="gone" />
+
             <ImageView
                 android:id="@+id/backButton"
                 android:layout_width="wrap_content"
@@ -29,7 +37,8 @@
                 android:layout_marginEnd="@dimen/sixteen_dp"
                 android:src="@drawable/back24"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toBottomOf="@id/top_padding_view"
+                />
 
 
 
