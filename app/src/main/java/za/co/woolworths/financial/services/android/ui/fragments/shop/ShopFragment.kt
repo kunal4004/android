@@ -1136,9 +1136,9 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                     validatePlace.stores
                 )
                 if(store?.storeDeliveryType == StoreUtils.Companion.StoreDeliveryType.FOOD_AND_OTHER.type) {
-                    blackToolTipLayout.deliveryCollectionTitle?.text = getString(R.string.food_items_beauty_home)
+                    blackToolTipLayout.deliveryCollectionTitle?.text = resources.getString(R.string.food_items_beauty_home)
                 } else
-                    blackToolTipLayout.deliveryCollectionTitle?.text = getString(R.string.earliest_collection_Date)
+                    blackToolTipLayout.deliveryCollectionTitle?.text = resources.getString(R.string.earliest_collection_Date)
                 blackToolTipLayout.foodItemDateText?.text = store?.firstAvailableFoodDeliveryDate
                 blackToolTipLayout.productAvailableText?.text = resources.getString(
                     R.string.dash_item_limit,
