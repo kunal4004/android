@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.BottomProgressBarBinding
 import com.awfs.coordination.databinding.ItemFoundLayoutBinding
-import com.awfs.coordination.databinding.ShopSearchProductItemBinding
+import com.awfs.coordination.databinding.LayoutCartListProductItemBinding
 import com.daimajia.swipe.adapters.RecyclerSwipeAdapter
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus
 import za.co.woolworths.financial.services.android.models.dto.ProductList
@@ -41,7 +41,7 @@ class SearchResultShopAdapter(
 
     private fun getSimpleViewHolder(parent: ViewGroup): SimpleViewHolder {
         return SimpleViewHolder(
-            ShopSearchProductItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            LayoutCartListProductItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         )
     }
 
@@ -73,7 +73,7 @@ class SearchResultShopAdapter(
                 holder.disableSwipeToDelete(false)
                 holder.setTvColorSize(productList)
                 holder.hideDropdownIcon()
-                holder.itemBinding.btnDeleteRow.setOnClickListener {
+                holder.itemBinding.cbShoppingList.setOnClickListener {
                     /**
                      * Disable clothing type selection when product detail api is loading
                      * food item type can still be selected.
@@ -86,7 +86,7 @@ class SearchResultShopAdapter(
                     val productType = productList.productType
                     if (!productType.equals(FOOD_PRODUCT, ignoreCase = true)) {
                         val unlockSelection = !viewIsLoading()
-                        holder.itemBinding.btnDeleteRow.isChecked = unlockSelection
+                        holder.itemBinding.cbShoppingList.isChecked = unlockSelection
                         if (unlockSelection) {
                             onCheckItemClick(holder)
                         }
@@ -160,17 +160,18 @@ class SearchResultShopAdapter(
         return R.id.swipe
     }
 
-    private inner class SimpleViewHolder(val itemBinding: ShopSearchProductItemBinding) : RecyclerView.ViewHolder(itemBinding.root) {
+    private inner class SimpleViewHolder(val itemBinding: LayoutCartListProductItemBinding) : RecyclerView.ViewHolder(itemBinding.root) {
 
         fun setDefaultQuantity() {
             itemBinding.tvQuantity.setText("1")
         }
 
         fun setCartImage(productItem: ProductList) {
-            val externalImageRefV2 = productItem.externalImageRefV2
-            if (itemBinding.cartProductImage != null && !TextUtils.isEmpty(externalImageRefV2)) itemBinding.cartProductImage.setImageURI(
-                externalImageRefV2 + (if ((externalImageRefV2!!.indexOf("?") > 0)) "w=" + 85 + "&q=" + 85 else "?w=" + 85 + "&q=" + 85)
-            )
+            productItem.externalImageRefV2?.let {
+                itemBinding.cartProductImage?.setImageURI(
+                    it + (if ((it.indexOf("?") > 0)) "w=" + 85 + "&q=" + 85 else "?w=" + 85 + "&q=" + 85)
+                )
+            }
         }
 
         fun setProductName(productItem: ProductList) {
