@@ -3,7 +3,6 @@ package za.co.woolworths.financial.services.android.ui.adapters;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
-import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.text.TextUtils;
@@ -248,9 +247,11 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 					}
 				});
 
-				holder.llItemContainer.setOnClickListener(view -> {
-					// TODO: open black tooltip To be implemented..
-				});
+                holder.llItemContainer.setOnClickListener(view -> {
+                    ShoppingListItem shoppingListItem14 = getItem(position);
+                    if (shoppingListItem14.unavailable)
+                        navigator.showListBlackToolTip();
+                });
 
 				holder.cartProductImage.setOnClickListener(view -> {
 					if (!mAdapterIsClickable) return;
@@ -281,7 +282,7 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 					item.userQuantity = Math.max(item.userQuantity, 1);
 					item.isSelected = !item.isSelected;
 					mShoppingListItem.set((position - 1), item);
-					navigator.onItemSelectionChange();
+					navigator.onItemSelectionChange(item.isSelected);
 					notifyItemChanged(position, item);
 				});
 
@@ -421,7 +422,7 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 				}
 			}
 			this.mShoppingListItem = updatedListItems;
-			navigator.onItemSelectionChange();
+			navigator.onItemSelectionChange(false); // default value
 			notifyDataSetChanged();
 			closeAllItems();
 		} catch (IllegalArgumentException ex) {
@@ -460,6 +461,6 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 			shoppinglistItem.isSelected = false;
 		}
 		notifyDataSetChanged();
-		navigator.onItemSelectionChange();
+		navigator.onItemSelectionChange(false);
 	}
 }

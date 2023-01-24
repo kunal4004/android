@@ -6,12 +6,10 @@ import android.content.BroadcastReceiver
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.view.*
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import androidx.activity.result.ActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -27,6 +25,7 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.contracts.IToastInterface
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils.Companion.getPlaceId
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.item_limits.ProductCountMap
@@ -37,13 +36,11 @@ import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingLi
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity
-import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity.*
 import za.co.woolworths.financial.services.android.ui.adapters.ShoppingListItemsAdapter
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.ConfirmDeliveryLocationFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment
-import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.*
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory.Companion.buildAddToCartSuccessToast
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory.Companion.buildShoppingListFromSearchResultToast
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory.Companion.showItemsLimitToastOnAddToCart
@@ -67,41 +64,6 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         ownerProducer = { this }
     )
 
-    private val productSearchResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
-        when (result.resultCode) {
-            // add to list from search result
-            ADDED_TO_SHOPPING_LIST_RESULT_CODE -> {
-                val count = result.data?.getIntExtra(EXTRA_LIST_ITEMS, 0) ?: 0
-                buildShoppingListFromSearchResultToast(
-                    requireActivity(), bindingListDetails.rlCheckOut, listName ?: "", count
-                )
-                initGetShoppingListItems()
-            }
-            // add to list from search result -> PDP
-            AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE -> {
-                with(requireActivity()) {
-                    setResult(
-                        AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE,
-                        result.data
-                    )
-                    onBackPressed()
-                }
-            }
-            // searched details result
-            PRODUCT_SEARCH_ACTIVITY_RESULT_CODE -> {
-                val searchResultFragment = SearchResultFragment()
-                result.data?.let { data ->
-                    val bundle = bundleOf(
-                        MY_LIST_SEARCH_TERM to data.getStringExtra(MY_LIST_LIST_NAME),
-                        MY_LIST_LIST_ID to data.getStringExtra(MY_LIST_LIST_ID)
-                    )
-                    searchResultFragment.arguments = bundle
-                }
-                (activity as? BottomNavigationActivity)?.pushFragment(searchResultFragment)
-            }
-        }
-    }
-
     private var mErrorHandlerView: ErrorHandlerView? = null
     private var openFromMyList = false
     private var addedToCart = false
@@ -115,6 +77,8 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
     private var mPostAddToCart: Call<AddItemToCartResponse>? = null
 
     private var _bindingListDetails: ShoppingListDetailFragmentBinding? = null
+    private var timer: CountDownTimer? = null
+
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val bindingListDetails get() = _bindingListDetails!!
@@ -133,7 +97,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         _bindingListDetails = ShoppingListDetailFragmentBinding.inflate(inflater, container, false)
         return _bindingListDetails?.root
@@ -227,6 +191,9 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             selectDeselectAllTextView.setOnClickListener(this@ShoppingListDetailFragment)
             deliveryLocationConstLayout.setOnClickListener(this@ShoppingListDetailFragment)
             textProductSearch.setOnClickListener(this@ShoppingListDetailFragment)
+            blackToolTipLayout.closeWhiteBtn.setOnClickListener(this@ShoppingListDetailFragment)
+            blackToolTipLayout.changeLocationButton.setOnClickListener(this@ShoppingListDetailFragment)
+
             btnRetry.setOnClickListener(this@ShoppingListDetailFragment)
 
             mErrorHandlerView = ErrorHandlerView(activity, noConnectionLayout)
@@ -242,6 +209,45 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
 
         // Show Bottom Navigation Menu
         (activity as? BottomNavigationActivity)?.showBottomNavigationMenu()
+    }
+
+    private fun showBlackToolTip() {
+        when (getPreferredDeliveryType()) {
+            Delivery.STANDARD -> {
+                bindingListDetails.blackToolTipLayout.deliveryCollectionTitle.text =
+                    getText(R.string.title_mylist_standard_tooltip)
+            }
+            Delivery.CNC -> {
+                bindingListDetails.blackToolTipLayout.deliveryCollectionTitle.text =
+                    getText(R.string.title_mylist_collection_tooltip)
+            }
+            Delivery.DASH -> {
+                bindingListDetails.blackToolTipLayout.deliveryCollectionTitle.text =
+                    getText(R.string.title_mylist_dash_tooltip)
+            }
+            else -> {
+                return
+                // No need to change anything.
+            }
+        }
+        bindingListDetails.blackToolTipLayout?.root?.visibility = VISIBLE
+        timer?.cancel()
+        // Check the time from the config for blackToolTip dismiss.
+        if (AppConfigSingleton.tooltipSettings?.isAutoDismissEnabled == true) {
+            val timeDuration =
+                AppConfigSingleton.tooltipSettings?.autoDismissDuration?.times(1000) ?: return
+            timer = object : CountDownTimer(timeDuration, 100) {
+                override fun onTick(millisUntilFinished: Long) {}
+                override fun onFinish() {
+                    hideBlackToolTip()
+                }
+            }.start()
+        }
+    }
+
+    private fun hideBlackToolTip() {
+        bindingListDetails?.blackToolTipLayout?.root?.visibility = GONE
+        timer?.cancel()
     }
 
     private fun setUpView() {
@@ -275,20 +281,24 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                 initGetShoppingListItems()
             }
             R.id.btnCheckOut -> addItemsToCart()
+            R.id.changeLocationButton -> deliverySelectionIntent(DELIVERY_LOCATION_REQUEST)
+            R.id.closeWhiteBtn -> hideBlackToolTip()
             else -> {}
         }
     }
 
     private fun openProductSearchActivity() {
-        with(requireActivity()) {
-            val openProductSearchActivity = Intent(this, ProductSearchActivity::class.java)
+        requireActivity().apply {
+            val openProductSearchActivity = Intent(activity, ProductSearchActivity::class.java)
             openProductSearchActivity.putExtra(
-                EXTRA_SEARCH_TEXT_HINT, requireContext().getString(R.string.shopping_search_hint)
+                "SEARCH_TEXT_HINT",
+                getString(R.string.shopping_search_hint)
             )
-            openProductSearchActivity.putExtra(
-                EXTRA_LIST_ID, listId
+            openProductSearchActivity.putExtra("listID", listId)
+            startActivityForResult(
+                openProductSearchActivity,
+                ProductSearchActivity.PRODUCT_SEARCH_ACTIVITY_REQUEST_CODE
             )
-            productSearchResult.launch(openProductSearchActivity)
             overridePendingTransition(0, 0)
         }
     }
@@ -299,6 +309,10 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             HTTP_OK -> {
                 bindingListDetails.loadingBar.visibility = GONE
                 viewModel.makeInventoryCalls()
+                if (viewModel.isShoppingListContainsUnavailableItems())
+                    showBlackToolTip()
+                else
+                    hideBlackToolTip()
                 updateList()
             }
             HTTP_SESSION_TIMEOUT_440 -> SessionUtilities.getInstance().setSessionState(
@@ -330,8 +344,10 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         shoppingListItemsAdapter?.adapterClickable(clickable)
     }
 
-    override fun onItemSelectionChange() {
+    override fun onItemSelectionChange(isSelected: Boolean) {
         if (!isAdded || !isVisible) return
+        if (isSelected)
+        hideBlackToolTip()
         updateCartCountButton()
         manageSelectAllMenuVisibility()
     }
@@ -341,13 +357,16 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             shoppingListItemsResponse.listItems?.let { ArrayList(it) } ?: ArrayList(0)
         updateList()
         enableAdapterClickEvent(true)
+        if (!viewModel.isShoppingListContainsUnavailableItems()) {
+            hideBlackToolTip()
+        }
     }
 
     override fun onItemDeleteClick(
         id: String,
         productId: String,
         catalogRefId: String,
-        shouldUpdateShoppingList: Boolean
+        shouldUpdateShoppingList: Boolean,
     ) {
         val listSize = shoppingListItemsAdapter?.shoppingListItems?.size ?: 0
         if (listSize == 1) {
@@ -548,7 +567,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
     private fun addFragmentListener() {
         activity ?: return
         activity?.supportFragmentManager?.setFragmentResultListener(
-            ADDED_TO_SHOPPING_LIST_RESULT_CODE.toString(),
+            SearchResultFragment.ADDED_TO_SHOPPING_LIST_RESULT_CODE.toString(),
             activity!!
         ) { requestKey: String?, result: Bundle ->
             if (result.containsKey("listItems")) {
@@ -686,13 +705,17 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             }
             notifyDataSetChanged()
             viewModel.mShoppingListItems = shoppingListItems
-            onItemSelectionChange()
+            onItemSelectionChange(setSelection)
         }
     }
 
     override fun onConnectionChanged() {
         if (viewModel.inventoryCallFailed) {
             viewModel.makeInventoryCalls()
+            if (viewModel.isShoppingListContainsUnavailableItems())
+                showBlackToolTip()
+            else
+                hideBlackToolTip()
         }
         if (addedToCart()) {
             addItemsToCart()
@@ -779,10 +802,24 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         updateCartCountButton()
     }
 
+    override fun showListBlackToolTip() {
+        showBlackToolTip()
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
+        // add to list from search result
+        if (requestCode == ProductSearchActivity.PRODUCT_SEARCH_ACTIVITY_REQUEST_CODE && resultCode == SearchResultFragment.ADDED_TO_SHOPPING_LIST_RESULT_CODE) {
+            val count = data!!.getIntExtra("listItems", 0)
+            buildShoppingListFromSearchResultToast(
+                activity!!, bindingListDetails.rlCheckOut, listName!!, count
+            )
+            initGetShoppingListItems()
+            return
+        }
         if (requestCode == BottomNavigationActivity.PDP_REQUEST_CODE && resultCode == AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE
+            || requestCode == ProductSearchActivity.PRODUCT_SEARCH_ACTIVITY_REQUEST_CODE && resultCode == AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE
         ) {
             activity?.setResult(
                 AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE,
@@ -793,11 +830,16 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             // response from search product from shopping list
         }
 
-        when(requestCode) {
+        when (requestCode) {
             DELIVERY_LOCATION_REQUEST_CODE_FROM_SELECT_ALL,
-            DELIVERY_LOCATION_REQUEST -> {
-                if(resultCode == RESULT_OK) {
+            DELIVERY_LOCATION_REQUEST,
+            -> {
+                if (resultCode == RESULT_OK) {
                     setDeliveryLocation()
+                    if (viewModel.isShoppingListContainsUnavailableItems())
+                        showBlackToolTip()
+                    else
+                        hideBlackToolTip()
                     viewModel.makeInventoryCalls()
                 }
             }
@@ -958,6 +1000,5 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         private const val ARG_LIST_ID: String = "listId"
         private const val ARG_LIST_NAME: String = "listName"
         private const val ARG_OPEN_FROM_MY_LIST: String = "openFromMyList"
-        private const val EXTRA_LIST_ITEMS: String = "listItems"
     }
 }

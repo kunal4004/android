@@ -2529,6 +2529,10 @@
     <string name="all_products_available">All Products Available</string>
     <string name="next_dash_delivery_timeslot_text">Next Dash Delivery Timeslot</string>
     <string name="my_shopping_lists">My Shopping Lists</string>
+    <string name="title_mylist_dash_tooltip">Some items aren’t available using <b>Dash.</b></string>
+    <string name="title_mylist_collection_tooltip">Some items aren’t available for <b>Collection.</b></string>
+    <string name="title_mylist_standard_tooltip">Some items aren’t available using <b>Standard.</b></string>
+    <string name="change_delivery_method_mylist_tooltip">Get them using a different delivery method.</string>
     <string name="hi">HI&#160;</string>
     <string name="tip_your_dash_driver">Tip Your Dash Driver</string>
     <string name="enter_your_own_amount">Enter your own amount between R%1d - R%2d</string>
