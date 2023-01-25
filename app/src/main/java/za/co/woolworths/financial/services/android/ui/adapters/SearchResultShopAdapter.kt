@@ -5,6 +5,8 @@ import android.text.Html
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
@@ -59,20 +61,27 @@ class SearchResultShopAdapter(
             }
             is ProgressViewHolder -> {
                 if (!value) {
-                    holder.itemBinding.pbFooterProgress.visibility = View.VISIBLE
+                    holder.itemBinding.pbFooterProgress.visibility = VISIBLE
                     holder.itemBinding.pbFooterProgress.isIndeterminate = true
-                } else holder.itemBinding.pbFooterProgress.visibility = View.GONE
+                } else holder.itemBinding.pbFooterProgress.visibility = GONE
             }
             is SimpleViewHolder -> {
                 holder.setPrice(productList)
-                holder.setProductName(productList)
+                holder.itemBinding?.apply {
+                    promotionalTextLayout.visibility = GONE
+                    llQuantity.visibility = GONE
+                    strikeThroughGroup.visibility = VISIBLE
+                    promotionalTextLayout.visibility = GONE
+
+                    cbShoppingList.visibility = VISIBLE
+                    cbShoppingList.isChecked = productList.itemWasChecked
+                    tvTitle.text = Html.fromHtml(productList.productName)
+                    tvQuantity.setText("1")
+                    tvColorSize.setText(productList.displayColorSizeText ?: "")
+                    swipe.isRightSwipeEnabled = false
+                }
                 holder.setCartImage(productList)
-                holder.setChecked(productList)
-                holder.setDefaultQuantity()
                 holder.showProgressBar(productList.viewIsLoading)
-                holder.disableSwipeToDelete(false)
-                holder.setTvColorSize(productList)
-                holder.hideDropdownIcon()
                 holder.itemBinding.cbShoppingList.setOnClickListener {
                     /**
                      * Disable clothing type selection when product detail api is loading
@@ -163,7 +172,6 @@ class SearchResultShopAdapter(
     private inner class SimpleViewHolder(val itemBinding: LayoutCartListProductItemBinding) : RecyclerView.ViewHolder(itemBinding.root) {
 
         fun setDefaultQuantity() {
-            itemBinding.tvQuantity.setText("1")
         }
 
         fun setCartImage(productItem: ProductList) {
@@ -183,25 +191,15 @@ class SearchResultShopAdapter(
             priceItem.setPrice(productItem, itemBinding, true)
         }
 
-        fun setChecked(productList: ProductList) {
-            itemBinding.btnDeleteRow.isChecked = productList.itemWasChecked
-        }
-
         fun showProgressBar(visible: Boolean) {
-            itemBinding.pbLoadProduct.visibility = if (visible) View.VISIBLE else View.GONE
-            itemBinding.btnDeleteRow.visibility = if (visible) View.GONE else View.VISIBLE
+            itemBinding.pbLoadProduct.visibility = if (visible) VISIBLE else GONE
+            itemBinding.btnDeleteRow.visibility = if (visible) GONE else VISIBLE
         }
 
         fun disableSwipeToDelete(enable: Boolean) {
-            itemBinding.swipe.isRightSwipeEnabled = enable
         }
 
-        fun setTvColorSize(productlist: ProductList) {
-            itemBinding.tvColorSize.setText(if (TextUtils.isEmpty(productlist.displayColorSizeText)) "" else productlist.displayColorSizeText)
-        }
-
-        fun hideDropdownIcon() {
-            itemBinding.imPrice.visibility = View.GONE
+        fun setTvColorSize(product: ProductList) {
         }
     }
 
