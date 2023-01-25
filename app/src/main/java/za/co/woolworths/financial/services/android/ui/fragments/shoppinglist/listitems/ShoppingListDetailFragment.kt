@@ -10,6 +10,9 @@ import android.os.CountDownTimer
 import android.view.*
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -36,6 +39,7 @@ import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingLi
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity
+import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity.*
 import za.co.woolworths.financial.services.android.ui.adapters.ShoppingListItemsAdapter
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.ConfirmDeliveryLocationFragment
@@ -63,6 +67,39 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
     private val viewModel: ShoppingListDetailViewModel by viewModels(
         ownerProducer = { this }
     )
+
+    private val productSearchResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+        // add to list from search result
+        when (result.resultCode) {
+            SearchResultFragment.ADDED_TO_SHOPPING_LIST_RESULT_CODE -> {
+                val count = result.data?.getIntExtra("listItems", 0) ?: 0
+                buildShoppingListFromSearchResultToast(
+                    requireActivity(), bindingListDetails.rlCheckOut, listName!!, count
+                )
+                initGetShoppingListItems()
+            }
+            AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE -> {
+                with(requireActivity()) {
+                    setResult(
+                        AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE,
+                        result.data
+                    )
+                    onBackPressed()
+                }
+            }
+            PRODUCT_SEARCH_ACTIVITY_RESULT_CODE -> {
+                val searchResultFragment = SearchResultFragment()
+                val bundle = bundleOf(
+                    SearchResultFragment.MY_LIST_SEARCH_TERM to
+                            result.data?.getStringExtra(SearchResultFragment.MY_LIST_LIST_NAME),
+                    SearchResultFragment.MY_LIST_LIST_ID to
+                                    result.data?.getStringExtra(SearchResultFragment.MY_LIST_LIST_ID)
+                )
+                searchResultFragment.arguments = bundle
+                (activity as? BottomNavigationActivity)?.pushFragment(searchResultFragment)
+            }
+        }
+    }
 
     private var mErrorHandlerView: ErrorHandlerView? = null
     private var openFromMyList = false
@@ -288,17 +325,15 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
     }
 
     private fun openProductSearchActivity() {
-        requireActivity().apply {
-            val openProductSearchActivity = Intent(activity, ProductSearchActivity::class.java)
+        with(requireActivity()) {
+            val openProductSearchActivity = Intent(this, ProductSearchActivity::class.java)
             openProductSearchActivity.putExtra(
-                "SEARCH_TEXT_HINT",
-                getString(R.string.shopping_search_hint)
+                EXTRA_SEARCH_TEXT_HINT, requireContext().getString(R.string.shopping_search_hint)
             )
-            openProductSearchActivity.putExtra("listID", listId)
-            startActivityForResult(
-                openProductSearchActivity,
-                ProductSearchActivity.PRODUCT_SEARCH_ACTIVITY_REQUEST_CODE
+            openProductSearchActivity.putExtra(
+                EXTRA_LIST_ID, listId
             )
+            productSearchResult.launch(openProductSearchActivity)
             overridePendingTransition(0, 0)
         }
     }
@@ -809,17 +844,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        // add to list from search result
-        if (requestCode == ProductSearchActivity.PRODUCT_SEARCH_ACTIVITY_REQUEST_CODE && resultCode == SearchResultFragment.ADDED_TO_SHOPPING_LIST_RESULT_CODE) {
-            val count = data!!.getIntExtra("listItems", 0)
-            buildShoppingListFromSearchResultToast(
-                activity!!, bindingListDetails.rlCheckOut, listName!!, count
-            )
-            initGetShoppingListItems()
-            return
-        }
         if (requestCode == BottomNavigationActivity.PDP_REQUEST_CODE && resultCode == AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE
-            || requestCode == ProductSearchActivity.PRODUCT_SEARCH_ACTIVITY_REQUEST_CODE && resultCode == AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE
         ) {
             activity?.setResult(
                 AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE,

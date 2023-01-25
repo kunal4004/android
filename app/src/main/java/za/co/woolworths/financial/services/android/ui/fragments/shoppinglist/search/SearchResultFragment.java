@@ -114,7 +114,7 @@ public class SearchResultFragment extends Fragment implements SearchResultNaviga
 
     public static final int PRODUCT_DETAILS_FROM_MY_LIST_SEARCH = 7657;
     public static final String  MY_LIST_LIST_NAME= "listName";
-    public static final String  MY_LIST_LIST_ID= "listID";
+    public static final String  MY_LIST_LIST_ID= "listId";
     public static final String  MY_LIST_SEARCH_TERM= "searchTerm";
 
     @Override
