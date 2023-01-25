@@ -14,17 +14,20 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.setFragmentResultListener
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentCartBinding
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.gson.Gson
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import org.json.JSONException
 import org.json.JSONObject
 import retrofit2.Call
+import za.co.woolworths.financial.services.android.cart.viewmodel.CartViewModel
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment
@@ -47,13 +50,16 @@ import za.co.woolworths.financial.services.android.models.network.CompletionHand
 import za.co.woolworths.financial.services.android.models.network.OneAppService.getChangeQuantity
 import za.co.woolworths.financial.services.android.models.network.OneAppService.getInventorySkuForStore
 import za.co.woolworths.financial.services.android.models.network.OneAppService.getSavedAddresses
-import za.co.woolworths.financial.services.android.models.network.OneAppService.getShoppingCart
 import za.co.woolworths.financial.services.android.models.network.OneAppService.removeAllCartItems
 import za.co.woolworths.financial.services.android.models.network.OneAppService.removeCartItem
 import za.co.woolworths.financial.services.android.models.network.OneAppService.removePromoCode
+import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.models.service.event.CartState
 import za.co.woolworths.financial.services.android.models.service.event.ProductState
-import za.co.woolworths.financial.services.android.ui.activities.*
+import za.co.woolworths.financial.services.android.ui.activities.CartCheckoutActivity
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
+import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
+import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator
 import za.co.woolworths.financial.services.android.ui.activities.online_voucher_redemption.AvailableVouchersToRedeemInCart
@@ -68,6 +74,9 @@ import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseVie
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView.IWalkthroughActionListener
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ActionSheetDialogFragment
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK_201
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_SESSION_TIMEOUT_440
 import za.co.woolworths.financial.services.android.util.CartUtils.Companion.filterCommerceItemFromCartResponse
 import za.co.woolworths.financial.services.android.util.CartUtils.Companion.getAppliedVouchersCount
 import za.co.woolworths.financial.services.android.util.CartUtils.Companion.updateItemLimitsBanner
@@ -91,10 +100,15 @@ import java.net.ConnectException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 
+@AndroidEntryPoint
 class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBinding::inflate),
     CartProductAdapter.OnItemClick,
     View.OnClickListener, NetworkChangeListener, ToastInterface, IWalkthroughActionListener,
     IRemoveProductsFromCartDialog {
+
+    private val viewModel: CartViewModel by viewModels(
+        ownerProducer = { this }
+    )
 
     private val TAG = this.javaClass.simpleName
     private var mNumberOfListSelected = 0
@@ -122,6 +136,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     var productCountMap: ProductCountMap? = null
     private var liquorCompliance: LiquorCompliance? = null
     private var cartItemList = ArrayList<CommerceItem>()
+    private var isOnItemRemoved = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -129,6 +144,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         initViews()
         hideEditCart()
         addFragmentListener()
+        addObserverEvents()
         mChangeQuantityList = ArrayList(0)
         mChangeQuantity = ChangeQuantity()
         mConnectionBroadcast = Utils.connectionBroadCast(
@@ -190,7 +206,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         if (isVisible) {
             ScreenManager.presentBiometricWalkthrough(activity)
         }
-        loadShoppingCart(false)
+        loadShoppingCart()
     }
 
     private fun initViews() {
@@ -330,7 +346,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                 if (NetworkManager.getInstance().isConnectedToNetwork(requireActivity())) {
                     errorMessageWasPopUp = false
                     binding.rvCartList.visibility = View.VISIBLE
-                    loadShoppingCart(false)
+                    loadShoppingCart()
                 }
             }
             R.id.btnCheckOut -> {
@@ -400,7 +416,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                 (object : IResponseListener<SavedAddressResponse> {
                     override fun onSuccess(response: SavedAddressResponse?) {
                         when (response!!.httpCode) {
-                            AppConstant.HTTP_OK -> {
+                            HTTP_OK -> {
                                 binding.cartProgressBar.visibility = View.GONE
                                 navigateToCheckout(response)
                             }
@@ -1010,78 +1026,56 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         cartProductAdapter?.onChangeQuantityComplete()
     }
 
-    private fun loadShoppingCart(onItemRemove: Boolean): Call<ShoppingCartResponse> {
-        setDeliveryLocationEnabled(false)
-        binding.apply {
-            rlCheckOut.isEnabled = !onItemRemove
-            rlCheckOut.visibility = if (onItemRemove) View.VISIBLE else View.GONE
-            cartProgressBar.visibility = View.VISIBLE
-        }
-        cartProductAdapter?.clear()
-        hideEditCart()
-        val shoppingCartResponseCall = getShoppingCart()
-        shoppingCartResponseCall.enqueue(
-            CompletionHandler(
-                (object : IResponseListener<ShoppingCartResponse> {
-                    override fun onSuccess(response: ShoppingCartResponse?) {
-                        try {
-                            binding.cartProgressBar.visibility = View.GONE
-                            setDeliveryLocationEnabled(true)
+    private fun loadShoppingCart() {
+        viewModel.getShoppingCartV2()
+    }
 
-                            when (response?.httpCode) {
-                                200 -> {
-                                    onRemoveItemFailed = false
-                                    binding.rlCheckOut.visibility = View.VISIBLE
-                                    binding.rlCheckOut.isEnabled = true
-                                    val cartResponse =
-                                        convertResponseToCartResponseObject(response)
-                                    updateCheckOutLink(response.data[0].jSessionId)
-                                    bindCartData(cartResponse)
-                                    if (onItemRemove) {
-                                        cartProductAdapter?.setEditMode(true)
-                                    }
-                                    setDeliveryLocationEnabled(true)
-                                    if (response.data[0].orderSummary.fulfillmentDetails?.address?.placeId != null) {
-                                        Utils.savePreferredDeliveryLocation(
-                                            ShoppingDeliveryLocation(
-                                                response.data[0].orderSummary.fulfillmentDetails
-                                            )
-                                        )
-                                    }
-                                    setItemLimitsBanner()
-                                    instance.queryCartSummaryCount()
-                                }
-                                440 -> {
-                                    //TODO:: improve error handling
-                                    SessionUtilities.getInstance()
-                                        .setSessionState(SessionDao.SESSION_STATE.INACTIVE)
-                                    SessionExpiredUtilities.getInstance().showSessionExpireDialog(
-                                        requireActivity() as AppCompatActivity?,
-                                        this@CartFragment
-                                    )
-                                    onChangeQuantityComplete()
-                                }
-                                else -> {
-                                    setDeliveryLocationEnabled(true)
-                                    response?.response?.let {
-                                        Utils.displayValidationMessage(
-                                            requireActivity(),
-                                            CustomPopUpWindow.MODAL_LAYOUT.ERROR,
-                                            it.desc,
-                                            true
-                                        )
-                                    }
-                                }
-                            }
-                        } catch (ex: Exception) {
-                            logException(ex)
-                        }
-                    }
-
-                    override fun onFailure(error: Throwable?) {
+    private fun onCartV2Response(
+        shoppingCartResponse: ShoppingCartResponse?,
+    ) {
+        if (!isAdded || !isVisible) return
+        when (shoppingCartResponse?.httpCode) {
+            HTTP_OK, HTTP_OK_201 -> {
+                binding.cartProgressBar.visibility = View.GONE
+                setDeliveryLocationEnabled(true)
+                onRemoveItemFailed = false
+                binding.rlCheckOut.visibility = View.VISIBLE
+                binding.rlCheckOut.isEnabled = true
+                val cartResponse =
+                    convertResponseToCartResponseObject(shoppingCartResponse)
+                updateCheckOutLink(shoppingCartResponse.data[0].jSessionId)
+                bindCartData(cartResponse)
+                if (isOnItemRemoved) {
+                    cartProductAdapter?.setEditMode(true)
+                    isOnItemRemoved = false
+                }
+                setDeliveryLocationEnabled(true)
+                if (shoppingCartResponse.data[0].orderSummary.fulfillmentDetails?.address?.placeId != null) {
+                    Utils.savePreferredDeliveryLocation(
+                        ShoppingDeliveryLocation(
+                            shoppingCartResponse.data[0].orderSummary.fulfillmentDetails
+                        )
+                    )
+                }
+                setItemLimitsBanner()
+                instance.queryCartSummaryCount()
+            }
+            HTTP_SESSION_TIMEOUT_440 -> {
+                //TODO:: improve error handling
+                SessionUtilities.getInstance()
+                    .setSessionState(SessionDao.SESSION_STATE.INACTIVE)
+                SessionExpiredUtilities.getInstance().showSessionExpireDialog(
+                    requireActivity() as AppCompatActivity?,
+                    this@CartFragment
+                )
+                onChangeQuantityComplete()
+            }
+            else -> {
+                when (shoppingCartResponse?.response) {
+                    null -> {
                         if (isAdded) {
                             requireActivity().runOnUiThread {
-                                if (!onItemRemove) {
+                                if (!isOnItemRemoved) {
                                     setDeliveryLocationEnabled(true)
                                     binding.apply {
                                         rvCartList.visibility = View.GONE
@@ -1093,10 +1087,21 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                             }
                         }
                     }
-                }), ShoppingCartResponse::class.java
-            )
-        )
-        return shoppingCartResponseCall
+                    else -> {
+                        setDeliveryLocationEnabled(true)
+                        shoppingCartResponse?.response?.let {
+                            Utils.displayValidationMessage(
+                                requireActivity(),
+                                CustomPopUpWindow.MODAL_LAYOUT.ERROR,
+                                it.desc,
+                                true
+                            )
+                        }
+                    }
+                }
+
+            }
+        }
     }
 
     private fun changeQuantityAPI(changeQuantity: ChangeQuantity?): Call<ShoppingCartResponse> {
@@ -1406,12 +1411,12 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                         }, SetDeliveryLocationSuburbResponse.class));*/
                     } else {
                         // Fallback if there is no cached location
-                        loadShoppingCart(false)
+                        loadShoppingCart()
                         loadShoppingCartAndSetDeliveryLocation()
                     }
                 } else {
                     // Checkout was cancelled
-                    loadShoppingCart(false)
+                    loadShoppingCart()
                     loadShoppingCartAndSetDeliveryLocation()
                 }
             } else {
@@ -1427,7 +1432,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             when (requestCode) {
                 BottomNavigationActivity.PDP_REQUEST_CODE -> {
                     val activity: FragmentActivity = activity ?: return
-                    loadShoppingCart(false)
+                    loadShoppingCart()
                     loadShoppingCartAndSetDeliveryLocation()
                     val productCountMap = Utils.jsonStringToObject(
                         data?.getStringExtra("ProductCountMap"), ProductCountMap::class.java
@@ -1536,13 +1541,14 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         setupToolbar()
         initializeBottomTab()
         initializeLoggedInUserCartUI()
-        loadShoppingCart(false)
+        loadShoppingCart()
     }
 
     override fun onConnectionChanged() {
         if (onRemoveItemFailed) {
             mErrorHandlerView?.hideErrorHandler()
-            loadShoppingCart(true)
+            isOnItemRemoved = true
+            loadShoppingCart()
             return
         }
         if (mRemoveAllItemFailed) {
@@ -1870,7 +1876,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     }
 
     override fun onOutOfStockProductsRemoved() {
-        loadShoppingCart(false)
+        loadShoppingCart()
     }
 
     private fun showMaxItemView() {
@@ -2080,6 +2086,31 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                 resultCode)
         customBottomSheetDialogFragment.show(requireFragmentManager(),
             CustomBottomSheetDialogFragment::class.java.simpleName)
+    }
+
+    private fun addObserverEvents() {
+        viewModel.getCarV2.observe(viewLifecycleOwner) {
+            val response = it.peekContent().data
+            when (it.peekContent().status) {
+                Status.LOADING -> {
+                    mErrorHandlerView?.hideErrorHandler()
+                    setDeliveryLocationEnabled(false)
+                    binding.apply {
+                        rlCheckOut.isEnabled = !isOnItemRemoved
+                        rlCheckOut.visibility = if (isOnItemRemoved) View.VISIBLE else View.GONE
+                        cartProgressBar.visibility = View.VISIBLE
+                    }
+                    cartProductAdapter?.clear()
+                    hideEditCart()
+                }
+                Status.SUCCESS -> {
+                    onCartV2Response(response)
+                }
+                Status.ERROR -> {
+                    onCartV2Response(response)
+                }
+            }
+        }
     }
 
     private fun addFragmentListener() {

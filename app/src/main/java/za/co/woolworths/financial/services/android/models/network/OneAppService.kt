@@ -564,6 +564,12 @@ object OneAppService : RetrofitConfig() {
         return mApiInterface.getShoppingCart(getSessionToken(), getDeviceIdentityToken())
     }
 
+    suspend fun getShoppingCartV2() : retrofit2.Response<ShoppingCartResponse>{
+        return withContext(Dispatchers.IO){
+            mApiInterface.getShoppingCartV2(getSessionToken(), getDeviceIdentityToken())
+        }
+    }
+
     fun getChangeQuantity(changeQuantity: ChangeQuantity?): Call<ShoppingCartResponse> {
         return mApiInterface.changeQuantityRequest(
             "",
