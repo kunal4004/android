@@ -181,6 +181,13 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             }
         }
 
+        viewModel.isUpdateList.observe(viewLifecycleOwner) {
+            if(it) {
+                bindingListDetails.loadingBar.visibility = GONE
+                updateList()
+            }
+        }
+
         // Shopping List Items Inventory
         viewModel.inventoryDetails.observe(viewLifecycleOwner) {
             val response = it.peekContent().data
@@ -201,8 +208,8 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                     viewModel.inventoryCallFailed = true
                     viewModel.setOutOfStock()
                     if (!isAdded || !isVisible) return@observe
+                    bindingListDetails.loadingBar.visibility = GONE
                     enableAdapterClickEvent(true)
-                    mErrorHandlerView?.showToast()
                     updateList()
                 }
             }
