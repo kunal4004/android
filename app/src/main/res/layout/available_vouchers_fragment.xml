@@ -71,7 +71,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/twenty_four_dp"
-        android:layout_marginTop="@dimen/sixteen_dp"
+        android:layout_marginTop="@dimen/twenty_dp"
         android:layout_marginEnd="@dimen/twenty_four_dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -111,7 +111,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/voucherTabLayout"
-            android:paddingTop="@dimen/sixteen_dp">
+            android:paddingTop="@dimen/nineteen_dp">
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guidelineEnd"
@@ -165,7 +165,7 @@
                 android:id="@+id/rcvVoucherList"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_marginTop="@dimen/ten_dp"
+                android:layout_marginTop="@dimen/thirty_dp"
                 android:paddingBottom="@dimen/_60sdp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -175,7 +175,7 @@
                 android:id="@+id/rcCashBackVoucherList"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_marginTop="@dimen/ten_dp"
+                android:layout_marginTop="@dimen/thirty_dp"
                 android:paddingBottom="@dimen/_100sdp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

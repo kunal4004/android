@@ -321,12 +321,12 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
                     priceHolder.orderSummeryLayout.setVisibility(View.GONE);
                 }
 
-                priceHolder.viewVouchers.setOnClickListener(v -> {
+                priceHolder.rlAvailableWRewardsVouchers.setOnClickListener(v -> {
                             onItemClick.onViewVouchers();
                             Utils.triggerFireBaseEvents(getAppliedVouchersCount() > 0 ? FirebaseManagerAnalyticsProperties.Cart_ovr_edit : FirebaseManagerAnalyticsProperties.Cart_ovr_view, mContext);
                         }
                 );
-                priceHolder.viewCashVouchers.setOnClickListener(v -> {
+                priceHolder.rlAvailableCashVouchers.setOnClickListener(v -> {
                             onItemClick.onViewCashBackVouchers();
                             Utils.triggerFireBaseEvents(getAppliedVouchersCount() > 0 ? FirebaseManagerAnalyticsProperties.Cart_ovr_edit : FirebaseManagerAnalyticsProperties.Cart_ovr_view, mContext);
                         }
@@ -374,14 +374,11 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
                     priceHolder.promoCodeLabel.setText(mContext.getString(R.string.do_you_have_a_promo_code));
                 }
 
-                priceHolder.promoCodeAction.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (voucherDetails.getPromoCodes() != null && voucherDetails.getPromoCodes().size() > 0)
-                            onItemClick.onRemovePromoCode(voucherDetails.getPromoCodes().get(0).getPromoCode());
-                        else
-                            onItemClick.onEnterPromoCode();
-                    }
+                priceHolder.rlPromoCode.setOnClickListener(v -> {
+                    if (voucherDetails.getPromoCodes() != null && voucherDetails.getPromoCodes().size() > 0)
+                        onItemClick.onRemovePromoCode(voucherDetails.getPromoCodes().get(0).getPromoCode());
+                    else
+                        onItemClick.onEnterPromoCode();
                 });
 
                 priceHolder.promoDiscountInfo.setOnClickListener(v -> {
@@ -662,6 +659,9 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
         private ImageView imgLiBanner;
         private TextView availableCashVouchersCount;
         private TextView viewCashVouchers;
+        private RelativeLayout rlAvailableCashVouchers;
+        private RelativeLayout rlAvailableWRewardsVouchers;
+        private RelativeLayout rlPromoCode;
 
 
         public CartPricesViewHolder(View view) {
@@ -689,6 +689,9 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
             orderTotal = view.findViewById(R.id.orderTotal);
             availableCashVouchersCount = view.findViewById(R.id.availableCashVouchersCount);
             viewCashVouchers = view.findViewById(R.id.viewCashVouchers);
+            rlAvailableCashVouchers = view.findViewById(R.id.rlAvailableCashVouchers);
+            rlAvailableWRewardsVouchers = view.findViewById(R.id.rlAvailableWRewardsVouchers);
+            rlPromoCode = view.findViewById(R.id.rlPromoCode);
 
         }
     }
