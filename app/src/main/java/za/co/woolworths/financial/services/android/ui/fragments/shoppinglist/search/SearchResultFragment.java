@@ -124,7 +124,7 @@ public class SearchResultFragment extends Fragment implements SearchResultNaviga
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             mSearchText = bundle.getString(MY_LIST_SEARCH_TERM);
-            mListId = bundle.getString(MY_LIST_LIST_ID);
+            mListId = bundle.getString(MY_LIST_LIST_ID, "");
         } else {
             mSearchText = "";
         }
