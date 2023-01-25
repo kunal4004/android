@@ -1,6 +1,8 @@
 package za.co.woolworths.financial.services.android.ui.adapters.holder
 
 import android.annotation.SuppressLint
+import android.graphics.Paint
+import android.view.View
 import com.awfs.coordination.databinding.LayoutCartListProductItemBinding
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
