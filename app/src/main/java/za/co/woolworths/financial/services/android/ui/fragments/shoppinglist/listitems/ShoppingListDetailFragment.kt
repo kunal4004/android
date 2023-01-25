@@ -45,6 +45,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.detail.I
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.ConfirmDeliveryLocationFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment
+import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.*
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory.Companion.buildAddToCartSuccessToast
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory.Companion.buildShoppingListFromSearchResultToast
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory.Companion.showItemsLimitToastOnAddToCart
@@ -69,15 +70,16 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
     )
 
     private val productSearchResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
-        // add to list from search result
         when (result.resultCode) {
-            SearchResultFragment.ADDED_TO_SHOPPING_LIST_RESULT_CODE -> {
-                val count = result.data?.getIntExtra("listItems", 0) ?: 0
+            // add to list from search result
+            ADDED_TO_SHOPPING_LIST_RESULT_CODE -> {
+                val count = result.data?.getIntExtra(EXTRA_LIST_ITEMS, 0) ?: 0
                 buildShoppingListFromSearchResultToast(
-                    requireActivity(), bindingListDetails.rlCheckOut, listName!!, count
+                    requireActivity(), bindingListDetails.rlCheckOut, listName ?: "", count
                 )
                 initGetShoppingListItems()
             }
+            // add to list from search result -> PDP
             AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE -> {
                 with(requireActivity()) {
                     setResult(
@@ -87,15 +89,16 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                     onBackPressed()
                 }
             }
+            // searched details result
             PRODUCT_SEARCH_ACTIVITY_RESULT_CODE -> {
                 val searchResultFragment = SearchResultFragment()
-                val bundle = bundleOf(
-                    SearchResultFragment.MY_LIST_SEARCH_TERM to
-                            result.data?.getStringExtra(SearchResultFragment.MY_LIST_LIST_NAME),
-                    SearchResultFragment.MY_LIST_LIST_ID to
-                                    result.data?.getStringExtra(SearchResultFragment.MY_LIST_LIST_ID)
-                )
-                searchResultFragment.arguments = bundle
+                result.data?.let { data ->
+                    val bundle = bundleOf(
+                        MY_LIST_SEARCH_TERM to data.getStringExtra(MY_LIST_LIST_NAME),
+                        MY_LIST_LIST_ID to data.getStringExtra(MY_LIST_LIST_ID)
+                    )
+                    searchResultFragment.arguments = bundle
+                }
                 (activity as? BottomNavigationActivity)?.pushFragment(searchResultFragment)
             }
         }
@@ -602,7 +605,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
     private fun addFragmentListener() {
         activity ?: return
         activity?.supportFragmentManager?.setFragmentResultListener(
-            SearchResultFragment.ADDED_TO_SHOPPING_LIST_RESULT_CODE.toString(),
+            ADDED_TO_SHOPPING_LIST_RESULT_CODE.toString(),
             activity!!
         ) { requestKey: String?, result: Bundle ->
             if (result.containsKey("listItems")) {
@@ -1025,5 +1028,6 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         private const val ARG_LIST_ID: String = "listId"
         private const val ARG_LIST_NAME: String = "listName"
         private const val ARG_OPEN_FROM_MY_LIST: String = "openFromMyList"
+        private const val EXTRA_LIST_ITEMS: String = "listItems"
     }
 }
