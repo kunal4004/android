@@ -171,19 +171,12 @@ class SearchResultShopAdapter(
 
     private inner class SimpleViewHolder(val itemBinding: LayoutCartListProductItemBinding) : RecyclerView.ViewHolder(itemBinding.root) {
 
-        fun setDefaultQuantity() {
-        }
-
         fun setCartImage(productItem: ProductList) {
             productItem.externalImageRefV2?.let {
                 itemBinding.cartProductImage?.setImageURI(
                     it + (if ((it.indexOf("?") > 0)) "w=" + 85 + "&q=" + 85 else "?w=" + 85 + "&q=" + 85)
                 )
             }
-        }
-
-        fun setProductName(productItem: ProductList) {
-            itemBinding.tvTitle.text = Html.fromHtml(productItem.productName)
         }
 
         fun setPrice(productItem: ProductList) {
@@ -194,12 +187,6 @@ class SearchResultShopAdapter(
         fun showProgressBar(visible: Boolean) {
             itemBinding.pbLoadProduct.visibility = if (visible) VISIBLE else GONE
             itemBinding.btnDeleteRow.visibility = if (visible) GONE else VISIBLE
-        }
-
-        fun disableSwipeToDelete(enable: Boolean) {
-        }
-
-        fun setTvColorSize(product: ProductList) {
         }
     }
 
