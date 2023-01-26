@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.fragments.product.shop
+package za.co.woolworths.financial.services.android.cart.view
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -65,6 +65,7 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.ui.activities.online_voucher_redemption.AvailableVouchersToRedeemInCart
 import za.co.woolworths.financial.services.android.ui.adapters.CartProductAdapter
 import za.co.woolworths.financial.services.android.ui.fragments.cart.GiftWithPurchaseDialogDetailFragment
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.RemoveProductsFromCartDialogFragment.Companion.newInstance
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.RemoveProductsFromCartDialogFragment.IRemoveProductsFromCartDialog
 import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
