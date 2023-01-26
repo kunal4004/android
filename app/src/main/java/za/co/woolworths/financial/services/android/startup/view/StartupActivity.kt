@@ -127,10 +127,10 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                         if (isComingFromSuccess) {
                             //success of api
                             if (remoteConfigJsonString.isEmpty()) {
-                                // api successful but firebase not configured so navigate with normal flow
+                                // api successfull but firebase not configured so navigate with normal flow
                                 presentNextScreenOrServerMessage()
                             } else {
-                                // api successful and  firebase also configured so display sunsetting ui
+                                // api successfull and  firebase also configured so display sunsetting ui
                                 bindingSplash = ActivitySplashScreenBinding.inflate(layoutInflater)
                                 setContentView(bindingSplash.root)
                                 val configData:ConfigData? = startupViewModel.parseRemoteconfigData(remoteConfigJsonString)
@@ -145,14 +145,15 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                         } else {
                             // error  of api
                             if (remoteConfigJsonString.isEmpty()) {
-                                // api is  failed and firebase not configured so show error screen of api response
+                                //api is  failed and firebase not configured so show error screen of api reposne
                                 bindingStartup.showNonVideoViewWithErrorLayout()
                             } else {
-                                // api is failed and sunsetting is configured then show sunsetting ui
+                                // api is failed and sunsetting is cofigured then show sunsetting ui
 
                                 val configData:ConfigData? = startupViewModel.parseRemoteconfigData(remoteConfigJsonString)
                                 if (configData?.expiryTime == -1L || configData == null) {
                                     // in case we get json exception while parsing then show error screen of api
+                                    bindingSplash.progressBar?.visibility = View.GONE
                                     bindingStartup.showNonVideoViewWithErrorLayout()
                                 } else {
                                     bindingSplash = ActivitySplashScreenBinding.inflate(layoutInflater)
@@ -165,9 +166,11 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                         // firebase fail
                         if (isComingFromSuccess) {
                             // api is success and firebase  is failed so navigate to next screen
+                            bindingSplash.progressBar?.visibility = View.GONE
                             presentNextScreenOrServerMessage()
                         } else  {
                             // api is failed and firebase  is failed so display error layout
+                            bindingSplash.progressBar?.visibility = View.GONE
                             bindingStartup.showNonVideoViewWithErrorLayout()
                         }
                     }

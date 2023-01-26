@@ -16,7 +16,6 @@ class ProductNotAvailableForCollectionDialog : WBottomSheetDialogFragment() {
     interface IProductNotAvailableForCollectionDialogListener {
         fun onChangeDeliveryOption()
         fun onFindInStore()
-        fun openChangeFulfillmentScreen()
     }
 
     companion object {
