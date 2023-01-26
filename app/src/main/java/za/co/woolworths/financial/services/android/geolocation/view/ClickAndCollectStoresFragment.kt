@@ -21,8 +21,6 @@ import za.co.woolworths.financial.services.android.geolocation.network.model.Val
 import za.co.woolworths.financial.services.android.geolocation.view.adapter.StoreListAdapter
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
-import za.co.woolworths.financial.services.android.ui.views.maps.DynamicMapDelegate
-import za.co.woolworths.financial.services.android.ui.views.maps.model.DynamicMapMarker
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.VtoErrorBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.listener.VtoTryAgainListener
 import za.co.woolworths.financial.services.android.util.AppConstant
@@ -36,11 +34,11 @@ import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.binding.BaseDialogFragmentBinding
 import javax.inject.Inject
+import za.co.woolworths.financial.services.android.geolocation.GeoUtils
+import za.co.woolworths.financial.services.android.util.StoreUtils
 
 @AndroidEntryPoint
-class ClickAndCollectStoresFragment :
-    BaseDialogFragmentBinding<FragmentClickAndCollectStoresBinding>(
-        FragmentClickAndCollectStoresBinding::inflate), DynamicMapDelegate,
+class ClickAndCollectStoresFragment : BaseDialogFragmentBinding<FragmentClickAndCollectStoresBinding>(FragmentClickAndCollectStoresBinding::inflate),
     StoreListAdapter.OnStoreSelected, View.OnClickListener, TextWatcher, VtoTryAgainListener {
 
     private var mValidateLocationResponse: ValidateLocationResponse? = null
@@ -84,10 +82,9 @@ class ClickAndCollectStoresFragment :
         super.onViewCreated(view, savedInstanceState)
 
         binding.apply {
-            dynamicMapView?.initializeMap(savedInstanceState, this@ClickAndCollectStoresFragment)
             tvConfirmStore?.setOnClickListener(this@ClickAndCollectStoresFragment)
-            ivCross?.setOnClickListener(this@ClickAndCollectStoresFragment)
             btChange?.setOnClickListener(this@ClickAndCollectStoresFragment)
+            backButton?.setOnClickListener(this@ClickAndCollectStoresFragment)
             etEnterNewAddress?.addTextChangedListener(this@ClickAndCollectStoresFragment)
             dialog?.window
                 ?.attributes?.windowAnimations = R.style.DialogFragmentAnimation
@@ -111,34 +108,11 @@ class ClickAndCollectStoresFragment :
         }
     }
 
-    private fun showFirstFourLocationInMap(addressStoreList: List<Store>?) {
-        addressStoreList?.let {
-            it.forEachIndexed { position, store ->
-                if (position <= 3) {
-                    binding.dynamicMapView?.addMarker(
-                        requireContext(),
-                        latitude = store?.latitude,
-                        longitude = store?.longitude,
-                        icon = R.drawable.pin
-                    )
-                } else
-                    return@forEachIndexed
-            }
-        }
-        //after plotting all the markers pointing the camera to nearest store
-        val store: Store? = addressStoreList?.getOrNull(0)
-        store?.let {
-            binding.dynamicMapView?.moveCamera(
-                latitude = it.latitude,
-                longitude = it.longitude,
-                zoom = 11f
-            )
-        }
-    }
+
 
     private fun setAddressUI(
         address: List<Store>?,
-        mValidateLocationResponse: ValidateLocationResponse?,
+        mValidateLocationResponse: ValidateLocationResponse?
     ) {
         binding.apply {
             tvStoresNearMe?.text = resources.getString(R.string.near_stores, address?.size)
@@ -152,17 +126,20 @@ class ClickAndCollectStoresFragment :
         binding.apply {
             rvStoreList.layoutManager =
                 activity?.let { activity -> LinearLayoutManager(activity) }
-            rvStoreList.adapter = activity?.let { activity ->
-                StoreListAdapter(
-                    activity,
-                    address,
-                    this@ClickAndCollectStoresFragment
-                )
+            val storesListWithHeaders=StoreUtils.getStoresListWithHeaders(StoreUtils.sortedStoreList(address))
+
+            if(storesListWithHeaders.isNotEmpty()){
+                tvConfirmStore?.isEnabled = false
+                rvStoreList.adapter = activity?.let { activity ->
+                    StoreListAdapter(
+                        activity,
+                        storesListWithHeaders,
+                        this@ClickAndCollectStoresFragment
+                    )
+                }
             }
-            rvStoreList.adapter?.notifyDataSetChanged()
         }
     }
-
     override fun onStoreSelected(mStore: Store?) {
         dataStore = mStore
         binding.tvConfirmStore?.isEnabled = true
@@ -180,8 +157,8 @@ class ClickAndCollectStoresFragment :
                     activity)
                 navigateToFulfillmentScreen()
             }
-            R.id.ivCross -> {
-                dismiss()
+            R.id.backButton -> {
+               dismiss()
             }
             R.id.btChange -> {
                 IS_FROM_STORE_LOCATOR = true
@@ -237,7 +214,9 @@ class ClickAndCollectStoresFragment :
                 }
             }
         }
-        setStoreList(list)
+        if(list.isNotEmpty()){
+            setStoreList(list)
+        }
     }
 
     private fun getDeliveryDetailsFromValidateLocation(placeId: String) {
@@ -250,13 +229,15 @@ class ClickAndCollectStoresFragment :
                     validateLocationResponse =
                         confirmAddressViewModel.getValidateLocation(placeId)
                     clickCollectProgress?.visibility = View.GONE
+                    //geoDel.visibility = View.VISIBLE
                     if (validateLocationResponse != null) {
                         when (validateLocationResponse?.httpCode) {
                             AppConstant.HTTP_OK -> {
-                                setAddressUI(
-                                    validateLocationResponse?.validatePlace?.stores,
-                                    validateLocationResponse
+                               val store = GeoUtils.getStoreDetails(
+                                    placeId,
+                                    validateLocationResponse?.validatePlace?.stores
                                 )
+                                setAddressUI(validateLocationResponse?.validatePlace?.stores, validateLocationResponse)
                             }
                             else -> {
                                 showErrorDialog()
@@ -293,35 +274,8 @@ class ClickAndCollectStoresFragment :
             placeId?.let { getDeliveryDetailsFromValidateLocation(it) }
     }
 
-    override fun onMapReady() {
-        binding.dynamicMapView?.setAllGesturesEnabled(false)
-        showFirstFourLocationInMap(mValidateLocationResponse?.validatePlace?.stores)
+    override fun onFirstTimePargo() {
+        findNavController().navigate( R.id.action_clickAndCollectStoresFragment_to_pargoStoreInfoBottomSheetDialog)
     }
 
-    override fun onMarkerClicked(marker: DynamicMapMarker) {}
-
-    override fun onResume() {
-        super.onResume()
-        binding.dynamicMapView?.onResume()
-    }
-
-    override fun onPause() {
-        binding.dynamicMapView?.onPause()
-        super.onPause()
-    }
-
-    override fun onLowMemory() {
-        super.onLowMemory()
-        binding.dynamicMapView?.onLowMemory()
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        binding.dynamicMapView?.onSaveInstanceState(outState)
-    }
-
-    override fun onDestroyView() {
-        binding.dynamicMapView?.onDestroy()
-        super.onDestroyView()
-    }
 }

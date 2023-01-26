@@ -23,7 +23,6 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.viewpager.widget.ViewPager
 import com.awfs.coordination.R
@@ -451,6 +450,15 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                             confirmAddressViewModel.getValidateLocation(it)
                         shopProgressbar?.visibility = View.GONE
                         tabsMain?.isClickable = true
+                        val placeId = validateLocationResponse?.validatePlace?.placeDetails?.placeId
+                        if(placeId != null) {
+                            val store = GeoUtils.getStoreDetails(
+                                placeId,
+                                validateLocationResponse?.validatePlace?.stores
+                            )
+                        }
+
+                      // geoDeliveryView?.visibility = View.VISIBLE
 
                         if (validateLocationResponse != null) {
                             when (validateLocationResponse?.httpCode) {
@@ -674,8 +682,8 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         tabWidth = shopCustomTabBinding.root?.width?.let {
             it.toFloat()
         }
-        shopCustomTabBinding?.tvTitle?.text = tabTitle?.get(pos)
-        shopCustomTabBinding?.foodOnlyText?.visibility = if (pos == 0) View.GONE else View.VISIBLE
+        shopCustomTabBinding?.tvTitle?.text = tabTitle?.getOrNull(pos)
+        shopCustomTabBinding?.foodOnlyText?.visibility = if (pos == 2) View.VISIBLE else View.GONE
         if (tabLayout.getTabAt(pos)?.view?.isSelected == true) {
             val myRiadFont =
                 Typeface.createFromAsset(requireActivity().assets, "fonts/MyriadPro-Semibold.otf")
@@ -702,6 +710,10 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         binding.apply {
             activity?.let {
                 getDeliveryType()?.let { fulfillmentDetails ->
+                    val store = GeoUtils.getStoreDetails(
+                        fulfillmentDetails.storeId,
+                        validateLocationResponse?.validatePlace?.stores
+                    )
                     KotlinUtils.setDeliveryAddressViewFoShop(
                         it,
                         fulfillmentDetails,
@@ -1197,6 +1209,10 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                     getStoreId(isStoreSelectedForBrowsing, browsingStoreId),
                     validatePlace.stores
                 )
+                if(store?.storeDeliveryType == StoreUtils.Companion.StoreDeliveryType.FOOD_AND_OTHER.type) {
+                    blackToolTipLayout.deliveryCollectionTitle?.text = resources.getString(R.string.food_items_beauty_home)
+                } else
+                    blackToolTipLayout.deliveryCollectionTitle?.text = resources.getString(R.string.earliest_collection_Date)
                 blackToolTipLayout.foodItemDateText?.text = store?.firstAvailableFoodDeliveryDate
                 blackToolTipLayout.productAvailableText?.text = resources.getString(
                     R.string.dash_item_limit,

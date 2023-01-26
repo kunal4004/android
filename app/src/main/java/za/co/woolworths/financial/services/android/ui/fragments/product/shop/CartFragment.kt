@@ -102,6 +102,8 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     private var errorMessageWasPopUp = false
     private var onRemoveItemFailed = false
     private var mRemoveAllItemFailed = false
+    private var isMixedBasket = false
+    private var isFBHOnly = false
     private var mRemoveAllItemFromCartTapped = false
     private var isAllInventoryAPICallSucceed = false
     private var isMaterialPopUpClosed = true
@@ -533,6 +535,8 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                 getDelivertyType(),
                 placeId,
                 isComingFromCheckout = true,
+                isMixedBasket = this.isMixedBasket,
+                isFBHOnly = this.isFBHOnly,
                 isComingFromSlotSelection = false,
                 savedAddressResponse = response,
                 defaultAddress = null,
@@ -1263,6 +1267,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                 setDeliveryLocation(ShoppingDeliveryLocation(fulfillmentDetailsObj))
             }
             val itemsObject = JSONObject(Gson().toJson(data.items))
+            isMixedBasket = itemsObject.has(ProductType.FOOD_COMMERCE_ITEM.value) && itemsObject.length() > 1
             val keys = itemsObject.keys()
             val cartItemGroups = ArrayList<CartItemGroup>()
             while ((keys.hasNext())) {
@@ -1299,6 +1304,9 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                         commerceItem.fulfillmentStoreId =
                             fulfillmentStoreId!!.replace("\"".toRegex(), "")
                         productList.add(commerceItem)
+                        isFBHOnly = if(!itemsObject.has(ProductType.FOOD_COMMERCE_ITEM.value)) {
+                            commerceItem.fulfillmentType == StoreUtils.Companion.FulfillmentType.CLOTHING_ITEMS?.type
+                        } else false
                     }
                     this.cartItemList = productList
                     cartItemGroup.setCommerceItems(productList)

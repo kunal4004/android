@@ -27,7 +27,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.checkout.service.network.Address
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity
@@ -976,6 +975,10 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
     }
 
     private fun GeoLocationDeliveryAddressBinding.setGeoDeliveryTextForCnc() {
+        val store = GeoUtils.getStoreDetails(
+                mStoreId,
+                validateLocationResponse?.validatePlace?.stores
+        )
         geoDeliveryText.text = KotlinUtils.capitaliseFirstLetter(mStoreName)
         editDelivery.text = bindString(R.string.edit)
         btnConfirmAddress.isEnabled = true

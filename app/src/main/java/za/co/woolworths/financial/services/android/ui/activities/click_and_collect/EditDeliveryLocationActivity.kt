@@ -22,6 +22,8 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.PLACE_ID
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.SAVED_ADDRESS_RESPONSE
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutWhoIsCollectingFragment
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment
 
 @AndroidEntryPoint
 class EditDeliveryLocationActivity : AppCompatActivity() {
@@ -33,6 +35,7 @@ class EditDeliveryLocationActivity : AppCompatActivity() {
     private var isComingFromCheckout: Boolean = false
     private var isComingFromSlotSelection: Boolean = false
     private var savedAddressResponse: SavedAddressResponse? = null
+    private var navHostFragment = NavHostFragment()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -79,7 +82,7 @@ class EditDeliveryLocationActivity : AppCompatActivity() {
     }
 
     private fun onEditDeliveryLocation() {
-        val navHostFragment =
+        navHostFragment =
             supportFragmentManager.findFragmentById(R.id.editAddressNavHost) as NavHostFragment
         val navController = navHostFragment.navController
         val navGraph = navController.navInflater.inflate(R.navigation.confirm_location_nav_host)
@@ -165,4 +168,31 @@ class EditDeliveryLocationActivity : AppCompatActivity() {
         }
     }
 
+    override fun onBackPressed() {
+        KeyboardUtils.hideKeyboardIfVisible(this)
+        val fragmentList: MutableList<androidx.fragment.app.Fragment> =
+            navHostFragment.childFragmentManager.fragments
+        //in Navigation component if Back stack entry count is 0 means it has last fragment presented.
+        // if > 0 means others are in backstack but fragment list size will always be 1
+        if (fragmentList.isNullOrEmpty() || navHostFragment.childFragmentManager.backStackEntryCount == 0) {
+            setReloadResultAndFinish()
+            return
+        }
+        when (fragmentList[0]) {
+            is CheckoutWhoIsCollectingFragment -> {
+                setReloadResultAndFinish()
+            }
+            else -> {
+                super.onBackPressed()
+            }
+        }
+    }
+    private fun setReloadResultAndFinish() {
+        setResult(CheckOutFragment.RESULT_RELOAD_CART)
+        closeActivity()
+    }
+    fun closeActivity() {
+        finish()
+        overridePendingTransition(R.anim.slide_in_from_left, R.anim.slide_out_to_right)
+    }
 }

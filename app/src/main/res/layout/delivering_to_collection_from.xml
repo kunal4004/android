@@ -81,8 +81,8 @@
             android:layout_height="match_parent"
             android:layout_weight="0.7"
             android:gravity="end"
-            android:textSize="@dimen/twelve_sp"
-            android:textColor="@color/color_444444"/>
+            android:textColor="@color/color_444444"
+            android:textSize="@dimen/twelve_sp" />
     </LinearLayout>
 
     <LinearLayout
@@ -122,7 +122,6 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingBottom="@dimen/eighteen_dp"
         app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
         app:layout_constraintRight_toRightOf="@+id/right_guideline"
         app:layout_constraintTop_toBottomOf="@+id/foodDeliveryLinearLayout">
@@ -144,11 +143,29 @@
             android:layout_height="match_parent"
             android:layout_weight="0.7"
             android:gravity="end"
+            android:visibility="gone"
             android:textColor="@color/color_444444"
             android:textSize="@dimen/twelve_sp" />
     </LinearLayout>
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/infoDeliveryDateTimeTextView"
+        style="@style/myriad_pro_regular"
+        android:layout_width="@dimen/zero_dp"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:text="@string/weekends_and_public_holidays_excluded"
+        android:textColor="@color/color_444444"
+        android:textSize="@dimen/ten_sp"
+        android:visibility="gone"
+        android:layout_marginTop="@dimen/zero_dp"
+        app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+        app:layout_constraintRight_toRightOf="@+id/right_guideline"
+        app:layout_constraintTop_toBottomOf="@+id/otherDeliveryLinearLayout"
+        app:layout_goneMarginTop="@dimen/_35sdp"
+        />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/dashDeliveryLinearLayout"
         android:layout_width="@dimen/zero_dp"
         android:layout_height="wrap_content"
@@ -158,120 +175,136 @@
         android:weightSum="1"
         app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
         app:layout_constraintRight_toRightOf="@+id/right_guideline"
-        app:layout_constraintTop_toBottomOf="@+id/otherDeliveryLinearLayout">
+        app:layout_constraintTop_toBottomOf="@+id/infoDeliveryDateTimeTextView">
 
         <ImageView
             android:id="@+id/optionImageConfirmed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/thirty_four_dp"
-            android:background="@drawable/ic_dash_confirmed_icon" />
+            android:layout_marginStart="@dimen/thirty_two_dp"
+            android:background="@drawable/ic_dash_confirmed_icon"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <View
             android:id="@+id/packaging_separator"
             style="@style/bottom_line"
             android:layout_width="@dimen/sixty_three_dp"
             android:layout_height="@dimen/two_dp"
+            android:layout_marginStart="@dimen/eight_dp"
             android:layout_marginTop="@dimen/eight_dp"
-            android:layout_marginStart="@dimen/five_dp"
-            android:layout_marginEnd="@dimen/four_dp"
-            android:background="@color/black"/>
+            android:background="@color/black"
+            app:layout_constraintStart_toEndOf="@+id/optionImageConfirmed"
+            app:layout_constraintTop_toTopOf="parent" />
 
 
         <ImageView
             android:id="@+id/optionImagePackaging"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/ic_dash_packaging_icon" />
+            android:layout_marginStart="@dimen/eight_dp"
+            android:background="@drawable/ic_dash_packaging_icon"
+            app:layout_constraintStart_toEndOf="@+id/packaging_separator"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <View
             android:id="@+id/enroute_seperator"
             android:layout_width="@dimen/sixty_three_dp"
             android:layout_height="@dimen/two_dp"
+            android:layout_marginStart="@dimen/eight_dp"
             android:layout_marginTop="@dimen/eight_dp"
             android:background="@color/color_E5E5E5"
-            android:layout_marginStart="@dimen/four_dp"
-            android:layout_marginEnd="@dimen/four_dp"/>
+            app:layout_constraintStart_toEndOf="@+id/optionImagePackaging"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/optionImageEnroute"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/ic_dash_enroute" />
+            android:layout_marginStart="@dimen/eight_dp"
+            android:background="@drawable/ic_dash_enroute"
+            app:layout_constraintStart_toEndOf="@+id/enroute_seperator"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <View
             android:id="@+id/delivered_seperator"
             style="@style/bottom_line"
             android:layout_width="@dimen/sixty_three_dp"
             android:layout_height="@dimen/two_dp"
+            android:layout_marginStart="@dimen/eight_dp"
             android:layout_marginTop="@dimen/eight_dp"
-            android:layout_marginStart="@dimen/four_dp"
-            android:layout_marginEnd="@dimen/four_dp"/>
+            app:layout_constraintStart_toEndOf="@+id/optionImageEnroute"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/optionImageDelivered"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/ic_dash_delivered_icon" />
+            android:layout_marginStart="@dimen/eight_dp"
+            android:layout_marginEnd="@dimen/thirty_two_dp"
+            android:background="@drawable/ic_dash_delivered_icon"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/delivered_seperator"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/dashStatusLinearLayout"
-        android:layout_width="@dimen/zero_dp"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingTop="@dimen/one_dp"
-        app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
-        app:layout_constraintRight_toRightOf="@+id/right_guideline"
-        app:layout_constraintTop_toBottomOf="@+id/dashDeliveryLinearLayout">
 
         <TextView
             android:id="@+id/dash_confirmed_textView"
             style="@style/futura_semi_bold_black"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/eighteen_dp"
+            android:layout_marginTop="@dimen/eight_dp"
             android:gravity="center_vertical"
             android:text="@string/dash_status_confirmed"
             android:textAllCaps="true"
             android:textSize="@dimen/eight_sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="@+id/optionImageConfirmed"
+            app:layout_constraintStart_toStartOf="@+id/optionImageConfirmed"
+            app:layout_constraintTop_toBottomOf="@+id/optionImageConfirmed" />
 
         <TextView
             android:id="@+id/dash_pacakging_textView"
             style="@style/futura_semi_bold_black"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/fourty_eight_dp"
+            android:layout_marginTop="@dimen/eight_dp"
             android:text="@string/dash_status_packaging"
             android:textAllCaps="true"
             android:textSize="@dimen/eight_sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="@+id/optionImagePackaging"
+            app:layout_constraintStart_toStartOf="@+id/optionImagePackaging"
+            app:layout_constraintTop_toBottomOf="@+id/optionImagePackaging" />
 
         <TextView
             android:id="@+id/standardEnroutetextView"
             style="@style/futura_semi_bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/fifty_dp"
+            android:layout_marginTop="@dimen/eight_dp"
             android:text="@string/dash_status_en_route"
             android:textAllCaps="true"
             android:textColor="@color/color_9D9D9D"
-            android:textSize="@dimen/eight_sp" />
+            android:textSize="@dimen/eight_sp"
+            app:layout_constraintEnd_toEndOf="@+id/optionImageEnroute"
+            app:layout_constraintStart_toStartOf="@+id/optionImageEnroute"
+            app:layout_constraintTop_toBottomOf="@+id/optionImageEnroute" />
 
         <TextView
             android:id="@+id/collectedOrDeliveredTextView"
             style="@style/futura_semi_bold"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginStart="@dimen/fourty_three_dp"
+            android:layout_marginTop="@dimen/eight_dp"
             android:text="@string/dash_status_delivered"
             android:textAllCaps="true"
             android:textColor="@color/color_9D9D9D"
             android:textSize="@dimen/eight_sp"
-            android:layout_marginEnd="@dimen/five_dp"/>
-    </LinearLayout>
+            app:layout_constraintEnd_toEndOf="@+id/optionImageDelivered"
+            app:layout_constraintStart_toStartOf="@+id/optionImageDelivered"
+            app:layout_constraintTop_toBottomOf="@+id/optionImageDelivered" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <LinearLayout
         android:id="@+id/continueBrowsingStandardLinearLayout"
@@ -281,7 +314,7 @@
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="@+id/right_guideline"
         app:layout_constraintStart_toStartOf="@+id/left_guideline"
-        app:layout_constraintTop_toBottomOf="@id/dashStatusLinearLayout">
+        app:layout_constraintTop_toBottomOf="@id/dashDeliveryLinearLayout">
 
         <TextView
             android:id="@+id/btnContinueBrowsing"

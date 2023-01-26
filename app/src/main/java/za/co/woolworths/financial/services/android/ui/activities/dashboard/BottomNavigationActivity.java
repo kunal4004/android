@@ -119,7 +119,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.grid.Pro
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.MyListsFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.shop.MyOrdersAccountFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.OrderDetailsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList;
@@ -153,6 +152,9 @@ import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager;
 import za.co.woolworths.financial.services.android.util.nav.FragNavController;
 import za.co.woolworths.financial.services.android.util.nav.FragNavTransactionOptions;
+import static za.co.woolworths.financial.services.android.util.AppConstant.TAG_FBH_CNC_FRAGMENT;
+import za.co.woolworths.financial.services.android.geolocation.view.FBHInfoBottomSheetDialog;
+import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 
 @AndroidEntryPoint
 public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigationBinding, BottomNavigationViewModel>
@@ -782,6 +784,11 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         }
     }
 
+    private void firstTimeFBHCNCIntroDialog() {
+        FBHInfoBottomSheetDialog fbh = new FBHInfoBottomSheetDialog();
+        fbh.show(getSupportFragmentManager(), TAG_FBH_CNC_FRAGMENT);
+    }
+
     private void replaceAccountIcon(@NonNull MenuItem item) {
         if (accountNavigationView != null) {
             if (ChatAWSAmplify.INSTANCE.isLiveChatBackgroundServiceRunning()
@@ -826,6 +833,9 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                         shopFragment.scrollToTop();
                     }
                     Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMENU, BottomNavigationActivity.this);
+                    if(!AppInstanceObject.get().featureWalkThrough.new_fbh_cnc) {
+                        firstTimeFBHCNCIntroDialog();
+                    }
                     break;
 
                 case R.id.navigate_to_cart:

@@ -3,8 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/color_F5F5F5"
-    android:paddingTop="@dimen/eight_dp">
+    >
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -20,16 +19,28 @@
             android:layout_height="wrap_content"
             tools:context="za.co.woolworths.financial.services.android.geolocation.view.ClickAndCollectStoresFragment">
 
+            <View
+                android:id="@+id/top_padding_view"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/eight_dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:background="@color/color_F5F5F5"
+                android:visibility="gone" />
+
             <ImageView
-                android:id="@+id/ivCross"
+                android:id="@+id/backButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="16dp"
-                android:contentDescription="@string/menu_close_page"
-                android:src="@drawable/close_24"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:layout_marginStart="@dimen/sixteen_dp"
+                android:layout_marginTop="@dimen/sixteen_dp"
+                android:layout_marginEnd="@dimen/sixteen_dp"
+                android:src="@drawable/back24"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/top_padding_view"
+                />
+
+
 
             <TextView
                 android:id="@+id/tvSelectStoreLabel"
@@ -46,7 +57,7 @@
                 android:translationY="-3.1sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/ivCross" />
+                app:layout_constraintTop_toBottomOf="@id/backButton" />
 
             <androidx.appcompat.widget.AppCompatEditText
                 android:id="@+id/etEnterNewAddress"
@@ -69,25 +80,6 @@
                 android:paddingEnd="@dimen/ten_dp"
                 app:layout_constraintTop_toBottomOf="@+id/tvSelectStoreLabel" />
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cvMapView"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/two_hundred_eight_dp"
-                android:layout_marginStart="@dimen/fifteen_dp"
-                android:layout_marginTop="@dimen/sixteen_dp"
-                android:layout_marginEnd="@dimen/fifteen_dp"
-                app:cardBackgroundColor="@color/transparent"
-                app:cardCornerRadius="@dimen/five_dp"
-                app:cardElevation="0dp"
-                app:layout_constraintTop_toBottomOf="@+id/etEnterNewAddress">
-
-                <za.co.woolworths.financial.services.android.ui.views.maps.DynamicMapView
-                    android:id="@+id/dynamicMapView"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-
-            </androidx.cardview.widget.CardView>
-
             <TextView
                 android:id="@+id/tvStoresNearMe"
                 style="@style/myriad_pro_semi_bold_black_15_text_style"
@@ -103,7 +95,7 @@
                 android:textStyle="normal"
                 app:layout_constraintEnd_toStartOf="@id/btChange"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/cvMapView"
+                app:layout_constraintTop_toBottomOf="@id/etEnterNewAddress"
                 tools:text="18 Strores near me" />
 
             <TextView
@@ -141,19 +133,9 @@
                 android:textAllCaps="true"
                 android:textColor="@color/white"
                 android:textSize="@dimen/twelve_sp"
-                app:layout_constraintBottom_toTopOf="@+id/viewSeparator"
+                app:layout_constraintBottom_toTopOf="@+id/rvStoreList"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/cvMapView" />
-
-            <View
-                android:id="@+id/viewSeparator"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/eight_dp"
-                android:layout_marginTop="@dimen/twenty_four_dp"
-                android:background="@color/color_F5F5F5"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvAddress" />
+                app:layout_constraintTop_toBottomOf="@+id/etEnterNewAddress" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvStoreList"
@@ -169,9 +151,20 @@
                 android:nestedScrollingEnabled="false"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/viewSeparator"
+                app:layout_constraintTop_toBottomOf="@id/tvAddress"
                 tools:itemCount="5"
                 tools:listitem="@layout/store_row_layout" />
+
+
+            <View
+                android:id="@+id/viewSeparator"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/eight_dp"
+                android:layout_marginTop="@dimen/twenty_four_dp"
+                android:background="@color/color_F5F5F5"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/rvStoreList" />
 
             <ProgressBar
                 android:id="@+id/clickCollectProgress"
@@ -184,7 +177,7 @@
                 android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/cvMapView" />
+                app:layout_constraintTop_toBottomOf="@id/etEnterNewAddress" />
 
             <include
                 android:id="@+id/noClickAndCollectConnectionLayout"
