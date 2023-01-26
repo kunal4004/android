@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.cart.network.CartRepository
+import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
 import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse
 import javax.inject.Inject
 import za.co.woolworths.financial.services.android.models.network.Event
@@ -26,6 +27,10 @@ class CartViewModel @Inject constructor(
         MutableLiveData<Event<Resource<ShoppingCartResponse>>>()
     val getCarV2: LiveData<Event<Resource<ShoppingCartResponse>>> =
         _getCarV2
+    private val _getSavedAddress =
+        MutableLiveData<Event<Resource<SavedAddressResponse>>>()
+    val getSavedAddress: LiveData<Event<Resource<SavedAddressResponse>>> =
+        _getSavedAddress
 
     fun getShoppingCartV2() {
         _getCarV2.value = Event(Resource.loading(null))
@@ -35,5 +40,11 @@ class CartViewModel @Inject constructor(
         }
     }
 
-
+    fun getSavedAddress() {
+        _getSavedAddress.value = Event(Resource.loading(null))
+        viewModelScope.launch {
+            val response = cartRepository.getSavedAddress()
+            _getSavedAddress.value = Event(response)
+        }
+    }
 }

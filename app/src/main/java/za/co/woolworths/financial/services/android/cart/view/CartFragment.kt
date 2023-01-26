@@ -388,7 +388,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                             return
                         }
                         // Get list of saved address and navigate to proper Checkout page.
-                        callSavedAddress()
+                        viewModel.getSavedAddress()
                     }
                 }
             }
@@ -407,41 +407,6 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
 
     private fun dismissProgress() {
         binding.cartProgressBar.visibility = View.GONE
-    }
-
-    private fun callSavedAddress() {
-        binding.cartProgressBar.visibility = View.VISIBLE
-        val savedAddressCall = getSavedAddresses()
-        savedAddressCall.enqueue(
-            CompletionHandler(
-                (object : IResponseListener<SavedAddressResponse> {
-                    override fun onSuccess(response: SavedAddressResponse?) {
-                        when (response!!.httpCode) {
-                            HTTP_OK -> {
-                                binding.cartProgressBar.visibility = View.GONE
-                                navigateToCheckout(response)
-                            }
-                            else -> {
-                                binding.cartProgressBar.visibility = View.GONE
-                                if (response.response != null) {
-                                    showErrorDialog(
-                                        ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON,
-                                        response.response!!.message
-                                    )
-                                }
-                            }
-                        }
-                    }
-
-                    override fun onFailure(error: Throwable?) {
-                        showErrorDialog(
-                            ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON,
-                            error!!.message
-                        )
-                    }
-                }), SavedAddressResponse::class.java
-            )
-        )
     }
 
     private fun showErrorDialog(errorType: Int, errorMessage: String?) {
@@ -1498,7 +1463,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
 
         // Retry callback when saved address api fails
         if (resultCode == ErrorHandlerActivity.RESULT_RETRY) {
-            callSavedAddress()
+            viewModel.getSavedAddress()
         }
     }
 
@@ -2109,6 +2074,38 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                 }
                 Status.ERROR -> {
                     onCartV2Response(response)
+                }
+            }
+        }
+
+        viewModel.getSavedAddress.observe(viewLifecycleOwner) {
+            val response = it.peekContent().data
+            when (it.peekContent().status) {
+                Status.LOADING -> {
+                    binding.cartProgressBar.visibility = View.VISIBLE
+                }
+                Status.SUCCESS -> {
+                    when (response?.httpCode) {
+                        HTTP_OK -> {
+                            binding.cartProgressBar.visibility = View.GONE
+                            navigateToCheckout(response)
+                        }
+                        else -> {
+                            binding.cartProgressBar.visibility = View.GONE
+                            if (response?.response != null) {
+                                showErrorDialog(
+                                    ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON,
+                                    response.response?.message
+                                )
+                            }
+                        }
+                    }
+                }
+                Status.ERROR -> {
+                    showErrorDialog(
+                        ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON,
+                        response?.response?.message
+                    )
                 }
             }
         }
