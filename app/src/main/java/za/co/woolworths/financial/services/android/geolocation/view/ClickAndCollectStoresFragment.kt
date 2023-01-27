@@ -47,6 +47,7 @@ class ClickAndCollectStoresFragment : BaseDialogFragmentBinding<FragmentClickAnd
     private var validateLocationResponse: ValidateLocationResponse? = null
     private var placeId: String? = null
     private var isComingFromConfirmAddress: Boolean? = false
+
     @Inject
     lateinit var vtoErrorBottomSheetDialog: VtoErrorBottomSheetDialog
 
@@ -65,8 +66,8 @@ class ClickAndCollectStoresFragment : BaseDialogFragmentBinding<FragmentClickAnd
         bundle = arguments?.getBundle(BUNDLE)
         bundle?.apply {
             placeId = this.getString(KEY_PLACE_ID, "")
-            isComingFromConfirmAddress = getBoolean(IS_COMING_CONFIRM_ADD,false)
-            if(containsKey(VALIDATE_RESPONSE)){
+            isComingFromConfirmAddress = getBoolean(IS_COMING_CONFIRM_ADD, false)
+            if (containsKey(VALIDATE_RESPONSE)) {
                 getSerializable(VALIDATE_RESPONSE)?.let {
                     mValidateLocationResponse =
                         it as ValidateLocationResponse
@@ -206,7 +207,9 @@ class ClickAndCollectStoresFragment : BaseDialogFragmentBinding<FragmentClickAnd
         val list = ArrayList<Store>()
         mValidateLocationResponse?.validatePlace?.stores?.let {
             for (store in it) {
-                if (store.storeName?.contains(s.toString(), true) == true || store.storeAddress?.contains(s.toString(), true)==true) {
+                if (store.storeName?.contains(s.toString(),
+                        true) == true || store.storeAddress?.contains(s.toString(), true) == true
+                ) {
                     list.add(store)
                 }
             }
@@ -265,9 +268,10 @@ class ClickAndCollectStoresFragment : BaseDialogFragmentBinding<FragmentClickAnd
             )
         }
     }
+
     override fun tryAgain() {
-        if(confirmAddressViewModel.isConnectedToInternet(requireActivity()))
-        placeId?.let { getDeliveryDetailsFromValidateLocation(it) }
+        if (confirmAddressViewModel.isConnectedToInternet(requireActivity()))
+            placeId?.let { getDeliveryDetailsFromValidateLocation(it) }
     }
 
     override fun onFirstTimePargo() {

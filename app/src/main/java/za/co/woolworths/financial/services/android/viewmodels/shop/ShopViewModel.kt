@@ -54,8 +54,8 @@ class ShopViewModel @Inject constructor(
     private val _addItemToCartResp = MutableLiveData<Event<Resource<AddItemToCartResponse>>>()
     val addItemToCartResp: LiveData<Event<Resource<AddItemToCartResponse>>> = _addItemToCartResp
 
-    private val _onDemandCategories = MutableLiveData<Event<Resource<RootCategories>>>()
-    val onDemandCategories: LiveData<Event<Resource<RootCategories>>> = _onDemandCategories
+    private val _onDemandCategories = MutableLiveData<Event<Resource<DashRootCategories>>>()
+    val onDemandCategories: LiveData<Event<Resource<DashRootCategories>>> = _onDemandCategories
 
     private val _dashLandingDetails = MutableLiveData<Event<Resource<DashCategories>>>()
     val dashLandingDetails: LiveData<Event<Resource<DashCategories>>> = _dashLandingDetails

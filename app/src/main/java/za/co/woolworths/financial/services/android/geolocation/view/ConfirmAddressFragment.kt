@@ -363,7 +363,9 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
                         ConfirmAddressFragmentDirections.actionToConfirmAddressMapFragment(
                             getMapData
                         )
-                    findNavController().navigate(directions)
+                    if (findNavController().currentDestination?.id == R.id.confirmAddressLocationFragment) {
+                        findNavController().navigate(directions)
+                    }
                 } else {
                     val getMapData =
                         MapData(mLastLocation?.latitude,
@@ -376,7 +378,9 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
                         ConfirmAddressFragmentDirections.actionToConfirmAddressMapFragment(
                             getMapData
                         )
-                    findNavController().navigate(directions)
+                    if (findNavController().currentDestination?.id == R.id.confirmAddressLocationFragment) {
+                        findNavController().navigate(directions)
+                    }
                 }
             }
             R.id.inSavedAddress -> {
@@ -420,7 +424,9 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
                         ConfirmAddressFragmentDirections.actionToConfirmAddressMapFragment(
                             getMapData
                         )
-                    findNavController().navigate(directions)
+                    if (findNavController().currentDestination?.id == R.id.confirmAddressLocationFragment) {
+                        findNavController().navigate(directions)
+                    }
                 } else {
                     val getMapData =
                         MapData(0.0, 0.0, true,

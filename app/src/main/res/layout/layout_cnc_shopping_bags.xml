@@ -16,7 +16,6 @@
         android:layout_margin="@dimen/twenty_four_dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:text="@string/your_shopping_bags"
         android:textColor="@color/black"
         android:textSize="@dimen/eighteen_sp"/>
 
@@ -24,7 +23,6 @@
         android:id="@+id/shoppingBagsDec"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/shopping_bags_dec"
         android:fontFamily="@font/myriad_pro_regular"
         android:lineSpacingExtra="@dimen/two_dp"
         android:layout_marginStart="@dimen/twenty_four_dp"
@@ -65,7 +63,6 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/fourteen_dp"
             android:fontFamily="@font/myriad_pro_semi_bold"
-            android:text="@string/no_bags_or_free_bags"
             android:textSize="@dimen/fifteen_sp"
             android:textColor="@color/black"
             app:layout_constraintBottom_toTopOf="@+id/free_bag_desc"
@@ -80,7 +77,6 @@
             android:layout_marginStart="@dimen/fourteen_dp"
             android:layout_marginTop="@dimen/two_dp"
             android:fontFamily="@font/myriad_pro_regular"
-            android:text="@string/free_bag_desc"
             android:textColor="@color/color_444444"
             android:textSize="@dimen/fourteen_sp"
             app:layout_constraintBottom_toBottomOf="parent"

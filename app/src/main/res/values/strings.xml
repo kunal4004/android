@@ -209,6 +209,7 @@
     <string name="edit">EDIT</string>
     <string name="done">DONE</string>
     <string name="remove_all">REMOVE ALL</string>
+    <string name="remove_selected">REMOVE SELECTED</string>
     <string name="checkout">CHECKOUT</string>
     <string name="unlinked_account_copy">We see that your Woolies Card is not yet linked. To conveniently view your available funds, next payment due, recent transactions and so much more, please link your Woolies Card now.</string>
     <string name="added_to_shopping_list">added to shopping list</string>
@@ -474,6 +475,8 @@
     <string name="empty_cart_desc">We see that you currently have no items in\n your cart. Would you like to start shopping?</string>
     <string name="start_shopping">start shopping</string>
     <string name="delete">DELETE</string>
+    <string name="are_you_sure">Are You Sure?</string>
+    <string name="delete_confirmation_text">If you remove these products from your cart, you can still shop for them in the app.</string>
 
     <!-- new list item-->
     <string name="create_list">create list</string>
@@ -482,7 +485,7 @@
     <string name="total_item">Total*</string>
     <string name="rlOtherDiscounts"><![CDATA[WRewards Savings & Other Discounts]]></string>
     <string name="out_of_stock">out of stock</string>
-    <string name="promotional_text">You saved </string>
+    <string name="promotional_text">You Saved </string>
     <string name="labelPromotionOne">labelPromotionOne</string>
     <string name="labelPromotionTwo">labelPromotionTwo</string>
     <string name="labelPromotionThree">labelPromotionThree</string>
@@ -860,7 +863,7 @@
     <string name="food_product_type">foodProducts</string>
     <string name="select_your_quantity">Select Your Quantity</string>
     <string name="no_stock_available">No Stock Available Online</string>
-    <string name="no_stock_available_desc">Use our find in-store feature to see if there is stock available at a Woolies store near you.</string>
+    <string name="no_stock_available_desc">Try our find-in-store feature, or change the details around your delivery or collection method, to see if stock is available at another Woolies store near you.</string>
     <string name="no_of_items_added">%1$Item%2$</string>
     <string name="npc_already_have_your_card_link">ALREADY HAVE your card? LINK it NOW</string>
     <string name="npc_participating_store">Can’t find a participating store close to you? Tap here to arrange delivery and we will issue you a virtual temp card to get shopping today.</string>
@@ -1899,7 +1902,6 @@
     <string name="promo_discount_dialog_desc">If more than one Promo Code is applied, we select the code with the highest priority for you.</string>
     <string name="earliest_collection_date">Earliest Collection date:</string>
     <string name="earliest_collection_Date">Earliest Collection Date:</string>
-    <string name="food_items_beauty_home">Food Items &amp; Fashion, Beauty &amp; Home</string>
     <string name="driver_tip">Driver Tip</string>
 
     <!-- Dash Details -->
@@ -2181,6 +2183,8 @@
     <string name="app_version_info">App Version %s (%s)</string>
     <string name="fsp_number_info">Woolworths Financial Services (FSP15289 and NCRCP49)</string>
     <string name="product_details_out_of_stock">Unfortunately this item is out of stock in %s. Try changing your delivery location and try again.</string>
+    <string name="out_of_stock_dialog_title">This Item Is Out Of Stock</string>
+    <string name="change_delivery_or_collection_out_of_stock" tools:ignore="ButtonCase"><u>Change Delivery or collection details</u></string>
 
     <!--  Voice of Customer  -->
     <string name="voc_question_slider_desc">Please rate your experience, %1$d being poor and %2$d being excellent</string>
@@ -2339,7 +2343,6 @@
 
     <!--Native Checkout-->
     <string name="name_colon_text_view">Name: *</string>
-    <string name="recipient_name_fbh">Recipient Name: *</string>
     <string name="mobile_number_text_view">Mobile Number: *</string>
     <string name="my_address_details">My Address Details</string>
     <string name="address_nickname_text_view">Address Nickname: *</string>
@@ -2815,6 +2818,15 @@
     <string name="cancelled">Cancelled</string>
     <string name="order">Order\u0020</string>
     <string name="a_report_for_this_review_has_already_been_submitted">A report for this review has already been submitted.</string>
+    <string name="reduce_count_button">Reduce Count Button</string>
+    <string name="add_item_count">Add item count</string>
+    <string name="get_replacement_card_action_button_text_label_on_overlay">get_replacement_card_action_button_text_label_on_overlay</string>
+    <plurals name="category_item">
+        <item quantity="one">%1$s %2$s Item</item>
+        <item quantity="other">%1$s %2$s Items</item>
+    </plurals>
+    <string name="select_your_marital_status">Select your marital status</string>
+    <!--  FBH CNC -->
 
     <string name="food_item_not_available_for_collection_title">Food Items Can’t Be Collected From a Pargo Pickup Point.</string>
     <string name="quick">QUICK</string>
@@ -2846,5 +2858,6 @@
     <string name="fashion_items">%1$s Fashion Items</string>
     <string name="fashion_item">%1$s Fashion Item</string>
     <string name="weekends_and_public_holidays_excluded">Weekends and public holidays excluded.</string>
-
+    <string name="food_items_beauty_home">Food Items &amp; Fashion, Beauty &amp; Home</string>
+    <string name="recipient_name_fbh">Recipient Name: *</string>
 </resources>

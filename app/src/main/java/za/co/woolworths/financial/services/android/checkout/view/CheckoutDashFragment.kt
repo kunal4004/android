@@ -81,11 +81,13 @@ import java.util.regex.Pattern
 
 class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_dash),
     ShoppingBagsRadioGroupAdapter.EventListner, View.OnClickListener, CollectionTimeSlotsListener,
-    CustomDriverTipBottomSheetDialog.ClickListner, CompoundButton.OnCheckedChangeListener, IToastInterface {
+    CustomDriverTipBottomSheetDialog.ClickListner, CompoundButton.OnCheckedChangeListener,
+    IToastInterface {
 
+    private var isItemLimitExceeded: Boolean = false
     private lateinit var binding: FragmentCheckoutReturningUserDashBinding
 
-    private var orderTotalValue: Double= -1.0
+    private var orderTotalValue: Double = -1.0
     private var suburbId: String = ""
     private var placesId: String? = ""
     private var storeId: String? = ""
@@ -164,7 +166,8 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
         ShoppingCartLiveData.observe(viewLifecycleOwner) { isLiquorOrder ->
             if (isLiquorOrder == false) {
                 binding.ageConfirmationLayout?.root?.visibility = View.GONE
-                binding.ageConfirmationLayout.liquorComplianceBannerLayout?.root?.visibility = View.GONE
+                binding.ageConfirmationLayout.liquorComplianceBannerLayout?.root?.visibility =
+                    View.GONE
                 ShoppingCartLiveData.value = true
             }
         }
@@ -198,12 +201,18 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
                 if (liquorOrder == true && containsKey(Constant.NO_LIQUOR_IMAGE_URL)) {
                     liquorImageUrl = getString(Constant.NO_LIQUOR_IMAGE_URL)
                     binding.ageConfirmationLayout?.root?.visibility = View.VISIBLE
-                    binding.ageConfirmationLayout.liquorComplianceBannerLayout?.root?.visibility = View.VISIBLE
-                    ImageManager.setPicture(binding.ageConfirmationLayout.liquorComplianceBannerLayout.imgLiquorBanner, liquorImageUrl)
+                    binding.ageConfirmationLayout.liquorComplianceBannerLayout?.root?.visibility =
+                        View.VISIBLE
+                    ImageManager.setPicture(
+                        binding.ageConfirmationLayout.liquorComplianceBannerLayout.imgLiquorBanner,
+                        liquorImageUrl
+                    )
 
                     binding.ageConfirmationLayout.root.visibility = View.VISIBLE
-                    binding.ageConfirmationLayout.liquorComplianceBannerSeparator.visibility = View.VISIBLE
-                    binding.ageConfirmationLayout.liquorComplianceBannerLayout.root.visibility = View.VISIBLE
+                    binding.ageConfirmationLayout.liquorComplianceBannerSeparator.visibility =
+                        View.VISIBLE
+                    binding.ageConfirmationLayout.liquorComplianceBannerLayout.root.visibility =
+                        View.VISIBLE
 
                     if (!binding.ageConfirmationLayout.radioBtnAgeConfirmation.isChecked) {
                         Utils.fadeInFadeOutAnimation(binding.txtContinueToPayment, true)
@@ -236,7 +245,10 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
                 binding.checkoutCollectingFromLayout.deliveringTitleValueShimmerFrameLayout,
                 binding.checkoutCollectingFromLayout.tvNativeCheckoutDeliveringValue
             ),
-            Pair<ShimmerFrameLayout, View>(binding.checkoutCollectingFromLayout.forwardImgViewShimmerFrameLayout, binding.checkoutCollectingFromLayout.imageViewCaretForward),
+            Pair<ShimmerFrameLayout, View>(
+                binding.checkoutCollectingFromLayout.forwardImgViewShimmerFrameLayout,
+                binding.checkoutCollectingFromLayout.imageViewCaretForward
+            ),
             Pair<ShimmerFrameLayout, View>(
                 binding.nativeCheckoutFoodSubstitutionLayout.foodSubstitutionTitleShimmerFrameLayout,
                 binding.nativeCheckoutFoodSubstitutionLayout.txtFoodSubstitutionTitle
@@ -306,7 +318,10 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
                 binding.layoutDeliveryInstructions.specialInstructionSwitchShimmerFrameLayout,
                 binding.layoutDeliveryInstructions.switchSpecialDeliveryInstruction
             ),
-            Pair<ShimmerFrameLayout, View>(binding.layoutCheckoutDeliveryOrderSummary.txtYourCartShimmerFrameLayout, binding.layoutCheckoutDeliveryOrderSummary.txtOrderSummaryYourCart),
+            Pair<ShimmerFrameLayout, View>(
+                binding.layoutCheckoutDeliveryOrderSummary.txtYourCartShimmerFrameLayout,
+                binding.layoutCheckoutDeliveryOrderSummary.txtOrderSummaryYourCart
+            ),
             Pair<ShimmerFrameLayout, View>(
                 binding.layoutCheckoutDeliveryOrderSummary.yourCartValueShimmerFrameLayout,
                 binding.layoutCheckoutDeliveryOrderSummary.txtOrderSummaryYourCartValue
@@ -319,7 +334,10 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
                 binding.layoutCheckoutDeliveryOrderSummary.deliveryFeeValueShimmerFrameLayout,
                 binding.layoutCheckoutDeliveryOrderSummary.txtOrderSummaryDeliveryFeeValue
             ),
-            Pair<ShimmerFrameLayout, View>(binding.layoutCheckoutDeliveryOrderSummary.summaryNoteShimmerFrameLayout, binding.layoutCheckoutDeliveryOrderSummary.txtOrderSummaryNote),
+            Pair<ShimmerFrameLayout, View>(
+                binding.layoutCheckoutDeliveryOrderSummary.summaryNoteShimmerFrameLayout,
+                binding.layoutCheckoutDeliveryOrderSummary.txtOrderSummaryNote
+            ),
             Pair<ShimmerFrameLayout, View>(
                 binding.layoutCheckoutDeliveryOrderSummary.txtOrderTotalShimmerFrameLayout,
                 binding.layoutCheckoutDeliveryOrderSummary.txtOrderTotalTitle
@@ -411,6 +429,7 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
             KotlinUtils.getDeliveryType()?.storeId, "checkout"
         )
 
+        isItemLimitExceeded = false
         checkoutAddAddressNewUserViewModel?.getConfirmLocationDetails(body)
             ?.observe(viewLifecycleOwner) { response ->
                 stopShimmerView()
@@ -436,7 +455,9 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
                                     showEmptyCart()
                                     return@observe
                                 }
+                                var maxItemLimit: Int = -1
                                 response.orderSummary?.fulfillmentDetails?.let {
+                                    maxItemLimit = it.foodMaximumQuantity ?: -1
                                     if (!it.deliveryType.isNullOrEmpty()) {
                                         Utils.savePreferredDeliveryLocation(
                                             ShoppingDeliveryLocation(
@@ -444,6 +465,12 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
                                             )
                                         )
                                     }
+                                }
+
+                                isItemLimitExceeded =
+                                    (response.orderSummary?.totalItemsCount ?: -1) > maxItemLimit
+                                if(isItemLimitExceeded) {
+                                    showMaxItemView()
                                 }
 
                                 if (response.orderSummary?.hasMinimumBasketAmount == false) {
@@ -499,15 +526,16 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
             return
         }
 
-        binding.checkoutCollectingTimeDetailsLayout.firstAvailableDateLayout?.titleTv?.text = selectedWeekSlot?.date ?: try {
-            WFormatter.convertDateToFormat(
-                slots[0].stringShipOnDate,
-                DATE_FORMAT_EEEE_COMMA_dd_MMMM
-            )
-        } catch (e: Exception) {
-            FirebaseManager.logException(e)
-            ""
-        }
+        binding.checkoutCollectingTimeDetailsLayout.firstAvailableDateLayout?.titleTv?.text =
+            selectedWeekSlot?.date ?: try {
+                WFormatter.convertDateToFormat(
+                    slots[0].stringShipOnDate,
+                    DATE_FORMAT_EEEE_COMMA_dd_MMMM
+                )
+            } catch (e: Exception) {
+                FirebaseManager.logException(e)
+                ""
+            }
         context?.let { context ->
             binding.checkoutCollectingTimeDetailsLayout.firstAvailableDateLayout?.titleTv?.setTextColor(
                 ContextCompat.getColor(
@@ -520,12 +548,15 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
                     context,
                     R.drawable.checkout_delivering_title_round_button_pressed
                 )
-            binding.checkoutCollectingTimeDetailsLayout.chooseDateLayout?.titleTv?.text = context.getString(R.string.choose_date)
+            binding.checkoutCollectingTimeDetailsLayout.chooseDateLayout?.titleTv?.text =
+                context.getString(R.string.choose_date)
         }
 
         setSelectedDateTimeSlots(slots)
         binding.checkoutCollectingTimeDetailsLayout.chooseDateLayout?.root?.setOnClickListener(this@CheckoutDashFragment)
-        binding.checkoutCollectingTimeDetailsLayout.firstAvailableDateLayout?.root?.setOnClickListener(this@CheckoutDashFragment)
+        binding.checkoutCollectingTimeDetailsLayout.firstAvailableDateLayout?.root?.setOnClickListener(
+            this@CheckoutDashFragment
+        )
     }
 
     private fun setSelectedDateTimeSlots(slots: List<Slot>?) {
@@ -626,8 +657,10 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
                         )
                         binding.layoutDriverTip.tipNoteTextView?.visibility = View.VISIBLE
                     } else if (
-                        removeRandFromAmount(selectedDriverTipValue
-                            ?: DEFAULT_AMOUNT).toDouble() != 0.0
+                        removeRandFromAmount(
+                            selectedDriverTipValue
+                                ?: DEFAULT_AMOUNT
+                        ).toDouble() != 0.0
                         && driverTipOptionsList?.contains(selectedDriverTipValue) == false
                         && index == driverTipOptionsList?.size?.minus(1)
                     ) {
@@ -641,7 +674,8 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
                             )
                         )
                         binding.layoutDriverTip.tipNoteTextView?.visibility = View.VISIBLE
-                        titleTextView?.text = "R${removeRandFromAmount(selectedDriverTipValue ?: DEFAULT_AMOUNT).toDouble()}"
+                        titleTextView?.text =
+                            "R${removeRandFromAmount(selectedDriverTipValue ?: DEFAULT_AMOUNT).toDouble()}"
                         val image = AppCompatResources.getDrawable(
                             requireContext(),
                             R.drawable.edit_icon_white
@@ -754,7 +788,8 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
     }
 
     private fun initializeDashingToView() {
-        binding.checkoutCollectingFromLayout.tvNativeCheckoutDeliveringTitle?.text = getString(R.string.dashing_to)
+        binding.checkoutCollectingFromLayout.tvNativeCheckoutDeliveringTitle?.text =
+            getString(R.string.dashing_to)
         binding.checkoutCollectingTimeDetailsLayout.chooseDateLayout?.root?.visibility = GONE
         if (arguments == null) {
             binding.checkoutCollectingFromLayout.root.visibility = GONE
@@ -822,7 +857,8 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
                         binding.checkoutCollectingFromLayout?.root?.visibility = GONE
                     }
                 }
-                binding.checkoutCollectingFromLayout.tvNativeCheckoutDeliveringValue?.text = deliveringToAddress
+                binding.checkoutCollectingFromLayout.tvNativeCheckoutDeliveringValue?.text =
+                    deliveringToAddress
                 binding.checkoutCollectingFromLayout?.root?.setOnClickListener(this)
             }
         }
@@ -830,9 +866,13 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
 
 
     private fun initializeDeliveryInstructions() {
-        binding.layoutDeliveryInstructions.edtTxtSpecialDeliveryInstruction?.addTextChangedListener(deliveryInstructionsTextWatcher)
-        binding.layoutDeliveryInstructions.edtTxtInputLayoutSpecialDeliveryInstruction?.visibility = GONE
-        binding.layoutDeliveryInstructions.edtTxtInputLayoutSpecialDeliveryInstruction?.isCounterEnabled = false
+        binding.layoutDeliveryInstructions.edtTxtSpecialDeliveryInstruction?.addTextChangedListener(
+            deliveryInstructionsTextWatcher
+        )
+        binding.layoutDeliveryInstructions.edtTxtInputLayoutSpecialDeliveryInstruction?.visibility =
+            GONE
+        binding.layoutDeliveryInstructions.edtTxtInputLayoutSpecialDeliveryInstruction?.isCounterEnabled =
+            false
         deliveryInstructionClickListener(binding.layoutDeliveryInstructions.switchSpecialDeliveryInstruction.isChecked)
 
         binding.layoutDeliveryInstructions.switchSpecialDeliveryInstruction?.setOnCheckedChangeListener { _, isChecked ->
@@ -844,9 +884,10 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
         if (AppConfigSingleton.nativeCheckout?.currentShoppingBag?.isEnabled == true) {
             binding.layoutDeliveryInstructions.switchNeedBags?.visibility = View.VISIBLE
             binding.layoutDeliveryInstructions.txtNeedBags?.visibility = View.VISIBLE
-            binding.layoutDeliveryInstructions.txtNeedBags?.text = AppConfigSingleton.nativeCheckout?.currentShoppingBag?.title.plus(
-                AppConfigSingleton.nativeCheckout?.currentShoppingBag?.description
-            )
+            binding.layoutDeliveryInstructions.txtNeedBags?.text =
+                AppConfigSingleton.nativeCheckout?.currentShoppingBag?.title.plus(
+                    AppConfigSingleton.nativeCheckout?.currentShoppingBag?.description
+                )
             binding.layoutDeliveryInstructions.viewHorizontalSeparator?.visibility = GONE
             binding.layoutDeliveryInstructions.newShoppingBagsLayout?.root?.visibility = GONE
             binding.layoutDeliveryInstructions.switchNeedBags?.setOnCheckedChangeListener { _, isChecked ->
@@ -861,7 +902,8 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
             binding.layoutDeliveryInstructions.switchNeedBags?.visibility = GONE
             binding.layoutDeliveryInstructions.viewHorizontalSeparator?.visibility = View.VISIBLE
             binding.layoutDeliveryInstructions.txtNeedBags?.visibility = GONE
-            binding.layoutDeliveryInstructions.newShoppingBagsLayout?.root?.visibility = View.VISIBLE
+            binding.layoutDeliveryInstructions.newShoppingBagsLayout?.root?.visibility =
+                View.VISIBLE
             addShoppingBagsRadioButtons()
         }
     }
@@ -874,16 +916,19 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
             )
         binding.layoutDeliveryInstructions.edtTxtInputLayoutSpecialDeliveryInstruction?.visibility =
             if (isChecked) View.VISIBLE else GONE
-        binding.layoutDeliveryInstructions.edtTxtInputLayoutSpecialDeliveryInstruction?.isCounterEnabled = isChecked
+        binding.layoutDeliveryInstructions.edtTxtInputLayoutSpecialDeliveryInstruction?.isCounterEnabled =
+            isChecked
         binding.layoutDeliveryInstructions.edtTxtSpecialDeliveryInstruction?.visibility =
             if (isChecked) View.VISIBLE else GONE
     }
 
     private fun addShoppingBagsRadioButtons() {
-        binding.layoutDeliveryInstructions.newShoppingBagsLayout.txtNewShoppingBagsSubDesc?.visibility = View.VISIBLE
         val newShoppingBags = AppConfigSingleton.nativeCheckout?.newShoppingBag
-        binding.layoutDeliveryInstructions.newShoppingBagsLayout.txtNewShoppingBagsDesc?.text = newShoppingBags?.title
-        binding.layoutDeliveryInstructions.newShoppingBagsLayout.txtNewShoppingBagsSubDesc?.text = newShoppingBags?.description
+        binding.layoutDeliveryInstructions.newShoppingBagsLayout.txtNewShoppingBagsDesc?.text =
+            newShoppingBags?.title
+        binding.layoutDeliveryInstructions.newShoppingBagsLayout.newShoppingBagsTitle.text = newShoppingBags?.title
+        binding.layoutDeliveryInstructions.newShoppingBagsLayout.txtNewShoppingBagsDesc.text = newShoppingBags?.description
+
 
         val shoppingBagsAdapter =
             ShoppingBagsRadioGroupAdapter(newShoppingBags?.options, this, selectedShoppingBagType)
@@ -1076,6 +1121,12 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
     }
 
     private fun onCheckoutPaymentClick() {
+
+        if (isItemLimitExceeded) {
+            showMaxItemView()
+            return
+        }
+
         if (isRequiredFieldsMissing() || isAgeConfirmationLiquorCompliance()) {
             return
         }
@@ -1118,12 +1169,24 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
         if (liquorOrder == true && !binding.ageConfirmationLayout.radioBtnAgeConfirmation.isChecked) {
             binding.ageConfirmationLayout.root.visibility = View.VISIBLE
             binding.ageConfirmationLayout.liquorComplianceBannerSeparator.visibility = View.VISIBLE
-            binding.ageConfirmationLayout.liquorComplianceBannerLayout.root.visibility = View.VISIBLE
+            binding.ageConfirmationLayout.liquorComplianceBannerLayout.root.visibility =
+                View.VISIBLE
 
             Utils.fadeInFadeOutAnimation(binding.txtContinueToPayment, false)
         } else {
             Utils.fadeInFadeOutAnimation(binding.txtContinueToPayment, true)
         }
+    }
+
+    private fun showMaxItemView() {
+        KotlinUtils.showGeneralInfoDialog(
+            requireActivity().supportFragmentManager,
+            getString(R.string.unable_process_checkout_desc),
+            getString(R.string.unable_process_checkout_title),
+            getString(R.string.got_it),
+            R.drawable.payment_overdue_icon,
+            isFromCheckoutScreen = true
+        )
     }
 
     private fun setEventForShippingDetails() {
@@ -1182,12 +1245,16 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
                 FirebaseAnalytics.Param.QUANTITY,
                 cartItem.commerceItemInfo.quantity
             )
-            driverTipItemParams.putParcelableArray(FirebaseAnalytics.Param.ITEMS,
-                arrayOf(addShippingInfoItem))
+            driverTipItemParams.putParcelableArray(
+                FirebaseAnalytics.Param.ITEMS,
+                arrayOf(addShippingInfoItem)
+            )
         }
 
-        AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.ADD_SHIPPING_INFO,
-            driverTipItemParams)
+        AnalyticsManager.logEvent(
+            FirebaseManagerAnalyticsProperties.ADD_SHIPPING_INFO,
+            driverTipItemParams
+        )
     }
 
     private fun setEventForDriverTip() {
@@ -1197,16 +1264,22 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
 
         val driverTipItemParams = Bundle()
 
-        driverTipItemParams.putString(FirebaseAnalytics.Param.CURRENCY,
-            FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE)
+        driverTipItemParams.putString(
+            FirebaseAnalytics.Param.CURRENCY,
+            FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE
+        )
 
         driverTipItemParams.putDouble(FirebaseAnalytics.Param.VALUE, orderTotalValue)
 
-        driverTipItemParams.putString(FirebaseManagerAnalyticsProperties.PropertyNames.DASH_TIP,
-            removeRandFromAmount(selectedDriverTipValue))
+        driverTipItemParams.putString(
+            FirebaseManagerAnalyticsProperties.PropertyNames.DASH_TIP,
+            removeRandFromAmount(selectedDriverTipValue)
+        )
 
-        AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.DASH_DRIVER_TIP,
-            driverTipItemParams)
+        AnalyticsManager.logEvent(
+            FirebaseManagerAnalyticsProperties.DASH_DRIVER_TIP,
+            driverTipItemParams
+        )
     }
 
     private fun presentErrorDialog(title: String, subTitle: String, errorType: Int) {
@@ -1230,10 +1303,12 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
     }
 
     private fun setScreenClickEvents(isClickable: Boolean) {
-        binding.nativeCheckoutFoodSubstitutionLayout.radioGroupFoodSubstitution?.isClickable = isClickable
+        binding.nativeCheckoutFoodSubstitutionLayout.radioGroupFoodSubstitution?.isClickable =
+            isClickable
         binding.checkoutCollectingFromLayout?.root?.isClickable = isClickable
         binding.layoutDeliveryInstructions.switchNeedBags?.isClickable = isClickable
-        binding.layoutDeliveryInstructions.switchSpecialDeliveryInstruction?.isClickable = isClickable
+        binding.layoutDeliveryInstructions.switchSpecialDeliveryInstruction?.isClickable =
+            isClickable
     }
 
     private fun getShipmentDetailsBody() = ShippingDetailsBody().apply {
@@ -1293,7 +1368,8 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
 
     private fun isRequiredFieldsMissing(): Boolean {
         if (!TextUtils.isEmpty(selectedTimeSlot?.slotId)) {
-            binding.checkoutCollectingTimeDetailsLayout.txtSelectCollectionTimeSlotFoodError?.visibility = GONE
+            binding.checkoutCollectingTimeDetailsLayout.txtSelectCollectionTimeSlotFoodError?.visibility =
+                GONE
             return false
         }
         // scroll to slot selection layout
@@ -1301,7 +1377,8 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
             0,
             binding.checkoutCollectingTimeDetailsLayout?.root?.top ?: 0
         )
-        binding.checkoutCollectingTimeDetailsLayout.txtSelectCollectionTimeSlotFoodError?.visibility = View.VISIBLE
+        binding.checkoutCollectingTimeDetailsLayout.txtSelectCollectionTimeSlotFoodError?.visibility =
+            View.VISIBLE
         return true
     }
 
@@ -1379,8 +1456,10 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
     override fun onCancelDialog(previousTipValue: String) {
 
         var index = driverTipOptionsList?.indexOf(selectedDriverTipValue) ?: -1
-        if (index < 0 && removeRandFromAmount(selectedDriverTipValue
-                ?: DEFAULT_AMOUNT).toDouble() > 0.0
+        if (index < 0 && removeRandFromAmount(
+                selectedDriverTipValue
+                    ?: DEFAULT_AMOUNT
+            ).toDouble() > 0.0
         ) {
             index = driverTipOptionsList?.lastIndex ?: -1
         }
@@ -1416,7 +1495,11 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
     override fun onResume() {
         super.onResume()
         if (!areNotificationsEnabled()) {
-            buildPushNotificationAlertToast(requireActivity(), binding.deliverySummaryScrollView, this)
+            buildPushNotificationAlertToast(
+                requireActivity(),
+                binding.deliverySummaryScrollView,
+                this
+            )
         }
     }
 

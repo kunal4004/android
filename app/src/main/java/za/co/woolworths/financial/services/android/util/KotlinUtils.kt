@@ -902,6 +902,7 @@ class KotlinUtils {
         }
 
         fun String.capitaliseFirstLetterInEveryWord(): String = split(" ").map { it.lowercase().replaceFirstChar { it -> it.titlecase() } }.joinToString(" ")
+
         fun showGeneralInfoDialog(
             fragmentManager: FragmentManager,
             description: String,
@@ -912,17 +913,12 @@ class KotlinUtils {
         ) {
             val dialog =
                 GeneralInfoDialogFragment.newInstance(description, title, actionText, infoIcon, isFromCheckoutScreen)
+            dialog.isCancelable = !isFromCheckoutScreen
             fragmentManager.let { fragmentTransaction ->
                 dialog.show(
                     fragmentTransaction,
                     GeneralInfoDialogFragment::class.java.simpleName
                 )
-            }
-
-            if (isFromCheckoutScreen) {
-                dialog.isCancelable = false
-            } else {
-                dialog.isCancelable = true
             }
         }
 
@@ -1222,7 +1218,6 @@ class KotlinUtils {
         }
 
          fun getDeliveryDetails(isUserBrowsing : Boolean): String? {
-            //TODO: Update condition to when browsing delivery is true
             return if (isUserBrowsing) {
                 when (browsingDeliveryType) {
                     Delivery.CNC -> {

@@ -92,4 +92,26 @@
         app:layout_goneMarginEnd="0dp"
         tools:visibility="visible" />
 
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/inAppOrderNotificationChatCount"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/twenty_dp"
+        android:background="@drawable/circle_red_notification"
+        android:fontFamily="@font/myriad_pro_semi_bold"
+        android:gravity="center"
+        android:minWidth="@dimen/eighteen_dp"
+        android:padding="@dimen/two_dp"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="@dimen/twelve_sp"
+        android:visibility="gone"
+        app:layout_constraintCircle="@+id/inappOrderNotificationIcon"
+        app:layout_constraintCircleAngle="45"
+        app:layout_constraintCircleRadius="@dimen/fifteen_dp"
+        app:layout_constraintEnd_toEndOf="@id/inappOrderNotificationIcon"
+        app:layout_constraintStart_toStartOf="@id/inappOrderNotificationIcon"
+        app:layout_constraintTop_toTopOf="@id/inappOrderNotificationIcon"
+        tools:text="99"
+        tools:visibility="visible" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
