@@ -91,8 +91,8 @@ class SearchResultShopAdapter(
                      * Disable clothing type selection when product detail api is loading
                      * food item type can still be selected.
                      */
-                    val productList: ProductList = this@SearchResultShopAdapter.productList!![holder.adapterPosition]
-                    val productType = productList.productType
+                    val productList: ProductList? = this@SearchResultShopAdapter.productList?.get(holder.adapterPosition) ?: null
+                    val productType = productList?.productType ?: ""
                     if (!productType.equals(FOOD_PRODUCT, ignoreCase = true)) {
                         val unlockSelection = !viewIsLoading()
                         holder.itemBinding.cbShoppingList.isChecked = unlockSelection
@@ -122,7 +122,7 @@ class SearchResultShopAdapter(
             selectedProduct.viewIsLoading = !selectedProduct.viewIsLoading
             if (selectedProduct.itemWasChecked) selectedProduct.viewIsLoading = false
             selectedProduct.itemWasChecked = productWasChecked(selectedProduct)
-            mSearchResultNavigator!!.onCheckedItem(
+            mSearchResultNavigator?.onCheckedItem(
                 productList,
                 selectedProduct,
                 selectedProduct.viewIsLoading
@@ -130,8 +130,8 @@ class SearchResultShopAdapter(
             notifyItemChanged(position)
         } else {
             selectedProduct.itemWasChecked = productWasChecked(selectedProduct)
-            mSearchResultNavigator!!.onFoodTypeChecked(productList, selectedProduct)
-            mSearchResultNavigator.minOneItemSelected(productList)
+            mSearchResultNavigator?.onFoodTypeChecked(productList, selectedProduct)
+            mSearchResultNavigator?.minOneItemSelected(productList)
             notifyItemChanged(position)
         }
     }

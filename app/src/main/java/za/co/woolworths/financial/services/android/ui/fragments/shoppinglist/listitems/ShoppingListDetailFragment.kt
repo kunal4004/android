@@ -207,7 +207,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                 Status.ERROR -> {
                     viewModel.inventoryCallFailed = true
                     viewModel.setOutOfStock()
-                    if (!isAdded || !isVisible) return@observe
+                    if (!isAdded) return@observe
                     bindingListDetails.loadingBar.visibility = GONE
                     enableAdapterClickEvent(true)
                     updateList()
