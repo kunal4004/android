@@ -595,6 +595,12 @@ object OneAppService : RetrofitConfig() {
         )
     }
 
+    suspend fun removeSingleCartItem(commerceId: String) : retrofit2.Response<ShoppingCartResponse>{
+        return withContext(Dispatchers.IO){
+            mApiInterface.removeCartItem(getSessionToken(), getDeviceIdentityToken(), commerceId)
+        }
+    }
+
     fun removeAllCartItems(): Call<ShoppingCartResponse> {
         return mApiInterface.removeAllCartItems(getSessionToken(), getDeviceIdentityToken())
     }

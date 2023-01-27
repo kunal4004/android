@@ -31,6 +31,10 @@ class CartViewModel @Inject constructor(
         MutableLiveData<Event<Resource<SavedAddressResponse>>>()
     val getSavedAddress: LiveData<Event<Resource<SavedAddressResponse>>> =
         _getSavedAddress
+    private val _removeCartItem =
+        MutableLiveData<Event<Resource<ShoppingCartResponse>>>()
+    val removeCartItem: LiveData<Event<Resource<ShoppingCartResponse>>> =
+        _removeCartItem
 
     fun getShoppingCartV2() {
         _getCarV2.value = Event(Resource.loading(null))
@@ -45,6 +49,14 @@ class CartViewModel @Inject constructor(
         viewModelScope.launch {
             val response = cartRepository.getSavedAddress()
             _getSavedAddress.value = Event(response)
+        }
+    }
+
+    fun removeCartItem(commerceId: String) {
+        _removeCartItem.value = Event(Resource.loading(null))
+        viewModelScope.launch {
+            val response = cartRepository.removeCartItem(commerceId)
+            _removeCartItem.value = Event(response)
         }
     }
 }
