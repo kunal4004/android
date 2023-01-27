@@ -184,7 +184,6 @@ class SearchResultShopAdapter(
         }
 
         fun setChecked(productList: ProductList) {
-            itemBinding.btnDeleteRow.isChecked = productList.itemWasChecked
         }
 
         fun showProgressBar(visible: Boolean) {
@@ -201,7 +200,6 @@ class SearchResultShopAdapter(
         }
 
         fun hideDropdownIcon() {
-            itemBinding.imPrice.visibility = View.GONE
         }
     }
 
