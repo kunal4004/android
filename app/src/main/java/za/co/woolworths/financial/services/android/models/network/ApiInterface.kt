@@ -528,6 +528,19 @@ interface ApiInterface {
         @Header("deviceIdentityToken") deviceIdentityToken: String
     ): Call<SavedAddressResponse>
 
+    @Headers(
+        "Content-Type: application/json",
+        "Accept: application/json",
+        "Media-Type: application/json"
+    )
+    @GET("wfs/app/v4/cart/checkout/savedAddresses")
+   suspend fun getSavedAddress(
+        @Header("userAgent") userAgent: String,
+        @Header("userAgentVersion") userAgentVersion: String,
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String
+    ): retrofit2.Response<SavedAddressResponse>
+
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("wfs/app/v4/cart/checkout/addAddress")
     fun addAddress(

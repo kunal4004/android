@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.fragments.product.shop
+package za.co.woolworths.financial.services.android.cart.view
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -65,6 +65,7 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.ui.activities.online_voucher_redemption.AvailableVouchersToRedeemInCart
 import za.co.woolworths.financial.services.android.ui.adapters.CartProductAdapter
 import za.co.woolworths.financial.services.android.ui.fragments.cart.GiftWithPurchaseDialogDetailFragment
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.RemoveProductsFromCartDialogFragment.Companion.newInstance
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.RemoveProductsFromCartDialogFragment.IRemoveProductsFromCartDialog
 import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
@@ -387,7 +388,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                             return
                         }
                         // Get list of saved address and navigate to proper Checkout page.
-                        callSavedAddress()
+                        viewModel.getSavedAddress()
                     }
                 }
             }
@@ -406,41 +407,6 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
 
     private fun dismissProgress() {
         binding.cartProgressBar.visibility = View.GONE
-    }
-
-    private fun callSavedAddress() {
-        binding.cartProgressBar.visibility = View.VISIBLE
-        val savedAddressCall = getSavedAddresses()
-        savedAddressCall.enqueue(
-            CompletionHandler(
-                (object : IResponseListener<SavedAddressResponse> {
-                    override fun onSuccess(response: SavedAddressResponse?) {
-                        when (response!!.httpCode) {
-                            HTTP_OK -> {
-                                binding.cartProgressBar.visibility = View.GONE
-                                navigateToCheckout(response)
-                            }
-                            else -> {
-                                binding.cartProgressBar.visibility = View.GONE
-                                if (response.response != null) {
-                                    showErrorDialog(
-                                        ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON,
-                                        response.response!!.message
-                                    )
-                                }
-                            }
-                        }
-                    }
-
-                    override fun onFailure(error: Throwable?) {
-                        showErrorDialog(
-                            ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON,
-                            error!!.message
-                        )
-                    }
-                }), SavedAddressResponse::class.java
-            )
-        )
     }
 
     private fun showErrorDialog(errorType: Int, errorMessage: String?) {
@@ -1497,7 +1463,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
 
         // Retry callback when saved address api fails
         if (resultCode == ErrorHandlerActivity.RESULT_RETRY) {
-            callSavedAddress()
+            viewModel.getSavedAddress()
         }
     }
 
@@ -2108,6 +2074,38 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                 }
                 Status.ERROR -> {
                     onCartV2Response(response)
+                }
+            }
+        }
+
+        viewModel.getSavedAddress.observe(viewLifecycleOwner) {
+            val response = it.peekContent().data
+            when (it.peekContent().status) {
+                Status.LOADING -> {
+                    binding.cartProgressBar.visibility = View.VISIBLE
+                }
+                Status.SUCCESS -> {
+                    when (response?.httpCode) {
+                        HTTP_OK -> {
+                            binding.cartProgressBar.visibility = View.GONE
+                            navigateToCheckout(response)
+                        }
+                        else -> {
+                            binding.cartProgressBar.visibility = View.GONE
+                            if (response?.response != null) {
+                                showErrorDialog(
+                                    ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON,
+                                    response.response?.message
+                                )
+                            }
+                        }
+                    }
+                }
+                Status.ERROR -> {
+                    showErrorDialog(
+                        ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON,
+                        response?.response?.message
+                    )
                 }
             }
         }

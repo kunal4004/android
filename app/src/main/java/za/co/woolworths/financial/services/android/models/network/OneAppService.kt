@@ -373,6 +373,12 @@ object OneAppService : RetrofitConfig() {
         )
     }
 
+    suspend fun getSavedAddress() : retrofit2.Response<SavedAddressResponse>{
+        return withContext(Dispatchers.IO){
+            mApiInterface.getSavedAddress("","",getSessionToken(), getDeviceIdentityToken())
+        }
+    }
+
     fun addAddress(addAddressRequestBody: AddAddressRequestBody): Call<AddAddressResponse> {
         return mApiInterface.addAddress(
             "",
