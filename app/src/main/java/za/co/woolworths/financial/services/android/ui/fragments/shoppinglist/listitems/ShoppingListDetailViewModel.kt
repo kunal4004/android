@@ -14,7 +14,6 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsR
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse
 import za.co.woolworths.financial.services.android.models.network.Event
 import za.co.woolworths.financial.services.android.models.network.Resource
-import za.co.woolworths.financial.services.android.util.DeliveryType
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import javax.inject.Inject
@@ -32,8 +31,8 @@ class ShoppingListDetailViewModel @Inject constructor(
     val shoppListDetails: LiveData<Event<Resource<ShoppingListItemsResponse>>> =
         _shoppingListDetails
 
-    private val _isUpdateList = MutableLiveData(false)
-    val isUpdateList: LiveData<Boolean> = _isUpdateList
+    private val _isListUpdated = MutableLiveData(false)
+    val isListUpdated: LiveData<Boolean> = _isListUpdated
 
     private val _inventoryDetails =
         MutableLiveData<Event<Resource<SkusInventoryForStoreResponse>>>()
@@ -59,7 +58,7 @@ class ShoppingListDetailViewModel @Inject constructor(
      * Step 6: make Inventory call with storeId and catalogRefIds
      **/
     fun makeInventoryCalls() {
-        _isUpdateList.value = false
+        _isListUpdated.value = false
         mShoppingListItems.map { it.fulfillmentType }.distinct().forEach { fulfillmentType ->
             val multiSkuList =
                 mShoppingListItems.filter { fulfillmentType.equals(it.fulfillmentType) }
@@ -80,7 +79,7 @@ class ShoppingListDetailViewModel @Inject constructor(
                         setUnavailable(multiSkuList, skuIds)
                     }
                 }
-                _isUpdateList.value = true
+                _isListUpdated.value = true
             } else {
                 fulfillmentStoreMapArrayList?.add(
                     FulfillmentStoreMap(fulfillmentType, storeId, false)

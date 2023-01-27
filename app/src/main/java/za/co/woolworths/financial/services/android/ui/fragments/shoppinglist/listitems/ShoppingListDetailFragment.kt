@@ -181,7 +181,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             }
         }
 
-        viewModel.isUpdateList.observe(viewLifecycleOwner) {
+        viewModel.isListUpdated.observe(viewLifecycleOwner) {
             if(it) {
                 bindingListDetails.loadingBar.visibility = GONE
                 updateList()
