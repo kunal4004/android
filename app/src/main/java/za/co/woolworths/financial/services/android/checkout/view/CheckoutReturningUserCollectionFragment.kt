@@ -379,7 +379,7 @@ class CheckoutReturningUserCollectionFragment :
     private fun callStorePickupInfoAPI() {
         initShimmerView()
 
-        isItemLimitExceeded = false
+        //isItemLimitExceeded = false
         checkoutAddAddressNewUserViewModel?.getStorePickupInfo(getStorePickupInfoBody())
             ?.observe(viewLifecycleOwner) { response ->
                 stopShimmerView()
@@ -405,9 +405,9 @@ class CheckoutReturningUserCollectionFragment :
                                     showEmptyCart()
                                     return@observe
                                 }
-                                var maxItemLimit = -1
+                               // var maxItemLimit = -1
                                 response.orderSummary?.fulfillmentDetails?.let {
-                                    maxItemLimit = it.foodMaximumQuantity ?: -1
+                                   // maxItemLimit = it.foodMaximumQuantity ?: -1
                                     if (!it.deliveryType.isNullOrEmpty()) {
                                         Utils.savePreferredDeliveryLocation(
                                             ShoppingDeliveryLocation(
@@ -417,11 +417,11 @@ class CheckoutReturningUserCollectionFragment :
                                     }
                                 }
 
-                                isItemLimitExceeded =
+                             /*   isItemLimitExceeded =
                                     (response.orderSummary?.totalItemsCount ?: 0) > maxItemLimit
                                 if (isItemLimitExceeded) {
                                     showMaxItemView()
-                                }
+                                }*/
 
                                 initializeOrderSummary(response.orderSummary)
                                 updateCollectionItemsForCheckout()
