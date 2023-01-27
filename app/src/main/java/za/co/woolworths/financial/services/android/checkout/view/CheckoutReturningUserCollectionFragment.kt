@@ -743,11 +743,11 @@ class CheckoutReturningUserCollectionFragment :
                     switchNeedBags?.visibility = View.GONE
                     txtNeedBags?.visibility = View.GONE
 
-                    checkoutCNCShoppingBagsInfoLayout?.root?.visibility = View.VISIBLE
+                    checkoutCNCShoppingBagsInfoLayout?.root?.visibility = View.GONE
 
                     viewHorizontalCollectionSeparator?.visibility = View.GONE
-                    shoppingBagsSeparator?.visibility = View.VISIBLE
-                    viewHorizontalCollectionBottomSeparator?.visibility = View.VISIBLE
+                    shoppingBagsSeparator?.visibility = View.GONE
+                    viewHorizontalCollectionBottomSeparator?.visibility = View.GONE
                 }
             }
             storePickupInfoResponse?.sortedFoodDeliverySlots?.apply {
@@ -779,10 +779,10 @@ class CheckoutReturningUserCollectionFragment :
                     shoppingBagSeparator?.visibility = View.GONE
                     viewGiftHorizontalSeparator?.visibility = View.GONE
 
-                    checkoutCNCShoppingBagsInfoLayout?.root?.visibility = View.VISIBLE
+                    checkoutCNCShoppingBagsInfoLayout?.root?.visibility = View.GONE
 
                     viewHorizontalCollectionSeparator?.visibility = View.GONE
-                    viewHorizontalCollectionBottomSeparator?.visibility = View.VISIBLE
+                    viewHorizontalCollectionBottomSeparator?.visibility = View.GONE
                 }
             }
             storePickupInfoResponse?.sortedJoinDeliverySlots?.apply {
@@ -883,12 +883,12 @@ class CheckoutReturningUserCollectionFragment :
     }
 
     private fun addShoppingBagsRadioButtons() {
-        binding.layoutCollectionInstructions.newShoppingBagsLayout.txtNewShoppingBagsSubDesc?.visibility =
-            View.VISIBLE
+
         val newShoppingBags = AppConfigSingleton.nativeCheckout?.newShoppingBag
-        binding.layoutCollectionInstructions.newShoppingBagsLayout.txtNewShoppingBagsDesc?.text =
+        binding.layoutCollectionInstructions.newShoppingBagsLayout.newShoppingBagsTitle.text =
             newShoppingBags?.title
-        binding.layoutCollectionInstructions.newShoppingBagsLayout.txtNewShoppingBagsSubDesc?.text =
+
+        binding.layoutCollectionInstructions.newShoppingBagsLayout.txtNewShoppingBagsDesc?.text =
             newShoppingBags?.description
 
         val shoppingBagsAdapter =

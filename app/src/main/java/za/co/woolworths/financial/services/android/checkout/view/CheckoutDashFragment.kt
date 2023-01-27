@@ -923,13 +923,12 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
     }
 
     private fun addShoppingBagsRadioButtons() {
-        binding.layoutDeliveryInstructions.newShoppingBagsLayout.txtNewShoppingBagsSubDesc?.visibility =
-            View.VISIBLE
         val newShoppingBags = AppConfigSingleton.nativeCheckout?.newShoppingBag
         binding.layoutDeliveryInstructions.newShoppingBagsLayout.txtNewShoppingBagsDesc?.text =
             newShoppingBags?.title
-        binding.layoutDeliveryInstructions.newShoppingBagsLayout.txtNewShoppingBagsSubDesc?.text =
-            newShoppingBags?.description
+        binding.layoutDeliveryInstructions.newShoppingBagsLayout.newShoppingBagsTitle.text = newShoppingBags?.title
+        binding.layoutDeliveryInstructions.newShoppingBagsLayout.txtNewShoppingBagsDesc.text = newShoppingBags?.description
+
 
         val shoppingBagsAdapter =
             ShoppingBagsRadioGroupAdapter(newShoppingBags?.options, this, selectedShoppingBagType)
