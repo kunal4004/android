@@ -67,6 +67,7 @@
             android:id="@+id/replacementCardIconImageView"
             style="@style/accountOptionsImageviewStyle"
             android:alpha="0.3"
+            android:contentDescription="@string/get_replacement_card_action_button_card_icon_image_on_overlay"
             android:src="@drawable/icon_card" />
 
         <TextView
@@ -76,11 +77,13 @@
             android:layout_alignTop="@+id/viewTreatmentPlanNext"
             android:layout_alignBottom="@+id/viewTreatmentPlanNext"
             android:layout_toEndOf="@+id/replacementCardIconImageView"
+            android:contentDescription="@string/get_replacement_card_action_button_text_label_on_overlay"
             android:text="@string/replacement_card_label" />
 
         <ImageView
             android:id="@+id/viewTreatmentPlanNext"
             style="@style/accountOptionsNextImageViewStyle"
+            android:contentDescription="@string/get_replacement_card_action_button_directional_arrow_on_overlay"
             android:src="@drawable/ic_caret_black" />
     </RelativeLayout>
 
@@ -97,6 +100,7 @@
         <ImageView
             android:id="@+id/activateVirtualTempCardImageView"
             style="@style/accountOptionsImageviewStyle"
+            android:contentDescription="@string/activate_vtsc_action_button_icon_image_on_overlay"
             android:src="@drawable/icon_activate_virtual_temp_card" />
 
         <TextView
@@ -108,11 +112,13 @@
             android:layout_marginTop="0dp"
             android:layout_toStartOf="@+id/activateVirtualTempCardArrowImageView"
             android:layout_toEndOf="@+id/activateVirtualTempCardImageView"
+            android:contentDescription="@string/activate_vtsc_action_button_text_label_on_overlay"
             android:text="@string/activate_vtc_title" />
 
         <ImageView
             android:id="@+id/activateVirtualTempCardArrowImageView"
             style="@style/accountOptionsNextImageViewStyle"
+            android:contentDescription="@string/activate_vtsc_action_button_directional_arrow_on_overlay"
             android:src="@drawable/ic_caret_black" />
     </RelativeLayout>
 
@@ -129,6 +135,7 @@
         <ImageView
             android:id="@+id/linkNewCardImageView"
             style="@style/accountOptionsImageviewStyle"
+            android:contentDescription="@string/link_new_card_action_button_link_icon_image_on_overlay"
             android:src="@drawable/link_icon" />
 
         <TextView
@@ -140,11 +147,13 @@
             android:layout_marginTop="0dp"
             android:layout_toStartOf="@+id/linkNewCardArrowImageView"
             android:layout_toEndOf="@+id/linkNewCardImageView"
+            android:contentDescription="@string/link_new_card_action_button_text_label_on_overlay"
             android:text="@string/link_new_card" />
 
         <ImageView
             android:id="@+id/linkNewCardArrowImageView"
             style="@style/accountOptionsNextImageViewStyle"
+            android:contentDescription="@string/link_new_card_action_button_directional_arrow_on_overlay"
             android:src="@drawable/ic_caret_black" />
     </RelativeLayout>
 
@@ -162,6 +171,7 @@
             android:id="@+id/blockCardImageView"
             style="@style/accountOptionsImageviewStyle"
             android:alpha="0.3"
+            android:contentDescription="@string/block_card_action_button_card_icon_image_on_overlay"
             android:src="@drawable/icon_card" />
 
         <TextView
@@ -173,11 +183,13 @@
             android:layout_marginTop="0dp"
             android:layout_toStartOf="@+id/blockCardArrowImageView"
             android:layout_toEndOf="@+id/blockCardImageView"
+            android:contentDescription="@string/block_card_action_button_text_label_on_overlay"
             android:text="@string/block_card_title" />
 
         <ImageView
             android:id="@+id/blockCardArrowImageView"
             style="@style/accountOptionsNextImageViewStyle"
+            android:contentDescription="@string/block_card_action_button_directional_arrow_on_overlay"
             android:src="@drawable/ic_caret_black" />
     </RelativeLayout>
 

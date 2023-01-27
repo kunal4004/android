@@ -23,6 +23,7 @@ class BlockMyCardReasonFragment : MyCardExtension(R.layout.block_my_card_fragmen
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding = BlockMyCardFragmentBinding.bind(view)
 
         binding.apply {
             AnimationUtilExtension.animateViewPushDown(btnBlockCard)
