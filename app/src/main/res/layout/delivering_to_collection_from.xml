@@ -181,7 +181,7 @@
             android:id="@+id/optionImageConfirmed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/thirty_two_dp"
+            android:layout_marginStart="@dimen/thirty_dp"
             android:background="@drawable/ic_dash_confirmed_icon"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -191,7 +191,7 @@
             style="@style/bottom_line"
             android:layout_width="@dimen/sixty_three_dp"
             android:layout_height="@dimen/two_dp"
-            android:layout_marginStart="@dimen/eight_dp"
+            android:layout_marginStart="@dimen/seven_dp"
             android:layout_marginTop="@dimen/eight_dp"
             android:background="@color/black"
             app:layout_constraintStart_toEndOf="@+id/optionImageConfirmed"
@@ -202,7 +202,7 @@
             android:id="@+id/optionImagePackaging"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/eight_dp"
+            android:layout_marginStart="@dimen/seven_dp"
             android:background="@drawable/ic_dash_packaging_icon"
             app:layout_constraintStart_toEndOf="@+id/packaging_separator"
             app:layout_constraintTop_toTopOf="parent" />
@@ -211,7 +211,7 @@
             android:id="@+id/enroute_seperator"
             android:layout_width="@dimen/sixty_three_dp"
             android:layout_height="@dimen/two_dp"
-            android:layout_marginStart="@dimen/eight_dp"
+            android:layout_marginStart="@dimen/seven_dp"
             android:layout_marginTop="@dimen/eight_dp"
             android:background="@color/color_E5E5E5"
             app:layout_constraintStart_toEndOf="@+id/optionImagePackaging"
@@ -221,7 +221,7 @@
             android:id="@+id/optionImageEnroute"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/eight_dp"
+            android:layout_marginStart="@dimen/seven_dp"
             android:background="@drawable/ic_dash_enroute"
             app:layout_constraintStart_toEndOf="@+id/enroute_seperator"
             app:layout_constraintTop_toTopOf="parent" />
@@ -231,7 +231,7 @@
             style="@style/bottom_line"
             android:layout_width="@dimen/sixty_three_dp"
             android:layout_height="@dimen/two_dp"
-            android:layout_marginStart="@dimen/eight_dp"
+            android:layout_marginStart="@dimen/seven_dp"
             android:layout_marginTop="@dimen/eight_dp"
             app:layout_constraintStart_toEndOf="@+id/optionImageEnroute"
             app:layout_constraintTop_toTopOf="parent" />
@@ -240,10 +240,8 @@
             android:id="@+id/optionImageDelivered"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/eight_dp"
-            android:layout_marginEnd="@dimen/thirty_two_dp"
+            android:layout_marginStart="@dimen/seven_dp"
             android:background="@drawable/ic_dash_delivered_icon"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/delivered_seperator"
             app:layout_constraintTop_toTopOf="parent" />
 
