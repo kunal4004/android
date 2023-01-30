@@ -85,6 +85,11 @@ class ShoppingListDetailViewModel @Inject constructor(
                     FulfillmentStoreMap(fulfillmentType, storeId, false)
                 )
                 val skuIds = getSKUIdsByDeliveryType(multiSkuList)
+                if (skuIds.isEmpty()) {
+                    setUnavailable(multiSkuList, skuIds)
+                    _isListUpdated.value = true
+                    return@forEach
+                }
                 setUnavailable(multiSkuList, skuIds)
                 val multiSku = TextUtils.join("-", skuIds)
                 getInventoryStockForStore(storeId, multiSku)
@@ -176,6 +181,7 @@ class ShoppingListDetailViewModel @Inject constructor(
                 for(skuId in multiSkuList) {
                     if(skuId.catalogRefId.equals(shoppingListItem.catalogRefId, true)) {
                         shoppingListItem.inventoryCallCompleted = true
+                        shoppingListItem.unavailable = false
                         shoppingListItem.quantityInStock = -1
                     }
                 }

@@ -2827,6 +2827,11 @@
         <item quantity="one">ADD %d ITEM TO CART</item>
         <item quantity="other">ADD %d ITEMS TO CART</item>
     </plurals>
+
+    <plurals name="plural_add_to_list">
+        <item quantity="one">ADD %d ITEM TO LIST</item>
+        <item quantity="other">ADD %d ITEMS TO LIST</item>
+    </plurals>
     <string name="reduce_count_button">Reduce Count Button</string>
     <string name="add_item_count">Add item count</string>
     <string name="unavailable">Unavailable</string>
