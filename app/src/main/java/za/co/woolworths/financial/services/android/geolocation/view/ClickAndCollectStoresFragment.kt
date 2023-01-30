@@ -292,7 +292,7 @@ class ClickAndCollectStoresFragment : BaseDialogFragmentBinding<FragmentClickAnd
 
     private fun firstTimeFBHCNCIntroDialog() {
         val fbh = FBHInfoBottomSheetDialog()
-        fbh.show(activity?.getSupportFragmentManager()!!, AppConstant.TAG_FBH_CNC_FRAGMENT)
+        activity?.supportFragmentManager?.let { fbh.show(it, AppConstant.TAG_FBH_CNC_FRAGMENT) }
     }
 
 }

@@ -219,8 +219,9 @@ class ChangeFullfilmentCollectionStoreFragment :
                     }
                 }
             }
+            binding.layoutClickAndCollectStore.rvStoreList.adapter?.notifyDataSetChanged()
         }
-        binding.layoutClickAndCollectStore.rvStoreList.adapter?.notifyDataSetChanged()
+
     }
 
     private fun showSetLocationUi() {
@@ -500,7 +501,7 @@ class ChangeFullfilmentCollectionStoreFragment :
     }
     private fun firstTimeFBHCNCIntroDialog() {
         val fbh = FBHInfoBottomSheetDialog()
-        fbh.show(activity?.getSupportFragmentManager()!!, AppConstant.TAG_FBH_CNC_FRAGMENT)
+        activity?.supportFragmentManager?.let { fbh.show(it, AppConstant.TAG_FBH_CNC_FRAGMENT) }
     }
 
 }
