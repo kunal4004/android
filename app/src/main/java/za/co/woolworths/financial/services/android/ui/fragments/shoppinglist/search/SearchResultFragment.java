@@ -516,14 +516,14 @@ public class SearchResultFragment extends Fragment implements SearchResultNaviga
         }
         int count = 0;
         if(mProductList == null) {
-            String addToCartText = getActivity().getResources().getQuantityString(R.plurals.plural_add_to_cart, count, count);
+            String addToCartText = getActivity().getResources().getQuantityString(R.plurals.plural_add_to_list, count, count);
             btnCheckOut.setText(addToCartText);
             return;
         }
         for (ProductList item : mProductList ) {
             if(item.itemWasChecked) count ++;
         }
-        String addToCartText = getActivity().getResources().getQuantityString(R.plurals.plural_add_to_cart, count, count);
+        String addToCartText = getActivity().getResources().getQuantityString(R.plurals.plural_add_to_list, count, count);
         btnCheckOut.setText(addToCartText);
     }
 

@@ -88,7 +88,7 @@ class ShoppingListDetailViewModel @Inject constructor(
                 if (skuIds.isEmpty()) {
                     setUnavailable(multiSkuList, skuIds)
                     _isListUpdated.value = true
-                    return
+                    return@forEach
                 }
                 setUnavailable(multiSkuList, skuIds)
                 val multiSku = TextUtils.join("-", skuIds)
