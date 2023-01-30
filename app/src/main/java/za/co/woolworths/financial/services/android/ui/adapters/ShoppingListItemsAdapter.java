@@ -35,6 +35,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.lis
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView;
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter;
+import za.co.woolworths.financial.services.android.util.KotlinUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager;
 import za.co.woolworths.financial.services.android.util.wenum.Delivery;
@@ -294,13 +295,7 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
     private int getUnavailableMessage(boolean isUnavailable) {
         int msg = isUnavailable ? R.string.unavailable : R.string.out_of_stock;
         if (isUnavailable) {
-            ShoppingDeliveryLocation location = Utils.getPreferredDeliveryLocation();
-            if (location == null || location.fulfillmentDetails == null
-                    || location.fulfillmentDetails.getDeliveryType() == null) {
-                return msg;
-            }
-            String deliveryType = location.fulfillmentDetails.getDeliveryType();
-            Delivery type = Delivery.Companion.getType(deliveryType);
+            Delivery type = KotlinUtils.Companion.getPreferredDeliveryType();
             if (type == null) {
                 return msg;
             }
