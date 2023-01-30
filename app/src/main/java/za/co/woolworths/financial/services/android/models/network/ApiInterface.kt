@@ -375,8 +375,9 @@ interface ApiInterface {
         @Header("longitude") long: Double?,
         @Query("suburbId") suburbId: String?,
         @Query("storeId") storeId: String?,
-        @Query("deliveryType") deliveryType: String?
-    ): retrofit2.Response<RootCategories>
+        @Query("deliveryType") deliveryType: String?,
+        @Query("fulFillmentStoreId01") fulFillmentStoreId01: String?
+    ): retrofit2.Response<DashRootCategories>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "Accept-Encoding: gzip")
     @GET("wfs/app/v4/search/department/landingPage")

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.CardInformationActivityBinding
 import com.google.gson.Gson
@@ -37,7 +38,8 @@ class CardInformationHelpActivity : AppCompatActivity(), View.OnClickListener {
                 descriptionTextView?.text = helpInformation.description
                 informationContainerLinearLayout?.addView(view)
             }
-
+            /** Note:: Temporary fix till we migrate PL&CC to SC enhancements */
+            closeIcon.setColorFilter(ContextCompat.getColor(this@CardInformationHelpActivity, R.color.black), android.graphics.PorterDuff.Mode.MULTIPLY);
             closeIcon?.setOnClickListener(this@CardInformationHelpActivity)
         }
     }
