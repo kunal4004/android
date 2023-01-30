@@ -40,7 +40,8 @@ import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.geolocation.network.model.PlaceDetails
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.TAG_CHANGEFULLFILMENT_COLLECTION_STORE_FRAGMENT
 import za.co.woolworths.financial.services.android.geolocation.view.PargoStoreInfoBottomSheetDialog
-
+import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
+import za.co.woolworths.financial.services.android.geolocation.view.FBHInfoBottomSheetDialog
 class ChangeFullfilmentCollectionStoreFragment :
     DepartmentExtensionFragment(R.layout.layout_dash_collection_store),
     StoreListAdapter.OnStoreSelected, View.OnClickListener, TextWatcher {
@@ -56,6 +57,7 @@ class ChangeFullfilmentCollectionStoreFragment :
     private var mDepartmentAdapter: DepartmentAdapter? = null
     private var saveInstanceState: Bundle? = null
     private var updatedPlace:PlaceDetails?=null
+    private var isFragmentVisible: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -209,10 +211,17 @@ class ChangeFullfilmentCollectionStoreFragment :
                         this
                     )
                 }
+                if(isFragmentVisible) {
+                    binding.layoutClickAndCollectStore.rvStoreList.runWhenReady {
+                        if (!AppInstanceObject.get().featureWalkThrough.new_fbh_cnc) {
+                            firstTimeFBHCNCIntroDialog()
+                        }
+                    }
+                }
             }
-
+            binding.layoutClickAndCollectStore.rvStoreList.adapter?.notifyDataSetChanged()
         }
-        binding.layoutClickAndCollectStore.rvStoreList.adapter?.notifyDataSetChanged()
+
     }
 
     private fun showSetLocationUi() {
@@ -485,6 +494,14 @@ class ChangeFullfilmentCollectionStoreFragment :
             parentFragmentManager,
             TAG_CHANGEFULLFILMENT_COLLECTION_STORE_FRAGMENT
         )
+    }
+    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
+        super.setUserVisibleHint(isVisibleToUser)
+        isFragmentVisible=isVisibleToUser
+    }
+    private fun firstTimeFBHCNCIntroDialog() {
+        val fbh = FBHInfoBottomSheetDialog()
+        activity?.supportFragmentManager?.let { fbh.show(it, AppConstant.TAG_FBH_CNC_FRAGMENT) }
     }
 
 }

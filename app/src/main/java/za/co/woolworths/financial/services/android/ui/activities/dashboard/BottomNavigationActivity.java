@@ -784,11 +784,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         }
     }
 
-    private void firstTimeFBHCNCIntroDialog() {
-        FBHInfoBottomSheetDialog fbh = new FBHInfoBottomSheetDialog();
-        fbh.show(getSupportFragmentManager(), TAG_FBH_CNC_FRAGMENT);
-    }
-
     private void replaceAccountIcon(@NonNull MenuItem item) {
         if (accountNavigationView != null) {
             if (ChatAWSAmplify.INSTANCE.isLiveChatBackgroundServiceRunning()
@@ -833,9 +828,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                         shopFragment.scrollToTop();
                     }
                     Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMENU, BottomNavigationActivity.this);
-                    if(!AppInstanceObject.get().featureWalkThrough.new_fbh_cnc) {
-                        firstTimeFBHCNCIntroDialog();
-                    }
                     break;
 
                 case R.id.navigate_to_cart:
