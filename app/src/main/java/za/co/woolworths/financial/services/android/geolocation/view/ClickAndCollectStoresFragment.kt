@@ -14,6 +14,7 @@ import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentClickAndCollectStoresBinding
 import com.google.gson.JsonSyntaxException
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils
@@ -45,7 +46,6 @@ class ClickAndCollectStoresFragment : BaseDialogFragmentBinding<FragmentClickAnd
     private var validateLocationResponse: ValidateLocationResponse? = null
     private var placeId: String? = null
     private var isComingFromConfirmAddress: Boolean? = false
-    private var isFragmentVisible: Boolean = false
 
     @Inject
     lateinit var vtoErrorBottomSheetDialog: VtoErrorBottomSheetDialog
@@ -136,12 +136,13 @@ class ClickAndCollectStoresFragment : BaseDialogFragmentBinding<FragmentClickAnd
                         this@ClickAndCollectStoresFragment
                     )
                 }
-                if(isFragmentVisible){
                 rvStoreList.runWhenReady {
-                    if (!AppInstanceObject.get().featureWalkThrough.new_fbh_cnc) {
-                        firstTimeFBHCNCIntroDialog()
+                    lifecycleScope.launch {
+                        if (!AppInstanceObject.get().featureWalkThrough.new_fbh_cnc) {
+                            delay(2000)
+                            firstTimeFBHCNCIntroDialog()
+                        }
                     }
-                }
                 }
             }
             rvStoreList.adapter?.notifyDataSetChanged()
@@ -284,11 +285,6 @@ class ClickAndCollectStoresFragment : BaseDialogFragmentBinding<FragmentClickAnd
     override fun onFirstTimePargo() {
         findNavController().navigate( R.id.action_clickAndCollectStoresFragment_to_pargoStoreInfoBottomSheetDialog)
     }
-    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
-        super.setUserVisibleHint(isVisibleToUser)
-        isFragmentVisible=isVisibleToUser
-    }
-
 
     private fun firstTimeFBHCNCIntroDialog() {
         val fbh = FBHInfoBottomSheetDialog()
