@@ -1525,48 +1525,9 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                 }
                 this.cartItems = cartItems
             } else {
-                initInventoryRequest(fulfilmentStoreId, groupBySkuIds)
+                viewModel.getInventorySkuForInventory(fulfilmentStoreId, groupBySkuIds, false)
             }
         }
-    }
-
-    private fun initInventoryRequest(
-        storeId: String?,
-        multiSku: String?,
-    ): Call<SkusInventoryForStoreResponse> {
-        val skuInventoryForStoreResponseCall = getInventorySkuForStore(
-            (storeId)!!, (multiSku)!!, false
-        )
-        skuInventoryForStoreResponseCall.enqueue(
-            CompletionHandler(
-                (object : IResponseListener<SkusInventoryForStoreResponse> {
-                    override fun onSuccess(response: SkusInventoryForStoreResponse?) {
-                        if (response?.httpCode == 200) {
-                            mSkuInventories!![response.storeId] =
-                                response.skuInventory
-                            if (mSkuInventories!!.size == mapStoreIdWithCommerceItems!!.size) {
-                                updateCartListWithAvailableStock(mSkuInventories)
-                            }
-                        } else {
-                            isAllInventoryAPICallSucceed = false
-                            if (!errorMessageWasPopUp) {
-                                Utils.displayValidationMessage(
-                                    requireActivity(),
-                                    CustomPopUpWindow.MODAL_LAYOUT.ERROR,
-                                    response?.response?.desc ?: ""
-                                )
-                                errorMessageWasPopUp = true
-                            }
-                        }
-                    }
-
-                    override fun onFailure(error: Throwable?) {
-                        disableQuantitySelector(error)
-                    }
-                }), SkusInventoryForStoreResponse::class.java
-            )
-        )
-        return skuInventoryForStoreResponseCall
     }
 
     private fun disableQuantitySelector(error: Throwable?) {
@@ -2101,6 +2062,38 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                         }
                         mErrorHandlerView?.showToast()
                     }
+                }
+            }
+        }
+
+        viewModel.getInventorySkuForInventory.observe(viewLifecycleOwner) {
+            val response = it.peekContent().data
+            when (it.peekContent().status) {
+                Status.LOADING -> {
+                    showProgressBar()
+                }
+                Status.SUCCESS -> {
+                    hideProgressBar()
+                    if (response?.httpCode == HTTP_OK || response?.httpCode == HTTP_OK_201) {
+                        mSkuInventories?.set(response.storeId, response.skuInventory)
+                        if (mSkuInventories?.size == mapStoreIdWithCommerceItems?.size) {
+                            updateCartListWithAvailableStock(mSkuInventories)
+                        }
+                    } else {
+                        isAllInventoryAPICallSucceed = false
+                        if (!errorMessageWasPopUp) {
+                            Utils.displayValidationMessage(
+                                requireActivity(),
+                                CustomPopUpWindow.MODAL_LAYOUT.ERROR,
+                                response?.response?.desc ?: ""
+                            )
+                            errorMessageWasPopUp = true
+                        }
+                    }
+                }
+                Status.ERROR -> {
+                    hideProgressBar()
+                    disableQuantitySelector(response?.exception)
                 }
             }
         }

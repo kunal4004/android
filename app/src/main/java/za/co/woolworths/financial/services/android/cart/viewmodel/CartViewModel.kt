@@ -9,6 +9,7 @@ import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.cart.network.CartRepository
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
 import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse
+import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse
 import javax.inject.Inject
 import za.co.woolworths.financial.services.android.models.network.Event
 import za.co.woolworths.financial.services.android.models.network.Resource
@@ -36,6 +37,11 @@ class CartViewModel @Inject constructor(
     val removeCartItem: LiveData<Event<Resource<ShoppingCartResponse>>> =
         _removeCartItem
 
+    private val _getInventorySkuForInventory =
+        MutableLiveData<Event<Resource<SkusInventoryForStoreResponse>>>()
+    val getInventorySkuForInventory: LiveData<Event<Resource<SkusInventoryForStoreResponse>>> =
+        _getInventorySkuForInventory
+
     fun getShoppingCartV2() {
         _getCarV2.value = Event(Resource.loading(null))
         viewModelScope.launch {
@@ -57,6 +63,14 @@ class CartViewModel @Inject constructor(
         viewModelScope.launch {
             val response = cartRepository.removeCartItem(commerceId)
             _removeCartItem.value = Event(response)
+        }
+    }
+
+    fun getInventorySkuForInventory(store_id: String, multipleSku: String, isUserBrowsing: Boolean) {
+        _getInventorySkuForInventory.value = Event(Resource.loading(null))
+        viewModelScope.launch {
+            val response = cartRepository.getInventorySkuForInventory(store_id, multipleSku, isUserBrowsing)
+            _getInventorySkuForInventory.value = Event(response)
         }
     }
 }
