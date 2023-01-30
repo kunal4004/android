@@ -49,7 +49,6 @@ import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService.getChangeQuantity
 import za.co.woolworths.financial.services.android.models.network.OneAppService.getInventorySkuForStore
-import za.co.woolworths.financial.services.android.models.network.OneAppService.getSavedAddresses
 import za.co.woolworths.financial.services.android.models.network.OneAppService.removeAllCartItems
 import za.co.woolworths.financial.services.android.models.network.OneAppService.removeCartItem
 import za.co.woolworths.financial.services.android.models.network.OneAppService.removePromoCode
@@ -1117,52 +1116,6 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         )
     }
 
-    private fun removeCartItem(commerceItem: CommerceItem): Call<ShoppingCartResponse> {
-        mCommerceItem = commerceItem
-        showProgressBar()
-        val shoppingCartResponseCall = removeCartItem(commerceItem.commerceItemInfo.getCommerceId())
-        shoppingCartResponseCall.enqueue(
-            CompletionHandler(
-                (object : IResponseListener<ShoppingCartResponse> {
-                    override fun onSuccess(response: ShoppingCartResponse?) {
-                        try {
-                            if (response?.httpCode == 200) {
-                                val cartResponse =
-                                    convertResponseToCartResponseObject(response)
-                                updateCart(cartResponse, commerceItem)
-                                if (cartResponse?.cartItems.isNullOrEmpty()) {
-                                    onRemoveSuccess()
-                                }
-                            } else {
-                                resetItemDelete(true)
-                            }
-                            hideProgressBar()
-                            fadeCheckoutButton(false)
-                            setDeliveryLocationEnabled(true)
-                            enableRemoveAllButton(true)
-                            setMinimumCartErrorMessage()
-                        } catch (ex: Exception) {
-                            logException(ex)
-                        }
-                    }
-
-                    override fun onFailure(error: Throwable?) {
-                        requireActivity().runOnUiThread {
-                            if (cartProductAdapter != null) {
-                                onRemoveItemLoadFail(commerceItem)
-                                onRemoveItemFailed = true
-                                enableItemDelete(false)
-                                hideProgressBar()
-                            }
-                            mErrorHandlerView?.showToast()
-                        }
-                    }
-                }), ShoppingCartResponse::class.java
-            )
-        )
-        return shoppingCartResponseCall
-    }
-
     private fun removeAllCartItem(commerceItem: CommerceItem?): Call<ShoppingCartResponse> {
         mRemoveAllItemFromCartTapped = true
         showProgressBar()
@@ -1529,8 +1482,9 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         }
     }
 
-    private fun removeItemAPI(mCommerceItem: CommerceItem) {
-        removeCartItem(mCommerceItem)
+    private fun removeItemAPI(commerceItem: CommerceItem) {
+        mCommerceItem = commerceItem
+        viewModel.removeCartItem(commerceItem.commerceItemInfo.getCommerceId())
     }
 
     private fun queryServiceInventoryCall(items: ArrayList<CartItemGroup>) {
@@ -2106,6 +2060,47 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                         ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON,
                         response?.response?.message
                     )
+                }
+            }
+        }
+
+        viewModel.removeCartItem.observe(viewLifecycleOwner) {
+            val response = it.peekContent().data
+            when (it.peekContent().status) {
+                Status.LOADING -> {
+                    showProgressBar()
+                }
+                Status.SUCCESS -> {
+                    try {
+                        if (response?.httpCode == 200) {
+                            val cartResponse =
+                                convertResponseToCartResponseObject(response)
+                            updateCart(cartResponse, mCommerceItem)
+                            if (cartResponse?.cartItems.isNullOrEmpty()) {
+                                onRemoveSuccess()
+                            }
+                        } else {
+                            resetItemDelete(true)
+                        }
+                        hideProgressBar()
+                        fadeCheckoutButton(false)
+                        setDeliveryLocationEnabled(true)
+                        enableRemoveAllButton(true)
+                        setMinimumCartErrorMessage()
+                    } catch (ex: Exception) {
+                        logException(ex)
+                    }
+                }
+                Status.ERROR -> {
+                    requireActivity().runOnUiThread {
+                        if (cartProductAdapter != null) {
+                            mCommerceItem?.let { it1 -> onRemoveItemLoadFail(it1) }
+                            onRemoveItemFailed = true
+                            enableItemDelete(false)
+                            hideProgressBar()
+                        }
+                        mErrorHandlerView?.showToast()
+                    }
                 }
             }
         }

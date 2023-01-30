@@ -689,6 +689,14 @@ interface ApiInterface {
             @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Query("commerceId") commerceId: String): Call<ShoppingCartResponse>
 
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @DELETE("wfs/app/v4/cartV2/item")
+    suspend fun removeCartItem(
+
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Query("commerceId") commerceId: String): retrofit2.Response<ShoppingCartResponse>
+
     @Headers(
         "Content-Type: application/json",
         "Accept: application/json",

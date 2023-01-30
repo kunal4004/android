@@ -55,4 +55,25 @@ class CartRepository @Inject constructor() {
             Resource.error(R.string.error_internet_connection, null)
         }
     }
+
+    suspend fun removeCartItem(commerceId: String): Resource<ShoppingCartResponse> {
+        return try {
+            val response = OneAppService.removeSingleCartItem(commerceId)
+            if (response.isSuccessful) {
+                response.body()?.let {
+                    return when (it.httpCode) {
+                        AppConstant.HTTP_OK, AppConstant.HTTP_OK_201 ->
+                            Resource.success(it)
+                        else ->
+                            Resource.error(R.string.error_unknown, it)
+                    }
+                } ?: Resource.error(R.string.error_unknown, null)
+            } else {
+                Resource.error(R.string.error_unknown, null)
+            }
+        } catch (e: IOException) {
+            FirebaseManager.logException(e)
+            Resource.error(R.string.error_internet_connection, null)
+        }
+    }
 }
