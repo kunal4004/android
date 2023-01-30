@@ -4,7 +4,7 @@
     android:id="@+id/vouchersLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="@dimen/_12sdp"
+    android:layout_marginTop="@dimen/sixteen_dp"
     android:background="@drawable/bg_un_selected_voucher"
     android:layout_marginEnd="@dimen/twenty_four_dp"
     android:layout_marginStart="@dimen/twenty_four_dp">
@@ -14,38 +14,40 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_end="@dimen/twenty_dp" />
+        app:layout_constraintGuide_end="@dimen/sixteen_dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guidelineStart"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_begin="@dimen/twenty_dp" />
+        app:layout_constraintGuide_begin="@dimen/twenty_four_dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guidelineTop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="@dimen/fifteen_dp" />
+        app:layout_constraintGuide_begin="@dimen/twenty_four_dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guidelineBottom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_end="@dimen/fifteen_dp" />
+        app:layout_constraintGuide_end="@dimen/twenty_four_dp" />
 
 
     <CheckBox
         android:id="@+id/voucherSelector"
-        android:layout_width="@dimen/twenty_four_dp"
-        android:layout_height="@dimen/twenty_four_dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:button="@drawable/wrewards_selector"
         android:clickable="false"
+        android:layout_marginTop="@dimen/sixteen_dp"
+        android:gravity="center_horizontal"
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-        app:layout_constraintTop_toTopOf="@id/guidelineTop" />
+        app:layout_constraintTop_toTopOf="parent" />
 
 
     <TextView
@@ -53,7 +55,6 @@
         style="@style/futura_semi_bold_black"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/eight_dp"
         android:layout_marginEnd="@dimen/ten_dp"
         android:lineSpacingMultiplier="1.33"
         android:textSize="@dimen/eighteen_sp"
@@ -84,6 +85,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/five_dp"
         android:textSize="@dimen/twelve_sp"
+        android:visibility="gone"
         android:textColor="@color/input_error_color_code"
         app:layout_constraintBottom_toTopOf="@id/guidelineBottom"
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
@@ -96,6 +98,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textSize="@dimen/twelve_sp"
+        android:visibility="gone"
         android:textColor="@color/color_444444"
         android:layout_marginTop="@dimen/two_dp"
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"

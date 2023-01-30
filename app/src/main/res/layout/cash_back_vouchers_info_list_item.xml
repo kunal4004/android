@@ -8,8 +8,8 @@
 
     <View
         android:id="@+id/circleView"
-        android:layout_width="@dimen/_5sdp"
-        android:layout_height="@dimen/_5sdp"
+        android:layout_width="@dimen/_3sdp"
+        android:layout_height="@dimen/_3sdp"
         android:layout_marginTop="@dimen/six_dp"
         android:background="@drawable/bg_cash_back_vouchers_indicator"
         app:layout_constraintStart_toStartOf="parent"
@@ -19,11 +19,11 @@
         android:id="@+id/voucherInfoText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/five_dp"
+        android:layout_marginStart="@dimen/nine_dp"
         android:fontFamily="@font/myriad_pro_regular"
         android:lineSpacingExtra="@dimen/_4ssp"
         android:textColor="@color/color_444444"
-        android:textSize="@dimen/_11ssp"
+        android:textSize="@dimen/thirteen_sp"
         app:layout_constraintStart_toEndOf="@id/circleView"
         app:layout_constraintTop_toTopOf="parent" />
 
