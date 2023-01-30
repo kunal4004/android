@@ -11,9 +11,6 @@ public class RootCategories {
     @SerializedName("rootCategories")
     @Expose
     public List<RootCategory> rootCategories = null;
-    @SerializedName("onDemandCategories")
-    @Expose
-    public ArrayList<RootCategory> onDemandCategories = null;
     @SerializedName("response")
     @Expose
     public Response response;

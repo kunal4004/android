@@ -6,6 +6,8 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.awfs.coordination.R
@@ -21,9 +23,27 @@ fun LabelTitle(params: LabelProperties) {
             stringId = params.stringId,
             fontSize = params.fontSize,
             isUpperCased = params.isUpperCased,
+            style = params.style,
             letterSpacing = params.letterSpacing,
             modifier = params.modifier
-            .fillMaxWidth(),
+                .fillMaxWidth(),
+            textColor = params.textColor,
+            textAlign = params.textAlign)
+    )
+}
+
+@Composable
+fun LabelCustomTitle(params: LabelProperties) {
+    LabelTitleLarge(
+        params = LabelProperties(
+            label = params.label,
+            stringId = params.stringId,
+            fontSize = params.fontSize,
+            isUpperCased = params.isUpperCased,
+            style = params.style,
+            letterSpacing = params.letterSpacing,
+            modifier = params.modifier
+                .fillMaxWidth(),
             textColor = params.textColor,
             textAlign = params.textAlign)
     )
@@ -42,8 +62,8 @@ fun LabelMediumText(params: LabelProperties){
             textColor = params.textColor,
             letterSpacing = params.letterSpacing,
             modifier = params.modifier
-            .fillMaxWidth()
-            .padding(start = 24.dp, top = 22.dp, bottom = 20.dp, end = 15.dp))
+                .fillMaxWidth()
+                .padding(start = 24.dp, top = 22.dp, bottom = 20.dp, end = 15.dp))
     )}
 
 @Composable
@@ -94,14 +114,71 @@ fun TextWithRadioButtonOption(
             modifier = Modifier
                 .fillMaxWidth()
                 .selectable(selected = (item == selectedOption),
-                    onClick = { onOptionSelected(item)
-                        onSelected(item)}),
+                    onClick = {
+                        onOptionSelected(item)
+                        onSelected(item)
+                    }),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Box(modifier = Modifier.weight(1f).padding(start = 24.dp, end = 2.dp)
+            Box(modifier = Modifier
+                .weight(1f)
+                .padding(start = 24.dp, end = 2.dp)
             ) { LabelSmall(LabelProperties(label =  item.title))  }
             CheckedUncheckedRadioButton(isChecked = item == selectedOption)
         }
         DividerThicknessOne()
+    }
+}
+
+@Composable
+fun SingleTextViewRow(params: LabelProperties, isSelected : Boolean = false,  onclick : (String) -> Unit  ){
+    Column {
+        val label = params.label ?: params.stringId?.let { stringResource(id = it) } ?: ""
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag(label)
+                .selectable(
+                    selected = isSelected,
+                    onClick = { onclick(label) }
+                )
+                .padding(top = 24.dp, bottom = 24.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            LabelSmall(params)
+        }
+    }
+}
+
+@Composable
+fun SingleTextViewTitleRow(params: LabelProperties){
+    val label = params.label ?: params.stringId?.let { stringResource(id = it) } ?: stringResource(id = R.string.app_name)
+    Column {
+        Row(
+            modifier = Modifier
+                .testTag(label)
+                .fillMaxWidth()
+                .padding(start = 24.dp, top = 24.dp, bottom = 24.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            LabelTitleCustomStyleLarge(params)
+        }
+    }
+}
+
+
+@Composable
+fun ButtonRow(params: LabelProperties){
+    val label = params.label ?: params.stringId?.let { stringResource(id = it) } ?: stringResource(id = R.string.app_name)
+    Column {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag(label)
+                .padding(top = 24.dp, bottom = 24.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            LabelMedium(params)
+        }
     }
 }

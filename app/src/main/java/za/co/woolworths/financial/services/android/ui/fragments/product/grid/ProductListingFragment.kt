@@ -1605,12 +1605,14 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
                         }
 
                         AppConstant.HTTP_EXPECTATION_FAILED_502 -> {
-                            KotlinUtils.showQuantityLimitErrror(
-                                activity?.supportFragmentManager,
-                                addItemToCartResponse.response.desc,
-                                "",
-                                context
-                            )
+                            addItemToCartResponse.response.desc?.let {
+                                KotlinUtils.showQuantityLimitErrror(
+                                    activity?.supportFragmentManager,
+                                    it,
+                                    "",
+                                    context
+                                )
+                            }
                         }
 
                         else -> addItemToCartResponse?.response?.desc?.let { desc ->
@@ -1727,6 +1729,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
                 }
             }, LocationResponse::class.java))
         }
+    }
+
+    override fun openChangeFulfillmentScreen() {
+        presentEditDeliveryActivity()
     }
 
     fun onRefined(navigationState: String, isMultiSelectCategoryRefined: Boolean) {

@@ -522,22 +522,29 @@ class ConfirmAddressMapFragment :
                             FetchPlaceRequest.builder(placeId.toString(), it)
                                 .setSessionToken(item?.token).build()
                         }
-                    request.let { placeRequest ->
-                        placesClient.fetchPlace(placeRequest)
-                            .addOnSuccessListener { response ->
-                                hideKeyboard(requireActivity())
-                                binding.autoCompleteTextView?.clearFocus()
-                                val place = response.place
-                                try {
-                                    isAddressSearch = true
-                                    moveMapCamera(place.latLng?.latitude, place.latLng?.longitude)
-                                } catch (e: Exception) {
-                                    FirebaseManager.logException(e)
+                    try {
+                        request.let { placeRequest ->
+                            placesClient.fetchPlace(placeRequest)
+                                .addOnSuccessListener { response ->
+                                    hideKeyboard(requireActivity())
+                                    binding.autoCompleteTextView?.clearFocus()
+                                    val place = response.place
+                                    try {
+                                        isAddressSearch = true
+                                        moveMapCamera(
+                                            place.latLng?.latitude,
+                                            place.latLng?.longitude
+                                        )
+                                    } catch (e: Exception) {
+                                        FirebaseManager.logException(e)
+                                    }
+                                }.addOnFailureListener {
+                                    if (!isAdded || !isVisible) return@addOnFailureListener
+                                    showErrorDialog()
                                 }
-                            }.addOnFailureListener {
-                                if (!isAdded || !isVisible) return@addOnFailureListener
-                                showErrorDialog()
-                            }
+                        }
+                    } catch(e: Exception){
+                        FirebaseManager.logException(e)
                     }
                 }
         }
