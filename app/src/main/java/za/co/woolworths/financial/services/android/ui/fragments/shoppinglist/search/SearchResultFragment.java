@@ -507,10 +507,10 @@ public class SearchResultFragment extends Fragment implements SearchResultNaviga
                 getProductAdapter().onDeselectSKU(getSelectedProduct(), otherSkus);
             }
         }
-        updateAddToCartCount();
+        updateAddToListCount();
     }
 
-    private void updateAddToCartCount() {
+    private void updateAddToListCount() {
         if(getActivity() == null) {
             return;
         }
@@ -682,7 +682,7 @@ public class SearchResultFragment extends Fragment implements SearchResultNaviga
     public void onFoodTypeChecked(List<ProductList> productLists, ProductList selectedProduct) {
         this.mProductList = productLists;
         toggleAddToListBtn(true);
-        updateAddToCartCount();
+        updateAddToListCount();
     }
 
     @Override
