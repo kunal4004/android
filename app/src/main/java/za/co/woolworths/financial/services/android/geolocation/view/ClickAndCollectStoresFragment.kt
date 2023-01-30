@@ -16,26 +16,24 @@ import com.google.gson.JsonSyntaxException
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.geolocation.network.model.Store
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
 import za.co.woolworths.financial.services.android.geolocation.view.adapter.StoreListAdapter
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
+import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.VtoErrorBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.listener.VtoTryAgainListener
-import za.co.woolworths.financial.services.android.util.AppConstant
+import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_CONFIRM_ADD
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_FROM_STORE_LOCATOR
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_PLACE_ID
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.VALIDATE_RESPONSE
-import za.co.woolworths.financial.services.android.util.KotlinUtils
-import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.binding.BaseDialogFragmentBinding
 import javax.inject.Inject
-import za.co.woolworths.financial.services.android.geolocation.GeoUtils
-import za.co.woolworths.financial.services.android.util.StoreUtils
 
 @AndroidEntryPoint
 class ClickAndCollectStoresFragment : BaseDialogFragmentBinding<FragmentClickAndCollectStoresBinding>(FragmentClickAndCollectStoresBinding::inflate),
@@ -47,6 +45,7 @@ class ClickAndCollectStoresFragment : BaseDialogFragmentBinding<FragmentClickAnd
     private var validateLocationResponse: ValidateLocationResponse? = null
     private var placeId: String? = null
     private var isComingFromConfirmAddress: Boolean? = false
+    private var isFragmentVisible: Boolean = false
 
     @Inject
     lateinit var vtoErrorBottomSheetDialog: VtoErrorBottomSheetDialog
@@ -137,7 +136,15 @@ class ClickAndCollectStoresFragment : BaseDialogFragmentBinding<FragmentClickAnd
                         this@ClickAndCollectStoresFragment
                     )
                 }
+                if(isFragmentVisible){
+                rvStoreList.runWhenReady {
+                    if (!AppInstanceObject.get().featureWalkThrough.new_fbh_cnc) {
+                        firstTimeFBHCNCIntroDialog()
+                    }
+                }
+                }
             }
+            rvStoreList.adapter?.notifyDataSetChanged()
         }
     }
     override fun onStoreSelected(mStore: Store?) {
@@ -276,6 +283,16 @@ class ClickAndCollectStoresFragment : BaseDialogFragmentBinding<FragmentClickAnd
 
     override fun onFirstTimePargo() {
         findNavController().navigate( R.id.action_clickAndCollectStoresFragment_to_pargoStoreInfoBottomSheetDialog)
+    }
+    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
+        super.setUserVisibleHint(isVisibleToUser)
+        isFragmentVisible=isVisibleToUser
+    }
+
+
+    private fun firstTimeFBHCNCIntroDialog() {
+        val fbh = FBHInfoBottomSheetDialog()
+        fbh.show(activity?.getSupportFragmentManager()!!, AppConstant.TAG_FBH_CNC_FRAGMENT)
     }
 
 }

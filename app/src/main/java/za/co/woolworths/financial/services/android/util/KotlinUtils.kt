@@ -24,6 +24,7 @@ import android.text.style.*
 import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.RotateAnimation
@@ -39,6 +40,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
+import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import com.google.common.reflect.TypeToken
 import com.google.firebase.installations.FirebaseInstallations
@@ -1507,6 +1509,15 @@ fun Fragment.setDialogPadding(dialog: Dialog?) {
             )
         )
     }
+}
+fun RecyclerView.runWhenReady(action: () -> Unit) {
+    val globalLayoutListener = object: ViewTreeObserver.OnGlobalLayoutListener {
+        override fun onGlobalLayout() {
+            action()
+            viewTreeObserver.removeOnGlobalLayoutListener(this)
+        }
+    }
+    viewTreeObserver.addOnGlobalLayoutListener(globalLayoutListener)
 }
 
 
