@@ -179,15 +179,7 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 							holder.tvColorSize.setVisibility(VISIBLE);
 						}
 
-						int msg = shoppingListItem.unavailable ? R.string.unavailable : R.string.out_of_stock;
-						ShoppingDeliveryLocation location = Utils.getPreferredDeliveryLocation();
-						if (location != null && location.fulfillmentDetails != null
-								&& location.fulfillmentDetails.getDeliveryType() != null) {
-							String deliveryType = location.fulfillmentDetails.getDeliveryType();
-							if (Delivery.Companion.getType(deliveryType) == Delivery.DASH && shoppingListItem.unavailable) {
-								msg = R.string.unavailable_with_dash;
-							}
-						}
+						int msg = getUnavailableMessage(shoppingListItem.unavailable);
 						Utils.setBackgroundColor(
 								holder.tvProductAvailability,
 								R.drawable.delivery_round_btn_black,
@@ -298,6 +290,31 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 				break;
 		}
 	}
+
+    private int getUnavailableMessage(boolean isUnavailable) {
+        int msg = isUnavailable ? R.string.unavailable : R.string.out_of_stock;
+        if (isUnavailable) {
+            ShoppingDeliveryLocation location = Utils.getPreferredDeliveryLocation();
+            if (location == null || location.fulfillmentDetails == null
+                    || location.fulfillmentDetails.getDeliveryType() == null) {
+                return msg;
+            }
+            String deliveryType = location.fulfillmentDetails.getDeliveryType();
+            Delivery type = Delivery.Companion.getType(deliveryType);
+            if (type == null) {
+                return msg;
+            }
+            switch (type) {
+                case DASH:
+                    msg = R.string.unavailable_with_dash;
+                    break;
+                case CNC:
+                    msg = R.string.unavailable_with_collection;
+                    break;
+            }
+        }
+        return msg;
+    }
 
 	private void deleteItemFromList(ShoppingListItem shoppingListItem, int adapterPosition) {
 		if (mShoppingListItem == null || mShoppingListItem.size() <= 0) {
