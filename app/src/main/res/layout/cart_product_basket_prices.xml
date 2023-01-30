@@ -63,7 +63,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/one_dp"
-                android:layout_marginRight="1dp"
+                android:layout_marginRight="@dimen/one_dp"
                 android:background="@color/color_D8D8D8"/>
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
