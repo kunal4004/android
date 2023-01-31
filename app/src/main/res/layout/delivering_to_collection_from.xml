@@ -181,7 +181,7 @@
             android:id="@+id/optionImageConfirmed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/thirty_dp"
+            android:layout_marginStart="@dimen/twenty_five_dp"
             android:background="@drawable/ic_dash_confirmed_icon"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -189,7 +189,7 @@
         <View
             android:id="@+id/packaging_separator"
             style="@style/bottom_line"
-            android:layout_width="@dimen/sixty_three_dp"
+            android:layout_width="@dimen/sixty_dp"
             android:layout_height="@dimen/two_dp"
             android:layout_marginStart="@dimen/seven_dp"
             android:layout_marginTop="@dimen/eight_dp"
@@ -209,7 +209,7 @@
 
         <View
             android:id="@+id/enroute_seperator"
-            android:layout_width="@dimen/sixty_three_dp"
+            android:layout_width="@dimen/sixty_dp"
             android:layout_height="@dimen/two_dp"
             android:layout_marginStart="@dimen/seven_dp"
             android:layout_marginTop="@dimen/eight_dp"
@@ -229,7 +229,7 @@
         <View
             android:id="@+id/delivered_seperator"
             style="@style/bottom_line"
-            android:layout_width="@dimen/sixty_three_dp"
+            android:layout_width="@dimen/sixty_dp"
             android:layout_height="@dimen/two_dp"
             android:layout_marginStart="@dimen/seven_dp"
             android:layout_marginTop="@dimen/eight_dp"
