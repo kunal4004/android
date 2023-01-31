@@ -1200,24 +1200,31 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                 blackToolTipLayout.foodItemDateText?.visibility = View.VISIBLE
                 blackToolTipLayout.deliveryCollectionTitle?.text =
                     getString(R.string.earliest_collection_Date)
-                blackToolTipLayout.foodItemTitle?.visibility = View.GONE
-                blackToolTipLayout.fashionItemDateText?.visibility = View.GONE
-                blackToolTipLayout.fashionItemTitle?.visibility = View.GONE
+                blackToolTipLayout.foodItemTitle?.visibility = View.VISIBLE
+                blackToolTipLayout.fashionItemDateText?.visibility = View.VISIBLE
+                
+                blackToolTipLayout.fashionItemTitle?.visibility = View.VISIBLE
                 blackToolTipLayout.deliveryIconLayout?.visibility = View.VISIBLE
+
+                if (validatePlace.firstAvailableFoodDeliveryDate?.isNullOrEmpty() == true) {
+                    blackToolTipLayout.deliveryCollectionTitle?.visibility = View.GONE
+                    blackToolTipLayout.foodItemDateText?.visibility = View.GONE
+                }
+
+                if (validatePlace.firstAvailableOtherDeliveryDate?.isNullOrEmpty() == true) {
+                    blackToolTipLayout.fashionItemTitle?.visibility = View.GONE
+                    blackToolTipLayout.fashionItemDateText?.visibility = View.GONE
+                }
 
                 val store = GeoUtils.getStoreDetails(
                     getStoreId(isStoreSelectedForBrowsing, browsingStoreId),
                     validatePlace.stores
                 )
-                if(store?.storeDeliveryType == StoreUtils.Companion.StoreDeliveryType.FOOD_AND_OTHER.type) {
-                    blackToolTipLayout.deliveryCollectionTitle?.text = resources.getString(R.string.food_items_beauty_home)
-                } else
-                    blackToolTipLayout.deliveryCollectionTitle?.text = resources.getString(R.string.earliest_collection_Date)
+                blackToolTipLayout.deliveryCollectionTitle?.text = resources.getString(R.string.earliest_collection_Date)
                 blackToolTipLayout.foodItemDateText?.text = store?.firstAvailableFoodDeliveryDate
-                blackToolTipLayout.productAvailableText?.text = resources.getString(
-                    R.string.dash_item_limit,
-                    store?.quantityLimit?.foodMaximumQuantity
-                )
+                blackToolTipLayout.fashionItemDateText?.text = validatePlace.firstAvailableOtherDeliveryDate
+                blackToolTipLayout.productAvailableText?.text =
+                        getString(R.string.all_products_available)
 
                 blackToolTipLayout.cartIcon?.setImageResource(R.drawable.icon_cart_white)
                 blackToolTipLayout.deliveryIcon?.setImageResource(R.drawable.white_shopping_bag_icon)
