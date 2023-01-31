@@ -18,12 +18,8 @@ class FBHInfoBottomSheetDialog : WBottomSheetDialogFragment() ,
             inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View? {
-
-
-
         binding = NewFbhBottomSheetDialogBinding.inflate(inflater, container, false)
         return binding.root
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
