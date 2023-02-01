@@ -17,10 +17,10 @@
 
     <TextView
         android:id="@+id/tvStoresStock"
-        style="@style/futura_medium"
+        style="@style/futura_medium_666666"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/twenty_eight_dp"
+        android:layout_marginTop="@dimen/twenty_dp"
         android:maxLines="1"
         android:textSize="@dimen/thirteen_sp"
         app:layout_constraintTop_toBottomOf="@+id/viewSeparator"
@@ -31,7 +31,7 @@
 
     <TextView
         android:id="@+id/tvStoreHeader"
-        style="@style/futura_medium_black"
+        style="@style/futura_semi_bold_black"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="@dimen/twenty_four_sp"
