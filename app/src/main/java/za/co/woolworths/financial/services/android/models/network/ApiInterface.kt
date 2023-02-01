@@ -847,6 +847,15 @@ interface ApiInterface {
             @Path("store_id") store_id: String,
             @Path("multipleSku") multipleSku: String): retrofit2.Response<SkusInventoryForStoreResponse>
 
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @GET("wfs/app/v4/inventory/store/{store_id}/multiSku/{multipleSku}")
+    suspend fun fetchInventorySKUForStore(
+
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Path("store_id") store_id: String,
+        @Path("multipleSku") multipleSku: String): retrofit2.Response<SkusInventoryForStoreResponse>
+
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip")
     @GET("wfs/app/v4/searchSortAndFilterV2")
     fun getProducts(
