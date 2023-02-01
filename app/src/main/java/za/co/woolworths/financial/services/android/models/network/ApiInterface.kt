@@ -720,14 +720,14 @@ interface ApiInterface {
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @PUT("wfs/app/v4/cartV2/item/{commerceId}")
-    fun changeQuantityRequest(
+    suspend fun changeProductQuantityRequest(
 
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Path("commerceId") commerceId: String?,
-            @Body quantity: ChangeQuantity?): Call<ShoppingCartResponse>
+            @Body quantity: ChangeQuantity?): retrofit2.Response<ShoppingCartResponse>
 
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip")

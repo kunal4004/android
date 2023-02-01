@@ -8,6 +8,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.cart.network.CartRepository
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
+import za.co.woolworths.financial.services.android.models.dto.ChangeQuantity
 import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse
 import javax.inject.Inject
@@ -42,6 +43,11 @@ class CartViewModel @Inject constructor(
     val getInventorySkuForInventory: LiveData<Event<Resource<SkusInventoryForStoreResponse>>> =
         _getInventorySkuForInventory
 
+    private val _changeProductQuantity =
+        MutableLiveData<Event<Resource<ShoppingCartResponse>>>()
+    val changeProductQuantity: LiveData<Event<Resource<ShoppingCartResponse>>> =
+        _changeProductQuantity
+
     fun getShoppingCartV2() {
         _getCarV2.value = Event(Resource.loading(null))
         viewModelScope.launch {
@@ -71,6 +77,14 @@ class CartViewModel @Inject constructor(
         viewModelScope.launch {
             val response = cartRepository.getInventorySkuForInventory(store_id, multipleSku, isUserBrowsing)
             _getInventorySkuForInventory.value = Event(response)
+        }
+    }
+
+    fun changeProductQuantityRequest(changeQuantity: ChangeQuantity?) {
+        _changeProductQuantity.value = Event(Resource.loading(null))
+        viewModelScope.launch {
+            val response = cartRepository.changeProductQuantityRequest(changeQuantity)
+            _changeProductQuantity.value = Event(response)
         }
     }
 }
