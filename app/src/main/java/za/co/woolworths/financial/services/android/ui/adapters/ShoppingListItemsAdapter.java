@@ -35,6 +35,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.lis
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView;
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter;
+import za.co.woolworths.financial.services.android.util.KotlinUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager;
 import za.co.woolworths.financial.services.android.util.wenum.Delivery;
@@ -179,15 +180,7 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 							holder.tvColorSize.setVisibility(VISIBLE);
 						}
 
-						int msg = shoppingListItem.unavailable ? R.string.unavailable : R.string.out_of_stock;
-						ShoppingDeliveryLocation location = Utils.getPreferredDeliveryLocation();
-						if (location != null && location.fulfillmentDetails != null
-								&& location.fulfillmentDetails.getDeliveryType() != null) {
-							String deliveryType = location.fulfillmentDetails.getDeliveryType();
-							if (Delivery.Companion.getType(deliveryType) == Delivery.DASH && shoppingListItem.unavailable) {
-								msg = R.string.unavailable_with_dash;
-							}
-						}
+						int msg = getUnavailableMessage(shoppingListItem.unavailable);
 						Utils.setBackgroundColor(
 								holder.tvProductAvailability,
 								R.drawable.delivery_round_btn_black,
@@ -298,6 +291,25 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 				break;
 		}
 	}
+
+    private int getUnavailableMessage(boolean isUnavailable) {
+        int msg = isUnavailable ? R.string.unavailable : R.string.out_of_stock;
+        if (isUnavailable) {
+            Delivery type = KotlinUtils.Companion.getPreferredDeliveryType();
+            if (type == null) {
+                return msg;
+            }
+            switch (type) {
+                case DASH:
+                    msg = R.string.unavailable_with_dash;
+                    break;
+                case CNC:
+                    msg = R.string.unavailable_with_collection;
+                    break;
+            }
+        }
+        return msg;
+    }
 
 	private void deleteItemFromList(ShoppingListItem shoppingListItem, int adapterPosition) {
 		if (mShoppingListItem == null || mShoppingListItem.size() <= 0) {
