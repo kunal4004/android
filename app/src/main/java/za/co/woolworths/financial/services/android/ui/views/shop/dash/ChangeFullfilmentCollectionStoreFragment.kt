@@ -62,7 +62,6 @@ class ChangeFullfilmentCollectionStoreFragment :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         validatePlace = arguments?.get(AppConstant.Keys.ARG_VALIDATE_PLACE) as? ValidatePlace
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
