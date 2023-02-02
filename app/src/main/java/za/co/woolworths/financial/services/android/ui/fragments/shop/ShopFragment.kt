@@ -450,16 +450,6 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                             confirmAddressViewModel.getValidateLocation(it)
                         shopProgressbar?.visibility = View.GONE
                         tabsMain?.isClickable = true
-                        val placeId = validateLocationResponse?.validatePlace?.placeDetails?.placeId
-                        if(placeId != null) {
-                            val store = GeoUtils.getStoreDetails(
-                                placeId,
-                                validateLocationResponse?.validatePlace?.stores
-                            )
-                        }
-
-                      // geoDeliveryView?.visibility = View.VISIBLE
-
                         if (validateLocationResponse != null) {
                             when (validateLocationResponse?.httpCode) {
                                 AppConstant.HTTP_OK -> {
@@ -710,10 +700,6 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         binding.apply {
             activity?.let {
                 getDeliveryType()?.let { fulfillmentDetails ->
-                    val store = GeoUtils.getStoreDetails(
-                        fulfillmentDetails.storeId,
-                        validateLocationResponse?.validatePlace?.stores
-                    )
                     KotlinUtils.setDeliveryAddressViewFoShop(
                         it,
                         fulfillmentDetails,
@@ -1170,69 +1156,72 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                 blackToolTipLayout.root.visibility = View.GONE
                 return
             }
-            if (isUserAuthenticated() && getFirstAvailableFoodDeliveryDate(
-                    isStoreSelectedForBrowsing,
-                    browsingStoreId
-                ).isNullOrEmpty() == true
-            ) {
-                blackToolTipLayout.root.visibility = View.GONE
-                return
-            } else {
-                if (getFirstAvailableFoodDeliveryDate(
-                        isStoreSelectedForBrowsing,
-                        browsingStoreId
-                    ).isNullOrEmpty() == true
-                ) {
-                    blackToolTipLayout.root.visibility = View.GONE
-                    return
-                }
-            }
             blackToolTipLayout.root.visibility = View.VISIBLE
             if (getDeliveryType() == null || Delivery.getType(getDeliveryType()?.deliveryType)?.type == Delivery.CNC.type) {
                 blackToolTipLayout.changeButtonLayout?.visibility = View.GONE
             } else {
                 blackToolTipLayout.changeButtonLayout?.visibility = View.VISIBLE
-                blackToolTipLayout.changeText?.text = getText(R.string.shop_using_cnc)
+                blackToolTipLayout.changeText?.text = context?.getText(R.string.shop_using_cnc)
             }
             KotlinUtils.fullfillmentTypeClicked = Delivery.CNC.name
             validateLocationResponse?.validatePlace?.let { validatePlace ->
-                blackToolTipLayout.deliveryCollectionTitle?.visibility = View.VISIBLE
-                blackToolTipLayout.foodItemDateText?.visibility = View.VISIBLE
                 blackToolTipLayout.deliveryCollectionTitle?.text =
                     getString(R.string.earliest_collection_Date)
-                blackToolTipLayout.foodItemTitle?.visibility = View.VISIBLE
-                blackToolTipLayout.fashionItemDateText?.visibility = View.VISIBLE
-                
-                blackToolTipLayout.fashionItemTitle?.visibility = View.VISIBLE
-                blackToolTipLayout.deliveryIconLayout?.visibility = View.VISIBLE
-
-                if (validatePlace.firstAvailableFoodDeliveryDate?.isNullOrEmpty() == true) {
-                    blackToolTipLayout.deliveryCollectionTitle?.visibility = View.GONE
-                    blackToolTipLayout.foodItemDateText?.visibility = View.GONE
-                }
-
-                if (validatePlace.firstAvailableOtherDeliveryDate?.isNullOrEmpty() == true) {
-                    blackToolTipLayout.fashionItemTitle?.visibility = View.GONE
-                    blackToolTipLayout.fashionItemDateText?.visibility = View.GONE
-                }
-
                 val store = GeoUtils.getStoreDetails(
                     getStoreId(isStoreSelectedForBrowsing, browsingStoreId),
                     validatePlace.stores
                 )
-                blackToolTipLayout.deliveryCollectionTitle?.text = resources.getString(R.string.earliest_collection_Date)
-                if(!validatePlace.onDemand?.firstAvailableFoodDeliveryTime.isNullOrEmpty())
-                blackToolTipLayout.foodItemDateText?.text = store?.firstAvailableFoodDeliveryDate + validatePlace.onDemand?.firstAvailableFoodDeliveryTime?.let { StoreUtils.formatDeliveryTime(it) }
-                else
-                    blackToolTipLayout.foodItemDateText?.text = store?.firstAvailableFoodDeliveryDate
-                blackToolTipLayout.fashionItemDateText?.text = validatePlace.firstAvailableOtherDeliveryDate
-                blackToolTipLayout.productAvailableText?.text =
-                        getString(R.string.all_products_available)
 
+                //checking fbh products condition
+                if (store?.firstAvailableFoodDeliveryDate.isNullOrEmpty() ) {
+                    enableOrDisableFashionItems(true)
+                    enableOrDisableFoodItems(false)
+                    blackToolTipLayout.fashionItemDateText?.text = store?.firstAvailableOtherDeliveryDate
+                    blackToolTipLayout.productAvailableText?.text =
+                        context?.getString(R.string.all_fashion_beauty_home_avlbl)
+                }
+                //food products checking conditions
+              else  if (store?.firstAvailableOtherDeliveryDate.isNullOrEmpty() ) {
+                    enableOrDisableFashionItems(false)
+                    enableOrDisableFoodItems(true)
+                    if(!validatePlace.onDemand?.firstAvailableFoodDeliveryTime.isNullOrEmpty()) {
+                        if(!store?.firstAvailableFoodDeliveryDate.isNullOrEmpty()) {
+                            blackToolTipLayout.foodItemDateText?.text =
+                                store?.firstAvailableFoodDeliveryDate + validatePlace.onDemand?.firstAvailableFoodDeliveryTime?.let {
+                                    StoreUtils.formatDeliveryTime(it)
+                                }
+                        }
+                        else
+                            blackToolTipLayout.foodItemDateText?.text =
+                                store?.firstAvailableFoodDeliveryDate
+                    }
+                    blackToolTipLayout.productAvailableText?.text =
+                       context?.getString(R.string.all_food_items_avlbl)
+                }
+                else{
+                    //mixed basket
+                    enableOrDisableFashionItems(true)
+                    enableOrDisableFoodItems(true)
+                    blackToolTipLayout.fashionItemDateText?.text = store?.firstAvailableOtherDeliveryDate
+                    if(!validatePlace.onDemand?.firstAvailableFoodDeliveryTime.isNullOrEmpty()) {
+                        if(!store?.firstAvailableFoodDeliveryDate.isNullOrEmpty()) {
+                            blackToolTipLayout.foodItemDateText?.text =
+                                store?.firstAvailableFoodDeliveryDate + validatePlace.onDemand?.firstAvailableFoodDeliveryTime?.let {
+                                    StoreUtils.formatDeliveryTime(it)
+                                }
+                        }
+                        else
+                            blackToolTipLayout.foodItemDateText?.text =
+                                store?.firstAvailableFoodDeliveryDate
+                    }
+
+                    blackToolTipLayout.productAvailableText?.text =
+                        context?.getString(R.string.all_products_available)
+                }
                 blackToolTipLayout.cartIcon?.setImageResource(R.drawable.icon_cart_white)
                 blackToolTipLayout.deliveryIcon?.setImageResource(R.drawable.white_shopping_bag_icon)
                 blackToolTipLayout.deliveryFeeText?.text =
-                    resources.getString(R.string.dash_free_collection)
+                    context?.getString(R.string.dash_free_collection)
                 blackToolTipLayout.bubbleLayout?.setArrowDirection(ArrowDirection.TOP_CENTER)
             }
         }
@@ -1573,5 +1562,29 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
 
     override fun updateLastDashOrder() {
         makeLastDashOrderDetailsCall()
+    }
+   fun enableOrDisableFashionItems(isEnabled: Boolean){
+           binding.blackToolTipLayout?.apply {
+               if(isEnabled) {
+                   fashionItemTitle?.visibility = View.VISIBLE
+                   fashionItemDateText.visibility = View.VISIBLE
+               }
+               else{
+                   fashionItemTitle?.visibility = View.GONE
+                   fashionItemDateText.visibility = View.GONE
+               }
+       }
+    }
+    fun enableOrDisableFoodItems(isEnabled: Boolean){
+        binding.blackToolTipLayout?.apply {
+            if(isEnabled){
+                foodItemTitle?.visibility = View.VISIBLE
+                foodItemDateText.visibility = View.VISIBLE
+            }else{
+                foodItemTitle?.visibility = View.GONE
+                foodItemDateText.visibility = View.GONE
+            }
+        }
+
     }
 }

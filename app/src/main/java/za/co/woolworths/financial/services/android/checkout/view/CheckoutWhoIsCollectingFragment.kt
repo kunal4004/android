@@ -348,11 +348,11 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(R.
 
                 binding.whoIsCollectingDetailsLayout?.recipientDetailsTitle?.visibility = View.GONE
                 binding.whoIsCollectingDetailsInfoLayout?.root?.visibility = View.VISIBLE
-                binding.whoIsCollectingDetailsLayout.recipientNamePlaceHolder.text = resources.getString(R.string.recipient_name_fbh)
+                binding.whoIsCollectingDetailsLayout.recipientNamePlaceHolder.text = context?.getString(R.string.recipient_name_fbh)
             } else if (isMixBasket == true) {
                 binding.whoIsCollectingDetailsLayout?.recipientDetailsTitle?.visibility = View.GONE
                 binding.whoIsCollectingDetailsInfoLayout?.root?.visibility = View.VISIBLE
-                binding.whoIsCollectingDetailsLayout.recipientNamePlaceHolder.text = resources.getString(R.string.recipient_name_fbh)
+                binding.whoIsCollectingDetailsLayout.recipientNamePlaceHolder.text = context?.getString(R.string.recipient_name_fbh)
             }
         }
     }

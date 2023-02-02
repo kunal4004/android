@@ -819,13 +819,6 @@ class ProductDetailsFragment :
                                     navigateToUnsellableItemsFragment(it as java.util.ArrayList<UnSellableCommerceItem>,
                                         KotlinUtils.browsingDeliveryType?.name)
                                 }
-                                val placeId = validateLocationResponse?.validatePlace?.placeDetails?.placeId
-                                if(placeId != null) {
-                                    val store = GeoUtils.getStoreDetails(
-                                        placeId,
-                                        validateLocationResponse?.validatePlace?.stores
-                                    )
-                                }
                             } else
                                 callConfirmPlace()
                         }
