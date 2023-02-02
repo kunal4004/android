@@ -2863,7 +2863,7 @@
     <string name="cash_back_cancellation">Due to a cancellation or reversal of a previous order we are reactivating this Voucher.It will be available soon.</string>
     <string name="cash_back_vouchers_info_one">You can only use one Voucher at a time.</string>
     <string name="cash_back_vouchers_info_two">Make sure your cart total is higher than the voucher value.</string>
-    <string name="cash_back_vouchers_info_three">You can use a Cash Back Voucher when your cart has either only food items or a mix of fashion,\nbeauty and/or homeware items.</string>
+    <string name="cash_back_vouchers_info_three">You can use a Cash Back Voucher when your cart has either only food items or a mix of fashion, beauty and/or homeware items.</string>
     <string name="cash_back_vouchers_info_four">These Vouchers are only redeemable at checkout as a payment method.</string>
     <string name="quarterly_voucher">Quarterly Voucher</string>
     <string name="can_not_redeem_cash_back_vouchers">Can’t redeem this voucher</string>
