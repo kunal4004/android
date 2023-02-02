@@ -250,7 +250,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
      */
     private fun queryServiceChangeQuantity() {
         mChangeQuantityList?.add(mChangeQuantity)
-        viewModel.changeProductQuantityRequest(mChangeQuantityList?.get(0))
+        viewModel.changeProductQuantityRequest(mChangeQuantityList?.getOrNull(0))
     }
 
     private fun setEmptyCartUIUserName() {
