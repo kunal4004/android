@@ -3082,4 +3082,11 @@
         <item name="android:scaleType">fitCenter</item>
         <item name="srcCompat">@drawable/close</item>
     </style>
+
+    <style name="pargo_info_description_text_style">
+        <item name="android:lineSpacingExtra">1.4dp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">15sp</item>
+        <item name="WTextView_font">myriadpro_regular</item>
+    </style>
 </resources>

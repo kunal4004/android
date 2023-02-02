@@ -41,7 +41,7 @@
 
     <za.co.woolworths.financial.services.android.ui.views.WTextView
         android:id="@+id/pargoInfoDescription"
-        style="@style/absa_page_description_text_style"
+        style="@style/pargo_info_description_text_style"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/pargoInfoTitle"
