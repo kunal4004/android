@@ -37,6 +37,10 @@ class CartViewModel @Inject constructor(
         MutableLiveData<Event<Resource<ShoppingCartResponse>>>()
     val removeCartItem: LiveData<Event<Resource<ShoppingCartResponse>>> =
         _removeCartItem
+    private val _removeAllCartItem =
+        MutableLiveData<Event<Resource<ShoppingCartResponse>>>()
+    val removeAllCartItem: LiveData<Event<Resource<ShoppingCartResponse>>> =
+        _removeAllCartItem
 
     private val _getInventorySkuForInventory =
         MutableLiveData<Event<Resource<SkusInventoryForStoreResponse>>>()
@@ -69,6 +73,14 @@ class CartViewModel @Inject constructor(
         viewModelScope.launch {
             val response = cartRepository.removeCartItem(commerceId)
             _removeCartItem.value = Event(response)
+        }
+    }
+
+    fun removeAllCartItem() {
+        _removeAllCartItem.value = Event(Resource.loading(null))
+        viewModelScope.launch {
+            val response = cartRepository.removeAllCartItems()
+            _removeAllCartItem.value = Event(response)
         }
     }
 

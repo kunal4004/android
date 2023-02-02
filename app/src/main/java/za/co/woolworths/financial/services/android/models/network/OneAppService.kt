@@ -592,7 +592,7 @@ object OneAppService : RetrofitConfig() {
         }
     }
 
-    fun removeAllCartItems(): Call<ShoppingCartResponse> {
+    suspend fun removeAllCartItems(): retrofit2.Response<ShoppingCartResponse> {
         return mApiInterface.removeAllCartItems(getSessionToken(), getDeviceIdentityToken())
     }
 

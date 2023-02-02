@@ -79,6 +79,27 @@ class CartRepository @Inject constructor() {
         }
     }
 
+    suspend fun removeAllCartItems(): Resource<ShoppingCartResponse> {
+        return try {
+            val response = OneAppService.removeAllCartItems()
+            if (response.isSuccessful) {
+                response.body()?.let {
+                    return when (it.httpCode) {
+                        AppConstant.HTTP_OK, AppConstant.HTTP_OK_201 ->
+                            Resource.success(it)
+                        else ->
+                            Resource.error(R.string.error_unknown, it)
+                    }
+                } ?: Resource.error(R.string.error_unknown, null)
+            } else {
+                Resource.error(R.string.error_unknown, null)
+            }
+        } catch (e: IOException) {
+            FirebaseManager.logException(e)
+            Resource.error(R.string.error_internet_connection, null)
+        }
+    }
+
     suspend fun changeProductQuantityRequest(changeQuantity: ChangeQuantity?): Resource<ShoppingCartResponse> {
         return try {
             val response = OneAppService.changeProductQuantityRequest(changeQuantity)
