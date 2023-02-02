@@ -69,5 +69,8 @@ class StoreUtils {
             return address
         }
 
+        fun formatDeliveryTime(time : String) : String {
+            return time.split(",").toTypedArray()[1]
+        }
     }
 }
