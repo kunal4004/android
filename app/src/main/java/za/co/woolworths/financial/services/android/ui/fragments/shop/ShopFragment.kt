@@ -1221,7 +1221,10 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                     validatePlace.stores
                 )
                 blackToolTipLayout.deliveryCollectionTitle?.text = resources.getString(R.string.earliest_collection_Date)
+                if(!validatePlace.onDemand?.firstAvailableFoodDeliveryTime.isNullOrEmpty())
                 blackToolTipLayout.foodItemDateText?.text = store?.firstAvailableFoodDeliveryDate + validatePlace.onDemand?.firstAvailableFoodDeliveryTime?.let { StoreUtils.formatDeliveryTime(it) }
+                else
+                    blackToolTipLayout.foodItemDateText?.text = store?.firstAvailableFoodDeliveryDate
                 blackToolTipLayout.fashionItemDateText?.text = validatePlace.firstAvailableOtherDeliveryDate
                 blackToolTipLayout.productAvailableText?.text =
                         getString(R.string.all_products_available)
