@@ -11,6 +11,7 @@ import za.co.woolworths.financial.services.android.checkout.service.network.Save
 import za.co.woolworths.financial.services.android.models.dto.ChangeQuantity
 import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse
+import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.CouponClaimCode
 import javax.inject.Inject
 import za.co.woolworths.financial.services.android.models.network.Event
 import za.co.woolworths.financial.services.android.models.network.Resource
@@ -51,6 +52,11 @@ class CartViewModel @Inject constructor(
         MutableLiveData<Event<Resource<ShoppingCartResponse>>>()
     val changeProductQuantity: LiveData<Event<Resource<ShoppingCartResponse>>> =
         _changeProductQuantity
+
+    private val _onRemovePromoCode =
+        MutableLiveData<Event<Resource<ShoppingCartResponse>>>()
+    val onRemovePromoCode: LiveData<Event<Resource<ShoppingCartResponse>>> =
+        _onRemovePromoCode
 
     fun getShoppingCartV2() {
         _getCarV2.value = Event(Resource.loading(null))
@@ -97,6 +103,14 @@ class CartViewModel @Inject constructor(
         viewModelScope.launch {
             val response = cartRepository.changeProductQuantityRequest(changeQuantity)
             _changeProductQuantity.value = Event(response)
+        }
+    }
+
+    fun onRemovePromoCode(couponClaimCode: CouponClaimCode) {
+        _onRemovePromoCode.value = Event(Resource.loading(null))
+        viewModelScope.launch {
+            val response = cartRepository.onRemovePromoCode(couponClaimCode)
+            _onRemovePromoCode.value = Event(response)
         }
     }
 }

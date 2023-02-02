@@ -70,6 +70,7 @@ import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseVie
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView.IWalkthroughActionListener
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ActionSheetDialogFragment
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_EXPECTATION_FAILED_502
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK_201
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_SESSION_TIMEOUT_440
@@ -1773,61 +1774,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     }
 
     override fun onRemovePromoCode(promoCode: String) {
-        val activity: FragmentActivity = requireActivity()
-        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Cart_promo_remove, activity)
-        showProgressBar()
-        removePromoCode(CouponClaimCode(promoCode)).enqueue(
-            CompletionHandler(
-                (object : IResponseListener<ShoppingCartResponse> {
-                    override fun onSuccess(response: ShoppingCartResponse?) {
-                        hideProgressBar()
-                        when (response?.httpCode) {
-                            200 -> {
-                                updateCart(convertResponseToCartResponseObject(response), null)
-                                if (voucherDetails?.promoCodes == null || voucherDetails?.promoCodes?.size == 0)
-                                    showVouchersOrPromoCodeAppliedToast(
-                                        getString(R.string.promo_code_removed_toast_message)
-                                    )
-                            }
-                            502 -> response.response?.let {
-                                Utils.displayValidationMessage(
-                                    activity,
-                                    CustomPopUpWindow.MODAL_LAYOUT.ERROR,
-                                    response.response.desc,
-                                    true
-                                )
-                            }
-                            440 -> {
-                                SessionUtilities.getInstance()
-                                    .setSessionState(SessionDao.SESSION_STATE.INACTIVE)
-                                SessionExpiredUtilities.getInstance().showSessionExpireDialog(
-                                    activity as AppCompatActivity?,
-                                    this@CartFragment
-                                )
-                            }
-                            else -> response?.response?.let {
-                                Utils.displayValidationMessage(
-                                    activity,
-                                    CustomPopUpWindow.MODAL_LAYOUT.ERROR,
-                                    getString(R.string.general_error_desc),
-                                    true
-                                )
-                            }
-                        }
-                    }
-
-                    override fun onFailure(error: Throwable?) {
-                        hideProgressBar()
-                        Utils.displayValidationMessage(
-                            activity,
-                            CustomPopUpWindow.MODAL_LAYOUT.ERROR,
-                            getString(R.string.general_error_desc),
-                            true
-                        )
-                    }
-                }), ShoppingCartResponse::class.java
-            )
-        )
+        viewModel.onRemovePromoCode(CouponClaimCode(promoCode))
     }
 
     private fun navigateToApplyPromoCodePage() {
@@ -2076,6 +2023,62 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                         changeQuantityWasClicked = true
                         cartProductAdapter?.onChangeQuantityError()
                     }
+                }
+            }
+        }
+
+        viewModel.onRemovePromoCode.observe(viewLifecycleOwner) {
+            val response = it.peekContent().data
+            when (it.peekContent().status) {
+                Status.LOADING -> {
+                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Cart_promo_remove,
+                        requireActivity())
+                    showProgressBar()
+                }
+                Status.SUCCESS -> {
+                    hideProgressBar()
+                    when (response?.httpCode) {
+                        HTTP_OK -> {
+                            updateCart(convertResponseToCartResponseObject(response), null)
+                            if (voucherDetails?.promoCodes == null || voucherDetails?.promoCodes?.size == 0)
+                                showVouchersOrPromoCodeAppliedToast(
+                                    getString(R.string.promo_code_removed_toast_message)
+                                )
+                        }
+                        HTTP_EXPECTATION_FAILED_502 -> response.response?.let {
+                            Utils.displayValidationMessage(
+                                activity,
+                                CustomPopUpWindow.MODAL_LAYOUT.ERROR,
+                                response.response.desc,
+                                true
+                            )
+                        }
+                        HTTP_SESSION_TIMEOUT_440 -> {
+                            SessionUtilities.getInstance()
+                                .setSessionState(SessionDao.SESSION_STATE.INACTIVE)
+                            SessionExpiredUtilities.getInstance().showSessionExpireDialog(
+                                activity as AppCompatActivity?,
+                                this@CartFragment
+                            )
+                        }
+                        else -> response?.response?.let {
+                            Utils.displayValidationMessage(
+                                activity,
+                                CustomPopUpWindow.MODAL_LAYOUT.ERROR,
+                                getString(R.string.general_error_desc),
+                                true
+                            )
+                        }
+                    }
+                }
+                Status.ERROR -> {
+                    hideProgressBar()
+                    Utils.displayValidationMessage(
+                        activity,
+                        CustomPopUpWindow.MODAL_LAYOUT.ERROR,
+                        getString(R.string.general_error_desc),
+                        true
+                    )
                 }
             }
         }

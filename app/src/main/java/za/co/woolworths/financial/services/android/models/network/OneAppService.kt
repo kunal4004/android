@@ -979,7 +979,7 @@ object OneAppService : RetrofitConfig() {
         )
     }
 
-    fun removePromoCode(couponClaimCode: CouponClaimCode): Call<ShoppingCartResponse> {
+    suspend fun removePromoCode(couponClaimCode: CouponClaimCode): retrofit2.Response<ShoppingCartResponse> {
         return mApiInterface.removePromoCode(
             "", "", getSessionToken(),
             getDeviceIdentityToken(), couponClaimCode
