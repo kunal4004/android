@@ -65,12 +65,6 @@ class ChangeFullfilmentCollectionStoreFragment :
 
     }
 
-    private fun hideBottomNav() {
-        (activity as? BottomNavigationActivity)?.apply {
-            hideBottomNavigationMenu()
-        }
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = LayoutDashCollectionStoreBinding.bind(view)
@@ -200,7 +194,6 @@ class ChangeFullfilmentCollectionStoreFragment :
     }
 
     private fun setStoreList(stores: List<Store>?) {
-        hideBottomNav()
         binding.layoutEdgeCaseScreen?.root?.visibility = View.GONE
         binding.layoutClickAndCollectStore?.root?.visibility = View.VISIBLE
         binding.layoutClickAndCollectStore?.topPaddingView?.visibility=View.VISIBLE
@@ -429,7 +422,6 @@ class ChangeFullfilmentCollectionStoreFragment :
     }
 
     private fun showCategoryList() {
-        showBottomNavigationMenu()
         binding.apply {
             parentFragment?.showSearchAndBarcodeUi()
             layoutClickAndCollectStore?.root?.visibility = View.GONE
@@ -511,13 +503,6 @@ class ChangeFullfilmentCollectionStoreFragment :
     private fun firstTimeFBHCNCIntroDialog() {
         val fbh = FBHInfoBottomSheetDialog()
         activity?.supportFragmentManager?.let { fbh.show(it, AppConstant.TAG_FBH_CNC_FRAGMENT) }
-    }
-
-     fun showBottomNavigationMenu() {
-
-        (activity as? BottomNavigationActivity)?.apply {
-            showBottomNavigationMenu()
-        }
     }
 
 }
