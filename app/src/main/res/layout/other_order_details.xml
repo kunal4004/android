@@ -310,6 +310,7 @@
         app:layout_constraintTop_toBottomOf="@id/totalDiscountSeparator">
 
         <TextView
+            android:id="@+id/deliveryFeeLabel"
             style="@style/myriad_pro_regular"
             android:layout_width="0dp"
             android:layout_height="match_parent"

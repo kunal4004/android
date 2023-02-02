@@ -2860,4 +2860,5 @@
     <string name="weekends_and_public_holidays_excluded">Weekends and public holidays excluded.</string>
     <string name="food_items_beauty_home">Food Items &amp; Fashion, Beauty &amp; Home</string>
     <string name="recipient_name_fbh">Recipient Name: *</string>
+    <string name="collection_fee">Collection Fee</string>
 </resources>
