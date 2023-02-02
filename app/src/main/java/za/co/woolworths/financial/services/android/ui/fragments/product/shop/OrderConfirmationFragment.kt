@@ -5,6 +5,7 @@ import android.graphics.Typeface.BOLD
 import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableString
+import android.text.SpannableStringBuilder
 import android.text.style.StyleSpan
 import android.view.Menu
 import android.view.MenuInflater
@@ -214,10 +215,27 @@ class OrderConfirmationFragment :
                     }
                     binding.deliveryCollectionDetailsConstraintLayout.apply {
                         deliveryTextView.text = it.getText(R.string.delivery_semicolon)
-                        optionLocation.text =
-                            response?.orderSummary?.fulfillmentDetails?.address?.address1?.let {
-                                convertToTitleCase(it)
-                            } ?: ""
+
+                        val nickNameWithAddress = SpannableStringBuilder()
+
+                        val nickName =
+                            SpannableString(
+                                response?.orderSummary?.fulfillmentDetails?.address?.nickname + "  " + context?.getString(
+                                    R.string.bullet
+                                ) + "  "
+                            )
+                        if (response?.orderSummary?.fulfillmentDetails?.address?.nickname?.isNullOrEmpty() == false) {
+                            nickNameWithAddress.append(nickName)
+                        }
+
+                        val address =  response?.orderSummary?.fulfillmentDetails?.address?.address1?.let {
+                            convertToTitleCase(it)
+                        } ?: ""
+
+                        nickNameWithAddress.append(address)
+
+                        optionLocation.text = nickNameWithAddress
+
                         continueBrowsingStandardLinearLayout.setOnClickListener {
                             requireActivity()?.setResult(CheckOutFragment.REQUEST_CHECKOUT_ON_CONTINUE_SHOPPING)
                             requireActivity()?.finish()
@@ -239,11 +257,27 @@ class OrderConfirmationFragment :
                                 R.drawable.icon_dash_delivery_scooter
                             )
                         optionTitle.text = it.getText(R.string.dashing_to)
-                        optionLocationTitle.text =
-                            response?.orderSummary?.fulfillmentDetails?.address?.address1?.let {
-                                convertToTitleCase(it)
-                            }
-                                ?: ""
+
+                        val nickNameWithAddress = SpannableStringBuilder()
+
+                        val nickName =
+                            SpannableString(
+                                response?.orderSummary?.fulfillmentDetails?.address?.nickname + "  " + context?.getString(
+                                    R.string.bullet
+                                ) + "  "
+                            )
+                        if (response?.orderSummary?.fulfillmentDetails?.address?.nickname?.isNullOrEmpty() == false) {
+                            nickNameWithAddress.append(nickName)
+                        }
+
+                        val address =  response?.orderSummary?.fulfillmentDetails?.address?.address1?.let {
+                            convertToTitleCase(it)
+                        } ?: ""
+
+                        nickNameWithAddress.append(address)
+
+                        optionLocationTitle.text = nickNameWithAddress
+
                         dashFoodDeliveryDateTimeTextView?.text = applyBoldBeforeComma(
                             response
                                 ?.deliveryDetails?.deliveryInfos?.get(0)?.deliveryDateAndTime

@@ -5,6 +5,8 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
+import android.text.SpannableString
+import android.text.SpannableStringBuilder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -878,9 +880,27 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
     }
 
     private fun GeoLocationDeliveryAddressBinding.updateDeliveryDetails() {
-        geoDeliveryText?.text =
-            KotlinUtils.capitaliseFirstLetter(validateLocationResponse?.validatePlace?.placeDetails?.address1
-                ?: getString(R.string.empty))
+
+        val nickNameWithAddress = SpannableStringBuilder()
+
+        var nickName =
+            SpannableString(
+                validateLocationResponse?.validatePlace?.placeDetails?.nickname + "  " + context?.getString(
+                    R.string.bullet
+                ) + "  "
+            )
+
+        val address =  KotlinUtils.capitaliseFirstLetter(validateLocationResponse?.validatePlace?.placeDetails?.address1 ?: getString(R.string.empty))
+
+        if (validateLocationResponse?.validatePlace?.placeDetails?.nickname.isNullOrEmpty() == true
+            || validateLocationResponse?.validatePlace?.placeDetails?.nickname?.equals(address) == true) {
+            nickName = SpannableString(getString(R.string.empty))
+        }
+
+        nickNameWithAddress.append(nickName)
+        nickNameWithAddress.append(address)
+
+        geoDeliveryText?.text = nickNameWithAddress
 
         var earliestFoodDate =
             validateLocationResponse?.validatePlace?.firstAvailableFoodDeliveryDate
@@ -909,9 +929,26 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
     }
 
     private fun GeoLocationDeliveryAddressBinding.updateDashDetails() {
-        geoDeliveryText.text =
-            KotlinUtils.capitaliseFirstLetter(validateLocationResponse?.validatePlace?.placeDetails?.address1
-                ?: getString(R.string.empty))
+        val nickNameWithAddress = SpannableStringBuilder()
+        var nickName =
+            SpannableString(
+                validateLocationResponse?.validatePlace?.placeDetails?.nickname + "  " + context?.getString(
+                    R.string.bullet
+                ) + "  "
+            )
+
+        val address = KotlinUtils.capitaliseFirstLetter(validateLocationResponse?.validatePlace?.placeDetails?.address1
+            ?: getString(R.string.empty))
+
+        if (validateLocationResponse?.validatePlace?.placeDetails?.nickname.isNullOrEmpty() == true
+            || validateLocationResponse?.validatePlace?.placeDetails?.nickname?.equals(address) == true) {
+            nickName = SpannableString(getString(R.string.empty))
+        }
+
+        nickNameWithAddress.append(nickName).append(address)
+
+        geoDeliveryText.text = nickNameWithAddress
+
         var earliestDashDate =
             validateLocationResponse?.validatePlace?.onDemand?.firstAvailableFoodDeliveryTime
         if (earliestDashDate.isNullOrEmpty())

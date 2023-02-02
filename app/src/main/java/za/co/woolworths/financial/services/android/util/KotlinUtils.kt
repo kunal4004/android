@@ -470,6 +470,7 @@ class KotlinUtils {
             tvDeliveringTo: TextView,
             tvDeliveryLocation: TextView,
             deliverLocationIcon: ImageView?,
+            isComingFromMyPreferences:Boolean = false
         ) {
             with(fulfillmentDetails) {
                 when (Delivery?.getType(deliveryType)) {
@@ -485,7 +486,26 @@ class KotlinUtils {
                     Delivery.STANDARD -> {
                         tvDeliveringTo.text =
                             context?.resources?.getString(R.string.standard_delivery)
-                        tvDeliveryLocation?.text = capitaliseFirstLetter(address?.address1 ?: "")
+                        if (isComingFromMyPreferences) {
+                            tvDeliveryLocation?.text =  capitaliseFirstLetter(address?.address1 ?: "")
+                        } else {
+                            val nickNameWithAddress = SpannableStringBuilder()
+                            var nickName =
+                                SpannableString(
+                                    address?.nickname + "  " + context?.getString(
+                                        R.string.bullet
+                                    ) + "  "
+                                )
+
+                            val fullAddress = capitaliseFirstLetter(address?.address1 ?: "")
+
+                            if (address?.nickname?.isNullOrEmpty() == true
+                                || address?.nickname?.equals(fullAddress) == true) {
+                                nickName = SpannableString("")
+                            }
+                            nickNameWithAddress.append(nickName).append(fullAddress)
+                            tvDeliveryLocation?.text = nickNameWithAddress
+                        }
 
                         tvDeliveryLocation?.visibility = View.VISIBLE
                         deliverLocationIcon?.setImageResource(R.drawable.ic_delivery_circle)
@@ -501,9 +521,32 @@ class KotlinUtils {
                                 context?.resources?.getString(R.string.dash_delivery_bold)
                                     .plus("\t" + timeSlot)
                         }
-                        tvDeliveryLocation?.text =
-                            capitaliseFirstLetter(WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.address1
-                                ?: address?.address1 ?: "")
+
+                        if (isComingFromMyPreferences) {
+                            tvDeliveryLocation?.text = capitaliseFirstLetter(
+                                WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.address1
+                                    ?: address?.address1 ?: "")
+                        } else {
+                            val nickNameWithAddress = SpannableStringBuilder()
+                            var nickName =
+                                SpannableString(
+                                    address?.nickname + "  " + context?.getString(
+                                        R.string.bullet
+                                    ) + "  "
+                                )
+
+                            val fullAddress = capitaliseFirstLetter(
+                                WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.address1
+                                    ?: address?.address1 ?: "")
+
+                            if (address?.nickname?.isNullOrEmpty() == true
+                                || address?.nickname?.equals(fullAddress) == true) {
+                                nickName = SpannableString("")
+                            }
+                            nickNameWithAddress.append(nickName).append(fullAddress)
+                            tvDeliveryLocation?.text = nickNameWithAddress
+                        }
+
                         tvDeliveryLocation?.visibility = View.VISIBLE
                         deliverLocationIcon?.setImageResource(R.drawable.ic_dash_delivery_circle)
                     }
@@ -530,8 +573,7 @@ class KotlinUtils {
             with(fulfillmentDetails) {
                 when (Delivery?.getType(deliveryType)) {
                     Delivery.CNC -> {
-                        tvDeliveringTo?.text =
-                            context?.resources?.getString(R.string.click_collect)
+                        tvDeliveringTo?.text = context?.resources?.getString(R.string.click_collect)
                         tvDeliveryLocation?.text =
                             capitaliseFirstLetter(context?.resources?.getString(R.string.store) + storeName)
 
@@ -541,7 +583,27 @@ class KotlinUtils {
                     Delivery.STANDARD -> {
                         tvDeliveringTo.text =
                             context?.resources?.getString(R.string.standard_delivery)
-                        tvDeliveryLocation?.text = capitaliseFirstLetter(address?.address1 ?: "")
+                        val nickNameWithAddress = SpannableStringBuilder()
+                        val nickName: SpannableString
+
+                        val fullAddress = capitaliseFirstLetter(address?.address1 ?: "")
+
+                        if (address?.nickname?.isNullOrEmpty() == true || address?.nickname?.equals(
+                                fullAddress) == true
+                        ) {
+                            nickName = SpannableString("")
+                        } else {
+                            nickName = SpannableString(
+                                address?.nickname + "  " + context?.getString(
+                                    R.string.bullet
+                                ) + "  "
+                            )
+                        }
+
+
+                        nickNameWithAddress.append(nickName).append(fullAddress)
+
+                        tvDeliveryLocation?.text = nickNameWithAddress
 
                         tvDeliveryLocation?.visibility = View.VISIBLE
                         deliverLocationIcon?.setImageResource(R.drawable.ic_delivery_circle)
@@ -551,14 +613,43 @@ class KotlinUtils {
                             WoolworthsApplication.getValidatePlaceDetails()?.onDemand?.firstAvailableFoodDeliveryTime
                         tvDeliveringTo?.text =
                             context?.resources?.getString(R.string.dash_delivery_bold)
-                        if (timeSlot == null) {
-                            tvDeliveryLocation?.text =
-                                capitaliseFirstLetter(WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.address1
-                                    ?: address?.address1 ?: "")
+
+                        val nickNameWithAddress = SpannableStringBuilder()
+
+                        val nickName: SpannableString
+
+                        if (address?.nickname?.isNullOrEmpty() == true || address?.nickname?.equals(
+                                capitaliseFirstLetter(
+                                    WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.address1
+                                        ?: address?.address1 ?: ""
+                                )) == true
+                        ) {
+                            nickName = SpannableString("")
                         } else {
-                            tvDeliveryLocation?.text = timeSlot.plus("\t\u2022\t").plus(
-                                capitaliseFirstLetter(WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.address1
-                                    ?: address?.address1 ?: ""))
+                             nickName = SpannableString(
+                                address?.nickname + "  " + context?.getString(
+                                    R.string.bullet
+                                ) + "  "
+                            )
+                        }
+
+                        nickNameWithAddress.append(nickName)
+
+                        if (timeSlot == null) {
+                            tvDeliveryLocation?.text = nickNameWithAddress.append(
+                                capitaliseFirstLetter(
+                                    WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.address1
+                                        ?: address?.address1 ?: ""
+                                )
+                            )
+                        } else {
+                            tvDeliveryLocation?.text =
+                                timeSlot.plus("\t\u2022\t").plus(nickNameWithAddress).plus(
+                                    capitaliseFirstLetter(
+                                        WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.address1
+                                            ?: address?.address1 ?: ""
+                                    )
+                                )
                         }
                         tvDeliveryLocation?.visibility = View.VISIBLE
                         deliverLocationIcon?.setImageResource(R.drawable.ic_dash_delivery_circle)
