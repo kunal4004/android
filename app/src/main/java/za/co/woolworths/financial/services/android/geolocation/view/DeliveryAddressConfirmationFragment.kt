@@ -897,8 +897,7 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
             nickName = SpannableString(getString(R.string.empty))
         }
 
-        nickNameWithAddress.append(nickName)
-        nickNameWithAddress.append(address)
+        nickNameWithAddress.append(nickName).append(address)
 
         geoDeliveryText?.text = nickNameWithAddress
 

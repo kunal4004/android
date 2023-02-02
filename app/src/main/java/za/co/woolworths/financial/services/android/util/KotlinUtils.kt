@@ -584,7 +584,9 @@ class KotlinUtils {
                         tvDeliveringTo.text =
                             context?.resources?.getString(R.string.standard_delivery)
                         val nickNameWithAddress = SpannableStringBuilder()
-                        val nickName: SpannableString
+                        var nickName =   SpannableString(address?.nickname + "  " + context?.getString(
+                                R.string.bullet
+                            ) + "  ")
 
                         val fullAddress = capitaliseFirstLetter(address?.address1 ?: "")
 
@@ -592,14 +594,7 @@ class KotlinUtils {
                                 fullAddress) == true
                         ) {
                             nickName = SpannableString("")
-                        } else {
-                            nickName = SpannableString(
-                                address?.nickname + "  " + context?.getString(
-                                    R.string.bullet
-                                ) + "  "
-                            )
                         }
-
 
                         nickNameWithAddress.append(nickName).append(fullAddress)
 
@@ -616,7 +611,11 @@ class KotlinUtils {
 
                         val nickNameWithAddress = SpannableStringBuilder()
 
-                        val nickName: SpannableString
+                        var nickName = SpannableString(
+                            address?.nickname + "  " + context?.getString(
+                                R.string.bullet
+                            ) + "  "
+                        )
 
                         if (address?.nickname?.isNullOrEmpty() == true || address?.nickname?.equals(
                                 capitaliseFirstLetter(
@@ -625,12 +624,6 @@ class KotlinUtils {
                                 )) == true
                         ) {
                             nickName = SpannableString("")
-                        } else {
-                             nickName = SpannableString(
-                                address?.nickname + "  " + context?.getString(
-                                    R.string.bullet
-                                ) + "  "
-                            )
                         }
 
                         nickNameWithAddress.append(nickName)
