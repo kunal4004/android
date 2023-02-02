@@ -359,7 +359,7 @@ class OrderConfirmationFragment :
                 Delivery.STANDARD -> {
                     driverTipLinearLayout.visibility = GONE
                     driverTipSeparator.visibility = GONE
-                    deliveryFeeLabel.text = getText(R.string.delivery_fee)
+                    deliveryFeeLabel.text = context?.getString(R.string.delivery_fee)
 
                     val companyDiscount = response?.orderSummary?.discountDetails?.companyDiscount
                     if (companyDiscount != null && companyDiscount > 0) {
@@ -389,7 +389,7 @@ class OrderConfirmationFragment :
                 Delivery.CNC -> {
                     driverTipLinearLayout.visibility = GONE
                     driverTipSeparator.visibility = GONE
-                    deliveryFeeLabel.text = getText(R.string.collection_fee)
+                    deliveryFeeLabel.text = context?.getString(R.string.collection_fee)
 
                     val companyDiscount = response?.orderSummary?.discountDetails?.companyDiscount
                     if (companyDiscount != null && companyDiscount > 0) {
@@ -428,7 +428,7 @@ class OrderConfirmationFragment :
                     companyDiscountSeparator.visibility = GONE
                     wRewardsVouchersLinearLayout.visibility = GONE
                     wRewardsVouchersSeparator.visibility = GONE
-                    deliveryFeeLabel.text = getText(R.string.delivery_fee)
+                    deliveryFeeLabel.text = context?.getString(R.string.delivery_fee)
                     deliveryFeeTextView.text =
                         CurrencyFormatter.formatAmountToRandAndCentWithSpace(response?.deliveryDetails?.shippingAmount)
 
