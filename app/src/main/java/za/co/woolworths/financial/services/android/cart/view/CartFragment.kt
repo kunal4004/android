@@ -47,8 +47,6 @@ import za.co.woolworths.financial.services.android.models.dto.item_limits.Produc
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.CouponClaimCode
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.VoucherDetails
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
-import za.co.woolworths.financial.services.android.models.network.OneAppService.getChangeQuantity
-import za.co.woolworths.financial.services.android.models.network.OneAppService.getInventorySkuForStore
 import za.co.woolworths.financial.services.android.models.network.OneAppService.removeAllCartItems
 import za.co.woolworths.financial.services.android.models.network.OneAppService.removeCartItem
 import za.co.woolworths.financial.services.android.models.network.OneAppService.removePromoCode
@@ -252,8 +250,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
      */
     private fun queryServiceChangeQuantity() {
         mChangeQuantityList?.add(mChangeQuantity)
-        changeQuantityAPI(mChangeQuantityList?.get(0))
-        mChangeQuantityList?.removeAt(0)
+        viewModel.changeProductQuantityRequest(mChangeQuantityList?.getOrNull(0))
     }
 
     private fun setEmptyCartUIUserName() {
@@ -1067,42 +1064,6 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
 
             }
         }
-    }
-
-    private fun changeQuantityAPI(changeQuantity: ChangeQuantity?): Call<ShoppingCartResponse> {
-        cartProductAdapter?.onChangeQuantityLoad()
-        fadeCheckoutButton(true)
-        val shoppingCartResponseCall = getChangeQuantity(
-            changeQuantity
-        )
-        shoppingCartResponseCall.enqueue(
-            CompletionHandler(
-                (object : IResponseListener<ShoppingCartResponse> {
-                    override fun onSuccess(response: ShoppingCartResponse?) {
-                        try {
-                            if (response?.httpCode == 200) {
-                                val cartResponse =
-                                    convertResponseToCartResponseObject(response)
-                                changeQuantity(cartResponse, changeQuantity)
-                            } else {
-                                onChangeQuantityComplete()
-                            }
-                        } catch (ex: Exception) {
-                            logException(ex)
-                        }
-                    }
-
-                    override fun onFailure(error: Throwable?) {
-                        requireActivity().runOnUiThread {
-                            mErrorHandlerView?.showToast()
-                            changeQuantityWasClicked = true
-                            cartProductAdapter?.onChangeQuantityError()
-                        }
-                    }
-                }), ShoppingCartResponse::class.java
-            )
-        )
-        return shoppingCartResponseCall
     }
 
     private fun removeItem(commerceItem: CommerceItem) {
@@ -2094,6 +2055,33 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                 Status.ERROR -> {
                     hideProgressBar()
                     disableQuantitySelector(response?.exception)
+                }
+            }
+        }
+
+        viewModel.changeProductQuantity.observe(viewLifecycleOwner) {
+            val response = it.peekContent().data
+            when (it.peekContent().status) {
+                Status.LOADING -> {
+                    cartProductAdapter?.onChangeQuantityLoad()
+                    fadeCheckoutButton(true)
+                }
+                Status.SUCCESS -> {
+                    if (response?.httpCode == HTTP_OK) {
+                        val cartResponse =
+                            convertResponseToCartResponseObject(response)
+                        changeQuantity(cartResponse, mChangeQuantityList?.getOrNull(0))
+                    } else {
+                        onChangeQuantityComplete()
+                    }
+                    mChangeQuantityList?.removeFirstOrNull()
+                }
+                Status.ERROR -> {
+                    requireActivity().runOnUiThread {
+                        mErrorHandlerView?.showToast()
+                        changeQuantityWasClicked = true
+                        cartProductAdapter?.onChangeQuantityError()
+                    }
                 }
             }
         }

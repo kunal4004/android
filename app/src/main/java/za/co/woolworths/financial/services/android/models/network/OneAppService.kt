@@ -567,8 +567,8 @@ object OneAppService : RetrofitConfig() {
         }
     }
 
-    fun getChangeQuantity(changeQuantity: ChangeQuantity?): Call<ShoppingCartResponse> {
-        return mApiInterface.changeQuantityRequest(
+    suspend fun changeProductQuantityRequest(changeQuantity: ChangeQuantity?): retrofit2.Response<ShoppingCartResponse>{
+        return mApiInterface.changeProductQuantityRequest(
             "",
             "",
             getSessionToken(),
