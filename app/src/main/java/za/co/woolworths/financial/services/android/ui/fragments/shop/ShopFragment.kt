@@ -1184,16 +1184,9 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
               else  if (store?.firstAvailableOtherDeliveryDate.isNullOrEmpty() ) {
                     enableOrDisableFashionItems(false)
                     enableOrDisableFoodItems(true)
-                    if(!validatePlace.onDemand?.firstAvailableFoodDeliveryTime.isNullOrEmpty()) {
-                        if(!store?.firstAvailableFoodDeliveryDate.isNullOrEmpty()) {
-                            blackToolTipLayout.foodItemDateText?.text =
-                                store?.firstAvailableFoodDeliveryDate + validatePlace.onDemand?.firstAvailableFoodDeliveryTime?.let {
-                                    StoreUtils.formatDeliveryTime(it)
-                                }
-                        }
-                        else
-                            blackToolTipLayout.foodItemDateText?.text =
-                                store?.firstAvailableFoodDeliveryDate
+                    if (!store?.firstAvailableFoodDeliveryDate.isNullOrEmpty()) {
+                        blackToolTipLayout.foodItemDateText?.text =
+                            store?.firstAvailableFoodDeliveryDate
                     }
                     blackToolTipLayout.productAvailableText?.text =
                        context?.getString(R.string.all_food_items_avlbl)
@@ -1202,19 +1195,12 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                     //mixed basket
                     enableOrDisableFashionItems(true)
                     enableOrDisableFoodItems(true)
-                    blackToolTipLayout.fashionItemDateText?.text = store?.firstAvailableOtherDeliveryDate
-                    if(!validatePlace.onDemand?.firstAvailableFoodDeliveryTime.isNullOrEmpty()) {
-                        if(!store?.firstAvailableFoodDeliveryDate.isNullOrEmpty()) {
-                            blackToolTipLayout.foodItemDateText?.text =
-                                store?.firstAvailableFoodDeliveryDate + validatePlace.onDemand?.firstAvailableFoodDeliveryTime?.let {
-                                    StoreUtils.formatDeliveryTime(it)
-                                }
-                        }
-                        else
-                            blackToolTipLayout.foodItemDateText?.text =
-                                store?.firstAvailableFoodDeliveryDate
+                    blackToolTipLayout.fashionItemDateText?.text =
+                        store?.firstAvailableOtherDeliveryDate
+                    if (!store?.firstAvailableFoodDeliveryDate.isNullOrEmpty()) {
+                        blackToolTipLayout.foodItemDateText?.text =
+                            store?.firstAvailableFoodDeliveryDate
                     }
-
                     blackToolTipLayout.productAvailableText?.text =
                         context?.getString(R.string.all_products_available)
                 }
@@ -1567,11 +1553,11 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
            binding.blackToolTipLayout?.apply {
                if(isEnabled) {
                    fashionItemTitle?.visibility = View.VISIBLE
-                   fashionItemDateText.visibility = View.VISIBLE
+                   fashionItemDateText?.visibility = View.VISIBLE
                }
                else{
                    fashionItemTitle?.visibility = View.GONE
-                   fashionItemDateText.visibility = View.GONE
+                   fashionItemDateText?.visibility = View.GONE
                }
        }
     }
@@ -1579,10 +1565,10 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         binding.blackToolTipLayout?.apply {
             if(isEnabled){
                 foodItemTitle?.visibility = View.VISIBLE
-                foodItemDateText.visibility = View.VISIBLE
+                foodItemDateText?.visibility = View.VISIBLE
             }else{
                 foodItemTitle?.visibility = View.GONE
-                foodItemDateText.visibility = View.GONE
+                foodItemDateText?.visibility = View.GONE
             }
         }
 

@@ -62,15 +62,5 @@ class StoreUtils {
 
         }
 
-        fun sortedStoreListBasedOnDistance(address: List<Store>?): List<Store>? {
-            address?.stream()?.sorted { store1, store2 ->
-                store2?.distance?.let { store1?.distance?.compareTo(it) }!!
-            }
-            return address
-        }
-
-        fun formatDeliveryTime(time : String) : String {
-            return time.split(",").toTypedArray()[1]
-        }
     }
 }
