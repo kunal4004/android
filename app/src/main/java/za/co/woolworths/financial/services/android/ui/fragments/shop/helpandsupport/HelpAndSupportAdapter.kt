@@ -40,10 +40,12 @@ class HelpAndSupportAdapter(
                             .equals(context?.getString(R.string.dash_send_us_an_email), true) -> {
                             helpAndSupportListener.openEmailSupport(txtHelpSubTitle?.text.toString())
                         }
-                        txtHelpTitle?.text.toString().equals(
-                            context?.getString(R.string.dash_Chat_to_your_shopper),
-                            true
-                        ) -> {
+                        context?.getString(R.string.dash_Chat_to_your_shopper)?.let { it ->
+                            txtHelpTitle?.text.toString().startsWith(
+                                it,
+                                true
+                            )
+                        } == true -> {
                             helpAndSupportListener.openChatSupport()
                         }
                         txtHelpTitle?.text.toString()
