@@ -8,9 +8,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.cart.network.CartRepository
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
-import za.co.woolworths.financial.services.android.models.dto.ChangeQuantity
-import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse
-import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse
+import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.CouponClaimCode
 import javax.inject.Inject
 import za.co.woolworths.financial.services.android.models.network.Event
@@ -27,20 +25,20 @@ class CartViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _getCarV2 =
-        MutableLiveData<Event<Resource<ShoppingCartResponse>>>()
-    val getCarV2: LiveData<Event<Resource<ShoppingCartResponse>>> =
+        MutableLiveData<Event<Resource<CartResponse>>>()
+    val getCarV2: LiveData<Event<Resource<CartResponse>>> =
         _getCarV2
     private val _getSavedAddress =
         MutableLiveData<Event<Resource<SavedAddressResponse>>>()
     val getSavedAddress: LiveData<Event<Resource<SavedAddressResponse>>> =
         _getSavedAddress
     private val _removeCartItem =
-        MutableLiveData<Event<Resource<ShoppingCartResponse>>>()
-    val removeCartItem: LiveData<Event<Resource<ShoppingCartResponse>>> =
+        MutableLiveData<Event<Resource<CartResponse>>>()
+    val removeCartItem: LiveData<Event<Resource<CartResponse>>> =
         _removeCartItem
     private val _removeAllCartItem =
-        MutableLiveData<Event<Resource<ShoppingCartResponse>>>()
-    val removeAllCartItem: LiveData<Event<Resource<ShoppingCartResponse>>> =
+        MutableLiveData<Event<Resource<CartResponse>>>()
+    val removeAllCartItem: LiveData<Event<Resource<CartResponse>>> =
         _removeAllCartItem
 
     private val _getInventorySkuForInventory =
@@ -49,13 +47,13 @@ class CartViewModel @Inject constructor(
         _getInventorySkuForInventory
 
     private val _changeProductQuantity =
-        MutableLiveData<Event<Resource<ShoppingCartResponse>>>()
-    val changeProductQuantity: LiveData<Event<Resource<ShoppingCartResponse>>> =
+        MutableLiveData<Event<Resource<CartResponse>>>()
+    val changeProductQuantity: LiveData<Event<Resource<CartResponse>>> =
         _changeProductQuantity
 
     private val _onRemovePromoCode =
-        MutableLiveData<Event<Resource<ShoppingCartResponse>>>()
-    val onRemovePromoCode: LiveData<Event<Resource<ShoppingCartResponse>>> =
+        MutableLiveData<Event<Resource<CartResponse>>>()
+    val onRemovePromoCode: LiveData<Event<Resource<CartResponse>>> =
         _onRemovePromoCode
 
     fun getShoppingCartV2() {
@@ -112,5 +110,13 @@ class CartViewModel @Inject constructor(
             val response = cartRepository.onRemovePromoCode(couponClaimCode)
             _onRemovePromoCode.value = Event(response)
         }
+    }
+
+    fun getCartItemList(): ArrayList<CommerceItem> {
+        return cartRepository.getCartItemList()
+    }
+
+    fun getConvertedCartResponse(response: ShoppingCartResponse): CartResponse? {
+        return cartRepository.convertResponseToCartResponseObject(response)
     }
 }
