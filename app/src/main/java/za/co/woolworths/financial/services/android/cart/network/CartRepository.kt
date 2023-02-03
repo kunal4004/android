@@ -1,27 +1,25 @@
-package za.co.woolworths.financial.services.android.repository.shop
+package za.co.woolworths.financial.services.android.cart.network
 
-import android.location.Location
 import com.awfs.coordination.R
-import com.google.gson.Gson
-import com.google.gson.JsonParseException
-import com.google.gson.JsonSyntaxException
-import za.co.woolworths.financial.services.android.checkout.service.network.ConfirmDeliveryAddressResponse
-import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
-import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
-import za.co.woolworths.financial.services.android.models.dto.*
-import za.co.woolworths.financial.services.android.models.dto.dash.LastOrderDetailsResponse
-import za.co.woolworths.financial.services.android.models.dto.shop.DashCategories
+import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
+import za.co.woolworths.financial.services.android.models.dto.ChangeQuantity
+import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse
+import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse
+import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.CouponClaimCode
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.models.network.Resource
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import java.io.IOException
+import javax.inject.Inject
 
-class MainShopRepository : ShopRepository {
-
-    override suspend fun fetchDashLandingDetails(): Resource<DashCategories> {
+/**
+ * Created by Kunal Uttarwar on 24/01/23.
+ */
+class CartRepository @Inject constructor() {
+    suspend fun getShoppingCartV2(): Resource<ShoppingCartResponse> {
         return try {
-            val response = OneAppService.getDashLandingDetails()
+            val response = OneAppService.getShoppingCartV2()
             if (response.isSuccessful) {
                 response.body()?.let {
                     return when (it.httpCode) {
@@ -40,10 +38,9 @@ class MainShopRepository : ShopRepository {
         }
     }
 
-    override suspend fun fetchOnDemandCategories(location: Location?): Resource<DashRootCategories> {
+    suspend fun getSavedAddress(): Resource<SavedAddressResponse> {
         return try {
-
-            val response = OneAppService.getDashCategoryNavigation(location)
+            val response = OneAppService.getSavedAddress()
             if (response.isSuccessful) {
                 response.body()?.let {
                     return when (it.httpCode) {
@@ -62,13 +59,9 @@ class MainShopRepository : ShopRepository {
         }
     }
 
-    override suspend fun fetchInventorySkuForStore(
-        mStoreId: String,
-        referenceId: String
-    ): Resource<SkusInventoryForStoreResponse> {
+    suspend fun removeCartItem(commerceId: String): Resource<ShoppingCartResponse> {
         return try {
-
-            val response = OneAppService.fetchInventorySkuForStore(mStoreId, referenceId, false)
+            val response = OneAppService.removeSingleCartItem(commerceId)
             if (response.isSuccessful) {
                 response.body()?.let {
                     return when (it.httpCode) {
@@ -87,63 +80,9 @@ class MainShopRepository : ShopRepository {
         }
     }
 
-    override suspend fun addItemsToCart(mAddItemsToCart: MutableList<AddItemToCart>): Resource<AddItemToCartResponse> {
-       return try {
-            val response = OneAppService.addItemsToCart(mAddItemsToCart)
-            if (response.isSuccessful) {
-                response.body()?.let {
-                    return when (it.httpCode) {
-                        AppConstant.HTTP_OK, AppConstant.HTTP_OK_201 ->
-                            Resource.success(it)
-                        else ->
-                            Resource.error(R.string.error_unknown, it)
-                    }
-                } ?: Resource.error(R.string.error_unknown, null)
-            } else {
-                var errorResponse : AddItemToCartResponse? = null
-                try {
-                   errorResponse = Gson().fromJson(
-                       response?.errorBody()?.charStream(),
-                       AddItemToCartResponse::class.java)
-                } catch (jsonException: JsonParseException) {
-                    FirebaseManager.logException(jsonException)
-                }
-                Resource.error(R.string.error_unknown, errorResponse)
-            }
-        } catch (e: IOException) {
-            FirebaseManager.logException(e)
-            Resource.error(R.string.error_internet_connection, null)
-        }
-    }
-
-    override suspend fun validateLocation(placeId: String): Resource<ValidateLocationResponse> {
+    suspend fun removeAllCartItems(): Resource<ShoppingCartResponse> {
         return try {
-
-            val response = OneAppService.getValidateLocation(placeId)
-            if (response.isSuccessful) {
-                response.body()?.let {
-                    return when (it.httpCode) {
-                        AppConstant.HTTP_OK, AppConstant.HTTP_OK_201 ->
-                            Resource.success(it)
-                        else ->
-                            Resource.error(R.string.error_unknown, it)
-                    }
-                } ?: Resource.error(R.string.error_unknown, null)
-            } else {
-                Resource.error(R.string.error_unknown, null)
-            }
-        } catch (e: IOException) {
-            FirebaseManager.logException(e)
-            Resource.error(R.string.error_internet_connection, null)
-        } catch (e: JsonSyntaxException) {
-            FirebaseManager.logException(e)
-            Resource.error(R.string.error_unknown, null)
-        }
-    }
-
-    override suspend fun confirmPlace(confirmLocationRequest: ConfirmLocationRequest): Resource<ConfirmDeliveryAddressResponse> {
-        return try {
-            val response = OneAppService.confirmLocation(confirmLocationRequest)
+            val response = OneAppService.removeAllCartItems()
             if (response.isSuccessful) {
                 response.body()?.let {
                     return when (it.httpCode) {
@@ -162,13 +101,9 @@ class MainShopRepository : ShopRepository {
         }
     }
 
-    override suspend fun callStoreFinder(
-        sku: String,
-        startRadius: String?,
-        endRadius: String?
-    ): Resource<LocationResponse> {
+    suspend fun changeProductQuantityRequest(changeQuantity: ChangeQuantity?): Resource<ShoppingCartResponse> {
         return try {
-            val response = OneAppService.productStoreFinder(sku, startRadius, endRadius)
+            val response = OneAppService.changeProductQuantityRequest(changeQuantity)
             if (response.isSuccessful) {
                 response.body()?.let {
                     return when (it.httpCode) {
@@ -187,9 +122,9 @@ class MainShopRepository : ShopRepository {
         }
     }
 
-    override suspend fun fetchLastDashOrderDetails(): Resource<LastOrderDetailsResponse> {
+    suspend fun onRemovePromoCode(couponClaimCode: CouponClaimCode): Resource<ShoppingCartResponse> {
         return try {
-            val response = OneAppService.getLastDashOrder()
+            val response = OneAppService.removePromoCode(couponClaimCode)
             if (response.isSuccessful) {
                 response.body()?.let {
                     return when (it.httpCode) {
@@ -200,19 +135,34 @@ class MainShopRepository : ShopRepository {
                     }
                 } ?: Resource.error(R.string.error_unknown, null)
             } else {
-                var errorResponse : LastOrderDetailsResponse? = null
-                try {
-                    errorResponse = Gson().fromJson(
-                        response.errorBody()?.charStream(),
-                        LastOrderDetailsResponse::class.java)
-                } catch (jsonException: JsonParseException) {
-                    FirebaseManager.logException(jsonException)
-                }
-                Resource.error(R.string.error_unknown, errorResponse)
+                Resource.error(R.string.error_unknown, null)
             }
         } catch (e: IOException) {
             FirebaseManager.logException(e)
             Resource.error(R.string.error_internet_connection, null)
+        }
+    }
+
+    suspend fun getInventorySkuForInventory(store_id: String, multipleSku: String, isUserBrowsing: Boolean): Resource<SkusInventoryForStoreResponse> {
+        return try {
+            val response = OneAppService.fetchInventorySkuForStore(store_id, multipleSku, isUserBrowsing)
+            if (response.isSuccessful) {
+                response.body()?.let {
+                    return when (it.httpCode) {
+                        AppConstant.HTTP_OK, AppConstant.HTTP_OK_201 ->
+                            Resource.success(it)
+                        else ->
+                            Resource.error(R.string.error_unknown, it)
+                    }
+                } ?: Resource.error(R.string.error_unknown, null)
+            } else {
+                Resource.error(R.string.error_unknown, null)
+            }
+        } catch (exception: IOException) {
+            FirebaseManager.logException(exception)
+            val response = SkusInventoryForStoreResponse()
+            response.exception = exception
+            Resource.error(R.string.error_internet_connection, response)
         }
     }
 }
