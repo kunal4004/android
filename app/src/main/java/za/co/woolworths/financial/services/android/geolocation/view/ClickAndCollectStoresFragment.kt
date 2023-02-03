@@ -17,7 +17,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.geolocation.network.model.Store
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
 import za.co.woolworths.financial.services.android.geolocation.view.adapter.StoreListAdapter
@@ -237,14 +236,9 @@ class ClickAndCollectStoresFragment : BaseDialogFragmentBinding<FragmentClickAnd
                     validateLocationResponse =
                         confirmAddressViewModel.getValidateLocation(placeId)
                     clickCollectProgress?.visibility = View.GONE
-                    //geoDel.visibility = View.VISIBLE
                     if (validateLocationResponse != null) {
                         when (validateLocationResponse?.httpCode) {
                             AppConstant.HTTP_OK -> {
-                               val store = GeoUtils.getStoreDetails(
-                                    placeId,
-                                    validateLocationResponse?.validatePlace?.stores
-                                )
                                 setAddressUI(validateLocationResponse?.validatePlace?.stores, validateLocationResponse)
                             }
                             else -> {
