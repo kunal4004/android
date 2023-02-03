@@ -890,11 +890,12 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
                 ) + "  "
             )
 
-        val address =  KotlinUtils.capitaliseFirstLetter(validateLocationResponse?.validatePlace?.placeDetails?.address1 ?: getString(R.string.empty))
+        val address =  KotlinUtils.capitaliseFirstLetter(validateLocationResponse?.validatePlace?.placeDetails?.address1 ?: context?.getString(R.string.empty))
 
-        if (validateLocationResponse?.validatePlace?.placeDetails?.nickname.isNullOrEmpty() == true
-            || validateLocationResponse?.validatePlace?.placeDetails?.nickname?.equals(address) == true) {
-            nickName = SpannableString(getString(R.string.empty))
+        validateLocationResponse?.validatePlace?.placeDetails?.let {
+            if (it.nickname.isNullOrEmpty() == true || it.equals(address)) {
+                nickName = SpannableString(context?.getString(R.string.empty))
+            }
         }
 
         nickNameWithAddress.append(nickName).append(address)
@@ -938,6 +939,12 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
 
         val address = KotlinUtils.capitaliseFirstLetter(validateLocationResponse?.validatePlace?.placeDetails?.address1
             ?: getString(R.string.empty))
+
+        validateLocationResponse?.validatePlace?.placeDetails?.let {
+            if (it.nickname.isNullOrEmpty() == true || it.equals(address)) {
+                nickName = SpannableString(context?.getString(R.string.empty))
+            }
+        }
 
         if (validateLocationResponse?.validatePlace?.placeDetails?.nickname.isNullOrEmpty() == true
             || validateLocationResponse?.validatePlace?.placeDetails?.nickname?.equals(address) == true) {
