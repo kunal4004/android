@@ -26,7 +26,6 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import org.json.JSONException
 import org.json.JSONObject
-import retrofit2.Call
 import za.co.woolworths.financial.services.android.cart.viewmodel.CartViewModel
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity
@@ -47,7 +46,6 @@ import za.co.woolworths.financial.services.android.models.dto.item_limits.Produc
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.CouponClaimCode
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.VoucherDetails
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
-import za.co.woolworths.financial.services.android.models.network.OneAppService.removeAllCartItems
 import za.co.woolworths.financial.services.android.models.network.OneAppService.removeCartItem
 import za.co.woolworths.financial.services.android.models.network.OneAppService.removePromoCode
 import za.co.woolworths.financial.services.android.models.network.Status
@@ -72,6 +70,7 @@ import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseVie
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView.IWalkthroughActionListener
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ActionSheetDialogFragment
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_EXPECTATION_FAILED_502
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK_201
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_SESSION_TIMEOUT_440
@@ -1077,48 +1076,6 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         )
     }
 
-    private fun removeAllCartItem(commerceItem: CommerceItem?): Call<ShoppingCartResponse> {
-        mRemoveAllItemFromCartTapped = true
-        showProgressBar()
-        onRemoveItem(true)
-        val shoppingCartResponseCall = removeAllCartItems()
-        shoppingCartResponseCall.enqueue(
-            CompletionHandler(
-                (object : IResponseListener<ShoppingCartResponse> {
-                    override fun onSuccess(response: ShoppingCartResponse?) {
-                        try {
-                            if (response?.httpCode == 200) {
-                                val cartResponse =
-                                    convertResponseToCartResponseObject(response)
-                                mRemoveAllItemFromCartTapped = false
-                                updateCart(cartResponse, commerceItem)
-                                updateCartSummary(0)
-                                onRemoveSuccess()
-                            } else {
-                                onRemoveItem(false)
-                            }
-                            hideProgressBar()
-                            setDeliveryLocationEnabled(true)
-                        } catch (ex: Exception) {
-                            ex.message?.let { Log.e(TAG, it) }
-                        }
-                    }
-
-                    override fun onFailure(error: Throwable?) {
-                        requireActivity().runOnUiThread {
-                            mRemoveAllItemFailed = true
-                            onRemoveItem(false)
-                            mErrorHandlerView?.hideErrorHandler()
-                            mErrorHandlerView?.showToast()
-                            hideProgressBar()
-                        }
-                    }
-                }), ShoppingCartResponse::class.java
-            )
-        )
-        return shoppingCartResponseCall
-    }
-
     private fun onRemoveItemLoadFail(commerceItem: CommerceItem) {
         mCommerceItem = commerceItem
         resetItemDelete(true)
@@ -1432,7 +1389,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             return
         }
         if (mRemoveAllItemFailed) {
-            removeAllCartItem(null)
+            viewModel.removeAllCartItem()
             mRemoveAllItemFailed = false
             return
         }
@@ -1817,61 +1774,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     }
 
     override fun onRemovePromoCode(promoCode: String) {
-        val activity: FragmentActivity = requireActivity()
-        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Cart_promo_remove, activity)
-        showProgressBar()
-        removePromoCode(CouponClaimCode(promoCode)).enqueue(
-            CompletionHandler(
-                (object : IResponseListener<ShoppingCartResponse> {
-                    override fun onSuccess(response: ShoppingCartResponse?) {
-                        hideProgressBar()
-                        when (response?.httpCode) {
-                            200 -> {
-                                updateCart(convertResponseToCartResponseObject(response), null)
-                                if (voucherDetails?.promoCodes == null || voucherDetails?.promoCodes?.size == 0)
-                                    showVouchersOrPromoCodeAppliedToast(
-                                        getString(R.string.promo_code_removed_toast_message)
-                                    )
-                            }
-                            502 -> response.response?.let {
-                                Utils.displayValidationMessage(
-                                    activity,
-                                    CustomPopUpWindow.MODAL_LAYOUT.ERROR,
-                                    response.response.desc,
-                                    true
-                                )
-                            }
-                            440 -> {
-                                SessionUtilities.getInstance()
-                                    .setSessionState(SessionDao.SESSION_STATE.INACTIVE)
-                                SessionExpiredUtilities.getInstance().showSessionExpireDialog(
-                                    activity as AppCompatActivity?,
-                                    this@CartFragment
-                                )
-                            }
-                            else -> response?.response?.let {
-                                Utils.displayValidationMessage(
-                                    activity,
-                                    CustomPopUpWindow.MODAL_LAYOUT.ERROR,
-                                    getString(R.string.general_error_desc),
-                                    true
-                                )
-                            }
-                        }
-                    }
-
-                    override fun onFailure(error: Throwable?) {
-                        hideProgressBar()
-                        Utils.displayValidationMessage(
-                            activity,
-                            CustomPopUpWindow.MODAL_LAYOUT.ERROR,
-                            getString(R.string.general_error_desc),
-                            true
-                        )
-                    }
-                }), ShoppingCartResponse::class.java
-            )
-        )
+        viewModel.onRemovePromoCode(CouponClaimCode(promoCode))
     }
 
     private fun navigateToApplyPromoCodePage() {
@@ -1994,7 +1897,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                 }
                 Status.SUCCESS -> {
                     try {
-                        if (response?.httpCode == 200) {
+                        if (response?.httpCode == HTTP_OK) {
                             val cartResponse =
                                 convertResponseToCartResponseObject(response)
                             updateCart(cartResponse, mCommerceItem)
@@ -2022,6 +1925,44 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                             hideProgressBar()
                         }
                         mErrorHandlerView?.showToast()
+                    }
+                }
+            }
+        }
+
+        viewModel.removeAllCartItem.observe(viewLifecycleOwner) {
+            val response = it.peekContent().data
+            when (it.peekContent().status) {
+                Status.LOADING -> {
+                    mRemoveAllItemFromCartTapped = true
+                    showProgressBar()
+                    onRemoveItem(true)
+                }
+                Status.SUCCESS -> {
+                    try {
+                        if (response?.httpCode == HTTP_OK) {
+                            val cartResponse =
+                                convertResponseToCartResponseObject(response)
+                            mRemoveAllItemFromCartTapped = false
+                            updateCart(cartResponse, null)
+                            updateCartSummary(0)
+                            onRemoveSuccess()
+                        } else {
+                            onRemoveItem(false)
+                        }
+                        hideProgressBar()
+                        setDeliveryLocationEnabled(true)
+                    } catch (ex: Exception) {
+                        ex.message?.let { Log.e(TAG, it) }
+                    }
+                }
+                Status.ERROR -> {
+                    requireActivity().runOnUiThread {
+                        mRemoveAllItemFailed = true
+                        onRemoveItem(false)
+                        mErrorHandlerView?.hideErrorHandler()
+                        mErrorHandlerView?.showToast()
+                        hideProgressBar()
                     }
                 }
             }
@@ -2085,6 +2026,62 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                 }
             }
         }
+
+        viewModel.onRemovePromoCode.observe(viewLifecycleOwner) {
+            val response = it.peekContent().data
+            when (it.peekContent().status) {
+                Status.LOADING -> {
+                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Cart_promo_remove,
+                        requireActivity())
+                    showProgressBar()
+                }
+                Status.SUCCESS -> {
+                    hideProgressBar()
+                    when (response?.httpCode) {
+                        HTTP_OK -> {
+                            updateCart(convertResponseToCartResponseObject(response), null)
+                            if (voucherDetails?.promoCodes == null || voucherDetails?.promoCodes?.size == 0)
+                                showVouchersOrPromoCodeAppliedToast(
+                                    getString(R.string.promo_code_removed_toast_message)
+                                )
+                        }
+                        HTTP_EXPECTATION_FAILED_502 -> response.response?.let {
+                            Utils.displayValidationMessage(
+                                activity,
+                                CustomPopUpWindow.MODAL_LAYOUT.ERROR,
+                                response.response.desc,
+                                true
+                            )
+                        }
+                        HTTP_SESSION_TIMEOUT_440 -> {
+                            SessionUtilities.getInstance()
+                                .setSessionState(SessionDao.SESSION_STATE.INACTIVE)
+                            SessionExpiredUtilities.getInstance().showSessionExpireDialog(
+                                activity as AppCompatActivity?,
+                                this@CartFragment
+                            )
+                        }
+                        else -> response?.response?.let {
+                            Utils.displayValidationMessage(
+                                activity,
+                                CustomPopUpWindow.MODAL_LAYOUT.ERROR,
+                                getString(R.string.general_error_desc),
+                                true
+                            )
+                        }
+                    }
+                }
+                Status.ERROR -> {
+                    hideProgressBar()
+                    Utils.displayValidationMessage(
+                        activity,
+                        CustomPopUpWindow.MODAL_LAYOUT.ERROR,
+                        getString(R.string.general_error_desc),
+                        true
+                    )
+                }
+            }
+        }
     }
 
     private fun addFragmentListener() {
@@ -2111,7 +2108,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         }
         setFragmentResultListener(ON_CONFIRM_REMOVE_ALL) { _, _ ->
             enableItemDelete(false)
-            removeAllCartItem(null)
+            viewModel.removeAllCartItem()
         }
     }
 

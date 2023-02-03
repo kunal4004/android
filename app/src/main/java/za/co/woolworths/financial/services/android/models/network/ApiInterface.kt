@@ -712,10 +712,10 @@ interface ApiInterface {
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @DELETE("wfs/app/v4/cartV2/item")
-    fun removeAllCartItems(
+    suspend fun removeAllCartItems(
 
             @Header("sessionToken") sessionToken: String,
-            @Header("deviceIdentityToken") deviceIdentityToken: String): Call<ShoppingCartResponse>
+            @Header("deviceIdentityToken") deviceIdentityToken: String): retrofit2.Response<ShoppingCartResponse>
 
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
@@ -1227,13 +1227,13 @@ interface ApiInterface {
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("wfs/app/v4/cartV2/removePromoCode")
-    fun removePromoCode(
+    suspend fun removePromoCode(
 
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String,
-            @Body couponClaimCode: CouponClaimCode): Call<ShoppingCartResponse>
+            @Body couponClaimCode: CouponClaimCode): retrofit2.Response<ShoppingCartResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("wfs/app/v4/productsV2/content/{contentId}")

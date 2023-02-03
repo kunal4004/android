@@ -592,7 +592,7 @@ object OneAppService : RetrofitConfig() {
         }
     }
 
-    fun removeAllCartItems(): Call<ShoppingCartResponse> {
+    suspend fun removeAllCartItems(): retrofit2.Response<ShoppingCartResponse> {
         return mApiInterface.removeAllCartItems(getSessionToken(), getDeviceIdentityToken())
     }
 
@@ -979,7 +979,7 @@ object OneAppService : RetrofitConfig() {
         )
     }
 
-    fun removePromoCode(couponClaimCode: CouponClaimCode): Call<ShoppingCartResponse> {
+    suspend fun removePromoCode(couponClaimCode: CouponClaimCode): retrofit2.Response<ShoppingCartResponse> {
         return mApiInterface.removePromoCode(
             "", "", getSessionToken(),
             getDeviceIdentityToken(), couponClaimCode
