@@ -90,7 +90,7 @@ class CreditCardDeliveryBoardingFragment : BaseFragmentBinding<CreditCardDeliver
     private fun setupToolbar() {
         if (activity is CreditCardDeliveryActivity) {
             (activity as? CreditCardDeliveryActivity)?.apply {
-                setToolbarTitle(bindString(R.string.my_card))
+                setToolbarTitle(bindString(R.string.my_card,""))
                 changeToolbarBackground(R.color.grey_bg)
             }
         }

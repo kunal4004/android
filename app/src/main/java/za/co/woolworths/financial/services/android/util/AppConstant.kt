@@ -98,6 +98,7 @@ class AppConstant {
         //Absa cookie content
         const val ABSA_COOKIE_WFPT = "wfpt"
         const val ABSA_COOKIE_XFPT = "xfpt"
+        const val ABSA_COOKIE_JSESSIONID = "jsessionid"
 
         const val EMPTY_STRING = ""
 
