@@ -637,7 +637,7 @@ class KotlinUtils {
                             )
                         } else {
                             tvDeliveryLocation?.text =
-                                timeSlot.plus("\t\u2022\t").plus(nickNameWithAddress).plus(
+                                timeSlot.plus("\t\u2022\t").plus("\t").plus(nickNameWithAddress).plus(
                                     capitaliseFirstLetter(
                                         WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.address1
                                             ?: address?.address1 ?: ""
