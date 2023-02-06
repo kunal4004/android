@@ -24,8 +24,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import org.json.JSONException
-import org.json.JSONObject
 import za.co.woolworths.financial.services.android.cart.viewmodel.CartViewModel
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity
@@ -47,7 +45,6 @@ import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.VoucherDetails
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService.removeCartItem
-import za.co.woolworths.financial.services.android.models.network.OneAppService.removePromoCode
 import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.models.service.event.CartState
 import za.co.woolworths.financial.services.android.models.service.event.ProductState
@@ -132,7 +129,6 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     private var voucherDetails: VoucherDetails? = null
     var productCountMap: ProductCountMap? = null
     private var liquorCompliance: LiquorCompliance? = null
-    private var cartItemList = ArrayList<CommerceItem>()
     private var isOnItemRemoved = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -264,7 +260,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             )
     }
 
-    fun onRemoveItem(visibility: Boolean) {
+    private fun onRemoveItem(visibility: Boolean) {
         binding.apply {
             cartProgressBar.visibility =
                 if (visibility) View.VISIBLE else View.GONE
@@ -474,7 +470,8 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                 putExtra(CheckoutAddressConfirmationFragment.SAVED_ADDRESS_KEY, response)
                 putExtra(CheckoutAddressConfirmationFragment.IS_EDIT_ADDRESS_SCREEN, true)
                 putExtra(CheckoutAddressManagementBaseFragment.DASH_SLOT_SELECTION, true)
-                putExtra(CheckoutAddressManagementBaseFragment.CART_ITEM_LIST, cartItemList)
+                putExtra(CheckoutAddressManagementBaseFragment.CART_ITEM_LIST,
+                    viewModel.getCartItemList())
                 liquorCompliance.let {
                     if ((it != null) && it.isLiquorOrder && (AppConfigSingleton.liquor!!.noLiquorImgUrl != null) && AppConfigSingleton.liquor!!.noLiquorImgUrl.isNotEmpty()) {
                         putExtra(Constant.LIQUOR_ORDER, it.isLiquorOrder)
@@ -992,7 +989,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     }
 
     private fun onCartV2Response(
-        shoppingCartResponse: ShoppingCartResponse?,
+        shoppingCartResponse: CartResponse?,
     ) {
         if (!isAdded || !isVisible) return
         when (shoppingCartResponse?.httpCode) {
@@ -1002,19 +999,18 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                 onRemoveItemFailed = false
                 binding.rlCheckOut.visibility = View.VISIBLE
                 binding.rlCheckOut.isEnabled = true
-                val cartResponse =
-                    convertResponseToCartResponseObject(shoppingCartResponse)
-                updateCheckOutLink(shoppingCartResponse.data[0].jSessionId)
-                bindCartData(cartResponse)
+                updateUIForCartResponse(shoppingCartResponse)
+                updateCheckOutLink(shoppingCartResponse.jSessionId)
+                bindCartData(shoppingCartResponse)
                 if (isOnItemRemoved) {
                     cartProductAdapter?.setEditMode(true)
                     isOnItemRemoved = false
                 }
                 setDeliveryLocationEnabled(true)
-                if (shoppingCartResponse.data[0].orderSummary.fulfillmentDetails?.address?.placeId != null) {
+                if (shoppingCartResponse.orderSummary.fulfillmentDetails?.address?.placeId != null) {
                     Utils.savePreferredDeliveryLocation(
                         ShoppingDeliveryLocation(
-                            shoppingCartResponse.data[0].orderSummary.fulfillmentDetails
+                            shoppingCartResponse.orderSummary.fulfillmentDetails
                         )
                     )
                 }
@@ -1081,99 +1077,17 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         resetItemDelete(true)
     }
 
-    fun convertResponseToCartResponseObject(response: ShoppingCartResponse?): CartResponse? {
-        if (response == null) return null
-        val cartResponse: CartResponse?
-
-        try {
-            displayUpSellMessage(response.data[0])
-            cartResponse = CartResponse()
-            cartResponse.httpCode = response.httpCode
-            val data = response.data[0]
-            cartResponse.orderSummary = data.orderSummary
-            cartResponse.voucherDetails = data.voucherDetails
-            cartResponse.productCountMap = data.productCountMap // set delivery location
-            cartResponse.liquorOrder = data.liquorOrder
-            cartResponse.noLiquorImageUrl = data.noLiquorImageUrl
-            val fulfillmentDetailsObj = cartResponse.orderSummary.fulfillmentDetails
-            if (fulfillmentDetailsObj?.address?.placeId != null) {
-                val shoppingDeliveryLocation = ShoppingDeliveryLocation(fulfillmentDetailsObj)
-                Utils.savePreferredDeliveryLocation(shoppingDeliveryLocation)
-                setDeliveryLocation(shoppingDeliveryLocation)
-            } else {
-                // If user logs out and login with new registration who don't have location.
-                setDeliveryLocation(ShoppingDeliveryLocation(fulfillmentDetailsObj))
-            }
-            val itemsObject = JSONObject(Gson().toJson(data.items))
-            val keys = itemsObject.keys()
-            val cartItemGroups = ArrayList<CartItemGroup>()
-            while ((keys.hasNext())) {
-                val cartItemGroup = CartItemGroup()
-                val key = keys.next()
-                //GENERAL - "default",HOME - "homeCommerceItem",FOOD
-                // - "foodCommerceItem",CLOTHING
-                // - "clothingCommerceItem",PREMIUM BRANDS
-                // - "premiumBrandCommerceItem",
-                // Anything else: OTHER
-                when {
-                    key.contains(ProductType.DEFAULT.value) ->
-                        cartItemGroup.setType(ProductType.DEFAULT.shortHeader)
-                    key.contains(ProductType.GIFT_COMMERCE_ITEM.value) ->
-                        cartItemGroup.setType(ProductType.GIFT_COMMERCE_ITEM.shortHeader)
-                    key.contains(ProductType.HOME_COMMERCE_ITEM.value) ->
-                        cartItemGroup.setType(ProductType.HOME_COMMERCE_ITEM.shortHeader)
-                    key.contains(ProductType.FOOD_COMMERCE_ITEM.value) ->
-                        cartItemGroup.setType(ProductType.FOOD_COMMERCE_ITEM.shortHeader)
-                    key.contains(ProductType.CLOTHING_COMMERCE_ITEM.value) ->
-                        cartItemGroup.setType(ProductType.CLOTHING_COMMERCE_ITEM.shortHeader)
-                    key.contains(ProductType.PREMIUM_BRAND_COMMERCE_ITEM.value) ->
-                        cartItemGroup.setType(ProductType.PREMIUM_BRAND_COMMERCE_ITEM.shortHeader)
-                    else -> cartItemGroup.setType(ProductType.OTHER_ITEMS.shortHeader)
-                }
-                val productsArray = itemsObject.getJSONArray(key)
-                if (productsArray.length() > 0) {
-                    val productList = ArrayList<CommerceItem>()
-                    for (i in 0 until productsArray.length()) {
-                        val commerceItemObject = productsArray.getJSONObject(i)
-                        val commerceItem =
-                            Gson().fromJson(commerceItemObject.toString(), CommerceItem::class.java)
-                        val fulfillmentStoreId = Utils.retrieveStoreId(commerceItem.fulfillmentType)
-                        commerceItem.fulfillmentStoreId =
-                            fulfillmentStoreId!!.replace("\"".toRegex(), "")
-                        productList.add(commerceItem)
-                    }
-                    this.cartItemList = productList
-                    cartItemGroup.setCommerceItems(productList)
-                }
-                cartItemGroups.add(cartItemGroup)
-            }
-            var giftCartItemGroup = CartItemGroup()
-            giftCartItemGroup.type = GIFT_ITEM
-            val generalCartItemGroup = CartItemGroup()
-            generalCartItemGroup.type = GENERAL_ITEM
-            var generalIndex = -1
-            if (cartItemGroups.contains(giftCartItemGroup) && cartItemGroups.contains(
-                    generalCartItemGroup
-                )
-            ) {
-                for (cartGroupIndex in cartItemGroups.indices) {
-                    val cartItemGroup = cartItemGroups[cartGroupIndex]
-                    if (cartItemGroup.type.equals(GENERAL_ITEM, ignoreCase = true)) {
-                        generalIndex = cartGroupIndex
-                    }
-                    if (cartItemGroup.type.equals(GIFT_ITEM, ignoreCase = true)) {
-                        giftCartItemGroup = cartItemGroup
-                        cartItemGroups.removeAt(cartGroupIndex)
-                    }
-                }
-                cartItemGroups.add(generalIndex + 1, giftCartItemGroup)
-            }
-            cartResponse.cartItems = cartItemGroups
-        } catch (e: JSONException) {
-            logException(e)
-            return null
+    private fun updateUIForCartResponse(response: CartResponse?) {
+        if (response == null) return
+        displayUpSellMessage(response.globalMessages)
+        val fulfillmentDetailsObj = response?.orderSummary?.fulfillmentDetails
+        if (fulfillmentDetailsObj?.address?.placeId != null) {
+            val shoppingDeliveryLocation = ShoppingDeliveryLocation(fulfillmentDetailsObj)
+            setDeliveryLocation(shoppingDeliveryLocation)
+        } else {
+            // If user logs out and login with new registration who don't have location.
+            setDeliveryLocation(ShoppingDeliveryLocation(fulfillmentDetailsObj))
         }
-        return cartResponse
     }
 
     override fun onResume() {
@@ -1294,7 +1208,9 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                         data?.getStringExtra("ShoppingCartResponse"),
                         ShoppingCartResponse::class.java
                     ) as ShoppingCartResponse
-                    updateCart(convertResponseToCartResponseObject(shoppingCartResponse), null)
+                    val cartResponse = viewModel.getConvertedCartResponse(shoppingCartResponse)
+                    updateUIForCartResponse(cartResponse)
+                    updateCart(cartResponse, null)
                     if (requestCode == REDEEM_VOUCHERS_REQUEST_CODE) showVouchersOrPromoCodeAppliedToast(
                         getString(
                             if (voucherDetails?.vouchers?.let {
@@ -1618,7 +1534,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     }
 
     private fun enableRemoveAllButton(enable: Boolean) {
-        binding.btnClearCart.isEnabled = !enable
+        binding.btnClearCart.isEnabled = enable
         binding.btnClearCart.isClickable = enable
     }
 
@@ -1660,18 +1576,16 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         if (isAdded) showAvailableVouchersToast(voucherDetails?.activeVouchersCount ?: 0)
     }
 
-    private fun displayUpSellMessage(data: Data?) {
+    private fun displayUpSellMessage(globalMessages: GlobalMessages) {
         if (mRemoveAllItemFromCartTapped) return
-        data?.globalMessages?.let {
-            if (it.qualifierMessages.isNullOrEmpty()) {
-                binding.upSellMessageTextView?.visibility = View.GONE
-                return
-            }
-            val qualifierMessage = it.qualifierMessages[0]
-            binding.upSellMessageTextView.text = qualifierMessage
-            binding.upSellMessageTextView.visibility =
-                if (TextUtils.isEmpty(qualifierMessage)) View.GONE else View.VISIBLE
+        if (globalMessages.qualifierMessages.isNullOrEmpty()) {
+            binding.upSellMessageTextView?.visibility = View.GONE
+            return
         }
+        val qualifierMessage = globalMessages.qualifierMessages[0]
+        binding.upSellMessageTextView.text = qualifierMessage
+        binding.upSellMessageTextView.visibility =
+            if (TextUtils.isEmpty(qualifierMessage)) View.GONE else View.VISIBLE
     }
 
     override fun onOutOfStockProductsRemoved() {
@@ -1898,10 +1812,9 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                 Status.SUCCESS -> {
                     try {
                         if (response?.httpCode == HTTP_OK) {
-                            val cartResponse =
-                                convertResponseToCartResponseObject(response)
-                            updateCart(cartResponse, mCommerceItem)
-                            if (cartResponse?.cartItems.isNullOrEmpty()) {
+                            updateUIForCartResponse(response)
+                            updateCart(response, mCommerceItem)
+                            if (response?.cartItems.isNullOrEmpty()) {
                                 onRemoveSuccess()
                             }
                         } else {
@@ -1941,10 +1854,9 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                 Status.SUCCESS -> {
                     try {
                         if (response?.httpCode == HTTP_OK) {
-                            val cartResponse =
-                                convertResponseToCartResponseObject(response)
+                            updateUIForCartResponse(response)
                             mRemoveAllItemFromCartTapped = false
-                            updateCart(cartResponse, null)
+                            updateCart(response, null)
                             updateCartSummary(0)
                             onRemoveSuccess()
                         } else {
@@ -2009,9 +1921,8 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                 }
                 Status.SUCCESS -> {
                     if (response?.httpCode == HTTP_OK) {
-                        val cartResponse =
-                            convertResponseToCartResponseObject(response)
-                        changeQuantity(cartResponse, mChangeQuantityList?.getOrNull(0))
+                        updateUIForCartResponse(response)
+                        changeQuantity(response, mChangeQuantityList?.getOrNull(0))
                     } else {
                         onChangeQuantityComplete()
                     }
@@ -2039,7 +1950,8 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                     hideProgressBar()
                     when (response?.httpCode) {
                         HTTP_OK -> {
-                            updateCart(convertResponseToCartResponseObject(response), null)
+                            updateUIForCartResponse(response)
+                            updateCart(response, null)
                             if (voucherDetails?.promoCodes == null || voucherDetails?.promoCodes?.size == 0)
                                 showVouchersOrPromoCodeAppliedToast(
                                     getString(R.string.promo_code_removed_toast_message)
@@ -2128,7 +2040,6 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
 
         private const val TAG_ADDED_TO_LIST_TOAST = "ADDED_TO_LIST"
         private const val TAG_AVAILABLE_VOUCHERS_TOAST = "AVAILABLE_VOUCHERS"
-        private const val GENERAL_ITEM = "GENERAL"
         private const val GIFT_ITEM = "GIFT"
 
         // constants for deletion confirmation.
