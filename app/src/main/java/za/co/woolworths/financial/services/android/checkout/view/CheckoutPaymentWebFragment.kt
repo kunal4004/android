@@ -122,7 +122,7 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
 
     private fun onStatusChanged(url: String) {
         val uri = Uri.parse(url)
-        currentSuccessURI =  if (currentSuccessURI.isEmpty()) url else ""
+        currentSuccessURI =  url
         when (uri.getQueryParameter(KEY_STATUS)) {
             PaymentStatus.PAYMENT_SUCCESS.type -> {
                 val paymentType = uri.getQueryParameter(PAYMENT_TYPE)
@@ -165,6 +165,7 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
         super.onResume()
         if (currentSuccessURI.isNotEmpty() && isAdded) {
             onStatusChanged(currentSuccessURI)
+            currentSuccessURI = getString(R.string.empty)
         }
     }
 
