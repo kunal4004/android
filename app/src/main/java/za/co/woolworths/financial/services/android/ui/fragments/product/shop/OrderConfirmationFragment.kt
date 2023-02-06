@@ -15,6 +15,7 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import android.graphics.Typeface
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentOrderConfirmationBinding
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -286,8 +287,9 @@ class OrderConfirmationFragment :
                     )
                     if(Delivery.getType(response?.orderSummary?.fulfillmentDetails?.deliveryType)==Delivery.CNC){
                         otherDeliveryDateTimeTextView.text = applyBoldBeforeComma(
-                            response.deliveryDetails?.deliveryInfos?.getOrNull(1)?.time?.removeRange(0,6)
+                            response.deliveryDetails?.deliveryInfos?.getOrNull(1)?.time
                         )
+                        otherDeliveryDateTimeTextView.setTypeface(otherDeliveryDateTimeTextView.typeface, Typeface.BOLD);
                         infoDeliveryDateTimeTextView.visibility = VISIBLE
                     }
                 } else if (response?.deliveryDetails?.deliveryInfos?.size == 1) {
@@ -303,8 +305,9 @@ class OrderConfirmationFragment :
                     if(other>0 && food==0){
                         deliveryDateTimeTextView.text = applyBoldBeforeComma(
                             response
-                                .deliveryDetails?.deliveryInfos?.getOrNull(0)?.time?.removeRange(0,6)
+                                .deliveryDetails?.deliveryInfos?.getOrNull(0)?.time
                         )
+                        deliveryDateTimeTextView.setTypeface(deliveryDateTimeTextView.typeface, Typeface.BOLD);
                         infoDeliveryDateTimeTextView.visibility = VISIBLE
                     }
                 }
