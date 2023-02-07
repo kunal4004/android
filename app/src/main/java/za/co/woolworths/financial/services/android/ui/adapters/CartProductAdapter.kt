@@ -4,7 +4,6 @@ import android.animation.ObjectAnimator
 import android.app.Activity
 import android.graphics.Color
 import android.graphics.PorterDuff
-import android.text.TextUtils
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View

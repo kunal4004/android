@@ -128,7 +128,6 @@ import za.co.woolworths.financial.services.android.util.pickimagecontract.PickIm
 import za.co.woolworths.financial.services.android.util.pickimagecontract.PickImageGalleryContract
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.FoodProductNotAvailableForCollectionDialog
-import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import java.io.File
 import javax.inject.Inject
 import kotlin.collections.get
