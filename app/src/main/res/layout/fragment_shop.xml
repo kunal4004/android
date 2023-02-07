@@ -36,7 +36,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/eight_dp"
                 android:fontFamily="@font/futura_bold"
-                android:textStyle="bold"
                 android:gravity="top"
                 android:lineHeight="@dimen/twenty_sp"
                 android:text="@string/standard_delivery"
@@ -83,7 +82,7 @@
                 android:layout_marginBottom="@dimen/sixteen_dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                android:background="@color/color_F3F3F3"
+                android:background="@color/color_D8D8D8"
                 app:layout_constraintTop_toBottomOf="@+id/tvToolbarSubtitle" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>

@@ -31,8 +31,10 @@ class CartUtils {
             productCountMap?.let {
                 if (it.quantityLimit?.foodLayoutColour != null && showBanner && it.totalProductCount ?: 0 > 0) {
                     message?.text = it.quantityLimit.foodLayoutMessage ?: ""
-                    counter?.text = it.totalProductCount.toString() + "/" + it.quantityLimit.foodMaximumQuantity?:""
-                    if (it.quantityLimit.foodLayoutColour.isNotEmpty()) {
+                    if(it.quantityLimit.other!=null && it.totalProductCount !=null && it.totalProductCount>it.quantityLimit.other) {
+                        counter?.text = ((it.totalProductCount - it.quantityLimit.other).toString() + "/" + it.quantityLimit.foodMaximumQuantity) ?: ""
+                    }
+                    if (it.quantityLimit.foodLayoutColour.isNotEmpty() && !it.quantityLimit.foodLayoutMessage.isNullOrEmpty()) {
                         banner?.visibility = View.VISIBLE
                         banner?.setBackgroundColor(Color.parseColor(it.quantityLimit.foodLayoutColour))
                     }
