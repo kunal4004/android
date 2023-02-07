@@ -152,9 +152,6 @@ import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager;
 import za.co.woolworths.financial.services.android.util.nav.FragNavController;
 import za.co.woolworths.financial.services.android.util.nav.FragNavTransactionOptions;
-import static za.co.woolworths.financial.services.android.util.AppConstant.TAG_FBH_CNC_FRAGMENT;
-import za.co.woolworths.financial.services.android.geolocation.view.FBHInfoBottomSheetDialog;
-import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 
 @AndroidEntryPoint
 public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigationBinding, BottomNavigationViewModel>
