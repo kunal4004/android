@@ -14,14 +14,13 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsR
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse
 import za.co.woolworths.financial.services.android.models.network.Event
 import za.co.woolworths.financial.services.android.models.network.Resource
-import za.co.woolworths.financial.services.android.util.DeliveryType
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import javax.inject.Inject
 
 @HiltViewModel
 class ShoppingListDetailViewModel @Inject constructor(
-    private val shoppingListDetailRepository: ShoppingListDetailRepository
+    private val shoppingListDetailRepository: ShoppingListDetailRepository,
 ) : ViewModel() {
 
     var inventoryCallFailed: Boolean = false
@@ -31,6 +30,10 @@ class ShoppingListDetailViewModel @Inject constructor(
     private val _shoppingListDetails = MutableLiveData<Event<Resource<ShoppingListItemsResponse>>>()
     val shoppListDetails: LiveData<Event<Resource<ShoppingListItemsResponse>>> =
         _shoppingListDetails
+
+    private val _isListUpdated = MutableLiveData(false)
+    val isListUpdated: LiveData<Boolean> = _isListUpdated
+
     private val _inventoryDetails =
         MutableLiveData<Event<Resource<SkusInventoryForStoreResponse>>>()
     val inventoryDetails: LiveData<Event<Resource<SkusInventoryForStoreResponse>>> =
@@ -55,6 +58,7 @@ class ShoppingListDetailViewModel @Inject constructor(
      * Step 6: make Inventory call with storeId and catalogRefIds
      **/
     fun makeInventoryCalls() {
+        _isListUpdated.value = false
         mShoppingListItems.map { it.fulfillmentType }.distinct().forEach { fulfillmentType ->
             val multiSkuList =
                 mShoppingListItems.filter { fulfillmentType.equals(it.fulfillmentType) }
@@ -62,19 +66,30 @@ class ShoppingListDetailViewModel @Inject constructor(
             val storeId = Utils.retrieveStoreId(fulfillmentType)
                 ?.replace("\"", "") ?: ""
             if (TextUtils.isEmpty(storeId)) {
-                val type = Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.deliveryType?.let {
-                    Delivery.getType(it)
-                } ?: Delivery.STANDARD
-                if(Delivery.STANDARD == type){
-                    setOutOfStock()
-                } else {
-                    setAllUnavailable(multiSkuList)
+                val type =
+                    Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.deliveryType?.let {
+                        Delivery.getType(it)
+                    } ?: Delivery.STANDARD
+                when(type) {
+                    Delivery.STANDARD -> setOutOfStock(multiSkuList)
+                    Delivery.CNC -> setAllUnavailable(multiSkuList)
+                    Delivery.DASH -> {
+                        setOutOfStock(multiSkuList)
+                        val skuIds = getSKUIdsByDeliveryType(multiSkuList)
+                        setUnavailable(multiSkuList, skuIds)
+                    }
                 }
+                _isListUpdated.value = true
             } else {
                 fulfillmentStoreMapArrayList?.add(
                     FulfillmentStoreMap(fulfillmentType, storeId, false)
                 )
                 val skuIds = getSKUIdsByDeliveryType(multiSkuList)
+                if (skuIds.isEmpty()) {
+                    setUnavailable(multiSkuList, skuIds)
+                    _isListUpdated.value = true
+                    return@forEach
+                }
                 setUnavailable(multiSkuList, skuIds)
                 val multiSku = TextUtils.join("-", skuIds)
                 getInventoryStockForStore(storeId, multiSku)
@@ -159,6 +174,21 @@ class ShoppingListDetailViewModel @Inject constructor(
         }
     }
 
+    private fun setOutOfStock(multiSkuList: List<ShoppingListItem>) {
+        // Hide quantity progress bar indicator
+        if (mShoppingListItems.isNotEmpty()) {
+            for (shoppingListItem in mShoppingListItems) {
+                for(skuId in multiSkuList) {
+                    if(skuId.catalogRefId.equals(shoppingListItem.catalogRefId, true)) {
+                        shoppingListItem.inventoryCallCompleted = true
+                        shoppingListItem.unavailable = false
+                        shoppingListItem.quantityInStock = -1
+                    }
+                }
+            }
+        }
+    }
+
     private fun setAllUnavailable(shoppingListItemsCollection: List<ShoppingListItem>) {
         for (item in shoppingListItemsCollection) {
             for (inventoryItems in mShoppingListItems) {
@@ -181,7 +211,7 @@ class ShoppingListDetailViewModel @Inject constructor(
      */
     fun setUnavailable(
         shoppingListItemsCollection: MutableCollection<ShoppingListItem>,
-        availableSkuIds: List<String>
+        availableSkuIds: List<String>,
     ) {
         for (shoppingItem in shoppingListItemsCollection) {
             val index = mShoppingListItems.indexOf(shoppingItem)
@@ -201,7 +231,7 @@ class ShoppingListDetailViewModel @Inject constructor(
 
     fun setUnavailable(
         shoppingListItemsCollection: List<ShoppingListItem>,
-        availableSkuIds: List<String>
+        availableSkuIds: List<String>,
     ) {
         for (shoppingItem in shoppingListItemsCollection) {
             val index = mShoppingListItems.indexOf(shoppingItem)
@@ -217,6 +247,15 @@ class ShoppingListDetailViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun isShoppingListContainsUnavailableItems(): Boolean {
+        if (mShoppingListItems.filter { item ->
+                item.unavailable
+            }.isNullOrEmpty()) {
+            return false
+        }
+        return true
     }
 
     fun setItem(updatedItem: ShoppingListItem) {

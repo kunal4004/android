@@ -24,6 +24,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
@@ -114,7 +115,7 @@ public class SearchResultFragment extends Fragment implements SearchResultNaviga
 
     public static final int PRODUCT_DETAILS_FROM_MY_LIST_SEARCH = 7657;
     public static final String  MY_LIST_LIST_NAME= "listName";
-    public static final String  MY_LIST_LIST_ID= "listID";
+    public static final String  MY_LIST_LIST_ID= "listId";
     public static final String  MY_LIST_SEARCH_TERM= "searchTerm";
 
     @Override
@@ -124,7 +125,7 @@ public class SearchResultFragment extends Fragment implements SearchResultNaviga
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             mSearchText = bundle.getString(MY_LIST_SEARCH_TERM);
-            mListId = bundle.getString(MY_LIST_LIST_ID);
+            mListId = bundle.getString(MY_LIST_LIST_ID, "");
         } else {
             mSearchText = "";
         }
@@ -176,6 +177,16 @@ public class SearchResultFragment extends Fragment implements SearchResultNaviga
         rlAddToList = view.findViewById(R.id.rlCheckOut);
         pbLoadingIndicator = view.findViewById(R.id.pbLoadingIndicator);
         rclProductList = view.findViewById(R.id.productList);
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        Activity activity = getActivity();
+        if( activity instanceof BottomNavigationActivity) {
+            BottomNavigationActivity bottomNavigationActivity = (BottomNavigationActivity) activity;
+            bottomNavigationActivity.hideBottomNavigationMenu();
+        }
     }
 
     private WGlobalState getGlobalState() {
@@ -496,6 +507,24 @@ public class SearchResultFragment extends Fragment implements SearchResultNaviga
                 getProductAdapter().onDeselectSKU(getSelectedProduct(), otherSkus);
             }
         }
+        updateAddToListCount();
+    }
+
+    private void updateAddToListCount() {
+        if(getActivity() == null) {
+            return;
+        }
+        int count = 0;
+        if(mProductList == null) {
+            String addToCartText = getActivity().getResources().getQuantityString(R.plurals.plural_add_to_list, count, count);
+            btnCheckOut.setText(addToCartText);
+            return;
+        }
+        for (ProductList item : mProductList ) {
+            if(item.itemWasChecked) count ++;
+        }
+        String addToCartText = getActivity().getResources().getQuantityString(R.plurals.plural_add_to_list, count, count);
+        btnCheckOut.setText(addToCartText);
     }
 
     @Override
@@ -653,6 +682,7 @@ public class SearchResultFragment extends Fragment implements SearchResultNaviga
     public void onFoodTypeChecked(List<ProductList> productLists, ProductList selectedProduct) {
         this.mProductList = productLists;
         toggleAddToListBtn(true);
+        updateAddToListCount();
     }
 
     @Override
@@ -700,6 +730,11 @@ public class SearchResultFragment extends Fragment implements SearchResultNaviga
     @Override
     public void onDetach() {
         super.onDetach();
+        Activity activity = getActivity();
+        if( activity instanceof BottomNavigationActivity) {
+            BottomNavigationActivity bottomNavigationActivity = (BottomNavigationActivity) activity;
+            bottomNavigationActivity.showBottomNavigationMenu();
+        }
         cancelRequest(mGetProductDetail);
         cancelRequest(mPostAddToList);
     }

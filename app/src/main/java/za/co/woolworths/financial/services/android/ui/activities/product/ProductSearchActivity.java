@@ -55,7 +55,9 @@ public class ProductSearchActivity extends AppCompatActivity
     private String mSearchTextHint = "";
     private String mListID;
     private boolean isUserBrowsingDash;
-    public static final int PRODUCT_SEARCH_ACTIVITY_REQUEST_CODE = 1244;
+    public static final String EXTRA_SEARCH_TEXT_HINT = "SEARCH_TEXT_HINT";
+    public static final String EXTRA_LIST_ID = "listId";
+    public static final int PRODUCT_SEARCH_ACTIVITY_RESULT_CODE = 1244;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +80,7 @@ public class ProductSearchActivity extends AppCompatActivity
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             isUserBrowsingDash = bundle.getBoolean(EXTRA_SEND_DELIVERY_DETAILS_PARAMS, false);
-            if (!TextUtils.isEmpty(bundle.getString("SEARCH_TEXT_HINT"))) {
+            if (!TextUtils.isEmpty(bundle.getString(EXTRA_SEARCH_TEXT_HINT))) {
                 mListID = bundle.getString(MY_LIST_LIST_ID);
                 mSearchTextHint = getString(R.string.shopping_search_hint);
                 mEditSearchProduct.setHint(mSearchTextHint);
@@ -148,7 +150,7 @@ public class ProductSearchActivity extends AppCompatActivity
                     intent.putExtra(MY_LIST_LIST_ID, mListID);
                     intent.putExtra(MY_LIST_LIST_NAME, search.searchedValue);
                     intent.putExtra(EXTRA_SEND_DELIVERY_DETAILS_PARAMS, isUserBrowsingDash);
-                    setActivityResult(intent, PRODUCT_SEARCH_ACTIVITY_REQUEST_CODE);
+                    setActivityResult(intent, PRODUCT_SEARCH_ACTIVITY_RESULT_CODE);
 				}
 		}
 	}

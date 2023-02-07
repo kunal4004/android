@@ -3,7 +3,6 @@ package za.co.woolworths.financial.services.android.ui.adapters;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
-import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.text.TextUtils;
@@ -36,6 +35,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.lis
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView;
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter;
+import za.co.woolworths.financial.services.android.util.KotlinUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager;
 import za.co.woolworths.financial.services.android.util.wenum.Delivery;
@@ -180,15 +180,7 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 							holder.tvColorSize.setVisibility(VISIBLE);
 						}
 
-						int msg = shoppingListItem.unavailable ? R.string.unavailable : R.string.out_of_stock;
-						ShoppingDeliveryLocation location = Utils.getPreferredDeliveryLocation();
-						if (location != null && location.fulfillmentDetails != null
-								&& location.fulfillmentDetails.getDeliveryType() != null) {
-							String deliveryType = location.fulfillmentDetails.getDeliveryType();
-							if (Delivery.Companion.getType(deliveryType) == Delivery.DASH && shoppingListItem.unavailable) {
-								msg = R.string.unavailable_with_dash;
-							}
-						}
+						int msg = getUnavailableMessage(shoppingListItem.unavailable);
 						Utils.setBackgroundColor(
 								holder.tvProductAvailability,
 								R.drawable.delivery_round_btn_black,
@@ -247,9 +239,11 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 					}
 				});
 
-				holder.llItemContainer.setOnClickListener(view -> {
-					// TODO: open black tooltip To be implemented..
-				});
+                holder.llItemContainer.setOnClickListener(view -> {
+                    ShoppingListItem shoppingListItem14 = getItem(position);
+                    if (shoppingListItem14.unavailable)
+                        navigator.showListBlackToolTip();
+                });
 
 				holder.cartProductImage.setOnClickListener(view -> {
 					if (!mAdapterIsClickable) return;
@@ -280,7 +274,7 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 					item.userQuantity = Math.max(item.userQuantity, 1);
 					item.isSelected = !item.isSelected;
 					mShoppingListItem.set((position - 1), item);
-					navigator.onItemSelectionChange();
+					navigator.onItemSelectionChange(item.isSelected);
 					notifyItemChanged(position, item);
 				});
 
@@ -294,6 +288,25 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 				break;
 		}
 	}
+
+    private int getUnavailableMessage(boolean isUnavailable) {
+        int msg = isUnavailable ? R.string.unavailable : R.string.out_of_stock;
+        if (isUnavailable) {
+            Delivery type = KotlinUtils.Companion.getPreferredDeliveryType();
+            if (type == null) {
+                return msg;
+            }
+            switch (type) {
+                case DASH:
+                    msg = R.string.unavailable_with_dash;
+                    break;
+                case CNC:
+                    msg = R.string.unavailable_with_collection;
+                    break;
+            }
+        }
+        return msg;
+    }
 
 	private void deleteItemFromList(ShoppingListItem shoppingListItem, int adapterPosition) {
 		if (mShoppingListItem == null || mShoppingListItem.size() <= 0) {
@@ -418,7 +431,7 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 				}
 			}
 			this.mShoppingListItem = updatedListItems;
-			navigator.onItemSelectionChange();
+			navigator.onItemSelectionChange(false); // default value
 			notifyDataSetChanged();
 			closeAllItems();
 		} catch (IllegalArgumentException ex) {
@@ -457,6 +470,6 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 			shoppinglistItem.isSelected = false;
 		}
 		notifyDataSetChanged();
-		navigator.onItemSelectionChange();
+		navigator.onItemSelectionChange(false);
 	}
 }

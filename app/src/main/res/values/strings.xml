@@ -864,7 +864,7 @@
     <string name="food_product_type">foodProducts</string>
     <string name="select_your_quantity">Select Your Quantity</string>
     <string name="no_stock_available">No Stock Available Online</string>
-    <string name="no_stock_available_desc">Use our find in-store feature to see if there is stock available at a Woolies store near you.</string>
+    <string name="no_stock_available_desc">Try our find-in-store feature, or change the details around your delivery or collection method, to see if stock is available at another Woolies store near you.</string>
     <string name="no_of_items_added">%1$Item%2$</string>
     <string name="npc_already_have_your_card_link">ALREADY HAVE your card? LINK it NOW</string>
     <string name="npc_participating_store">Can’t find a participating store close to you? Tap here to arrange delivery and we will issue you a virtual temp card to get shopping today.</string>
@@ -2184,6 +2184,8 @@
     <string name="app_version_info">App Version %s (%s)</string>
     <string name="fsp_number_info">Woolworths Financial Services (FSP15289 and NCRCP49)</string>
     <string name="product_details_out_of_stock">Unfortunately this item is out of stock in %s. Try changing your delivery location and try again.</string>
+    <string name="out_of_stock_dialog_title">This Item Is Out Of Stock</string>
+    <string name="change_delivery_or_collection_out_of_stock" tools:ignore="ButtonCase"><u>Change Delivery or collection details</u></string>
 
     <!--  Voice of Customer  -->
     <string name="voc_question_slider_desc">Please rate your experience, %1$d being poor and %2$d being excellent</string>
@@ -2528,6 +2530,10 @@
     <string name="all_products_available">All Products Available</string>
     <string name="next_dash_delivery_timeslot_text">Next Dash Delivery Timeslot</string>
     <string name="my_shopping_lists">My Shopping Lists</string>
+    <string name="title_mylist_dash_tooltip">Some items aren’t available using <b>Dash.</b></string>
+    <string name="title_mylist_collection_tooltip">Some items aren’t available for <b>Collection.</b></string>
+    <string name="title_mylist_standard_tooltip">Some items aren’t available using <b>Standard.</b></string>
+    <string name="change_delivery_method_mylist_tooltip">Get them using a different delivery method.</string>
     <string name="hi">HI&#160;</string>
     <string name="tip_your_dash_driver">Tip Your Dash Driver</string>
     <string name="enter_your_own_amount">Enter your own amount between R%1d - R%2d</string>
@@ -2822,10 +2828,16 @@
         <item quantity="one">ADD %d ITEM TO CART</item>
         <item quantity="other">ADD %d ITEMS TO CART</item>
     </plurals>
+
+    <plurals name="plural_add_to_list">
+        <item quantity="one">ADD %d ITEM TO LIST</item>
+        <item quantity="other">ADD %d ITEMS TO LIST</item>
+    </plurals>
     <string name="reduce_count_button">Reduce Count Button</string>
     <string name="add_item_count">Add item count</string>
     <string name="unavailable">Unavailable</string>
     <string name="unavailable_with_dash">Unavailable With Dash</string>
+    <string name="unavailable_with_collection">Unavailable With Collection</string>
     <string name="get_replacement_card_action_button_text_label_on_overlay">get_replacement_card_action_button_text_label_on_overlay</string>
     <plurals name="category_item">
         <item quantity="one">%1$s %2$s Item</item>
