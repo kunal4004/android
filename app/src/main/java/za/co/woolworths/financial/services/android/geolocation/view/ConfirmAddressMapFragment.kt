@@ -60,7 +60,6 @@ import za.co.woolworths.financial.services.android.util.LocalConstant.Companion.
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.location.DynamicGeocoder
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
-import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -274,14 +273,6 @@ class ConfirmAddressMapFragment :
                                     }
                                     return@let
                                 } else if (KotlinUtils.isComingFromCncTab == true) {
-
-                                    if(placeId != null) {
-                                        val store = GeoUtils.getStoreDetails(
-                                                placeId,
-                                                validateLocationResponse?.validatePlace?.stores
-                                        )
-                                    }
-
                                     /*user is coming from CNC i.e. set Location flow */
                                     // navigate to CNC home tab.
                                     KotlinUtils.isComingFromCncTab = false
