@@ -4,6 +4,7 @@ import android.animation.ObjectAnimator
 import android.app.Activity
 import android.graphics.Color
 import android.graphics.PorterDuff
+import android.text.TextUtils
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
@@ -32,9 +33,11 @@ import za.co.woolworths.financial.services.android.util.CartUtils.Companion.getA
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.ImageManager.Companion.setPicture
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.capitaliseFirstLetter
 import za.co.woolworths.financial.services.android.util.NetworkManager
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.util.*
 
 
@@ -408,6 +411,10 @@ class CartProductAdapter(
                 } else {
                     priceHolder.liquorBannerRootConstraintLayout.visibility = GONE
                 }
+                if (KotlinUtils.getPreferredDeliveryType() == Delivery.CNC)
+                {
+                    priceHolder.deliveryFee.text=mContext?.getString(R.string.collection_fee)
+                }
             }
         }
     }
@@ -706,6 +713,9 @@ class CartProductAdapter(
         val promoDiscountInfo: ImageView
         val liquorBannerRootConstraintLayout: ConstraintLayout
         val imgLiBanner: ImageView
+        val deliveryFee: TextView
+        val txtPriceEstimatedDelivery:TextView
+
 
         init {
             txtYourCartPrice = view.findViewById(R.id.txtYourCartPrice)
@@ -730,6 +740,8 @@ class CartProductAdapter(
                 view.findViewById(R.id.liquorBannerRootConstraintLayout)
             imgLiBanner = view.findViewById(R.id.imgLiquorBanner)
             orderTotal = view.findViewById(R.id.orderTotal)
+            deliveryFee=view.findViewById(R.id.delivery_fee_label)
+            txtPriceEstimatedDelivery=view.findViewById(R.id.txtPriceEstimatedDelivery)
         }
     }
 

@@ -962,6 +962,11 @@ class CheckoutReturningUserCollectionFragment :
 
                     txtOrderTotalValue?.text =
                         CurrencyFormatter.formatAmountToRandAndCentWithSpace(it.total)
+                    if (KotlinUtils.getPreferredDeliveryType() == Delivery.CNC)
+                    {
+                        txtOrderSummaryDeliveryFee?.text=context?.getString(R.string.collection_fee)
+                    }
+
                 }
             }
         }

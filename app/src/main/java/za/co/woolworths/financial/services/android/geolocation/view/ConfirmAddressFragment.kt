@@ -59,7 +59,6 @@ import za.co.woolworths.financial.services.android.util.location.Event
 import za.co.woolworths.financial.services.android.util.location.EventType
 import za.co.woolworths.financial.services.android.util.location.Locator
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
-import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import java.util.*
 
 class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_dialog), SavedAddressAdapter.OnAddressSelected,
@@ -490,12 +489,6 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
                                     }
                                 } else if (KotlinUtils.isComingFromCncTab == true) {
                                     KotlinUtils.isComingFromCncTab = false
-                                    if(address.placesId != null) {
-                                        val store = GeoUtils.getStoreDetails(
-                                                address.placesId,
-                                                validateLocationResponse?.validatePlace?.stores
-                                        )
-                                    }
                                     /* set cnc browsing data */
                                     WoolworthsApplication.setCncBrowsingValidatePlaceDetails(
                                         validateLocationResponse?.validatePlace)
