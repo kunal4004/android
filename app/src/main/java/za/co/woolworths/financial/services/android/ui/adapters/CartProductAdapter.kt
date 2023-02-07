@@ -411,9 +411,8 @@ class CartProductAdapter(
                 } else {
                     priceHolder.liquorBannerRootConstraintLayout.visibility = GONE
                 }
-                if (KotlinUtils.getPreferredDeliveryType() == Delivery.CNC)
-                {
-                    priceHolder.deliveryFee.text=mContext?.getString(R.string.collection_fee)
+                if (KotlinUtils.getPreferredDeliveryType() == Delivery.CNC) {
+                    priceHolder.deliveryFee.text = mContext?.getString(R.string.collection_fee)
                 }
             }
         }
@@ -740,8 +739,8 @@ class CartProductAdapter(
                 view.findViewById(R.id.liquorBannerRootConstraintLayout)
             imgLiBanner = view.findViewById(R.id.imgLiquorBanner)
             orderTotal = view.findViewById(R.id.orderTotal)
-            deliveryFee=view.findViewById(R.id.delivery_fee_label)
-            txtPriceEstimatedDelivery=view.findViewById(R.id.txtPriceEstimatedDelivery)
+            deliveryFee = view.findViewById(R.id.delivery_fee_label)
+            txtPriceEstimatedDelivery = view.findViewById(R.id.txtPriceEstimatedDelivery)
         }
     }
 
