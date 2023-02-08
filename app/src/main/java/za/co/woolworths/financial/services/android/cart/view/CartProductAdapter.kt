@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.adapters
+package za.co.woolworths.financial.services.android.cart.view
 
 import android.animation.ObjectAnimator
 import android.app.Activity
@@ -560,7 +560,8 @@ class CartProductAdapter(
         if (!cartItems.isNullOrEmpty()) {
             for (entry in cartItems!!) {
                 if (currentPosition == position) {
-                    return CartCommerceItemRow(CartRowType.HEADER,
+                    return CartCommerceItemRow(
+                        CartRowType.HEADER,
                         entry.type,
                         null,
                         entry.getCommerceItems())
@@ -576,7 +577,8 @@ class CartProductAdapter(
                         CartRowType.GIFT,
                         entry.type,
                         productCollection[position - currentPosition],
-                        null) else CartCommerceItemRow(CartRowType.PRODUCT,
+                        null) else CartCommerceItemRow(
+                        CartRowType.PRODUCT,
                         entry.type,
                         productCollection[position - currentPosition],
                         null)
