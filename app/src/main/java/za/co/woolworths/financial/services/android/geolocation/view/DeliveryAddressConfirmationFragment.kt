@@ -347,7 +347,11 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
                 )
                 mStoreName = it.storeName.toString()
                 mStoreId = it.storeId.toString()
+                if(deliveryType == Delivery.CNC.name){
+                    showCollectionTitle(it)
+                }
             }
+
         }
 
         setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_CLICK_RESULT) { _, _ ->
@@ -689,21 +693,11 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
         deliveryBagIcon.setImageDrawable(ContextCompat.getDrawable(requireActivity(),
             R.drawable.ic_cnc_set_location))
         changeFulfillmentTitleTextView.text = bindString(R.string.click_and_collect)
-        val collectionQuantity =
-            validateLocationResponse?.validatePlace?.stores?.getOrNull(0)?.quantityLimit?.foodMaximumQuantity
-        if(store?.locationId?.isNotEmpty() == true){
-            val collectionFeeText = AppConfigSingleton.clickAndCollect?.collectionFeeDescription
-            changeFulfillmentSubTitleTextView.text =if(collectionFeeText?.isNotEmpty() == true) bindString(
-                R.string.click_and_collect_title_text, collectionFeeText) else bindString(R.string.empty)
-        }
-        else {
-            changeFulfillmentSubTitleTextView.text =
-                if (collectionQuantity != null) bindString(
-                    R.string.click_and_collect_title_text,
-                    collectionQuantity.toString()
-                ) else bindString(R.string.empty)
-        }
+        val selectedStore = validateLocationResponse?.validatePlace?.stores?.single { it.storeId == mStoreId }
+        showCollectionTitle(selectedStore)
     }
+
+
 
     private fun GeoLocationDeliveryAddressBinding.showDashTabView() {
         selectATab(geoDashTab)
@@ -761,20 +755,8 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
         deliveryBagIcon.setImageDrawable(ContextCompat.getDrawable(requireActivity(),
             R.drawable.ic_cnc_set_location))
         changeFulfillmentTitleTextView.text = bindString(R.string.click_and_collect)
-        val collectionQuantity =
-            validateLocationResponse?.validatePlace?.stores?.getOrNull(0)?.quantityLimit?.foodMaximumQuantity
-        if(store?.locationId?.isNotEmpty() == true){
-            val collectionFeeText = AppConfigSingleton.clickAndCollect?.collectionFeeDescription
-            changeFulfillmentSubTitleTextView.text =if(collectionFeeText?.isNotEmpty() == true) bindString(
-                R.string.click_and_collect_title_text, collectionFeeText) else bindString(R.string.empty)
-        }
-        else {
-            changeFulfillmentSubTitleTextView.text =
-                if (collectionQuantity != null) bindString(
-                    R.string.click_and_collect_title_text,
-                    collectionQuantity.toString()
-                ) else bindString(R.string.empty)
-        }
+        val selectedStore = validateLocationResponse?.validatePlace?.stores?.single { it.storeId == mStoreId }
+        showCollectionTitle(selectedStore)
         validateLocationResponse?.validatePlace?.apply {
             if ((this.stores?.isEmpty() == true || this.stores?.getOrNull(0)?.deliverable == false) && progressBar?.visibility == View.GONE) {
                 // Show no store available Bottom Dialog.
@@ -1118,6 +1100,32 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
 
     override fun tryAgain() {
         binding.initView()
+    }
+
+    private fun GeoLocationDeliveryAddressBinding.showCollectionTitle(
+        selectedStore: Store?
+    ) {
+        val collectionQuantity =
+            selectedStore?.quantityLimit?.foodMaximumQuantity
+        val collectionFeeText = AppConfigSingleton.clickAndCollect?.collectionFeeDescription
+        if (selectedStore?.locationId?.isNotEmpty() == true) {
+            changeFulfillmentSubTitleTextView.text =
+                if (collectionFeeText?.isNotEmpty() == true) bindString(
+                    R.string.only_fashion_beauty_and_home_products_available, collectionFeeText
+                ) else bindString(R.string.empty)
+        } else if (!selectedStore?.firstAvailableFoodDeliveryDate.isNullOrEmpty() && selectedStore?.firstAvailableOtherDeliveryDate.isNullOrEmpty()) {
+            changeFulfillmentSubTitleTextView.text =
+                if (collectionQuantity != null) bindString(
+                    R.string.click_and_collect_title_text,
+                    collectionQuantity.toString()
+                ) else bindString(R.string.empty)
+        } else {
+            changeFulfillmentSubTitleTextView.text =
+                if (collectionQuantity != null) bindString(
+                    R.string.food_fashion_beauty_and_home_products_available,
+                    collectionFeeText.toString()
+                ) else bindString(R.string.empty)
+        }
     }
 }
 

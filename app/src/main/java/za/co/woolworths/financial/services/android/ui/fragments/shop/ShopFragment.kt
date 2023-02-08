@@ -1179,9 +1179,10 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                     blackToolTipLayout.fashionItemDateText?.text = store?.firstAvailableOtherDeliveryDate
                     blackToolTipLayout.productAvailableText?.text =
                         context?.getString(R.string.all_fashion_beauty_home_avlbl)
+                    blackToolTipLayout.deliveryFeeText?.text = AppConfigSingleton.clickAndCollect?.collectionFeeDescription
                 }
                 //food products checking conditions
-              else  if (store?.firstAvailableOtherDeliveryDate.isNullOrEmpty() ) {
+              else  if (store?.firstAvailableOtherDeliveryDate.isNullOrEmpty() && !store?.firstAvailableFoodDeliveryDate.isNullOrEmpty() ) {
                     enableOrDisableFashionItems(false)
                     enableOrDisableFoodItems(true)
                     if (!store?.firstAvailableFoodDeliveryDate.isNullOrEmpty()) {
@@ -1190,6 +1191,8 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                     }
                     blackToolTipLayout.productAvailableText?.text =
                        context?.getString(R.string.all_food_items_avlbl)
+                    blackToolTipLayout.deliveryFeeText?.text =
+                        context?.getString(R.string.dash_free_collection)
                 }
                 else{
                     //mixed basket
@@ -1202,12 +1205,11 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                             store?.firstAvailableFoodDeliveryDate
                     }
                     blackToolTipLayout.productAvailableText?.text =
-                        context?.getString(R.string.all_products_available)
+                        context?.getString(R.string.food_fashion_beauty_and_home_products_available_tool_tip)
+                    blackToolTipLayout.deliveryFeeText?.text = AppConfigSingleton.clickAndCollect?.collectionFeeDescription
                 }
                 blackToolTipLayout.cartIcon?.setImageResource(R.drawable.icon_cart_white)
                 blackToolTipLayout.deliveryIcon?.setImageResource(R.drawable.white_shopping_bag_icon)
-                blackToolTipLayout.deliveryFeeText?.text =
-                    context?.getString(R.string.dash_free_collection)
                 blackToolTipLayout.bubbleLayout?.setArrowDirection(ArrowDirection.TOP_CENTER)
             }
         }
