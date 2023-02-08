@@ -876,12 +876,12 @@ class CheckoutReturningUserCollectionFragment :
     }
 
     private fun addShoppingBagsRadioButtons() {
-
+        binding.layoutCollectionInstructions.newShoppingBagsLayout.txtNewShoppingBagsSubDesc?.visibility =
+            View.VISIBLE
         val newShoppingBags = AppConfigSingleton.nativeCheckout?.newShoppingBag
-        binding.layoutCollectionInstructions.newShoppingBagsLayout.newShoppingBagsTitle.text =
-            newShoppingBags?.title
-
         binding.layoutCollectionInstructions.newShoppingBagsLayout.txtNewShoppingBagsDesc?.text =
+            newShoppingBags?.title
+        binding.layoutCollectionInstructions.newShoppingBagsLayout.txtNewShoppingBagsSubDesc?.text =
             newShoppingBags?.description
 
         val shoppingBagsAdapter =
