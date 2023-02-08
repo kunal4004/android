@@ -351,7 +351,6 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
                     showCollectionTitle(it)
                 }
             }
-
         }
 
         setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_CLICK_RESULT) { _, _ ->
