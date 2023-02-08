@@ -211,7 +211,6 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 					if (listItem.quantityInStock == 0) return;
 					// One item selected by user in add to list
 					if (listItem.userQuantity == 1) {
-						holder.llItemContainer.setAlpha(0.3f);
 						deleteItemFromList(listItem, position);
 					} else if (listItem.userQuantity > 1) {
 						listItem.userQuantity -= 1;
@@ -281,8 +280,6 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 
 				holder.delete.setOnClickListener(view -> {
 					if (!mAdapterIsClickable) return;
-					holder.delete.setVisibility(View.INVISIBLE);
-					holder.progressBar.setVisibility(VISIBLE);
 					navigator.onItemDeleteClick(getItem(position).Id, getItem(position).productId, getItem(position).catalogRefId, true);
 				});
 				mItemManger.bindView(holder.itemView, position);
