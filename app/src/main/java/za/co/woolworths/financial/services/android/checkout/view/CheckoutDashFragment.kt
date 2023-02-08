@@ -836,26 +836,29 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
                 deliveringToAddress.append(defaultAddressNickname)
 
                 // Extract default address display name
-                savedAddresses.addresses?.forEach { address ->
-                    if (savedAddresses.defaultAddressNickname.equals(address.nickname)) {
-                        this.defaultAddress = address
-                        suburbId = address.suburbId ?: ""
-                        placesId = address?.placesId
-                        storeId = address?.storeId
-                        nickName = address?.nickname
-                        val addressName = SpannableString(address.address1)
-                        val typeface1 =
-                            ResourcesCompat.getFont(context, R.font.myriad_pro_regular)
-                        addressName.setSpan(
-                            StyleSpan(typeface1!!.style),
-                            0, addressName.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                        )
-                        deliveringToAddress.append(addressName)
-                        return@forEach
+
+                    savedAddresses.addresses?.forEach list@{ address ->
+                        if (savedAddresses.defaultAddressNickname.equals(address.nickname)) {
+                            this.defaultAddress = address
+                            suburbId = address.suburbId ?: ""
+                            placesId = address?.placesId
+                            storeId = address?.storeId
+                            nickName = address?.nickname
+                            val addressName = SpannableString(address.address1)
+                            val typeface1 =
+                                ResourcesCompat.getFont(context, R.font.myriad_pro_regular)
+                            addressName.setSpan(
+                                StyleSpan(typeface1!!.style),
+                                0, addressName.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                            )
+
+                            deliveringToAddress.append(addressName)
+                            return@list
+                        }
                     }
-                    if (savedAddresses.defaultAddressNickname.isNullOrEmpty()) {
-                        binding.checkoutCollectingFromLayout?.root?.visibility = GONE
-                    }
+
+                if (savedAddresses.defaultAddressNickname.isNullOrEmpty()) {
+                    binding.checkoutCollectingFromLayout?.root?.visibility = GONE
                 }
                 binding.checkoutCollectingFromLayout.tvNativeCheckoutDeliveringValue?.text =
                     deliveringToAddress
