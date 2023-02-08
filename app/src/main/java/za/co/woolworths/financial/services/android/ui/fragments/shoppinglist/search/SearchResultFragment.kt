@@ -40,6 +40,8 @@ import za.co.woolworths.financial.services.android.ui.fragments.colorandsize.Col
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList.Companion.openShoppingList
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_SESSION_TIMEOUT_440
 import java.util.*
 
 class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickListener,
@@ -147,8 +149,7 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
 
     override fun unhandledResponseCode(response: Response) {}
     override fun failureResponseHandler(e: String) {
-        val activity: Activity? = activity
-        activity?.runOnUiThread { mErrorHandlerView!!.networkFailureHandler(e) }
+        activity?.runOnUiThread { mErrorHandlerView?.networkFailureHandler(e) }
     }
 
     private fun cancelColorSizeSelection() {
@@ -171,9 +172,9 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
             headerProduct.numberOfItems = numItemsInTotal
             productList.add(0, headerProduct)
         }
-        productAdapter = SearchResultShopAdapter(activity!!, mProductList, this)
+        productAdapter = SearchResultShopAdapter(requireActivity(), mProductList, this)
         binding.productList.apply {
-            val mRecyclerViewLayoutManager = LinearLayoutManager(activity)
+            val mRecyclerViewLayoutManager = LinearLayoutManager(requireContext())
             layoutManager = mRecyclerViewLayoutManager
             isNestedScrollingEnabled = false
             adapter = productAdapter
@@ -292,11 +293,12 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
                 val addToListRequests: MutableList<AddToListRequest> = ArrayList()
                 productAdapter?.productList?.forEach {
                     if (it.itemWasChecked) {
-                        val addToList = AddToListRequest()
-                        addToList.catalogRefId = it.sku
-                        addToList.quantity = "1"
-                        addToList.giftListId = it.sku
-                        addToList.skuID = it.sku
+                        val addToList = AddToListRequest().apply {
+                            catalogRefId = it.sku
+                            quantity = "1"
+                            giftListId = it.sku
+                            skuID = it.sku
+                        }
                         addToListRequests.add(addToList)
                     }
                 }
@@ -584,7 +586,7 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
                 object : IResponseListener<ProductView> {
                     override fun onSuccess(response: ProductView?) {
                         when (response?.httpCode) {
-                            200 -> {
+                            HTTP_OK -> {
                                 val productLists: MutableList<ProductList>? = response.products
                                 if (productLists != null) {
                                     numItemsInTotal(response)
@@ -626,8 +628,8 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
                 object : IResponseListener<ShoppingListItemsResponse> {
                     override fun onSuccess(response: ShoppingListItemsResponse?) {
                         when (response?.httpCode) {
-                            200 -> onAddToListLoadComplete()
-                            440 -> {
+                            HTTP_OK -> onAddToListLoadComplete()
+                            HTTP_SESSION_TIMEOUT_440 -> {
                                 accountExpired(response)
                                 onAddToListLoad(false)
                             }
