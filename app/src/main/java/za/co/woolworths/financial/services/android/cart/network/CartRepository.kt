@@ -11,6 +11,7 @@ import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.models.network.Resource
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.ProductType
+import za.co.woolworths.financial.services.android.util.StoreUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import java.io.IOException
@@ -22,6 +23,8 @@ import javax.inject.Inject
 class CartRepository @Inject constructor() {
 
     private var cartItemList = ArrayList<CommerceItem>()
+    private var isMixedBasket = false
+    private var isFBHOnly = false
 
     suspend fun getShoppingCartV2(): Resource<CartResponse> {
         return try {
@@ -176,6 +179,14 @@ class CartRepository @Inject constructor() {
         return cartItemList
     }
 
+    fun isMixedBasket(): Boolean {
+        return isMixedBasket
+    }
+
+    fun isFBHOnly(): Boolean{
+        return isFBHOnly
+    }
+
     fun convertResponseToCartResponseObject(response: ShoppingCartResponse?): CartResponse? {
         if (response == null) return null
         val cartResponse: CartResponse?
@@ -197,6 +208,7 @@ class CartRepository @Inject constructor() {
                 Utils.savePreferredDeliveryLocation(shoppingDeliveryLocation)
             }
             val itemsObject = JSONObject(Gson().toJson(data.items))
+            isMixedBasket = itemsObject.has(ProductType.FOOD_COMMERCE_ITEM.value) && itemsObject.length() > 1
             val keys = itemsObject.keys()
             val cartItemGroups = ArrayList<CartItemGroup>()
             while ((keys.hasNext())) {
@@ -233,6 +245,9 @@ class CartRepository @Inject constructor() {
                         commerceItem.fulfillmentStoreId =
                             fulfillmentStoreId!!.replace("\"".toRegex(), "")
                         productList.add(commerceItem)
+                        isFBHOnly = if(!itemsObject.has(ProductType.FOOD_COMMERCE_ITEM.value)) {
+                            commerceItem.fulfillmentType == StoreUtils.Companion.FulfillmentType.CLOTHING_ITEMS?.type
+                        } else false
                     }
                     this.cartItemList = productList
                     cartItemGroup.setCommerceItems(productList)

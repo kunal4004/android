@@ -507,6 +507,8 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                 getDelivertyType(),
                 placeId,
                 isComingFromCheckout = true,
+                isMixedBasket = viewModel.isMixedBasket(),
+                isFBHOnly = viewModel.isFBHOnly(),
                 isComingFromSlotSelection = false,
                 savedAddressResponse = response,
                 defaultAddress = null,
@@ -1076,7 +1078,6 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         mCommerceItem = commerceItem
         resetItemDelete(true)
     }
-
     private fun updateUIForCartResponse(response: CartResponse?) {
         if (response == null) return
         displayUpSellMessage(response.globalMessages)
@@ -1089,7 +1090,6 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             setDeliveryLocation(ShoppingDeliveryLocation(fulfillmentDetailsObj))
         }
     }
-
     override fun onResume() {
         super.onResume()
         val activity: Activity = requireActivity()
