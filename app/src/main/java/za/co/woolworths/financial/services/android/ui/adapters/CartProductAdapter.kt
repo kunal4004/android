@@ -165,8 +165,11 @@ class CartProductAdapter(
                         commerceItem.getPriceInfo().discountedAmount))
                     productHolder.llPromotionalText.visibility = VISIBLE
                     mContext?.let {
+                        productHolder.promotionalText.setTextColor(
+                            ContextCompat.getColor(it, R.color.promotional_text_red)
+                        )
                         productHolder.price.setTextColor(ContextCompat.getColor(it,
-                            R.color.promotional_text_red))
+                            R.color.black))
                     }
                 } else {
                     productHolder.llPromotionalText.visibility = GONE
