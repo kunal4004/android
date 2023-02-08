@@ -2863,4 +2863,6 @@
     <string name="collection_fee">Collection Fee</string>
     <string name="all_fashion_beauty_home_avlbl"><b>All</b> Fashion, Beauty and Home Products Available</string>
     <string name="all_food_items_avlbl"><b>All</b> Food Products Available</string>
+
+    <string name="only_fashion_beauty_and_home_products_available" > %1$s\nOnly Fashion, Beauty and Home products available.</string>
 </resources>
