@@ -330,6 +330,7 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
             if (it.itemWasChecked) {
                 productWasChecked = true
                 toggleAddToListBtn(true)
+                return@forEach
             }
         }
         // hide checkbox when no item selected
@@ -741,21 +742,6 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == COLOR_SIZE_SELECTION_REQUEST_CODE) {
-            when (resultCode) {
-                ConfirmColorSizeActivity.SELECTED_SHOPPING_LIST_ITEM_RESULT_CODE -> if (productAdapter != null) {
-                    globalState?.selectedSKUId?.let {
-                        productAdapter?.setSelectedSku(
-                            selectedProduct!!, it
-                        )
-                    }
-                    toggleAddToListBtn(true)
-                    minOneItemSelected(mProductList!!)
-                }
-                ConfirmColorSizeActivity.CLOSE_ICON_TAPPED_RESULT_CODE -> cancelColorSizeSelection()
-                else -> {}
-            }
-        }
         if (requestCode == BottomNavigationActivity.PDP_REQUEST_CODE && resultCode == AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE) {
             activity?.apply {
                 setResult(
@@ -768,7 +754,6 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
     }
 
     companion object {
-        private const val COLOR_SIZE_SELECTION_REQUEST_CODE = 3012
         const val ADDED_TO_SHOPPING_LIST_RESULT_CODE = 1312
         const val SHOPPING_LIST_SEARCH_RESULT_REQUEST_CODE = 2012
         const val PRODUCT_DETAILS_FROM_MY_LIST_SEARCH = 7657
