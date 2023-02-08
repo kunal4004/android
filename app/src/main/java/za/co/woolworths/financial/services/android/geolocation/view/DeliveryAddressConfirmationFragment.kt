@@ -1102,26 +1102,28 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
     private fun GeoLocationDeliveryAddressBinding.showCollectionTitle(
         selectedStore: Store?
     ) {
-        val collectionQuantity =
-            selectedStore?.quantityLimit?.foodMaximumQuantity
-        val collectionFeeText = AppConfigSingleton.clickAndCollect?.collectionFeeDescription
-        if (selectedStore?.locationId?.isNotEmpty() == true) {
-            changeFulfillmentSubTitleTextView.text =
-                if (collectionFeeText?.isNotEmpty() == true) bindString(
-                    R.string.only_fashion_beauty_and_home_products_available, collectionFeeText
-                ) else bindString(R.string.empty)
-        } else if (!selectedStore?.firstAvailableFoodDeliveryDate.isNullOrEmpty() && selectedStore?.firstAvailableOtherDeliveryDate.isNullOrEmpty()) {
-            changeFulfillmentSubTitleTextView.text =
-                if (collectionQuantity != null) bindString(
-                    R.string.click_and_collect_title_text,
-                    collectionQuantity.toString()
-                ) else bindString(R.string.empty)
-        } else {
-            changeFulfillmentSubTitleTextView.text =
-                if (collectionQuantity != null) bindString(
-                    R.string.food_fashion_beauty_and_home_products_available,
-                    collectionFeeText.toString()
-                ) else bindString(R.string.empty)
+        selectedStore?.apply {
+            val collectionQuantity =
+                quantityLimit?.foodMaximumQuantity
+            val collectionFeeText = AppConfigSingleton.clickAndCollect?.collectionFeeDescription
+            if (locationId?.isNotEmpty() == true) {
+                changeFulfillmentSubTitleTextView.text =
+                    if (collectionFeeText?.isNotEmpty() == true) bindString(
+                        R.string.only_fashion_beauty_and_home_products_available, collectionFeeText
+                    ) else bindString(R.string.empty)
+            } else if (!firstAvailableFoodDeliveryDate.isNullOrEmpty() && firstAvailableOtherDeliveryDate.isNullOrEmpty()) {
+                changeFulfillmentSubTitleTextView.text =
+                    if (collectionQuantity != null) bindString(
+                        R.string.click_and_collect_title_text,
+                        collectionQuantity.toString()
+                    ) else bindString(R.string.empty)
+            } else {
+                changeFulfillmentSubTitleTextView.text =
+                    if (collectionQuantity != null) bindString(
+                        R.string.food_fashion_beauty_and_home_products_available,
+                        collectionFeeText.toString()
+                    ) else bindString(R.string.empty)
+            }
         }
     }
 }
