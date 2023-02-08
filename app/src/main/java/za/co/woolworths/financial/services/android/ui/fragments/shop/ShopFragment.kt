@@ -260,18 +260,21 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                                 showBlackToolTip(Delivery.STANDARD)
                                 setEventsForSwitchingBrowsingType(Delivery.STANDARD.name)
                                 KotlinUtils.browsingDeliveryType = Delivery.STANDARD
+                                removeNotificationToast()
                             }
                             CLICK_AND_COLLECT_TAB.index -> {
                                 //Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMYLISTS, this)
                                 showBlackToolTip(Delivery.CNC)
                                 setEventsForSwitchingBrowsingType(Delivery.CNC.name)
                                 KotlinUtils.browsingDeliveryType = Delivery.CNC
+                                removeNotificationToast()
                             }
                             DASH_TAB.index -> {
                                 // Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMYORDERS, this)
                                 showBlackToolTip(Delivery.DASH)
                                 setEventsForSwitchingBrowsingType(Delivery.DASH.name)
                                 KotlinUtils.browsingDeliveryType = Delivery.DASH
+                                addObserverInAppNotificationToast()
                             }
                         }
                         setupToolbar(position)
@@ -320,6 +323,11 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
 
         // Show only when showDashOrder flag is true
         if (!params.showDashOrder) {
+            return
+        }
+
+
+        if (binding.viewpagerMain.currentItem != DASH_TAB.index ) {
             return
         }
 
@@ -839,7 +847,12 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                 // But we want forcefully user to come on Dash tab even though the location is not dash.
                 delay(AppConstant.DELAY_500_MS)
                 updateCurrentTab(BundleKeysConstants.DASH)
-                refreshViewPagerFragment()
+                val dashDeliveryAddressFragment =
+                    binding.viewpagerMain?.adapter?.instantiateItem(
+                        binding.viewpagerMain,
+                        binding.viewpagerMain.currentItem
+                    ) as? DashDeliveryAddressFragment
+                dashDeliveryAddressFragment?.initViews()
                 showDashToolTip(validateLocationResponse) // externally showing dash tooltip as delivery type is not same.
             }
         }
