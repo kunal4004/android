@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.integration.rem
 import okhttp3.Interceptor
 import okhttp3.Response
 import za.co.woolworths.financial.services.android.ui.fragments.integration.helper.AbsaTemporaryDataSourceSingleton
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.ABSA_COOKIE_JSESSIONID
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.ABSA_COOKIE_WFPT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.ABSA_COOKIE_XFPT
 import java.io.IOException
@@ -18,19 +19,19 @@ class ReceivedCookiesInterceptor : Interceptor {
             }
 
             if (cookies.size > 0){
-
+                var jSessionIdCookie = ""
                 for (cookie in cookies){
                     when {
                         cookie.lowercase().startsWith(ABSA_COOKIE_XFPT) -> AbsaTemporaryDataSourceSingleton.wfpt = cookie
                         cookie.lowercase().startsWith(ABSA_COOKIE_WFPT) -> AbsaTemporaryDataSourceSingleton.xfpt = cookie
+                        cookie.lowercase().startsWith(ABSA_COOKIE_JSESSIONID) -> jSessionIdCookie = cookie
                     }
                 }
 
-                val cookie = cookies[0]
-                AbsaTemporaryDataSourceSingleton.cookie = cookie
-                AbsaTemporaryDataSourceSingleton.jsessionId = cookie.replace("JSESSIONID=", "")
-                }
+                AbsaTemporaryDataSourceSingleton.cookie = cookies.joinToString(separator = ";")
+                AbsaTemporaryDataSourceSingleton.jsessionId = jSessionIdCookie.replace("JSESSIONID=", "")
             }
+        }
         return originalResponse
     }
 }
