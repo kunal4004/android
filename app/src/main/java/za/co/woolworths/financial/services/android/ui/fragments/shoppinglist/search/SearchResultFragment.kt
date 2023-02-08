@@ -757,11 +757,13 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
             }
         }
         if (requestCode == BottomNavigationActivity.PDP_REQUEST_CODE && resultCode == AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE) {
-            activity!!.setResult(
-                AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE,
-                data
-            )
-            activity!!.onBackPressed()
+            activity?.apply {
+                setResult(
+                    AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE,
+                    data
+                )
+                onBackPressed()
+            }
         }
     }
 
