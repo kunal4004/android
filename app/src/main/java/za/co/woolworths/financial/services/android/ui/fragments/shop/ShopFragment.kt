@@ -839,7 +839,12 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                 // But we want forcefully user to come on Dash tab even though the location is not dash.
                 delay(AppConstant.DELAY_500_MS)
                 updateCurrentTab(BundleKeysConstants.DASH)
-                refreshViewPagerFragment()
+                val dashDeliveryAddressFragment =
+                    binding.viewpagerMain?.adapter?.instantiateItem(
+                        binding.viewpagerMain,
+                        binding.viewpagerMain.currentItem
+                    ) as? DashDeliveryAddressFragment
+                dashDeliveryAddressFragment?.initViews()
                 showDashToolTip(validateLocationResponse) // externally showing dash tooltip as delivery type is not same.
             }
         }
