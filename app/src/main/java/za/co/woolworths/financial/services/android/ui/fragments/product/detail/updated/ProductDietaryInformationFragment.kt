@@ -5,9 +5,7 @@ import android.os.Bundle
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.StyleSpan
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentProdcutDietaryInformationBinding
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
@@ -20,7 +18,6 @@ class ProductDietaryInformationFragment : BaseFragmentBinding<FragmentProdcutDie
         fun newInstance(dietary: String?) = ProductDietaryInformationFragment().withArgs {
             putString("DIETARY_INFO", dietary)
         }
-
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,10 +26,6 @@ class ProductDietaryInformationFragment : BaseFragmentBinding<FragmentProdcutDie
         arguments?.apply {
             dietary = getString("DIETARY_INFO", "")
         }
-    }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_prodcut_dietary_information, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

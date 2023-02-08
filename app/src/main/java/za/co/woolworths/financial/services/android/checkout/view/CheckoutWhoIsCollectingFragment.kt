@@ -2,18 +2,22 @@ package za.co.woolworths.financial.services.android.checkout.view
 
 import android.animation.ObjectAnimator
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
 import androidx.annotation.VisibleForTesting
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.CheckoutWhoIsCollectingFragmentBinding
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import za.co.woolworths.financial.services.android.checkout.service.network.Address
+import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.SAVED_ADDRESS_KEY
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutReturningUserCollectionFragment.Companion.KEY_COLLECTING_DETAILS
 import za.co.woolworths.financial.services.android.checkout.viewmodel.WhoIsCollectingDetails
@@ -22,8 +26,13 @@ import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.cart.view.CartFragment
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment
+import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_CNC_SELETION
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_FBH_ONLY
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_MIXED_BASKET
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.PLACE_ID
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.SAVED_ADDRESS_RESPONSE
 import za.co.woolworths.financial.services.android.util.Constant
 import za.co.woolworths.financial.services.android.util.Utils
@@ -41,6 +50,11 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(R.
     private var isMyVehicle = true
     private var navController: NavController? = null
     private var isComingFromCnc: Boolean? = false
+    private var isMixBasket: Boolean? = false
+    private var isFBHOnly: Boolean? = false
+    private var placeId : String? = null
+    private var savedAddressResponse :SavedAddressResponse? = null
+
 
     companion object {
         const val REGEX_VEHICLE_TEXT: String = "^\$|^[a-zA-Z0-9\\s<!>@\$&().+,-/\\\"']+\$"
@@ -54,6 +68,13 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(R.
         val bundle = arguments?.getBundle(BUNDLE)
         bundle?.apply {
             isComingFromCnc = getBoolean(IS_COMING_FROM_CNC_SELETION, false)
+            isMixBasket = getBoolean(IS_MIXED_BASKET, false)
+            isFBHOnly = getBoolean(IS_FBH_ONLY, false)
+            placeId = getString(PLACE_ID,"")
+            savedAddressResponse = if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+                getSerializable(SAVED_ADDRESS_RESPONSE, SavedAddressResponse::class.java)
+            else
+                getSerializable(SAVED_ADDRESS_RESPONSE) as? SavedAddressResponse
         }
 
         initView()
@@ -69,6 +90,20 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(R.
             }
             R.id.myVehicleText -> {
                 onVehicleSelected()
+            }
+
+            R.id.backArrow -> {
+                activity ?.apply{
+                    setResult(CheckOutFragment.RESULT_RELOAD_CART)
+                    view?.let{
+                        closeFragment(it)
+                    }
+                    overridePendingTransition(
+                        R.anim.slide_in_from_left,
+                        R.anim.slide_out_to_right
+                    )
+                }
+
             }
         }
     }
@@ -238,6 +273,13 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(R.
         binding.confirmDetails?.setOnClickListener(this)
         binding.vehiclesDetailsLayout.myVehicleText?.setOnClickListener(this)
         binding.vehiclesDetailsLayout.taxiText?.setOnClickListener(this)
+        if(isComingFromCnc == true && savedAddressResponse != null){
+            val address : Address? = savedAddressResponse?.addresses?.single { it.placesId == placeId }
+            binding.whoIsCollectingDetailsLayout.recipientNameEditText?.setText(address?.recipientName)
+            binding.whoIsCollectingDetailsLayout.cellphoneNumberEditText.setText(address?.primaryContactNo)
+        }
+        showFBHView()
+        binding.backArrow?.setOnClickListener(this)
 
         binding.whoIsCollectingDetailsLayout.recipientNameEditText?.apply {
             afterTextChanged {
@@ -296,6 +338,24 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(R.
         listOfTaxiInputFields = listOf(binding.whoIsCollectingDetailsLayout.recipientNameEditText, binding.whoIsCollectingDetailsLayout.cellphoneNumberEditText)
     }
 
+    private fun showFBHView() {
+        if (isComingFromCnc == true) {
+            if (isFBHOnly == true) {
+                binding.collectingPartition?.visibility = View.GONE
+                binding.vehiclesDetailsLayout?.root?.visibility = View.GONE
+                binding.vehicleDetailsPartition?.visibility = View.GONE
+                isMyVehicle = false
+
+                binding.whoIsCollectingDetailsLayout?.recipientDetailsTitle?.visibility = View.GONE
+                binding.whoIsCollectingDetailsInfoLayout?.root?.visibility = View.VISIBLE
+                binding.whoIsCollectingDetailsLayout.recipientNamePlaceHolder.text = context?.getString(R.string.recipient_name_fbh)
+            } else if (isMixBasket == true) {
+                binding.whoIsCollectingDetailsLayout?.recipientDetailsTitle?.visibility = View.GONE
+                binding.whoIsCollectingDetailsInfoLayout?.root?.visibility = View.VISIBLE
+                binding.whoIsCollectingDetailsLayout.recipientNamePlaceHolder.text = context?.getString(R.string.recipient_name_fbh)
+            }
+        }
+    }
     private fun setEditText(whoIsCollectingDetails: WhoIsCollectingDetails) {
         if (whoIsCollectingDetails != null) {
             if (whoIsCollectingDetails.isMyVehicle) {
@@ -365,4 +425,10 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(R.
     fun testGetTaxiList(): List<View> {
         return listOfTaxiInputFields
     }
+
+    private fun FragmentActivity.closeFragment(view: View) {
+        view.postDelayed({ onBackPressed() }, AppConstant.DELAY_500_MS)
+    }
+
+
 }

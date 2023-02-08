@@ -10,9 +10,10 @@
     <com.google.android.material.appbar.AppBarLayout
 
         android:id="@+id/appbar"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
+        android:paddingTop="@dimen/fifteen_dp"
         app:elevation="0dp"
         android:visibility="gone"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -23,6 +24,8 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/fifteen_dp"
+            android:gravity="center"
             app:layout_scrollFlags="scroll|enterAlways">
 
             <TextView
@@ -41,6 +44,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/appbar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
