@@ -697,8 +697,6 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
         showCollectionTitle(selectedStore)
     }
 
-
-
     private fun GeoLocationDeliveryAddressBinding.showDashTabView() {
         selectATab(geoDashTab)
         deliveryBagIcon.setImageDrawable(ContextCompat.getDrawable(requireActivity(),
