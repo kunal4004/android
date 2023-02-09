@@ -1189,6 +1189,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                 if (store?.firstAvailableFoodDeliveryDate.isNullOrEmpty() ) {
                     enableOrDisableFashionItems(true)
                     enableOrDisableFoodItems(false)
+                    blackToolTipLayout.fashionItemTitle?.visibility = View.GONE
                     blackToolTipLayout.fashionItemDateText?.text = store?.firstAvailableOtherDeliveryDate
                     blackToolTipLayout.productAvailableText?.text =
                         context?.getString(R.string.all_fashion_beauty_home_avlbl)
@@ -1198,6 +1199,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
               else  if (store?.firstAvailableOtherDeliveryDate.isNullOrEmpty() && !store?.firstAvailableFoodDeliveryDate.isNullOrEmpty() ) {
                     enableOrDisableFashionItems(false)
                     enableOrDisableFoodItems(true)
+                    blackToolTipLayout.foodItemTitle?.visibility = View.GONE
                     if (!store?.firstAvailableFoodDeliveryDate.isNullOrEmpty()) {
                         blackToolTipLayout.foodItemDateText?.text =
                             store?.firstAvailableFoodDeliveryDate
@@ -1211,6 +1213,8 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                     //mixed basket
                     enableOrDisableFashionItems(true)
                     enableOrDisableFoodItems(true)
+                    blackToolTipLayout.fashionItemTitle?.visibility = View.VISIBLE
+                    blackToolTipLayout.foodItemTitle?.visibility = View.VISIBLE
                     blackToolTipLayout.fashionItemDateText?.text =
                         store?.firstAvailableOtherDeliveryDate
                     if (!store?.firstAvailableFoodDeliveryDate.isNullOrEmpty()) {
