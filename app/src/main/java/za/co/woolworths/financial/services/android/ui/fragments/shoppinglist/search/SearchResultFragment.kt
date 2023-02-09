@@ -72,6 +72,9 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
     private val globalState: WGlobalState?
         get() = WoolworthsApplication.getInstance()?.wGlobalState
 
+    private val isNetworkConnected: Boolean
+        get() = NetworkManager.getInstance().isConnectedToNetwork(activity)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
@@ -94,7 +97,7 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        ViewCompat.setTranslationZ(getView()!!, 100f)
+        ViewCompat.setTranslationZ(view, 100f)
         setUpToolbar()
         binding.incNoConnectionHandler.apply {
             mErrorHandlerView = ErrorHandlerView(activity, noConnectionLayout)
@@ -146,8 +149,8 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
             }
         }
     }
-
     override fun unhandledResponseCode(response: Response) {}
+
     override fun failureResponseHandler(e: String) {
         activity?.runOnUiThread { mErrorHandlerView?.networkFailureHandler(e) }
     }
@@ -213,9 +216,7 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
     }
 
     private fun listContainFooter(): Boolean {
-        val list =
-            mProductList?.filter { it.rowType === ProductListingViewType.FOOTER } ?: emptyList()
-        return list.isNotEmpty()
+        return mProductList?.any { it.rowType === ProductListingViewType.FOOTER } ?: false
     }
 
     private fun removeFooter() {
@@ -228,11 +229,7 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
     }
 
     private fun listContainHeader(): Boolean {
-        val list = mProductList?.filter {
-            it.rowType === ProductListingViewType.HEADER
-            return true
-        } ?: emptyList()
-        return list.isNotEmpty()
+        return mProductList?.any { it.rowType === ProductListingViewType.HEADER } ?: false
     }
 
     override fun onDestroy() {
@@ -241,7 +238,7 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
     }
 
     override fun startProductRequest() {
-        executeSearchProduct(activity, productRequestBody)
+        executeSearchProduct(productRequestBody)
     }
 
     override fun loadMoreData(productLists: List<ProductList>) {
@@ -404,8 +401,8 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
             itemCount.size
         )
     }
-
     override fun responseFailureHandler(response: Response) {}
+
     override fun onSuccessResponse(product: WProduct) {
         globalState?.saveButtonClicked(ProductDetailsFragment.INDEX_SEARCH_FROM_LIST)
         selectedProduct?.let { productAdapter?.setCheckedProgressBar(it) }
@@ -455,9 +452,6 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
         ColorAndSizeFragment.getInstance(this, productItem)
             .show(requireActivity().supportFragmentManager, tag)
     }
-
-    private val isNetworkConnected: Boolean
-        get() = NetworkManager.getInstance().isConnectedToNetwork(activity)
 
     private fun noSizeColorIntent(mSkuId: String?) {
         val otherSkus = OtherSkus()
@@ -575,10 +569,8 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
         }
     }
 
-    private fun searchProduct(
-        context: Context?,
-        requestParams: ProductsRequestParams?
-    ): Call<ProductView> {
+    private fun searchProduct(requestParams: ProductsRequestParams?): Call<ProductView> {
+
         onLoadStart(loadMoreData)
         setProductIsLoading(true)
         val productListCall = getProducts(requestParams!!)
@@ -664,8 +656,8 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
         )
     }
 
-    private fun executeSearchProduct(context: Context?, lp: ProductsRequestParams?) {
-        mGetProductsRequest = searchProduct(context, lp)
+    private fun executeSearchProduct(lp: ProductsRequestParams?) {
+        mGetProductsRequest = searchProduct(lp)
     }
 
     private fun numItemsInTotal(productView: ProductView?) {
@@ -737,7 +729,7 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
             )
         }
         toggleAddToListBtn(true)
-        minOneItemSelected(mProductList!!)
+        mProductList?.let { minOneItemSelected(it) }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
