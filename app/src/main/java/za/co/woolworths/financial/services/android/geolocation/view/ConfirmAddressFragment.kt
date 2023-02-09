@@ -21,7 +21,6 @@ import com.awfs.coordination.R
 import com.awfs.coordination.databinding.ConfirmAddressBottomSheetDialogBinding
 import com.google.gson.JsonSyntaxException
 import kotlinx.coroutines.launch
-import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.checkout.service.network.Address
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment
@@ -60,7 +59,6 @@ import za.co.woolworths.financial.services.android.util.location.Event
 import za.co.woolworths.financial.services.android.util.location.EventType
 import za.co.woolworths.financial.services.android.util.location.Locator
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
-import java.net.SocketTimeoutException
 import java.util.*
 
 class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_dialog), SavedAddressAdapter.OnAddressSelected,

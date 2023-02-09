@@ -232,6 +232,7 @@
                 android:background="@color/color_D8D8D8"/>
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/delivery_fee_label"
                 style="@style/style_cart_basket_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
