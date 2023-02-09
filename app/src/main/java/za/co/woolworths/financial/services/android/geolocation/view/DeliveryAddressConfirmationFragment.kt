@@ -692,7 +692,7 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
         deliveryBagIcon.setImageDrawable(ContextCompat.getDrawable(requireActivity(),
             R.drawable.ic_cnc_set_location))
         changeFulfillmentTitleTextView.text = bindString(R.string.click_and_collect)
-        val selectedStore = validateLocationResponse?.validatePlace?.stores?.single { it.storeId == mStoreId }
+        val selectedStore = validateLocationResponse?.validatePlace?.stores?.firstOrNull { it.storeId == mStoreId }
         showCollectionTitle(selectedStore)
     }
 
@@ -752,7 +752,7 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
         deliveryBagIcon.setImageDrawable(ContextCompat.getDrawable(requireActivity(),
             R.drawable.ic_cnc_set_location))
         changeFulfillmentTitleTextView.text = bindString(R.string.click_and_collect)
-        val selectedStore = validateLocationResponse?.validatePlace?.stores?.single { it.storeId == mStoreId }
+        val selectedStore = validateLocationResponse?.validatePlace?.stores?.firstOrNull { it.storeId == mStoreId }
         showCollectionTitle(selectedStore)
         validateLocationResponse?.validatePlace?.apply {
             if ((this.stores?.isEmpty() == true || this.stores?.getOrNull(0)?.deliverable == false) && progressBar?.visibility == View.GONE) {
