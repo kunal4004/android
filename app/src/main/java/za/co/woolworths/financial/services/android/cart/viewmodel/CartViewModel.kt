@@ -6,7 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import za.co.woolworths.financial.services.android.cart.network.CartRepository
+import za.co.woolworths.financial.services.android.cart.service.network.CartResponse
+import za.co.woolworths.financial.services.android.cart.service.repository.CartRepository
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.CouponClaimCode
