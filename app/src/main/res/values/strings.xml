@@ -1439,6 +1439,7 @@
     <string name="plp_savePromotionalImage">savePromotionalImage</string>
     <string name="plp_rewardsPromotionalImage">rewardsPromotionalImage</string>
     <string name="plp_vitalityPromotionalImage">vitalityPromotionalImage</string>
+    <string name="plp_w_list">WListImage</string>
     <string name="cancel_delivery">Cancel Delivery</string>
     <string name="cancel_order">Cancel Order</string>
     <string name="yes_i_d_like_to_cancel">yes, i\'d like to cancel</string>
