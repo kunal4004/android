@@ -2844,5 +2844,7 @@
         <item quantity="other">%1$s %2$s Items</item>
     </plurals>
     <string name="select_your_marital_status">Select your marital status</string>
+    <string name="confirm_your_product_details">Confirm Your Product Details</string>
+    <string name="show_less">Show Less</string>
 
 </resources>
