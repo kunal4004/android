@@ -119,4 +119,12 @@ class CartViewModel @Inject constructor(
     fun getConvertedCartResponse(response: ShoppingCartResponse): CartResponse? {
         return cartRepository.convertResponseToCartResponseObject(response)
     }
+
+    fun isMixedBasket(): Boolean {
+        return cartRepository.isMixedBasket()
+    }
+
+    fun isFBHOnly(): Boolean{
+        return cartRepository.isFBHOnly()
+    }
 }

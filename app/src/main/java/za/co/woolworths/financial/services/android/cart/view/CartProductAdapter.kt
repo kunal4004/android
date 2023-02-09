@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.adapters
+package za.co.woolworths.financial.services.android.cart.view
 
 import android.animation.ObjectAnimator
 import android.app.Activity
@@ -32,9 +32,11 @@ import za.co.woolworths.financial.services.android.util.CartUtils.Companion.getA
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.ImageManager.Companion.setPicture
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.capitaliseFirstLetter
 import za.co.woolworths.financial.services.android.util.NetworkManager
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.util.*
 
 
@@ -411,6 +413,9 @@ class CartProductAdapter(
                 } else {
                     priceHolder.liquorBannerRootConstraintLayout.visibility = GONE
                 }
+                if (KotlinUtils.getPreferredDeliveryType() == Delivery.CNC) {
+                    priceHolder.deliveryFee.text = mContext?.getString(R.string.collection_fee)
+                }
             }
         }
     }
@@ -558,7 +563,8 @@ class CartProductAdapter(
         if (!cartItems.isNullOrEmpty()) {
             for (entry in cartItems!!) {
                 if (currentPosition == position) {
-                    return CartCommerceItemRow(CartRowType.HEADER,
+                    return CartCommerceItemRow(
+                        CartRowType.HEADER,
                         entry.type,
                         null,
                         entry.getCommerceItems())
@@ -574,7 +580,8 @@ class CartProductAdapter(
                         CartRowType.GIFT,
                         entry.type,
                         productCollection[position - currentPosition],
-                        null) else CartCommerceItemRow(CartRowType.PRODUCT,
+                        null) else CartCommerceItemRow(
+                        CartRowType.PRODUCT,
                         entry.type,
                         productCollection[position - currentPosition],
                         null)
@@ -709,6 +716,9 @@ class CartProductAdapter(
         val promoDiscountInfo: ImageView
         val liquorBannerRootConstraintLayout: ConstraintLayout
         val imgLiBanner: ImageView
+        val deliveryFee: TextView
+        val txtPriceEstimatedDelivery:TextView
+
 
         init {
             txtYourCartPrice = view.findViewById(R.id.txtYourCartPrice)
@@ -733,6 +743,8 @@ class CartProductAdapter(
                 view.findViewById(R.id.liquorBannerRootConstraintLayout)
             imgLiBanner = view.findViewById(R.id.imgLiquorBanner)
             orderTotal = view.findViewById(R.id.orderTotal)
+            deliveryFee = view.findViewById(R.id.delivery_fee_label)
+            txtPriceEstimatedDelivery = view.findViewById(R.id.txtPriceEstimatedDelivery)
         }
     }
 

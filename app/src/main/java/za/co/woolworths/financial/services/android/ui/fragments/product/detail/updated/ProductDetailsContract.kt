@@ -41,6 +41,7 @@ interface ProductDetailsContract {
         fun setUniqueIds()
         fun clearSelectedOnLocationChange()
         fun showProductNotAvailableForCollection()
+        fun foodProductNotAvailableForCollection()
         fun clearStockAvailability()
         fun shareProduct()
         fun onGetRatingNReviewSuccess(ratingNReview: RatingAndReviewData)

@@ -55,7 +55,6 @@ import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator
 import za.co.woolworths.financial.services.android.ui.activities.online_voucher_redemption.AvailableVouchersToRedeemInCart
-import za.co.woolworths.financial.services.android.ui.adapters.CartProductAdapter
 import za.co.woolworths.financial.services.android.ui.fragments.cart.GiftWithPurchaseDialogDetailFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.RemoveProductsFromCartDialogFragment.Companion.newInstance
@@ -507,6 +506,8 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                 getDelivertyType(),
                 placeId,
                 isComingFromCheckout = true,
+                isMixedBasket = viewModel.isMixedBasket(),
+                isFBHOnly = viewModel.isFBHOnly(),
                 isComingFromSlotSelection = false,
                 savedAddressResponse = response,
                 defaultAddress = null,
@@ -1076,7 +1077,6 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         mCommerceItem = commerceItem
         resetItemDelete(true)
     }
-
     private fun updateUIForCartResponse(response: CartResponse?) {
         if (response == null) return
         displayUpSellMessage(response.globalMessages)
@@ -1089,7 +1089,6 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             setDeliveryLocation(ShoppingDeliveryLocation(fulfillmentDetailsObj))
         }
     }
-
     override fun onResume() {
         super.onResume()
         val activity: Activity = requireActivity()
