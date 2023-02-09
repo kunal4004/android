@@ -1,7 +1,10 @@
-package za.co.woolworths.financial.services.android.models.dto;
+package za.co.woolworths.financial.services.android.cart.service.network;
 
 import java.util.ArrayList;
 
+import za.co.woolworths.financial.services.android.models.dto.GlobalMessages;
+import za.co.woolworths.financial.services.android.models.dto.OrderSummary;
+import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.item_limits.ProductCountMap;
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.VoucherDetails;
 

@@ -1,9 +1,11 @@
-package za.co.woolworths.financial.services.android.cart.network
+package za.co.woolworths.financial.services.android.cart.service.repository
 
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import org.json.JSONException
 import org.json.JSONObject
+import za.co.woolworths.financial.services.android.cart.service.network.CartItemGroup
+import za.co.woolworths.financial.services.android.cart.service.network.CartResponse
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.CouponClaimCode
@@ -191,7 +193,8 @@ class CartRepository @Inject constructor() {
         if (response == null) return null
         val cartResponse: CartResponse?
         try {
-            cartResponse = CartResponse()
+            cartResponse =
+                CartResponse()
             cartResponse.httpCode = response.httpCode
             val data = response.data[0]
             cartResponse.orderSummary = data.orderSummary
@@ -212,7 +215,8 @@ class CartRepository @Inject constructor() {
             val keys = itemsObject.keys()
             val cartItemGroups = ArrayList<CartItemGroup>()
             while ((keys.hasNext())) {
-                val cartItemGroup = CartItemGroup()
+                val cartItemGroup =
+                    CartItemGroup()
                 val key = keys.next()
                 //GENERAL - "default",HOME - "homeCommerceItem",FOOD
                 // - "foodCommerceItem",CLOTHING
@@ -254,9 +258,11 @@ class CartRepository @Inject constructor() {
                 }
                 cartItemGroups.add(cartItemGroup)
             }
-            var giftCartItemGroup = CartItemGroup()
+            var giftCartItemGroup =
+                CartItemGroup()
             giftCartItemGroup.type = GIFT_ITEM
-            val generalCartItemGroup = CartItemGroup()
+            val generalCartItemGroup =
+                CartItemGroup()
             generalCartItemGroup.type = GENERAL_ITEM
             var generalIndex = -1
             if (cartItemGroups.contains(giftCartItemGroup) && cartItemGroups.contains(
