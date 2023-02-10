@@ -1,13 +1,13 @@
-package za.co.woolworths.financial.services.android.util
+package za.co.woolworths.financial.services.android.cart.viewmodel
 
 import android.graphics.Color
 import android.view.View
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
-import za.co.woolworths.financial.services.android.models.dto.CartResponse
+import za.co.woolworths.financial.services.android.cart.service.network.CartResponse
 import za.co.woolworths.financial.services.android.models.dto.CommerceItem
-import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.Voucher
 import za.co.woolworths.financial.services.android.models.dto.item_limits.ProductCountMap
+import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.Voucher
 
 class CartUtils {
     companion object {
