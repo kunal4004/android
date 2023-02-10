@@ -29,4 +29,13 @@ public class WProductDetail {
 	@SerializedName("promotionImages")
 	@Expose
 	public PromotionImages promotionImages;
+	@SerializedName("colourSizeVariants")
+	@Expose
+	public String colourSizeVariants;
+	@SerializedName("lowStockThreshold")
+	@Expose
+	public Integer lowStockIndicator;
+	@SerializedName("sizeGuideId")
+	@Expose
+	public String sizeGuideId;
 }
