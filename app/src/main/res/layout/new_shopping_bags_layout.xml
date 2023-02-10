@@ -21,6 +21,7 @@
             android:layout_height="wrap_content"
             android:background="@color/white"
             android:fontFamily="@font/futura_semi_bold"
+            android:text="@string/delivery_instructions_shopping_bags_title"
             android:textColor="@color/black"
             android:textSize="@dimen/eighteen_sp" />
     </com.facebook.shimmer.ShimmerFrameLayout>
@@ -31,8 +32,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/twenty_four_dp"
         android:layout_marginTop="@dimen/twenty_dp"
-        android:lineSpacingExtra="@dimen/two_dp"
-        android:layout_marginStart="@dimen/twenty_four_dp"
+        android:layout_marginRight="@dimen/twenty_four_dp"
         android:background="@color/shimmer_view_background"
         app:layout_constrainedWidth="true"
         app:layout_constraintStart_toStartOf="parent"
@@ -44,12 +44,10 @@
             android:layout_height="wrap_content"
             android:background="@color/white"
             android:fontFamily="@font/myriad_pro_semi_bold"
-            android:textSize="@dimen/fourteen_sp"
             android:text="@string/delivery_instructions_shopping_bags_desc"
             android:textColor="@color/black" />
     </com.facebook.shimmer.ShimmerFrameLayout>
 
-<!--
     <TextView
         android:id="@+id/txtNewShoppingBagsSubDesc"
         android:layout_width="match_parent"
@@ -65,7 +63,6 @@
         app:layout_constrainedWidth="true"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/newShoppingBagsDescShimmerFrameLayout" />
--->
 
     <com.facebook.shimmer.ShimmerFrameLayout
         android:id="@+id/radioGroupShoppingBagsShimmerFrameLayout"
@@ -76,7 +73,7 @@
         android:background="@color/shimmer_view_background"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/newShoppingBagsDescShimmerFrameLayout">
+        app:layout_constraintTop_toBottomOf="@id/txtNewShoppingBagsSubDesc">
 
         <RadioGroup
             android:id="@+id/radioGroupShoppingBags"
