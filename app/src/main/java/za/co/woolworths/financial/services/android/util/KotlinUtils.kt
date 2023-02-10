@@ -117,6 +117,7 @@ class KotlinUtils {
         var isStoreSelectedForBrowsing: Boolean = false
         var placeId: String? = null
         var isLocationSame: Boolean? = false
+        var isNickNameSame: Boolean? = false
         var isDeliveryLocationTabCrossClicked: Boolean? = false
         var isCncTabCrossClicked: Boolean? = false
         var isDashTabCrossClicked: Boolean? = false

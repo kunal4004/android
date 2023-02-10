@@ -842,7 +842,7 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
 
     private fun getDeliveryDetailsFromValidateLocation(placeId: String, isNewLocation: Boolean) {
         val oldPlaceId = validateLocationResponse?.validatePlace?.placeDetails?.placeId
-        if (placeId.isNullOrEmpty() || (oldPlaceId != null && oldPlaceId == placeId)) {
+        if (placeId.isNullOrEmpty() || (oldPlaceId != null && (oldPlaceId == placeId && KotlinUtils.isNickNameSame == true))) {
             moveToTab(deliveryType)
             return
         }
@@ -861,6 +861,15 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
                                 mStoreId =
                                     getNearestStoreId(validateLocationResponse?.validatePlace?.stores)
                             }
+
+
+                            KotlinUtils.placeId = validateLocationResponse?.validatePlace?.placeDetails?.placeId
+                            val nickname =  validateLocationResponse?.validatePlace?.placeDetails?.nickname
+                            val fulfillmentDeliveryLocation = Utils.getPreferredDeliveryLocation()
+                            fulfillmentDeliveryLocation.fulfillmentDetails.address?.nickname = nickname
+
+                            Utils.savePreferredDeliveryLocation(fulfillmentDeliveryLocation)
+
                             moveToTab(deliveryType)
                         }
                         else -> {
@@ -882,25 +891,20 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
     private fun GeoLocationDeliveryAddressBinding.updateDeliveryDetails() {
 
         val nickNameWithAddress = SpannableStringBuilder()
-
         var nickName =
             SpannableString(
                 validateLocationResponse?.validatePlace?.placeDetails?.nickname + "  " + context?.getString(
                     R.string.bullet
                 ) + "  "
             )
-
         val address =  KotlinUtils.capitaliseFirstLetter(validateLocationResponse?.validatePlace?.placeDetails?.address1 ?: context?.getString(R.string.empty))
-
         validateLocationResponse?.validatePlace?.placeDetails?.let {
             if (it.nickname.isNullOrEmpty() == true || it.nickname?.equals(address) == true) {
                 nickName = SpannableString(context?.getString(R.string.empty))
             }
         }
         nickNameWithAddress.append(nickName).append(address)
-
         geoDeliveryText?.text = nickNameWithAddress
-
         var earliestFoodDate =
             validateLocationResponse?.validatePlace?.firstAvailableFoodDeliveryDate
         if (earliestFoodDate.isNullOrEmpty())

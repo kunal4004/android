@@ -463,6 +463,14 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                                     WoolworthsApplication.setValidatedSuburbProducts(
                                         validateLocationResponse?.validatePlace
                                     )
+
+                                    // APP1-1316 : nickname update in fulfillment details object
+
+                                    val fulfillmentDeliveryLocation = Utils.getPreferredDeliveryLocation()
+                                    val nickname =  validateLocationResponse?.validatePlace?.placeDetails?.nickname
+                                    fulfillmentDeliveryLocation.fulfillmentDetails.address?.nickname = nickname
+                                    Utils.savePreferredDeliveryLocation(fulfillmentDeliveryLocation)
+
                                     updateCurrentTab(getDeliveryType()?.deliveryType)
                                     setEventForDeliveryTypeAndBrowsingType()
                                     setDeliveryView()
@@ -517,7 +525,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         //verify if the show dash order is true
         refreshInAppNotificationToast()
 
-        if ((KotlinUtils.isLocationSame == false && KotlinUtils.placeId != null) || WoolworthsApplication.getValidatePlaceDetails() == null) {
+        if (((KotlinUtils.isLocationSame == false || KotlinUtils.isNickNameSame == false) && KotlinUtils.placeId != null) || WoolworthsApplication.getValidatePlaceDetails() == null)  {
             executeValidateSuburb()
         }
         if (Utils.getPreferredDeliveryLocation()?.fulfillmentDetails == null && KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails == null) {
