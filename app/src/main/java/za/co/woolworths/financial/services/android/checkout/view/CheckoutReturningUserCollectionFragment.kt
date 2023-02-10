@@ -739,14 +739,10 @@ class CheckoutReturningUserCollectionFragment :
                     specialInstructionSwitchShimmerFrameLayout?.visibility = View.GONE
                     viewGiftHorizontalSeparator?.visibility = View.GONE
                     instructionTxtShimmerFrameLayout?.visibility = View.GONE
-                    shoppingBagSeparator?.visibility = View.GONE
-                    switchNeedBags?.visibility = View.GONE
-                    txtNeedBags?.visibility = View.GONE
-
-                    checkoutCNCShoppingBagsInfoLayout?.root?.visibility = View.GONE
-
+                    shoppingBagSeparator?.visibility = View.VISIBLE
+                    switchNeedBags?.visibility = View.VISIBLE
+                    txtNeedBags?.visibility = View.VISIBLE
                     viewHorizontalCollectionSeparator?.visibility = View.GONE
-                    shoppingBagsSeparator?.visibility = View.GONE
                     viewHorizontalCollectionBottomSeparator?.visibility = View.GONE
                 }
             }
@@ -772,15 +768,12 @@ class CheckoutReturningUserCollectionFragment :
 
             binding.apply {
                 with(layoutCollectionInstructions) {
-                    txtNeedBags?.visibility = View.GONE
+                    txtNeedBags?.visibility = View.VISIBLE
                     instructionTxtShimmerFrameLayout?.visibility = View.GONE
-                    switchNeedBags?.visibility = View.GONE
+                    switchNeedBags?.visibility = View.VISIBLE
                     specialInstructionSwitchShimmerFrameLayout?.visibility = View.GONE
-                    shoppingBagSeparator?.visibility = View.GONE
+                    shoppingBagSeparator?.visibility = View.VISIBLE
                     viewGiftHorizontalSeparator?.visibility = View.GONE
-
-                    checkoutCNCShoppingBagsInfoLayout?.root?.visibility = View.GONE
-
                     viewHorizontalCollectionSeparator?.visibility = View.GONE
                     viewHorizontalCollectionBottomSeparator?.visibility = View.GONE
                 }
@@ -883,12 +876,12 @@ class CheckoutReturningUserCollectionFragment :
     }
 
     private fun addShoppingBagsRadioButtons() {
-
+        binding.layoutCollectionInstructions.newShoppingBagsLayout.txtNewShoppingBagsSubDesc?.visibility =
+            View.VISIBLE
         val newShoppingBags = AppConfigSingleton.nativeCheckout?.newShoppingBag
-        binding.layoutCollectionInstructions.newShoppingBagsLayout.newShoppingBagsTitle.text =
-            newShoppingBags?.title
-
         binding.layoutCollectionInstructions.newShoppingBagsLayout.txtNewShoppingBagsDesc?.text =
+            newShoppingBags?.title
+        binding.layoutCollectionInstructions.newShoppingBagsLayout.txtNewShoppingBagsSubDesc?.text =
             newShoppingBags?.description
 
         val shoppingBagsAdapter =
