@@ -355,9 +355,10 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     }
 
     private fun addShoppingBagsRadioButtons() {
+        binding.layoutDeliveryInstructions.newShoppingBagsLayout.txtNewShoppingBagsSubDesc.visibility = VISIBLE
         val newShoppingBags = AppConfigSingleton.nativeCheckout?.newShoppingBag
-        binding.layoutDeliveryInstructions.newShoppingBagsLayout.newShoppingBagsTitle.text = newShoppingBags?.title
-        binding.layoutDeliveryInstructions.newShoppingBagsLayout.txtNewShoppingBagsDesc.text = newShoppingBags?.description
+        binding.layoutDeliveryInstructions.newShoppingBagsLayout.txtNewShoppingBagsDesc.text = newShoppingBags?.title
+        binding.layoutDeliveryInstructions.newShoppingBagsLayout.txtNewShoppingBagsSubDesc.text = newShoppingBags?.description
 
         val shoppingBagsAdapter =
             ShoppingBagsRadioGroupAdapter(newShoppingBags?.options, this, selectedShoppingBagType)
