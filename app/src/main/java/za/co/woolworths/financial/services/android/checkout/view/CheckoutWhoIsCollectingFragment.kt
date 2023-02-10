@@ -274,7 +274,7 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(R.
         binding.vehiclesDetailsLayout.myVehicleText?.setOnClickListener(this)
         binding.vehiclesDetailsLayout.taxiText?.setOnClickListener(this)
         if(isComingFromCnc == true && savedAddressResponse != null){
-            val address : Address? = savedAddressResponse?.addresses?.single { it.placesId == placeId }
+            val address : Address? = savedAddressResponse?.addresses?.firstOrNull { it.placesId == placeId }
             binding.whoIsCollectingDetailsLayout.recipientNameEditText?.setText(address?.recipientName)
             binding.whoIsCollectingDetailsLayout.cellphoneNumberEditText.setText(address?.primaryContactNo)
         }
