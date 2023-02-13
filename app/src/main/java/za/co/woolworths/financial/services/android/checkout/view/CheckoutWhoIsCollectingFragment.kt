@@ -25,7 +25,7 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
-import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment
+import za.co.woolworths.financial.services.android.cart.view.CartFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
@@ -274,7 +274,7 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(R.
         binding.vehiclesDetailsLayout.myVehicleText?.setOnClickListener(this)
         binding.vehiclesDetailsLayout.taxiText?.setOnClickListener(this)
         if(isComingFromCnc == true && savedAddressResponse != null){
-            val address : Address? = savedAddressResponse?.addresses?.single { it.placesId == placeId }
+            val address : Address? = savedAddressResponse?.addresses?.firstOrNull { it.placesId == placeId }
             binding.whoIsCollectingDetailsLayout.recipientNameEditText?.setText(address?.recipientName)
             binding.whoIsCollectingDetailsLayout.cellphoneNumberEditText.setText(address?.primaryContactNo)
         }

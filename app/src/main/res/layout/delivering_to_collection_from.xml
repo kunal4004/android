@@ -189,7 +189,7 @@
         <View
             android:id="@+id/packaging_separator"
             style="@style/bottom_line"
-            android:layout_width="@dimen/sixty_dp"
+            android:layout_width="@dimen/fifty_dp"
             android:layout_height="@dimen/two_dp"
             android:layout_marginStart="@dimen/seven_dp"
             android:layout_marginTop="@dimen/eight_dp"
@@ -209,7 +209,7 @@
 
         <View
             android:id="@+id/enroute_seperator"
-            android:layout_width="@dimen/sixty_dp"
+            android:layout_width="@dimen/fifty_dp"
             android:layout_height="@dimen/two_dp"
             android:layout_marginStart="@dimen/seven_dp"
             android:layout_marginTop="@dimen/eight_dp"
@@ -229,7 +229,7 @@
         <View
             android:id="@+id/delivered_seperator"
             style="@style/bottom_line"
-            android:layout_width="@dimen/sixty_dp"
+            android:layout_width="@dimen/fifty_dp"
             android:layout_height="@dimen/two_dp"
             android:layout_marginStart="@dimen/seven_dp"
             android:layout_marginTop="@dimen/eight_dp"
