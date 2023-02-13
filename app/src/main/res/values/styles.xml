@@ -1288,6 +1288,20 @@
         <item name="WTextView_font">medium_bold</item>
     </style>
 
+    <style name="calender_title_text_style">
+        <item name="android:letterSpacing">0.06</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">@dimen/sixteen_dp</item>
+        <item name="WTextView_font">medium_bold</item>
+    </style>
+
+    <style name="calender_details_text_style">
+        <item name="android:letterSpacing">0.06</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">@dimen/sixteen_dp</item>
+        <item name="fontFamily">@font/myriad_pro_regular</item>
+    </style>
+
     <style name="absa_page_title_style" parent="absa_page_title_text_style">
         <item name="android:fontFamily">@font/futura_semi_bold_ttf</item>
         <item name="android:layout_width">0dp</item>
@@ -1748,6 +1762,9 @@
         <item name="android:textColor">@color/black</item>
     </style>
 
+    <style name="futura_medium_666666" parent="futura_medium">
+        <item name="android:textColor">@color/color_666666</item>
+    </style>
 
     <style name="myriad_pro_regular">
         <item name="android:layout_width">0dp</item>
@@ -3064,5 +3081,12 @@
         <item name="android:background">@color/white</item>
         <item name="android:scaleType">fitCenter</item>
         <item name="srcCompat">@drawable/close</item>
+    </style>
+
+    <style name="pargo_info_description_text_style">
+        <item name="android:lineSpacingExtra">1.4dp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">15sp</item>
+        <item name="WTextView_font">myriadpro_regular</item>
     </style>
 </resources>

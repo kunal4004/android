@@ -220,7 +220,7 @@
 
                 <RelativeLayout
                     android:id="@+id/rlQuantitySelector"
-                    android:layout_width="@dimen/thirty_two_dp"
+                    android:layout_width="@dimen/thirty_dp"
                     android:layout_height="@dimen/thirty_two_dp">
 
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
@@ -272,10 +272,12 @@
                 app:layout_constraintStart_toStartOf="@id/cartLowStock">
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    style="@style/futura_semi_bold"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/promotional_text"
-                    android:textColor="@color/color_9D9D9D"
+                    android:textAllCaps="true"
+                    android:textColor="@color/was_price_color"
                     android:textSize="@dimen/ten_sp"
                     app:WTextView_font="medium" />
 
