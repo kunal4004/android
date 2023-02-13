@@ -364,11 +364,10 @@ object OneAppService : RetrofitConfig() {
         )
     }
 
-    fun getSavedAddresses(): Call<SavedAddressResponse> {
-        return mApiInterface.getSavedAddresses(
-            "", "", getSessionToken(),
-            getDeviceIdentityToken()
-        )
+    suspend fun getSavedAddress() : retrofit2.Response<SavedAddressResponse>{
+        return withContext(Dispatchers.IO){
+            mApiInterface.getSavedAddress("","",getSessionToken(), getDeviceIdentityToken())
+        }
     }
 
     fun addAddress(addAddressRequestBody: AddAddressRequestBody): Call<AddAddressResponse> {
@@ -562,8 +561,14 @@ object OneAppService : RetrofitConfig() {
         return mApiInterface.getShoppingCart(getSessionToken(), getDeviceIdentityToken())
     }
 
-    fun getChangeQuantity(changeQuantity: ChangeQuantity?): Call<ShoppingCartResponse> {
-        return mApiInterface.changeQuantityRequest(
+    suspend fun getShoppingCartV2() : retrofit2.Response<ShoppingCartResponse>{
+        return withContext(Dispatchers.IO){
+            mApiInterface.getShoppingCartV2(getSessionToken(), getDeviceIdentityToken())
+        }
+    }
+
+    suspend fun changeProductQuantityRequest(changeQuantity: ChangeQuantity?): retrofit2.Response<ShoppingCartResponse>{
+        return mApiInterface.changeProductQuantityRequest(
             "",
             "",
             getSessionToken(),
@@ -581,7 +586,13 @@ object OneAppService : RetrofitConfig() {
         )
     }
 
-    fun removeAllCartItems(): Call<ShoppingCartResponse> {
+    suspend fun removeSingleCartItem(commerceId: String) : retrofit2.Response<ShoppingCartResponse>{
+        return withContext(Dispatchers.IO){
+            mApiInterface.removeCartItem(getSessionToken(), getDeviceIdentityToken(), commerceId)
+        }
+    }
+
+    suspend fun removeAllCartItems(): retrofit2.Response<ShoppingCartResponse> {
         return mApiInterface.removeAllCartItems(getSessionToken(), getDeviceIdentityToken())
     }
 
@@ -657,14 +668,6 @@ object OneAppService : RetrofitConfig() {
         )
     }
 
-    fun getInventorySku(multipleSku: String): Call<SkuInventoryResponse> {
-        return mApiInterface.getInventorySKU(
-            getSessionToken(),
-            getDeviceIdentityToken(),
-            multipleSku
-        )
-    }
-
     fun getInventorySkuForStore(
         store_id: String,
         multipleSku: String,
@@ -690,15 +693,28 @@ object OneAppService : RetrofitConfig() {
 
     suspend fun fetchInventorySkuForStore(
         store_id: String,
-        multipleSku: String
+        multipleSku: String,
+        isUserBrowsing: Boolean
     ): retrofit2.Response<SkusInventoryForStoreResponse> {
         return withContext(Dispatchers.IO) {
-            mApiInterface.fetchDashInventorySKUForStore(
-                getSessionToken(),
-                getDeviceIdentityToken(),
-                store_id,
-                multipleSku
-            )
+            if ((isUserBrowsing && Delivery.DASH.type == KotlinUtils.browsingDeliveryType?.type) ||
+                (!isUserBrowsing && Delivery.DASH.type == KotlinUtils.getDeliveryType()?.deliveryType)
+            ) {
+                mApiInterface.fetchDashInventorySKUForStore(
+                    getSessionToken(),
+                    getDeviceIdentityToken(),
+                    store_id,
+                    multipleSku
+                )
+            }
+            else {
+                mApiInterface.fetchInventorySKUForStore(
+                    getSessionToken(),
+                    getDeviceIdentityToken(),
+                    store_id,
+                    multipleSku
+                )
+            }
         }
     }
 
@@ -711,14 +727,6 @@ object OneAppService : RetrofitConfig() {
             getStatement.docId,
             getStatement.productOfferingId,
             getStatement.docDesc
-        )
-    }
-
-    fun postCheckoutSuccess(checkoutSuccess: CheckoutSuccess): Call<Void> {
-        return mApiInterface.postCheckoutSuccess(
-            getSessionToken(),
-            getDeviceIdentityToken(),
-            checkoutSuccess
         )
     }
 
@@ -971,17 +979,17 @@ object OneAppService : RetrofitConfig() {
         )
     }
 
-    fun removePromoCode(couponClaimCode: CouponClaimCode): Call<ShoppingCartResponse> {
+    suspend fun removePromoCode(couponClaimCode: CouponClaimCode): retrofit2.Response<ShoppingCartResponse> {
         return mApiInterface.removePromoCode(
             "", "", getSessionToken(),
             getDeviceIdentityToken(), couponClaimCode
         )
     }
 
-    fun queryServicePayURemovePaymentMethod(paymenToken: String): Call<DeleteResponse> {
+    fun queryServicePayURemovePaymentMethod(paymentToken: String): Call<DeleteResponse> {
         return mApiInterface.payURemovePaymentMethod(
             "", "", getSessionToken(),
-            getDeviceIdentityToken(), paymenToken
+            getDeviceIdentityToken(), paymentToken
         )
     }
 

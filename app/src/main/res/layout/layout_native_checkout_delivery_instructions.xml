@@ -140,25 +140,6 @@
         android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@id/viewGiftHorizontalSeparator" />
 
-    <include
-        android:id="@+id/checkoutCNCShoppingBagsInfoLayout"
-        layout="@layout/layout_cnc_shopping_bags"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/eight_dp"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/viewHorizontalCollectionSeparator" />
-
-    <View
-        android:id="@+id/shoppingBagsSeparator"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/eight_dp"
-        android:layout_marginTop="@dimen/twenty_four_dp"
-        android:background="@color/color_F3F3F3"
-        android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@id/checkoutCNCShoppingBagsInfoLayout" />
 
     <include
         android:id="@+id/checkoutCollectionDetailsInfoLayout"
@@ -169,7 +150,7 @@
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/shoppingBagsSeparator" />
+        app:layout_constraintTop_toBottomOf="@id/viewHorizontalCollectionSeparator" />
 
     <View
         android:id="@+id/viewHorizontalCollectionBottomSeparator"
