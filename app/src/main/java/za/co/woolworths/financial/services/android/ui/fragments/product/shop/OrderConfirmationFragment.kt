@@ -216,25 +216,17 @@ class OrderConfirmationFragment :
                     binding.deliveryCollectionDetailsConstraintLayout.apply {
                         deliveryTextView.text = it.getText(R.string.delivery_semicolon)
 
-                        val nickNameWithAddress = SpannableStringBuilder()
-
-                        val nickName =
-                            SpannableString(
-                                response?.orderSummary?.fulfillmentDetails?.address?.nickname + "  " + context?.getString(
-                                    R.string.bullet
-                                ) + "  "
-                            )
-                        if (response?.orderSummary?.fulfillmentDetails?.address?.nickname?.isNullOrEmpty() == false) {
-                            nickNameWithAddress.append(nickName)
-                        }
-
                         val address =  response?.orderSummary?.fulfillmentDetails?.address?.address1?.let {
                             convertToTitleCase(it)
                         } ?: ""
 
-                        nickNameWithAddress.append(address)
+                        val formattedNickNameWithAddress = KotlinUtils.getFormattedNickName(
+                            response?.orderSummary?.fulfillmentDetails?.address?.nickname, address, activity
+                        )
 
-                        optionLocation.text = nickNameWithAddress
+                        formattedNickNameWithAddress.append(address)
+
+                        optionLocation.text = formattedNickNameWithAddress
 
                         continueBrowsingStandardLinearLayout.setOnClickListener {
                             requireActivity()?.setResult(CheckOutFragment.REQUEST_CHECKOUT_ON_CONTINUE_SHOPPING)
@@ -258,25 +250,19 @@ class OrderConfirmationFragment :
                             )
                         optionTitle.text = it.getText(R.string.dashing_to)
 
-                        val nickNameWithAddress = SpannableStringBuilder()
-
-                        val nickName =
-                            SpannableString(
-                                response?.orderSummary?.fulfillmentDetails?.address?.nickname + "  " + context?.getString(
-                                    R.string.bullet
-                                ) + "  "
-                            )
-                        if (response?.orderSummary?.fulfillmentDetails?.address?.nickname?.isNullOrEmpty() == false) {
-                            nickNameWithAddress.append(nickName)
-                        }
-
                         val address =  response?.orderSummary?.fulfillmentDetails?.address?.address1?.let {
                             convertToTitleCase(it)
                         } ?: ""
 
-                        nickNameWithAddress.append(address)
+                        val formattedNickNameWithAddress = KotlinUtils.getFormattedNickName(
+                            response?.orderSummary?.fulfillmentDetails?.address?.nickname,
+                            address,
+                            activity
+                        )
 
-                        optionLocationTitle.text = nickNameWithAddress
+                        formattedNickNameWithAddress.append(address)
+
+                        optionLocationTitle.text = formattedNickNameWithAddress
 
                         dashFoodDeliveryDateTimeTextView?.text = applyBoldBeforeComma(
                             response

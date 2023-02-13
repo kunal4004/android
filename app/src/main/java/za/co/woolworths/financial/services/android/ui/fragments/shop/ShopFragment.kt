@@ -23,7 +23,6 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.viewpager.widget.ViewPager
 import com.awfs.coordination.R
@@ -525,7 +524,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         //verify if the show dash order is true
         refreshInAppNotificationToast()
 
-        if (((KotlinUtils.isLocationSame == false || KotlinUtils.isNickNameSame == false) && KotlinUtils.placeId != null) || WoolworthsApplication.getValidatePlaceDetails() == null)  {
+        if (((KotlinUtils.isLocationSame == false || KotlinUtils.isNickNameChanged == true) && KotlinUtils.placeId != null) || WoolworthsApplication.getValidatePlaceDetails() == null)  {
             executeValidateSuburb()
         }
         if (Utils.getPreferredDeliveryLocation()?.fulfillmentDetails == null && KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails == null) {

@@ -5,11 +5,7 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
-import android.text.SpannableString
-import android.text.SpannableStringBuilder
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
@@ -29,7 +25,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.checkout.service.network.Address
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity
@@ -842,7 +837,7 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
 
     private fun getDeliveryDetailsFromValidateLocation(placeId: String, isNewLocation: Boolean) {
         val oldPlaceId = validateLocationResponse?.validatePlace?.placeDetails?.placeId
-        if (placeId.isNullOrEmpty() || (oldPlaceId != null && (oldPlaceId == placeId && KotlinUtils.isNickNameSame == true))) {
+        if (placeId.isNullOrEmpty() || (oldPlaceId != null && (oldPlaceId == placeId && KotlinUtils.isNickNameChanged == false))) {
             moveToTab(deliveryType)
             return
         }
@@ -861,7 +856,6 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
                                 mStoreId =
                                     getNearestStoreId(validateLocationResponse?.validatePlace?.stores)
                             }
-
 
                             KotlinUtils.placeId = validateLocationResponse?.validatePlace?.placeDetails?.placeId
                             val nickname =  validateLocationResponse?.validatePlace?.placeDetails?.nickname
