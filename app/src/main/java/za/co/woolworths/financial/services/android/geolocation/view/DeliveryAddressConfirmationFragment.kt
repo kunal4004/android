@@ -890,21 +890,12 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
 
     private fun GeoLocationDeliveryAddressBinding.updateDeliveryDetails() {
 
-        val nickNameWithAddress = SpannableStringBuilder()
-        var nickName =
-            SpannableString(
-                validateLocationResponse?.validatePlace?.placeDetails?.nickname + "  " + context?.getString(
-                    R.string.bullet
-                ) + "  "
-            )
         val address =  KotlinUtils.capitaliseFirstLetter(validateLocationResponse?.validatePlace?.placeDetails?.address1 ?: context?.getString(R.string.empty))
-        validateLocationResponse?.validatePlace?.placeDetails?.let {
-            if (it.nickname.isNullOrEmpty() == true || it.nickname?.equals(address) == true) {
-                nickName = SpannableString(context?.getString(R.string.empty))
-            }
-        }
-        nickNameWithAddress.append(nickName).append(address)
-        geoDeliveryText?.text = nickNameWithAddress
+
+        val formmmatedNickName = KotlinUtils.getFormattedNickName(validateLocationResponse?.validatePlace?.placeDetails?.nickname,
+            address, activity)
+        formmmatedNickName.append(address)
+        geoDeliveryText?.text = formmmatedNickName
         var earliestFoodDate =
             validateLocationResponse?.validatePlace?.firstAvailableFoodDeliveryDate
         if (earliestFoodDate.isNullOrEmpty())
@@ -932,26 +923,15 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
     }
 
     private fun GeoLocationDeliveryAddressBinding.updateDashDetails() {
-        val nickNameWithAddress = SpannableStringBuilder()
-        var nickName =
-            SpannableString(
-                validateLocationResponse?.validatePlace?.placeDetails?.nickname + "  " + context?.getString(
-                    R.string.bullet
-                ) + "  "
-            )
 
         val address = KotlinUtils.capitaliseFirstLetter(validateLocationResponse?.validatePlace?.placeDetails?.address1
             ?: getString(R.string.empty))
+        val formmmatedNickName = KotlinUtils.getFormattedNickName(validateLocationResponse?.validatePlace?.placeDetails?.nickname,
+            address, activity)
 
-        validateLocationResponse?.validatePlace?.placeDetails?.let {
-            if (it.nickname.isNullOrEmpty() == true || it.nickname?.equals(address) == true) {
-                nickName = SpannableString(context?.getString(R.string.empty))
-            }
-        }
+        formmmatedNickName.append(address)
 
-        nickNameWithAddress.append(nickName).append(address)
-
-        geoDeliveryText.text = nickNameWithAddress
+        geoDeliveryText.text = formmmatedNickName
 
         var earliestDashDate =
             validateLocationResponse?.validatePlace?.onDemand?.firstAvailableFoodDeliveryTime

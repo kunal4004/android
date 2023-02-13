@@ -837,7 +837,8 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
 
                 // Extract default address display name
 
-                    savedAddresses.addresses?.forEach list@{ address ->
+                run list@{
+                    savedAddresses.addresses?.forEach { address ->
                         if (savedAddresses.defaultAddressNickname.equals(address.nickname)) {
                             this.defaultAddress = address
                             suburbId = address.suburbId ?: ""
@@ -851,11 +852,11 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
                                 StyleSpan(typeface1!!.style),
                                 0, addressName.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                             )
-
                             deliveringToAddress.append(addressName)
                             return@list
                         }
                     }
+                }
 
                 if (savedAddresses.defaultAddressNickname.isNullOrEmpty()) {
                     binding.checkoutCollectingFromLayout?.root?.visibility = GONE
