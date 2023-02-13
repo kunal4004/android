@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.activities.webview.data
 
 import za.co.woolworths.financial.services.android.models.dto.app_config.account_options.FicaRefresh
 import za.co.woolworths.financial.services.android.util.ChromeClient
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 
 data class WebViewData(
     var mExternalLink: String,
@@ -14,6 +15,6 @@ data class WebViewData(
     var chromeClient: ChromeClient?,
     var ficaCanceled: Boolean = false,
     var isPetInsurance: Boolean = false,
-    var fica: FicaRefresh? = null,
+    var fica: FicaRefresh? = AppConfigSingleton.accountOptions?.ficaRefresh,
     var mustRedirectBlankTargetLinkToExternal: Boolean = false
 )

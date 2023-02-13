@@ -123,18 +123,17 @@ class WebViewClientHandler @Inject constructor():IWebViewClientHandler {
 
     fun ficaHandling(url: String?) {
         webViewData?.apply {
-            if (AppConfigSingleton.accountOptions != null && url != null && collectionsExitUrl != null) {
-                fica = AppConfigSingleton.accountOptions!!.ficaRefresh
-                if (url.contains(collectionsExitUrl!!)) {
-                    _webViewActions.value = WebViewActions.DestroyWebView
-                    val parameters = getQueryString(url)
-                    if (parameters.containsKey("IsCompleted") && parameters["IsCompleted"] == "false") {
-                        ficaCanceled = true
+            url?.let {
+                collectionsExitUrl?.apply {
+                    if (it.contains(this)) {
+                        _webViewActions.value = WebViewActions.DestroyWebView
+                        val parameters = getQueryString(url)
+                        if (parameters.containsKey("IsCompleted") && parameters["IsCompleted"] == "false") {
+                            ficaCanceled = true
+                        }
+                        _webViewActions.value = WebViewActions.FinishActivity
                     }
-                    _webViewActions.value = WebViewActions.FinishActivity
                 }
-            } else {
-                fica = null
             }
         }
     }

@@ -205,8 +205,10 @@ class WInternalWebPageActivity : BindingBaseActivity<InternalWebviewActivityBind
     }
 
     fun finishActivity() {
-        if (!viewModel.webViewClientHandler.webViewData?.ficaCanceled!!) {
-            setResult(RESULT_OK)
+        viewModel.webViewClientHandler.webViewData?.apply {
+            if (!ficaCanceled) {
+                setResult(RESULT_OK)
+            }
         }
         finish()
         overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
