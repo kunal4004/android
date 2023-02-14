@@ -116,7 +116,7 @@
         android:layout_marginTop="@dimen/thirteen_dp"
         android:alpha="0.5"
         android:gravity="center"
-        android:text="@string/cancel"
+        android:text="@string/cancel_underline"
         android:textColor="@color/black"
         android:textSize="@dimen/sixteen_sp"
         app:WTextView_font="myriadpro_regular"
