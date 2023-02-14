@@ -11,6 +11,7 @@ import android.view.View
 import android.view.View.*
 import android.widget.CompoundButton
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResultListener
@@ -978,6 +979,8 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                         placesId,
                         false,
                         true,
+                        false,
+                        false,
                         true,
                         savedAddress,
                         defaultAddress,
@@ -1137,6 +1140,10 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                     }
                 }
                 // scroll to other slot selection layout
+                binding.checkoutHowWouldYouDeliveredLayout?.selectDeliveryTimeSlotSubTitle?.setTextColor( ContextCompat.getColor(
+                    requireContext(),
+                    R.color.color_D0021B
+                ))
                 binding.deliverySummaryScrollView?.smoothScrollTo(
                     0,
                     binding.checkoutHowWouldYouDeliveredLayout?.root?.top ?: 0
@@ -1165,6 +1172,10 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                         }
                         else -> {
                             if (TextUtils.isEmpty(selectedOtherSlot?.slotId)) {
+                                binding.checkoutHowWouldYouDeliveredLayout?.selectDeliveryTimeSlotSubTitle?.setTextColor( ContextCompat.getColor(
+                                    requireContext(),
+                                    R.color.color_D0021B
+                                ))
                                 // scroll to other slot selection layout
                                 binding.deliverySummaryScrollView?.smoothScrollTo(
                                     0,
@@ -1189,6 +1200,10 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                         binding.checkoutTimeSlotSelectionLayout.txtSelectDeliveryTimeSlotFoodError?.visibility = VISIBLE
                     } else if (TextUtils.isEmpty(selectedOtherSlot?.slotId)) {
                         // scroll to other slot selection layout
+                        binding.checkoutHowWouldYouDeliveredLayout?.selectDeliveryTimeSlotSubTitle?.setTextColor( ContextCompat.getColor(
+                            requireContext(),
+                            R.color.color_D0021B
+                        ))
                         binding.deliverySummaryScrollView?.smoothScrollTo(
                             0,
                             binding.checkoutHowWouldYouDeliveredLayout?.root?.top ?: 0
@@ -1196,6 +1211,19 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                     }
                 }
             }
+            //Default
+            otherType == DEFAULT -> {
+                // scroll to other slot selection layout
+                binding.checkoutHowWouldYouDeliveredLayout?.selectDeliveryTimeSlotSubTitle?.setTextColor( ContextCompat.getColor(
+                    requireContext(),
+                    R.color.color_D0021B
+                ))
+                binding.deliverySummaryScrollView?.smoothScrollTo(
+                    0,
+                    binding.checkoutHowWouldYouDeliveredLayout?.root?.top ?: 0
+                )
+            }
+
             else -> return true
         }
         return true
@@ -1322,6 +1350,11 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     ) {
         oddSelectedPosition = position
         selectedOpenDayDeliverySlot = openDayDeliverySlot
+
+        binding.checkoutHowWouldYouDeliveredLayout?.selectDeliveryTimeSlotSubTitle?.setTextColor( ContextCompat.getColor(
+            requireContext(),
+            R.color.checkout_delivering_title
+        ))
 
         Utils.triggerFireBaseEvents(
             FirebaseManagerAnalyticsProperties.CHECKOUT_DELIVERY_OPTION_.plus(openDayDeliverySlot.deliveryType),

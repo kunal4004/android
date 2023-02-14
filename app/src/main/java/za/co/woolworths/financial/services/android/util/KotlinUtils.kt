@@ -24,6 +24,7 @@ import android.text.style.*
 import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.RotateAnimation
@@ -39,6 +40,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
+import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import com.google.common.reflect.TypeToken
 import com.google.firebase.installations.FirebaseInstallations
@@ -56,6 +58,7 @@ import za.co.woolworths.financial.services.android.geolocation.model.request.Con
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
 import za.co.woolworths.financial.services.android.geolocation.network.model.Store
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidatePlace
+import za.co.woolworths.financial.services.android.geolocation.view.FBHInfoBottomSheetDialog
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton.accountOptions
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton.liquor
@@ -110,6 +113,9 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.CoroutineContext
 import kotlin.math.roundToInt
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_MIXED_BASKET
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_FBH_ONLY
+
 
 class KotlinUtils {
     companion object {
@@ -434,6 +440,8 @@ class KotlinUtils {
             placeId: String? = null,
             isFromDashTab: Boolean = false,
             isComingFromCheckout: Boolean = false,
+            isMixedBasket: Boolean = false,
+            isFBHOnly: Boolean = false,
             isComingFromSlotSelection: Boolean = false,
             savedAddressResponse: SavedAddressResponse? = null,
             defaultAddress: Address? = null,
@@ -454,6 +462,8 @@ class KotlinUtils {
                 mBundle.putBoolean(IS_FROM_DASH_TAB, isFromDashTab)
                 mBundle.putBoolean(IS_COMING_FROM_CHECKOUT, isComingFromCheckout)
                 mBundle.putBoolean(IS_COMING_FROM_CNC_SELETION, isComingFromCheckout)
+                mBundle.putBoolean(IS_MIXED_BASKET, isMixedBasket)
+                mBundle.putBoolean(IS_FBH_ONLY, isFBHOnly)
                 mBundle.putBoolean(IS_COMING_FROM_SLOT_SELECTION, isComingFromSlotSelection)
                 mBundle.putSerializable(SAVED_ADDRESS_RESPONSE, savedAddressResponse)
                 mBundle.putSerializable(DEFAULT_ADDRESS, defaultAddress)
@@ -479,7 +489,7 @@ class KotlinUtils {
                         tvDeliveringTo?.text =
                             context?.resources?.getString(R.string.collecting_from)
                         tvDeliveryLocation?.text =
-                            capitaliseFirstLetter(context?.resources?.getString(R.string.store) + storeName)
+                            capitaliseFirstLetter(storeName)
 
                         tvDeliveryLocation?.visibility = View.VISIBLE
                         deliverLocationIcon?.setImageResource(R.drawable.ic_collection_circle)
@@ -560,7 +570,7 @@ class KotlinUtils {
                     Delivery.CNC -> {
                         tvDeliveringTo?.text = context?.resources?.getString(R.string.click_collect)
                         tvDeliveryLocation?.text =
-                            capitaliseFirstLetter(context?.resources?.getString(R.string.store) + storeName)
+                            capitaliseFirstLetter(storeName)
 
                         tvDeliveryLocation?.visibility = View.VISIBLE
                         deliverLocationIcon?.setImageResource(R.drawable.ic_collection_circle)
@@ -1561,6 +1571,17 @@ fun Fragment.setDialogPadding(dialog: Dialog?) {
         )
     }
 }
+fun RecyclerView.runWhenReady(action: () -> Unit) {
+    val globalLayoutListener = object: ViewTreeObserver.OnGlobalLayoutListener {
+        override fun onGlobalLayout() {
+            action()
+            viewTreeObserver.removeOnGlobalLayoutListener(this)
+        }
+    }
+    viewTreeObserver.addOnGlobalLayoutListener(globalLayoutListener)
+}
+
+
 
 
 

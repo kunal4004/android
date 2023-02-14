@@ -44,6 +44,7 @@ import za.co.woolworths.financial.services.android.geolocation.network.model.Sto
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.UnSellableItemsLiveData
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.*
@@ -343,6 +344,9 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
                 )
                 mStoreName = it.storeName.toString()
                 mStoreId = it.storeId.toString()
+                if(deliveryType == Delivery.CNC.name){
+                    showCollectionTitle(it)
+                }
             }
         }
 
@@ -685,11 +689,8 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
         deliveryBagIcon.setImageDrawable(ContextCompat.getDrawable(requireActivity(),
             R.drawable.ic_cnc_set_location))
         changeFulfillmentTitleTextView.text = bindString(R.string.click_and_collect)
-        val collectionQuantity =
-            validateLocationResponse?.validatePlace?.stores?.getOrNull(0)?.quantityLimit?.foodMaximumQuantity
-        changeFulfillmentSubTitleTextView.text =
-            if (collectionQuantity != null) bindString(R.string.click_and_collect_title_text,
-                collectionQuantity.toString()) else bindString(R.string.empty)
+        val selectedStore = validateLocationResponse?.validatePlace?.stores?.firstOrNull { it.storeId == mStoreId }
+        showCollectionTitle(selectedStore)
     }
 
     private fun GeoLocationDeliveryAddressBinding.showDashTabView() {
@@ -748,11 +749,8 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
         deliveryBagIcon.setImageDrawable(ContextCompat.getDrawable(requireActivity(),
             R.drawable.ic_cnc_set_location))
         changeFulfillmentTitleTextView.text = bindString(R.string.click_and_collect)
-        val collectionQuantity =
-            validateLocationResponse?.validatePlace?.stores?.getOrNull(0)?.quantityLimit?.foodMaximumQuantity
-        changeFulfillmentSubTitleTextView.text =
-            if (collectionQuantity != null) bindString(R.string.click_and_collect_title_text,
-                collectionQuantity.toString()) else bindString(R.string.empty)
+        val selectedStore = validateLocationResponse?.validatePlace?.stores?.firstOrNull { it.storeId == mStoreId }
+        showCollectionTitle(selectedStore)
         validateLocationResponse?.validatePlace?.apply {
             if ((this.stores?.isEmpty() == true || this.stores?.getOrNull(0)?.deliverable == false) && progressBar?.visibility == View.GONE) {
                 // Show no store available Bottom Dialog.
@@ -1114,6 +1112,34 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
 
     override fun tryAgain() {
         binding.initView()
+    }
+
+    private fun GeoLocationDeliveryAddressBinding.showCollectionTitle(
+        selectedStore: Store?
+    ) {
+        selectedStore?.apply {
+            val collectionQuantity =
+                quantityLimit?.foodMaximumQuantity
+            val collectionFeeText = AppConfigSingleton.clickAndCollect?.collectionFeeDescription
+            if (locationId?.isNotEmpty() == true) {
+                changeFulfillmentSubTitleTextView.text =
+                    if (collectionFeeText?.isNotEmpty() == true) bindString(
+                        R.string.only_fashion_beauty_and_home_products_available, collectionFeeText
+                    ) else bindString(R.string.empty)
+            } else if (!firstAvailableFoodDeliveryDate.isNullOrEmpty() && firstAvailableOtherDeliveryDate.isNullOrEmpty()) {
+                changeFulfillmentSubTitleTextView.text =
+                    if (collectionQuantity != null) bindString(
+                        R.string.click_and_collect_title_text,
+                        collectionQuantity.toString()
+                    ) else bindString(R.string.empty)
+            } else {
+                changeFulfillmentSubTitleTextView.text =
+                    if (collectionQuantity != null) bindString(
+                        R.string.food_fashion_beauty_and_home_products_available,
+                        collectionFeeText.toString()
+                    ) else bindString(R.string.empty)
+            }
+        }
     }
 }
 
