@@ -1188,6 +1188,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                 store?.apply {
                     val collectionQuantity =
                         quantityLimit?.foodMaximumQuantity
+                    blackToolTipLayout.deliveryIconLayout?.visibility = View.VISIBLE
                     //checking fbh products condition
                     if (locationId?.isNotEmpty() == true && firstAvailableFoodDeliveryDate.isNullOrEmpty()) {
                         enableOrDisableFashionItems(true)
