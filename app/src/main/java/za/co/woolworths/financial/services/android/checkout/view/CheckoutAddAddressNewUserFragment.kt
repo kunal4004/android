@@ -1158,11 +1158,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                                                 Utils.toJson(savedAddressResponse)
                                             )
                                         }
-                                    if (oldNickName?.equals(response?.address?.nickname) == true) {
-                                        KotlinUtils.isNickNameChanged = true
-                                    } else  {
-                                        KotlinUtils.isNickNameChanged = false
-                                    }
+                                    KotlinUtils.isNickNameChanged = oldNickName?.equals(response?.address?.nickname) == true
                                     hideKeyboardIfVisible(activity)
                                     if (navController?.navigateUp() == false) {
                                         if (activity is CheckoutActivity) {

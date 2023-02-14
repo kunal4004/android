@@ -138,7 +138,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/ten_dp"
                         android:layout_marginTop="@dimen/two_dp"
-                        android:layout_marginEnd="16dp"
+                        android:layout_marginEnd="@dimen/sixteen_dp"
                         android:fontFamily="@font/myriad_pro_semi_bold"
                         android:lineHeight="@dimen/sixteen_dp"
                         android:ellipsize="end"
