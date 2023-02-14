@@ -1189,25 +1189,32 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                 if (store?.firstAvailableFoodDeliveryDate.isNullOrEmpty() ) {
                     enableOrDisableFashionItems(true)
                     enableOrDisableFoodItems(false)
+                    blackToolTipLayout.fashionItemTitle?.visibility = View.GONE
                     blackToolTipLayout.fashionItemDateText?.text = store?.firstAvailableOtherDeliveryDate
                     blackToolTipLayout.productAvailableText?.text =
                         context?.getString(R.string.all_fashion_beauty_home_avlbl)
+                    blackToolTipLayout.deliveryFeeText?.text = AppConfigSingleton.clickAndCollect?.collectionFeeDescription
                 }
                 //food products checking conditions
-              else  if (store?.firstAvailableOtherDeliveryDate.isNullOrEmpty() ) {
+              else  if (store?.firstAvailableOtherDeliveryDate.isNullOrEmpty() && !store?.firstAvailableFoodDeliveryDate.isNullOrEmpty() ) {
                     enableOrDisableFashionItems(false)
                     enableOrDisableFoodItems(true)
+                    blackToolTipLayout.foodItemTitle?.visibility = View.GONE
                     if (!store?.firstAvailableFoodDeliveryDate.isNullOrEmpty()) {
                         blackToolTipLayout.foodItemDateText?.text =
                             store?.firstAvailableFoodDeliveryDate
                     }
                     blackToolTipLayout.productAvailableText?.text =
                        context?.getString(R.string.all_food_items_avlbl)
+                    blackToolTipLayout.deliveryFeeText?.text =
+                        context?.getString(R.string.dash_free_collection)
                 }
                 else{
                     //mixed basket
                     enableOrDisableFashionItems(true)
                     enableOrDisableFoodItems(true)
+                    blackToolTipLayout.fashionItemTitle?.visibility = View.VISIBLE
+                    blackToolTipLayout.foodItemTitle?.visibility = View.VISIBLE
                     blackToolTipLayout.fashionItemDateText?.text =
                         store?.firstAvailableOtherDeliveryDate
                     if (!store?.firstAvailableFoodDeliveryDate.isNullOrEmpty()) {
@@ -1215,12 +1222,11 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                             store?.firstAvailableFoodDeliveryDate
                     }
                     blackToolTipLayout.productAvailableText?.text =
-                        context?.getString(R.string.all_products_available)
+                        context?.getString(R.string.food_fashion_beauty_and_home_products_available_tool_tip)
+                    blackToolTipLayout.deliveryFeeText?.text = AppConfigSingleton.clickAndCollect?.collectionFeeDescription
                 }
                 blackToolTipLayout.cartIcon?.setImageResource(R.drawable.icon_cart_white)
                 blackToolTipLayout.deliveryIcon?.setImageResource(R.drawable.white_shopping_bag_icon)
-                blackToolTipLayout.deliveryFeeText?.text =
-                    context?.getString(R.string.dash_free_collection)
                 blackToolTipLayout.bubbleLayout?.setArrowDirection(ArrowDirection.TOP_CENTER)
             }
         }

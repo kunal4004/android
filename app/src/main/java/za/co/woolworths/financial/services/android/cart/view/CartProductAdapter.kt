@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.adapters
+package za.co.woolworths.financial.services.android.cart.view
 
 import android.animation.ObjectAnimator
 import android.app.Activity
@@ -19,6 +19,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import com.daimajia.swipe.SwipeLayout
 import com.daimajia.swipe.adapters.RecyclerSwipeAdapter
+import za.co.woolworths.financial.services.android.cart.service.network.CartItemGroup
+import za.co.woolworths.financial.services.android.cart.viewmodel.CartUtils.Companion.getAppliedVouchersCount
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton.liquor
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton.lowStock
@@ -28,7 +30,6 @@ import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_
 import za.co.woolworths.financial.services.android.models.service.event.ProductState
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList.Companion.openShoppingList
 import za.co.woolworths.financial.services.android.ui.views.WTextView
-import za.co.woolworths.financial.services.android.util.CartUtils.Companion.getAppliedVouchersCount
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.ImageManager.Companion.setPicture
@@ -168,8 +169,11 @@ class CartProductAdapter(
                         commerceItem.getPriceInfo().discountedAmount))
                     productHolder.llPromotionalText.visibility = VISIBLE
                     mContext?.let {
+                        productHolder.promotionalText.setTextColor(
+                            ContextCompat.getColor(it, R.color.promotional_text_red)
+                        )
                         productHolder.price.setTextColor(ContextCompat.getColor(it,
-                            R.color.promotional_text_red))
+                            R.color.black))
                     }
                 } else {
                     productHolder.llPromotionalText.visibility = GONE
@@ -594,7 +598,8 @@ class CartProductAdapter(
         if (!cartItems.isNullOrEmpty()) {
             for (entry in cartItems!!) {
                 if (currentPosition == position) {
-                    return CartCommerceItemRow(CartRowType.HEADER,
+                    return CartCommerceItemRow(
+                        CartRowType.HEADER,
                         entry.type,
                         null,
                         entry.getCommerceItems())
@@ -610,7 +615,8 @@ class CartProductAdapter(
                         CartRowType.GIFT,
                         entry.type,
                         productCollection[position - currentPosition],
-                        null) else CartCommerceItemRow(CartRowType.PRODUCT,
+                        null) else CartCommerceItemRow(
+                        CartRowType.PRODUCT,
                         entry.type,
                         productCollection[position - currentPosition],
                         null)
