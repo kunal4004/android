@@ -19,4 +19,5 @@ public class SkusInventoryForStoreResponse {
 	@SerializedName("httpCode")
 	@Expose
 	public Integer httpCode;
+	public Exception exception;
 }
