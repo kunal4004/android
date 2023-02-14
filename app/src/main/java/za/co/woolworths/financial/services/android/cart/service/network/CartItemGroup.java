@@ -1,6 +1,8 @@
-package za.co.woolworths.financial.services.android.models.dto;
+package za.co.woolworths.financial.services.android.cart.service.network;
 
 import java.util.ArrayList;
+
+import za.co.woolworths.financial.services.android.models.dto.CommerceItem;
 
 /**
  * Created by W7099877 on 2018/02/08.

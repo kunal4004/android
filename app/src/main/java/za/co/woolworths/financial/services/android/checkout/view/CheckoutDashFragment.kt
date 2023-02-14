@@ -468,7 +468,7 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
                                 }
 
                                 isItemLimitExceeded =
-                                    (response.orderSummary?.totalItemsCount ?: -1) > maxItemLimit
+                                    response.orderSummary?.fulfillmentDetails?.allowsCheckout == false
                                 if(isItemLimitExceeded) {
                                     showMaxItemView()
                                 }
@@ -1045,6 +1045,8 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
                     placesId,
                     false,
                     true,
+                    false,
+                    false,
                     true,
                     savedAddress,
                     defaultAddress,
