@@ -49,5 +49,7 @@ data class OrderSummary(
     var totalOrderCount: Double = 0.0,
     var driverTrackingURL : String? = "",
     var hasMinimumBasketAmount: Boolean = false,
-    var minimumBasketAmount: Double = 0.0
+    var minimumBasketAmount: Double = 0.0,
+    var cashVoucherApplied: Double = 0.0
+
 ) : Parcelable

@@ -35,6 +35,7 @@ public class Data {
 
 	public ProductCountMap productCountMap;
 	public Boolean liquorOrder;
+	public Boolean blackCardHolder;
 	public String noLiquorImageUrl;
 
 }
