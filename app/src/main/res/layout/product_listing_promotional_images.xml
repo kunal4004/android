@@ -59,4 +59,14 @@
         android:id="@+id/imVitality"
         style="@style/promotionLayoutStyle" />
 
+    <ImageView
+        android:id="@+id/imageWList"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/sixteen_dp"
+        android:layout_marginBottom="@dimen/four_dp"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/plp_w_list"
+        android:minHeight="@dimen/sixteen_dp"
+        android:scaleType="fitStart" />
+
 </androidx.appcompat.widget.LinearLayoutCompat>
