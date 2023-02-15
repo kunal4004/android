@@ -155,7 +155,7 @@ class RecommendationFragment :
         productDetails.externalImageRefV2 = productList.externalImageRefV2
         productDetails.productName = productList.productName
         productDetails.productId = productList.productId
-        productDetails.sku = "6009223457053"
+        productDetails.sku = productList.sku
         openProductDetailFragment("", productDetails)
     }
 
