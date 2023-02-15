@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.fragments.product.shop
+package za.co.woolworths.financial.services.android.cart.view
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -14,17 +14,22 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.setFragmentResultListener
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentCartBinding
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.gson.Gson
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import org.json.JSONException
-import org.json.JSONObject
-import retrofit2.Call
+import za.co.woolworths.financial.services.android.cart.service.network.CartItemGroup
+import za.co.woolworths.financial.services.android.cart.service.network.CartResponse
+import za.co.woolworths.financial.services.android.cart.viewmodel.CartUtils.Companion.filterCommerceItemFromCartResponse
+import za.co.woolworths.financial.services.android.cart.viewmodel.CartUtils.Companion.getAppliedVouchersCount
+import za.co.woolworths.financial.services.android.cart.viewmodel.CartUtils.Companion.updateItemLimitsBanner
+import za.co.woolworths.financial.services.android.cart.viewmodel.CartViewModel
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment
@@ -44,21 +49,19 @@ import za.co.woolworths.financial.services.android.models.dto.item_limits.Produc
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.CouponClaimCode
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.VoucherDetails
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
-import za.co.woolworths.financial.services.android.models.network.OneAppService.getChangeQuantity
-import za.co.woolworths.financial.services.android.models.network.OneAppService.getInventorySkuForStore
-import za.co.woolworths.financial.services.android.models.network.OneAppService.getSavedAddresses
-import za.co.woolworths.financial.services.android.models.network.OneAppService.getShoppingCart
-import za.co.woolworths.financial.services.android.models.network.OneAppService.removeAllCartItems
 import za.co.woolworths.financial.services.android.models.network.OneAppService.removeCartItem
-import za.co.woolworths.financial.services.android.models.network.OneAppService.removePromoCode
+import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.models.service.event.CartState
 import za.co.woolworths.financial.services.android.models.service.event.ProductState
-import za.co.woolworths.financial.services.android.ui.activities.*
+import za.co.woolworths.financial.services.android.ui.activities.CartCheckoutActivity
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
+import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
+import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator
 import za.co.woolworths.financial.services.android.ui.activities.online_voucher_redemption.AvailableVouchersToRedeemInCart
-import za.co.woolworths.financial.services.android.ui.adapters.CartProductAdapter
 import za.co.woolworths.financial.services.android.ui.fragments.cart.GiftWithPurchaseDialogDetailFragment
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.RemoveProductsFromCartDialogFragment.Companion.newInstance
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.RemoveProductsFromCartDialogFragment.IRemoveProductsFromCartDialog
 import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
@@ -68,9 +71,10 @@ import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseVie
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView.IWalkthroughActionListener
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ActionSheetDialogFragment
 import za.co.woolworths.financial.services.android.util.*
-import za.co.woolworths.financial.services.android.util.CartUtils.Companion.filterCommerceItemFromCartResponse
-import za.co.woolworths.financial.services.android.util.CartUtils.Companion.getAppliedVouchersCount
-import za.co.woolworths.financial.services.android.util.CartUtils.Companion.updateItemLimitsBanner
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_EXPECTATION_FAILED_502
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK_201
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_SESSION_TIMEOUT_440
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getPreferredDeliveryType
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getPreferredPlaceId
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.isDeliveryOptionClickAndCollect
@@ -91,10 +95,15 @@ import java.net.ConnectException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 
+@AndroidEntryPoint
 class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBinding::inflate),
     CartProductAdapter.OnItemClick,
     View.OnClickListener, NetworkChangeListener, ToastInterface, IWalkthroughActionListener,
     IRemoveProductsFromCartDialog {
+
+    private val viewModel: CartViewModel by viewModels(
+        ownerProducer = { this }
+    )
 
     private val TAG = this.javaClass.simpleName
     private var mNumberOfListSelected = 0
@@ -102,8 +111,6 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     private var errorMessageWasPopUp = false
     private var onRemoveItemFailed = false
     private var mRemoveAllItemFailed = false
-    private var isMixedBasket = false
-    private var isFBHOnly = false
     private var mRemoveAllItemFromCartTapped = false
     private var isAllInventoryAPICallSucceed = false
     private var isMaterialPopUpClosed = true
@@ -125,6 +132,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     private var liquorCompliance: LiquorCompliance? = null
     private var cartItemList = ArrayList<CommerceItem>()
     private var isBlackCardHolder : Boolean = false
+    private var isOnItemRemoved = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -132,6 +140,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         initViews()
         hideEditCart()
         addFragmentListener()
+        addObserverEvents()
         mChangeQuantityList = ArrayList(0)
         mChangeQuantity = ChangeQuantity()
         mConnectionBroadcast = Utils.connectionBroadCast(
@@ -193,7 +202,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         if (isVisible) {
             ScreenManager.presentBiometricWalkthrough(activity)
         }
-        loadShoppingCart(false)
+        loadShoppingCart()
     }
 
     private fun initViews() {
@@ -239,8 +248,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
      */
     private fun queryServiceChangeQuantity() {
         mChangeQuantityList?.add(mChangeQuantity)
-        changeQuantityAPI(mChangeQuantityList?.get(0))
-        mChangeQuantityList?.removeAt(0)
+        viewModel.changeProductQuantityRequest(mChangeQuantityList?.getOrNull(0))
     }
 
     private fun setEmptyCartUIUserName() {
@@ -255,7 +263,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             )
     }
 
-    fun onRemoveItem(visibility: Boolean) {
+    private fun onRemoveItem(visibility: Boolean) {
         binding.apply {
             cartProgressBar.visibility =
                 if (visibility) View.VISIBLE else View.GONE
@@ -333,7 +341,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                 if (NetworkManager.getInstance().isConnectedToNetwork(requireActivity())) {
                     errorMessageWasPopUp = false
                     binding.rvCartList.visibility = View.VISIBLE
-                    loadShoppingCart(false)
+                    loadShoppingCart()
                 }
             }
             R.id.btnCheckOut -> {
@@ -374,7 +382,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                             return
                         }
                         // Get list of saved address and navigate to proper Checkout page.
-                        callSavedAddress()
+                        viewModel.getSavedAddress()
                     }
                 }
             }
@@ -393,41 +401,6 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
 
     private fun dismissProgress() {
         binding.cartProgressBar.visibility = View.GONE
-    }
-
-    private fun callSavedAddress() {
-        binding.cartProgressBar.visibility = View.VISIBLE
-        val savedAddressCall = getSavedAddresses()
-        savedAddressCall.enqueue(
-            CompletionHandler(
-                (object : IResponseListener<SavedAddressResponse> {
-                    override fun onSuccess(response: SavedAddressResponse?) {
-                        when (response!!.httpCode) {
-                            AppConstant.HTTP_OK -> {
-                                binding.cartProgressBar.visibility = View.GONE
-                                navigateToCheckout(response)
-                            }
-                            else -> {
-                                binding.cartProgressBar.visibility = View.GONE
-                                if (response.response != null) {
-                                    showErrorDialog(
-                                        ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON,
-                                        response.response!!.message
-                                    )
-                                }
-                            }
-                        }
-                    }
-
-                    override fun onFailure(error: Throwable?) {
-                        showErrorDialog(
-                            ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON,
-                            error!!.message
-                        )
-                    }
-                }), SavedAddressResponse::class.java
-            )
-        )
     }
 
     private fun showErrorDialog(errorType: Int, errorMessage: String?) {
@@ -500,7 +473,8 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                 putExtra(CheckoutAddressConfirmationFragment.SAVED_ADDRESS_KEY, response)
                 putExtra(CheckoutAddressConfirmationFragment.IS_EDIT_ADDRESS_SCREEN, true)
                 putExtra(CheckoutAddressManagementBaseFragment.DASH_SLOT_SELECTION, true)
-                putExtra(CheckoutAddressManagementBaseFragment.CART_ITEM_LIST, cartItemList)
+                putExtra(CheckoutAddressManagementBaseFragment.CART_ITEM_LIST,
+                    viewModel.getCartItemList())
                 liquorCompliance.let {
                     if ((it != null) && it.isLiquorOrder && (AppConfigSingleton.liquor!!.noLiquorImgUrl != null) && AppConfigSingleton.liquor!!.noLiquorImgUrl.isNotEmpty()) {
                         putExtra(Constant.LIQUOR_ORDER, it.isLiquorOrder)
@@ -536,8 +510,8 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                 getDelivertyType(),
                 placeId,
                 isComingFromCheckout = true,
-                isMixedBasket = this.isMixedBasket,
-                isFBHOnly = this.isFBHOnly,
+                isMixedBasket = viewModel.isMixedBasket(),
+                isFBHOnly = viewModel.isFBHOnly(),
                 isComingFromSlotSelection = false,
                 savedAddressResponse = response,
                 defaultAddress = null,
@@ -1019,78 +993,55 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         cartProductAdapter?.onChangeQuantityComplete()
     }
 
-    private fun loadShoppingCart(onItemRemove: Boolean): Call<ShoppingCartResponse> {
-        setDeliveryLocationEnabled(false)
-        binding.apply {
-            rlCheckOut.isEnabled = !onItemRemove
-            rlCheckOut.visibility = if (onItemRemove) View.VISIBLE else View.GONE
-            cartProgressBar.visibility = View.VISIBLE
-        }
-        cartProductAdapter?.clear()
-        hideEditCart()
-        val shoppingCartResponseCall = getShoppingCart()
-        shoppingCartResponseCall.enqueue(
-            CompletionHandler(
-                (object : IResponseListener<ShoppingCartResponse> {
-                    override fun onSuccess(response: ShoppingCartResponse?) {
-                        try {
-                            binding.cartProgressBar.visibility = View.GONE
-                            setDeliveryLocationEnabled(true)
+    private fun loadShoppingCart() {
+        viewModel.getShoppingCartV2()
+    }
 
-                            when (response?.httpCode) {
-                                200 -> {
-                                    onRemoveItemFailed = false
-                                    binding.rlCheckOut.visibility = View.VISIBLE
-                                    binding.rlCheckOut.isEnabled = true
-                                    val cartResponse =
-                                        convertResponseToCartResponseObject(response)
-                                    updateCheckOutLink(response.data[0].jSessionId)
-                                    bindCartData(cartResponse)
-                                    if (onItemRemove) {
-                                        cartProductAdapter?.setEditMode(true)
-                                    }
-                                    setDeliveryLocationEnabled(true)
-                                    if (response.data[0].orderSummary.fulfillmentDetails?.address?.placeId != null) {
-                                        Utils.savePreferredDeliveryLocation(
-                                            ShoppingDeliveryLocation(
-                                                response.data[0].orderSummary.fulfillmentDetails
-                                            )
-                                        )
-                                    }
-                                    setItemLimitsBanner()
-                                    instance.queryCartSummaryCount()
-                                }
-                                440 -> {
-                                    //TODO:: improve error handling
-                                    SessionUtilities.getInstance()
-                                        .setSessionState(SessionDao.SESSION_STATE.INACTIVE)
-                                    SessionExpiredUtilities.getInstance().showSessionExpireDialog(
-                                        requireActivity() as AppCompatActivity?,
-                                        this@CartFragment
-                                    )
-                                    onChangeQuantityComplete()
-                                }
-                                else -> {
-                                    setDeliveryLocationEnabled(true)
-                                    response?.response?.let {
-                                        Utils.displayValidationMessage(
-                                            requireActivity(),
-                                            CustomPopUpWindow.MODAL_LAYOUT.ERROR,
-                                            it.desc,
-                                            true
-                                        )
-                                    }
-                                }
-                            }
-                        } catch (ex: Exception) {
-                            logException(ex)
-                        }
-                    }
-
-                    override fun onFailure(error: Throwable?) {
+    private fun onCartV2Response(
+        shoppingCartResponse: CartResponse?,
+    ) {
+        if (!isAdded || !isVisible) return
+        when (shoppingCartResponse?.httpCode) {
+            HTTP_OK, HTTP_OK_201 -> {
+                binding.cartProgressBar.visibility = View.GONE
+                setDeliveryLocationEnabled(true)
+                onRemoveItemFailed = false
+                binding.rlCheckOut.visibility = View.VISIBLE
+                binding.rlCheckOut.isEnabled = true
+                updateUIForCartResponse(shoppingCartResponse)
+                updateCheckOutLink(shoppingCartResponse.jSessionId)
+                bindCartData(shoppingCartResponse)
+                if (isOnItemRemoved) {
+                    cartProductAdapter?.setEditMode(true)
+                    isOnItemRemoved = false
+                }
+                setDeliveryLocationEnabled(true)
+                if (shoppingCartResponse.orderSummary.fulfillmentDetails?.address?.placeId != null) {
+                    Utils.savePreferredDeliveryLocation(
+                        ShoppingDeliveryLocation(
+                            shoppingCartResponse.orderSummary.fulfillmentDetails
+                        )
+                    )
+                }
+                setItemLimitsBanner()
+                instance.queryCartSummaryCount()
+            }
+            HTTP_SESSION_TIMEOUT_440 -> {
+                //TODO:: improve error handling
+                SessionUtilities.getInstance()
+                    .setSessionState(SessionDao.SESSION_STATE.INACTIVE)
+                SessionExpiredUtilities.getInstance().showSessionExpireDialog(
+                    requireActivity() as AppCompatActivity?,
+                    this@CartFragment
+                )
+                onChangeQuantityComplete()
+            }
+            else -> {
+                when (shoppingCartResponse?.response) {
+                    null -> {
                         if (isAdded) {
                             requireActivity().runOnUiThread {
-                                if (!onItemRemove) {
+                                if (!isOnItemRemoved) {
                                     setDeliveryLocationEnabled(true)
                                     binding.apply {
                                         rvCartList.visibility = View.GONE
@@ -1102,46 +1053,21 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                             }
                         }
                     }
-                }), ShoppingCartResponse::class.java
-            )
-        )
-        return shoppingCartResponseCall
-    }
-
-    private fun changeQuantityAPI(changeQuantity: ChangeQuantity?): Call<ShoppingCartResponse> {
-        cartProductAdapter?.onChangeQuantityLoad()
-        fadeCheckoutButton(true)
-        val shoppingCartResponseCall = getChangeQuantity(
-            changeQuantity
-        )
-        shoppingCartResponseCall.enqueue(
-            CompletionHandler(
-                (object : IResponseListener<ShoppingCartResponse> {
-                    override fun onSuccess(response: ShoppingCartResponse?) {
-                        try {
-                            if (response?.httpCode == 200) {
-                                val cartResponse =
-                                    convertResponseToCartResponseObject(response)
-                                changeQuantity(cartResponse, changeQuantity)
-                            } else {
-                                onChangeQuantityComplete()
-                            }
-                        } catch (ex: Exception) {
-                            logException(ex)
+                    else -> {
+                        setDeliveryLocationEnabled(true)
+                        shoppingCartResponse?.response?.let {
+                            Utils.displayValidationMessage(
+                                requireActivity(),
+                                CustomPopUpWindow.MODAL_LAYOUT.ERROR,
+                                it.desc,
+                                true
+                            )
                         }
                     }
+                }
 
-                    override fun onFailure(error: Throwable?) {
-                        requireActivity().runOnUiThread {
-                            mErrorHandlerView?.showToast()
-                            changeQuantityWasClicked = true
-                            cartProductAdapter?.onChangeQuantityError()
-                        }
-                    }
-                }), ShoppingCartResponse::class.java
-            )
-        )
-        return shoppingCartResponseCall
+            }
+        }
     }
 
     private fun removeItem(commerceItem: CommerceItem) {
@@ -1155,199 +1081,24 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         )
     }
 
-    private fun removeCartItem(commerceItem: CommerceItem): Call<ShoppingCartResponse> {
-        mCommerceItem = commerceItem
-        showProgressBar()
-        val shoppingCartResponseCall = removeCartItem(commerceItem.commerceItemInfo.getCommerceId())
-        shoppingCartResponseCall.enqueue(
-            CompletionHandler(
-                (object : IResponseListener<ShoppingCartResponse> {
-                    override fun onSuccess(response: ShoppingCartResponse?) {
-                        try {
-                            if (response?.httpCode == 200) {
-                                val cartResponse =
-                                    convertResponseToCartResponseObject(response)
-                                updateCart(cartResponse, commerceItem)
-                                if (cartResponse?.cartItems.isNullOrEmpty()) {
-                                    onRemoveSuccess()
-                                }
-                            } else {
-                                resetItemDelete(true)
-                            }
-                            hideProgressBar()
-                            fadeCheckoutButton(false)
-                            setDeliveryLocationEnabled(true)
-                            enableRemoveAllButton(true)
-                            setMinimumCartErrorMessage()
-                        } catch (ex: Exception) {
-                            logException(ex)
-                        }
-                    }
-
-                    override fun onFailure(error: Throwable?) {
-                        requireActivity().runOnUiThread {
-                            if (cartProductAdapter != null) {
-                                onRemoveItemLoadFail(commerceItem)
-                                onRemoveItemFailed = true
-                                enableItemDelete(false)
-                                hideProgressBar()
-                            }
-                            mErrorHandlerView?.showToast()
-                        }
-                    }
-                }), ShoppingCartResponse::class.java
-            )
-        )
-        return shoppingCartResponseCall
-    }
-
-    private fun removeAllCartItem(commerceItem: CommerceItem?): Call<ShoppingCartResponse> {
-        mRemoveAllItemFromCartTapped = true
-        showProgressBar()
-        onRemoveItem(true)
-        val shoppingCartResponseCall = removeAllCartItems()
-        shoppingCartResponseCall.enqueue(
-            CompletionHandler(
-                (object : IResponseListener<ShoppingCartResponse> {
-                    override fun onSuccess(response: ShoppingCartResponse?) {
-                        try {
-                            if (response?.httpCode == 200) {
-                                val cartResponse =
-                                    convertResponseToCartResponseObject(response)
-                                mRemoveAllItemFromCartTapped = false
-                                updateCart(cartResponse, commerceItem)
-                                updateCartSummary(0)
-                                onRemoveSuccess()
-                            } else {
-                                onRemoveItem(false)
-                            }
-                            hideProgressBar()
-                            setDeliveryLocationEnabled(true)
-                        } catch (ex: Exception) {
-                            ex.message?.let { Log.e(TAG, it) }
-                        }
-                    }
-
-                    override fun onFailure(error: Throwable?) {
-                        requireActivity().runOnUiThread {
-                            mRemoveAllItemFailed = true
-                            onRemoveItem(false)
-                            mErrorHandlerView?.hideErrorHandler()
-                            mErrorHandlerView?.showToast()
-                            hideProgressBar()
-                        }
-                    }
-                }), ShoppingCartResponse::class.java
-            )
-        )
-        return shoppingCartResponseCall
-    }
-
     private fun onRemoveItemLoadFail(commerceItem: CommerceItem) {
         mCommerceItem = commerceItem
         resetItemDelete(true)
     }
-
-    fun convertResponseToCartResponseObject(response: ShoppingCartResponse?): CartResponse? {
-        if (response == null) return null
-        val cartResponse: CartResponse?
-
-        try {
-            displayUpSellMessage(response.data[0])
-            cartResponse = CartResponse()
-            cartResponse.httpCode = response.httpCode
-            val data = response.data[0]
-            cartResponse.orderSummary = data.orderSummary
-            cartResponse.voucherDetails = data.voucherDetails
-            cartResponse.productCountMap = data.productCountMap // set delivery location
-            cartResponse.liquorOrder = data.liquorOrder
-            cartResponse.noLiquorImageUrl = data.noLiquorImageUrl
-            cartResponse.blackCardHolder = data.blackCardHolder
-            val fulfillmentDetailsObj = cartResponse.orderSummary.fulfillmentDetails
-            if (fulfillmentDetailsObj?.address?.placeId != null) {
-                val shoppingDeliveryLocation = ShoppingDeliveryLocation(fulfillmentDetailsObj)
-                Utils.savePreferredDeliveryLocation(shoppingDeliveryLocation)
-                setDeliveryLocation(shoppingDeliveryLocation)
-            } else {
-                // If user logs out and login with new registration who don't have location.
-                setDeliveryLocation(ShoppingDeliveryLocation(fulfillmentDetailsObj))
-            }
-            val itemsObject = JSONObject(Gson().toJson(data.items))
-            isMixedBasket = itemsObject.has(ProductType.FOOD_COMMERCE_ITEM.value) && itemsObject.length() > 1
-            val keys = itemsObject.keys()
-            val cartItemGroups = ArrayList<CartItemGroup>()
-            while ((keys.hasNext())) {
-                val cartItemGroup = CartItemGroup()
-                val key = keys.next()
-                //GENERAL - "default",HOME - "homeCommerceItem",FOOD
-                // - "foodCommerceItem",CLOTHING
-                // - "clothingCommerceItem",PREMIUM BRANDS
-                // - "premiumBrandCommerceItem",
-                // Anything else: OTHER
-                when {
-                    key.contains(ProductType.DEFAULT.value) ->
-                        cartItemGroup.setType(ProductType.DEFAULT.shortHeader)
-                    key.contains(ProductType.GIFT_COMMERCE_ITEM.value) ->
-                        cartItemGroup.setType(ProductType.GIFT_COMMERCE_ITEM.shortHeader)
-                    key.contains(ProductType.HOME_COMMERCE_ITEM.value) ->
-                        cartItemGroup.setType(ProductType.HOME_COMMERCE_ITEM.shortHeader)
-                    key.contains(ProductType.FOOD_COMMERCE_ITEM.value) ->
-                        cartItemGroup.setType(ProductType.FOOD_COMMERCE_ITEM.shortHeader)
-                    key.contains(ProductType.CLOTHING_COMMERCE_ITEM.value) ->
-                        cartItemGroup.setType(ProductType.CLOTHING_COMMERCE_ITEM.shortHeader)
-                    key.contains(ProductType.PREMIUM_BRAND_COMMERCE_ITEM.value) ->
-                        cartItemGroup.setType(ProductType.PREMIUM_BRAND_COMMERCE_ITEM.shortHeader)
-                    else -> cartItemGroup.setType(ProductType.OTHER_ITEMS.shortHeader)
-                }
-                val productsArray = itemsObject.getJSONArray(key)
-                if (productsArray.length() > 0) {
-                    val productList = ArrayList<CommerceItem>()
-                    for (i in 0 until productsArray.length()) {
-                        val commerceItemObject = productsArray.getJSONObject(i)
-                        val commerceItem =
-                            Gson().fromJson(commerceItemObject.toString(), CommerceItem::class.java)
-                        val fulfillmentStoreId = Utils.retrieveStoreId(commerceItem.fulfillmentType)
-                        commerceItem.fulfillmentStoreId =
-                            fulfillmentStoreId!!.replace("\"".toRegex(), "")
-                        productList.add(commerceItem)
-                        isFBHOnly = if(!itemsObject.has(ProductType.FOOD_COMMERCE_ITEM.value)) {
-                            commerceItem.fulfillmentType == StoreUtils.Companion.FulfillmentType.CLOTHING_ITEMS?.type
-                        } else false
-                    }
-                    this.cartItemList = productList
-                    cartItemGroup.setCommerceItems(productList)
-                }
-                cartItemGroups.add(cartItemGroup)
-            }
-            var giftCartItemGroup = CartItemGroup()
-            giftCartItemGroup.type = GIFT_ITEM
-            val generalCartItemGroup = CartItemGroup()
-            generalCartItemGroup.type = GENERAL_ITEM
-            var generalIndex = -1
-            if (cartItemGroups.contains(giftCartItemGroup) && cartItemGroups.contains(
-                    generalCartItemGroup
-                )
-            ) {
-                for (cartGroupIndex in cartItemGroups.indices) {
-                    val cartItemGroup = cartItemGroups[cartGroupIndex]
-                    if (cartItemGroup.type.equals(GENERAL_ITEM, ignoreCase = true)) {
-                        generalIndex = cartGroupIndex
-                    }
-                    if (cartItemGroup.type.equals(GIFT_ITEM, ignoreCase = true)) {
-                        giftCartItemGroup = cartItemGroup
-                        cartItemGroups.removeAt(cartGroupIndex)
-                    }
-                }
-                cartItemGroups.add(generalIndex + 1, giftCartItemGroup)
-            }
-            cartResponse.cartItems = cartItemGroups
-        } catch (e: JSONException) {
-            logException(e)
-            return null
+    
+    private fun updateUIForCartResponse(response: CartResponse?) {
+        if (response == null) return
+        displayUpSellMessage(response.globalMessages)
+        val fulfillmentDetailsObj = response?.orderSummary?.fulfillmentDetails
+        if (fulfillmentDetailsObj?.address?.placeId != null) {
+            val shoppingDeliveryLocation = ShoppingDeliveryLocation(fulfillmentDetailsObj)
+            setDeliveryLocation(shoppingDeliveryLocation)
+        } else {
+            // If user logs out and login with new registration who don't have location.
+            setDeliveryLocation(ShoppingDeliveryLocation(fulfillmentDetailsObj))
         }
-        return cartResponse
     }
-
+    
     override fun onResume() {
         super.onResume()
         val activity: Activity = requireActivity()
@@ -1420,12 +1171,12 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                         }, SetDeliveryLocationSuburbResponse.class));*/
                     } else {
                         // Fallback if there is no cached location
-                        loadShoppingCart(false)
+                        loadShoppingCart()
                         loadShoppingCartAndSetDeliveryLocation()
                     }
                 } else {
                     // Checkout was cancelled
-                    loadShoppingCart(false)
+                    loadShoppingCart()
                     loadShoppingCartAndSetDeliveryLocation()
                 }
             } else {
@@ -1441,7 +1192,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             when (requestCode) {
                 BottomNavigationActivity.PDP_REQUEST_CODE -> {
                     val activity: FragmentActivity = activity ?: return
-                    loadShoppingCart(false)
+                    loadShoppingCart()
                     loadShoppingCartAndSetDeliveryLocation()
                     val productCountMap = Utils.jsonStringToObject(
                         data?.getStringExtra("ProductCountMap"), ProductCountMap::class.java
@@ -1466,7 +1217,9 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                         data?.getStringExtra("ShoppingCartResponse"),
                         ShoppingCartResponse::class.java
                     ) as ShoppingCartResponse
-                    updateCart(convertResponseToCartResponseObject(shoppingCartResponse), null)
+                    val cartResponse = viewModel.getConvertedCartResponse(shoppingCartResponse)
+                    updateUIForCartResponse(cartResponse)
+                    updateCart(cartResponse, null)
                     if (requestCode == REDEEM_VOUCHERS_REQUEST_CODE) showVouchersOrPromoCodeAppliedToast(
                         getString(
                             if (voucherDetails?.vouchers?.let {
@@ -1506,7 +1259,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
 
         // Retry callback when saved address api fails
         if (resultCode == ErrorHandlerActivity.RESULT_RETRY) {
-            callSavedAddress()
+            viewModel.getSavedAddress()
         }
     }
 
@@ -1550,17 +1303,18 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         setupToolbar()
         initializeBottomTab()
         initializeLoggedInUserCartUI()
-        loadShoppingCart(false)
+        loadShoppingCart()
     }
 
     override fun onConnectionChanged() {
         if (onRemoveItemFailed) {
             mErrorHandlerView?.hideErrorHandler()
-            loadShoppingCart(true)
+            isOnItemRemoved = true
+            loadShoppingCart()
             return
         }
         if (mRemoveAllItemFailed) {
-            removeAllCartItem(null)
+            viewModel.removeAllCartItem()
             mRemoveAllItemFailed = false
             return
         }
@@ -1571,8 +1325,9 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         }
     }
 
-    private fun removeItemAPI(mCommerceItem: CommerceItem) {
-        removeCartItem(mCommerceItem)
+    private fun removeItemAPI(commerceItem: CommerceItem) {
+        mCommerceItem = commerceItem
+        viewModel.removeCartItem(commerceItem.commerceItemInfo.getCommerceId())
     }
 
     private fun queryServiceInventoryCall(items: ArrayList<CartItemGroup>) {
@@ -1613,48 +1368,9 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                 }
                 this.cartItems = cartItems
             } else {
-                initInventoryRequest(fulfilmentStoreId, groupBySkuIds)
+                viewModel.getInventorySkuForInventory(fulfilmentStoreId, groupBySkuIds, false)
             }
         }
-    }
-
-    private fun initInventoryRequest(
-        storeId: String?,
-        multiSku: String?,
-    ): Call<SkusInventoryForStoreResponse> {
-        val skuInventoryForStoreResponseCall = getInventorySkuForStore(
-            (storeId)!!, (multiSku)!!, false
-        )
-        skuInventoryForStoreResponseCall.enqueue(
-            CompletionHandler(
-                (object : IResponseListener<SkusInventoryForStoreResponse> {
-                    override fun onSuccess(response: SkusInventoryForStoreResponse?) {
-                        if (response?.httpCode == 200) {
-                            mSkuInventories!![response.storeId] =
-                                response.skuInventory
-                            if (mSkuInventories!!.size == mapStoreIdWithCommerceItems!!.size) {
-                                updateCartListWithAvailableStock(mSkuInventories)
-                            }
-                        } else {
-                            isAllInventoryAPICallSucceed = false
-                            if (!errorMessageWasPopUp) {
-                                Utils.displayValidationMessage(
-                                    requireActivity(),
-                                    CustomPopUpWindow.MODAL_LAYOUT.ERROR,
-                                    response?.response?.desc ?: ""
-                                )
-                                errorMessageWasPopUp = true
-                            }
-                        }
-                    }
-
-                    override fun onFailure(error: Throwable?) {
-                        disableQuantitySelector(error)
-                    }
-                }), SkusInventoryForStoreResponse::class.java
-            )
-        )
-        return skuInventoryForStoreResponseCall
     }
 
     private fun disableQuantitySelector(error: Throwable?) {
@@ -1830,7 +1546,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     }
 
     private fun enableRemoveAllButton(enable: Boolean) {
-        binding.btnClearCart.isEnabled = !enable
+        binding.btnClearCart.isEnabled = enable
         binding.btnClearCart.isClickable = enable
     }
 
@@ -1872,22 +1588,20 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         if (isAdded) showAvailableVouchersToast(voucherDetails?.activeTotalVouchersCount ?: 0)
     }
 
-    private fun displayUpSellMessage(data: Data?) {
+    private fun displayUpSellMessage(globalMessages: GlobalMessages) {
         if (mRemoveAllItemFromCartTapped) return
-        data?.globalMessages?.let {
-            if (it.qualifierMessages.isNullOrEmpty()) {
-                binding.upSellMessageTextView?.visibility = View.GONE
-                return
-            }
-            val qualifierMessage = it.qualifierMessages[0]
-            binding.upSellMessageTextView.text = qualifierMessage
-            binding.upSellMessageTextView.visibility =
-                if (TextUtils.isEmpty(qualifierMessage)) View.GONE else View.VISIBLE
+        if (globalMessages.qualifierMessages.isNullOrEmpty()) {
+            binding.upSellMessageTextView?.visibility = View.GONE
+            return
         }
+        val qualifierMessage = globalMessages.qualifierMessages[0]
+        binding.upSellMessageTextView.text = qualifierMessage
+        binding.upSellMessageTextView.visibility =
+            if (TextUtils.isEmpty(qualifierMessage)) View.GONE else View.VISIBLE
     }
 
     override fun onOutOfStockProductsRemoved() {
-        loadShoppingCart(false)
+        loadShoppingCart()
     }
 
     private fun showMaxItemView() {
@@ -2008,61 +1722,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     }
 
     override fun onRemovePromoCode(promoCode: String) {
-        val activity: FragmentActivity = requireActivity()
-        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Cart_promo_remove, activity)
-        showProgressBar()
-        removePromoCode(CouponClaimCode(promoCode)).enqueue(
-            CompletionHandler(
-                (object : IResponseListener<ShoppingCartResponse> {
-                    override fun onSuccess(response: ShoppingCartResponse?) {
-                        hideProgressBar()
-                        when (response?.httpCode) {
-                            200 -> {
-                                updateCart(convertResponseToCartResponseObject(response), null)
-                                if (voucherDetails?.promoCodes == null || voucherDetails?.promoCodes?.size == 0)
-                                    showVouchersOrPromoCodeAppliedToast(
-                                        getString(R.string.promo_code_removed_toast_message)
-                                    )
-                            }
-                            502 -> response.response?.let {
-                                Utils.displayValidationMessage(
-                                    activity,
-                                    CustomPopUpWindow.MODAL_LAYOUT.ERROR,
-                                    response.response.desc,
-                                    true
-                                )
-                            }
-                            440 -> {
-                                SessionUtilities.getInstance()
-                                    .setSessionState(SessionDao.SESSION_STATE.INACTIVE)
-                                SessionExpiredUtilities.getInstance().showSessionExpireDialog(
-                                    activity as AppCompatActivity?,
-                                    this@CartFragment
-                                )
-                            }
-                            else -> response?.response?.let {
-                                Utils.displayValidationMessage(
-                                    activity,
-                                    CustomPopUpWindow.MODAL_LAYOUT.ERROR,
-                                    getString(R.string.general_error_desc),
-                                    true
-                                )
-                            }
-                        }
-                    }
-
-                    override fun onFailure(error: Throwable?) {
-                        hideProgressBar()
-                        Utils.displayValidationMessage(
-                            activity,
-                            CustomPopUpWindow.MODAL_LAYOUT.ERROR,
-                            getString(R.string.general_error_desc),
-                            true
-                        )
-                    }
-                }), ShoppingCartResponse::class.java
-            )
-        )
+        viewModel.onRemovePromoCode(CouponClaimCode(promoCode))
     }
 
     private fun navigateToApplyPromoCodePage() {
@@ -2121,6 +1781,255 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             CustomBottomSheetDialogFragment::class.java.simpleName)
     }
 
+    private fun addObserverEvents() {
+        viewModel.getCarV2.observe(viewLifecycleOwner) {
+            val response = it.peekContent().data
+            when (it.peekContent().status) {
+                Status.LOADING -> {
+                    mErrorHandlerView?.hideErrorHandler()
+                    setDeliveryLocationEnabled(false)
+                    binding.apply {
+                        rlCheckOut.isEnabled = !isOnItemRemoved
+                        rlCheckOut.visibility = if (isOnItemRemoved) View.VISIBLE else View.GONE
+                        cartProgressBar.visibility = View.VISIBLE
+                    }
+                    cartProductAdapter?.clear()
+                    hideEditCart()
+                }
+                Status.SUCCESS -> {
+                    onCartV2Response(response)
+                }
+                Status.ERROR -> {
+                    onCartV2Response(response)
+                }
+            }
+        }
+
+        viewModel.getSavedAddress.observe(viewLifecycleOwner) {
+            val response = it.peekContent().data
+            when (it.peekContent().status) {
+                Status.LOADING -> {
+                    binding.cartProgressBar.visibility = View.VISIBLE
+                }
+                Status.SUCCESS -> {
+                    when (response?.httpCode) {
+                        HTTP_OK -> {
+                            binding.cartProgressBar.visibility = View.GONE
+                            navigateToCheckout(response)
+                        }
+                        else -> {
+                            binding.cartProgressBar.visibility = View.GONE
+                            if (response?.response != null) {
+                                showErrorDialog(
+                                    ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON,
+                                    response.response?.message
+                                )
+                            }
+                        }
+                    }
+                }
+                Status.ERROR -> {
+                    showErrorDialog(
+                        ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON,
+                        response?.response?.message
+                    )
+                }
+            }
+        }
+
+        viewModel.removeCartItem.observe(viewLifecycleOwner) {
+            val response = it.peekContent().data
+            when (it.peekContent().status) {
+                Status.LOADING -> {
+                    showProgressBar()
+                }
+                Status.SUCCESS -> {
+                    try {
+                        if (response?.httpCode == HTTP_OK) {
+                            updateUIForCartResponse(response)
+                            updateCart(response, mCommerceItem)
+                            if (response?.cartItems.isNullOrEmpty()) {
+                                onRemoveSuccess()
+                            }
+                        } else {
+                            resetItemDelete(true)
+                        }
+                        hideProgressBar()
+                        fadeCheckoutButton(false)
+                        setDeliveryLocationEnabled(true)
+                        enableRemoveAllButton(true)
+                        setMinimumCartErrorMessage()
+                    } catch (ex: Exception) {
+                        logException(ex)
+                    }
+                }
+                Status.ERROR -> {
+                    requireActivity().runOnUiThread {
+                        if (cartProductAdapter != null) {
+                            mCommerceItem?.let { it1 -> onRemoveItemLoadFail(it1) }
+                            onRemoveItemFailed = true
+                            enableItemDelete(false)
+                            hideProgressBar()
+                        }
+                        mErrorHandlerView?.showToast()
+                    }
+                }
+            }
+        }
+
+        viewModel.removeAllCartItem.observe(viewLifecycleOwner) {
+            val response = it.peekContent().data
+            when (it.peekContent().status) {
+                Status.LOADING -> {
+                    mRemoveAllItemFromCartTapped = true
+                    showProgressBar()
+                    onRemoveItem(true)
+                }
+                Status.SUCCESS -> {
+                    try {
+                        if (response?.httpCode == HTTP_OK) {
+                            updateUIForCartResponse(response)
+                            mRemoveAllItemFromCartTapped = false
+                            updateCart(response, null)
+                            updateCartSummary(0)
+                            onRemoveSuccess()
+                        } else {
+                            onRemoveItem(false)
+                        }
+                        hideProgressBar()
+                        setDeliveryLocationEnabled(true)
+                    } catch (ex: Exception) {
+                        ex.message?.let { Log.e(TAG, it) }
+                    }
+                }
+                Status.ERROR -> {
+                    requireActivity().runOnUiThread {
+                        mRemoveAllItemFailed = true
+                        onRemoveItem(false)
+                        mErrorHandlerView?.hideErrorHandler()
+                        mErrorHandlerView?.showToast()
+                        hideProgressBar()
+                    }
+                }
+            }
+        }
+
+        viewModel.getInventorySkuForInventory.observe(viewLifecycleOwner) {
+            val response = it.peekContent().data
+            when (it.peekContent().status) {
+                Status.LOADING -> {
+                    showProgressBar()
+                }
+                Status.SUCCESS -> {
+                    hideProgressBar()
+                    if (response?.httpCode == HTTP_OK || response?.httpCode == HTTP_OK_201) {
+                        mSkuInventories?.set(response.storeId, response.skuInventory)
+                        if (mSkuInventories?.size == mapStoreIdWithCommerceItems?.size) {
+                            updateCartListWithAvailableStock(mSkuInventories)
+                        }
+                    } else {
+                        isAllInventoryAPICallSucceed = false
+                        if (!errorMessageWasPopUp) {
+                            Utils.displayValidationMessage(
+                                requireActivity(),
+                                CustomPopUpWindow.MODAL_LAYOUT.ERROR,
+                                response?.response?.desc ?: ""
+                            )
+                            errorMessageWasPopUp = true
+                        }
+                    }
+                }
+                Status.ERROR -> {
+                    hideProgressBar()
+                    disableQuantitySelector(response?.exception)
+                }
+            }
+        }
+
+        viewModel.changeProductQuantity.observe(viewLifecycleOwner) {
+            val response = it.peekContent().data
+            when (it.peekContent().status) {
+                Status.LOADING -> {
+                    cartProductAdapter?.onChangeQuantityLoad()
+                    fadeCheckoutButton(true)
+                }
+                Status.SUCCESS -> {
+                    if (response?.httpCode == HTTP_OK) {
+                        updateUIForCartResponse(response)
+                        changeQuantity(response, mChangeQuantityList?.getOrNull(0))
+                    } else {
+                        onChangeQuantityComplete()
+                    }
+                    mChangeQuantityList?.removeFirstOrNull()
+                }
+                Status.ERROR -> {
+                    requireActivity().runOnUiThread {
+                        mErrorHandlerView?.showToast()
+                        changeQuantityWasClicked = true
+                        cartProductAdapter?.onChangeQuantityError()
+                    }
+                }
+            }
+        }
+
+        viewModel.onRemovePromoCode.observe(viewLifecycleOwner) {
+            val response = it.peekContent().data
+            when (it.peekContent().status) {
+                Status.LOADING -> {
+                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Cart_promo_remove,
+                        requireActivity())
+                    showProgressBar()
+                }
+                Status.SUCCESS -> {
+                    hideProgressBar()
+                    when (response?.httpCode) {
+                        HTTP_OK -> {
+                            updateUIForCartResponse(response)
+                            updateCart(response, null)
+                            if (voucherDetails?.promoCodes == null || voucherDetails?.promoCodes?.size == 0)
+                                showVouchersOrPromoCodeAppliedToast(
+                                    getString(R.string.promo_code_removed_toast_message)
+                                )
+                        }
+                        HTTP_EXPECTATION_FAILED_502 -> response.response?.let {
+                            Utils.displayValidationMessage(
+                                activity,
+                                CustomPopUpWindow.MODAL_LAYOUT.ERROR,
+                                response.response.desc,
+                                true
+                            )
+                        }
+                        HTTP_SESSION_TIMEOUT_440 -> {
+                            SessionUtilities.getInstance()
+                                .setSessionState(SessionDao.SESSION_STATE.INACTIVE)
+                            SessionExpiredUtilities.getInstance().showSessionExpireDialog(
+                                activity as AppCompatActivity?,
+                                this@CartFragment
+                            )
+                        }
+                        else -> response?.response?.let {
+                            Utils.displayValidationMessage(
+                                activity,
+                                CustomPopUpWindow.MODAL_LAYOUT.ERROR,
+                                getString(R.string.general_error_desc),
+                                true
+                            )
+                        }
+                    }
+                }
+                Status.ERROR -> {
+                    hideProgressBar()
+                    Utils.displayValidationMessage(
+                        activity,
+                        CustomPopUpWindow.MODAL_LAYOUT.ERROR,
+                        getString(R.string.general_error_desc),
+                        true
+                    )
+                }
+            }
+        }
+    }
+
     private fun addFragmentListener() {
         setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_CLICK_RESULT) { _, _ ->
             fadeCheckoutButton(false)
@@ -2145,7 +2054,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         }
         setFragmentResultListener(ON_CONFIRM_REMOVE_ALL) { _, _ ->
             enableItemDelete(false)
-            removeAllCartItem(null)
+            viewModel.removeAllCartItem()
         }
     }
 
@@ -2165,7 +2074,6 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
 
         private const val TAG_ADDED_TO_LIST_TOAST = "ADDED_TO_LIST"
         private const val TAG_AVAILABLE_VOUCHERS_TOAST = "AVAILABLE_VOUCHERS"
-        private const val GENERAL_ITEM = "GENERAL"
         private const val GIFT_ITEM = "GIFT"
 
         // constants for deletion confirmation.
