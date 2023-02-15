@@ -53,6 +53,7 @@ class OrderConfirmationFragment :
     private var cncFoodItemsOrderListAdapter: ItemsOrderListAdapter? = null
     private var cncOtherItemsOrderListAdapter: ItemsOrderListAdapter? = null
     private var itemsOrderListAdapter: ItemsOrderListAdapter? = null
+    private var isPurchaseEventTriggered: Boolean = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -76,7 +77,12 @@ class OrderConfirmationFragment :
                                     setupDeliveryOrCollectionDetails(response)
                                     setupOrderTotalDetails(response)
                                     displayVocifNeeded(response)
-                                    showPurchaseEvent(response)
+                                    if (isPurchaseEventTriggered)
+                                    {
+                                        showPurchaseEvent(response)
+                                        isPurchaseEventTriggered = false
+                                    }
+
                                 }
                                 else -> {
                                     showErrorScreen(ErrorHandlerActivity.ERROR_TYPE_SUBMITTED_ORDER)
