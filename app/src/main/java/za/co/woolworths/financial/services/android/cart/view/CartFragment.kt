@@ -12,9 +12,11 @@ import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentCartBinding
@@ -75,6 +77,8 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HT
 import za.co.woolworths.financial.services.android.cart.viewmodel.CartUtils.Companion.filterCommerceItemFromCartResponse
 import za.co.woolworths.financial.services.android.cart.viewmodel.CartUtils.Companion.getAppliedVouchersCount
 import za.co.woolworths.financial.services.android.cart.viewmodel.CartUtils.Companion.updateItemLimitsBanner
+import za.co.woolworths.financial.services.android.recommendations.data.response.request.CartProducts
+import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getPreferredDeliveryType
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getPreferredPlaceId
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.isDeliveryOptionClickAndCollect
@@ -1019,6 +1023,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                 }
                 setItemLimitsBanner()
                 instance.queryCartSummaryCount()
+                showRecommendedProducts()
             }
             HTTP_SESSION_TIMEOUT_440 -> {
                 //TODO:: improve error handling
@@ -1061,6 +1066,43 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                 }
 
             }
+        }
+    }
+
+    private fun showRecommendedProducts() {
+        val bundle = Bundle()
+        val cartLinesValue : MutableList<CartProducts> = arrayListOf()
+
+        cartItems?.forEach { item ->
+            cartLinesValue.addAll(item.commerceItems.map { CartProducts(it.commerceItemInfo.productId,it.commerceItemInfo.quantity,null, null, null) })
+        }
+
+        bundle.putParcelable(
+            BundleKeysConstants.RECOMMENDATIONS_EVENT_DATA, Event(
+                eventType = "monetate:context:PageView",
+                url = "/cart",
+                pageType = "cart",
+                null,
+                null, null)
+        )
+        bundle.putParcelable(BundleKeysConstants.RECOMMENDATIONS_EVENT_DATA_TYPE, Event(
+            eventType = "monetate:context:Cart",null,null,null,
+            null, cartLinesValue)
+        )
+
+        val navHostFragment =
+            childFragmentManager.findFragmentById(R.id.navHostRecommendation) as NavHostFragment
+        val navController = navHostFragment?.navController
+        val navGraph = navController?.navInflater?.inflate(R.navigation.nav_recommendation_graph)
+
+        navGraph?.startDestination = R.id.recommendationFragment
+        navGraph?.let {
+            navController?.graph = it
+        }
+        navGraph?.let {
+            navController?.setGraph(
+                it, bundleOf("bundle" to bundle)
+            )
         }
     }
 

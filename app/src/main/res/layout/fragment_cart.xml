@@ -190,9 +190,21 @@
                     layout="@layout/layout_dash_set_address_fragment"
                     android:visibility="gone" />
 
+                <include
+                    android:id="@+id/layoutRecommendationContainer"
+                    layout="@layout/recommendation_fragment_container_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/fifty_dp"/>
+
                 <include layout="@layout/no_connection_handler" />
 
+
+
+
             </LinearLayout>
+
+
         </androidx.core.widget.NestedScrollView>
 
         <LinearLayout

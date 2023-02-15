@@ -44,7 +44,7 @@ class ProductListRecommendationAdapter(
             }
 
 
-            holder.mProductListingPageRowBinding.includeProductListingPriceLayout.imQuickShopAddToCartIcon?.setOnClickListener {
+        /*    holder.mProductListingPageRowBinding.includeProductListingPriceLayout.imQuickShopAddToCartIcon?.setOnClickListener {
                 // if (!productList.quickShopButtonWasTapped) {
                 activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPQS_ADD_TO_CART,
                     this as Activity?
@@ -59,7 +59,7 @@ class ProductListRecommendationAdapter(
                     )
                 }
                 //  }
-            }
+            }*/
         }
             if(position >= mProductsList.size || position < 0){
                 return

@@ -43,7 +43,6 @@ class MyRecycleViewHolder(val mProductListingPageRowBinding: RecommendationsProd
 
     private fun setOnClickListener(navigator: RecommendationsProductListingListener, productList: Product
     ) {
-       // itemView.setOnClickListener { navigator.openProductDetailView(productList) }
         mProductListingPageRowBinding.imProductImage.setOnClickListener { navigator.openProductDetailView(productList) }
     }
 
@@ -198,7 +197,7 @@ class MyRecycleViewHolder(val mProductListingPageRowBinding: RecommendationsProd
                     includeProductListingPriceLayout.imQuickShopAddToCartIcon?.visibility =
                         if (productType.equals(
                                 getString(
-                                   R.string.rec_product_type
+                                   R.string.food_product_type
                                 ), ignoreCase = true
                             )
                         ) View.VISIBLE else View.GONE

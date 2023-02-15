@@ -9,10 +9,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.get
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.databinding.RecommendationsLayoutBinding
 import com.google.gson.Gson
+import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
@@ -28,13 +30,16 @@ import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
+@AndroidEntryPoint
 class RecommendationFragment :
     BaseFragmentBinding<RecommendationsLayoutBinding>(RecommendationsLayoutBinding::inflate),
     RecommendationsProductListingListener {
 
     private var _recommendationsLayoutBinding: RecommendationsLayoutBinding? = null
     private val recommendationsLayoutBinding get() = _recommendationsLayoutBinding!!
-    private val recommendationViewModel: RecommendationViewModel by activityViewModels()
+    private val recommendationViewModel: RecommendationViewModel by viewModels()
+
+    //private val recommendationViewModel: RecommendationViewModel by activityViewModels()
     private var mProductCategoryAdapter: ProductCategoryAdapter? = null
     private var mProductListRecommendationAdapter: ProductListRecommendationAdapter? = null
 
