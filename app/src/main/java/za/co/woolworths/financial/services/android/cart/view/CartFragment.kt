@@ -1071,25 +1071,22 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
 
     private fun showRecommendedProducts() {
         val bundle = Bundle()
-        val cartLinesValue : MutableList<CartProducts> = arrayListOf()
+        val cartLinesValue: MutableList<CartProducts> = arrayListOf()
 
         cartItems?.forEach { item ->
-            cartLinesValue.addAll(item.commerceItems.map { CartProducts(it.commerceItemInfo.productId,it.commerceItemInfo.quantity,null, null, null) })
+            cartLinesValue.addAll(item.commerceItems.map {
+                CartProducts(
+                    it.commerceItemInfo.productId, it.commerceItemInfo.quantity, null, null, null)
+            })
         }
 
         bundle.putParcelable(
-            BundleKeysConstants.RECOMMENDATIONS_EVENT_DATA, Event(
-                eventType = "monetate:context:PageView",
-                url = "/cart",
-                pageType = "cart",
-                null,
-                null, null)
+            BundleKeysConstants.RECOMMENDATIONS_EVENT_DATA, Event(eventType = "monetate:context:PageView", url = "/cart", pageType = "cart", null, null, null)
         )
-        bundle.putParcelable(BundleKeysConstants.RECOMMENDATIONS_EVENT_DATA_TYPE, Event(
-            eventType = "monetate:context:Cart",null,null,null,
-            null, cartLinesValue)
+        bundle.putParcelable(
+            BundleKeysConstants.RECOMMENDATIONS_EVENT_DATA_TYPE, Event(eventType = "monetate:context:Cart", null, null, null, null, cartLinesValue
+            )
         )
-
         val navHostFragment =
             childFragmentManager.findFragmentById(R.id.navHostRecommendation) as NavHostFragment
         val navController = navHostFragment?.navController

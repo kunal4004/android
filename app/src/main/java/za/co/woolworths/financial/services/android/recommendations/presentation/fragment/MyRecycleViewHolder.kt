@@ -4,14 +4,12 @@ import android.text.Html
 import android.text.TextUtils
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import com.awfs.coordination.R
 import com.awfs.coordination.databinding.RecommendationsProductListingPageRowBinding
 import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.Product
 import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.PromotionImages
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.featureutils.RatingAndReviewUtil
 import za.co.woolworths.financial.services.android.util.ImageManager
 import za.co.woolworths.financial.services.android.util.KotlinUtils
-import za.co.woolworths.financial.services.android.util.Utils
 
 class MyRecycleViewHolder(val mProductListingPageRowBinding: RecommendationsProductListingPageRowBinding) :
     RecyclerView.ViewHolder(mProductListingPageRowBinding.root) {
@@ -62,7 +60,6 @@ class MyRecycleViewHolder(val mProductListingPageRowBinding: RecommendationsProd
                 productListingPromotionalImage.imReducedImage,
                 imPromo?.reduced ?: ""
             )
-            // ImageManager.setPictureWithoutPlaceHolder(productListingPromotionalImage.imFreeGiftImage, imPromo?.freeGift ?: "")
             ImageManager.setPictureOverrideWidthHeight(
                 productListingPromotionalImage.imSave,
                 imPromo?.save ?: ""
@@ -75,10 +72,6 @@ class MyRecycleViewHolder(val mProductListingPageRowBinding: RecommendationsProd
                 productListingPromotionalImage.imVitality,
                 imPromo?.vitality ?: ""
             )
-            //   ImageManager.setPictureWithoutPlaceHolder(productListingPromotionalImage.imNewImage, imPromo?.newImage ?: "")
-            /*if (VirtualTryOnUtil.isVtoConfigAvailable()) {
-                ImageManager.setPictureWithoutPlaceHolder(productListingPromotionalImage.imgTryItOn, virtualTryOn ?: "")
-            }*/
         }
     }
 
@@ -194,25 +187,9 @@ class MyRecycleViewHolder(val mProductListingPageRowBinding: RecommendationsProd
         mProductListingPageRowBinding.apply {
             root.context?.apply {
                 productList?.apply {
-                    includeProductListingPriceLayout.imQuickShopAddToCartIcon?.visibility =
-                        if (productType.equals(
-                                getString(
-                                   R.string.food_product_type
-                                ), ignoreCase = true
-                            )
-                        ) View.VISIBLE else View.GONE
+                    includeProductListingPriceLayout.imQuickShopAddToCartIcon?.visibility = View.GONE
                 }
             }
-        }
-    }
-
-
-    companion object {
-        // Extracting the fulfilmentStoreId from user location or default MC config
-        fun getFulFillmentStoreId(fulfilmentTypeId: String): String {
-            var defaultStoreId = ""
-            Utils.retrieveStoreId(fulfilmentTypeId)?.let { defaultStoreId = it }
-            return defaultStoreId
         }
     }
 }
