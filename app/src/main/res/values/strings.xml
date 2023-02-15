@@ -2867,4 +2867,6 @@
     <string name="only_fashion_beauty_and_home_products_available" >%1$s\nOnly Fashion, Beauty and Home products available.</string>
     <string name="food_fashion_beauty_and_home_products_available">%1$s\nFood, Fashion, Beauty and Home products available.</string>
     <string name="food_fashion_beauty_and_home_products_available_tool_tip">Food, Fashion, Beauty and Home products available.</string>
+
+    <string name="recommendations_title">Recommended</string>
 </resources>
