@@ -1229,6 +1229,12 @@ public class Utils {
             case MY_LIST:
                 appInstanceObject.featureWalkThrough.my_lists = true;
                 break;
+            case PARGO_STORE:
+                appInstanceObject.featureWalkThrough.pargo_store = true;
+                break;
+            case NEW_FBH_CNC:
+                appInstanceObject.featureWalkThrough.new_fbh_cnc = true;
+                break;
             default:
                 break;
         }

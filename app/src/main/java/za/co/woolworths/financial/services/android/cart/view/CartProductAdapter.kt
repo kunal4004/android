@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.adapters
+package za.co.woolworths.financial.services.android.cart.view
 
 import android.animation.ObjectAnimator
 import android.app.Activity
@@ -19,6 +19,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import com.daimajia.swipe.SwipeLayout
 import com.daimajia.swipe.adapters.RecyclerSwipeAdapter
+import za.co.woolworths.financial.services.android.cart.service.network.CartItemGroup
+import za.co.woolworths.financial.services.android.cart.viewmodel.CartUtils.Companion.getAppliedVouchersCount
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton.liquor
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton.lowStock
@@ -28,13 +30,14 @@ import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_
 import za.co.woolworths.financial.services.android.models.service.event.ProductState
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList.Companion.openShoppingList
 import za.co.woolworths.financial.services.android.ui.views.WTextView
-import za.co.woolworths.financial.services.android.util.CartUtils.Companion.getAppliedVouchersCount
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.ImageManager.Companion.setPicture
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.capitaliseFirstLetter
 import za.co.woolworths.financial.services.android.util.NetworkManager
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.util.*
 
 
@@ -62,6 +65,7 @@ class CartProductAdapter(
         fun totalItemInBasket(total: Int)
         fun onOpenProductDetail(commerceItem: CommerceItem)
         fun onViewVouchers()
+        fun onViewCashBackVouchers()
         fun updateOrderTotal()
         fun onGiftItemClicked(commerceItem: CommerceItem)
         fun onEnterPromoCode()
@@ -165,8 +169,11 @@ class CartProductAdapter(
                         commerceItem.getPriceInfo().discountedAmount))
                     productHolder.llPromotionalText.visibility = VISIBLE
                     mContext?.let {
+                        productHolder.promotionalText.setTextColor(
+                            ContextCompat.getColor(it, R.color.promotional_text_red)
+                        )
                         productHolder.price.setTextColor(ContextCompat.getColor(it,
-                            R.color.promotional_text_red))
+                            R.color.black))
                     }
                 } else {
                     productHolder.llPromotionalText.visibility = GONE
@@ -355,36 +362,69 @@ class CartProductAdapter(
                 } else {
                     priceHolder.orderSummeryLayout.visibility = GONE
                 }
-                priceHolder.viewVouchers.setOnClickListener {
+                priceHolder.rlAvailableWRewardsVouchers.setOnClickListener {
                     onItemClick.onViewVouchers()
                     Utils.triggerFireBaseEvents(if (appliedVouchersCount > 0) FirebaseManagerAnalyticsProperties.Cart_ovr_edit else FirebaseManagerAnalyticsProperties.Cart_ovr_view,
                         mContext)
                 }
+                priceHolder.rlAvailableCashVouchers?.setOnClickListener {
+                    onItemClick.onViewCashBackVouchers()
+                    Utils.triggerFireBaseEvents(
+                        if (appliedVouchersCount > 0) FirebaseManagerAnalyticsProperties.Cart_ovr_edit else FirebaseManagerAnalyticsProperties.Cart_ovr_view,
+                        mContext)
+                }
+
                 if (voucherDetails == null) {
                     return
                 }
-                val activeVouchersCount = voucherDetails!!.activeVouchersCount
-                if (activeVouchersCount > 0) {
+                val activeCashVouchersCount = voucherDetails?.let {
+                    it.activeCashVouchersCount
+                }
+                if (activeCashVouchersCount!=null && activeCashVouchersCount > 0) {
+                    val availableVouchersLabel =
+                        mContext?.resources?.getQuantityString(R.plurals.available_cash_vouchers_message,
+                            activeCashVouchersCount,
+                            activeCashVouchersCount)
+                    priceHolder.availableCashVouchersCount.text = availableVouchersLabel
+                    priceHolder.viewCashVouchers.isEnabled = true
+                    priceHolder.rlAvailableCashVouchers.isClickable = true
+                } else {
+                    priceHolder.availableCashVouchersCount.text =
+                        mContext?.getString(R.string.zero_cash_vouchers_available)
+                    priceHolder.viewCashVouchers.isEnabled = false
+                    priceHolder.rlAvailableCashVouchers.isClickable = false
+                }
+
+                val activeVouchersCount = voucherDetails?.let {
+                    it.activeVouchersCount
+                }
+                if (activeVouchersCount != null && activeVouchersCount > 0) {
                     if (appliedVouchersCount > 0) {
                         val availableVouchersLabel =
-                            appliedVouchersCount.toString() + mContext?.getString(if (appliedVouchersCount == 1) R.string.available_voucher_toast_message else R.string.available_vouchers_toast_message) + mContext?.getString(
-                                R.string.applied)
+                            mContext?.resources?.getQuantityString(R.plurals._rewards_vouchers_message_applied,
+                                appliedVouchersCount,
+                                appliedVouchersCount)
                         priceHolder.availableVouchersCount.text = availableVouchersLabel
                         priceHolder.viewVouchers.text = mContext?.getString(R.string.edit)
                         priceHolder.viewVouchers.isEnabled = true
+                        priceHolder.rlAvailableWRewardsVouchers.isClickable = true
                     } else {
                         val availableVouchersLabel =
-                            activeVouchersCount.toString() + mContext?.getString(if (voucherDetails?.activeVouchersCount == 1) R.string.available_voucher_toast_message else R.string.available_vouchers_toast_message) + mContext?.getString(
-                                R.string.available)
+                            mContext?.resources?.getQuantityString(R.plurals.available_rewards_vouchers_message,
+                                activeVouchersCount,
+                                activeVouchersCount)
                         priceHolder.availableVouchersCount.text = availableVouchersLabel
                         priceHolder.viewVouchers.text = mContext?.getString(R.string.view)
                         priceHolder.viewVouchers.isEnabled = true
+                        priceHolder.rlAvailableWRewardsVouchers.isClickable = true
                     }
                 } else {
                     priceHolder.availableVouchersCount.text =
-                        mContext?.getString(R.string.no_vouchers_available)
+                        mContext?.getString(R.string.zero_wrewards_vouchers_available)
                     priceHolder.viewVouchers.text = mContext?.getString(R.string.view)
                     priceHolder.viewVouchers.isEnabled = false
+                    priceHolder.rlAvailableWRewardsVouchers.isClickable = false
+
                 }
                 priceHolder.promoCodeAction.text =
                     mContext?.getString(if (voucherDetails?.promoCodes != null && voucherDetails!!.promoCodes.size > 0) R.string.remove else R.string.enter)
@@ -396,7 +436,7 @@ class CartProductAdapter(
                     priceHolder.promoCodeLabel.text =
                         mContext?.getString(R.string.do_you_have_a_promo_code)
                 }
-                priceHolder.promoCodeAction.setOnClickListener {
+                priceHolder.rlPromoCode.setOnClickListener {
                     if (voucherDetails!!.promoCodes != null && voucherDetails!!.promoCodes.size > 0) onItemClick.onRemovePromoCode(
                         voucherDetails!!.promoCodes[0].promoCode) else onItemClick.onEnterPromoCode()
                 }
@@ -407,6 +447,9 @@ class CartProductAdapter(
                         liquor?.noLiquorImgUrl)
                 } else {
                     priceHolder.liquorBannerRootConstraintLayout.visibility = GONE
+                }
+                if (KotlinUtils.getPreferredDeliveryType() == Delivery.CNC) {
+                    priceHolder.deliveryFee.text = mContext?.getString(R.string.collection_fee)
                 }
             }
         }
@@ -555,7 +598,8 @@ class CartProductAdapter(
         if (!cartItems.isNullOrEmpty()) {
             for (entry in cartItems!!) {
                 if (currentPosition == position) {
-                    return CartCommerceItemRow(CartRowType.HEADER,
+                    return CartCommerceItemRow(
+                        CartRowType.HEADER,
                         entry.type,
                         null,
                         entry.getCommerceItems())
@@ -571,7 +615,8 @@ class CartProductAdapter(
                         CartRowType.GIFT,
                         entry.type,
                         productCollection[position - currentPosition],
-                        null) else CartCommerceItemRow(CartRowType.PRODUCT,
+                        null) else CartCommerceItemRow(
+                        CartRowType.PRODUCT,
                         entry.type,
                         productCollection[position - currentPosition],
                         null)
@@ -706,6 +751,14 @@ class CartProductAdapter(
         val promoDiscountInfo: ImageView
         val liquorBannerRootConstraintLayout: ConstraintLayout
         val imgLiBanner: ImageView
+        val deliveryFee: TextView
+        val txtPriceEstimatedDelivery:TextView
+
+        val availableCashVouchersCount: TextView
+        val viewCashVouchers: TextView
+        val rlAvailableCashVouchers: RelativeLayout
+        val rlAvailableWRewardsVouchers: RelativeLayout
+        val rlPromoCode: RelativeLayout
 
         init {
             txtYourCartPrice = view.findViewById(R.id.txtYourCartPrice)
@@ -730,6 +783,13 @@ class CartProductAdapter(
                 view.findViewById(R.id.liquorBannerRootConstraintLayout)
             imgLiBanner = view.findViewById(R.id.imgLiquorBanner)
             orderTotal = view.findViewById(R.id.orderTotal)
+            availableCashVouchersCount = view.findViewById(R.id.availableCashVouchersCount)
+            viewCashVouchers = view.findViewById(R.id.viewCashVouchers)
+            rlAvailableCashVouchers = view.findViewById(R.id.rlAvailableCashVouchers);
+            rlAvailableWRewardsVouchers = view.findViewById(R.id.rlAvailableWRewardsVouchers);
+            rlPromoCode = view.findViewById(R.id.rlPromoCode);
+            deliveryFee = view.findViewById(R.id.delivery_fee_label)
+            txtPriceEstimatedDelivery = view.findViewById(R.id.txtPriceEstimatedDelivery)
         }
     }
 

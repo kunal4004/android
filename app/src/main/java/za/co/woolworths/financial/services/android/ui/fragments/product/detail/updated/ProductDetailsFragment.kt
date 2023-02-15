@@ -28,10 +28,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
-import androidx.fragment.app.FragmentTransaction
-import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.setFragmentResultListener
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.*
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -130,6 +127,7 @@ import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBind
 import za.co.woolworths.financial.services.android.util.pickimagecontract.PickImageFileContract
 import za.co.woolworths.financial.services.android.util.pickimagecontract.PickImageGalleryContract
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.FoodProductNotAvailableForCollectionDialog
 import java.io.File
 import javax.inject.Inject
 import kotlin.collections.get
@@ -146,7 +144,8 @@ class ProductDetailsFragment :
     ProductNotAvailableForCollectionDialog.IProductNotAvailableForCollectionDialogListener,
     VtoSelectOptionListener, WMaterialShowcaseView.IWalkthroughActionListener, VtoTryAgainListener,
     View.OnTouchListener, ReviewThumbnailAdapter.ThumbnailClickListener,
-    ViewTreeObserver.OnScrollChangedListener {
+    ViewTreeObserver.OnScrollChangedListener,
+    FoodProductNotAvailableForCollectionDialog.IProductNotAvailableForCollectionDialogListener{
 
     var productDetails: ProductDetails? = null
     private var subCategoryTitle: String? = null
@@ -225,7 +224,7 @@ class ProductDetailsFragment :
     private var isRnRAPICalled = false
     private var prodId: String = "-1"
     private lateinit var moreReviewViewModel: RatingAndReviewViewModel
-
+    private val dialogInstance = FoodProductNotAvailableForCollectionDialog.newInstance()
     @OpenTermAndLighting
     @Inject
     lateinit var vtoBottomSheetDialog: VtoBottomSheetDialog
@@ -1057,12 +1056,24 @@ class ProductDetailsFragment :
             if (!this.productDetails?.productType.equals(
                     getString(R.string.food_product_type),
                     ignoreCase = true
-                ) && (KotlinUtils.getPreferredDeliveryType() == Delivery.CNC
-                        || KotlinUtils.getPreferredDeliveryType() == Delivery.DASH)
+                ) && (KotlinUtils.getPreferredDeliveryType() == Delivery.DASH)
             ) {
                 showProductUnavailable()
                 showProductNotAvailableForCollection()
                 return
+            } else if(KotlinUtils.getPreferredDeliveryType() == Delivery.CNC) {
+                //Food only
+                if(this.productDetails?.fulfillmentType == StoreUtils.Companion.FulfillmentType.FOOD_ITEMS?.type && Utils.retrieveStoreId(this.productDetails?.fulfillmentType) == "") {
+                    showProductUnavailable()
+                    foodProductNotAvailableForCollection()
+                    return
+                }  //FBH only
+                else if((this.productDetails?.fulfillmentType == StoreUtils.Companion.FulfillmentType.CLOTHING_ITEMS?.type || this.productDetails?.fulfillmentType == StoreUtils.Companion.FulfillmentType.CRG_ITEMS?.type) &&
+                    (Utils.retrieveStoreId(this.productDetails?.fulfillmentType) == "")) {
+                    showProductUnavailable()
+                    showProductNotAvailableForCollection()
+                    return
+                }
             }
         }
 
@@ -2205,7 +2216,7 @@ class ProductDetailsFragment :
                             if (!this.productDetails?.productType.equals(
                                     getString(R.string.food_product_type),
                                     ignoreCase = true
-                                ) && KotlinUtils.getPreferredDeliveryType() == Delivery.CNC
+                                )
                             ) {
                                 storeIdForInventory = ""
                                 clearStockAvailability()
@@ -3942,6 +3953,16 @@ class ProductDetailsFragment :
                 ratingReviewResponse?.reportReviewOptions as ArrayList<String>?,
                 ratingReviewResponse?.reviews?.get(0)
             )
+        }
+    }
+
+    override fun foodProductNotAvailableForCollection() {
+        activity?.apply {
+            if (dialogInstance != null && !dialogInstance.isVisible)
+                dialogInstance.show(
+                    this@ProductDetailsFragment.childFragmentManager,
+                    FoodProductNotAvailableForCollectionDialog::class.java.simpleName
+                )
         }
     }
 
