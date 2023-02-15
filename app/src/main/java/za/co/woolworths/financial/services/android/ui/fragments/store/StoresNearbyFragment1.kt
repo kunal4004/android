@@ -136,7 +136,9 @@ class StoresNearbyFragment1 : Fragment(R.layout.fragment_stores_nearby1), Dynami
 
             close?.setOnClickListener { backToAllStoresPage(currentStorePosition) }
             slidingLayout?.setFadeOnClickListener {
+                slidingLayout?.anchorPoint = 1.0f
                 slidingLayout?.panelState = PanelState.COLLAPSED
+                backToAllStoresPage(currentStorePosition)
             }
             slidingLayout?.addPanelSlideListener(object : SlidingUpPanelLayout.PanelSlideListener {
                 override fun onPanelSlide(panel: View, slideOffset: Float) {
@@ -525,6 +527,7 @@ class StoresNearbyFragment1 : Fragment(R.layout.fragment_stores_nearby1), Dynami
             }
             REQUEST_CHECK_SETTINGS -> initLocationCheck()
             LAYOUT_ANCHORED_RESULT_CODE -> {
+                binding.slidingLayout?.anchorPoint = 1.0f
                 binding.slidingLayout?.panelState = PanelState.COLLAPSED
                 binding.slidingLayout?.isFocusable = false
             }
