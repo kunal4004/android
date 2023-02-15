@@ -53,12 +53,9 @@ class ProductCategoryAdapter(private val actionItemList: List<Action>?) :
 
             }
             itemView.setOnClickListener {
-
-              //  actionItem?.products?.let {
-
-                    onItemClick?.invoke(actionItem.products)
-                    row_index = position;
-                    notifyDataSetChanged();
+                onItemClick?.invoke(actionItem.products)
+                row_index = position;
+                notifyDataSetChanged();
 
             }
         }

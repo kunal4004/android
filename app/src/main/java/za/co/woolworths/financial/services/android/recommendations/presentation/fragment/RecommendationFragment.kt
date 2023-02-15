@@ -38,13 +38,8 @@ class RecommendationFragment :
     private var _recommendationsLayoutBinding: RecommendationsLayoutBinding? = null
     private val recommendationsLayoutBinding get() = _recommendationsLayoutBinding!!
     private val recommendationViewModel: RecommendationViewModel by viewModels()
-
-    //private val recommendationViewModel: RecommendationViewModel by activityViewModels()
     private var mProductCategoryAdapter: ProductCategoryAdapter? = null
     private var mProductListRecommendationAdapter: ProductListRecommendationAdapter? = null
-
-    private var mStoreId = ""
-    private var isUserBrowsing: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -96,21 +91,24 @@ class RecommendationFragment :
             _recommendationsLayoutBinding?.recommendationsProductsRecyclerview?.adapter =
                 mProductListRecommendationAdapter
         }
-
     }
-
 
     private fun getRecommendationDetails() {
         val bundle = arguments?.getBundle(BundleKeysConstants.BUNDLE)
-        val reccommendationsDataEventTypeFirst = bundle?.getParcelable<Event>(BundleKeysConstants.RECOMMENDATIONS_EVENT_DATA) as Event
-        val reccommendationsDataEventTypeSecond = bundle?.getParcelable<Event>(BundleKeysConstants.RECOMMENDATIONS_EVENT_DATA_TYPE) as Event
+        val reccommendationsDataEventTypeFirst =
+            bundle?.getParcelable<Event>(BundleKeysConstants.RECOMMENDATIONS_EVENT_DATA) as Event
+        val reccommendationsDataEventTypeSecond =
+            bundle?.getParcelable<Event>(BundleKeysConstants.RECOMMENDATIONS_EVENT_DATA_TYPE) as Event
         var recMonetateId: String? = null
         if (Utils.getMonetateId() != null) {
             recMonetateId = Utils.getMonetateId()
         }
 
         val recommendationRequest = RecommendationRequest(
-            events = listOf(reccommendationsDataEventTypeFirst, reccommendationsDataEventTypeSecond),
+            events = listOf(
+                reccommendationsDataEventTypeFirst,
+                reccommendationsDataEventTypeSecond
+            ),
             monetateId = recMonetateId
         )
 
@@ -130,7 +128,6 @@ class RecommendationFragment :
                         }
                     }
                     Status.ERROR -> {
-                        //TODO:
                     }
                     else -> {
                         // Nothing
@@ -147,7 +144,6 @@ class RecommendationFragment :
     }
 
     override fun openProductDetailView(productList: Product) {
-
         // Move to shop tab.
         if (requireActivity() !is BottomNavigationActivity) {
             return
@@ -156,8 +152,6 @@ class RecommendationFragment :
         bottomNavigationActivity.bottomNavigationById.currentItem =
             BottomNavigationActivity.INDEX_PRODUCT
         val productDetails = ProductDetails()
-
-
         productDetails.externalImageRefV2 = productList.externalImageRefV2
         productDetails.productName = productList.productName
         productDetails.productId = productList.productId

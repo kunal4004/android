@@ -200,8 +200,6 @@
                     android:layout_marginBottom="@dimen/eighty_dp"/>
 
             </LinearLayout>
-
-
         </androidx.core.widget.NestedScrollView>
 
         <LinearLayout
