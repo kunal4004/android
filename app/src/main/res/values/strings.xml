@@ -2526,7 +2526,7 @@
     <string name="standard_delivery">Standard Delivery</string>
     <string name="click_and_collect">Click &amp; Collect</string>
     <string name="standard_title_text">Delivery fee determined during checkout.\nAll products available.</string>
-    <string name="click_and_collect_title_text">Free Collection. \n Limited shop of %1$s Items.</string>
+    <string name="click_and_collect_title_text">Free Collection. \n Limited shop of %1$s food items.</string>
     <string name="dash_title_text_1">R%1$s Delivery Fee. \n </string>
     <string name="dash_title_text_2">Limited shop of %1$s Items.</string>
     <string name="dash_delivery">Dash Delivery</string>
@@ -2911,4 +2911,6 @@
     <string name="only_fashion_beauty_and_home_products_available" >%1$s\nOnly Fashion, Beauty and Home products available.</string>
     <string name="food_fashion_beauty_and_home_products_available">%1$s\nFood, Fashion, Beauty and Home products available.</string>
     <string name="food_fashion_beauty_and_home_products_available_tool_tip">Food, Fashion, Beauty and Home products available.</string>
+    <string name="only_fashion_beauty_and_home_products_available_text" >Only Fashion, Beauty and Home products available.</string>
+    <string name="cnc_title_text_2">Limited shop of %1$s food items.</string>
 </resources>
