@@ -26,6 +26,9 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import za.co.woolworths.financial.services.android.cart.service.network.CartItemGroup
 import za.co.woolworths.financial.services.android.cart.service.network.CartResponse
+import za.co.woolworths.financial.services.android.cart.viewmodel.CartUtils.Companion.filterCommerceItemFromCartResponse
+import za.co.woolworths.financial.services.android.cart.viewmodel.CartUtils.Companion.getAppliedVouchersCount
+import za.co.woolworths.financial.services.android.cart.viewmodel.CartUtils.Companion.updateItemLimitsBanner
 import za.co.woolworths.financial.services.android.cart.viewmodel.CartViewModel
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity
@@ -72,9 +75,6 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK_201
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_SESSION_TIMEOUT_440
-import za.co.woolworths.financial.services.android.cart.viewmodel.CartUtils.Companion.filterCommerceItemFromCartResponse
-import za.co.woolworths.financial.services.android.cart.viewmodel.CartUtils.Companion.getAppliedVouchersCount
-import za.co.woolworths.financial.services.android.cart.viewmodel.CartUtils.Companion.updateItemLimitsBanner
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getPreferredDeliveryType
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getPreferredPlaceId
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.isDeliveryOptionClickAndCollect
@@ -1085,105 +1085,6 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         mCommerceItem = commerceItem
         resetItemDelete(true)
     }
-
-    fun convertResponseToCartResponseObject(response: ShoppingCartResponse?): CartResponse? {
-        if (response == null) return null
-        val cartResponse: CartResponse?
-
-        try {
-            displayUpSellMessage(response.data[0])
-            cartResponse = CartResponse()
-            cartResponse.httpCode = response.httpCode
-            val data = response.data[0]
-            cartResponse.orderSummary = data.orderSummary
-            cartResponse.voucherDetails = data.voucherDetails
-            cartResponse.productCountMap = data.productCountMap // set delivery location
-            cartResponse.liquorOrder = data.liquorOrder
-            cartResponse.noLiquorImageUrl = data.noLiquorImageUrl
-            cartResponse.blackCardHolder = data.blackCardHolder
-            val fulfillmentDetailsObj = cartResponse.orderSummary.fulfillmentDetails
-            if (fulfillmentDetailsObj?.address?.placeId != null) {
-                val shoppingDeliveryLocation = ShoppingDeliveryLocation(fulfillmentDetailsObj)
-                Utils.savePreferredDeliveryLocation(shoppingDeliveryLocation)
-                setDeliveryLocation(shoppingDeliveryLocation)
-            } else {
-                // If user logs out and login with new registration who don't have location.
-                setDeliveryLocation(ShoppingDeliveryLocation(fulfillmentDetailsObj))
-            }
-            val itemsObject = JSONObject(Gson().toJson(data.items))
-            isMixedBasket = itemsObject.has(ProductType.FOOD_COMMERCE_ITEM.value) && itemsObject.length() > 1
-            val keys = itemsObject.keys()
-            val cartItemGroups = ArrayList<CartItemGroup>()
-            while ((keys.hasNext())) {
-                val cartItemGroup = CartItemGroup()
-                val key = keys.next()
-                //GENERAL - "default",HOME - "homeCommerceItem",FOOD
-                // - "foodCommerceItem",CLOTHING
-                // - "clothingCommerceItem",PREMIUM BRANDS
-                // - "premiumBrandCommerceItem",
-                // Anything else: OTHER
-                when {
-                    key.contains(ProductType.DEFAULT.value) ->
-                        cartItemGroup.setType(ProductType.DEFAULT.shortHeader)
-                    key.contains(ProductType.GIFT_COMMERCE_ITEM.value) ->
-                        cartItemGroup.setType(ProductType.GIFT_COMMERCE_ITEM.shortHeader)
-                    key.contains(ProductType.HOME_COMMERCE_ITEM.value) ->
-                        cartItemGroup.setType(ProductType.HOME_COMMERCE_ITEM.shortHeader)
-                    key.contains(ProductType.FOOD_COMMERCE_ITEM.value) ->
-                        cartItemGroup.setType(ProductType.FOOD_COMMERCE_ITEM.shortHeader)
-                    key.contains(ProductType.CLOTHING_COMMERCE_ITEM.value) ->
-                        cartItemGroup.setType(ProductType.CLOTHING_COMMERCE_ITEM.shortHeader)
-                    key.contains(ProductType.PREMIUM_BRAND_COMMERCE_ITEM.value) ->
-                        cartItemGroup.setType(ProductType.PREMIUM_BRAND_COMMERCE_ITEM.shortHeader)
-                    else -> cartItemGroup.setType(ProductType.OTHER_ITEMS.shortHeader)
-                }
-                val productsArray = itemsObject.getJSONArray(key)
-                if (productsArray.length() > 0) {
-                    val productList = ArrayList<CommerceItem>()
-                    for (i in 0 until productsArray.length()) {
-                        val commerceItemObject = productsArray.getJSONObject(i)
-                        val commerceItem =
-                            Gson().fromJson(commerceItemObject.toString(), CommerceItem::class.java)
-                        val fulfillmentStoreId = Utils.retrieveStoreId(commerceItem.fulfillmentType)
-                        commerceItem.fulfillmentStoreId =
-                            fulfillmentStoreId!!.replace("\"".toRegex(), "")
-                        productList.add(commerceItem)
-                        isFBHOnly = if(!itemsObject.has(ProductType.FOOD_COMMERCE_ITEM.value)) {
-                            commerceItem.fulfillmentType == StoreUtils.Companion.FulfillmentType.CLOTHING_ITEMS?.type
-                        } else false
-                    }
-                    this.cartItemList = productList
-                    cartItemGroup.setCommerceItems(productList)
-                }
-                cartItemGroups.add(cartItemGroup)
-            }
-            var giftCartItemGroup = CartItemGroup()
-            giftCartItemGroup.type = GIFT_ITEM
-            val generalCartItemGroup = CartItemGroup()
-            generalCartItemGroup.type = GENERAL_ITEM
-            var generalIndex = -1
-            if (cartItemGroups.contains(giftCartItemGroup) && cartItemGroups.contains(
-                    generalCartItemGroup
-                )
-            ) {
-                for (cartGroupIndex in cartItemGroups.indices) {
-                    val cartItemGroup = cartItemGroups[cartGroupIndex]
-                    if (cartItemGroup.type.equals(GENERAL_ITEM, ignoreCase = true)) {
-                        generalIndex = cartGroupIndex
-                    }
-                    if (cartItemGroup.type.equals(GIFT_ITEM, ignoreCase = true)) {
-                        giftCartItemGroup = cartItemGroup
-                        cartItemGroups.removeAt(cartGroupIndex)
-                    }
-                }
-                cartItemGroups.add(generalIndex + 1, giftCartItemGroup)
-            }
-            cartResponse.cartItems = cartItemGroups
-        } catch (e: JSONException) {
-            logException(e)
-            return null
-        }
-	}
     
     private fun updateUIForCartResponse(response: CartResponse?) {
         if (response == null) return

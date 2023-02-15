@@ -13,6 +13,9 @@ import com.awfs.coordination.databinding.AvailableVouchersFragmentBinding
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.tabs.TabLayout
 import dagger.hilt.android.AndroidEntryPoint
+import za.co.woolworths.financial.services.android.cart.view.CartFragment.Companion.BLACK_CARD_HOLDER
+import za.co.woolworths.financial.services.android.cart.view.CartFragment.Companion.CASH_BACK_VOUCHERS
+import za.co.woolworths.financial.services.android.cart.view.CartFragment.Companion.VOUCHER_DETAILS
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
@@ -21,9 +24,6 @@ import za.co.woolworths.financial.services.android.ui.adapters.AvailableVouchers
 import za.co.woolworths.financial.services.android.ui.adapters.CashBackVouchersAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.account.applynow.activities.ApplyNowActivity
-import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment.Companion.BLACK_CARD_HOLDER
-import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment.Companion.CASH_BACK_VOUCHERS
-import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment.Companion.VOUCHER_DETAILS
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.vouchersBottomDialog.VouchersBottomDialog
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_3000_MS
 import za.co.woolworths.financial.services.android.util.Utils
