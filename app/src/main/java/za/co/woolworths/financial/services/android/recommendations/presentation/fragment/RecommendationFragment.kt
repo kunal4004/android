@@ -1,23 +1,17 @@
 package za.co.woolworths.financial.services.android.recommendations.presentation.fragment
 
-import android.location.Location
 import android.os.Bundle
-import android.os.Handler
-import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.get
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.databinding.RecommendationsLayoutBinding
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
-import za.co.woolworths.financial.services.android.models.AppConfigSingleton
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
-import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.models.dto.ProductDetails
 import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.Action
 import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.Product
@@ -25,10 +19,10 @@ import za.co.woolworths.financial.services.android.recommendations.data.response
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.RecommendationRequest
 import za.co.woolworths.financial.services.android.recommendations.presentation.viewmodel.RecommendationViewModel
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
-import za.co.woolworths.financial.services.android.ui.adapters.holder.RecyclerViewViewHolderItems
-import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants
+import za.co.woolworths.financial.services.android.util.ScreenManager
+import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
-import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
 @AndroidEntryPoint
 class RecommendationFragment :
@@ -155,7 +149,7 @@ class RecommendationFragment :
         productDetails.externalImageRefV2 = productList.externalImageRefV2
         productDetails.productName = productList.productName
         productDetails.productId = productList.productId
-        productDetails.sku = productList.sku
+        productDetails.sku = "6009223457053"
         openProductDetailFragment("", productDetails)
     }
 
