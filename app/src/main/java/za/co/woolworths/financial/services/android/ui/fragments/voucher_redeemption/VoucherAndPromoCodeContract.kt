@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.voucher_redeemp
 
 import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
 import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse
+import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.CashBackVouchers
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.SelectedVoucher
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.Voucher
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.VoucherErrorMessage
@@ -27,6 +28,8 @@ interface VoucherAndPromoCodeContract {
         fun isVouchersSelectedToRedeem(): Boolean
         fun setVouchers(vouchers: ArrayList<Voucher>)
         fun getVouchers(): ArrayList<Voucher>?
+        fun setCashBackVouchers(cashBackVouchers: ArrayList<CashBackVouchers>)
+        fun getCashBackVouchers(): ArrayList<CashBackVouchers>?
         fun updateVouchersWithErrorMessages(message: ArrayList<VoucherErrorMessage>)
     }
 

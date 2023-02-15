@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.awfs.coordination.R
 import com.awfs.coordination.databinding.AvailableVouchersToRedeemListItemBinding
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.Voucher
 import za.co.woolworths.financial.services.android.ui.fragments.voucher_redeemption.VoucherAndPromoCodeContract
@@ -34,6 +35,11 @@ class AvailableVouchersToRedeemListAdapter(var vouchers: ArrayList<Voucher>, var
                         errorMessage.text = it.errorMessage
                         errorMessage.visibility =
                             if (it.errorMessage.isEmpty()) View.GONE else View.VISIBLE
+                        if (voucher.isSelected && voucherSelector.isChecked) {
+                            vouchersLayout.setBackgroundResource(R.drawable.bg_selected_voucher)
+                        } else {
+                            vouchersLayout.setBackgroundResource(R.drawable.bg_un_selected_voucher)
+                        }
                     }
                     setOnClickListener {
                         voucher.isSelected = !voucher.isSelected

@@ -53,6 +53,7 @@ class OrderConfirmationFragment :
     private var cncFoodItemsOrderListAdapter: ItemsOrderListAdapter? = null
     private var cncOtherItemsOrderListAdapter: ItemsOrderListAdapter? = null
     private var itemsOrderListAdapter: ItemsOrderListAdapter? = null
+    private var isPurchaseEventTriggered: Boolean = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -76,7 +77,12 @@ class OrderConfirmationFragment :
                                     setupDeliveryOrCollectionDetails(response)
                                     setupOrderTotalDetails(response)
                                     displayVocifNeeded(response)
-                                    showPurchaseEvent(response)
+                                    if (isPurchaseEventTriggered)
+                                    {
+                                        showPurchaseEvent(response)
+                                        isPurchaseEventTriggered = false
+                                    }
+
                                 }
                                 else -> {
                                     showErrorScreen(ErrorHandlerActivity.ERROR_TYPE_SUBMITTED_ORDER)
@@ -367,6 +373,18 @@ class OrderConfirmationFragment :
                 totalDiscountSeparator.visibility = GONE
             }
 
+            val cashVoucherApplied = response?.orderSummary?.cashVoucherApplied
+            if (cashVoucherApplied != null && cashVoucherApplied > 0) {
+                quarterlyVoucherText?.text = "- ".plus(
+                    CurrencyFormatter
+                        .formatAmountToRandAndCentWithSpace(cashVoucherApplied)
+                )
+            } else {
+                quarterlyVoucherLinearLayout.visibility = GONE
+                quarterlyVoucherSeparator.visibility = GONE
+            }
+
+
             // Commenting this Till Jan-2022 Release as per WOP-13825
             /*if (response?.wfsCardDetails?.isWFSCardAvailable == false) {
                 if (response.orderSummary?.discountDetails?.wrewardsDiscount!! > 0.0) {
@@ -485,7 +503,7 @@ class OrderConfirmationFragment :
 
         initCncFoodRecyclerView()
 
-        handleAddToShoppingListButton()
+        handleAddToShoppingListButtonFromCNC()
     }
 
     private fun setCncItemCount(items: OrderItems?) {
@@ -670,6 +688,54 @@ class OrderConfirmationFragment :
                     }
                 }
             }
+        }
+    }
+
+    private fun handleAddToShoppingListButtonFromCNC() {
+        handleCncFoodAddToList()
+        handleCncOtherAddToList()
+
+    }
+
+    private fun handleCncFoodAddToList() {
+        if (cncFoodItemsOrder.isNullOrEmpty()) {
+            return
+        }
+        val listOfItems = ArrayList<AddToListRequest>()
+        cncFoodItemsOrder!!.forEach {
+            val item = AddToListRequest()
+            item.apply {
+                quantity = it.quantity.toString()
+                catalogRefId = it.catalogRefId
+                giftListId = ""
+                skuID = ""
+            }
+            listOfItems.add(item)
+        }
+
+        binding.dashOrderDetailsLayout.addShoppingListButton.setOnClickListener {
+            NavigateToShoppingList.openShoppingList(activity, listOfItems, "", false)
+        }
+    }
+
+    private fun handleCncOtherAddToList() {
+        if (cncOtherItemsOrder.isNullOrEmpty()) {
+            return
+        }
+        val listOfItems = ArrayList<AddToListRequest>()
+        cncOtherItemsOrder!!.forEach {
+            val item = AddToListRequest()
+            item.apply {
+                quantity = it.quantity.toString()
+                catalogRefId = it.catalogRefId
+                giftListId = ""
+                skuID = ""
+            }
+            listOfItems.add(item)
+        }
+
+        binding.cncOrderDetailsLayout.addShoppingListButton.setOnClickListener {
+            NavigateToShoppingList.openShoppingList(activity, listOfItems, "", false)
         }
     }
 }
