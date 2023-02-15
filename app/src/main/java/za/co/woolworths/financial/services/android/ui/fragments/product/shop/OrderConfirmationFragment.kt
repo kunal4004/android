@@ -367,6 +367,18 @@ class OrderConfirmationFragment :
                 totalDiscountSeparator.visibility = GONE
             }
 
+            val cashVoucherApplied = response?.orderSummary?.cashVoucherApplied
+            if (cashVoucherApplied != null && cashVoucherApplied > 0) {
+                quarterlyVoucherText?.text = "- ".plus(
+                    CurrencyFormatter
+                        .formatAmountToRandAndCentWithSpace(cashVoucherApplied)
+                )
+            } else {
+                quarterlyVoucherLinearLayout.visibility = GONE
+                quarterlyVoucherSeparator.visibility = GONE
+            }
+
+
             // Commenting this Till Jan-2022 Release as per WOP-13825
             /*if (response?.wfsCardDetails?.isWFSCardAvailable == false) {
                 if (response.orderSummary?.discountDetails?.wrewardsDiscount!! > 0.0) {

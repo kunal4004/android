@@ -1812,14 +1812,29 @@
     <string name="delivery_location_title1">labelDeliveryLocationTitle</string>
     <string name="delivery_location_value">txtDeliveryLocationValue</string>
     <string name="redeem_voucher_walkthrough_title">Redeem your vouchers online</string>
-    <string name="redeem_voucher_walkthrough_desc">Save more than ever – use your WRewards vouchers for instant savings when you checkout in the Woolies app or on our website.</string>
+    <string name="redeem_voucher_walkthrough_desc">Save more than ever - redeem your WRewards or Cash Back Vouchers during checkout for instant savings.</string>
     <string name="apply_promo_code_title">Promo Code</string>
     <string name="apply">apply</string>
     <string name="enter_promo_code_hint">Enter promo code</string>
-    <string name="available_voucher_toast_message">\u0020voucher</string>
-    <string name="available_vouchers_toast_message">\u0020vouchers</string>
+    <plurals name="available_rewards_vouchers_message">
+        <item quantity="one">%d wrewards voucher available</item>
+        <item quantity="other">%d wrewards vouchers available</item>
+    </plurals>
+    <plurals name="_rewards_vouchers_message_applied">
+        <item quantity="one">%d wrewards voucher Applied</item>
+        <item quantity="other">%d wrewards vouchers Applied</item>
+    </plurals>
+    <plurals name="available_cash_vouchers_message">
+        <item quantity="one">%d cash back voucher available</item>
+        <item quantity="other">%d cash back vouchers available</item>
+    </plurals>
+    <string name="zero_wrewards_vouchers_available">no wrewards vouchers available</string>
+    <string name="zero_cash_vouchers_available">no cash back vouchers available</string>
+    <plurals name="vouchers_available">
+        <item quantity="one">voucher available:</item>
+        <item quantity="other">vouchers available:</item>
+    </plurals>
     <string name="available">\u0020available</string>
-    <string name="vouchers_available">available vouchers</string>
     <string name="applying_your_vouchers">Applying Your Vouchers</string>
     <string name="redeem">Redeem</string>
     <string name="redeem_voucher_generic_error_message">There was a problem redeeming your voucher(s) Please try again</string>
@@ -2826,6 +2841,35 @@
         <item quantity="other">%1$s %2$s Items</item>
     </plurals>
     <string name="select_your_marital_status">Select your marital status</string>
+    <string name="apply_for_credit_card">apply for credit card</string>
+    <string name="available_vouchers">vouchers available</string>
+    <string name="wrewards_voucher">WRewards Vouchers</string>
+    <string name="cash_back_vouchers">Cash Back Vouchers</string>
+    <string name="your_cash_back_vouchers">Your Cash Back Vouchers</string>
+    <string name="cash_back_vouchers_desc">These are your quarterly Cash Back Vouchers. You can redeem these Vouchers when selecting a payment method in Checkout.</string>
+    <string name="select_wvouchers_redeem">Select Vouchers To Redeem</string>
+    <string name="select_wvouchers_desc">Save even more - Redeem your WRewards Vouchers now.</string>
+    <string name="vouchers_redeemable_at_checkout">Redeemable at Checkout</string>
+    <string name="expires_vouchers">"Expires %s"</string>
+    <string name="you_don_t_qualify_for_cash_back">You Don’t Qualify For Cash Back Vouchers Yet</string>
+    <string name="apply_for_a_woolworths_credit_card">To qualify for Cash Back Vouchers, apply for a Woolworths Credit Card today.</string>
+    <string name="no_wrewords_right_now">"You Have No WRewards Vouchers \nRight Now"</string>
+    <string name="unable_load_wrewards">"Unable to load WRewards vouchers"</string>
+    <string name="load_fail_wrewards_vouchers">"We are experiencing technical issues with our Voucher system. We’re working on it, please try  again later."</string>
+    <string name="no_cash_back_right_now">"You Have No Cash Back Vouchers \nRight Now"</string>
+    <string name="unable_load_cash_back_vouchers">"Unable to load Cash Back vouchers"</string>
+    <string name="load_fail_cask_back_vouchers">"We are experiencing technical issues with our Voucher system. Please try  again later."</string>
+    <string name="using_cash_back_vouchers">Using Cash Back Vouchers</string>
+    <string name="cash_back_cancellation">Due to a cancellation or reversal of a previous order we are reactivating this Voucher.It will be available soon.</string>
+    <string name="cash_back_vouchers_info_one">You can only use one Voucher at a time.</string>
+    <string name="cash_back_vouchers_info_two">Make sure your cart total is higher than the voucher value.</string>
+    <string name="cash_back_vouchers_info_three">You can use a Cash Back Voucher when your cart has either only food items or a mix of fashion, beauty and/or homeware items.</string>
+    <string name="cash_back_vouchers_info_four">These Vouchers are only redeemable at checkout as a payment method.</string>
+    <string name="quarterly_voucher">Quarterly Voucher</string>
+    <string name="can_not_redeem_cash_back_vouchers">Can’t redeem this voucher</string>
+    <string name="learn_more">Learn More</string>
+
+
     <!--  FBH CNC -->
 
     <string name="food_item_not_available_for_collection_title">Food Items Can’t Be Collected From a Pargo Pickup Point.</string>
