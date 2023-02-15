@@ -497,7 +497,7 @@ class OrderConfirmationFragment :
 
         initCncFoodRecyclerView()
 
-        handleAddToShoppingListButton()
+        handleAddToShoppingListButtonFromCNC()
     }
 
     private fun setCncItemCount(items: OrderItems?) {
@@ -682,6 +682,54 @@ class OrderConfirmationFragment :
                     }
                 }
             }
+        }
+    }
+
+    private fun handleAddToShoppingListButtonFromCNC() {
+        handleCncFoodAddToList()
+        handleCncOtherAddToList()
+
+    }
+
+    private fun handleCncFoodAddToList() {
+        if (cncFoodItemsOrder.isNullOrEmpty()) {
+            return
+        }
+        val listOfItems = ArrayList<AddToListRequest>()
+        cncFoodItemsOrder!!.forEach {
+            val item = AddToListRequest()
+            item.apply {
+                quantity = it.quantity.toString()
+                catalogRefId = it.catalogRefId
+                giftListId = ""
+                skuID = ""
+            }
+            listOfItems.add(item)
+        }
+
+        binding.dashOrderDetailsLayout.addShoppingListButton.setOnClickListener {
+            NavigateToShoppingList.openShoppingList(activity, listOfItems, "", false)
+        }
+    }
+
+    private fun handleCncOtherAddToList() {
+        if (cncOtherItemsOrder.isNullOrEmpty()) {
+            return
+        }
+        val listOfItems = ArrayList<AddToListRequest>()
+        cncOtherItemsOrder!!.forEach {
+            val item = AddToListRequest()
+            item.apply {
+                quantity = it.quantity.toString()
+                catalogRefId = it.catalogRefId
+                giftListId = ""
+                skuID = ""
+            }
+            listOfItems.add(item)
+        }
+
+        binding.cncOrderDetailsLayout.addShoppingListButton.setOnClickListener {
+            NavigateToShoppingList.openShoppingList(activity, listOfItems, "", false)
         }
     }
 }
