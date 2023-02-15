@@ -411,25 +411,27 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                 deliveringToAddress.append(defaultAddressNickname)
 
                 // Extract default address display name
-                savedAddresses.addresses?.forEach { address ->
-                    if (savedAddresses.defaultAddressNickname.equals(address.nickname)) {
-                        this.defaultAddress = address
-                        suburbId = address.suburbId ?: ""
-                        placesId = address?.placesId
-                        storeId = address?.storeId
-                        nickName = address?.nickname
-                        val addressName = SpannableString(address.address1)
-                        val typeface1 =
-                            ResourcesCompat.getFont(context, R.font.myriad_pro_regular)
-                        addressName.setSpan(
-                            StyleSpan(typeface1!!.style),
-                            0, addressName.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                        )
-                        deliveringToAddress.append(addressName)
-                        return@forEach
-                    }
-                    if (savedAddresses.defaultAddressNickname.isNullOrEmpty()) {
-                        binding.checkoutDeliveryDetailsLayout.root.visibility = GONE
+                run list@{
+                    savedAddresses.addresses?.forEach { address ->
+                        if (savedAddresses.defaultAddressNickname.equals(address.nickname)) {
+                            this.defaultAddress = address
+                            suburbId = address.suburbId ?: ""
+                            placesId = address?.placesId
+                            storeId = address?.storeId
+                            nickName = address?.nickname
+                            val addressName = SpannableString(address.address1)
+                            val typeface1 =
+                                ResourcesCompat.getFont(context, R.font.myriad_pro_regular)
+                            addressName.setSpan(
+                                StyleSpan(typeface1!!.style),
+                                0, addressName.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                            )
+                            deliveringToAddress.append(addressName)
+                            return@list
+                        }
+                        if (savedAddresses.defaultAddressNickname.isNullOrEmpty()) {
+                            binding.checkoutDeliveryDetailsLayout.root.visibility = GONE
+                        }
                     }
                 }
                 binding.checkoutDeliveryDetailsLayout.tvNativeCheckoutDeliveringTitle.text = requireContext().getString(R.string.standard_delivery)
