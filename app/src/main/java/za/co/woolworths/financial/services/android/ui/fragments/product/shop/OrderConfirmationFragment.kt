@@ -77,7 +77,7 @@ class OrderConfirmationFragment :
                                     setupDeliveryOrCollectionDetails(response)
                                     setupOrderTotalDetails(response)
                                     displayVocifNeeded(response)
-                                    if (isPurchaseEventTriggered)
+                                    if (!isPurchaseEventTriggered)
                                     {
                                         showPurchaseEvent(response)
                                         isPurchaseEventTriggered = false
