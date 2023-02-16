@@ -5,6 +5,7 @@ import android.graphics.Typeface.BOLD
 import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableString
+import android.text.SpannableStringBuilder
 import android.text.style.StyleSpan
 import android.view.Menu
 import android.view.MenuInflater
@@ -52,6 +53,7 @@ class OrderConfirmationFragment :
     private var cncFoodItemsOrderListAdapter: ItemsOrderListAdapter? = null
     private var cncOtherItemsOrderListAdapter: ItemsOrderListAdapter? = null
     private var itemsOrderListAdapter: ItemsOrderListAdapter? = null
+    private var isPurchaseEventTriggered: Boolean = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -75,7 +77,12 @@ class OrderConfirmationFragment :
                                     setupDeliveryOrCollectionDetails(response)
                                     setupOrderTotalDetails(response)
                                     displayVocifNeeded(response)
-                                    showPurchaseEvent(response)
+                                    if (isPurchaseEventTriggered)
+                                    {
+                                        showPurchaseEvent(response)
+                                        isPurchaseEventTriggered = false
+                                    }
+
                                 }
                                 else -> {
                                     showErrorScreen(ErrorHandlerActivity.ERROR_TYPE_SUBMITTED_ORDER)
@@ -228,10 +235,19 @@ class OrderConfirmationFragment :
                     }
                     binding.deliveryCollectionDetailsConstraintLayout.apply {
                         deliveryTextView.text = it.getText(R.string.delivery_semicolon)
-                        optionLocation.text =
-                            response?.orderSummary?.fulfillmentDetails?.address?.address1?.let {
-                                convertToTitleCase(it)
-                            } ?: ""
+
+                        val address =  response?.orderSummary?.fulfillmentDetails?.address?.address1?.let {
+                            convertToTitleCase(it)
+                        } ?: ""
+
+                        val formattedNickNameWithAddress = KotlinUtils.getFormattedNickName(
+                            response?.orderSummary?.fulfillmentDetails?.address?.nickname, address, activity
+                        )
+
+                        formattedNickNameWithAddress.append(address)
+
+                        optionLocation.text = formattedNickNameWithAddress
+
                         continueBrowsingStandardLinearLayout.setOnClickListener {
                             requireActivity()?.setResult(CheckOutFragment.REQUEST_CHECKOUT_ON_CONTINUE_SHOPPING)
                             requireActivity()?.finish()
@@ -253,11 +269,21 @@ class OrderConfirmationFragment :
                                 R.drawable.icon_dash_delivery_scooter
                             )
                         optionTitle.text = it.getText(R.string.dashing_to)
-                        optionLocationTitle.text =
-                            response?.orderSummary?.fulfillmentDetails?.address?.address1?.let {
-                                convertToTitleCase(it)
-                            }
-                                ?: ""
+
+                        val address =  response?.orderSummary?.fulfillmentDetails?.address?.address1?.let {
+                            convertToTitleCase(it)
+                        } ?: ""
+
+                        val formattedNickNameWithAddress = KotlinUtils.getFormattedNickName(
+                            response?.orderSummary?.fulfillmentDetails?.address?.nickname,
+                            address,
+                            activity
+                        )
+
+                        formattedNickNameWithAddress.append(address)
+
+                        optionLocationTitle.text = formattedNickNameWithAddress
+
                         dashFoodDeliveryDateTimeTextView?.text = applyBoldBeforeComma(
                             response
                                 ?.deliveryDetails?.deliveryInfos?.get(0)?.deliveryDateAndTime
@@ -346,6 +372,18 @@ class OrderConfirmationFragment :
                 totalDiscountLinearLayout.visibility = GONE
                 totalDiscountSeparator.visibility = GONE
             }
+
+            val cashVoucherApplied = response?.orderSummary?.cashVoucherApplied
+            if (cashVoucherApplied != null && cashVoucherApplied > 0) {
+                quarterlyVoucherText?.text = "- ".plus(
+                    CurrencyFormatter
+                        .formatAmountToRandAndCentWithSpace(cashVoucherApplied)
+                )
+            } else {
+                quarterlyVoucherLinearLayout.visibility = GONE
+                quarterlyVoucherSeparator.visibility = GONE
+            }
+
 
             // Commenting this Till Jan-2022 Release as per WOP-13825
             /*if (response?.wfsCardDetails?.isWFSCardAvailable == false) {
@@ -465,7 +503,7 @@ class OrderConfirmationFragment :
 
         initCncFoodRecyclerView()
 
-        handleAddToShoppingListButton()
+        handleAddToShoppingListButtonFromCNC()
     }
 
     private fun setCncItemCount(items: OrderItems?) {
@@ -650,6 +688,54 @@ class OrderConfirmationFragment :
                     }
                 }
             }
+        }
+    }
+
+    private fun handleAddToShoppingListButtonFromCNC() {
+        handleCncFoodAddToList()
+        handleCncOtherAddToList()
+
+    }
+
+    private fun handleCncFoodAddToList() {
+        if (cncFoodItemsOrder.isNullOrEmpty()) {
+            return
+        }
+        val listOfItems = ArrayList<AddToListRequest>()
+        cncFoodItemsOrder!!.forEach {
+            val item = AddToListRequest()
+            item.apply {
+                quantity = it.quantity.toString()
+                catalogRefId = it.catalogRefId
+                giftListId = ""
+                skuID = ""
+            }
+            listOfItems.add(item)
+        }
+
+        binding.dashOrderDetailsLayout.addShoppingListButton.setOnClickListener {
+            NavigateToShoppingList.openShoppingList(activity, listOfItems, "", false)
+        }
+    }
+
+    private fun handleCncOtherAddToList() {
+        if (cncOtherItemsOrder.isNullOrEmpty()) {
+            return
+        }
+        val listOfItems = ArrayList<AddToListRequest>()
+        cncOtherItemsOrder!!.forEach {
+            val item = AddToListRequest()
+            item.apply {
+                quantity = it.quantity.toString()
+                catalogRefId = it.catalogRefId
+                giftListId = ""
+                skuID = ""
+            }
+            listOfItems.add(item)
+        }
+
+        binding.cncOrderDetailsLayout.addShoppingListButton.setOnClickListener {
+            NavigateToShoppingList.openShoppingList(activity, listOfItems, "", false)
         }
     }
 }

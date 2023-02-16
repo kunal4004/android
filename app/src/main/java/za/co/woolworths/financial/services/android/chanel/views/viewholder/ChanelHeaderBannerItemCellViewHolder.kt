@@ -68,6 +68,7 @@ class ChanelHeaderBannerItemCellViewHolder(val binding: ChanelProductsHorizontal
                     setPictureWithoutPlaceHolder(imReward, imPromo?.wRewards ?: "")
                     setPictureWithoutPlaceHolder(imVitality, imPromo?.vitality ?: "")
                     setPictureWithoutPlaceHolder(imNewImage, imPromo?.newImage ?: "")
+                    setPictureWithoutPlaceHolder(imageWList, imPromo?.wList ?: "")
                     if (VirtualTryOnUtil.isVtoConfigAvailable()) {
                         setPictureWithoutPlaceHolder(imgTryItOn, virtualTryOn ?: "")
                     }

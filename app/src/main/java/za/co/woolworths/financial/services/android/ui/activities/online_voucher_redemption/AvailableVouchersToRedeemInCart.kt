@@ -10,9 +10,10 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.CartAvailableVouchersToRedeemBinding
+import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.ui.fragments.voucher_redeemption.AvailableVoucherFragment
 import za.co.woolworths.financial.services.android.util.Utils
-
+@AndroidEntryPoint
 class AvailableVouchersToRedeemInCart : AppCompatActivity() {
 
     private lateinit var binding: CartAvailableVouchersToRedeemBinding
