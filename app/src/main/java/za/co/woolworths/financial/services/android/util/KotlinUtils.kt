@@ -1538,7 +1538,7 @@ class KotlinUtils {
         fun getFormattedNickName(nickname: String?, address: CharSequence?, context: Context?): SpannableStringBuilder {
             val nickNameWithAddress = SpannableStringBuilder()
             var formattedNickName =
-                SpannableString(nickname.plus("\t").plus(context?.resources?.getString(R.string.bullet)).plus("\t\t"))
+                SpannableString(nickname.plus(" ").plus(context?.resources?.getString(R.string.bullet)).plus(" "))
 
             if (nickname.isNullOrEmpty() == true || nickname?.equals(address) == true) {
                 formattedNickName = SpannableString(context?.resources?.getString(R.string.empty))
