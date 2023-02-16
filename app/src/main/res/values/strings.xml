@@ -2509,7 +2509,7 @@
     <string name="confirm_btn">Confirm</string>
     <string name="edt_location">EDIT LOCATION </string>
     <string name="please_select_the_store_you_are_collecting_from">Please select the location that you would like to collect from.</string>
-    <string name="search_by_store_or_location">Search by store or location</string>
+    <string name="search_by_store_or_location">Search stores from the list below</string>
     <string name="change">change</string>
     <string name="near_stores">%d Stores Near Me</string>
     <string name="where_do_you_want_to_collect">Where do you want to collect?</string>
