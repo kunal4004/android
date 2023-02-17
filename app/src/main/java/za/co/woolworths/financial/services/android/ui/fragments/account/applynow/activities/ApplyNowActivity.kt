@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.applynow.activities
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.View.*
@@ -15,11 +16,13 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.dto.account.ServerErrorResponse
 import za.co.woolworths.financial.services.android.models.dto.account.applynow.ApplyNowSectionReference
 import za.co.woolworths.financial.services.android.models.dto.account.applynow.Content
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.applynow.adapters.ApplyNowFragAdapter
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.ToastFactory
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.ViewState
@@ -31,6 +34,7 @@ import za.co.woolworths.financial.services.android.util.animation.AnimationUtilE
 class ApplyNowActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var binding: ActivityApplyNowBinding
     val viewModel: ApplyNowViewModel by viewModels()
+    private var wasApplicationInBackground = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -216,6 +220,16 @@ class ApplyNowActivity : AppCompatActivity(), View.OnClickListener {
                 return
             }
         }
-        KotlinUtils.onBackPressed(this)
+        if(wasApplicationInBackground) redirectToMyAccounts() else KotlinUtils.onBackPressed(this)
+    }
+
+    private fun redirectToMyAccounts() {
+        startActivity(Intent(this, BottomNavigationActivity::class.java))
+        overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        wasApplicationInBackground = !WoolworthsApplication.isApplicationInForeground()
     }
 }
