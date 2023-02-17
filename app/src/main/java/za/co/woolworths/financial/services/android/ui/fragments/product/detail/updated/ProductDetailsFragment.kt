@@ -2814,7 +2814,7 @@ class ProductDetailsFragment :
                     if (!it.vitality.isNullOrEmpty()) images.add(it.vitality ?: "")
                     if (!it.newImage.isNullOrEmpty()) images.add(it.newImage ?: "")
                     if (!it.reduced.isNullOrEmpty()) images.add(it.reduced ?: "")
-
+                    if (!it.wList.isNullOrEmpty()) images.add(it.wList ?: "")
                 }
 
                 priceLayout.promotionalImages?.removeAllViews()
