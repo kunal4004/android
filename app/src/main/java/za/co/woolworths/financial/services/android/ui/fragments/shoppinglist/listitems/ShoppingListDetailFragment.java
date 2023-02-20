@@ -1044,17 +1044,17 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
         Activity activity = getActivity();
         if (activity == null) return;
         KotlinUtils.Companion.presentEditDeliveryGeoLocationActivity(
-                activity, resultCode, null, null, false,false, false, null, null, null, null);
+                activity, resultCode, null, null, false,false, false,false,false, null, null, null, null);
     }
 
     private void startActivityToSelectDeliveryLocation(boolean addItemToCartOnFinished) {
         if (getActivity() != null) {
             if (addItemToCartOnFinished) {
                 KotlinUtils.Companion.presentEditDeliveryGeoLocationActivity(
-                        getActivity(), REQUEST_SUBURB_CHANGE, null, null, false, false, false, null, null, null, null);
+                        getActivity(), REQUEST_SUBURB_CHANGE, null, null, false, false,false, false,false, null, null, null, null);
             } else {
                 KotlinUtils.Companion.presentEditDeliveryGeoLocationActivity(
-                        getActivity(), 0, null, null, false,false, false , null, null, null, null );
+                        getActivity(), 0, null, null, false,false, false,false,false, null, null, null, null );
             }
             getActivity().overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
         }
@@ -1080,6 +1080,10 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
         return postItemToCart.make(addItemToCart, new IResponseListener<AddItemToCartResponse>() {
             @Override
             public void onSuccess(AddItemToCartResponse addItemToCartResponse) {
+                Activity activity = getActivity();
+                if (activity == null || !isAdded()) return;
+                pbLoadingIndicator.setVisibility(GONE);
+
                 switch (addItemToCartResponse.httpCode) {
                     case HTTP_OK:
                         onAddToCartSuccess(addItemToCartResponse, getTotalItemQuantity(addItemToCart));
@@ -1107,6 +1111,8 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
                                     getContext()
                             );
                             enableAddToCartButton(VISIBLE);
+                        } else {
+                            otherHttpCode(addItemToCartResponse.response);
                         }
                         break;
                     default:
@@ -1122,12 +1128,11 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
                 addedToCartFail(true);
                 Activity activity = getActivity();
                 if (activity == null || !isAdded()) return;
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
+                activity.runOnUiThread(() -> {
+                    if(pbLoadingIndicator != null)
                         pbLoadingIndicator.setVisibility(GONE);
+                    if(btnCheckOut != null)
                         btnCheckOut.setVisibility(VISIBLE);
-                    }
                 });
             }
         });
@@ -1263,6 +1268,8 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
                 REQUEST_SUBURB_CHANGE,
                 KotlinUtils.Companion.getPreferredDeliveryType(),
                 GeoUtils.Companion.getPlaceId(),
+                false,
+                false,
                 false,
                 false,
                 false,

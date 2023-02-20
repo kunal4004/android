@@ -5,7 +5,7 @@ import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.whatsapp_chat_activity.*
+import com.awfs.coordination.databinding.WhatsappChatActivityBinding
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatToUs.Companion.APP_SCREEN
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatToUs.Companion.FEATURE_NAME
@@ -17,13 +17,15 @@ import za.co.woolworths.financial.services.android.util.animation.AnimationUtilE
 
 class WhatsAppChatDetailActivity : AppCompatActivity(), View.OnClickListener {
 
+    private lateinit var binding: WhatsappChatActivityBinding
     private var featureName: String? = null
     private var appScreen: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Utils.updateStatusBarBackground(this)
-        setContentView(R.layout.whatsapp_chat_activity)
+        binding = WhatsappChatActivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         intent?.extras?.apply {
             featureName = getString(FEATURE_NAME, "")
@@ -31,10 +33,10 @@ class WhatsAppChatDetailActivity : AppCompatActivity(), View.OnClickListener {
         }
 
         with(WhatsAppChatToUs()) {
-            whatsappNumberValueTextView?.text = whatsAppNumber
+            binding.whatsappNumberValueTextView?.text = whatsAppNumber
         }
 
-        chatWithUsButton?.apply {
+        binding.chatWithUsButton?.apply {
             AnimationUtilExtension.animateViewPushDown(this)
             setOnClickListener(this@WhatsAppChatDetailActivity)
         }
@@ -43,7 +45,7 @@ class WhatsAppChatDetailActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     fun actionBar() {
-        setSupportActionBar(whatsAppToolbar)
+        setSupportActionBar(binding.whatsAppToolbar)
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
             setDisplayShowTitleEnabled(false)

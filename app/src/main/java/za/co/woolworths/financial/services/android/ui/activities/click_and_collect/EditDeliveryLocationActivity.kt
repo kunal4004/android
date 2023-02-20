@@ -1,7 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.activities.click_and_collect
 
-
-
 import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
@@ -11,10 +9,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.EditDeliveryLocationActivityBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.edit_delivery_location_activity.toolbar
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
-import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment
+import za.co.woolworths.financial.services.android.cart.view.CartFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DELIVERY_TYPE
@@ -24,22 +22,25 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.PLACE_ID
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.SAVED_ADDRESS_RESPONSE
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutWhoIsCollectingFragment
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment
 
 @AndroidEntryPoint
 class EditDeliveryLocationActivity : AppCompatActivity() {
 
-   private var bundle: Bundle? = null
-   private var deliveryType: Delivery? = null
-   private var placeId: String? = null
-   private var isComingFromCheckout: Boolean = false
-   private var isComingFromSlotSelection: Boolean = false
-   private var savedAddressResponse: SavedAddressResponse? = null
-
-
+    private lateinit var binding: EditDeliveryLocationActivityBinding
+    private var bundle: Bundle? = null
+    private var deliveryType: Delivery? = null
+    private var placeId: String? = null
+    private var isComingFromCheckout: Boolean = false
+    private var isComingFromSlotSelection: Boolean = false
+    private var savedAddressResponse: SavedAddressResponse? = null
+    private var navHostFragment = NavHostFragment()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.edit_delivery_location_activity)
+        binding = EditDeliveryLocationActivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         Utils.updateStatusBarBackground(this)
         bundle = intent.getBundleExtra(BUNDLE)
         bundle?.apply {
@@ -57,7 +58,7 @@ class EditDeliveryLocationActivity : AppCompatActivity() {
     }
 
     private fun actionBar() {
-        setSupportActionBar(toolbar)
+        setSupportActionBar(binding.toolbar)
         supportActionBar?.apply {
             setDisplayShowTitleEnabled(false)
             setDisplayUseLogoEnabled(false)
@@ -81,7 +82,7 @@ class EditDeliveryLocationActivity : AppCompatActivity() {
     }
 
     private fun onEditDeliveryLocation() {
-        val navHostFragment =
+        navHostFragment =
             supportFragmentManager.findFragmentById(R.id.editAddressNavHost) as NavHostFragment
         val navController = navHostFragment.navController
         val navGraph = navController.navInflater.inflate(R.navigation.confirm_location_nav_host)
@@ -167,4 +168,31 @@ class EditDeliveryLocationActivity : AppCompatActivity() {
         }
     }
 
+    override fun onBackPressed() {
+        KeyboardUtils.hideKeyboardIfVisible(this)
+        val fragmentList: MutableList<androidx.fragment.app.Fragment> =
+            navHostFragment.childFragmentManager.fragments
+        //in Navigation component if Back stack entry count is 0 means it has last fragment presented.
+        // if > 0 means others are in backstack but fragment list size will always be 1
+        if (fragmentList.isNullOrEmpty() || navHostFragment.childFragmentManager.backStackEntryCount == 0) {
+            setReloadResultAndFinish()
+            return
+        }
+        when (fragmentList[0]) {
+            is CheckoutWhoIsCollectingFragment -> {
+                setReloadResultAndFinish()
+            }
+            else -> {
+                super.onBackPressed()
+            }
+        }
+    }
+    private fun setReloadResultAndFinish() {
+        setResult(CheckOutFragment.RESULT_RELOAD_CART)
+        closeActivity()
+    }
+    fun closeActivity() {
+        finish()
+        overridePendingTransition(R.anim.slide_in_from_left, R.anim.slide_out_to_right)
+    }
 }

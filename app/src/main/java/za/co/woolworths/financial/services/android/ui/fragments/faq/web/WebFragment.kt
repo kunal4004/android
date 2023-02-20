@@ -2,17 +2,17 @@ package za.co.woolworths.financial.services.android.ui.fragments.faq.web
 
 import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.activity_faqdetails_web.*
+import com.awfs.coordination.databinding.ActivityFaqdetailsWebBinding
 import za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator
 
-class WebFragment : Fragment() {
+class WebFragment : Fragment(R.layout.activity_faqdetails_web) {
+
+    private lateinit var binding: ActivityFaqdetailsWebBinding
     private var mUrl: String = ""
     private var mBottomNavigator: BottomNavigator? = null
 
@@ -29,15 +29,11 @@ class WebFragment : Fragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.activity_faqdetails_web, container, false)
-    }
-
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupToolbar()
+        binding = ActivityFaqdetailsWebBinding.bind(view)
 
+        setupToolbar()
         bindDateWithUI()
     }
 
@@ -53,7 +49,7 @@ class WebFragment : Fragment() {
     }
 
     private fun bindDateWithUI() {
-        faqWeb?.settings?.javaScriptEnabled = true
-        faqWeb?.loadUrl(mUrl)
+        binding.faqWeb?.settings?.javaScriptEnabled = true
+        binding.faqWeb?.loadUrl(mUrl)
     }
 }

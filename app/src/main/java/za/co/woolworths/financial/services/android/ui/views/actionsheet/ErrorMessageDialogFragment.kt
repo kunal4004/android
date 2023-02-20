@@ -5,13 +5,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.default_error_message_dialog.*
+import com.awfs.coordination.databinding.DefaultErrorMessageDialogBinding
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment.Companion.SET_DELIVERY_LOCATION_REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 
 class ErrorMessageDialogFragment : WBottomSheetDialogFragment(), View.OnClickListener {
 
+    private lateinit var binding: DefaultErrorMessageDialogBinding
     private var buttonLabel: String? = null
     private var message: String? = null
 
@@ -33,14 +34,18 @@ class ErrorMessageDialogFragment : WBottomSheetDialogFragment(), View.OnClickLis
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.default_error_message_dialog, container, false)
+        binding = DefaultErrorMessageDialogBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        tvErrorDescription?.text = message
-        btnDismissDialog?.text = buttonLabel
-        btnDismissDialog?.setOnClickListener(this)
+
+        with(binding) {
+            tvErrorDescription?.text = message
+            btnDismissDialog?.text = buttonLabel
+            btnDismissDialog?.setOnClickListener(this@ErrorMessageDialogFragment)
+        }
     }
 
     override fun onClick(view: View) {

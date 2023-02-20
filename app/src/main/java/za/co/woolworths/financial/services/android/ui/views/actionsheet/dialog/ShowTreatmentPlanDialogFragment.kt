@@ -3,26 +3,20 @@ package za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog
 import android.content.Context
 import android.graphics.Paint
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.core.os.bundleOf
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.view_treatment_plan_dialog_fragment.*
+import com.awfs.coordination.databinding.ViewTreatmentPlanDialogFragmentBinding
 import za.co.woolworths.financial.services.android.contracts.IShowChatBubble
-import za.co.woolworths.financial.services.android.models.dto.EligibilityPlan
 import za.co.woolworths.financial.services.android.models.dto.ProductGroupCode
-import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
-import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
+import za.co.woolworths.financial.services.android.util.binding.BaseAppCompatDialogFragmentBinding
 
-class ShowTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickListener {
+class ShowTreatmentPlanDialogFragment : BaseAppCompatDialogFragmentBinding<ViewTreatmentPlanDialogFragmentBinding>(ViewTreatmentPlanDialogFragmentBinding::inflate), View.OnClickListener {
 
     private var showChatBubbleInterface: IShowChatBubble? = null
     private val mClassName = ViewTreatmentPlanDialogFragment::class.java.simpleName
@@ -42,44 +36,39 @@ class ShowTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickL
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.view_treatment_plan_dialog_fragment, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         viewPaymentOption = arguments?.getBoolean(VIEW_PAYMENT_OPTIONS_VISIBILITY, false) ?: false
         state =
             arguments?.getString(ViewTreatmentPlanDialogFragment.APPLY_NOW_STATE)
-        mainButton?.apply {
-            setOnClickListener(this@ShowTreatmentPlanDialogFragment)
-            AnimationUtilExtension.animateViewPushDown(this)
-        }
 
-        makePaymentButton?.apply {
-            paintFlags = Paint.UNDERLINE_TEXT_FLAG
-            visibility = if (viewPaymentOption) View.VISIBLE else View.GONE
-            setOnClickListener(this@ShowTreatmentPlanDialogFragment)
-            AnimationUtilExtension.animateViewPushDown(this)
-        }
+        binding.apply {
+            mainButton?.apply {
+                setOnClickListener(this@ShowTreatmentPlanDialogFragment)
+                AnimationUtilExtension.animateViewPushDown(this)
+            }
 
-        closeIconImageButton?.apply {
-            setOnClickListener(this@ShowTreatmentPlanDialogFragment)
-            AnimationUtilExtension.animateViewPushDown(this)
-        }
+            makePaymentButton?.apply {
+                paintFlags = Paint.UNDERLINE_TEXT_FLAG
+                visibility = if (viewPaymentOption) View.VISIBLE else View.GONE
+                setOnClickListener(this@ShowTreatmentPlanDialogFragment)
+                AnimationUtilExtension.animateViewPushDown(this)
+            }
 
-        viewPaymentOptionsButton?.apply {
-            paintFlags = Paint.UNDERLINE_TEXT_FLAG
-            visibility = if (viewPaymentOption) View.GONE else View.VISIBLE
-            setOnClickListener(this@ShowTreatmentPlanDialogFragment)
-            AnimationUtilExtension.animateViewPushDown(this)
+            closeIconImageButton?.apply {
+                setOnClickListener(this@ShowTreatmentPlanDialogFragment)
+                AnimationUtilExtension.animateViewPushDown(this)
+            }
+
+            viewPaymentOptionsButton?.apply {
+                paintFlags = Paint.UNDERLINE_TEXT_FLAG
+                visibility = if (viewPaymentOption) View.GONE else View.VISIBLE
+                setOnClickListener(this@ShowTreatmentPlanDialogFragment)
+                AnimationUtilExtension.animateViewPushDown(this)
+            }
+            handlePopupForCC()
         }
-        handlePopupForCC()
     }
 
     override fun onClick(view: View?) {
@@ -106,7 +95,7 @@ class ShowTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickL
         }
     }
 
-    private fun handlePopupForCC() {
+    private fun ViewTreatmentPlanDialogFragmentBinding.handlePopupForCC() {
         when (state) {
             ProductGroupCode.CC.value-> {
                 viewTreatmentPlanDescriptionTextView.text = bindString(

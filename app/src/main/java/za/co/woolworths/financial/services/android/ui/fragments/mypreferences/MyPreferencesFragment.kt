@@ -6,16 +6,18 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.view.*
+import android.view.Gravity
+import android.view.MotionEvent
+import android.view.View
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.Navigation
 import androidx.navigation.findNavController
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.FragmentMyPreferencesBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.fragment_my_preferences.*
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
@@ -42,13 +44,14 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.RE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.setDeliveryAddressView
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
+import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 import za.co.woolworths.financial.services.android.util.location.Event
 import za.co.woolworths.financial.services.android.util.location.EventType
 import za.co.woolworths.financial.services.android.util.location.Locator
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchListener ,
+class MyPreferencesFragment : BaseFragmentBinding<FragmentMyPreferencesBinding>(FragmentMyPreferencesBinding::inflate), View.OnClickListener, View.OnTouchListener ,
     VtoTryAgainListener {
 
     private lateinit var locator: Locator
@@ -73,10 +76,9 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View? {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
         activity?.runOnUiThread { activity?.window?.clearFlags(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE) }
         activity?.runOnUiThread { activity?.window?.addFlags(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN) }
 
@@ -85,12 +87,6 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
             isUpdateAccountCache = true
             callLinkedDevicesAPI()
         }
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_my_preferences, container, false)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
 
         init()
         bindDataWithUI()
@@ -99,13 +95,16 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
 
     private fun init() {
         locator = Locator(activity as AppCompatActivity)
-        auSwitch.setOnClickListener(this)
-        locationSelectedLayout.setOnClickListener(this)
-        auSwitch.setOnTouchListener(this)
-        linkDeviceSwitch.setOnClickListener(this)
-        retryLinkDeviceLinearLayout?.setOnClickListener(this)
-        viewAllLinkedDevicesRelativeLayout?.setOnClickListener(this)
-        deleteAccountLayout?.setOnClickListener(this)
+
+        binding.apply {
+            auSwitch.setOnClickListener(this@MyPreferencesFragment)
+            locationSelectedLayout.setOnClickListener(this@MyPreferencesFragment)
+            auSwitch.setOnTouchListener(this@MyPreferencesFragment)
+            linkDeviceSwitch.setOnClickListener(this@MyPreferencesFragment)
+            retryLinkDeviceLinearLayout?.setOnClickListener(this@MyPreferencesFragment)
+            viewAllLinkedDevicesRelativeLayout?.setOnClickListener(this@MyPreferencesFragment)
+            deleteAccountLayout?.setOnClickListener(this@MyPreferencesFragment)
+        }
 
         activity?.apply {
             if (this is MyPreferencesInterface) {
@@ -146,114 +145,129 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
     }
 
     private fun hideProgress() {
-        incCenteredProgress?.visibility = View.GONE
-        myPreProgressLayout?.isClickable = false
-        myPreProgressLayout?.isFocusable = false
+        binding.apply {
+            incCenteredProgress?.root?.visibility = View.GONE
+            myPreProgressLayout?.isClickable = false
+            myPreProgressLayout?.isFocusable = false
+        }
     }
 
     private fun showProgress() {
-        incCenteredProgress?.visibility = View.VISIBLE
-        myPreProgressLayout?.isClickable = true
-        myPreProgressLayout?.isFocusable = true
+        binding.apply {
+            incCenteredProgress?.root?.visibility = View.VISIBLE
+            myPreProgressLayout?.isClickable = true
+            myPreProgressLayout?.isFocusable = true
+        }
     }
 
     fun bindDataWithUI() {
-        if (AuthenticateUtils.getInstance(activity).isAppSupportsAuthentication) {
-            if (AuthenticateUtils.getInstance(activity).isDeviceSecure) auSwitch.isChecked =
-                AuthenticateUtils.getInstance(activity).isAuthenticationEnabled else setUserAuthentication(
-                false
-            )
-        } else {
-            biometricsLayout.setVerticalGravity(View.GONE)
-        }
-        val lastDeliveryLocation = Utils.getPreferredDeliveryLocation()
-        lastDeliveryLocation?.let { setDeliveryLocation(it) }
+        binding.apply {
+            if (AuthenticateUtils.getInstance(activity).isAppSupportsAuthentication) {
+                if (AuthenticateUtils.getInstance(activity).isDeviceSecure) auSwitch.isChecked =
+                    AuthenticateUtils.getInstance(activity).isAuthenticationEnabled else setUserAuthentication(
+                    false
+                )
+            } else {
+                biometricsLayout.setVerticalGravity(View.GONE)
+            }
+            val lastDeliveryLocation = Utils.getPreferredDeliveryLocation()
+            lastDeliveryLocation?.let { setDeliveryLocation(it) }
 
-        if (Utils.isGooglePlayOrHuaweiMobileServicesAvailable()) {
-            val isDeviceIdentityIdPresent = verifyDeviceIdentityId(deviceList)
-            updateLinkedDeviceView(isDeviceIdentityIdPresent)
+            if (Utils.isGooglePlayOrHuaweiMobileServicesAvailable()) {
+                val isDeviceIdentityIdPresent = verifyDeviceIdentityId(deviceList)
+                updateLinkedDeviceView(isDeviceIdentityIdPresent)
+            }
+            tvMyPrefManageDevicesTitle.text =
+                bindString(
+                    R.string.my_preferences_linked_devices,
+                    (deviceList?.size ?: 0).toString()
+                )
         }
-        tvMyPrefManageDevicesTitle.text =
-            bindString(R.string.my_preferences_linked_devices, (deviceList?.size ?: 0).toString())
     }
 
     private fun callLinkedDevicesAPI() {
-        val spinningAnimation = KotlinUtils.rotateViewAnimation()
-        retryLinkDeviceImageView?.startAnimation(spinningAnimation)
-        retryLinkDeviceLinearLayout?.visibility = View.VISIBLE
-        retryLinkDeviceTextView?.visibility = View.GONE
+        binding.apply {
+            val spinningAnimation = KotlinUtils.rotateViewAnimation()
+            retryLinkDeviceImageView?.startAnimation(spinningAnimation)
+            retryLinkDeviceLinearLayout?.visibility = View.VISIBLE
+            retryLinkDeviceTextView?.visibility = View.GONE
 
-        mViewAllLinkedDevices = OneAppService.getAllLinkedDevices(isUpdateAccountCache)
-        mViewAllLinkedDevices?.enqueue(CompletionHandler(object :
-            IResponseListener<ViewAllLinkedDeviceResponse> {
+            mViewAllLinkedDevices = OneAppService.getAllLinkedDevices(isUpdateAccountCache)
+            mViewAllLinkedDevices?.enqueue(CompletionHandler(object :
+                IResponseListener<ViewAllLinkedDeviceResponse> {
 
-            override fun onSuccess(response: ViewAllLinkedDeviceResponse?) {
-                when (response?.httpCode) {
-                    200 -> {
-                        if (!isAdded) {
-                            return
+                override fun onSuccess(response: ViewAllLinkedDeviceResponse?) {
+                    when (response?.httpCode) {
+                        200 -> {
+                            if (!isAdded) {
+                                return
+                            }
+                            spinningAnimation.cancel()
+                            retryLinkDeviceLinearLayout?.visibility = View.GONE
+                            val isDeviceIdentityIdPresent =
+                                verifyDeviceIdentityId(response?.userDevices)
+                            deviceList = response?.userDevices
+                            AppStateRepository().saveLinkedDevices(deviceList)
+                            updateLinkedDeviceView(isDeviceIdentityIdPresent)
+                            tvMyPrefManageDevicesTitle.text =
+                                bindString(
+                                    R.string.my_preferences_linked_devices,
+                                    (deviceList?.size ?: 0).toString()
+                                )
                         }
-                        spinningAnimation.cancel()
-                        retryLinkDeviceLinearLayout?.visibility = View.GONE
-                        val isDeviceIdentityIdPresent =
-                            verifyDeviceIdentityId(response?.userDevices)
-                        deviceList = response?.userDevices
-                        AppStateRepository().saveLinkedDevices(deviceList)
-                        updateLinkedDeviceView(isDeviceIdentityIdPresent)
-                        tvMyPrefManageDevicesTitle.text =
-                            bindString(
-                                R.string.my_preferences_linked_devices,
-                                (deviceList?.size ?: 0).toString()
-                            )
-                    }
-                    else -> {
-                        spinningAnimation.cancel()
-                        showLinkDeviceRetryView()
+                        else -> {
+                            spinningAnimation.cancel()
+                            showLinkDeviceRetryView()
+                        }
                     }
                 }
-            }
 
-            override fun onFailure(error: Throwable?) {
-                spinningAnimation.cancel()
-                showLinkDeviceRetryView()
-            }
+                override fun onFailure(error: Throwable?) {
+                    spinningAnimation.cancel()
+                    showLinkDeviceRetryView()
+                }
 
-        }, ViewAllLinkedDeviceResponse::class.java))
+            }, ViewAllLinkedDeviceResponse::class.java))
+        }
     }
 
     private fun showLinkDeviceRetryView() {
-        retryLinkDeviceLinearLayout?.visibility = View.VISIBLE
-        retryLinkDeviceTextView?.visibility = View.VISIBLE
-        linkDeviceSwitch?.visibility = View.GONE
+        binding.apply {
+            retryLinkDeviceLinearLayout?.visibility = View.VISIBLE
+            retryLinkDeviceTextView?.visibility = View.VISIBLE
+            linkDeviceSwitch?.visibility = View.GONE
+        }
     }
 
     private fun updateLinkedDeviceView(deviceIdentityIdPresent: Boolean) {
-        when (isNonWFSUser) {
-            true -> {
-                linkDeviceLayout?.visibility = View.GONE
-            }
-            else -> {
-                linkDeviceLayout?.visibility = View.VISIBLE
-                linkDeviceSwitch.isChecked = deviceIdentityIdPresent
-                if (deviceList == null || deviceList?.isEmpty() == true) {
-                    viewAllLinkedDevicesRelativeLayout.visibility = View.GONE
-                } else {
-                    viewAllLinkedDevicesRelativeLayout.visibility = View.VISIBLE
+        binding.apply {
+            when (isNonWFSUser) {
+                true -> {
+                    linkDeviceLayout?.visibility = View.GONE
                 }
-
-                if (deviceIdentityIdPresent) {
-                    linkDeviceSwitch.visibility = View.GONE
-                    linkDeviceSwitch.isEnabled = false
-                    context?.apply {
-                        linkThisDeviceTextView?.text =
-                            getString(R.string.link_device_this_is_linked)
+                else -> {
+                    linkDeviceLayout?.visibility = View.VISIBLE
+                    linkDeviceSwitch.isChecked = deviceIdentityIdPresent
+                    if (deviceList == null || deviceList?.isEmpty() == true) {
+                        viewAllLinkedDevicesRelativeLayout.visibility = View.GONE
+                    } else {
+                        viewAllLinkedDevicesRelativeLayout.visibility = View.VISIBLE
                     }
-                } else {
-                    linkDeviceSwitch.visibility = View.VISIBLE
-                    linkDeviceSwitch.isEnabled = true
-                    context?.apply {
-                        linkThisDeviceTextView?.text =
-                            getString(R.string.my_preferences_link_this_device)
+
+                    if (deviceIdentityIdPresent) {
+                        linkDeviceSwitch.visibility = View.GONE
+                        linkDeviceSwitch.isEnabled = false
+                        context?.apply {
+                            linkThisDeviceTextView?.text =
+                                getString(R.string.link_device_this_is_linked)
+                        }
+                    } else {
+                        linkDeviceSwitch.visibility = View.VISIBLE
+                        linkDeviceSwitch.isEnabled = true
+                        context?.apply {
+                            linkThisDeviceTextView?.text =
+                                getString(R.string.my_preferences_link_this_device)
+                        }
                     }
                 }
             }
@@ -282,7 +296,7 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
     override fun onClick(view: View?) {
         when (view?.id) {
             R.id.auSwitch -> if (AuthenticateUtils.getInstance(activity).isDeviceSecure) {
-                if (auSwitch.isChecked) {
+                if (binding.auSwitch.isChecked) {
                     startBiometricAuthentication(LOCK_REQUEST_CODE_TO_ENABLE)
                 } else {
                     Utils.displayValidationMessageForResult(
@@ -444,7 +458,7 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
     fun setUserAuthentication(isAuthenticated: Boolean) {
         AuthenticateUtils.getInstance(activity)
             .setUserAuthenticate(if (isAuthenticated) SessionDao.BIOMETRIC_AUTHENTICATION_STATE.ON else SessionDao.BIOMETRIC_AUTHENTICATION_STATE.OFF)
-        auSwitch?.isChecked = isAuthenticated
+        binding.auSwitch?.isChecked = isAuthenticated
     }
 
     fun openDeviceSecuritySettings() {
@@ -495,17 +509,20 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
     }
 
     fun setDeliveryLocation(shoppingDeliveryLocation: ShoppingDeliveryLocation?) {
-        iconCaretRight.visibility = View.GONE
-        editLocation.visibility = View.VISIBLE
-        deliverLocationIcon.setBackgroundResource(R.drawable.tick_cli_active)
-        shoppingDeliveryLocation?.let {
-            setDeliveryAddressView(
-                activity,
-                shoppingDeliveryLocation.fulfillmentDetails,
-                tvDeliveringTo,
-                tvDeliveryLocation,
-                null
-            )
+        binding.apply {
+            iconCaretRight.visibility = View.GONE
+            editLocation.visibility = View.VISIBLE
+            deliverLocationIcon.setBackgroundResource(R.drawable.tick_cli_active)
+            shoppingDeliveryLocation?.let {
+                setDeliveryAddressView(
+                    activity,
+                    shoppingDeliveryLocation.fulfillmentDetails,
+                    tvDeliveringTo,
+                    tvDeliveryLocation,
+                    null,
+                    true
+                )
+            }
         }
     }
 

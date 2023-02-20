@@ -16,11 +16,13 @@ class FirebaseEventDetailManager {
 
         fun undefined(eventName: String, activity: Activity) = triggerEvent(hashMapOf(FirebaseManagerAnalyticsProperties.PropertyNames.FAILED to FirebaseManagerAnalyticsProperties.PropertyNames.UNDEFINED), eventName, activity)
 
-        fun pin(eventName: String, activity: Activity) = triggerEvent(hashMapOf(FirebaseManagerAnalyticsProperties.PropertyNames.FAILED to FirebaseManagerAnalyticsProperties.PropertyNames.PIN), eventName, activity)
+        fun pin(eventName: String, activity: Activity) = triggerEvent(hashMapOf(FirebaseManagerAnalyticsProperties.PropertyNames.ACTION to FirebaseManagerAnalyticsProperties.PropertyNames.FAILED, FirebaseManagerAnalyticsProperties.PropertyNames.REASON to FirebaseManagerAnalyticsProperties.PropertyNames.PIN), eventName, activity)
 
-        fun passcode(eventName: String, activity: Activity) = triggerEvent(hashMapOf(FirebaseManagerAnalyticsProperties.PropertyNames.FAILED to FirebaseManagerAnalyticsProperties.PropertyNames.PASSCODE), eventName, activity)
+        fun passcode(eventName: String, activity: Activity) = triggerEvent(hashMapOf(FirebaseManagerAnalyticsProperties.PropertyNames.ACTION to FirebaseManagerAnalyticsProperties.PropertyNames.FAILED, FirebaseManagerAnalyticsProperties.PropertyNames.REASON to FirebaseManagerAnalyticsProperties.PropertyNames.PASSCODE), eventName, activity)
 
         fun success(eventName: String, activity: Activity) = triggerEvent(hashMapOf(FirebaseManagerAnalyticsProperties.PropertyNames.SUCCESSFUL to FirebaseManagerAnalyticsProperties.PropertyNames.SUCCESSFUL), eventName, activity)
+
+        fun passcodeSuccess(eventName: String, activity: Activity) = triggerEvent(hashMapOf(FirebaseManagerAnalyticsProperties.PropertyNames.ACTION to FirebaseManagerAnalyticsProperties.PropertyNames.SUCCESSFUL), eventName, activity)
 
         private fun triggerEvent(arguments: HashMap<String, String>, eventName: String, activity: Activity) {
             SessionUtilities.getInstance()?.jwt?.C2Id?.let { c2id -> arguments[FirebaseManagerAnalyticsProperties.PropertyNames.C2ID] = c2id }

@@ -7,11 +7,8 @@ import android.net.Uri
 import android.provider.Settings
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.TemporaryFreezeCartLayoutBinding
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import kotlinx.android.synthetic.main.temporary_freeze_cart_layout.view.*
-import kotlinx.android.synthetic.main.temporary_unfreeze_cart_layout.view.cancelTextView
-import kotlinx.android.synthetic.main.temporary_unfreeze_cart_layout.view.description
-import kotlinx.android.synthetic.main.temporary_unfreeze_cart_layout.view.title
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.listener.VtoTryAgainListener
 import javax.inject.Inject
@@ -36,15 +33,15 @@ class VTOErrorSettingBottomSheetDialog @Inject constructor(
 
         val dialog = BottomSheetDialog(context, R.style.BottomSheetDialogTheme)
 
-        val view = dialog.layoutInflater.inflate(R.layout.temporary_freeze_cart_layout, null)
+        val binding = TemporaryFreezeCartLayoutBinding.inflate(dialog.layoutInflater, null, false)
 
-        view.imageIcon.setImageDrawable(bindDrawable(R.drawable.ic_vto_error))
-        view.cancelTextView.text = context.getString(R.string.vto_dismiss)
-        view.title.text = title
-        view.description.text = description
-        view.confirmFreezeCardButton.text = btnText
+        binding.imageIcon.setImageDrawable(bindDrawable(R.drawable.ic_vto_error))
+        binding.cancelTextView.text = context.getString(R.string.vto_dismiss)
+        binding.title.text = title
+        binding.description.text = description
+        binding.confirmFreezeCardButton.text = btnText
 
-        view.confirmFreezeCardButton.setOnClickListener {
+        binding.confirmFreezeCardButton.setOnClickListener {
             if (btnText == context.getString(R.string.vto_change_setting)) {
                 openAppSetting(context)
             } else {
@@ -53,13 +50,13 @@ class VTOErrorSettingBottomSheetDialog @Inject constructor(
             dialog.dismiss()
         }
 
-        view.cancelTextView?.apply {
+        binding.cancelTextView?.apply {
             paintFlags = Paint.UNDERLINE_TEXT_FLAG
             setOnClickListener {
                 dialog.dismiss()
             }
         }
-        dialog.setContentView(view)
+        dialog.setContentView(binding.root)
         dialog.show()
     }
 }

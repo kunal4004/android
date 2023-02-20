@@ -5,9 +5,7 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.MenuItem
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.block_my_card_activity.*
-import kotlinx.android.synthetic.main.my_card_activity.tbMyCard
-import kotlinx.android.synthetic.main.my_card_activity.toolbarText
+import com.awfs.coordination.databinding.BlockMyCardActivityBinding
 import za.co.woolworths.financial.services.android.contracts.IStoreCardListener
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCard
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.STORE_CARD_DETAIL
@@ -22,9 +20,12 @@ class BlockMyCardActivity : MyCardActivityExtension(), IStoreCardListener {
         const val REQUEST_CODE_BLOCK_MY_CARD = 8073
     }
 
+    private lateinit var binding: BlockMyCardActivityBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.block_my_card_activity)
+        binding = BlockMyCardActivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         Utils.updateStatusBarBackground(this)
         actionBar()
 
@@ -40,14 +41,14 @@ class BlockMyCardActivity : MyCardActivityExtension(), IStoreCardListener {
             )
         }
 
-        imCloseIcon?.setOnClickListener {
+        binding.imCloseIcon?.setOnClickListener {
             finishActivity()
         }
     }
 
     private fun actionBar() {
-        toolbarText?.text = ""
-        setSupportActionBar(tbMyCard)
+        binding.toolbarText?.text = ""
+        setSupportActionBar(binding.tbMyCard)
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
             setDisplayShowTitleEnabled(false)
@@ -100,6 +101,6 @@ class BlockMyCardActivity : MyCardActivityExtension(), IStoreCardListener {
     fun getAccountStoreCards(): StoreCard? = getStoreCardDetail().storeCardsData?.primaryCards?.get(PRIMARY_CARD_POSITION)
 
     fun iconVisibility(state: Int) {
-        imCloseIcon?.visibility = state
+        binding.imCloseIcon?.visibility = state
     }
 }

@@ -14,9 +14,9 @@ import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProviders
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.ActivityDeeplinkPdpBinding
 import com.google.gson.JsonObject
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.activity_deeplink_pdp.*
 import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
@@ -50,6 +50,7 @@ import javax.inject.Inject
 class ProductDetailsDeepLinkActivity : AppCompatActivity(),
     ProductDetailsExtension.ProductDetailsStatusListner, ToastInterface {
 
+    private lateinit var binding: ActivityDeeplinkPdpBinding
     private lateinit var startupViewModel: StartupViewModel
     private lateinit var jsonLinkData: JsonObject
     private var mToastUtils: ToastUtils? = null
@@ -59,7 +60,8 @@ class ProductDetailsDeepLinkActivity : AppCompatActivity(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_deeplink_pdp)
+        binding = ActivityDeeplinkPdpBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         startProgressBar()
         var bundle: Any? = intent?.data
         if (intent.hasExtra("deepLinkRequestCode")) {
@@ -188,8 +190,8 @@ class ProductDetailsDeepLinkActivity : AppCompatActivity(),
     }
 
     private fun goToProductDetailsActivity(bundle: Bundle?) {
-        if (productDetailsprogressBar.isVisible)
-            productDetailsprogressBar.visibility = View.GONE
+        if (binding.productDetailsprogressBar.isVisible)
+            binding.productDetailsprogressBar.visibility = View.GONE
         val productDetailsFragmentNew = newInstance()
         productDetailsFragmentNew.arguments = bundle
         Utils.updateStatusBarBackground(this)
@@ -222,13 +224,13 @@ class ProductDetailsDeepLinkActivity : AppCompatActivity(),
     }
 
     override fun startProgressBar() {
-        if (!productDetailsprogressBar.isVisible)
-            productDetailsprogressBar.visibility = View.VISIBLE
+        if (!binding.productDetailsprogressBar.isVisible)
+            binding.productDetailsprogressBar.visibility = View.VISIBLE
     }
 
     override fun stopProgressBar() {
-        if (productDetailsprogressBar.isVisible)
-            productDetailsprogressBar.visibility = View.GONE
+        if (binding.productDetailsprogressBar.isVisible)
+            binding.productDetailsprogressBar.visibility = View.GONE
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -320,7 +322,7 @@ class ProductDetailsDeepLinkActivity : AppCompatActivity(),
         if (productCountMap != null && (isDeliveryOptionClickAndCollect() || isDeliveryOptionDash())
             && productCountMap.quantityLimit?.foodLayoutColour != null) {
             showItemsLimitToastOnAddToCart(
-                pdpBottomNavigation,
+                binding.pdpBottomNavigation,
                 productCountMap,
                 this,
                 noOfItems,
@@ -331,12 +333,12 @@ class ProductDetailsDeepLinkActivity : AppCompatActivity(),
         mToastUtils = ToastUtils(this@ProductDetailsDeepLinkActivity)
         mToastUtils?.apply {
             setActivity(this@ProductDetailsDeepLinkActivity)
-            setView(pdpBottomNavigation)
+            setView(binding.pdpBottomNavigation)
             setGravity(Gravity.BOTTOM)
             setCurrentState(this.javaClass.simpleName)
             setCartText(cartText)
             setAllCapsUpperCase(false)
-            setPixel(pdpBottomNavigation.getHeight() + Utils.dp2px(10f))
+            setPixel(binding.pdpBottomNavigation.height + Utils.dp2px(10f))
             setMessage(message)
             setViewState(true)
             build()

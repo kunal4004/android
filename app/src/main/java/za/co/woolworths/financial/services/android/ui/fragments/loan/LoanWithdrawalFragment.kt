@@ -16,7 +16,7 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.loan_withdrawal.*
+import com.awfs.coordination.databinding.LoanWithdrawalBinding
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
@@ -37,6 +37,7 @@ import java.util.*
 
 class LoanWithdrawalFragment : LoanBaseFragment(), View.OnClickListener {
 
+    private lateinit var binding: LoanWithdrawalBinding
     private var mMenu: Menu? = null
     private var mPostLoanIssue: Call<IssueLoanResponse>? = null
     private var mErrorHandlerView: ErrorHandlerView? = null
@@ -61,7 +62,8 @@ class LoanWithdrawalFragment : LoanBaseFragment(), View.OnClickListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.loan_withdrawal, container, false)
+        binding = LoanWithdrawalBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -74,24 +76,27 @@ class LoanWithdrawalFragment : LoanBaseFragment(), View.OnClickListener {
     }
 
     private fun populatePersonalLoanView() {
-        tvAvailableFunds?.text = currencyFormatter(getAvailableFund())
-        tvCreditLimit?.text = currencyFormatter(getCreditLimit())
-        nexImageView?.setOnClickListener(this)
+        binding.apply {
+            tvAvailableFunds?.text = currencyFormatter(getAvailableFund())
+            tvCreditLimit?.text = currencyFormatter(getCreditLimit())
+            nexImageView?.setOnClickListener(this@LoanWithdrawalFragment)
+        }
     }
 
     private fun configureEditText() {
-
-        edtWithdrawAmount.keyListener = DigitsKeyListener.getInstance("0123456789")
-        edtWithdrawAmount.addTextChangedListener(NumberTextWatcherForThousand(edtWithdrawAmount))
-        edtWithdrawAmount.setRawInputType(Configuration.KEYBOARD_12KEY)
-        edtWithdrawAmount.imeOptions = EditorInfo.IME_ACTION_DONE
-        edtWithdrawAmount.setOnEditorActionListener { _, actionId, _ ->
-            var handled = false
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                handled = true
-                if (arrowIsVisible) confirmDrawnDownAmount()
+        binding.apply {
+            edtWithdrawAmount.keyListener = DigitsKeyListener.getInstance("0123456789")
+            edtWithdrawAmount.addTextChangedListener(NumberTextWatcherForThousand(edtWithdrawAmount))
+            edtWithdrawAmount.setRawInputType(Configuration.KEYBOARD_12KEY)
+            edtWithdrawAmount.imeOptions = EditorInfo.IME_ACTION_DONE
+            edtWithdrawAmount.setOnEditorActionListener { _, actionId, _ ->
+                var handled = false
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    handled = true
+                    if (arrowIsVisible) confirmDrawnDownAmount()
+                }
+                handled
             }
-            handled
         }
     }
 
@@ -104,13 +109,13 @@ class LoanWithdrawalFragment : LoanBaseFragment(), View.OnClickListener {
     }
 
     private fun getDrawnDownAmount(): Int {
-        val mCurrentDrawnAmount = amountToInt(edtWithdrawAmount.text.toString())
+        val mCurrentDrawnAmount = amountToInt(binding.edtWithdrawAmount.text.toString())
         return if (TextUtils.isEmpty(mCurrentDrawnAmount)) 0 else mCurrentDrawnAmount.toInt()
     }
 
     fun menuItemVisible(isVisible: Boolean) {
         arrowIsVisible = isVisible
-        nexImageView?.apply {
+        binding.nexImageView?.apply {
             if (isVisible) {
                 isEnabled = true
                 alpha = 1f
@@ -347,9 +352,11 @@ class LoanWithdrawalFragment : LoanBaseFragment(), View.OnClickListener {
     }
 
     private fun showProgressDialog(isVisible: Boolean) {
-        mLoanWithdrawalProgress?.visibility = if (isVisible) VISIBLE else GONE
-        currencyType?.visibility = if (isVisible) GONE else VISIBLE
-        edtWithdrawAmount?.visibility = if (isVisible) GONE else VISIBLE
+        binding.apply {
+            mLoanWithdrawalProgress?.visibility = if (isVisible) VISIBLE else GONE
+            currencyType?.visibility = if (isVisible) GONE else VISIBLE
+            edtWithdrawAmount?.visibility = if (isVisible) GONE else VISIBLE
+        }
     }
 
     override fun onDestroy() {
@@ -367,7 +374,7 @@ class LoanWithdrawalFragment : LoanBaseFragment(), View.OnClickListener {
 
     override fun onResume() {
         super.onResume()
-        edtWithdrawAmount?.apply {
+        binding.edtWithdrawAmount?.apply {
             val drawnDownAmount: String = text.toString()
             // retrieve drawnDown amount
             // check if drawnDownAmount is empty
@@ -393,7 +400,7 @@ class LoanWithdrawalFragment : LoanBaseFragment(), View.OnClickListener {
     }
 
     private fun showKeyboard() {
-        edtWithdrawAmount?.apply {
+        binding.edtWithdrawAmount?.apply {
             requestFocus()
             activity?.let {
                 requestFocus()

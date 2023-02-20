@@ -8,9 +8,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.TextUtils
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.webkit.CookieManager
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -19,8 +17,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
 import androidx.navigation.findNavController
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.FragmentCheckoutPaymentWebBinding
 import com.google.firebase.analytics.FirebaseAnalytics
-import kotlinx.android.synthetic.main.fragment_checkout_payment_web.*
 import za.co.woolworths.financial.services.android.checkout.service.network.ShippingDetailsResponse
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
@@ -30,8 +28,7 @@ import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.Utils
 import java.net.URI
 
-
-class CheckoutPaymentWebFragment : Fragment(), AdvancedWebView.Listener {
+class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_web), AdvancedWebView.Listener {
 
     companion object {
         const val KEY_ARGS_WEB_TOKEN = "web_tokens"
@@ -47,6 +44,9 @@ class CheckoutPaymentWebFragment : Fragment(), AdvancedWebView.Listener {
         PAYMENT_ERROR("error")
     }
 
+    private lateinit var binding: FragmentCheckoutPaymentWebBinding
+    private var currentSuccessURI = ""
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         (activity as? CheckoutActivity)?.apply {
@@ -54,22 +54,15 @@ class CheckoutPaymentWebFragment : Fragment(), AdvancedWebView.Listener {
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_checkout_payment_web, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding = FragmentCheckoutPaymentWebBinding.bind(view)
         initPaymentWebView()
     }
 
     @SuppressLint("SetJavaScriptEnabled")
     private fun initPaymentWebView() {
-        checkoutPaymentWebView?.apply {
+        binding.checkoutPaymentWebView?.apply {
             CookieManager.getInstance().removeAllCookies(null)
             CookieManager.getInstance().removeSessionCookies {
             }
@@ -110,25 +103,26 @@ class CheckoutPaymentWebFragment : Fragment(), AdvancedWebView.Listener {
     }
 
     private fun navigateToOrderConfirmation() {
-        paymentSuccessConfirmationLayout?.visibility = View.VISIBLE
+        binding.paymentSuccessConfirmationLayout?.root?.visibility = View.VISIBLE
         Handler(Looper.getMainLooper()).postDelayed({
-            paymentSuccessConfirmationLayout?.visibility = View.GONE
+            binding.paymentSuccessConfirmationLayout?.root?.visibility = View.GONE
             view?.findNavController()
                 ?.navigate(R.id.action_checkoutPaymentWebFragment_orderConfirmationFragment)
         }, AppConstant.DELAY_1500_MS)
     }
 
     override fun onPageStarted(url: String?, favicon: Bitmap?) {
-        progressBar?.visibility = View.VISIBLE
+        binding.progressBar?.visibility = View.VISIBLE
     }
 
     override fun onPageFinished(url: String?) {
-        progressBar?.visibility = View.GONE
+        binding.progressBar?.visibility = View.GONE
         url?.let { onStatusChanged(it) }
     }
 
     private fun onStatusChanged(url: String) {
         val uri = Uri.parse(url)
+        currentSuccessURI =  url
         when (uri.getQueryParameter(KEY_STATUS)) {
             PaymentStatus.PAYMENT_SUCCESS.type -> {
                 val paymentType = uri.getQueryParameter(PAYMENT_TYPE)
@@ -164,6 +158,14 @@ class CheckoutPaymentWebFragment : Fragment(), AdvancedWebView.Listener {
             val intent = Intent(this, ErrorHandlerActivity::class.java)
             intent.putExtra(ErrorHandlerActivity.ERROR_TYPE, errorType)
             startActivityForResult(intent, ErrorHandlerActivity.ERROR_PAGE_REQUEST_CODE)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (currentSuccessURI.isNotEmpty() && isAdded) {
+            onStatusChanged(currentSuccessURI)
+            currentSuccessURI = getString(R.string.empty)
         }
     }
 

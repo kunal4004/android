@@ -13,9 +13,9 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
 import androidx.navigation.fragment.navArgs
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.ScanBarcodeToPayDialogBinding
 import com.google.zxing.BarcodeFormat
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.scan_barcode_to_pay_dialog.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_account_options_list.card_freeze.TemporaryFreezeCardViewModel
@@ -26,6 +26,7 @@ import za.co.woolworths.financial.services.android.util.Utils
 
 @AndroidEntryPoint
 class ScanBarcodeToPayDialogFragment : WBottomSheetDialogFragment() {
+    private lateinit var binding: ScanBarcodeToPayDialogBinding
     private var isCardDetailsVisible: Boolean = false
     private val timerCardDetailsVisibility = Handler(Looper.getMainLooper())
 
@@ -42,15 +43,16 @@ class ScanBarcodeToPayDialogFragment : WBottomSheetDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.scan_barcode_to_pay_dialog, container, false)
+        binding = ScanBarcodeToPayDialogBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        configureUI()
+        binding.configureUI()
     }
 
-    private fun configureUI() {
+    private fun ScanBarcodeToPayDialogBinding.configureUI() {
         btnDismissDialog.setOnClickListener { dismiss() }
         btnToggleCardDetails.setOnClickListener { toggleCardDetailsVisibility() }
 
@@ -83,7 +85,7 @@ class ScanBarcodeToPayDialogFragment : WBottomSheetDialogFragment() {
         isCardDetailsVisible = false
     }
 
-    private fun toggleCardDetailsVisibility() {
+    private fun ScanBarcodeToPayDialogBinding.toggleCardDetailsVisibility() {
         isCardDetailsVisible = !isCardDetailsVisible
 
         toggleShowCardDetailsButtonState()
@@ -117,7 +119,7 @@ class ScanBarcodeToPayDialogFragment : WBottomSheetDialogFragment() {
         }
     }
 
-    private fun toggleShowCardDetailsButtonState() {
+    private fun ScanBarcodeToPayDialogBinding.toggleShowCardDetailsButtonState() {
         ivToggleCardDetailsLabelIcon
             .setImageDrawable(
                 ResourcesCompat.getDrawable(

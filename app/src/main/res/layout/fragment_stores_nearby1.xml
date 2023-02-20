@@ -25,6 +25,7 @@
             android:layout_height="match_parent">
 
             <include
+                android:id="@+id/includeLocationServiceOffLayout"
                 layout="@layout/location_service_off_layout"
                 android:visibility="gone"/>
 
@@ -114,7 +115,9 @@
             android:focusable="false"
             android:orientation="vertical">
 
-            <include layout="@layout/store_details_layout_common"/>
+            <include
+                android:id="@+id/includeStoreDetailsLayoutCommon"
+                layout="@layout/store_details_layout_common"/>
 
         </LinearLayout>
 

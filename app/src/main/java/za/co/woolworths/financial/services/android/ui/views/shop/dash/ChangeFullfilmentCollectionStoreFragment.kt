@@ -5,32 +5,23 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.LayoutDashCollectionStoreBinding
 import com.google.gson.JsonSyntaxException
-import kotlinx.android.synthetic.main.fragment_click_and_collect_stores.*
-import kotlinx.android.synthetic.main.fragment_click_and_collect_stores.view.*
-import kotlinx.android.synthetic.main.fragment_shop_department.*
-import kotlinx.android.synthetic.main.layout_dash_collection_store.*
-import kotlinx.android.synthetic.main.layout_dash_set_address_fragment.*
 import kotlinx.coroutines.launch
-import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
-import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
 import za.co.woolworths.financial.services.android.geolocation.network.model.Store
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidatePlace
 import za.co.woolworths.financial.services.android.geolocation.view.adapter.StoreListAdapter
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
-import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
 import za.co.woolworths.financial.services.android.models.dto.RootCategory
@@ -42,66 +33,60 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.grid.Pro
 import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.list.DepartmentExtensionFragment
-import za.co.woolworths.financial.services.android.ui.views.maps.DynamicMapDelegate
-import za.co.woolworths.financial.services.android.ui.views.maps.model.DynamicMapMarker
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getDeliveryType
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
-import java.net.SocketTimeoutException
-
-class ChangeFullfilmentCollectionStoreFragment() :
-    DepartmentExtensionFragment(), DynamicMapDelegate,
+import za.co.woolworths.financial.services.android.geolocation.network.model.PlaceDetails
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.TAG_CHANGEFULLFILMENT_COLLECTION_STORE_FRAGMENT
+import za.co.woolworths.financial.services.android.geolocation.view.PargoStoreInfoBottomSheetDialog
+import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
+import za.co.woolworths.financial.services.android.geolocation.view.FBHInfoBottomSheetDialog
+class ChangeFullfilmentCollectionStoreFragment :
+    DepartmentExtensionFragment(R.layout.layout_dash_collection_store),
     StoreListAdapter.OnStoreSelected, View.OnClickListener, TextWatcher {
+
+    private lateinit var binding: LayoutDashCollectionStoreBinding
 
     private var validatePlace: ValidatePlace? = null
     private var updatedAddressStoreList: List<Store>? = mutableListOf()
     private var storeId: String? = null
     private var placeId: String? = null
-    private lateinit var confirmAddressViewModel: ConfirmAddressViewModel
+    private val confirmAddressViewModel: ConfirmAddressViewModel by activityViewModels()
     private var parentFragment: ShopFragment? = null
     private var mDepartmentAdapter: DepartmentAdapter? = null
     private var saveInstanceState: Bundle? = null
+    private var updatedPlace:PlaceDetails?=null
+    private var isFragmentVisible: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         validatePlace = arguments?.get(AppConstant.Keys.ARG_VALIDATE_PLACE) as? ValidatePlace
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View? {
-        return inflater.inflate(R.layout.layout_dash_collection_store, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        parentFragment = (activity as? BottomNavigationActivity)?.currentFragment as? ShopFragment
-        setUpViewModel()
-        this.saveInstanceState = savedInstanceState
-        dynamicMapView?.initializeMap(savedInstanceState, this)
-    }
+        binding = LayoutDashCollectionStoreBinding.bind(view)
 
-    private fun setUpViewModel() {
-        confirmAddressViewModel = ViewModelProvider(
-            this,
-            GeoLocationViewModelFactory(GeoLocationApiHelper())
-        ).get(ConfirmAddressViewModel::class.java)
+        parentFragment = (activity as? BottomNavigationActivity)?.currentFragment as? ShopFragment
+        this.saveInstanceState = savedInstanceState
     }
 
     override fun onResume() {
         super.onResume()
-        dynamicMapView?.initializeMap(saveInstanceState, this)
-        dynamicMapView?.onResume()
-        etEnterNewAddress?.addTextChangedListener(this)
+        binding.layoutClickAndCollectStore.apply {
+            etEnterNewAddress?.addTextChangedListener(this@ChangeFullfilmentCollectionStoreFragment)
+        }
         init()
     }
 
+    override fun noConnectionLayout(isVisible: Boolean) {
+        binding.layoutClickAndCollectStore?.noClickAndCollectConnectionLayout?.root?.visibility = if (isVisible) View.VISIBLE else View.GONE
+    }
+
     fun init() {
-        tvConfirmStore?.setOnClickListener(this)
-        btChange?.setOnClickListener(this)
+        binding.layoutClickAndCollectStore.tvConfirmStore?.setOnClickListener(this)
+        binding.layoutClickAndCollectStore.btChange?.setOnClickListener(this)
 
         var isPermissionGranted = false
         activity?.apply {
@@ -153,15 +138,15 @@ class ChangeFullfilmentCollectionStoreFragment() :
             }
             return
         }
-        if (validatePlace.stores?.isNullOrEmpty() == true) {
+        if (validatePlace.stores.isNullOrEmpty()) {
             showNoCollectionStoresUi()
             return
         }
-        tvStoresNearMe?.text = resources.getString(
+        binding.layoutClickAndCollectStore.tvStoresNearMe?.text = resources.getString(
             R.string.near_stores,
             validatePlace.stores?.size
         )
-        tvAddress?.text =
+        binding.layoutClickAndCollectStore.tvAddress?.text =
             KotlinUtils.capitaliseFirstLetter(validatePlace.placeDetails?.address1)
         placeId = validatePlace.placeDetails?.placeId
         setStoreList(validatePlace.stores)
@@ -170,73 +155,101 @@ class ChangeFullfilmentCollectionStoreFragment() :
     private fun executeValidatePlaceApi(mPlaceId: String) {
         lifecycleScope.launch {
             try {
-                cncProgressBar.visibility = View.VISIBLE
+                binding.cncProgressBar.visibility = View.VISIBLE
                 val validateLocationResponse =
                     confirmAddressViewModel.getValidateLocation(mPlaceId)
 
                 if (validateLocationResponse != null) {
                     when (validateLocationResponse.httpCode) {
                         AppConstant.HTTP_OK -> {
-                            cncProgressBar.visibility = View.GONE
-                            tvStoresNearMe?.text = resources.getString(
+                            binding.cncProgressBar.visibility = View.GONE
+                            binding.layoutClickAndCollectStore.tvStoresNearMe?.text = resources.getString(
                                 R.string.near_stores,
                                 validateLocationResponse?.validatePlace?.stores?.size
                             )
                             updatedAddressStoreList = validateLocationResponse?.validatePlace?.stores
-                            tvAddress?.text =
+                            updatedPlace=validateLocationResponse?.validatePlace?.placeDetails
+                            binding.layoutClickAndCollectStore.tvAddress?.text =
                                 KotlinUtils.capitaliseFirstLetter(validateLocationResponse?.validatePlace?.placeDetails?.address1)
                             placeId = validateLocationResponse?.validatePlace?.placeDetails?.placeId
                             setStoreList(validateLocationResponse?.validatePlace?.stores)
+                            if(placeId != null) {
+                                val store = GeoUtils.getStoreDetails(
+                                        placeId,
+                                        validateLocationResponse?.validatePlace?.stores
+                                )
+                            }
                         }
                     }
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
-                cncProgressBar?.visibility = View.GONE
+                binding.cncProgressBar?.visibility = View.GONE
             } catch (e: JsonSyntaxException) {
                 e.printStackTrace()
-                cncProgressBar?.visibility = View.GONE
+                binding.cncProgressBar?.visibility = View.GONE
             }
         }
     }
 
     private fun setStoreList(stores: List<Store>?) {
-        layoutEdgeCaseScreen?.visibility = View.GONE
-        layoutClickAndCollectStore?.visibility = View.VISIBLE
-        layoutClickAndCollectStore?.ivCross?.visibility = View.GONE
-        rvStoreList.layoutManager =
+        binding.layoutEdgeCaseScreen?.root?.visibility = View.GONE
+        binding.layoutClickAndCollectStore?.root?.visibility = View.VISIBLE
+        binding.layoutClickAndCollectStore?.topPaddingView?.visibility=View.VISIBLE
+        binding.layoutClickAndCollectStore?.backButton?.visibility = View.GONE
+        binding.layoutClickAndCollectStore.rvStoreList.layoutManager =
             activity?.let { activity -> LinearLayoutManager(activity) }
-        rvStoreList.adapter = activity?.let { activity ->
-            StoreListAdapter(
-                activity,
-                stores,
-                this
-            )
+        if (stores?.isNotEmpty() == true) {
+            binding.layoutClickAndCollectStore.tvConfirmStore?.isEnabled = false
+            val storesListWithHeaders =
+                StoreUtils.getStoresListWithHeaders(StoreUtils.sortedStoreList(stores))
+            if (storesListWithHeaders.isNotEmpty()) {
+                binding.layoutClickAndCollectStore.rvStoreList.adapter = activity?.let { activity ->
+                    StoreListAdapter(
+                        activity,
+                        storesListWithHeaders,
+                        this
+                    )
+                }
+                if(isFragmentVisible) {
+                    binding.layoutClickAndCollectStore.rvStoreList.runWhenReady {
+                        if (!AppInstanceObject.get().featureWalkThrough.new_fbh_cnc) {
+                            firstTimeFBHCNCIntroDialog()
+                        }
+                    }
+                }
+            }
+            binding.layoutClickAndCollectStore.rvStoreList.adapter?.notifyDataSetChanged()
         }
-        rvStoreList.adapter?.notifyDataSetChanged()
+
     }
 
     private fun showSetLocationUi() {
-        layoutClickAndCollectStore?.visibility = View.GONE
-        layoutEdgeCaseScreen?.visibility = View.VISIBLE
-        img_view?.setImageResource(R.drawable.ic_cnc_set_location)
-        txt_dash_title?.text = bindString(R.string.set_location_title)
-        txt_dash_sub_title?.text = bindString(R.string.device_location_service_disabled_subTitle)
-        btn_dash_set_address?.text = bindString(R.string.set_location)
-        btn_dash_set_address?.setOnClickListener {
-            navigateToConfirmAddressScreen()
+        binding.apply {
+            layoutClickAndCollectStore?.root?.visibility = View.GONE
+            layoutEdgeCaseScreen?.root?.visibility = View.VISIBLE
+            layoutEdgeCaseScreen.imgView?.setImageResource(R.drawable.ic_cnc_set_location)
+            layoutEdgeCaseScreen.txtDashTitle?.text = bindString(R.string.set_location_title)
+            layoutEdgeCaseScreen.txtDashSubTitle?.text =
+                bindString(R.string.device_location_service_disabled_subTitle)
+            layoutEdgeCaseScreen.btnDashSetAddress?.text = bindString(R.string.set_location)
+            layoutEdgeCaseScreen.btnDashSetAddress?.setOnClickListener {
+                navigateToConfirmAddressScreen()
+            }
         }
     }
 
     private fun showNoCollectionStoresUi() {
-        layoutClickAndCollectStore?.visibility = View.GONE
-        layoutEdgeCaseScreen?.visibility = View.VISIBLE
-        img_view?.setImageResource(R.drawable.ic_cnc_set_location)
-        txt_dash_title?.text = bindString(R.string.collection_store_title)
-        txt_dash_sub_title?.text = bindString(R.string.suburb_not_deliverable_description)
-        btn_dash_set_address?.text = bindString(R.string.change_location)
-        btn_dash_set_address?.setOnClickListener {
-            navigateToConfirmAddressScreen()
+        binding.apply {
+            layoutClickAndCollectStore?.root?.visibility = View.GONE
+            layoutEdgeCaseScreen?.root?.visibility = View.VISIBLE
+            layoutEdgeCaseScreen.imgView?.setImageResource(R.drawable.ic_cnc_set_location)
+            layoutEdgeCaseScreen.txtDashTitle?.text = bindString(R.string.collection_store_title)
+            layoutEdgeCaseScreen.txtDashSubTitle?.text = bindString(R.string.suburb_not_deliverable_description)
+            layoutEdgeCaseScreen.btnDashSetAddress?.text = bindString(R.string.change_location)
+            layoutEdgeCaseScreen.btnDashSetAddress?.setOnClickListener {
+                navigateToConfirmAddressScreen()
+            }
         }
     }
 
@@ -255,27 +268,16 @@ class ChangeFullfilmentCollectionStoreFragment() :
     }
 
     fun scrollToTop() {
-        layoutEdgeCaseScreen?.scrollTo(0, 0)
+        binding.layoutEdgeCaseScreen?.root?.scrollTo(0, 0)
     }
 
     override fun onStoreSelected(store: Store?) {
         storeId = store?.storeId
-        tvConfirmStore?.isEnabled = true
+        binding.layoutClickAndCollectStore.tvConfirmStore?.isEnabled = true
     }
 
-    override fun onMapReady() {
-        dynamicMapView?.setAllGesturesEnabled(false)
-        val addressStoreList = WoolworthsApplication.getCncBrowsingValidatePlaceDetails()?.stores
-        if (addressStoreList != null && addressStoreList?.isEmpty() == false) {
-            GeoUtils.showFirstFourLocationInMap(addressStoreList, dynamicMapView, context)
-        } else if (updatedAddressStoreList?.isEmpty() == false)  {
-            GeoUtils.showFirstFourLocationInMap(updatedAddressStoreList, dynamicMapView, context)
-        }
-    }
 
-    override fun onMarkerClicked(marker: DynamicMapMarker) {
 
-    }
 
     override fun onClick(v: View?) {
         when (v?.id) {
@@ -306,7 +308,7 @@ class ChangeFullfilmentCollectionStoreFragment() :
     private fun postConfirmLocationApi() {
         lifecycleScope.launch {
             try {
-                cncProgressBar.visibility = View.VISIBLE
+                binding.cncProgressBar.visibility = View.VISIBLE
                 val confirmLocationAddress =
                     ConfirmLocationAddress(placeId)
                 val confirmLocationRequest =
@@ -316,7 +318,7 @@ class ChangeFullfilmentCollectionStoreFragment() :
                 if (confirmLocationResponse != null) {
                     when (confirmLocationResponse.httpCode) {
                         AppConstant.HTTP_OK -> {
-                            cncProgressBar.visibility = View.GONE
+                            binding.cncProgressBar.visibility = View.GONE
                             if (SessionUtilities.getInstance().isUserAuthenticated) {
 
                                 KotlinUtils.placeId = placeId
@@ -366,7 +368,7 @@ class ChangeFullfilmentCollectionStoreFragment() :
                 }
             } catch (e: Exception) {
                 FirebaseManager.logException(e)
-                cncProgressBar?.visibility = View.GONE
+                binding.cncProgressBar?.visibility = View.GONE
             }
         }
     }
@@ -414,17 +416,19 @@ class ChangeFullfilmentCollectionStoreFragment() :
         KotlinUtils.browsingCncStore =
             GeoUtils.getStoreDetails(
                 storeId,
-                WoolworthsApplication.getCncBrowsingValidatePlaceDetails().stores
+                WoolworthsApplication.getCncBrowsingValidatePlaceDetails()?.stores
             )
     }
 
     private fun showCategoryList() {
-        parentFragment?.showSearchAndBarcodeUi()
-        layoutClickAndCollectStore?.visibility = View.GONE
-        layoutEdgeCaseScreen?.visibility = View.GONE
-        rv_category_layout?.visibility = View.VISIBLE
-        setUpCategoryRecyclerView(mutableListOf())
-        initializeRootCategoryList()
+        binding.apply {
+            parentFragment?.showSearchAndBarcodeUi()
+            layoutClickAndCollectStore?.root?.visibility = View.GONE
+            layoutEdgeCaseScreen?.root?.visibility = View.GONE
+            binding.rvCategoryLayout?.root?.visibility = View.VISIBLE
+            setUpCategoryRecyclerView(mutableListOf())
+            initializeRootCategoryList()
+        }
     }
 
     private fun initializeRootCategoryList() {
@@ -435,13 +439,13 @@ class ChangeFullfilmentCollectionStoreFragment() :
     }
 
     private fun setUpCategoryRecyclerView(categories: MutableList<RootCategory>?) {
-        rv_category_layout?.visibility = View.VISIBLE
+        binding.rvCategoryLayout?.root?.visibility = View.VISIBLE
         mDepartmentAdapter = DepartmentAdapter(
             categories,
             ::departmentItemClicked
         ) //{ rootCategory: RootCategory -> departmentItemClicked(rootCategory)}
         activity?.let {
-            rclDepartment?.apply {
+            binding.rvCategoryLayout.rclDepartment?.apply {
                 layoutManager = LinearLayoutManager(it, LinearLayoutManager.VERTICAL, false)
                 adapter = mDepartmentAdapter
             }
@@ -480,24 +484,24 @@ class ChangeFullfilmentCollectionStoreFragment() :
         setStoreList(list)
     }
 
-    override fun onPause() {
-        dynamicMapView?.onPause()
-        super.onPause()
-    }
-
-    override fun onLowMemory() {
-        super.onLowMemory()
-        dynamicMapView?.onLowMemory()
-    }
-
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         this.saveInstanceState = outState
-        dynamicMapView?.onSaveInstanceState(outState)
     }
 
-    override fun onDestroyView() {
-        dynamicMapView?.onDestroy()
-        super.onDestroyView()
+    override fun onFirstTimePargo() {
+        PargoStoreInfoBottomSheetDialog().show(
+            parentFragmentManager,
+            TAG_CHANGEFULLFILMENT_COLLECTION_STORE_FRAGMENT
+        )
     }
+    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
+        super.setUserVisibleHint(isVisibleToUser)
+        isFragmentVisible=isVisibleToUser
+    }
+    private fun firstTimeFBHCNCIntroDialog() {
+        val fbh = FBHInfoBottomSheetDialog()
+        activity?.supportFragmentManager?.let { fbh.show(it, AppConstant.TAG_FBH_CNC_FRAGMENT) }
+    }
+
 }

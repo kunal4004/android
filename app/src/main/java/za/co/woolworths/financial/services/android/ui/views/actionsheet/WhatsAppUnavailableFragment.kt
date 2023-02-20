@@ -5,18 +5,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.account_in_arrears_fragment_dialog.*
+import com.awfs.coordination.databinding.WhatsappUnavailableFragmentBinding
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
 class WhatsAppUnavailableFragment : WBottomSheetDialogFragment(), View.OnClickListener {
 
+    private lateinit var binding: WhatsappUnavailableFragmentBinding
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.whatsapp_unavailable_fragment, container, false)
+        binding = WhatsappUnavailableFragmentBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        gotItButton?.apply {
+        binding.gotItButton?.apply {
             AnimationUtilExtension.animateViewPushDown(this)
             setOnClickListener(this@WhatsAppUnavailableFragment)
         }

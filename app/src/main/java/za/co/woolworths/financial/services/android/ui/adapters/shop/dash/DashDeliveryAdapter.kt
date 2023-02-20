@@ -3,18 +3,18 @@ package za.co.woolworths.financial.services.android.ui.adapters.shop.dash
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
 import android.view.ViewGroup
 import androidx.annotation.NonNull
 import androidx.recyclerview.widget.*
-import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.item_layout_on_demand_category.view.*
-import kotlinx.android.synthetic.main.item_layout_product_carousel.view.*
+import com.awfs.coordination.databinding.ItemLayoutOnDemandCategoryBinding
+import com.awfs.coordination.databinding.ItemLayoutProductCarouselBinding
 import za.co.woolworths.financial.services.android.contracts.IProductListing
 import za.co.woolworths.financial.services.android.models.dto.RootCategory
 import za.co.woolworths.financial.services.android.models.dto.shop.ProductCatalogue
 import za.co.woolworths.financial.services.android.ui.views.shop.dash.OnDashLandingNavigationListener
 import za.co.woolworths.financial.services.android.ui.views.shop.dash.OnDemandNavigationListener
-import java.util.*
+import za.co.woolworths.financial.services.android.util.ImageManager
 
 class DashDeliveryAdapter(
     @NonNull val context: Context,
@@ -29,6 +29,7 @@ class DashDeliveryAdapter(
         const val TYPE_NAME_PRODUCT_CAROUSEL = "Product Carousel"
         const val TYPE_NAME_LONG_BANNER_CAROUSEL = "Long Banners Carousel"
         const val TYPE_NAME_LONG_BANNER_LIST = "Long Banners List"
+        const val TYPE_NAME_BANNER_FULL_WIDTH = "Banner FullWidth"
 
         const val TYPE_EMPTY = 0
         const val TYPE_ON_DEMAND_CATEGORIES = 1
@@ -76,8 +77,8 @@ class DashDeliveryAdapter(
         return when (viewType) {
             TYPE_ON_DEMAND_CATEGORIES -> {
                 OnDemandCategoryLayoutViewHolder(
-                    LayoutInflater.from(parent.context).inflate(
-                        R.layout.item_layout_on_demand_category,
+                    ItemLayoutOnDemandCategoryBinding.inflate(
+                        LayoutInflater.from(parent.context),
                         parent,
                         false
                     )
@@ -85,8 +86,8 @@ class DashDeliveryAdapter(
             }
             TYPE_DASH_CATEGORIES_BANNER_CAROUSEL -> {
                 BannerCarouselLayoutViewHolder(
-                    LayoutInflater.from(parent.context).inflate(
-                        R.layout.item_layout_product_carousel,
+                    ItemLayoutProductCarouselBinding.inflate(
+                        LayoutInflater.from(parent.context),
                         parent,
                         false
                     )
@@ -94,8 +95,8 @@ class DashDeliveryAdapter(
             }
             TYPE_DASH_CATEGORIES_BANNER_GRID -> {
                 BannerGridLayoutViewHolder(
-                    LayoutInflater.from(parent.context).inflate(
-                        R.layout.item_layout_product_carousel,
+                    ItemLayoutProductCarouselBinding.inflate(
+                        LayoutInflater.from(parent.context),
                         parent,
                         false
                     )
@@ -103,8 +104,8 @@ class DashDeliveryAdapter(
             }
             TYPE_DASH_CATEGORIES_PRODUCT_CAROUSEL -> {
                 ProductCarouselLayoutViewHolder(
-                    LayoutInflater.from(parent.context).inflate(
-                        R.layout.item_layout_product_carousel,
+                    ItemLayoutProductCarouselBinding.inflate(
+                        LayoutInflater.from(parent.context),
                         parent,
                         false
                     )
@@ -112,8 +113,8 @@ class DashDeliveryAdapter(
             }
             TYPE_DASH_CATEGORIES_LONG_BANNER_CAROUSEL -> {
                 LongBannerCarouselLayoutViewHolder(
-                    LayoutInflater.from(parent.context).inflate(
-                        R.layout.item_layout_product_carousel,
+                    ItemLayoutProductCarouselBinding.inflate(
+                        LayoutInflater.from(parent.context),
                         parent,
                         false
                     )
@@ -121,8 +122,8 @@ class DashDeliveryAdapter(
             }
             TYPE_DASH_CATEGORIES_LONG_BANNER_LIST -> {
                 LongBannerListLayoutViewHolder(
-                    LayoutInflater.from(parent.context).inflate(
-                        R.layout.item_layout_product_carousel,
+                    ItemLayoutProductCarouselBinding.inflate(
+                        LayoutInflater.from(parent.context),
                         parent,
                         false
                     )
@@ -144,19 +145,46 @@ class DashDeliveryAdapter(
                 )
             }
             is BannerCarouselLayoutViewHolder -> {
-                holder.bindView(context, position, categoryList[position] as ProductCatalogue, dashLandingNavigationListener)
+                holder.bindView(
+                    context,
+                    position,
+                    categoryList[position] as ProductCatalogue,
+                    dashLandingNavigationListener
+                )
             }
             is BannerGridLayoutViewHolder -> {
-                holder.bindView(context, position, categoryList[position] as ProductCatalogue, dashLandingNavigationListener)
+                if(position < categoryList.size && position >= 0)
+                holder.bindView(
+                    context,
+                    position,
+                    categoryList[position] as ProductCatalogue,
+                    categoryList[position + 1] as ProductCatalogue,
+                    dashLandingNavigationListener
+                )
             }
             is ProductCarouselLayoutViewHolder -> {
-                holder.bindView(context, position, categoryList[position] as ProductCatalogue, iProductListing)
+                holder.bindView(
+                    context,
+                    position,
+                    categoryList[position] as ProductCatalogue,
+                    iProductListing
+                )
             }
             is LongBannerCarouselLayoutViewHolder -> {
-                holder.bindView(context, position, categoryList[position] as ProductCatalogue, dashLandingNavigationListener)
+                holder.bindView(
+                    context,
+                    position,
+                    categoryList[position] as ProductCatalogue,
+                    dashLandingNavigationListener
+                )
             }
             is LongBannerListLayoutViewHolder -> {
-                holder.bindView(context, position, categoryList[position] as ProductCatalogue, dashLandingNavigationListener)
+                holder.bindView(
+                    context,
+                    position,
+                    categoryList[position] as ProductCatalogue,
+                    dashLandingNavigationListener
+                )
             }
         }
     }
@@ -215,7 +243,8 @@ class DashDeliveryAdapter(
 
 class EmptyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
-class OnDemandCategoryLayoutViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+class OnDemandCategoryLayoutViewHolder(val itemBinding: ItemLayoutOnDemandCategoryBinding) :
+    RecyclerView.ViewHolder(itemBinding.root) {
 
     fun bindView(
         context: Context,
@@ -225,8 +254,9 @@ class OnDemandCategoryLayoutViewHolder(itemView: View) : RecyclerView.ViewHolder
     ) {
 
         onDemandCategories?.let {
-            itemView.rvOnDemandCategories?.apply {
-                val onDemandCategoryAdapter = OnDemandCategoryAdapter(context, onDemandNavigationListener)
+            itemBinding.rvOnDemandCategories?.apply {
+                val onDemandCategoryAdapter =
+                    OnDemandCategoryAdapter(context, onDemandNavigationListener)
                 layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
                 adapter = onDemandCategoryAdapter
                 onDemandCategoryAdapter.setOnDemandCategoryList(it)
@@ -235,7 +265,8 @@ class OnDemandCategoryLayoutViewHolder(itemView: View) : RecyclerView.ViewHolder
     }
 }
 
-class BannerCarouselLayoutViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+class BannerCarouselLayoutViewHolder(val itemBinding: ItemLayoutProductCarouselBinding) :
+    RecyclerView.ViewHolder(itemBinding.root) {
 
     fun bindView(
         context: Context,
@@ -244,9 +275,10 @@ class BannerCarouselLayoutViewHolder(itemView: View) : RecyclerView.ViewHolder(i
         dashLandingNavigationListener: OnDashLandingNavigationListener
     ) {
 
-        itemView.dashCategoryTitle.text = productCatalogue?.headerText
-        itemView.rvDashCategories?.apply {
-            val bannerCarouselAdapter = DashCategoryAdapter(context, dashLandingNavigationListener, null)
+        itemBinding.dashCategoryTitle.text = productCatalogue?.headerText
+        itemBinding.rvDashCategories?.apply {
+            val bannerCarouselAdapter =
+                DashCategoryAdapter(context, dashLandingNavigationListener, null)
             layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
             adapter = bannerCarouselAdapter
             productCatalogue?.let {
@@ -256,27 +288,45 @@ class BannerCarouselLayoutViewHolder(itemView: View) : RecyclerView.ViewHolder(i
     }
 }
 
-class BannerGridLayoutViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+class BannerGridLayoutViewHolder(val itemBinding: ItemLayoutProductCarouselBinding) :
+    RecyclerView.ViewHolder(itemBinding.root) {
 
     fun bindView(
         context: Context,
         position: Int,
         productCatalogue: ProductCatalogue?,
+        nextProductCatalogue: ProductCatalogue?,
         dashLandingNavigationListener: OnDashLandingNavigationListener
     ) {
-        itemView.dashCategoryTitle.text = productCatalogue?.headerText
-        itemView.rvDashCategories?.apply {
-            val bannerGridAdapter = DashCategoryAdapter(context, dashLandingNavigationListener, null)
+        itemBinding.imgBannerFullWidth.visibility = GONE
+        itemBinding.dashCategoryTitle.text = productCatalogue?.headerText
+        itemBinding.rvDashCategories?.apply {
+            val bannerGridAdapter =
+                DashCategoryAdapter(context, dashLandingNavigationListener, null)
             layoutManager = GridLayoutManager(context, 2)
             adapter = bannerGridAdapter
             productCatalogue?.let {
                 bannerGridAdapter.setData(it)
             }
         }
+        if (!DashDeliveryAdapter.TYPE_NAME_BANNER_FULL_WIDTH
+                .equals(nextProductCatalogue?.name, true)
+        ) return
+        nextProductCatalogue?.banners?.apply {
+            if (this.isEmpty()) return
+            itemBinding.imgBannerFullWidth.visibility = get(0).externalImageRefV2?.let {
+                ImageManager.setPicture(
+                    itemBinding.imgBannerFullWidth,
+                    it
+                )
+                View.VISIBLE
+            } ?: GONE
+        }
     }
 }
 
-class ProductCarouselLayoutViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+class ProductCarouselLayoutViewHolder(val itemBinding: ItemLayoutProductCarouselBinding) :
+    RecyclerView.ViewHolder(itemBinding.root) {
 
     fun bindView(
         context: Context,
@@ -284,8 +334,8 @@ class ProductCarouselLayoutViewHolder(itemView: View) : RecyclerView.ViewHolder(
         productCatalogue: ProductCatalogue?,
         iProductListing: IProductListing
     ) {
-        itemView.dashCategoryTitle.text = productCatalogue?.headerText
-        itemView.rvDashCategories?.apply {
+        itemBinding.dashCategoryTitle.text = productCatalogue?.headerText
+        itemBinding.rvDashCategories?.apply {
             val productCarouselAdapter = DashCategoryAdapter(context, null, iProductListing)
             layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
             adapter = productCarouselAdapter
@@ -296,7 +346,8 @@ class ProductCarouselLayoutViewHolder(itemView: View) : RecyclerView.ViewHolder(
     }
 }
 
-class LongBannerCarouselLayoutViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+class LongBannerCarouselLayoutViewHolder(val itemBinding: ItemLayoutProductCarouselBinding) :
+    RecyclerView.ViewHolder(itemBinding.root) {
 
     fun bindView(
         context: Context,
@@ -304,9 +355,10 @@ class LongBannerCarouselLayoutViewHolder(itemView: View) : RecyclerView.ViewHold
         productCatalogue: ProductCatalogue?,
         dashLandingNavigationListener: OnDashLandingNavigationListener
     ) {
-        itemView.dashCategoryTitle.text = productCatalogue?.headerText
-        itemView.rvDashCategories?.apply {
-            val longBannerCarouselAdapter = DashCategoryAdapter(context, dashLandingNavigationListener, null)
+        itemBinding.dashCategoryTitle.text = productCatalogue?.headerText
+        itemBinding.rvDashCategories?.apply {
+            val longBannerCarouselAdapter =
+                DashCategoryAdapter(context, dashLandingNavigationListener, null)
             layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
             adapter = longBannerCarouselAdapter
             productCatalogue?.let {
@@ -316,7 +368,8 @@ class LongBannerCarouselLayoutViewHolder(itemView: View) : RecyclerView.ViewHold
     }
 }
 
-class LongBannerListLayoutViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+class LongBannerListLayoutViewHolder(val itemBinding: ItemLayoutProductCarouselBinding) :
+    RecyclerView.ViewHolder(itemBinding.root) {
 
     fun bindView(
         context: Context,
@@ -324,9 +377,10 @@ class LongBannerListLayoutViewHolder(itemView: View) : RecyclerView.ViewHolder(i
         productCatalogue: ProductCatalogue?,
         dashLandingNavigationListener: OnDashLandingNavigationListener
     ) {
-        itemView.dashCategoryTitle.text = productCatalogue?.headerText
-        itemView.rvDashCategories?.apply {
-            val longBannerListAdapter = DashCategoryAdapter(context, dashLandingNavigationListener, null)
+        itemBinding.dashCategoryTitle.text = productCatalogue?.headerText
+        itemBinding.rvDashCategories?.apply {
+            val longBannerListAdapter =
+                DashCategoryAdapter(context, dashLandingNavigationListener, null)
             layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
             adapter = longBannerListAdapter
             productCatalogue?.let {

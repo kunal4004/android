@@ -29,7 +29,9 @@
             android:visibility="gone"
             app:shimmer_duration="800">
 
-            <include layout="@layout/account_activate_credit_card_plcae_holder_layout" />
+            <include
+                android:id="@+id/includeAccountActivateCreditCardPlaceholder"
+                layout="@layout/account_activate_credit_card_plcae_holder_layout" />
         </com.facebook.shimmer.ShimmerFrameLayout>
 
         <LinearLayout
@@ -156,7 +158,9 @@
 
         </LinearLayout>
 
-        <include layout="@layout/common_account_detail" />
+        <include
+            android:id="@+id/includeCommonAccountDetails"
+            layout="@layout/common_account_detail" />
         <View
             android:id="@+id/accbottomSpaceView"
             android:layout_width="wrap_content"

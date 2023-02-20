@@ -5,22 +5,19 @@ import android.os.Bundle
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.StyleSpan
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.fragment_prodcut_dietary_information.*
+import com.awfs.coordination.databinding.FragmentProdcutDietaryInformationBinding
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
+import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 
-class ProductDietaryInformationFragment : Fragment(){
+class ProductDietaryInformationFragment : BaseFragmentBinding<FragmentProdcutDietaryInformationBinding>(FragmentProdcutDietaryInformationBinding::inflate){
     var dietary: String = ""
 
     companion object {
         fun newInstance(dietary: String?) = ProductDietaryInformationFragment().withArgs {
             putString("DIETARY_INFO", dietary)
         }
-
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,20 +28,16 @@ class ProductDietaryInformationFragment : Fragment(){
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_prodcut_dietary_information, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        dietaryText.text = getStyledText(dietary)
+        binding.dietaryText.text = getStyledText(dietary)
         setUniqueIds()
     }
 
     private fun setUniqueIds() {
         resources.apply {
-            dietaryTitle?.contentDescription = getString(R.string.pdp_productDietaryTitle)
-            dietaryText?.contentDescription = getString(R.string.pdp_textViewDietary)
+            binding.dietaryTitle?.contentDescription = getString(R.string.pdp_productDietaryTitle)
+            binding.dietaryText?.contentDescription = getString(R.string.pdp_textViewDietary)
         }
     }
 

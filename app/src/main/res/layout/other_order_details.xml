@@ -232,7 +232,7 @@
             android:layout_height="match_parent"
             android:layout_weight="0.5"
             android:gravity="center_vertical"
-            android:text="@string/your_wrewards_vouchers"
+            android:text="@string/wrewards_voucher"
             android:textColor="@color/gray"
             android:textSize="@dimen/fifteen_sp" />
 
@@ -310,6 +310,7 @@
         app:layout_constraintTop_toBottomOf="@id/totalDiscountSeparator">
 
         <TextView
+            android:id="@+id/deliveryFeeLabel"
             style="@style/myriad_pro_regular"
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -331,12 +332,55 @@
     </LinearLayout>
 
     <View
-        android:id="@+id/deliveryFeeSeparator"
+        android:id="@+id/quarterlyVoucherSeparator"
         style="@style/bottom_line"
         android:layout_width="0dp"
         app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
         app:layout_constraintRight_toRightOf="@+id/right_guideline"
         app:layout_constraintTop_toBottomOf="@+id/deliveryFeeLinearLayout" />
+
+
+    <LinearLayout
+        android:id="@+id/quarterlyVoucherLinearLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="@dimen/twenty_dp"
+        android:paddingBottom="@dimen/twenty_dp"
+        android:weightSum="1"
+        app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+        app:layout_constraintRight_toRightOf="@+id/right_guideline"
+        app:layout_constraintTop_toBottomOf="@id/deliveryFeeLinearLayout">
+
+        <TextView
+            style="@style/myriad_pro_regular"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:gravity="center_vertical"
+            android:text="@string/quarterly_voucher"
+            android:textColor="@color/gray"
+            android:textSize="@dimen/fifteen_sp" />
+
+        <TextView
+            android:id="@+id/quarterlyVoucherText"
+            style="@style/futura_semi_bold_black"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:gravity="end"
+            android:textColor="@color/black"
+            android:textSize="@dimen/fifteen_sp" />
+    </LinearLayout>
+
+
+    <View
+        android:id="@+id/deliveryFeeSeparator"
+        style="@style/bottom_line"
+        android:layout_width="0dp"
+        app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+        app:layout_constraintRight_toRightOf="@+id/right_guideline"
+        app:layout_constraintTop_toBottomOf="@+id/quarterlyVoucherLinearLayout" />
 
     <LinearLayout
         android:id="@+id/missedRewardsLinearLayout"

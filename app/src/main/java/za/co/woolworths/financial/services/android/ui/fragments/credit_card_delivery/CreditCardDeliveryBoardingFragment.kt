@@ -1,33 +1,28 @@
 package za.co.woolworths.financial.services.android.ui.fragments.credit_card_delivery
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.core.os.bundleOf
-import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.credit_card_delivery_boarding_layout.*
+import com.awfs.coordination.databinding.CreditCardDeliveryBoardingLayoutBinding
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.ui.fragments.credit_card_activation.CreditCardActivationAvailabilityDialogFragment
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
+import java.util.*
 
-class CreditCardDeliveryBoardingFragment : Fragment() {
+class CreditCardDeliveryBoardingFragment : BaseFragmentBinding<CreditCardDeliveryBoardingLayoutBinding>(CreditCardDeliveryBoardingLayoutBinding::inflate) {
 
     private var navController: NavController? = null
     var bundle: Bundle? = null
     var accountBinNumber: String? = null
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.credit_card_delivery_boarding_layout, container, false)
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,18 +35,33 @@ class CreditCardDeliveryBoardingFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         navController = Navigation.findNavController(view)
-        init()
-        setupToolbar()
-        setUpDeliveryNow?.setOnClickListener {
-            (activity as? CreditCardDeliveryActivity)?.mFirebaseCreditCardDeliveryEvent?.forMyAccountCreditCardDelivery()
-            navController?.navigate(R.id.action_to_creditCardDeliveryRecipientDetailsFragment, bundleOf("bundle" to bundle))
-        }
-        activateNow?.setOnClickListener {
-            activity?.apply { Utils.makeCall(AppConfigSingleton.creditCardDelivery?.callCenterNumber) }
+
+        binding.apply {
+            init()
+            setupToolbar()
+            setUpDeliveryNow.setOnClickListener {
+                (activity as? CreditCardDeliveryActivity)?.mFirebaseCreditCardDeliveryEvent?.forMyAccountCreditCardDelivery()
+                navController?.navigate(
+                    R.id.action_to_creditCardDeliveryRecipientDetailsFragment,
+                    bundleOf("bundle" to bundle)
+                )
+            }
+            activateNow.setOnClickListener {
+                //Jira OWT-243
+                val calendar: Calendar = Calendar.getInstance()
+                val day: Int = calendar.get(Calendar.DAY_OF_WEEK)
+                if (day != Calendar.SUNDAY && Utils.isCreditCardActivationEndpointAvailable()) {
+                    activity?.apply {
+                        Utils.makeCall(AppConfigSingleton.creditCardDelivery?.callCenterNumber)
+                    } } else {
+                        activity?.supportFragmentManager?.let { CreditCardActivationAvailabilityDialogFragment.newInstance(accountBinNumber).show(it, CreditCardActivationAvailabilityDialogFragment::class.java.simpleName)
+                    }
+                }
+            }
         }
     }
 
-    private fun init() {
+    private fun CreditCardDeliveryBoardingLayoutBinding.init() {
         var creditCardName: String = bindString(R.string.black_credit_card_title)
         val formattedCardDeliveryFee: String = AppConfigSingleton.creditCardDelivery?.formattedCardDeliveryFee
                 ?: ""
@@ -80,7 +90,7 @@ class CreditCardDeliveryBoardingFragment : Fragment() {
     private fun setupToolbar() {
         if (activity is CreditCardDeliveryActivity) {
             (activity as? CreditCardDeliveryActivity)?.apply {
-                setToolbarTitle(bindString(R.string.my_card))
+                setToolbarTitle(bindString(R.string.my_card,""))
                 changeToolbarBackground(R.color.grey_bg)
             }
         }
