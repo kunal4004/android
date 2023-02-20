@@ -134,18 +134,20 @@
 
                     <TextView
                         android:id="@+id/tvDeliverySubtitle"
-                        android:layout_width="wrap_content"
+                        android:layout_width="@dimen/zero_dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/ten_dp"
                         android:layout_marginTop="@dimen/two_dp"
+                        android:layout_marginEnd="@dimen/sixteen_dp"
                         android:fontFamily="@font/myriad_pro_semi_bold"
-                        android:gravity="center"
                         android:lineHeight="@dimen/sixteen_dp"
+                        android:ellipsize="end"
+                        android:maxLines="1"
                         android:text="@string/cart_default_location"
-                        android:textAlignment="center"
                         android:textColor="@color/black"
                         android:textSize="@dimen/fourteen_sp"
                         app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/iconLocationRight"
                         app:layout_constraintStart_toEndOf="@id/imgCartDelivery"
                         app:layout_constraintTop_toBottomOf="@+id/tvDeliveryTitle" />
 
@@ -176,12 +178,11 @@
                     android:visibility="gone"
                     tools:ignore="HardcodedText" />
 
-
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rvCartList"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginBottom="@dimen/one_thirty_four"
+                    android:layout_marginBottom="@dimen/twenty_dp"
                     android:nestedScrollingEnabled="false"
                     android:scrollbars="none" />
 
@@ -191,6 +192,13 @@
                     android:visibility="gone" />
 
                 <include layout="@layout/no_connection_handler" />
+
+                <include
+                    android:id="@+id/layoutRecommendationContainer"
+                    layout="@layout/recommendation_fragment_container_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/eighty_dp"/>
 
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>

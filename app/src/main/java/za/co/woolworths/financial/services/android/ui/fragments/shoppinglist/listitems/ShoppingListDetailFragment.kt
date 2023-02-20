@@ -965,6 +965,8 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             isFromDashTab = false,
             isComingFromCheckout = false,
             isComingFromSlotSelection = false,
+            isMixedBasket = false,
+            isFBHOnly = false,
             savedAddressResponse = null,
             defaultAddress = null,
             whoISCollecting = null,

@@ -4,6 +4,7 @@ import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse
+import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.CashBackVouchers
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.SelectedVoucher
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.Voucher
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.VoucherErrorMessage
@@ -12,7 +13,7 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HT
 class AvailableVoucherPresenterImpl(var mainView: VoucherAndPromoCodeContract.AvailableVoucherView?, var getInteractor: VoucherAndPromoCodeContract.AvailableVoucherInteractor?) : VoucherAndPromoCodeContract.AvailableVoucherPresenter, IGenericAPILoaderView<Any> {
 
     private var vouchers: ArrayList<Voucher>? = null
-
+    private var cashBackVouchers: ArrayList<CashBackVouchers>? = null
     override fun onDestroy() {
         mainView = null
     }
@@ -29,6 +30,7 @@ class AvailableVoucherPresenterImpl(var mainView: VoucherAndPromoCodeContract.Av
                         HTTP_OK -> {
                             this.data[0].let {
                                 setVouchers(it.voucherDetails.vouchers)
+                                setCashBackVouchers(it.voucherDetails.cashBack)
                                 updateVouchersWithErrorMessages(it.messages)
                                 val isPartiallySuccess = !it?.messages.isNullOrEmpty()
                                 it?.messages?.clear()
@@ -75,6 +77,15 @@ class AvailableVoucherPresenterImpl(var mainView: VoucherAndPromoCodeContract.Av
     override fun getVouchers(): ArrayList<Voucher>? {
         return vouchers
     }
+
+    override fun setCashBackVouchers(cashBackVouchers: ArrayList<CashBackVouchers>) {
+        this.cashBackVouchers = cashBackVouchers
+
+    }
+    override fun getCashBackVouchers(): ArrayList<CashBackVouchers>? {
+        return cashBackVouchers
+    }
+
 
     override fun updateVouchersWithErrorMessages(message: ArrayList<VoucherErrorMessage>) {
         if (message.isNullOrEmpty()) return

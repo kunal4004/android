@@ -519,7 +519,8 @@ class MyPreferencesFragment : BaseFragmentBinding<FragmentMyPreferencesBinding>(
                     shoppingDeliveryLocation.fulfillmentDetails,
                     tvDeliveringTo,
                     tvDeliveryLocation,
-                    null
+                    null,
+                    true
                 )
             }
         }
