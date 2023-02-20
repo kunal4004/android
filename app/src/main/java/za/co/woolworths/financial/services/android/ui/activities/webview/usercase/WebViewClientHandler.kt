@@ -7,7 +7,6 @@ import android.os.Build
 import android.os.Handler
 import android.webkit.*
 import kotlinx.coroutines.flow.MutableStateFlow
-import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.ui.activities.webview.data.WebViewActions
 import za.co.woolworths.financial.services.android.ui.activities.webview.data.WebViewData
 import za.co.woolworths.financial.services.android.util.AppConstant
@@ -123,18 +122,17 @@ class WebViewClientHandler @Inject constructor():IWebViewClientHandler {
 
     fun ficaHandling(url: String?) {
         webViewData?.apply {
-            if (AppConfigSingleton.accountOptions != null && url != null && collectionsExitUrl != null) {
-                fica = AppConfigSingleton.accountOptions!!.ficaRefresh
-                if (url.contains(collectionsExitUrl!!)) {
-                    _webViewActions.value = WebViewActions.DestroyWebView
-                    val parameters = getQueryString(url)
-                    if (parameters.containsKey("IsCompleted") && parameters["IsCompleted"] == "false") {
-                        ficaCanceled = true
+            url?.let {
+                collectionsExitUrl?.apply {
+                    if (it.contains(this)) {
+                        _webViewActions.value = WebViewActions.DestroyWebView
+                        val parameters = getQueryString(url)
+                        if (parameters.containsKey("IsCompleted") && parameters["IsCompleted"] == "false") {
+                            ficaCanceled = true
+                        }
+                        _webViewActions.value = WebViewActions.FinishActivity
                     }
-                    _webViewActions.value = WebViewActions.FinishActivity
                 }
-            } else {
-                fica = null
             }
         }
     }
