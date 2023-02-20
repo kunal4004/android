@@ -24,6 +24,7 @@ import com.awfs.coordination.databinding.InternalWebviewActivityBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
+import za.co.woolworths.financial.services.android.ui.activities.webview.data.EliteWebViewArgs.*
 import za.co.woolworths.financial.services.android.ui.activities.webview.usercase.WebViewHandler.Companion.REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.activities.webview.data.WebViewActions
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.BindingBaseActivity
@@ -35,7 +36,7 @@ class WInternalWebPageActivity : BindingBaseActivity<InternalWebviewActivityBind
     val viewModel: WebViewModel by viewModels()
 
     override fun onStart() {
-        if (viewModel.webViewClientHandler.webViewData?.treatmentPlan!!) {
+        if (viewModel.webViewClientHandler.webViewData?.treatmentPlan == true) {
             overridePendingTransition(R.anim.slide_from_right, R.anim.stay)
         } else {
             overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
@@ -193,9 +194,9 @@ class WInternalWebPageActivity : BindingBaseActivity<InternalWebviewActivityBind
                     finishActivity()
                 }
             }
-            if (viewModel.webViewClientHandler.webViewData?.treatmentPlan!! && binding.internalWebView.url!!.contains(
+            if (viewModel.webViewClientHandler.webViewData?.treatmentPlan == true && binding.internalWebView.url?.contains(
                     KotlinUtils.collectionsIdUrl
-                )
+                ) == true
             ) {
                 finishActivity()
             }
@@ -217,7 +218,7 @@ class WInternalWebPageActivity : BindingBaseActivity<InternalWebviewActivityBind
     private fun finishActivityForElite(params: HashMap<String, String>) {
         val resultIntent = Intent()
         val elitePlanModel =
-            ElitePlanModel(params["Scope"], params["DiscountAmount"], params["SettlementAmount"])
+            ElitePlanModel(params[SCOPE.type], params[DISCOUNT_AMOUNT.type], params[SETTLEMENT_AMOUNT.type])
         resultIntent.putExtra(AccountSignedInPresenterImpl.ELITE_PLAN_MODEL, elitePlanModel)
         setResult(RESULT_OK, resultIntent)
         finish()

@@ -7,7 +7,6 @@ import android.os.Build
 import android.os.Handler
 import android.webkit.*
 import kotlinx.coroutines.flow.MutableStateFlow
-import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.ui.activities.webview.data.WebViewActions
 import za.co.woolworths.financial.services.android.ui.activities.webview.data.WebViewData
 import za.co.woolworths.financial.services.android.util.AppConstant
