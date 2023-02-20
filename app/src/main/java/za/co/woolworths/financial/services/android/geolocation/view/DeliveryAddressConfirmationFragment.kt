@@ -856,9 +856,10 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
                             }
 
                             KotlinUtils.placeId = validateLocationResponse?.validatePlace?.placeDetails?.placeId
-                            val nickname =  validateLocationResponse?.validatePlace?.placeDetails?.nickname
+                            val nickname = validateLocationResponse?.validatePlace?.placeDetails?.nickname
+
                             val fulfillmentDeliveryLocation = Utils.getPreferredDeliveryLocation()
-                            fulfillmentDeliveryLocation.fulfillmentDetails.address?.nickname = nickname
+                            fulfillmentDeliveryLocation?.fulfillmentDetails?.address?.nickname = nickname
 
                             Utils.savePreferredDeliveryLocation(fulfillmentDeliveryLocation)
 
