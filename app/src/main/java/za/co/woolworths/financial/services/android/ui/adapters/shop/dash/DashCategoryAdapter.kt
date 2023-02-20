@@ -389,6 +389,7 @@ class ProductCarouselItemViewHolder(val itemBinding: ItemProductCarouselListBind
             ImageManager.setPictureWithoutPlaceHolder(imReward, imPromo?.wRewards ?: "")
             ImageManager.setPictureWithoutPlaceHolder(imVitality, imPromo?.vitality ?: "")
             ImageManager.setPictureWithoutPlaceHolder(imNewImage, imPromo?.newImage ?: "")
+            ImageManager.setPictureWithoutPlaceHolder(imageWList, imPromo?.wList ?: "")
             if (VirtualTryOnUtil.isVtoConfigAvailable()) {
                 ImageManager.setPictureWithoutPlaceHolder(imgTryItOn, virtualTryOn ?: "")
             }

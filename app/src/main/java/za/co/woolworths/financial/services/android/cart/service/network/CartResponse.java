@@ -23,6 +23,7 @@ public class CartResponse {
 	public ProductCountMap productCountMap;
 	public boolean liquorOrder;
 	public String noLiquorImageUrl;
+	public boolean blackCardHolder;
 	public GlobalMessages globalMessages;
 	public String jSessionId;
 }

@@ -11,19 +11,17 @@ import kotlinx.android.parcel.Parcelize
 data class PromotionImages(
     @SerializedName("newImage")
     var newImage: String? = null,
-
     @SerializedName("save")
     var save: String? = null,
-
     @SerializedName("vitality")
     var vitality: String? = null,
-
     @SerializedName("wRewards")
     var wRewards: String? = null,
-
     @SerializedName("freeGift")
     var freeGift: String? = null,
-
     @SerializedName("reduced")
-    var reduced: String? = null
-) : Parcelable
+    var reduced: String? = null,
+    @SerializedName("wList")
+    var wList: String? = null,
+
+    ) : Parcelable
