@@ -224,6 +224,7 @@ class ApplyNowActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun redirectToMyAccounts() {
+        finish()
         startActivity(Intent(this, BottomNavigationActivity::class.java))
         overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
     }
