@@ -68,7 +68,7 @@ class MainShopRepository : ShopRepository {
     ): Resource<SkusInventoryForStoreResponse> {
         return try {
 
-            val response = OneAppService.fetchInventorySkuForStore(mStoreId, referenceId)
+            val response = OneAppService.fetchInventorySkuForStore(mStoreId, referenceId, false)
             if (response.isSuccessful) {
                 response.body()?.let {
                     return when (it.httpCode) {
