@@ -41,6 +41,8 @@ data class Store (
     @SerializedName("unSellableCommerceItems")
     var unSellableCommerceItems: MutableList<UnSellableCommerceItem>? = null,
 
+    @SerializedName("locationId")
+    var locationId: String?= "",
 
     @SerializedName("longitude")
     var longitude: Double?= null,
