@@ -720,6 +720,7 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
 
     override fun onCancelColorAndSize() {
         cancelColorSizeSelection()
+        updateAddToListCount()
     }
 
     override fun setSelectedSku(selectedSku: OtherSkus) {
