@@ -20,6 +20,20 @@ class ColorAndSizeViewModel(
         private const val CONST_NO_SIZE = "NO SZ"
     }
 
+    private val _uiColorState = MutableStateFlow<UiState>(UiState.Loading)
+    val uiColorState: StateFlow<UiState> = _uiColorState.stateIn(
+        scope = viewModelScope,
+        initialValue = UiState.Loading,
+        started = SharingStarted.WhileSubscribed(5000L)
+    )
+
+    private val _uiSizeState = MutableStateFlow<UiState>(UiState.Loading)
+    val uiSizeState: StateFlow<UiState> = _uiSizeState.stateIn(
+        scope = viewModelScope,
+        initialValue = UiState.Loading,
+        started = SharingStarted.WhileSubscribed(5000L)
+    )
+
     init {
         viewModelScope.launch {
             setProductItem()
@@ -44,21 +58,8 @@ class ColorAndSizeViewModel(
     }
 
     var productItem: ProductDetails? = null
+
     var selectedSku: OtherSkus? = null
-
-    private val _uiColorState = MutableStateFlow<UiState>(UiState.Loading)
-    val uiColorState: StateFlow<UiState> = _uiColorState.stateIn(
-        scope = viewModelScope,
-        initialValue = UiState.Loading,
-        started = SharingStarted.WhileSubscribed(5000L)
-    )
-
-    private val _uiSizeState = MutableStateFlow<UiState>(UiState.Loading)
-    val uiSizeState: StateFlow<UiState> = _uiSizeState.stateIn(
-        scope = viewModelScope,
-        initialValue = UiState.Loading,
-        started = SharingStarted.WhileSubscribed(5000L)
-    )
 
     private fun getColorAndSizeAvailability(): Pair<Boolean, Boolean> {
         return when (ColourSizeVariants.find(productItem?.colourSizeVariants ?: "")) {
