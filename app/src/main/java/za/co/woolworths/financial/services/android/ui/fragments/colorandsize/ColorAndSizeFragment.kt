@@ -12,12 +12,15 @@ import androidx.core.content.ContextCompat
 import androidx.core.text.buildSpannedString
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentColorAndSizeBinding
 import com.google.gson.Gson
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus
 import za.co.woolworths.financial.services.android.models.dto.ProductDetails
@@ -45,40 +48,37 @@ class ColorAndSizeFragment : WBottomSheetDialogFragment(), ColorAndSizeListener 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch {
-                    viewModel.uiSizeState.collect { state ->
-                        when (state) {
-                            UiState.Loading -> setSizeLayoutVisibility(GONE)
-                            is UiState.Success -> {
-                                if (state.data.isEmpty()) {
-                                    setSizeLayoutVisibility(GONE)
-                                    return@collect
-                                }
-                                initSizeList(state.isAvailable, state.sizeGuideId, state.data)
-                                setSizeLayoutVisibility(VISIBLE)
-                            }
+        viewModel.uiSizeState
+            .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
+            .onEach { state ->
+                when (state) {
+                    UiState.Loading -> setSizeLayoutVisibility(GONE)
+                    is UiState.Success -> {
+                        if (state.data.isEmpty()) {
+                            setSizeLayoutVisibility(GONE)
+                            return@onEach
                         }
+                        initSizeList(state.isAvailable, state.sizeGuideId, state.data)
+                        setSizeLayoutVisibility(VISIBLE)
                     }
                 }
-                launch {
-                    viewModel.uiColorState.collect { state ->
-                        when (state) {
-                            UiState.Loading -> setColorLayoutVisibility(GONE)
-                            is UiState.Success -> {
-                                if (state.data.isEmpty()) {
-                                    setColorLayoutVisibility(GONE)
-                                    return@collect
-                                }
-                                initColorList(state.data)
-                                setColorLayoutVisibility(VISIBLE)
-                            }
+            }.launchIn(lifecycleScope)
+
+        viewModel.uiColorState
+            .flowWithLifecycle(lifecycle = lifecycle, Lifecycle.State.STARTED)
+            .onEach { state ->
+                when (state) {
+                    UiState.Loading -> setColorLayoutVisibility(GONE)
+                    is UiState.Success -> {
+                        if (state.data.isEmpty()) {
+                            setColorLayoutVisibility(GONE)
+                            return@onEach
                         }
+                        initColorList(state.data)
+                        setColorLayoutVisibility(VISIBLE)
                     }
                 }
-            }
-        }
+            }.launchIn(lifecycleScope)
     }
 
     override fun onCreateView(
