@@ -273,6 +273,13 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
                                         KotlinUtils.browsingDeliveryType?.name
                                     )
                                 }
+                                val placeId = validateLocationResponse?.validatePlace?.placeDetails?.placeId
+                                if(placeId != null) {
+                                    val store = GeoUtils.getStoreDetails(
+                                            placeId,
+                                            validateLocationResponse?.validatePlace?.stores
+                                    )
+                                }
                             } else
                                 callConfirmPlace()
                         }
