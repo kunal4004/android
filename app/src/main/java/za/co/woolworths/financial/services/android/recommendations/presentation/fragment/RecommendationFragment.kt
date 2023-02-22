@@ -53,11 +53,11 @@ class RecommendationFragment :
 
     private fun showProductCategory(actionItemList: List<Action>) {
         context?.let {
-            _recommendationsLayoutBinding?.recommendationsCategoryRecyclerview?.layoutManager =
+            recommendationsLayoutBinding?.recommendationsCategoryRecyclerview?.layoutManager =
                 LinearLayoutManager(it, RecyclerView.HORIZONTAL, false)
             mProductCategoryAdapter = ProductCategoryAdapter(actionItemList)
         }
-        _recommendationsLayoutBinding?.recommendationsCategoryRecyclerview?.adapter =
+        recommendationsLayoutBinding?.recommendationsCategoryRecyclerview?.adapter =
             mProductCategoryAdapter
 
         actionItemList.get(0).products?.let { showRecProductsList(it) }
@@ -69,20 +69,20 @@ class RecommendationFragment :
 
     private fun showRecProductsList(productsList: List<Product>?) {
         if (productsList.isNullOrEmpty()) {
-            _recommendationsLayoutBinding?.recommendationsProductsRecyclerview?.visibility =
+            recommendationsLayoutBinding?.recommendationsProductsRecyclerview?.visibility =
                 View.GONE
         } else {
 
-            _recommendationsLayoutBinding?.recommendationsProductsRecyclerview?.visibility =
+            recommendationsLayoutBinding?.recommendationsProductsRecyclerview?.visibility =
                 View.VISIBLE
             context?.let {
-                _recommendationsLayoutBinding?.recommendationsProductsRecyclerview?.layoutManager =
+                recommendationsLayoutBinding?.recommendationsProductsRecyclerview?.layoutManager =
                     LinearLayoutManager(it, RecyclerView.HORIZONTAL, false)
 
                 mProductListRecommendationAdapter =
                     ProductListRecommendationAdapter(productsList, this, it)
             }
-            _recommendationsLayoutBinding?.recommendationsProductsRecyclerview?.adapter =
+            recommendationsLayoutBinding?.recommendationsProductsRecyclerview?.adapter =
                 mProductListRecommendationAdapter
         }
     }
