@@ -8,6 +8,7 @@ import androidx.core.view.get
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.awfs.coordination.R
 import com.awfs.coordination.databinding.RecommendationsLayoutBinding
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
@@ -112,13 +113,18 @@ class RecommendationFragment :
             it.getContentIfNotHandled()?.let { response ->
                 when (response.status) {
                     Status.SUCCESS -> {
-                        recommendationsLayoutBinding.recommendationsText.text = response.data?.title
-                        if (!response.data?.monetateId.isNullOrEmpty()) {
-                            Utils.saveMonetateId(response.data?.monetateId)
-                        }
-                        response.data?.actions?.let { response ->
-                            showProductCategory(response)
-
+                        if(response.data?.actions.isNullOrEmpty())
+                        {
+                            recommendationsLayoutBinding.recommendationsMainLayout.visibility= View.GONE
+                        }else {
+                            recommendationsLayoutBinding.recommendationsMainLayout.visibility= View.VISIBLE
+                            recommendationsLayoutBinding.recommendationsText.text = getString(R.string.recommendations_title)
+                            if (!response.data?.monetateId.isNullOrEmpty()) {
+                                Utils.saveMonetateId(response.data?.monetateId)
+                            }
+                            response.data?.actions?.let { response ->
+                                showProductCategory(response)
+                            }
                         }
                     }
                     Status.ERROR -> {
