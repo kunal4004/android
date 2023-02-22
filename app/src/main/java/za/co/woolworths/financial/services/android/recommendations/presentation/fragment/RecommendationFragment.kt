@@ -112,7 +112,7 @@ class RecommendationFragment :
             it.getContentIfNotHandled()?.let { response ->
                 when (response.status) {
                     Status.SUCCESS -> {
-
+                        recommendationsLayoutBinding.recommendationsText.text = response.data?.title
                         if (!response.data?.monetateId.isNullOrEmpty()) {
                             Utils.saveMonetateId(response.data?.monetateId)
                         }
