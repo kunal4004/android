@@ -2917,4 +2917,10 @@
 
     <string name="recommendations_title">Recommended</string>
 
+
+    <string name="enhanced_substitution_title">Introducing Custom Substitutions</string>
+    <string name="enhanced_substitution_desc">Add or remove substitutes as you shop your favourite products, or let our shoppers choose for you!</string>
+    <string name="enhanced_substitution_btn">Manage substitutions</string>
+    <string name="got_it_btn"><u>GOT IT</u></string>
+
 </resources>
