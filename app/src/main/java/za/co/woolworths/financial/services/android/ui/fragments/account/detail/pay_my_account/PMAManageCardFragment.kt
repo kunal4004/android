@@ -231,15 +231,14 @@ class PMAManageCardFragment : PMAFragment(), View.OnClickListener {
         onGetPaymentMethodProgress(type, true)
         payMyAccountViewModel.queryServicePayUPaymentMethod({ paymentMethodsList ->
             if (!isAdded) return@queryServicePayUPaymentMethod
-            when (mLifecycleType) {
-                LifecycleType.INIT -> configureRecyclerview()
-                LifecycleType.RESUME -> {
-                    manageCardAdapter?.notifyUpdate(paymentMethodsList, mTemporarySelectedPosition)
-                    mPaymentMethodList = manageCardAdapter?.getList()
-                }
-            }
 
             mPaymentMethodList = manageCardAdapter?.getList()
+
+            configureRecyclerview()
+
+            if (mLifecycleType == LifecycleType.RESUME) {
+                manageCardAdapter?.notifyUpdate(paymentMethodsList, mTemporarySelectedPosition)
+            }
 
             val itemTouchHelper = ItemTouchHelper(paymentMethodItemSwipeLeft)
             itemTouchHelper.attachToRecyclerView(binding.pmaManageCardRecyclerView)
@@ -258,15 +257,11 @@ class PMAManageCardFragment : PMAFragment(), View.OnClickListener {
 
     private fun onGetPaymentMethodProgress(type: LifecycleType, isRefreshing: Boolean) {
         if (!isAdded) return
-        when (type) {
-            LifecycleType.INIT -> {
-                binding.paymentMethodsListProgressBar?.visibility = if (isRefreshing) VISIBLE else GONE
-                binding.pmaManageCardRecyclerView?.visibility = if (isRefreshing) GONE else VISIBLE
-            }
-            LifecycleType.RESUME -> {
-                binding.swipeToRefreshList?.isRefreshing = isRefreshing
-            }
+        if (type == LifecycleType.RESUME) {
+            binding.swipeToRefreshList?.isRefreshing = isRefreshing
         }
+        binding.paymentMethodsListProgressBar?.visibility = if (isRefreshing) VISIBLE else GONE
+        binding.pmaManageCardRecyclerView?.visibility = if (isRefreshing) GONE else VISIBLE
         binding.useThisCardButton?.isEnabled = !isRefreshing
     }
 
