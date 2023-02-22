@@ -289,6 +289,7 @@ class ColorAndSizeFragment : WBottomSheetDialogFragment(), ColorAndSizeListener 
     override fun onColorSelection(selectedColor: OtherSkus?, isFromVto: Boolean) {
         viewModel.updateSizesOnColorSelection(selectedColor)
         showSelectedColor()
+        viewModel.selectedSku?.let { sizeAdapter?.setSelection(it) } ?: sizeAdapter?.clearSelection()
         showSelectedSize()
     }
 
