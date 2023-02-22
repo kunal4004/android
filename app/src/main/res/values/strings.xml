@@ -863,7 +863,7 @@
     <string name="food_product_type">foodProducts</string>
     <string name="select_your_quantity">Select Your Quantity</string>
     <string name="no_stock_available">No Stock Available Online</string>
-    <string name="no_stock_available_desc">Use our find in-store feature to see if there is stock available at a Woolies store near you.</string>
+    <string name="no_stock_available_desc">Try our find-in-store feature, or change the details around your delivery or collection method, to see if stock is available at another Woolies store near you.</string>
     <string name="no_of_items_added">%1$Item%2$</string>
     <string name="npc_already_have_your_card_link">ALREADY HAVE your card? LINK it NOW</string>
     <string name="npc_participating_store">Can’t find a participating store close to you? Tap here to arrange delivery and we will issue you a virtual temp card to get shopping today.</string>
@@ -1439,6 +1439,7 @@
     <string name="plp_savePromotionalImage">savePromotionalImage</string>
     <string name="plp_rewardsPromotionalImage">rewardsPromotionalImage</string>
     <string name="plp_vitalityPromotionalImage">vitalityPromotionalImage</string>
+    <string name="plp_w_list">WListImage</string>
     <string name="cancel_delivery">Cancel Delivery</string>
     <string name="cancel_order">Cancel Order</string>
     <string name="yes_i_d_like_to_cancel">yes, i\'d like to cancel</string>
@@ -1812,14 +1813,29 @@
     <string name="delivery_location_title1">labelDeliveryLocationTitle</string>
     <string name="delivery_location_value">txtDeliveryLocationValue</string>
     <string name="redeem_voucher_walkthrough_title">Redeem your vouchers online</string>
-    <string name="redeem_voucher_walkthrough_desc">Save more than ever – use your WRewards vouchers for instant savings when you checkout in the Woolies app or on our website.</string>
+    <string name="redeem_voucher_walkthrough_desc">Save more than ever - redeem your WRewards or Cash Back Vouchers during checkout for instant savings.</string>
     <string name="apply_promo_code_title">Promo Code</string>
     <string name="apply">apply</string>
     <string name="enter_promo_code_hint">Enter promo code</string>
-    <string name="available_voucher_toast_message">\u0020voucher</string>
-    <string name="available_vouchers_toast_message">\u0020vouchers</string>
+    <plurals name="available_rewards_vouchers_message">
+        <item quantity="one">%d wrewards voucher available</item>
+        <item quantity="other">%d wrewards vouchers available</item>
+    </plurals>
+    <plurals name="_rewards_vouchers_message_applied">
+        <item quantity="one">%d wrewards voucher Applied</item>
+        <item quantity="other">%d wrewards vouchers Applied</item>
+    </plurals>
+    <plurals name="available_cash_vouchers_message">
+        <item quantity="one">%d cash back voucher available</item>
+        <item quantity="other">%d cash back vouchers available</item>
+    </plurals>
+    <string name="zero_wrewards_vouchers_available">no wrewards vouchers available</string>
+    <string name="zero_cash_vouchers_available">no cash back vouchers available</string>
+    <plurals name="vouchers_available">
+        <item quantity="one">voucher available:</item>
+        <item quantity="other">vouchers available:</item>
+    </plurals>
     <string name="available">\u0020available</string>
-    <string name="vouchers_available">available vouchers</string>
     <string name="applying_your_vouchers">Applying Your Vouchers</string>
     <string name="redeem">Redeem</string>
     <string name="redeem_voucher_generic_error_message">There was a problem redeeming your voucher(s) Please try again</string>
@@ -2183,6 +2199,8 @@
     <string name="app_version_info">App Version %s (%s)</string>
     <string name="fsp_number_info">Woolworths Financial Services (FSP15289 and NCRCP49)</string>
     <string name="product_details_out_of_stock">Unfortunately this item is out of stock in %s. Try changing your delivery location and try again.</string>
+    <string name="out_of_stock_dialog_title">This Item Is Out Of Stock</string>
+    <string name="change_delivery_or_collection_out_of_stock" tools:ignore="ButtonCase"><u>Change Delivery or collection details</u></string>
 
     <!--  Voice of Customer  -->
     <string name="voc_question_slider_desc">Please rate your experience, %1$d being poor and %2$d being excellent</string>
@@ -2490,10 +2508,10 @@
     <string name="confirm_collection_location_desc">Your current collection store is set to </string>
     <string name="confirm_btn">Confirm</string>
     <string name="edt_location">EDIT LOCATION </string>
-    <string name="please_select_the_store_you_are_collecting_from">Please select the store you\nare collecting from.</string>
-    <string name="search_by_store_or_location">Search by store or location</string>
+    <string name="please_select_the_store_you_are_collecting_from">Please select the location that you would like to collect from.</string>
+    <string name="search_by_store_or_location">Search stores from the list below</string>
     <string name="change">change</string>
-    <string name="near_stores">%d Stores near me.</string>
+    <string name="near_stores">%d Stores Near Me</string>
     <string name="where_do_you_want_to_collect">Where do you want to collect?</string>
 
     <!--Dash-->
@@ -2509,7 +2527,7 @@
     <string name="standard_delivery">Standard Delivery</string>
     <string name="click_and_collect">Click &amp; Collect</string>
     <string name="standard_title_text">Delivery fee determined during checkout.\nAll products available.</string>
-    <string name="click_and_collect_title_text">Free Collection. \n Limited shop of %1$s Items.</string>
+    <string name="click_and_collect_title_text">Free Collection. \n Limited shop of %1$s food items.</string>
     <string name="dash_title_text_1">R%1$s Delivery Fee. \n </string>
     <string name="dash_title_text_2">Limited shop of %1$s Items.</string>
     <string name="dash_delivery">Dash Delivery</string>
@@ -2530,7 +2548,7 @@
     <string name="hi">HI&#160;</string>
     <string name="tip_your_dash_driver">Tip Your Dash Driver</string>
     <string name="enter_your_own_amount">Enter your own amount between R%1d - R%2d</string>
-    <string name="driver_tip_note">* Your tip will reflect in the order total value before payment.</string>
+    <string name="driver_tip_note">* Tap on the selected amount to remove the tip. \n** Your tip will reflect in the order total value before payment.</string>
     <string name="amt_tip_added">R%,.2f Tip Added</string>
     <string name="rand_text">R</string>
     <string name="driver_minimum_tip_amt_error">A minimum amount of R%,.2f is required.</string>
@@ -2824,4 +2842,79 @@
         <item quantity="other">%1$s %2$s Items</item>
     </plurals>
     <string name="select_your_marital_status">Select your marital status</string>
+    <string name="apply_for_credit_card">apply for credit card</string>
+    <string name="available_vouchers">vouchers available</string>
+    <string name="wrewards_voucher">WRewards Vouchers</string>
+    <string name="cash_back_vouchers">Cash Back Vouchers</string>
+    <string name="your_cash_back_vouchers">Your Cash Back Vouchers</string>
+    <string name="cash_back_vouchers_desc">These are your quarterly Cash Back Vouchers. You can redeem these Vouchers when selecting a payment method in Checkout.</string>
+    <string name="select_wvouchers_redeem">Select Vouchers To Redeem</string>
+    <string name="select_wvouchers_desc">Save even more - Redeem your WRewards Vouchers now.</string>
+    <string name="vouchers_redeemable_at_checkout">Redeemable at Checkout</string>
+    <string name="expires_vouchers">"Expires %s"</string>
+    <string name="you_don_t_qualify_for_cash_back">You Don’t Qualify For Cash Back Vouchers Yet</string>
+    <string name="apply_for_a_woolworths_credit_card">To qualify for Cash Back Vouchers, apply for a Woolworths Credit Card today.</string>
+    <string name="no_wrewords_right_now">"You Have No WRewards Vouchers \nRight Now"</string>
+    <string name="unable_load_wrewards">"Unable to load WRewards vouchers"</string>
+    <string name="load_fail_wrewards_vouchers">"We are experiencing technical issues with our Voucher system. We’re working on it, please try  again later."</string>
+    <string name="no_cash_back_right_now">"You Have No Cash Back Vouchers \nRight Now"</string>
+    <string name="unable_load_cash_back_vouchers">"Unable to load Cash Back vouchers"</string>
+    <string name="load_fail_cask_back_vouchers">"We are experiencing technical issues with our Voucher system. Please try  again later."</string>
+    <string name="using_cash_back_vouchers">Using Cash Back Vouchers</string>
+    <string name="cash_back_cancellation">Due to a cancellation or reversal of a previous order we are reactivating this Voucher.It will be available soon.</string>
+    <string name="cash_back_vouchers_info_one">You can only use one Voucher at a time.</string>
+    <string name="cash_back_vouchers_info_two">Make sure your cart total is higher than the voucher value.</string>
+    <string name="cash_back_vouchers_info_three">You can use a Cash Back Voucher when your cart has either only food items or a mix of fashion, beauty and/or homeware items.</string>
+    <string name="cash_back_vouchers_info_four">These Vouchers are only redeemable at checkout as a payment method.</string>
+    <string name="quarterly_voucher">Quarterly Voucher</string>
+    <string name="can_not_redeem_cash_back_vouchers">Can’t redeem this voucher</string>
+    <string name="learn_more">Learn More</string>
+
+
+    <!--  FBH CNC -->
+
+    <string name="food_item_not_available_for_collection_title">Food Items Can’t Be Collected From a Pargo Pickup Point.</string>
+    <string name="quick">QUICK</string>
+    <string name="convenient">CONVENIENT</string>
+    <string name="alarm_text">We\’ll notify you when your order is ready for collection.</string>
+    <string name="calender_detail">Orders will be ready to collect within 1-5 working days.</string>
+
+    <string name="introducing_pargo_our_new_collection_partner">Introducing Pargo, Our New Collection Partner!</string>
+    <string name="new_fbh_cnc_text">Introducing Click &amp; Collect for Fashion, Beauty &amp; Homeware</string>
+    <string name="we_ve_expanded_our_collection_locations_with_pargo_to_offer_you_more_flexibility_and_choice_in_your_shopping_experience">We’ve expanded our collection locations with Pargo, to offer you more flexibility and choice in your shopping experience.</string>
+    <string name="fashion_beauty_home_ware">Fashion, Beauty &amp; Homeware Only</string>
+    <string name="these_stores_stock">THESE STORES STOCK</string>
+    <string name="food_items_only">Food Items Only</string>
+    <string name="all_woolworths_products">All Woolworths Products</string>
+    <string name="collection_details_text">Your order will be ready for collection in </string>
+    <string name="notify_text_label"> We\'ll notify you via SMS when it\'s ready.</string>
+    <string name="who_is_collecting_label">Upon collection, the recipient will have to show proof of identification using their <b>ID, passport or drivers license.</b></string>
+    <string name="mixed_cart_food_item_title">Collection 1 - Food Items</string>
+    <string name="mixed_cart_other_item_title">Collection 2 - Other Items</string>
+    <string name="food_item_not_available_for_collection_desc">To shop this item, change your collection store or delivery method.</string>
+    <string name="change_collection_location">CHANGE COLLECTION LOCATION</string>
+    <string name="who_is_collecting_header_title">Who Is Collecting?</string>
+    <string name="your_shopping_bags">Your Shopping Bags</string>
+    <string name="no_bags_or_free_bags">No Bags | Free</string>
+    <string name="shopping_bags_dec">To be part of the solution, we’re going plastic bag free!</string>
+    <string name="free_bag_desc">Please bring your own bags to collect your order.</string>
+    <string name="recipient_name_hint">As displayed on identification document</string>
+
+    <string name="fashion_items">%1$s Fashion Items</string>
+    <string name="fashion_item">%1$s Fashion Item</string>
+    <string name="weekends_and_public_holidays_excluded">Weekends and public holidays excluded.</string>
+    <string name="food_items_beauty_home">Food Items &amp; Fashion, Beauty &amp; Home</string>
+    <string name="recipient_name_fbh">Recipient Name: *</string>
+    <string name="collection_fee">Collection Fee</string>
+    <string name="all_fashion_beauty_home_avlbl"><b>All</b> Fashion, Beauty and Home Products Available</string>
+    <string name="all_food_items_avlbl"><b>All</b> Food Products Available</string>
+
+    <string name="only_fashion_beauty_and_home_products_available" >%1$s\nOnly Fashion, Beauty and Home products available.</string>
+    <string name="food_fashion_beauty_and_home_products_available">%1$s\nFood, Fashion, Beauty and Home products available.</string>
+    <string name="food_fashion_beauty_and_home_products_available_tool_tip">Food, Fashion, Beauty and Home products available.</string>
+    <string name="only_fashion_beauty_and_home_products_available_text" >Only Fashion, Beauty and Home products available.</string>
+    <string name="cnc_title_text_2">Limited shop of %1$s food items.</string>
+
+    <string name="recommendations_title">Recommended</string>
+
 </resources>
