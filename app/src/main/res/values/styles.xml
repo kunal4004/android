@@ -3090,7 +3090,7 @@
         <item name="tabSelectedTextColor">@color/offer_title</item>
         <item name="tabTextColor">@color/offer_title</item>
         <item name="tabRippleColor">@null</item>
-        <item name="android:fontFamily">@font/myriad_pro_regular</item>
+        <item name="android:fontFamily">@font/open_sans_regular</item>
         <item name="tabTextAppearance">@style/TabText</item>
     </style>
 
@@ -3098,7 +3098,7 @@
         <item name="android:textSize">12sp</item>
         <item name="android:textColor">@color/color_444444</item>
         <item name="android:textAllCaps">false</item>
-        <item name="android:fontFamily">@font/myriad_pro_regular</item>
+        <item name="android:fontFamily">@font/open_sans_regular</item>
 
     </style>
 
@@ -3109,4 +3109,29 @@
         <item name="android:textSize">15sp</item>
         <item name="WTextView_font">myriadpro_regular</item>
     </style>
+
+    <style name="open_sens_medium" >
+        <item name="android:fontFamily">@font/open_sans_medium</item>
+    </style>
+
+    <style name="open_sens_semi_bold" >
+        <item name="android:fontFamily">@font/open_sans_semi_bold</item>
+    </style>
+
+    <style name="open_sens_bold" >
+        <item name="android:fontFamily">@font/open_sans_bold</item>
+    </style>
+
+    <style name="open_sens_regular" >
+        <item name="android:fontFamily">@font/open_sans_regular</item>
+    </style>
+
+    <style name="open_sens_light" >
+        <item name="android:fontFamily">@font/open_sans_light</item>
+    </style>
+
+    <style name="open_sans_extra_bold" >
+        <item name="android:fontFamily">@font/open_sans_extra_bold</item>
+    </style>
+
 </resources>
