@@ -4,7 +4,6 @@ import android.content.Context
 import android.text.Html
 import android.text.TextUtils
 import android.view.LayoutInflater
-import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
@@ -19,6 +18,7 @@ import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.ui.adapters.holder.ProductListingViewType
 import za.co.woolworths.financial.services.android.ui.adapters.holder.SearchResultPriceItem
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultNavigator
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.CONST_NO_SIZE
 
 class SearchResultShopAdapter(
     private val context: Context, var productList: List<ProductList>?,
@@ -116,12 +116,10 @@ class SearchResultShopAdapter(
     private fun onCheckItemClick(vh: SimpleViewHolder) {
         val position = vh.adapterPosition
         val selectedProduct = productList!![position]
-        val otherSkuSize = getOtherSkuSize(selectedProduct)
         // ProductDetails of type clothing or OtherSkus > 0
         if (clothingTypeProduct(selectedProduct)) {
             selectedProduct.viewIsLoading = !selectedProduct.viewIsLoading
             if (selectedProduct.itemWasChecked) selectedProduct.viewIsLoading = false
-            selectedProduct.itemWasChecked = productWasChecked(selectedProduct)
             mSearchResultNavigator?.onCheckedItem(
                 productList,
                 selectedProduct,
@@ -143,22 +141,12 @@ class SearchResultShopAdapter(
     private fun onItemClick(vh: SimpleViewHolder) {
         val position = vh.adapterPosition
         val selectedProduct = productList!![position]
-        val otherSkuSize = getOtherSkuSize(selectedProduct)
         // ProductDetails of type clothing or OtherSkus > 0
         if (clothingTypeProduct(selectedProduct)) {
             mSearchResultNavigator!!.onClothingTypeSelect(selectedProduct)
         } else {
             mSearchResultNavigator!!.onFoodTypeSelect(selectedProduct)
         }
-    }
-
-    private fun getOtherSkuSize(selectedProduct: ProductList): Int {
-        val otherSkuList = selectedProduct.otherSkus
-        var otherSkuSize = 0
-        if (otherSkuList != null) {
-            otherSkuSize = otherSkuList.size
-        }
-        return otherSkuSize
     }
 
     private fun productWasChecked(prodList: ProductList): Boolean {
@@ -227,19 +215,27 @@ class SearchResultShopAdapter(
     }
 
     fun setSelectedSku(selectedProduct: ProductList, selectedSKU: OtherSkus) {
-        if (productList != null) {
-            for (pList: ProductList in productList!!) {
-                if (pList === selectedProduct) {
-                    pList.sku = selectedSKU.sku
-                    val colour =
-                        if (TextUtils.isEmpty(selectedSKU.colour)) "" else (selectedSKU.colour)!!
-                    val size = if (TextUtils.isEmpty(selectedSKU.size)) "" else (selectedSKU.size)!!
-                    val colourSize = TextUtils.isEmpty(colour) || TextUtils.isEmpty(size)
-                    pList.displayColorSizeText =
-                        if (colourSize) (colour + "" + size) else ("$colour, $size")
+
+        productList?.forEachIndexed { index, productList ->
+
+            if (productList === selectedProduct) {
+                productList.sku = selectedSKU.sku
+                val colour = selectedSKU.colour
+                val size =
+                    if (CONST_NO_SIZE.equals(selectedSKU.size, ignoreCase = true))
+                        ""
+                    else
+                        selectedSKU.size
+                val isEitherColourSizeEmpty = TextUtils.isEmpty(colour) || TextUtils.isEmpty(size)
+                productList.displayColorSizeText = buildString {
+                    append(colour ?: "")
+                    if (colour?.equals(size, ignoreCase = true) == false) {
+                        append(if (isEitherColourSizeEmpty) "" else ", ")
+                        append(size ?: "")
+                    }
                 }
+                notifyItemChanged(index, productList)
             }
-            notifyDataSetChanged()
         }
     }
 
@@ -273,6 +269,18 @@ class SearchResultShopAdapter(
             }
         }
         return false
+    }
+
+    fun setSelectedProduct(selectedProduct: ProductList) {
+        val index = productList?.indexOf(selectedProduct) ?: -1
+        if (index < 0 || index >= (productList?.size ?: 0)) {
+            return
+        }
+        val item = productList?.getOrNull(index)?.also {
+            it.viewIsLoading = false
+            it.itemWasChecked = true
+        }
+        notifyItemChanged(index, item)
     }
 
     companion object {

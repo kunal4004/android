@@ -401,11 +401,17 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
             itemCount.size
         )
     }
-    override fun responseFailureHandler(response: Response) {}
+
+    override fun responseFailureHandler(response: Response) {
+        cancelColorSizeSelection()
+    }
 
     override fun onSuccessResponse(product: WProduct) {
         globalState?.saveButtonClicked(ProductDetailsFragment.INDEX_SEARCH_FROM_LIST)
-        selectedProduct?.let { productAdapter?.setCheckedProgressBar(it) }
+        selectedProduct?.let {
+            productAdapter?.setSelectedProduct(it)
+        }
+        updateAddToListCount()
 
         if (isNetworkConnected) {
             val colorList = getColorList(otherSkus)
@@ -414,10 +420,15 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
 
             // No color and no size
             val containsColorAndSize = colorList.size <= 0 && sizeList.size <= 0
-            if (containsColorAndSize) {
-                noSizeColorIntent(objProduct.sku)
-            } else {
-                openColorAndSizeBottomSheetFragment(objProduct)
+            when {
+                containsColorAndSize -> noSizeColorIntent(objProduct.sku)
+                objProduct?.otherSkus?.size == 1 -> {
+                    objProduct?.otherSkus?.getOrNull(0)?.let { setSelectedSku(it) }
+                        ?: noSizeColorIntent(objProduct.sku)
+                }
+                else -> {
+                    openColorAndSizeBottomSheetFragment(objProduct)
+                }
             }
         }
     }
