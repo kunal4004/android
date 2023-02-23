@@ -1702,7 +1702,7 @@ public class Utils {
     public static boolean isEnhanceSubstitutionFeatureShown(){
         AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
         if (!currentUserObject.enhanceSubstitutionFeatureShown) {
-            /*feature is not shown til now*/
+            /*feature is not shown till now*/
             currentUserObject.enhanceSubstitutionFeatureShown = true;
             currentUserObject.save();
             return false;
