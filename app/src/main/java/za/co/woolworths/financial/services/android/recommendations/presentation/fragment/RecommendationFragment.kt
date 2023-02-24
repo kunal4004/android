@@ -8,6 +8,7 @@ import androidx.core.view.get
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.awfs.coordination.R
 import com.awfs.coordination.databinding.RecommendationsLayoutBinding
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
@@ -53,11 +54,11 @@ class RecommendationFragment :
 
     private fun showProductCategory(actionItemList: List<Action>) {
         context?.let {
-            _recommendationsLayoutBinding?.recommendationsCategoryRecyclerview?.layoutManager =
+            recommendationsLayoutBinding?.recommendationsCategoryRecyclerview?.layoutManager =
                 LinearLayoutManager(it, RecyclerView.HORIZONTAL, false)
             mProductCategoryAdapter = ProductCategoryAdapter(actionItemList)
         }
-        _recommendationsLayoutBinding?.recommendationsCategoryRecyclerview?.adapter =
+        recommendationsLayoutBinding?.recommendationsCategoryRecyclerview?.adapter =
             mProductCategoryAdapter
 
         actionItemList.get(0).products?.let { showRecProductsList(it) }
@@ -69,20 +70,20 @@ class RecommendationFragment :
 
     private fun showRecProductsList(productsList: List<Product>?) {
         if (productsList.isNullOrEmpty()) {
-            _recommendationsLayoutBinding?.recommendationsProductsRecyclerview?.visibility =
+            recommendationsLayoutBinding?.recommendationsProductsRecyclerview?.visibility =
                 View.GONE
         } else {
 
-            _recommendationsLayoutBinding?.recommendationsProductsRecyclerview?.visibility =
+            recommendationsLayoutBinding?.recommendationsProductsRecyclerview?.visibility =
                 View.VISIBLE
             context?.let {
-                _recommendationsLayoutBinding?.recommendationsProductsRecyclerview?.layoutManager =
+                recommendationsLayoutBinding?.recommendationsProductsRecyclerview?.layoutManager =
                     LinearLayoutManager(it, RecyclerView.HORIZONTAL, false)
 
                 mProductListRecommendationAdapter =
                     ProductListRecommendationAdapter(productsList, this, it)
             }
-            _recommendationsLayoutBinding?.recommendationsProductsRecyclerview?.adapter =
+            recommendationsLayoutBinding?.recommendationsProductsRecyclerview?.adapter =
                 mProductListRecommendationAdapter
         }
     }
@@ -112,13 +113,18 @@ class RecommendationFragment :
             it.getContentIfNotHandled()?.let { response ->
                 when (response.status) {
                     Status.SUCCESS -> {
-
-                        if (!response.data?.monetateId.isNullOrEmpty()) {
-                            Utils.saveMonetateId(response.data?.monetateId)
-                        }
-                        response.data?.actions?.let { response ->
-                            showProductCategory(response)
-
+                        if(response.data?.actions.isNullOrEmpty())
+                        {
+                            recommendationsLayoutBinding.recommendationsMainLayout.visibility= View.GONE
+                        }else {
+                            recommendationsLayoutBinding.recommendationsMainLayout.visibility= View.VISIBLE
+                            recommendationsLayoutBinding.recommendationsText.text = getString(R.string.recommendations_title)
+                            if (!response.data?.monetateId.isNullOrEmpty()) {
+                                Utils.saveMonetateId(response.data?.monetateId)
+                            }
+                            response.data?.actions?.let { response ->
+                                showProductCategory(response)
+                            }
                         }
                     }
                     Status.ERROR -> {
