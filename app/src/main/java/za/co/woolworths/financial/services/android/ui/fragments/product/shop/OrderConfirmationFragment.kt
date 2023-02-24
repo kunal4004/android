@@ -5,7 +5,6 @@ import android.graphics.Typeface.BOLD
 import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableString
-import android.text.SpannableStringBuilder
 import android.text.style.StyleSpan
 import android.view.Menu
 import android.view.MenuInflater
@@ -192,17 +191,15 @@ class OrderConfirmationFragment :
                 Delivery.CNC -> {
                     binding.deliveryCollectionDetailsConstraintLayout.root.visibility = VISIBLE
                     binding.dashOrderDetailsLayout.root.visibility = VISIBLE
-                    binding.dashDeliveryConstraintLayout.apply {
-                        optionTitle.text = it.getText(R.string.collecting_from)
                         binding.deliveryCollectionDetailsConstraintLayout.apply {
                             val other: Int = response?.items?.other?.size ?: 0
                             val food: Int = response?.items?.food?.size ?: 0
                             if (other > 0 && food == 0) {
-                                deliveryTextView.text = it.getText(R.string.collection_semicolon)
+                                deliveryTextView.text = it.getString(R.string.collection_semicolon)
                                 infoDeliveryDateTimeTextView.visibility = VISIBLE
                                 binding.dashOrderDetailsLayout.root.visibility = GONE
                             } else {
-                                deliveryTextView.text = it.getText(R.string.food_items_semicolon)
+                                deliveryTextView.text = it.getString(R.string.food_items_semicolon)
                                 infoDeliveryDateTimeTextView.visibility = GONE
                             }
                             optionImage.background =
@@ -211,31 +208,27 @@ class OrderConfirmationFragment :
                                 response?.orderSummary?.fulfillmentDetails?.storeName?.let {
                                     convertToTitleCase(it)
                                 } ?: ""
-                            standardEnroutetextView.text = it.getText(R.string.collection_status)
+                            standardEnroutetextView.text = it.getString(R.string.collection_status)
                             collectedOrDeliveredTextView.text =
                                 it.getText(R.string.status_collected)
+                            optionTitle.text = it.getString(R.string.collecting_from)
                             setUpCncOrderDetailsLayout(response)
                             continueBrowsingStandardLinearLayout.setOnClickListener {
                                 requireActivity().setResult(CheckOutFragment.REQUEST_CHECKOUT_ON_CONTINUE_SHOPPING)
                                 requireActivity().finish()
                             }
                         }
-                    }
                 }
                 Delivery.STANDARD -> {
                     binding.deliveryCollectionDetailsConstraintLayout.root.visibility = VISIBLE
                     binding.dashOrderDetailsLayout.root.visibility = VISIBLE
-                    binding.dashDeliveryConstraintLayout.apply {
+                    binding.deliveryCollectionDetailsConstraintLayout.apply {
+                        deliveryTextView.text = it.getString(R.string.delivery_semicolon)
                         optionImage.background =
                             AppCompatResources.getDrawable(
                                 it,
                                 R.drawable.ic_icon_standard_delivery_truck
                             )
-                        optionTitle.text = it.getText(R.string.delivering_to)
-                    }
-                    binding.deliveryCollectionDetailsConstraintLayout.apply {
-                        deliveryTextView.text = it.getText(R.string.delivery_semicolon)
-
                         val address =  response?.orderSummary?.fulfillmentDetails?.address?.address1?.let {
                             convertToTitleCase(it)
                         } ?: ""
@@ -247,7 +240,7 @@ class OrderConfirmationFragment :
                         formattedNickNameWithAddress.append(address)
 
                         optionLocation.text = formattedNickNameWithAddress
-
+                        optionTitle.text = it.getString(R.string.delivering_to)
                         continueBrowsingStandardLinearLayout.setOnClickListener {
                             requireActivity()?.setResult(CheckOutFragment.REQUEST_CHECKOUT_ON_CONTINUE_SHOPPING)
                             requireActivity()?.finish()
@@ -268,7 +261,7 @@ class OrderConfirmationFragment :
                                 it,
                                 R.drawable.icon_dash_delivery_scooter
                             )
-                        optionTitle.text = it.getText(R.string.dashing_to)
+                        optionTitle.text = it.getString(R.string.dashing_to)
 
                         val address =  response?.orderSummary?.fulfillmentDetails?.address?.address1?.let {
                             convertToTitleCase(it)
