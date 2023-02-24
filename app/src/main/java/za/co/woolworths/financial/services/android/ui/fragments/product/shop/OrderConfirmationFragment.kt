@@ -57,7 +57,7 @@ class OrderConfirmationFragment :
     private var cncOtherItemsOrderListAdapter: ItemsOrderListAdapter? = null
     private var itemsOrderListAdapter: ItemsOrderListAdapter? = null
     private var isPurchaseEventTriggered: Boolean = false
-    private val recommendationViewModel: OrderConfirmationViewModel by viewModels()
+    private val orderConfirmationViewModel: OrderConfirmationViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -88,7 +88,7 @@ class OrderConfirmationFragment :
                                     }
 
                                     //Make this call to recommendation API after receiving the 200 or 201 from the order
-                                    recommendationViewModel.submitRecommendationsOnOrderResponse(response)
+                                    orderConfirmationViewModel.submitRecommendationsOnOrderResponse(response)
                                 }
                                 else -> {
                                     showErrorScreen(ErrorHandlerActivity.ERROR_TYPE_SUBMITTED_ORDER)

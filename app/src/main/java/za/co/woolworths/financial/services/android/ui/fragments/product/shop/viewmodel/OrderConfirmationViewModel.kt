@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.models.dto.cart.SubmittedOrderResponse
-import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.SubmitRecommendationsUseCase
 import javax.inject.Inject
 
@@ -19,9 +18,7 @@ class OrderConfirmationViewModel @Inject constructor(
      */
     fun submitRecommendationsOnOrderResponse(response: SubmittedOrderResponse) {
         viewModelScope.launch {
-            val resp = submitRecommendationsUseCase(response)
-            val success = resp.status == Status.SUCCESS
-            println("OrderConfirmationViewModel, submit recommendations success $success")
+            submitRecommendationsUseCase(response)
         }
     }
 }
