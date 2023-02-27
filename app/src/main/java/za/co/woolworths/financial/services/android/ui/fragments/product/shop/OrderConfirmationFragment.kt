@@ -15,6 +15,7 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import android.graphics.Typeface
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentOrderConfirmationBinding
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -46,7 +47,12 @@ class OrderConfirmationFragment :
     BaseFragmentBinding<FragmentOrderConfirmationBinding>(FragmentOrderConfirmationBinding::inflate) {
 
     private var itemsOrder: ArrayList<OrderItem>? = ArrayList(0)
+    private var cncFoodItemsOrder: ArrayList<OrderItem>? = ArrayList(0)
+    private var cncOtherItemsOrder: ArrayList<OrderItem>? = ArrayList(0)
+    private var cncFoodItemsOrderListAdapter: ItemsOrderListAdapter? = null
+    private var cncOtherItemsOrderListAdapter: ItemsOrderListAdapter? = null
     private var itemsOrderListAdapter: ItemsOrderListAdapter? = null
+    private var isPurchaseEventTriggered: Boolean = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -70,7 +76,12 @@ class OrderConfirmationFragment :
                                     setupDeliveryOrCollectionDetails(response)
                                     setupOrderTotalDetails(response)
                                     displayVocifNeeded(response)
-                                    showPurchaseEvent(response)
+                                    if (!isPurchaseEventTriggered)
+                                    {
+                                        showPurchaseEvent(response)
+                                        isPurchaseEventTriggered = false
+                                    }
+
                                 }
                                 else -> {
                                     showErrorScreen(ErrorHandlerActivity.ERROR_TYPE_SUBMITTED_ORDER)
@@ -180,44 +191,56 @@ class OrderConfirmationFragment :
                 Delivery.CNC -> {
                     binding.deliveryCollectionDetailsConstraintLayout.root.visibility = VISIBLE
                     binding.dashOrderDetailsLayout.root.visibility = VISIBLE
-                    binding.dashDeliveryConstraintLayout.apply {
-                        optionImage.background =
-                            AppCompatResources.getDrawable(it, R.drawable.ic_collection_bag)
-                        optionTitle.text = it.getText(R.string.collecting_from)
                         binding.deliveryCollectionDetailsConstraintLayout.apply {
-                            deliveryTextView.text = it.getText(R.string.collection_semicolon)
+                            val other: Int = response?.items?.other?.size ?: 0
+                            val food: Int = response?.items?.food?.size ?: 0
+                            if (other > 0 && food == 0) {
+                                deliveryTextView.text = it.getString(R.string.collection_semicolon)
+                                infoDeliveryDateTimeTextView.visibility = VISIBLE
+                                binding.dashOrderDetailsLayout.root.visibility = GONE
+                            } else {
+                                deliveryTextView.text = it.getString(R.string.food_items_semicolon)
+                                infoDeliveryDateTimeTextView.visibility = GONE
+                            }
+                            optionImage.background =
+                                AppCompatResources.getDrawable(it, R.drawable.ic_collection_bag)
                             optionLocation.text =
                                 response?.orderSummary?.fulfillmentDetails?.storeName?.let {
                                     convertToTitleCase(it)
                                 } ?: ""
-                            standardEnroutetextView.text = it.getText(R.string.collection_status)
+                            standardEnroutetextView.text = it.getString(R.string.collection_status)
                             collectedOrDeliveredTextView.text =
                                 it.getText(R.string.status_collected)
-                            setUpDashOrderDetailsLayout(response)
+                            optionTitle.text = it.getString(R.string.collecting_from)
+                            setUpCncOrderDetailsLayout(response)
                             continueBrowsingStandardLinearLayout.setOnClickListener {
                                 requireActivity().setResult(CheckOutFragment.REQUEST_CHECKOUT_ON_CONTINUE_SHOPPING)
                                 requireActivity().finish()
                             }
                         }
-                    }
                 }
                 Delivery.STANDARD -> {
                     binding.deliveryCollectionDetailsConstraintLayout.root.visibility = VISIBLE
                     binding.dashOrderDetailsLayout.root.visibility = VISIBLE
-                    binding.dashDeliveryConstraintLayout.apply {
+                    binding.deliveryCollectionDetailsConstraintLayout.apply {
+                        deliveryTextView.text = it.getString(R.string.delivery_semicolon)
                         optionImage.background =
                             AppCompatResources.getDrawable(
                                 it,
                                 R.drawable.ic_icon_standard_delivery_truck
                             )
-                        optionTitle.text = it.getText(R.string.delivering_to)
-                    }
-                    binding.deliveryCollectionDetailsConstraintLayout.apply {
-                        deliveryTextView.text = it.getText(R.string.delivery_semicolon)
-                        optionLocation.text =
-                            response?.orderSummary?.fulfillmentDetails?.address?.address1?.let {
-                                convertToTitleCase(it)
-                            } ?: ""
+                        val address =  response?.orderSummary?.fulfillmentDetails?.address?.address1?.let {
+                            convertToTitleCase(it)
+                        } ?: ""
+
+                        val formattedNickNameWithAddress = KotlinUtils.getFormattedNickName(
+                            response?.orderSummary?.fulfillmentDetails?.address?.nickname, address, activity
+                        )
+
+                        formattedNickNameWithAddress.append(address)
+
+                        optionLocation.text = formattedNickNameWithAddress
+                        optionTitle.text = it.getString(R.string.delivering_to)
                         continueBrowsingStandardLinearLayout.setOnClickListener {
                             requireActivity()?.setResult(CheckOutFragment.REQUEST_CHECKOUT_ON_CONTINUE_SHOPPING)
                             requireActivity()?.finish()
@@ -238,12 +261,22 @@ class OrderConfirmationFragment :
                                 it,
                                 R.drawable.icon_dash_delivery_scooter
                             )
-                        optionTitle.text = it.getText(R.string.dashing_to)
-                        optionLocationTitle.text =
-                            response?.orderSummary?.fulfillmentDetails?.address?.address1?.let {
-                                convertToTitleCase(it)
-                            }
-                                ?: ""
+                        optionTitle.text = it.getString(R.string.dashing_to)
+
+                        val address =  response?.orderSummary?.fulfillmentDetails?.address?.address1?.let {
+                            convertToTitleCase(it)
+                        } ?: ""
+
+                        val formattedNickNameWithAddress = KotlinUtils.getFormattedNickName(
+                            response?.orderSummary?.fulfillmentDetails?.address?.nickname,
+                            address,
+                            activity
+                        )
+
+                        formattedNickNameWithAddress.append(address)
+
+                        optionLocationTitle.text = formattedNickNameWithAddress
+
                         dashFoodDeliveryDateTimeTextView?.text = applyBoldBeforeComma(
                             response
                                 ?.deliveryDetails?.deliveryInfos?.get(0)?.deliveryDateAndTime
@@ -263,13 +296,21 @@ class OrderConfirmationFragment :
                     oneDeliveryLinearLayout.visibility = GONE
                     foodDeliveryLinearLayout.visibility = VISIBLE
                     otherDeliveryLinearLayout.visibility = VISIBLE
+                    otherDeliveryDateTimeTextView.visibility = VISIBLE
                     foodDeliveryDateTimeTextView.text = applyBoldBeforeComma(
                         response
-                            .deliveryDetails?.deliveryInfos?.get(0)?.deliveryDateAndTime
+                            .deliveryDetails?.deliveryInfos?.getOrNull(0)?.deliveryDateAndTime
                     )
                     otherDeliveryDateTimeTextView.text = applyBoldBeforeComma(
-                        response.deliveryDetails?.deliveryInfos?.get(1)?.deliveryDateAndTime
+                        response.deliveryDetails?.deliveryInfos?.getOrNull(1)?.deliveryDateAndTime
                     )
+                    if(Delivery.getType(response?.orderSummary?.fulfillmentDetails?.deliveryType)==Delivery.CNC){
+                        otherDeliveryDateTimeTextView.text = applyBoldBeforeComma(
+                            response.deliveryDetails?.deliveryInfos?.getOrNull(1)?.time
+                        )
+                        otherDeliveryDateTimeTextView.setTypeface(otherDeliveryDateTimeTextView.typeface, Typeface.BOLD);
+                        infoDeliveryDateTimeTextView.visibility = VISIBLE
+                    }
                 } else if (response?.deliveryDetails?.deliveryInfos?.size == 1) {
                     oneDeliveryLinearLayout.visibility = VISIBLE
                     foodDeliveryLinearLayout.visibility = GONE
@@ -278,6 +319,16 @@ class OrderConfirmationFragment :
                         response
                             .deliveryDetails?.deliveryInfos?.get(0)?.deliveryDateAndTime
                     )
+                    val other: Int = response.items?.other?.size ?: 0
+                    val food: Int = response.items?.food?.size ?: 0
+                    if(other>0 && food==0){
+                        deliveryDateTimeTextView.text = applyBoldBeforeComma(
+                            response
+                                .deliveryDetails?.deliveryInfos?.getOrNull(0)?.time
+                        )
+                        deliveryDateTimeTextView.setTypeface(deliveryDateTimeTextView.typeface, Typeface.BOLD);
+                        infoDeliveryDateTimeTextView.visibility = VISIBLE
+                    }
                 }
             }
         }
@@ -315,6 +366,18 @@ class OrderConfirmationFragment :
                 totalDiscountSeparator.visibility = GONE
             }
 
+            val cashVoucherApplied = response?.orderSummary?.cashVoucherApplied
+            if (cashVoucherApplied != null && cashVoucherApplied > 0) {
+                quarterlyVoucherText?.text = "- ".plus(
+                    CurrencyFormatter
+                        .formatAmountToRandAndCentWithSpace(cashVoucherApplied)
+                )
+            } else {
+                quarterlyVoucherLinearLayout.visibility = GONE
+                quarterlyVoucherSeparator.visibility = GONE
+            }
+
+
             // Commenting this Till Jan-2022 Release as per WOP-13825
             /*if (response?.wfsCardDetails?.isWFSCardAvailable == false) {
                 if (response.orderSummary?.discountDetails?.wrewardsDiscount!! > 0.0) {
@@ -330,6 +393,7 @@ class OrderConfirmationFragment :
                 Delivery.STANDARD -> {
                     driverTipLinearLayout.visibility = GONE
                     driverTipSeparator.visibility = GONE
+                    deliveryFeeLabel.text = context?.getString(R.string.delivery_fee)
 
                     val companyDiscount = response?.orderSummary?.discountDetails?.companyDiscount
                     if (companyDiscount != null && companyDiscount > 0) {
@@ -359,6 +423,7 @@ class OrderConfirmationFragment :
                 Delivery.CNC -> {
                     driverTipLinearLayout.visibility = GONE
                     driverTipSeparator.visibility = GONE
+                    deliveryFeeLabel.text = context?.getString(R.string.collection_fee)
 
                     val companyDiscount = response?.orderSummary?.discountDetails?.companyDiscount
                     if (companyDiscount != null && companyDiscount > 0) {
@@ -397,6 +462,7 @@ class OrderConfirmationFragment :
                     companyDiscountSeparator.visibility = GONE
                     wRewardsVouchersLinearLayout.visibility = GONE
                     wRewardsVouchersSeparator.visibility = GONE
+                    deliveryFeeLabel.text = context?.getString(R.string.delivery_fee)
                     deliveryFeeTextView.text =
                         CurrencyFormatter.formatAmountToRandAndCentWithSpace(response?.deliveryDetails?.shippingAmount)
 
@@ -422,6 +488,29 @@ class OrderConfirmationFragment :
         initRecyclerView(response?.items)
 
         handleAddToShoppingListButton()
+    }
+    private fun setUpCncOrderDetailsLayout(response: SubmittedOrderResponse?) {
+        setCncItemCount(response?.items)
+
+        initCncRecyclerView(response?.items)
+
+        initCncFoodRecyclerView()
+
+        handleAddToShoppingListButtonFromCNC()
+    }
+
+    private fun setCncItemCount(items: OrderItems?) {
+        val other: Int = items?.other?.size ?: 0
+        val food: Int = items?.food?.size ?: 0
+        binding.dashOrderDetailsLayout.foodNumberItemsTextView.text = if (food > 1)
+            bindString(R.string.food_number_items, food.toString())
+        else
+            bindString(R.string.food_number_item, food.toString())
+
+        binding.cncOrderDetailsLayout.foodNumberItemsTextView.text = if (other > 1)
+            bindString(R.string.fashion_items, other.toString())
+        else
+            bindString(R.string.fashion_item, other.toString())
     }
 
     private fun setFoodItemCount(items: OrderItems?) {
@@ -468,12 +557,47 @@ class OrderConfirmationFragment :
         binding.dashOrderDetailsLayout.itemsRecyclerView.adapter = itemsOrderListAdapter
     }
 
-    private fun initialiseItemsOrder(items: OrderItems?) {
-        if (items?.other != null && items.other!!.isNotEmpty()) {
-            itemsOrder?.addAll(items.other!!)
+    private fun initCncRecyclerView(items: OrderItems?) {
+        initialiseCncItemsOrder(items)
+        if (cncOtherItemsOrder.isNullOrEmpty()) {
+            return
         }
-        if (items?.food != null && items.food!!.isNotEmpty()) {
-            itemsOrder?.addAll(items.food!!)
+        binding.cncOrderDetailsLayout.root.visibility = VISIBLE
+        context?.let {
+            binding.cncOrderDetailsLayout.itemsRecyclerView.layoutManager =
+                LinearLayoutManager(it, RecyclerView.VERTICAL, false)
+            cncFoodItemsOrderListAdapter = ItemsOrderListAdapter(cncOtherItemsOrder!!)
+        }
+        binding.cncOrderDetailsLayout.itemsRecyclerView.adapter = cncFoodItemsOrderListAdapter
+    }
+
+    private fun initCncFoodRecyclerView() {
+        if (cncFoodItemsOrder.isNullOrEmpty()) {
+            return
+        }
+        context?.let {
+            binding.dashOrderDetailsLayout.itemsRecyclerView.layoutManager =
+                LinearLayoutManager(it, RecyclerView.VERTICAL, false)
+            cncOtherItemsOrderListAdapter = ItemsOrderListAdapter(cncFoodItemsOrder!!)
+        }
+        binding.dashOrderDetailsLayout.itemsRecyclerView.adapter = cncOtherItemsOrderListAdapter
+    }
+
+    private fun initialiseItemsOrder(items: OrderItems?) {
+        if (!items?.other.isNullOrEmpty()) {
+            itemsOrder?.addAll(items?.other!!)
+        }
+        if (!items?.food.isNullOrEmpty()) {
+            itemsOrder?.addAll(items?.food!!)
+        }
+    }
+
+    private fun initialiseCncItemsOrder(items: OrderItems?) {
+        if (!items?.other.isNullOrEmpty()) {
+            cncOtherItemsOrder?.addAll(items?.other!!)
+        }
+        if (!items?.food.isNullOrEmpty()) {
+            cncFoodItemsOrder?.addAll(items?.food!!)
         }
     }
 
@@ -557,6 +681,54 @@ class OrderConfirmationFragment :
                     }
                 }
             }
+        }
+    }
+
+    private fun handleAddToShoppingListButtonFromCNC() {
+        handleCncFoodAddToList()
+        handleCncOtherAddToList()
+
+    }
+
+    private fun handleCncFoodAddToList() {
+        if (cncFoodItemsOrder.isNullOrEmpty()) {
+            return
+        }
+        val listOfItems = ArrayList<AddToListRequest>()
+        cncFoodItemsOrder!!.forEach {
+            val item = AddToListRequest()
+            item.apply {
+                quantity = it.quantity.toString()
+                catalogRefId = it.catalogRefId
+                giftListId = ""
+                skuID = ""
+            }
+            listOfItems.add(item)
+        }
+
+        binding.dashOrderDetailsLayout.addShoppingListButton.setOnClickListener {
+            NavigateToShoppingList.openShoppingList(activity, listOfItems, "", false)
+        }
+    }
+
+    private fun handleCncOtherAddToList() {
+        if (cncOtherItemsOrder.isNullOrEmpty()) {
+            return
+        }
+        val listOfItems = ArrayList<AddToListRequest>()
+        cncOtherItemsOrder!!.forEach {
+            val item = AddToListRequest()
+            item.apply {
+                quantity = it.quantity.toString()
+                catalogRefId = it.catalogRefId
+                giftListId = ""
+                skuID = ""
+            }
+            listOfItems.add(item)
+        }
+
+        binding.cncOrderDetailsLayout.addShoppingListButton.setOnClickListener {
+            NavigateToShoppingList.openShoppingList(activity, listOfItems, "", false)
         }
     }
 }

@@ -122,6 +122,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
     private var placeId: String = ""
     private var isPoiAddress: Boolean? = false
     private var address2: String? = ""
+    private var oldNickName: String? = ""
 
     companion object {
         const val SCREEN_NAME_EDIT_ADDRESS: String = "SCREEN_NAME_EDIT_ADDRESS"
@@ -166,6 +167,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                     selectedDeliveryAddressType = savedAddress?.addressType
                     if (savedAddress != null) {
                         selectedAddress.savedAddress = savedAddress
+
                         if (!savedAddress?.city.isNullOrEmpty()) {
                             selectedAddress?.provinceName = savedAddress.city!!
                         } else {
@@ -247,6 +249,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
     }
 
     private fun setTextFields() {
+        oldNickName = selectedAddress?.savedAddress?.nickname
         enableDisableUserInputEditText(
             binding.recipientAddressLayout.addressNicknameEditText,
             true,
@@ -1156,6 +1159,8 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                                                 Utils.toJson(savedAddressResponse)
                                             )
                                         }
+
+                                    KotlinUtils.isNickNameChanged = oldNickName?.equals(response?.address?.nickname) == false
                                     hideKeyboardIfVisible(activity)
                                     if (navController?.navigateUp() == false) {
                                         if (activity is CheckoutActivity) {
