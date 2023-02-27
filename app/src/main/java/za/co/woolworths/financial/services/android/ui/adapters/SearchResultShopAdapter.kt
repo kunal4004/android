@@ -2,9 +2,7 @@ package za.co.woolworths.financial.services.android.ui.adapters
 
 import android.content.Context
 import android.text.Html
-import android.text.TextUtils
 import android.view.LayoutInflater
-import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
@@ -19,6 +17,7 @@ import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.ui.adapters.holder.ProductListingViewType
 import za.co.woolworths.financial.services.android.ui.adapters.holder.SearchResultPriceItem
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultNavigator
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.CONST_NO_SIZE
 
 class SearchResultShopAdapter(
     private val context: Context, var productList: List<ProductList>?,
@@ -43,7 +42,11 @@ class SearchResultShopAdapter(
 
     private fun getSimpleViewHolder(parent: ViewGroup): SimpleViewHolder {
         return SimpleViewHolder(
-            LayoutCartListProductItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            LayoutCartListProductItemBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            )
         )
     }
 
@@ -91,7 +94,9 @@ class SearchResultShopAdapter(
                      * Disable clothing type selection when product detail api is loading
                      * food item type can still be selected.
                      */
-                    val productList: ProductList? = this@SearchResultShopAdapter.productList?.get(holder.adapterPosition) ?: null
+                    val productList: ProductList? =
+                        this@SearchResultShopAdapter.productList?.get(holder.adapterPosition)
+                            ?: null
                     val productType = productList?.productType ?: ""
                     if (!productType.equals(FOOD_PRODUCT, ignoreCase = true)) {
                         val unlockSelection = !viewIsLoading()
@@ -116,12 +121,10 @@ class SearchResultShopAdapter(
     private fun onCheckItemClick(vh: SimpleViewHolder) {
         val position = vh.adapterPosition
         val selectedProduct = productList!![position]
-        val otherSkuSize = getOtherSkuSize(selectedProduct)
         // ProductDetails of type clothing or OtherSkus > 0
         if (clothingTypeProduct(selectedProduct)) {
             selectedProduct.viewIsLoading = !selectedProduct.viewIsLoading
             if (selectedProduct.itemWasChecked) selectedProduct.viewIsLoading = false
-            selectedProduct.itemWasChecked = productWasChecked(selectedProduct)
             mSearchResultNavigator?.onCheckedItem(
                 productList,
                 selectedProduct,
@@ -143,22 +146,12 @@ class SearchResultShopAdapter(
     private fun onItemClick(vh: SimpleViewHolder) {
         val position = vh.adapterPosition
         val selectedProduct = productList!![position]
-        val otherSkuSize = getOtherSkuSize(selectedProduct)
         // ProductDetails of type clothing or OtherSkus > 0
         if (clothingTypeProduct(selectedProduct)) {
             mSearchResultNavigator!!.onClothingTypeSelect(selectedProduct)
         } else {
             mSearchResultNavigator!!.onFoodTypeSelect(selectedProduct)
         }
-    }
-
-    private fun getOtherSkuSize(selectedProduct: ProductList): Int {
-        val otherSkuList = selectedProduct.otherSkus
-        var otherSkuSize = 0
-        if (otherSkuList != null) {
-            otherSkuSize = otherSkuList.size
-        }
-        return otherSkuSize
     }
 
     private fun productWasChecked(prodList: ProductList): Boolean {
@@ -169,7 +162,8 @@ class SearchResultShopAdapter(
         return R.id.swipe
     }
 
-    private inner class SimpleViewHolder(val itemBinding: LayoutCartListProductItemBinding) : RecyclerView.ViewHolder(itemBinding.root) {
+    private inner class SimpleViewHolder(val itemBinding: LayoutCartListProductItemBinding) :
+        RecyclerView.ViewHolder(itemBinding.root) {
 
         fun setCartImage(productItem: ProductList) {
             productItem.externalImageRefV2?.let {
@@ -190,11 +184,13 @@ class SearchResultShopAdapter(
         }
     }
 
-    private inner class ProgressViewHolder(val itemBinding: BottomProgressBarBinding) : RecyclerView.ViewHolder(itemBinding.root) {
+    private inner class ProgressViewHolder(val itemBinding: BottomProgressBarBinding) :
+        RecyclerView.ViewHolder(itemBinding.root) {
 
     }
 
-    private inner class HeaderViewHolder(val itemBinding: ItemFoundLayoutBinding) : RecyclerView.ViewHolder(itemBinding.root) {
+    private inner class HeaderViewHolder(val itemBinding: ItemFoundLayoutBinding) :
+        RecyclerView.ViewHolder(itemBinding.root) {
 
         fun setTotalItem(productList: ProductList) {
             if (null != productList.numberOfItems) itemBinding.tvNumberOfItem.text =
@@ -227,19 +223,29 @@ class SearchResultShopAdapter(
     }
 
     fun setSelectedSku(selectedProduct: ProductList, selectedSKU: OtherSkus) {
-        if (productList != null) {
-            for (pList: ProductList in productList!!) {
-                if (pList === selectedProduct) {
-                    pList.sku = selectedSKU.sku
-                    val colour =
-                        if (TextUtils.isEmpty(selectedSKU.colour)) "" else (selectedSKU.colour)!!
-                    val size = if (TextUtils.isEmpty(selectedSKU.size)) "" else (selectedSKU.size)!!
-                    val colourSize = TextUtils.isEmpty(colour) || TextUtils.isEmpty(size)
-                    pList.displayColorSizeText =
-                        if (colourSize) (colour + "" + size) else ("$colour, $size")
-                }
+
+        productList?.forEachIndexed { index, productList ->
+            if (productList === selectedProduct) {
+                productList.sku = selectedSKU.sku
+                productList.displayColorSizeText = buildColorSizeText(
+                    selectedSKU.colour,
+                    selectedSKU.size
+                )
+                notifyItemChanged(index, productList)
+                return@forEachIndexed
             }
-            notifyDataSetChanged()
+        }
+    }
+
+    private fun buildColorSizeText(colour: String?, size: String?): String = buildString {
+
+        val newSize = if (CONST_NO_SIZE.equals(size, ignoreCase = true)) "" else size
+        val isEitherColourSizeEmpty = colour.isNullOrEmpty() || newSize.isNullOrEmpty()
+
+        append(colour ?: "")
+        if (colour?.equals(size, ignoreCase = true) == false) {
+            append(if (isEitherColourSizeEmpty) "" else ", ")
+            append(size ?: "")
         }
     }
 
@@ -273,6 +279,27 @@ class SearchResultShopAdapter(
             }
         }
         return false
+    }
+
+    fun setSelectedProduct(selectedProduct: ProductList) {
+        // Ensure that the product list is not null
+        productList ?: return
+
+        // Find the index of the selected product within the list
+        val index = productList!!.indexOf(selectedProduct)
+        if (index < 0 || index >= productList!!.size) {
+            // Return if the index is out of range
+            return
+        }
+
+        // Update the selected item's properties
+        val selectedItem = productList!!.getOrNull(index)?.apply {
+            viewIsLoading = false
+            itemWasChecked = true
+        }
+
+        // Notify the adapter that the selected item has changed
+        notifyItemChanged(index, selectedItem)
     }
 
     companion object {

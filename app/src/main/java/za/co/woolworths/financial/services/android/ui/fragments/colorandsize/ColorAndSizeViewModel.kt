@@ -10,6 +10,7 @@ import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus
 import za.co.woolworths.financial.services.android.models.dto.ProductDetails
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.ColourSizeVariants
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.CONST_NO_SIZE
 
 class ColorAndSizeViewModel(
     private val savedStateHandle: SavedStateHandle?
@@ -17,7 +18,6 @@ class ColorAndSizeViewModel(
 
     companion object {
         private const val ARG_PRODUCT_ITEM = "productItem"
-        private const val CONST_NO_SIZE = "NO SZ"
     }
 
     private val _uiColorState = MutableStateFlow<UiState>(UiState.Loading)
