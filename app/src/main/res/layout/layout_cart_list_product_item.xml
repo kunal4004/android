@@ -47,19 +47,6 @@
         android:gravity="start|center"
         android:orientation="horizontal">
 
-        <ProgressBar
-            android:id="@+id/pbLoadProduct"
-            android:layout_width="@dimen/twenty_four_dp"
-            android:layout_height="@dimen/twenty_four_dp"
-            android:layout_centerVertical="true"
-            android:layout_marginHorizontal="@dimen/eighteen_dp"
-            android:indeterminateTint="@color/black"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:visibility="visible" />
-
         <CheckBox
             android:id="@+id/cbShoppingList"
             android:layout_width="wrap_content"
@@ -72,6 +59,20 @@
             android:padding="@dimen/seven_dp"
             android:saveEnabled="false"
             android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible" />
+
+        <ProgressBar
+            android:id="@+id/pbLoadProduct"
+            android:layout_width="@dimen/twenty_four_dp"
+            android:layout_height="@dimen/twenty_four_dp"
+            android:layout_centerVertical="true"
+            android:layout_marginHorizontal="@dimen/eighteen_dp"
+            android:indeterminateTint="@color/black"
+            android:visibility="gone"
+            style="?android:attr/progressBarStyleLarge"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -91,7 +92,7 @@
 
             <ProgressBar
                 android:id="@+id/pbDeleteProgress"
-                style="?android:attr/progressBarStyleSmall"
+                style="?android:attr/progressBarStyleLarge"
                 android:layout_width="@dimen/twenty_four_dp"
                 android:layout_height="@dimen/twenty_four_dp"
                 android:layout_gravity="center_vertical"

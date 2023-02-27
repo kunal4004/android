@@ -140,7 +140,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        app:constraint_referenced_ids="sizeSelectorRecycleView,selectedSize,selectedSizePlaceholder,divider2"/>
+        app:constraint_referenced_ids="sizeSelectorRecycleView,selectedSize,selectedSizePlaceholder"/>
     <androidx.constraintlayout.widget.Group
         android:id="@+id/colorSelectorLayout"
         android:layout_width="wrap_content"
