@@ -257,6 +257,20 @@ public class WFormatter {
                         .parse(date));
     }
 
+
+    public static String cashBackVoucherDate(String date) {
+        if (date == null)
+            return "";
+        try {
+            return new SimpleDateFormat("dd MMMM yyyy")
+                    .format((new SimpleDateFormat("dd/MM/yyyy"))
+                            .parse(date));
+        } catch (Exception e) {
+            FirebaseManager.Companion.logException(e);
+            return "";
+        }
+    }
+
     public static String getFullMonthWithDate(String date) {
         if (date == null)
             return "";
