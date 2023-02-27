@@ -1222,10 +1222,29 @@ object OneAppService : RetrofitConfig() {
         }
     }
 
-    suspend fun getLastDashOrder(): retrofit2.Response<LastOrderDetailsResponse>  {
+    suspend fun getLastDashOrder(): retrofit2.Response<LastOrderDetailsResponse> {
         return withContext(Dispatchers.IO) {
             mApiInterface.getLastDashOrder(getSessionToken(), getDeviceIdentityToken())
         }
+    }
+    fun getFeatureEnablementResponse(): Call<FeatureEnablementModel> {
+        return mApiInterface.getFeatureEnablement(
+            getSessionToken(),
+            getDeviceIdentityToken()
+        )
+    }
+    fun getPetInsuranceResponse(): Call<PetInsuranceModel> {
+        return mApiInterface.getPetInsurance(
+            getSessionToken(),
+            getDeviceIdentityToken()
+        )
+    }
+    fun getAppGUIDResponse(appGUIDRequestType: AppGUIDRequestType): Call<AppGUIDModel> {
+        return mApiInterface.getAppGUID(
+            getSessionToken(),
+            getDeviceIdentityToken(),
+            getRequestBody(appGUIDRequestType)
+        )
     }
 
     suspend fun recommendation(recommendationRequest: RecommendationRequest): retrofit2.Response<RecommendationResponse> {
