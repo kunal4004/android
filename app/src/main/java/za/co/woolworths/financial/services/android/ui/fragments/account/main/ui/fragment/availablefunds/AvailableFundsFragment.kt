@@ -63,15 +63,17 @@ open class AvailableFundsFragment :
         bottomViewSetup(view)
         connectionBroadCastReceiver()
 
-        viewModel.getNavigationResult().observe(viewLifecycleOwner) { result ->
-            when (result) {
-                PayMyAccountViewModel.OnNavigateBack.Retry -> {
-                    activity?.runOnUiThread {
-                        viewModel.isQueryPayUPaymentMethodComplete = false
-                        queryPaymentMethod()
+        viewModel.getNavigationResult().observe(viewLifecycleOwner) { event ->
+            event.getContentIfNotHandled()?.let { result ->
+                when (result) {
+                    PayMyAccountViewModel.OnNavigateBack.Retry -> {
+                        activity?.runOnUiThread {
+                            viewModel.isQueryPayUPaymentMethodComplete = false
+                            queryPaymentMethod()
+                        }
                     }
+                    else -> return@observe
                 }
-                else -> return@observe
             }
         }
     }
