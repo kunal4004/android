@@ -1,0 +1,53 @@
+package za.co.woolworths.financial.services.android.enhancedSubstitution
+
+import android.content.Context
+import androidx.fragment.app.Fragment
+import com.awfs.coordination.R
+import com.awfs.coordination.databinding.TemporaryFreezeCartLayoutBinding
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
+import javax.inject.Inject
+
+class EnhancedSubstitutionBottomSheetDialog @Inject constructor() :
+    EnhancedSubstituionManageDialogListener {
+
+    private lateinit var listener: EnhancedSubstitutionListener
+
+    override fun showEnhancedSubstitionBottomSheetDialog(
+        fragment: Fragment,
+        context: Context,
+        title: String,
+        description: String,
+        btnText: String
+    ) {
+        try {
+            listener = fragment as EnhancedSubstitutionListener
+        } catch (e: Exception) {
+            FirebaseManager.logException(e)
+        }
+
+        val dialog = BottomSheetDialog(context, R.style.BottomSheetDialogTheme)
+
+        val binding = TemporaryFreezeCartLayoutBinding.inflate(dialog.layoutInflater, null, false)
+
+        binding.imageIcon.setImageDrawable(bindDrawable(R.drawable.union_row))
+        binding.cancelTextView.text = context.getString(R.string.got_it_btn)
+        binding.title.text = title
+        binding.description.text = description
+        binding.confirmFreezeCardButton.text = btnText
+
+        binding.confirmFreezeCardButton.setOnClickListener {
+            listener.openManageSubstituion()
+            dialog.dismiss()
+        }
+
+        binding.cancelTextView?.apply {
+            setOnClickListener {
+                dialog.dismiss()
+            }
+        }
+        dialog.setContentView(binding.root)
+        dialog.show()
+    }
+}

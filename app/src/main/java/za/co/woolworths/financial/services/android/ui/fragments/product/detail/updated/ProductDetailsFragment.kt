@@ -53,6 +53,7 @@ import za.co.woolworths.financial.services.android.common.SingleMessageCommonToa
 import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.ILocationProvider
+import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhancedSubstitutionBottomSheetDialog
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
@@ -244,6 +245,10 @@ class ProductDetailsFragment :
     @Inject
     lateinit var vtoSavedPhotoToast: SingleMessageCommonToast
 
+
+    @Inject
+    lateinit var enhancedSubstitutionBottomSheetDialog: EnhancedSubstitutionBottomSheetDialog
+
     companion object {
         const val INDEX_STORE_FINDER = 1
         const val INDEX_ADD_TO_CART = 2
@@ -294,6 +299,22 @@ class ProductDetailsFragment :
         setUniqueIds()
         productDetails?.let { addViewItemEvent(it) }
         setUpCartCountPDP()
+
+    }
+
+    fun showEnhancedSubstitutionDialog() {
+        if (SessionUtilities.getInstance().isUserAuthenticated
+            && Utils.isEnhanceSubstitutionFeatureShown() == false
+            && KotlinUtils.getDeliveryType()?.deliveryType == Delivery.DASH.type
+        ) {
+            enhancedSubstitutionBottomSheetDialog.showEnhancedSubstitionBottomSheetDialog(
+                this@ProductDetailsFragment,
+                requireActivity(),
+                getString(R.string.enhanced_substitution_title),
+                getString(R.string.enhanced_substitution_desc),
+                getString(R.string.enhanced_substitution_btn)
+            )
+        }
     }
 
     private fun setUpCartCountPDP() {
@@ -1036,6 +1057,8 @@ class ProductDetailsFragment :
 
     override fun onProductDetailsSuccess(productDetails: ProductDetails) {
         if (!isAdded || productDetails == null) return
+
+        showEnhancedSubstitutionDialog()
 
         this.productDetails = productDetails
         otherSKUsByGroupKey = this.productDetails?.otherSkus.let { groupOtherSKUsByColor(it) }
@@ -4009,7 +4032,5 @@ class ProductDetailsFragment :
                 )
         }
     }
-
-
 }
 
