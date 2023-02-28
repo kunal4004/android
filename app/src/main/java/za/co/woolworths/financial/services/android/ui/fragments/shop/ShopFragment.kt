@@ -617,7 +617,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                         )
                     )
                     tvToolbarTitle?.text = requireContext().getString(R.string.dash_delivery)
-                    tvToolbarSubtitle?.text = requireContext().getString(R.string.set_your_address)
+                    tvToolbarSubtitle?.text = requireContext().getString(R.string.set_location_title)
                 }
                 else -> {
                     imgToolbarStart?.setImageDrawable(
