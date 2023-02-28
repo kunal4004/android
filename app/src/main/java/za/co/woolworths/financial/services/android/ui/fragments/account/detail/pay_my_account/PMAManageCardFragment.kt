@@ -72,29 +72,31 @@ class PMAManageCardFragment : PMAFragment(), View.OnClickListener {
             AnimationUtilExtension.animateViewPushDown(this)
         }
 
-        payMyAccountViewModel.getNavigationResult().observe(viewLifecycleOwner) { result ->
-            when (result) {
-                is PayMyAccountViewModel.OnNavigateBack.Remove -> {
-                    CoroutineScope(Dispatchers.Main).launch {
-                        delay(AppConstant.DELAY_300_MS)
-                        removeCardProduct(if (result.isCardExpired) result.position else mTemporarySelectedPosition)
+        payMyAccountViewModel.getNavigationResult().observe(viewLifecycleOwner) { event ->
+            event.getContentIfNotHandled()?.let { result ->
+                when (result) {
+                    is PayMyAccountViewModel.OnNavigateBack.Remove -> {
+                        CoroutineScope(Dispatchers.Main).launch {
+                            delay(AppConstant.DELAY_300_MS)
+                            removeCardProduct(if (result.isCardExpired) result.position else mTemporarySelectedPosition)
+                        }
                     }
-                }
-               is PayMyAccountViewModel.OnNavigateBack.Add -> {
-                    CoroutineScope(Dispatchers.Main).launch {
-                        delay(AppConstant.DELAY_300_MS)
-                        navController?.navigate(R.id.action_manageCardFragment_to_addNewPayUCardFragment)
+                    is PayMyAccountViewModel.OnNavigateBack.Add -> {
+                        CoroutineScope(Dispatchers.Main).launch {
+                            delay(AppConstant.DELAY_300_MS)
+                            navController?.navigate(R.id.action_manageCardFragment_to_addNewPayUCardFragment)
+                        }
                     }
-                }
 
-               is  PayMyAccountViewModel.OnNavigateBack.MaxCardLimit -> {
-                    CoroutineScope(Dispatchers.Main).launch {
-                        delay(AppConstant.DELAY_350_MS)
-                        navController?.navigate(R.id.action_manageCardFragment_to_PMATenCardLimitDialogFragment)
+                    is PayMyAccountViewModel.OnNavigateBack.MaxCardLimit -> {
+                        CoroutineScope(Dispatchers.Main).launch {
+                            delay(AppConstant.DELAY_350_MS)
+                            navController?.navigate(R.id.action_manageCardFragment_to_PMATenCardLimitDialogFragment)
+                        }
                     }
-                }
 
-                else -> return@observe
+                    else -> return@observe
+                }
             }
         }
     }
