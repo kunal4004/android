@@ -1064,11 +1064,17 @@ class ProductDetailsFragment :
         otherSKUsByGroupKey = this.productDetails?.otherSkus.let { groupOtherSKUsByColor(it) }
         this.defaultSku = getDefaultSku(otherSKUsByGroupKey)
 
-        if (SessionUtilities.getInstance().isUserAuthenticated
-            && KotlinUtils.getDeliveryType()?.deliveryType == Delivery.DASH.type) {
-            binding?.productDetailOptionsAndInformation?.substitutionLayout?.root?.visibility = View.VISIBLE
-        } else {
-            binding?.productDetailOptionsAndInformation?.substitutionLayout?.root?.visibility = View.GONE
+        binding?.productDetailOptionsAndInformation?.substitutionLayout?.apply {
+            if (SessionUtilities.getInstance().isUserAuthenticated
+                && KotlinUtils.getDeliveryType()?.deliveryType == Delivery.DASH.type) {
+                this?.root?.visibility = View.VISIBLE
+            } else {
+                this.root?.visibility = View.GONE
+            }
+
+            this.txtSubstitutionEdit?.setOnClickListener {
+                /*pop up for out of stock*/
+            }
         }
 
         if (productDetails?.isLiquor == true && !KotlinUtils.isCurrentSuburbDeliversLiquor() && !KotlinUtils.isLiquorModalShown()) {
