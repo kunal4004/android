@@ -2917,4 +2917,7 @@
 
     <string name="recommendations_title">Recommended</string>
 
+    <string name="substitutions">Substitutions</string>
+    <string name="let_my_shooper_choose_for_me">Let My Shopper Choose For Me</string>
+
 </resources>

@@ -56,5 +56,4 @@ class OutOfStockMessageDialogFragment : WBottomSheetDialogFragment() {
         super.onDismiss(dialog)
         listener?.onOutOfStockDialogDismiss()
     }
-
 }

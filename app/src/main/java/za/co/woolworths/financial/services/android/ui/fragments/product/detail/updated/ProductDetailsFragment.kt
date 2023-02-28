@@ -136,6 +136,7 @@ import java.io.File
 import javax.inject.Inject
 import kotlin.collections.get
 import kotlin.collections.set
+import kotlin.jvm.internal.Intrinsics.Kotlin
 
 
 @AndroidEntryPoint
@@ -1039,6 +1040,13 @@ class ProductDetailsFragment :
         this.productDetails = productDetails
         otherSKUsByGroupKey = this.productDetails?.otherSkus.let { groupOtherSKUsByColor(it) }
         this.defaultSku = getDefaultSku(otherSKUsByGroupKey)
+
+        if (SessionUtilities.getInstance().isUserAuthenticated
+            && KotlinUtils.getDeliveryType()?.deliveryType == Delivery.DASH.type) {
+            binding?.productDetailOptionsAndInformation?.substitutionLayout?.root?.visibility = View.VISIBLE
+        } else {
+            binding?.productDetailOptionsAndInformation?.substitutionLayout?.root?.visibility = View.GONE
+        }
 
         if (productDetails?.isLiquor == true && !KotlinUtils.isCurrentSuburbDeliversLiquor() && !KotlinUtils.isLiquorModalShown()) {
             KotlinUtils.setLiquorModalShown()
