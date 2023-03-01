@@ -1058,7 +1058,9 @@ class ProductDetailsFragment :
     override fun onProductDetailsSuccess(productDetails: ProductDetails) {
         if (!isAdded || productDetails == null) return
 
-        showEnhancedSubstitutionDialog()
+        if (!isOutOfStock_502) {
+            showEnhancedSubstitutionDialog()
+        }
 
         this.productDetails = productDetails
         otherSKUsByGroupKey = this.productDetails?.otherSkus.let { groupOtherSKUsByColor(it) }
@@ -1073,7 +1075,11 @@ class ProductDetailsFragment :
             }
 
             this.txtSubstitutionEdit?.setOnClickListener {
-                /*pop up for out of stock*/
+                if (isOutOfStock_502) {
+                    /*pop up for out of stock*/
+                } else {
+                    /*navigate to manage substitution screen*/
+                }
             }
         }
 
@@ -1146,6 +1152,7 @@ class ProductDetailsFragment :
             }
 
         } else if (productDetails?.otherSkus.isNullOrEmpty()) {
+            binding?.productDetailOptionsAndInformation?.substitutionLayout?.txtSubstitutionEdit?.isEnabled = false
             productOutOfStockErrorMessage()
         } else {
             showErrorWhileLoadingProductDetails()
@@ -1188,6 +1195,7 @@ class ProductDetailsFragment :
         if (httpCode == HTTP_CODE_502) {
             isOutOfStock_502 = true
             val message = getString(R.string.out_of_stock_502)
+            binding?.productDetailOptionsAndInformation?.substitutionLayout?.txtSubstitutionEdit?.isEnabled = false
             OutOfStockMessageDialogFragment.newInstance(message).show(
                 this@ProductDetailsFragment.childFragmentManager,
                 OutOfStockMessageDialogFragment::class.java.simpleName
