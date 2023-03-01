@@ -70,6 +70,13 @@ fun String.toAes256Decrypt(): String {
     return decrypt ?: ""
 }
 
+fun String?.toFloatOrZero(): Float {
+    return try {
+        this?.toFloat() ?: 0F
+    } catch (e: Exception) {
+        0F
+    }
+}
 
 fun String.toAes256DecryptBase64BodyToByteArray(): ByteArray? {
     val derivedSeed = AbsaTemporaryDataSourceSingleton.deriveSeeds
