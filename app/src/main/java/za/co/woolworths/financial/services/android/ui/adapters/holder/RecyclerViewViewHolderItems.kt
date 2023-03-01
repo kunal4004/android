@@ -40,8 +40,6 @@ class RecyclerViewViewHolderItems(val itemBinding: ProductListingPageRowBinding)
     }
 
     private fun setProductName(productList: ProductList?) = itemBinding.apply {
-        tvProductName.maxLines = 3
-        tvProductName.minLines = 1
         tvProductName?.text = productList?.productName ?: ""
     }
 
