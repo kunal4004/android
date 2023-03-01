@@ -82,8 +82,8 @@
 
                 <ImageButton
                     android:id="@+id/storeCardBackButton"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
+                    android:layout_width="@dimen/fourty_eight_dp"
+                    android:layout_height="@dimen/fourty_eight_dp"
                     android:background="@color/transparent"
                     android:src="@drawable/back24"
                     android:textAlignment="center"></ImageButton>
