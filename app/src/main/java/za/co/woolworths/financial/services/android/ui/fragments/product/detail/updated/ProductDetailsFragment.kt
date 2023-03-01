@@ -1058,30 +1058,11 @@ class ProductDetailsFragment :
     override fun onProductDetailsSuccess(productDetails: ProductDetails) {
         if (!isAdded || productDetails == null) return
 
-        if (!isOutOfStock_502) {
-            showEnhancedSubstitutionDialog()
-        }
-
         this.productDetails = productDetails
         otherSKUsByGroupKey = this.productDetails?.otherSkus.let { groupOtherSKUsByColor(it) }
         this.defaultSku = getDefaultSku(otherSKUsByGroupKey)
 
-        binding?.productDetailOptionsAndInformation?.substitutionLayout?.apply {
-            if (SessionUtilities.getInstance().isUserAuthenticated
-                && KotlinUtils.getDeliveryType()?.deliveryType == Delivery.DASH.type) {
-                this?.root?.visibility = View.VISIBLE
-            } else {
-                this.root?.visibility = View.GONE
-            }
 
-            this.txtSubstitutionEdit?.setOnClickListener {
-                if (isOutOfStock_502) {
-                    /*pop up for out of stock*/
-                } else {
-                    /*navigate to manage substitution screen*/
-                }
-            }
-        }
 
         if (productDetails?.isLiquor == true && !KotlinUtils.isCurrentSuburbDeliversLiquor() && !KotlinUtils.isLiquorModalShown()) {
             KotlinUtils.setLiquorModalShown()
@@ -1152,7 +1133,6 @@ class ProductDetailsFragment :
             }
 
         } else if (productDetails?.otherSkus.isNullOrEmpty()) {
-            binding?.productDetailOptionsAndInformation?.substitutionLayout?.txtSubstitutionEdit?.isEnabled = false
             productOutOfStockErrorMessage()
         } else {
             showErrorWhileLoadingProductDetails()
@@ -1195,7 +1175,6 @@ class ProductDetailsFragment :
         if (httpCode == HTTP_CODE_502) {
             isOutOfStock_502 = true
             val message = getString(R.string.out_of_stock_502)
-            binding?.productDetailOptionsAndInformation?.substitutionLayout?.txtSubstitutionEdit?.isEnabled = false
             OutOfStockMessageDialogFragment.newInstance(message).show(
                 this@ProductDetailsFragment.childFragmentManager,
                 OutOfStockMessageDialogFragment::class.java.simpleName
@@ -1501,6 +1480,36 @@ class ProductDetailsFragment :
                     }
                 } else {
                     hideRatingAndReview()
+                }
+            }
+
+
+
+            if (!isAllProductsOutOfStock() && isInventoryCalled) {
+                showEnhancedSubstitutionDialog()
+            }
+
+
+            binding?.productDetailOptionsAndInformation?.substitutionLayout?.apply {
+                if (SessionUtilities.getInstance().isUserAuthenticated
+                    && KotlinUtils.getDeliveryType()?.deliveryType == Delivery.DASH.type
+                ) {
+                    this?.root?.visibility = View.VISIBLE
+                } else {
+                    this.root?.visibility = View.GONE
+                }
+
+                if (isAllProductsOutOfStock() && isInventoryCalled) {
+                    this.txtSubstitutionEdit?.background = resources.getDrawable(R.drawable.grey_background_with_corner_5)
+                }
+
+                this.txtSubstitutionEdit?.setOnClickListener {
+                    if (isAllProductsOutOfStock() && isInventoryCalled) {
+                        /*pop up for out of stock*/
+                        productOutOfStockErrorMessage(true)
+                    } else {
+                        /*navigate to manage substitution screen*/
+                    }
                 }
             }
 
@@ -2950,8 +2959,8 @@ class ProductDetailsFragment :
         return isAllProductsOutOfStock
     }
 
-    private fun productOutOfStockErrorMessage() {
-        if (!isOutOfStockFragmentAdded) {
+    private fun productOutOfStockErrorMessage(isClickOnChangeButton:Boolean = false) {
+        if (!isOutOfStockFragmentAdded || isClickOnChangeButton) {
             isOutOfStockFragmentAdded = true
             updateAddToCartButtonForSelectedSKU()
             try {
