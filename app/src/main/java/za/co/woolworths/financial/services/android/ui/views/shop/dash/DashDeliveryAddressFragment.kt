@@ -379,7 +379,8 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                             response.orderSummary?.fulfillmentDetails?.address?.placeId.let { responsePlaceId ->
                                 this.placeId = responsePlaceId
                                 isLocationSame = responsePlaceId.equals(savedPlaceId)
-                                isDeliveryLocationTabCrossClicked = responsePlaceId.equals(savedPlaceId)
+                                isDeliveryLocationTabCrossClicked =
+                                    responsePlaceId.equals(savedPlaceId)
                                 isCncTabCrossClicked = responsePlaceId.equals(savedPlaceId)
                                 isDashTabCrossClicked = responsePlaceId.equals(savedPlaceId)
                             }
@@ -452,12 +453,14 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
 
                             HTTP_EXPECTATION_FAILED_502 -> {
                                 if (response.response.code == AppConstant.RESPONSE_ERROR_CODE_1235) {
-                                    KotlinUtils.showQuantityLimitErrror(
-                                        activity?.supportFragmentManager,
-                                        response.response.desc,
-                                        "",
-                                        context
-                                    )
+                                    response.response.desc?.let { it1 ->
+                                        KotlinUtils.showQuantityLimitErrror(
+                                            activity?.supportFragmentManager,
+                                            it1,
+                                            "",
+                                            context
+                                        )
+                                    }
                                 }
                             }
                             else -> response?.response?.desc?.let { desc ->
@@ -664,7 +667,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
     }
 
     fun scrollToTop() {
-        binding.rvDashDelivery?.scrollToPosition(0)
+        binding?.rvDashDelivery?.scrollToPosition(0)
     }
 
     private fun navigateToConfirmAddressScreen() {
@@ -730,8 +733,10 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                 }
             }
             BundleKeysConstants.REQUEST_CODE -> {
-             if (resultCode == Activity.RESULT_OK) {
-                 initViews()
+                if (resultCode == Activity.RESULT_OK) {
+                    initViews()
+                viewModel.getOnDemandCategories()
+                 viewModel.getDashLandingDetails()
                }
             }
         }
@@ -875,6 +880,15 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
         }
     }
 
+    override fun openChangeFulfillmentScreen() {
+        KotlinUtils.presentEditDeliveryGeoLocationActivity(
+            requireActivity(),
+            BundleKeysConstants.REQUEST_CODE,
+            Delivery.DASH,
+            getDeliveryType()?.address?.placeId ?: ""
+        )
+    }
+
     override fun showLiquorDialog() {
         TODO("Not yet implemented")
     }
@@ -892,7 +906,8 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                     sub_category_name = categoryItem.categoryName,
                     searchTerm = categoryItem.dimValId,
                     isBrowsing = true,
-                    sendDeliveryDetails = arguments?.getBoolean(AppConstant.Keys.ARG_SEND_DELIVERY_DETAILS, false) == true
+                    sendDeliveryDetails = arguments?.getBoolean(AppConstant.Keys.ARG_SEND_DELIVERY_DETAILS,
+                        false) == true
                 )
             )
         }
@@ -944,7 +959,8 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                     sub_category_name = item.displayName,
                     searchTerm = item.navigationState,
                     isBrowsing = true,
-                    sendDeliveryDetails = arguments?.getBoolean(AppConstant.Keys.ARG_SEND_DELIVERY_DETAILS, false) == true
+                    sendDeliveryDetails = arguments?.getBoolean(AppConstant.Keys.ARG_SEND_DELIVERY_DETAILS,
+                        false) == true
                 )
             )
         }

@@ -72,29 +72,31 @@ class PMAManageCardFragment : PMAFragment(), View.OnClickListener {
             AnimationUtilExtension.animateViewPushDown(this)
         }
 
-        payMyAccountViewModel.getNavigationResult().observe(viewLifecycleOwner) { result ->
-            when (result) {
-                is PayMyAccountViewModel.OnNavigateBack.Remove -> {
-                    CoroutineScope(Dispatchers.Main).launch {
-                        delay(AppConstant.DELAY_300_MS)
-                        removeCardProduct(if (result.isCardExpired) result.position else mTemporarySelectedPosition)
+        payMyAccountViewModel.getNavigationResult().observe(viewLifecycleOwner) { event ->
+            event.getContentIfNotHandled()?.let { result ->
+                when (result) {
+                    is PayMyAccountViewModel.OnNavigateBack.Remove -> {
+                        CoroutineScope(Dispatchers.Main).launch {
+                            delay(AppConstant.DELAY_300_MS)
+                            removeCardProduct(if (result.isCardExpired) result.position else mTemporarySelectedPosition)
+                        }
                     }
-                }
-               is PayMyAccountViewModel.OnNavigateBack.Add -> {
-                    CoroutineScope(Dispatchers.Main).launch {
-                        delay(AppConstant.DELAY_300_MS)
-                        navController?.navigate(R.id.action_manageCardFragment_to_addNewPayUCardFragment)
+                    is PayMyAccountViewModel.OnNavigateBack.Add -> {
+                        CoroutineScope(Dispatchers.Main).launch {
+                            delay(AppConstant.DELAY_300_MS)
+                            navController?.navigate(R.id.action_manageCardFragment_to_addNewPayUCardFragment)
+                        }
                     }
-                }
 
-               is  PayMyAccountViewModel.OnNavigateBack.MaxCardLimit -> {
-                    CoroutineScope(Dispatchers.Main).launch {
-                        delay(AppConstant.DELAY_350_MS)
-                        navController?.navigate(R.id.action_manageCardFragment_to_PMATenCardLimitDialogFragment)
+                    is PayMyAccountViewModel.OnNavigateBack.MaxCardLimit -> {
+                        CoroutineScope(Dispatchers.Main).launch {
+                            delay(AppConstant.DELAY_350_MS)
+                            navController?.navigate(R.id.action_manageCardFragment_to_PMATenCardLimitDialogFragment)
+                        }
                     }
-                }
 
-                else -> return@observe
+                    else -> return@observe
+                }
             }
         }
     }
@@ -231,15 +233,14 @@ class PMAManageCardFragment : PMAFragment(), View.OnClickListener {
         onGetPaymentMethodProgress(type, true)
         payMyAccountViewModel.queryServicePayUPaymentMethod({ paymentMethodsList ->
             if (!isAdded) return@queryServicePayUPaymentMethod
-            when (mLifecycleType) {
-                LifecycleType.INIT -> configureRecyclerview()
-                LifecycleType.RESUME -> {
-                    manageCardAdapter?.notifyUpdate(paymentMethodsList, mTemporarySelectedPosition)
-                    mPaymentMethodList = manageCardAdapter?.getList()
-                }
-            }
 
             mPaymentMethodList = manageCardAdapter?.getList()
+
+            configureRecyclerview()
+
+            if (mLifecycleType == LifecycleType.RESUME) {
+                manageCardAdapter?.notifyUpdate(paymentMethodsList, mTemporarySelectedPosition)
+            }
 
             val itemTouchHelper = ItemTouchHelper(paymentMethodItemSwipeLeft)
             itemTouchHelper.attachToRecyclerView(binding.pmaManageCardRecyclerView)
@@ -258,15 +259,11 @@ class PMAManageCardFragment : PMAFragment(), View.OnClickListener {
 
     private fun onGetPaymentMethodProgress(type: LifecycleType, isRefreshing: Boolean) {
         if (!isAdded) return
-        when (type) {
-            LifecycleType.INIT -> {
-                binding.paymentMethodsListProgressBar?.visibility = if (isRefreshing) VISIBLE else GONE
-                binding.pmaManageCardRecyclerView?.visibility = if (isRefreshing) GONE else VISIBLE
-            }
-            LifecycleType.RESUME -> {
-                binding.swipeToRefreshList?.isRefreshing = isRefreshing
-            }
+        if (type == LifecycleType.RESUME) {
+            binding.swipeToRefreshList?.isRefreshing = isRefreshing
         }
+        binding.paymentMethodsListProgressBar?.visibility = if (isRefreshing) VISIBLE else GONE
+        binding.pmaManageCardRecyclerView?.visibility = if (isRefreshing) GONE else VISIBLE
         binding.useThisCardButton?.isEnabled = !isRefreshing
     }
 

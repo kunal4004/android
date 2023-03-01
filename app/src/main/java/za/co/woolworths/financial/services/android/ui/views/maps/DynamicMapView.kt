@@ -369,10 +369,12 @@ class DynamicMapView @JvmOverloads constructor(
     }
 
     fun onSaveInstanceState(outState: Bundle) {
-        if (isGooglePlayServicesAvailable) {
-            googleMapView?.onSaveInstanceState(outState)
-        } else {
-            huaweiMapView?.onSaveInstanceState(outState)
+        if(!outState.isEmpty){
+            if (isGooglePlayServicesAvailable) {
+                googleMapView?.onSaveInstanceState(outState)
+            } else {
+                huaweiMapView?.onSaveInstanceState(outState)
+            }
         }
     }
 }

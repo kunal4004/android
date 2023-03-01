@@ -161,15 +161,17 @@ open class AvailableFundFragment : Fragment(R.layout.available_funds_fragment), 
             })
         }
 
-        payMyAccountViewModel.getNavigationResult().observe(viewLifecycleOwner) { result ->
-            when (result) {
-                PayMyAccountViewModel.OnNavigateBack.Retry -> {
-                    activity?.runOnUiThread {
-                        payMyAccountViewModel.isQueryPayUPaymentMethodComplete = false
-                        queryPaymentMethod()
+        payMyAccountViewModel.getNavigationResult().observe(viewLifecycleOwner) { event ->
+            event.getContentIfNotHandled()?.let { result ->
+                when (result) {
+                    PayMyAccountViewModel.OnNavigateBack.Retry -> {
+                        activity?.runOnUiThread {
+                            payMyAccountViewModel.isQueryPayUPaymentMethodComplete = false
+                            queryPaymentMethod()
+                        }
                     }
+                    else -> return@observe
                 }
-                else -> return@observe
             }
         }
     }

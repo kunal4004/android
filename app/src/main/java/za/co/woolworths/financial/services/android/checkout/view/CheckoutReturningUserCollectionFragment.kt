@@ -3,9 +3,8 @@ package za.co.woolworths.financial.services.android.checkout.view
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextUtils
-import android.text.TextWatcher
+import android.text.*
+import android.text.style.StyleSpan
 import android.view.View
 import android.widget.CompoundButton
 import androidx.annotation.VisibleForTesting
@@ -63,11 +62,14 @@ import za.co.woolworths.financial.services.android.util.pushnotification.Notific
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.viewmodels.ShoppingCartLiveData
 import java.util.regex.Pattern
+import za.co.woolworths.financial.services.android.util.StoreUtils
 
-class CheckoutReturningUserCollectionFragment : Fragment(R.layout.fragment_checkout_returning_user_collection),
+class CheckoutReturningUserCollectionFragment :
+    Fragment(R.layout.fragment_checkout_returning_user_collection),
     ShoppingBagsRadioGroupAdapter.EventListner, View.OnClickListener, CollectionTimeSlotsListener,
     CompoundButton.OnCheckedChangeListener {
 
+    private var isItemLimitExceeded: Boolean = false
     private lateinit var binding: FragmentCheckoutReturningUserCollectionBinding
     private var selectedTimeSlot: Slot? = null
     private var selectedPosition: Int = 0
@@ -129,7 +131,9 @@ class CheckoutReturningUserCollectionFragment : Fragment(R.layout.fragment_check
         getLiquorComplianceDetails()
         callStorePickupInfoAPI()
         binding.txtContinueToPaymentCollection?.setOnClickListener(this)
-        binding.ageConfirmationLayoutCollection.radioBtnAgeConfirmation?.setOnCheckedChangeListener(this)
+        binding.ageConfirmationLayoutCollection.radioBtnAgeConfirmation?.setOnCheckedChangeListener(
+            this
+        )
         setFragmentResults()
     }
 
@@ -137,11 +141,13 @@ class CheckoutReturningUserCollectionFragment : Fragment(R.layout.fragment_check
         ShoppingCartLiveData.observe(viewLifecycleOwner) { isLiquorOrder ->
             if (isLiquorOrder == false) {
                 binding.ageConfirmationLayoutCollection?.root?.visibility = View.GONE
-                binding.ageConfirmationLayoutCollection.liquorComplianceBannerLayout?.root?.visibility = View.GONE
+                binding.ageConfirmationLayoutCollection.liquorComplianceBannerLayout?.root?.visibility =
+                    View.GONE
                 ShoppingCartLiveData.value = true
             }
         }
     }
+
     private fun setFragmentResults() {
 
         setFragmentResultListener(ErrorHandlerBottomSheetDialog.RESULT_ERROR_CODE_RETRY) { _, args ->
@@ -167,7 +173,10 @@ class CheckoutReturningUserCollectionFragment : Fragment(R.layout.fragment_check
                 binding.checkoutCollectingFromLayout.deliveringTitleValueShimmerFrameLayout,
                 binding.checkoutCollectingFromLayout.tvNativeCheckoutDeliveringValue
             ),
-            Pair<ShimmerFrameLayout, View>(binding.checkoutCollectingFromLayout.forwardImgViewShimmerFrameLayout, binding.checkoutCollectingFromLayout.imageViewCaretForward),
+            Pair<ShimmerFrameLayout, View>(
+                binding.checkoutCollectingFromLayout.forwardImgViewShimmerFrameLayout,
+                binding.checkoutCollectingFromLayout.imageViewCaretForward
+            ),
             Pair<ShimmerFrameLayout, View>(
                 binding.nativeCheckoutFoodSubstitutionLayout.foodSubstitutionTitleShimmerFrameLayout,
                 binding.nativeCheckoutFoodSubstitutionLayout.txtFoodSubstitutionTitle
@@ -175,6 +184,15 @@ class CheckoutReturningUserCollectionFragment : Fragment(R.layout.fragment_check
             Pair<ShimmerFrameLayout, View>(
                 binding.nativeCheckoutFoodSubstitutionLayout.radioGroupFoodSubstitutionShimmerFrameLayout,
                 binding.nativeCheckoutFoodSubstitutionLayout.radioGroupFoodSubstitution
+            ),
+
+            Pair<ShimmerFrameLayout, View>(
+                binding.layoutCollectionInstructions.checkoutCollectionDetailsInfoLayout.collectionDetailsTitleShimmerFrameLayout,
+                binding.layoutCollectionInstructions.checkoutCollectionDetailsInfoLayout.tvCollectionDetailsTitle
+            ),
+            Pair<ShimmerFrameLayout, View>(
+                binding.layoutCollectionInstructions.checkoutCollectionDetailsInfoLayout.collectionDetailsTextShimmerFrameLayout,
+                binding.layoutCollectionInstructions.checkoutCollectionDetailsInfoLayout.tvCollectionDetailsText
             ),
 
             Pair<ShimmerFrameLayout, View>(
@@ -250,7 +268,10 @@ class CheckoutReturningUserCollectionFragment : Fragment(R.layout.fragment_check
                 binding.layoutCollectionInstructions.giftInstructionSwitchShimmerFrameLayout,
                 binding.layoutCollectionInstructions.switchGiftInstructions
             ),
-            Pair<ShimmerFrameLayout, View>(binding.layoutCheckoutDeliveryOrderSummary.txtYourCartShimmerFrameLayout, binding.layoutCheckoutDeliveryOrderSummary.txtOrderSummaryYourCart),
+            Pair<ShimmerFrameLayout, View>(
+                binding.layoutCheckoutDeliveryOrderSummary.txtYourCartShimmerFrameLayout,
+                binding.layoutCheckoutDeliveryOrderSummary.txtOrderSummaryYourCart
+            ),
             Pair<ShimmerFrameLayout, View>(
                 binding.layoutCheckoutDeliveryOrderSummary.yourCartValueShimmerFrameLayout,
                 binding.layoutCheckoutDeliveryOrderSummary.txtOrderSummaryYourCartValue
@@ -263,7 +284,10 @@ class CheckoutReturningUserCollectionFragment : Fragment(R.layout.fragment_check
                 binding.layoutCheckoutDeliveryOrderSummary.deliveryFeeValueShimmerFrameLayout,
                 binding.layoutCheckoutDeliveryOrderSummary.txtOrderSummaryDeliveryFeeValue
             ),
-            Pair<ShimmerFrameLayout, View>(binding.layoutCheckoutDeliveryOrderSummary.summaryNoteShimmerFrameLayout, binding.layoutCheckoutDeliveryOrderSummary.txtOrderSummaryNote),
+            Pair<ShimmerFrameLayout, View>(
+                binding.layoutCheckoutDeliveryOrderSummary.summaryNoteShimmerFrameLayout,
+                binding.layoutCheckoutDeliveryOrderSummary.txtOrderSummaryNote
+            ),
             Pair<ShimmerFrameLayout, View>(
                 binding.layoutCheckoutDeliveryOrderSummary.txtOrderTotalShimmerFrameLayout,
                 binding.layoutCheckoutDeliveryOrderSummary.txtOrderTotalTitle
@@ -311,7 +335,8 @@ class CheckoutReturningUserCollectionFragment : Fragment(R.layout.fragment_check
     fun startShimmerView() {
         binding.layoutCollectionInstructions.txtNeedBags?.visibility = View.GONE
         binding.layoutCollectionInstructions.switchNeedBags?.visibility = View.GONE
-        binding.layoutCollectionInstructions.edtTxtSpecialDeliveryInstruction?.visibility = View.GONE
+        binding.layoutCollectionInstructions.edtTxtSpecialDeliveryInstruction?.visibility =
+            View.GONE
         binding.layoutCollectionInstructions.edtTxtGiftInstructions?.visibility = View.GONE
         binding.layoutCollectionInstructions.switchSpecialDeliveryInstruction?.isChecked = false
         binding.layoutCollectionInstructions.switchGiftInstructions?.isChecked = false
@@ -354,12 +379,13 @@ class CheckoutReturningUserCollectionFragment : Fragment(R.layout.fragment_check
     private fun callStorePickupInfoAPI() {
         initShimmerView()
 
+        isItemLimitExceeded = false
         checkoutAddAddressNewUserViewModel?.getStorePickupInfo(getStorePickupInfoBody())
             ?.observe(viewLifecycleOwner) { response ->
                 stopShimmerView()
                 when (response) {
                     is ConfirmDeliveryAddressResponse -> {
-                        when (response.httpCode ?: 400) {
+                        when (response.httpCode ?: AppConstant.HTTP_SESSION_TIMEOUT_400) {
                             AppConstant.HTTP_OK -> {
                                 storePickupInfoResponse = response
                                 if (!isAdded) {
@@ -379,7 +405,9 @@ class CheckoutReturningUserCollectionFragment : Fragment(R.layout.fragment_check
                                     showEmptyCart()
                                     return@observe
                                 }
+                                var maxItemLimit = -1
                                 response.orderSummary?.fulfillmentDetails?.let {
+                                    maxItemLimit = it.foodMaximumQuantity ?: -1
                                     if (!it.deliveryType.isNullOrEmpty()) {
                                         Utils.savePreferredDeliveryLocation(
                                             ShoppingDeliveryLocation(
@@ -388,24 +416,20 @@ class CheckoutReturningUserCollectionFragment : Fragment(R.layout.fragment_check
                                         )
                                     }
                                 }
-                                initializeOrderSummary(response.orderSummary)
-                                response.sortedJoinDeliverySlots?.apply {
-                                    val firstAvailableDateSlot = getFirstAvailableSlot(this)
-                                    initializeDatesAndTimeSlots(firstAvailableDateSlot)
-                                    // Set default time slot selected
-                                    var selectedSlotIndex = 0
-                                    ArrayList(firstAvailableDateSlot?.slots).forEachIndexed { index, slot ->
-                                        if (slot.slotId.equals(selectedTimeSlot?.slotId)) {
-                                            selectedSlotIndex = index
-                                        }
-                                    }
-                                    collectionTimeSlotsAdapter.setSelectedItem(selectedSlotIndex)
+
+                                isItemLimitExceeded =
+                                    (response.orderSummary?.totalItemsCount ?: 0) > maxItemLimit
+                                if (isItemLimitExceeded && !isFBHOnly()) {
+                                    showMaxItemView()
                                 }
-                                if(response.orderSummary?.hasMinimumBasketAmount == false) {
-                                   KotlinUtils.showMinCartValueError(
-                                       requireActivity() as AppCompatActivity,
-                                       response.orderSummary?.minimumBasketAmount
-                                   )
+
+                                initializeOrderSummary(response.orderSummary)
+                                updateCollectionItemsForCheckout()
+                                if (response.orderSummary?.hasMinimumBasketAmount == false) {
+                                    KotlinUtils.showMinCartValueError(
+                                        requireActivity() as AppCompatActivity,
+                                        response.orderSummary?.minimumBasketAmount
+                                    )
                                 }
                             }
                             else -> {
@@ -437,15 +461,16 @@ class CheckoutReturningUserCollectionFragment : Fragment(R.layout.fragment_check
             return
         }
 
-        binding.checkoutCollectingTimeDetailsLayout.firstAvailableDateLayout?.titleTv?.text = selectedWeekSlot?.date ?: try {
-            WFormatter.convertDateToFormat(
-                slots[0].stringShipOnDate,
-                DATE_FORMAT_EEEE_COMMA_dd_MMMM
-            )
-        } catch (e: Exception) {
-            FirebaseManager.logException(e)
-            ""
-        }
+        binding.checkoutCollectingTimeDetailsLayout.firstAvailableDateLayout?.titleTv?.text =
+            selectedWeekSlot?.date ?: try {
+                WFormatter.convertDateToFormat(
+                    slots[0].stringShipOnDate,
+                    DATE_FORMAT_EEEE_COMMA_dd_MMMM
+                )
+            } catch (e: Exception) {
+                FirebaseManager.logException(e)
+                ""
+            }
         context?.let { context ->
             binding.checkoutCollectingTimeDetailsLayout.firstAvailableDateLayout?.titleTv?.setTextColor(
                 ContextCompat.getColor(
@@ -458,12 +483,15 @@ class CheckoutReturningUserCollectionFragment : Fragment(R.layout.fragment_check
                     context,
                     R.drawable.checkout_delivering_title_round_button_pressed
                 )
-            binding.checkoutCollectingTimeDetailsLayout.chooseDateLayout?.titleTv?.text = context.getString(R.string.choose_date)
+            binding.checkoutCollectingTimeDetailsLayout.chooseDateLayout?.titleTv?.text =
+                context.getString(R.string.choose_date)
         }
 
         setSelectedDateTimeSlots(slots)
         binding.checkoutCollectingTimeDetailsLayout.chooseDateLayout?.root?.setOnClickListener(this@CheckoutReturningUserCollectionFragment)
-        binding.checkoutCollectingTimeDetailsLayout.firstAvailableDateLayout?.root?.setOnClickListener(this@CheckoutReturningUserCollectionFragment)
+        binding.checkoutCollectingTimeDetailsLayout.firstAvailableDateLayout?.root?.setOnClickListener(
+            this@CheckoutReturningUserCollectionFragment
+        )
     }
 
     private fun setSelectedDateTimeSlots(slots: List<Slot>?) {
@@ -543,26 +571,35 @@ class CheckoutReturningUserCollectionFragment : Fragment(R.layout.fragment_check
                 if (liquorOrder == true && containsKey(Constant.NO_LIQUOR_IMAGE_URL)) {
                     liquorImageUrl = getString(Constant.NO_LIQUOR_IMAGE_URL)
                     binding.ageConfirmationLayoutCollection?.root?.visibility = View.VISIBLE
-                    binding.ageConfirmationLayoutCollection.liquorComplianceBannerLayout?.root?.visibility = View.VISIBLE
-                    ImageManager.setPicture(binding.ageConfirmationLayoutCollection.liquorComplianceBannerLayout.imgLiquorBanner, liquorImageUrl)
+                    binding.ageConfirmationLayoutCollection.liquorComplianceBannerLayout?.root?.visibility =
+                        View.VISIBLE
+                    ImageManager.setPicture(
+                        binding.ageConfirmationLayoutCollection.liquorComplianceBannerLayout.imgLiquorBanner,
+                        liquorImageUrl
+                    )
 
                     binding.ageConfirmationLayoutCollection?.root?.visibility = View.VISIBLE
-                    binding.ageConfirmationLayoutCollection.liquorComplianceBannerSeparator?.visibility = View.VISIBLE
-                    binding.ageConfirmationLayoutCollection.liquorComplianceBannerLayout?.root?.visibility = View.VISIBLE
+                    binding.ageConfirmationLayoutCollection.liquorComplianceBannerSeparator?.visibility =
+                        View.VISIBLE
+                    binding.ageConfirmationLayoutCollection.liquorComplianceBannerLayout?.root?.visibility =
+                        View.VISIBLE
 
                     if (!binding.ageConfirmationLayoutCollection.radioBtnAgeConfirmation.isChecked) {
                         Utils.fadeInFadeOutAnimation(binding.txtContinueToPaymentCollection, true)
-                        binding.ageConfirmationLayoutCollection.radioBtnAgeConfirmation?.isChecked = false
+                        binding.ageConfirmationLayoutCollection.radioBtnAgeConfirmation?.isChecked =
+                            false
                         binding.txtContinueToPaymentCollection?.isClickable = false
                     } else {
                         Utils.fadeInFadeOutAnimation(binding.txtContinueToPaymentCollection, false)
                         binding.txtContinueToPaymentCollection?.isClickable = true
-                        binding.ageConfirmationLayoutCollection.radioBtnAgeConfirmation?.isChecked = true
+                        binding.ageConfirmationLayoutCollection.radioBtnAgeConfirmation?.isChecked =
+                            true
                     }
                 }
             } else {
                 binding.ageConfirmationLayoutCollection?.root?.visibility = View.GONE
-                binding.ageConfirmationLayoutCollection.liquorComplianceBannerLayout?.root?.visibility = View.GONE
+                binding.ageConfirmationLayoutCollection.liquorComplianceBannerLayout?.root?.visibility =
+                    View.GONE
             }
         }
     }
@@ -598,7 +635,8 @@ class CheckoutReturningUserCollectionFragment : Fragment(R.layout.fragment_check
                         R.color.black
                     )
                 )
-                binding.checkoutCollectingFromLayout.tvNativeCheckoutDeliveringValue?.text = convertToTitleCase(selectedStore)
+                binding.checkoutCollectingFromLayout.tvNativeCheckoutDeliveringValue?.text =
+                    convertToTitleCase(selectedStore)
             } else
                 binding.checkoutCollectingFromLayout.root.visibility = View.GONE
         } else
@@ -619,7 +657,8 @@ class CheckoutReturningUserCollectionFragment : Fragment(R.layout.fragment_check
             ) as? SavedAddressResponse ?: SavedAddressResponse()
         }
         if (whoIsCollectingDetails != null) {
-            binding.checkoutCollectingUserInfoLayout.tvCollectionUserName.text = whoIsCollectingDetails?.recipientName
+            binding.checkoutCollectingUserInfoLayout.tvCollectionUserName.text =
+                whoIsCollectingDetails?.recipientName
             val star = "***"
             val phoneNo = whoIsCollectingDetails?.phoneNumber
             val beforeStar =
@@ -628,13 +667,133 @@ class CheckoutReturningUserCollectionFragment : Fragment(R.layout.fragment_check
                 if (beforeStar.length + star.length < phoneNo.length) beforeStar.length + star.length else beforeStar.length,
                 phoneNo.length
             )
-            binding.checkoutCollectingUserInfoLayout.tvCollectionUserPhoneNumber.text = beforeStar.plus(star).plus(afterStar)
+            binding.checkoutCollectingUserInfoLayout.tvCollectionUserPhoneNumber.text =
+                beforeStar.plus(star).plus(afterStar)
         } else {
             binding.checkoutCollectingUserInfoLayout.root.visibility = View.GONE
         }
         binding.checkoutCollectingUserInfoLayout.root.setOnClickListener(this)
     }
 
+    /**
+     * collection label message for FBH item into cart
+     */
+    private fun collectionMessageForFBHItem() {
+        val deliveryInDays = storePickupInfoResponse?.openDayDeliverySlots?.get(0)?.deliveryInDays
+        binding.layoutCollectionInstructions?.checkoutCollectionDetailsInfoLayout?.root?.visibility = View.VISIBLE
+
+        val collectionDetailsTextString  = context?.resources?.getString(R.string.collection_details_text).toString() +
+                " " + deliveryInDays?.lowercase() + ". " + (context?.resources?.getString(R.string.notify_text_label))
+        val spannableStringBuilder = SpannableStringBuilder(collectionDetailsTextString)
+        val styleSpam = StyleSpan(android.graphics.Typeface.BOLD)
+        spannableStringBuilder.setSpan(styleSpam, (collectionDetailsTextString.length - 41),
+                collectionDetailsTextString.length, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
+
+        binding.layoutCollectionInstructions.checkoutCollectionDetailsInfoLayout?.tvCollectionDetailsText?.text = spannableStringBuilder
+    }
+    /**
+     * check if cart items have only FBH products
+     */
+    private fun isFBHOnly() : Boolean {
+         storePickupInfoResponse?.let {
+           return it.fulfillmentTypes?.join == StoreUtils.Companion.FulfillmentType.CLOTHING_ITEMS?.type
+                    && it.openDayDeliverySlots?.isNullOrEmpty() == false
+                    && it.fulfillmentTypes?.join != StoreUtils.Companion.FulfillmentType.FOOD_ITEMS?.type
+                    && it.fulfillmentTypes?.food != StoreUtils.Companion.FulfillmentType.FOOD_ITEMS?.type
+            }
+            return false
+        }
+    /**
+     * Update collection item view according to Food, FBH and mixed item with title on checkout
+     * screen
+     */
+    private fun updateCollectionItemsForCheckout() {
+        //FBH only
+        if(isFBHOnly()) {
+            collectionMessageForFBHItem()
+            binding.apply {
+                checkoutCollectingTimeDetailsLayout?.root?.visibility = View.GONE
+                with(layoutCollectionInstructions) {
+                    txtNeedBags?.visibility = View.GONE
+                    nativeCheckoutFoodSubstitutionLayout?.root?.visibility = View.GONE
+                    viewHorizontalCollectionBottomSeparator?.visibility = View.VISIBLE
+                    instructionTxtShimmerFrameLayout?.visibility = View.GONE
+                    switchNeedBags?.visibility = View.GONE
+                    specialInstructionSwitchShimmerFrameLayout?.visibility = View.GONE
+                    shoppingBagSeparator?.visibility = View.GONE
+                    viewGiftHorizontalSeparator?.visibility = View.GONE
+                }
+            }
+        } //mixed cart - FBH + Food
+        else if((storePickupInfoResponse?.fulfillmentTypes?.other == StoreUtils.Companion.FulfillmentType.CLOTHING_ITEMS?.type
+                        && storePickupInfoResponse?.openDayDeliverySlots?.isNullOrEmpty() == false
+                        && storePickupInfoResponse?.sortedFoodDeliverySlots?.isNullOrEmpty() == false
+                        && storePickupInfoResponse?.fulfillmentTypes?.food == StoreUtils.Companion.FulfillmentType.FOOD_ITEMS?.type
+                        && storePickupInfoResponse?.fulfillmentTypes?.join == StoreUtils.Companion.FulfillmentType.CLOTHING_ITEMS?.type)) {
+            collectionMessageForFBHItem()
+            binding?.apply {
+                checkoutCollectingTimeDetailsLayout.tvCollectionTimeDetailsTitle?.text = bindString(R.string.mixed_cart_food_item_title)
+                with(layoutCollectionInstructions) {
+                    checkoutCollectionDetailsInfoLayout?.tvCollectionDetailsTitle?.text = bindString(R.string.mixed_cart_other_item_title)
+
+                    specialInstructionSwitchShimmerFrameLayout?.visibility = View.GONE
+                    viewGiftHorizontalSeparator?.visibility = View.GONE
+                    instructionTxtShimmerFrameLayout?.visibility = View.GONE
+                    shoppingBagSeparator?.visibility = View.VISIBLE
+                    switchNeedBags?.visibility = View.VISIBLE
+                    txtNeedBags?.visibility = View.VISIBLE
+                    viewHorizontalCollectionSeparator?.visibility = View.GONE
+                    viewHorizontalCollectionBottomSeparator?.visibility = View.GONE
+                }
+            }
+            storePickupInfoResponse?.sortedFoodDeliverySlots?.apply {
+                val firstAvailableDateSlot = getFirstAvailableFoodSlot(this)
+                initializeDatesAndTimeSlots(firstAvailableDateSlot)
+                // Set default time slot selected
+                var selectedSlotIndex = 0
+                firstAvailableDateSlot?.let { week ->
+                    ArrayList(week?.slots).forEachIndexed { index, slot ->
+                        if (slot?.slotId.equals(selectedTimeSlot?.slotId)) {
+                            selectedSlotIndex = index
+                        }
+                    }
+                    collectionTimeSlotsAdapter.setSelectedItem(selectedSlotIndex)
+                }
+            }
+
+        }   //Food only
+        else if(storePickupInfoResponse?.sortedJoinDeliverySlots?.isNullOrEmpty() == false
+                && storePickupInfoResponse?.fulfillmentTypes?.other != StoreUtils.Companion.FulfillmentType.CLOTHING_ITEMS?.type
+                && storePickupInfoResponse?.fulfillmentTypes?.join == StoreUtils.Companion.FulfillmentType.FOOD_ITEMS?.type) {
+
+            binding.apply {
+                with(layoutCollectionInstructions) {
+                    txtNeedBags?.visibility = View.VISIBLE
+                    instructionTxtShimmerFrameLayout?.visibility = View.GONE
+                    switchNeedBags?.visibility = View.VISIBLE
+                    specialInstructionSwitchShimmerFrameLayout?.visibility = View.GONE
+                    shoppingBagSeparator?.visibility = View.VISIBLE
+                    viewGiftHorizontalSeparator?.visibility = View.GONE
+                    viewHorizontalCollectionSeparator?.visibility = View.GONE
+                    viewHorizontalCollectionBottomSeparator?.visibility = View.GONE
+                }
+            }
+            storePickupInfoResponse?.sortedJoinDeliverySlots?.apply {
+                val firstAvailableDateSlot = getFirstAvailableSlot(this)
+                initializeDatesAndTimeSlots(firstAvailableDateSlot)
+                // Set default time slot selected
+                var selectedSlotIndex = 0
+                firstAvailableDateSlot?.let { week ->
+                    ArrayList(week?.slots).forEachIndexed { index, slot ->
+                        if (slot?.slotId.equals(selectedTimeSlot?.slotId)) {
+                            selectedSlotIndex = index
+                        }
+                    }
+                    collectionTimeSlotsAdapter.setSelectedItem(selectedSlotIndex)
+                }
+            }
+        }
+    }
     fun initializeDeliveryInstructions() {
         with(binding.layoutCollectionInstructions) {
             edtTxtSpecialDeliveryInstruction?.addTextChangedListener(deliveryInstructionsTextWatcher)
@@ -717,10 +876,13 @@ class CheckoutReturningUserCollectionFragment : Fragment(R.layout.fragment_check
     }
 
     private fun addShoppingBagsRadioButtons() {
-        binding.layoutCollectionInstructions.newShoppingBagsLayout.txtNewShoppingBagsSubDesc?.visibility = View.VISIBLE
+        binding.layoutCollectionInstructions.newShoppingBagsLayout.txtNewShoppingBagsSubDesc?.visibility =
+            View.VISIBLE
         val newShoppingBags = AppConfigSingleton.nativeCheckout?.newShoppingBag
-        binding.layoutCollectionInstructions.newShoppingBagsLayout.txtNewShoppingBagsDesc?.text = newShoppingBags?.title
-        binding.layoutCollectionInstructions.newShoppingBagsLayout.txtNewShoppingBagsSubDesc?.text = newShoppingBags?.description
+        binding.layoutCollectionInstructions.newShoppingBagsLayout.txtNewShoppingBagsDesc?.text =
+            newShoppingBags?.title
+        binding.layoutCollectionInstructions.newShoppingBagsLayout.txtNewShoppingBagsSubDesc?.text =
+            newShoppingBags?.description
 
         val shoppingBagsAdapter =
             ShoppingBagsRadioGroupAdapter(newShoppingBags?.options, this, selectedShoppingBagType)
@@ -793,6 +955,11 @@ class CheckoutReturningUserCollectionFragment : Fragment(R.layout.fragment_check
 
                     txtOrderTotalValue?.text =
                         CurrencyFormatter.formatAmountToRandAndCentWithSpace(it.total)
+                    if (KotlinUtils.getPreferredDeliveryType() == Delivery.CNC) {
+                        txtOrderSummaryDeliveryFee?.text =
+                            context?.getString(R.string.collection_fee)
+                    }
+
                 }
             }
         }
@@ -831,6 +998,8 @@ class CheckoutReturningUserCollectionFragment : Fragment(R.layout.fragment_check
                         GeoUtils.getPlaceId(),
                         false,
                         true,
+                        false,
+                        false,
                         true,
                         savedAddressResponse,
                         defaultAddress,
@@ -905,7 +1074,8 @@ class CheckoutReturningUserCollectionFragment : Fragment(R.layout.fragment_check
                     Activity.RESULT_CANCELED, ErrorHandlerActivity.RESULT_RETRY -> {
                         (activity as? CheckoutActivity)?.apply {
                             //set BR to update cart fragment in CNC flow
-                            LocalBroadcastManager.getInstance(this).sendBroadcast(Intent(CheckOutFragment.TAG_CART_BROADCAST_RECEIVER))
+                            LocalBroadcastManager.getInstance(this)
+                                .sendBroadcast(Intent(CheckOutFragment.TAG_CART_BROADCAST_RECEIVER))
                             setResult(CheckOutFragment.RESULT_EMPTY_CART)
                             closeActivity()
                         }
@@ -929,6 +1099,12 @@ class CheckoutReturningUserCollectionFragment : Fragment(R.layout.fragment_check
     }
 
     private fun onCheckoutPaymentClick() {
+
+        if (isItemLimitExceeded && !isFBHOnly()) {
+            showMaxItemView()
+            return
+        }
+
         if (isRequiredFieldsMissing() || isGiftMessage()) {
             return
         }
@@ -938,7 +1114,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(R.layout.fragment_check
 
         val body = getShipmentDetailsBody()
         if (TextUtils.isEmpty(body.oddDeliverySlotId) && TextUtils.isEmpty(body.foodDeliverySlotId)
-            && TextUtils.isEmpty(body.otherDeliverySlotId)
+            && TextUtils.isEmpty(body.otherDeliverySlotId) && !isFBHOnly()
         ) {
             return
         }
@@ -972,13 +1148,26 @@ class CheckoutReturningUserCollectionFragment : Fragment(R.layout.fragment_check
         //liquor compliance: age confirmation
         if (liquorOrder == true && !binding.ageConfirmationLayoutCollection.radioBtnAgeConfirmation.isChecked) {
             binding.ageConfirmationLayoutCollection?.root?.visibility = View.VISIBLE
-            binding.ageConfirmationLayoutCollection.liquorComplianceBannerSeparator?.visibility = View.VISIBLE
-            binding.ageConfirmationLayoutCollection.liquorComplianceBannerLayout?.root?.visibility = View.VISIBLE
+            binding.ageConfirmationLayoutCollection.liquorComplianceBannerSeparator?.visibility =
+                View.VISIBLE
+            binding.ageConfirmationLayoutCollection.liquorComplianceBannerLayout?.root?.visibility =
+                View.VISIBLE
 
             Utils.fadeInFadeOutAnimation(binding.txtContinueToPaymentCollection, false)
         } else {
             Utils.fadeInFadeOutAnimation(binding.txtContinueToPaymentCollection, true)
         }
+    }
+
+    private fun showMaxItemView() {
+        KotlinUtils.showGeneralInfoDialog(
+            requireActivity().supportFragmentManager,
+            getString(R.string.unable_process_checkout_desc),
+            getString(R.string.unable_process_checkout_title),
+            getString(R.string.got_it),
+            R.drawable.payment_overdue_icon,
+            isFromCheckoutScreen = true
+        )
     }
 
     private fun presentErrorDialog(title: String, subTitle: String, errorType: Int) {
@@ -1002,7 +1191,8 @@ class CheckoutReturningUserCollectionFragment : Fragment(R.layout.fragment_check
     }
 
     private fun setScreenClickEvents(isClickable: Boolean) {
-        binding.nativeCheckoutFoodSubstitutionLayout.radioGroupFoodSubstitution?.isClickable = isClickable
+        binding.nativeCheckoutFoodSubstitutionLayout.radioGroupFoodSubstitution?.isClickable =
+            isClickable
         binding.checkoutCollectingFromLayout?.root?.isClickable = isClickable
         with(binding.layoutCollectionInstructions) {
             switchNeedBags?.isClickable = isClickable
@@ -1017,17 +1207,18 @@ class CheckoutReturningUserCollectionFragment : Fragment(R.layout.fragment_check
         if (liquorOrder == true) {
             ageConsentConfirmed = true
         }
-        foodShipOnDate = selectedTimeSlot?.stringShipOnDate
+        foodShipOnDate = if(selectedTimeSlot?.stringShipOnDate != null) selectedTimeSlot?.stringShipOnDate else ""
         otherShipOnDate = ""
-        foodDeliverySlotId = selectedTimeSlot?.slotId
+        foodDeliverySlotId = if(selectedTimeSlot?.slotId !=null) selectedTimeSlot?.slotId else ""
         otherDeliverySlotId = ""
-        oddDeliverySlotId = ""
+        oddDeliverySlotId = if(storePickupInfoResponse?.openDayDeliverySlots?.size!! > 0 && storePickupInfoResponse?.openDayDeliverySlots?.get(0)?.deliverySlotId != null) storePickupInfoResponse?.openDayDeliverySlots?.get(0)?.deliverySlotId else ""
         foodDeliveryStartHour = selectedTimeSlot?.intHourFrom?.toLong() ?: 0
         otherDeliveryStartHour = 0
         substituesAllowed = selectedFoodSubstitution.rgb
         plasticBags = binding.layoutCollectionInstructions.switchNeedBags?.isChecked ?: false
         shoppingBagType = selectedShoppingBagType
-        giftNoteSelected = binding.layoutCollectionInstructions.switchGiftInstructions?.isChecked ?: false
+        giftNoteSelected =
+            binding.layoutCollectionInstructions.switchGiftInstructions?.isChecked ?: false
         deliverySpecialInstructions =
             if (binding.layoutCollectionInstructions.switchSpecialDeliveryInstruction?.isChecked == true) binding.layoutCollectionInstructions.edtTxtSpecialDeliveryInstruction?.text.toString() else ""
         giftMessage =
@@ -1042,7 +1233,8 @@ class CheckoutReturningUserCollectionFragment : Fragment(R.layout.fragment_check
         KotlinUtils.getUniqueDeviceID {
             pushNotificationToken = Utils.getToken()
             appInstanceId = it
-            tokenProvider = if (Utils.isGooglePlayServicesAvailable()) NotificationUtils.TOKEN_PROVIDER_FIREBASE else NotificationUtils.TOKEN_PROVIDER_HMS
+            tokenProvider =
+                if (Utils.isGooglePlayServicesAvailable()) NotificationUtils.TOKEN_PROVIDER_FIREBASE else NotificationUtils.TOKEN_PROVIDER_HMS
         }
     }
 
@@ -1083,16 +1275,18 @@ class CheckoutReturningUserCollectionFragment : Fragment(R.layout.fragment_check
     }
 
     private fun isRequiredFieldsMissing(): Boolean {
-        if (!TextUtils.isEmpty(selectedTimeSlot?.slotId)) {
+        if (!TextUtils.isEmpty(selectedTimeSlot?.slotId) || isFBHOnly()) {
             binding.checkoutCollectingTimeDetailsLayout.txtSelectCollectionTimeSlotFoodError?.visibility = View.GONE
             return false
         }
         // scroll to slot selection layout
+        if(!isFBHOnly())
         binding.checkoutReturningCollectionScrollView?.smoothScrollTo(
             0,
             binding.checkoutCollectingTimeDetailsLayout?.root?.top ?: 0
         )
-        binding.checkoutCollectingTimeDetailsLayout.txtSelectCollectionTimeSlotFoodError?.visibility = View.VISIBLE
+        binding.checkoutCollectingTimeDetailsLayout.txtSelectCollectionTimeSlotFoodError?.visibility =
+            View.VISIBLE
         return true
     }
 
@@ -1117,5 +1311,23 @@ class CheckoutReturningUserCollectionFragment : Fragment(R.layout.fragment_check
     fun testSetStorePickupInfoResponse(mockStorePickupInfoResponse: ConfirmDeliveryAddressResponse) {
         storePickupInfoResponse = mockStorePickupInfoResponse
     }
-
+    fun getFirstAvailableFoodSlot(list: List<SortedFoodDeliverySlot>): Week? {
+        if (list.isNullOrEmpty()) {
+            return null
+        }
+        list.forEach { sortedFoodDeliverySlot ->
+            if (!sortedFoodDeliverySlot.week.isNullOrEmpty()) {
+                sortedFoodDeliverySlot.week?.forEach { weekDay ->
+                    if (!weekDay.slots.isNullOrEmpty()) {
+                        weekDay.slots?.forEach { slot ->
+                            if(slot.available == true) {
+                                return weekDay
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return null
+    }
 }

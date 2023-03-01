@@ -98,6 +98,7 @@ class AppConstant {
         //Absa cookie content
         const val ABSA_COOKIE_WFPT = "wfpt"
         const val ABSA_COOKIE_XFPT = "xfpt"
+        const val ABSA_COOKIE_JSESSIONID = "jsessionid"
 
         const val EMPTY_STRING = ""
 
@@ -123,6 +124,10 @@ class AppConstant {
         const val RESULT_CODE_DELETE_ACCOUNT = 444
         const val FIFTY=50
         const val TEN=10
+
+        // pargo store
+        const val TAG_CHANGEFULLFILMENT_COLLECTION_STORE_FRAGMENT: String = "ChangeFullfilmentCollectionStoreFragment"
+        const val TAG_FBH_CNC_FRAGMENT: String = "FBHCNC"
     }
 
     class Keys {

@@ -150,6 +150,7 @@ class RecyclerViewViewHolderItems(val itemBinding: ProductListingPageRowBinding)
             ImageManager.setPictureWithoutPlaceHolder(productListingPromotionalImage.imReward, imPromo?.wRewards ?: "")
             ImageManager.setPictureWithoutPlaceHolder(productListingPromotionalImage.imVitality, imPromo?.vitality ?: "")
             ImageManager.setPictureWithoutPlaceHolder(productListingPromotionalImage.imNewImage, imPromo?.newImage ?: "")
+            ImageManager.setPictureWithoutPlaceHolder(productListingPromotionalImage.imageWList, imPromo?.wList ?: "")
             if (VirtualTryOnUtil.isVtoConfigAvailable()) {
                 ImageManager.setPictureWithoutPlaceHolder(productListingPromotionalImage.imgTryItOn, virtualTryOn ?: "")
             }

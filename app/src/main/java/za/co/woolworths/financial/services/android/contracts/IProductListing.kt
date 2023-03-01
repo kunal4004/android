@@ -10,6 +10,7 @@ interface IProductListing {
     fun queryInventoryForStore(fulfilmentTypeId: String, addItemToCart: AddItemToCart?, productList: ProductList)
     fun addFoodProductTypeToCart(addItemToCart: AddItemToCart?)
     fun queryStoreFinderProductByFusedLocation(location: Location?)
+    fun openChangeFulfillmentScreen()
     /**
      * This function shows liquor dialog to select suburb with title "Show Liquor" and description fetched from mobile config [Configs.liquor.message].
      * It should only be shown if below conditions are met:
