@@ -1,6 +1,8 @@
 package za.co.woolworths.financial.services.android.enhancedSubstitution
 
 import android.content.Context
+import android.text.Html
+import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.TemporaryFreezeCartLayoutBinding
@@ -32,7 +34,7 @@ class EnhancedSubstitutionBottomSheetDialog @Inject constructor() :
         val binding = TemporaryFreezeCartLayoutBinding.inflate(dialog.layoutInflater, null, false)
 
         binding.imageIcon.setImageDrawable(bindDrawable(R.drawable.union_row))
-        binding.cancelTextView.text = context.getString(R.string.got_it_btn)
+        binding.cancelTextView.text = Html.fromHtml(context.getString(R.string.got_it_btn), HtmlCompat.FROM_HTML_MODE_LEGACY)
         binding.title.text = title
         binding.description.text = description
         binding.confirmFreezeCardButton.text = btnText
