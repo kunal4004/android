@@ -54,6 +54,7 @@ import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.ILocationProvider
 import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhancedSubstitutionBottomSheetDialog
+import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhancedSubstitutionListener
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
@@ -151,7 +152,8 @@ class ProductDetailsFragment :
     VtoSelectOptionListener, WMaterialShowcaseView.IWalkthroughActionListener, VtoTryAgainListener,
     View.OnTouchListener, ReviewThumbnailAdapter.ThumbnailClickListener,
     ViewTreeObserver.OnScrollChangedListener,
-    FoodProductNotAvailableForCollectionDialog.IProductNotAvailableForCollectionDialogListener{
+    FoodProductNotAvailableForCollectionDialog.IProductNotAvailableForCollectionDialogListener,
+    EnhancedSubstitutionListener{
 
     var productDetails: ProductDetails? = null
     private var subCategoryTitle: String? = null
@@ -4054,6 +4056,10 @@ class ProductDetailsFragment :
                     FoodProductNotAvailableForCollectionDialog::class.java.simpleName
                 )
         }
+    }
+
+    override fun openManageSubstituion() {
+       /*navigate to manage substitution screen*/
     }
 }
 
