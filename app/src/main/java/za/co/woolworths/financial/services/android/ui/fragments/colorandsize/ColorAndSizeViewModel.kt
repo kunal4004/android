@@ -43,7 +43,7 @@ class ColorAndSizeViewModel(
             val (hasColor, hasSize) = getColorAndSizeAvailability()
             getColorsList().collect {
                 _uiColorState.value = UiState.Success(
-                    isAvailable = hasColor,
+                    isAvailable = hasColor && it.isNotEmpty(),
                     data = it
                 )
             }
@@ -93,12 +93,26 @@ class ColorAndSizeViewModel(
         if (productItem == null) {
             setProductItem()
         }
-        val list = productItem?.otherSkus?.filter {
-            it.colour.equals(colour, ignoreCase = true)
-                    && !CONST_NO_SIZE.equals(it.size, ignoreCase = true)
-        }?.distinctBy {
-            it.size
-        } ?: emptyList()
+        val (hasColor, hasSize) = getColorAndSizeAvailability()
+        // If NoColorSizeVariant is the variant only distinct by size
+        val isNoColorSizeVariant = !hasColor && hasSize
+
+        var list: List<OtherSkus> = emptyList()
+        productItem?.otherSkus?.let { skuList ->
+            list = if (isNoColorSizeVariant) {
+                skuList.map { it.size = it.colour }
+                skuList.distinctBy {
+                    it.size
+                }
+            } else {
+                skuList.filter {
+                    it.colour.equals(colour, ignoreCase = false)
+                            && !CONST_NO_SIZE.equals(it.size, ignoreCase = true)
+                }.distinctBy {
+                    it.size
+                }
+            }
+        }
         emit(list)
     }.flowOn(Dispatchers.IO)
 

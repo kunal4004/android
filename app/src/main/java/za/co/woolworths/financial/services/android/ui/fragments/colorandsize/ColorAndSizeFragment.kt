@@ -54,7 +54,7 @@ class ColorAndSizeFragment : WBottomSheetDialogFragment(), ColorAndSizeListener 
                 when (state) {
                     UiState.Loading -> setSizeLayoutVisibility(GONE)
                     is UiState.Success -> {
-                        if (state.data.isEmpty()) {
+                        if (state.data.isEmpty() || !state.isAvailable) {
                             setSizeLayoutVisibility(GONE)
                             return@onEach
                         }
@@ -70,7 +70,7 @@ class ColorAndSizeFragment : WBottomSheetDialogFragment(), ColorAndSizeListener 
                 when (state) {
                     UiState.Loading -> setColorLayoutVisibility(GONE)
                     is UiState.Success -> {
-                        if (state.data.isEmpty()) {
+                        if (state.data.isEmpty() || !state.isAvailable) {
                             setColorLayoutVisibility(GONE)
                             return@onEach
                         }
@@ -253,6 +253,7 @@ class ColorAndSizeFragment : WBottomSheetDialogFragment(), ColorAndSizeListener 
         if (!isAdded) return
         with(binding.sizeColorSelectorLayout) {
             sizeSelectorLayout.visibility = visibility
+            divider2.visibility = if(colorSelectorLayout.visibility == VISIBLE) visibility else GONE
         }
     }
 
@@ -260,6 +261,7 @@ class ColorAndSizeFragment : WBottomSheetDialogFragment(), ColorAndSizeListener 
         if (!isAdded) return
         with(binding.sizeColorSelectorLayout) {
             colorSelectorLayout.visibility = visibility
+            divider1.visibility = GONE // always gone as per UI
         }
     }
 

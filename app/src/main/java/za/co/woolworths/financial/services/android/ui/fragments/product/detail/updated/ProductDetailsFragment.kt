@@ -1223,9 +1223,21 @@ class ProductDetailsFragment :
 
     private fun loadSizeAndColor() {
         if (hasColor)
-            binding.showColors()
+            binding?.showColors()
+        else {
+            binding?.sizeColorSelectorLayout?.apply {
+                colorSelectorLayout.visibility = View.GONE
+                divider1.visibility = View.GONE
+            }
+        }
         if (hasSize)
-            binding.showSize()
+            binding?.showSize()
+        else {
+            binding?.sizeColorSelectorLayout?.apply {
+                sizeSelectorLayout.visibility = View.GONE
+                divider2.visibility = View.GONE
+            }
+        }
 
         if (productDetailsPresenter?.isSizeGuideApplicable(
                 productDetails?.colourSizeVariants,
@@ -1268,6 +1280,7 @@ class ProductDetailsFragment :
             }
 
             colorSelectorLayout?.visibility = View.VISIBLE
+            divider1.visibility = View.VISIBLE
         }
     }
 
