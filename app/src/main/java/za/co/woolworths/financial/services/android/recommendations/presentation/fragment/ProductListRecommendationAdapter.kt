@@ -83,10 +83,8 @@ class ProductListRecommendationAdapter(
         productList.productName = productName
         productList.productType = productType
         productList.productVariants = productVariants
-        //productList.promotionImages = promotionImages
         productList.promotions = promotions?.toArrayList()
         productList.saveText = saveText
-        //productList.sku = sku
         productList.sku = productId
         productList.wasPrice = wasPrice?.toFloatOrZero()
         productList.averageRating = averageRating
