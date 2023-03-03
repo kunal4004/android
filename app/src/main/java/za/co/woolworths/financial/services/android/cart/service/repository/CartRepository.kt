@@ -201,6 +201,7 @@ class CartRepository @Inject constructor() {
             cartResponse.voucherDetails = data.voucherDetails
             cartResponse.productCountMap = data.productCountMap // set delivery location
             cartResponse.liquorOrder = data.liquorOrder
+            cartResponse.blackCardHolder = data.blackCardHolder
             cartResponse.noLiquorImageUrl = data.noLiquorImageUrl
             cartResponse.globalMessages = data.globalMessages
             cartResponse.jSessionId = data.jSessionId
