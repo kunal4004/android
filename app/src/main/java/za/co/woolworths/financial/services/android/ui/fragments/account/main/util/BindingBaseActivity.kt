@@ -30,7 +30,7 @@ abstract class BindingBaseActivity<B : ViewBinding>(val bindingFactory: (LayoutI
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
-        menu?.findItem(R.id.action_search)?.icon?.setTint(resources.getColor(R.color.white))
+        menu?.findItem(R.id.action_search)?.icon?.setTint(resources.getColor(R.color.black))
         return super.onPrepareOptionsMenu(menu)
     }
 
