@@ -187,7 +187,7 @@ class MyRecycleViewHolder(val mProductListingPageRowBinding: RecommendationsProd
         mProductListingPageRowBinding.apply {
             root.context?.apply {
                 productList?.apply {
-                    includeProductListingPriceLayout.imQuickShopAddToCartIcon?.visibility = View.GONE
+                    includeProductListingPriceLayout.imQuickShopAddToCartIcon.visibility = if (productType.equals(RecommendationFragment.ITEM_TYPE_FOOD, ignoreCase = true)) View.VISIBLE else View.GONE
                 }
             }
         }

@@ -8,6 +8,16 @@
     android:contentDescription="@string/plp_viewGroupItemsFound">
 
     <include
+        android:id="@+id/promotionalTextBannerLayout"
+        layout="@layout/promotional_text_plp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <include
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="gone"
@@ -15,7 +25,7 @@
         layout="@layout/chanel_view_seperator_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/promotionalTextBannerLayout" />
 
     <include
         android:visibility="gone"
