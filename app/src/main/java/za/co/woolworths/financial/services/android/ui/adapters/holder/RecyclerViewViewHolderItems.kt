@@ -38,6 +38,8 @@ class RecyclerViewViewHolderItems(val itemBinding: ProductListingPageRowBinding)
     private fun setOnClickListener(navigator: IProductListing, productList: ProductList) = itemBinding?.apply {
         tvProductName.setOnClickListener { navigator.openProductDetailView(productList) }
         mainImgLayout.setOnClickListener { navigator.openProductDetailView(productList) }
+        brandName.setOnClickListener { navigator.openProductDetailView(productList) }
+        tvRangeName.setOnClickListener { navigator.openProductDetailView(productList) }
     }
 
     private fun setProductName(productList: ProductList?) = itemBinding.apply {
