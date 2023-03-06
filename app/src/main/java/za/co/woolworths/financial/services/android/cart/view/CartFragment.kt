@@ -373,6 +373,15 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                         showMaxItemView()
                         return
                     }
+
+                    if (deliveryType == Delivery.DASH
+                        && WoolworthsApplication.getValidatePlaceDetails()?.deliverable == true
+                        && (WoolworthsApplication.getValidatePlaceDetails()?.onDemand?.firstAvailableFoodDeliveryTime.isNullOrEmpty()
+                                || WoolworthsApplication.getValidatePlaceDetails()?.onDemand?.deliveryTimeSlots?.isNullOrEmpty() == true)) {
+                        showNoTimeSlotsView()
+                        return
+                    }
+
                     // Go to Web checkout journey if...
                     if (nativeCheckout?.isNativeCheckoutEnabled == false) {
                         val openCheckOutActivity = Intent(context, CartCheckoutActivity::class.java)
@@ -1650,6 +1659,16 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             getString(R.string.unable_process_checkout_title),
             getString(R.string.got_it),
             R.drawable.payment_overdue_icon
+        )
+    }
+
+    private fun showNoTimeSlotsView() {
+        showGeneralInfoDialog(
+            requireActivity().supportFragmentManager,
+            getString(R.string.timeslot_title),
+            getString(R.string.timeslot_desc),
+            getString(R.string.got_it),
+            R.drawable.icon_dash_delivery_scooter
         )
     }
 

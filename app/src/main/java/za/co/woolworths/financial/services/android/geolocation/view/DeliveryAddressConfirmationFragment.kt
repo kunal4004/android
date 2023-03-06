@@ -929,7 +929,7 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
         var earliestDashDate =
             validateLocationResponse?.validatePlace?.onDemand?.firstAvailableFoodDeliveryTime
         if (earliestDashDate.isNullOrEmpty())
-            earliestDashDate = getString(R.string.earliest_delivery_no_date_available)
+            earliestDashDate = getString(R.string.no_timeslots_available_title)
         geoDeliveryView?.visibility = View.VISIBLE
         earliestDeliveryDashLabel?.text = requireContext().getString(R.string.earliest_dash_delivery_timeslot)
         setVisibilityDeliveryDates(null, null, earliestDashDate)

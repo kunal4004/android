@@ -474,7 +474,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
 
                                     val fulfillmentDeliveryLocation = Utils.getPreferredDeliveryLocation()
                                     val nickname =  validateLocationResponse?.validatePlace?.placeDetails?.nickname
-                                    fulfillmentDeliveryLocation.fulfillmentDetails.address?.nickname = nickname
+                                    fulfillmentDeliveryLocation?.fulfillmentDetails?.address?.nickname = nickname
                                     Utils.savePreferredDeliveryLocation(fulfillmentDeliveryLocation)
 
                                     updateCurrentTab(getDeliveryType()?.deliveryType)
@@ -1288,11 +1288,6 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                 return
             }
 
-            if (validateLocationResponse?.validatePlace?.onDemand?.firstAvailableFoodDeliveryTime?.isNullOrEmpty() == true) {
-                blackToolTipLayout.root.visibility = View.GONE
-                return
-            }
-
             blackToolTipLayout.root.visibility = View.VISIBLE
             if (getDeliveryType() == null || Delivery.getType(getDeliveryType()?.deliveryType)?.type == Delivery.DASH.type) {
                 blackToolTipLayout.changeButtonLayout?.visibility = View.GONE
@@ -1302,8 +1297,9 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
             }
             KotlinUtils.fullfillmentTypeClicked = Delivery.DASH.name
             validateLocationResponse?.validatePlace?.let {
-                blackToolTipLayout.deliveryCollectionTitle?.text =
-                    getString(R.string.next_dash_delivery_timeslot_text)
+
+                val timeSlots = it?.onDemand?.deliveryTimeSlots
+
                 blackToolTipLayout.foodItemTitle?.visibility = View.GONE
                 blackToolTipLayout.fashionItemDateText?.visibility = View.GONE
                 blackToolTipLayout.deliveryIconLayout?.visibility = View.VISIBLE
@@ -1312,8 +1308,18 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                 blackToolTipLayout.deliveryIcon?.visibility = View.VISIBLE
                 blackToolTipLayout.deliveryFeeText?.visibility = View.VISIBLE
 
-                blackToolTipLayout.foodItemDateText?.text =
-                    it.onDemand?.firstAvailableFoodDeliveryTime
+                if (timeSlots?.isNullOrEmpty() == true && it?.onDemand?.deliverable == true) {
+                    blackToolTipLayout.deliveryCollectionTitle?.text =
+                        getString(R.string.no_timeslots_available_title)
+                    blackToolTipLayout.foodItemDateText?.text =
+                        getString(R.string.timeslot_desc)
+                } else {
+                    blackToolTipLayout.deliveryCollectionTitle?.text =
+                        getString(R.string.next_dash_delivery_timeslot_text)
+                    blackToolTipLayout.foodItemDateText?.text =
+                        it.onDemand?.firstAvailableFoodDeliveryTime
+                }
+
                 blackToolTipLayout.cartIcon?.setImageResource(R.drawable.icon_cart_white)
                 blackToolTipLayout.deliveryIcon?.setImageResource(R.drawable.icon_scooter_white)
                 blackToolTipLayout.bubbleLayout?.setArrowDirection(ArrowDirection.TOP)
