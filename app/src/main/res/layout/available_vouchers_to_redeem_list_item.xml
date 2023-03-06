@@ -65,7 +65,7 @@
 
     <TextView
         android:id="@+id/voucherDescription"
-        style="@style/open_sens_regular"
+        style="@style/opensens_regular"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/five_dp"
@@ -80,7 +80,7 @@
 
     <TextView
         android:id="@+id/errorMessage"
-        style="@style/open_sens_regular"
+        style="@style/opensens_regular"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/five_dp"
@@ -94,7 +94,7 @@
 
     <TextView
         android:id="@+id/expireVoucherDate"
-        style="@style/open_sens_regular"
+        style="@style/opensens_regular"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textSize="@dimen/twelve_sp"

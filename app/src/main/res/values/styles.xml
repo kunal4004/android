@@ -3110,27 +3110,27 @@
         <item name="WTextView_font">myriadpro_regular</item>
     </style>
 
-    <style name="open_sens_medium" >
+    <style name="opensens_medium" >
         <item name="android:fontFamily">@font/open_sans_medium</item>
     </style>
 
-    <style name="open_sens_semi_bold" >
+    <style name="opensens_semi_bold" >
         <item name="android:fontFamily">@font/open_sans_semi_bold</item>
     </style>
 
-    <style name="open_sens_bold" >
+    <style name="opensens_bold" >
         <item name="android:fontFamily">@font/open_sans_bold</item>
     </style>
 
-    <style name="open_sens_regular" >
+    <style name="opensens_regular" >
         <item name="android:fontFamily">@font/open_sans_regular</item>
     </style>
 
-    <style name="open_sens_light" >
+    <style name="opensens_light" >
         <item name="android:fontFamily">@font/open_sans_light</item>
     </style>
 
-    <style name="open_sans_extra_bold" >
+    <style name="opensans_extra_bold" >
         <item name="android:fontFamily">@font/open_sans_extra_bold</item>
     </style>
 
