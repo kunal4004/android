@@ -53,6 +53,8 @@ import za.co.woolworths.financial.services.android.common.SingleMessageCommonToa
 import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.ILocationProvider
+import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhancedSubstitutionBottomSheetDialog
+import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhancedSubstitutionListener
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
@@ -136,6 +138,7 @@ import java.io.File
 import javax.inject.Inject
 import kotlin.collections.get
 import kotlin.collections.set
+import kotlin.jvm.internal.Intrinsics.Kotlin
 
 
 @AndroidEntryPoint
@@ -149,7 +152,8 @@ class ProductDetailsFragment :
     VtoSelectOptionListener, WMaterialShowcaseView.IWalkthroughActionListener, VtoTryAgainListener,
     View.OnTouchListener, ReviewThumbnailAdapter.ThumbnailClickListener,
     ViewTreeObserver.OnScrollChangedListener,
-    FoodProductNotAvailableForCollectionDialog.IProductNotAvailableForCollectionDialogListener{
+    FoodProductNotAvailableForCollectionDialog.IProductNotAvailableForCollectionDialogListener,
+    EnhancedSubstitutionListener{
 
     var productDetails: ProductDetails? = null
     private var subCategoryTitle: String? = null
@@ -243,6 +247,10 @@ class ProductDetailsFragment :
     @Inject
     lateinit var vtoSavedPhotoToast: SingleMessageCommonToast
 
+
+    @Inject
+    lateinit var enhancedSubstitutionBottomSheetDialog: EnhancedSubstitutionBottomSheetDialog
+
     companion object {
         const val INDEX_STORE_FINDER = 1
         const val INDEX_ADD_TO_CART = 2
@@ -293,6 +301,22 @@ class ProductDetailsFragment :
         setUniqueIds()
         productDetails?.let { addViewItemEvent(it) }
         setUpCartCountPDP()
+
+    }
+
+    fun showEnhancedSubstitutionDialog() {
+        if (SessionUtilities.getInstance().isUserAuthenticated
+            && Utils.isEnhanceSubstitutionFeatureShown() == false
+            && KotlinUtils.getDeliveryType()?.deliveryType == Delivery.DASH.type
+        ) {
+            enhancedSubstitutionBottomSheetDialog.showEnhancedSubstitionBottomSheetDialog(
+                this@ProductDetailsFragment,
+                requireActivity(),
+                getString(R.string.enhanced_substitution_title),
+                getString(R.string.enhanced_substitution_desc),
+                getString(R.string.enhanced_substitution_btn)
+            )
+        }
     }
 
     private fun setUpCartCountPDP() {
@@ -1040,6 +1064,8 @@ class ProductDetailsFragment :
         otherSKUsByGroupKey = this.productDetails?.otherSkus.let { groupOtherSKUsByColor(it) }
         this.defaultSku = getDefaultSku(otherSKUsByGroupKey)
 
+
+
         if (productDetails?.isLiquor == true && !KotlinUtils.isCurrentSuburbDeliversLiquor() && !KotlinUtils.isLiquorModalShown()) {
             KotlinUtils.setLiquorModalShown()
             showLiquorDialog()
@@ -1456,6 +1482,36 @@ class ProductDetailsFragment :
                     }
                 } else {
                     hideRatingAndReview()
+                }
+            }
+
+
+
+            if (!isAllProductsOutOfStock() && isInventoryCalled) {
+                showEnhancedSubstitutionDialog()
+            }
+
+
+            binding?.productDetailOptionsAndInformation?.substitutionLayout?.apply {
+                if (SessionUtilities.getInstance().isUserAuthenticated
+                    && KotlinUtils.getDeliveryType()?.deliveryType == Delivery.DASH.type
+                ) {
+                    this?.root?.visibility = View.VISIBLE
+                } else {
+                    this.root?.visibility = View.GONE
+                }
+
+                if (isAllProductsOutOfStock() && isInventoryCalled) {
+                    this.txtSubstitutionEdit?.background = resources.getDrawable(R.drawable.grey_background_with_corner_5)
+                }
+
+                this.txtSubstitutionEdit?.setOnClickListener {
+                    if (isAllProductsOutOfStock() && isInventoryCalled) {
+                        /*pop up for out of stock*/
+                        productOutOfStockErrorMessage(true)
+                    } else {
+                        /*navigate to manage substitution screen*/
+                    }
                 }
             }
 
@@ -2905,8 +2961,8 @@ class ProductDetailsFragment :
         return isAllProductsOutOfStock
     }
 
-    private fun productOutOfStockErrorMessage() {
-        if (!isOutOfStockFragmentAdded) {
+    private fun productOutOfStockErrorMessage(isClickOnChangeButton:Boolean = false) {
+        if (!isOutOfStockFragmentAdded || isClickOnChangeButton) {
             isOutOfStockFragmentAdded = true
             updateAddToCartButtonForSelectedSKU()
             try {
@@ -4002,6 +4058,8 @@ class ProductDetailsFragment :
         }
     }
 
-
+    override fun openManageSubstituion() {
+       /*navigate to manage substitution screen*/
+    }
 }
 
