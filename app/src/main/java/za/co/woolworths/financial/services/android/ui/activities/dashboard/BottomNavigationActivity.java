@@ -460,9 +460,9 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
     @Override
     public void bottomNavConfig() {
-        Typeface tfMyriadProT = Typeface.createFromAsset(getAssets(), "fonts/MyriadPro-Regular.otf");
+        Typeface tfMyriadProT = Typeface.createFromAsset(getAssets(), "fonts/OpenSans-SemiBold.ttf");
         getBottomNavigationById().setTypeface(tfMyriadProT);
-        getBottomNavigationById().setTextSize(12);
+        getBottomNavigationById().setTextSize(10);
         // set icon size
         int iconSize = 28;
         getBottomNavigationById().setIconSize(iconSize, iconSize);

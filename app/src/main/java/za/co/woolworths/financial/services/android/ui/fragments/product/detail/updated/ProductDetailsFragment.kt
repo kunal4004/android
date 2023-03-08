@@ -86,6 +86,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.detail.I
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.OutOfStockMessageDialogFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.size_guide.SkinProfileDialog
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment.Companion.SET_DELIVERY_LOCATION_REQUEST_CODE
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.FoodProductNotAvailableForCollectionDialog
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.ProductNotAvailableForCollectionDialog
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.BaseProductUtils
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.ColourSizeVariants
@@ -131,7 +132,6 @@ import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBind
 import za.co.woolworths.financial.services.android.util.pickimagecontract.PickImageFileContract
 import za.co.woolworths.financial.services.android.util.pickimagecontract.PickImageGalleryContract
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
-import za.co.woolworths.financial.services.android.ui.fragments.product.shop.FoodProductNotAvailableForCollectionDialog
 import java.io.File
 import javax.inject.Inject
 import kotlin.collections.get
@@ -296,12 +296,19 @@ class ProductDetailsFragment :
     }
 
     private fun setUpCartCountPDP() {
+        val cartIconMargin = requireContext().resources.getDimensionPixelSize(R.dimen.five_dp)
+        val params = ConstraintLayout.LayoutParams(
+            ConstraintLayout.LayoutParams.WRAP_CONTENT,
+            ConstraintLayout.LayoutParams.WRAP_CONTENT
+        )
         if (SessionUtilities.getInstance().isUserAuthenticated && QueryBadgeCounter.instance.cartCount <= 0) {
             binding.openCart.cartCountTextView?.visibility = View.GONE
         } else if (SessionUtilities.getInstance().isUserAuthenticated && QueryBadgeCounter.instance.cartCount > 0) {
             binding.openCart.cartCountTextView?.visibility = View.VISIBLE
             binding.openCart.cartCountTextView?.text =
                 QueryBadgeCounter.instance.cartCount.toString()
+            params.setMargins(cartIconMargin, 0, 0, 0)
+            binding.openCart.cartCountImage.setLayoutParams(params)
         }
     }
 
