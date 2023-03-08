@@ -10,6 +10,7 @@ data class Event(
     val pageType: String?,
     val categories: List<String>?,
     val products: List<ProductX>?,
-    val cartLines: List<CartProducts?>?
-
+    val cartLines: List<CartProducts?>?,
+    val orderId: String? = null,
+    val purchaseLines: List<CartProducts?>? = null,
 ) : Parcelable

@@ -140,11 +140,12 @@
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/vouchersSubTitle"
+                style="@style/opensens_regular"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/sixteen_dp"
-                android:fontFamily="@font/myriad_pro_regular"
-                android:lineSpacingMultiplier="1.33"
+                android:lineSpacingMultiplier="1"
+                android:lineSpacingExtra="@dimen/two_sp"
                 android:textColor="@color/color_444444"
                 android:textSize="@dimen/thirteen_sp"
                 app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
