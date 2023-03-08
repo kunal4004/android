@@ -28,10 +28,12 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.core.os.bundleOf
 import androidx.fragment.app.*
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.ProductDetailsFragmentBinding
@@ -61,6 +63,8 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
+import za.co.woolworths.financial.services.android.recommendations.data.response.request.ProductX
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.MultipleImageActivity
@@ -82,6 +86,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.detail.I
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.OutOfStockMessageDialogFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.size_guide.SkinProfileDialog
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment.Companion.SET_DELIVERY_LOCATION_REQUEST_CODE
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.FoodProductNotAvailableForCollectionDialog
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.ProductNotAvailableForCollectionDialog
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.BaseProductUtils
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.ColourSizeVariants
@@ -127,7 +132,6 @@ import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBind
 import za.co.woolworths.financial.services.android.util.pickimagecontract.PickImageFileContract
 import za.co.woolworths.financial.services.android.util.pickimagecontract.PickImageGalleryContract
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
-import za.co.woolworths.financial.services.android.ui.fragments.product.shop.FoodProductNotAvailableForCollectionDialog
 import java.io.File
 import javax.inject.Inject
 import kotlin.collections.get
@@ -292,12 +296,19 @@ class ProductDetailsFragment :
     }
 
     private fun setUpCartCountPDP() {
+        val cartIconMargin = requireContext().resources.getDimensionPixelSize(R.dimen.five_dp)
+        val params = ConstraintLayout.LayoutParams(
+            ConstraintLayout.LayoutParams.WRAP_CONTENT,
+            ConstraintLayout.LayoutParams.WRAP_CONTENT
+        )
         if (SessionUtilities.getInstance().isUserAuthenticated && QueryBadgeCounter.instance.cartCount <= 0) {
             binding.openCart.cartCountTextView?.visibility = View.GONE
         } else if (SessionUtilities.getInstance().isUserAuthenticated && QueryBadgeCounter.instance.cartCount > 0) {
             binding.openCart.cartCountTextView?.visibility = View.VISIBLE
             binding.openCart.cartCountTextView?.text =
                 QueryBadgeCounter.instance.cartCount.toString()
+            params.setMargins(cartIconMargin, 0, 0, 0)
+            binding.openCart.cartCountImage.setLayoutParams(params)
         }
     }
 
@@ -1108,6 +1119,38 @@ class ProductDetailsFragment :
             productOutOfStockErrorMessage()
         } else {
             showErrorWhileLoadingProductDetails()
+        }
+        sendRecommendationsDetail()
+    }
+
+    private fun sendRecommendationsDetail() {
+        val bundle = Bundle()
+        val productX = ProductX(productDetails?.productId.toString())
+        bundle.putParcelable(
+            BundleKeysConstants.RECOMMENDATIONS_EVENT_DATA, Event(
+                eventType = "monetate:context:PageView", url = "/pdp", pageType = "pdp", categories = listOf(), null, null
+            )
+        )
+
+        bundle.putParcelable(
+            BundleKeysConstants.RECOMMENDATIONS_EVENT_DATA_TYPE, Event(eventType = "monetate:context:ProductDetailView", null, null, null,
+                products = listOf(productX), cartLines = listOf()
+            )
+        )
+
+        val navHostFragment =
+            childFragmentManager.findFragmentById(R.id.navHostRecommendation) as NavHostFragment
+        val navController = navHostFragment?.navController
+        val navGraph = navController?.navInflater?.inflate(R.navigation.nav_recommendation_graph)
+
+        navGraph?.startDestination = R.id.recommendationFragment
+        navGraph?.let {
+            navController?.graph = it
+        }
+        navGraph?.let {
+            navController?.setGraph(
+                it, bundleOf("bundle" to bundle)
+            )
         }
     }
 
@@ -2778,7 +2821,7 @@ class ProductDetailsFragment :
                     if (!it.vitality.isNullOrEmpty()) images.add(it.vitality ?: "")
                     if (!it.newImage.isNullOrEmpty()) images.add(it.newImage ?: "")
                     if (!it.reduced.isNullOrEmpty()) images.add(it.reduced ?: "")
-
+                    if (!it.wList.isNullOrEmpty()) images.add(it.wList ?: "")
                 }
 
                 priceLayout.promotionalImages?.removeAllViews()

@@ -70,6 +70,7 @@
             android:layout_marginStart="@dimen/twenty_dp"
             android:layout_marginTop="@dimen/ten_dp"
             android:background="@color/white"
+            android:lineSpacingMultiplier="1.5"
             android:paddingTop="@dimen/one_dp"
             android:paddingBottom="@dimen/one_dp"
             android:text="@string/driver_tip_note"

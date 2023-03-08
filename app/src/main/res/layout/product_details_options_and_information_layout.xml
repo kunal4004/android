@@ -245,6 +245,16 @@
         <ImageView style="@style/card_item_end_icon_style" />
     </RelativeLayout>
 
+    <include
+        android:id="@+id/layoutRecommendationContainer"
+        layout="@layout/recommendation_fragment_container_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/eight_dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/productIngredientsInformation" />
+
     <RelativeLayout
         android:id="@+id/headerCustomerReview"
         style="@style/card_items_header_layout_style"
@@ -252,7 +262,7 @@
         android:layout_marginTop="@dimen/eight_dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/productIngredientsInformation">
+        app:layout_constraintTop_toBottomOf="@id/layoutRecommendationContainer">
 
         <TextView
             android:id="@+id/tvCustomerReviewCount"
