@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/imgBack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/twenty_four_dp"
+        android:layout_marginTop="@dimen/twenty_four_dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:src="@drawable/back24" />
+
+    <TextView
+        android:id="@+id/txtManageTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/twenty_four_dp"
+        android:layout_marginTop="@dimen/thirty_two_dp"
+        android:fontFamily="@font/futura_bold_ttf"
+        android:lineHeight="@dimen/_27sdp"
+        android:text="@string/enhanced_substitution_btn"
+        android:textColor="@color/black"
+        android:textSize="@dimen/text_size_18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imgBack" />
+
+    <RadioGroup
+        android:id="@+id/radioGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/twenty_four_dp"
+        android:layout_marginTop="@dimen/sixteen_dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtManageTitle">
+
+        <RadioButton
+            android:id="@+id/rbShopperChoose"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checked="false"
+            android:textColor="@color/black"
+            android:text="@string/let_my_shooper_choose_for_me"
+            android:textSize="@dimen/_13sdp" />
+
+        <RadioButton
+            android:id="@+id/rbOwnSubstitute"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checked="false"
+            android:layout_marginTop="@dimen/twenty_dp"
+            android:textColor="@color/black"
+            android:text="@string/choose_substitute"
+            android:textSize="@dimen/_13sdp" />
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/tvSearchProduct"
+        android:layout_width="@dimen/zero_dp"
+        android:layout_height="@dimen/fourty_dp"
+        android:layout_marginStart="@dimen/sixteen_dp"
+        android:layout_marginTop="@dimen/fourty_three_dp"
+        android:layout_marginEnd="@dimen/sixteen_dp"
+        android:background="@drawable/bg_search_corner_4"
+        android:drawablePadding="@dimen/twelve_dp"
+        android:fontFamily="@font/myriad_pro_regular"
+        android:gravity="center_vertical"
+        android:hint="@string/search_alternative_product"
+        android:padding="@dimen/twelve_dp"
+        android:textColor="@color/color_9D9D9D"
+        android:textColorHint="@color/product_search_hint"
+        android:textSize="@dimen/fourteen_sp"
+        android:drawableStart="@drawable/ic_search"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
+
+
+    <Button
+        android:id="@+id/btnConfirm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/twenty_four_dp"
+        android:layout_marginEnd="@dimen/twenty_four_dp"
+        android:layout_marginBottom="@dimen/twenty_four_dp"
+        android:background="@drawable/black_background_with_corner_5"
+        android:text="@string/confirm"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toTopOf="@+id/dontWantText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/dontWantText"
+        android:layout_width="@dimen/zero_dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/twenty_four_dp"
+        android:layout_marginEnd="@dimen/twenty_four_dp"
+        android:layout_marginBottom="@dimen/thirty_six_dp"
+        android:gravity="center"
+        android:text="@string/dont_want_substitute"
+        android:textAllCaps="true"
+        android:textColor="@color/color_666666"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

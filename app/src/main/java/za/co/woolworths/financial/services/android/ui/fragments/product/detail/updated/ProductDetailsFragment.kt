@@ -1511,6 +1511,7 @@ class ProductDetailsFragment :
                         productOutOfStockErrorMessage(true)
                     } else {
                         /*navigate to manage substitution screen*/
+                        (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(ManageSubstitutionFragment())
                     }
                 }
             }
