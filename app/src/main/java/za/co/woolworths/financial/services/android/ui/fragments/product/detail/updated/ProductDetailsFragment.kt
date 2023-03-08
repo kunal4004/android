@@ -53,8 +53,10 @@ import za.co.woolworths.financial.services.android.common.SingleMessageCommonToa
 import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.ILocationProvider
+import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhancedSubstituionManageDialogListener
 import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhancedSubstitutionBottomSheetDialog
 import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhancedSubstitutionListener
+import za.co.woolworths.financial.services.android.enhancedSubstitution.managesubstitution.ManageSubstitutionFragment
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
@@ -153,7 +155,7 @@ class ProductDetailsFragment :
     View.OnTouchListener, ReviewThumbnailAdapter.ThumbnailClickListener,
     ViewTreeObserver.OnScrollChangedListener,
     FoodProductNotAvailableForCollectionDialog.IProductNotAvailableForCollectionDialogListener,
-    EnhancedSubstitutionListener{
+    EnhancedSubstitutionListener {
 
     var productDetails: ProductDetails? = null
     private var subCategoryTitle: String? = null
@@ -1511,7 +1513,9 @@ class ProductDetailsFragment :
                         productOutOfStockErrorMessage(true)
                     } else {
                         /*navigate to manage substitution screen*/
-                        (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(ManageSubstitutionFragment())
+                        (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
+                            ManageSubstitutionFragment()
+                        )
                     }
                 }
             }
