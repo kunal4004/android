@@ -1665,8 +1665,8 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     private fun showNoTimeSlotsView() {
         showGeneralInfoDialog(
             requireActivity().supportFragmentManager,
-            getString(R.string.timeslot_title),
             getString(R.string.timeslot_desc),
+            getString(R.string.timeslot_title),
             getString(R.string.got_it),
             R.drawable.icon_dash_delivery_scooter
         )

@@ -1332,10 +1332,16 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                     R.string.dash_item_limit,
                     it.onDemand?.quantityLimit?.foodMaximumQuantity
                 )
-                blackToolTipLayout.deliveryFeeText?.text = resources.getString(
-                    R.string.dash_delivery_fee,
-                    it.onDemand?.firstAvailableFoodDeliveryCost
-                )
+
+                if (it.onDemand?.firstAvailableFoodDeliveryTime?.isNullOrEmpty() == true) {
+                    blackToolTipLayout?.deliveryIconLayout?.visibility = View.GONE
+                } else {
+                    blackToolTipLayout?.deliveryIconLayout?.visibility = View.VISIBLE
+                    blackToolTipLayout.deliveryFeeText?.text = resources.getString(
+                        R.string.dash_delivery_fee,
+                        it.onDemand?.firstAvailableFoodDeliveryCost
+                    )
+                }
             }
         }
     }
