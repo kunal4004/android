@@ -3,15 +3,11 @@ package za.co.woolworths.financial.services.android.geolocation
 import android.os.Bundle
 import android.view.View
 import androidx.annotation.IdRes
-import androidx.core.os.bundleOf
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
-import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
 import za.co.woolworths.financial.services.android.geolocation.network.model.Store
-import za.co.woolworths.financial.services.android.util.BundleKeysConstants
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 
