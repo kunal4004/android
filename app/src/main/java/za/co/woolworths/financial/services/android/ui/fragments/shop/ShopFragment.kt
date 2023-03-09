@@ -1139,12 +1139,16 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
             validateLocationResponse?.validatePlace?.let {
                 blackToolTipLayout.fashionItemDateText?.visibility = View.VISIBLE
                 blackToolTipLayout.foodItemTitle?.visibility = View.VISIBLE
+                blackToolTipLayout.foodItemDateText?.visibility = View.VISIBLE
                 blackToolTipLayout.fashionItemTitle?.visibility = View.VISIBLE
                 blackToolTipLayout.deliveryIconLayout?.visibility = View.GONE
+
+                blackToolTipLayout.fashionItemTitle?.text = getString(R.string.fashion_beauty_home)
 
                 if (it.firstAvailableFoodDeliveryDate?.isNullOrEmpty() == true) {
                     blackToolTipLayout.deliveryCollectionTitle?.visibility = View.GONE
                     blackToolTipLayout.foodItemDateText?.visibility = View.GONE
+                    blackToolTipLayout.foodItemTitle?.visibility = View.GONE
                 }
 
                 if (it.firstAvailableOtherDeliveryDate?.isNullOrEmpty() == true) {
@@ -1288,6 +1292,12 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                 return
             }
 
+            if (validateLocationResponse?.validatePlace?.onDemand?.firstAvailableFoodDeliveryTime?.isNullOrEmpty() == true
+                && Delivery.getType(getDeliveryType()?.deliveryType)?.type != Delivery.DASH.type) {
+                blackToolTipLayout.root.visibility = View.GONE
+                return
+            }
+
             blackToolTipLayout.root.visibility = View.VISIBLE
             if (getDeliveryType() == null || Delivery.getType(getDeliveryType()?.deliveryType)?.type == Delivery.DASH.type) {
                 blackToolTipLayout.changeButtonLayout?.visibility = View.GONE
@@ -1310,14 +1320,19 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
 
                 if (timeSlots?.isNullOrEmpty() == true && it?.onDemand?.deliverable == true) {
                     blackToolTipLayout.deliveryCollectionTitle?.text =
-                        getString(R.string.no_timeslots_available_title)
+                        getString(R.string.next_dash_delivery_timeslot_text)
+                    blackToolTipLayout.foodItemDateText?.visibility = View.VISIBLE
                     blackToolTipLayout.foodItemDateText?.text =
-                        getString(R.string.timeslot_desc)
+                        getString(R.string.no_timeslots_available_title)
+                    blackToolTipLayout.fashionItemTitle.visibility = View.VISIBLE
+                    blackToolTipLayout.fashionItemTitle.text = getString(R.string.timeslot_desc)
                 } else {
                     blackToolTipLayout.deliveryCollectionTitle?.text =
                         getString(R.string.next_dash_delivery_timeslot_text)
+                    blackToolTipLayout.foodItemDateText?.visibility = View.VISIBLE
                     blackToolTipLayout.foodItemDateText?.text =
                         it.onDemand?.firstAvailableFoodDeliveryTime
+                    blackToolTipLayout.fashionItemTitle.visibility = View.GONE
                 }
 
                 blackToolTipLayout.cartIcon?.setImageResource(R.drawable.icon_cart_white)
