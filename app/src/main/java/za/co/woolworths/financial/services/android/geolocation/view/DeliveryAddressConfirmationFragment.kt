@@ -325,27 +325,9 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
             IS_COMING_CONFIRM_ADD, false)
         bundle?.putString(DELIVERY_TYPE, deliveryType)
 
-        findNavController().navigateSafe(
-            R.id.action_deliveryAddressConfirmationFragment_to_clickAndCollectStoresFragment,
-            bundleOf(BUNDLE to bundle)
-        )
-    }
-
-    private fun NavController.navigateSafe(@IdRes actionId: Int, args: Bundle?) {
-        currentDestination?.let { currentDestination ->
-            val navAction = currentDestination.getAction(actionId)
-            // to navigate successfully certain action should be explicitly stated in nav graph
-            if (navAction != null) {
-                val destinationId = navAction.destinationId
-                if (destinationId != 0) {
-                    val currentNode = currentDestination as? NavGraph ?: currentDestination.parent
-                    if (currentNode?.id == destinationId ||
-                            currentNode?.findNode(destinationId) != null
-                    ) {
-                        navigate(actionId, args, null)
-                    }
-                }
-            }
+        view?.let {
+            GeoUtils.navigateSafe(it, R.id.action_deliveryAddressConfirmationFragment_to_clickAndCollectStoresFragment,
+                bundleOf(BUNDLE to bundle))
         }
     }
 
