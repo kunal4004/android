@@ -97,6 +97,7 @@ import za.co.woolworths.financial.services.android.util.wenum.Delivery.Companion
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.CartProducts
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
 import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationEventHandler
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants
 import java.net.ConnectException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
@@ -1083,8 +1084,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
 
         cartItems?.forEach { item ->
             cartLinesValue.addAll(item.commerceItems.map {
-                CartProducts(
-                    it.commerceItemInfo.productId, it.commerceItemInfo.quantity, null, null, null)
+                CartProducts(it.commerceItemInfo.productId, it.commerceItemInfo.quantity, it.priceInfo.amount, it.commerceItemInfo.catalogRefId, Constants.CURRENCY_VALUE)
             })
         }
 
