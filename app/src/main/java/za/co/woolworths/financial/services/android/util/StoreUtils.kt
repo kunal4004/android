@@ -1,8 +1,6 @@
 package za.co.woolworths.financial.services.android.util
 
 import za.co.woolworths.financial.services.android.geolocation.network.model.Store
-import java.util.ArrayList
-import java.util.HashMap
 
 class StoreUtils {
     companion object {
@@ -17,20 +15,40 @@ class StoreUtils {
             CLOTHING_ITEMS("02"),
             CRG_ITEMS("07")
         }
-        fun sortedStoreList(address: List<Store>?): List<Store> {
-            val storeArrayList = ArrayList(address)
-            val sortRoles: HashMap<String, Int> = hashMapOf(
-                    StoreDeliveryType.OTHER.type.lowercase() to 0,
-                    StoreDeliveryType.FOOD.type.lowercase() to 1,
-                    StoreDeliveryType.FOOD_AND_OTHER.type.lowercase() to 2
-            )
-            val comparator = Comparator { s1: Store, s2: Store ->
-                return@Comparator sortRoles[s2.storeDeliveryType?.lowercase()]?.let { sortRoles[s1.storeDeliveryType?.lowercase()]?.minus(it) }
-                        ?: -1
+
+        /*
+        Filtering  the List based on  Delivery Type
+        Under Fbh stores section Woolies stores adding first and after adding Pargo Stores.
+         */
+
+        fun sortedStoreList(address: List<Store>?): List<Store>? {
+            val storeArrayList = ArrayList<Store>()
+            var wwFbhStoreFilterList: List<Store>? =
+                address?.filter { s -> s.storeDeliveryType.equals(StoreDeliveryType.OTHER.type) && s.locationId?.isEmpty() == true }
+                    ?.sortedBy { it.distance }
+            var pargoStoreFilterList: List<Store>? =
+                address?.filter { s -> s.storeDeliveryType.equals(StoreDeliveryType.OTHER.type) && s.locationId?.isEmpty() == false }
+                    ?.sortedBy { it.distance }
+            var foodStoreFilterList: List<Store>? =
+                address?.filter { s -> s.storeDeliveryType.equals(StoreDeliveryType.FOOD.type) }
+                    ?.sortedBy { it.distance }
+            var mixedBasketFilterList: List<Store>? =
+                address?.filter { s -> s.storeDeliveryType.equals(StoreDeliveryType.FOOD_AND_OTHER.type) }
+                    ?.sortedBy { it.distance }
+            if (!wwFbhStoreFilterList.isNullOrEmpty()) {
+                storeArrayList.addAll(wwFbhStoreFilterList)
             }
-            val sortedStoreList = arrayListOf<Store>().apply { addAll(storeArrayList) }
-            sortedStoreList.sortWith(comparator)
-            return sortedStoreList
+
+            if (!pargoStoreFilterList.isNullOrEmpty()) {
+                storeArrayList.addAll(pargoStoreFilterList)
+            }
+            if (!foodStoreFilterList.isNullOrEmpty()) {
+                storeArrayList.addAll(foodStoreFilterList)
+            }
+            if (!mixedBasketFilterList.isNullOrEmpty()) {
+                storeArrayList.addAll(mixedBasketFilterList)
+            }
+            return storeArrayList
         }
 
         fun getStoresListWithHeaders(addressList: List<Store>?): List<StoreListRow> {
