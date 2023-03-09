@@ -12,6 +12,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.ActivityCheckoutBinding
+import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.SAVED_ADDRESS_KEY
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment.Companion.DASH_SLOT_SELECTION
@@ -35,6 +36,7 @@ import za.co.woolworths.financial.services.android.util.Constant.Companion.NO_LI
 /**
  * Created by Kunal Uttarwar on 26/05/21.
  */
+@AndroidEntryPoint
 class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
 
     private lateinit var binding: ActivityCheckoutBinding
