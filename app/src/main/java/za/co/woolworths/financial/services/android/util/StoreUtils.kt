@@ -24,10 +24,10 @@ class StoreUtils {
         fun sortedStoreList(address: List<Store>?): List<Store>? {
             val storeArrayList = ArrayList<Store>()
             var wwFbhStoreFilterList: List<Store>? =
-                address?.filter { s -> s.storeDeliveryType.equals(StoreDeliveryType.OTHER.type) && s.locationId?.isEmpty() == true }
+                address?.filter { s -> s.storeDeliveryType.equals(StoreDeliveryType.OTHER.type) && s.storeName?.lowercase()?.contains(Constant.PARGO)==false}
                     ?.sortedBy { it.distance }
             var pargoStoreFilterList: List<Store>? =
-                address?.filter { s -> s.storeDeliveryType.equals(StoreDeliveryType.OTHER.type) && s.locationId?.isEmpty() == false }
+                address?.filter { s -> s.storeDeliveryType.equals(StoreDeliveryType.OTHER.type) && s.storeName?.lowercase()?.contains(Constant.PARGO)==true}
                     ?.sortedBy { it.distance }
             var foodStoreFilterList: List<Store>? =
                 address?.filter { s -> s.storeDeliveryType.equals(StoreDeliveryType.FOOD.type) }
