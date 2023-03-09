@@ -339,7 +339,7 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
                 val destinationId = navAction.destinationId
                 if (destinationId != 0) {
                     val currentNode = currentDestination as? NavGraph ?: currentDestination.parent
-                    if (currentNode?.id == destinationId ||   //  <--------- THIS CONDITION IS THE KEY
+                    if (currentNode?.id == destinationId ||
                             currentNode?.findNode(destinationId) != null
                     ) {
                         navigate(actionId, args, null)
