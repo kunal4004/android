@@ -7,6 +7,7 @@ import android.graphics.Typeface
 import android.os.Bundle
 import android.view.View
 import androidx.annotation.DrawableRes
+import androidx.annotation.IdRes
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatTextView
@@ -16,6 +17,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavController
+import androidx.navigation.NavGraph
 import androidx.navigation.fragment.findNavController
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.GeoLocationDeliveryAddressBinding
@@ -321,10 +324,29 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
         bundle?.putBoolean(
             IS_COMING_CONFIRM_ADD, false)
         bundle?.putString(DELIVERY_TYPE, deliveryType)
-        findNavController().navigate(
+
+        findNavController().navigateSafe(
             R.id.action_deliveryAddressConfirmationFragment_to_clickAndCollectStoresFragment,
             bundleOf(BUNDLE to bundle)
         )
+    }
+
+    private fun NavController.navigateSafe(@IdRes actionId: Int, args: Bundle?) {
+        currentDestination?.let { currentDestination ->
+            val navAction = currentDestination.getAction(actionId)
+            // to navigate successfully certain action should be explicitly stated in nav graph
+            if (navAction != null) {
+                val destinationId = navAction.destinationId
+                if (destinationId != 0) {
+                    val currentNode = currentDestination as? NavGraph ?: currentDestination.parent
+                    if (currentNode?.id == destinationId ||   //  <--------- THIS CONDITION IS THE KEY
+                            currentNode?.findNode(destinationId) != null
+                    ) {
+                        navigate(actionId, args, null)
+                    }
+                }
+            }
+        }
     }
 
     private fun GeoLocationDeliveryAddressBinding.addFragmentListner() {
