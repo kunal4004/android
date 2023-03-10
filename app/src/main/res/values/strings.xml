@@ -2927,6 +2927,7 @@
     <string name="let_my_shooper_choose_for_me">Let My Shopper Choose For Me</string>
     <string name="search_alternative_product">Search for an alternative product</string>
     <string name="choose_substitute">Choose My Own Substitute</string>
-    <string name="dont_want_substitute">i don’t want a substitute</string>
+    <string name="dont_want_substitute"><u>i don’t want a substitute</u></string>
+    <string name="more_details">More Details</string>
 
 </resources>
