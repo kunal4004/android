@@ -35,13 +35,14 @@ class RecyclerViewViewHolderItems(val itemBinding: ProductListingPageRowBinding)
         }
     }
 
-    private fun setOnClickListener(navigator: IProductListing, productList: ProductList) {
-        itemView.setOnClickListener { navigator.openProductDetailView(productList) }
+    private fun setOnClickListener(navigator: IProductListing, productList: ProductList) = itemBinding?.apply {
+        tvProductName.setOnClickListener { navigator.openProductDetailView(productList) }
+        mainImgLayout.setOnClickListener { navigator.openProductDetailView(productList) }
+        brandName.setOnClickListener { navigator.openProductDetailView(productList) }
+        tvRangeName.setOnClickListener { navigator.openProductDetailView(productList) }
     }
 
     private fun setProductName(productList: ProductList?) = itemBinding.apply {
-        tvProductName.maxLines = 3
-        tvProductName.minLines = 1
         tvProductName?.text = productList?.productName ?: ""
     }
 
