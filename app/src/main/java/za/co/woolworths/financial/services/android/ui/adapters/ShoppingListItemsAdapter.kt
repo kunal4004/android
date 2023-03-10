@@ -133,20 +133,23 @@ class ShoppingListItemsAdapter(
     }
 
     private fun createProductList(shoppingListItem: ShoppingListItem): ProductList {
-        val productList = ProductList()
-        productList.productId = shoppingListItem.productId
-        productList.productName = shoppingListItem.displayName
-        productList.fromPrice =
-            java.lang.Float.valueOf(if (TextUtils.isEmpty(shoppingListItem.price)) "0.0" else shoppingListItem.price)
-        productList.sku = shoppingListItem.catalogRefId
-        productList.externalImageRefV2 = shoppingListItem.externalImageRefV2
-        val otherSku = OtherSkus()
-        otherSku.price = shoppingListItem.price.toString()
-        otherSku.size = ""
-        val otherSkuList: MutableList<OtherSkus> = ArrayList()
-        productList.otherSkus = ArrayList()
-        otherSkuList.add(otherSku)
-        productList.otherSkus = otherSkuList
+        val productList = ProductList().apply {
+            productId = shoppingListItem.productId
+            productName = shoppingListItem.displayName
+            sku = shoppingListItem.catalogRefId
+            externalImageRefV2 = shoppingListItem.externalImageRefV2
+
+            fromPrice = if (shoppingListItem.price.isNullOrEmpty()) "0.0".toFloat()
+            else shoppingListItem.price.toFloat()
+
+            val otherSku = OtherSkus().also {
+                it.price = shoppingListItem.price.toString()
+                it.size = ""
+            }
+            val otherSkuList: MutableList<OtherSkus> = ArrayList(0)
+            otherSkuList.add(otherSku)
+            otherSkus = otherSkuList
+        }
         return productList
     }
 
@@ -233,7 +236,8 @@ class ShoppingListItemsAdapter(
 
         fun bindOutOfStockProduct() {
             itemBinding?.apply {
-                tvProductAvailability.text = itemBinding.root.context.getString(R.string.out_of_stock)
+                tvProductAvailability.text =
+                    itemBinding.root.context.getString(R.string.out_of_stock)
                 tvProductAvailability.visibility = VISIBLE
             }
         }
@@ -283,7 +287,7 @@ class ShoppingListItemsAdapter(
                         shoppingListItem.userQuantity == shoppingListItem.quantityInStock
                     ) GONE else VISIBLE
 
-                llQuantity.visibility = if(shoppingListItem.isSelected) VISIBLE else GONE
+                llQuantity.visibility = if (shoppingListItem.isSelected) VISIBLE else GONE
 
                 cbShoppingList.setOnClickListener {
 
