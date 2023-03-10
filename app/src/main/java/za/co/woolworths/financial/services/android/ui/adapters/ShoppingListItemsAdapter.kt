@@ -82,9 +82,15 @@ class ShoppingListItemsAdapter(
                 holder.bind(shoppingListItem)
 
                 when (shoppingListItem.availability) {
-                    ProductAvailability.UNAVAILABLE.value -> { holder.bindUnavailableProduct() }
-                    ProductAvailability.OUT_OF_STOCK.value -> { holder.bindOutOfStockProduct() }
-                    else -> { holder.bindAvailableProduct(shoppingListItem) }
+                    ProductAvailability.UNAVAILABLE.value -> {
+                        holder.bindUnavailableProduct()
+                    }
+                    ProductAvailability.OUT_OF_STOCK.value -> {
+                        holder.bindOutOfStockProduct()
+                    }
+                    else -> {
+                        holder.bindAvailableProduct(shoppingListItem)
+                    }
                 }
             }
         }
@@ -92,12 +98,12 @@ class ShoppingListItemsAdapter(
 
     private fun getColorAndSize(color: String?, size: String?): String = buildString {
         append(color ?: "")
-        append(
-            if (!color.isNullOrEmpty() && !size.isNullOrEmpty()
-                && !CONST_NO_SIZE.equals(size, ignoreCase = true)
-            ) ", " else ""
-        )
-        append(if (size != null && !CONST_NO_SIZE.equals(size, ignoreCase = true)) size else "")
+
+        if (size.isNullOrEmpty() || CONST_NO_SIZE.equals(size, ignoreCase = true)) {
+            return@buildString
+        }
+        append(if (!color.isNullOrEmpty()) ", " else "")
+        append(size)
     }
 
     private fun getUnavailableMsgByDeliveryType(context: Context): String {
@@ -145,7 +151,7 @@ class ShoppingListItemsAdapter(
     }
 
     override fun getItemCount(): Int {
-        return shoppingListItems!!.size + 1
+        return shoppingListItems?.size?.plus(1) ?: 1
     }
 
     val addedItemsCount: Int
@@ -167,173 +173,179 @@ class ShoppingListItemsAdapter(
         RecyclerView.ViewHolder(itemBinding.root) {
 
         fun bind(shoppingListItem: ShoppingListItem) {
-            itemBinding.cartProductImage.setImageURI(shoppingListItem.externalImageRefV2)
-            itemBinding.tvTitle.setText(shoppingListItem.displayName)
-            itemBinding.tvPrice.setText(formatAmountToRandAndCentWithSpace(shoppingListItem.price))
-            // Set Color and Size START
-            itemBinding.tvColorSize.text =
-                getColorAndSize(shoppingListItem.color, shoppingListItem.size)
-            //Swipe Layout
-            mItemManger.bindView(itemBinding.root, position)
-            itemBinding.swipe.isTopSwipeEnabled = false
-            itemBinding.swipe.addDrag(SwipeLayout.DragEdge.Right, itemBinding.swipeRight)
+            itemBinding?.apply {
 
-            itemBinding.tvProductAvailability.visibility = GONE
-            itemBinding.cbShoppingList.visibility = GONE
-            itemBinding.cbShoppingList.isEnabled = false
-            itemBinding.llQuantity.visibility = GONE
+                cartProductImage.setImageURI(shoppingListItem.externalImageRefV2)
+                tvTitle.setText(shoppingListItem.displayName)
+                tvPrice.setText(formatAmountToRandAndCentWithSpace(shoppingListItem.price))
+                // Set Color and Size START
+                tvColorSize.text =
+                    getColorAndSize(shoppingListItem.color, shoppingListItem.size)
+                //Swipe Layout
+                mItemManger.bindView(root, position)
+                swipe.isTopSwipeEnabled = false
+                swipe.addDrag(SwipeLayout.DragEdge.Right, swipeRight)
 
-            // Product Image
-            itemBinding.cartProductImage.setOnClickListener {
-                if (!mAdapterIsClickable) return@setOnClickListener
-                val listItem = getItem(position) ?: return@setOnClickListener
-                val productList = createProductList(listItem)
-                navigator.openProductDetailFragment(listItem.displayName, productList)
-            }
+                tvProductAvailability.visibility = GONE
+                cbShoppingList.visibility = GONE
+                cbShoppingList.isEnabled = false
+                llQuantity.visibility = GONE
 
-            // Item Container
-            itemBinding.llItemContainer.setOnClickListener {
-                val listItem = getItem(position) ?: return@setOnClickListener
-                val isUnavailable = ProductAvailability.UNAVAILABLE.value.equals(listItem.availability, ignoreCase = true)
-                if (isUnavailable) navigator.showListBlackToolTip()
-            }
+                // Product Image
+                cartProductImage.setOnClickListener {
+                    if (!mAdapterIsClickable) return@setOnClickListener
+                    val listItem = getItem(position) ?: return@setOnClickListener
+                    val productList = createProductList(listItem)
+                    navigator.openProductDetailFragment(listItem.displayName, productList)
+                }
 
-            // Swipe delete click
-            itemBinding.tvDelete.setOnClickListener {
-                if (!mAdapterIsClickable) return@setOnClickListener
-                val item = getItem(position) ?: return@setOnClickListener
-                navigator.onItemDeleteClick(
-                    item.Id,
-                    item.productId,
-                    item.catalogRefId,
-                    true
-                )
+                // Item Container
+                llItemContainer.setOnClickListener {
+                    val listItem = getItem(position) ?: return@setOnClickListener
+                    val isUnavailable = ProductAvailability.UNAVAILABLE.value.equals(
+                        listItem.availability,
+                        ignoreCase = true
+                    )
+                    if (isUnavailable) navigator.showListBlackToolTip()
+                }
+
+                // Swipe delete click
+                tvDelete.setOnClickListener {
+                    if (!mAdapterIsClickable) return@setOnClickListener
+                    val item = getItem(position) ?: return@setOnClickListener
+                    navigator.onItemDeleteClick(
+                        item.Id,
+                        item.productId,
+                        item.catalogRefId,
+                        true
+                    )
+                }
             }
         }
 
         fun bindUnavailableProduct() {
-            val msg = getUnavailableMsgByDeliveryType(itemBinding.root.context)
-            itemBinding.tvProductAvailability.text = msg
-            itemBinding.tvProductAvailability.visibility = VISIBLE
+            itemBinding?.apply {
+                val msg = getUnavailableMsgByDeliveryType(itemBinding.root.context)
+                tvProductAvailability.text = msg
+                tvProductAvailability.visibility = VISIBLE
+            }
         }
 
         fun bindOutOfStockProduct() {
-            itemBinding.tvProductAvailability.text =
-                itemBinding.root.context.getString(R.string.out_of_stock)
-            itemBinding.tvProductAvailability.visibility = VISIBLE
+            itemBinding?.apply {
+                tvProductAvailability.text = itemBinding.root.context.getString(R.string.out_of_stock)
+                tvProductAvailability.visibility = VISIBLE
+            }
         }
 
         fun bindAvailableProduct(shoppingListItem: ShoppingListItem) {
 
-            if (!shoppingListItem.inventoryCallCompleted) {
-                itemBinding.pbQuantityLoader.visibility = VISIBLE
-                return
-            }
+            itemBinding?.apply {
 
-            //Inventory progress bar
-            itemBinding.pbQuantityLoader.visibility = GONE
-
-            if (shoppingListItem.quantityInStock <= 0) {
-                return
-            }
-            //enable check box
-            itemBinding.cbShoppingList.visibility = VISIBLE
-            itemBinding.cbShoppingList.isEnabled = true
-
-            /*
-            * shoppingListItem.userShouldSetSuburb - is set to true when user did not cbxSelectShoppingListItem any suburb
-            */
-            if (userShouldSetSuburb) {
-                adapterClickable(true)
-                return
-            }
-
-            itemBinding.cbShoppingList.isChecked = shoppingListItem.isSelected
-            itemBinding.tvQuantity.setText(shoppingListItem.userQuantity.toString())
-            // Delete button
-            val padding = itemBinding.root.context.resources.getDimension(
-                if (shoppingListItem.userQuantity == 1 && shoppingListItem.isSelected)
-                    R.dimen.seven_dp else R.dimen.ten_dp
-            ).toInt()
-            itemBinding.minusDeleteCountImage.setPadding(padding, padding, padding, padding)
-            itemBinding.minusDeleteCountImage.setImageResource(
-                if (shoppingListItem.userQuantity == 1) R.drawable.delete_24 else R.drawable.ic_minus_black
-            )
-            // Add button
-            itemBinding.addCountImage.visibility =
-                if (shoppingListItem.quantityInStock == 1 ||
-                    shoppingListItem.userQuantity == shoppingListItem.quantityInStock
-                ) GONE else VISIBLE
-
-            when (shoppingListItem.isSelected) {
-                true -> {
-                    itemBinding.llQuantity.visibility = VISIBLE
+                if (!shoppingListItem.inventoryCallCompleted) {
+                    pbQuantityLoader.visibility = VISIBLE
+                    return
                 }
-                false -> {
-                    itemBinding.llQuantity.visibility = GONE
+
+                //Inventory progress bar
+                pbQuantityLoader.visibility = GONE
+
+                if (shoppingListItem.quantityInStock <= 0) {
+                    return
                 }
-            }
 
-            itemBinding.cbShoppingList.setOnClickListener {
+                //enable check box
+                cbShoppingList.visibility = VISIBLE
+                cbShoppingList.isEnabled = true
 
-                val item = getItem(bindingAdapterPosition) ?: return@setOnClickListener
-                if (enableClickEvent(item) || !mAdapterIsClickable) return@setOnClickListener
-
-                if (!item.isSelected && userShouldSetSuburb()) {
-                    item.isSelected = false
-                    notifyItemChanged(position, shoppingListItems?.size)
-                    navigator.openSetSuburbProcess(item)
-                    return@setOnClickListener
-                }
-                if (item.quantityInStock == 0) return@setOnClickListener
                 /*
-                 1. By default quantity will be ZERO.
-                 2. On Selection it will change to ONE.
-                 */
-                item.userQuantity = item.userQuantity.coerceAtLeast(1)
-                item.isSelected = !item.isSelected
-                shoppingListItems?.set(position - 1, item)
-                navigator.onItemSelectionChange(item.isSelected)
-                notifyItemChanged(position, item)
-            }
-
-            itemBinding.minusDeleteCountImage.setOnClickListener {
-
-                val listItem = getItem(position) ?: return@setOnClickListener
-                if (enableClickEvent(listItem) || !mAdapterIsClickable) return@setOnClickListener
-
-                if (userShouldSetSuburb()) {
-                    navigator.openSetSuburbProcess(listItem)
-                    return@setOnClickListener
+                * shoppingListItem.userShouldSetSuburb - is set to true when user did not cbxSelectShoppingListItem any suburb
+                */
+                if (userShouldSetSuburb) {
+                    adapterClickable(true)
+                    return
                 }
-                if (listItem.quantityInStock == 0) return@setOnClickListener
-                // One item selected by user in add to list
-                if (listItem.userQuantity == 1) {
-                    deleteItemFromList(listItem, position)
-                } else if (listItem.userQuantity > 1) {
-                    listItem.userQuantity -= 1
-                    shoppingListItems!![position - 1] = listItem
-                    navigator.onSubstractListItemCount(listItem)
-                    notifyItemChanged(position, listItem)
+
+                cbShoppingList.isChecked = shoppingListItem.isSelected
+                tvQuantity.setText(shoppingListItem.userQuantity.toString())
+                // Delete button
+                val padding = root.context.resources.getDimension(
+                    if (shoppingListItem.userQuantity == 1 && shoppingListItem.isSelected)
+                        R.dimen.seven_dp else R.dimen.ten_dp
+                ).toInt()
+                minusDeleteCountImage.setPadding(padding, padding, padding, padding)
+                minusDeleteCountImage.setImageResource(
+                    if (shoppingListItem.userQuantity == 1) R.drawable.delete_24 else R.drawable.ic_minus_black
+                )
+                // Add button
+                addCountImage.visibility =
+                    if (shoppingListItem.quantityInStock == 1 ||
+                        shoppingListItem.userQuantity == shoppingListItem.quantityInStock
+                    ) GONE else VISIBLE
+
+                llQuantity.visibility = if(shoppingListItem.isSelected) VISIBLE else GONE
+
+                cbShoppingList.setOnClickListener {
+
+                    val item = getItem(bindingAdapterPosition) ?: return@setOnClickListener
+                    if (enableClickEvent(item) || !mAdapterIsClickable) return@setOnClickListener
+
+                    if (!item.isSelected && userShouldSetSuburb()) {
+                        item.isSelected = false
+                        notifyItemChanged(position, shoppingListItems?.size)
+                        navigator.openSetSuburbProcess(item)
+                        return@setOnClickListener
+                    }
+                    if (item.quantityInStock == 0) return@setOnClickListener
+                    /*
+                     1. By default quantity will be ZERO.
+                     2. On Selection it will change to ONE.
+                     */
+                    item.userQuantity = item.userQuantity.coerceAtLeast(1)
+                    item.isSelected = !item.isSelected
+                    shoppingListItems?.set(position - 1, item)
+                    navigator.onItemSelectionChange(item.isSelected)
+                    notifyItemChanged(position, item)
                 }
-            }
 
-            itemBinding.addCountImage.setOnClickListener {
+                minusDeleteCountImage.setOnClickListener {
 
-                val listItem = getItem(position) ?: return@setOnClickListener
-                if (enableClickEvent(listItem) || !mAdapterIsClickable) return@setOnClickListener
+                    val listItem = getItem(position) ?: return@setOnClickListener
+                    if (enableClickEvent(listItem) || !mAdapterIsClickable) return@setOnClickListener
 
-                if (userShouldSetSuburb()) {
-                    navigator.openSetSuburbProcess(listItem)
-                    return@setOnClickListener
+                    if (userShouldSetSuburb()) {
+                        navigator.openSetSuburbProcess(listItem)
+                        return@setOnClickListener
+                    }
+                    if (listItem.quantityInStock == 0) return@setOnClickListener
+                    // One item selected by user in add to list
+                    if (listItem.userQuantity == 1) {
+                        deleteItemFromList(listItem, position)
+                    } else if (listItem.userQuantity > 1) {
+                        listItem.userQuantity -= 1
+                        shoppingListItems!![position - 1] = listItem
+                        navigator.onSubstractListItemCount(listItem)
+                        notifyItemChanged(position, listItem)
+                    }
                 }
-                if (listItem.quantityInStock == 0) return@setOnClickListener
-                // One item selected by user in add to list
-                if (listItem.userQuantity < listItem.quantityInStock) {
-                    listItem.userQuantity += 1
-                    shoppingListItems!![position - 1] = listItem
-                    navigator.onAddListItemCount(listItem)
-                    notifyItemChanged(position, listItem)
+
+                addCountImage.setOnClickListener {
+
+                    val listItem = getItem(position) ?: return@setOnClickListener
+                    if (enableClickEvent(listItem) || !mAdapterIsClickable) return@setOnClickListener
+
+                    if (userShouldSetSuburb()) {
+                        navigator.openSetSuburbProcess(listItem)
+                        return@setOnClickListener
+                    }
+                    if (listItem.quantityInStock == 0) return@setOnClickListener
+                    // One item selected by user in add to list
+                    if (listItem.userQuantity < listItem.quantityInStock) {
+                        listItem.userQuantity += 1
+                        shoppingListItems!![position - 1] = listItem
+                        navigator.onAddListItemCount(listItem)
+                        notifyItemChanged(position, listItem)
+                    }
                 }
             }
         }
@@ -349,41 +361,37 @@ class ShoppingListItemsAdapter(
 
     @Synchronized
     fun setList(listItems: ArrayList<ShoppingListItem>?) {
-        if (listItems == null || listItems.isEmpty()) {
+        if (listItems.isNullOrEmpty()) {
             return
         }
         type = getPreferredDeliveryType()
         userShouldSetSuburb = userShouldSetSuburb()
         shoppingListItems = listItems
-        notifyItemRangeChanged(0, shoppingListItems!!.size)
+        notifyItemRangeChanged(0, shoppingListItems?.size ?: 0)
         closeAllItems()
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if (isPositionHeader(position)) ITEM_VIEW_TYPE_HEADER else ITEM_VIEW_TYPE_BASIC
+        return when (position) {
+            0 -> ITEM_VIEW_TYPE_HEADER
+            else -> ITEM_VIEW_TYPE_BASIC
+        }
     }
 
     fun adapterClickable(clickable: Boolean) {
         mAdapterIsClickable = clickable
     }
 
-    private fun isPositionHeader(position: Int): Boolean {
-        return position == 0
-    }
+    private fun getItem(position: Int): ShoppingListItem? =
+        shoppingListItems?.getOrNull(position - 1)
 
-    private fun getItem(position: Int): ShoppingListItem? {
-        return shoppingListItems?.getOrNull(position - 1)
-    }
-
-    fun userShouldSetSuburb(): Boolean {
-        return Utils.getPreferredDeliveryLocation() == null
-    }
+    fun userShouldSetSuburb(): Boolean = Utils.getPreferredDeliveryLocation() == null
 
     fun resetSelection() {
         shoppingListItems ?: return
-        shoppingListItems?.filter{
+        shoppingListItems?.filter {
             it.isSelected
-        }?.forEach {
+        }?.map {
             it.userQuantity = 0
             it.isSelected = false
         }
