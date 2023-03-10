@@ -82,15 +82,9 @@ class ShoppingListItemsAdapter(
                 holder.bind(shoppingListItem)
 
                 when (shoppingListItem.availability) {
-                    ProductAvailability.UNAVAILABLE.value -> {
-                        holder.bindUnavailableProduct()
-                    }
-                    ProductAvailability.OUT_OF_STOCK.value -> {
-                        holder.bindOutOfStockProduct()
-                    }
-                    else -> {
-                        holder.bindAvailableProduct(shoppingListItem)
-                    }
+                    ProductAvailability.UNAVAILABLE.value -> holder.bindUnavailableProduct()
+                    ProductAvailability.OUT_OF_STOCK.value -> holder.bindOutOfStockProduct()
+                    else -> holder.bindAvailableProduct(shoppingListItem)
                 }
             }
         }
