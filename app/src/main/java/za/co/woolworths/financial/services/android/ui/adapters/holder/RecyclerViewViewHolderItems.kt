@@ -53,8 +53,8 @@ class RecyclerViewViewHolderItems(val itemBinding: ProductListingPageRowBinding)
        ) {
                val ratings:Float = productList.averageRating!!.toFloat()
                if (ratings == 0.0f) {
-                   ratingBar.visibility = View.INVISIBLE
-                   txtRatingCount.visibility = View.INVISIBLE
+                   ratingBar.visibility = View.GONE
+                   txtRatingCount.visibility = View.GONE
                } else {
                    ratingBar.visibility = VISIBLE
                    txtRatingCount.visibility = VISIBLE
@@ -63,8 +63,8 @@ class RecyclerViewViewHolderItems(val itemBinding: ProductListingPageRowBinding)
                }
 
        }  else {
-           ratingBar.visibility = View.INVISIBLE
-           txtRatingCount.visibility = View.INVISIBLE
+           ratingBar.visibility = View.GONE
+           txtRatingCount.visibility = View.GONE
        }
 
     }
