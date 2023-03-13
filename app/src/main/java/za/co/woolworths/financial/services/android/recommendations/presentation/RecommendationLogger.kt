@@ -17,8 +17,10 @@ class RecommendationLoggerImpl @Inject constructor(
     private val externalScope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     override fun submitRecClicks(products: List<Product>) {
-        externalScope.launch {
-            recClickUseCase(products = products)
+        if (externalScope.isActive) {
+            externalScope.launch {
+                recClickUseCase(products = products)
+            }
         }
     }
 }
