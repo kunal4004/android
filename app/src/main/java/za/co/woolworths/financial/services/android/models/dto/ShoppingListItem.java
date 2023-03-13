@@ -39,6 +39,10 @@ public class ShoppingListItem {
 	public String color;
 
 	public String fulfillmentType;
+
+	@SerializedName("availabilty")
+	public String availability;
+
 	//quantityInStock amount value is set from Inventory stock call
 	public int quantityInStock = -1;
 
@@ -47,7 +51,4 @@ public class ShoppingListItem {
 
 	@Nullable
 	public String visibility;
-
-	public boolean unavailable = true;
-
 }

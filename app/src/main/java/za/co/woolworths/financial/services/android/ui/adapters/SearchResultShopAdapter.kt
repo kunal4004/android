@@ -238,15 +238,17 @@ class SearchResultShopAdapter(
     }
 
     private fun buildColorSizeText(colour: String?, size: String?): String = buildString {
-
-        val newSize = if (CONST_NO_SIZE.equals(size, ignoreCase = true)) "" else size
-        val isEitherColourSizeEmpty = colour.isNullOrEmpty() || newSize.isNullOrEmpty()
-
         append(colour ?: "")
-        if (colour?.equals(size, ignoreCase = true) == false) {
-            append(if (isEitherColourSizeEmpty) "" else ", ")
-            append(size ?: "")
+        if (!colour.isNullOrEmpty() && colour.equals(size, ignoreCase = true)) {
+            return@buildString
         }
+
+        if(size.isNullOrEmpty() || CONST_NO_SIZE.equals(size, ignoreCase = true)) {
+            return@buildString
+        }
+
+        append(if (!colour.isNullOrEmpty()) ", " else "")
+        append(size)
     }
 
     fun onDeselectSKU(selectedProduct: ProductList, selectedSKU: OtherSkus?) {
