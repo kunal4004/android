@@ -68,7 +68,10 @@ class GeoUtils {
                         if (currentNode?.id == destinationId ||
                                 currentNode?.findNode(destinationId) != null
                         ) {
-                            navigate(actionId, args, null)
+                            if(args != null)
+                                navigate(actionId, args, null)
+                            else
+                                navigate(actionId)
                         }
                     }
                 }
