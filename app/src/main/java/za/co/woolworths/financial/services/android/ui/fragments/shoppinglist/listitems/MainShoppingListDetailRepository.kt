@@ -8,8 +8,9 @@ import za.co.woolworths.financial.services.android.models.network.Resource
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import java.io.IOException
+import javax.inject.Inject
 
-class MainShoppingListDetailRepository : ShoppingListDetailRepository {
+class MainShoppingListDetailRepository @Inject constructor() : ShoppingListDetailRepository {
 
     override suspend fun getShoppingListItems(listId: String): Resource<ShoppingListItemsResponse> {
         return try {
