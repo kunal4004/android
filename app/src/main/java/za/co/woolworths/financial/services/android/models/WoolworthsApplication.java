@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Base64;
+
 import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -33,17 +34,24 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.TimeZone;
 
+import javax.inject.Inject;
+
 import dagger.hilt.android.HiltAndroidApp;
+import kotlinx.coroutines.CoroutineScope;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import za.co.absa.openbankingapi.Cryptography;
 import za.co.absa.openbankingapi.KeyGenerationFailureException;
 import za.co.wigroup.androidutils.Util;
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidatePlace;
-import za.co.woolworths.financial.services.android.models.dto.RatingsAndReviews;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.service.RxBus;
 import za.co.woolworths.financial.services.android.onecartgetstream.common.constant.OCConstant;
+import za.co.woolworths.financial.services.android.recommendations.data.repository.RecommendationsRepository;
+import za.co.woolworths.financial.services.android.recommendations.data.repository.RecommendationsRepositoryImpl;
+import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationLogger;
+import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationLoggerImpl;
+import za.co.woolworths.financial.services.android.recommendations.presentation.usecase.RecClickUseCase;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.onboarding.OnBoardingActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatAWSAmplify;
@@ -53,10 +61,6 @@ import za.co.woolworths.financial.services.android.ui.vto.utils.SdkUtility;
 import za.co.woolworths.financial.services.android.util.ConnectivityLiveData;
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager;
 import za.co.woolworths.financial.services.android.util.analytics.HuaweiManager;
-
-import static za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService.CHANNEL_ID;
-
-import javax.inject.Inject;
 
 @HiltAndroidApp
 public class WoolworthsApplication extends Application implements Application.ActivityLifecycleCallbacks, LifecycleObserver {
@@ -86,6 +90,14 @@ public class WoolworthsApplication extends Application implements Application.Ac
     private static ValidatePlace cncValidatePlace;
 
    @Inject ConnectivityLiveData connectivityLiveData;
+
+   private RecommendationLogger recommendationLogger;
+
+   private void initRecommendationLogger() {
+       final RecommendationsRepository repository = new RecommendationsRepositoryImpl();
+       final RecClickUseCase recClickUseCase = new RecClickUseCase(repository);
+       recommendationLogger = new RecommendationLoggerImpl(recClickUseCase);
+   }
 
 
     public static String getApiId() {
@@ -166,7 +178,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
         getTracker();
         bus = new RxBus();
         vtoSyncServer();
-
+        initRecommendationLogger();
     }
 
     private void initializeAnalytics() {
@@ -306,6 +318,10 @@ public class WoolworthsApplication extends Application implements Application.Ac
 
     public WGlobalState getWGlobalState() {
         return mWGlobalState;
+    }
+
+    public RecommendationLogger getRecommendationLogger(){
+        return recommendationLogger;
     }
 
     public RxBus bus() {
