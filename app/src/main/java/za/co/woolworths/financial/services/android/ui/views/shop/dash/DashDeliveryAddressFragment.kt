@@ -68,9 +68,7 @@ import java.util.*
 class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), IProductListing,
     View.OnClickListener, OnDemandNavigationListener, OnDashLandingNavigationListener {
 
-    private val viewModel: ShopViewModel by viewModels(
-        ownerProducer = { requireParentFragment() }
-    )
+    private val viewModel: ShopViewModel by viewModels()
 
     private lateinit var binding: FragmentDashDeliveryBinding
     private lateinit var dashDeliveryAdapter: DashDeliveryAdapter
