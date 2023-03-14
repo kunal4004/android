@@ -3,17 +3,17 @@ package za.co.woolworths.financial.services.android.enhancedSubstitution.manages
 import android.os.Bundle
 import android.view.View
 import android.view.View.OnClickListener
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.ManageSubstitutionDetailsLayoutBinding
+import za.co.woolworths.financial.services.android.enhancedSubstitution.ProductSubstitutionListListener
 import za.co.woolworths.financial.services.android.enhancedSubstitution.adapter.ManageProductSubstitutionAdapter
 import za.co.woolworths.financial.services.android.enhancedSubstitution.adapter.SubstitutionRecylerViewItem
 import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 
 class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetailsLayoutBinding>(
     ManageSubstitutionDetailsLayoutBinding::inflate
-), OnClickListener {
+), OnClickListener, ProductSubstitutionListListener {
 
     private var manageProductSubstitutionAdapter: ManageProductSubstitutionAdapter? = null
 
@@ -23,7 +23,7 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
         binding.dontWantText?.setOnClickListener(this)
 
         manageProductSubstitutionAdapter = ManageProductSubstitutionAdapter(
-            getHeaderForSubstituteList(), getSubstututeProductList()
+            getHeaderForSubstituteList(), getSubstututeProductList() , this
         )
 
         binding.recyclerView?.apply {
@@ -35,8 +35,6 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
 
     private fun getHeaderForSubstituteList(): SubstitutionRecylerViewItem.SubstitutionOptionHeader {
         return SubstitutionRecylerViewItem.SubstitutionOptionHeader(
-            optionFirstText = resources.getString(R.string.let_my_shooper_choose_for_me),
-            optionSecondText = resources.getString(R.string.choose_substitute),
             searchHint = resources.getString(R.string.search_alternative_product)
         )
     }
@@ -111,11 +109,10 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
 
     override fun onClick(v: View?) {
         when (v?.id) {
-          /*  R.id.btnConfirm -> confirmSubstitutionProduct()
-            R.id.dontWantText -> confirmDontWantSubstitutionForProduct() */
+            R.id.btnConfirm -> confirmSubstitutionProduct()
+            R.id.dontWantText -> confirmDontWantSubstitutionForProduct()
         }
     }
-
 
     private fun searchForSubstitutions() {
 
@@ -127,5 +124,17 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
 
     private fun confirmDontWantSubstitutionForProduct() {
 
+    }
+
+    override fun openSubstitutionSearchScreen() {
+
+    }
+
+    override fun clickOnLetMyShooperChooseOption() {
+        binding.btnConfirm?.background = resources.getDrawable(R.drawable.black_background_with_corner_5, null)
+    }
+    override fun clickOnMySubstitutioneOption() {
+        binding.btnConfirm?.isEnabled = false
+        binding.btnConfirm?.background = resources.getDrawable(R.drawable.grey_background_with_corner_5, null)
     }
 }

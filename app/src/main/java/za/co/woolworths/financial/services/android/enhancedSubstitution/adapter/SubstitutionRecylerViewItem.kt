@@ -3,8 +3,6 @@ package za.co.woolworths.financial.services.android.enhancedSubstitution.adapter
 sealed class SubstitutionRecylerViewItem {
 
     class SubstitutionOptionHeader(
-        val optionFirstText: String,
-        val optionSecondText: String,
         val searchHint: String
     ) : SubstitutionRecylerViewItem()
 

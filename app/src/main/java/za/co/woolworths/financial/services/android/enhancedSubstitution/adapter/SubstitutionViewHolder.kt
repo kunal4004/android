@@ -5,22 +5,51 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.awfs.coordination.databinding.LayoutManageSubstitutionBinding
 import com.awfs.coordination.databinding.SubstitutionProductsItemCellBinding
+import za.co.woolworths.financial.services.android.enhancedSubstitution.ProductSubstitutionListListener
+import za.co.woolworths.financial.services.android.ui.extension.onClick
 import za.co.woolworths.financial.services.android.util.ImageManager
 
 sealed class SubstitutionViewHolder(binding:ViewBinding): RecyclerView.ViewHolder (binding.root) {
 
     class SubstitueOptionwHolder(private val binding: LayoutManageSubstitutionBinding) : SubstitutionViewHolder(binding) {
 
-        fun bind(substitutionProducts: SubstitutionRecylerViewItem.SubstitutionOptionHeader){
-            binding.rbOwnSubstitute.text = substitutionProducts.optionFirstText
-            binding.tvSearchProduct.text = substitutionProducts.searchHint
-            binding.rbShopperChoose.text = substitutionProducts.optionSecondText
+        fun bind(substitutionProducts: SubstitutionRecylerViewItem.SubstitutionOptionHeader,
+                 productSubstitutionListListener: ProductSubstitutionListListener) {
+            binding.tvSearchProduct?.apply {
+                text = substitutionProducts.searchHint
+                onClick {
+                    /*navigate to new search screen*/
+                }
+            }
+
+            binding.rbShopperChoose?.apply {
+                setOnCheckedChangeListener { buttonView, isChecked ->
+                    if (isChecked) {
+                        binding.rbOwnSubstitute?.isChecked = false
+                        binding.tvSearchProduct?.isEnabled = false
+                        productSubstitutionListListener.clickOnLetMyShooperChooseOption()
+                    }
+                }
+            }
+
+            binding.rbOwnSubstitute?.apply {
+                if (binding.rbShopperChoose.isChecked) {
+                    binding.rbShopperChoose?.isChecked = false
+                }
+
+                setOnCheckedChangeListener { buttonView, isChecked ->
+                    if (isChecked) {
+                        binding.rbShopperChoose?.isChecked = false
+                        productSubstitutionListListener.clickOnMySubstitutioneOption()
+                    }
+                }
+            }
         }
     }
 
     class SubstitueProductViewHolder(
         private val binding: SubstitutionProductsItemCellBinding,
-        var context: Context
+        var context: Context,
     ) : SubstitutionViewHolder(binding) {
 
         fun bind(substitutionProducts: SubstitutionRecylerViewItem.SubstitutionProducts){
