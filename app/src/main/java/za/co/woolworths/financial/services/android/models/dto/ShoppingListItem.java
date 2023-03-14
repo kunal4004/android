@@ -40,7 +40,7 @@ public class ShoppingListItem {
 
 	public String fulfillmentType;
 
-	@SerializedName("availabilty")
+	@SerializedName("availability")
 	public String availability;
 
 	//quantityInStock amount value is set from Inventory stock call
