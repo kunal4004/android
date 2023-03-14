@@ -42,6 +42,9 @@ class MyRecycleViewHolder(val mProductListingPageRowBinding: RecommendationsProd
     private fun setOnClickListener(navigator: RecommendationsProductListingListener, productList: Product
     ) {
         mProductListingPageRowBinding.imProductImage.setOnClickListener { navigator.openProductDetailView(productList) }
+        mProductListingPageRowBinding.brandName.setOnClickListener { navigator.openProductDetailView(productList) }
+        mProductListingPageRowBinding.tvRangeName.setOnClickListener { navigator.openProductDetailView(productList) }
+        mProductListingPageRowBinding.tvProductName.setOnClickListener { navigator.openProductDetailView(productList) }
     }
 
     private fun setProductImage(productList: Product) {
@@ -187,7 +190,7 @@ class MyRecycleViewHolder(val mProductListingPageRowBinding: RecommendationsProd
         mProductListingPageRowBinding.apply {
             root.context?.apply {
                 productList?.apply {
-                    includeProductListingPriceLayout.imQuickShopAddToCartIcon?.visibility = View.GONE
+                    includeProductListingPriceLayout.imQuickShopAddToCartIcon.visibility = if (productType.equals(RecommendationFragment.ITEM_TYPE_FOOD, ignoreCase = true)) View.VISIBLE else View.GONE
                 }
             }
         }

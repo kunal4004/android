@@ -42,12 +42,12 @@
 
         <ImageView
             android:id="@+id/logoCheckInStore"
-            style="@style/card_item_start_icon_style"
+            style="@style/card_item_start_icon_style_pdp"
             android:alpha="1"
-            app:srcCompat="@drawable/ic_store_locator" />
+            app:srcCompat="@drawable/ic_location_black" />
 
         <TextView
-            style="@style/card_item_regular_text_style"
+            style="@style/opensans_regular_text_style_14sp_black"
             android:layout_toEndOf="@+id/logoCheckInStore"
             android:text="@string/check_in_store_availablity"
             android:textColor="@color/account_amount_color" />
@@ -83,12 +83,11 @@
 
         <ImageView
             android:id="@+id/logoAddToShoppingList"
-            style="@style/card_item_start_icon_style"
-            android:alpha="1"
-            app:srcCompat="@drawable/ic_add_to_list_pdp" />
+            style="@style/card_item_start_icon_style_pdp"
+            app:srcCompat="@drawable/ic_add_list_black" />
 
         <TextView
-            style="@style/card_item_regular_text_style"
+            style="@style/opensans_regular_text_style_14sp_black"
             android:layout_toEndOf="@+id/logoAddToShoppingList"
             android:text="@string/add_to_a_shopping_list"
             android:textColor="@color/account_amount_color" />
@@ -142,7 +141,7 @@
             android:background="@color/layout_background_gray" />
 
         <TextView
-            style="@style/card_item_regular_text_style"
+            style="@style/opensans_regular_text_style_14sp_black"
             android:text="@string/product_details"
             android:textColor="@color/account_amount_color" />
 
@@ -166,7 +165,7 @@
             android:background="@color/layout_background_gray" />
 
         <TextView
-            style="@style/card_item_regular_text_style"
+            style="@style/opensans_regular_text_style_14sp_black"
             android:text="@string/nutritional_information"
             android:textColor="@color/account_amount_color" />
 
@@ -190,7 +189,7 @@
             android:background="@color/layout_background_gray" />
 
         <TextView
-            style="@style/card_item_regular_text_style"
+            style="@style/opensans_regular_text_style_14sp_black"
             android:text="@string/dietary"
             android:textColor="@color/account_amount_color" />
 
@@ -214,7 +213,7 @@
             android:background="@color/layout_background_gray" />
 
         <TextView
-            style="@style/card_item_regular_text_style"
+            style="@style/opensans_regular_text_style_14sp_black"
             android:text="@string/allergens"
             android:textColor="@color/account_amount_color" />
 
@@ -238,7 +237,7 @@
             android:background="@color/layout_background_gray" />
 
         <TextView
-            style="@style/card_item_regular_text_style"
+            style="@style/opensans_regular_text_style_14sp_black"
             android:text="@string/ingredients"
             android:textColor="@color/account_amount_color" />
 
@@ -266,7 +265,7 @@
 
         <TextView
             android:id="@+id/tvCustomerReviewCount"
-            style="@style/card_items_header_text_style"
+            style="@style/opensans_regular_text_style_14sp_black"
             android:layout_alignParentStart="true"
             android:letterSpacing="0"
             android:textAllCaps="false"

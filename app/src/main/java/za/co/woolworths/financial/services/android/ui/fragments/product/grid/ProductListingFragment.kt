@@ -129,6 +129,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
     private val confirmAddressViewModel: ConfirmAddressViewModel by activityViewModels()
     private var localDeliveryType: String? = null
     private var localDeliveryTypeForHiddenChange: String? = null
+    private var mPromotionalCopy: String? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -214,16 +215,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
 
         binding.layoutErrorBlp.blpErrorBackBtn.setOnClickListener {
             startProductRequest()
-        }
-    }
-
-    private fun showPromotionalBanner(response: ProductView) {
-        binding.promotionalTextBannerLayout.root.visibility = VISIBLE
-        val htmlDataPromotionalText = response.richText
-        binding.promotionalTextBannerLayout.apply {
-            promotionalTextDesc.text =
-                HtmlCompat.fromHtml(htmlDataPromotionalText, HtmlCompat.FROM_HTML_MODE_LEGACY)
-            promotionalTextDesc.movementMethod = LinkMovementMethod.getInstance()
         }
     }
 
@@ -545,10 +536,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
         }
         binding.plpRelativeLayout.visibility = VISIBLE
 
-        if (!response.richText.isNullOrEmpty()) {
-            showPromotionalBanner(response)
-        }
-
         val productLists = response.products
         if (mProductList?.isNullOrEmpty() == true)
 
@@ -749,6 +736,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
         mProductList?.clear()
         mProductList = ArrayList()
         mProductList = productLists
+        mPromotionalCopy = productView?.richText ?: ""
         if (!listContainHeader()) {
             val headerProduct = ProductList()
             headerProduct.rowType = ProductListingViewType.HEADER
@@ -763,7 +751,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
                 it,
                 mBannerLabel,
                 mBannerImage,
-                mIsComingFromBLP
+                mIsComingFromBLP,
+                mPromotionalCopy
             )
         }
         val mRecyclerViewLayoutManager: GridLayoutManager?
@@ -798,7 +787,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
                     it,
                     mBannerLabel,
                     mBannerImage,
-                    mIsComingFromBLP
+                    mIsComingFromBLP,
+                    mPromotionalCopy
                 )
             }
         binding.productsRecyclerView.apply {
