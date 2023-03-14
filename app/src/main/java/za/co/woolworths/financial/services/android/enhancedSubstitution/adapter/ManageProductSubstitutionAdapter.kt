@@ -30,7 +30,7 @@ class ManageProductSubstitutionAdapter(
             VIEW_TYPE_SUBSTITUTION_LIST -> return SubstitutionViewHolder.SubstitueProductViewHolder(
                 SubstitutionProductsItemCellBinding.inflate(
                     LayoutInflater.from(parent.context), parent, false
-                ), parent.context, productSubstitutionListListener)
+                ), parent.context)
 
             else -> {
                 FirebaseManager.logException("Wrong ViewType passed")

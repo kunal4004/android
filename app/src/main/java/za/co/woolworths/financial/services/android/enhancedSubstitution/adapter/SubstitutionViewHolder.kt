@@ -56,8 +56,9 @@ sealed class SubstitutionViewHolder(binding:ViewBinding): RecyclerView.ViewHolde
             binding.txtProductTitle.text = substitutionProducts?.productTitle
             binding.txtProductPrice.text = substitutionProducts?.productPrice
             binding.txtPromotionText.text = substitutionProducts?.promotionText
-            ImageManager.setPictureWithoutPlaceHolder(binding.productIamge,
+          /*  ImageManager.setPictureWithoutPlaceHolder(binding.productIamge,
                 "https://assets.woolworthsstatic.co.za/100-Rye-Bread-400-g-6001009038821.jpg?V=QmO3&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDIwLTA5LTA4LzYwMDEwMDkwMzg4MjFfaGVyby5qcGcifQ&")
+       */
         }
     }
 }
