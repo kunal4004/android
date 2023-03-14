@@ -29,6 +29,7 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyNames.Companion.STATUS
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyNames.Companion.TRANSACTION_ID
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyValues.Companion.CURRENCY_VALUE
+import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.util.AdvancedWebView
@@ -115,8 +116,9 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
         binding.paymentSuccessConfirmationLayout?.root?.visibility = View.VISIBLE
         Handler(Looper.getMainLooper()).postDelayed({
             binding.paymentSuccessConfirmationLayout?.root?.visibility = View.GONE
-            view?.findNavController()
-                ?.navigate(R.id.action_checkoutPaymentWebFragment_orderConfirmationFragment)
+            view?.let {
+                GeoUtils.navigateSafe(it, R.id.action_checkoutPaymentWebFragment_orderConfirmationFragment, null)
+            }
         }, AppConstant.DELAY_1500_MS)
     }
 
