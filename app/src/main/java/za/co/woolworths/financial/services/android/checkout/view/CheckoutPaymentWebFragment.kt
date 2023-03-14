@@ -141,7 +141,7 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
             paymentArguments[STATUS] = paymentStatusType
 
         if (!transactionAnalytics.isNullOrEmpty()) {
-            val jsonToAnalyticsList = Gson().fromJson<PaymentAnalyticsData>(
+            val jsonToAnalyticsList = Gson().fromJson<PaymentAnalyticsData?>(
                 transactionAnalytics,
                 object : TypeToken<PaymentAnalyticsData?>() {}.type
             )
@@ -177,7 +177,7 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
                 view?.findNavController()?.navigateUp()
             }
         }
-        if (paymentArguments.size > 0)
+        if (!paymentArguments.isNullOrEmpty())
             Utils.triggerFireBaseEvents(PAYMENT_STATUS, paymentArguments, activity)
     }
 
