@@ -59,7 +59,7 @@ class ChatViewModel : ViewModel() {
     fun fetchOtherUser() {
         val channelClient = chatClient.channel(channelId)
         channelClient.queryMembers(0, 2, Filters.neutral()).enqueue { result ->
-            if (result.isSuccess && (!result.data().isNullOrEmpty())) {
+            if (result.isSuccess && !result.data().isNullOrEmpty()) {
                 val member = result.data().lastOrNull() { x -> x.user.id != currentUser?.id }
                 member?.let {
                     otherUser = it.user
