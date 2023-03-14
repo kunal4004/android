@@ -9,6 +9,6 @@ interface ShoppingListDetailRepository {
     suspend fun getInventorySkuForStore(
         storeId: String,
         multiSku: String,
-        isUserBrowsing: Boolean
+        isUserBrowsing: Boolean = false
     ): Resource<SkusInventoryForStoreResponse>
 }

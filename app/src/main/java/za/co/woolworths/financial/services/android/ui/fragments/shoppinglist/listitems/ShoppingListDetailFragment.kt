@@ -46,12 +46,11 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.detail.I
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.ConfirmDeliveryLocationFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment
-import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
-import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.*
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.Companion.ADDED_TO_SHOPPING_LIST_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.Companion.MY_LIST_LIST_ID
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.Companion.MY_LIST_LIST_NAME
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.Companion.MY_LIST_SEARCH_TERM
+import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory.Companion.buildAddToCartSuccessToast
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory.Companion.buildShoppingListFromSearchResultToast
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory.Companion.showItemsLimitToastOnAddToCart
@@ -71,44 +70,43 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
     NetworkChangeListener, ToastInterface, ShoppingListItemsNavigator, IToastInterface,
     IOnConfirmDeliveryLocationActionListener {
 
-    private val viewModel: ShoppingListDetailViewModel by viewModels(
-        ownerProducer = { this }
-    )
+    private val viewModel: ShoppingListDetailViewModel by viewModels()
 
-    private val productSearchResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
-        when (result.resultCode) {
-            // add to list from search result
-            ADDED_TO_SHOPPING_LIST_RESULT_CODE -> {
-                val count = result.data?.getIntExtra(EXTRA_LIST_ITEMS, 0) ?: 0
-                buildShoppingListFromSearchResultToast(
-                    requireActivity(), bindingListDetails.rlCheckOut, listName ?: "", count
-                )
-                initGetShoppingListItems()
-            }
-            // add to list from search result -> PDP
-            AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE -> {
-                with(requireActivity()) {
-                    setResult(
-                        AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE,
-                        result.data
+    private val productSearchResult =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+            when (result.resultCode) {
+                // add to list from search result
+                ADDED_TO_SHOPPING_LIST_RESULT_CODE -> {
+                    val count = result.data?.getIntExtra(EXTRA_LIST_ITEMS, 0) ?: 0
+                    buildShoppingListFromSearchResultToast(
+                        requireActivity(), bindingListDetails.rlCheckOut, listName ?: "", count
                     )
-                    onBackPressed()
+                    viewModel.getShoppingListDetails()
                 }
-            }
-            // searched details result
-            PRODUCT_SEARCH_ACTIVITY_RESULT_CODE -> {
-                val searchResultFragment = SearchResultFragment()
-                result.data?.let { data ->
-                    val bundle = bundleOf(
-                        MY_LIST_SEARCH_TERM to data.getStringExtra(MY_LIST_LIST_NAME),
-                        MY_LIST_LIST_ID to data.getStringExtra(MY_LIST_LIST_ID)
-                    )
-                    searchResultFragment.arguments = bundle
+                // add to list from search result -> PDP
+                AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE -> {
+                    with(requireActivity()) {
+                        setResult(
+                            AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE,
+                            result.data
+                        )
+                        onBackPressed()
+                    }
                 }
-                (activity as? BottomNavigationActivity)?.pushFragment(searchResultFragment)
+                // searched details result
+                PRODUCT_SEARCH_ACTIVITY_RESULT_CODE -> {
+                    val searchResultFragment = SearchResultFragment()
+                    result.data?.let { data ->
+                        val bundle = bundleOf(
+                            MY_LIST_SEARCH_TERM to data.getStringExtra(MY_LIST_LIST_NAME),
+                            MY_LIST_LIST_ID to data.getStringExtra(MY_LIST_LIST_ID)
+                        )
+                        searchResultFragment.arguments = bundle
+                    }
+                    (activity as? BottomNavigationActivity)?.pushFragment(searchResultFragment)
+                }
             }
         }
-    }
 
     private var mErrorHandlerView: ErrorHandlerView? = null
     private var openFromMyList = false
@@ -117,19 +115,17 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
     private var showMenu = false
     private var isSelectAll: Boolean = false
     private var listName: String? = null
-    private var listId: String? = ""
     private var shoppingListItemsAdapter: ShoppingListItemsAdapter? = null
     private var mConnectionBroadcast: BroadcastReceiver? = null
     private var mPostAddToCart: Call<AddItemToCartResponse>? = null
 
-    private var _bindingListDetails: ShoppingListDetailFragmentBinding? = null
     private var timer: CountDownTimer? = null
-
     private var mId: String  = ""
     private var mProductId: String = ""
     private var mCatalogRefId: String = ""
     private var mShouldUpdateShoppingList: Boolean = false
 
+    private var _bindingListDetails: ShoppingListDetailFragmentBinding? = null
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val bindingListDetails get() = _bindingListDetails!!
@@ -138,7 +134,6 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
         arguments?.apply {
-            listId = getString(ARG_LIST_ID, "")
             listName = getString(ARG_LIST_NAME, "")
             openFromMyList = getBoolean(ARG_OPEN_FROM_MY_LIST, false)
         }
@@ -164,7 +159,6 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         setUpToolbar(listName)
         setDeliveryLocation()
         initViewAndEvent()
-        initGetShoppingListItems()
         addSubscribeEvents()
         addFragmentListener()
     }
@@ -214,6 +208,8 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                     enableAdapterClickEvent(true)
                     bindingListDetails.loadingBar.visibility = GONE
                     getInventoryForStoreSuccess(response)
+                    updateCartCountButton()
+                    manageSelectAllMenuVisibility()
                 }
                 Status.ERROR -> {
                     viewModel.inventoryCallFailed = true
@@ -336,7 +332,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                 )
             ) {
                 errorMessageWasPopUp = false
-                initGetShoppingListItems()
+                viewModel.getShoppingListDetails()
             }
             R.id.btnCheckOut -> addItemsToCart()
             R.id.changeLocationButton -> deliverySelectionIntent(DELIVERY_LOCATION_REQUEST)
@@ -352,7 +348,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                 EXTRA_SEARCH_TEXT_HINT, requireContext().getString(R.string.shopping_search_hint)
             )
             openProductSearchActivity.putExtra(
-                EXTRA_LIST_ID, listId
+                EXTRA_LIST_ID, viewModel.listId
             )
             productSearchResult.launch(openProductSearchActivity)
             overridePendingTransition(0, 0)
@@ -364,12 +360,15 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         when (shoppingListItemsResponse?.httpCode) {
             HTTP_OK -> {
                 bindingListDetails.loadingBar.visibility = GONE
+                viewModel.syncListWithAdapter(shoppingListItemsAdapter?.shoppingListItems)
                 viewModel.makeInventoryCalls()
                 if (viewModel.isShoppingListContainsUnavailableItems())
                     showBlackToolTip()
                 else
                     hideBlackToolTip()
-                updateList()
+
+                setUpView()
+                shoppingListItemsAdapter?.setList(viewModel.mShoppingListItems)
             }
             HTTP_SESSION_TIMEOUT_440 -> SessionUtilities.getInstance().setSessionState(
                 SessionDao.SESSION_STATE.INACTIVE,
@@ -403,14 +402,12 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
     override fun onItemSelectionChange(isSelected: Boolean) {
         if (!isAdded || !isVisible) return
         if (isSelected)
-        hideBlackToolTip()
+            hideBlackToolTip()
         updateCartCountButton()
         manageSelectAllMenuVisibility()
     }
 
     override fun onShoppingListItemDelete(shoppingListItemsResponse: ShoppingListItemsResponse) {
-        viewModel.mShoppingListItems =
-            shoppingListItemsResponse.listItems?.let { ArrayList(it) } ?: ArrayList(0)
         updateList()
         enableAdapterClickEvent(true)
         if (!viewModel.isShoppingListContainsUnavailableItems()) {
@@ -435,6 +432,11 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         if (mId?.isEmpty() == true || mProductId?.isEmpty() == true || mCatalogRefId?.isEmpty() == true) {
             return
         }
+
+        if (viewModel.listId.isEmpty()) {
+            return
+        }
+
         val listSize = shoppingListItemsAdapter?.shoppingListItems?.size ?: 0
         if (listSize == 1) {
             if (!mShouldUpdateShoppingList) {
@@ -447,7 +449,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             }
         }
         val shoppingListItemsResponseCall = deleteShoppingListItem(
-            listId!!, mId, mProductId, mCatalogRefId
+            viewModel.listId, mId, mProductId, mCatalogRefId
         )
         bindingListDetails.loadingBar.visibility = VISIBLE
         shoppingListItemsResponseCall.enqueue(
@@ -458,31 +460,16 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                         val currentList =
                             shoppingListItemsAdapter?.shoppingListItems ?: ArrayList(0)
 
-                        for (shoppingListItem in currentList) {
-                            for (updatedList in response?.listItems ?: ArrayList(0)) {
-                                if (shoppingListItem.catalogRefId.equals(
-                                        updatedList.catalogRefId,
-                                        ignoreCase = true
-                                    )
-                                ) {
-                                    // Since the location is not changed.
-                                    updatedList.inventoryCallCompleted =
-                                        shoppingListItem.inventoryCallCompleted
-                                    updatedList.unavailable = shoppingListItem.unavailable
-                                    updatedList.quantityInStock = shoppingListItem.quantityInStock
-                                }
-                            }
-                        }
+                        viewModel.mShoppingListItems =
+                            response?.listItems?.let { ArrayList(it) } ?: ArrayList(0)
+                        viewModel.onDeleteSyncList(currentList)
 
                         response?.let { onShoppingListItemDelete(it) }
 
-                        response?.listItems?.let {
-                            val isStockAvailable =
-                                getIsStockAvailable(ArrayList(response.listItems))
-                            if (!isStockAvailable) {
-                                bindingListDetails.rlCheckOut.visibility = GONE
-                                manageSelectAllMenuVisibility()
-                            }
+                        val isStockAvailable =
+                            viewModel.getIsStockAvailable()
+                        if (!isStockAvailable) {
+                            bindingListDetails.rlCheckOut.visibility = GONE
                         }
                         //requirement: to show count on add to cart
                         //update on delete item
@@ -505,20 +492,12 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                 getString(R.string.delete_confirmation_list_text),
                 getString(R.string.remove),
                 getString(R.string.cancel),
-                resultCode)
-        customBottomSheetDialogFragment.show(requireFragmentManager(),
-            CustomBottomSheetDialogFragment::class.java.simpleName)
-    }
-
-    private fun getIsStockAvailable(list: ArrayList<ShoppingListItem?>): Boolean {
-        var isAvailable = false
-        for (listItem in list) {
-            if ((listItem?.quantityInStock ?: 0) > 0) {
-                isAvailable = true
-                break
-            }
-        }
-        return isAvailable
+                resultCode
+            )
+        customBottomSheetDialogFragment.show(
+            requireFragmentManager(),
+            CustomBottomSheetDialogFragment::class.java.simpleName
+        )
     }
 
     override fun onShoppingSearchClick() {
@@ -641,23 +620,19 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         }
     }
 
-    private fun initGetShoppingListItems() {
-        listId?.let { viewModel.getShoppingListDetails(it) }
-    }
-
     private fun addFragmentListener() {
         activity ?: return
         activity?.supportFragmentManager?.setFragmentResultListener(
             ADDED_TO_SHOPPING_LIST_RESULT_CODE.toString(),
             activity!!
-        ) { requestKey: String?, result: Bundle ->
+        ) { _, result: Bundle ->
             if (result.containsKey("listItems")) {
                 val count = result.getInt("listItems", 0)
                 buildShoppingListFromSearchResultToast(
                     activity!!, bindingListDetails.rlCheckOut, listName!!, count
                 )
             }
-            initGetShoppingListItems()
+            viewModel.getShoppingListDetails()
         }
 
         setFragmentResultListener(ON_CONFIRM_REMOVE_WITH_DELETE_ICON_PRESSED) { _, _ ->
@@ -721,9 +696,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
     }
 
     private fun updateCartCountButton() {
-        val itemWasSelected =
-            shoppingListItemsAdapter?.shoppingListItems?.let { viewModel.isItemSelected(it) }
-                ?: false
+        val itemWasSelected = viewModel.isItemSelected(shoppingListItemsAdapter?.shoppingListItems)
 
         if (itemWasSelected) {
             bindingListDetails.rlCheckOut.visibility = VISIBLE
@@ -764,32 +737,31 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
     fun manageSelectAllMenuVisibility() {
         showMenu = false
         isSelectAll = false
-        for (shoppingListItem in viewModel.mShoppingListItems) {
-            if (shoppingListItem.quantityInStock > 0) {
+        viewModel.mShoppingListItems
+            .filter { it.quantityInStock > 0 }
+            .forEach { shoppingListItem ->
                 // This condition to verify to show select all or Deselect All
                 if (!shoppingListItem.isSelected) {
                     isSelectAll = true
                     showMenu = true
-                    break
+                    return@forEach
                 }
                 showMenu = true
-                break
             }
-        }
         requireActivity().invalidateOptionsMenu()
     }
 
     private fun selectAllListItems(setSelection: Boolean) {
         shoppingListItemsAdapter?.apply {
             shoppingListItems ?: return
-            for (item in shoppingListItems) {
+            shoppingListItems?.forEach { item ->
                 if (item.quantityInStock > 0) {
                     item.isSelected = setSelection
                     item.userQuantity = item.userQuantity.coerceAtLeast(1)
                 }
             }
+            viewModel.mShoppingListItems = ArrayList(shoppingListItems)
             notifyDataSetChanged()
-            viewModel.mShoppingListItems = shoppingListItems
             onItemSelectionChange(setSelection)
         }
     }
@@ -839,7 +811,9 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
 
     private fun getInventoryForStoreSuccess(skusInventoryForStoreResponse: SkusInventoryForStoreResponse?) {
         if (skusInventoryForStoreResponse?.httpCode == HTTP_OK) {
-            updateList()
+            shoppingListItemsAdapter?.setList(
+                viewModel.mShoppingListItems
+            )
             enableAdapterClickEvent(true)
         } else {
             onInventoryError(skusInventoryForStoreResponse)
@@ -865,7 +839,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
 
     private fun updateList() {
         setUpView()
-        shoppingListItemsAdapter?.updateList(
+        shoppingListItemsAdapter?.setList(
             viewModel.mShoppingListItems
         )
     }
@@ -915,7 +889,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                         showBlackToolTip()
                     else
                         hideBlackToolTip()
-                    viewModel.makeInventoryCalls()
+                    viewModel.getShoppingListDetails()
                 }
             }
         }
@@ -1074,12 +1048,12 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         private const val DELIVERY_LOCATION_REQUEST_CODE_FROM_SELECT_ALL = 1222
         private const val DELIVERY_LOCATION_REQUEST = 2
         private const val TOOLBAR_SELECT_ALL: String = "SELECT ALL"
-        private const val ARG_LIST_ID: String = "listId"
         private const val ARG_LIST_NAME: String = "listName"
         private const val ARG_OPEN_FROM_MY_LIST: String = "openFromMyList"
         private const val EXTRA_LIST_ITEMS: String = "listItems"
 
         // constants for deletion confirmation.
-        private const val ON_CONFIRM_REMOVE_WITH_DELETE_ICON_PRESSED = "remove_with_delete_icon_pressed"
+        private const val ON_CONFIRM_REMOVE_WITH_DELETE_ICON_PRESSED =
+            "remove_with_delete_icon_pressed"
     }
 }
