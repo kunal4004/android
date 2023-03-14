@@ -39,7 +39,7 @@ class EmailUsLoadingActivity : AppCompatActivity(), View.OnClickListener {
                 with(result){
                     renderLoading { binding.pbEmailUsLoading.visibility = if (isLoading) VISIBLE else GONE }
                     renderSuccess { handleSuccess() }
-                    renderHttpFailureFromServer { handleError(output.response?.message ?: getString(R.string.oops_error_message)) }
+                    renderHttpFailureFromServer { handleError(output.response?.message ?: getString(R.string.error_message_400)) }
                     renderFailure { handleError(throwable.toString()) }
                 }
             }
