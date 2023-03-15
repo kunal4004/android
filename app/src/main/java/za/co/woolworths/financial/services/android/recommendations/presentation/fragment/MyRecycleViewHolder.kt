@@ -42,6 +42,9 @@ class MyRecycleViewHolder(val mProductListingPageRowBinding: RecommendationsProd
     private fun setOnClickListener(navigator: RecommendationsProductListingListener, productList: Product
     ) {
         mProductListingPageRowBinding.imProductImage.setOnClickListener { navigator.openProductDetailView(productList) }
+        mProductListingPageRowBinding.brandName.setOnClickListener { navigator.openProductDetailView(productList) }
+        mProductListingPageRowBinding.tvRangeName.setOnClickListener { navigator.openProductDetailView(productList) }
+        mProductListingPageRowBinding.tvProductName.setOnClickListener { navigator.openProductDetailView(productList) }
     }
 
     private fun setProductImage(productList: Product) {

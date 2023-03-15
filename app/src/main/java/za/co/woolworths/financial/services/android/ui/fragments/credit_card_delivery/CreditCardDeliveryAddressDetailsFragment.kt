@@ -1,9 +1,11 @@
 package za.co.woolworths.financial.services.android.ui.fragments.credit_card_delivery
 
+import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.widget.EditText
 import androidx.core.os.bundleOf
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
@@ -27,7 +29,6 @@ class CreditCardDeliveryAddressDetailsFragment : CreditCardDeliveryBaseFragment(
         binding = CreditCardDeliveryRecipientAddressLayoutBinding.bind(view)
 
         binding.apply {
-            setUpToolBar()
             navController = Navigation.findNavController(view)
             listOfInputFields = listOf(
                 complexOrBuildingName,
@@ -60,7 +61,12 @@ class CreditCardDeliveryAddressDetailsFragment : CreditCardDeliveryBaseFragment(
             }
         }
     }
-
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        activity?.lifecycleScope?.launchWhenCreated {
+            setUpToolBar()
+        }
+    }
     private fun setUpToolBar() {
         if (activity is CreditCardDeliveryActivity) {
             (activity as? CreditCardDeliveryActivity)?.apply {
