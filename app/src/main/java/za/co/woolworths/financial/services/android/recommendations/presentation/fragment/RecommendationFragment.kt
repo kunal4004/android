@@ -169,7 +169,7 @@ class RecommendationFragment :
 
     override fun openProductDetailView(productList: Product) {
         if(isConnectedToNetwork() == true) {
-            WoolworthsApplication.getInstance().recommendationLogger.submitRecClicks(products = listOf(productList))
+            WoolworthsApplication.getInstance().recommendationAnalytics.submitRecClicks(products = listOf(productList))
         }
         // Move to shop tab.
         if (requireActivity() !is BottomNavigationActivity) {

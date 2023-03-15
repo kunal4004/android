@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.recommendations.presentation.usecase
+package za.co.woolworths.financial.services.android.recommendations.analytics.usecase
 
 import za.co.woolworths.financial.services.android.models.network.Resource
 import za.co.woolworths.financial.services.android.recommendations.data.repository.RecommendationsRepository

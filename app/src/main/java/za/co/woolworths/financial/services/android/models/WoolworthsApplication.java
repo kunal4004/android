@@ -47,11 +47,11 @@ import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.service.RxBus;
 import za.co.woolworths.financial.services.android.onecartgetstream.common.constant.OCConstant;
-import za.co.woolworths.financial.services.android.recommendations.data.repository.RecommendationsRepository;
-import za.co.woolworths.financial.services.android.recommendations.data.repository.RecommendationsRepositoryImpl;
-import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationLogger;
-import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationLoggerImpl;
-import za.co.woolworths.financial.services.android.recommendations.presentation.usecase.RecClickUseCase;
+import za.co.woolworths.financial.services.android.recommendations.analytics.CoroutineScopeProvider;
+import za.co.woolworths.financial.services.android.recommendations.analytics.RecommendationAnalytics;
+import za.co.woolworths.financial.services.android.recommendations.analytics.RecommendationEvents;
+import za.co.woolworths.financial.services.android.recommendations.analytics.RecommendationUseCaseProvider;
+import za.co.woolworths.financial.services.android.recommendations.analytics.RecommendationUseCases;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.onboarding.OnBoardingActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatAWSAmplify;
@@ -91,13 +91,13 @@ public class WoolworthsApplication extends Application implements Application.Ac
 
    @Inject ConnectivityLiveData connectivityLiveData;
 
-   private RecommendationLogger recommendationLogger;
+    private RecommendationEvents recommendationAnalytics;
 
-   private void initRecommendationLogger() {
-       final RecommendationsRepository repository = new RecommendationsRepositoryImpl();
-       final RecClickUseCase recClickUseCase = new RecClickUseCase(repository);
-       recommendationLogger = new RecommendationLoggerImpl(recClickUseCase);
-   }
+    private RecommendationAnalytics initRecommendationAnalytics() {
+        final RecommendationUseCases recommendationUseCases = new RecommendationUseCaseProvider();
+        final CoroutineScope coroutineScope = CoroutineScopeProvider.INSTANCE.getExternalScope();
+        return RecommendationAnalytics.Companion.getInstance(recommendationUseCases, coroutineScope);
+    }
 
 
     public static String getApiId() {
@@ -178,7 +178,6 @@ public class WoolworthsApplication extends Application implements Application.Ac
         getTracker();
         bus = new RxBus();
         vtoSyncServer();
-        initRecommendationLogger();
     }
 
     private void initializeAnalytics() {
@@ -320,8 +319,11 @@ public class WoolworthsApplication extends Application implements Application.Ac
         return mWGlobalState;
     }
 
-    public RecommendationLogger getRecommendationLogger(){
-        return recommendationLogger;
+    public RecommendationEvents getRecommendationAnalytics() {
+        if (recommendationAnalytics == null) {
+            recommendationAnalytics = initRecommendationAnalytics();
+        }
+        return recommendationAnalytics;
     }
 
     public RxBus bus() {
