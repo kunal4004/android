@@ -20,12 +20,14 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.core.text.HtmlCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -54,6 +56,8 @@ import za.co.woolworths.financial.services.android.models.dto.brandlandingpage.D
 import za.co.woolworths.financial.services.android.models.dto.brandlandingpage.Navigation
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
+import za.co.woolworths.financial.services.android.recommendations.data.response.request.CartProducts
+import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.DISMISS_POP_WINDOW_CLICKED
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
@@ -810,6 +814,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
                     // Detect scrolling up
                     if (dy > 0)
                         loadData()
+
+                    // No search recommendation
+                    if (lastVisibleItem == 0)
+                        showRecommendedProducts()
                 }
             })
 
@@ -819,6 +827,33 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
             //and therefore we can most likely expect a IndexOutOfBoundsException
             if (visibility == View.INVISIBLE)
                 visibility = VISIBLE
+        }
+    }
+
+    private fun showRecommendedProducts() {
+        val bundle = Bundle()
+        val cartLinesValue: MutableList<CartProducts> = arrayListOf()
+
+        bundle.putParcelable(
+            BundleKeysConstants.RECOMMENDATIONS_EVENT_DATA, Event(eventType = "monetate:context:PageView", url = "/cart", pageType = "cart", null, null, null)
+        )
+        bundle.putParcelable(
+            BundleKeysConstants.RECOMMENDATIONS_EVENT_DATA_TYPE, Event(eventType = "monetate:context:Cart", null, null, null, null, cartLinesValue
+            )
+        )
+        val navHostFragment =
+            childFragmentManager.findFragmentById(R.id.navHostRecommendation) as NavHostFragment
+        val navController = navHostFragment?.navController
+        val navGraph = navController?.navInflater?.inflate(R.navigation.nav_recommendation_graph)
+
+        navGraph?.startDestination = R.id.recommendationFragment
+        navGraph?.let {
+            navController?.graph = it
+        }
+        navGraph?.let {
+            navController?.setGraph(
+                it, bundleOf("bundle" to bundle)
+            )
         }
     }
 
