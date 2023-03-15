@@ -55,6 +55,7 @@ class CreditCardTrackMyDelivery : WBottomSheetDialogFragment(), View.OnClickList
         referenceNumber.text = envelopeNumber
         referenceNumberText.setOnClickListener(this@CreditCardTrackMyDelivery)
         trackMyDelivery.setOnClickListener(this@CreditCardTrackMyDelivery)
+        cancelText.setOnClickListener(this@CreditCardTrackMyDelivery)
     }
 
     override fun onClick(v: View?) {
@@ -76,6 +77,9 @@ class CreditCardTrackMyDelivery : WBottomSheetDialogFragment(), View.OnClickList
                     viewState = false
                     buildCustomTrackMyDeliveryToast(context)
                 }
+            }
+            R.id.cancelText -> {
+                dismiss()
             }
         }
     }
