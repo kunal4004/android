@@ -12,7 +12,7 @@
         android:id="@+id/size"
         android:layout_width="match_parent"
         android:layout_height="@dimen/fourty_dp"
-        android:fontFamily="@font/myriad_pro_regular"
+        android:fontFamily="@font/opensans_regular"
         android:gravity="center"
         android:textColor="@color/black"
         android:textSize="@dimen/twelve_sp"

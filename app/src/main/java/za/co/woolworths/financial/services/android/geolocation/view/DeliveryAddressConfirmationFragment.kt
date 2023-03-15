@@ -321,10 +321,11 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
         bundle?.putBoolean(
             IS_COMING_CONFIRM_ADD, false)
         bundle?.putString(DELIVERY_TYPE, deliveryType)
-        findNavController().navigate(
-            R.id.action_deliveryAddressConfirmationFragment_to_clickAndCollectStoresFragment,
-            bundleOf(BUNDLE to bundle)
-        )
+
+        view?.let {
+            GeoUtils.navigateSafe(it, R.id.action_deliveryAddressConfirmationFragment_to_clickAndCollectStoresFragment,
+                bundleOf(BUNDLE to bundle))
+        }
     }
 
     private fun GeoLocationDeliveryAddressBinding.addFragmentListner() {
@@ -929,7 +930,7 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
         var earliestDashDate =
             validateLocationResponse?.validatePlace?.onDemand?.firstAvailableFoodDeliveryTime
         if (earliestDashDate.isNullOrEmpty())
-            earliestDashDate = getString(R.string.earliest_delivery_no_date_available)
+            earliestDashDate = getString(R.string.no_timeslots_available_title)
         geoDeliveryView?.visibility = View.VISIBLE
         earliestDeliveryDashLabel?.text = requireContext().getString(R.string.earliest_dash_delivery_timeslot)
         setVisibilityDeliveryDates(null, null, earliestDashDate)
