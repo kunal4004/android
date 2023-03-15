@@ -958,11 +958,14 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                     changeFullfilmentCollectionStoreFragment?.scrollToTop()
                 }
                 DASH_TAB.index -> {
-                    val dashDeliveryAddressFragment = viewpagerMain?.adapter?.instantiateItem(
-                        viewpagerMain,
-                        viewpagerMain.currentItem
-                    ) as? DashDeliveryAddressFragment
-                    dashDeliveryAddressFragment?.scrollToTop()
+                    activity?.lifecycleScope?.launchWhenCreated {
+                        val dashDeliveryAddressFragment = viewpagerMain?.adapter?.instantiateItem(
+                            viewpagerMain,
+                            viewpagerMain.currentItem
+                        ) as? DashDeliveryAddressFragment
+                        if (dashDeliveryAddressFragment is DashDeliveryAddressFragment)
+                            dashDeliveryAddressFragment.scrollToTop()
+                    }
                 }
             }
         }
