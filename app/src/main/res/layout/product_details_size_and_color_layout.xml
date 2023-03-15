@@ -2,8 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:layout_height="wrap_content">
 
     <View
         android:id="@+id/divider1"
@@ -11,8 +10,8 @@
         android:layout_height="1dp"
         android:background="#1A000000"
         android:layout_marginTop="@dimen/twenty_four_dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -21,10 +20,8 @@
         android:layout_marginTop="@dimen/thirty_two_dp"
         android:letterSpacing="0.05"
         android:text="@string/select_colour"
-        app:layout_constrainedWidth="true"
-        android:layout_width="wrap_content"
-        android:gravity="start"
         android:textAllCaps="true"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/divider1" />
 
@@ -43,8 +40,7 @@
         style="@style/futura_semi_bold_black_12_text_style"
         android:letterSpacing="0.05"
         android:textAllCaps="true"
-        app:layout_constraintEnd_toStartOf="@id/moreColor"
-        app:layout_constraintStart_toEndOf="@+id/colorPlaceholder"
+        app:layout_constraintLeft_toRightOf="@+id/colorPlaceholder"
         app:layout_constraintTop_toTopOf="@id/colorPlaceholder" />
 
     <TextView
@@ -52,7 +48,7 @@
         style="@style/myriad_pro_regular_black_15_text_style"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/colorPlaceholder"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="@id/colorPlaceholder" />
 
     <androidx.recyclerview.widget.RecyclerView
@@ -97,6 +93,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/divider2" />
 
+
     <include
         android:id="@+id/layoutLowStockIndicator"
         layout="@layout/low_stock_product_details"
@@ -109,7 +106,7 @@
 
     <TextView
         android:id="@+id/selectedSize"
-        style="@style/futura_semi_bold_black_12_text_style"
+        style="@style/futura_semi_bold_black_14_text_style"
         android:letterSpacing="0.05"
         android:textAllCaps="true"
         app:layout_constraintLeft_toRightOf="@+id/selectedSizePlaceholder"
@@ -117,7 +114,11 @@
 
     <TextView
         android:id="@+id/sizeGuide"
-        style="@style/myriad_pro_regular_black_15_text_style"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/fourteen_sp"
+        android:textColor="@color/black"
+        android:fontFamily="@font/opensans_regular"
         android:contentDescription="@string/cd_lnksizeguide"
         android:letterSpacing="0.05"
         android:text="@string/size_guide"
@@ -140,12 +141,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        app:constraint_referenced_ids="sizeSelectorRecycleView,selectedSize,selectedSizePlaceholder"/>
+        app:constraint_referenced_ids="sizeSelectorRecycleView,selectedSize,selectedSizePlaceholder,divider2"/>
     <androidx.constraintlayout.widget.Group
         android:id="@+id/colorSelectorLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        app:constraint_referenced_ids="colorSelectorRecycleView,selectedColor,colorPlaceholder"/>
+        app:constraint_referenced_ids="colorSelectorRecycleView,selectedColor,colorPlaceholder,divider1"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

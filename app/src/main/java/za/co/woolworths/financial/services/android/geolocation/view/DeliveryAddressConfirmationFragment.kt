@@ -321,10 +321,11 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
         bundle?.putBoolean(
             IS_COMING_CONFIRM_ADD, false)
         bundle?.putString(DELIVERY_TYPE, deliveryType)
-        findNavController().navigate(
-            R.id.action_deliveryAddressConfirmationFragment_to_clickAndCollectStoresFragment,
-            bundleOf(BUNDLE to bundle)
-        )
+
+        view?.let {
+            GeoUtils.navigateSafe(it, R.id.action_deliveryAddressConfirmationFragment_to_clickAndCollectStoresFragment,
+                bundleOf(BUNDLE to bundle))
+        }
     }
 
     private fun GeoLocationDeliveryAddressBinding.addFragmentListner() {
