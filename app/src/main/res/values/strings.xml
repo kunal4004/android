@@ -477,11 +477,12 @@
     <string name="delete">DELETE</string>
     <string name="are_you_sure">Are You Sure?</string>
     <string name="delete_confirmation_text">If you remove these products from your cart, you can still shop for them in the app.</string>
+    <string name="delete_confirmation_list_text">If you remove this product from your list, you can still shop for it in the app.</string>
 
     <!-- new list item-->
     <string name="create_list">create list</string>
     <string name="new_list">new list</string>
-    <string name="shopping_search_hint">Search products to add to your list</string>
+    <string name="shopping_search_hint">Add Items To Your List</string>
     <string name="total_item">Total*</string>
     <string name="rlOtherDiscounts"><![CDATA[WRewards Savings & Other Discounts]]></string>
     <string name="out_of_stock">out of stock</string>
@@ -2545,6 +2546,10 @@
     <string name="all_products_available">All Products Available</string>
     <string name="next_dash_delivery_timeslot_text">Next Dash Delivery Timeslot</string>
     <string name="my_shopping_lists">My Shopping Lists</string>
+    <string name="title_mylist_dash_tooltip">Some items aren’t available using <b>Dash.</b></string>
+    <string name="title_mylist_collection_tooltip">Some items aren’t available for <b>Collection.</b></string>
+    <string name="title_mylist_standard_tooltip">Some items aren’t available using <b>Standard.</b></string>
+    <string name="change_delivery_method_mylist_tooltip">Get them using a different delivery method.</string>
     <string name="hi">HI&#160;</string>
     <string name="tip_your_dash_driver">Tip Your Dash Driver</string>
     <string name="enter_your_own_amount">Enter your own amount between R%1d - R%2d</string>
@@ -2834,8 +2839,21 @@
     <string name="cancelled">Cancelled</string>
     <string name="order">Order\u0020</string>
     <string name="a_report_for_this_review_has_already_been_submitted">A report for this review has already been submitted.</string>
+
+    <plurals name="plural_add_to_cart">
+        <item quantity="one">ADD %d ITEM TO CART</item>
+        <item quantity="other">ADD %d ITEMS TO CART</item>
+    </plurals>
+
+    <plurals name="plural_add_to_list">
+        <item quantity="one">ADD %d ITEM TO LIST</item>
+        <item quantity="other">ADD %d ITEMS TO LIST</item>
+    </plurals>
     <string name="reduce_count_button">Reduce Count Button</string>
     <string name="add_item_count">Add item count</string>
+    <string name="unavailable">Unavailable</string>
+    <string name="unavailable_with_dash">Unavailable With Dash</string>
+    <string name="unavailable_with_collection">Unavailable for Collection</string>
     <string name="get_replacement_card_action_button_text_label_on_overlay">get_replacement_card_action_button_text_label_on_overlay</string>
     <plurals name="category_item">
         <item quantity="one">%1$s %2$s Item</item>
@@ -2916,5 +2934,19 @@
     <string name="cnc_title_text_2">Limited shop of %1$s food items.</string>
 
     <string name="recommendations_title">Recommended</string>
+
+    <string name="confirm_your_product_details">Confirm Your Product Details</string>
+    <string name="show_less">Show Less</string>
+
+    <string name="enhanced_substitution_title">Introducing Custom Substitutions</string>
+    <string name="enhanced_substitution_desc">Add or remove substitutes as you shop your favourite products, or let our shoppers choose for you!</string>
+    <string name="enhanced_substitution_btn">Manage substitutions</string>
+    <string name="got_it_btn"><u>GOT IT</u></string>
+
+    <string name="substitutions">Substitutions</string>
+    <string name="let_my_shooper_choose_for_me">Let My Shopper Choose For Me</string>
+
+    <string name="timeslot_title">All Dash Timeslots Are Fully Booked.</string>
+    <string name="timeslot_desc">Check back later to see if any new delivery slots become available.</string>
 
 </resources>
