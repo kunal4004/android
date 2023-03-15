@@ -516,9 +516,9 @@ class KotlinUtils {
                     Delivery.DASH -> {
                         val timeSlot: String? =
                             WoolworthsApplication.getValidatePlaceDetails()?.onDemand?.firstAvailableFoodDeliveryTime
-                        if (timeSlot == null) {
+                        if (timeSlot?.isNullOrEmpty() == true || WoolworthsApplication.getValidatePlaceDetails()?.onDemand?.deliveryTimeSlots?.isNullOrEmpty() == true) {
                             tvDeliveringTo?.text =
-                                context?.resources?.getString(R.string.dash_delivery_bold)
+                                context?.resources?.getString(R.string.dash_delivery_bold) +  "\t" + context?.resources?.getString(R.string.no_timeslots_available_title)
                         } else {
                             tvDeliveringTo?.text =
                                 context?.resources?.getString(R.string.dash_delivery_bold)
@@ -602,13 +602,17 @@ class KotlinUtils {
                         val formmmatedNickName = getFormattedNickName(address?.nickname,
                             fullAddress, context)
 
-                        if (timeSlot == null) {
-                            tvDeliveryLocation?.text = formmmatedNickName.append(
-                                capitaliseFirstLetter(
-                                    WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.address1
-                                        ?: address?.address1 ?: ""
-                                )
-                            )
+                        if (timeSlot?.isNullOrEmpty() == true) {
+                            tvDeliveryLocation?.text =
+                                context?.getString(R.string.no_timeslots_available_title)
+                                    ?.plus("\t\u2022\t")?.plus(
+                                        formmmatedNickName.append(
+                                            capitaliseFirstLetter(
+                                                WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.address1
+                                                    ?: address?.address1 ?: ""
+                                            )
+                                        )
+                                    )
                         } else {
                             tvDeliveryLocation?.text =
                                 timeSlot.plus("\t\u2022\t").plus(formmmatedNickName).plus(

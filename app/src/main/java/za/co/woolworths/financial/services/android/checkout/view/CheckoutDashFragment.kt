@@ -85,6 +85,7 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
     IToastInterface {
 
     private var isItemLimitExceeded: Boolean = false
+    private var isTimeSlotsNotAvailable: Boolean = false
     private lateinit var binding: FragmentCheckoutReturningUserDashBinding
 
     private var orderTotalValue: Double = -1.0
@@ -518,6 +519,13 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
     }
 
     private fun initializeDatesAndTimeSlots(selectedWeekSlot: Week?) {
+
+        if (selectedWeekSlot == null) {
+            binding.checkoutCollectingTimeDetailsLayout?.root?.visibility = View.GONE
+            showNoTimeSlotsView()
+            return
+        }
+
         val slots = selectedWeekSlot?.slots?.filter { slot ->
             slot.available == true
         }
@@ -1132,6 +1140,11 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
             return
         }
 
+        if (isTimeSlotsNotAvailable) {
+            showNoTimeSlotsView()
+            return
+        }
+
         if (isRequiredFieldsMissing() || isAgeConfirmationLiquorCompliance()) {
             return
         }
@@ -1191,6 +1204,22 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
             getString(R.string.got_it),
             R.drawable.payment_overdue_icon,
             isFromCheckoutScreen = true
+        )
+    }
+
+    private fun showNoTimeSlotsView() {
+        isTimeSlotsNotAvailable = true
+        binding.txtContinueToPayment?.background = ContextCompat.getDrawable(
+            requireContext(),
+            R.drawable.grey_background_with_corner_6
+        )
+        KotlinUtils.showGeneralInfoDialog(
+            requireActivity().supportFragmentManager,
+            getString(R.string.timeslot_desc),
+            getString(R.string.timeslot_title),
+            getString(R.string.got_it),
+            R.drawable.icon_dash_delivery_scooter,
+            false
         )
     }
 
