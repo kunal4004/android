@@ -24,18 +24,13 @@ public class WProductDetail {
 	public String longDescription;
 	//@SerializedName("otherSkus")
 	@SerializedName("otherSkus")
-	@Expose
 	public List<OtherSkus> otherSkus = null;
 	@SerializedName("promotionImages")
-	@Expose
 	public PromotionImages promotionImages;
 	@SerializedName("colourSizeVariants")
-	@Expose
 	public String colourSizeVariants;
 	@SerializedName("lowStockThreshold")
-	@Expose
 	public Integer lowStockIndicator;
 	@SerializedName("sizeGuideId")
-	@Expose
 	public String sizeGuideId;
 }

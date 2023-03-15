@@ -166,9 +166,9 @@ class SearchResultShopAdapter(
         RecyclerView.ViewHolder(itemBinding.root) {
 
         fun setCartImage(productItem: ProductList) {
-            productItem.externalImageRefV2?.let {
+            productItem.externalImageRefV2?.let { url ->
                 itemBinding.cartProductImage?.setImageURI(
-                    it + (if ((it.indexOf("?") > 0)) "w=" + 85 + "&q=" + 85 else "?w=" + 85 + "&q=" + 85)
+                    url + (if ((url.indexOf("?") > 0)) "w=" + 85 + "&q=" + 85 else "?w=" + 85 + "&q=" + 85)
                 )
             }
         }
@@ -285,7 +285,9 @@ class SearchResultShopAdapter(
 
     fun setSelectedProduct(selectedProduct: ProductList) {
         // Ensure that the product list is not null
-        productList ?: return
+        if(productList.isNullOrEmpty()) {
+            return
+        }
 
         // Find the index of the selected product within the list
         val index = productList!!.indexOf(selectedProduct)
