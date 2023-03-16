@@ -59,10 +59,12 @@ class ChatViewModel : ViewModel() {
     fun fetchOtherUser() {
         val channelClient = chatClient.channel(channelId)
         channelClient.queryMembers(0, 2, Filters.neutral()).enqueue { result ->
-            if (result.isSuccess) {
-                val member = result.data().last { x -> x.user.id != currentUser!!.id }
-                otherUser = member.user
-                _otherUserDisplayName.postValue(otherUser.name)
+            if (result.isSuccess && !result.data().isNullOrEmpty()) {
+                val member = result.data().lastOrNull() { x -> x.user.id != currentUser?.id }
+                member?.let {
+                    otherUser = it.user
+                    _otherUserDisplayName.postValue(otherUser.name)
+                }
                 observeOtherUserEvents()
                 observeNewMessageEvents()
                 postOtherUserPresence()

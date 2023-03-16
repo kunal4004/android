@@ -170,17 +170,17 @@
             android:id="@+id/rlCheckOut"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:minHeight="@dimen/ninety_dp"
             android:layout_alignParentBottom="true"
-            android:background="@color/recent_search_bg"
-            android:gravity="center"
-            android:visibility="gone">
+            android:background="@color/white"
+            android:visibility="gone"
+            tools:visibility="visible">
 
             <RelativeLayout
                 android:id="@+id/rlCheckOutContainer"
                 style="@style/blackButtonStyle"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginBottom="8dp">
+                android:layout_marginHorizontal="@dimen/eight_dp"
+                android:layout_centerInParent="true">
 
                 <ProgressBar
                     android:id="@+id/pbLoadingIndicator"
