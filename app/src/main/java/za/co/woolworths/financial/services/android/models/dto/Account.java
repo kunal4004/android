@@ -1,12 +1,12 @@
 package za.co.woolworths.financial.services.android.models.dto;
 
 
-import com.google.gson.JsonElement;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 import za.co.woolworths.financial.services.android.models.dto.account.BpiInsuranceApplication;
 import za.co.woolworths.financial.services.android.models.dto.npc.PrimaryCard;
@@ -62,8 +62,7 @@ public class Account implements Serializable {
 	@Expose
 	public List<PaymentMethod> paymentMethods;
 	@SerializedName("bankingDetails")
-	@Expose(serialize = false)
-	public JsonElement bankingDetails;
+	public Map<String, String> bankingDetails;
 	@SerializedName("debitOrder")
 	@Expose
 	public DebitOrder debitOrder;
