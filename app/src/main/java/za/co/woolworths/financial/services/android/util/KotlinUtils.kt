@@ -75,10 +75,10 @@ import za.co.woolworths.financial.services.android.models.dto.app_config.chat.Co
 import za.co.woolworths.financial.services.android.models.dto.cart.FulfillmentDetails
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
-import za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.LinkDeviceConfirmationActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
+import za.co.woolworths.financial.services.android.ui.activities.webview.activities.WInternalWebPageActivity
 import za.co.woolworths.financial.services.android.ui.extension.*
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.Constants.IS_PET_INSURANCE
@@ -1543,6 +1543,7 @@ class KotlinUtils {
                 infoIcon = R.drawable.icon_dash_delivery_scooter
             )
         }
+
         fun showPetInsurancePendingDialog(fragmentManager: FragmentManager) {
             val petInsurancePendingFragment =
                 PetInsurancePendingFragment.newInstance()
@@ -1551,6 +1552,7 @@ class KotlinUtils {
                 PetInsurancePendingFragment::class.java.simpleName
             )
         }
+
         fun petInsuranceRedirect(
             activity: Activity?,
             url: String?,
@@ -1563,8 +1565,10 @@ class KotlinUtils {
                 openInternalWebView.putExtra(IS_PET_INSURANCE, true)
                 if (isWebView) {
                     openInternalWebView.putExtra(COLLECTIONS_EXIT_URL, collectionsExitUrl)
-                    startActivityForResult(openInternalWebView,
-                        MyAccountsFragment.PET_INSURANCE_REQUEST_CODE)
+                    startActivityForResult(
+                        openInternalWebView,
+                        MyAccountsFragment.PET_INSURANCE_REQUEST_CODE
+                    )
                 } else {
                     openUrlInPhoneBrowser(url, activity)
                     activity.finish()

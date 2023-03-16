@@ -1523,6 +1523,14 @@ interface ApiInterface {
     ) : retrofit2.Response<LastOrderDetailsResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @POST("wfs/app/recommendations")
+    suspend fun recommendation(
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Body recommendationRequest: RecommendationRequest
+    ) : retrofit2.Response<RecommendationResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("wfs/app/v4/user/featureEnablement")
     fun getFeatureEnablement(
         @Header("sessionToken") sessionToken: String,
@@ -1541,15 +1549,7 @@ interface ApiInterface {
     fun getAppGUID(
         @Header("sessionToken") sessionToken: String,
         @Header("deviceIdentityToken") deviceIdentityToken: String,
-        @Body appGUIDRequestModel : AppGUIDRequestModel
+        @Body appGUIDRequestModel: AppGUIDRequestModel
     ):  Call<AppGUIDModel>
-
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @POST("wfs/app/recommendations")
-    suspend fun recommendation(
-        @Header("sessionToken") sessionToken: String,
-        @Header("deviceIdentityToken") deviceIdentityToken: String,
-        @Body recommendationRequest: RecommendationRequest
-    ) : retrofit2.Response<RecommendationResponse>
 }
 

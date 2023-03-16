@@ -1259,25 +1259,6 @@ object OneAppService : RetrofitConfig() {
             mApiInterface.getLastDashOrder(getSessionToken(), getDeviceIdentityToken())
         }
     }
-    fun getFeatureEnablementResponse(): Call<FeatureEnablementModel> {
-        return mApiInterface.getFeatureEnablement(
-            getSessionToken(),
-            getDeviceIdentityToken()
-        )
-    }
-    fun getPetInsuranceResponse(): Call<PetInsuranceModel> {
-        return mApiInterface.getPetInsurance(
-            getSessionToken(),
-            getDeviceIdentityToken()
-        )
-    }
-    fun getAppGUIDResponse(appGUIDRequestType: AppGUIDRequestType): Call<AppGUIDModel> {
-        return mApiInterface.getAppGUID(
-            getSessionToken(),
-            getDeviceIdentityToken(),
-            getRequestBody(appGUIDRequestType)
-        )
-    }
 
     suspend fun recommendation(recommendationRequest: RecommendationRequest): retrofit2.Response<RecommendationResponse> {
         return withContext(Dispatchers.IO) {
@@ -1287,5 +1268,27 @@ object OneAppService : RetrofitConfig() {
                 recommendationRequest
             )
         }
+    }
+
+    fun getFeatureEnablementResponse(): Call<FeatureEnablementModel> {
+        return mApiInterface.getFeatureEnablement(
+            getSessionToken(),
+            getDeviceIdentityToken()
+        )
+    }
+
+    fun getPetInsuranceResponse(): Call<PetInsuranceModel> {
+        return mApiInterface.getPetInsurance(
+            getSessionToken(),
+            getDeviceIdentityToken()
+        )
+    }
+
+    fun getAppGUIDResponse(appGUIDRequestType: AppGUIDRequestType): Call<AppGUIDModel> {
+        return mApiInterface.getAppGUID(
+            getSessionToken(),
+            getDeviceIdentityToken(),
+            getRequestBody(appGUIDRequestType)
+        )
     }
 }
