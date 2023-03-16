@@ -26,6 +26,7 @@ import za.co.woolworths.financial.services.android.checkout.service.network.Save
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutAddressConfirmationListAdapter
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.geolocation.model.MapData
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
@@ -623,19 +624,19 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
             putBoolean(IS_COMING_CONFIRM_ADD, true)
         }
         if (IS_FROM_STORE_LOCATOR) {
-            findNavController().navigate(
-                R.id.actionClickAndCollectStoresFragment,
-                bundleOf(BUNDLE to bundle)
-            )
+            view?.let {
+                GeoUtils.navigateSafe(it, R.id.actionClickAndCollectStoresFragment,
+                        bundleOf(BUNDLE to bundle))
+            }
         } else {
             if (findNavController().navigateUp()) {
                 setFragmentResult(DeliveryAddressConfirmationFragment.MAP_LOCATION_RESULT,
                     bundleOf(BUNDLE to bundle))
             } else {
-                findNavController().navigate(
-                    R.id.actionToDeliveryAddressConfirmationFragment,
-                    bundleOf(BUNDLE to bundle)
-                )
+                view?.let {
+                    GeoUtils.navigateSafe(it, R.id.actionToDeliveryAddressConfirmationFragment,
+                            bundleOf(BUNDLE to bundle))
+                }
             }
         }
     }
@@ -688,10 +689,10 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
             CheckoutAddressConfirmationListAdapter.EDIT_ADDRESS_POSITION_KEY,
             mPosition)
 
-        findNavController().navigate(
-            R.id.action_confirmAddressLocationFragment_to_checkoutAddAddressNewUserFragment,
-            bundleOf(BUNDLE to bundle)
-        )
+        view?.let {
+            GeoUtils.navigateSafe(it, R.id.action_confirmAddressLocationFragment_to_checkoutAddAddressNewUserFragment,
+                    bundleOf(BUNDLE to bundle))
+        }
     }
 
 
@@ -713,10 +714,11 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
             IS_COMING_FROM_SLOT_SELECTION,
             isComingFromSlotSelection
         )
-        findNavController()?.navigate(
-            R.id.action_confirmAddressLocationFragment_to_checkoutAddAddressNewUserFragment,
-            bundleOf(BUNDLE to bundle)
-        )
+
+        view?.let {
+            GeoUtils.navigateSafe(it, R.id.action_confirmAddressLocationFragment_to_checkoutAddAddressNewUserFragment,
+                    bundleOf(BUNDLE to bundle))
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
