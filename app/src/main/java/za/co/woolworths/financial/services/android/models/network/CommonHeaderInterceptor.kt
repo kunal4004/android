@@ -8,6 +8,9 @@ import za.co.woolworths.financial.services.android.models.network.CommonHeaderUt
 import za.co.woolworths.financial.services.android.models.network.CommonHeaderUtils.Companion.NETWORK
 import za.co.woolworths.financial.services.android.models.network.CommonHeaderUtils.Companion.OS
 import za.co.woolworths.financial.services.android.models.network.CommonHeaderUtils.Companion.SHA1_PASSWORD
+import za.co.woolworths.financial.services.android.ui.activities.maintenance.NetworkRuntimeExceptionViewController
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.logException
+import java.net.SocketTimeoutException
 
 class CommonHeaderInterceptor : NetworkConfig() , Interceptor {
 
@@ -22,6 +25,14 @@ class CommonHeaderInterceptor : NetworkConfig() , Interceptor {
                 .addHeader(OS, getOS())
                 .addHeader(CommonHeaderUtils.OS_VERSION, getOsVersion())
                 .addHeader(APP_VERSION,getAppVersion())
-        return chain.proceed(request.build())
+        try {
+            return chain.proceed(request.build())
+        } catch (exception: Exception) {
+            if (exception is SocketTimeoutException) {
+                logException(exception)
+                NetworkRuntimeExceptionViewController().openSocketTimeOutDialog()
+            }
+            throw exception
+        }
     }
 }

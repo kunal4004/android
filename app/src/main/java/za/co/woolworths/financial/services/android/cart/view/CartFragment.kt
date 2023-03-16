@@ -10,11 +10,14 @@ import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
+import android.widget.ScrollView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentCartBinding
@@ -26,6 +29,9 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import za.co.woolworths.financial.services.android.cart.service.network.CartItemGroup
 import za.co.woolworths.financial.services.android.cart.service.network.CartResponse
+import za.co.woolworths.financial.services.android.cart.viewmodel.CartUtils.Companion.filterCommerceItemFromCartResponse
+import za.co.woolworths.financial.services.android.cart.viewmodel.CartUtils.Companion.getAppliedVouchersCount
+import za.co.woolworths.financial.services.android.cart.viewmodel.CartUtils.Companion.updateItemLimitsBanner
 import za.co.woolworths.financial.services.android.cart.viewmodel.CartViewModel
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity
@@ -72,9 +78,6 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK_201
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_SESSION_TIMEOUT_440
-import za.co.woolworths.financial.services.android.cart.viewmodel.CartUtils.Companion.filterCommerceItemFromCartResponse
-import za.co.woolworths.financial.services.android.cart.viewmodel.CartUtils.Companion.getAppliedVouchersCount
-import za.co.woolworths.financial.services.android.cart.viewmodel.CartUtils.Companion.updateItemLimitsBanner
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getPreferredDeliveryType
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getPreferredPlaceId
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.isDeliveryOptionClickAndCollect
@@ -91,6 +94,10 @@ import za.co.woolworths.financial.services.android.util.analytics.FirebaseManage
 import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.util.wenum.Delivery.Companion.getType
+import za.co.woolworths.financial.services.android.recommendations.data.response.request.CartProducts
+import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
+import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationEventHandler
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants
 import java.net.ConnectException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
@@ -99,7 +106,7 @@ import java.net.UnknownHostException
 class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBinding::inflate),
     CartProductAdapter.OnItemClick,
     View.OnClickListener, NetworkChangeListener, ToastInterface, IWalkthroughActionListener,
-    IRemoveProductsFromCartDialog {
+    IRemoveProductsFromCartDialog, RecommendationEventHandler {
 
     private val viewModel: CartViewModel by viewModels(
         ownerProducer = { this }
@@ -130,6 +137,8 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     private var voucherDetails: VoucherDetails? = null
     var productCountMap: ProductCountMap? = null
     private var liquorCompliance: LiquorCompliance? = null
+    private var cartItemList = ArrayList<CommerceItem>()
+    private var isBlackCardHolder : Boolean = false
     private var isOnItemRemoved = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -367,6 +376,15 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                         showMaxItemView()
                         return
                     }
+
+                    if (deliveryType == Delivery.DASH
+                        && WoolworthsApplication.getValidatePlaceDetails()?.deliverable == true
+                        && (WoolworthsApplication.getValidatePlaceDetails()?.onDemand?.firstAvailableFoodDeliveryTime.isNullOrEmpty()
+                                || WoolworthsApplication.getValidatePlaceDetails()?.onDemand?.deliveryTimeSlots?.isNullOrEmpty() == true)) {
+                        showNoTimeSlotsView()
+                        return
+                    }
+
                     // Go to Web checkout journey if...
                     if (nativeCheckout?.isNativeCheckoutEnabled == false) {
                         val openCheckOutActivity = Intent(context, CartCheckoutActivity::class.java)
@@ -651,6 +669,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                     cartItems = cartResponse.cartItems
                     orderSummary = cartResponse.orderSummary
                     voucherDetails = cartResponse.voucherDetails
+                    isBlackCardHolder = cartResponse.blackCardHolder
                     productCountMap = cartResponse.productCountMap
                     liquorCompliance = LiquorCompliance(
                         cartResponse.liquorOrder,
@@ -693,6 +712,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     fun updateCart(cartResponse: CartResponse?, commerceItemToRemove: CommerceItem?) {
         orderSummary = cartResponse?.orderSummary
         voucherDetails = cartResponse?.voucherDetails
+       isBlackCardHolder = cartResponse?.blackCardHolder ?: false
         productCountMap = cartResponse?.productCountMap
         liquorCompliance =
             (if (cartResponse?.noLiquorImageUrl != null) cartResponse?.noLiquorImageUrl else "")?.let {
@@ -852,6 +872,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
 
                 orderSummary = cartResponse.orderSummary
                 voucherDetails = cartResponse.voucherDetails
+                isBlackCardHolder = cartResponse.blackCardHolder
                 productCountMap = cartResponse.productCountMap
                 liquorCompliance = LiquorCompliance(
                     cartResponse.liquorOrder,
@@ -892,6 +913,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                 if (shouldEnableCheckOutAndEditButton) {
                     orderSummary = cartResponse?.orderSummary
                     voucherDetails = cartResponse?.voucherDetails
+                    isBlackCardHolder = cartResponse?.blackCardHolder ?: false
                     productCountMap = cartResponse?.productCountMap
                     liquorCompliance = LiquorCompliance(
                         cartResponse?.liquorOrder ?: false,
@@ -1019,6 +1041,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                 }
                 setItemLimitsBanner()
                 instance.queryCartSummaryCount()
+                showRecommendedProducts()
             }
             HTTP_SESSION_TIMEOUT_440 -> {
                 //TODO:: improve error handling
@@ -1064,6 +1087,39 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         }
     }
 
+    private fun showRecommendedProducts() {
+        val bundle = Bundle()
+        val cartLinesValue: MutableList<CartProducts> = arrayListOf()
+
+        cartItems?.forEach { item ->
+            cartLinesValue.addAll(item.commerceItems.map {
+                CartProducts(it.commerceItemInfo.productId, it.commerceItemInfo.quantity, it.priceInfo.amount, it.commerceItemInfo.catalogRefId, Constants.CURRENCY_VALUE)
+            })
+        }
+
+        bundle.putParcelable(
+            BundleKeysConstants.RECOMMENDATIONS_EVENT_DATA, Event(eventType = "monetate:context:PageView", url = "/cart", pageType = "cart", null, null, null)
+        )
+        bundle.putParcelable(
+            BundleKeysConstants.RECOMMENDATIONS_EVENT_DATA_TYPE, Event(eventType = "monetate:context:Cart", null, null, null, null, cartLinesValue
+            )
+        )
+        val navHostFragment =
+            childFragmentManager.findFragmentById(R.id.navHostRecommendation) as NavHostFragment
+        val navController = navHostFragment?.navController
+        val navGraph = navController?.navInflater?.inflate(R.navigation.nav_recommendation_graph)
+
+        navGraph?.startDestination = R.id.recommendationFragment
+        navGraph?.let {
+            navController?.graph = it
+        }
+        navGraph?.let {
+            navController?.setGraph(
+                it, bundleOf("bundle" to bundle)
+            )
+        }
+    }
+
     private fun removeItem(commerceItem: CommerceItem) {
         removeCartItem(commerceItem.commerceItemInfo.commerceId).enqueue(
             CompletionHandler(
@@ -1079,6 +1135,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         mCommerceItem = commerceItem
         resetItemDelete(true)
     }
+
     private fun updateUIForCartResponse(response: CartResponse?) {
         if (response == null) return
         displayUpSellMessage(response.globalMessages)
@@ -1091,6 +1148,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             setDeliveryLocation(ShoppingDeliveryLocation(fulfillmentDetailsObj))
         }
     }
+
     override fun onResume() {
         super.onResume()
         val activity: Activity = requireActivity()
@@ -1452,7 +1510,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         }
         if (!binding.btnCheckOut.isEnabled && isAllInventoryAPICallSucceed && !isAnyItemNeedsQuantityUpdate) {
             fadeCheckoutButton(false)
-            if (isAdded) showAvailableVouchersToast(voucherDetails?.activeVouchersCount ?: 0)
+            if (isAdded) showAvailableVouchersToast(voucherDetails?.activeTotalVouchersCount ?: 0)
         }
         if (itemsTobeRemovedFromCart.size > 0) {
             if (activity != null && isAdded) {
@@ -1508,7 +1566,10 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                     FirebaseManagerAnalyticsProperties.Cart_ovr_popup_view,
                     requireActivity()
                 )
-                navigateToAvailableVouchersPage()
+                when {
+                    voucherDetails?.activeVouchersCount?.let { it > 0 } == true -> navigateToAvailableVouchersPage()
+                    voucherDetails?.activeCashVouchersCount?.let { it > 0 } == true -> navigateToCashBackVouchers()
+                }
             }
             else -> {}
         }
@@ -1574,7 +1635,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
 
     override fun onPromptDismiss(feature: WMaterialShowcaseView.Feature) {
         isMaterialPopUpClosed = true
-        if (isAdded) showAvailableVouchersToast(voucherDetails?.activeVouchersCount ?: 0)
+        if (isAdded) showAvailableVouchersToast(voucherDetails?.activeTotalVouchersCount ?: 0)
     }
 
     private fun displayUpSellMessage(globalMessages: GlobalMessages) {
@@ -1600,6 +1661,16 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             getString(R.string.unable_process_checkout_title),
             getString(R.string.got_it),
             R.drawable.payment_overdue_icon
+        )
+    }
+
+    private fun showNoTimeSlotsView() {
+        showGeneralInfoDialog(
+            requireActivity().supportFragmentManager,
+            getString(R.string.timeslot_desc),
+            getString(R.string.timeslot_title),
+            getString(R.string.got_it),
+            R.drawable.icon_dash_delivery_scooter
         )
     }
 
@@ -1634,14 +1705,13 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         mToastUtils?.apply {
             activity = requireActivity()
             currentState = TAG_AVAILABLE_VOUCHERS_TOAST
-            cartText = requireContext().getString(R.string.available)
-            pixel = (binding.btnCheckOut.height ?: 0 * 2.5).toInt()
+            cartText = availableVouchersCount.toString()
+            pixel = (binding.btnCheckOut.height * 3.5).toInt()
             view = binding.btnCheckOut
             message =
-                availableVouchersCount.toString() + requireContext().getString(
-                    if (availableVouchersCount > 1) R.string.available_vouchers_toast_message
-                    else R.string.available_voucher_toast_message
-                )
+                requireContext().resources.getQuantityString(R.plurals.vouchers_available,
+                    availableVouchersCount,
+                    availableVouchersCount)
             setAllCapsUpperCase(true)
             viewState = true
             build()
@@ -1666,11 +1736,34 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         navigateToAvailableVouchersPage()
     }
 
+    override fun onViewCashBackVouchers() {
+        navigateToCashBackVouchers()
+    }
+
+    private fun navigateToCashBackVouchers() {
+        val intent = Intent(context, AvailableVouchersToRedeemInCart::class.java)
+        intent.putExtra(
+            VOUCHER_DETAILS, Utils.toJson(voucherDetails)
+        )
+        intent.putExtra(
+            CASH_BACK_VOUCHERS, true)
+        intent.putExtra(
+            BLACK_CARD_HOLDER,  isBlackCardHolder)
+
+        startActivityForResult(
+            intent, REDEEM_VOUCHERS_REQUEST_CODE
+        )
+    }
+
     private fun navigateToAvailableVouchersPage() {
         val intent = Intent(context, AvailableVouchersToRedeemInCart::class.java)
         intent.putExtra(
-            "VoucherDetails", Utils.toJson(voucherDetails)
+            VOUCHER_DETAILS, Utils.toJson(voucherDetails)
         )
+        intent.putExtra(
+            CASH_BACK_VOUCHERS, false)
+        intent.putExtra(
+            BLACK_CARD_HOLDER,  isBlackCardHolder)
         startActivityForResult(
             intent, REDEEM_VOUCHERS_REQUEST_CODE
         )
@@ -2030,6 +2123,13 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         setDeliveryLocationEnabled(enable)
     }
 
+    override fun onItemAddedToCart() {
+        if(isAdded){
+            loadShoppingCart()
+            binding.nestedScrollView.fullScroll(ScrollView.FOCUS_UP)
+        }
+    }
+
     companion object {
         const val CART_BACK_PRESSED_CODE = 9
         const val PDP_LOCATION_CHANGED_BACK_PRESSED_CODE = 18
@@ -2048,5 +2148,8 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         private const val ON_CONFIRM_REMOVE_WITH_DELETE_ICON_PRESSED =
             "remove_with_delete_icon_pressed"
         private const val ON_CONFIRM_REMOVE_ALL = "on_confirm_remove_all"
+        const val VOUCHER_DETAILS = "VoucherDetails"
+        const val CASH_BACK_VOUCHERS = "cash_back_vouchers"
+        const val BLACK_CARD_HOLDER = "black_card"
     }
 }

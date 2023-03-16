@@ -321,10 +321,11 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
         bundle?.putBoolean(
             IS_COMING_CONFIRM_ADD, false)
         bundle?.putString(DELIVERY_TYPE, deliveryType)
-        findNavController().navigate(
-            R.id.action_deliveryAddressConfirmationFragment_to_clickAndCollectStoresFragment,
-            bundleOf(BUNDLE to bundle)
-        )
+
+        view?.let {
+            GeoUtils.navigateSafe(it, R.id.action_deliveryAddressConfirmationFragment_to_clickAndCollectStoresFragment,
+                bundleOf(BUNDLE to bundle))
+        }
     }
 
     private fun GeoLocationDeliveryAddressBinding.addFragmentListner() {
@@ -835,7 +836,7 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
 
     private fun getDeliveryDetailsFromValidateLocation(placeId: String, isNewLocation: Boolean) {
         val oldPlaceId = validateLocationResponse?.validatePlace?.placeDetails?.placeId
-        if (placeId.isNullOrEmpty() || (oldPlaceId != null && oldPlaceId == placeId)) {
+        if (placeId.isNullOrEmpty() || (oldPlaceId != null && (oldPlaceId == placeId && KotlinUtils.isNickNameChanged == false))) {
             moveToTab(deliveryType)
             return
         }
@@ -854,6 +855,15 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
                                 mStoreId =
                                     getNearestStoreId(validateLocationResponse?.validatePlace?.stores)
                             }
+
+                            KotlinUtils.placeId = validateLocationResponse?.validatePlace?.placeDetails?.placeId
+                            val nickname =  validateLocationResponse?.validatePlace?.placeDetails?.nickname
+
+                            val fulfillmentDeliveryLocation = Utils.getPreferredDeliveryLocation()
+                            fulfillmentDeliveryLocation?.fulfillmentDetails?.address?.nickname = nickname
+
+                            Utils.savePreferredDeliveryLocation(fulfillmentDeliveryLocation)
+
                             moveToTab(deliveryType)
                         }
                         else -> {
@@ -873,10 +883,13 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
     }
 
     private fun GeoLocationDeliveryAddressBinding.updateDeliveryDetails() {
-        geoDeliveryText?.text =
-            KotlinUtils.capitaliseFirstLetter(validateLocationResponse?.validatePlace?.placeDetails?.address1
-                ?: getString(R.string.empty))
 
+        val address =  KotlinUtils.capitaliseFirstLetter(validateLocationResponse?.validatePlace?.placeDetails?.address1 ?: context?.getString(R.string.empty))
+
+        val formmmatedNickName = KotlinUtils.getFormattedNickName(validateLocationResponse?.validatePlace?.placeDetails?.nickname,
+            address, activity)
+        formmmatedNickName.append(address)
+        geoDeliveryText?.text = formmmatedNickName
         var earliestFoodDate =
             validateLocationResponse?.validatePlace?.firstAvailableFoodDeliveryDate
         if (earliestFoodDate.isNullOrEmpty())
@@ -904,13 +917,20 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
     }
 
     private fun GeoLocationDeliveryAddressBinding.updateDashDetails() {
-        geoDeliveryText.text =
-            KotlinUtils.capitaliseFirstLetter(validateLocationResponse?.validatePlace?.placeDetails?.address1
-                ?: getString(R.string.empty))
+
+        val address = KotlinUtils.capitaliseFirstLetter(validateLocationResponse?.validatePlace?.placeDetails?.address1
+            ?: getString(R.string.empty))
+        val formmmatedNickName = KotlinUtils.getFormattedNickName(validateLocationResponse?.validatePlace?.placeDetails?.nickname,
+            address, activity)
+
+        formmmatedNickName.append(address)
+
+        geoDeliveryText.text = formmmatedNickName
+
         var earliestDashDate =
             validateLocationResponse?.validatePlace?.onDemand?.firstAvailableFoodDeliveryTime
         if (earliestDashDate.isNullOrEmpty())
-            earliestDashDate = getString(R.string.earliest_delivery_no_date_available)
+            earliestDashDate = getString(R.string.no_timeslots_available_title)
         geoDeliveryView?.visibility = View.VISIBLE
         earliestDeliveryDashLabel?.text = requireContext().getString(R.string.earliest_dash_delivery_timeslot)
         setVisibilityDeliveryDates(null, null, earliestDashDate)

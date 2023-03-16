@@ -296,8 +296,12 @@ class ProductCarouselItemViewHolder(val itemBinding: ItemProductCarouselListBind
             setProductVariant(this)
             quickShopAddToCartSwitch(this)
             iProductListing?.let { navigator ->
-                itemBinding.rowLayout?.root?.setOnClickListener {
-                    navigator.openProductDetailView(this)
+
+                itemBinding.rowLayout?.let {
+                    it.brandName.setOnClickListener { navigator.openProductDetailView(this) }
+                    it.tvRangeName.setOnClickListener { navigator.openProductDetailView(this) }
+                    it.tvProductName.setOnClickListener { navigator.openProductDetailView(this) }
+                    it.mainImgLayout.setOnClickListener { navigator.openProductDetailView(this) }
                 }
                 setQuickshopListener(context, navigator, this)
             }
@@ -389,6 +393,7 @@ class ProductCarouselItemViewHolder(val itemBinding: ItemProductCarouselListBind
             ImageManager.setPictureWithoutPlaceHolder(imReward, imPromo?.wRewards ?: "")
             ImageManager.setPictureWithoutPlaceHolder(imVitality, imPromo?.vitality ?: "")
             ImageManager.setPictureWithoutPlaceHolder(imNewImage, imPromo?.newImage ?: "")
+            ImageManager.setPictureWithoutPlaceHolder(imageWList, imPromo?.wList ?: "")
             if (VirtualTryOnUtil.isVtoConfigAvailable()) {
                 ImageManager.setPictureWithoutPlaceHolder(imgTryItOn, virtualTryOn ?: "")
             }
