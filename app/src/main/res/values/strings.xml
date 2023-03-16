@@ -7,6 +7,7 @@
 
     <string name="credit_card">CREDIT CARD</string>
     <string name="personal_loan">PERSONAL LOAN</string>
+    <string name="pet_insurance">PET INSURANCE</string>
     <string name="available_funds">Available Funds</string>
     <string name="total_amount_due">Total Amount Due</string>
     <string name="deduction_day">Deduction Day:</string>
@@ -91,6 +92,7 @@
     <string name="txt_general_enquiry">General enquiries</string>
 
     <string name="contact_us_financial_services">Financial Services</string>
+    <string name="contact_us_general_enquiries">General Enquiries</string>
     <string name="contact_us_customer_service">Customer Services</string>
     <string name="contact_us_wrewards">WRewards</string>
     <string name="contact_us_myschool">MySchool enquiries</string>
@@ -964,6 +966,7 @@
     <string name="activate">ACTIVATE</string>
     <string name="linked_personal_loan_layout">Linked Personal Loan</string>
     <string name="apply_personal_loan_layout">Apply Personal Loan</string>
+    <string name="apply_pet_insurance_layout">Apply Pet Insurance</string>
     <string name="messages_layout">Messages</string>
     <string name="store_locator_layout">Store Locator</string>
     <string name="need_help_layout">Need Help</string>
@@ -2930,6 +2933,7 @@
     <string name="only_fashion_beauty_and_home_products_available" >%1$s\nOnly Fashion, Beauty and Home products available.</string>
     <string name="food_fashion_beauty_and_home_products_available">%1$s\nFood, Fashion, Beauty and Home products available.</string>
     <string name="food_fashion_beauty_and_home_products_available_tool_tip">Food, Fashion, Beauty and Home products available.</string>
+
     <string name="only_fashion_beauty_and_home_products_available_text" >Only Fashion, Beauty and Home products available.</string>
     <string name="cnc_title_text_2">Limited shop of %1$s food items.</string>
 
@@ -2948,5 +2952,20 @@
 
     <string name="timeslot_title">All Dash Timeslots Are Fully Booked.</string>
     <string name="timeslot_desc">Check back later to see if any new delivery slots become available.</string>
+
+    <!--Pet Insurance -->
+    <string name="pet_insurance_covered"> • COVERED</string>
+    <string name="pet_insurance_pending"> • PENDING</string>
+    <string name="pet_insurance_pending_title">Your Woolies Pet Insurance Application is Being Processed.</string>
+    <string name="pet_insurance_pending_desc">Your application has been received, and approval is pending.</string>
+    <string name="pet_insurance_apply_now_title">Introducing Woolies \nPet Insurance</string>
+    <string name="pet_insurance_apply_now_affordable_title">Affordable</string>
+    <string name="pet_insurance_apply_now_affordable_desc">Premiums from only R115 a month, with multiple pet discounts</string>
+    <string name="pet_insurance_apply_now_comprehensive_title">Comprehensive</string>
+    <string name="pet_insurance_apply_now_comprehensive_desc">Extensive benefits &amp; cover options for routine care, accidents, illnesses and third party liability</string>
+    <string name="pet_insurance_apply_now_control_title">You\'re in Control</string>
+    <string name="pet_insurance_apply_now_control_desc">Optional excess waiver and medical saving benefits</string>
+    <string name="pet_insurance_care">PET</string>
+    <string name="error_message_400">We are unable to process your request, Please \ncontact our call centre on \n0861 50 20 10</string>
 
 </resources>
