@@ -437,7 +437,9 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
                         ConfirmAddressFragmentDirections.actionToConfirmAddressMapFragment(
                             getMapData
                         )
-                    findNavController().navigate(directions)
+                    if (findNavController().currentDestination?.id == R.id.confirmAddressLocationFragment) {
+                        findNavController().navigate(directions)
+                    }
                 }
             }
         }
@@ -625,8 +627,8 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
         }
         if (IS_FROM_STORE_LOCATOR) {
             view?.let {
-                GeoUtils.navigateSafe(it, R.id.actionClickAndCollectStoresFragment,
-                        bundleOf(BUNDLE to bundle))
+               GeoUtils.navigateSafe(it, R.id.actionClickAndCollectStoresFragment,
+                bundleOf(BUNDLE to bundle))
             }
         } else {
             if (findNavController().navigateUp()) {
@@ -634,8 +636,8 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
                     bundleOf(BUNDLE to bundle))
             } else {
                 view?.let {
-                    GeoUtils.navigateSafe(it, R.id.actionToDeliveryAddressConfirmationFragment,
-                            bundleOf(BUNDLE to bundle))
+                   GeoUtils.navigateSafe(it, R.id.actionToDeliveryAddressConfirmationFragment,
+                    bundleOf(BUNDLE to bundle))
                 }
             }
         }
@@ -675,7 +677,9 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
             ConfirmAddressFragmentDirections.actionToConfirmAddressMapFragment(
                 getMapData
             )
-        findNavController().navigate(directions)
+        if (findNavController().currentDestination?.id == R.id.confirmAddressLocationFragment) {
+            findNavController().navigate(directions)
+        }
     }
 
     private fun navigateToUpdateAddress(savedAddressResponse: SavedAddressResponse) {
@@ -690,8 +694,8 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
             mPosition)
 
         view?.let {
-            GeoUtils.navigateSafe(it, R.id.action_confirmAddressLocationFragment_to_checkoutAddAddressNewUserFragment,
-                    bundleOf(BUNDLE to bundle))
+           GeoUtils.navigateSafe(it, R.id.action_confirmAddressLocationFragment_to_checkoutAddAddressNewUserFragment,
+            bundleOf(BUNDLE to bundle))
         }
     }
 
@@ -714,10 +718,9 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
             IS_COMING_FROM_SLOT_SELECTION,
             isComingFromSlotSelection
         )
-
         view?.let {
-            GeoUtils.navigateSafe(it, R.id.action_confirmAddressLocationFragment_to_checkoutAddAddressNewUserFragment,
-                    bundleOf(BUNDLE to bundle))
+           GeoUtils.navigateSafe(it, R.id.action_confirmAddressLocationFragment_to_checkoutAddAddressNewUserFragment,
+            bundleOf(BUNDLE to bundle))
         }
     }
 
