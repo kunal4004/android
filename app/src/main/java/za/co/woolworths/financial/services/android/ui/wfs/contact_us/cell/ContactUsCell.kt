@@ -129,7 +129,11 @@ fun TextWithRadioButtonOption(
                 .weight(1f)
                 .padding(start = 24.dp, end = 2.dp)
             ) { LabelSmall(LabelProperties(label =  item.title))  }
-            CheckedUncheckedRadioButton(isChecked = item == selectedOption)
+            CheckedUncheckedRadioButton(isChecked = item == selectedOption,
+                onClick = {
+                    onOptionSelected(item)
+                    onSelected(item)
+                })
         }
         DividerThicknessOne()
     }
