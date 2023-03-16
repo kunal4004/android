@@ -40,14 +40,14 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.MyAccountsRemoteApiViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment
-import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
-import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PMA3DSecureProcessRequestFragment.Companion.PMA_TRANSACTION_COMPLETED_RESULT_CODE
-import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PMA3DSecureProcessRequestFragment.Companion.PMA_UPDATE_CARD_RESULT_CODE
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleVisibility
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.AccountSixMonthArrearsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountsOptionFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountsOptionFragment.Companion.REQUEST_ELITEPLAN
+import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PMA3DSecureProcessRequestFragment.Companion.PMA_TRANSACTION_COMPLETED_RESULT_CODE
+import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PMA3DSecureProcessRequestFragment.Companion.PMA_UPDATE_CARD_RESULT_CODE
+import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ShowTreatmentPlanDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanDialogFragment
 import za.co.woolworths.financial.services.android.util.ActivityIntentNavigationManager
@@ -102,7 +102,8 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
             )
             setAccountCardDetailInfo(mAccountOptionsNavHost?.navController)
 
-            setToolbarTopMargin()
+            setToolbarTopMargin(binding.includeAccountProductLandingToolbarAvailableFund.root)
+            setToolbarTopMargin(binding.includeAccountProductLandingToolbarRemoveBlockOnCollection.root)
         }
 
         with(binding.includeAccountProductLandingToolbarAvailableFund.includeAccountInArrears) {
@@ -124,11 +125,10 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
         }
     }
 
-    private fun setToolbarTopMargin() {
-        val bar = findViewById<Toolbar>(R.id.toolbarContainer)
-        val params = bar?.layoutParams as? ViewGroup.MarginLayoutParams
+    private fun setToolbarTopMargin(toolbar: Toolbar) {
+        val params = toolbar.layoutParams as? ViewGroup.MarginLayoutParams
         params?.topMargin = KotlinUtils.getStatusBarHeight()
-        bar?.layoutParams = params
+        toolbar.layoutParams = params
     }
 
     private fun configureBottomSheetDialog() {
@@ -173,7 +173,7 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
         binding.includeAccountProductLandingToolbarRemoveBlockOnCollection.includeAccountInArrears.toolbarTitleTextView?.text = title
     }
 
-    override fun showAccountInArrears(account: Account?) {
+    override fun showAccountInArrears(account: Account?, showDialog: Boolean) {
         with(binding.includeAccountProductLandingToolbarAvailableFund.includeAccountInArrears) {
             toolbarTitleTextView?.visibility = GONE
             accountInArrearsTextView?.visibility = VISIBLE
@@ -182,8 +182,10 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
             toolbarTitleTextView?.visibility = GONE
             accountInArrearsTextView?.visibility = VISIBLE
         }
-        mAccountSignedInPresenter?.getMyAccountCardInfo()
-            ?.let { accountKeyPair -> showAccountInArrearsDialog(accountKeyPair) }
+        if (showDialog) {
+            mAccountSignedInPresenter?.getMyAccountCardInfo()
+                ?.let { accountKeyPair -> showAccountInArrearsDialog(accountKeyPair) }
+        }
     }
 
     override fun showAboveSixMonthsAccountInDelinquencyPopup(eligibilityPlan: EligibilityPlan?) {

@@ -16,7 +16,7 @@ interface IAccountSignedInContract {
 
     interface MyAccountView {
         fun toolbarTitle(title: String)
-        fun showAccountInArrears(account: Account?)
+        fun showAccountInArrears(account: Account?, showDialog: Boolean)
         fun showAboveSixMonthsAccountInDelinquencyPopup(eligibilityPlan: EligibilityPlan?)
         fun hideAccountInArrears(account: Account)
         fun showAccountHelp(informationModelAccount: MutableList<AccountHelpInformation>)
