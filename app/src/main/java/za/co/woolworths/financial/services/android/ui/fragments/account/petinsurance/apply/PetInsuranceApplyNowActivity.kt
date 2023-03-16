@@ -1,11 +1,13 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.petinsurance.apply
 
 import android.os.Bundle
+import android.view.Menu
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
+import com.awfs.coordination.R
 import com.awfs.coordination.databinding.ActivityPetInsuranceApplyNowBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -26,6 +28,10 @@ class PetInsuranceApplyNowActivity :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setViews()
+    }
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        changeMenuItemColor(menu,resources.getColor(R.color.black))
+        return true
     }
 
     override fun onClick(v: View?) {

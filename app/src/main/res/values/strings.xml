@@ -92,6 +92,7 @@
     <string name="txt_general_enquiry">General enquiries</string>
 
     <string name="contact_us_financial_services">Financial Services</string>
+    <string name="contact_us_general_enquiries">General Enquiries</string>
     <string name="contact_us_customer_service">Customer Services</string>
     <string name="contact_us_wrewards">WRewards</string>
     <string name="contact_us_myschool">MySchool enquiries</string>
@@ -2964,5 +2965,7 @@
     <string name="pet_insurance_apply_now_comprehensive_desc">Extensive benefits &amp; cover options for routine care, accidents, illnesses and third party liability</string>
     <string name="pet_insurance_apply_now_control_title">You\'re in Control</string>
     <string name="pet_insurance_apply_now_control_desc">Optional excess waiver and medical saving benefits</string>
-    <string name="pet_insurance_care">WPET CARE</string>
+    <string name="pet_insurance_care">PET</string>
+    <string name="error_message_400">We are unable to process your request, Please \ncontact our call centre on \n0861 50 20 10</string>
+
 </resources>
