@@ -17,7 +17,6 @@ import za.co.woolworths.financial.services.android.util.Utils
 abstract class BindingBaseActivity<B : ViewBinding>(val bindingFactory: (LayoutInflater) -> B) : AppCompatActivity(),View.OnClickListener {
 
     protected lateinit var binding: B
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = bindingFactory(layoutInflater)
@@ -30,10 +29,12 @@ abstract class BindingBaseActivity<B : ViewBinding>(val bindingFactory: (LayoutI
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
-        menu?.findItem(R.id.action_search)?.icon?.setTint(resources.getColor(R.color.black))
+        menu?.findItem(R.id.action_search)?.icon?.setTint(resources.getColor(R.color.white))
         return super.onPrepareOptionsMenu(menu)
     }
-
+    fun changeMenuItemColor(menu: Menu?,tintColor:Int){
+        menu?.findItem(R.id.action_search)?.icon?.setTint(tintColor)
+    }
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_search -> onBackPressed()
