@@ -6,6 +6,7 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -14,6 +15,7 @@ import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.ui.wfs.component.*
 import za.co.woolworths.financial.services.android.ui.wfs.contact_us.model.Children
 import za.co.woolworths.financial.services.android.ui.wfs.contact_us.model.ChildrenItem
+import za.co.woolworths.financial.services.android.ui.wfs.contact_us.model.ContactUsType
 
 @Composable
 fun LabelTitle(params: LabelProperties) {
@@ -98,7 +100,10 @@ fun LeftIconTitleDescriptionAndNextArrowItem(item: Children) {
            LabelMedium(LabelProperties(label = item.title))
            LabelSmall(LabelProperties(label = item.description))
         }
-        MyIcon(id = R.drawable.ic_caret_black, contentDescriptionId = R.string.next_arrow)
+        MyIcon(
+            id = R.drawable.ic_caret_black,
+            contentDescriptionId = R.string.next_arrow,
+            modifier = Modifier.alpha(if(item.type == ContactUsType.ACTION_FAX) 0f else 1f))
     }
 }
 
@@ -124,7 +129,11 @@ fun TextWithRadioButtonOption(
                 .weight(1f)
                 .padding(start = 24.dp, end = 2.dp)
             ) { LabelSmall(LabelProperties(label =  item.title))  }
-            CheckedUncheckedRadioButton(isChecked = item == selectedOption)
+            CheckedUncheckedRadioButton(isChecked = item == selectedOption,
+                onClick = {
+                    onOptionSelected(item)
+                    onSelected(item)
+                })
         }
         DividerThicknessOne()
     }

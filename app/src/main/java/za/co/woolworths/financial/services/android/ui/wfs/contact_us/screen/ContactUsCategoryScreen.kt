@@ -3,9 +3,14 @@ package za.co.woolworths.financial.services.android.ui.wfs.contact_us.screen
 import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.ripple.rememberRipple
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -99,8 +104,15 @@ fun CategoryList(
             }
             val size = item.children.size.minus(1)
             item.children.forEachIndexed { index, child ->
-                val title = if (item.title.equals(
+                // Only "Financial Services > General Enquiries" will have
+                // the category's title in the next screen instead of the sub-category's title
+                val title = if (
+                    item.title.equals(
                         stringResource(id = R.string.contact_us_financial_services),
+                        ignoreCase = true
+                    )
+                    && child.title.equals(
+                        stringResource(id = R.string.contact_us_general_enquiries),
                         ignoreCase = true
                     )
                 ) item.title else child.title ?: ""
