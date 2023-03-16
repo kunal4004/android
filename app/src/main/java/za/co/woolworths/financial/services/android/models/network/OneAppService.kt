@@ -651,12 +651,14 @@ object OneAppService : RetrofitConfig() {
     }
 
 
-    fun getShoppingListItems(listId: String): Call<ShoppingListItemsResponse> {
-        return mApiInterface.getShoppingListItems(
-            getSessionToken(),
-            getDeviceIdentityToken(),
-            listId
-        )
+    suspend fun getShoppingListItems(listId: String): retrofit2.Response<ShoppingListItemsResponse> {
+        return withContext(Dispatchers.IO) {
+            mApiInterface.getShoppingListItems(
+                getSessionToken(),
+                getDeviceIdentityToken(),
+                listId
+            )
+        }
     }
 
     fun deleteShoppingList(listId: String): Call<ShoppingListsResponse> {
@@ -675,6 +677,31 @@ object OneAppService : RetrofitConfig() {
         )
     }
 
+    suspend fun getInventorySkusForStore(
+        store_id: String,
+        multipleSku: String,
+        isUserBrowsing: Boolean
+    ): retrofit2.Response<SkusInventoryForStoreResponse> {
+        return withContext(Dispatchers.IO) {
+            if ((isUserBrowsing && Delivery.DASH.type == KotlinUtils.browsingDeliveryType?.type) ||
+                (!isUserBrowsing && Delivery.DASH.type == KotlinUtils.getDeliveryType()?.deliveryType)
+            ) {
+                mApiInterface.fetchDashInventorySKUForStore(
+                    getSessionToken(),
+                    getDeviceIdentityToken(),
+                    store_id,
+                    multipleSku
+                )
+            } else
+                mApiInterface.getInventorySKUForStore(
+                    getSessionToken(),
+                    getDeviceIdentityToken(),
+                    store_id,
+                    multipleSku
+                )
+        }
+    }
+
     fun getInventorySkuForStore(
         store_id: String,
         multipleSku: String,
@@ -683,14 +710,14 @@ object OneAppService : RetrofitConfig() {
         return if ((isUserBrowsing && Delivery.DASH.type == KotlinUtils.browsingDeliveryType?.type) ||
             (!isUserBrowsing && Delivery.DASH.type == KotlinUtils.getDeliveryType()?.deliveryType)
         ) {
-            mApiInterface.getDashInventorySKUForStore(
+            mApiInterface.fetchDashInventorySKUsForStore(
                 getSessionToken(),
                 getDeviceIdentityToken(),
                 store_id,
                 multipleSku
             )
         } else
-            mApiInterface.getInventorySKUForStore(
+            mApiInterface.getInventorySKUsForStore(
                 getSessionToken(),
                 getDeviceIdentityToken(),
                 store_id,
