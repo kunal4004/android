@@ -1686,4 +1686,16 @@ public class Utils {
     public static int calculatePercentage(int count, int totalCount){
         return (count*100)/totalCount;
     }
+
+    public static void saveMonetateId(String monetateId) {
+        AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
+        currentUserObject.mId = monetateId;
+        currentUserObject.save();
+    }
+
+    public static String getMonetateId() {
+        AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
+        return currentUserObject.mId;
+    }
+
 }

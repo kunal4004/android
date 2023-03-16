@@ -19,10 +19,10 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.MyAccountsRemoteApiViewModel
 import za.co.woolworths.financial.services.android.ui.extension.deviceHeight
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.AccountOfferingState
-import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
-import za.co.woolworths.financial.services.android.util.eliteplan.EligibilityImpl
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
+import za.co.woolworths.financial.services.android.util.eliteplan.EligibilityImpl
 import za.co.woolworths.financial.services.android.util.eliteplan.PMApiStatusImpl
 
 class AccountSignedInPresenterImpl(
@@ -171,7 +171,7 @@ class AccountSignedInPresenterImpl(
                         }
                     } else {
                         if (eligibilityPlan == null) mainView?.showAccountInArrears(
-                            account = getAccount()) else mainView?.showAboveSixMonthsAccountInDelinquencyPopup(eligibilityPlan)
+                            account = getAccount(), showDialog = true) else mainView?.showAboveSixMonthsAccountInDelinquencyPopup(eligibilityPlan)
                     }
                 }
                 ActionText.TAKE_UP_TREATMENT_PLAN.value -> {
@@ -183,7 +183,7 @@ class AccountSignedInPresenterImpl(
                         }
                     } else {
                         getAccount()?.let { mainView?.showAccountInArrears(
-                            account = it) }
+                            account = it, showDialog = true) }
                     }
                 }
 
@@ -206,21 +206,21 @@ class AccountSignedInPresenterImpl(
                             )
                         }
                     } else {
-                        mainView?.showAccountInArrears(account = getAccount()) }
+                        mainView?.showAccountInArrears(account = getAccount(), showDialog = true) }
                 }
             }
         } else {
             eligibilityImpl?.eligibilityFailed()
-            showAccountInArrears(account)
+            showAccountInArrears(account, showDialog = true)
         }
     }
 
-    private fun showAccountInArrears(account: Account?) {
+    private fun showAccountInArrears(account: Account?, showDialog: Boolean) {
         account ?: return
         if (ProductOfferingStatus(account).isChargedOffCC()) {
             return
         }
-        mainView?.showAccountInArrears(account)
+        mainView?.showAccountInArrears(account, showDialog = true)
         mainView?.showAccountHelp(getCardProductInformation(true))
     }
 
@@ -238,6 +238,12 @@ class AccountSignedInPresenterImpl(
                 // Construct help list when account is in good standing or in arrears
                 showAccountHelp(getCardProductInformation(isAccountInArrearsState() || isChargedOff()))
 
+                if (isAccountInArrearsState() || isChargedOff()) {
+                    showAccountInArrears(account, showDialog = false)
+                } else {
+                    hideAccountInArrears(account)
+                }
+
                 state { status ->
                     when (status) {
 
@@ -247,7 +253,7 @@ class AccountSignedInPresenterImpl(
                         }
 
                         AccountOfferingState.AccountIsInArrears -> showAccountInArrears(
-                            account)
+                            account, showDialog = true)
 
                         AccountOfferingState.AccountIsChargedOff -> {
                             // account is in arrears for more than 6 months
@@ -256,7 +262,7 @@ class AccountSignedInPresenterImpl(
                             when (productGroupCode()) {
                                 ProductOfferingStatus.productGroupCodeSc, ProductOfferingStatus.productGroupCodePl -> {
                                     getAccount()?.let { mainView?.showAccountInArrears(
-                                        account = it) }
+                                        account = it, showDialog = true) }
                                 }
                             }
                         }
@@ -284,7 +290,7 @@ class AccountSignedInPresenterImpl(
                                 {
                                     eligibilityImpl?.eligibilityFailed()
                                     if (showPopupIfNeeded && !isChargedOffCC()){ showAccountInArrears(
-                                        account)
+                                        account, showDialog = true)
                                     }
                                 })
                         }
