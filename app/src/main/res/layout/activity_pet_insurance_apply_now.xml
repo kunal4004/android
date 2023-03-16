@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:elevation="@dimen/five_dp">
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -19,24 +20,39 @@
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:id="@+id/WTextView"
                 android:layout_width="wrap_content"
-                android:layout_height="@dimen/thirty_two_dp"
-                android:background="@color/black"
+                android:layout_height="@dimen/twenty_dp"
+                android:layout_marginStart="11dp"
+                android:background="@color/transparent"
                 android:elevation="@dimen/five_dp"
-                android:fontFamily="@font/futura_semi_bold"
-                app:WTextView_font="medium_bold"
+                android:fontFamily="@font/futura_bold"
                 android:gravity="center"
-                android:letterSpacing="0.2"
-                android:paddingStart="@dimen/twenty_six_dp"
-                android:paddingTop="@dimen/eleven_dp"
-                android:paddingEnd="@dimen/twenty_four_dp"
-                android:paddingBottom="@dimen/seven_dp"
                 android:text="@string/pet_insurance_care"
-                android:textColor="@color/white"
-                android:textSize="@dimen/twelve_sp"
-                app:layout_constraintBottom_toBottomOf="@+id/appBarLayout"
-                app:layout_constraintEnd_toEndOf="parent"
+                android:textColor="@color/black"
+                android:textSize="@dimen/twenty_sp"
+                app:WTextView_font="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/imageView6"
+                app:layout_constraintStart_toEndOf="@+id/imageView6"
+                app:layout_constraintTop_toTopOf="@+id/imageView6" />
+
+            <ImageView
+                android:id="@+id/imageView6"
+                android:layout_width="@dimen/thirty_two_dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/ten_dp"
+                android:layout_marginTop="@dimen/twenty_five_dp"
+                android:elevation="@dimen/five_dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/appBarLayout" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/pet_logo" />
+
+            <ImageView
+                android:id="@+id/pet_care_logo"
+                android:layout_width="@dimen/fifty_dp"
+                android:layout_height="@dimen/fifteen_dp"
+                android:elevation="@dimen/five_dp"
+                app:layout_constraintBottom_toBottomOf="@+id/WTextView"
+                app:layout_constraintStart_toEndOf="@+id/WTextView"
+                app:srcCompat="@drawable/pet_care_logo" />
 
             <com.google.android.material.appbar.AppBarLayout
                 android:id="@+id/appBarLayout"
@@ -45,7 +61,6 @@
                 android:background="@color/bg_e6e6e6"
                 android:elevation="@dimen/zero_dp"
                 app:elevation="@dimen/zero_dp"
-                android:layout_marginTop="0dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
@@ -61,13 +76,13 @@
                         android:layout_height="@dimen/_300sdp"
                         android:layout_marginTop="0dp"
                         android:scaleType="fitXY"
-                        android:src="@drawable/pet_insurance_bg" />
+                        android:src="@drawable/pet_more_header" />
 
                     <androidx.appcompat.widget.Toolbar
-                        android:layout_marginTop="@dimen/fifteen_dp"
                         android:id="@+id/toolbar_pet_insurance"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/fifteen_dp" />
                 </RelativeLayout>
 
 

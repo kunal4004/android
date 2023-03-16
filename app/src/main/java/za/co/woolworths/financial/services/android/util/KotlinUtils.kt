@@ -1544,18 +1544,6 @@ class KotlinUtils {
             )
         }
 
-        fun getFormattedNickName(nickname: String?, address: CharSequence?, context: Context?): SpannableStringBuilder {
-            val nickNameWithAddress = SpannableStringBuilder()
-            var formattedNickName =
-                SpannableString(nickname.plus(" ").plus(context?.resources?.getString(R.string.bullet)).plus(" "))
-
-            if (nickname.isNullOrEmpty() == true || nickname?.equals(address) == true) {
-                formattedNickName = SpannableString(context?.resources?.getString(R.string.empty))
-            }
-            nickNameWithAddress.append(formattedNickName)
-            return nickNameWithAddress
-        }
-
         fun showPetInsurancePendingDialog(fragmentManager: FragmentManager) {
             val petInsurancePendingFragment =
                 PetInsurancePendingFragment.newInstance()
@@ -1586,6 +1574,18 @@ class KotlinUtils {
                     activity.finish()
                 }
             }
+        }
+
+        fun getFormattedNickName(nickname: String?, address: CharSequence?, context: Context?): SpannableStringBuilder {
+            val nickNameWithAddress = SpannableStringBuilder()
+            var formattedNickName =
+                SpannableString(nickname.plus(" ").plus(context?.resources?.getString(R.string.bullet)).plus(" "))
+
+            if (nickname.isNullOrEmpty() == true || nickname?.equals(address) == true) {
+                formattedNickName = SpannableString(context?.resources?.getString(R.string.empty))
+            }
+            nickNameWithAddress.append(formattedNickName)
+            return nickNameWithAddress
         }
     }
 }

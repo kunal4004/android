@@ -13,7 +13,12 @@ import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburb
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.Response
-import za.co.woolworths.financial.services.android.models.dto.account.*
+import za.co.woolworths.financial.services.android.models.dto.account.AppGUIDModel
+import za.co.woolworths.financial.services.android.models.dto.account.AppGUIDRequestType
+import za.co.woolworths.financial.services.android.models.dto.account.FeatureEnablementModel
+import za.co.woolworths.financial.services.android.models.dto.account.FicaModel
+import za.co.woolworths.financial.services.android.models.dto.account.PetInsuranceModel
+import za.co.woolworths.financial.services.android.models.dto.account.getRequestBody
 import za.co.woolworths.financial.services.android.models.dto.bpi.BPIBody
 import za.co.woolworths.financial.services.android.models.dto.bpi.InsuranceTypeOptInBody
 import za.co.woolworths.financial.services.android.models.dto.cart.SubmittedOrderResponse
@@ -1271,12 +1276,14 @@ object OneAppService : RetrofitConfig() {
             getDeviceIdentityToken()
         )
     }
+
     fun getPetInsuranceResponse(): Call<PetInsuranceModel> {
         return mApiInterface.getPetInsurance(
             getSessionToken(),
             getDeviceIdentityToken()
         )
     }
+
     fun getAppGUIDResponse(appGUIDRequestType: AppGUIDRequestType): Call<AppGUIDModel> {
         return mApiInterface.getAppGUID(
             getSessionToken(),
