@@ -264,6 +264,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                             }
                             CLICK_AND_COLLECT_TAB.index -> {
                                 //Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMYLISTS, this)
+                                showBlackToolTip(Delivery.CNC)
                                 showClickAndCollectToolTip( KotlinUtils.isStoreSelectedForBrowsing,
                                     getDeliveryType()?.storeId)
                                 setEventsForSwitchingBrowsingType(Delivery.CNC.name)
