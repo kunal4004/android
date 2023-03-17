@@ -24,7 +24,7 @@
         android:layout_marginStart="@dimen/twenty_four_dp"
         android:layout_marginTop="@dimen/fourty_dp"
         android:fontFamily="@font/futura_semi_bold"
-        android:text="@string/confirm_your_loc"
+        android:text="@string/choose_a_location"
         android:textColor="@color/black"
         android:textSize="@dimen/twenty_sp"
         app:layout_constraintStart_toStartOf="parent"
@@ -40,14 +40,14 @@
         android:layout_marginEnd="@dimen/twenty_four_dp"
         android:lineSpacingMultiplier="1.2"
         android:textColor="@color/color_444444"
-        android:text="@string/we_use_your_location_to_give_you_the_most_naccurate_stock_availabilty_and_pricing"
+        android:text="@string/use_an_address_the_name_of_a_complex_or_your_closest_landmark_eg_a_woolies_store"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_confirm_address_title" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/enterNewAddress"
-        style="@style/myriad_pro_regular_black_15_text_style"
+        style="@style/opensans_regular_12_text_style"
         android:layout_width="match_parent"
         android:layout_height="@dimen/fourty_dp"
         android:layout_marginStart="@dimen/twenty_four_dp"
@@ -151,5 +151,20 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+    <TextView
+        android:id="@+id/tvSignIn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/fourty_dp"
+        android:fontFamily="@font/futura_semi_bold"
+        android:gravity="center"
+        android:text="@string/sign_in_to_see_saved_addresses"
+        android:textColor="@color/black"
+        android:textSize="@dimen/twelve_sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

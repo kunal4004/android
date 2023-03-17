@@ -2463,8 +2463,8 @@
     <string name="unavailable_item">Unfortunately this item is unavailable in %1$s. Try changing your delivery location and try again.</string>
     <string name="out_of_stock_item">Unfortunately this item is out of stock in %1$s. Try changing your delivery location and try again.</string>
     <string name="absa_statement_error_try_again_later">We\'re unable to retrieve your Statement. Please try again later.</string>
-    <string name="confirm_your_loc">Confirm Your Location</string>
-    <string name="we_use_your_location_to_give_you_the_most_naccurate_stock_availabilty_and_pricing">You can use an address, the name of a complex, or your closest landmark (e.g. a Woolies store).</string>
+    <string name="choose_a_location">Choose a Location</string>
+    <string name="use_an_address_the_name_of_a_complex_or_your_closest_landmark_eg_a_woolies_store">Use an address, the name of a complex, or your closest landmark (e.g. a Woolies store).</string>
     <string name="enter_new_location">Enter new location</string>
     <string name="my_saved_addresses">My Saved Addresses</string>
     <string name="current_location">Current Location</string>
@@ -2916,5 +2916,8 @@
     <string name="cnc_title_text_2">Limited shop of %1$s food items.</string>
 
     <string name="recommendations_title">Recommended</string>
+    <string name="sign_in_to_see_saved_addresses"><u>SIGN IN</u> TO SEE SAVED ADDRESSES</string>
+    <string name="enable_location_services">Enable Location Services</string>
+
 
 </resources>
