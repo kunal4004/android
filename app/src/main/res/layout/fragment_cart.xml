@@ -182,7 +182,6 @@
                     android:id="@+id/rvCartList"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginBottom="@dimen/twenty_dp"
                     android:nestedScrollingEnabled="false"
                     android:scrollbars="none" />
 
@@ -194,12 +193,17 @@
                 <include layout="@layout/no_connection_handler" />
 
                 <include
-                    android:id="@+id/layoutRecommendationContainer"
-                    layout="@layout/recommendation_fragment_container_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/eighty_dp"/>
+                        android:id="@+id/layoutRecommendationContainer"
+                        layout="@layout/recommendation_fragment_container_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
 
+                <include
+                        android:layout_marginBottom="@dimen/eighty_dp"
+                        android:id="@+id/includedPrice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        layout="@layout/cart_product_basket_prices"/>
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
 

@@ -312,146 +312,173 @@ class CartProductAdapter(
                 }
             }
             CartRowType.PRICES -> {
-                val priceHolder = holder as CartPricesViewHolder
-                if (orderSummary != null) {
-                    priceHolder.orderSummeryLayout.visibility = VISIBLE
-                    orderSummary?.basketTotal?.let {
-                        setPriceValue(priceHolder.txtYourCartPrice, it)
-                    }
-                    priceHolder.orderTotal.text = formatAmountToRandAndCentWithSpace(
-                        orderSummary?.total)
-                    val discountDetails = orderSummary?.discountDetails
-                    if (discountDetails != null) {
+                bindPriceData(holder)
+            }
+        }
+    }
 
-                        if (discountDetails.companyDiscount > 0) {
-                            setDiscountPriceValue(priceHolder.txtCompanyDiscount,
-                                discountDetails.companyDiscount)
-                            priceHolder.rlCompanyDiscount.visibility = VISIBLE
-                        } else {
-                            priceHolder.rlCompanyDiscount.visibility = GONE
-                        }
-                        if (discountDetails.totalOrderDiscount > 0) {
-                            setDiscountPriceValue(priceHolder.txtTotalDiscount,
-                                discountDetails.totalOrderDiscount)
-                            priceHolder.rlTotalDiscount.visibility = VISIBLE
-                        } else {
-                            priceHolder.rlTotalDiscount.visibility = GONE
-                        }
-                        if (discountDetails.otherDiscount > 0) {
-                            setDiscountPriceValue(priceHolder.txtDiscount,
-                                discountDetails.otherDiscount)
-                            priceHolder.rlDiscount.visibility = VISIBLE
-                        } else {
-                            priceHolder.rlDiscount.visibility = GONE
-                        }
-                        if (discountDetails.voucherDiscount > 0) {
-                            setDiscountPriceValue(priceHolder.txtWrewardsDiscount,
-                                discountDetails.voucherDiscount)
-                            priceHolder.rlWrewardsDiscount.visibility = VISIBLE
-                        } else {
-                            priceHolder.rlWrewardsDiscount.visibility = GONE
-                        }
-                        if (discountDetails.promoCodeDiscount > 0) {
-                            setDiscountPriceValue(priceHolder.txtPromoCodeDiscount,
-                                discountDetails.promoCodeDiscount)
-                            priceHolder.rlPromoCodeDiscount.visibility = VISIBLE
-                        } else {
-                            priceHolder.rlPromoCodeDiscount.visibility = GONE
-                        }
-                    }
-                } else {
-                    priceHolder.orderSummeryLayout.visibility = GONE
-                }
-                priceHolder.rlAvailableWRewardsVouchers.setOnClickListener {
-                    onItemClick.onViewVouchers()
-                    Utils.triggerFireBaseEvents(if (appliedVouchersCount > 0) FirebaseManagerAnalyticsProperties.Cart_ovr_edit else FirebaseManagerAnalyticsProperties.Cart_ovr_view,
-                        mContext)
-                }
-                priceHolder.rlAvailableCashVouchers?.setOnClickListener {
-                    onItemClick.onViewCashBackVouchers()
-                    Utils.triggerFireBaseEvents(
-                        if (appliedVouchersCount > 0) FirebaseManagerAnalyticsProperties.Cart_ovr_edit else FirebaseManagerAnalyticsProperties.Cart_ovr_view,
-                        mContext)
-                }
+    private fun bindPriceData(holder: RecyclerView.ViewHolder) {
+        val priceHolder = holder as CartPricesViewHolder
+        if (orderSummary != null) {
+            priceHolder.orderSummeryLayout.visibility = VISIBLE
+            orderSummary?.basketTotal?.let {
+                setPriceValue(priceHolder.txtYourCartPrice, it)
+            }
+            priceHolder.orderTotal.text = formatAmountToRandAndCentWithSpace(
+                orderSummary?.total
+            )
+            val discountDetails = orderSummary?.discountDetails
+            if (discountDetails != null) {
 
-                if (voucherDetails == null) {
-                    return
-                }
-                val activeCashVouchersCount = voucherDetails?.let {
-                    it.activeCashVouchersCount
-                }
-                if (activeCashVouchersCount!=null && activeCashVouchersCount > 0) {
-                    val availableVouchersLabel =
-                        mContext?.resources?.getQuantityString(R.plurals.available_cash_vouchers_message,
-                            activeCashVouchersCount,
-                            activeCashVouchersCount)
-                    priceHolder.availableCashVouchersCount.text = availableVouchersLabel
-                    priceHolder.viewCashVouchers.isEnabled = true
-                    priceHolder.rlAvailableCashVouchers.isClickable = true
+                if (discountDetails.companyDiscount > 0) {
+                    setDiscountPriceValue(
+                        priceHolder.txtCompanyDiscount,
+                        discountDetails.companyDiscount
+                    )
+                    priceHolder.rlCompanyDiscount.visibility = VISIBLE
                 } else {
-                    priceHolder.availableCashVouchersCount.text =
-                        mContext?.getString(R.string.zero_cash_vouchers_available)
-                    priceHolder.viewCashVouchers.isEnabled = false
-                    priceHolder.rlAvailableCashVouchers.isClickable = false
+                    priceHolder.rlCompanyDiscount.visibility = GONE
                 }
-
-                val activeVouchersCount = voucherDetails?.let {
-                    it.activeVouchersCount
-                }
-                if (activeVouchersCount != null && activeVouchersCount > 0) {
-                    if (appliedVouchersCount > 0) {
-                        val availableVouchersLabel =
-                            mContext?.resources?.getQuantityString(R.plurals._rewards_vouchers_message_applied,
-                                appliedVouchersCount,
-                                appliedVouchersCount)
-                        priceHolder.availableVouchersCount.text = availableVouchersLabel
-                        priceHolder.viewVouchers.text = mContext?.getString(R.string.edit)
-                        priceHolder.viewVouchers.isEnabled = true
-                        priceHolder.rlAvailableWRewardsVouchers.isClickable = true
-                    } else {
-                        val availableVouchersLabel =
-                            mContext?.resources?.getQuantityString(R.plurals.available_rewards_vouchers_message,
-                                activeVouchersCount,
-                                activeVouchersCount)
-                        priceHolder.availableVouchersCount.text = availableVouchersLabel
-                        priceHolder.viewVouchers.text = mContext?.getString(R.string.view)
-                        priceHolder.viewVouchers.isEnabled = true
-                        priceHolder.rlAvailableWRewardsVouchers.isClickable = true
-                    }
+                if (discountDetails.totalOrderDiscount > 0) {
+                    setDiscountPriceValue(
+                        priceHolder.txtTotalDiscount,
+                        discountDetails.totalOrderDiscount
+                    )
+                    priceHolder.rlTotalDiscount.visibility = VISIBLE
                 } else {
-                    priceHolder.availableVouchersCount.text =
-                        mContext?.getString(R.string.zero_wrewards_vouchers_available)
-                    priceHolder.viewVouchers.text = mContext?.getString(R.string.view)
-                    priceHolder.viewVouchers.isEnabled = false
-                    priceHolder.rlAvailableWRewardsVouchers.isClickable = false
-
+                    priceHolder.rlTotalDiscount.visibility = GONE
                 }
-                priceHolder.promoCodeAction.text =
-                    mContext?.getString(if (voucherDetails?.promoCodes != null && voucherDetails!!.promoCodes.size > 0) R.string.remove else R.string.enter)
-                if (voucherDetails!!.promoCodes != null && voucherDetails!!.promoCodes.size > 0) {
-                    val appliedPromoCodeText =
-                        mContext?.getString(R.string.promo_code_applied) + voucherDetails!!.promoCodes[0].promoCode
-                    priceHolder.promoCodeLabel.text = appliedPromoCodeText
+                if (discountDetails.otherDiscount > 0) {
+                    setDiscountPriceValue(
+                        priceHolder.txtDiscount,
+                        discountDetails.otherDiscount
+                    )
+                    priceHolder.rlDiscount.visibility = VISIBLE
                 } else {
-                    priceHolder.promoCodeLabel.text =
-                        mContext?.getString(R.string.do_you_have_a_promo_code)
+                    priceHolder.rlDiscount.visibility = GONE
                 }
-                priceHolder.rlPromoCode.setOnClickListener {
-                    if (voucherDetails!!.promoCodes != null && voucherDetails!!.promoCodes.size > 0) onItemClick.onRemovePromoCode(
-                        voucherDetails!!.promoCodes[0].promoCode) else onItemClick.onEnterPromoCode()
-                }
-                priceHolder.promoDiscountInfo.setOnClickListener { onItemClick.onPromoDiscountInfo() }
-                if (liquorComplianceInfo != null && liquorComplianceInfo!!.isLiquorOrder) {
-                    priceHolder.liquorBannerRootConstraintLayout.visibility = VISIBLE
-                    if (!liquor?.noLiquorImgUrl.isNullOrEmpty()) setPicture(priceHolder.imgLiBanner,
-                        liquor?.noLiquorImgUrl)
+                if (discountDetails.voucherDiscount > 0) {
+                    setDiscountPriceValue(
+                        priceHolder.txtWrewardsDiscount,
+                        discountDetails.voucherDiscount
+                    )
+                    priceHolder.rlWrewardsDiscount.visibility = VISIBLE
                 } else {
-                    priceHolder.liquorBannerRootConstraintLayout.visibility = GONE
+                    priceHolder.rlWrewardsDiscount.visibility = GONE
                 }
-                if (KotlinUtils.getPreferredDeliveryType() == Delivery.CNC) {
-                    priceHolder.deliveryFee.text = mContext?.getString(R.string.collection_fee)
+                if (discountDetails.promoCodeDiscount > 0) {
+                    setDiscountPriceValue(
+                        priceHolder.txtPromoCodeDiscount,
+                        discountDetails.promoCodeDiscount
+                    )
+                    priceHolder.rlPromoCodeDiscount.visibility = VISIBLE
+                } else {
+                    priceHolder.rlPromoCodeDiscount.visibility = GONE
                 }
             }
+        } else {
+            priceHolder.orderSummeryLayout.visibility = GONE
+        }
+        priceHolder.rlAvailableWRewardsVouchers.setOnClickListener {
+            onItemClick.onViewVouchers()
+            Utils.triggerFireBaseEvents(
+                if (appliedVouchersCount > 0) FirebaseManagerAnalyticsProperties.Cart_ovr_edit else FirebaseManagerAnalyticsProperties.Cart_ovr_view,
+                mContext
+            )
+        }
+        priceHolder.rlAvailableCashVouchers?.setOnClickListener {
+            onItemClick.onViewCashBackVouchers()
+            Utils.triggerFireBaseEvents(
+                if (appliedVouchersCount > 0) FirebaseManagerAnalyticsProperties.Cart_ovr_edit else FirebaseManagerAnalyticsProperties.Cart_ovr_view,
+                mContext
+            )
+        }
+
+        if (voucherDetails == null) {
+            return
+        }
+        val activeCashVouchersCount = voucherDetails?.let {
+            it.activeCashVouchersCount
+        }
+        if (activeCashVouchersCount != null && activeCashVouchersCount > 0) {
+            val availableVouchersLabel =
+                mContext?.resources?.getQuantityString(
+                    R.plurals.available_cash_vouchers_message,
+                    activeCashVouchersCount,
+                    activeCashVouchersCount
+                )
+            priceHolder.availableCashVouchersCount.text = availableVouchersLabel
+            priceHolder.viewCashVouchers.isEnabled = true
+            priceHolder.rlAvailableCashVouchers.isClickable = true
+        } else {
+            priceHolder.availableCashVouchersCount.text =
+                mContext?.getString(R.string.zero_cash_vouchers_available)
+            priceHolder.viewCashVouchers.isEnabled = false
+            priceHolder.rlAvailableCashVouchers.isClickable = false
+        }
+
+        val activeVouchersCount = voucherDetails?.let {
+            it.activeVouchersCount
+        }
+        if (activeVouchersCount != null && activeVouchersCount > 0) {
+            if (appliedVouchersCount > 0) {
+                val availableVouchersLabel =
+                    mContext?.resources?.getQuantityString(
+                        R.plurals._rewards_vouchers_message_applied,
+                        appliedVouchersCount,
+                        appliedVouchersCount
+                    )
+                priceHolder.availableVouchersCount.text = availableVouchersLabel
+                priceHolder.viewVouchers.text = mContext?.getString(R.string.edit)
+                priceHolder.viewVouchers.isEnabled = true
+                priceHolder.rlAvailableWRewardsVouchers.isClickable = true
+            } else {
+                val availableVouchersLabel =
+                    mContext?.resources?.getQuantityString(
+                        R.plurals.available_rewards_vouchers_message,
+                        activeVouchersCount,
+                        activeVouchersCount
+                    )
+                priceHolder.availableVouchersCount.text = availableVouchersLabel
+                priceHolder.viewVouchers.text = mContext?.getString(R.string.view)
+                priceHolder.viewVouchers.isEnabled = true
+                priceHolder.rlAvailableWRewardsVouchers.isClickable = true
+            }
+        } else {
+            priceHolder.availableVouchersCount.text =
+                mContext?.getString(R.string.zero_wrewards_vouchers_available)
+            priceHolder.viewVouchers.text = mContext?.getString(R.string.view)
+            priceHolder.viewVouchers.isEnabled = false
+            priceHolder.rlAvailableWRewardsVouchers.isClickable = false
+
+        }
+        priceHolder.promoCodeAction.text =
+            mContext?.getString(if (voucherDetails?.promoCodes != null && voucherDetails!!.promoCodes.size > 0) R.string.remove else R.string.enter)
+        if (voucherDetails!!.promoCodes != null && voucherDetails!!.promoCodes.size > 0) {
+            val appliedPromoCodeText =
+                mContext?.getString(R.string.promo_code_applied) + voucherDetails!!.promoCodes[0].promoCode
+            priceHolder.promoCodeLabel.text = appliedPromoCodeText
+        } else {
+            priceHolder.promoCodeLabel.text =
+                mContext?.getString(R.string.do_you_have_a_promo_code)
+        }
+        priceHolder.rlPromoCode.setOnClickListener {
+            if (voucherDetails!!.promoCodes != null && voucherDetails!!.promoCodes.size > 0) onItemClick.onRemovePromoCode(
+                voucherDetails!!.promoCodes[0].promoCode
+            ) else onItemClick.onEnterPromoCode()
+        }
+        priceHolder.promoDiscountInfo.setOnClickListener { onItemClick.onPromoDiscountInfo() }
+        if (liquorComplianceInfo != null && liquorComplianceInfo!!.isLiquorOrder) {
+            priceHolder.liquorBannerRootConstraintLayout.visibility = VISIBLE
+            if (!liquor?.noLiquorImgUrl.isNullOrEmpty()) setPicture(
+                priceHolder.imgLiBanner,
+                liquor?.noLiquorImgUrl
+            )
+        } else {
+            priceHolder.liquorBannerRootConstraintLayout.visibility = GONE
+        }
+        if (KotlinUtils.getPreferredDeliveryType() == Delivery.CNC) {
+            priceHolder.deliveryFee.text = mContext?.getString(R.string.collection_fee)
         }
     }
 
@@ -565,11 +592,11 @@ class CartProductAdapter(
         }
     }
 
-    private fun setPriceValue(textView: WTextView, value: Double) {
+    fun setPriceValue(textView: WTextView, value: Double) {
         textView.setText(formatAmountToRandAndCentWithSpace(value))
     }
 
-    private fun setDiscountPriceValue(textView: WTextView, value: Double) {
+    fun setDiscountPriceValue(textView: WTextView, value: Double) {
         textView.setText("- " + formatAmountToRandAndCentWithSpace(value))
     }
 
@@ -580,13 +607,14 @@ class CartProductAdapter(
                 size += collection.getCommerceItems().size
             }
         }
-        return if (editMode) {
+        /*return if (editMode) {
             // returns sum of headers + product items
             size
         } else {
             // returns sum of headers + product items + last row for prices
             size + 1
-        }
+        }*/
+        return size
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -780,7 +808,7 @@ class CartProductAdapter(
             rlPromoCodeDiscount = view.findViewById(R.id.rlPromoCodeDiscount)
             promoDiscountInfo = view.findViewById(R.id.promoDiscountInfo)
             liquorBannerRootConstraintLayout =
-                view.findViewById(R.id.liquorBannerRootConstraintLayout)
+                view.findViewById(R.id.liquorComplianceMain)
             imgLiBanner = view.findViewById(R.id.imgLiquorBanner)
             orderTotal = view.findViewById(R.id.orderTotal)
             availableCashVouchersCount = view.findViewById(R.id.availableCashVouchersCount)
