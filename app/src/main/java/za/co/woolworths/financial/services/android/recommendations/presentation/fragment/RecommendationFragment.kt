@@ -26,6 +26,9 @@ import za.co.woolworths.financial.services.android.recommendations.data.response
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.RecommendationRequest
 import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationEventHandler
+import za.co.woolworths.financial.services.android.recommendations.presentation.adapter.ProductCategoryAdapter
+import za.co.woolworths.financial.services.android.recommendations.presentation.adapter.ProductListRecommendationAdapter
+import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationsProductListingListener
 import za.co.woolworths.financial.services.android.recommendations.presentation.viewmodel.RecommendationViewModel
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
@@ -116,6 +119,10 @@ class RecommendationFragment :
             bundle?.getParcelable<Event>(BundleKeysConstants.RECOMMENDATIONS_EVENT_DATA) as Event
         val reccommendationsDataEventTypeSecond =
             bundle?.getParcelable<Event>(BundleKeysConstants.RECOMMENDATIONS_EVENT_DATA_TYPE) as Event
+        val reccommendationsUserAgent =
+            bundle?.getParcelable<Event>(BundleKeysConstants.RECOMMENDATIONS_USER_AGENT) as Event
+        val reccommendationsIPAddress =
+            bundle?.getParcelable<Event>(BundleKeysConstants.RECOMMENDATIONS_IP_ADDRESS) as Event
         var recMonetateId: String? = null
         if (Utils.getMonetateId() != null) {
             recMonetateId = Utils.getMonetateId()
@@ -124,7 +131,9 @@ class RecommendationFragment :
         val recommendationRequest = RecommendationRequest(
             events = listOf(
                 reccommendationsDataEventTypeFirst,
-                reccommendationsDataEventTypeSecond
+                reccommendationsDataEventTypeSecond,
+                reccommendationsUserAgent,
+                reccommendationsIPAddress
             ),
             monetateId = recMonetateId
         )
