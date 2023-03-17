@@ -42,9 +42,9 @@ class ContactUsSubCategoryFragment : Fragment() {
                     ContactUsType.ACTION_EMAIL_INAPP -> {
                         viewModel.setEnquiryTypeList(children.children)
                         router.push(ContactUsSelectEmailEnquiryTypeFragment(), true) }
-                    ContactUsType.ACTION_CALL, ContactUsType.ACTION_FAX -> viewModel.call(children.description)
+                    ContactUsType.ACTION_CALL -> viewModel.call(children.description)
                     ContactUsType.ACTION_WHATSAPP_FS -> whatsappChat()
-                    ContactUsType.NONE, null -> Unit
+                    ContactUsType.NONE, ContactUsType.ACTION_FAX, null -> Unit
                 }
             }
         }
