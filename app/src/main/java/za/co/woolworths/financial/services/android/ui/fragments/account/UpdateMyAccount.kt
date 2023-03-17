@@ -168,7 +168,7 @@ class UpdateMyAccount(private val swipeRefreshLayout: SwipeRefreshLayout?, priva
         mRotateAnimation?.cancel()
     }
 
-    private fun rotateViewAnimation(): RotateAnimation {
+    fun rotateViewAnimation(): RotateAnimation {
         val animation = RotateAnimation(0f, 360f,
                 Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f)
         with(animation) {
