@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.recommendations.presentation.fragment
+package za.co.woolworths.financial.services.android.recommendations.presentation.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -12,6 +12,8 @@ import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.dto.Promotions
 import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.Product
 import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.Promotion
+import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationsProductListingListener
+import za.co.woolworths.financial.services.android.recommendations.presentation.adapter.viewholder.MyRecycleViewHolder
 import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.toFloatOrZero
 import za.co.woolworths.financial.services.android.util.Utils
 

@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.recommendations.presentation.fragment
+package za.co.woolworths.financial.services.android.recommendations.presentation.adapter.viewholder
 
 import android.text.Html
 import android.text.TextUtils
@@ -7,6 +7,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.databinding.RecommendationsProductListingPageRowBinding
 import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.Product
 import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.PromotionImages
+import za.co.woolworths.financial.services.android.recommendations.presentation.fragment.RecommendationFragment
+import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationsProductListingListener
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.featureutils.RatingAndReviewUtil
 import za.co.woolworths.financial.services.android.util.ImageManager
 import za.co.woolworths.financial.services.android.util.KotlinUtils
@@ -190,7 +192,8 @@ class MyRecycleViewHolder(val mProductListingPageRowBinding: RecommendationsProd
         mProductListingPageRowBinding.apply {
             root.context?.apply {
                 productList?.apply {
-                    includeProductListingPriceLayout.imQuickShopAddToCartIcon.visibility = if (productType.equals(RecommendationFragment.ITEM_TYPE_FOOD, ignoreCase = true)) View.VISIBLE else View.GONE
+                    includeProductListingPriceLayout.imQuickShopAddToCartIcon.visibility = if (productType.equals(
+                            RecommendationFragment.ITEM_TYPE_FOOD, ignoreCase = true)) View.VISIBLE else View.GONE
                 }
             }
         }
