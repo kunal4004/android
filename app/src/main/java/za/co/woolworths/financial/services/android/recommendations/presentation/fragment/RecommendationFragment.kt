@@ -17,6 +17,7 @@ import com.skydoves.balloon.balloon
 import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
@@ -33,6 +34,7 @@ import za.co.woolworths.financial.services.android.recommendations.presentation.
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.adapters.holder.RecyclerViewViewHolderItems
+import za.co.woolworths.financial.services.android.ui.extension.isConnectedToNetwork
 import za.co.woolworths.financial.services.android.ui.views.AddedToCartBalloonFactory
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SelectYourQuantityFragment
@@ -175,6 +177,9 @@ class RecommendationFragment :
     }
 
     override fun openProductDetailView(productList: Product) {
+        if(isConnectedToNetwork() == true) {
+            WoolworthsApplication.getInstance().recommendationAnalytics.submitRecClicks(products = listOf(productList))
+        }
         // Move to shop tab.
         if (requireActivity() !is BottomNavigationActivity) {
             return
