@@ -50,11 +50,10 @@
                 android:layout_marginStart="@dimen/twenty_four_dp"
                 android:layout_marginTop="@dimen/twenty_four_dp"
                 android:layout_marginEnd="@dimen/twenty_four_dp"
-                android:lineSpacingExtra="@dimen/_5sdp"
+                android:lineSpacingExtra="2sp"
+                android:translationY="-1.1sp"
                 android:text="@string/please_select_the_store_you_are_collecting_from"
                 android:textColor="@color/black"
-                android:textStyle="normal"
-                android:translationY="-3.1sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/backButton" />
@@ -81,7 +80,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/tvSelectStoreLabel" />
 
             <TextView
-                android:id="@+id/tvStoresNearMe"
+                android:id="@+id/tvAddress"
                 style="@style/myriad_pro_semi_bold_black_15_text_style"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -96,25 +95,29 @@
                 app:layout_constraintEnd_toStartOf="@id/btChange"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/etEnterNewAddress"
-                tools:text="18 Strores near me" />
+
+                tools:text="28 Eastlake Island Drive"
+                />
 
             <TextView
-                android:id="@+id/tvAddress"
+                android:id="@+id/tvStoresNearMe"
                 style="@style/myriad_pro_regular_black_14_text_style"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/twenty_four_dp"
                 android:layout_marginTop="@dimen/two_dp"
-                android:layout_marginEnd="@dimen/_5sdp"
+                android:layout_marginEnd="@dimen/twenty_four_dp"
+                android:paddingBottom="@dimen/twenty_four_dp"
                 android:ellipsize="end"
-                android:lineSpacingExtra="@dimen/_2sdp"
                 android:minLines="1"
+                android:text="19 stores"
                 android:textColor="@color/color_444444"
                 android:translationY="-1sp"
                 app:layout_constraintEnd_toStartOf="@id/btChange"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvStoresNearMe"
-                tools:text="28 Eastlake Island Drive" />
+                app:layout_constraintTop_toBottomOf="@id/tvAddress"
+                tools:text="18 Strores near me"
+                 />
 
             <Button
                 android:id="@+id/btChange"
@@ -150,9 +153,11 @@
                 android:nestedScrollingEnabled="false"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvAddress"
+                app:layout_constraintTop_toBottomOf="@id/tvStoresNearMe"
                 tools:itemCount="5"
-                tools:listitem="@layout/store_row_layout" />
+                tools:listitem="@layout/store_row_layout"
+                android:visibility="visible"
+                />
 
 
             <View
