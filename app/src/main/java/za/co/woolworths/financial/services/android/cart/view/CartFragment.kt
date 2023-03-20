@@ -98,6 +98,7 @@ import za.co.woolworths.financial.services.android.recommendations.data.response
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
 import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationEventHandler
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants
+import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.ui.wfs.common.getIpAddress
 import java.net.ConnectException
 import java.net.SocketTimeoutException
@@ -632,6 +633,14 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         binding.includedPrice.orderSummeryLayout.visibility = if(visibility) View.VISIBLE else View.GONE
     }
 
+    private fun setPriceValue(textView: WTextView, value: Double) {
+        textView.setText(CurrencyFormatter.formatAmountToRandAndCentWithSpace(value))
+    }
+
+    private fun setDiscountPriceValue(textView: WTextView, value: Double) {
+        textView.setText("- " + CurrencyFormatter.formatAmountToRandAndCentWithSpace(value))
+    }
+
     @SuppressLint("NotifyDataSetChanged")
     private fun resetItemDelete(isEditMode: Boolean) {
         if (isEditMode) {
@@ -721,7 +730,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         if (orderSummary != null) {
             setPriceInformationVisibility(true)
             orderSummary?.basketTotal?.let {
-                cartProductAdapter?.setPriceValue(priceHolder.txtYourCartPrice, it)
+                setPriceValue(priceHolder.txtYourCartPrice, it)
             }
             priceHolder.orderTotal.text = CurrencyFormatter.formatAmountToRandAndCentWithSpace(
                 orderSummary?.total
@@ -730,7 +739,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             if (discountDetails != null) {
 
                 if (discountDetails.companyDiscount > 0) {
-                    cartProductAdapter?.setDiscountPriceValue(
+                    setDiscountPriceValue(
                         priceHolder.txtCompanyDiscount,
                         discountDetails.companyDiscount
                     )
@@ -739,7 +748,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                     priceHolder.rlCompanyDiscount.visibility = View.GONE
                 }
                 if (discountDetails.totalOrderDiscount > 0) {
-                    cartProductAdapter?.setDiscountPriceValue(
+                    setDiscountPriceValue(
                         priceHolder.txtTotalDiscount,
                         discountDetails.totalOrderDiscount
                     )
@@ -748,7 +757,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                     priceHolder.rlTotalDiscount.visibility = View.GONE
                 }
                 if (discountDetails.otherDiscount > 0) {
-                    cartProductAdapter?.setDiscountPriceValue(
+                    setDiscountPriceValue(
                         priceHolder.txtDiscount,
                         discountDetails.otherDiscount
                     )
@@ -757,7 +766,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                     priceHolder.rlDiscount.visibility = View.GONE
                 }
                 if (discountDetails.voucherDiscount > 0) {
-                    cartProductAdapter?.setDiscountPriceValue(
+                    setDiscountPriceValue(
                         priceHolder.txtWrewardsDiscount,
                         discountDetails.voucherDiscount
                     )
@@ -766,7 +775,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                     priceHolder.rlWrewardsDiscount.visibility = View.GONE
                 }
                 if (discountDetails.promoCodeDiscount > 0) {
-                    cartProductAdapter?.setDiscountPriceValue(
+                    setDiscountPriceValue(
                         priceHolder.txtPromoCodeDiscount,
                         discountDetails.promoCodeDiscount
                     )
