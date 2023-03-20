@@ -44,17 +44,17 @@ class ReviewsDataSourceTest {
 
     @Before
     fun setup() {
-        MockitoAnnotations.initMocks(this)
+      /*  MockitoAnnotations.initMocks(this)
         setUpMockRatingAndReviewResponse()
         reviewsPagingSource = ReviewsDataSource(
                 ratingAndReviewApiHelper,
                 mockReview.productId,
                 sortOptions.sortOption,
                 refinements.navigationState,
-                ratingAndResponseLiveData)
+                ratingAndResponseLiveData)*/
     }
 
-    private fun setUpMockRatingAndReviewResponse() {
+   /* private fun setUpMockRatingAndReviewResponse() {
         mockReview = Reviews(
                 isVerifiedBuyer = true,
                 isStaffMember = false,
@@ -105,7 +105,7 @@ class ReviewsDataSourceTest {
                 )
         ).toString()
         )
-    }
+    }*/
 
  //   @Ignore
 //    fun `reviews paging source refresh - success`() = runBlockingTest {

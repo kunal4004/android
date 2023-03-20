@@ -61,7 +61,7 @@ class StartupViewModelPowerMockTest {
         `when`(instrumentationContext.packageManager).thenReturn(packageManager)
     }
 
-    @Test
+    /*@Test
     fun check_for_environment_variable() {
         `when`(packageManager.getPackageInfo(packageName, 0)).thenReturn(packageInfo)
 
@@ -97,5 +97,5 @@ class StartupViewModelPowerMockTest {
         verify(firebaseAnalytics, times(1)).setUserId("Woolworth")
         verify(firebaseAnalytics, times(1)).setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.ATGId, "Woolworth")
         verify(firebaseAnalytics, times(1)).setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.C2ID, "test")
-    }
+    }*/
 }

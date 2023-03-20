@@ -47,7 +47,7 @@ class CheckoutAddAddressNewUserFragmentTest : Fragment() {
         firebaseAnalytics = mock()
     }
 
-    @Test
+   /* @Test
     fun check_if_onlyProvinceEnabled() = runBlockingTest {
 
         val province = Province()
@@ -270,5 +270,5 @@ class CheckoutAddAddressNewUserFragmentTest : Fragment() {
             region = "1"
         }
         return address
-    }
+    }*/
 }

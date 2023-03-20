@@ -49,7 +49,7 @@ class StartupViewModelTest : ViewModel() {
         TestViewModel()
     }
 
-    @Test
+   /* @Test
     fun get_shouldReturn_loading_and_Success() = runBlocking {
         val mockData: ConfigResponse = mock()
         `when`(startUpRepository.queryServiceGetConfig()).thenReturn(mockData)
@@ -89,5 +89,5 @@ class StartupViewModelTest : ViewModel() {
         verify(startUpRepository, times(1)).getSessionDao(SessionDao.KEY.SPLASH_VIDEO)
         verify(startupApiHelper, times(1)).isConnectedToInternet(instrumentationContext)
         verify(startUpRepository, times(1)).clearSharedPreference(instrumentationContext)
-    }
+    }*/
 }

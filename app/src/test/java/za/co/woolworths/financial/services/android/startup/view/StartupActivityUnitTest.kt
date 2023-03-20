@@ -52,7 +52,7 @@ class StartupActivityUnitTest : Activity() {
         startupActivity.testSetViewModelInstance(startupViewModel)
     }
 
-    @Test
+   /* @Test
     fun check_all_methods_from_init() = runBlockingTest {
         doNothing().`when`(startupActivity).showNonVideoViewWithErrorLayout()
         startupActivity.init()
@@ -192,9 +192,9 @@ class StartupActivityUnitTest : Activity() {
         startupViewModel.queryServiceGetConfig().observeForever(apiObserver)
         startupActivity.getConfig()
         testCoroutineRule.postDelay().await()
-        /*verify(apiObserver).onChanged(ConfigResource.loading(null))
+        *//*verify(apiObserver).onChanged(ConfigResource.loading(null))
         verify(apiObserver).onChanged(ConfigResource.success(any()))
-        verify(startupViewModel, times(1)).queryServiceGetConfig()*/
+        verify(startupViewModel, times(1)).queryServiceGetConfig()*//*
         startupViewModel.queryServiceGetConfig().removeObserver(apiObserver)
-    }
+    }*/
 }

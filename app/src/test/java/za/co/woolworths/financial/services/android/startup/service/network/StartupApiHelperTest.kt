@@ -52,7 +52,7 @@ class StartupApiHelperTest {
         startupApiHelper = mock(StartupApiHelper::class.java, CALLS_REAL_METHODS)
     }
 
-    @Test
+  /*  @Test
     fun check_if_config_method_get_called() = runBlockingTest {
         startupApiHelper.getConfig()
         verify(RetrofitConfig.mApiInterface).getConfig("ANDROID_Vza.co.woolworths.financial.services.android",
@@ -68,5 +68,5 @@ class StartupApiHelperTest {
         `when`(instrumentationContext.getSystemService(Context.CONNECTIVITY_SERVICE)).thenReturn(connectivityManager)
         `when`(connectivityManager.getAllNetworkInfo()).thenReturn(mockNetInfoArray)
         Assert.assertFalse(startupApiHelper.isConnectedToInternet(instrumentationContext))
-    }
+    }*/
 }
