@@ -222,6 +222,7 @@ class ShoppingListItemsAdapter(
 
         fun bindUnavailableProduct() {
             itemBinding?.apply {
+                adapterClickable(true)
                 val msg = getUnavailableMsgByDeliveryType(itemBinding.root.context)
                 tvProductAvailability.text = msg
                 tvProductAvailability.visibility = VISIBLE
@@ -230,6 +231,7 @@ class ShoppingListItemsAdapter(
 
         fun bindOutOfStockProduct() {
             itemBinding?.apply {
+                adapterClickable(true)
                 tvProductAvailability.text =
                     itemBinding.root.context.getString(R.string.out_of_stock)
                 tvProductAvailability.visibility = VISIBLE
@@ -359,14 +361,16 @@ class ShoppingListItemsAdapter(
 
     @Synchronized
     fun setList(listItems: ArrayList<ShoppingListItem>?) {
-        if (listItems.isNullOrEmpty()) {
-            return
+        synchronized(this) {
+            if (listItems.isNullOrEmpty()) {
+                return
+            }
+            type = getPreferredDeliveryType()
+            userShouldSetSuburb = userShouldSetSuburb()
+            shoppingListItems = listItems
+            notifyItemRangeChanged(0, (shoppingListItems?.size ?: 0).plus(1))
+            closeAllItems()
         }
-        type = getPreferredDeliveryType()
-        userShouldSetSuburb = userShouldSetSuburb()
-        shoppingListItems = listItems
-        notifyItemRangeChanged(0, shoppingListItems?.size ?: 0)
-        closeAllItems()
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -393,7 +397,19 @@ class ShoppingListItemsAdapter(
             it.userQuantity = 0
             it.isSelected = false
         }
-        notifyItemRangeChanged(0, shoppingListItems?.size ?: 0)
+        notifyItemRangeChanged(0, (shoppingListItems?.size ?: 0).plus(1))
         navigator.onItemSelectionChange(false)
+    }
+
+    fun deleteListItem(mCatalogRefId: String) {
+        synchronized(this) {
+            val item = shoppingListItems?.find { it.catalogRefId.equals(mCatalogRefId, ignoreCase = true) }
+            val index = shoppingListItems?.indexOf(item) ?: -1
+            if(index < 0 || index >= (shoppingListItems?.size ?: -1)) {
+                return
+            }
+            shoppingListItems?.remove(item)
+            notifyItemRemoved(index + 1)
+        }
     }
 }
