@@ -1238,8 +1238,4 @@ object OneAppService : RetrofitConfig() {
             )
         }
     }
-
-    suspend fun getProductSubstitution(productId: String?): retrofit2.Response<ProductSubstitution> {
-        return mApiInterface.getSubstitution(getSessionToken(), getDeviceIdentityToken(), productId)
-    }
 }
