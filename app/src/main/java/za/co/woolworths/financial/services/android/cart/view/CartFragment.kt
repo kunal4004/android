@@ -1268,6 +1268,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     }
 
     private fun showRecommendedProducts() {
+        binding.layoutRecommendationContainer.root.visibility = View.VISIBLE
         val bundle = Bundle()
         val cartLinesValue: MutableList<CartProducts> = arrayListOf()
 
@@ -1543,6 +1544,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
 
     fun reloadFragment() {
         //Reload screen
+        binding.layoutRecommendationContainer.root.visibility = View.GONE
         setPriceInformationVisibility(false)
         setupToolbar()
         initializeBottomTab()
