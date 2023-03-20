@@ -1,18 +1,18 @@
 package za.co.woolworths.financial.services.android.enhancedSubstitution.repository
 
 import com.awfs.coordination.R
+import za.co.woolworths.financial.services.android.enhancedSubstitution.apihelper.SubstitutionApiHelper
 import za.co.woolworths.financial.services.android.enhancedSubstitution.model.ProductSubstitution
-import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.models.network.Resource
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import java.io.IOException
 
-class ProductSubstitutionRepository {
+class ProductSubstitutionRepository(var substitutionApiHelper: SubstitutionApiHelper) {
 
     suspend fun getProductSubstitution(productId: String?): Resource<ProductSubstitution> {
         return try {
-            val response = OneAppService.getProductSubstitution(productId)
+            val response = substitutionApiHelper.getProductSubstitution(productId)
             if (response.isSuccessful) {
                 response.body()?.let {
                     return when (it.httpCode) {

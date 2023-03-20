@@ -47,6 +47,7 @@ import com.perfectcorp.perfectlib.CameraView
 import com.perfectcorp.perfectlib.MakeupCam
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
+import org.intellij.lang.annotations.Subst
 import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.chanel.utils.ChanelUtils
 import za.co.woolworths.financial.services.android.common.SingleMessageCommonToast
@@ -55,6 +56,7 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.ILocationProvider
 import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhancedSubstitutionBottomSheetDialog
 import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhancedSubstitutionListener
+import za.co.woolworths.financial.services.android.enhancedSubstitution.apihelper.SubstitutionApiHelper
 import za.co.woolworths.financial.services.android.enhancedSubstitution.model.ProductSubstitution
 import za.co.woolworths.financial.services.android.enhancedSubstitution.repository.ProductSubstitutionRepository
 import za.co.woolworths.financial.services.android.enhancedSubstitution.viewmodel.ProductSubstitutionViewModel
@@ -448,7 +450,7 @@ class ProductDetailsFragment :
 
         productSubstitutionViewModel = ViewModelProvider(
                 this,
-         ProductSubstitutionViewModelFactory(ProductSubstitutionRepository())
+         ProductSubstitutionViewModelFactory(ProductSubstitutionRepository(SubstitutionApiHelper()))
         ).get(ProductSubstitutionViewModel::class.java)
     }
 
