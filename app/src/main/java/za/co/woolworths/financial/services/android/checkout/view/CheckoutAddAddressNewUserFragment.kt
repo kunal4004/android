@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.checkout.view
 
 import android.animation.ObjectAnimator
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
@@ -16,6 +17,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.findNavController
@@ -302,11 +304,6 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             }
             binding.saveAddress?.text = bindString(R.string.change_details)
         }
-        if (activity is CheckoutActivity) {
-            (activity as? CheckoutActivity)?.apply {
-                showBackArrowWithoutTitle()
-            }
-        }
         binding.saveAddress?.setOnClickListener(this)
         binding.backButton?.setOnClickListener(this)
         binding.autoCompleteTextView?.apply {
@@ -360,7 +357,16 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             }
         }
     }
-
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        activity?.lifecycleScope?.launchWhenCreated {
+            if (activity is CheckoutActivity) {
+                (activity as? CheckoutActivity)?.apply {
+                    showBackArrowWithoutTitle()
+                }
+            }
+        }
+    }
     private fun setupViewModel() {
         checkoutAddAddressNewUserViewModel = ViewModelProviders.of(
             this,

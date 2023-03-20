@@ -2,9 +2,12 @@ package za.co.woolworths.financial.services.android.recommendations.data.reposit
 
 import za.co.woolworths.financial.services.android.models.network.Resource
 import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.RecommendationResponse
+import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.RecommendationRequest
 
 interface RecommendationsRepository {
 
     suspend fun getRecommendationResponse(recommendationRequest: RecommendationRequest?): Resource<RecommendationResponse>
+
+    suspend fun getRecommendationResponse(requestEvent: Event?): Resource<RecommendationResponse>
 }

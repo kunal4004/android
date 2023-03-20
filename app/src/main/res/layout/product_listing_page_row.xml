@@ -94,18 +94,16 @@
         android:id="@+id/tvProductName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:alpha="0.9"
         android:contentDescription="@string/plp_textViewProductName"
         android:ellipsize="end"
-        android:fontFamily="@font/myriad_pro_regular"
+        android:fontFamily="@font/opensans_regular"
         android:gravity="top|start"
         android:includeFontPadding="false"
-        android:lineSpacingExtra="0dp"
-        android:lineSpacingMultiplier="1.29"
-        android:maxLines="2"
-        android:minHeight="@dimen/thirty_three_dp"
+        android:lineSpacingExtra="@dimen/two_sp"
+        android:lineSpacingMultiplier="1"
+        android:maxLines="3"
         android:textColor="@color/black"
-        android:textSize="@dimen/fourteen_sp"
+        android:textSize="@dimen/thirteen_sp"
         app:layout_constrainedHeight="true"
         app:layout_constrainedWidth="true"
         app:layout_constraintEnd_toStartOf="@+id/endMarginGuideline"
@@ -116,28 +114,28 @@
 
     <RatingBar
         android:id="@+id/rating_bar"
+        style="@style/StarRating"
         android:layout_width="@dimen/zero_dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/eight_dp"
-        android:numStars="5"
-        style="@style/StarRating"
         android:isIndicator="true"
+        android:numStars="5"
         app:layout_constraintStart_toStartOf="@+id/startMarginGuideline"
         app:layout_constraintTop_toBottomOf="@+id/tvProductName" />
 
     <TextView
         android:id="@+id/txt_rating_count"
+        style="@style/reviewCount"
         android:layout_width="@dimen/zero_dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/eight_dp"
-        style="@style/reviewCount"
         android:gravity="start"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/rating_bar"
-        app:layout_constraintStart_toEndOf="@+id/rating_bar"
         app:layout_constraintEnd_toStartOf="@+id/endMarginGuideline"
-        app:layout_constraintTop_toTopOf="@+id/rating_bar"
-        app:layout_constraintTop_toBottomOf="@+id/tvProductName"/>
+        app:layout_constraintStart_toEndOf="@+id/rating_bar"
+        app:layout_constraintTop_toBottomOf="@+id/tvProductName"
+        app:layout_constraintTop_toTopOf="@+id/rating_bar" />
 
     <TextView
         android:id="@+id/onlinePromotionalTextView1"
@@ -159,7 +157,6 @@
         app:layout_constraintTop_toBottomOf="@+id/rating_bar"
         tools:text="Buy one get one free"
         tools:visibility="visible" />
-        app:layout_constraintTop_toBottomOf="@+id/txt_rating_count" />
 
     <TextView
         android:id="@+id/onlinePromotionalTextView2"
@@ -179,6 +176,7 @@
         app:layout_constraintEnd_toStartOf="@+id/endMarginGuideline"
         app:layout_constraintStart_toStartOf="@+id/startMarginGuideline"
         app:layout_constraintTop_toBottomOf="@+id/onlinePromotionalTextView1"
+        app:layout_constraintBottom_toTopOf="@id/includeProductListingPriceLayout"
         tools:text="R15.00"
         tools:visibility="visible" />
 
@@ -240,8 +238,7 @@
         app:layout_constrainedHeight="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/startMarginGuideline"
-        app:layout_constraintTop_toBottomOf="@id/tvSaveText" />
+        app:layout_constraintStart_toStartOf="@+id/startMarginGuideline" />
 
     <include
         android:id="@+id/productListingPromotionalImage"

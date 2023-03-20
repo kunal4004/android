@@ -21,7 +21,8 @@ class ProductListingAdapter(
     val activity: FragmentActivity?,
     val mBannerLabel: String?,
     val mBannerImage: String?,
-    val mIsComingFromBLP: Boolean
+    val mIsComingFromBLP: Boolean,
+    val promotionalRichText: String?
 ) : RecyclerView.Adapter<RecyclerViewViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerViewViewHolder {
@@ -52,6 +53,8 @@ class ProductListingAdapter(
                     )
                     (holder as? RecyclerViewViewHolderHeader)?.setChanelBanner(
                         mBannerLabel, mBannerImage, mIsComingFromBLP, navigator
+                    )
+                    (holder as? RecyclerViewViewHolderHeader)?.setPromotionalBanner(promotionalRichText
                     )
                 }
                 ProductListingViewType.FOOTER -> (holder as? RecyclerViewViewHolderFooter)?.loadMoreProductProgressBarVisibility()
