@@ -7,5 +7,6 @@ import kotlinx.android.parcel.Parcelize
 data class ConfigAccountOptions(
     val showTreatmentPlanJourney: ConfigShowTreatmentPlan,
     val collectionsStartNewPlanJourney: ConfigShowTreatmentPlan,
-    var ficaRefresh: FicaRefresh
+    var ficaRefresh: FicaRefresh,
+    var insuranceProducts: PetInsuranceConfig
 ) : Parcelable

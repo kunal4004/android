@@ -5,6 +5,8 @@ import retrofit2.http.*
 import za.co.woolworths.financial.services.android.models.dto.CreditCardTokenResponse
 import za.co.woolworths.financial.services.android.models.dto.EligibilityPlanResponse
 import za.co.woolworths.financial.services.android.models.dto.OfferActive
+import za.co.woolworths.financial.services.android.models.dto.account.AppGUIDModel
+import za.co.woolworths.financial.services.android.models.dto.account.AppGUIDRequestModel
 import za.co.woolworths.financial.services.android.models.dto.account.applynow.ApplyNowModel
 import za.co.woolworths.financial.services.android.models.dto.npc.BlockCardRequestBody
 import za.co.woolworths.financial.services.android.models.dto.npc.BlockMyCardResponse
@@ -141,4 +143,11 @@ interface WfsApiService {
         @Header("deviceIdentityToken") deviceIdentityToken: String,
         @Body emailUsRequest: EmailUsRequest?
     ):  Response<GenericResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @POST("/wfs/app/v4/user/appGuid")
+    suspend fun getAppGUID(
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Body appGUIDRequestModel : AppGUIDRequestModel
+    ): Response<AppGUIDModel>
 }
