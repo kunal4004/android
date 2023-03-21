@@ -15,4 +15,5 @@ data class Event(
     val purchaseLines: List<CartProducts?>? = null,
     val userAgent: String? = null,
     val ipAddress: String? = null,
+    val recClicks: List<String>? = null
 ) : Parcelable
