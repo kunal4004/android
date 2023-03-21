@@ -47,6 +47,7 @@ import com.perfectcorp.perfectlib.CameraView
 import com.perfectcorp.perfectlib.MakeupCam
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
+import org.intellij.lang.annotations.Subst
 import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.chanel.utils.ChanelUtils
 import za.co.woolworths.financial.services.android.common.SingleMessageCommonToast
@@ -55,6 +56,11 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.ILocationProvider
 import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhancedSubstitutionBottomSheetDialog
 import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhancedSubstitutionListener
+import za.co.woolworths.financial.services.android.enhancedSubstitution.apihelper.SubstitutionApiHelper
+import za.co.woolworths.financial.services.android.enhancedSubstitution.model.ProductSubstitution
+import za.co.woolworths.financial.services.android.enhancedSubstitution.repository.ProductSubstitutionRepository
+import za.co.woolworths.financial.services.android.enhancedSubstitution.viewmodel.ProductSubstitutionViewModel
+import za.co.woolworths.financial.services.android.enhancedSubstitution.viewmodel.ProductSubstitutionViewModelFactory
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
@@ -65,6 +71,8 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.models.network.Resource
+import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.ProductX
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_REQUEST_CODE
@@ -139,7 +147,6 @@ import java.io.File
 import javax.inject.Inject
 import kotlin.collections.get
 import kotlin.collections.set
-import kotlin.jvm.internal.Intrinsics.Kotlin
 
 
 @AndroidEntryPoint
@@ -234,6 +241,8 @@ class ProductDetailsFragment :
     private var prodId: String = "-1"
     private lateinit var moreReviewViewModel: RatingAndReviewViewModel
     private val dialogInstance = FoodProductNotAvailableForCollectionDialog.newInstance()
+    private lateinit var productSubstitutionViewModel: ProductSubstitutionViewModel
+
     @OpenTermAndLighting
     @Inject
     lateinit var vtoBottomSheetDialog: VtoBottomSheetDialog
@@ -268,6 +277,9 @@ class ProductDetailsFragment :
         const val STR_BRAND_HEADER = "strBandHeaderDesc"
         const val IS_BROWSING = "isBrowsing"
         const val BRAND_NAVIGATION_DETAILS = "BRAND_NAVIGATION_DETAILS"
+
+        const val USER_CHOICE = "USER_CHOICE"
+        const val SHOPPER_CHOICE = "SHOPPER_CHOICE"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -443,6 +455,11 @@ class ProductDetailsFragment :
             this,
             RatingAndReviewViewModelFactory(RatingAndReviewApiHelper())
         ).get(RatingAndReviewViewModel::class.java)
+
+        productSubstitutionViewModel = ViewModelProvider(
+                this,
+         ProductSubstitutionViewModelFactory(ProductSubstitutionRepository(SubstitutionApiHelper()))
+        ).get(ProductSubstitutionViewModel::class.java)
     }
 
     private fun ProductDetailsFragmentBinding.updateReportLikeStatus() {
@@ -1524,35 +1541,83 @@ class ProductDetailsFragment :
                 showEnhancedSubstitutionDialog()
             }
 
-
-            binding?.productDetailOptionsAndInformation?.substitutionLayout?.apply {
-                if (SessionUtilities.getInstance().isUserAuthenticated
-                    && KotlinUtils.getDeliveryType()?.deliveryType == Delivery.DASH.type
-                ) {
-                    this?.root?.visibility = View.VISIBLE
-                } else {
-                    this.root?.visibility = View.GONE
-                }
-
-                if (isAllProductsOutOfStock() && isInventoryCalled) {
-                    this.txtSubstitutionEdit?.background = resources.getDrawable(R.drawable.grey_background_with_corner_5)
-                }
-
-                this.txtSubstitutionEdit?.setOnClickListener {
-                    if (isAllProductsOutOfStock() && isInventoryCalled) {
-                        /*pop up for out of stock*/
-                        productOutOfStockErrorMessage(true)
-                    } else {
-                        /*navigate to manage substitution screen*/
-                    }
-                }
-            }
+            callGetSubstitutionApi(isInventoryCalled)
 
             if (isAllProductsOutOfStock() && isInventoryCalled) {
                 productOutOfStockErrorMessage()
                 return
             }
         }
+    }
+
+    private fun callGetSubstitutionApi(isInventoryCalled: Boolean) {
+        if (isAllProductsOutOfStock() && isInventoryCalled) {
+            return
+        }
+        productSubstitutionViewModel.getProductSubstitution(productDetails?.productId)
+        productSubstitutionViewModel.productSubstitution.observe(viewLifecycleOwner) {
+
+            it.getContentIfNotHandled()?.let { resource ->
+                when (resource.status) {
+                    Status.LOADING -> {
+                        binding.progressBar.visibility = View.VISIBLE
+                    }
+                    Status.SUCCESS -> {
+                        binding.progressBar.visibility = View.GONE
+                        showSubstitutionLayout(isInventoryCalled, resource)
+                    }
+                    Status.ERROR -> {
+                        binding.progressBar.visibility = View.GONE
+                        hideSubstitutionLayout()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun showSubstitutionLayout(isInventoryCalled: Boolean, resource: Resource<ProductSubstitution>) {
+
+        binding?.productDetailOptionsAndInformation?.substitutionLayout?.apply {
+            if (SessionUtilities.getInstance().isUserAuthenticated
+                    && KotlinUtils.getDeliveryType()?.deliveryType == Delivery.DASH.type
+            ) {
+                this?.root?.visibility = View.VISIBLE
+            } else {
+                this.root?.visibility = View.GONE
+            }
+
+            if (isAllProductsOutOfStock() && isInventoryCalled) {
+                this.txtSubstitutionEdit?.background = resources.getDrawable(R.drawable.grey_background_with_corner_5,
+                        null)
+            } else {
+                this.txtSubstitutionEdit?.background = resources.getDrawable(R.drawable.black_background_with_corner_5,
+                        null)
+            }
+
+            if (resource?.data?.data?.isNullOrEmpty() == true) {
+                hideSubstitutionLayout()
+                return
+            }
+
+            if (resource.data?.data?.get(0)?.substitutionSelection == USER_CHOICE) {
+                txtSubstitutionTitle.text = resource.data?.data?.get(0)?.substitutionInfo?.displayName
+            } else {
+                txtSubstitutionTitle.text = getString(R.string.let_my_shooper_choose_for_me)
+            }
+
+            this.txtSubstitutionEdit?.setOnClickListener {
+                if (isAllProductsOutOfStock() && isInventoryCalled) {
+                    /*pop up for out of stock*/
+                    productOutOfStockErrorMessage(true)
+                } else {
+                    /*navigate to manage substitution screen*/
+                }
+            }
+        }
+    }
+
+    private fun hideSubstitutionLayout() {
+        binding?.productDetailOptionsAndInformation?.root?.visibility = View.GONE
     }
 
     private fun ProductDetailsFragmentBinding.hideRatingAndReview() {
