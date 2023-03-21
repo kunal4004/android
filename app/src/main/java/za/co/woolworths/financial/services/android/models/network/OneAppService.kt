@@ -512,7 +512,7 @@ object OneAppService : RetrofitConfig() {
         }
     }
 
-    private fun getSuburbOrStoreId(): Pair<String?, String?> {
+    public fun getSuburbOrStoreId(): Pair<String?, String?> {
         val suburbId: String? = null
         val storeId: String? = null
         return Pair(suburbId, storeId)

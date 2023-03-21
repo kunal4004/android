@@ -4,9 +4,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.enhancedSubstitution.model.ProductSubstitution
 import za.co.woolworths.financial.services.android.enhancedSubstitution.repository.ProductSubstitutionRepository
+import za.co.woolworths.financial.services.android.models.dto.ProductList
+import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
 import za.co.woolworths.financial.services.android.models.network.Event
 import za.co.woolworths.financial.services.android.models.network.Resource
 
@@ -24,4 +28,11 @@ class ProductSubstitutionViewModel (
             _productSubstitution.value = Event(result)
         }
     }
+
+
+    fun getAllSearchedSubstitutions(requestParams: ProductsRequestParams): LiveData<PagingData<ProductList>> {
+        return repository.getAllSearchedSubstitutions(requestParams).cachedIn(viewModelScope)
+    }
+
+
 }
