@@ -30,9 +30,9 @@ class ProductSubstitutionRepositoryTest {
 
     @Test
     fun test_emptylist_getSubstitutions() = runTest {
-        Mockito.`when`(substitutionApiHelper.getProductSubstitution("6009195203504")).thenReturn(Response.success(productSubstitution))
+        Mockito.`when`(substitutionApiHelper.getProductSubstitution(PROD_ID)).thenReturn(Response.success(productSubstitution))
         val sut = ProductSubstitutionRepository(substitutionApiHelper)
-        val result = sut.getProductSubstitution("6009195203504")
+        val result = sut.getProductSubstitution(PROD_ID)
         Assert.assertEquals(0, result.data?.data?.size)
     }
 
@@ -44,9 +44,9 @@ class ProductSubstitutionRepositoryTest {
         val response = za.co.woolworths.financial.services.android.enhancedSubstitution.model.Response(code = "-1" , desc = "success")
 
         val productSubstitution = ProductSubstitution(data= dataList, httpCode = 200, response = response)
-        Mockito.`when`(substitutionApiHelper.getProductSubstitution("6009195203504")).thenReturn(Response.success(productSubstitution))
+        Mockito.`when`(substitutionApiHelper.getProductSubstitution(PROD_ID)).thenReturn(Response.success(productSubstitution))
         val sut = ProductSubstitutionRepository(substitutionApiHelper)
-        val result = sut.getProductSubstitution("6009195203504")
+        val result = sut.getProductSubstitution(PROD_ID)
         Assert.assertEquals(1, result.data?.data?.size)
         Assert.assertEquals("Free Range Jumbo Eggs 6 pk", result.data?.data?.get(0)?.substitutionInfo?.displayName)
     }
@@ -54,9 +54,13 @@ class ProductSubstitutionRepositoryTest {
     @Test
     fun test_error_getSubstitutions() = runTest {
 
-        Mockito.`when`(substitutionApiHelper.getProductSubstitution("6009195203504")).thenReturn(Response.error(504, "".toResponseBody()))
+        Mockito.`when`(substitutionApiHelper.getProductSubstitution(PROD_ID)).thenReturn(Response.error(504, "".toResponseBody()))
         val sut = ProductSubstitutionRepository(substitutionApiHelper)
-        val result = sut.getProductSubstitution("6009195203504")
+        val result = sut.getProductSubstitution(PROD_ID)
         Assert.assertEquals(Status.ERROR, result.status)
+    }
+
+    companion object {
+        private val PROD_ID = "6009195203504"
     }
 }
