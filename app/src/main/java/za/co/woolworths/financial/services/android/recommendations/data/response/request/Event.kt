@@ -6,10 +6,14 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 data class Event(
     val eventType: String?,
-    val url: String?,
-    val pageType: String?,
-    val categories: List<String>?,
-    val products: List<ProductX>?,
-    val cartLines: List<CartProducts?>?
-
+    val url: String? = null,
+    val pageType: String? = null,
+    val categories: List<String>? = null,
+    val products: List<ProductX>? = null,
+    val cartLines: List<CartProducts?>? = null,
+    val orderId: String? = null,
+    val purchaseLines: List<CartProducts?>? = null,
+    val userAgent: String? = null,
+    val ipAddress: String? = null,
+    val recClicks: List<String>? = null
 ) : Parcelable

@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.ShoppingListFragmentBinding
+import dagger.hilt.android.AndroidEntryPoint
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
@@ -31,6 +32,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.shop.list.Depart
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
 import za.co.woolworths.financial.services.android.util.*
 
+@AndroidEntryPoint
 class MyListsFragment : DepartmentExtensionFragment(R.layout.shopping_list_fragment), View.OnClickListener, IShoppingList {
 
     private lateinit var binding: ShoppingListFragmentBinding

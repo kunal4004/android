@@ -7,13 +7,19 @@ import okhttp3.ResponseBody
 import retrofit2.Call
 import za.co.absa.openbankingapi.woolworths.integration.dto.PayUResponse
 import za.co.woolworths.financial.services.android.checkout.service.network.*
+import za.co.woolworths.financial.services.android.enhancedSubstitution.model.ProductSubstitution
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
 import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.Response
+import za.co.woolworths.financial.services.android.models.dto.account.AppGUIDModel
+import za.co.woolworths.financial.services.android.models.dto.account.AppGUIDRequestType
+import za.co.woolworths.financial.services.android.models.dto.account.FeatureEnablementModel
 import za.co.woolworths.financial.services.android.models.dto.account.FicaModel
+import za.co.woolworths.financial.services.android.models.dto.account.PetInsuranceModel
+import za.co.woolworths.financial.services.android.models.dto.account.getRequestBody
 import za.co.woolworths.financial.services.android.models.dto.bpi.BPIBody
 import za.co.woolworths.financial.services.android.models.dto.bpi.InsuranceTypeOptInBody
 import za.co.woolworths.financial.services.android.models.dto.cart.SubmittedOrderResponse
@@ -45,6 +51,7 @@ import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.SelectedVoucher
 import za.co.woolworths.financial.services.android.onecartgetstream.model.OCAuthenticationResponse
 import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.RecommendationResponse
+import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.RecommendationRequest
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.RatingAndReviewData
 import za.co.woolworths.financial.services.android.util.KotlinUtils
@@ -646,12 +653,14 @@ object OneAppService : RetrofitConfig() {
     }
 
 
-    fun getShoppingListItems(listId: String): Call<ShoppingListItemsResponse> {
-        return mApiInterface.getShoppingListItems(
-            getSessionToken(),
-            getDeviceIdentityToken(),
-            listId
-        )
+    suspend fun getShoppingListItems(listId: String): retrofit2.Response<ShoppingListItemsResponse> {
+        return withContext(Dispatchers.IO) {
+            mApiInterface.getShoppingListItems(
+                getSessionToken(),
+                getDeviceIdentityToken(),
+                listId
+            )
+        }
     }
 
     fun deleteShoppingList(listId: String): Call<ShoppingListsResponse> {
@@ -670,6 +679,31 @@ object OneAppService : RetrofitConfig() {
         )
     }
 
+    suspend fun getInventorySkusForStore(
+        store_id: String,
+        multipleSku: String,
+        isUserBrowsing: Boolean
+    ): retrofit2.Response<SkusInventoryForStoreResponse> {
+        return withContext(Dispatchers.IO) {
+            if ((isUserBrowsing && Delivery.DASH.type == KotlinUtils.browsingDeliveryType?.type) ||
+                (!isUserBrowsing && Delivery.DASH.type == KotlinUtils.getDeliveryType()?.deliveryType)
+            ) {
+                mApiInterface.fetchDashInventorySKUForStore(
+                    getSessionToken(),
+                    getDeviceIdentityToken(),
+                    store_id,
+                    multipleSku
+                )
+            } else
+                mApiInterface.getInventorySKUForStore(
+                    getSessionToken(),
+                    getDeviceIdentityToken(),
+                    store_id,
+                    multipleSku
+                )
+        }
+    }
+
     fun getInventorySkuForStore(
         store_id: String,
         multipleSku: String,
@@ -678,14 +712,14 @@ object OneAppService : RetrofitConfig() {
         return if ((isUserBrowsing && Delivery.DASH.type == KotlinUtils.browsingDeliveryType?.type) ||
             (!isUserBrowsing && Delivery.DASH.type == KotlinUtils.getDeliveryType()?.deliveryType)
         ) {
-            mApiInterface.getDashInventorySKUForStore(
+            mApiInterface.fetchDashInventorySKUsForStore(
                 getSessionToken(),
                 getDeviceIdentityToken(),
                 store_id,
                 multipleSku
             )
         } else
-            mApiInterface.getInventorySKUForStore(
+            mApiInterface.getInventorySKUsForStore(
                 getSessionToken(),
                 getDeviceIdentityToken(),
                 store_id,
@@ -1222,7 +1256,7 @@ object OneAppService : RetrofitConfig() {
         }
     }
 
-    suspend fun getLastDashOrder(): retrofit2.Response<LastOrderDetailsResponse>  {
+    suspend fun getLastDashOrder(): retrofit2.Response<LastOrderDetailsResponse> {
         return withContext(Dispatchers.IO) {
             mApiInterface.getLastDashOrder(getSessionToken(), getDeviceIdentityToken())
         }
@@ -1236,5 +1270,36 @@ object OneAppService : RetrofitConfig() {
                 recommendationRequest
             )
         }
+    }
+    suspend fun recommendation(recommendationRequest: Event): retrofit2.Response<RecommendationResponse> {
+        return withContext(Dispatchers.IO) {
+            mApiInterface.recommendation(
+                getSessionToken(),
+                getDeviceIdentityToken(),
+                recommendationRequest
+            )
+        }
+    }
+
+    fun getFeatureEnablementResponse(): Call<FeatureEnablementModel> {
+        return mApiInterface.getFeatureEnablement(
+            getSessionToken(),
+            getDeviceIdentityToken()
+        )
+    }
+
+    fun getPetInsuranceResponse(): Call<PetInsuranceModel> {
+        return mApiInterface.getPetInsurance(
+            getSessionToken(),
+            getDeviceIdentityToken()
+        )
+    }
+
+    fun getAppGUIDResponse(appGUIDRequestType: AppGUIDRequestType): Call<AppGUIDModel> {
+        return mApiInterface.getAppGUID(
+            getSessionToken(),
+            getDeviceIdentityToken(),
+            getRequestBody(appGUIDRequestType)
+        )
     }
 }

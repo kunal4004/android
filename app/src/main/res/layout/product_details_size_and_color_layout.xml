@@ -106,7 +106,7 @@
 
     <TextView
         android:id="@+id/selectedSize"
-        style="@style/futura_semi_bold_black_12_text_style"
+        style="@style/futura_semi_bold_black_14_text_style"
         android:letterSpacing="0.05"
         android:textAllCaps="true"
         app:layout_constraintLeft_toRightOf="@+id/selectedSizePlaceholder"
@@ -114,7 +114,11 @@
 
     <TextView
         android:id="@+id/sizeGuide"
-        style="@style/futura_medium_black_12_text_style"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/fourteen_sp"
+        android:textColor="@color/black"
+        android:fontFamily="@font/opensans_regular"
         android:contentDescription="@string/cd_lnksizeguide"
         android:letterSpacing="0.05"
         android:text="@string/size_guide"

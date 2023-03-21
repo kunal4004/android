@@ -47,6 +47,7 @@ import com.perfectcorp.perfectlib.CameraView
 import com.perfectcorp.perfectlib.MakeupCam
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
+import org.intellij.lang.annotations.Subst
 import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.chanel.utils.ChanelUtils
 import za.co.woolworths.financial.services.android.common.SingleMessageCommonToast
@@ -56,6 +57,11 @@ import za.co.woolworths.financial.services.android.contracts.ILocationProvider
 import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhancedSubstituionManageDialogListener
 import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhancedSubstitutionBottomSheetDialog
 import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhancedSubstitutionListener
+import za.co.woolworths.financial.services.android.enhancedSubstitution.apihelper.SubstitutionApiHelper
+import za.co.woolworths.financial.services.android.enhancedSubstitution.model.ProductSubstitution
+import za.co.woolworths.financial.services.android.enhancedSubstitution.repository.ProductSubstitutionRepository
+import za.co.woolworths.financial.services.android.enhancedSubstitution.viewmodel.ProductSubstitutionViewModel
+import za.co.woolworths.financial.services.android.enhancedSubstitution.viewmodel.ProductSubstitutionViewModelFactory
 import za.co.woolworths.financial.services.android.enhancedSubstitution.managesubstitution.ManageSubstitutionFragment
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
@@ -67,6 +73,8 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.models.network.Resource
+import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.ProductX
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_REQUEST_CODE
@@ -90,11 +98,12 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.detail.I
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.OutOfStockMessageDialogFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.size_guide.SkinProfileDialog
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment.Companion.SET_DELIVERY_LOCATION_REQUEST_CODE
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.FoodProductNotAvailableForCollectionDialog
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.ProductNotAvailableForCollectionDialog
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.BaseProductUtils
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.ColourSizeVariants
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
-import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListDetailFragment.ADD_TO_CART_SUCCESS_RESULT
+import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListDetailFragment.Companion.ADD_TO_CART_SUCCESS_RESULT
 import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.UnsellableItemsBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView
@@ -117,6 +126,7 @@ import za.co.woolworths.financial.services.android.ui.vto.ui.gallery.ImageResult
 import za.co.woolworths.financial.services.android.ui.vto.utils.PermissionUtil
 import za.co.woolworths.financial.services.android.ui.vto.utils.SdkUtility
 import za.co.woolworths.financial.services.android.ui.vto.utils.VirtualTryOnUtil
+import za.co.woolworths.financial.services.android.ui.wfs.common.getIpAddress
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_1000_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_1500_MS
@@ -135,12 +145,10 @@ import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBind
 import za.co.woolworths.financial.services.android.util.pickimagecontract.PickImageFileContract
 import za.co.woolworths.financial.services.android.util.pickimagecontract.PickImageGalleryContract
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
-import za.co.woolworths.financial.services.android.ui.fragments.product.shop.FoodProductNotAvailableForCollectionDialog
 import java.io.File
 import javax.inject.Inject
 import kotlin.collections.get
 import kotlin.collections.set
-import kotlin.jvm.internal.Intrinsics.Kotlin
 
 
 @AndroidEntryPoint
@@ -235,6 +243,8 @@ class ProductDetailsFragment :
     private var prodId: String = "-1"
     private lateinit var moreReviewViewModel: RatingAndReviewViewModel
     private val dialogInstance = FoodProductNotAvailableForCollectionDialog.newInstance()
+    private lateinit var productSubstitutionViewModel: ProductSubstitutionViewModel
+
     @OpenTermAndLighting
     @Inject
     lateinit var vtoBottomSheetDialog: VtoBottomSheetDialog
@@ -269,6 +279,9 @@ class ProductDetailsFragment :
         const val STR_BRAND_HEADER = "strBandHeaderDesc"
         const val IS_BROWSING = "isBrowsing"
         const val BRAND_NAVIGATION_DETAILS = "BRAND_NAVIGATION_DETAILS"
+
+        const val USER_CHOICE = "USER_CHOICE"
+        const val SHOPPER_CHOICE = "SHOPPER_CHOICE"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -322,12 +335,19 @@ class ProductDetailsFragment :
     }
 
     private fun setUpCartCountPDP() {
+        val cartIconMargin = requireContext().resources.getDimensionPixelSize(R.dimen.five_dp)
+        val params = ConstraintLayout.LayoutParams(
+            ConstraintLayout.LayoutParams.WRAP_CONTENT,
+            ConstraintLayout.LayoutParams.WRAP_CONTENT
+        )
         if (SessionUtilities.getInstance().isUserAuthenticated && QueryBadgeCounter.instance.cartCount <= 0) {
             binding.openCart.cartCountTextView?.visibility = View.GONE
         } else if (SessionUtilities.getInstance().isUserAuthenticated && QueryBadgeCounter.instance.cartCount > 0) {
             binding.openCart.cartCountTextView?.visibility = View.VISIBLE
             binding.openCart.cartCountTextView?.text =
                 QueryBadgeCounter.instance.cartCount.toString()
+            params.setMargins(cartIconMargin, 0, 0, 0)
+            binding.openCart.cartCountImage.setLayoutParams(params)
         }
     }
 
@@ -437,6 +457,11 @@ class ProductDetailsFragment :
             this,
             RatingAndReviewViewModelFactory(RatingAndReviewApiHelper())
         ).get(RatingAndReviewViewModel::class.java)
+
+        productSubstitutionViewModel = ViewModelProvider(
+                this,
+         ProductSubstitutionViewModelFactory(ProductSubstitutionRepository(SubstitutionApiHelper()))
+        ).get(ProductSubstitutionViewModel::class.java)
     }
 
     private fun ProductDetailsFragmentBinding.updateReportLikeStatus() {
@@ -1158,6 +1183,18 @@ class ProductDetailsFragment :
                 products = listOf(productX), cartLines = listOf()
             )
         )
+        bundle.putParcelable(
+            BundleKeysConstants.RECOMMENDATIONS_USER_AGENT, Event(
+                eventType = BundleKeysConstants.RECOMMENDATIONS_USER_AGENT,
+                userAgent = System.getProperty("http.agent") ?: ""
+            )
+        )
+        bundle.putParcelable(
+            BundleKeysConstants.RECOMMENDATIONS_IP_ADDRESS,
+            Event(eventType = BundleKeysConstants.RECOMMENDATIONS_IP_ADDRESS,
+                ipAddress = getIpAddress(requireActivity())
+            )
+        )
 
         val navHostFragment =
             childFragmentManager.findFragmentById(R.id.navHostRecommendation) as NavHostFragment
@@ -1251,9 +1288,21 @@ class ProductDetailsFragment :
 
     private fun loadSizeAndColor() {
         if (hasColor)
-            binding.showColors()
+            binding?.showColors()
+        else {
+            binding?.sizeColorSelectorLayout?.apply {
+                colorSelectorLayout.visibility = View.GONE
+                divider1.visibility = View.GONE
+            }
+        }
         if (hasSize)
-            binding.showSize()
+            binding?.showSize()
+        else {
+            binding?.sizeColorSelectorLayout?.apply {
+                sizeSelectorLayout.visibility = View.GONE
+                divider2.visibility = View.GONE
+            }
+        }
 
         if (productDetailsPresenter?.isSizeGuideApplicable(
                 productDetails?.colourSizeVariants,
@@ -1296,6 +1345,7 @@ class ProductDetailsFragment :
             }
 
             colorSelectorLayout?.visibility = View.VISIBLE
+            divider1.visibility = View.VISIBLE
         }
     }
 
@@ -1493,19 +1543,69 @@ class ProductDetailsFragment :
                 showEnhancedSubstitutionDialog()
             }
 
+            callGetSubstitutionApi(isInventoryCalled)
 
-            binding?.productDetailOptionsAndInformation?.substitutionLayout?.apply {
-                if (SessionUtilities.getInstance().isUserAuthenticated
+            if (isAllProductsOutOfStock() && isInventoryCalled) {
+                productOutOfStockErrorMessage()
+                return
+            }
+        }
+    }
+
+    private fun callGetSubstitutionApi(isInventoryCalled: Boolean) {
+        if (isAllProductsOutOfStock() && isInventoryCalled) {
+            return
+        }
+        productSubstitutionViewModel.getProductSubstitution(productDetails?.productId)
+        productSubstitutionViewModel.productSubstitution.observe(viewLifecycleOwner) {
+
+            it.getContentIfNotHandled()?.let { resource ->
+                when (resource.status) {
+                    Status.LOADING -> {
+                        binding.progressBar.visibility = View.VISIBLE
+                    }
+                    Status.SUCCESS -> {
+                        binding.progressBar.visibility = View.GONE
+                        showSubstitutionLayout(isInventoryCalled, resource)
+                    }
+                    Status.ERROR -> {
+                        binding.progressBar.visibility = View.GONE
+                        hideSubstitutionLayout()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun showSubstitutionLayout(isInventoryCalled: Boolean, resource: Resource<ProductSubstitution>) {
+
+        binding?.productDetailOptionsAndInformation?.substitutionLayout?.apply {
+            if (SessionUtilities.getInstance().isUserAuthenticated
                     && KotlinUtils.getDeliveryType()?.deliveryType == Delivery.DASH.type
-                ) {
-                    this?.root?.visibility = View.VISIBLE
-                } else {
-                    this.root?.visibility = View.GONE
-                }
+            ) {
+                this?.root?.visibility = View.VISIBLE
+            } else {
+                this.root?.visibility = View.GONE
+            }
 
-                if (isAllProductsOutOfStock() && isInventoryCalled) {
-                    this.txtSubstitutionEdit?.background = resources.getDrawable(R.drawable.grey_background_with_corner_5)
-                }
+            if (isAllProductsOutOfStock() && isInventoryCalled) {
+                this.txtSubstitutionEdit?.background = resources.getDrawable(R.drawable.grey_background_with_corner_5,
+                        null)
+            } else {
+                this.txtSubstitutionEdit?.background = resources.getDrawable(R.drawable.black_background_with_corner_5,
+                        null)
+            }
+
+            if (resource?.data?.data?.isNullOrEmpty() == true) {
+                hideSubstitutionLayout()
+                return
+            }
+
+            if (resource.data?.data?.get(0)?.substitutionSelection == USER_CHOICE) {
+                txtSubstitutionTitle.text = resource.data?.data?.get(0)?.substitutionInfo?.displayName
+            } else {
+                txtSubstitutionTitle.text = getString(R.string.let_my_shooper_choose_for_me)
+            }
 
                 this.txtSubstitutionEdit?.setOnClickListener {
                     if (isAllProductsOutOfStock() && isInventoryCalled) {
@@ -1519,12 +1619,11 @@ class ProductDetailsFragment :
                     }
                 }
             }
-
-            if (isAllProductsOutOfStock() && isInventoryCalled) {
-                productOutOfStockErrorMessage()
-                return
-            }
         }
+
+
+    private fun hideSubstitutionLayout() {
+        binding?.productDetailOptionsAndInformation?.root?.visibility = View.GONE
     }
 
     private fun ProductDetailsFragmentBinding.hideRatingAndReview() {
