@@ -43,8 +43,6 @@ class CartProductAdapter(
     private val onItemClick: OnItemClick,
     orderSummary: OrderSummary?,
     context: Activity?,
-    voucherDetails: VoucherDetails?,
-    liquorCompliance: LiquorCompliance?,
 ) : RecyclerSwipeAdapter<RecyclerView.ViewHolder>() {
     private val DISABLE_VIEW_VALUE = 0.5f
     private val GIFT_ITEM = "GIFT"
@@ -70,14 +68,13 @@ class CartProductAdapter(
         fun onPromoDiscountInfo()
         fun onItemDeleteClick(commerceId: CommerceItem)
         fun onCheckBoxChange(isChecked: Boolean, commerceItem: CommerceItem)
+        fun onCartRefresh()
     }
 
     private var editMode = false
     private var firstLoadCompleted = false
     private var orderSummary: OrderSummary? = null
-    private var liquorComplianceInfo: LiquorCompliance?
     private val mContext: Activity?
-    private var voucherDetails: VoucherDetails?
     private var isQuantityUploading = false
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
@@ -483,6 +480,7 @@ class CartProductAdapter(
         cartItems?.clear()
         orderSummary = null
         notifyDataSetChanged()
+        onItemClick.onCartRefresh()
     }
 
     private inner class CartHeaderViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -658,22 +656,21 @@ class CartProductAdapter(
 
     fun notifyAdapter(
         cartItems: ArrayList<CartItemGroup>?,
-        orderSummary: OrderSummary?, voucherDetails: VoucherDetails?,
-        liquorCompliance: LiquorCompliance?,
+        orderSummary: OrderSummary?,
     ) {
         this.cartItems = cartItems
         this.orderSummary = orderSummary
-        this.voucherDetails = voucherDetails
-        liquorComplianceInfo = liquorCompliance
         resetQuantityState(false)
         notifyDataSetChanged()
         onItemClick.updateOrderTotal()
+        onItemClick.onCartRefresh()
     }
 
     fun onChangeQuantityComplete() {
         isQuantityUploading = false
         resetQuantityState(false)
         notifyDataSetChanged()
+        onItemClick.onCartRefresh()
     }
 
     fun onChangeQuantityLoad(mCommerceItem: CommerceItem) {
@@ -690,6 +687,7 @@ class CartProductAdapter(
                 }
             }
             notifyDataSetChanged()
+            onItemClick.onCartRefresh()
         }
     }
 
@@ -714,11 +712,13 @@ class CartProductAdapter(
     fun onChangeQuantityError() {
         resetQuantityState(true)
         notifyDataSetChanged()
+        onItemClick.onCartRefresh()
     }
 
     fun onChangeQuantityLoad() {
         isQuantityUploading = isQuantityUploading()
         notifyDataSetChanged()
+        onItemClick.onCartRefresh()
     }
 
     private fun animateOnDeleteButtonVisibility(view: View, animate: Boolean) {
@@ -745,6 +745,7 @@ class CartProductAdapter(
             ProductState.CANCEL_DIALOG_TAPPED -> {
                 resetQuantityState(true)
                 notifyDataSetChanged()
+                onItemClick.onCartRefresh()
             }
             else -> {}
         }
@@ -780,17 +781,11 @@ class CartProductAdapter(
     fun updateStockAvailability(cartItems: ArrayList<CartItemGroup>?) {
         this.cartItems = cartItems
         notifyDataSetChanged()
+        onItemClick.onCartRefresh()
     }
-
-    private val appliedVouchersCount: Int
-        get() = if (voucherDetails == null) {
-            -1
-        } else getAppliedVouchersCount(voucherDetails!!.vouchers)
 
     init {
         this.orderSummary = orderSummary
         mContext = context
-        this.voucherDetails = voucherDetails
-        liquorComplianceInfo = liquorCompliance
     }
 }

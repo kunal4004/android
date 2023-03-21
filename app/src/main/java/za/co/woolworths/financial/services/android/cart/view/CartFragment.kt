@@ -579,6 +579,15 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             }
     }
 
+    override fun onCartRefresh() {
+        //refresh the pricing view
+        if(cartProductAdapter?.cartItems?.isNullOrEmpty() == true){
+            setPriceInformationVisibility(false)
+        } else {
+            updatePriceInformation()
+        }
+    }
+
     override fun onChangeQuantity(commerceId: CommerceItem, quantity: Int) {
         mCommerceItem = commerceId
         mChangeQuantity?.commerceId = commerceId.commerceItemInfo.getCommerceId()
@@ -655,6 +664,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             }
         }
         cartProductAdapter?.notifyDataSetChanged()
+        onCartRefresh()
     }
 
     private fun locationSelectionClicked() {
@@ -695,9 +705,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                         cartItems,
                         this@CartFragment,
                         orderSummary,
-                        requireActivity(),
-                        voucherDetails,
-                        liquorCompliance
+                        requireActivity()
                     )
                     queryServiceInventoryCall(cartResponse.cartItems)
                     val mLayoutManager = LinearLayoutManager(activity)
@@ -964,8 +972,6 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             cartProductAdapter?.notifyAdapter(
                 cartItems,
                 orderSummary,
-                voucherDetails,
-                liquorCompliance
             )
         } else {
             cartProductAdapter?.clear()
@@ -1070,8 +1076,6 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                 cartProductAdapter!!.notifyAdapter(
                     cartItems,
                     orderSummary,
-                    voucherDetails,
-                    liquorCompliance
                 )
             } else {
                 val currentCartItemGroup = cartProductAdapter?.cartItems
@@ -1110,9 +1114,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                     )
                     cartProductAdapter!!.notifyAdapter(
                         currentCartItemGroup,
-                        orderSummary,
-                        voucherDetails,
-                        liquorCompliance
+                        orderSummary
                     )
                     fadeCheckoutButton(false)
                 }
@@ -1277,7 +1279,6 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     }
 
     private fun showRecommendedProducts() {
-        binding.layoutRecommendationContainer.root.visibility = View.VISIBLE
         val bundle = Bundle()
         val cartLinesValue: MutableList<CartProducts> = arrayListOf()
 
@@ -1553,7 +1554,6 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
 
     fun reloadFragment() {
         //Reload screen
-        binding.layoutRecommendationContainer.root.visibility = View.GONE
         setPriceInformationVisibility(false)
         setupToolbar()
         initializeBottomTab()
