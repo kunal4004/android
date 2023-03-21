@@ -2946,6 +2946,9 @@
     <string name="enhanced_substitution_desc">Add or remove substitutes as you shop your favourite products, or let our shoppers choose for you!</string>
     <string name="enhanced_substitution_btn">Manage substitutions</string>
     <string name="got_it_btn"><u>GOT IT</u></string>
+    <string name="substitution_work_info">How Do Substitutions Work?</string>
+    <string name="substitution_how_it_works_title">How It Works</string>
+    <string name="substitution_how_it_works_subtitle">If no substitutions are selected, our shoppers will choose one for you. If you don’t want an alternative product, you can edit your choice to “I don’t want a substitute” instead.</string>
 
     <string name="substitutions">Substitutions</string>
     <string name="let_my_shooper_choose_for_me">Let My Shopper Choose For Me</string>
