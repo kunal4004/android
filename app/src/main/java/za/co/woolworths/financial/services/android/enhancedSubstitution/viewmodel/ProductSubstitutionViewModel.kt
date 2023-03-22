@@ -34,5 +34,4 @@ class ProductSubstitutionViewModel (
         return repository.getAllSearchedSubstitutions(requestParams).cachedIn(viewModelScope)
     }
 
-
 }
