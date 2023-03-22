@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.fragment.app.Fragment
 
 interface EnhancedSubstituionManageDialogListener {
-
     fun showEnhancedSubstitionBottomSheetDialog(
         fragment: Fragment,
         context: Context,
