@@ -10,18 +10,36 @@ import za.co.woolworths.financial.services.android.enhancedSubstitution.ProductS
 import za.co.woolworths.financial.services.android.enhancedSubstitution.adapter.ManageProductSubstitutionAdapter
 import za.co.woolworths.financial.services.android.enhancedSubstitution.adapter.SubstitutionRecylerViewItem
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
+import za.co.woolworths.financial.services.android.ui.extension.withArgs
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment
 import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 
-class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetailsLayoutBinding>(
+class ManageSubstitutionFragment() : BaseFragmentBinding<ManageSubstitutionDetailsLayoutBinding>(
     ManageSubstitutionDetailsLayoutBinding::inflate
 ), OnClickListener, ProductSubstitutionListListener {
 
     private var manageProductSubstitutionAdapter: ManageProductSubstitutionAdapter? = null
+    private var selectionChoice = ""
+
+    companion object {
+        private val SELECTION_CHOICE = "SELECTION_CHOICE"
+
+        fun newInstance(
+                substitutionSelectionChoice: String?,
+        ) = ManageSubstitutionFragment().withArgs {
+            putString(SELECTION_CHOICE, substitutionSelectionChoice)
+        }
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        arguments?.apply {
+         selectionChoice = getString(SELECTION_CHOICE,  ProductDetailsFragment.USER_CHOICE)
+        }
         binding.btnConfirm?.setOnClickListener(this)
         binding.dontWantText?.setOnClickListener(this)
+        binding.imgBack?.setOnClickListener(this)
 
         manageProductSubstitutionAdapter = ManageProductSubstitutionAdapter(
             getHeaderForSubstituteList(), getSubstututeProductList() , this
@@ -43,7 +61,6 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
 
     private fun getSubstututeProductList(): MutableList<SubstitutionRecylerViewItem.SubstitutionProducts> {
         var list = mutableListOf<SubstitutionRecylerViewItem.SubstitutionProducts>()
-
         /*prepare list from kibo api and set to recyler view */
         list.add( SubstitutionRecylerViewItem.SubstitutionProducts(1, productTitle = "Banana 1",
                 productThumbnail = "https://assets.woolworthsstatic.co.za/100-Rye-Bread-400-g-6001009038821.jpg?V=QmO3&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDIwLTA5LTA4LzYwMDEwMDkwMzg4MjFfaGVyby5qcGcifQ&", productPrice = "123", promotionText = "you have saved rs 10"))
@@ -61,6 +78,7 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
         when (v?.id) {
             R.id.btnConfirm -> confirmSubstitutionProduct()
             R.id.dontWantText -> confirmDontWantSubstitutionForProduct()
+            R.id.imgBack -> (activity as BottomNavigationActivity)?.popFragment()
         }
     }
 
@@ -81,6 +99,7 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
     override fun clickOnLetMyShooperChooseOption() {
         binding.btnConfirm?.background = resources.getDrawable(R.drawable.black_background_with_corner_5, null)
     }
+
     override fun clickOnMySubstitutioneOption() {
         binding.btnConfirm?.isEnabled = false
         binding.btnConfirm?.background = resources.getDrawable(R.drawable.grey_background_with_corner_5, null)

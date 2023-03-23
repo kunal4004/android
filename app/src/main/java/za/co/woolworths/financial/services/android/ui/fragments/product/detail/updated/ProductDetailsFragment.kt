@@ -1630,12 +1630,15 @@ class ProductDetailsFragment :
                     } else {
                         /*navigate to manage substitution screen*/
                         (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
-                            ManageSubstitutionFragment()
+                            openManageSubstitutionFragment(resource.data?.data?.get(0)?.substitutionSelection)
                         )
                     }
                 }
             }
         }
+
+    private fun openManageSubstitutionFragment(substiutionSelection: String?)  =
+            ManageSubstitutionFragment.newInstance(substiutionSelection)
 
 
     private fun hideSubstitutionLayout() {
