@@ -3156,4 +3156,17 @@
         <item name="android:fontFamily">@font/opensans_extra_bold</item>
     </style>
 
+    <style name="opensans_regular_12_text_style" parent="opensens_regular">
+        <item name="android:textSize">@dimen/twelve_sp</item>
+    </style>
+
+    <style name="opensans_semi_bold_13_text_style" parent="opensens_semi_bold">
+        <item name="android:textSize">@dimen/thirteen_sp</item>
+    </style>
+
+    <style name="opensans_semi_bold_13_black_text_style" parent="opensens_semi_bold">
+        <item name="android:textSize">@dimen/thirteen_sp</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
 </resources>
