@@ -90,6 +90,7 @@ public class AppInstanceObject {
         public boolean isLinkConfirmationScreenShown;
         public Long linkedDeviceIdentityId;
         public String mId;
+        public boolean enhanceSubstitutionFeatureShown;
 
         public User() {
             id = AppInstanceObject.getCurrentUsersID();
