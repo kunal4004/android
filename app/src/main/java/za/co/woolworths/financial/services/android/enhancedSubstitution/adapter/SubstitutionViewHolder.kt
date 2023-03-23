@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.enhancedSubstitution.adapter
 import android.content.Context
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
+import com.awfs.coordination.R
 import com.awfs.coordination.databinding.LayoutManageSubstitutionBinding
 import com.awfs.coordination.databinding.SubstitutionProductsItemCellBinding
 import za.co.woolworths.financial.services.android.enhancedSubstitution.ProductSubstitutionListListener
@@ -64,6 +65,7 @@ sealed class SubstitutionViewHolder(binding:ViewBinding): RecyclerView.ViewHolde
         }
 
         fun bind(productList: ProductList?) {
+            binding.root.background = context?.resources?.getDrawable(R.color.white, null)
             binding.txtProductTitle.text = productList?.productName
             binding.txtProductPrice.text = productList?.price?.toString()
             binding.txtPromotionText.text = "yo have saved".plus(productList?.wasPrice?.toString())

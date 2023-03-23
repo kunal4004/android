@@ -20,7 +20,9 @@ class SearchProductSubstitutionAdapter : PagingDataAdapter<ProductList, Substitu
 
     override fun onBindViewHolder(holder: SubstitutionViewHolder, position: Int) {
         when (holder) {
-            is SubstitutionViewHolder.SubstitueProductViewHolder -> holder.bind(getItem(position))
+            is SubstitutionViewHolder.SubstitueProductViewHolder -> {
+                holder.bind(getItem(position))
+            }
             else -> {
                 FirebaseManager.logException("Wrong ViewType passed")
                 throw IllegalArgumentException("Wrong ViewType Passed")

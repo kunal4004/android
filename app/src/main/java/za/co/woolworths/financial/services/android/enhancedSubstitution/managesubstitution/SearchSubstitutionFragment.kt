@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.enhancedSubstitution.manages
 
 import android.os.Bundle
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -34,7 +35,19 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
             adapter = searchProductSubstitutionAdapter
         }
 
-        getSubstututeProductList()
+       binding.tvSearchProduct?.setOnEditorActionListener { v, actionId, event ->
+           if (actionId == EditorInfo.IME_ACTION_DONE) {
+               var productsRequestParams = getRequestParamsBody(v.text.toString())
+               getSubstututeProductList(productsRequestParams)
+               true
+           }
+            false
+       }
+
+       binding.txtCancelSearch?.setOnClickListener {
+           binding.tvSearchProduct?.text?.clear()
+       }
+
     }
 
     private fun setUpViewModel() {
@@ -44,19 +57,20 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
         ).get(ProductSubstitutionViewModel::class.java)
     }
 
-    private fun getSubstututeProductList() =
+    private fun getSubstututeProductList(requestParams: ProductsRequestParams) =
 
         lifecycleScope.launch {
             productSubstitutionViewModel?.getAllSearchedSubstitutions(
-                    getRequestParamsBody())?.collectLatest {
+                    requestParams)?.collectLatest {
+                binding.txtSubstitutionCount?.text = searchProductSubstitutionAdapter?.itemCount.toString().plus(" ITEMS FOUND")
                 searchProductSubstitutionAdapter?.submitData(it)
             }
         }
 
-    private fun getRequestParamsBody(): ProductsRequestParams {
+    private fun getRequestParamsBody(searchTerm: String): ProductsRequestParams {
         /*todo need to remove hardcode values once UI is ready */
         var productsRequestParams = ProductsRequestParams(
-                searchTerm = "bread",
+                searchTerm = searchTerm,
                 searchType = ProductsRequestParams.SearchType.SEARCH,
                 responseType = ProductsRequestParams.ResponseType.DETAIL,
                 pageOffset = 0,
