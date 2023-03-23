@@ -42,54 +42,30 @@
         android:layout_width="@dimen/zero_dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/sixteen_dp"
-        android:layout_marginTop="@dimen/twenty_four_dp"
         android:gravity="top"
         android:lineSpacingExtra="@dimen/two_sp"
         android:textColor="@color/black"
         android:textSize="@dimen/fourteen_sp"
+        android:fontFamily="@font/opensans_regular"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/productIamge"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/productIamge"
         tools:text="Small Bananas 800g" />
-
-    <ImageView
-        android:id="@+id/imgMoreDetails"
-        android:src="@drawable/frame"
-        android:layout_marginTop="@dimen/eight_dp"
-        android:layout_marginStart="@dimen/sixteen_dp"
-        app:layout_constraintTop_toBottomOf="@+id/txtProductTitle"
-        app:layout_constraintLeft_toRightOf="@+id/productIamge"
-        android:layout_width="@dimen/twenty_four_dp"
-        android:layout_height="@dimen/twenty_four_dp"/>
-
-    <TextView
-        android:textColor="@color/black"
-        android:fontFamily="@font/myriad_pro_semi_bold_otf"
-        android:text="@string/more_details"
-        android:layout_marginTop="@dimen/eight_dp"
-        android:layout_marginStart="@dimen/ten_dp"
-        android:textSize="@dimen/thirteen_sp"
-        android:gravity="top"
-        android:id="@+id/txtMoreDetails"
-        android:lineSpacingExtra="@dimen/three_sp"
-        app:layout_constraintTop_toBottomOf="@+id/txtProductTitle"
-        app:layout_constraintStart_toEndOf="@+id/imgMoreDetails"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
 
     <TextView
         android:id="@+id/txtPromotionText"
         android:layout_width="@dimen/zero_dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/sixteen_dp"
-        android:layout_marginTop="@dimen/twenty_five_dp"
-        tools:text="You Saved R5.00"
-        android:textSize="@dimen/ten_sp"
+        android:layout_marginTop="53dp"
         android:lineSpacingExtra="@dimen/one_sp"
         android:textColor="@color/was_price_color"
+        android:fontFamily="@font/opensans_semi_bold"
+        android:textSize="@dimen/ten_sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/productIamge"
-        app:layout_constraintTop_toBottomOf="@+id/txtMoreDetails" />
+        app:layout_constraintTop_toBottomOf="@+id/txtProductTitle"
+        tools:text="You Saved R5.00" />
 
     <TextView
         android:id="@+id/txtProductPrice"
@@ -98,7 +74,7 @@
         android:layout_marginStart="@dimen/sixteen_dp"
         android:layout_marginTop="@dimen/four_dp"
         tools:text="R 21.99"
-        android:fontFamily="@font/futura_bold"
+        android:fontFamily="@font/futura_semi_bold"
         android:textSize="@dimen/fourteen_sp"
         android:textColor="@color/black"
         android:lineSpacingExtra="6sp"
@@ -108,14 +84,13 @@
         app:layout_constraintTop_toBottomOf="@+id/txtPromotionText" />
     
     <View
-
         app:layout_constraintTop_toBottomOf="@+id/txtProductPrice"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="@dimen/twenty_three_dp"
         android:background="@color/color_D8D8D8"
         android:layout_width="match_parent"
-        android:layout_height="2dp"/>
+        android:layout_height="@dimen/two_dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

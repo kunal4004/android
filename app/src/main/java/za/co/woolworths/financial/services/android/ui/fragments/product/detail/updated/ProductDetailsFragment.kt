@@ -47,14 +47,12 @@ import com.perfectcorp.perfectlib.CameraView
 import com.perfectcorp.perfectlib.MakeupCam
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
-import org.intellij.lang.annotations.Subst
 import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.chanel.utils.ChanelUtils
 import za.co.woolworths.financial.services.android.common.SingleMessageCommonToast
 import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.ILocationProvider
-import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhancedSubstituionManageDialogListener
 import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhancedSubstitutionBottomSheetDialog
 import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhancedSubstitutionListener
 import za.co.woolworths.financial.services.android.enhancedSubstitution.apihelper.SubstitutionApiHelper
@@ -1614,12 +1612,15 @@ class ProductDetailsFragment :
                     } else {
                         /*navigate to manage substitution screen*/
                         (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
-                            ManageSubstitutionFragment()
+                            openManageSubstitutionFragment(resource.data?.data?.get(0)?.substitutionSelection)
                         )
                     }
                 }
             }
         }
+
+    private fun openManageSubstitutionFragment(substiutionSelection: String?)  =
+            ManageSubstitutionFragment.newInstance(substiutionSelection)
 
 
     private fun hideSubstitutionLayout() {
