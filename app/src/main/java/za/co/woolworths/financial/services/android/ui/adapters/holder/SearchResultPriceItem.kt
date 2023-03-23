@@ -1,23 +1,25 @@
 package za.co.woolworths.financial.services.android.ui.adapters.holder
 
 import android.annotation.SuppressLint
-import android.util.Log
-import android.view.View
-import com.awfs.coordination.databinding.ShopSearchProductItemBinding
+import android.graphics.Color
+import android.graphics.Paint
+import android.view.View.GONE
+import android.view.View.VISIBLE
+import androidx.core.content.ContextCompat
+import com.awfs.coordination.R
+import com.awfs.coordination.databinding.LayoutCartListProductItemBinding
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 
 class SearchResultPriceItem {
 
-    fun setPrice(productList: ProductList?, itemBinding: ShopSearchProductItemBinding, shopFromItem: Boolean = false) {
+    fun setPrice(productList: ProductList?, itemBinding: LayoutCartListProductItemBinding, shopFromItem: Boolean = false) {
         val wasPrice: String = productList?.wasPrice?.toString() ?: ""
         val price: String = productList?.price?.toString() ?: ""
         val kilogramPrice: String = productList?.kilogramPrice?.toString() ?: ""
         val priceType = productList?.priceType
-        if (productList?.productName?.toLowerCase()?.contains("short sleeve khaki sch") == true) {
-            Log.e("productListValue", "productListValue")
-        }
-        itemBinding.includePriceItem.apply {
+        itemBinding.apply {
             fromPriceLabelTextView?.text = ""
             if (wasPrice.isNullOrEmpty()) {
                 if (price!!.isEmpty()) {
@@ -25,14 +27,16 @@ class SearchResultPriceItem {
                 } else {
                     tvPrice?.text = getMassPrice(price, priceType, kilogramPrice, shopFromItem)
                 }
-                tvPrice?.setTextColor(android.graphics.Color.BLACK)
+                tvPrice?.setTextColor(Color.BLACK)
                 tvWasPrice?.text = ""
-                fromPriceLabelTextView?.visibility = View.GONE
-                fromPriceStrikeThrough?.visibility = View.GONE
+                fromPriceLabelTextView?.visibility = GONE
                 if (shopFromItem && kilogramPrice.isEmpty()) {
                     tvPrice?.text = ""
                     tvWasPrice?.text = getMassPrice(price, priceType, kilogramPrice, shopFromItem)
-                    tvWasPrice?.setTextColor(android.graphics.Color.BLACK)
+                    tvWasPrice?.setTextColor(Color.BLACK)
+                    // Remove strike through flag
+                    tvWasPrice?.paintFlags =
+                        tvWasPrice.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
                 }
             } else {
                 if (wasPrice.equals(price, ignoreCase = true)) {
@@ -41,18 +45,22 @@ class SearchResultPriceItem {
                     } else {
                         tvPrice?.text = getMassPrice(price, priceType, kilogramPrice, shopFromItem)
                     }
-                    tvPrice?.setTextColor(android.graphics.Color.BLACK)
-                    fromPriceLabelTextView?.visibility = View.GONE
-                    fromPriceStrikeThrough?.visibility = View.GONE
+                    tvPrice?.setTextColor(Color.BLACK)
+                    fromPriceLabelTextView?.visibility = GONE
                     tvWasPrice?.text = ""
                 } else {
                     tvPrice?.text = CurrencyFormatter.formatAmountToRandAndCentWithSpace(price)
-                    tvPrice?.setTextColor(androidx.core.content.ContextCompat.getColor(za.co.woolworths.financial.services.android.models.WoolworthsApplication.getAppContext(), com.awfs.coordination.R.color.was_price_color))
+                    tvPrice?.setTextColor(
+                        ContextCompat.getColor(
+                            WoolworthsApplication.getAppContext(),
+                            R.color.was_price_color
+                        )
+                    )
                     wasPrice.let {
+                        tvWasPrice?.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
                         tvWasPrice?.text = getMassPrice(it, priceType, kilogramPrice, shopFromItem)
-                        fromPriceLabelTextView?.visibility = View.GONE
-                        fromPriceStrikeThrough?.visibility = View.VISIBLE
-                        tvWasPrice?.setTextColor(android.graphics.Color.BLACK)
+                        fromPriceLabelTextView?.visibility = GONE
+                        tvWasPrice?.setTextColor(Color.BLACK)
                     }
                 }
             }
@@ -79,14 +87,14 @@ class SearchResultPriceItem {
     }
 
     @SuppressLint("DefaultLocale")
-    private fun showFromPriceLabel(itemBinding: ShopSearchProductItemBinding, priceType: String?) {
-        itemBinding.includePriceItem.apply {
+    private fun showFromPriceLabel(itemBinding: LayoutCartListProductItemBinding, priceType: String?) {
+        itemBinding.apply {
             priceType?.let {
                 if (it.toLowerCase().contains("from", true)) {
-                    fromPriceLabelTextView?.visibility = View.VISIBLE
+                    fromPriceLabelTextView?.visibility = VISIBLE
                     fromPriceLabelTextView?.text = "From " // add space on StrikeThrough only
                 } else {
-                    fromPriceLabelTextView?.visibility = View.GONE
+                    fromPriceLabelTextView?.visibility = GONE
                     fromPriceLabelTextView?.text = ""
                 }
             }

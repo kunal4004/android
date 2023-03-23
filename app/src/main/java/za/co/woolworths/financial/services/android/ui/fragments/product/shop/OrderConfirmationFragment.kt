@@ -16,9 +16,11 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import android.graphics.Typeface
+import androidx.fragment.app.viewModels
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentOrderConfirmationBinding
 import com.google.firebase.analytics.FirebaseAnalytics
+import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity
 import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
@@ -29,6 +31,7 @@ import za.co.woolworths.financial.services.android.models.dto.cart.OrderItems
 import za.co.woolworths.financial.services.android.models.dto.cart.SubmittedOrderResponse
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.viewmodel.OrderConfirmationViewModel
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.adapters.ItemsOrderListAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
@@ -43,6 +46,7 @@ import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBind
 import za.co.woolworths.financial.services.android.util.voc.VoiceOfCustomerManager
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
+@AndroidEntryPoint
 class OrderConfirmationFragment :
     BaseFragmentBinding<FragmentOrderConfirmationBinding>(FragmentOrderConfirmationBinding::inflate) {
 
@@ -53,6 +57,7 @@ class OrderConfirmationFragment :
     private var cncOtherItemsOrderListAdapter: ItemsOrderListAdapter? = null
     private var itemsOrderListAdapter: ItemsOrderListAdapter? = null
     private var isPurchaseEventTriggered: Boolean = false
+    private val orderConfirmationViewModel: OrderConfirmationViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -82,6 +87,8 @@ class OrderConfirmationFragment :
                                         isPurchaseEventTriggered = false
                                     }
 
+                                    //Make this call to recommendation API after receiving the 200 or 201 from the order
+                                    orderConfirmationViewModel.submitRecommendationsOnOrderResponse(response)
                                 }
                                 else -> {
                                     showErrorScreen(ErrorHandlerActivity.ERROR_TYPE_SUBMITTED_ORDER)
