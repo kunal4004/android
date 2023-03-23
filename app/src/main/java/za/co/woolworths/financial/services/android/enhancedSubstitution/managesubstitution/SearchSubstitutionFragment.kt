@@ -15,6 +15,7 @@ import za.co.woolworths.financial.services.android.enhancedSubstitution.reposito
 import za.co.woolworths.financial.services.android.enhancedSubstitution.viewmodel.ProductSubstitutionViewModel
 import za.co.woolworths.financial.services.android.enhancedSubstitution.viewmodel.ProductSubstitutionViewModelFactory
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 
 class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionFragmentBinding>(
@@ -45,7 +46,7 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
        }
 
        binding.txtCancelSearch?.setOnClickListener {
-           binding.tvSearchProduct?.text?.clear()
+           (activity as BottomNavigationActivity)?.popFragment()
        }
 
     }
