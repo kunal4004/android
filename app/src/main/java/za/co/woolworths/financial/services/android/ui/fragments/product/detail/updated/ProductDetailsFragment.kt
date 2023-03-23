@@ -47,14 +47,12 @@ import com.perfectcorp.perfectlib.CameraView
 import com.perfectcorp.perfectlib.MakeupCam
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
-import org.intellij.lang.annotations.Subst
 import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.chanel.utils.ChanelUtils
 import za.co.woolworths.financial.services.android.common.SingleMessageCommonToast
 import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.ILocationProvider
-import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhancedSubstituionManageDialogListener
 import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhancedSubstitutionBottomSheetDialog
 import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhancedSubstitutionListener
 import za.co.woolworths.financial.services.android.enhancedSubstitution.apihelper.SubstitutionApiHelper
@@ -74,7 +72,6 @@ import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.network.Resource
-import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.ProductX
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_REQUEST_CODE
@@ -1556,7 +1553,7 @@ class ProductDetailsFragment :
         if (isAllProductsOutOfStock() && isInventoryCalled) {
             return
         }
-        productSubstitutionViewModel.getProductSubstitution(productDetails?.productId)
+      /*  productSubstitutionViewModel.getProductSubstitution(productDetails?.productId)
         productSubstitutionViewModel.productSubstitution.observe(viewLifecycleOwner) {
 
             it.getContentIfNotHandled()?.let { resource ->
@@ -1572,6 +1569,25 @@ class ProductDetailsFragment :
                         binding.progressBar.visibility = View.GONE
                         hideSubstitutionLayout()
                     }
+                }
+            }
+        }*/
+
+        showSubstitutionLayoutOne(isInventoryCalled)
+    }
+
+    fun showSubstitutionLayoutOne(isInventoryCalled: Boolean) {
+        binding?.productDetailOptionsAndInformation?.substitutionLayout?.apply {
+            this.txtSubstitutionTitle.text = getString(R.string.let_my_shooper_choose_for_me)
+            this.txtSubstitutionEdit?.setOnClickListener {
+                if (isAllProductsOutOfStock() && isInventoryCalled) {
+                    /*pop up for out of stock*/
+                    productOutOfStockErrorMessage(true)
+                } else {
+                    /*navigate to manage substitution screen*/
+                    (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
+                            ManageSubstitutionFragment()
+                    )
                 }
             }
         }

@@ -2,19 +2,17 @@ package za.co.woolworths.financial.services.android.enhancedSubstitution.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.paging.PagingDataAdapter
-import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.databinding.LayoutManageSubstitutionBinding
 import com.awfs.coordination.databinding.SubstitutionProductsItemCellBinding
 import za.co.woolworths.financial.services.android.enhancedSubstitution.ProductSubstitutionListListener
-import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 
 class ManageProductSubstitutionAdapter(
     var headerItem: SubstitutionRecylerViewItem.SubstitutionOptionHeader,
     var subStitutionProductList: List<SubstitutionRecylerViewItem.SubstitutionProducts>,
     var productSubstitutionListListener: ProductSubstitutionListListener
-) : PagingDataAdapter<ProductList, SubstitutionViewHolder>(Comparator) {
+) : RecyclerView.Adapter<SubstitutionViewHolder>() {
 
     companion object {
         const val VIEW_TYPE_SUBSTITUTION_HEADER = 0
@@ -62,14 +60,4 @@ class ManageProductSubstitutionAdapter(
         return  position == 0
     }
 
-}
-
-object Comparator: DiffUtil.ItemCallback<ProductList>() {
-    override fun areItemsTheSame(oldItem: ProductList, newItem: ProductList): Boolean {
-        return oldItem.productId == newItem.productId
-    }
-
-    override fun areContentsTheSame(oldItem: ProductList, newItem: ProductList): Boolean {
-        return oldItem == newItem
-    }
 }

@@ -9,6 +9,7 @@ import com.awfs.coordination.databinding.ManageSubstitutionDetailsLayoutBinding
 import za.co.woolworths.financial.services.android.enhancedSubstitution.ProductSubstitutionListListener
 import za.co.woolworths.financial.services.android.enhancedSubstitution.adapter.ManageProductSubstitutionAdapter
 import za.co.woolworths.financial.services.android.enhancedSubstitution.adapter.SubstitutionRecylerViewItem
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 
 class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetailsLayoutBinding>(
@@ -44,10 +45,14 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
         var list = mutableListOf<SubstitutionRecylerViewItem.SubstitutionProducts>()
 
         /*prepare list from kibo api and set to recyler view */
-        list.add(0, SubstitutionRecylerViewItem.SubstitutionProducts(1, productTitle = "Banana 1", productThumbnail = "https://assets.woolworthsstatic.co.za/100-Rye-Bread-400-g-6001009038821.jpg?V=QmO3&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDIwLTA5LTA4LzYwMDEwMDkwMzg4MjFfaGVyby5qcGcifQ&", productPrice = "123", promotionText = "you have saved rs 10"))
-        list.add(1, SubstitutionRecylerViewItem.SubstitutionProducts(2, productTitle = "Banana 2", productThumbnail = "https://assets.woolworthsstatic.co.za/100-Rye-Bread-400-g-6001009038821.jpg?V=QmO3&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDIwLTA5LTA4LzYwMDEwMDkwMzg4MjFfaGVyby5qcGcifQ&", productPrice = "123", promotionText = "you have saved rs 10"))
-        list.add(2, SubstitutionRecylerViewItem.SubstitutionProducts(3, productTitle = "Banana 3", productThumbnail = "https://assets.woolworthsstatic.co.za/100-Rye-Bread-400-g-6001009038821.jpg?V=QmO3&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDIwLTA5LTA4LzYwMDEwMDkwMzg4MjFfaGVyby5qcGcifQ&", productPrice = "123", promotionText = "you have saved rs 10"))
-        list.add(3, SubstitutionRecylerViewItem.SubstitutionProducts(4, productTitle = "Banana 4", productThumbnail = "https://assets.woolworthsstatic.co.za/100-Rye-Bread-400-g-6001009038821.jpg?V=QmO3&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDIwLTA5LTA4LzYwMDEwMDkwMzg4MjFfaGVyby5qcGcifQ&", productPrice = "123", promotionText = "you have saved rs 10"))
+        list.add( SubstitutionRecylerViewItem.SubstitutionProducts(1, productTitle = "Banana 1",
+                productThumbnail = "https://assets.woolworthsstatic.co.za/100-Rye-Bread-400-g-6001009038821.jpg?V=QmO3&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDIwLTA5LTA4LzYwMDEwMDkwMzg4MjFfaGVyby5qcGcifQ&", productPrice = "123", promotionText = "you have saved rs 10"))
+        list.add(SubstitutionRecylerViewItem.SubstitutionProducts(2, productTitle = "Banana 2",
+                productThumbnail = "https://assets.woolworthsstatic.co.za/100-Rye-Bread-400-g-6001009038821.jpg?V=QmO3&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDIwLTA5LTA4LzYwMDEwMDkwMzg4MjFfaGVyby5qcGcifQ&", productPrice = "123", promotionText = "you have saved rs 10"))
+        list.add(SubstitutionRecylerViewItem.SubstitutionProducts(3, productTitle = "Banana 3",
+                productThumbnail = "https://assets.woolworthsstatic.co.za/100-Rye-Bread-400-g-6001009038821.jpg?V=QmO3&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDIwLTA5LTA4LzYwMDEwMDkwMzg4MjFfaGVyby5qcGcifQ&", productPrice = "123", promotionText = "you have saved rs 10"))
+        list.add(SubstitutionRecylerViewItem.SubstitutionProducts(4, productTitle = "Banana 4",
+                productThumbnail = "https://assets.woolworthsstatic.co.za/100-Rye-Bread-400-g-6001009038821.jpg?V=QmO3&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDIwLTA5LTA4LzYwMDEwMDkwMzg4MjFfaGVyby5qcGcifQ&", productPrice = "123", promotionText = "you have saved rs 10"))
 
         return list
     }
@@ -59,10 +64,6 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
         }
     }
 
-    private fun searchForSubstitutions() {
-
-    }
-
     private fun confirmSubstitutionProduct() {
 
     }
@@ -72,7 +73,9 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
     }
 
     override fun openSubstitutionSearchScreen() {
-
+        (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
+                SearchSubstitutionFragment()
+        )
     }
 
     override fun clickOnLetMyShooperChooseOption() {
