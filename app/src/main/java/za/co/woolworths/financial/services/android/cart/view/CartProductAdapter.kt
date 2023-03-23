@@ -722,7 +722,6 @@ class CartProductAdapter(
         val tvAddToList: WTextView
         val substitutionLayout: ConstraintLayout
         val topDivider: View
-        val substitutionInfoIcon: ImageView
         fun addToListListener(commerceItems: ArrayList<CommerceItem>?) {
             tvAddToList.setOnClickListener {
                 val woolworthsApplication = WoolworthsApplication.getInstance()
@@ -747,7 +746,7 @@ class CartProductAdapter(
                 }
                 openShoppingList(mContext, addToListRequests, "", false)
             }
-            substitutionInfoIcon.setOnClickListener {
+            substitutionLayout.setOnClickListener {
                 // show info dialog
                 mContext?.let {
                     val customBottomSheetDialogFragment =
@@ -773,7 +772,6 @@ class CartProductAdapter(
             tvAddToList = view.findViewById(R.id.tvAddToList)
             substitutionLayout = view.findViewById(R.id.substitutionLayout)
             topDivider = view.findViewById(R.id.topDivider)
-            substitutionInfoIcon = view.findViewById(R.id.substitutionInfoIcon)
         }
     }
 
