@@ -460,20 +460,20 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                         val currentList =
                             shoppingListItemsAdapter?.shoppingListItems ?: ArrayList(0)
 
-                        viewModel.mShoppingListItems =
+                        val updatedList =
                             response?.listItems?.let { ArrayList(it) } ?: ArrayList(0)
-                        viewModel.onDeleteSyncList(currentList)
 
-                        response?.let { onShoppingListItemDelete(it) }
-
-                        val isStockAvailable =
-                            viewModel.getIsStockAvailable()
-                        if (!isStockAvailable) {
-                            bindingListDetails.rlCheckOut.visibility = GONE
+                        when(updatedList.size) {
+                            currentList.size.minus(1) -> {
+                                shoppingListItemsAdapter?.deleteListItem(mCatalogRefId)
+                            }
+                            else -> {
+                                viewModel.mShoppingListItems = updatedList
+                                viewModel.onDeleteSyncList(currentList)
+                                response?.let { onShoppingListItemDelete(it) }
+                            }
                         }
-                        //requirement: to show count on add to cart
-                        //update on delete item
-                        updateCartCountButton()
+                        onDeleteUIUpdate()
                     }
 
                     override fun onFailure(error: Throwable?) {
@@ -483,6 +483,17 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                 }, ShoppingListItemsResponse::class.java
             )
         )
+    }
+
+    private fun onDeleteUIUpdate() {
+        val isStockAvailable =
+            viewModel.getIsStockAvailable()
+        if (!isStockAvailable) {
+            bindingListDetails.rlCheckOut.visibility = GONE
+            manageSelectAllMenuVisibility()
+        }
+        //update on delete item
+        updateCartCountButton()
     }
 
     private fun showDeleteConfirmationDialog(resultCode: String) {
