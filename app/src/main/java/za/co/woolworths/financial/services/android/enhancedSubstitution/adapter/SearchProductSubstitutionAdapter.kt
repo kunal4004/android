@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
+import com.awfs.coordination.databinding.ShoppingListCommerceItemBinding
 import com.awfs.coordination.databinding.SubstitutionProductsItemCellBinding
 import za.co.woolworths.financial.services.android.enhancedSubstitution.ProductSubstitutionListListener
 import za.co.woolworths.financial.services.android.models.dto.ProductList
@@ -13,7 +14,7 @@ class SearchProductSubstitutionAdapter : PagingDataAdapter<ProductList, Substitu
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SubstitutionViewHolder {
         return SubstitutionViewHolder.SubstitueProductViewHolder(
-                SubstitutionProductsItemCellBinding.inflate(
+                ShoppingListCommerceItemBinding.inflate(
                         LayoutInflater.from(parent.context), parent, false
                 ), parent.context)
     }

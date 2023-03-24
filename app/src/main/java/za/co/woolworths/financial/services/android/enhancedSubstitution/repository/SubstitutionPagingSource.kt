@@ -1,14 +1,18 @@
 package za.co.woolworths.financial.services.android.enhancedSubstitution.repository
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import za.co.woolworths.financial.services.android.enhancedSubstitution.apihelper.SubstitutionApiHelper
+import za.co.woolworths.financial.services.android.models.dto.PagingResponse
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 
 class SubstitutionPagingSource(var apiHelper: SubstitutionApiHelper,
-                               var requestParams: ProductsRequestParams) :
+                               var requestParams: ProductsRequestParams,
+                               var _pagingResponse: MutableLiveData<PagingResponse>) :
         PagingSource<Int, ProductList>() {
 
     override fun getRefreshKey(state: PagingState<Int, ProductList>): Int? {
@@ -22,6 +26,7 @@ class SubstitutionPagingSource(var apiHelper: SubstitutionApiHelper,
         return try {
             val position = params.key ?: 0
             val response = apiHelper.getSearchedProducts(requestParams)
+            _pagingResponse.postValue(response.body()?.pagingResponse)
             LoadResult.Page(
                     data = response.body()!!.products,
                     prevKey = if (position == 0) null else position - ProductSubstitutionRepository.PAGE_SIZE,

@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.databinding.LayoutManageSubstitutionBinding
+import com.awfs.coordination.databinding.ShoppingListCommerceItemBinding
 import com.awfs.coordination.databinding.SubstitutionProductsItemCellBinding
 import za.co.woolworths.financial.services.android.enhancedSubstitution.ProductSubstitutionListListener
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
@@ -28,7 +29,7 @@ class ManageProductSubstitutionAdapter(
             )
 
             VIEW_TYPE_SUBSTITUTION_LIST -> return SubstitutionViewHolder.SubstitueProductViewHolder(
-                SubstitutionProductsItemCellBinding.inflate(
+                    ShoppingListCommerceItemBinding.inflate(
                     LayoutInflater.from(parent.context), parent, false
                 ), parent.context)
 

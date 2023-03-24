@@ -8,6 +8,7 @@ import androidx.paging.cachedIn
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.enhancedSubstitution.model.ProductSubstitution
 import za.co.woolworths.financial.services.android.enhancedSubstitution.repository.ProductSubstitutionRepository
+import za.co.woolworths.financial.services.android.models.dto.PagingResponse
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
 import za.co.woolworths.financial.services.android.models.network.Event
 import za.co.woolworths.financial.services.android.models.network.Resource
@@ -19,6 +20,8 @@ class ProductSubstitutionViewModel(
     val productSubstitution: LiveData<Event<Resource<ProductSubstitution>>>
         get() = _productSubstitution
 
+     val _pagingResponse = MutableLiveData<PagingResponse>()
+
 
     fun getProductSubstitution(productId: String?) {
         viewModelScope.launch {
@@ -29,6 +32,6 @@ class ProductSubstitutionViewModel(
     }
 
     fun getAllSearchedSubstitutions(requestParams: ProductsRequestParams) =
-            repository.getAllSearchedSubstitutions(requestParams).cachedIn(viewModelScope)
+            repository.getAllSearchedSubstitutions(requestParams, _pagingResponse).cachedIn(viewModelScope)
 
 }

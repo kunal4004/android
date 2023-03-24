@@ -3,9 +3,13 @@ package za.co.woolworths.financial.services.android.enhancedSubstitution.manages
 import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.EditorInfo
+import android.widget.EditText
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.OnScrollListener
+import com.awfs.coordination.R
 import com.awfs.coordination.databinding.LayoutSearchSubstitutionFragmentBinding
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -16,7 +20,9 @@ import za.co.woolworths.financial.services.android.enhancedSubstitution.viewmode
 import za.co.woolworths.financial.services.android.enhancedSubstitution.viewmodel.ProductSubstitutionViewModelFactory
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
+import za.co.woolworths.financial.services.android.util.KeyboardUtil
 import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
+
 
 class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionFragmentBinding>(
         LayoutSearchSubstitutionFragmentBinding::inflate
@@ -34,12 +40,31 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(context)
             adapter = searchProductSubstitutionAdapter
+            addOnScrollListener(object : OnScrollListener(){
+                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                    super.onScrollStateChanged(recyclerView, newState)
+                    if (!recyclerView.canScrollVertically(1) ) {
+                       binding.viewSeprator?.visibility = View.VISIBLE
+                    } else {
+                        binding.viewSeprator?.visibility = View.GONE
+                    }
+                }
+            })
+        }
+
+        if (view !is EditText) {
+            view.setOnTouchListener { v, event ->
+                KeyboardUtil.hideSoftKeyboard(activity)
+                false
+            }
         }
 
        binding.tvSearchProduct?.setOnEditorActionListener { v, actionId, event ->
            if (actionId == EditorInfo.IME_ACTION_DONE) {
                var productsRequestParams = getRequestParamsBody(v.text.toString())
-               getSubstututeProductList(productsRequestParams)
+               if (v.text.length != 0) {
+                   getSubstututeProductList(productsRequestParams)
+               }
                true
            }
             false
@@ -59,11 +84,15 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
     }
 
     private fun getSubstututeProductList(requestParams: ProductsRequestParams) =
-
         lifecycleScope.launch {
             productSubstitutionViewModel?.getAllSearchedSubstitutions(
                     requestParams)?.collectLatest {
-                binding.txtSubstitutionCount?.text = searchProductSubstitutionAdapter?.itemCount.toString().plus(" ITEMS FOUND")
+                /*todo handle failure cases as well*/
+
+                val itemCount =  productSubstitutionViewModel._pagingResponse?.value?.numItemsInTotal?.toString()
+                itemCount.plus(resources.getString(R.string.item_found))
+                binding.txtSubstitutionCount?.visibility = View.VISIBLE
+                binding.txtSubstitutionCount?.text = itemCount
                 searchProductSubstitutionAdapter?.submitData(it)
             }
         }
