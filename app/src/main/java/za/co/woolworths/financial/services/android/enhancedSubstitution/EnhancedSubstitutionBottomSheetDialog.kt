@@ -13,9 +13,7 @@ import javax.inject.Inject
 
 class EnhancedSubstitutionBottomSheetDialog @Inject constructor() :
     EnhancedSubstituionManageDialogListener {
-
     private lateinit var listener: EnhancedSubstitutionListener
-
     override fun showEnhancedSubstitionBottomSheetDialog(
         fragment: Fragment,
         context: Context,
@@ -28,22 +26,18 @@ class EnhancedSubstitutionBottomSheetDialog @Inject constructor() :
         } catch (e: Exception) {
             FirebaseManager.logException(e)
         }
-
         val dialog = BottomSheetDialog(context, R.style.BottomSheetDialogTheme)
-
         val binding = TemporaryFreezeCartLayoutBinding.inflate(dialog.layoutInflater, null, false)
-
         binding.imageIcon.setImageDrawable(bindDrawable(R.drawable.union_row))
-        binding.cancelTextView.text = Html.fromHtml(context.getString(R.string.got_it_btn), HtmlCompat.FROM_HTML_MODE_LEGACY)
+        binding.cancelTextView.text =
+            Html.fromHtml(context.getString(R.string.got_it_btn), HtmlCompat.FROM_HTML_MODE_LEGACY)
         binding.title.text = title
         binding.description.text = description
         binding.confirmFreezeCardButton.text = btnText
-
         binding.confirmFreezeCardButton.setOnClickListener {
             listener.openManageSubstituion()
             dialog.dismiss()
         }
-
         binding.cancelTextView?.apply {
             setOnClickListener {
                 dialog.dismiss()

@@ -47,7 +47,6 @@ import com.perfectcorp.perfectlib.CameraView
 import com.perfectcorp.perfectlib.MakeupCam
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
-import org.intellij.lang.annotations.Subst
 import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.chanel.utils.ChanelUtils
 import za.co.woolworths.financial.services.android.common.SingleMessageCommonToast
@@ -61,6 +60,7 @@ import za.co.woolworths.financial.services.android.enhancedSubstitution.model.Pr
 import za.co.woolworths.financial.services.android.enhancedSubstitution.repository.ProductSubstitutionRepository
 import za.co.woolworths.financial.services.android.enhancedSubstitution.viewmodel.ProductSubstitutionViewModel
 import za.co.woolworths.financial.services.android.enhancedSubstitution.viewmodel.ProductSubstitutionViewModelFactory
+import za.co.woolworths.financial.services.android.enhancedSubstitution.managesubstitution.ManageSubstitutionFragment
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
@@ -161,7 +161,7 @@ class ProductDetailsFragment :
     View.OnTouchListener, ReviewThumbnailAdapter.ThumbnailClickListener,
     ViewTreeObserver.OnScrollChangedListener,
     FoodProductNotAvailableForCollectionDialog.IProductNotAvailableForCollectionDialogListener,
-    EnhancedSubstitutionListener{
+    EnhancedSubstitutionListener {
 
     var productDetails: ProductDetails? = null
     private var subCategoryTitle: String? = null
@@ -1605,16 +1605,23 @@ class ProductDetailsFragment :
                 txtSubstitutionTitle.text = getString(R.string.let_my_shooper_choose_for_me)
             }
 
-            this.txtSubstitutionEdit?.setOnClickListener {
-                if (isAllProductsOutOfStock() && isInventoryCalled) {
-                    /*pop up for out of stock*/
-                    productOutOfStockErrorMessage(true)
-                } else {
-                    /*navigate to manage substitution screen*/
+                this.txtSubstitutionEdit?.setOnClickListener {
+                    if (isAllProductsOutOfStock() && isInventoryCalled) {
+                        /*pop up for out of stock*/
+                        productOutOfStockErrorMessage(true)
+                    } else {
+                        /*navigate to manage substitution screen*/
+                        (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
+                            openManageSubstitutionFragment(resource.data?.data?.get(0)?.substitutionSelection)
+                        )
+                    }
                 }
             }
         }
-    }
+
+    private fun openManageSubstitutionFragment(substiutionSelection: String?)  =
+            ManageSubstitutionFragment.newInstance(substiutionSelection)
+
 
     private fun hideSubstitutionLayout() {
         binding?.productDetailOptionsAndInformation?.root?.visibility = View.GONE
