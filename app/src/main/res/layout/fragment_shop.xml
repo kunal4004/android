@@ -30,7 +30,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvToolbarTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -41,26 +41,24 @@
                 android:text="@string/standard_delivery"
                 android:textColor="@color/black"
                 android:textSize="@dimen/twenty_sp"
-                app:WTextView_font="bold"
                 app:layout_constraintBottom_toTopOf="@+id/tvToolbarSubtitle"
                 app:layout_constraintStart_toEndOf="@id/imgToolbarStart"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_chainStyle="packed" />
 
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvToolbarSubtitle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/myriad_pro_semi_bold"
+                android:fontFamily="@font/opensans_semi_bold"
                 android:maxLines="1"
                 android:ellipsize="end"
-                android:text="Default Location"
+                android:text="@string/default_location"
                 android:layout_marginStart="@dimen/eight_dp"
                 android:layout_marginEnd="@dimen/sixteen_dp"
                 android:textColor="@color/black"
-                android:textSize="@dimen/twelve_sp"
+                android:textSize="@dimen/eleven_sp"
                 android:lineHeight="@dimen/sixteen_sp"
-                app:WTextView_font="myriadpro_semibold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/imageView4"
                 app:layout_constraintStart_toEndOf="@+id/imgToolbarStart"
@@ -155,13 +153,13 @@
             android:layout_toStartOf="@+id/imBarcodeScanner"
             android:background="@drawable/bg_search_corner_4"
             android:drawablePadding="@dimen/twelve_dp"
-            android:fontFamily="@font/myriad_pro_regular"
+            android:fontFamily="@font/opensans_regular"
             android:gravity="center_vertical"
             android:hint="@string/dash_product_search"
             android:padding="@dimen/twelve_dp"
             android:textColor="@color/color_9D9D9D"
             android:textColorHint="@color/product_search_hint"
-            android:textSize="@dimen/fourteen_sp"
+            android:textSize="@dimen/twelve_sp"
             app:drawableStartCompat="@drawable/ic_search"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/imBarcodeScanner"
