@@ -94,8 +94,7 @@
                 android:textStyle="normal"
                 app:layout_constraintEnd_toStartOf="@id/btChange"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/etEnterNewAddress"
-                tools:text="28 Eastlake Island Drive" />
+                app:layout_constraintTop_toBottomOf="@id/etEnterNewAddress" />
 
             <TextView
                 android:id="@+id/tvStoresNearMe"
@@ -108,13 +107,11 @@
                 android:paddingBottom="@dimen/twenty_four_dp"
                 android:ellipsize="end"
                 android:minLines="1"
-                android:text="19 stores"
                 android:textColor="@color/color_444444"
                 android:translationY="-1sp"
                 app:layout_constraintEnd_toStartOf="@id/btChange"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvAddress"
-                tools:text="18 Strores near me" />
+                app:layout_constraintTop_toBottomOf="@id/tvAddress" />
 
             <Button
                 android:id="@+id/btChange"
