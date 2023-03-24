@@ -19,7 +19,7 @@
 
     <TextView
         android:id="@+id/txtShopperChoose"
-        android:layout_width="0dp"
+        android:layout_width="@dimen/zero_dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/ten_dp"
         android:ellipsize="end"
@@ -64,7 +64,7 @@
         android:id="@+id/tvSearchProduct"
         android:layout_width="@dimen/zero_dp"
         android:layout_height="@dimen/fourty_dp"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="@dimen/sixteen_dp"
         android:layout_marginTop="@dimen/fourty_three_dp"
         android:layout_marginEnd="@dimen/sixteen_dp"
         android:background="@drawable/bg_search_corner_4"

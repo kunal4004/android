@@ -1599,8 +1599,8 @@ class ProductDetailsFragment :
                 return
             }
 
-            if (resource.data?.data?.get(0)?.substitutionSelection == USER_CHOICE) {
-                txtSubstitutionTitle.text = resource.data?.data?.get(0)?.substitutionInfo?.displayName
+            if (resource.data?.data?.getOrNull(0)?.substitutionSelection == USER_CHOICE) {
+                txtSubstitutionTitle.text = resource.data?.data?.getOrNull(0)?.substitutionInfo?.displayName
             } else {
                 txtSubstitutionTitle.text = getString(R.string.let_my_shooper_choose_for_me)
             }
@@ -1612,7 +1612,7 @@ class ProductDetailsFragment :
                     } else {
                         /*navigate to manage substitution screen*/
                         (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
-                            openManageSubstitutionFragment(resource.data?.data?.get(0)?.substitutionSelection)
+                            openManageSubstitutionFragment(resource.data?.data?.getOrNull(0)?.substitutionSelection)
                         )
                     }
                 }
