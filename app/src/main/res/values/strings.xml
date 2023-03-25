@@ -2971,4 +2971,11 @@
     <string name="pet_insurance_care">PET</string>
     <string name="error_message_400">We are unable to process your request, Please \ncontact our call centre on \n0861 50 20 10</string>
 
+    <string name="street_address_lbl">Street Address:</string>
+    <string name="recipient_name_placeholder">Recipient Name: *</string>
+    <string name="additional_details">Additional Details:</string>
+    <string name="office_details">Office Details:*</string>
+    <string name="complex_estate">Complex/Estate:*</string>
+    <string name="unit_number_floor">Unit Number/Floor:*</string>
+
 </resources>
