@@ -2977,5 +2977,5 @@
     <string name="office_details">Office Details:*</string>
     <string name="complex_estate">Complex/Estate:*</string>
     <string name="unit_number_floor">Unit Number/Floor:*</string>
-
+    <string name="change_address_btn_text">CHANGE</string>
 </resources>
