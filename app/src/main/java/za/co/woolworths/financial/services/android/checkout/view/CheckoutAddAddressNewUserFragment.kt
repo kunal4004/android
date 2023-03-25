@@ -241,10 +241,11 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                 if (!navController?.popBackStack()!!) {
                     // Edit address screen from Cart as user don't have unit no or complex no.
                     // disable Google address view.
-                    binding.autoCompleteTextView?.isEnabled = false
-                    binding.autoCompleteTextView?.setBackgroundResource(R.drawable.input_box_inactive_bg)
-                    binding.autoCompleteTextView?.setTextColor(ContextCompat.getColor(requireContext(), R.color.non_editable_edit_text_text_color))
-                    binding.saveAddress.text = getString(R.string.confirm_address)
+                    //Below lines commented for Future reference
+                    //binding.autoCompleteTextView?.isEnabled = false
+                    //binding.autoCompleteTextView?.setBackgroundResource(R.drawable.input_box_inactive_bg)
+                   // binding.autoCompleteTextView?.setTextColor(ContextCompat.getColor(requireContext(), R.color.non_editable_edit_text_text_color))
+                   binding.saveAddress.text = getString(R.string.save_address)
                 }
             }
         }
