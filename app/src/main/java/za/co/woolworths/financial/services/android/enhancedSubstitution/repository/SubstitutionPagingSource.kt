@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.enhancedSubstitution.repository
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
@@ -26,7 +25,8 @@ class SubstitutionPagingSource(var apiHelper: SubstitutionApiHelper,
         return try {
             val position = params.key ?: 0
             val response = apiHelper.getSearchedProducts(requestParams)
-            _pagingResponse.postValue(response.body()?.pagingResponse)
+            val pagingResponse = response.body()?.pagingResponse
+            _pagingResponse.value = pagingResponse
             LoadResult.Page(
                     data = response.body()!!.products,
                     prevKey = if (position == 0) null else position - ProductSubstitutionRepository.PAGE_SIZE,

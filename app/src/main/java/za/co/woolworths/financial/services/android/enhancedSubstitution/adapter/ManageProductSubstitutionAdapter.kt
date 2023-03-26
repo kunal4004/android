@@ -5,7 +5,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.databinding.LayoutManageSubstitutionBinding
 import com.awfs.coordination.databinding.ShoppingListCommerceItemBinding
-import com.awfs.coordination.databinding.SubstitutionProductsItemCellBinding
 import za.co.woolworths.financial.services.android.enhancedSubstitution.ProductSubstitutionListListener
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 
@@ -14,6 +13,8 @@ class ManageProductSubstitutionAdapter(
     var subStitutionProductList: List<SubstitutionRecylerViewItem.SubstitutionProducts>,
     var productSubstitutionListListener: ProductSubstitutionListListener
 ) : RecyclerView.Adapter<SubstitutionViewHolder>() {
+
+    private var lastSelectedPosition = -1
 
     companion object {
         const val VIEW_TYPE_SUBSTITUTION_HEADER = 0
@@ -31,7 +32,7 @@ class ManageProductSubstitutionAdapter(
             VIEW_TYPE_SUBSTITUTION_LIST -> return SubstitutionViewHolder.SubstitueProductViewHolder(
                     ShoppingListCommerceItemBinding.inflate(
                     LayoutInflater.from(parent.context), parent, false
-                ), parent.context)
+                ), parent.context, lastSelectedPosition)
 
             else -> {
                 FirebaseManager.logException("Wrong ViewType passed")
@@ -42,8 +43,10 @@ class ManageProductSubstitutionAdapter(
 
     override fun onBindViewHolder(holder: SubstitutionViewHolder, position: Int) {
         when (holder) {
-            is SubstitutionViewHolder.SubstitueOptionwHolder -> holder.bind(headerItem, productSubstitutionListListener)
-            is SubstitutionViewHolder.SubstitueProductViewHolder -> holder.bind(subStitutionProductList[position])
+            is SubstitutionViewHolder.SubstitueOptionwHolder ->
+                holder.bind(headerItem, productSubstitutionListListener)
+            is SubstitutionViewHolder.SubstitueProductViewHolder ->
+                holder.bind(subStitutionProductList[position])
         }
     }
 

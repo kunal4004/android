@@ -42,8 +42,6 @@
     </RelativeLayout>
 
 
-
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/llItemContainer"
         android:layout_width="match_parent"
