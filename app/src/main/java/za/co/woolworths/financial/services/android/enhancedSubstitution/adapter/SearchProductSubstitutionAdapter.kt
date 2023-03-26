@@ -1,16 +1,12 @@
 package za.co.woolworths.financial.services.android.enhancedSubstitution.adapter
 
-import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import com.awfs.coordination.R
 import com.awfs.coordination.databinding.ShoppingListCommerceItemBinding
 import za.co.woolworths.financial.services.android.enhancedSubstitution.ProductListSelectionListener
 import za.co.woolworths.financial.services.android.models.dto.ProductList
-import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 
 class SearchProductSubstitutionAdapter(var productListSelectionListener: ProductListSelectionListener) :

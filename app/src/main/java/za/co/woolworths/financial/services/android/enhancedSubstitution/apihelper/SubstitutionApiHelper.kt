@@ -15,7 +15,6 @@ class SubstitutionApiHelper : RetrofitConfig() {
             productId
     )
 
-
     suspend fun getSearchedProducts(requestParams: ProductsRequestParams): retrofit2.Response<ProductView> {
         val (suburbId: String?, storeId: String?) = OneAppService.getSuburbOrStoreId()
 
@@ -72,5 +71,13 @@ class SubstitutionApiHelper : RetrofitConfig() {
             )
         }
     }
+
+    suspend fun fetchInventoryForSubstitution(storeId: String ,multipleSku: String) =mApiInterface.fetchDashInventorySKUForStore(
+            getSessionToken(),
+            getDeviceIdentityToken(),
+            storeId,
+            multipleSku
+    )
+
 
 }

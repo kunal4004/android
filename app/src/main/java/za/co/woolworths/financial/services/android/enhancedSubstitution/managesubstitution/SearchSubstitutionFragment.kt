@@ -27,14 +27,13 @@ import za.co.woolworths.financial.services.android.enhancedSubstitution.viewmode
 import za.co.woolworths.financial.services.android.enhancedSubstitution.viewmodel.ProductSubstitutionViewModelFactory
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
+import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.util.KeyboardUtil
 import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 
 
-class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionFragmentBinding>(
-        LayoutSearchSubstitutionFragmentBinding::inflate
-) , ProductListSelectionListener, OnClickListener, OnEditorActionListener {
+class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionFragmentBinding>(LayoutSearchSubstitutionFragmentBinding::inflate), ProductListSelectionListener, OnClickListener, OnEditorActionListener {
 
     private var searchProductSubstitutionAdapter: SearchProductSubstitutionAdapter? = null
     private lateinit var productSubstitutionViewModel: ProductSubstitutionViewModel
@@ -70,21 +69,17 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
     }
 
     private fun setUpViewModel() {
-        productSubstitutionViewModel = ViewModelProvider(
-                this,
-                ProductSubstitutionViewModelFactory(ProductSubstitutionRepository(SubstitutionApiHelper()))
-        ).get(ProductSubstitutionViewModel::class.java)
+        productSubstitutionViewModel = ViewModelProvider(this, ProductSubstitutionViewModelFactory(ProductSubstitutionRepository(SubstitutionApiHelper()))).get(ProductSubstitutionViewModel::class.java)
     }
 
     private fun getSubstututeProductList(requestParams: ProductsRequestParams) {
 
         lifecycleScope.launch {
 
-            productSubstitutionViewModel?.getAllSearchedSubstitutions(
-                    requestParams)?.collectLatest {
+            productSubstitutionViewModel?.getAllSearchedSubstitutions(requestParams)?.collectLatest {
                 binding.txtSubstitutionCount?.visibility = View.VISIBLE
                 productSubstitutionViewModel._pagingResponse.observe(viewLifecycleOwner, {
-                    val totalItemCount: String = "<b>" + it.numItemsInTotal?.toString() + "</b>" .plus(getString(R.string.item_found))
+                    val totalItemCount: String = "<b>" + it.numItemsInTotal?.toString() + "</b>".plus(getString(R.string.item_found))
                     val formattedItemCount = HtmlCompat.fromHtml(totalItemCount, HtmlCompat.FROM_HTML_MODE_COMPACT)
                     binding.txtSubstitutionCount.text = formattedItemCount
                 })
@@ -129,13 +124,49 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
             R.id.btnConfirm -> confirmProductSelection()
             R.id.crossIamgeView -> binding.tvSearchProduct?.text?.clear()
             R.id.txtCancelSearch -> (activity as BottomNavigationActivity)?.popFragment()
-            R.id.rootLayout ->  hideKeyBoard(v)
+            R.id.rootLayout -> hideKeyBoard(v)
         }
     }
 
     fun confirmProductSelection() {
         /* call inventory api */
+        callInventoryApi()
         /* call add substitution api */
+    }
+
+    private fun callInventoryApi() {
+        if (productList?.sku == null) {
+            return
+        }
+        /*todo get store id */
+        val storeId = "473"
+        productSubstitutionViewModel.getInventoryForSubstitution(storeId, productList?.sku!!)
+        productSubstitutionViewModel.inventorySubstitution.observe(viewLifecycleOwner) {
+
+            it.getContentIfNotHandled()?.let { resource ->
+                when (resource.status) {
+                    Status.LOADING -> {
+
+                    }
+                    Status.SUCCESS -> {
+
+                        if (resource.data?.skuInventory?.isNullOrEmpty() == true) {
+                            //show OutOf stock pop up
+                            return@observe
+                        }
+
+                        if (resource?.data?.skuInventory?.get(0)?.quantity == 0) {
+                            // show out of stock pop up
+                            return@observe
+                        }
+                    }
+                    Status.ERROR -> {
+
+                    }
+                }
+            }
+        }
+
     }
 
     override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
@@ -152,7 +183,7 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
         return false
     }
 
-    fun hideKeyBoard(view :View?) {
+    fun hideKeyBoard(view: View?) {
         if (view !is EditText) {
             view?.setOnTouchListener { v, event ->
                 KeyboardUtil.hideSoftKeyboard(activity)

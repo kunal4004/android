@@ -10,6 +10,7 @@ import za.co.woolworths.financial.services.android.enhancedSubstitution.model.Pr
 import za.co.woolworths.financial.services.android.enhancedSubstitution.repository.ProductSubstitutionRepository
 import za.co.woolworths.financial.services.android.models.dto.PagingResponse
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
+import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse
 import za.co.woolworths.financial.services.android.models.network.Event
 import za.co.woolworths.financial.services.android.models.network.Resource
 
@@ -20,8 +21,11 @@ class ProductSubstitutionViewModel(
     val productSubstitution: LiveData<Event<Resource<ProductSubstitution>>>
         get() = _productSubstitution
 
-     val _pagingResponse = MutableLiveData<PagingResponse>()
+    private val _inventorySubstitution = MutableLiveData<Event<Resource<SkusInventoryForStoreResponse>>>()
+    val inventorySubstitution: LiveData<Event<Resource<SkusInventoryForStoreResponse>>>
+        get() = _inventorySubstitution
 
+     val _pagingResponse = MutableLiveData<PagingResponse>()
 
 
     fun getProductSubstitution(productId: String?) {
@@ -29,6 +33,14 @@ class ProductSubstitutionViewModel(
             _productSubstitution.postValue(Event(Resource.loading(null)))
             val result = repository.getProductSubstitution(productId)
             _productSubstitution.value = Event(result)
+        }
+    }
+
+    fun getInventoryForSubstitution(storeId: String, multisku:String) {
+        viewModelScope.launch {
+            _inventorySubstitution.postValue(Event(Resource.loading(null)))
+            val result = repository.getInventoryForSubstitution(storeId, multisku)
+            _inventorySubstitution.value = Event(result)
         }
     }
 
