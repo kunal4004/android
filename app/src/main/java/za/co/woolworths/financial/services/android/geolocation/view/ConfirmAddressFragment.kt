@@ -302,7 +302,9 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
         mPosition = position
         binding.setButtonUI(true)
         if (address.verified) {
-            binding.tvConfirmAddress?.text = getString(R.string.confirm)
+            selectedAddress?.apply {
+                    binding.tvConfirmAddress?.text=getString(R.string.use)+nickname
+            }
         } else {
             binding.tvConfirmAddress?.text = getString(R.string.update_address)
         }
