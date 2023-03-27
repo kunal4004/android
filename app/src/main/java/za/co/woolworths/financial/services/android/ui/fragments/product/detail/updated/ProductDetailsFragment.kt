@@ -1553,7 +1553,7 @@ class ProductDetailsFragment :
         if (isAllProductsOutOfStock() && isInventoryCalled) {
             return
         }
-      /*  productSubstitutionViewModel.getProductSubstitution(productDetails?.productId)
+        productSubstitutionViewModel.getProductSubstitution(productDetails?.productId)
         productSubstitutionViewModel.productSubstitution.observe(viewLifecycleOwner) {
 
             it.getContentIfNotHandled()?.let { resource ->
@@ -1571,27 +1571,9 @@ class ProductDetailsFragment :
                     }
                 }
             }
-        }*/
-
-        showSubstitutionLayoutOne(isInventoryCalled)
-    }
-
-    fun showSubstitutionLayoutOne(isInventoryCalled: Boolean) {
-        binding?.productDetailOptionsAndInformation?.substitutionLayout?.apply {
-            this.txtSubstitutionTitle.text = getString(R.string.let_my_shooper_choose_for_me)
-            this.txtSubstitutionEdit?.setOnClickListener {
-                if (isAllProductsOutOfStock() && isInventoryCalled) {
-                    /*pop up for out of stock*/
-                    productOutOfStockErrorMessage(true)
-                } else {
-                    /*navigate to manage substitution screen*/
-                    (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
-                            ManageSubstitutionFragment()
-                    )
-                }
-            }
         }
     }
+
 
     private fun showSubstitutionLayout(isInventoryCalled: Boolean, resource: Resource<ProductSubstitution>) {
 

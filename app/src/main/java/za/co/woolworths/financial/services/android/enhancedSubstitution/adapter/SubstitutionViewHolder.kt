@@ -60,8 +60,8 @@ sealed class SubstitutionViewHolder(binding: ViewBinding) : RecyclerView.ViewHol
         fun bind(substitutionProducts: SubstitutionRecylerViewItem.SubstitutionProducts?) {
             binding.root.isSwipeEnabled = false
             binding.llQuantity?.visibility = View.GONE
-            binding.tvProductAvailability?.visibility = View.GONE
-            binding.tvColorSize?.visibility = View.GONE
+            binding.tvProductAvailability?.visibility = View.INVISIBLE
+            binding.tvColorSize?.visibility = View.INVISIBLE
 
             binding.tvTitle.setTextAppearance(R.style.style_substitution_title)
             binding.tvPromotionText.setTextAppearance(R.style.style_substitution_promotion)
@@ -79,8 +79,8 @@ sealed class SubstitutionViewHolder(binding: ViewBinding) : RecyclerView.ViewHol
         fun bind(productList: ProductList?) {
             binding.root.isSwipeEnabled = false
             binding.llQuantity?.visibility = View.GONE
-            binding.tvProductAvailability?.visibility = View.GONE
-            binding.tvColorSize?.visibility = View.GONE
+            binding.tvProductAvailability?.visibility = View.INVISIBLE
+            binding.tvColorSize?.visibility = View.INVISIBLE
 
             binding.tvTitle.setTextAppearance(R.style.style_substitution_title)
             binding.tvPromotionText.setTextAppearance(R.style.style_substitution_promotion)

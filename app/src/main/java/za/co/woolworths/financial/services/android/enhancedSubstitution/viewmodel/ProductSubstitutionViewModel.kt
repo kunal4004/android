@@ -22,8 +22,6 @@ class ProductSubstitutionViewModel(
 
      val _pagingResponse = MutableLiveData<PagingResponse>()
 
-
-
     fun getProductSubstitution(productId: String?) {
         viewModelScope.launch {
             _productSubstitution.postValue(Event(Resource.loading(null)))
@@ -34,7 +32,5 @@ class ProductSubstitutionViewModel(
 
     fun getAllSearchedSubstitutions(requestParams: ProductsRequestParams) =
             repository.getAllSearchedSubstitutions(requestParams, _pagingResponse).cachedIn(viewModelScope)
-
-    fun getPagingResponse() = _pagingResponse
 
 }

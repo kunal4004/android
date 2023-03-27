@@ -114,6 +114,7 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
     }
 
     private fun showErrorView() {
+        /*todo error view if search api is failed*/
 
     }
 
