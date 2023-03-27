@@ -13,7 +13,6 @@ import static za.co.woolworths.financial.services.android.ui.activities.TipsAndT
 import static za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity.RESULT_OK_ACCOUNTS;
 import static za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity.RESULT_OK_OPEN_CART_FROM_TIPS_AND_TRICKS;
 import static za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity.RESULT_CODE_MY_ACCOUNT_FRAGMENT;
-import static za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity.PRODUCT_SEARCH_ACTIVITY_REQUEST_CODE;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.BRAND_NAVIGATION_DETAILS;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.IS_BROWSING;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.STR_BRAND_HEADER;
@@ -24,9 +23,6 @@ import static za.co.woolworths.financial.services.android.ui.fragments.product.s
 import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.RESULT_RELOAD_CART;
 import static za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToShoppingListFragment.POST_ADD_TO_SHOPPING_LIST;
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListDetailFragment.ADD_TO_CART_SUCCESS_RESULT;
-import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.MY_LIST_LIST_ID;
-import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.MY_LIST_LIST_NAME;
-import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.MY_LIST_SEARCH_TERM;
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.PRODUCT_DETAILS_FROM_MY_LIST_SEARCH;
 import static za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsVouchersFragment.LOCK_REQUEST_CODE_WREWARDS;
 import static za.co.woolworths.financial.services.android.util.AppConstant.DP_LINKING_MY_ACCOUNTS_ORDER_DETAILS;
@@ -122,7 +118,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.shop.MyListsFrag
 import za.co.woolworths.financial.services.android.ui.fragments.shop.OrderDetailsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList;
-import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsLoggedInAndNotLinkedFragment;
@@ -1109,16 +1104,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
         // Navigate from shopping list detail activity
         switch (requestCode) {
-            case PRODUCT_SEARCH_ACTIVITY_REQUEST_CODE:
-                if (resultCode == PRODUCT_SEARCH_ACTIVITY_REQUEST_CODE) {
-                    SearchResultFragment searchResultFragment = new SearchResultFragment();
-                    Bundle bundle = new Bundle();
-                    bundle.putString(MY_LIST_SEARCH_TERM, data.getStringExtra(MY_LIST_LIST_NAME));
-                    bundle.putString(MY_LIST_LIST_ID, data.getStringExtra(MY_LIST_LIST_ID));
-                    searchResultFragment.setArguments(bundle);
-                    pushFragment(searchResultFragment);
-                    break;
-                }
             case ADD_TO_SHOPPING_LIST_REQUEST_CODE:
                 if (resultCode == ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE) {
                     ToastFactory.Companion.buildShoppingListToast(this, getBottomNavigationById(), true, data, this);

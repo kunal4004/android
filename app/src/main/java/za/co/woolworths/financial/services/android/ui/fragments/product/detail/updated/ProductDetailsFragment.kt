@@ -91,7 +91,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.shop.Pro
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.BaseProductUtils
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.ColourSizeVariants
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
-import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListDetailFragment.ADD_TO_CART_SUCCESS_RESULT
+import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListDetailFragment.Companion.ADD_TO_CART_SUCCESS_RESULT
 import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.UnsellableItemsBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView
@@ -114,6 +114,7 @@ import za.co.woolworths.financial.services.android.ui.vto.ui.gallery.ImageResult
 import za.co.woolworths.financial.services.android.ui.vto.utils.PermissionUtil
 import za.co.woolworths.financial.services.android.ui.vto.utils.SdkUtility
 import za.co.woolworths.financial.services.android.ui.vto.utils.VirtualTryOnUtil
+import za.co.woolworths.financial.services.android.ui.wfs.common.getIpAddress
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_1000_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_1500_MS
@@ -1137,6 +1138,18 @@ class ProductDetailsFragment :
                 products = listOf(productX), cartLines = listOf()
             )
         )
+        bundle.putParcelable(
+            BundleKeysConstants.RECOMMENDATIONS_USER_AGENT, Event(
+                eventType = BundleKeysConstants.RECOMMENDATIONS_USER_AGENT,
+                userAgent = System.getProperty("http.agent") ?: ""
+            )
+        )
+        bundle.putParcelable(
+            BundleKeysConstants.RECOMMENDATIONS_IP_ADDRESS,
+            Event(eventType = BundleKeysConstants.RECOMMENDATIONS_IP_ADDRESS,
+                ipAddress = getIpAddress(requireActivity())
+            )
+        )
 
         val navHostFragment =
             childFragmentManager.findFragmentById(R.id.navHostRecommendation) as NavHostFragment
@@ -1230,9 +1243,21 @@ class ProductDetailsFragment :
 
     private fun loadSizeAndColor() {
         if (hasColor)
-            binding.showColors()
+            binding?.showColors()
+        else {
+            binding?.sizeColorSelectorLayout?.apply {
+                colorSelectorLayout.visibility = View.GONE
+                divider1.visibility = View.GONE
+            }
+        }
         if (hasSize)
-            binding.showSize()
+            binding?.showSize()
+        else {
+            binding?.sizeColorSelectorLayout?.apply {
+                sizeSelectorLayout.visibility = View.GONE
+                divider2.visibility = View.GONE
+            }
+        }
 
         if (productDetailsPresenter?.isSizeGuideApplicable(
                 productDetails?.colourSizeVariants,
@@ -1275,6 +1300,7 @@ class ProductDetailsFragment :
             }
 
             colorSelectorLayout?.visibility = View.VISIBLE
+            divider1.visibility = View.VISIBLE
         }
     }
 

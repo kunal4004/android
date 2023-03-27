@@ -16,7 +16,6 @@ class CommonHeaderInterceptor : NetworkConfig(), Interceptor {
             .addHeader(CommonHeaderUtils.DEVICE_MODEL, getDeviceModel())
             .addHeader(CommonHeaderUtils.NETWORK, getNetworkCarrier())
             .addHeader(CommonHeaderUtils.OS, getOS())
-            .addHeader(CommonHeaderUtils.OS_VERSION, getOsVersion())
             .addHeader(CommonHeaderUtils.USER_AGENT, "")
             .addHeader(CommonHeaderUtils.USER_AGENT_VERSION, "")
             .addHeader(CommonHeaderUtils.OS_VERSION, getOsVersion())

@@ -24,6 +24,7 @@ data class Product(
     val sku: String?,
     val wasPrice: String?,
     var averageRating: String? = null,
-    var reviewCount: String? = null
+    var reviewCount: String? = null,
+    val recToken: String? = null
 
 ) : Parcelable

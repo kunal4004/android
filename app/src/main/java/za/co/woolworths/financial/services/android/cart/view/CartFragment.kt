@@ -97,6 +97,8 @@ import za.co.woolworths.financial.services.android.util.wenum.Delivery.Companion
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.CartProducts
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
 import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationEventHandler
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants
+import za.co.woolworths.financial.services.android.ui.wfs.common.getIpAddress
 import java.net.ConnectException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
@@ -375,6 +377,15 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                         showMaxItemView()
                         return
                     }
+
+                    if (deliveryType == Delivery.DASH
+                        && WoolworthsApplication.getValidatePlaceDetails()?.deliverable == true
+                        && (WoolworthsApplication.getValidatePlaceDetails()?.onDemand?.firstAvailableFoodDeliveryTime.isNullOrEmpty()
+                                || WoolworthsApplication.getValidatePlaceDetails()?.onDemand?.deliveryTimeSlots?.isNullOrEmpty() == true)) {
+                        showNoTimeSlotsView()
+                        return
+                    }
+
                     // Go to Web checkout journey if...
                     if (nativeCheckout?.isNativeCheckoutEnabled == false) {
                         val openCheckOutActivity = Intent(context, CartCheckoutActivity::class.java)
@@ -1083,8 +1094,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
 
         cartItems?.forEach { item ->
             cartLinesValue.addAll(item.commerceItems.map {
-                CartProducts(
-                    it.commerceItemInfo.productId, it.commerceItemInfo.quantity, null, null, null)
+                CartProducts(it.commerceItemInfo.productId, it.commerceItemInfo.quantity, it.priceInfo.amount, it.commerceItemInfo.catalogRefId, Constants.CURRENCY_VALUE)
             })
         }
 
@@ -1095,6 +1105,19 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             BundleKeysConstants.RECOMMENDATIONS_EVENT_DATA_TYPE, Event(eventType = "monetate:context:Cart", null, null, null, null, cartLinesValue
             )
         )
+        bundle.putParcelable(
+            BundleKeysConstants.RECOMMENDATIONS_USER_AGENT, Event(
+                eventType = BundleKeysConstants.RECOMMENDATIONS_USER_AGENT,
+                userAgent = System.getProperty("http.agent") ?: ""
+            )
+        )
+        bundle.putParcelable(
+            BundleKeysConstants.RECOMMENDATIONS_IP_ADDRESS,
+            Event(eventType = BundleKeysConstants.RECOMMENDATIONS_IP_ADDRESS,
+                ipAddress = getIpAddress(requireActivity())
+            )
+        )
+
         val navHostFragment =
             childFragmentManager.findFragmentById(R.id.navHostRecommendation) as NavHostFragment
         val navController = navHostFragment?.navController
@@ -1652,6 +1675,16 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             getString(R.string.unable_process_checkout_title),
             getString(R.string.got_it),
             R.drawable.payment_overdue_icon
+        )
+    }
+
+    private fun showNoTimeSlotsView() {
+        showGeneralInfoDialog(
+            requireActivity().supportFragmentManager,
+            getString(R.string.timeslot_desc),
+            getString(R.string.timeslot_title),
+            getString(R.string.got_it),
+            R.drawable.icon_dash_delivery_scooter
         )
     }
 
