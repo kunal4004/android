@@ -72,6 +72,7 @@ import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.network.Resource
+import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.ProductX
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_REQUEST_CODE
@@ -1540,11 +1541,30 @@ class ProductDetailsFragment :
                 showEnhancedSubstitutionDialog()
             }
 
-            callGetSubstitutionApi(isInventoryCalled)
+            //callGetSubstitutionApi(isInventoryCalled)
+            showSubstitutionLayoutOne(isInventoryCalled)
+
 
             if (isAllProductsOutOfStock() && isInventoryCalled) {
                 productOutOfStockErrorMessage()
                 return
+            }
+        }
+    }
+
+    fun showSubstitutionLayoutOne(isInventoryCalled: Boolean) {
+        binding?.productDetailOptionsAndInformation?.substitutionLayout?.apply {
+            this.txtSubstitutionTitle.text = getString(R.string.let_my_shooper_choose_for_me)
+            this.txtSubstitutionEdit?.setOnClickListener {
+                if (isAllProductsOutOfStock() && isInventoryCalled) {
+                    /*pop up for out of stock*/
+                    productOutOfStockErrorMessage(true)
+                } else {
+                    /*navigate to manage substitution screen*/
+                    (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
+                            ManageSubstitutionFragment()
+                    )
+                }
             }
         }
     }
@@ -1568,6 +1588,9 @@ class ProductDetailsFragment :
                     Status.ERROR -> {
                         binding.progressBar.visibility = View.GONE
                         hideSubstitutionLayout()
+                    }
+                    else -> {
+
                     }
                 }
             }
