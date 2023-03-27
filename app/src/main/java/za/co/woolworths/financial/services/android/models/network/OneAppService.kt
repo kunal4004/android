@@ -1270,15 +1270,6 @@ object OneAppService : RetrofitConfig() {
             )
         }
     }
-    suspend fun recommendation(recommendationRequest: Event): retrofit2.Response<RecommendationResponse> {
-        return withContext(Dispatchers.IO) {
-            mApiInterface.recommendation(
-                getSessionToken(),
-                getDeviceIdentityToken(),
-                recommendationRequest
-            )
-        }
-    }
 
     fun getFeatureEnablementResponse(): Call<FeatureEnablementModel> {
         return mApiInterface.getFeatureEnablement(

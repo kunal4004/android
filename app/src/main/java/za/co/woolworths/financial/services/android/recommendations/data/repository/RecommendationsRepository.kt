@@ -9,5 +9,4 @@ interface RecommendationsRepository {
 
     suspend fun getRecommendationResponse(recommendationRequest: RecommendationRequest?): Resource<RecommendationResponse>
 
-    suspend fun getRecommendationResponse(requestEvent: Event?): Resource<RecommendationResponse>
 }
