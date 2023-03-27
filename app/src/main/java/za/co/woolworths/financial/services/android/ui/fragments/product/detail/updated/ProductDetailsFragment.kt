@@ -1553,6 +1553,7 @@ class ProductDetailsFragment :
     }
 
     fun showSubstitutionLayoutOne(isInventoryCalled: Boolean) {
+        /*todo need to remove once get subs api is deployed*/
         binding?.productDetailOptionsAndInformation?.substitutionLayout?.apply {
             this.txtSubstitutionTitle.text = getString(R.string.let_my_shooper_choose_for_me)
             this.txtSubstitutionEdit?.setOnClickListener {
