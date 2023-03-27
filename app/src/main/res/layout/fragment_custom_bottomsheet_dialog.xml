@@ -46,7 +46,7 @@
     <TextView
         android:id="@+id/tvDescription"
         style="@style/dialog_description_text_style"
-        android:layout_marginHorizontal="@dimen/sixty_dp"
+        android:layout_marginHorizontal="@dimen/fifty_dp"
         android:layout_marginBottom="@dimen/fourty_dp"
         android:lineHeight="@dimen/twenty_one_dp"
         android:text="@string/suburb_not_deliverable_description"

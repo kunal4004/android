@@ -14,8 +14,6 @@ class ManageProductSubstitutionAdapter(
     var productSubstitutionListListener: ProductSubstitutionListListener
 ) : RecyclerView.Adapter<SubstitutionViewHolder>() {
 
-    private var lastSelectedPosition = -1
-
     companion object {
         const val VIEW_TYPE_SUBSTITUTION_HEADER = 0
         const val VIEW_TYPE_SUBSTITUTION_LIST = 1
@@ -32,7 +30,7 @@ class ManageProductSubstitutionAdapter(
             VIEW_TYPE_SUBSTITUTION_LIST -> return SubstitutionViewHolder.SubstitueProductViewHolder(
                     ShoppingListCommerceItemBinding.inflate(
                     LayoutInflater.from(parent.context), parent, false
-                ), parent.context, lastSelectedPosition)
+                ), parent.context)
 
             else -> {
                 FirebaseManager.logException("Wrong ViewType passed")

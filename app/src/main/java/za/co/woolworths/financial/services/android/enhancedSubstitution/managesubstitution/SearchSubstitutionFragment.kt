@@ -1,13 +1,13 @@
 package za.co.woolworths.financial.services.android.enhancedSubstitution.managesubstitution
 
+import android.content.Context
 import android.os.Bundle
-import android.view.KeyEvent
 import android.view.View
 import android.view.View.OnClickListener
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
-import android.widget.TextView
-import android.widget.TextView.OnEditorActionListener
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.text.HtmlCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -33,7 +33,9 @@ import za.co.woolworths.financial.services.android.util.KeyboardUtil
 import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 
 
-class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionFragmentBinding>(LayoutSearchSubstitutionFragmentBinding::inflate), ProductListSelectionListener, OnClickListener, OnEditorActionListener {
+class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionFragmentBinding>(
+        LayoutSearchSubstitutionFragmentBinding::inflate
+) , ProductListSelectionListener, OnClickListener {
 
     private var searchProductSubstitutionAdapter: SearchProductSubstitutionAdapter? = null
     private lateinit var productSubstitutionViewModel: ProductSubstitutionViewModel
@@ -59,32 +61,48 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
                 }
             })
         }
-        hideKeyBoard(view)
 
-        binding.tvSearchProduct?.setOnEditorActionListener(this)
+        binding.tvSearchProduct.setOnEditorActionListener { v, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                val productsRequestParams = getRequestParamsBody(v?.text.toString())
+                if (v?.text?.length != 0) {
+                    getSubstututeProductList(productsRequestParams)
+                }
+                false
+            } else {
+                false
+            }
+        }
+
         binding.btnConfirm?.setOnClickListener(this)
         binding.crossIamgeView?.setOnClickListener(this)
         binding.txtCancelSearch?.setOnClickListener(this)
         binding.rootLayout?.setOnClickListener(this)
+
+        closeKeyBoard();
     }
 
     private fun setUpViewModel() {
-        productSubstitutionViewModel = ViewModelProvider(this, ProductSubstitutionViewModelFactory(ProductSubstitutionRepository(SubstitutionApiHelper()))).get(ProductSubstitutionViewModel::class.java)
+        productSubstitutionViewModel = ViewModelProvider(
+                this,
+                ProductSubstitutionViewModelFactory(ProductSubstitutionRepository(SubstitutionApiHelper()))
+        ).get(ProductSubstitutionViewModel::class.java)
     }
 
     private fun getSubstututeProductList(requestParams: ProductsRequestParams) {
-
+        binding.shimmerLayout?.visibility = View.VISIBLE
+        binding.shimmerLayout.startShimmer()
         lifecycleScope.launch {
-
-            productSubstitutionViewModel?.getAllSearchedSubstitutions(requestParams)?.collectLatest {
+            productSubstitutionViewModel?.getAllSearchedSubstitutions(
+                    requestParams)?.collectLatest {
                 binding.txtSubstitutionCount?.visibility = View.VISIBLE
+                binding.shimmerLayout.stopShimmer()
+                binding.shimmerLayout.visibility = View.GONE
                 productSubstitutionViewModel._pagingResponse.observe(viewLifecycleOwner, {
-                    val totalItemCount: String = "<b>" + it.numItemsInTotal?.toString() + "</b>".plus(getString(R.string.item_found))
+                    val totalItemCount: String = "<b>" + it.numItemsInTotal?.toString() + "</b>" .plus(getString(R.string.item_found))
                     val formattedItemCount = HtmlCompat.fromHtml(totalItemCount, HtmlCompat.FROM_HTML_MODE_COMPACT)
                     binding.txtSubstitutionCount.text = formattedItemCount
                 })
-                binding.shimmerLayout.stopShimmer()
-                binding.shimmerLayout.visibility = View.GONE
                 searchProductSubstitutionAdapter?.submitData(it)
             }
         }
@@ -97,6 +115,7 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
     }
 
     private fun showErrorView() {
+        /*todo error view if search api is failed*/
 
     }
 
@@ -124,7 +143,6 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
             R.id.btnConfirm -> confirmProductSelection()
             R.id.crossIamgeView -> binding.tvSearchProduct?.text?.clear()
             R.id.txtCancelSearch -> (activity as BottomNavigationActivity)?.popFragment()
-            R.id.rootLayout -> hideKeyBoard(v)
         }
     }
 
@@ -189,6 +207,10 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
                 KeyboardUtil.hideSoftKeyboard(activity)
                 false
             }
+    private fun closeKeyBoard() {
+        val view = activity?.currentFocus
+        if (view != null) {
+            KeyboardUtil.hideSoftKeyboard(activity)
         }
     }
 }

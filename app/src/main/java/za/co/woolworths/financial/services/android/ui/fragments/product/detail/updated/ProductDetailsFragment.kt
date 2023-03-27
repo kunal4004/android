@@ -72,6 +72,7 @@ import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.network.Resource
+import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.ProductX
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_REQUEST_CODE
@@ -1540,7 +1541,9 @@ class ProductDetailsFragment :
                 showEnhancedSubstitutionDialog()
             }
 
-            callGetSubstitutionApi(isInventoryCalled)
+            //callGetSubstitutionApi(isInventoryCalled)
+            showSubstitutionLayoutOne(isInventoryCalled)
+
 
             if (isAllProductsOutOfStock() && isInventoryCalled) {
                 productOutOfStockErrorMessage()
@@ -1549,34 +1552,8 @@ class ProductDetailsFragment :
         }
     }
 
-    private fun callGetSubstitutionApi(isInventoryCalled: Boolean) {
-        if (isAllProductsOutOfStock() && isInventoryCalled) {
-            return
-        }
-      /*  productSubstitutionViewModel.getProductSubstitution(productDetails?.productId)
-        productSubstitutionViewModel.productSubstitution.observe(viewLifecycleOwner) {
-
-            it.getContentIfNotHandled()?.let { resource ->
-                when (resource.status) {
-                    Status.LOADING -> {
-                        binding.progressBar.visibility = View.VISIBLE
-                    }
-                    Status.SUCCESS -> {
-                        binding.progressBar.visibility = View.GONE
-                        showSubstitutionLayout(isInventoryCalled, resource)
-                    }
-                    Status.ERROR -> {
-                        binding.progressBar.visibility = View.GONE
-                        hideSubstitutionLayout()
-                    }
-                }
-            }
-        }*/
-
-        showSubstitutionLayoutOne(isInventoryCalled)
-    }
-
     fun showSubstitutionLayoutOne(isInventoryCalled: Boolean) {
+        /*todo need to remove once get subs api is deployed*/
         binding?.productDetailOptionsAndInformation?.substitutionLayout?.apply {
             this.txtSubstitutionTitle.text = getString(R.string.let_my_shooper_choose_for_me)
             this.txtSubstitutionEdit?.setOnClickListener {
@@ -1592,6 +1569,35 @@ class ProductDetailsFragment :
             }
         }
     }
+
+    private fun callGetSubstitutionApi(isInventoryCalled: Boolean) {
+        if (isAllProductsOutOfStock() && isInventoryCalled) {
+            return
+        }
+        productSubstitutionViewModel.getProductSubstitution(productDetails?.productId)
+        productSubstitutionViewModel.productSubstitution.observe(viewLifecycleOwner) {
+
+            it.getContentIfNotHandled()?.let { resource ->
+                when (resource.status) {
+                    Status.LOADING -> {
+                        binding.progressBar.visibility = View.VISIBLE
+                    }
+                    Status.SUCCESS -> {
+                        binding.progressBar.visibility = View.GONE
+                        showSubstitutionLayout(isInventoryCalled, resource)
+                    }
+                    Status.ERROR -> {
+                        binding.progressBar.visibility = View.GONE
+                        hideSubstitutionLayout()
+                    }
+                    else -> {
+
+                    }
+                }
+            }
+        }
+    }
+
 
     private fun showSubstitutionLayout(isInventoryCalled: Boolean, resource: Resource<ProductSubstitution>) {
 
