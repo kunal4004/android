@@ -35,7 +35,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/eight_dp"
-                android:fontFamily="@font/futura_bold"
+                android:fontFamily="@font/futura_semi_bold"
                 android:gravity="top"
                 android:lineHeight="@dimen/twenty_sp"
                 android:text="@string/standard_delivery"
