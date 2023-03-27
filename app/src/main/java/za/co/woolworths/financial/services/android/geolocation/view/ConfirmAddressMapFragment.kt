@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.AdapterView
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
@@ -553,6 +554,7 @@ class ConfirmAddressMapFragment :
     private fun showSearchBarHint() {
         binding.apply {
             errorMessage?.visibility = View.GONE
+            errorMessageTitle?.visibility = View.GONE
             errorMassageDivider?.visibility = View.VISIBLE
             searchBarTipHint?.visibility = View.VISIBLE
         }
@@ -576,15 +578,29 @@ class ConfirmAddressMapFragment :
                     )
                 } else {
                     errorMassageDivider?.visibility = View.VISIBLE
+                    errorMessageTitle?.visibility = View.VISIBLE
                     errorMessage?.visibility = View.VISIBLE
-                    errorMessage?.text = getString(R.string.geo_loc_error_msg)
+                    errorMessageTitle?.text = getString(R.string.geo_loc_error_msg_title)
+                    errorMessage?.text = HtmlCompat.fromHtml(getString(R.string.geo_loc_error_msg),HtmlCompat.FROM_HTML_MODE_LEGACY)
                     errorMessage?.setTextColor(
                         ContextCompat.getColor(
                             requireContext(),
-                            R.color.red
+                            R.color.color_D0021B
                         )
                     )
                     errorMessage?.setBackgroundColor(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.white
+                        )
+                    )
+                    errorMessageTitle?.setTextColor(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.color_D0021B
+                        )
+                    )
+                    errorMessageTitle?.setBackgroundColor(
                         ContextCompat.getColor(
                             requireContext(),
                             R.color.white
