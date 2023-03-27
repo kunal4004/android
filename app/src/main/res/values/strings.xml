@@ -2546,7 +2546,9 @@
     <string name="next_dash_delivery_timeslot_text">Next Dash Delivery Timeslot</string>
     <string name="my_shopping_lists">My Shopping Lists</string>
     <string name="hi">HI&#160;</string>
+    <string name="no_location_settings_msg">Search for an address, the name of a complex, or your closest landmark (e.g. a Woolies store).</string>
     <string name="tip_your_dash_driver">Tip Your Dash Driver</string>
+    <string name="location_settings_mesg"><u>Turn Location Settings On</u></string>
     <string name="enter_your_own_amount">Enter your own amount between R%1d - R%2d</string>
     <string name="driver_tip_note">* Tap on the selected amount to remove the tip. \n** Your tip will reflect in the order total value before payment.</string>
     <string name="amt_tip_added">R%,.2f Tip Added</string>
