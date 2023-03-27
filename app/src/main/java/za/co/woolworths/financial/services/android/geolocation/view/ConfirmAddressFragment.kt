@@ -348,7 +348,8 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
                 }
                 if (binding.progressBar.visibility == View.GONE
                     && selectedAddress != null
-                    && binding.tvConfirmAddress?.text == getString(R.string.confirm)
+                    && binding.tvConfirmAddress?.text == getString(R.string.confirm) || binding.tvConfirmAddress?.text.toString()
+                        .contains(getString(R.string.use))
                 ) {
                     selectedAddress.let {
                         if (it.placesId != null) {
