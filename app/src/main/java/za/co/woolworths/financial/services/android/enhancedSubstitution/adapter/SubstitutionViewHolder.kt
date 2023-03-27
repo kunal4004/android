@@ -7,7 +7,6 @@ import androidx.viewbinding.ViewBinding
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.LayoutManageSubstitutionBinding
 import com.awfs.coordination.databinding.ShoppingListCommerceItemBinding
-import za.co.woolworths.financial.services.android.enhancedSubstitution.ProductListSelectionListener
 import za.co.woolworths.financial.services.android.enhancedSubstitution.ProductSubstitutionListListener
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.ui.extension.onClick
@@ -54,17 +53,20 @@ sealed class SubstitutionViewHolder(binding: ViewBinding) : RecyclerView.ViewHol
     }
 
     class SubstitueProductViewHolder(
-            private val binding: ShoppingListCommerceItemBinding,
-            var context: Context,
-            var lastSelectedPosition: Int
+             val binding: ShoppingListCommerceItemBinding,
+            var context: Context
     ) : SubstitutionViewHolder(binding) {
-
 
         fun bind(substitutionProducts: SubstitutionRecylerViewItem.SubstitutionProducts?) {
             binding.root.isSwipeEnabled = false
             binding.llQuantity?.visibility = View.GONE
             binding.tvProductAvailability?.visibility = View.GONE
             binding.tvColorSize?.visibility = View.GONE
+
+            binding.tvTitle.setTextAppearance(R.style.style_substitution_title)
+            binding.tvPromotionText.setTextAppearance(R.style.style_substitution_promotion)
+            binding.tvPrice.setTextAppearance(R.style.style_substitution_price)
+
             binding.tvTitle.text = substitutionProducts?.productTitle
             binding.tvPrice.text = context.resources.getString(R.string.rand_text)
                     .plus("\t").plus(substitutionProducts?.productPrice)
@@ -74,11 +76,15 @@ sealed class SubstitutionViewHolder(binding: ViewBinding) : RecyclerView.ViewHol
             binding.cartProductImage?.setImageURI(substitutionProducts?.productThumbnail)
         }
 
-        fun bind(productList: ProductList?,  productListSelectionListener: ProductListSelectionListener, position:Int) {
+        fun bind(productList: ProductList?) {
             binding.root.isSwipeEnabled = false
             binding.llQuantity?.visibility = View.GONE
             binding.tvProductAvailability?.visibility = View.GONE
             binding.tvColorSize?.visibility = View.GONE
+
+            binding.tvTitle.setTextAppearance(R.style.style_substitution_title)
+            binding.tvPromotionText.setTextAppearance(R.style.style_substitution_promotion)
+            binding.tvPrice.setTextAppearance(R.style.style_substitution_price)
 
             binding.tvTitle.text = productList?.productName
             binding.tvPrice.text = formatAmountToRandAndCentWithSpace(productList?.price)
@@ -88,27 +94,8 @@ sealed class SubstitutionViewHolder(binding: ViewBinding) : RecyclerView.ViewHol
                 binding.tvPromotionText.visibility = View.VISIBLE
                 binding.tvPromotionText.text = productList?.promotions?.getOrNull(0)?.promotionalText
             }
-
-            if (lastSelectedPosition == -1) {
-                binding.cbShoppingList.isChecked = false
-            } else {
-                if (lastSelectedPosition == position) {
-                    binding.cbShoppingList.isChecked = true
-                } else {
-                    binding.cbShoppingList.isChecked = false
-                }
-            }
-
-            binding.cbShoppingList.setOnClickListener {
-                binding.cbShoppingList?.isChecked = true
-                if (lastSelectedPosition != adapterPosition) {
-                    bindingAdapter?.notifyItemChanged(lastSelectedPosition)
-                    lastSelectedPosition = bindingAdapterPosition
-                }
-                productListSelectionListener.clickOnProductSelection(productList)
-            }
-            binding.tvPromotionText.text = context.resources.getString(R.string.promotion_txt).plus(productList?.wasPrice?.toString())
             binding.cartProductImage?.setImageURI(productList?.externalImageRefV2)
         }
+
     }
 }

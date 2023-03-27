@@ -89,6 +89,7 @@ class StoreListAdapter(
                             listener.onFirstTimePargo()
                         } else {
                             lastSelectedPosition = bindingAdapterPosition
+                            notifyDataSetChanged()
                             listener.onStoreSelected(store)
                         }
                     }
