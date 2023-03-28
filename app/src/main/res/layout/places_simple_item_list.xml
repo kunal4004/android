@@ -18,7 +18,6 @@
         android:background="@color/white"
         android:gravity="center_vertical"
         android:lineSpacingExtra="@dimen/two_sp"
-        android:text="28 East Lake Island Drive"
         android:textColor="@color/color_000000"
         android:textSize="@dimen/twelve_sp"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -36,7 +35,6 @@
         android:background="@color/white"
         android:gravity="center_vertical"
         android:lineSpacingExtra="@dimen/two_sp"
-        android:text="Marina da Gama, Cape Town, South Africa"
         android:textColor="@color/checkout_delivering_title"
         android:textSize="@dimen/twelve_sp"
         app:layout_constraintTop_toBottomOf="@+id/primaryTextView" />
