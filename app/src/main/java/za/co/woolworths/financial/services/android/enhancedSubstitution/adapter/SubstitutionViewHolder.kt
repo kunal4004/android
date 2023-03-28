@@ -58,43 +58,49 @@ sealed class SubstitutionViewHolder(binding: ViewBinding) : RecyclerView.ViewHol
     ) : SubstitutionViewHolder(binding) {
 
         fun bind(substitutionProducts: SubstitutionRecylerViewItem.SubstitutionProducts?) {
-            binding.root.isSwipeEnabled = false
-            binding.llQuantity?.visibility = View.GONE
-            binding.tvProductAvailability?.visibility = View.INVISIBLE
-            binding.tvColorSize?.visibility = View.INVISIBLE
+            binding?.apply {
+                root.isSwipeEnabled = false
+                llQuantity?.visibility = View.GONE
+                tvProductAvailability?.visibility = View.INVISIBLE
+                tvColorSize?.visibility = View.INVISIBLE
 
-            binding.tvTitle.setTextAppearance(R.style.style_substitution_title)
-            binding.tvPromotionText.setTextAppearance(R.style.style_substitution_promotion)
-            binding.tvPrice.setTextAppearance(R.style.style_substitution_price)
+                tvTitle.setTextAppearance(R.style.style_substitution_title)
+                tvPromotionText.setTextAppearance(R.style.style_substitution_promotion)
+                tvPrice.setTextAppearance(R.style.style_substitution_price)
 
-            binding.tvTitle.text = substitutionProducts?.productTitle
-            binding.tvPrice.text = context.resources.getString(R.string.rand_text)
-                    .plus("\t").plus(substitutionProducts?.productPrice)
-            binding.tvPrice.minHeight = context.resources.getDimension(R.dimen.two_dp).toInt()
-            binding.tvPromotionText.visibility = View.VISIBLE
-            //binding.tvPromotionText.text = substitutionProducts?.promotionText
-            binding.cartProductImage?.setImageURI(substitutionProducts?.productThumbnail)
+                tvTitle.text = substitutionProducts?.productTitle
+                tvPrice.text = context.resources.getString(R.string.rand_text)
+                        .plus("\t").plus(substitutionProducts?.productPrice)
+                tvPrice.minHeight = context.resources.getDimension(R.dimen.two_dp).toInt()
+                tvPromotionText.visibility = View.VISIBLE
+                //binding.tvPromotionText.text = substitutionProducts?.promotionText
+                cartProductImage?.setImageURI(substitutionProducts?.productThumbnail)
+            }
+
         }
 
         fun bind(productList: ProductList?) {
-            binding.root.isSwipeEnabled = false
-            binding.llQuantity?.visibility = View.GONE
-            binding.tvProductAvailability?.visibility = View.INVISIBLE
-            binding.tvColorSize?.visibility = View.INVISIBLE
+            binding?.apply {
+                root.isSwipeEnabled = false
+                llQuantity?.visibility = View.GONE
+                tvProductAvailability?.visibility = View.INVISIBLE
+                tvColorSize?.visibility = View.INVISIBLE
 
-            binding.tvTitle.setTextAppearance(R.style.style_substitution_title)
-            binding.tvPromotionText.setTextAppearance(R.style.style_substitution_promotion)
-            binding.tvPrice.setTextAppearance(R.style.style_substitution_price)
+                tvTitle.setTextAppearance(R.style.style_substitution_title)
+                tvPromotionText.setTextAppearance(R.style.style_substitution_promotion)
+                tvPrice.setTextAppearance(R.style.style_substitution_price)
 
-            binding.tvTitle.text = productList?.productName
-            binding.tvPrice.text = formatAmountToRandAndCentWithSpace(productList?.price)
-            if (productList?.promotions?.isEmpty() == true) {
-                binding.tvPromotionText.visibility = View.GONE
-            } else {
-                binding.tvPromotionText.visibility = View.VISIBLE
-                binding.tvPromotionText.text = productList?.promotions?.getOrNull(0)?.promotionalText
+                tvTitle.text = productList?.productName
+                tvPrice.text = formatAmountToRandAndCentWithSpace(productList?.price)
+                if (productList?.promotions?.isEmpty() == true) {
+                    tvPromotionText.visibility = View.GONE
+                } else {
+                    tvPromotionText.visibility = View.VISIBLE
+                    tvPromotionText.text = productList?.promotions?.getOrNull(0)?.promotionalText
+                }
+                cartProductImage?.setImageURI(productList?.externalImageRefV2)
             }
-            binding.cartProductImage?.setImageURI(productList?.externalImageRefV2)
+
         }
 
     }

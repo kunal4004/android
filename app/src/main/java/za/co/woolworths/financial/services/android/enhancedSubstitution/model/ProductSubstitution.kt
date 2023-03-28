@@ -1,15 +1,6 @@
 package za.co.woolworths.financial.services.android.enhancedSubstitution.model
 
-import com.google.gson.annotations.Expose
-import com.google.gson.annotations.SerializedName
-
 data class ProductSubstitution(
-        @SerializedName("data")
-        @Expose
-        var data: List<Data>,
-        @SerializedName("httpCode")
-        @Expose
+        var data: ArrayList<Data>,
         val httpCode: Int,
-        @SerializedName("response")
-        @Expose
         val response: Response)
