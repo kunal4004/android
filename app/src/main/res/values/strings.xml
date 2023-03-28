@@ -2620,7 +2620,7 @@
     <string name="vtsc_card_not_arrived_notified_desc">A customer service agent will be in touch to arrange VIP delivery.</string>
 
     <string name="product_details_color_count">+ %d More</string>
-    <string name="geo_loc_error_msg">We can’t seem to find you. Please enter the number and name of your street, the location of your closest landmark, or drag the pin to your exact location.</string>
+    <string name="geo_loc_error_msg">Please use a general location <b>near you</b> instead. Search for an address, the name of a complex, your closest landmark (e.g. a Woolies store) or drag the pin to a location nearby.></string>
     <string name="geo_loc_error_msg_on_edit_address">We can’t seem to find you. Please enter number and name of your street, to get
         your exact location.</string>
     <string name="fashion_beauty_geo">Fashion,Beauty,Home</string>
@@ -2970,5 +2970,5 @@
     <string name="pet_insurance_apply_now_control_desc">Optional excess waiver and medical saving benefits</string>
     <string name="pet_insurance_care">PET</string>
     <string name="error_message_400">We are unable to process your request, Please \ncontact our call centre on \n0861 50 20 10</string>
-
+    <string name="geo_loc_error_msg_title">We can’t seem to find you here.</string>
 </resources>
