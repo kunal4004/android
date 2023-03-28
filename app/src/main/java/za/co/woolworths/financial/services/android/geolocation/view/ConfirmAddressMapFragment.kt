@@ -866,7 +866,7 @@ class ConfirmAddressMapFragment :
                     mapFrameLayout.visibility = View.VISIBLE
                     autoCompleteTextView.isEnabled = true
                     dynamicMapView?.setAllGesturesEnabled(true)
-                    if (isAddAddress!! && isAddressSearch == false) {
+                    if (isAddAddress != null && isAddressSearch == false) {
                         confirmAddress.isEnabled = false
                         imgMapMarker.visibility = View.GONE
                     }

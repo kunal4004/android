@@ -12,7 +12,7 @@
         android:layout_marginTop="@dimen/sixteen_dp"
         android:background="@color/color_D8D8D8"
         android:paddingTop="@dimen/two_dp"
-        app:layout_constraintBottom_toTopOf="@+id/constraintLayout2"
+        app:layout_constraintBottom_toTopOf="@+id/confirmAddressLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/searchLayout">
@@ -163,7 +163,7 @@
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout2"
+        android:id="@+id/confirmAddressLayout"
         android:layout_width="match_parent"
         android:layout_height="@dimen/hundred_dp"
         android:background="@color/white"
