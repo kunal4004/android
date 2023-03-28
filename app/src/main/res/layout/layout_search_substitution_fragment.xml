@@ -23,7 +23,7 @@
             android:layout_height="wrap_content">
 
             <View
-                android:id="@+id/view11"
+                android:id="@+id/viewSepratorOne"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:background="@drawable/bg_search_corner_4"
@@ -58,9 +58,9 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginEnd="@dimen/twenty_dp"
                 android:src="@drawable/close_cross_icon"
-                app:layout_constraintBottom_toBottomOf="@+id/view11"
-                app:layout_constraintEnd_toEndOf="@+id/view11"
-                app:layout_constraintTop_toTopOf="@+id/view11" />
+                app:layout_constraintBottom_toBottomOf="@+id/viewSepratorOne"
+                app:layout_constraintEnd_toEndOf="@+id/viewSepratorOne"
+                app:layout_constraintTop_toTopOf="@+id/viewSepratorOne" />
 
             <TextView
                 android:id="@+id/txtCancelSearch"
@@ -78,7 +78,7 @@
                 android:textSize="@dimen/twelve_sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/view11"
+                app:layout_constraintStart_toEndOf="@+id/viewSepratorOne"
                 app:layout_constraintTop_toTopOf="@+id/tvSearchProduct" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.appcompat.widget.Toolbar>
