@@ -2554,9 +2554,7 @@
     <string name="title_mylist_standard_tooltip">Some items aren’t available using <b>Standard.</b></string>
     <string name="change_delivery_method_mylist_tooltip">Get them using a different delivery method.</string>
     <string name="hi">HI&#160;</string>
-    <string name="no_location_settings_msg">Search for an address, the name of a complex, or your closest landmark (e.g. a Woolies store).</string>
     <string name="tip_your_dash_driver">Tip Your Dash Driver</string>
-    <string name="location_settings_mesg"><u>Turn Location Settings On</u></string>
     <string name="enter_your_own_amount">Enter your own amount between R%1d - R%2d</string>
     <string name="driver_tip_note">* Tap on the selected amount to remove the tip. \n** Your tip will reflect in the order total value before payment.</string>
     <string name="amt_tip_added">R%,.2f Tip Added</string>
@@ -2972,5 +2970,7 @@
     <string name="pet_insurance_apply_now_control_desc">Optional excess waiver and medical saving benefits</string>
     <string name="pet_insurance_care">PET</string>
     <string name="error_message_400">We are unable to process your request, Please \ncontact our call centre on \n0861 50 20 10</string>
+    <string name="no_location_settings_msg">Search for an address, the name of a complex, or your closest landmark (e.g. a Woolies store).</string>
+    <string name="location_settings_mesg"><u>Turn Location Settings On</u></string>
 
 </resources>
