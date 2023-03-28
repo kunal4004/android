@@ -850,7 +850,7 @@ class ConfirmAddressMapFragment :
                     noLocationLayout?.noLocationRootLayout?.visibility = View.VISIBLE
                     dynamicMapView?.visibility = View.GONE
                     imgMapMarker?.visibility = View.GONE
-                    constraintLayout2?.visibility = View.GONE
+                    confirmAddressLayout?.visibility = View.GONE
                 }
                 return@apply
             } else {
