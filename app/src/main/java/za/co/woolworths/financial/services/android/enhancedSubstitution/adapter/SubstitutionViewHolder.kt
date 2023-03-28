@@ -65,14 +65,12 @@ sealed class SubstitutionViewHolder(binding: ViewBinding) : RecyclerView.ViewHol
                 tvColorSize?.visibility = View.INVISIBLE
 
                 tvTitle.setTextAppearance(R.style.style_substitution_title)
-                tvPromotionText.setTextAppearance(R.style.style_substitution_promotion)
                 tvPrice.setTextAppearance(R.style.style_substitution_price)
 
                 tvTitle.text = substitutionProducts?.productTitle
                 tvPrice.text = context.resources.getString(R.string.rand_text)
                         .plus("\t").plus(substitutionProducts?.productPrice)
                 tvPrice.minHeight = context.resources.getDimension(R.dimen.two_dp).toInt()
-                tvPromotionText.visibility = View.VISIBLE
                 //binding.tvPromotionText.text = substitutionProducts?.promotionText
                 cartProductImage?.setImageURI(substitutionProducts?.productThumbnail)
             }
@@ -87,17 +85,10 @@ sealed class SubstitutionViewHolder(binding: ViewBinding) : RecyclerView.ViewHol
                 tvColorSize?.visibility = View.INVISIBLE
 
                 tvTitle.setTextAppearance(R.style.style_substitution_title)
-                tvPromotionText.setTextAppearance(R.style.style_substitution_promotion)
                 tvPrice.setTextAppearance(R.style.style_substitution_price)
 
                 tvTitle.text = productList?.productName
                 tvPrice.text = formatAmountToRandAndCentWithSpace(productList?.price)
-                if (productList?.promotions?.isEmpty() == true) {
-                    tvPromotionText.visibility = View.GONE
-                } else {
-                    tvPromotionText.visibility = View.VISIBLE
-                    tvPromotionText.text = productList?.promotions?.getOrNull(0)?.promotionalText
-                }
                 cartProductImage?.setImageURI(productList?.externalImageRefV2)
             }
 
