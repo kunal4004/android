@@ -216,7 +216,6 @@ class ConfirmAddressMapFragment :
 
     private fun clearAddressText() {
         binding.autoCompleteTextView.setText("")
-        showSearchBarHint()
     }
 
     private fun clearMapDetails() {
@@ -852,7 +851,6 @@ class ConfirmAddressMapFragment :
                     dynamicMapView?.visibility = View.GONE
                     imgMapMarker?.visibility = View.GONE
                     constraintLayout2?.visibility = View.GONE
-                    hideSearchBarHint()
                 }
                 return@apply
             } else {
