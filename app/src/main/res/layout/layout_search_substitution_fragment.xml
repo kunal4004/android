@@ -21,7 +21,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <View
-                android:id="@+id/view11"
+                android:id="@+id/view_top_seperator"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:background="@drawable/bg_search_corner_4"
@@ -54,9 +54,9 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginEnd="@dimen/twenty_dp"
                 android:src="@drawable/close_cross_icon"
-                app:layout_constraintBottom_toBottomOf="@+id/view11"
-                app:layout_constraintEnd_toEndOf="@+id/view11"
-                app:layout_constraintTop_toTopOf="@+id/view11" />
+                app:layout_constraintBottom_toBottomOf="@+id/view_top_seperator"
+                app:layout_constraintEnd_toEndOf="@+id/view_top_seperator"
+                app:layout_constraintTop_toTopOf="@+id/view_top_seperator" />
             <TextView
                 android:id="@+id/txtCancelSearch"
                 android:layout_width="wrap_content"
@@ -73,7 +73,7 @@
                 android:textSize="@dimen/twelve_sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/view11"
+                app:layout_constraintStart_toEndOf="@+id/view_top_seperator"
                 app:layout_constraintTop_toTopOf="@+id/tvSearchProduct" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.appcompat.widget.Toolbar>

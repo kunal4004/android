@@ -18,7 +18,6 @@
         android:button="@drawable/shopping_list_item_selector"
         android:checked="false"
         android:saveEnabled="false"
-        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="@+id/productIamge"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/productIamge" />
@@ -29,7 +28,7 @@
         android:layout_height="112dp"
         android:layout_gravity="center"
         android:layout_marginStart="@dimen/sixteen_dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="@dimen/twenty_four_dp"
         android:contentDescription="@string/placeholder"
         android:src="@drawable/scooter"
         android:background="@color/color_F3F3F3"
