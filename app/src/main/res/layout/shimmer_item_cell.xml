@@ -24,7 +24,7 @@
 
     <za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
         android:id="@+id/productIamge"
-        android:layout_width="80dp"
+        android:layout_width="@dimen/eighty_dp"
         android:layout_height="112dp"
         android:layout_gravity="center"
         android:layout_marginStart="@dimen/sixteen_dp"
