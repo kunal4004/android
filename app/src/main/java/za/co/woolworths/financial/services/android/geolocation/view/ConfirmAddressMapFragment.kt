@@ -581,7 +581,7 @@ class ConfirmAddressMapFragment :
                     errorMessageTitle?.visibility = View.VISIBLE
                     errorMessage?.visibility = View.VISIBLE
                     errorMessageTitle?.text = getString(R.string.geo_loc_error_msg_title)
-                    errorMessage?.text = HtmlCompat.fromHtml(getString(R.string.geo_loc_error_msg),HtmlCompat.FROM_HTML_MODE_LEGACY)
+                    errorMessage?.text = getText(R.string.geo_loc_error_msg)
                     errorMessage?.setTextColor(
                         ContextCompat.getColor(
                             requireContext(),

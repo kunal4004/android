@@ -2620,7 +2620,7 @@
     <string name="vtsc_card_not_arrived_notified_desc">A customer service agent will be in touch to arrange VIP delivery.</string>
 
     <string name="product_details_color_count">+ %d More</string>
-    <string name="geo_loc_error_msg"><![CDATA[Please use a general location <b>near you</b> instead. Search for an address, the name of a complex, your closest landmark (e.g. a Woolies store) or drag the pin to a location nearby.]]></string>
+    <string name="geo_loc_error_msg">Please use a general location <b>near you</b> instead. Search for an address, the name of a complex, your closest landmark (e.g. a Woolies store) or drag the pin to a location nearby.></string>
     <string name="geo_loc_error_msg_on_edit_address">We can’t seem to find you. Please enter number and name of your street, to get
         your exact location.</string>
     <string name="fashion_beauty_geo">Fashion,Beauty,Home</string>
