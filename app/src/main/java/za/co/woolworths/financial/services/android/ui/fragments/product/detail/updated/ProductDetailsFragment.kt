@@ -1541,31 +1541,11 @@ class ProductDetailsFragment :
                 showEnhancedSubstitutionDialog()
             }
 
-            //callGetSubstitutionApi(isInventoryCalled)
-            showSubstitutionLayoutOne(isInventoryCalled)
-
+            callGetSubstitutionApi(isInventoryCalled)
 
             if (isAllProductsOutOfStock() && isInventoryCalled) {
                 productOutOfStockErrorMessage()
                 return
-            }
-        }
-    }
-
-    fun showSubstitutionLayoutOne(isInventoryCalled: Boolean) {
-        /*todo need to remove once get subs api is deployed*/
-        binding?.productDetailOptionsAndInformation?.substitutionLayout?.apply {
-            this.txtSubstitutionTitle.text = getString(R.string.let_my_shooper_choose_for_me)
-            this.txtSubstitutionEdit?.setOnClickListener {
-                if (isAllProductsOutOfStock() && isInventoryCalled) {
-                    /*pop up for out of stock*/
-                    productOutOfStockErrorMessage(true)
-                } else {
-                    /*navigate to manage substitution screen*/
-                    (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
-                            ManageSubstitutionFragment()
-                    )
-                }
             }
         }
     }
@@ -1590,14 +1570,10 @@ class ProductDetailsFragment :
                         binding.progressBar.visibility = View.GONE
                         hideSubstitutionLayout()
                     }
-                    else -> {
-
-                    }
                 }
             }
         }
     }
-
 
     private fun showSubstitutionLayout(isInventoryCalled: Boolean, resource: Resource<ProductSubstitution>) {
 
