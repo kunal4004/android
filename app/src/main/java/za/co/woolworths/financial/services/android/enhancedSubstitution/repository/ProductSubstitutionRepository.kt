@@ -1,9 +1,17 @@
 package za.co.woolworths.financial.services.android.enhancedSubstitution.repository
 
+import androidx.lifecycle.MutableLiveData
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import com.awfs.coordination.R
 import com.google.gson.JsonSyntaxException
+import kotlinx.coroutines.flow.Flow
 import za.co.woolworths.financial.services.android.enhancedSubstitution.apihelper.SubstitutionApiHelper
 import za.co.woolworths.financial.services.android.enhancedSubstitution.model.ProductSubstitution
+import za.co.woolworths.financial.services.android.models.dto.PagingResponse
+import za.co.woolworths.financial.services.android.models.dto.ProductList
+import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
 import za.co.woolworths.financial.services.android.models.network.Resource
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
@@ -36,4 +44,21 @@ class ProductSubstitutionRepository(var substitutionApiHelper: SubstitutionApiHe
         }
     }
 
- }
+
+    fun getAllSearchedSubstitutions(requestParams: ProductsRequestParams, _pagingResponse: MutableLiveData<PagingResponse>): Flow<PagingData<ProductList>> {
+        return Pager(
+                config = PagingConfig(
+                        pageSize = PAGE_SIZE,
+                        enablePlaceholders = false
+                ),
+                pagingSourceFactory = {
+                    SubstitutionPagingSource(substitutionApiHelper, requestParams, _pagingResponse)
+                }
+        ).flow
+    }
+
+
+    companion object {
+         val PAGE_SIZE = 60
+    }
+}
