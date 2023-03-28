@@ -47,7 +47,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/searchLayout"
-        android:layout_width="0dp"
+        android:layout_width="@dimen/zero_dp"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/sixteen_dp"
         android:background="@drawable/bg_search_corner_4"
