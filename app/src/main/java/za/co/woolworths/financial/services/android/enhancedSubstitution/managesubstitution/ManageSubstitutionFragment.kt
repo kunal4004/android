@@ -92,9 +92,7 @@ class ManageSubstitutionFragment() : BaseFragmentBinding<ManageSubstitutionDetai
     }
 
     override fun openSubstitutionSearchScreen() {
-        (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
-                SearchSubstitutionFragment()
-        )
+
     }
 
     override fun clickOnLetMyShooperChooseOption() {

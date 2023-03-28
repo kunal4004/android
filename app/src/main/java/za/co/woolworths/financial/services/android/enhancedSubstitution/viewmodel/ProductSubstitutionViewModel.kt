@@ -29,8 +29,4 @@ class ProductSubstitutionViewModel(
             _productSubstitution.value = Event(result)
         }
     }
-
-    fun getAllSearchedSubstitutions(requestParams: ProductsRequestParams) =
-            repository.getAllSearchedSubstitutions(requestParams, _pagingResponse).cachedIn(viewModelScope)
-
 }
