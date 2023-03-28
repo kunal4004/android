@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.enhancedSubstitution.repository
 
 import com.awfs.coordination.R
+import com.google.gson.JsonSyntaxException
 import za.co.woolworths.financial.services.android.enhancedSubstitution.apihelper.SubstitutionApiHelper
 import za.co.woolworths.financial.services.android.enhancedSubstitution.model.ProductSubstitution
 import za.co.woolworths.financial.services.android.models.network.Resource
@@ -29,5 +30,10 @@ class ProductSubstitutionRepository(var substitutionApiHelper: SubstitutionApiHe
             FirebaseManager.logException(e)
             Resource.error(R.string.error_internet_connection, null)
         }
+        catch (e: JsonSyntaxException) {
+            FirebaseManager.logException(e)
+            Resource.error(R.string.error_unknown, null)
+        }
     }
-}
+
+ }

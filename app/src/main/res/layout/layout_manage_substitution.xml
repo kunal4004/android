@@ -10,7 +10,6 @@
         android:layout_width="@dimen/twenty_four_dp"
         android:layout_height="@dimen/twenty_four_dp"
         android:layout_marginStart="@dimen/twenty_four_dp"
-        android:layout_marginTop="@dimen/eighteen_dp"
         android:layout_marginEnd="@dimen/ten_dp"
         android:button="@drawable/address_selector_background"
         app:layout_constraintEnd_toStartOf="@+id/txtShopperChoose"
@@ -19,7 +18,7 @@
 
     <TextView
         android:id="@+id/txtShopperChoose"
-        android:layout_width="@dimen/zero_dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/ten_dp"
         android:ellipsize="end"
@@ -28,7 +27,6 @@
         android:fontFamily="@font/opensans_regular"
         android:text="@string/let_my_shooper_choose_for_me"
         android:textColor="@color/black"
-        android:layout_marginTop="@dimen/eighteen_dp"
         android:textSize="@dimen/thirteen_sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/rbShopperChoose"
@@ -75,7 +73,7 @@
         android:inputType="text"
         android:fontFamily="@font/opensans_regular"
         android:padding="@dimen/twelve_dp"
-        android:textColor="@color/black"
+        android:textColor="@color/color_9D9D9D"
         android:textColorHint="@color/product_search_hint"
         android:textSize="@dimen/twelve_sp"
         app:layout_constraintBottom_toBottomOf="parent"
