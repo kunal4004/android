@@ -23,37 +23,34 @@
         android:layout_marginStart="@dimen/twenty_four_dp"
         android:layout_marginTop="@dimen/thirty_two_dp"
         android:fontFamily="@font/futura_semi_bold"
-        android:gravity="center_vertical"
         android:lineHeight="@dimen/_27sdp"
-        android:lineSpacingExtra="@dimen/seven_sp"
         android:text="@string/enhanced_substitution_btn"
         android:textColor="@color/black"
+        android:lineSpacingExtra="@dimen/seven_sp"
+        android:gravity="center_vertical"
         android:textSize="@dimen/text_size_18sp"
+        app:layout_constraintBottom_toTopOf="@+id/recyclerView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imgBack" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="@dimen/zero_dp"
+        android:layout_height="@dimen/zero_dp"
         android:layout_marginTop="@dimen/sixteen_dp"
         android:orientation="vertical"
-        android:fadeScrollbars="false"
-        android:scrollbars="vertical"
-        app:layout_constraintBottom_toTopOf="@+id/viewSeprator"
+        app:layout_constraintBottom_toTopOf="@+id/btnConfirm"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtManageTitle"
-        tools:listitem="@layout/shopping_list_commerce_item" />
+        tools:listitem="@layout/substitution_products_item_cell" />
 
     <View
-        android:visibility="gone"
         android:id="@+id/viewSeprator"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/recyclerView"
-        app:layout_constraintBottom_toTopOf="@+id/btnConfirm"
         android:background="@color/shimmer_view_background"
         android:layout_width="match_parent"
         android:layout_height="@dimen/eight_dp"/>

@@ -1566,7 +1566,6 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "environment:www-win-dev7")
     @GET("wfs/app/v4/cart/get-substitution")
     suspend fun getSubstitution(
-            /*todo remove enviorment value */
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Query("productId") productId: String?,
