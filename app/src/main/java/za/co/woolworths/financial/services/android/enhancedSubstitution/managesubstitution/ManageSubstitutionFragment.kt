@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.View.OnClickListener
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.ManageSubstitutionDetailsLayoutBinding
 import za.co.woolworths.financial.services.android.enhancedSubstitution.ProductSubstitutionListListener
@@ -48,6 +49,16 @@ class ManageSubstitutionFragment() : BaseFragmentBinding<ManageSubstitutionDetai
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(context)
             adapter = manageProductSubstitutionAdapter
+            addOnScrollListener(object : RecyclerView.OnScrollListener(){
+                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                    super.onScrollStateChanged(recyclerView, newState)
+                    if (!recyclerView.canScrollVertically(1) ) {
+                        binding.viewSeprator?.visibility = View.VISIBLE
+                    } else {
+                        binding.viewSeprator?.visibility = View.GONE
+                    }
+                }
+            })
         }
     }
 
@@ -61,7 +72,6 @@ class ManageSubstitutionFragment() : BaseFragmentBinding<ManageSubstitutionDetai
     private fun getSubstututeProductList(): MutableList<SubstitutionRecylerViewItem.SubstitutionProducts> {
         var list = mutableListOf<SubstitutionRecylerViewItem.SubstitutionProducts>()
         /*prepare list from kibo api and set to recyler view */
-
         return list
     }
 

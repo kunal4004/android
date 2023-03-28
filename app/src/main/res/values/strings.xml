@@ -2944,7 +2944,7 @@
 
     <string name="enhanced_substitution_title">Introducing Custom Substitutions</string>
     <string name="enhanced_substitution_desc">Add or remove substitutes as you shop your favourite products, or let our shoppers choose for you!</string>
-    <string name="enhanced_substitution_btn">Manage substitutions</string>
+    <string name="enhanced_substitution_btn">Manage Substitutions</string>
     <string name="got_it_btn"><u>GOT IT</u></string>
     <string name="substitution_work_info">How Do Substitutions Work?</string>
     <string name="substitution_how_it_works_title">How It Works</string>
@@ -2975,4 +2975,6 @@
     <string name="choose_substitute">Choose My Own Substitute</string>
     <string name="dont_want_substitute"><u>i don\'t want a substitute</u></string>
     <string name="more_details">More Details</string>
+    <string name="promotion_txt">you have saved</string>
+    <string name="item_found">\t ITEMS FOUND</string>
 </resources>
