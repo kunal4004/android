@@ -1,13 +1,10 @@
 package za.co.woolworths.financial.services.android.enhancedSubstitution.managesubstitution
 
-import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.view.View.OnClickListener
 import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.text.HtmlCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -29,13 +26,17 @@ import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
 import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.FoodProductNotAvailableForCollectionDialog
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.ProductDetailsFindInStoreDialog
 import za.co.woolworths.financial.services.android.util.KeyboardUtil
+import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 
 
 class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionFragmentBinding>(
         LayoutSearchSubstitutionFragmentBinding::inflate
-) , ProductListSelectionListener, OnClickListener {
+) , ProductListSelectionListener, OnClickListener, FoodProductNotAvailableForCollectionDialog.IProductNotAvailableForCollectionDialogListener {
 
     private var searchProductSubstitutionAdapter: SearchProductSubstitutionAdapter? = null
     private lateinit var productSubstitutionViewModel: ProductSubstitutionViewModel
@@ -96,14 +97,15 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
             productSubstitutionViewModel?.getAllSearchedSubstitutions(
                     requestParams)?.collectLatest {
                 binding.txtSubstitutionCount?.visibility = View.VISIBLE
-                binding.shimmerLayout.stopShimmer()
-                binding.shimmerLayout.visibility = View.GONE
+
                 productSubstitutionViewModel._pagingResponse.observe(viewLifecycleOwner, {
                     val totalItemCount: String = "<b>" + it.numItemsInTotal?.toString() + "</b>" .plus(getString(R.string.item_found))
                     val formattedItemCount = HtmlCompat.fromHtml(totalItemCount, HtmlCompat.FROM_HTML_MODE_COMPACT)
                     binding.txtSubstitutionCount.text = formattedItemCount
                 })
                 searchProductSubstitutionAdapter?.submitData(it)
+                binding.shimmerLayout.stopShimmer()
+                binding.shimmerLayout.visibility = View.GONE
             }
         }
 
@@ -153,52 +155,62 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
     }
 
     private fun callInventoryApi() {
-        if (productList?.sku == null) {
+
+        val storeId: String? =  Utils.getPreferredDeliveryLocation()?.let {
+            it.fulfillmentDetails.storeId
+        }
+
+        if (productList?.sku == null || storeId == null || storeId?.isEmpty() == true) {
             return
         }
-        /*todo get store id */
-        val storeId = "473"
+
         productSubstitutionViewModel.getInventoryForSubstitution(storeId, productList?.sku!!)
         productSubstitutionViewModel.inventorySubstitution.observe(viewLifecycleOwner) {
 
             it.getContentIfNotHandled()?.let { resource ->
                 when (resource.status) {
                     Status.LOADING -> {
-
                     }
                     Status.SUCCESS -> {
-
                         if (resource.data?.skuInventory?.isNullOrEmpty() == true) {
-                            //show OutOf stock pop up
+
+                            productOutOfStockErrorMessage()
                             return@observe
                         }
 
                         if (resource?.data?.skuInventory?.get(0)?.quantity == 0) {
-                            // show out of stock pop up
+                            productOutOfStockErrorMessage()
                             return@observe
                         }
+                        productOutOfStockErrorMessage()
+                        /*add subs api*/
+                        callAddSubsApi()
+
                     }
                     Status.ERROR -> {
-
                     }
                 }
             }
         }
-
     }
 
-    override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
-        if (actionId == EditorInfo.IME_ACTION_DONE) {
-            hideKeyBoard(v)
-            var productsRequestParams = getRequestParamsBody(v?.text.toString())
-            if (v?.text?.length != 0) {
-                binding.shimmerLayout?.visibility = View.VISIBLE
-                binding.shimmerLayout.startShimmer()
-                getSubstututeProductList(productsRequestParams)
+    fun callAddSubsApi() {
+    }
+
+    fun productOutOfStockErrorMessage() {
+        try {
+            activity?.supportFragmentManager?.beginTransaction()?.apply {
+                val productDetailsFindInStoreDialog =
+                        FoodProductNotAvailableForCollectionDialog.newInstance(
+                        )
+                productDetailsFindInStoreDialog.show(
+                        this,
+                        ProductDetailsFindInStoreDialog::class.java.simpleName
+                )
             }
-            return true
+        } catch (ex: IllegalStateException) {
+            FirebaseManager.logException(ex)
         }
-        return false
     }
 
     fun hideKeyBoard(view: View?) {
@@ -207,10 +219,22 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
                 KeyboardUtil.hideSoftKeyboard(activity)
                 false
             }
+        }
+    }
+
     private fun closeKeyBoard() {
         val view = activity?.currentFocus
         if (view != null) {
             KeyboardUtil.hideSoftKeyboard(activity)
         }
     }
+
+    override fun onChangeDeliveryOption() {
+
+    }
+
+    override fun onFindInStore() {
+
+    }
+
 }
