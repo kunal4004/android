@@ -300,6 +300,9 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
     override fun onAddressSelected(address: Address, position: Int) {
         selectedAddress = address
         mPosition = position
+        binding.currentLocDiv.apply {
+            visibility = if (position == 0) View.INVISIBLE else View.VISIBLE
+        }
         binding.setButtonUI(true)
         if (address.verified) {
             selectedAddress?.apply {

@@ -22,11 +22,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/twenty_four_dp"
-        android:layout_marginTop="@dimen/fourty_dp"
+        android:layout_marginTop="@dimen/fourty_five_dp"
         android:fontFamily="@font/futura_semi_bold"
         android:text="@string/choose_a_location"
         android:textColor="@color/black"
-        android:textSize="@dimen/twenty_sp"
+        android:textSize="@dimen/eighteen_sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/backButton" />
 
@@ -49,11 +49,11 @@
         android:id="@+id/enterNewAddress"
         style="@style/opensans_regular_12_text_style"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/fourty_dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/twenty_four_dp"
-        android:layout_marginTop="@dimen/twenty_one_dp"
+        android:layout_marginTop="@dimen/twenty_four_dp"
         android:layout_marginEnd="@dimen/twenty_four_dp"
-        android:background="@drawable/bg_edittext_confirm_address"
+        android:background="@drawable/search_bg_confirm_loc"
         android:drawableStart="@drawable/ic_search"
         android:drawablePadding="@dimen/fifteen_dp"
         android:gravity="center_vertical"
@@ -68,7 +68,8 @@
         android:id="@+id/inCurrentLocation"
         layout="@layout/current_location_row_layout"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/sixty_five_dp"
+        android:layout_height="@dimen/seventy_two_dp"
+        android:layout_marginTop="@dimen/sixteen_dp"
         app:layout_constraintTop_toBottomOf="@+id/enterNewAddress" />
 
     <View
@@ -113,7 +114,6 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="@dimen/twenty_four_dp"
-        android:layout_marginTop="@dimen/fifteen_dp"
         android:layout_marginEnd="@dimen/twenty_four_dp"
         android:layout_marginBottom="8dp"
         android:background="@color/white"
