@@ -188,6 +188,7 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
 
                     }
                     Status.ERROR -> {
+                        /*todo error view if inventory api is failed*/
                     }
                 }
             }
@@ -195,6 +196,7 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
     }
 
     fun callAddSubsApi() {
+        /*todo call add subs api*/
     }
 
     fun productOutOfStockErrorMessage() {
