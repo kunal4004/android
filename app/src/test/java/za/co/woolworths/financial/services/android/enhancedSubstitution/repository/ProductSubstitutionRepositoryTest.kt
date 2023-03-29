@@ -5,6 +5,8 @@ import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
+import org.mockito.ArgumentMatchers.anyInt
+import org.mockito.ArgumentMatchers.anyString
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
@@ -45,8 +47,8 @@ class ProductSubstitutionRepositoryTest {
 
         val productSubstitution = ProductSubstitution(data= dataList, httpCode = 200, response = response)
         Mockito.`when`(substitutionApiHelper.getProductSubstitution(PROD_ID)).thenReturn(Response.success(productSubstitution))
-        val sut = ProductSubstitutionRepository(substitutionApiHelper)
-        val result = sut.getProductSubstitution(PROD_ID)
+        val productSubstitutionRepository = ProductSubstitutionRepository(substitutionApiHelper)
+        val result = productSubstitutionRepository.getProductSubstitution(PROD_ID)
         Assert.assertEquals(1, result.data?.data?.size)
         Assert.assertEquals("Free Range Jumbo Eggs 6 pk", result.data?.data?.get(0)?.substitutionInfo?.displayName)
     }
@@ -55,12 +57,12 @@ class ProductSubstitutionRepositoryTest {
     fun test_error_getSubstitutions() = runTest {
 
         Mockito.`when`(substitutionApiHelper.getProductSubstitution(PROD_ID)).thenReturn(Response.error(504, "".toResponseBody()))
-        val sut = ProductSubstitutionRepository(substitutionApiHelper)
-        val result = sut.getProductSubstitution(PROD_ID)
+        val productSubstitutionRepository = ProductSubstitutionRepository(substitutionApiHelper)
+        val result = productSubstitutionRepository.getProductSubstitution(PROD_ID)
         Assert.assertEquals(Status.ERROR, result.status)
     }
 
     companion object {
-        private val PROD_ID = "6009195203504"
+        private  val PROD_ID:String? = "6009195203504"
     }
 }

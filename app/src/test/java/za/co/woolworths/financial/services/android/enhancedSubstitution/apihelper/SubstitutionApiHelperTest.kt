@@ -51,7 +51,7 @@ class SubstitutionApiHelperTest {
         mockWebServer.takeRequest()
 
         Assert.assertEquals(1 , response.body()?.data?.size)
-        Assert.assertEquals(USER_CHOICE , response.body()?.data?.get(0)?.substitutionSelection)
+        Assert.assertEquals(USER_CHOICE , response.body()?.data?.getOrNull(0)?.substitutionSelection)
     }
 
     @Test
@@ -65,8 +65,7 @@ class SubstitutionApiHelperTest {
         val response = apiHelper.getSubstitution(anyString(), anyString(), "123456")
         mockWebServer.takeRequest()
 
-        Assert.assertEquals(1 , response.body()?.data?.size)
-        Assert.assertEquals(USER_CHOICE , response.body()?.data?.get(0)?.substitutionSelection)
+        Assert.assertEquals(0 , response.body()?.data?.size)
     }
 
     @After
@@ -95,6 +94,15 @@ class SubstitutionApiHelperTest {
 
         private val USER_CHOICE = "USER_CHOICE"
 
-        private val EMPTY_RESPONSE = "{\"substitutionInfo\": \"\",\"links\": [],\"substitutionSelection\": \"\"}"
+        private val EMPTY_RESPONSE = "{\n" +
+                "    \"response\": {\n" +
+                "        \"code\": \"-1\",\n" +
+                "        \"desc\": \"Success\"\n" +
+                "    },\n" +
+                "    \"data\": [\n" +
+                "       \n" +
+                "    ],\n" +
+                "    \"httpCode\": 200\n" +
+                "}"
     }
 }
