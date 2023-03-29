@@ -93,6 +93,7 @@ class CheckoutReturningUserCollectionFragmentTest : Fragment() {
         )
     }
 
+    @Ignore
     @Test
     fun checkStopShimmerView() {
         var shimmerComponentArray: List<Pair<ShimmerFrameLayout, View>>

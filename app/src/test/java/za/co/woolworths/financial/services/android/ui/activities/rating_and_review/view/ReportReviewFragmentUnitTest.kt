@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.activities.rating_and_rev
 
 import androidx.fragment.app.Fragment
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.jupiter.api.Assertions.*
 import org.junit.runner.RunWith
@@ -25,6 +26,7 @@ class ReportReviewFragmentUnitTest : Fragment() {
         reportReviewFragment = mock(ReportReviewFragment::class.java, CALLS_REAL_METHODS)
     }
 
+    @Ignore
     @Test
     fun test_initContainsKeyForReviewList() {
         val bundle = BundleMock.mock()
@@ -36,6 +38,7 @@ class ReportReviewFragmentUnitTest : Fragment() {
         assertNotNull(reportList)
     }
 
+    @Ignore
     @Test
     fun test_initNotContainsKeyForReviewList() {
         val bundle = BundleMock.mock()

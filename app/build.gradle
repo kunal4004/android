@@ -37,6 +37,7 @@ android {
 
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_1_8.toString()
+        freeCompilerArgs = ['-Xjvm-default=compatibility']
     }
 
     testOptions {
@@ -345,11 +346,15 @@ dependencies {
     testImplementation 'junit:junit:4.13'
     testImplementation "org.mockito:mockito-core:3.4.6"
     testImplementation "org.mockito:mockito-inline:2.21.0"
+    testImplementation 'com.squareup.okhttp3:mockwebserver:4.9.0'
+    testImplementation 'com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0'
     testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.3.4'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.5.1'
     testImplementation 'android.arch.core:core-testing:1.1.1'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test:rules:1.4.0-alpha04'
+    androidTestImplementation "androidx.arch.core:core-testing:2.1.0"
+
 
     // UI testing with Espresso
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0-alpha04'
@@ -395,6 +400,10 @@ dependencies {
     implementation 'androidx.work:work-runtime:2.7.1'
     implementation 'androidx.paging:paging-common-ktx:3.0.1'
     implementation 'androidx.paging:paging-runtime-ktx:3.0.1'
+
+
+    /*Mockito */
+
 }
 
 apply plugin: 'com.google.gms.google-services'
