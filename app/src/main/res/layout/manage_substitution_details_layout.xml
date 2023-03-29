@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <ImageView
+        android:id="@+id/imgBack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/sixteen_dp"
+        android:layout_marginTop="@dimen/twenty_four_dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:src="@drawable/back24" />
+
+    <TextView
+        android:id="@+id/txtManageTitle"
+        android:layout_width="@dimen/zero_dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/twenty_four_dp"
+        android:layout_marginTop="@dimen/thirty_two_dp"
+        android:fontFamily="@font/futura_semi_bold"
+        android:gravity="center_vertical"
+        android:lineHeight="@dimen/_27sdp"
+        android:lineSpacingExtra="@dimen/seven_sp"
+        android:text="@string/enhanced_substitution_btn"
+        android:textColor="@color/black"
+        android:textSize="@dimen/text_size_18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imgBack" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/sixteen_dp"
+        android:orientation="vertical"
+        android:fadeScrollbars="false"
+        android:scrollbars="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/viewSeprator"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtManageTitle"
+        tools:listitem="@layout/shopping_list_commerce_item" />
+
+    <View
+        android:visibility="gone"
+        android:id="@+id/viewSeprator"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/recyclerView"
+        app:layout_constraintBottom_toTopOf="@+id/btnConfirm"
+        android:background="@color/shimmer_view_background"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/eight_dp"/>
+
+    <Button
+         android:id="@+id/btnConfirm"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:layout_marginStart="@dimen/twenty_four_dp"
+         android:layout_marginEnd="@dimen/twenty_four_dp"
+         android:layout_marginBottom="@dimen/sixteen_dp"
+         android:layout_marginTop="@dimen/twenty_four_dp"
+         android:background="@drawable/black_background_with_corner_5"
+         app:layout_constraintTop_toBottomOf="@+id/viewSeprator"
+         android:text="@string/confirm"
+         android:textAllCaps="true"
+         android:textColor="@color/white"
+         android:letterSpacing="0.08"
+         android:textSize="@dimen/twelve_sp"
+         android:lineSpacingExtra="@dimen/five_sp"
+         app:layout_constraintBottom_toTopOf="@+id/dontWantText"
+         app:layout_constraintEnd_toEndOf="parent"
+         app:layout_constraintStart_toStartOf="parent" />
+
+     <TextView
+         android:id="@+id/dontWantText"
+         android:layout_width="@dimen/zero_dp"
+         android:layout_height="wrap_content"
+         android:layout_marginStart="@dimen/twenty_four_dp"
+         android:layout_marginEnd="@dimen/twenty_four_dp"
+         android:layout_marginBottom="@dimen/thirty_six_dp"
+         android:gravity="center"
+         android:fontFamily="@font/futura_light"
+         android:text="@string/dont_want_substitute"
+         android:lineSpacingExtra="@dimen/seven_sp"
+         android:textAllCaps="true"
+         android:textSize="@dimen/twelve_sp"
+         android:lineHeight="@dimen/twenty_dp"
+         android:textAlignment="center"
+         android:textColor="@color/color_666666"
+         app:layout_constraintBottom_toBottomOf="parent"
+         app:layout_constraintEnd_toEndOf="parent"
+         app:layout_constraintStart_toStartOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

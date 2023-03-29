@@ -12,6 +12,7 @@ import androidx.compose.ui.platform.LocalContext
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.logException
 
 /**
  * Network utility to get current state of internet connection
@@ -82,4 +83,23 @@ fun connectivityState(): State<ConnectionState> {
         // In a coroutine, can make suspend calls
         context.observeConnectivityAsFlow().collect { value = it }
     }
+}
+
+fun Any.getIpAddress(context: Context): String {
+    var ipAddress = ""
+    try {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE)
+        if (connectivityManager is ConnectivityManager) {
+            val linkAddresses =
+                connectivityManager?.getLinkProperties(connectivityManager.activeNetwork)?.linkAddresses
+            ipAddress = linkAddresses?.firstOrNull { linkAddress ->
+                linkAddress.address.hostAddress?.contains('.') ?: false
+            }?.address?.hostAddress.toString()
+        }
+
+    } catch (e: Exception) {
+        logException(e)
+        return ""
+    }
+    return ipAddress
 }

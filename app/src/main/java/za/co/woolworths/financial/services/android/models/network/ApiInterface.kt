@@ -14,7 +14,11 @@ import za.co.woolworths.financial.services.android.geolocation.network.model.Val
 import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.Response
+import za.co.woolworths.financial.services.android.models.dto.account.AppGUIDModel
+import za.co.woolworths.financial.services.android.models.dto.account.AppGUIDRequestModel
+import za.co.woolworths.financial.services.android.models.dto.account.FeatureEnablementModel
 import za.co.woolworths.financial.services.android.models.dto.account.FicaModel
+import za.co.woolworths.financial.services.android.models.dto.account.PetInsuranceModel
 import za.co.woolworths.financial.services.android.models.dto.bpi.BPIBody
 import za.co.woolworths.financial.services.android.models.dto.bpi.InsuranceTypeOptInBody
 import za.co.woolworths.financial.services.android.models.dto.cart.SubmittedOrderResponse
@@ -51,6 +55,7 @@ import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.SelectedVoucher
 import za.co.woolworths.financial.services.android.onecartgetstream.model.OCAuthenticationResponse
 import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.RecommendationResponse
+import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.RecommendationRequest
 import za.co.woolworths.financial.services.android.ui.fragments.contact_us.enquiry.EmailUsRequest
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.ReviewFeedback
@@ -783,11 +788,11 @@ interface ApiInterface {
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("wfs/app/v4/list/{id}")
-    fun getShoppingListItems(
-
-            @Header("sessionToken") sessionToken: String,
-            @Header("deviceIdentityToken") deviceIdentityToken: String,
-            @Path("id") id: String): Call<ShoppingListItemsResponse>
+    suspend fun getShoppingListItems(
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Path("id") id: String
+    ): retrofit2.Response<ShoppingListItemsResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("wfs/app/v4/list/{productId}/item")
@@ -826,29 +831,37 @@ interface ApiInterface {
             @Path("multipleSku") multipleSku: String): Call<SkuInventoryResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("wfs/app/v4/isninventory/multi/{store_id}/{multipleSku}")
-    fun getDashInventorySKUForStore(
+    @GET("wfs/app/v4/inventory/store/{store_id}/multiSku/{multipleSku}")
+    suspend fun getInventorySKUForStore(
+
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Path("store_id") store_id: String,
+        @Path("multipleSku") multipleSku: String): retrofit2.Response<SkusInventoryForStoreResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @GET("wfs/app/v4/inventory/store/{store_id}/multiSku/{multipleSku}")
+    fun getInventorySKUsForStore(
         @Header("sessionToken") sessionToken: String,
         @Header("deviceIdentityToken") deviceIdentityToken: String,
         @Path("store_id") store_id: String,
         @Path("multipleSku") multipleSku: String): Call<SkusInventoryForStoreResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("wfs/app/v4/inventory/store/{store_id}/multiSku/{multipleSku}")
-    fun getInventorySKUForStore(
-
-            @Header("sessionToken") sessionToken: String,
-            @Header("deviceIdentityToken") deviceIdentityToken: String,
-            @Path("store_id") store_id: String,
-            @Path("multipleSku") multipleSku: String): Call<SkusInventoryForStoreResponse>
+    @GET("wfs/app/v4/isninventory/multi/{store_id}/{multipleSku}")
+    suspend fun fetchDashInventorySKUForStore(
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Path("store_id") store_id: String,
+        @Path("multipleSku") multipleSku: String): retrofit2.Response<SkusInventoryForStoreResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("wfs/app/v4/isninventory/multi/{store_id}/{multipleSku}")
-   suspend fun fetchDashInventorySKUForStore(
-            @Header("sessionToken") sessionToken: String,
-            @Header("deviceIdentityToken") deviceIdentityToken: String,
-            @Path("store_id") store_id: String,
-            @Path("multipleSku") multipleSku: String): retrofit2.Response<SkusInventoryForStoreResponse>
+    fun fetchDashInventorySKUsForStore(
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Path("store_id") store_id: String,
+        @Path("multipleSku") multipleSku: String): Call<SkusInventoryForStoreResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("wfs/app/v4/inventory/store/{store_id}/multiSku/{multipleSku}")
@@ -1519,13 +1532,94 @@ interface ApiInterface {
         @Body recommendationRequest: RecommendationRequest
     ) : retrofit2.Response<RecommendationResponse>
 
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @POST("wfs/app/recommendations")
+    suspend fun recommendation(
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Body recommendationRequest: Event
+    ) : retrofit2.Response<RecommendationResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @GET("wfs/app/v4/user/featureEnablement")
+    fun getFeatureEnablement(
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String
+    ):  Call<FeatureEnablementModel>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @GET("wfs/app/v4/user/insurance/products")
+    fun getPetInsurance(
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String
+    ):  Call<PetInsuranceModel>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @POST("wfs/app/v4/user/appGuid")
+    fun getAppGUID(
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Body appGUIDRequestModel: AppGUIDRequestModel
+    ):  Call<AppGUIDModel>
+
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "environment:www-win-dev7")
     @GET("wfs/app/v4/cart/get-substitution")
     suspend fun getSubstitution(
+            /*todo remove enviorment value */
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Query("productId") productId: String?,
     ): retrofit2.Response<ProductSubstitution>
+
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip")
+    @GET("wfs/app/v4/searchSortAndFilterV2")
+    suspend fun getSearchedProducts(
+
+            @Header("userAgent") userAgent: String,
+            @Header("userAgentVersion") userAgentVersion: String,
+            @Header("longitude") longitude: String,
+            @Header("latitude") latitude: String,
+            @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
+            @Query("searchTerm") searchTerm: String,
+            @Query("searchType") searchType: String,
+            @Query("responseType") responseType: String,
+            @Query("pageOffset") pageOffset: Int,
+            @Query("pageSize") pageSize: Int,
+            @Query("sortOption") sortOption: String,
+            @Query("refinement") refinement: String,
+            @Query("suburbId") suburbId: String?,
+            @Query("storeId") storeId: String?,
+            @Query("filterContent") filterContent: Boolean?,
+            @Query("deliveryType") deliveryType: String?,
+            @Query("deliveryDetails") deliveryDetails: String?
+    ): retrofit2.Response<ProductView>
+
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip")
+    @GET("wfs/app/v4/searchSortAndFilterV2")
+    suspend fun getSearchedProductsWithoutLocation(
+
+            @Header("userAgent") userAgent: String,
+            @Header("userAgentVersion") userAgentVersion: String,
+            @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
+            @Query("searchTerm") searchTerm: String,
+            @Query("searchType") searchType: String,
+            @Query("responseType") responseType: String,
+            @Query("pageOffset") pageOffset: Int,
+            @Query("pageSize") pageSize: Int,
+            @Query("sortOption") sortOption: String,
+            @Query("refinement") refinement: String,
+            @Header("longitude") longitude: String = "",
+            @Header("latitude") latitude: String = "",
+            @Query("suburbId") suburbId: String?,
+            @Query("storeId") storeId: String?,
+            @Query("filterContent") filterContent: Boolean?,
+            @Query("deliveryType") deliveryType: String?,
+            @Query("deliveryDetails") deliveryDetails: String?
+    ): retrofit2.Response<ProductView>
 }
 

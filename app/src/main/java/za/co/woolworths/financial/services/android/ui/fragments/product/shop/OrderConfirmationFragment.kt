@@ -5,7 +5,6 @@ import android.graphics.Typeface.BOLD
 import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableString
-import android.text.SpannableStringBuilder
 import android.text.style.StyleSpan
 import android.view.Menu
 import android.view.MenuInflater
@@ -17,9 +16,11 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import android.graphics.Typeface
+import androidx.fragment.app.viewModels
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentOrderConfirmationBinding
 import com.google.firebase.analytics.FirebaseAnalytics
+import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity
 import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
@@ -30,6 +31,7 @@ import za.co.woolworths.financial.services.android.models.dto.cart.OrderItems
 import za.co.woolworths.financial.services.android.models.dto.cart.SubmittedOrderResponse
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.viewmodel.OrderConfirmationViewModel
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.adapters.ItemsOrderListAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
@@ -44,6 +46,7 @@ import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBind
 import za.co.woolworths.financial.services.android.util.voc.VoiceOfCustomerManager
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
+@AndroidEntryPoint
 class OrderConfirmationFragment :
     BaseFragmentBinding<FragmentOrderConfirmationBinding>(FragmentOrderConfirmationBinding::inflate) {
 
@@ -54,6 +57,7 @@ class OrderConfirmationFragment :
     private var cncOtherItemsOrderListAdapter: ItemsOrderListAdapter? = null
     private var itemsOrderListAdapter: ItemsOrderListAdapter? = null
     private var isPurchaseEventTriggered: Boolean = false
+    private val orderConfirmationViewModel: OrderConfirmationViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -83,6 +87,8 @@ class OrderConfirmationFragment :
                                         isPurchaseEventTriggered = false
                                     }
 
+                                    //Make this call to recommendation API after receiving the 200 or 201 from the order
+                                    orderConfirmationViewModel.submitRecommendationsOnOrderResponse(response)
                                 }
                                 else -> {
                                     showErrorScreen(ErrorHandlerActivity.ERROR_TYPE_SUBMITTED_ORDER)
@@ -192,17 +198,15 @@ class OrderConfirmationFragment :
                 Delivery.CNC -> {
                     binding.deliveryCollectionDetailsConstraintLayout.root.visibility = VISIBLE
                     binding.dashOrderDetailsLayout.root.visibility = VISIBLE
-                    binding.dashDeliveryConstraintLayout.apply {
-                        optionTitle.text = it.getText(R.string.collecting_from)
                         binding.deliveryCollectionDetailsConstraintLayout.apply {
                             val other: Int = response?.items?.other?.size ?: 0
                             val food: Int = response?.items?.food?.size ?: 0
                             if (other > 0 && food == 0) {
-                                deliveryTextView.text = it.getText(R.string.collection_semicolon)
+                                deliveryTextView.text = it.getString(R.string.collection_semicolon)
                                 infoDeliveryDateTimeTextView.visibility = VISIBLE
                                 binding.dashOrderDetailsLayout.root.visibility = GONE
                             } else {
-                                deliveryTextView.text = it.getText(R.string.food_items_semicolon)
+                                deliveryTextView.text = it.getString(R.string.food_items_semicolon)
                                 infoDeliveryDateTimeTextView.visibility = GONE
                             }
                             optionImage.background =
@@ -211,31 +215,27 @@ class OrderConfirmationFragment :
                                 response?.orderSummary?.fulfillmentDetails?.storeName?.let {
                                     convertToTitleCase(it)
                                 } ?: ""
-                            standardEnroutetextView.text = it.getText(R.string.collection_status)
+                            standardEnroutetextView.text = it.getString(R.string.collection_status)
                             collectedOrDeliveredTextView.text =
                                 it.getText(R.string.status_collected)
+                            optionTitle.text = it.getString(R.string.collecting_from)
                             setUpCncOrderDetailsLayout(response)
                             continueBrowsingStandardLinearLayout.setOnClickListener {
                                 requireActivity().setResult(CheckOutFragment.REQUEST_CHECKOUT_ON_CONTINUE_SHOPPING)
                                 requireActivity().finish()
                             }
                         }
-                    }
                 }
                 Delivery.STANDARD -> {
                     binding.deliveryCollectionDetailsConstraintLayout.root.visibility = VISIBLE
                     binding.dashOrderDetailsLayout.root.visibility = VISIBLE
-                    binding.dashDeliveryConstraintLayout.apply {
+                    binding.deliveryCollectionDetailsConstraintLayout.apply {
+                        deliveryTextView.text = it.getString(R.string.delivery_semicolon)
                         optionImage.background =
                             AppCompatResources.getDrawable(
                                 it,
                                 R.drawable.ic_icon_standard_delivery_truck
                             )
-                        optionTitle.text = it.getText(R.string.delivering_to)
-                    }
-                    binding.deliveryCollectionDetailsConstraintLayout.apply {
-                        deliveryTextView.text = it.getText(R.string.delivery_semicolon)
-
                         val address =  response?.orderSummary?.fulfillmentDetails?.address?.address1?.let {
                             convertToTitleCase(it)
                         } ?: ""
@@ -247,7 +247,7 @@ class OrderConfirmationFragment :
                         formattedNickNameWithAddress.append(address)
 
                         optionLocation.text = formattedNickNameWithAddress
-
+                        optionTitle.text = it.getString(R.string.delivering_to)
                         continueBrowsingStandardLinearLayout.setOnClickListener {
                             requireActivity()?.setResult(CheckOutFragment.REQUEST_CHECKOUT_ON_CONTINUE_SHOPPING)
                             requireActivity()?.finish()
@@ -268,7 +268,7 @@ class OrderConfirmationFragment :
                                 it,
                                 R.drawable.icon_dash_delivery_scooter
                             )
-                        optionTitle.text = it.getText(R.string.dashing_to)
+                        optionTitle.text = it.getString(R.string.dashing_to)
 
                         val address =  response?.orderSummary?.fulfillmentDetails?.address?.address1?.let {
                             convertToTitleCase(it)
