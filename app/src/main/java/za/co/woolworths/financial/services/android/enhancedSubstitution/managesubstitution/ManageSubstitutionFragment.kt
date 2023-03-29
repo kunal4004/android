@@ -61,7 +61,6 @@ class ManageSubstitutionFragment() : BaseFragmentBinding<ManageSubstitutionDetai
     private fun getSubstututeProductList(): MutableList<SubstitutionRecylerViewItem.SubstitutionProducts> {
         var list = mutableListOf<SubstitutionRecylerViewItem.SubstitutionProducts>()
         /*prepare list from kibo api and set to recyler view */
-
         return list
     }
 
@@ -82,7 +81,9 @@ class ManageSubstitutionFragment() : BaseFragmentBinding<ManageSubstitutionDetai
     }
 
     override fun openSubstitutionSearchScreen() {
-
+        (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
+                SearchSubstitutionFragment()
+        )
     }
 
     override fun clickOnLetMyShooperChooseOption() {

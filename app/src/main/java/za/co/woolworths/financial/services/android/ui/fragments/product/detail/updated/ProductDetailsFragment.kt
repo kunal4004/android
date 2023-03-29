@@ -39,6 +39,7 @@ import com.awfs.coordination.R
 import com.awfs.coordination.databinding.ProductDetailsFragmentBinding
 import com.awfs.coordination.databinding.PromotionalImageBinding
 import com.facebook.FacebookSdk.getApplicationContext
+import com.google.api.ResourceProto.resource
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
@@ -1541,11 +1542,39 @@ class ProductDetailsFragment :
                 showEnhancedSubstitutionDialog()
             }
 
-            callGetSubstitutionApi(isInventoryCalled)
+           // callGetSubstitutionApi(isInventoryCalled)
+            showSubstitutionLayoutOne(isInventoryCalled)
 
             if (isAllProductsOutOfStock() && isInventoryCalled) {
                 productOutOfStockErrorMessage()
                 return
+            }
+        }
+    }
+
+    private fun showSubstitutionLayoutOne(isInventoryCalled: Boolean) {
+
+        binding?.productDetailOptionsAndInformation?.substitutionLayout?.apply {
+
+            if (isAllProductsOutOfStock() && isInventoryCalled) {
+                this.txtSubstitutionEdit?.background = resources.getDrawable(R.drawable.grey_background_with_corner_5,
+                        null)
+            } else {
+                this.txtSubstitutionEdit?.background = resources.getDrawable(R.drawable.black_background_with_corner_5,
+                        null)
+
+            }
+
+            this.txtSubstitutionEdit?.setOnClickListener {
+                if (isAllProductsOutOfStock() && isInventoryCalled) {
+                    /*pop up for out of stock*/
+                    productOutOfStockErrorMessage(true)
+                } else {
+                    /*navigate to manage substitution screen*/
+                    (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
+                           ManageSubstitutionFragment()
+                    )
+                }
             }
         }
     }
@@ -1612,7 +1641,7 @@ class ProductDetailsFragment :
                     } else {
                         /*navigate to manage substitution screen*/
                         (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
-                            openManageSubstitutionFragment(resource.data?.data?.getOrNull(0)?.substitutionSelection)
+                            openManageSubstitutionFragment(resource?.data?.data?.getOrNull(0)?.substitutionSelection)
                         )
                     }
                 }
