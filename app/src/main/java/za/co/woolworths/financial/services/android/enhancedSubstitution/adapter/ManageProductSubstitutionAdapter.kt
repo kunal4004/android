@@ -41,10 +41,8 @@ class ManageProductSubstitutionAdapter(
 
     override fun onBindViewHolder(holder: SubstitutionViewHolder, position: Int) {
         when (holder) {
-            is SubstitutionViewHolder.SubstitueOptionwHolder ->
-                holder.bind(headerItem, productSubstitutionListListener)
-            is SubstitutionViewHolder.SubstitueProductViewHolder ->
-                holder.bind(subStitutionProductList[position])
+            is SubstitutionViewHolder.SubstitueOptionwHolder -> holder.bind(headerItem, productSubstitutionListListener)
+            is SubstitutionViewHolder.SubstitueProductViewHolder -> holder.bind(subStitutionProductList[position])
         }
     }
 
@@ -61,5 +59,6 @@ class ManageProductSubstitutionAdapter(
     private fun isPositionHeader(position: Int): Boolean {
         return  position == 0
     }
+
 
 }

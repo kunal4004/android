@@ -3163,7 +3163,6 @@
         <item name="android:gravity">top</item>
         <item name="android:fontFamily">@font/opensans_regular</item>
     </style>
-
     <style name="style_substitution_promotion">
         <item name="android:textSize">10sp</item>
         <item name="android:textColor">@color/color_D0021B</item>
@@ -3171,7 +3170,6 @@
         <item name="android:gravity">top</item>
         <item name="android:fontFamily">@font/opensans_semi_bold</item>
     </style>
-
     <style name="style_substitution_price">
         <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/black</item>
@@ -3179,5 +3177,6 @@
         <item name="android:gravity">top</item>
         <item name="android:fontFamily">@font/opensans_semi_bold</item>
     </style>
+
 
 </resources>

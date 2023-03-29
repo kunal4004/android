@@ -41,7 +41,6 @@
             app:WTextView_font="medium" />
     </RelativeLayout>
 
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/llItemContainer"
         android:layout_width="match_parent"
@@ -200,7 +199,6 @@
         </LinearLayout>
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
-
             android:id="@+id/tvPromotionText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -218,7 +216,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@id/tvProductAvailability"
             tools:text="You Saved R5.00" />
-
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             android:id="@+id/tvPrice"
@@ -245,4 +242,5 @@
             android:background="@color/color_E5E5E5"
             app:layout_constraintBottom_toBottomOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </com.daimajia.swipe.SwipeLayout>

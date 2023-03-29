@@ -9,18 +9,17 @@ import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 
-class SubstitutionPagingSource(var apiHelper: SubstitutionApiHelper,
-                               var requestParams: ProductsRequestParams,
-                               var _pagingResponse: MutableLiveData<PagingResponse>) :
+class SubstitutionPagingSource (var apiHelper: SubstitutionApiHelper,
+                                var requestParams: ProductsRequestParams,
+                                var _pagingResponse: MutableLiveData<PagingResponse>) :
         PagingSource<Int, ProductList>() {
-
     override fun getRefreshKey(state: PagingState<Int, ProductList>): Int? {
         return state.anchorPosition?.let { anchorPosition ->
             state.closestPageToPosition(anchorPosition)?.prevKey?.plus(ProductSubstitutionRepository.PAGE_SIZE)
+
                     ?: state.closestPageToPosition(anchorPosition)?.nextKey?.minus(ProductSubstitutionRepository.PAGE_SIZE)
         }
     }
-
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, ProductList> {
         return try {
             val position = params.key ?: 0
@@ -36,8 +35,4 @@ class SubstitutionPagingSource(var apiHelper: SubstitutionApiHelper,
             LoadResult.Error(e)
         }
     }
-
 }
-
-
-

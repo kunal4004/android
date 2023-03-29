@@ -39,6 +39,7 @@ import com.awfs.coordination.R
 import com.awfs.coordination.databinding.ProductDetailsFragmentBinding
 import com.awfs.coordination.databinding.PromotionalImageBinding
 import com.facebook.FacebookSdk.getApplicationContext
+import com.google.api.ResourceProto.resource
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
@@ -1541,9 +1542,8 @@ class ProductDetailsFragment :
                 showEnhancedSubstitutionDialog()
             }
 
-            //callGetSubstitutionApi(isInventoryCalled)
+           // callGetSubstitutionApi(isInventoryCalled)
             showSubstitutionLayoutOne(isInventoryCalled)
-
 
             if (isAllProductsOutOfStock() && isInventoryCalled) {
                 productOutOfStockErrorMessage()
@@ -1552,10 +1552,19 @@ class ProductDetailsFragment :
         }
     }
 
-    fun showSubstitutionLayoutOne(isInventoryCalled: Boolean) {
-        /*todo need to remove once get subs api is deployed*/
+    private fun showSubstitutionLayoutOne(isInventoryCalled: Boolean) {
+
         binding?.productDetailOptionsAndInformation?.substitutionLayout?.apply {
-            this.txtSubstitutionTitle.text = getString(R.string.let_my_shooper_choose_for_me)
+
+            if (isAllProductsOutOfStock() && isInventoryCalled) {
+                this.txtSubstitutionEdit?.background = resources.getDrawable(R.drawable.grey_background_with_corner_5,
+                        null)
+            } else {
+                this.txtSubstitutionEdit?.background = resources.getDrawable(R.drawable.black_background_with_corner_5,
+                        null)
+
+            }
+
             this.txtSubstitutionEdit?.setOnClickListener {
                 if (isAllProductsOutOfStock() && isInventoryCalled) {
                     /*pop up for out of stock*/
@@ -1563,7 +1572,7 @@ class ProductDetailsFragment :
                 } else {
                     /*navigate to manage substitution screen*/
                     (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
-                            ManageSubstitutionFragment()
+                           ManageSubstitutionFragment()
                     )
                 }
             }
@@ -1590,14 +1599,10 @@ class ProductDetailsFragment :
                         binding.progressBar.visibility = View.GONE
                         hideSubstitutionLayout()
                     }
-                    else -> {
-
-                    }
                 }
             }
         }
     }
-
 
     private fun showSubstitutionLayout(isInventoryCalled: Boolean, resource: Resource<ProductSubstitution>) {
 
@@ -1623,8 +1628,8 @@ class ProductDetailsFragment :
                 return
             }
 
-            if (resource.data?.data?.get(0)?.substitutionSelection == USER_CHOICE) {
-                txtSubstitutionTitle.text = resource.data?.data?.get(0)?.substitutionInfo?.displayName
+            if (resource.data?.data?.getOrNull(0)?.substitutionSelection == USER_CHOICE) {
+                txtSubstitutionTitle.text = resource.data?.data?.getOrNull(0)?.substitutionInfo?.displayName
             } else {
                 txtSubstitutionTitle.text = getString(R.string.let_my_shooper_choose_for_me)
             }
@@ -1636,7 +1641,7 @@ class ProductDetailsFragment :
                     } else {
                         /*navigate to manage substitution screen*/
                         (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
-                            openManageSubstitutionFragment(resource.data?.data?.get(0)?.substitutionSelection)
+                            openManageSubstitutionFragment(resource?.data?.data?.getOrNull(0)?.substitutionSelection)
                         )
                     }
                 }

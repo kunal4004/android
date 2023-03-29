@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/rootLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/default_background">
-
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/searchToolbar"
         android:layout_width="match_parent"
@@ -17,13 +17,11 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
-
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-
             <View
-                android:id="@+id/view11"
+                android:id="@+id/view_top_seperator"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:background="@drawable/bg_search_corner_4"
@@ -31,7 +29,6 @@
                 app:layout_constraintEnd_toStartOf="@+id/txtCancelSearch"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
-
             <EditText
                 android:id="@+id/tvSearchProduct"
                 android:layout_width="0dp"
@@ -50,7 +47,6 @@
                 app:layout_constraintEnd_toStartOf="@+id/crossIamgeView"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
-
             <ImageView
                 android:id="@+id/crossIamgeView"
                 android:layout_width="@dimen/sixteen_dp"
@@ -58,10 +54,9 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginEnd="@dimen/twenty_dp"
                 android:src="@drawable/close_cross_icon"
-                app:layout_constraintBottom_toBottomOf="@+id/view11"
-                app:layout_constraintEnd_toEndOf="@+id/view11"
-                app:layout_constraintTop_toTopOf="@+id/view11" />
-
+                app:layout_constraintBottom_toBottomOf="@+id/view_top_seperator"
+                app:layout_constraintEnd_toEndOf="@+id/view_top_seperator"
+                app:layout_constraintTop_toTopOf="@+id/view_top_seperator" />
             <TextView
                 android:id="@+id/txtCancelSearch"
                 android:layout_width="wrap_content"
@@ -78,11 +73,10 @@
                 android:textSize="@dimen/twelve_sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/view11"
+                app:layout_constraintStart_toEndOf="@+id/view_top_seperator"
                 app:layout_constraintTop_toTopOf="@+id/tvSearchProduct" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.appcompat.widget.Toolbar>
-
     <com.facebook.shimmer.ShimmerFrameLayout
         android:id="@+id/shimmerLayout"
         android:layout_width="match_parent"
@@ -94,26 +88,18 @@
         app:layout_constraintTop_toBottomOf="@+id/txtSubstitutionCount"
         app:shimmer_repeat_mode="restart"
         app:shimmer_shape="radial">
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-
             <include layout="@layout/shimmer_item_cell" />
-
             <include layout="@layout/shimmer_item_cell" />
-
             <include layout="@layout/shimmer_item_cell" />
-
             <include layout="@layout/shimmer_item_cell" />
-
             <include layout="@layout/shimmer_item_cell" />
-
             <include layout="@layout/shimmer_item_cell" />
         </LinearLayout>
     </com.facebook.shimmer.ShimmerFrameLayout>
-
     <View
         android:layout_width="match_parent"
         android:layout_height="@dimen/one_dp"
@@ -121,7 +107,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/searchToolbar" />
-
     <TextView
         android:id="@+id/txtSubstitutionCount"
         android:layout_width="match_parent"
@@ -135,8 +120,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/searchToolbar" />
-
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="@dimen/zero_dp"
@@ -150,7 +133,6 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtSubstitutionCount" />
-
     <View
         android:id="@+id/viewSeprator"
         android:layout_width="match_parent"
@@ -161,7 +143,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/recyclerView" />
-
     <View
         android:layout_width="@dimen/zero_dp"
         android:layout_height="@dimen/zero_dp"
@@ -170,7 +151,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/viewSeprator" />
-
     <Button
         android:id="@+id/btnConfirm"
         android:layout_width="match_parent"
@@ -191,5 +171,4 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/viewSeprator" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>
