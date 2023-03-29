@@ -78,7 +78,7 @@
         android:layout_height="@dimen/one_dp"
         android:layout_centerHorizontal="true"
         android:layout_marginStart="@dimen/twenty_four_dp"
-        android:layout_marginTop="@dimen/fifteen_dp"
+        android:layout_marginTop="@dimen/sixteen_dp"
         android:layout_marginEnd="@dimen/twenty_four_dp"
         android:background="@drawable/rounded_grey_corner"
         app:layout_constraintTop_toBottomOf="@+id/inCurrentLocation" />
