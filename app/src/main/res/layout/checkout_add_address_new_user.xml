@@ -61,7 +61,6 @@
                 android:id="@+id/autoCompleteTextView"
                 style="@style/add_address_auto_complete_edittext_style"
                 android:layout_marginTop="@dimen/four_dp"
-                android:drawableStart="@drawable/mapview"
                 android:drawablePadding="@dimen/eight_dp"
                 android:hint="@string/places_autocomplete_tv_hint"
                 android:maxLines="1"
@@ -72,7 +71,6 @@
             <TextView
                 android:id="@+id/autocompletePlaceErrorMsg"
                 style="@style/add_address_screen_error_msg_style"
-                android:layout_marginTop="@dimen/fifteen_dp"
                 android:text="@string/places_address_error_msg"
                 android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="@id/right_guideline"
@@ -104,7 +102,6 @@
             <TextView
                 android:id="@+id/addressStreetNameEditTextErrorMsg"
                 style="@style/add_address_screen_error_msg_style"
-                android:layout_marginTop="@dimen/fifteen_dp"
                 android:text="@string/places_address_error_msg"
                 android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="@id/right_guideline"

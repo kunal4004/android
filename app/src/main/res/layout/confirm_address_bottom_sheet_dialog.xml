@@ -99,14 +99,19 @@
         android:layout_marginBottom="@dimen/twenty_four_dp"
         android:background="@color/black"
         android:fontFamily="@font/futura_semi_bold"
+        android:paddingStart="@dimen/sixteen_dp"
+        android:paddingEnd="@dimen/sixteen_dp"
         android:gravity="center"
-        android:letterSpacing="0.2"
+        android:letterSpacing="0.12"
         android:minHeight="@dimen/fifty_dp"
         android:text="@string/confirm"
+        android:maxLines="1"
         android:textAllCaps="true"
+        android:ellipsize="end"
         android:textColor="@color/white"
         android:textSize="@dimen/twelve_sp"
         android:visibility="gone"
+        android:maxLength="35"
         app:layout_constraintBottom_toBottomOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
