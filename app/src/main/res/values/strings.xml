@@ -2971,4 +2971,7 @@
     <string name="pet_insurance_care">PET</string>
     <string name="error_message_400">We are unable to process your request, Please \ncontact our call centre on \n0861 50 20 10</string>
     <string name="geo_loc_error_msg_title">We can’t seem to find you here.</string>
+    <string name="no_location_settings_msg">Search for an address, the name of a complex, or your closest landmark (e.g. a Woolies store).</string>
+    <string name="location_settings_mesg"><u>Turn Location Settings On</u></string>
+
 </resources>
