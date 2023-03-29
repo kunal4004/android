@@ -136,7 +136,7 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
 
     override fun clickOnProductSelection(productList: ProductList?) {
         binding.btnConfirm.isEnabled = true
-        binding.btnConfirm.background = resources.getDrawable(R.drawable.black_background_with_corner_5, null)
+        binding.btnConfirm.background = resources.getDrawable(R.drawable.black_color_drawable, null)
         this.productList = productList
     }
 

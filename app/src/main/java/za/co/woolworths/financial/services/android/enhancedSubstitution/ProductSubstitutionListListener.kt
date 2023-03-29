@@ -4,4 +4,5 @@ interface ProductSubstitutionListListener {
     fun openSubstitutionSearchScreen()
     fun clickOnLetMyShooperChooseOption()
     fun clickOnMySubstitutioneOption()
+    fun clickOnSubstituteProduct()
 }

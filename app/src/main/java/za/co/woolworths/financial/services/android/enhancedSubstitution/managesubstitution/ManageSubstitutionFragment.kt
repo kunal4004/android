@@ -118,7 +118,7 @@ class ManageSubstitutionFragment() : BaseFragmentBinding<ManageSubstitutionDetai
     }
 
     private fun confirmDontWantSubstitutionForProduct() {
-
+        (activity as BottomNavigationActivity)?.popFragment()
     }
 
     override fun openSubstitutionSearchScreen() {
@@ -128,11 +128,16 @@ class ManageSubstitutionFragment() : BaseFragmentBinding<ManageSubstitutionDetai
     }
 
     override fun clickOnLetMyShooperChooseOption() {
-        binding.btnConfirm?.background = resources.getDrawable(R.drawable.black_background_with_corner_5, null)
+        binding.btnConfirm?.background = resources.getDrawable(R.drawable.black_color_drawable, null)
     }
 
     override fun clickOnMySubstitutioneOption() {
         binding.btnConfirm?.isEnabled = false
-        binding.btnConfirm?.background = resources.getDrawable(R.drawable.grey_background_with_corner_5, null)
+        binding.btnConfirm?.background = resources.getDrawable(R.drawable.grey_bg_drawable, null)
+    }
+
+    override fun clickOnSubstituteProduct() {
+       binding.btnConfirm.isEnabled = true
+       binding.btnConfirm.background = resources.getDrawable(R.drawable.black_color_drawable, null)
     }
 }
