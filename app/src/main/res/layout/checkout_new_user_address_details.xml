@@ -11,11 +11,11 @@
         style="@style/add_address_screen_placeholders_style"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/twenty_four_dp"
         android:text="@string/address_type"
         app:layout_constraintRight_toRightOf="@id/right_guideline"
         app:layout_constraintStart_toStartOf="@id/left_guideline"
-        app:layout_constraintTop_toTopOf="@id/top_guideline" />
+        app:layout_constraintTop_toTopOf="@id/top_guideline"
+        />
 
     <HorizontalScrollView
         android:id="@+id/scrollView"
