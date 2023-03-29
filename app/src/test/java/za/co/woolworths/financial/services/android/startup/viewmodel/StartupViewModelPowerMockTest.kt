@@ -12,6 +12,7 @@ import org.hamcrest.CoreMatchers
 import org.hamcrest.core.IsNull
 import org.junit.Assert
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito.*
@@ -61,7 +62,7 @@ class StartupViewModelPowerMockTest {
         `when`(instrumentationContext.packageManager).thenReturn(packageManager)
     }
 
-    /*@Test
+    @Test
     fun check_for_environment_variable() {
         `when`(packageManager.getPackageInfo(packageName, 0)).thenReturn(packageInfo)
 
@@ -70,16 +71,16 @@ class StartupViewModelPowerMockTest {
         Assert.assertEquals(packageName, startupViewModel.appVersion)
     }
 
+
     @Test
     fun throws_NameNotFoundException() {
-
         `when`(packageManager.getPackageInfo(packageName, 0)).thenThrow(PackageManager.NameNotFoundException())
-
         startupViewModel.setUpEnvironment(instrumentationContext)
         Assert.assertEquals("QA", startupViewModel.environment)
         Assert.assertEquals("6.1.0", startupViewModel.appVersion)
     }
 
+    @Ignore
     @Test
     fun check_for_firebase_events() {
         `when`(packageManager.getPackageInfo(packageName, 0)).thenReturn(packageInfo)
@@ -97,5 +98,5 @@ class StartupViewModelPowerMockTest {
         verify(firebaseAnalytics, times(1)).setUserId("Woolworth")
         verify(firebaseAnalytics, times(1)).setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.ATGId, "Woolworth")
         verify(firebaseAnalytics, times(1)).setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.C2ID, "test")
-    }*/
+    }
 }
