@@ -26,7 +26,7 @@ import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
 import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
-import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment
+import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.FoodProductNotAvailableForCollectionDialog
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ProductDetailsFindInStoreDialog
 import za.co.woolworths.financial.services.android.util.KeyboardUtil
@@ -42,11 +42,24 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
     private var searchProductSubstitutionAdapter: SearchProductSubstitutionAdapter? = null
     private lateinit var productSubstitutionViewModel: ProductSubstitutionViewModel
     private var productList: ProductList? = null
+    private var commarceItemId: String? = ""
+
+    companion object {
+
+        fun newInstance(
+                commarceItemId: String?,
+        ) = ManageSubstitutionFragment().withArgs {
+            putString(ManageSubstitutionFragment.COMMARCE_ITEM_ID, commarceItemId)
+        }
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setUpViewModel()
         searchProductSubstitutionAdapter = SearchProductSubstitutionAdapter(this)
+        arguments?.apply {
+            commarceItemId = getString(ManageSubstitutionFragment.COMMARCE_ITEM_ID, "")
+        }
 
         binding.recyclerView?.apply {
             setHasFixedSize(true)
@@ -179,9 +192,7 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
                                 return@observe
                             }
                         }
-                        /*add subs api*/
-                        callAddSubsApi()
-
+                        naviagteToPdpScreen()
                     }
                     Status.ERROR -> {
                         /*todo error view if inventory api is failed*/
@@ -191,9 +202,15 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
         }
     }
 
-    fun callAddSubsApi() {
-        /*todo call add subs api*/
-        (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(ProductDetailsFragment())
+    fun naviagteToPdpScreen() {
+
+        if (commarceItemId?.isEmpty() == true) {
+            /*navigate to pdp with selected product  object and call add to cart api in order to add substitute there*/
+
+        } else {
+            /*add subsitute api here since we have commarceId because product is already added in cart */
+        }
+
     }
 
     fun productOutOfStockErrorMessage() {
