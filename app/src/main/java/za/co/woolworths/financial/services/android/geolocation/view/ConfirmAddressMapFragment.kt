@@ -1,13 +1,16 @@
 package za.co.woolworths.financial.services.android.geolocation.view
 
 import android.annotation.SuppressLint
+import android.annotation.TargetApi
 import android.app.Activity
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
@@ -25,7 +28,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.checkout.view.adapter.GooglePlacesAdapter
-import za.co.woolworths.financial.services.android.checkout.view.adapter.GooglePlacesAdapter.Companion.SEARCH_LENGTH
 import za.co.woolworths.financial.services.android.checkout.view.adapter.PlaceAutocomplete
 import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.ROUTE
 import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.STREET_NUMBER
@@ -38,9 +40,9 @@ import za.co.woolworths.financial.services.android.geolocation.view.DeliveryAddr
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
-import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
 import za.co.woolworths.financial.services.android.ui.fragments.poi.MapsPoiBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.EnableLocationSettingsFragment
 import za.co.woolworths.financial.services.android.ui.views.maps.DynamicMapDelegate
 import za.co.woolworths.financial.services.android.ui.views.maps.model.DynamicMapMarker
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.VtoErrorBottomSheetDialog
@@ -124,7 +126,8 @@ class ConfirmAddressMapFragment :
         clearAddress()
         confirmAddressClick()
         addFragmentListner()
-
+        turnLocationSettingsOn()
+        cancelClick()
         if (confirmAddressViewModel.isConnectedToInternet(requireActivity())) {
             initMap()
             binding.dynamicMapView?.setAllGesturesEnabled(true)
@@ -199,9 +202,21 @@ class ConfirmAddressMapFragment :
         }
     }
 
+    private fun cancelClick() {
+        binding.cancelText?.setOnClickListener {
+            findNavController().navigateUp()
+        }
+    }
+    private fun turnLocationSettingsOn() {
+        binding.apply {
+            noLocationLayout?.turnOnSubTitle?.setOnClickListener {
+                KotlinUtils.openAccessMyLocationDeviceSettings(EnableLocationSettingsFragment.ACCESS_MY_LOCATION_REQUEST_CODE, activity)
+            }
+        }
+    }
+
     private fun clearAddressText() {
         binding.autoCompleteTextView.setText("")
-        showSearchBarHint()
     }
 
     private fun clearMapDetails() {
@@ -494,13 +509,6 @@ class ConfirmAddressMapFragment :
             binding?.autoCompleteTextView?.apply {
                 setAdapter(placesAdapter)
             }
-            showSearchBarHint()
-            binding?.autoCompleteTextView?.afterTextChanged {
-                if (it.length < SEARCH_LENGTH) {
-                    showSearchBarHint()
-                } else
-                    hideSearchBarHint()
-            }
             binding?.autoCompleteTextView?.onItemClickListener =
                 AdapterView.OnItemClickListener { parent, _, position, _ ->
                     val item = parent.getItemAtPosition(position) as? PlaceAutocomplete
@@ -553,6 +561,7 @@ class ConfirmAddressMapFragment :
     private fun showSearchBarHint() {
         binding.apply {
             errorMessage?.visibility = View.GONE
+            errorMessageTitle?.visibility = View.GONE
             errorMassageDivider?.visibility = View.VISIBLE
             searchBarTipHint?.visibility = View.VISIBLE
         }
@@ -576,15 +585,29 @@ class ConfirmAddressMapFragment :
                     )
                 } else {
                     errorMassageDivider?.visibility = View.VISIBLE
+                    errorMessageTitle?.visibility = View.VISIBLE
                     errorMessage?.visibility = View.VISIBLE
-                    errorMessage?.text = getString(R.string.geo_loc_error_msg)
+                    errorMessageTitle?.text = getString(R.string.geo_loc_error_msg_title)
+                    errorMessage?.text = getText(R.string.geo_loc_error_msg)
                     errorMessage?.setTextColor(
                         ContextCompat.getColor(
                             requireContext(),
-                            R.color.red
+                            R.color.color_D0021B
                         )
                     )
                     errorMessage?.setBackgroundColor(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.white
+                        )
+                    )
+                    errorMessageTitle?.setTextColor(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.color_D0021B
+                        )
+                    )
+                    errorMessageTitle?.setBackgroundColor(
                         ContextCompat.getColor(
                             requireContext(),
                             R.color.white
@@ -826,11 +849,46 @@ class ConfirmAddressMapFragment :
 
     override fun onResume() {
         super.onResume()
-        binding.dynamicMapView?.onResume()
-        if (binding.dynamicMapView?.isMapInstantiated() == true) {
-            isMoveMapCameraFirstTime = false
+        KeyboardUtils.showSoftKeyboard(binding.autoCompleteTextView, activity)
+        checkForLocationPermissionAndSetLocationAddress()
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    private fun checkForLocationPermissionAndSetLocationAddress() {
+        activity?.apply {
+            //Check if user has location services enabled. If not, notify user as per current store locator functionality.
+            if (!Utils.isLocationEnabled(this)) {
+                binding.apply {
+                    autoCompleteTextView.isEnabled = false
+                    confirmAddress.isEnabled = false
+                    dynamicMapView?.setAllGesturesEnabled(false)
+
+                    noLocationLayout?.noLocationRootLayout?.visibility = View.VISIBLE
+                    dynamicMapView?.visibility = View.GONE
+                    imgMapMarker?.visibility = View.GONE
+                    confirmAddressLayout?.visibility = View.GONE
+                }
+                return@apply
+            } else {
+                binding.noLocationLayout?.noLocationRootLayout?.visibility = View.GONE
+
+                binding.dynamicMapView?.onResume()
+                if (binding.dynamicMapView?.isMapInstantiated() == true) {
+                    isMoveMapCameraFirstTime = false
+                }
+                moveMapCamera(mLatitude?.toDoubleOrNull(), mLongitude?.toDoubleOrNull())
+                binding.apply {
+                    dynamicMapView?.visibility = View.VISIBLE
+                    mapFrameLayout.visibility = View.VISIBLE
+                    autoCompleteTextView.isEnabled = true
+                    dynamicMapView?.setAllGesturesEnabled(true)
+                    if (isAddAddress != null && isAddressSearch == false) {
+                        confirmAddress.isEnabled = false
+                        imgMapMarker.visibility = View.GONE
+                    }
+                }
+            }
         }
-        moveMapCamera(mLatitude?.toDoubleOrNull(), mLongitude?.toDoubleOrNull())
     }
 
     override fun onDestroyView() {
