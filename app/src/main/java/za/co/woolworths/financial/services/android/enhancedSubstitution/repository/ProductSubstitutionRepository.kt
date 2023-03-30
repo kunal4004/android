@@ -45,6 +45,10 @@ class ProductSubstitutionRepository(var substitutionApiHelper: SubstitutionApiHe
             FirebaseManager.logException(e)
             Resource.error(R.string.error_unknown, null)
         }
+        catch (e: Exception) {
+            FirebaseManager.logException(e)
+            Resource.error(R.string.error_unknown, null)
+        }
     }
 
 
