@@ -93,6 +93,7 @@ import za.co.woolworths.financial.services.android.ui.adapters.*
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerAdapter.MultipleImageInterface
 import za.co.woolworths.financial.services.android.ui.extension.deviceWidth
 import za.co.woolworths.financial.services.android.ui.extension.underline
+import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.OutOfStockMessageDialogFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.size_guide.SkinProfileDialog
@@ -243,6 +244,10 @@ class ProductDetailsFragment :
     private lateinit var moreReviewViewModel: RatingAndReviewViewModel
     private val dialogInstance = FoodProductNotAvailableForCollectionDialog.newInstance()
     private lateinit var productSubstitutionViewModel: ProductSubstitutionViewModel
+    private var productList:ProductList? = null
+    private var selectionChoice: String = ""
+    private var substitutionId: String? = ""
+    private var commarceItemId: String? = ""
 
     @OpenTermAndLighting
     @Inject
@@ -281,6 +286,12 @@ class ProductDetailsFragment :
 
         const val USER_CHOICE = "USER_CHOICE"
         const val SHOPPER_CHOICE = "SHOPPER_CHOICE"
+        const val PRODUCTLIST = "PRODUCT_LIST"
+        fun newInstance(
+                productList: ProductList?,
+        ) = ProductDetailsFragment().withArgs {
+            putSerializable(PRODUCTLIST, productList)
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -295,13 +306,14 @@ class ProductDetailsFragment :
 
             (getSerializable(BRAND_NAVIGATION_DETAILS) as? BrandNavigationDetails)?.let {
                 bannerLabel = it.bannerLabel ?: ""
-                bannerImage = it.bannerImage ?: ""
+                bannerImage = it.bannerImage  ?: ""
             }
 
             brandHeaderText = getString(STR_BRAND_HEADER, AppConstant.EMPTY_STRING)
             defaultProductResponse = getString("productResponse")
             mFetchFromJson = getBoolean("fetchFromJson")
             isUserBrowsing = getBoolean(IS_BROWSING, false)
+            productList = getSerializable(PRODUCTLIST) as? ProductList?
         }
         productDetailsPresenter = ProductDetailsPresenterImpl(this, ProductDetailsInteractorImpl())
     }
@@ -1044,6 +1056,25 @@ class ProductDetailsFragment :
             updateAddToCartButtonForSelectedSKU()
             return
         }
+
+        /*checks added for enhance substitution feature*/
+
+        if (KotlinUtils.getDeliveryType()?.deliveryType == Delivery.DASH.type) {
+            if (selectionChoice == SHOPPER_CHOICE) {
+                /*set substitute id as empty*/
+                substitutionId = ""
+            } else if (selectionChoice == USER_CHOICE) {
+                if (commarceItemId?.isEmpty() == true) {
+                    /* not added to cart yet */
+                    /* substituted product can come from manage substitution screen or
+                    * search substitution screen  */
+                    substitutionId = productList?.sku
+                } else {
+                    substitutionId = commarceItemId
+                }
+            }
+        }
+
         //finally add to cart after all checks
         getSelectedSku()?.apply {
             addToCartForSelectedSKU()
@@ -1056,7 +1087,9 @@ class ProductDetailsFragment :
             AddItemToCart(
                 productDetails?.productId,
                 getSelectedSku()?.sku,
-                if (it > getSelectedSku()?.quantity!!) getSelectedSku()?.quantity!! else it
+                if (it > getSelectedSku()?.quantity!!) getSelectedSku()?.quantity!! else it,
+                selectionChoice,
+                substitutionId
             )
         }
         val listOfItems = ArrayList<AddItemToCart>()
@@ -1542,8 +1575,8 @@ class ProductDetailsFragment :
                 showEnhancedSubstitutionDialog()
             }
 
-           // callGetSubstitutionApi(isInventoryCalled)
-            showSubstitutionLayoutOne(isInventoryCalled)
+            callGetSubstitutionApi(isInventoryCalled)
+            //showSubstitutionLayoutOne(isInventoryCalled)
 
             if (isAllProductsOutOfStock() && isInventoryCalled) {
                 productOutOfStockErrorMessage()
@@ -1630,8 +1663,12 @@ class ProductDetailsFragment :
 
             if (resource.data?.data?.getOrNull(0)?.substitutionSelection == USER_CHOICE) {
                 txtSubstitutionTitle.text = resource.data?.data?.getOrNull(0)?.substitutionInfo?.displayName
+                selectionChoice = USER_CHOICE
+                substitutionId = resource.data?.data?.getOrNull(0)?.substitutionInfo?.id
             } else {
                 txtSubstitutionTitle.text = getString(R.string.let_my_shooper_choose_for_me)
+                selectionChoice = SHOPPER_CHOICE
+                substitutionId = ""
             }
 
                 this.txtSubstitutionEdit?.setOnClickListener {
@@ -1649,7 +1686,7 @@ class ProductDetailsFragment :
         }
 
     private fun openManageSubstitutionFragment(substiutionSelection: String?)  =
-            ManageSubstitutionFragment.newInstance(substiutionSelection)
+            ManageSubstitutionFragment.newInstance(substiutionSelection, commarceItemId)
 
 
     private fun hideSubstitutionLayout() {
@@ -2271,6 +2308,9 @@ class ProductDetailsFragment :
                             intent
                         )
                     }
+
+                    /* assign  updated commarceItem id here */
+
                 }
                 addToCartEvent(productDetails)
             }

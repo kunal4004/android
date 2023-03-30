@@ -15,6 +15,10 @@ import za.co.woolworths.financial.services.android.enhancedSubstitution.model.Ad
 import za.co.woolworths.financial.services.android.enhancedSubstitution.repository.ProductSubstitutionRepository
 import za.co.woolworths.financial.services.android.enhancedSubstitution.viewmodel.ProductSubstitutionViewModel
 import za.co.woolworths.financial.services.android.enhancedSubstitution.viewmodel.ProductSubstitutionViewModelFactory
+import za.co.woolworths.financial.services.android.enhancedSubstitution.apihelper.SubstitutionApiHelper
+import za.co.woolworths.financial.services.android.enhancedSubstitution.repository.ProductSubstitutionRepository
+import za.co.woolworths.financial.services.android.enhancedSubstitution.viewmodel.ProductSubstitutionViewModel
+import za.co.woolworths.financial.services.android.enhancedSubstitution.viewmodel.ProductSubstitutionViewModelFactory
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment
@@ -27,31 +31,37 @@ class ManageSubstitutionFragment() : BaseFragmentBinding<ManageSubstitutionDetai
     private var manageProductSubstitutionAdapter: ManageProductSubstitutionAdapter? = null
     private var selectionChoice = ""
     private lateinit var productSubstitutionViewModel: ProductSubstitutionViewModel
+    private var commarceItemId = ""
+    private lateinit var productSubstitutionViewModel: ProductSubstitutionViewModel
+
 
     companion object {
         private val SELECTION_CHOICE = "SELECTION_CHOICE"
+        val COMMARCE_ITEM_ID = "COMMARCE_ITEM_ID"
 
         fun newInstance(
                 substitutionSelectionChoice: String?,
+                commarceItemId: String?,
         ) = ManageSubstitutionFragment().withArgs {
             putString(SELECTION_CHOICE, substitutionSelectionChoice)
+            putString(COMMARCE_ITEM_ID, commarceItemId)
         }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         arguments?.apply {
-         selectionChoice = getString(SELECTION_CHOICE,  ProductDetailsFragment.USER_CHOICE)
+         selectionChoice = getString(SELECTION_CHOICE,  "")
+         commarceItemId = getString(COMMARCE_ITEM_ID,  "")
         }
         binding.btnConfirm?.setOnClickListener(this)
         binding.dontWantText?.setOnClickListener(this)
         binding.imgBack?.setOnClickListener(this)
+        setUpViewModel()
 
         manageProductSubstitutionAdapter = ManageProductSubstitutionAdapter(
             getHeaderForSubstituteList(), getSubstututeProductList() , this
         )
-
-        setUpViewModel()
 
         binding.recyclerView?.apply {
             setHasFixedSize(true)
@@ -66,7 +76,7 @@ class ManageSubstitutionFragment() : BaseFragmentBinding<ManageSubstitutionDetai
         )
     }
 
-    private fun setUpViewModel(){
+    private fun setUpViewModel() {
         productSubstitutionViewModel = ViewModelProvider(
                 this,
                 ProductSubstitutionViewModelFactory(ProductSubstitutionRepository(SubstitutionApiHelper()))
@@ -77,7 +87,18 @@ class ManageSubstitutionFragment() : BaseFragmentBinding<ManageSubstitutionDetai
     private fun getSubstututeProductList(): MutableList<SubstitutionRecylerViewItem.SubstitutionProducts> {
         var list = mutableListOf<SubstitutionRecylerViewItem.SubstitutionProducts>()
         /*prepare list from kibo api and set to recyler view */
-
+        list.add(SubstitutionRecylerViewItem.SubstitutionProducts(
+                1,"Banana","","you have 5","R21"))
+        list.add(SubstitutionRecylerViewItem.SubstitutionProducts(
+                1,"Banana","","you have 5","R21"))
+        list.add(SubstitutionRecylerViewItem.SubstitutionProducts(
+                1,"Banana","","you have 5","R21"))
+        list.add(SubstitutionRecylerViewItem.SubstitutionProducts(
+                1,"Banana","","you have 5","R21"))
+        list.add(SubstitutionRecylerViewItem.SubstitutionProducts(
+                1,"Banana","","you have 5","R21"))
+        list.add(SubstitutionRecylerViewItem.SubstitutionProducts(
+                1,"Banana","","you have 5","R21"))
         return list
     }
 
@@ -90,6 +111,15 @@ class ManageSubstitutionFragment() : BaseFragmentBinding<ManageSubstitutionDetai
     }
 
     private fun confirmSubstitutionProduct() {
+        callAddSubstitutionApi()
+    }
+
+    private fun callAddSubstitutionApi() {
+        if (commarceItemId?.isEmpty() == true) {
+            /*navigate to pdp with selected product  object and call add to cart api in order to add substitute there*/
+        } else {
+            /*add subsitute api here since we have commarceId because product is already added in cart */
+        }
 
     }
 
@@ -99,7 +129,7 @@ class ManageSubstitutionFragment() : BaseFragmentBinding<ManageSubstitutionDetai
 
     override fun openSubstitutionSearchScreen() {
         (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
-                SearchSubstitutionFragment()
+                SearchSubstitutionFragment.newInstance(commarceItemId)
         )
     }
 
