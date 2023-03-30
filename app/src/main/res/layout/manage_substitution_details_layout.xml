@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:layout_height="match_parent">
 
     <ImageView
         android:id="@+id/imgBack"
@@ -12,9 +11,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/sixteen_dp"
         android:layout_marginTop="@dimen/twenty_four_dp"
+        android:src="@drawable/back24"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:src="@drawable/back24" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/txtManageTitle"
@@ -38,8 +37,8 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="@dimen/sixteen_dp"
-        android:orientation="vertical"
         android:fadeScrollbars="false"
+        android:orientation="vertical"
         android:scrollbars="vertical"
         app:layout_constraintBottom_toTopOf="@+id/viewSeprator"
         app:layout_constraintEnd_toEndOf="parent"
@@ -48,36 +47,36 @@
         tools:listitem="@layout/shopping_list_commerce_item" />
 
     <View
-        android:visibility="gone"
         android:id="@+id/viewSeprator"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/recyclerView"
-        app:layout_constraintBottom_toTopOf="@+id/btnConfirm"
-        android:background="@color/shimmer_view_background"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/eight_dp"/>
+        android:layout_height="@dimen/eight_dp"
+        android:background="@color/shimmer_view_background"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/btnConfirm"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/recyclerView" />
 
     <Button
-         android:id="@+id/btnConfirm"
-         android:layout_width="match_parent"
-         android:layout_height="wrap_content"
-         android:layout_marginStart="@dimen/twenty_four_dp"
-         android:layout_marginEnd="@dimen/twenty_four_dp"
-         android:layout_marginBottom="@dimen/sixteen_dp"
-         android:layout_marginTop="@dimen/twenty_four_dp"
-         android:background="@drawable/grey_bg_drawable"
-         app:layout_constraintTop_toBottomOf="@+id/viewSeprator"
-         android:text="@string/confirm"
-         android:textAllCaps="true"
-         android:textColor="@color/white"
-         android:letterSpacing="0.08"
-         android:textSize="@dimen/twelve_sp"
-         android:lineSpacingExtra="@dimen/five_sp"
-         android:fontFamily="@font/futura_semi_bold"
-         app:layout_constraintBottom_toTopOf="@+id/dontWantText"
-         app:layout_constraintEnd_toEndOf="parent"
-         app:layout_constraintStart_toStartOf="parent" />
+        android:id="@+id/btnConfirm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/twenty_four_dp"
+        android:layout_marginTop="@dimen/twenty_four_dp"
+        android:layout_marginEnd="@dimen/twenty_four_dp"
+        android:layout_marginBottom="@dimen/sixteen_dp"
+        android:background="@drawable/grey_bg_drawable"
+        android:fontFamily="@font/futura_semi_bold"
+        android:letterSpacing="0.08"
+        android:lineSpacingExtra="@dimen/five_sp"
+        android:text="@string/confirm"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
+        android:textSize="@dimen/twelve_sp"
+        app:layout_constraintBottom_toTopOf="@+id/dontWantText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/viewSeprator" />
 
     <TextView
         android:id="@+id/dontWantText"
