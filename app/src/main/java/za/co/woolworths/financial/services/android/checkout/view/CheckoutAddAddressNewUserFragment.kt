@@ -253,35 +253,37 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
 
     private fun setTextFields() {
         oldNickName = selectedAddress?.savedAddress?.nickname
-        enableDisableUserInputEditText(
-            binding.recipientAddressLayout.addressNicknameEditText,
-            true,
-            binding.recipientAddressLayout.addressNicknameErrorMsg.isVisible
-        )
-        enableDisableUserInputEditText(
-            binding.recipientAddressLayout.unitComplexFloorEditText,
-            isEnable = true,
-            isErrorScreen = false
-        )
-        if (selectedAddress.savedAddress.placesId.isNullOrEmpty())
-            binding.autoCompleteTextView.text.clear() // This condition will only occur when address is added from web and is now opted for edit from app.
-        else
-            binding.autoCompleteTextView?.setText(selectedAddress.savedAddress.address1)
-        binding.recipientAddressLayout.addressNicknameEditText.setText(selectedAddress.savedAddress.nickname)
-        binding.recipientAddressLayout.unitComplexFloorEditText.setText(selectedAddress.savedAddress.address2)
-        binding.suburbEditText.setText(selectedAddress.savedAddress.suburb)
-        binding.suburbEditText.isEnabled = false
-        binding.provinceAutocompleteEditText.setText(selectedAddress.provinceName)
-        binding.provinceAutocompleteEditText.isEnabled = false
-        binding.recipientDetailsLayout.cellphoneNumberEditText.setText(selectedAddress.savedAddress.primaryContactNo)
-        binding.recipientDetailsLayout.recipientNameEditText.setText(selectedAddress.savedAddress.recipientName)
-        if (selectedAddress.savedAddress.postalCode.isNullOrEmpty()) {
-            binding.postalCode.text.clear()
-        } else
-            binding.postalCode.setText(selectedAddress.savedAddress.postalCode)
-        binding.postalCode.isEnabled = false
-        selectedDeliveryAddressType = selectedAddress.savedAddress.addressType
-        isValidAddress = true
+        binding.apply{
+            enableDisableUserInputEditText(
+                recipientAddressLayout.addressNicknameEditText,
+                true,
+              recipientAddressLayout.addressNicknameErrorMsg.isVisible
+            )
+            enableDisableUserInputEditText(
+                recipientAddressLayout.unitComplexFloorEditText,
+                isEnable = true,
+                isErrorScreen = false
+            )
+            if (selectedAddress.savedAddress.placesId.isNullOrEmpty())
+               autoCompleteTextView.text.clear() // This condition will only occur when address is added from web and is now opted for edit from app.
+            else
+                autoCompleteTextView?.setText(selectedAddress.savedAddress.address1)
+            recipientAddressLayout.addressNicknameEditText.setText(selectedAddress.savedAddress.nickname)
+            recipientAddressLayout.unitComplexFloorEditText.setText(selectedAddress.savedAddress.address2)
+            suburbEditText.setText(selectedAddress.savedAddress.suburb)
+            suburbEditText.isEnabled = false
+            provinceAutocompleteEditText.setText(selectedAddress.provinceName)
+            provinceAutocompleteEditText.isEnabled = false
+            recipientDetailsLayout.cellphoneNumberEditText.setText(selectedAddress.savedAddress.primaryContactNo)
+            recipientDetailsLayout.recipientNameEditText.setText(selectedAddress.savedAddress.recipientName)
+            if (selectedAddress.savedAddress.postalCode.isNullOrEmpty()) {
+                postalCode.text.clear()
+            } else
+               postalCode.setText(selectedAddress.savedAddress.postalCode)
+               postalCode.isEnabled = false
+            selectedDeliveryAddressType = selectedAddress.savedAddress.addressType
+            isValidAddress = true
+        }
     }
 
     private fun initView() {
