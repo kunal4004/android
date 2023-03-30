@@ -26,6 +26,7 @@ import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
 import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.FoodProductNotAvailableForCollectionDialog
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ProductDetailsFindInStoreDialog
 import za.co.woolworths.financial.services.android.util.KeyboardUtil
@@ -160,7 +161,7 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
             it.fulfillmentDetails.storeId
         }
 
-        if (productList?.sku == null || storeId == null || storeId?.isEmpty() == true) {
+        if (productList?.sku == null || storeId?.isNullOrEmpty() == true) {
             return
         }
 
@@ -172,17 +173,12 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
                     Status.LOADING -> {
                     }
                     Status.SUCCESS -> {
-                        if (resource.data?.skuInventory?.isNullOrEmpty() == true) {
-
-                            productOutOfStockErrorMessage()
-                            return@observe
+                        resource?.data?.skuInventory?.let {
+                            if (it?.isNullOrEmpty() == true  || it?.getOrNull(0)?.quantity == 0) {
+                                productOutOfStockErrorMessage()
+                                return@observe
+                            }
                         }
-
-                        if (resource?.data?.skuInventory?.get(0)?.quantity == 0) {
-                            productOutOfStockErrorMessage()
-                            return@observe
-                        }
-                        productOutOfStockErrorMessage()
                         /*add subs api*/
                         callAddSubsApi()
 
@@ -197,6 +193,7 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
 
     fun callAddSubsApi() {
         /*todo call add subs api*/
+        (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(ProductDetailsFragment())
     }
 
     fun productOutOfStockErrorMessage() {

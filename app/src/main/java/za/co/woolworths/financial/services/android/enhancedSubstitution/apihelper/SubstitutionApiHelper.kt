@@ -72,7 +72,7 @@ class SubstitutionApiHelper : RetrofitConfig() {
         }
     }
 
-    suspend fun fetchInventoryForSubstitution(storeId: String ,multipleSku: String) =mApiInterface.fetchDashInventorySKUForStore(
+    suspend fun fetchInventoryForSubstitution(storeId: String ,multipleSku: String) = mApiInterface.fetchDashInventorySKUForStore(
             getSessionToken(),
             getDeviceIdentityToken(),
             storeId,

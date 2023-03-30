@@ -68,7 +68,7 @@ class ManageSubstitutionFragment() : BaseFragmentBinding<ManageSubstitutionDetai
         when (v?.id) {
             R.id.btnConfirm -> confirmSubstitutionProduct()
             R.id.dontWantText -> confirmDontWantSubstitutionForProduct()
-            R.id.imgBack -> (activity as BottomNavigationActivity)?.popFragment()
+            R.id.imgBack -> (activity as? BottomNavigationActivity)?.popFragment()
         }
     }
 

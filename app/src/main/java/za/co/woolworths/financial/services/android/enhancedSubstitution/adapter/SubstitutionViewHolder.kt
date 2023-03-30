@@ -87,7 +87,7 @@ sealed class SubstitutionViewHolder(binding: ViewBinding) : RecyclerView.ViewHol
 
                 tvTitle.text = productList?.productName
                 tvPrice.text = formatAmountToRandAndCentWithSpace(productList?.price)
-                if (productList?.promotions == null || productList?.promotions?.isEmpty() == true) {
+                if (productList?.promotions?.isNullOrEmpty() == true) {
                     tvPromotionText?.visibility = View.VISIBLE
                     tvPromotionText?.setText(productList?.promotions?.getOrNull(0)?.promotionalText)
                 } else {

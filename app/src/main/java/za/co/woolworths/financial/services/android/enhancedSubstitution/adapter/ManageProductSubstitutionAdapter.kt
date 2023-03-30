@@ -55,7 +55,7 @@ class ManageProductSubstitutionAdapter(
                 holder.bind(subStitutionProductList[position])
                 holder.binding.cbShoppingList.setOnClickListener {
                     lastSelectedPosition = position
-                    notifyDataSetChanged()
+                    notifyItemChanged(position)
                     productSubstitutionListListener?.clickOnSubstituteProduct()
                 }
             }
