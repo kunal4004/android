@@ -1623,15 +1623,12 @@ interface ApiInterface {
             @Query("deliveryDetails") deliveryDetails: String?
     ): retrofit2.Response<ProductView>
 
-
-
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("wfs/app/v4/cart/add-substitution")
     suspend fun addSubstitution(
-            /*todo remove enviorment value */
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Body addSubstitutionRequest: AddSubstitutionRequest
-    ): retrofit2.Response<ProductSubstitution>
+    ): retrofit2.Response<AddSubstitutionResponse>
 }
 

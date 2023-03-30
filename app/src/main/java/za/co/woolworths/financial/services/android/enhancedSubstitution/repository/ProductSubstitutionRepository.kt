@@ -9,6 +9,7 @@ import com.google.gson.JsonSyntaxException
 import kotlinx.coroutines.flow.Flow
 import za.co.woolworths.financial.services.android.enhancedSubstitution.apihelper.SubstitutionApiHelper
 import za.co.woolworths.financial.services.android.enhancedSubstitution.model.AddSubstitutionRequest
+import za.co.woolworths.financial.services.android.enhancedSubstitution.model.AddSubstitutionResponse
 import za.co.woolworths.financial.services.android.enhancedSubstitution.model.ProductSubstitution
 import za.co.woolworths.financial.services.android.models.dto.PagingResponse
 import za.co.woolworths.financial.services.android.models.dto.ProductList
@@ -84,7 +85,7 @@ class ProductSubstitutionRepository(var substitutionApiHelper: SubstitutionApiHe
         }
     }
 
-    suspend fun addSubstitution(addSubstitutionRequest: AddSubstitutionRequest): Resource<ProductSubstitution> {
+    suspend fun addSubstitution(addSubstitutionRequest: AddSubstitutionRequest): Resource<AddSubstitutionResponse> {
 
         return try {
             val response = substitutionApiHelper.addSubstitution(addSubstitutionRequest)
