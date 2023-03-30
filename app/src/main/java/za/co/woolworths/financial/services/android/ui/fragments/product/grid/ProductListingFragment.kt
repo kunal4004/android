@@ -129,6 +129,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
     private val confirmAddressViewModel: ConfirmAddressViewModel by activityViewModels()
     private var localDeliveryType: String? = null
     private var localDeliveryTypeForHiddenChange: String? = null
+    private var mPromotionalCopy: String? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -217,16 +218,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
         }
     }
 
-    private fun showPromotionalBanner(response: ProductView) {
-        binding.promotionalTextBannerLayout.root.visibility = VISIBLE
-        val htmlDataPromotionalText = response.richText
-        binding.promotionalTextBannerLayout.apply {
-            promotionalTextDesc.text =
-                HtmlCompat.fromHtml(htmlDataPromotionalText, HtmlCompat.FROM_HTML_MODE_LEGACY)
-            promotionalTextDesc.movementMethod = LinkMovementMethod.getInstance()
-        }
-    }
-
     private fun addFragmentListner() {
         setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_CLICK_RESULT) { _, _ ->
             // As User selects to change the delivery location. So we will call confirm place API and will change the users location.
@@ -271,6 +262,13 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
                                     navigateToUnsellableItemsFragment(
                                         it as ArrayList<UnSellableCommerceItem>,
                                         KotlinUtils.browsingDeliveryType?.name
+                                    )
+                                }
+                                val placeId = validateLocationResponse?.validatePlace?.placeDetails?.placeId
+                                if(placeId != null) {
+                                    val store = GeoUtils.getStoreDetails(
+                                            placeId,
+                                            validateLocationResponse?.validatePlace?.stores
                                     )
                                 }
                             } else
@@ -538,10 +536,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
         }
         binding.plpRelativeLayout.visibility = VISIBLE
 
-        if (!response.richText.isNullOrEmpty()) {
-            showPromotionalBanner(response)
-        }
-
         val productLists = response.products
         if (mProductList?.isNullOrEmpty() == true)
 
@@ -742,6 +736,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
         mProductList?.clear()
         mProductList = ArrayList()
         mProductList = productLists
+        mPromotionalCopy = productView?.richText ?: ""
         if (!listContainHeader()) {
             val headerProduct = ProductList()
             headerProduct.rowType = ProductListingViewType.HEADER
@@ -756,7 +751,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
                 it,
                 mBannerLabel,
                 mBannerImage,
-                mIsComingFromBLP
+                mIsComingFromBLP,
+                mPromotionalCopy
             )
         }
         val mRecyclerViewLayoutManager: GridLayoutManager?
@@ -791,7 +787,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
                     it,
                     mBannerLabel,
                     mBannerImage,
-                    mIsComingFromBLP
+                    mIsComingFromBLP,
+                    mPromotionalCopy
                 )
             }
         binding.productsRecyclerView.apply {
@@ -1729,6 +1726,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
                 }
             }, LocationResponse::class.java))
         }
+    }
+
+    override fun openChangeFulfillmentScreen() {
+        presentEditDeliveryActivity()
     }
 
     fun onRefined(navigationState: String, isMultiSelectCategoryRefined: Boolean) {

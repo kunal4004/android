@@ -67,5 +67,7 @@
         </RelativeLayout>
     </LinearLayout>
 
-    <include layout="@layout/no_connection_handler"/>
+    <include
+        android:id="@+id/no_connection_handler"
+        layout="@layout/no_connection_handler"/>
 </FrameLayout>

@@ -12,36 +12,32 @@ import com.awfs.coordination.databinding.ActivityFicaBinding
 import com.awfs.coordination.databinding.FicaDialogBinding
 import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.ui.base.BaseActivity
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.BindingBaseActivity
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 
 @AndroidEntryPoint
-class FicaActivity : AppCompatActivity(), View.OnClickListener {
+class FicaActivity : BindingBaseActivity<ActivityFicaBinding>(ActivityFicaBinding::inflate), View.OnClickListener {
     private val ficaViewModel: FicaViewModel by viewModels()
 
-    private lateinit var binding: ActivityFicaBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityFicaBinding.inflate(layoutInflater)
-        val view = binding.root
-        setContentView(view)
         ficaViewModel.start(intent)
-        Utils.updateStatusBarBackground(this, R.color.bg_e6e6e6)
-        setUpActionBar()
-        setClickListeners()
+        setViews()
     }
 
-    private fun setClickListeners() {
-        binding.ficaDialog.btnFicaMaybeLater.setOnClickListener(this)
-        binding.ficaDialog.btnFicaVerify.setOnClickListener(this)
+    private fun setViews() {
+        setClickListeners(binding.ficaDialog.btnFicaMaybeLater,binding.ficaDialog.btnFicaVerify)
+        setUpActionBar(binding.toolbarCreditReport)
     }
 
     override fun onClick(view: View?) {
         binding.ficaDialog.let {
         when (view) {
             it.btnFicaMaybeLater -> {
-                onBackPressed()
+                onBackPressedDispatcher.onBackPressed()
             }
             it.btnFicaVerify -> {
                 Utils.triggerFireBaseEvents(
@@ -53,40 +49,12 @@ class FicaActivity : AppCompatActivity(), View.OnClickListener {
         }
         }
     }
-
-    private fun setUpActionBar() {
-        setSupportActionBar(binding.toolbarCreditReport)
-        supportActionBar?.apply {
-            setDisplayShowTitleEnabled(false)
-            setDisplayUseLogoEnabled(false)
-        }
-        KotlinUtils.setTransparentStatusBar(this)
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.search_item, menu)
-        return super.onCreateOptionsMenu(menu)
-    }
-
-    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
-        menu?.findItem(R.id.action_search)?.icon?.setTint(resources.getColor(R.color.white))
-        return super.onPrepareOptionsMenu(menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.action_search -> onBackPressed()
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
     override fun onBackPressed() {
         Utils.triggerFireBaseEvents(
             FirebaseManagerAnalyticsProperties.FICA_VERIFY_SKIP,
             this
-        );
-        finish()
-        overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
+        )
+        onBackPressedDispatcher.onBackPressed()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

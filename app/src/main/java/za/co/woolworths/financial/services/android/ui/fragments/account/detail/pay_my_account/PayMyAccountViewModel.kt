@@ -16,6 +16,7 @@ import za.co.woolworths.financial.services.android.models.dto.account.AccountsPr
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.dto.pma.DeleteResponse
 import za.co.woolworths.financial.services.android.models.dto.pma.PaymentMethodsResponse
+import za.co.woolworths.financial.services.android.models.network.Event
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
@@ -23,8 +24,8 @@ import za.co.woolworths.financial.services.android.ui.extension.request
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.helper.BeginPayMyAccountJourneyActionImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.helper.PMATrackFirebaseEvent
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.helper.PayMyAccountPresenter
-import za.co.woolworths.financial.services.android.util.eliteplan.ElitePlanModel
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.eliteplan.ElitePlanModel
 import za.co.woolworths.financial.services.android.util.wenum.PMAVendorCardEnum
 import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
 import java.net.ConnectException
@@ -38,7 +39,7 @@ open class PayMyAccountViewModel: ViewModel() {
     private var mQueryServiceDeletePaymentMethod: Call<DeleteResponse>? = null
     private var mQueryServiceGetPaymentMethods: Call<PaymentMethodsResponse>? = null
     private var paymentMethodsResponse: MutableLiveData<PaymentMethodsResponse?> = MutableLiveData()
-    private var onDialogDismiss: MutableLiveData<OnNavigateBack> = MutableLiveData()
+    private var onDialogDismiss: MutableLiveData<Event<OnNavigateBack>> = MutableLiveData()
     private val pmaFirebaseEvent: PMATrackFirebaseEvent = PMATrackFirebaseEvent()
     private var addCardResponse: MutableLiveData<AddCardResponse> = MutableLiveData()
     private var isQueryServiceGetRedirectionCompleted: Boolean = false
@@ -155,10 +156,10 @@ open class PayMyAccountViewModel: ViewModel() {
     fun getCardDetailInStringFormat(): String? = Gson().toJson(getCardDetail())
 
     fun setNavigationResult(onDismiss: OnNavigateBack) {
-        onDialogDismiss.value = onDismiss
+        onDialogDismiss.value = Event(onDismiss)
     }
 
-    fun getNavigationResult(): MutableLiveData<OnNavigateBack> = onDialogDismiss
+    fun getNavigationResult(): MutableLiveData<Event<OnNavigateBack>> = onDialogDismiss
 
 
     fun queryServicePayUPaymentMethod(onSuccessResult: (MutableList<GetPaymentMethod>?) -> Unit, onSessionExpired: (String?) -> Unit, onGeneralError: (String) -> Unit, onFailureHandler: (Throwable?) -> Unit) {

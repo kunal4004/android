@@ -126,17 +126,6 @@
         app:layout_constraintStart_toEndOf="@+id/geoCollectTab"
         app:layout_constraintTop_toBottomOf="@id/imgDelBack" />
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/txtNewFeatureCnC"
-        style="@style/futura_semi_bold"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/_minus8dp"
-        android:gravity="center"
-        android:src="@drawable/ic_title_tag"
-        app:layout_constraintBottom_toTopOf="@id/geoCollectTab"
-        app:layout_constraintEnd_toEndOf="@id/geoCollectTab"
-        app:layout_constraintStart_toStartOf="@id/geoCollectTab" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/txtNewFeature"
@@ -145,7 +134,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/_minus8dp"
         android:gravity="center"
-        android:src="@drawable/ic_title_tag"
+        android:src="@drawable/ic_title_food_today"
         app:layout_constraintBottom_toTopOf="@id/geoDashTab"
         app:layout_constraintEnd_toEndOf="@id/geoDashTab"
         app:layout_constraintStart_toStartOf="@id/geoDashTab" />
@@ -283,7 +272,7 @@
         android:layout_height="match_parent"
         app:constraint_referenced_ids="deliveryBagIcon,
         changeFulfillmentTitleTextView,geoDeliveryTab,geoCollectTab,
-        geoDashTab,txtNewFeature,txtNewFeatureCnC" />
+        geoDashTab,txtNewFeature" />
 
     <View
         android:id="@+id/geoDivider"

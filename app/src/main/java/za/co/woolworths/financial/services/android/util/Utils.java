@@ -10,6 +10,7 @@ import static za.co.woolworths.financial.services.android.models.dao.SessionDao.
 import static za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY.OC_CHAT_FCM_TOKEN;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.REMOVE_ALL_BADGE_COUNTER;
 import static za.co.woolworths.financial.services.android.util.RequestInAppReviewKt.requestInAppReview;
+import static za.co.woolworths.financial.services.android.ui.activities.webview.usercase.WebViewHandler.ARG_REDIRECT_BLANK_TARGET_LINK_EXTERNAL;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -113,7 +114,7 @@ import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity;
-import za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity;
+import za.co.woolworths.financial.services.android.ui.activities.webview.activities.WInternalWebPageActivity;
 import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
@@ -442,7 +443,7 @@ public class Utils {
         Intent openInternalWebView = new Intent(context, WInternalWebPageActivity.class);
         openInternalWebView.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         openInternalWebView.putExtra("externalLink", url);
-        openInternalWebView.putExtra(WInternalWebPageActivity.ARG_REDIRECT_BLANK_TARGET_LINK_EXTERNAL, mustRedirectBlankTargetLinkToExternal);
+        openInternalWebView.putExtra(ARG_REDIRECT_BLANK_TARGET_LINK_EXTERNAL, mustRedirectBlankTargetLinkToExternal);
         context.startActivity(openInternalWebView);
     }
 
@@ -1229,6 +1230,12 @@ public class Utils {
             case MY_LIST:
                 appInstanceObject.featureWalkThrough.my_lists = true;
                 break;
+            case PARGO_STORE:
+                appInstanceObject.featureWalkThrough.pargo_store = true;
+                break;
+            case NEW_FBH_CNC:
+                appInstanceObject.featureWalkThrough.new_fbh_cnc = true;
+                break;
             default:
                 break;
         }
@@ -1679,4 +1686,16 @@ public class Utils {
     public static int calculatePercentage(int count, int totalCount){
         return (count*100)/totalCount;
     }
+
+    public static void saveMonetateId(String monetateId) {
+        AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
+        currentUserObject.mId = monetateId;
+        currentUserObject.save();
+    }
+
+    public static String getMonetateId() {
+        AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
+        return currentUserObject.mId;
+    }
+
 }
