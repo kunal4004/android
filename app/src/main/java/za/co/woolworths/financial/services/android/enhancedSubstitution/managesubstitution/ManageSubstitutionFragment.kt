@@ -77,7 +77,7 @@ class ManageSubstitutionFragment() : BaseFragmentBinding<ManageSubstitutionDetai
     }
 
     private fun confirmDontWantSubstitutionForProduct() {
-        (activity as BottomNavigationActivity)?.popFragment()
+        (activity as? BottomNavigationActivity)?.popFragment()
     }
 
     override fun openSubstitutionSearchScreen() {
