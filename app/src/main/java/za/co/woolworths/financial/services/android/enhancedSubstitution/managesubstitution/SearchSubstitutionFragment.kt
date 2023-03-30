@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.View.OnClickListener
 import android.view.inputmethod.EditorInfo
+import android.widget.EditText
 import androidx.core.text.HtmlCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -23,13 +24,21 @@ import za.co.woolworths.financial.services.android.enhancedSubstitution.viewmode
 import za.co.woolworths.financial.services.android.enhancedSubstitution.viewmodel.ProductSubstitutionViewModelFactory
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
+import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.FoodProductNotAvailableForCollectionDialog
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.ProductDetailsFindInStoreDialog
 import za.co.woolworths.financial.services.android.util.KeyboardUtil
+import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 
-class SearchSubstitutionFragment  : BaseFragmentBinding<LayoutSearchSubstitutionFragmentBinding>(
+
+class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionFragmentBinding>(
         LayoutSearchSubstitutionFragmentBinding::inflate
-) , ProductListSelectionListener, OnClickListener {
+) , ProductListSelectionListener, OnClickListener, FoodProductNotAvailableForCollectionDialog.IProductNotAvailableForCollectionDialogListener {
+
     private var searchProductSubstitutionAdapter: SearchProductSubstitutionAdapter? = null
     private lateinit var productSubstitutionViewModel: ProductSubstitutionViewModel
     private var productList: ProductList? = null
@@ -128,7 +137,7 @@ class SearchSubstitutionFragment  : BaseFragmentBinding<LayoutSearchSubstitution
 
     override fun clickOnProductSelection(productList: ProductList?) {
         binding.btnConfirm.isEnabled = true
-        binding.btnConfirm.background = resources.getDrawable(R.drawable.black_background_with_corner_5, null)
+        binding.btnConfirm.background = resources.getDrawable(R.drawable.black_color_drawable, null)
         this.productList = productList
     }
 
@@ -142,12 +151,89 @@ class SearchSubstitutionFragment  : BaseFragmentBinding<LayoutSearchSubstitution
 
     fun confirmProductSelection() {
         /* call inventory api */
+        callInventoryApi()
         /* call add substitution api */
     }
+
+    private fun callInventoryApi() {
+
+        val storeId: String? =  Utils.getPreferredDeliveryLocation()?.let {
+            it.fulfillmentDetails.storeId
+        }
+
+        if (productList?.sku == null || storeId?.isNullOrEmpty() == true) {
+            return
+        }
+
+        productSubstitutionViewModel.getInventoryForSubstitution(storeId, productList?.sku!!)
+        productSubstitutionViewModel.inventorySubstitution.observe(viewLifecycleOwner) {
+
+            it.getContentIfNotHandled()?.let { resource ->
+                when (resource.status) {
+                    Status.LOADING -> {
+                    }
+                    Status.SUCCESS -> {
+                        resource?.data?.skuInventory?.let {
+                            if (it?.isNullOrEmpty() == true  || it?.getOrNull(0)?.quantity == 0) {
+                                productOutOfStockErrorMessage()
+                                return@observe
+                            }
+                        }
+                        /*add subs api*/
+                        callAddSubsApi()
+
+                    }
+                    Status.ERROR -> {
+                        /*todo error view if inventory api is failed*/
+                    }
+                }
+            }
+        }
+    }
+
+    fun callAddSubsApi() {
+        /*todo call add subs api*/
+        (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(ProductDetailsFragment())
+    }
+
+    fun productOutOfStockErrorMessage() {
+        try {
+            activity?.supportFragmentManager?.beginTransaction()?.apply {
+                val productDetailsFindInStoreDialog =
+                        FoodProductNotAvailableForCollectionDialog.newInstance(
+                        )
+                productDetailsFindInStoreDialog.show(
+                        this,
+                        ProductDetailsFindInStoreDialog::class.java.simpleName
+                )
+            }
+        } catch (ex: IllegalStateException) {
+            FirebaseManager.logException(ex)
+        }
+    }
+
+    fun hideKeyBoard(view: View?) {
+        if (view !is EditText) {
+            view?.setOnTouchListener { v, event ->
+                KeyboardUtil.hideSoftKeyboard(activity)
+                false
+            }
+        }
+    }
+
     private fun closeKeyBoard() {
         val view = activity?.currentFocus
         if (view != null) {
             KeyboardUtil.hideSoftKeyboard(activity)
         }
     }
+
+    override fun onChangeDeliveryOption() {
+
+    }
+
+    override fun onFindInStore() {
+
+    }
+
 }

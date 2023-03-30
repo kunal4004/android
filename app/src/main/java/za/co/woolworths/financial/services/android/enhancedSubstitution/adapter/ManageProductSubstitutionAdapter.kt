@@ -19,6 +19,8 @@ class ManageProductSubstitutionAdapter(
         const val VIEW_TYPE_SUBSTITUTION_LIST = 1
     }
 
+    private var lastSelectedPosition = -1
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SubstitutionViewHolder {
         when (viewType) {
             VIEW_TYPE_SUBSTITUTION_HEADER -> return SubstitutionViewHolder.SubstitueOptionwHolder(
@@ -41,8 +43,22 @@ class ManageProductSubstitutionAdapter(
 
     override fun onBindViewHolder(holder: SubstitutionViewHolder, position: Int) {
         when (holder) {
-            is SubstitutionViewHolder.SubstitueOptionwHolder -> holder.bind(headerItem, productSubstitutionListListener)
-            is SubstitutionViewHolder.SubstitueProductViewHolder -> holder.bind(subStitutionProductList[position])
+            is SubstitutionViewHolder.SubstitueOptionwHolder -> {
+                holder.bind(headerItem, productSubstitutionListListener)
+            }
+            is SubstitutionViewHolder.SubstitueProductViewHolder ->  {
+                if (lastSelectedPosition == position) {
+                    holder.binding.cbShoppingList.isChecked = true
+                } else {
+                    holder.binding.cbShoppingList.isChecked = false
+                }
+                holder.bind(subStitutionProductList[position])
+                holder.binding.cbShoppingList.setOnClickListener {
+                    lastSelectedPosition = position
+                    notifyItemChanged(position)
+                    productSubstitutionListListener?.clickOnSubstituteProduct()
+                }
+            }
         }
     }
 

@@ -10,13 +10,16 @@ import za.co.woolworths.financial.services.android.models.dto.ProductList
 
 class SearchProductSubstitutionAdapter(var productListSelectionListener: ProductListSelectionListener) :
         PagingDataAdapter<ProductList, SubstitutionViewHolder.SubstitueProductViewHolder>(Comparator) {
+
     private var lastSelectedPosition = -1
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SubstitutionViewHolder.SubstitueProductViewHolder {
         return SubstitutionViewHolder.SubstitueProductViewHolder(
                 ShoppingListCommerceItemBinding.inflate(
                         LayoutInflater.from(parent.context), parent, false
                 ), parent.context)
     }
+
     override fun onBindViewHolder(holder: SubstitutionViewHolder.SubstitueProductViewHolder, position: Int) {
         holder.bind(getItem(position))
         if (lastSelectedPosition == position) {
