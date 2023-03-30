@@ -77,24 +77,7 @@ class ManageSubstitutionFragment() : BaseFragmentBinding<ManageSubstitutionDetai
     private fun getSubstututeProductList(): MutableList<SubstitutionRecylerViewItem.SubstitutionProducts> {
         var list = mutableListOf<SubstitutionRecylerViewItem.SubstitutionProducts>()
         /*prepare list from kibo api and set to recyler view */
-        list.add(SubstitutionRecylerViewItem.SubstitutionProducts(
-                1, "Banana","","you have saved R5", "R21"
-        ))
-        list.add(SubstitutionRecylerViewItem.SubstitutionProducts(
-                1, "Banana","","you have saved R5", "R21"
-        ))
-        list.add(SubstitutionRecylerViewItem.SubstitutionProducts(
-                1, "Banana","","you have saved R5", "R21"
-        ))
-        list.add(SubstitutionRecylerViewItem.SubstitutionProducts(
-                1, "Banana","","you have saved R5", "R21"
-        ))
-        list.add(SubstitutionRecylerViewItem.SubstitutionProducts(
-                1, "Banana","","you have saved R5", "R21"
-        ))
-        list.add(SubstitutionRecylerViewItem.SubstitutionProducts(
-                1, "Banana","","you have saved R5", "R21"
-        ))
+
         return list
     }
 
