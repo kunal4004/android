@@ -48,7 +48,7 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
 
         fun newInstance(
                 commarceItemId: String?,
-        ) = ManageSubstitutionFragment().withArgs {
+        ) = SearchSubstitutionFragment().withArgs {
             putString(ManageSubstitutionFragment.COMMARCE_ITEM_ID, commarceItemId)
         }
     }
