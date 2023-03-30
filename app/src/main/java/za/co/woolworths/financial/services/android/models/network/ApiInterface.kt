@@ -7,6 +7,8 @@ import retrofit2.Callback
 import retrofit2.http.*
 import za.co.absa.openbankingapi.woolworths.integration.dto.PayUResponse
 import za.co.woolworths.financial.services.android.checkout.service.network.*
+import za.co.woolworths.financial.services.android.enhancedSubstitution.model.AddSubstitutionRequest
+import za.co.woolworths.financial.services.android.enhancedSubstitution.model.AddSubstitutionResponse
 import za.co.woolworths.financial.services.android.enhancedSubstitution.model.ProductSubstitution
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.request.SaveAddressLocationRequest
@@ -1620,5 +1622,16 @@ interface ApiInterface {
             @Query("deliveryType") deliveryType: String?,
             @Query("deliveryDetails") deliveryDetails: String?
     ): retrofit2.Response<ProductView>
+
+
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @GET("wfs/app/v4/cart/add-substitution")
+    suspend fun addSubstitution(
+            /*todo remove enviorment value */
+            @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
+            @Body addSubstitutionRequest: AddSubstitutionRequest
+    ): retrofit2.Response<ProductSubstitution>
 }
 

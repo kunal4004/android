@@ -8,6 +8,7 @@ import com.awfs.coordination.R
 import com.google.gson.JsonSyntaxException
 import kotlinx.coroutines.flow.Flow
 import za.co.woolworths.financial.services.android.enhancedSubstitution.apihelper.SubstitutionApiHelper
+import za.co.woolworths.financial.services.android.enhancedSubstitution.model.AddSubstitutionRequest
 import za.co.woolworths.financial.services.android.enhancedSubstitution.model.ProductSubstitution
 import za.co.woolworths.financial.services.android.models.dto.PagingResponse
 import za.co.woolworths.financial.services.android.models.dto.ProductList
@@ -61,6 +62,32 @@ class ProductSubstitutionRepository(var substitutionApiHelper: SubstitutionApiHe
     suspend fun getInventoryForSubstitution(storeId: String, multisku:String): Resource<SkusInventoryForStoreResponse> {
         return try {
             val response = substitutionApiHelper.fetchInventoryForSubstitution(storeId, multisku)
+            if (response.isSuccessful) {
+                response.body()?.let {
+                    return when (it.httpCode) {
+                        AppConstant.HTTP_OK, AppConstant.HTTP_OK_201 ->
+                            Resource.success(it)
+                        else ->
+                            Resource.error(R.string.error_unknown, it)
+                    }
+                } ?: Resource.error(R.string.error_unknown, null)
+            } else {
+                Resource.error(R.string.error_unknown, null)
+            }
+        } catch (e: IOException) {
+            FirebaseManager.logException(e)
+            Resource.error(R.string.error_internet_connection, null)
+        }
+        catch (e: JsonSyntaxException) {
+            FirebaseManager.logException(e)
+            Resource.error(R.string.error_unknown, null)
+        }
+    }
+
+    suspend fun addSubstitution(addSubstitutionRequest: AddSubstitutionRequest): Resource<ProductSubstitution> {
+
+        return try {
+            val response = substitutionApiHelper.addSubstitution(addSubstitutionRequest)
             if (response.isSuccessful) {
                 response.body()?.let {
                     return when (it.httpCode) {
