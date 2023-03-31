@@ -9,18 +9,18 @@ import za.co.woolworths.financial.services.android.enhancedSubstitution.ProductL
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 
 class SearchProductSubstitutionAdapter(var productListSelectionListener: ProductListSelectionListener) :
-        PagingDataAdapter<ProductList, SubstitutionViewHolder.SubstitueProductViewHolder>(Comparator) {
+        PagingDataAdapter<ProductList, SubstitutionViewHolder.SubstituteProductViewHolder>(Comparator) {
 
     private var lastSelectedPosition = -1
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SubstitutionViewHolder.SubstitueProductViewHolder {
-        return SubstitutionViewHolder.SubstitueProductViewHolder(
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SubstitutionViewHolder.SubstituteProductViewHolder {
+        return SubstitutionViewHolder.SubstituteProductViewHolder(
                 ShoppingListCommerceItemBinding.inflate(
                         LayoutInflater.from(parent.context), parent, false
                 ), parent.context)
     }
 
-    override fun onBindViewHolder(holder: SubstitutionViewHolder.SubstitueProductViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: SubstitutionViewHolder.SubstituteProductViewHolder, position: Int) {
         holder.bind(getItem(position))
         if (lastSelectedPosition == position) {
             holder.binding.cbShoppingList.isChecked = true

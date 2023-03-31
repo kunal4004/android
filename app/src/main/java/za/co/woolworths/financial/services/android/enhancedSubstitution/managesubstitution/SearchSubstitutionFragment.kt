@@ -36,8 +36,9 @@ import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBind
 
 
 class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionFragmentBinding>(
-        LayoutSearchSubstitutionFragmentBinding::inflate
-) , ProductListSelectionListener, OnClickListener, FoodProductNotAvailableForCollectionDialog.IProductNotAvailableForCollectionDialogListener {
+    LayoutSearchSubstitutionFragmentBinding::inflate
+), ProductListSelectionListener, OnClickListener,
+    FoodProductNotAvailableForCollectionDialog.IProductNotAvailableForCollectionDialogListener {
 
     private var searchProductSubstitutionAdapter: SearchProductSubstitutionAdapter? = null
     private lateinit var productSubstitutionViewModel: ProductSubstitutionViewModel
@@ -81,7 +82,7 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 val productsRequestParams = getRequestParamsBody(v?.text.toString())
                 if (v?.text?.length != 0) {
-                    getSubstututeProductList(productsRequestParams)
+                    getSubstituteProductList(productsRequestParams)
                 }
                 false
             } else {
@@ -94,29 +95,36 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
         binding.txtCancelSearch?.setOnClickListener(this)
         binding.rootLayout?.setOnClickListener(this)
 
-        closeKeyBoard();
+        closeKeyBoard()
     }
 
     private fun setUpViewModel() {
         productSubstitutionViewModel = ViewModelProvider(
-                this,
-                ProductSubstitutionViewModelFactory(ProductSubstitutionRepository(SubstitutionApiHelper()))
-        ).get(ProductSubstitutionViewModel::class.java)
+            this,
+            ProductSubstitutionViewModelFactory(ProductSubstitutionRepository(SubstitutionApiHelper()))
+        )[ProductSubstitutionViewModel::class.java]
     }
 
-    private fun getSubstututeProductList(requestParams: ProductsRequestParams) {
+    private fun getSubstituteProductList(requestParams: ProductsRequestParams) {
         binding.shimmerLayout?.visibility = View.VISIBLE
         binding.shimmerLayout.startShimmer()
         lifecycleScope.launch {
             productSubstitutionViewModel?.getAllSearchedSubstitutions(
-                    requestParams)?.collectLatest {
+                requestParams
+            )?.collectLatest {
                 binding.txtSubstitutionCount?.visibility = View.VISIBLE
 
-                productSubstitutionViewModel._pagingResponse.observe(viewLifecycleOwner, {
-                    val totalItemCount: String = "<b>" + it.numItemsInTotal?.toString() + "</b>" .plus(getString(R.string.item_found))
-                    val formattedItemCount = HtmlCompat.fromHtml(totalItemCount, HtmlCompat.FROM_HTML_MODE_COMPACT)
+                productSubstitutionViewModel._pagingResponse.observe(
+                    viewLifecycleOwner
+                ) { pagingResponse ->
+                    val totalItemCount: String =
+                        "<b>" + pagingResponse.numItemsInTotal?.toString() + "</b>".plus(
+                            getString(R.string.item_found)
+                        )
+                    val formattedItemCount =
+                        HtmlCompat.fromHtml(totalItemCount, HtmlCompat.FROM_HTML_MODE_COMPACT)
                     binding.txtSubstitutionCount.text = formattedItemCount
-                })
+                }
                 searchProductSubstitutionAdapter?.submitData(it)
                 binding.shimmerLayout.stopShimmer()
                 binding.shimmerLayout.visibility = View.GONE
@@ -137,11 +145,11 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
 
     private fun getRequestParamsBody(searchTerm: String): ProductsRequestParams {
         /*todo need to remove hardcode values once UI is ready */
-        var productsRequestParams = ProductsRequestParams(
-                searchTerm = searchTerm,
-                searchType = ProductsRequestParams.SearchType.SEARCH,
-                responseType = ProductsRequestParams.ResponseType.DETAIL,
-                pageOffset = 0,
+        val productsRequestParams = ProductsRequestParams(
+            searchTerm = searchTerm,
+            searchType = ProductsRequestParams.SearchType.SEARCH,
+            responseType = ProductsRequestParams.ResponseType.DETAIL,
+            pageOffset = 0,
         )
         productsRequestParams.filterContent = false
         productsRequestParams.sendDeliveryDetailsParams = true
@@ -162,7 +170,7 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
         }
     }
 
-    fun confirmProductSelection() {
+    private fun confirmProductSelection() {
         /* call inventory api */
         callInventoryApi()
         /* call add substitution api */
@@ -170,7 +178,7 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
 
     private fun callInventoryApi() {
 
-        val storeId: String? =  Utils.getPreferredDeliveryLocation()?.let {
+        val storeId: String? = Utils.getPreferredDeliveryLocation()?.let {
             it.fulfillmentDetails.storeId
         }
 
@@ -186,8 +194,8 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
                     Status.LOADING -> {
                     }
                     Status.SUCCESS -> {
-                        resource?.data?.skuInventory?.let {
-                            if (it?.isNullOrEmpty() == true  || it?.getOrNull(0)?.quantity == 0) {
+                        resource?.data?.skuInventory?.let { inventoryList ->
+                            if (inventoryList?.isNullOrEmpty() == true || inventoryList?.getOrNull(0)?.quantity == 0) {
                                 productOutOfStockErrorMessage()
                                 return@observe
                             }
@@ -213,15 +221,15 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
 
     }
 
-    fun productOutOfStockErrorMessage() {
+    private fun productOutOfStockErrorMessage() {
         try {
             activity?.supportFragmentManager?.beginTransaction()?.apply {
                 val productDetailsFindInStoreDialog =
-                        FoodProductNotAvailableForCollectionDialog.newInstance(
-                        )
+                    FoodProductNotAvailableForCollectionDialog.newInstance(
+                    )
                 productDetailsFindInStoreDialog.show(
-                        this,
-                        ProductDetailsFindInStoreDialog::class.java.simpleName
+                    this,
+                    ProductDetailsFindInStoreDialog::class.java.simpleName
                 )
             }
         } catch (ex: IllegalStateException) {

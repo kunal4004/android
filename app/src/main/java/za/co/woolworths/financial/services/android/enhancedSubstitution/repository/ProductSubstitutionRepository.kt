@@ -20,7 +20,7 @@ import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import java.io.IOException
 
-class ProductSubstitutionRepository(var substitutionApiHelper: SubstitutionApiHelper) {
+class ProductSubstitutionRepository(private var substitutionApiHelper: SubstitutionApiHelper) {
 
     suspend fun getProductSubstitution(productId: String?): Resource<ProductSubstitution> {
         return try {
@@ -40,8 +40,7 @@ class ProductSubstitutionRepository(var substitutionApiHelper: SubstitutionApiHe
         } catch (e: IOException) {
             FirebaseManager.logException(e)
             Resource.error(R.string.error_internet_connection, null)
-        }
-        catch (e: JsonSyntaxException) {
+        } catch (e: JsonSyntaxException) {
             FirebaseManager.logException(e)
             Resource.error(R.string.error_unknown, null)
         }
@@ -52,21 +51,27 @@ class ProductSubstitutionRepository(var substitutionApiHelper: SubstitutionApiHe
     }
 
 
-    fun getAllSearchedSubstitutions(requestParams: ProductsRequestParams, _pagingResponse: MutableLiveData<PagingResponse>): Flow<PagingData<ProductList>> {
+    fun getAllSearchedSubstitutions(
+        requestParams: ProductsRequestParams,
+        _pagingResponse: MutableLiveData<PagingResponse>,
+    ): Flow<PagingData<ProductList>> {
         return Pager(
-                config = PagingConfig(
-                        pageSize = PAGE_SIZE,
-                        enablePlaceholders = false
-                ),
-                pagingSourceFactory = {
-                    SubstitutionPagingSource(substitutionApiHelper, requestParams, _pagingResponse)
-                }
+            config = PagingConfig(
+                pageSize = PAGE_SIZE,
+                enablePlaceholders = false
+            ),
+            pagingSourceFactory = {
+                SubstitutionPagingSource(substitutionApiHelper, requestParams, _pagingResponse)
+            }
         ).flow
     }
 
-    suspend fun getInventoryForSubstitution(storeId: String, multisku:String): Resource<SkusInventoryForStoreResponse> {
+    suspend fun getInventoryForSubstitution(
+        storeId: String,
+        multiSku: String,
+    ): Resource<SkusInventoryForStoreResponse> {
         return try {
-            val response = substitutionApiHelper.fetchInventoryForSubstitution(storeId, multisku)
+            val response = substitutionApiHelper.fetchInventoryForSubstitution(storeId, multiSku)
             if (response.isSuccessful) {
                 response.body()?.let {
                     return when (it.httpCode) {
@@ -82,8 +87,7 @@ class ProductSubstitutionRepository(var substitutionApiHelper: SubstitutionApiHe
         } catch (e: IOException) {
             FirebaseManager.logException(e)
             Resource.error(R.string.error_internet_connection, null)
-        }
-        catch (e: JsonSyntaxException) {
+        } catch (e: JsonSyntaxException) {
             FirebaseManager.logException(e)
             Resource.error(R.string.error_unknown, null)
         }
@@ -116,9 +120,7 @@ class ProductSubstitutionRepository(var substitutionApiHelper: SubstitutionApiHe
     }
 
 
-
-
     companion object {
-         val PAGE_SIZE = 60
+        const val PAGE_SIZE = 60
     }
 }

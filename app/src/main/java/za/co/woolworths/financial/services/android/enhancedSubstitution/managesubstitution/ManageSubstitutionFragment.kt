@@ -20,7 +20,7 @@ import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment
 import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 
-class ManageSubstitutionFragment() : BaseFragmentBinding<ManageSubstitutionDetailsLayoutBinding>(
+class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetailsLayoutBinding>(
     ManageSubstitutionDetailsLayoutBinding::inflate
 ), OnClickListener, ProductSubstitutionListListener {
 
@@ -55,7 +55,7 @@ class ManageSubstitutionFragment() : BaseFragmentBinding<ManageSubstitutionDetai
         setUpViewModel()
 
         manageProductSubstitutionAdapter = ManageProductSubstitutionAdapter(
-            getHeaderForSubstituteList(), getSubstututeProductList() , this
+            getHeaderForSubstituteList(), getSubstituteProductList(), this
         )
 
         binding.recyclerView?.apply {
@@ -129,7 +129,8 @@ class ManageSubstitutionFragment() : BaseFragmentBinding<ManageSubstitutionDetai
     }
 
     override fun clickOnLetMyShooperChooseOption() {
-        binding.btnConfirm?.background = resources.getDrawable(R.drawable.black_color_drawable, null)
+        binding.btnConfirm?.background =
+            resources.getDrawable(R.drawable.black_color_drawable, null)
     }
 
     override fun clickOnMySubstitutioneOption() {
@@ -138,7 +139,7 @@ class ManageSubstitutionFragment() : BaseFragmentBinding<ManageSubstitutionDetai
     }
 
     override fun clickOnSubstituteProduct() {
-       binding.btnConfirm.isEnabled = true
-       binding.btnConfirm.background = resources.getDrawable(R.drawable.black_color_drawable, null)
+        binding.btnConfirm.isEnabled = true
+        binding.btnConfirm.background = resources.getDrawable(R.drawable.black_color_drawable, null)
     }
 }
