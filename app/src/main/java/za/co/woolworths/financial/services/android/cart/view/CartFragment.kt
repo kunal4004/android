@@ -463,6 +463,8 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                 putExtra(CheckoutAddressConfirmationFragment.SAVED_ADDRESS_KEY, response)
                 putExtra(CheckoutAddressConfirmationFragment.IS_EDIT_ADDRESS_SCREEN, true)
                 putExtra(CheckoutAddressManagementBaseFragment.GEO_SLOT_SELECTION, true)
+                putExtra(CheckoutAddressManagementBaseFragment.CART_ITEM_LIST,
+                    viewModel.getCartItemList())
             }
             if ((liquorCompliance != null) && liquorCompliance!!.isLiquorOrder && (AppConfigSingleton.liquor!!.noLiquorImgUrl != null) && AppConfigSingleton.liquor!!.noLiquorImgUrl.isNotEmpty()) {
                 checkoutActivityIntent.putExtra(

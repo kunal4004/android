@@ -40,6 +40,7 @@ import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutA
 import za.co.woolworths.financial.services.android.checkout.service.network.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.Companion.REGEX_DELIVERY_INSTRUCTIONS
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.FoodSubstitution
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment.Companion.CART_ITEM_LIST
 import za.co.woolworths.financial.services.android.checkout.view.CollectionDatesBottomSheetDialog.Companion.ARGS_KEY_COLLECTION_DATES
 import za.co.woolworths.financial.services.android.checkout.view.CollectionDatesBottomSheetDialog.Companion.ARGS_KEY_SELECTED_POSITION
 import za.co.woolworths.financial.services.android.checkout.view.CustomDriverTipBottomSheetDialog.Companion.MAX_TIP_VALUE
@@ -1419,7 +1420,10 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
     private fun navigateToPaymentWebpage(webTokens: ShippingDetailsResponse) {
         view?.findNavController()?.navigate(
             R.id.action_checkoutDashFragment_to_checkoutPaymentWebFragment,
-            bundleOf(CheckoutPaymentWebFragment.KEY_ARGS_WEB_TOKEN to webTokens)
+
+            bundleOf(CheckoutPaymentWebFragment.KEY_ARGS_WEB_TOKEN to webTokens,
+                CART_ITEM_LIST to cartItemList
+            )
         )
     }
 

@@ -44,6 +44,7 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
+import za.co.woolworths.financial.services.android.models.dto.CommerceItem
 import za.co.woolworths.financial.services.android.models.dto.LiquorCompliance
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary
 import za.co.woolworths.financial.services.android.models.dto.app_config.native_checkout.ConfigShoppingBagsOptions
@@ -124,7 +125,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     private var shimmerComponentArray: List<Pair<ShimmerFrameLayout, View>> = ArrayList()
 
     private var defaultAddress: Address? = null
-
+    private var cartItemList: ArrayList<CommerceItem>? = null
 
     enum class FoodSubstitution(val rgb: String) {
         PHONE_CONFIRM("YES_CALL_CONFIRM"),
@@ -162,6 +163,8 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         (activity as? CheckoutActivity)?.apply {
             showBackArrowWithTitle(bindString(R.string.checkout))
         }
+        cartItemList =
+            checkNotNull(arguments?.getSerializable(CART_ITEM_LIST) as ArrayList<CommerceItem>?)
         initViews()
     }
 
@@ -1234,7 +1237,10 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     private fun navigateToPaymentWebpage(webTokens: ShippingDetailsResponse) {
         view?.findNavController()?.navigate(
             R.id.action_CheckoutAddAddressReturningUserFragment_to_checkoutPaymentWebFragment,
-            bundleOf(KEY_ARGS_WEB_TOKEN to webTokens)
+            bundleOf(KEY_ARGS_WEB_TOKEN to webTokens,
+                CART_ITEM_LIST to cartItemList
+            )
+
         )
     }
 

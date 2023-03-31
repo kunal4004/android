@@ -46,6 +46,7 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
+import za.co.woolworths.financial.services.android.models.dto.CommerceItem
 import za.co.woolworths.financial.services.android.models.dto.LiquorCompliance
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
@@ -84,6 +85,7 @@ class CheckoutReturningUserCollectionFragment :
     private var navController: NavController? = null
     private var liquorImageUrl: String? = ""
     private var liquorOrder: Boolean? = false
+    private var cartItemList: ArrayList<CommerceItem>? = null
     private val deliveryInstructionsTextWatcher: TextWatcher = object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
         override fun afterTextChanged(s: Editable?) {
@@ -123,6 +125,8 @@ class CheckoutReturningUserCollectionFragment :
         (activity as? CheckoutActivity)?.apply {
             showBackArrowWithTitle(bindString(R.string.checkout))
         }
+        cartItemList =
+            checkNotNull(arguments?.getSerializable(CheckoutAddressManagementBaseFragment.CART_ITEM_LIST) as ArrayList<CommerceItem>?)
         setupViewModel()
         initializeCollectingFromView()
         initializeCollectingDetailsView()
@@ -1293,7 +1297,9 @@ class CheckoutReturningUserCollectionFragment :
     private fun navigateToPaymentWebpage(webTokens: ShippingDetailsResponse) {
         view?.findNavController()?.navigate(
             R.id.action_checkoutReturningUserCollectionFragment_to_checkoutPaymentWebFragment,
-            bundleOf(CheckoutPaymentWebFragment.KEY_ARGS_WEB_TOKEN to webTokens)
+            bundleOf(CheckoutPaymentWebFragment.KEY_ARGS_WEB_TOKEN to webTokens,
+                CheckoutAddressManagementBaseFragment.CART_ITEM_LIST to cartItemList
+            )
         )
     }
 

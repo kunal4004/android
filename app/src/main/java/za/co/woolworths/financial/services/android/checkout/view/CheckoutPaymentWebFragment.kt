@@ -31,10 +31,12 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyValues.Companion.CURRENCY_VALUE
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
+import za.co.woolworths.financial.services.android.models.dto.CommerceItem
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.util.AdvancedWebView
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
 import java.net.URI
 
 class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_web),
@@ -45,6 +47,8 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
         const val KEY_STATUS = "status"
         const val REQUEST_KEY_PAYMENT_STATUS = "payment_status"
         const val PAYMENT_TYPE = "payment_type"
+        const val PAYMENT_VALUE = "value"
+
     }
 
     enum class PaymentStatus(val type: String) {
@@ -56,6 +60,7 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
 
     private lateinit var binding: FragmentCheckoutPaymentWebBinding
     private var currentSuccessURI = ""
+    private var cartItemList: ArrayList<CommerceItem>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,6 +72,8 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentCheckoutPaymentWebBinding.bind(view)
+        cartItemList =
+            checkNotNull(arguments?.getSerializable(CheckoutAddressManagementBaseFragment.CART_ITEM_LIST) as ArrayList<CommerceItem>?)
         initPaymentWebView()
     }
 
@@ -151,14 +158,68 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
 
         when (paymentStatusType) {
             PaymentStatus.PAYMENT_SUCCESS.type -> {
+                val selectItem = Bundle()
                 val paymentType = uri.getQueryParameter(PAYMENT_TYPE)
-                val arguments = HashMap<String, String>()
-                arguments[FirebaseAnalytics.Param.CURRENCY] = CURRENCY_VALUE
-                arguments[FirebaseAnalytics.Param.PAYMENT_TYPE] = paymentType.toString()
-                Utils.triggerFireBaseEvents(
+                val paymentValue = uri.getQueryParameter(PAYMENT_VALUE)
+                cartItemList?.let {
+                    for (cartItem in it) {
+                        selectItem.putString(
+                            FirebaseAnalytics.Param.ITEM_ID,
+                            cartItem.commerceItemInfo.productId
+                        )
+
+                        selectItem.putString(
+                            FirebaseAnalytics.Param.ITEM_NAME,
+                            cartItem.commerceItemInfo.productDisplayName
+                        )
+
+                        selectItem.putDouble(
+                            FirebaseAnalytics.Param.PRICE,
+                            cartItem.priceInfo.amount
+                        )
+
+                        selectItem.putString(
+                            FirebaseAnalytics.Param.ITEM_BRAND,
+                            cartItem.commerceItemInfo?.productDisplayName
+                        )
+                        selectItem.putString(
+                            FirebaseAnalytics.Param.ITEM_VARIANT,
+                            cartItem.commerceItemInfo?.size
+                        )
+
+                        selectItem.putString(
+                            FirebaseAnalytics.Param.ITEM_CATEGORY,
+                            cartItem.commerceItemInfo.productDisplayName
+                        )
+                        selectItem.putInt(
+                            FirebaseAnalytics.Param.QUANTITY,
+                            cartItem.commerceItemInfo.quantity
+                        )
+
+                        selectItem.putString(
+                            FirebaseAnalytics.Param.CURRENCY,
+                            CURRENCY_VALUE
+                        )
+                        selectItem.putString(
+                            FirebaseAnalytics.Param.PAYMENT_TYPE,
+                            paymentType.toString()
+                        )
+                        selectItem.putString(
+                            FirebaseAnalytics.Param.VALUE,
+                            paymentValue.toString()
+                        )
+
+
+                        selectItem.putParcelableArray(
+                            FirebaseAnalytics.Param.ITEMS,
+                            arrayOf(selectItem)
+                        )
+                    }
+                }
+
+                AnalyticsManager.logEvent(
                     FirebaseManagerAnalyticsProperties.ADD_PAYMENT_INFO,
-                    arguments,
-                    activity
+                    selectItem
                 )
                 navigateToOrderConfirmation()
             }
