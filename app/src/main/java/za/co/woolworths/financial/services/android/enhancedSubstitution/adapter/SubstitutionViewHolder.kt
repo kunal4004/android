@@ -14,10 +14,13 @@ import za.co.woolworths.financial.services.android.util.CurrencyFormatter.Compan
 
 sealed class SubstitutionViewHolder(binding: ViewBinding) : RecyclerView.ViewHolder(binding.root) {
 
-    class SubstitueOptionwHolder(val binding: LayoutManageSubstitutionBinding) : SubstitutionViewHolder(binding) {
+    class SubstituteOptionHolder(val binding: LayoutManageSubstitutionBinding) :
+        SubstitutionViewHolder(binding) {
 
-        fun bind(substitutionProducts: SubstitutionRecylerViewItem.SubstitutionOptionHeader?,
-                 productSubstitutionListListener: ProductSubstitutionListListener?) {
+        fun bind(
+            substitutionProducts: SubstitutionRecylerViewItem.SubstitutionOptionHeader?,
+            productSubstitutionListListener: ProductSubstitutionListListener?,
+        ) {
             binding.tvSearchProduct?.apply {
                 text = substitutionProducts?.searchHint
                 onClick {
@@ -52,9 +55,9 @@ sealed class SubstitutionViewHolder(binding: ViewBinding) : RecyclerView.ViewHol
         }
     }
 
-    class SubstitueProductViewHolder(
-             val binding: ShoppingListCommerceItemBinding,
-            var context: Context
+    class SubstituteProductViewHolder(
+        val binding: ShoppingListCommerceItemBinding,
+        var context: Context,
     ) : SubstitutionViewHolder(binding) {
 
         fun bind(substitutionProducts: SubstitutionRecylerViewItem.SubstitutionProducts?) {
@@ -63,11 +66,11 @@ sealed class SubstitutionViewHolder(binding: ViewBinding) : RecyclerView.ViewHol
                 llQuantity?.visibility = View.GONE
                 tvProductAvailability?.visibility = View.INVISIBLE
                 tvColorSize?.visibility = View.INVISIBLE
-                tvTitle.setTextAppearance(R.style.style_substitution_title)
-                tvPrice.setTextAppearance(R.style.style_substitution_price)
+                tvTitle.setTextAppearance(context, R.style.style_substitution_title)
+                tvPrice.setTextAppearance(context, R.style.style_substitution_price)
                 tvTitle.text = substitutionProducts?.productTitle
                 tvPrice.text = context.resources.getString(R.string.rand_text)
-                        .plus("\t").plus(substitutionProducts?.productPrice)
+                    .plus("\t").plus(substitutionProducts?.productPrice)
                 tvPrice.minHeight = context.resources.getDimension(R.dimen.two_dp).toInt()
                 binding.tvPromotionText.text = substitutionProducts?.promotionText
                 cartProductImage?.setImageURI(substitutionProducts?.productThumbnail)
@@ -82,8 +85,8 @@ sealed class SubstitutionViewHolder(binding: ViewBinding) : RecyclerView.ViewHol
                 tvProductAvailability?.visibility = View.INVISIBLE
                 tvColorSize?.visibility = View.INVISIBLE
 
-                tvTitle.setTextAppearance(R.style.style_substitution_title)
-                tvPrice.setTextAppearance(R.style.style_substitution_price)
+                tvTitle.setTextAppearance(context, R.style.style_substitution_title)
+                tvPrice.setTextAppearance(context, R.style.style_substitution_price)
 
                 tvTitle.text = productList?.productName
                 tvPrice.text = formatAmountToRandAndCentWithSpace(productList?.price)
