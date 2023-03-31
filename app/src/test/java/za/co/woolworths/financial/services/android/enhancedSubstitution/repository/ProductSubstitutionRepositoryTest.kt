@@ -94,9 +94,9 @@ class ProductSubstitutionRepositoryTest {
 
     @Test
     fun test_error_fetchInventory() = runTest {
-        Mockito.`when`(substitutionApiHelper.fetchInventoryForSubstitution("473", SKU_ID)).thenReturn(Response.error(504, "".toResponseBody()))
+        Mockito.`when`(substitutionApiHelper.fetchInventoryForSubstitution(STORE_ID, SKU_ID)).thenReturn(Response.error(504, "".toResponseBody()))
         val productSubstitutionRepository = ProductSubstitutionRepository(substitutionApiHelper)
-        val result = productSubstitutionRepository.getInventoryForSubstitution("473", SKU_ID)
+        val result = productSubstitutionRepository.getInventoryForSubstitution(STORE_ID, SKU_ID)
         Assert.assertEquals(Status.ERROR, result.status)
     }
 
