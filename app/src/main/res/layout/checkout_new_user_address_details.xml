@@ -97,7 +97,6 @@
     <TextView
         android:id="@+id/unitComplexFloorEditTextErrorMsg"
         style="@style/add_address_screen_error_msg_style"
-        android:layout_marginTop="@dimen/fifteen_dp"
         android:text="@string/address_nickname_error_msg"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="@id/right_guideline"
