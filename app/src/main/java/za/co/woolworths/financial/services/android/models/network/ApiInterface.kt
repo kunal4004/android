@@ -1596,7 +1596,7 @@ interface ApiInterface {
             @Query("filterContent") filterContent: Boolean?,
             @Query("deliveryType") deliveryType: String?,
             @Query("deliveryDetails") deliveryDetails: String?
-    ): retrofit2.Response<ProductView>
+    ): ProductView
 
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip")
@@ -1621,7 +1621,7 @@ interface ApiInterface {
             @Query("filterContent") filterContent: Boolean?,
             @Query("deliveryType") deliveryType: String?,
             @Query("deliveryDetails") deliveryDetails: String?
-    ): retrofit2.Response<ProductView>
+    ): ProductView
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("wfs/app/v4/cart/add-substitution")

@@ -51,7 +51,7 @@ class ProductSubstitutionViewModel(
     }
 
     fun getAllSearchedSubstitutions(requestParams: ProductsRequestParams) =
-            repository.getAllSearchedSubstitutions(requestParams, _pagingResponse).cachedIn(viewModelScope)
+            repository.getAllSearchedSubstitutions(requestParams, _pagingResponse).flow.cachedIn(viewModelScope)
 
 
     fun addSubstitutionForProduct(addSubstitutionRequest: AddSubstitutionRequest) {

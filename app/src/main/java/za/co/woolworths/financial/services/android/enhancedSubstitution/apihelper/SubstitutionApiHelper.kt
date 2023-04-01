@@ -16,7 +16,7 @@ class SubstitutionApiHelper : RetrofitConfig() {
             productId
     )
 
-    suspend fun getSearchedProducts(requestParams: ProductsRequestParams): retrofit2.Response<ProductView> {
+    suspend fun getSearchedProducts(requestParams: ProductsRequestParams): ProductView {
         val (suburbId: String?, storeId: String?) = OneAppService.getSuburbOrStoreId()
 
         val (deliveryType, deliveryDetails) = when {
