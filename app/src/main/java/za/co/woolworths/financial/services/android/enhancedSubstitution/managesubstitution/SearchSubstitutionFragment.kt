@@ -200,7 +200,7 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
                                 return@observe
                             }
                         }
-                        naviagteToPdpScreen()
+                        navigateToPdpScreen()
                     }
                     Status.ERROR -> {
                         /*todo error view if inventory api is failed*/
@@ -210,15 +210,13 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
         }
     }
 
-    fun naviagteToPdpScreen() {
+    fun navigateToPdpScreen() {
 
         if (commarceItemId?.isEmpty() == true) {
             /*navigate to pdp with selected product  object and call add to cart api in order to add substitute there*/
-
         } else {
             /*add subsitute api here since we have commarceId because product is already added in cart */
         }
-
     }
 
     private fun productOutOfStockErrorMessage() {
