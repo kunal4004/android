@@ -65,49 +65,33 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
     }
 
     private fun initView() {
-        searchProductSubstitutionAdapter = SearchProductSubstitutionAdapter(this)
         arguments?.apply {
             commarceItemId = getString(ManageSubstitutionFragment.COMMARCE_ITEM_ID, "")
         }
-
-        binding.recyclerView?.apply {
-            setHasFixedSize(true)
-            layoutManager = LinearLayoutManager(context)
-            adapter = searchProductSubstitutionAdapter
-            addOnScrollListener(object : OnScrollListener() {
-                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                    super.onScrollStateChanged(recyclerView, newState)
-                    if (!recyclerView.canScrollVertically(1)) {
-                        binding.viewSeprator?.visibility = View.VISIBLE
-                    } else {
-                        binding.viewSeprator?.visibility = View.GONE
+        binding.apply {
+            tvSearchProduct.setOnEditorActionListener { v, actionId, event ->
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    searchText = v?.text?.toString()
+                    val productsRequestParams = searchText?.let { getRequestParamsBody(it) }
+                    if (searchText?.length != 0) {
+                        productsRequestParams?.let { getSubstituteProductList(it) }
                     }
+                    false
+                } else {
+                    false
                 }
-            })
-        }
-
-        binding.tvSearchProduct.setOnEditorActionListener { v, actionId, event ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                searchText = v?.text?.toString()
-                val productsRequestParams = searchText?.let { getRequestParamsBody(it) }
-                if (searchText?.length != 0) {
-                    productsRequestParams?.let { getSubstituteProductList(it) }
+            }
+            tvSearchProduct.doOnTextChanged { text, start, before, count ->
+                if (text.isNullOrEmpty() && before == 1) {
+                    reloadFragment()
                 }
-                false
-            } else {
-                false
             }
-        }
-        binding.tvSearchProduct.doOnTextChanged { text, start, before, count ->
-            if (text.isNullOrEmpty() && before == 1) {
-                reloadFragment()
-            }
-        }
 
-        binding.btnConfirm?.setOnClickListener(this)
-        binding.crossIamgeView?.setOnClickListener(this)
-        binding.txtCancelSearch?.setOnClickListener(this)
-        binding.rootLayout?.setOnClickListener(this)
+            btnConfirm?.setOnClickListener(this@SearchSubstitutionFragment)
+            crossIamgeView?.setOnClickListener(this@SearchSubstitutionFragment)
+            txtCancelSearch?.setOnClickListener(this@SearchSubstitutionFragment)
+            rootLayout?.setOnClickListener(this@SearchSubstitutionFragment)
+        }
 
         closeKeyBoard()
     }
@@ -120,6 +104,7 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
     }
 
     private fun getSubstituteProductList(requestParams: ProductsRequestParams) {
+        initializeRecyclerView() // when we change the already searched text we need to show shimmer view again.
         binding.apply {
             lifecycleScope.launch {
                 productSubstitutionViewModel?.getAllSearchedSubstitutions(
@@ -136,7 +121,6 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
                             HtmlCompat.fromHtml(totalItemCount, HtmlCompat.FROM_HTML_MODE_COMPACT)
                         txtSubstitutionCount.text = formattedItemCount
                     }
-                    initView() // when we change the already searched text we need to show shimmer view again.
                     searchProductSubstitutionAdapter?.submitData(it)
                 }
             }
@@ -160,6 +144,25 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
                     // Nothing to do
                 }
             }
+        }
+    }
+
+    private fun initializeRecyclerView() {
+        searchProductSubstitutionAdapter = SearchProductSubstitutionAdapter(this)
+        binding.recyclerView?.apply {
+            setHasFixedSize(true)
+            layoutManager = LinearLayoutManager(context)
+            adapter = searchProductSubstitutionAdapter
+            addOnScrollListener(object : OnScrollListener() {
+                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                    super.onScrollStateChanged(recyclerView, newState)
+                    if (!recyclerView.canScrollVertically(1)) {
+                        binding.viewSeprator?.visibility = View.VISIBLE
+                    } else {
+                        binding.viewSeprator?.visibility = View.GONE
+                    }
+                }
+            })
         }
     }
 
