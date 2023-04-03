@@ -17,7 +17,11 @@ import org.junit.rules.TestRule
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
+import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhanceSubstitutonHelperTest
+import za.co.woolworths.financial.services.android.enhancedSubstitution.apihelper.SubstitutionApiHelperTest
 import za.co.woolworths.financial.services.android.enhancedSubstitution.getOrAwaitValue
+import za.co.woolworths.financial.services.android.enhancedSubstitution.model.AddSubstitutionRequest
+import za.co.woolworths.financial.services.android.enhancedSubstitution.model.AddSubstitutionResponse
 import za.co.woolworths.financial.services.android.enhancedSubstitution.model.ProductSubstitution
 import za.co.woolworths.financial.services.android.enhancedSubstitution.repository.ProductSubstitutionRepository
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse
@@ -35,6 +39,9 @@ class ProductSubstitutionViewModelTest {
 
     @Mock
     private lateinit var skusInventoryForStoreResponse: SkusInventoryForStoreResponse
+
+    @Mock
+    private lateinit var addSubstitutionResponse: AddSubstitutionResponse
 
     @get:Rule
     val testInstantTaskExecutorRule: TestRule = InstantTaskExecutorRule()
@@ -91,6 +98,36 @@ class ProductSubstitutionViewModelTest {
         sut.getInventoryForSubstitution("473","6001009025692")
         testDispathcer.scheduler.advanceUntilIdle()
         val result = sut.inventorySubstitution.getOrAwaitValue()
+        Assert.assertEquals(R.string.error_unknown , result.peekContent().message)
+    }
+
+
+    @Test
+    fun  test_EmptyResponse_addSubstitution() = runTest{
+        val addSubstitutionRequest = AddSubstitutionRequest(SubstitutionApiHelperTest.USER_CHOICE, EnhanceSubstitutonHelperTest.SUBSTITUTION_ID, EnhanceSubstitutonHelperTest.COMMARCE_ITEM_ID)
+
+        Mockito.`when`(productSubstitutionRepository
+                .addSubstitution(addSubstitutionRequest)).thenReturn(Resource.success(addSubstitutionResponse))
+
+        val sut = ProductSubstitutionViewModel(repository = productSubstitutionRepository)
+        sut.addSubstitutionForProduct(addSubstitutionRequest)
+        testDispathcer.scheduler.advanceUntilIdle()
+        val result = sut.addSubstitutionResponse.getOrAwaitValue()
+        Assert.assertEquals(addSubstitutionResponse, result.peekContent().data)
+        Assert.assertEquals(0, result.peekContent().data?.data?.size)
+    }
+
+    @Test
+    fun test_error_addSubstitution() = runTest{
+        val addSubstitutionRequest = AddSubstitutionRequest(SubstitutionApiHelperTest.USER_CHOICE, EnhanceSubstitutonHelperTest.SUBSTITUTION_ID, EnhanceSubstitutonHelperTest.COMMARCE_ITEM_ID)
+
+        Mockito.`when`(productSubstitutionRepository
+                .addSubstitution(addSubstitutionRequest)).thenReturn(Resource.error(R.string.error_unknown, null))
+
+        val sut = ProductSubstitutionViewModel(repository = productSubstitutionRepository)
+        sut.addSubstitutionForProduct(addSubstitutionRequest)
+        testDispathcer.scheduler.advanceUntilIdle()
+        val result = sut.addSubstitutionResponse.getOrAwaitValue()
         Assert.assertEquals(R.string.error_unknown , result.peekContent().message)
     }
 
