@@ -7,6 +7,7 @@ import android.view.View.OnClickListener
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import androidx.core.text.HtmlCompat
+import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.LayoutSearchSubstitutionFragmentBinding
+import com.facebook.shimmer.Shimmer
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.enhancedSubstitution.ProductListSelectionListener
@@ -50,7 +52,7 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
     companion object {
 
         fun newInstance(
-                commarceItemId: String?,
+            commarceItemId: String?,
         ) = SearchSubstitutionFragment().withArgs {
             putString(ManageSubstitutionFragment.COMMARCE_ITEM_ID, commarceItemId)
         }
@@ -96,6 +98,11 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
                 false
             }
         }
+        binding.tvSearchProduct.doOnTextChanged { text, start, before, count ->
+            if (text.isNullOrEmpty() && before == 1) {
+                reloadFragment()
+            }
+        }
 
         binding.btnConfirm?.setOnClickListener(this)
         binding.crossIamgeView?.setOnClickListener(this)
@@ -114,8 +121,6 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
 
     private fun getSubstituteProductList(requestParams: ProductsRequestParams) {
         binding.apply {
-            shimmerLayout?.visibility = View.VISIBLE
-            shimmerLayout.startShimmer()
             lifecycleScope.launch {
                 productSubstitutionViewModel?.getAllSearchedSubstitutions(
                     requestParams
@@ -129,25 +134,46 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
                             )
                         val formattedItemCount =
                             HtmlCompat.fromHtml(totalItemCount, HtmlCompat.FROM_HTML_MODE_COMPACT)
-                        txtSubstitutionCount?.visibility = View.VISIBLE
                         txtSubstitutionCount.text = formattedItemCount
                     }
+                    initView() // when we change the already searched text we need to show shimmer view again.
                     searchProductSubstitutionAdapter?.submitData(it)
-                    shimmerLayout.setShimmer(null)
-                    shimmerLayout.stopShimmer()
-                    shimmerLayout.visibility = View.GONE
                 }
             }
         }
 
         searchProductSubstitutionAdapter?.addLoadStateListener {
-            if (it.refresh is LoadState.Error) {
-                binding.shimmerLayout.setShimmer(null)
-                binding.shimmerLayout.stopShimmer()
-                binding.shimmerLayout.visibility = View.GONE
-                showErrorView()
+            when (it.refresh) {
+                is LoadState.Loading -> {
+                    showShimmerView()
+                    binding.txtSubstitutionCount?.visibility = View.GONE
+                }
+                is LoadState.NotLoading -> {
+                    hideShimmerView()
+                    binding.txtSubstitutionCount?.visibility = View.VISIBLE
+                }
+                is LoadState.Error -> {
+                    hideShimmerView()
+                    showErrorView()
+                }
+                else -> {
+                    // Nothing to do
+                }
             }
         }
+    }
+
+    private fun showShimmerView() {
+        binding.shimmerLayout?.visibility = View.VISIBLE
+        val shimmer = Shimmer.AlphaHighlightBuilder().build()
+        binding.shimmerLayout.setShimmer(shimmer)
+        binding.shimmerLayout.startShimmer()
+    }
+
+    private fun hideShimmerView() {
+        binding.shimmerLayout.setShimmer(null)
+        binding.shimmerLayout.stopShimmer()
+        binding.shimmerLayout.visibility = View.GONE
     }
 
     private fun showErrorView() {
@@ -180,15 +206,19 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
             R.id.crossIamgeView -> {
                 binding.tvSearchProduct?.text?.clear()
                 if (!searchText.isNullOrEmpty()) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                        fragmentManager?.beginTransaction()?.detach(this)?.commitNow()
-                        fragmentManager?.beginTransaction()?.attach(this)?.commitNow()
-                    } else {
-                        fragmentManager?.beginTransaction()?.detach(this)?.attach(this)?.commit()
-                    }
+                    reloadFragment()
                 }
             }
             R.id.txtCancelSearch -> (activity as BottomNavigationActivity)?.popFragment()
+        }
+    }
+
+    private fun reloadFragment() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            fragmentManager?.beginTransaction()?.detach(this)?.commitNow()
+            fragmentManager?.beginTransaction()?.attach(this)?.commitNow()
+        } else {
+            fragmentManager?.beginTransaction()?.detach(this)?.attach(this)?.commit()
         }
     }
 
