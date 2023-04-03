@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.enhancedSubstitution.managesubstitution
 
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.View.OnClickListener
@@ -43,10 +44,15 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
     private var searchProductSubstitutionAdapter: SearchProductSubstitutionAdapter? = null
     private lateinit var productSubstitutionViewModel: ProductSubstitutionViewModel
     private var productList: ProductList? = null
+    private var searchText: String? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setUpViewModel()
+        initView()
+    }
+
+    private fun initView() {
         searchProductSubstitutionAdapter = SearchProductSubstitutionAdapter(this)
 
         binding.recyclerView?.apply {
@@ -67,9 +73,10 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
 
         binding.tvSearchProduct.setOnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                val productsRequestParams = getRequestParamsBody(v?.text.toString())
-                if (v?.text?.length != 0) {
-                    getSubstituteProductList(productsRequestParams)
+                searchText = v?.text?.toString()
+                val productsRequestParams = searchText?.let { getRequestParamsBody(it) }
+                if (searchText?.length != 0) {
+                    productsRequestParams?.let { getSubstituteProductList(it) }
                 }
                 false
             } else {
@@ -93,28 +100,30 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
     }
 
     private fun getSubstituteProductList(requestParams: ProductsRequestParams) {
-        binding.shimmerLayout?.visibility = View.VISIBLE
-        binding.shimmerLayout.startShimmer()
-        lifecycleScope.launch {
-            productSubstitutionViewModel?.getAllSearchedSubstitutions(
-                requestParams
-            )?.collectLatest {
-                binding.txtSubstitutionCount?.visibility = View.VISIBLE
-
-                productSubstitutionViewModel._pagingResponse.observe(
-                    viewLifecycleOwner
-                ) { pagingResponse ->
-                    val totalItemCount: String =
-                        "<b>" + pagingResponse.numItemsInTotal?.toString() + "</b>".plus(
-                            getString(R.string.item_found)
-                        )
-                    val formattedItemCount =
-                        HtmlCompat.fromHtml(totalItemCount, HtmlCompat.FROM_HTML_MODE_COMPACT)
-                    binding.txtSubstitutionCount.text = formattedItemCount
+        binding.apply {
+            shimmerLayout?.visibility = View.VISIBLE
+            shimmerLayout.startShimmer()
+            lifecycleScope.launch {
+                productSubstitutionViewModel?.getAllSearchedSubstitutions(
+                    requestParams
+                )?.collectLatest {
+                    productSubstitutionViewModel._pagingResponse.observe(
+                        viewLifecycleOwner
+                    ) { pagingResponse ->
+                        val totalItemCount: String =
+                            "<b>" + pagingResponse.numItemsInTotal?.toString() + "</b>".plus(
+                                getString(R.string.item_found)
+                            )
+                        val formattedItemCount =
+                            HtmlCompat.fromHtml(totalItemCount, HtmlCompat.FROM_HTML_MODE_COMPACT)
+                        txtSubstitutionCount?.visibility = View.VISIBLE
+                        txtSubstitutionCount.text = formattedItemCount
+                    }
+                    searchProductSubstitutionAdapter?.submitData(it)
+                    shimmerLayout.setShimmer(null)
+                    shimmerLayout.stopShimmer()
+                    shimmerLayout.visibility = View.GONE
                 }
-                searchProductSubstitutionAdapter?.submitData(it)
-                binding.shimmerLayout.stopShimmer()
-                binding.shimmerLayout.visibility = View.GONE
             }
         }
 
@@ -152,7 +161,17 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.btnConfirm -> confirmProductSelection()
-            R.id.crossIamgeView -> binding.tvSearchProduct?.text?.clear()
+            R.id.crossIamgeView -> {
+                binding.tvSearchProduct?.text?.clear()
+                if (!searchText.isNullOrEmpty()) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        fragmentManager?.beginTransaction()?.detach(this)?.commitNow()
+                        fragmentManager?.beginTransaction()?.attach(this)?.commitNow()
+                    } else {
+                        fragmentManager?.beginTransaction()?.detach(this)?.attach(this)?.commit()
+                    }
+                }
+            }
             R.id.txtCancelSearch -> (activity as BottomNavigationActivity)?.popFragment()
         }
     }
