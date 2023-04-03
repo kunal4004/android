@@ -456,11 +456,6 @@ object OneAppService : RetrofitConfig() {
     fun getProducts(requestParams: ProductsRequestParams): Call<ProductView> {
         val (suburbId: String?, storeId: String?) = getSuburbOrStoreId()
 
-        if (requestParams.refinement.trim().isNotEmpty()){
-            requestParams.searchTerm = requestParams.refinement
-            requestParams.searchType = ProductsRequestParams.SearchType.NAVIGATE
-        }
-
         val (deliveryType, deliveryDetails) = when {
             !requestParams.sendDeliveryDetailsParams -> {
                 Pair(null, null)
