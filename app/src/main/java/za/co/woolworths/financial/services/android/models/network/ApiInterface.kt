@@ -1624,7 +1624,7 @@ interface ApiInterface {
     ): ProductView
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("wfs/app/v4/cart/add-substitution")
+    @POST("wfs/app/v4/cart/add-substitution")
     suspend fun addSubstitution(
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String,
