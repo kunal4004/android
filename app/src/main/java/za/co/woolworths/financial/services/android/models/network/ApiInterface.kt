@@ -55,9 +55,7 @@ import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.SelectedVoucher
 import za.co.woolworths.financial.services.android.onecartgetstream.model.OCAuthenticationResponse
 import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.RecommendationResponse
-import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.RecommendationRequest
-import za.co.woolworths.financial.services.android.ui.fragments.contact_us.enquiry.EmailUsRequest
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.ReviewFeedback
 
 interface ApiInterface {
@@ -1530,14 +1528,6 @@ interface ApiInterface {
         @Header("sessionToken") sessionToken: String,
         @Header("deviceIdentityToken") deviceIdentityToken: String,
         @Body recommendationRequest: RecommendationRequest
-    ) : retrofit2.Response<RecommendationResponse>
-
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @POST("wfs/app/recommendations")
-    suspend fun recommendation(
-        @Header("sessionToken") sessionToken: String,
-        @Header("deviceIdentityToken") deviceIdentityToken: String,
-        @Body recommendationRequest: Event
     ) : retrofit2.Response<RecommendationResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
