@@ -47,14 +47,14 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
     private lateinit var productSubstitutionViewModel: ProductSubstitutionViewModel
     private var productList: ProductList? = null
     private var searchText: String? = null
-    private var commarceItemId: String? = ""
+    private var commerceItemId: String? = ""
 
     companion object {
 
         fun newInstance(
-            commarceItemId: String?,
+            commerceItemId: String?,
         ) = SearchSubstitutionFragment().withArgs {
-            putString(ManageSubstitutionFragment.COMMARCE_ITEM_ID, commarceItemId)
+            putString(ManageSubstitutionFragment.COMMERCE_ITEM_ID, commerceItemId)
         }
     }
 
@@ -66,7 +66,7 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
 
     private fun initView() {
         arguments?.apply {
-            commarceItemId = getString(ManageSubstitutionFragment.COMMARCE_ITEM_ID, "")
+            commerceItemId = getString(ManageSubstitutionFragment.COMMERCE_ITEM_ID, "")
         }
         binding.apply {
             tvSearchProduct.setOnEditorActionListener { v, actionId, event ->
@@ -265,9 +265,9 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
         }
     }
 
-    fun navigateToPdpScreen() {
+    private fun navigateToPdpScreen() {
 
-        if (commarceItemId?.isEmpty() == true) {
+        if (commerceItemId?.isEmpty() == true) {
             /*navigate to pdp with selected product  object and call add to cart api in order to add substitute there*/
         } else {
             /*add subsitute api here since we have commarceId because product is already added in cart */
