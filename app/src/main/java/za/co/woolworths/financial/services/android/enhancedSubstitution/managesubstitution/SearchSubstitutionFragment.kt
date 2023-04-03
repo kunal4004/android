@@ -142,6 +142,9 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
 
         searchProductSubstitutionAdapter?.addLoadStateListener {
             if (it.refresh is LoadState.Error) {
+                binding.shimmerLayout.setShimmer(null)
+                binding.shimmerLayout.stopShimmer()
+                binding.shimmerLayout.visibility = View.GONE
                 showErrorView()
             }
         }
