@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.enhancedSubstitution.apihelper
 
+import za.co.woolworths.financial.services.android.enhancedSubstitution.model.AddSubstitutionRequest
 import za.co.woolworths.financial.services.android.models.dto.ProductView
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
 import za.co.woolworths.financial.services.android.models.network.OneAppService
@@ -15,7 +16,7 @@ class SubstitutionApiHelper : RetrofitConfig() {
             productId
     )
 
-    suspend fun getSearchedProducts(requestParams: ProductsRequestParams): retrofit2.Response<ProductView> {
+    suspend fun getSearchedProducts(requestParams: ProductsRequestParams): ProductView {
         val (suburbId: String?, storeId: String?) = OneAppService.getSuburbOrStoreId()
 
         val (deliveryType, deliveryDetails) = when {
@@ -77,6 +78,12 @@ class SubstitutionApiHelper : RetrofitConfig() {
             getDeviceIdentityToken(),
             storeId,
             multipleSku
+    )
+
+    suspend fun addSubstitution(addSubstitutionRequest: AddSubstitutionRequest) = mApiInterface.addSubstitution(
+            getSessionToken(),
+            getDeviceIdentityToken(),
+            addSubstitutionRequest
     )
 
 

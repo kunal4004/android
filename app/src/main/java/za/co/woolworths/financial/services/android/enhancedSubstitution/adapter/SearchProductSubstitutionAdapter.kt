@@ -36,12 +36,13 @@ class SearchProductSubstitutionAdapter(var productListSelectionListener: Product
     override fun getItemViewType(position: Int): Int {
         return position;
     }
-}
-object Comparator : DiffUtil.ItemCallback<ProductList>() {
-    override fun areItemsTheSame(oldItem: ProductList, newItem: ProductList): Boolean {
-        return oldItem.productId == newItem.productId
-    }
-    override fun areContentsTheSame(oldItem: ProductList, newItem: ProductList): Boolean {
-        return oldItem == newItem
+
+    object Comparator : DiffUtil.ItemCallback<ProductList>() {
+        override fun areItemsTheSame(oldItem: ProductList, newItem: ProductList): Boolean {
+            return oldItem.productId == newItem.productId
+        }
+        override fun areContentsTheSame(oldItem: ProductList, newItem: ProductList): Boolean {
+            return oldItem == newItem
+        }
     }
 }
