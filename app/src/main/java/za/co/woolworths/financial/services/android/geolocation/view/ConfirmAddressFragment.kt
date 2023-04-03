@@ -301,9 +301,14 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
     override fun onAddressSelected(address: Address, position: Int) {
         selectedAddress = address
         mPosition = position
+        binding.currentLocDiv.apply {
+            visibility = if (position == 0) View.INVISIBLE else View.VISIBLE
+        }
         binding.setButtonUI(true)
         if (address.verified) {
-            binding.tvConfirmAddress?.text = getString(R.string.confirm)
+            selectedAddress?.apply {
+                    binding.tvConfirmAddress?.text=getString(R.string.use)+nickname
+            }
         } else {
             binding.tvConfirmAddress?.text = getString(R.string.update_address)
         }
@@ -347,7 +352,8 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
                 }
                 if (binding.progressBar.visibility == View.GONE
                     && selectedAddress != null
-                    && binding.tvConfirmAddress?.text == getString(R.string.confirm)
+                    && binding.tvConfirmAddress?.text == getString(R.string.confirm) || binding.tvConfirmAddress?.text.toString()
+                        .contains(getString(R.string.use))
                 ) {
                     selectedAddress.let {
                         if (it.placesId != null) {

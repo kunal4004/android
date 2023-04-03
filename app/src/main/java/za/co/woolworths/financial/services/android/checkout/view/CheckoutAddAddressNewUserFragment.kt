@@ -241,10 +241,11 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                 if (!navController?.popBackStack()!!) {
                     // Edit address screen from Cart as user don't have unit no or complex no.
                     // disable Google address view.
-                    binding.autoCompleteTextView?.isEnabled = false
-                    binding.autoCompleteTextView?.setBackgroundResource(R.drawable.input_box_inactive_bg)
-                    binding.autoCompleteTextView?.setTextColor(ContextCompat.getColor(requireContext(), R.color.non_editable_edit_text_text_color))
-                    binding.saveAddress.text = getString(R.string.confirm_address)
+                    //Below lines commented for Future reference
+                    //binding.autoCompleteTextView?.isEnabled = false
+                    //binding.autoCompleteTextView?.setBackgroundResource(R.drawable.input_box_inactive_bg)
+                   // binding.autoCompleteTextView?.setTextColor(ContextCompat.getColor(requireContext(), R.color.non_editable_edit_text_text_color))
+                   binding.saveAddress.text = getString(R.string.save_address)
                 }
             }
         }
@@ -252,35 +253,37 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
 
     private fun setTextFields() {
         oldNickName = selectedAddress?.savedAddress?.nickname
-        enableDisableUserInputEditText(
-            binding.recipientAddressLayout.addressNicknameEditText,
-            true,
-            binding.recipientAddressLayout.addressNicknameErrorMsg.isVisible
-        )
-        enableDisableUserInputEditText(
-            binding.recipientAddressLayout.unitComplexFloorEditText,
-            isEnable = true,
-            isErrorScreen = false
-        )
-        if (selectedAddress.savedAddress.placesId.isNullOrEmpty())
-            binding.autoCompleteTextView.text.clear() // This condition will only occur when address is added from web and is now opted for edit from app.
-        else
-            binding.autoCompleteTextView?.setText(selectedAddress.savedAddress.address1)
-        binding.recipientAddressLayout.addressNicknameEditText.setText(selectedAddress.savedAddress.nickname)
-        binding.recipientAddressLayout.unitComplexFloorEditText.setText(selectedAddress.savedAddress.address2)
-        binding.recipientAddressLayout.suburbEditText.setText(selectedAddress.savedAddress.suburb)
-        binding.recipientAddressLayout.suburbEditText.isEnabled = false
-        binding.recipientAddressLayout.provinceAutocompleteEditText.setText(selectedAddress.provinceName)
-        binding.recipientAddressLayout.provinceAutocompleteEditText.isEnabled = false
-        binding.recipientDetailsLayout.cellphoneNumberEditText.setText(selectedAddress.savedAddress.primaryContactNo)
-        binding.recipientDetailsLayout.recipientNameEditText.setText(selectedAddress.savedAddress.recipientName)
-        if (selectedAddress.savedAddress.postalCode.isNullOrEmpty()) {
-            binding.recipientAddressLayout.postalCode.text.clear()
-        } else
-            binding.recipientAddressLayout.postalCode.setText(selectedAddress.savedAddress.postalCode)
-        binding.recipientAddressLayout.postalCode.isEnabled = false
-        selectedDeliveryAddressType = selectedAddress.savedAddress.addressType
-        isValidAddress = true
+        binding.apply{
+            enableDisableUserInputEditText(
+                recipientAddressLayout.addressNicknameEditText,
+                true,
+              recipientAddressLayout.addressNicknameErrorMsg.isVisible
+            )
+            enableDisableUserInputEditText(
+                recipientAddressLayout.unitComplexFloorEditText,
+                isEnable = true,
+                isErrorScreen = false
+            )
+            if (selectedAddress.savedAddress.placesId.isNullOrEmpty())
+               autoCompleteTextView.text.clear() // This condition will only occur when address is added from web and is now opted for edit from app.
+            else
+                autoCompleteTextView?.setText(selectedAddress.savedAddress.address1)
+            recipientAddressLayout.addressNicknameEditText.setText(selectedAddress.savedAddress.nickname)
+            recipientAddressLayout.unitComplexFloorEditText.setText(selectedAddress.savedAddress.address2)
+            suburbEditText.setText(selectedAddress.savedAddress.suburb)
+            suburbEditText.isEnabled = false
+            provinceAutocompleteEditText.setText(selectedAddress.provinceName)
+            provinceAutocompleteEditText.isEnabled = false
+            recipientDetailsLayout.cellphoneNumberEditText.setText(selectedAddress.savedAddress.primaryContactNo)
+            recipientDetailsLayout.recipientNameEditText.setText(selectedAddress.savedAddress.recipientName)
+            if (selectedAddress.savedAddress.postalCode.isNullOrEmpty()) {
+                postalCode.text.clear()
+            } else
+               postalCode.setText(selectedAddress.savedAddress.postalCode)
+               postalCode.isEnabled = false
+            selectedDeliveryAddressType = selectedAddress.savedAddress.addressType
+            isValidAddress = true
+        }
     }
 
     private fun initView() {
@@ -499,7 +502,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         }
         selectedAddress.store = ""
         selectedAddress.storeId = ""
-        binding.recipientAddressLayout.suburbEditText?.text?.clear()
+        binding.suburbEditText?.text?.clear()
     }
 
 
@@ -640,9 +643,9 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
     fun checkIfSelectedProvinceExist() {
         val provinceName = selectedAddress.provinceName
         if (!provinceName.isNullOrEmpty()) {
-            binding.recipientAddressLayout.provinceAutocompleteEditText?.setText(provinceName)
+            binding.provinceAutocompleteEditText?.setText(provinceName)
         } else {
-            binding.recipientAddressLayout.provinceAutocompleteEditText.setText("")
+            binding.provinceAutocompleteEditText.setText("")
             provinceSuburbEnableType = ONLY_PROVINCE
         }
         if (selectedAddress.savedAddress.suburb.isNullOrEmpty()) {
@@ -650,11 +653,11 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             provinceSuburbEnableType =
                 if (selectedAddress.provinceName.isNullOrEmpty()) BOTH else ONLY_SUBURB
         } else {
-            binding.recipientAddressLayout.suburbEditText?.setText(selectedAddress.savedAddress.suburb)
+            binding.suburbEditText?.setText(selectedAddress.savedAddress.suburb)
         }
 
         if (!selectedAddress.savedAddress.postalCode.isNullOrEmpty()) {
-            binding.recipientAddressLayout.postalCode.setText(selectedAddress.savedAddress.postalCode)
+            binding.postalCode.setText(selectedAddress.savedAddress.postalCode)
         }
     }
 
@@ -722,9 +725,9 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                         binding.recipientAddressLayout.unitComplexFloorPlaceHolder?.visibility = View.VISIBLE
                         binding.recipientAddressLayout.unitComplexFloorEditText?.visibility = View.VISIBLE
                         binding.recipientAddressLayout.unitComplexFloorEditTextErrorMsg?.visibility = View.GONE
-                        binding.recipientAddressLayout.suburbEditText?.setText("")
-                        binding.recipientAddressLayout.provinceAutocompleteEditText?.setText("")
-                        binding.recipientAddressLayout.postalCode?.setText("")
+                        binding.suburbEditText?.setText("")
+                        binding.provinceAutocompleteEditText?.setText("")
+                        binding.postalCode?.setText("")
                         isPoiAddress = false
                     }
                     changeUnitComplexPlaceHolderOnType(selectedDeliveryAddressType)
@@ -1121,13 +1124,13 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             binding.recipientDetailsLayout.recipientNameEditText?.text.toString().trim(),
             (selectedAddress.savedAddress.address1 ?: "").toString().trim(),
             (selectedAddress.savedAddress.address2 ?: "").toString().trim(),
-            binding.recipientAddressLayout.postalCode?.text.toString().trim(),
+            binding.postalCode?.text.toString().trim(),
             binding.recipientDetailsLayout.cellphoneNumberEditText?.text.toString().trim(),
             "",
-            binding.recipientAddressLayout.provinceAutocompleteEditText?.text?.toString() ?: "",
+            binding.provinceAutocompleteEditText?.text?.toString() ?: "",
             selectedAddress.savedAddress.suburbId ?: "",
             selectedAddress.provinceName,
-            binding.recipientAddressLayout.suburbEditText?.text.toString(),
+            binding.suburbEditText?.text.toString(),
             "",
             false,
             selectedAddress.savedAddress.latitude?.toString(),
@@ -1519,16 +1522,23 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         //based on the AddressType changing the PlaceHolder for UnitNo/Complex/Floor/Building
 
         when (addressType) {
-            Constant.COMPLEX_ESTATE,
-            Constant.OFFICE, Constant.APARTMENT,
+            Constant.COMPLEX_ESTATE->{
+                binding.recipientAddressLayout.unitComplexFloorPlaceHolder?.text =
+                    getString(R.string.complex_estate)
+            }
+            Constant.OFFICE->{
+                binding.recipientAddressLayout.unitComplexFloorPlaceHolder?.text =
+                    getString(R.string.office_details)
+            }
+            Constant.APARTMENT,
             -> {
                 binding.recipientAddressLayout.unitComplexFloorPlaceHolder?.text =
-                    getString(R.string.unit_complex_floor_street_text_view_md)
+                    getString(R.string.unit_number_floor)
             }
             else
             -> {
                 binding.recipientAddressLayout.unitComplexFloorPlaceHolder?.text =
-                    getString(R.string.unit_complex_floor_street_text_view)
+                    getString(R.string.additional_details)
                 binding.recipientAddressLayout.unitComplexFloorEditTextErrorMsg?.visibility = View.GONE
             }
         }

@@ -22,11 +22,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/twenty_four_dp"
-        android:layout_marginTop="@dimen/fourty_dp"
+        android:layout_marginTop="@dimen/fourty_five_dp"
         android:fontFamily="@font/futura_semi_bold"
         android:text="@string/choose_a_location"
         android:textColor="@color/black"
-        android:textSize="@dimen/twenty_sp"
+        android:textSize="@dimen/eighteen_sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/backButton" />
 
@@ -49,11 +49,11 @@
         android:id="@+id/enterNewAddress"
         style="@style/opensans_regular_12_text_style"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/fourty_dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/twenty_four_dp"
-        android:layout_marginTop="@dimen/twenty_one_dp"
+        android:layout_marginTop="@dimen/twenty_four_dp"
         android:layout_marginEnd="@dimen/twenty_four_dp"
-        android:background="@drawable/bg_edittext_confirm_address"
+        android:background="@drawable/search_bg_confirm_loc"
         android:drawableStart="@drawable/ic_search"
         android:drawablePadding="@dimen/fifteen_dp"
         android:gravity="center_vertical"
@@ -68,7 +68,8 @@
         android:id="@+id/inCurrentLocation"
         layout="@layout/current_location_row_layout"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/sixty_five_dp"
+        android:layout_height="@dimen/seventy_two_dp"
+        android:layout_marginTop="@dimen/sixteen_dp"
         app:layout_constraintTop_toBottomOf="@+id/enterNewAddress" />
 
     <View
@@ -77,7 +78,7 @@
         android:layout_height="@dimen/one_dp"
         android:layout_centerHorizontal="true"
         android:layout_marginStart="@dimen/twenty_four_dp"
-        android:layout_marginTop="@dimen/fifteen_dp"
+        android:layout_marginTop="@dimen/sixteen_dp"
         android:layout_marginEnd="@dimen/twenty_four_dp"
         android:background="@drawable/rounded_grey_corner"
         app:layout_constraintTop_toBottomOf="@+id/inCurrentLocation" />
@@ -98,14 +99,19 @@
         android:layout_marginBottom="@dimen/twenty_four_dp"
         android:background="@color/black"
         android:fontFamily="@font/futura_semi_bold"
+        android:paddingStart="@dimen/sixteen_dp"
+        android:paddingEnd="@dimen/sixteen_dp"
         android:gravity="center"
-        android:letterSpacing="0.2"
+        android:letterSpacing="0.12"
         android:minHeight="@dimen/fifty_dp"
         android:text="@string/confirm"
+        android:maxLines="1"
         android:textAllCaps="true"
+        android:ellipsize="end"
         android:textColor="@color/white"
         android:textSize="@dimen/twelve_sp"
         android:visibility="gone"
+        android:maxLength="35"
         app:layout_constraintBottom_toBottomOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
@@ -113,7 +119,6 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="@dimen/twenty_four_dp"
-        android:layout_marginTop="@dimen/fifteen_dp"
         android:layout_marginEnd="@dimen/twenty_four_dp"
         android:layout_marginBottom="8dp"
         android:background="@color/white"
