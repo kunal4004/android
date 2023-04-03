@@ -6,9 +6,13 @@ import android.view.View
 import android.view.View.OnClickListener
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
+import androidx.annotation.StringRes
+import androidx.core.os.bundleOf
 import androidx.core.text.HtmlCompat
+import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -20,6 +24,7 @@ import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.enhancedSubstitution.ProductListSelectionListener
 import za.co.woolworths.financial.services.android.enhancedSubstitution.adapter.SearchProductSubstitutionAdapter
 import za.co.woolworths.financial.services.android.enhancedSubstitution.apihelper.SubstitutionApiHelper
+import za.co.woolworths.financial.services.android.enhancedSubstitution.model.AddSubstitutionRequest
 import za.co.woolworths.financial.services.android.enhancedSubstitution.repository.ProductSubstitutionRepository
 import za.co.woolworths.financial.services.android.enhancedSubstitution.viewmodel.ProductSubstitutionViewModel
 import za.co.woolworths.financial.services.android.enhancedSubstitution.viewmodel.ProductSubstitutionViewModelFactory
@@ -28,6 +33,8 @@ import za.co.woolworths.financial.services.android.models.dto.ProductsRequestPar
 import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.Companion.SHOPPER_CHOICE
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.Companion.USER_CHOICE
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.FoodProductNotAvailableForCollectionDialog
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ProductDetailsFindInStoreDialog
 import za.co.woolworths.financial.services.android.util.KeyboardUtil
@@ -54,6 +61,10 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
         ) = SearchSubstitutionFragment().withArgs {
             putString(ManageSubstitutionFragment.COMMARCE_ITEM_ID, commarceItemId)
         }
+
+        const val SELECTED_SUBSTITUTED_PRODUCT = "SELECTED_SUBSTITUTED_PRODUCT"
+        const val SUBSTITUTION_ITEM_KEY = "SUBSTITUTION_ITEM_KEY"
+        const val SUBSTITUTION_ITEM_ADDED = "SUBSTITUTION_ITEM_ADDED"
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -195,7 +206,6 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
     private fun confirmProductSelection() {
         /* call inventory api */
         callInventoryApi()
-        /* call add substitution api */
     }
 
     private fun callInventoryApi() {
@@ -214,6 +224,7 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
             it.getContentIfNotHandled()?.let { resource ->
                 when (resource.status) {
                     Status.LOADING -> {
+
                     }
                     Status.SUCCESS -> {
                         resource?.data?.skuInventory?.let { inventoryList ->
@@ -235,10 +246,49 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
     fun navigateToPdpScreen() {
 
         if (commarceItemId?.isEmpty() == true) {
-            /*navigate to pdp with selected product  object and call add to cart api in order to add substitute there*/
+            /*navigate to pdp with selected product  object and then call add to cart api in order to add substitute there*/
+            setResultAndNaviagationToPdpWithProduct(SELECTED_SUBSTITUTED_PRODUCT, productList)
         } else {
             /*add subsitute api here since we have commarceId because product is already added in cart */
+            val addSubstitutionRequest = AddSubstitutionRequest(
+                    substitutionSelection =  USER_CHOICE,
+                    substitutionId = productList?.sku,
+                    commerceItemId = commarceItemId
+            )
+            productSubstitutionViewModel?.addSubstitutionForProduct(addSubstitutionRequest)
+            productSubstitutionViewModel?.addSubstitutionResponse?.observe(viewLifecycleOwner, {
+                it.getContentIfNotHandled()?.let { resource ->
+                    when (resource.status) {
+                        Status.LOADING -> {
+                        }
+                        Status.SUCCESS -> {
+                            /*navigate to pdp and call getSubs. api*/
+                            setResultAndNaviagationToPdpWithoutProduct(SELECTED_SUBSTITUTED_PRODUCT)
+                        }
+                        Status.ERROR -> {
+                            /*show error view*/
+                        }
+                    }
+                }
+            })
         }
+    }
+
+    private fun setResultAndNaviagationToPdpWithProduct(requestKey: String,  substitutionItemValue: ProductList?) {
+        /*send product details to pdp screen*/
+        setFragmentResult(requestKey, bundleOf(SUBSTITUTION_ITEM_KEY to substitutionItemValue))
+
+
+
+        (activity as? BottomNavigationActivity)?.popFragment()
+        (activity as? BottomNavigationActivity)?.onBackPressed()
+    }
+
+    private fun setResultAndNaviagationToPdpWithoutProduct(requestKey: String) {
+        /*send product details to pdp screen*/
+        setFragmentResult(requestKey, bundleOf(SUBSTITUTION_ITEM_ADDED to true))
+        (activity as? BottomNavigationActivity)?.popFragment()
+        (activity as? BottomNavigationActivity)?.onBackPressed()
     }
 
     private fun productOutOfStockErrorMessage() {
