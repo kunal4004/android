@@ -303,9 +303,17 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
                         Status.LOADING -> {
                         }
                         Status.SUCCESS -> {
-                            /*navigate to pdp and call getSubs. api*/
                             binding.progressBar?.visibility = View.GONE
-                            /*todo if we get form exception need to show error popup*/
+
+                            /* if we get form exception need to show error popup*/
+                            resource?.data?.data?.getOrNull(0)?.formExceptions?.getOrNull(0)?.let {
+                               if (it.message?.isNotEmpty() == true) {
+                                   showErrorView(it.message)
+                               }
+                                return@observe
+                            }
+
+                            /* navigate to pdp and call getSubs. api*/
                             setResultAndNaviagationToPdpWithProduct(SELECTED_SUBSTITUTED_PRODUCT, bundleOf(SUBSTITUTION_ITEM_ADDED to true))
                         }
                         Status.ERROR -> {
