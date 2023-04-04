@@ -11,10 +11,12 @@ import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.ui.fragments.credit_card_activation.CreditCardActivationAvailabilityDialogFragment
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
+import java.util.*
 
 class CreditCardDeliveryBoardingFragment : BaseFragmentBinding<CreditCardDeliveryBoardingLayoutBinding>(CreditCardDeliveryBoardingLayoutBinding::inflate) {
 
@@ -37,15 +39,24 @@ class CreditCardDeliveryBoardingFragment : BaseFragmentBinding<CreditCardDeliver
         binding.apply {
             init()
             setupToolbar()
-            setUpDeliveryNow?.setOnClickListener {
+            setUpDeliveryNow.setOnClickListener {
                 (activity as? CreditCardDeliveryActivity)?.mFirebaseCreditCardDeliveryEvent?.forMyAccountCreditCardDelivery()
                 navController?.navigate(
                     R.id.action_to_creditCardDeliveryRecipientDetailsFragment,
                     bundleOf("bundle" to bundle)
                 )
             }
-            activateNow?.setOnClickListener {
-                activity?.apply { Utils.makeCall(AppConfigSingleton.creditCardDelivery?.callCenterNumber) }
+            activateNow.setOnClickListener {
+                //Jira OWT-243
+                val calendar: Calendar = Calendar.getInstance()
+                val day: Int = calendar.get(Calendar.DAY_OF_WEEK)
+                if (day != Calendar.SUNDAY && Utils.isCreditCardActivationEndpointAvailable()) {
+                    activity?.apply {
+                        Utils.makeCall(AppConfigSingleton.creditCardDelivery?.callCenterNumber)
+                    } } else {
+                        activity?.supportFragmentManager?.let { CreditCardActivationAvailabilityDialogFragment.newInstance(accountBinNumber).show(it, CreditCardActivationAvailabilityDialogFragment::class.java.simpleName)
+                    }
+                }
             }
         }
     }
@@ -79,7 +90,7 @@ class CreditCardDeliveryBoardingFragment : BaseFragmentBinding<CreditCardDeliver
     private fun setupToolbar() {
         if (activity is CreditCardDeliveryActivity) {
             (activity as? CreditCardDeliveryActivity)?.apply {
-                setToolbarTitle(bindString(R.string.my_card))
+                setToolbarTitle(bindString(R.string.my_card,""))
                 changeToolbarBackground(R.color.grey_bg)
             }
         }

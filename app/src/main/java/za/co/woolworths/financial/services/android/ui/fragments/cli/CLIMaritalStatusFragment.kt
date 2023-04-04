@@ -1,66 +1,54 @@
 package za.co.woolworths.financial.services.android.ui.fragments.cli
 
-import android.content.Context
 import android.os.Bundle
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
-import android.view.animation.Animation
-import android.view.animation.AnimationUtils
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.setFragmentResultListener
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentCliMaritalStatusBinding
-import za.co.woolworths.financial.services.android.contracts.MaritalStatusListener
-import za.co.woolworths.financial.services.android.models.AppConfigSingleton
-import za.co.woolworths.financial.services.android.models.dto.app_config.credit_limit_increase.ConfigMaritalStatus
 import za.co.woolworths.financial.services.android.ui.activities.cli.CLIPhase2Activity
+import za.co.woolworths.financial.services.android.ui.fragments.cli.MaritalStatusSelectionFragment.Companion.MaritalStatusResultCode
 import za.co.woolworths.financial.services.android.util.FragmentUtils
-import za.co.woolworths.financial.services.android.util.picker.WheelView
 
-class CLIMaritalStatusFragment : Fragment(R.layout.fragment_cli_marital_status), WheelView.OnItemSelectedListener<Any>, View.OnClickListener {
+class CLIMaritalStatusFragment : Fragment(R.layout.fragment_cli_marital_status), View.OnClickListener {
 
     private lateinit var binding: FragmentCliMaritalStatusBinding
     private var isChecked: Boolean = false
-    private var selectedMaritalStatus: ConfigMaritalStatus? = null
-    private var maritalStatusListener: MaritalStatusListener? = null
-    private lateinit var mContext: Context
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is MaritalStatusListener) {
-            maritalStatusListener = context
-        }
-        mContext = context
-    }
-
+    val maritalStatusViewModel : MaritalStatusViewModel by activityViewModels()
+    var statusId: Int? = -1
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentCliMaritalStatusBinding.bind(view)
-
-        AppConfigSingleton.creditLimitIncrease?.maritalStatus?.apply {
-            if (!contains(ConfigMaritalStatus(0, mContext.getString(R.string.please_select))))
-                add(0, ConfigMaritalStatus(0, mContext.getString(R.string.please_select)))
-        }
-
         binding.apply {
             //set default text for picker selection.
-            cliMaritalStatusSelection.text = mContext.getString(R.string.select)
-
-            (activity as? CLIPhase2Activity)?.selectedMaritalStatusPosition?.let {
-                setMaritalStatusPicker(it)
-                cliMaritalStatusPickerDone?.performClick()
-            } ?: run {
-                // Default selected position
-                setMaritalStatusPicker(0)
-            }
-
+            cliMaritalStatusSelection.text = requireActivity().getString(R.string.select)
             //Set Listeners
-            cliMaritalStatusNext?.setOnClickListener(this@CLIMaritalStatusFragment)
-            cliMaritalStatusAgreementCheck?.setOnClickListener(this@CLIMaritalStatusFragment)
-            cliMaritalStatusSelection?.setOnClickListener(this@CLIMaritalStatusFragment)
-            cliMaritalStatusPickerDone?.setOnClickListener(this@CLIMaritalStatusFragment)
-            cliMaritalStatusPicker?.onItemSelectedListener = this@CLIMaritalStatusFragment
+            cliMaritalStatusNext.setOnClickListener(this@CLIMaritalStatusFragment)
+            cliMaritalStatusAgreementCheck.setOnClickListener(this@CLIMaritalStatusFragment)
+            cliMaritalStatusSelection.setOnClickListener(this@CLIMaritalStatusFragment)
+            confirmAgreementTextview.setOnClickListener(this@CLIMaritalStatusFragment)
+        }
+
+        setFragmentResultListener(MaritalStatusResultCode){ _, bundle ->
+            when (val result  = bundle.get(MaritalStatusResultCode) as? MaritalStatusSelection) {
+                is MaritalStatusSelection.OnSelected -> {
+                     statusId = result.configMaritalStatus.statusId
+                    (activity as? CLIPhase2Activity)?.selectedMaritalStatusPosition = statusId
+                    binding.cliMaritalStatusSelection.text = result.configMaritalStatus.statusDesc
+                    (activity as? CLIPhase2Activity)?.setMaritalStatus(result.configMaritalStatus)
+                    binding.cliMaritalStatusAgreementContainer.visibility = if (maritalStatusViewModel.isCliStatusId6(statusId)) VISIBLE else GONE
+                    updateNextButtonStatus(statusId = statusId)
+                }
+                else -> Unit
+            }
+            binding.cliMaritalStatusSelection.isEnabled = true
         }
     }
 
@@ -69,86 +57,35 @@ class CLIMaritalStatusFragment : Fragment(R.layout.fragment_cli_marital_status),
         fun newInstance() = CLIMaritalStatusFragment()
     }
 
-    override fun onItemSelected(wheelView: WheelView<Any>?, data: Any?, position: Int) {
-        when (wheelView?.id) {
-            R.id.cli_marital_status_picker -> {
-                val maritalStatusList = AppConfigSingleton.creditLimitIncrease?.maritalStatus
-                if (maritalStatusList == null || maritalStatusList.isEmpty() || position >= maritalStatusList.size) {
-                    return
-                }
-                selectedMaritalStatus = maritalStatusList[position]
-                (activity as? CLIPhase2Activity)?.selectedMaritalStatusPosition = position
-                selectedMaritalStatus?.let { setMaritalStatusPicker(position) }
-            }
-        }
-    }
-
-    private fun setMaritalStatusPicker(position: Int) {
-        val maritalStatusList =
-            AppConfigSingleton.creditLimitIncrease?.maritalStatus
-        if (maritalStatusList == null || maritalStatusList.isEmpty()) {
-            return
-        }
-        val dataList = maritalStatusList.map { it.statusDesc }
-        selectedMaritalStatus = maritalStatusList[position]
-            binding.cliMaritalStatusPicker?.apply {
-                data = dataList
-                selectedItemPosition = position
-        }
-    }
-
     override fun onClick(v: View?) {
 
         binding.apply {
             when (v?.id) {
 
+                R.id.confirmAgreementTextview -> cliMaritalStatusAgreementCheck.performClick()
+
                 R.id.cli_marital_status_selection -> {
-                    cliMaritalStatusPickerContainer.visibility = View.VISIBLE
-                    val slideUpAnimation: Animation = AnimationUtils.loadAnimation(
-                        context,
-                        R.anim.slide_in_up
+                    cliMaritalStatusSelection.isEnabled = false
+                    val selectMaritalStatusFragment=
+                        MaritalStatusSelectionFragment()
+                    selectMaritalStatusFragment.show(
+                        requireActivity().supportFragmentManager,
+                        MaritalStatusSelectionFragment::class.java.simpleName
                     )
-                    cliMaritalStatusPickerContainer.startAnimation(slideUpAnimation)
                 }
 
-                R.id.cli_marital_status_picker_done -> {
-                    setMaritalStatusPicker(cliMaritalStatusPicker?.selectedItemPosition ?: 0)
-
-                    val slideDownAnimation: Animation = AnimationUtils.loadAnimation(
-                        context,
-                        R.anim.slide_down_anim
-                    )
-                    cliMaritalStatusPickerContainer?.startAnimation(slideDownAnimation)
-
-                    cliMaritalStatusPickerContainer?.visibility = View.GONE
-
-                    cliMaritalStatusAgreementContainer?.visibility =
-                        if (selectedMaritalStatus?.statusId == 6) View.VISIBLE else View.GONE
-                    cliMaritalStatusAgreementContainer?.visibility =
-                        if (selectedMaritalStatus?.statusId == 6) View.VISIBLE else View.GONE
-
-                    cliMaritalStatusSelection?.text =
-                        if (mContext.getString(R.string.please_select)
-                                .equals(selectedMaritalStatus?.statusDesc, ignoreCase = true)
-                        ) context?.getString(R.string.select) else selectedMaritalStatus?.statusDesc
-
-                    // Set marital status id for Create and update offer application.
-                    selectedMaritalStatus?.let { maritalStatusListener?.setMaritalStatus(it) }
-
-                    updateNextButtonStatus()
-                }
 
                 R.id.cli_marital_status_agreement_check -> {
                     isChecked = !isChecked
                     context?.let {
-                        cliMaritalStatusAgreementCheck?.setImageDrawable(
+                        cliMaritalStatusAgreementCheck.setImageDrawable(
                             ContextCompat.getDrawable(
                                 it,
                                 if (isChecked) R.drawable.checked_item else R.drawable.uncheck_item
                             )
                         )
                     }
-                    updateNextButtonStatus()
+                    updateNextButtonStatus(statusId = statusId)
                 }
 
                 R.id.cli_marital_status_next -> {
@@ -164,48 +101,48 @@ class CLIMaritalStatusFragment : Fragment(R.layout.fragment_cli_marital_status),
         }
     }
 
-    private fun updateNextButtonStatus() {
+    private fun updateNextButtonStatus(statusId : Int?) {
         binding.apply {
-            when (selectedMaritalStatus?.statusId) {
+            when (statusId) {
                 6 -> {
                     context?.let {
-                        cliMaritalStatusNext?.setBackgroundColor(
+                        cliMaritalStatusNext.setBackgroundColor(
                             ContextCompat.getColor(
                                 it,
                                 if (isChecked) R.color.black else R.color.button_disable
                             )
                         )
                     }
-                    cliMaritalStatusNext?.isEnabled = isChecked
+                    cliMaritalStatusNext.isEnabled = isChecked
                 }
                 0 -> {
                     context?.let {
-                        cliMaritalStatusNext?.setBackgroundColor(
+                        cliMaritalStatusNext.setBackgroundColor(
                             ContextCompat.getColor(
                                 it,
                                 R.color.button_disable
                             )
                         )
-                        cliMaritalStatusNext?.isEnabled = false
+                        cliMaritalStatusNext.isEnabled = false
                     }
                 }
                 else -> {
                     context?.let {
-                        cliMaritalStatusNext?.setBackgroundColor(
+                        cliMaritalStatusNext.setBackgroundColor(
                             ContextCompat.getColor(
                                 it,
                                 R.color.black
                             )
                         )
                     }
-                    cliMaritalStatusNext?.isEnabled = true
+                    cliMaritalStatusNext.isEnabled = true
                 }
             }
         }
     }
 
     override fun onDestroy() {
-        (binding.root?.parent as? ViewGroup)?.removeView(binding.root)
+        (binding.root.parent as? ViewGroup)?.removeView(binding.root)
         super.onDestroy()
     }
 }

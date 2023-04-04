@@ -733,7 +733,7 @@ class OfferCalculationFragment : CLIFragment(R.layout.offer_calculation_fragment
             val response = offerActive.response
             if (response != null) {
                 Utils.displayValidationMessage(
-                    activity, CustomPopUpWindow.MODAL_LAYOUT.CLI_ERROR, response.desc
+                    activity, CustomPopUpWindow.MODAL_LAYOUT.CLI_ERROR,response.desc.ifEmpty { getString(R.string.unfortunately_something_went_wrong) }
                 )
             }
         }
@@ -922,10 +922,9 @@ class OfferCalculationFragment : CLIFragment(R.layout.offer_calculation_fragment
     }
 
     private fun showErrorMessage(activity: Activity?, response: Response) {
-        val description = response.desc
         Utils.showGeneralErrorDialog(
             activity,
-            if (!TextUtils.isEmpty(description)) description else response.message
+            response.desc.ifEmpty { response.message }
         )
     }
 

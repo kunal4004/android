@@ -13,20 +13,16 @@ import static za.co.woolworths.financial.services.android.ui.activities.TipsAndT
 import static za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity.RESULT_OK_ACCOUNTS;
 import static za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity.RESULT_OK_OPEN_CART_FROM_TIPS_AND_TRICKS;
 import static za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity.RESULT_CODE_MY_ACCOUNT_FRAGMENT;
-import static za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity.PRODUCT_SEARCH_ACTIVITY_REQUEST_CODE;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.BRAND_NAVIGATION_DETAILS;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.IS_BROWSING;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.STR_BRAND_HEADER;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.STR_PRODUCT_CATEGORY;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.STR_PRODUCT_LIST;
-import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment.REQUEST_PAYMENT_STATUS;
+import static za.co.woolworths.financial.services.android.cart.view.CartFragment.REQUEST_PAYMENT_STATUS;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.REQUEST_CHECKOUT_ON_CONTINUE_SHOPPING;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.RESULT_RELOAD_CART;
 import static za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToShoppingListFragment.POST_ADD_TO_SHOPPING_LIST;
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListDetailFragment.ADD_TO_CART_SUCCESS_RESULT;
-import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.MY_LIST_LIST_ID;
-import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.MY_LIST_LIST_NAME;
-import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.MY_LIST_SEARCH_TERM;
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.PRODUCT_DETAILS_FROM_MY_LIST_SEARCH;
 import static za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsVouchersFragment.LOCK_REQUEST_CODE_WREWARDS;
 import static za.co.woolworths.financial.services.android.util.AppConstant.DP_LINKING_MY_ACCOUNTS_ORDER_DETAILS;
@@ -116,14 +112,12 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.Cha
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.AmplifyInit;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment;
+import za.co.woolworths.financial.services.android.cart.view.CartFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.MyListsFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.shop.MyOrdersAccountFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.OrderDetailsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList;
-import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsLoggedInAndNotLinkedFragment;
@@ -447,13 +441,15 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         }
 
         BottomNavigationMenuView bottomNavigationMenu = getBottomNavigationById().getBottomNavigationMenuView();
-        accountNavigationView = (BottomNavigationItemView) bottomNavigationMenu.getChildAt(INDEX_ACCOUNT);
-        notificationBadgeOne = LayoutInflater.from(this).inflate(R.layout.green_circle_icon, accountNavigationView, false);
-        onlineIconImageView = notificationBadgeOne.findViewById(R.id.onlineIconImageView);
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
-        params.addRule(RelativeLayout.ALIGN_END, RelativeLayout.TRUE);
-        params.addRule(RelativeLayout.ALIGN_BOTTOM, RelativeLayout.TRUE);
-        notificationBadgeOne.setLayoutParams(params);
+        if (bottomNavigationMenu != null && bottomNavigationMenu.getChildAt(INDEX_ACCOUNT) instanceof BottomNavigationItemView) {
+            accountNavigationView = (BottomNavigationItemView) bottomNavigationMenu.getChildAt(INDEX_ACCOUNT);
+            notificationBadgeOne = LayoutInflater.from(this).inflate(R.layout.green_circle_icon, accountNavigationView, false);
+            onlineIconImageView = notificationBadgeOne.findViewById(R.id.onlineIconImageView);
+            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+            params.addRule(RelativeLayout.ALIGN_END, RelativeLayout.TRUE);
+            params.addRule(RelativeLayout.ALIGN_BOTTOM, RelativeLayout.TRUE);
+            notificationBadgeOne.setLayoutParams(params);
+        }
     }
 
     private void deepLinkToOrderDetails(Parameter params) {
@@ -464,9 +460,9 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
     @Override
     public void bottomNavConfig() {
-        Typeface tfMyriadProT = Typeface.createFromAsset(getAssets(), "fonts/MyriadPro-Regular.otf");
+        Typeface tfMyriadProT = Typeface.createFromAsset(getAssets(), "fonts/OpenSans-SemiBold.ttf");
         getBottomNavigationById().setTypeface(tfMyriadProT);
-        getBottomNavigationById().setTextSize(12);
+        getBottomNavigationById().setTextSize(10);
         // set icon size
         int iconSize = 28;
         getBottomNavigationById().setIconSize(iconSize, iconSize);
@@ -1108,16 +1104,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
         // Navigate from shopping list detail activity
         switch (requestCode) {
-            case PRODUCT_SEARCH_ACTIVITY_REQUEST_CODE:
-                if (resultCode == PRODUCT_SEARCH_ACTIVITY_REQUEST_CODE) {
-                    SearchResultFragment searchResultFragment = new SearchResultFragment();
-                    Bundle bundle = new Bundle();
-                    bundle.putString(MY_LIST_SEARCH_TERM, data.getStringExtra(MY_LIST_LIST_NAME));
-                    bundle.putString(MY_LIST_LIST_ID, data.getStringExtra(MY_LIST_LIST_ID));
-                    searchResultFragment.setArguments(bundle);
-                    pushFragment(searchResultFragment);
-                    break;
-                }
             case ADD_TO_SHOPPING_LIST_REQUEST_CODE:
                 if (resultCode == ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE) {
                     ToastFactory.Companion.buildShoppingListToast(this, getBottomNavigationById(), true, data, this);
@@ -1125,6 +1111,10 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 }
 
             case REQUEST_PAYMENT_STATUS:
+                if(getCurrentFragment() instanceof ShopFragment) {
+                    ShopFragment fragment = (ShopFragment) getCurrentFragment();
+                    fragment.makeLastDashOrderDetailsCall();
+                }
                 if (resultCode == REQUEST_CHECKOUT_ON_CONTINUE_SHOPPING) {
                     navigateToTabIndex(BottomNavigationActivity.INDEX_PRODUCT, null);
                     QueryBadgeCounter.getInstance().queryCartSummaryCount();
@@ -1132,10 +1122,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 }
                 else if (resultCode == RESULT_RELOAD_CART) {
                     getCurrentFragment().onActivityResult(requestCode, resultCode, data);
-                }
-                else if(getCurrentFragment() instanceof ShopFragment) {
-                    ShopFragment fragment = (ShopFragment) getCurrentFragment();
-                    fragment.makeLastDashOrderDetailsCall();
                 }
                 else {
                     navigateToTabIndex(BottomNavigationActivity.INDEX_PRODUCT, null);

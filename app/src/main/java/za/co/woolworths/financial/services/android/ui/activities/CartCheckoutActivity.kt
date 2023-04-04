@@ -27,9 +27,6 @@ class CartCheckoutActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onClick(view: View) {
         when (view.id) {
-            R.id.btnCloseCart  -> {
-                onBackPressed()
-            }
             R.id.btnClose -> {
                 setResult(REQUEST_CHECKOUT_ON_DESTROY)
                 finish()

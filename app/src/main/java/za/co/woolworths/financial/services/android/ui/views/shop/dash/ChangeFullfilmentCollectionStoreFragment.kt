@@ -33,15 +33,17 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.grid.Pro
 import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.list.DepartmentExtensionFragment
-import za.co.woolworths.financial.services.android.ui.views.maps.DynamicMapDelegate
-import za.co.woolworths.financial.services.android.ui.views.maps.model.DynamicMapMarker
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getDeliveryType
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
-
+import za.co.woolworths.financial.services.android.geolocation.network.model.PlaceDetails
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.TAG_CHANGEFULLFILMENT_COLLECTION_STORE_FRAGMENT
+import za.co.woolworths.financial.services.android.geolocation.view.PargoStoreInfoBottomSheetDialog
+import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
+import za.co.woolworths.financial.services.android.geolocation.view.FBHInfoBottomSheetDialog
 class ChangeFullfilmentCollectionStoreFragment :
-    DepartmentExtensionFragment(R.layout.layout_dash_collection_store), DynamicMapDelegate,
+    DepartmentExtensionFragment(R.layout.layout_dash_collection_store),
     StoreListAdapter.OnStoreSelected, View.OnClickListener, TextWatcher {
 
     private lateinit var binding: LayoutDashCollectionStoreBinding
@@ -54,6 +56,8 @@ class ChangeFullfilmentCollectionStoreFragment :
     private var parentFragment: ShopFragment? = null
     private var mDepartmentAdapter: DepartmentAdapter? = null
     private var saveInstanceState: Bundle? = null
+    private var updatedPlace:PlaceDetails?=null
+    private var isFragmentVisible: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,14 +70,11 @@ class ChangeFullfilmentCollectionStoreFragment :
 
         parentFragment = (activity as? BottomNavigationActivity)?.currentFragment as? ShopFragment
         this.saveInstanceState = savedInstanceState
-        binding.layoutClickAndCollectStore.dynamicMapView?.initializeMap(savedInstanceState, this)
     }
 
     override fun onResume() {
         super.onResume()
         binding.layoutClickAndCollectStore.apply {
-            dynamicMapView?.initializeMap(saveInstanceState, this@ChangeFullfilmentCollectionStoreFragment)
-            dynamicMapView?.onResume()
             etEnterNewAddress?.addTextChangedListener(this@ChangeFullfilmentCollectionStoreFragment)
         }
         init()
@@ -137,7 +138,7 @@ class ChangeFullfilmentCollectionStoreFragment :
             }
             return
         }
-        if (validatePlace.stores?.isNullOrEmpty() == true) {
+        if (validatePlace.stores.isNullOrEmpty()) {
             showNoCollectionStoresUi()
             return
         }
@@ -167,10 +168,17 @@ class ChangeFullfilmentCollectionStoreFragment :
                                 validateLocationResponse?.validatePlace?.stores?.size
                             )
                             updatedAddressStoreList = validateLocationResponse?.validatePlace?.stores
+                            updatedPlace=validateLocationResponse?.validatePlace?.placeDetails
                             binding.layoutClickAndCollectStore.tvAddress?.text =
                                 KotlinUtils.capitaliseFirstLetter(validateLocationResponse?.validatePlace?.placeDetails?.address1)
                             placeId = validateLocationResponse?.validatePlace?.placeDetails?.placeId
                             setStoreList(validateLocationResponse?.validatePlace?.stores)
+                            if(placeId != null) {
+                                val store = GeoUtils.getStoreDetails(
+                                        placeId,
+                                        validateLocationResponse?.validatePlace?.stores
+                                )
+                            }
                         }
                     }
                 }
@@ -187,17 +195,33 @@ class ChangeFullfilmentCollectionStoreFragment :
     private fun setStoreList(stores: List<Store>?) {
         binding.layoutEdgeCaseScreen?.root?.visibility = View.GONE
         binding.layoutClickAndCollectStore?.root?.visibility = View.VISIBLE
-        binding.layoutClickAndCollectStore?.ivCross?.visibility = View.GONE
+        binding.layoutClickAndCollectStore?.topPaddingView?.visibility=View.VISIBLE
+        binding.layoutClickAndCollectStore?.backButton?.visibility = View.GONE
         binding.layoutClickAndCollectStore.rvStoreList.layoutManager =
             activity?.let { activity -> LinearLayoutManager(activity) }
-        binding.layoutClickAndCollectStore.rvStoreList.adapter = activity?.let { activity ->
-            StoreListAdapter(
-                activity,
-                stores,
-                this
-            )
+        if (stores?.isNotEmpty() == true) {
+            binding.layoutClickAndCollectStore.tvConfirmStore?.isEnabled = false
+            val storesListWithHeaders =
+                StoreUtils.getStoresListWithHeaders(StoreUtils.sortedStoreList(stores))
+            if (storesListWithHeaders.isNotEmpty()) {
+                binding.layoutClickAndCollectStore.rvStoreList.adapter = activity?.let { activity ->
+                    StoreListAdapter(
+                        activity,
+                        storesListWithHeaders,
+                        this
+                    )
+                }
+                if(isFragmentVisible) {
+                    binding.layoutClickAndCollectStore.rvStoreList.runWhenReady {
+                        if (!AppInstanceObject.get().featureWalkThrough.new_fbh_cnc) {
+                            firstTimeFBHCNCIntroDialog()
+                        }
+                    }
+                }
+            }
+            binding.layoutClickAndCollectStore.rvStoreList.adapter?.notifyDataSetChanged()
         }
-        binding.layoutClickAndCollectStore.rvStoreList.adapter?.notifyDataSetChanged()
+
     }
 
     private fun showSetLocationUi() {
@@ -252,19 +276,8 @@ class ChangeFullfilmentCollectionStoreFragment :
         binding.layoutClickAndCollectStore.tvConfirmStore?.isEnabled = true
     }
 
-    override fun onMapReady() {
-        binding.layoutClickAndCollectStore.dynamicMapView?.setAllGesturesEnabled(false)
-        val addressStoreList = WoolworthsApplication.getCncBrowsingValidatePlaceDetails()?.stores
-        if (addressStoreList != null && addressStoreList?.isEmpty() == false) {
-            GeoUtils.showFirstFourLocationInMap(addressStoreList, binding.layoutClickAndCollectStore.dynamicMapView, context)
-        } else if (updatedAddressStoreList?.isEmpty() == false)  {
-            GeoUtils.showFirstFourLocationInMap(updatedAddressStoreList, binding.layoutClickAndCollectStore.dynamicMapView, context)
-        }
-    }
 
-    override fun onMarkerClicked(marker: DynamicMapMarker) {
 
-    }
 
     override fun onClick(v: View?) {
         when (v?.id) {
@@ -403,7 +416,7 @@ class ChangeFullfilmentCollectionStoreFragment :
         KotlinUtils.browsingCncStore =
             GeoUtils.getStoreDetails(
                 storeId,
-                WoolworthsApplication.getCncBrowsingValidatePlaceDetails().stores
+                WoolworthsApplication.getCncBrowsingValidatePlaceDetails()?.stores
             )
     }
 
@@ -471,24 +484,24 @@ class ChangeFullfilmentCollectionStoreFragment :
         setStoreList(list)
     }
 
-    override fun onPause() {
-        binding.layoutClickAndCollectStore.dynamicMapView?.onPause()
-        super.onPause()
-    }
-
-    override fun onLowMemory() {
-        super.onLowMemory()
-        binding.layoutClickAndCollectStore.dynamicMapView?.onLowMemory()
-    }
-
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         this.saveInstanceState = outState
-        binding.layoutClickAndCollectStore.dynamicMapView?.onSaveInstanceState(outState)
     }
 
-    override fun onDestroyView() {
-        binding.layoutClickAndCollectStore.dynamicMapView?.onDestroy()
-        super.onDestroyView()
+    override fun onFirstTimePargo() {
+        PargoStoreInfoBottomSheetDialog().show(
+            parentFragmentManager,
+            TAG_CHANGEFULLFILMENT_COLLECTION_STORE_FRAGMENT
+        )
     }
+    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
+        super.setUserVisibleHint(isVisibleToUser)
+        isFragmentVisible=isVisibleToUser
+    }
+    private fun firstTimeFBHCNCIntroDialog() {
+        val fbh = FBHInfoBottomSheetDialog()
+        activity?.supportFragmentManager?.let { fbh.show(it, AppConstant.TAG_FBH_CNC_FRAGMENT) }
+    }
+
 }

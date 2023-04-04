@@ -31,7 +31,9 @@ class ApplyNowFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         arguments?.takeIf { it.containsKey(ARG_POSITION) }?.apply {
-                binding.rcvApplyNow.adapter = ApplyNowMainAdapter(viewModel.applyNowResponse.value?.content!![this.getInt("position")].children)
+            viewModel.applyNowResponse.value?.content?.let {
+                binding.rcvApplyNow.adapter = ApplyNowMainAdapter(it[this.getInt(ARG_POSITION)].children)
+            }
         }
     }
     override fun onDestroyView() {

@@ -1,9 +1,12 @@
 package za.co.woolworths.financial.services.android.checkout.view
 
 import android.animation.ObjectAnimator
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.view.*
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.View
 import android.widget.*
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatActivity
@@ -14,6 +17,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.findNavController
@@ -120,6 +124,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
     private var placeId: String = ""
     private var isPoiAddress: Boolean? = false
     private var address2: String? = ""
+    private var oldNickName: String? = ""
 
     companion object {
         const val SCREEN_NAME_EDIT_ADDRESS: String = "SCREEN_NAME_EDIT_ADDRESS"
@@ -164,6 +169,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                     selectedDeliveryAddressType = savedAddress?.addressType
                     if (savedAddress != null) {
                         selectedAddress.savedAddress = savedAddress
+
                         if (!savedAddress?.city.isNullOrEmpty()) {
                             selectedAddress?.provinceName = savedAddress.city!!
                         } else {
@@ -245,6 +251,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
     }
 
     private fun setTextFields() {
+        oldNickName = selectedAddress?.savedAddress?.nickname
         enableDisableUserInputEditText(
             binding.recipientAddressLayout.addressNicknameEditText,
             true,
@@ -296,11 +303,6 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                 binding.deleteTextView?.visibility = View.GONE
             }
             binding.saveAddress?.text = bindString(R.string.change_details)
-        }
-        if (activity is CheckoutActivity) {
-            (activity as? CheckoutActivity)?.apply {
-                showBackArrowWithoutTitle()
-            }
         }
         binding.saveAddress?.setOnClickListener(this)
         binding.backButton?.setOnClickListener(this)
@@ -355,7 +357,16 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             }
         }
     }
-
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        activity?.lifecycleScope?.launchWhenCreated {
+            if (activity is CheckoutActivity) {
+                (activity as? CheckoutActivity)?.apply {
+                    showBackArrowWithoutTitle()
+                }
+            }
+        }
+    }
     private fun setupViewModel() {
         checkoutAddAddressNewUserViewModel = ViewModelProviders.of(
             this,
@@ -1154,6 +1165,8 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                                                 Utils.toJson(savedAddressResponse)
                                             )
                                         }
+
+                                    KotlinUtils.isNickNameChanged = oldNickName?.equals(response?.address?.nickname) == false
                                     hideKeyboardIfVisible(activity)
                                     if (navController?.navigateUp() == false) {
                                         if (activity is CheckoutActivity) {
@@ -1410,16 +1423,16 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
     }
 
     private fun showAnimationErrorMessage(
-        textView: TextView,
+        textView: TextView?,
         visible: Int,
-        recipientLayoutValue: Int,
+        recipientLayoutValue: Int?,
     ) {
         textView?.visibility = visible
-        if (View.VISIBLE == visible) {
+        if (View.VISIBLE == visible && textView != null) {
             val anim = ObjectAnimator.ofInt(
                 binding.newUserNestedScrollView,
                 "scrollY",
-                recipientLayoutValue + textView.y.toInt()
+                recipientLayoutValue ?: (0 + (textView?.y?.toInt() ?: 0))
             )
             anim.setDuration(300).start()
         }

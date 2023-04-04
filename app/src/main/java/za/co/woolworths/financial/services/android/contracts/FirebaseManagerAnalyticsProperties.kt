@@ -491,6 +491,10 @@ open class FirebaseManagerAnalyticsProperties {
             const val UNDEFINED: String = "undefined"
             const val FAILED: String = "failed"
             const val SUCCESSFUL: String = "successful"
+            const val REASON: String = "Reason"
+            const val STATUS = "status"
+            const val TRANSACTION_ID = "transaction_id"
+            const val PAYMENT_STATUS = "payment_status"
 
             const val linkDeviceInitiated = "Link device initiated"
             const val linkDeviceSkipped = "Link device request skipped or canceled"

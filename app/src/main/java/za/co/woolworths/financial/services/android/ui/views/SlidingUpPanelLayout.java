@@ -332,7 +332,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
 		// If the shadow height is zero, don't show the shadow
 		if (mShadowHeight > 0) {
 			if (mIsSlidingUp) {
-				mShadowDrawable = getResources().getDrawable(R.drawable.shadow_on_map);
+				mShadowDrawable = getResources().getDrawable(R.drawable.above_shadow);
 			} else {
 				mShadowDrawable = getResources().getDrawable(R.drawable.below_shadow);
 			}
@@ -644,6 +644,9 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
 
 	void dispatchOnPanelSlide(View panel) {
+		if(mPanelSlideListeners.isEmpty()) {
+			return;
+		}
 		synchronized (mPanelSlideListeners) {
 			for (PanelSlideListener l : mPanelSlideListeners) {
 				l.onPanelSlide(panel, mSlideOffset);
@@ -653,6 +656,9 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
 
 	void dispatchOnPanelStateChanged(View panel, PanelState previousState, PanelState newState) {
+		if(mPanelSlideListeners.isEmpty()) {
+			return;
+		}
 		synchronized (mPanelSlideListeners) {
 			for (PanelSlideListener l : mPanelSlideListeners) {
 				l.onPanelStateChanged(panel, previousState, newState);

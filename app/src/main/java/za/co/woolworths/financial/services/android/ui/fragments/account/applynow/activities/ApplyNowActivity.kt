@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.applynow.activities
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.View.*
@@ -8,19 +9,24 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.lifecycle.lifecycleScope
+import com.awfs.coordination.R
 import com.awfs.coordination.databinding.ActivityApplyNowBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
+import za.co.woolworths.financial.services.android.models.dto.account.ServerErrorResponse
 import za.co.woolworths.financial.services.android.models.dto.account.applynow.ApplyNowSectionReference
 import za.co.woolworths.financial.services.android.models.dto.account.applynow.Content
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.applynow.adapters.ApplyNowFragAdapter
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.ToastFactory
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.ViewState
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.showErrorDialog
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
@@ -28,6 +34,7 @@ import za.co.woolworths.financial.services.android.util.animation.AnimationUtilE
 class ApplyNowActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var binding: ActivityApplyNowBinding
     val viewModel: ApplyNowViewModel by viewModels()
+    private var wasApplicationInBackground = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,6 +47,7 @@ class ApplyNowActivity : AppCompatActivity(), View.OnClickListener {
             clickListeners()
             setupToolbarTopMargin()
             setHeader()
+            setHeaderTitleAndDesc()
         }
         callApplyNow(viewModel.contentID())
     }
@@ -49,6 +57,14 @@ class ApplyNowActivity : AppCompatActivity(), View.OnClickListener {
         val params = toolbar.layoutParams as? ViewGroup.MarginLayoutParams
         params?.topMargin = KotlinUtils.getStatusBarHeight()
         toolbar.layoutParams = params
+    }
+    private fun ActivityApplyNowBinding.setHeaderTitleAndDesc(){
+        viewModel.getApplyNowResourcesData().apply{
+            incAccountSalesFrontLayout.let {
+                it.titleTextView.text = this.cardHeader.title
+                it.descriptionTextView.text = this.cardHeader.description
+            }
+        }
     }
 
     private fun ActivityApplyNowBinding.setHeader(){
@@ -95,15 +111,24 @@ class ApplyNowActivity : AppCompatActivity(), View.OnClickListener {
                                 setupView(this[0])
                                 viewModel.setApplyNowStateForCC(ApplyNowSectionReference.valueOf(this[0].reference))
                                 setHeader()
+                                tabLayoutApplyNow.selectTab(tabLayoutApplyNow.getTabAt(1))
                             }
                         }
                     }
-                    is ViewState.RenderFailure -> {}
-                    is ViewState.Loading -> {}
+                    is ViewState.RenderFailure,
+                    is ViewState.RenderErrorFromResponse-> {errorDialog()}
+                    is ViewState.Loading,
                     is ViewState.RenderEmpty -> {}
-                    else -> Unit
+                    is ViewState.RenderNoConnection->{ ToastFactory.showNoConnectionFound(this@ApplyNowActivity) }
                 }
             }
+        }
+    }
+    private fun errorDialog(){
+        runOnUiThread{
+            val serverErrorResponse = ServerErrorResponse()
+            serverErrorResponse.desc = getString(R.string.general_error_desc) ?: ""
+            showErrorDialog(this@ApplyNowActivity, serverErrorResponse)
         }
     }
 
@@ -175,6 +200,7 @@ class ApplyNowActivity : AppCompatActivity(), View.OnClickListener {
                             )
                         }
                 }
+
                 navigateBackImageButton -> onBackPressed()
 
                 incAccountSalesFrontLayout.viewApplicationStatusTextView -> {
@@ -194,6 +220,17 @@ class ApplyNowActivity : AppCompatActivity(), View.OnClickListener {
                 return
             }
         }
-        KotlinUtils.onBackPressed(this)
+        if(wasApplicationInBackground) redirectToMyAccounts() else KotlinUtils.onBackPressed(this)
+    }
+
+    private fun redirectToMyAccounts() {
+        finish()
+        startActivity(Intent(this, BottomNavigationActivity::class.java))
+        overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        wasApplicationInBackground = !WoolworthsApplication.isApplicationInForeground()
     }
 }

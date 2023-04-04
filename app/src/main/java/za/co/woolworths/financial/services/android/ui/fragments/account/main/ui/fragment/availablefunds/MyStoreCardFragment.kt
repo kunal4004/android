@@ -50,7 +50,7 @@ class MyStoreCardFragment @Inject constructor() : Fragment(R.layout.fragment_ava
     val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
 
     @Inject lateinit var router : ProductLandingRouterImpl
-    var mToolbarHelper : AccountProductsToolbarHelper? =   null
+    var mToolbarHelper : AccountProductsToolbarHelper? = null
 
     @Inject
     lateinit var pmaButton: PayMyAccountButtonTap
@@ -112,7 +112,7 @@ class MyStoreCardFragment @Inject constructor() : Fragment(R.layout.fragment_ava
         incPayMyAccountButton.viewPaymentOptionImageShimmerLayout.loadingState(isLoading)
     }
 
-    private fun FragmentAvailableFundBinding.setupToolbar() {
+    private fun setupToolbar() {
         viewLifecycleOwner.lifecycleScope.launch {
             mToolbarHelper?.setHomeLandingToolbar(homeViewModel) { view ->
                 when (view.id) {

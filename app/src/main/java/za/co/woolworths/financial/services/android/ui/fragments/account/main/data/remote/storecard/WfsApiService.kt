@@ -5,12 +5,18 @@ import retrofit2.http.*
 import za.co.woolworths.financial.services.android.models.dto.CreditCardTokenResponse
 import za.co.woolworths.financial.services.android.models.dto.EligibilityPlanResponse
 import za.co.woolworths.financial.services.android.models.dto.OfferActive
+import za.co.woolworths.financial.services.android.models.dto.account.AppGUIDModel
+import za.co.woolworths.financial.services.android.models.dto.account.AppGUIDRequestModel
+import za.co.woolworths.financial.services.android.models.dto.account.applynow.ApplyNowModel
 import za.co.woolworths.financial.services.android.models.dto.npc.BlockCardRequestBody
 import za.co.woolworths.financial.services.android.models.dto.npc.BlockMyCardResponse
 import za.co.woolworths.financial.services.android.models.dto.npc.UnblockStoreCardRequestBody
 import za.co.woolworths.financial.services.android.models.dto.pma.PaymentMethodsResponse
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsRequestBody
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
+import za.co.woolworths.financial.services.android.models.network.GenericResponse
+import za.co.woolworths.financial.services.android.ui.fragments.contact_us.enquiry.EmailUsRequest
+import za.co.woolworths.financial.services.android.ui.wfs.contact_us.model.ContactUsRemoteModel
 
 interface WfsApiService {
     @Headers(
@@ -69,7 +75,6 @@ interface WfsApiService {
         @Header("deviceIdentityToken") deviceIdentityToken: String
     ): Response<EligibilityPlanResponse>
 
-
     /**
      * Credit Limit Increase
      */
@@ -115,4 +120,34 @@ interface WfsApiService {
         @Body body: Any
     ): Response<BlockMyCardResponse>
 
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @GET("/wfs/app/v4/mobileconfigs/content")
+    suspend fun queryServiceMobileConfigsContent(
+        @Query("contentId") contentId: String
+    ): Response<ContactUsRemoteModel>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:86400")
+    @GET("/wfs/app/v4/mobileconfigs/content")
+    suspend fun applyNowService(
+        @Query("contentId") contentId: String
+    ): Response<ApplyNowModel>
+
+    @GET("wfs/app/v4/user/creditCardToken")
+    suspend fun getCreditCardToken(): Response<CreditCardTokenResponse>
+
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @POST("wfs/app/v4/user/email/{emailId}")
+    suspend fun userSendEmail(
+        @Path("emailId") emailId: String = "contactUs",
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Body emailUsRequest: EmailUsRequest?
+    ):  Response<GenericResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @POST("/wfs/app/v4/user/appGuid")
+    suspend fun getAppGUID(
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Body appGUIDRequestModel : AppGUIDRequestModel
+    ): Response<AppGUIDModel>
 }

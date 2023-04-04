@@ -40,7 +40,7 @@ class MainShopRepository : ShopRepository {
         }
     }
 
-    override suspend fun fetchOnDemandCategories(location: Location?): Resource<RootCategories> {
+    override suspend fun fetchOnDemandCategories(location: Location?): Resource<DashRootCategories> {
         return try {
 
             val response = OneAppService.getDashCategoryNavigation(location)
@@ -68,7 +68,7 @@ class MainShopRepository : ShopRepository {
     ): Resource<SkusInventoryForStoreResponse> {
         return try {
 
-            val response = OneAppService.fetchInventorySkuForStore(mStoreId, referenceId)
+            val response = OneAppService.fetchInventorySkuForStore(mStoreId, referenceId, false)
             if (response.isSuccessful) {
                 response.body()?.let {
                     return when (it.httpCode) {

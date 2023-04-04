@@ -1288,6 +1288,20 @@
         <item name="WTextView_font">medium_bold</item>
     </style>
 
+    <style name="calender_title_text_style">
+        <item name="android:letterSpacing">0.06</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">@dimen/sixteen_dp</item>
+        <item name="WTextView_font">medium_bold</item>
+    </style>
+
+    <style name="calender_details_text_style">
+        <item name="android:letterSpacing">0.06</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">@dimen/sixteen_dp</item>
+        <item name="fontFamily">@font/myriad_pro_regular</item>
+    </style>
+
     <style name="absa_page_title_style" parent="absa_page_title_text_style">
         <item name="android:fontFamily">@font/futura_semi_bold_ttf</item>
         <item name="android:layout_width">0dp</item>
@@ -1619,6 +1633,16 @@
         <item name="android:fontFamily">@font/myriad_pro_regular</item>
     </style>
 
+    <style name="opensans_regular_text_style_14sp_black">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:textSize">@dimen/fourteen_sp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:fontFamily">@font/opensans_regular</item>
+    </style>
+
     <style name="card_item_barcode_number_text_style">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:textSize">@dimen/thirty_sp</item>
@@ -1640,6 +1664,14 @@
         <item name="android:layout_alignParentStart">true</item>
         <item name="android:alpha">0.3</item>
         <item name="android:layout_marginRight">@dimen/twenty_four_dp</item>
+    </style>
+
+    <style name="card_item_start_icon_style_pdp">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:layout_alignParentStart">true</item>
+        <item name="android:layout_marginRight">@dimen/eight_dp</item>
     </style>
 
     <style name="card_item_end_icon_style">
@@ -1730,6 +1762,10 @@
         <item name="android:textSize">@dimen/twelve_sp</item>
     </style>
 
+    <style name="futura_semi_bold_black_14_text_style" parent="futura_semi_bold_black">
+        <item name="android:textSize">@dimen/fourteen_sp</item>
+    </style>
+
     <style name="futura_semi_bold_black_20_text_style" parent="futura_semi_bold_black">
         <item name="android:textSize">@dimen/twenty_sp</item>
     </style>
@@ -1748,6 +1784,9 @@
         <item name="android:textColor">@color/black</item>
     </style>
 
+    <style name="futura_medium_666666" parent="futura_medium">
+        <item name="android:textColor">@color/color_666666</item>
+    </style>
 
     <style name="myriad_pro_regular">
         <item name="android:layout_width">0dp</item>
@@ -3065,4 +3104,56 @@
         <item name="android:scaleType">fitCenter</item>
         <item name="srcCompat">@drawable/close</item>
     </style>
+
+    <style name="wfsVoucherStyle" parent="Widget.Design.TabLayout">
+        <item name="tabBackground">@drawable/rewards_voucher</item>
+        <item name="tabIndicator">@null</item>
+        <item name="android:background">@drawable/rounded_view_grey_tab_bg</item>
+        <item name="tabSelectedTextColor">@color/offer_title</item>
+        <item name="tabTextColor">@color/offer_title</item>
+        <item name="tabRippleColor">@null</item>
+        <item name="android:fontFamily">@font/opensans_regular</item>
+        <item name="tabTextAppearance">@style/TabText</item>
+    </style>
+
+    <style name="TabText" parent="TextAppearance.AppCompat.Button">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/color_444444</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:fontFamily">@font/opensans_regular</item>
+
+    </style>
+
+
+    <style name="pargo_info_description_text_style">
+        <item name="android:lineSpacingExtra">1.4dp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">15sp</item>
+        <item name="WTextView_font">myriadpro_regular</item>
+    </style>
+
+    <style name="opensens_medium" >
+        <item name="android:fontFamily">@font/opensans_medium</item>
+    </style>
+
+    <style name="opensens_semi_bold" >
+        <item name="android:fontFamily">@font/opensans_semi_bold</item>
+    </style>
+
+    <style name="opensens_bold" >
+        <item name="android:fontFamily">@font/opensans_bold</item>
+    </style>
+
+    <style name="opensens_regular" >
+        <item name="android:fontFamily">@font/opensans_regular</item>
+    </style>
+
+    <style name="opensens_light" >
+        <item name="android:fontFamily">@font/opensans_light</item>
+    </style>
+
+    <style name="opensans_extra_bold" >
+        <item name="android:fontFamily">@font/opensans_extra_bold</item>
+    </style>
+
 </resources>
