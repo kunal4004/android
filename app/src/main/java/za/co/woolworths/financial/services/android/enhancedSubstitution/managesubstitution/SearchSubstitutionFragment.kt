@@ -6,16 +6,12 @@ import android.view.View
 import android.view.View.OnClickListener
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
-import androidx.annotation.StringRes
 import androidx.core.os.bundleOf
 import androidx.core.text.HtmlCompat
 import androidx.core.widget.doOnTextChanged
-import androidx.core.view.isVisible
-import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -289,7 +285,7 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
 
     private fun navigateToPdpScreen() {
 
-        if (commarceItemId?.isEmpty() == true) {
+        if (commerceItemId?.isEmpty() == true) {
             /*navigate to pdp with selected product  object and then call add to cart api in order to add substitute there*/
             binding.progressBar?.visibility = View.GONE
             setResultAndNaviagationToPdpWithProduct(SELECTED_SUBSTITUTED_PRODUCT, bundleOf(SUBSTITUTION_ITEM_KEY to productList))
@@ -298,7 +294,7 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
             val addSubstitutionRequest = AddSubstitutionRequest(
                     substitutionSelection = USER_CHOICE,
                     substitutionId = productList?.sku,
-                    commerceItemId = commarceItemId
+                    commerceItemId = commerceItemId
             )
             productSubstitutionViewModel?.addSubstitutionForProduct(addSubstitutionRequest)
             productSubstitutionViewModel?.addSubstitutionResponse?.observe(viewLifecycleOwner, {
