@@ -70,7 +70,7 @@ class OrderConfirmationFragment :
     }
 
     private fun getOrderDetails() {
-        OneAppService.getSubmittedOrder()
+        OneAppService().getSubmittedOrder()
             .enqueue(CompletionHandler(object : IResponseListener<SubmittedOrderResponse> {
                 override fun onSuccess(response: SubmittedOrderResponse?) {
                     when (response) {

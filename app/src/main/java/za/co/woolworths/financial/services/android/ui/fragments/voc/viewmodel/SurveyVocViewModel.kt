@@ -85,7 +85,7 @@ class SurveyVocViewModel @Inject constructor(): ViewModel() {
     }
 
     fun performOptOutRequest() {
-        val optOutVocSurveyRequest = OneAppService.optOutVocSurvey()
+        val optOutVocSurveyRequest = OneAppService().optOutVocSurvey()
         optOutVocSurveyRequest.enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 // Response not needed

@@ -34,7 +34,7 @@ class VoiceOfCustomerManager {
             val allowedTriggerEvents = AppConfigSingleton.customerFeedback?.triggerEvents ?: return
             if (!allowedTriggerEvents.contains(triggerEvent.value)) return
 
-            val getVocSurveyRequest = OneAppService.getVocSurvey(triggerEvent)
+            val getVocSurveyRequest = OneAppService().getVocSurvey(triggerEvent)
             getVocSurveyRequest.enqueue(CompletionHandler(object : IResponseListener<SurveyDetailsResponse> {
                 override fun onSuccess(response: SurveyDetailsResponse?) {
                     response?.survey?.let {

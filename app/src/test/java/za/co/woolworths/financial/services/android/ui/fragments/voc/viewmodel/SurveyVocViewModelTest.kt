@@ -1,19 +1,38 @@
 package za.co.woolworths.financial.services.android.ui.fragments.voc.viewmodel
 
+import android.content.Context
 import org.junit.Assert
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.mockito.ArgumentCaptor
+import org.mockito.ArgumentMatchers
+import org.mockito.Mockito
+import org.powermock.api.mockito.PowerMockito
+import org.powermock.core.classloader.annotations.PrepareForTest
+import org.powermock.modules.junit4.PowerMockRunner
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.voc.SurveyDetails
 import za.co.woolworths.financial.services.android.models.dto.voc.SurveyQuestion
+import za.co.woolworths.financial.services.android.models.network.OneAppService
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 
 class SurveyVocViewModelTest {
 
-    private lateinit var viewModel: SurveyVocViewModel
+    private lateinit var SUT: SurveyVocViewModel
 
     @Before
-    fun init() {
-        viewModel = SurveyVocViewModel()
-        var questions = ArrayList<SurveyQuestion>()
+    fun setUp() {
+        Mockito.`when`(OneAppService().appContext())
+            .thenAnswer { Mockito.mock(Context::class.java) }
+
+        SUT = SurveyVocViewModel()
+
+        val questions = ArrayList<SurveyQuestion>()
         questions.add(
             SurveyQuestion(
                 id = 1,
@@ -48,43 +67,146 @@ class SurveyVocViewModelTest {
                 required = false
             )
         )
-        var survey = SurveyDetails(
+        val survey = SurveyDetails(
             id = 1,
             name = "Survey to test validation.",
             type = "GENEX",
             questions = questions
         )
-        viewModel.configure(survey)
+        SUT.configure(survey)
     }
 
     @Test
-    fun surveyVocViewModel_GetAllowedQuestions_UnknownTypeIgnored() {
-        Assert.assertEquals("Question with unknown type (unimplemented) is expected not to be present in the list of allowed questions", viewModel.getAllowedQuestions().size, 3)
+    fun getAllowedQuestions_QuestionsContainUnknownType_UnknownTypeIgnored() {
+        // Act
+        val result = SUT.getAllowedQuestions().size
+
+        // Assert
+        assertEquals("Question with unknown type (unimplemented) is expected not to be present in the list of allowed questions", result, 3)
     }
 
     @Test
-    fun surveyVocViewModel_ValidateSurvey_SurveyUnanswered() {
-        Assert.assertEquals("Validation is expected to fail on initial state", viewModel.isSurveyAnswersValid(), false)
+    fun isSurveyAnswersValid_NoAnswersYet_ReturnsFalse() {
+        // Act
+        val result = SUT.isSurveyAnswersValid()
+
+        // Assert
+        assertEquals("Validation is expected to fail on initial state", result, false)
     }
 
     @Test
-    fun surveyVocViewModel_ValidateSurvey_ValidAnswers() {
-        viewModel.setAnswer(1, 6)
-        viewModel.setAnswer(2, "Lorem ipsum")
-        Assert.assertEquals("Validation is expected to succeed", viewModel.isSurveyAnswersValid(), true)
-        viewModel.setAnswer(2, "")
-        Assert.assertEquals("Validation is expected to fail after clearing a required field", viewModel.isSurveyAnswersValid(), false)
+    fun isSurveyAnswersValid_HasExpectedAnswers_ReturnsTrue() {
+        // Arrange
+        SUT.setAnswer(1, 6)
+        SUT.setAnswer(2, "Lorem ipsum")
+
+        // Act
+        val result = SUT.isSurveyAnswersValid()
+
+        // Assert
+        assertEquals("Validation is expected to succeed", result, true)
     }
 
     @Test
-    fun surveyVocViewModel_UpdateAnswer_ValidAnswersRetrieved() {
-        Assert.assertEquals("Numeric answer is expected to be max value by default", viewModel.getAnswer(1)?.answerId, 11)
-        viewModel.setAnswer(1, 6)
-        Assert.assertEquals("Numeric answer is expected to have changed", viewModel.getAnswer(1)?.answerId, 6)
+    fun isSurveyAnswersValid_HasInvalidAnswer_ReturnsFalse() {
+        // Arrange
+        SUT.setAnswer(1, 6)
+        SUT.setAnswer(2, "")
 
-        Assert.assertNull("Free text answer is expected to be null by default", viewModel.getAnswer(2)?.textAnswer)
-        viewModel.setAnswer(2, "Lorem ipsum")
-        Assert.assertEquals("Free text answer is expected to have changed", viewModel.getAnswer(2)?.textAnswer, "Lorem ipsum")
+        // Act
+        val result = SUT.isSurveyAnswersValid()
 
+        // Assert
+        assertEquals("Validation is expected to fail after clearing a required field", result, false)
+    }
+
+    @Test
+    fun getAnswer_DefaultState_NumericAnswerEqualsMaxValue() {
+        // Act
+        val result = SUT.getAnswer(1)?.answerId
+
+        // Assert
+        assertEquals("Numeric answer is expected to be max value by default", result, 11)
+    }
+
+    @Test
+    fun getAnswer_NumericAnswerUpdated_UpdatedAsExpected() {
+        // Arrange
+        SUT.setAnswer(1, 6)
+
+        // Act
+        val result = SUT.getAnswer(1)?.answerId
+
+        // Assert
+        assertEquals("Numeric answer is expected to have changed", result, 6)
+    }
+
+    @Test
+    fun getAnswer_DefaultState_TextAnswerIsNull() {
+        // Act
+        val result = SUT.getAnswer(2)?.textAnswer
+
+        // Assert
+        Assert.assertNull("Free text answer is expected to be null by default", result)
+    }
+
+    @Test
+    fun getAnswer_TextAnswerUpdated_UpdatedAsExpected() {
+        // Arrange
+        SUT.setAnswer(2, "Lorem ipsum")
+
+        // Act
+        val result = SUT.getAnswer(2)?.textAnswer
+
+        // Assert
+        assertEquals("Free text answer is expected to have changed", result, "Lorem ipsum")
+    }
+
+    @Test
+    fun performOptOutRequest_ApiServiceToSucceed_RequestSentSuccessfully() {
+        // Arrange
+        val responseMock = Response.success<Void>(null)
+        val callMock = Mockito.mock(Call::class.java) as Call<Void>
+        Mockito.`when`(OneAppService().optOutVocSurvey())
+            .thenAnswer { callMock }
+        Mockito.`when`(callMock.enqueue(ArgumentMatchers.any()))
+            .then {
+                val callback = it.arguments[0] as Callback<Void>
+                callback.onResponse(callMock, responseMock)
+            }
+
+        // Act
+        SUT.performOptOutRequest()
+
+        // Assert
+        Mockito.verify(OneAppService).optOutVocSurvey()
+        Mockito.verify(callMock).enqueue(ArgumentMatchers.any())
+    }
+
+    @Test
+    fun performOptOutRequest_ApiServiceToFail_RequestFailed() {
+        // Arrange
+        val exception = RuntimeException("Something went wrong")
+        val callMock = Mockito.mock(Call::class.java) as Call<Void>
+
+        Mockito.`when`(OneAppService().optOutVocSurvey())
+            .thenReturn(callMock)
+        Mockito.`when`(callMock.enqueue(ArgumentMatchers.any()))
+            .then {
+                val callback = it.arguments[0] as Callback<Void>
+                callback.onFailure(callMock, exception)
+            }
+
+        val exceptionArgument = ArgumentCaptor.forClass(Throwable::class.java)
+        PowerMockito.mockStatic(FirebaseManager::class.java)
+
+        // Act
+        SUT.performOptOutRequest()
+
+        // Assert
+        Mockito.verify(OneAppService).optOutVocSurvey()
+        Mockito.verify(callMock).enqueue(ArgumentMatchers.any())
+        Mockito.verify(FirebaseManager).logException(exceptionArgument.capture())
+        assertEquals(exceptionArgument.value, exception)
     }
 }

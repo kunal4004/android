@@ -119,7 +119,7 @@ class ProcessBlockCardFragment : MyCardExtension(R.layout.process_block_card_fra
 
     fun blockMyCardRequest(blockMyCardRequest: BlockCardRequestBody, productOfferingId: String?) {
         productOfferingId?.let {
-            mPostBlockMyCard = OneAppService.postBlockMyCard(blockMyCardRequest, it)
+            mPostBlockMyCard = OneAppService().postBlockMyCard(blockMyCardRequest, it)
             mPostBlockMyCard?.enqueue(CompletionHandler(object : IResponseListener<BlockMyCardResponse> {
                 override fun onSuccess(blockMyCardResponse: BlockMyCardResponse?) {
                     blockCardSuccessResponse(blockMyCardResponse)

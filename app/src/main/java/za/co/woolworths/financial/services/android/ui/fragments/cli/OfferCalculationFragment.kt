@@ -31,7 +31,6 @@ import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.app_config.credit_limit_increase.ConfigMaritalStatus
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
-import za.co.woolworths.financial.services.android.models.network.OneAppService.createOfferDecision
 import za.co.woolworths.financial.services.android.models.service.event.BusStation
 import za.co.woolworths.financial.services.android.models.service.event.LoadState
 import za.co.woolworths.financial.services.android.startup.view.StartupActivity
@@ -225,7 +224,7 @@ class OfferCalculationFragment : CLIFragment(R.layout.offer_calculation_fragment
     private fun cliCreateApplication(createOfferRequest: CreateOfferRequest) {
         onLoad()
         showView(binding.includeCliNextButton.llNextButtonLayout)
-        createOfferTask = OneAppService.cliCreateApplication(createOfferRequest)
+        createOfferTask = OneAppService().cliCreateApplication(createOfferRequest)
         createOfferTask?.enqueue(
             CompletionHandler(
                 object : IResponseListener<OfferActive> {
@@ -266,7 +265,7 @@ class OfferCalculationFragment : CLIFragment(R.layout.offer_calculation_fragment
     private fun cliUpdateApplication(createOfferRequest: CreateOfferRequest, cliId: String) {
         onLoad()
         showView(binding.includeCliNextButton.llNextButtonLayout)
-        cliUpdateApplication = OneAppService.cliUpdateApplication(createOfferRequest, cliId)
+        cliUpdateApplication = OneAppService().cliUpdateApplication(createOfferRequest, cliId)
         cliUpdateApplication?.enqueue(
             CompletionHandler(
                 object : IResponseListener<OfferActive> {
@@ -307,7 +306,7 @@ class OfferCalculationFragment : CLIFragment(R.layout.offer_calculation_fragment
 
     private fun cliDelcineOfferRequest(createOfferDecision: CLIOfferDecision) {
         declineOfferInterface?.onLoad()
-        cliOfferDecision = createOfferDecision(createOfferDecision, mObjOffer?.cliId.toString())
+        cliOfferDecision = OneAppService().createOfferDecision(createOfferDecision, mObjOffer?.cliId.toString())
         cliOfferDecision?.enqueue(
             CompletionHandler(
                 object : IResponseListener<OfferActive> {
@@ -504,7 +503,7 @@ class OfferCalculationFragment : CLIFragment(R.layout.offer_calculation_fragment
                     newCreditLimitAmount,
                     true
                 )
-                cliAcceptOfferDecision = createOfferDecision(createOfferDecision, mCLiId.toString())
+                cliAcceptOfferDecision = OneAppService().createOfferDecision(createOfferDecision, mCLiId.toString())
                 cliAcceptOfferDecision?.enqueue(
                     CompletionHandler(
                         object : IResponseListener<OfferActive> {

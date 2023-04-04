@@ -119,7 +119,7 @@ class OrderDetailsFragment : BaseFragmentBinding<OrderDetailsFragmentBinding>(Or
     }
 
     private fun requestOrderDetails(orderId: String): Call<OrderDetailsResponse> {
-        val orderDetailRequest = OneAppService.getOrderDetails(orderId)
+        val orderDetailRequest = OneAppService().getOrderDetails(orderId)
         orderDetailRequest.enqueue(CompletionHandler(object :
             IResponseListener<OrderDetailsResponse> {
             override fun onSuccess(ordersResponse: OrderDetailsResponse?) {

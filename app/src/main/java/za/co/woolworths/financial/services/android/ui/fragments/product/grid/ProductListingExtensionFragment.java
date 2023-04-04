@@ -81,7 +81,7 @@ public class ProductListingExtensionFragment extends BaseFragmentBinding<GridLay
     public void executeLoadProduct(final Activity activity, ProductsRequestParams requestParams) {
         getNavigator().onLoadStart(getLoadMoreData());
         setProductIsLoading(true);
-        retrieveProduct = OneAppService.INSTANCE.getProducts(requestParams);
+        retrieveProduct = new OneAppService().getProducts(requestParams);
         retrieveProduct.enqueue(new CompletionHandler<>(new IResponseListener<ProductView>() {
             @Override
             public void onSuccess(ProductView productView) {

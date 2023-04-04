@@ -52,10 +52,13 @@ import za.co.woolworths.financial.services.android.models.dto.item_limits.Produc
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.CouponClaimCode
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.VoucherDetails
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
-import za.co.woolworths.financial.services.android.models.network.OneAppService.removeCartItem
+import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.models.service.event.CartState
 import za.co.woolworths.financial.services.android.models.service.event.ProductState
+import za.co.woolworths.financial.services.android.recommendations.data.response.request.CartProducts
+import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
+import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationEventHandler
 import za.co.woolworths.financial.services.android.ui.activities.CartCheckoutActivity
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
@@ -67,12 +70,14 @@ import za.co.woolworths.financial.services.android.ui.fragments.cart.GiftWithPur
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.RemoveProductsFromCartDialogFragment.Companion.newInstance
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.RemoveProductsFromCartDialogFragment.IRemoveProductsFromCartDialog
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants
 import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory.Companion.buildAddToCartSuccessToast
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory.Companion.showItemsLimitToastOnAddToCart
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView.IWalkthroughActionListener
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ActionSheetDialogFragment
+import za.co.woolworths.financial.services.android.ui.wfs.common.getIpAddress
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_EXPECTATION_FAILED_502
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
@@ -94,11 +99,6 @@ import za.co.woolworths.financial.services.android.util.analytics.FirebaseManage
 import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.util.wenum.Delivery.Companion.getType
-import za.co.woolworths.financial.services.android.recommendations.data.response.request.CartProducts
-import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
-import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationEventHandler
-import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants
-import za.co.woolworths.financial.services.android.ui.wfs.common.getIpAddress
 import java.net.ConnectException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
@@ -1135,7 +1135,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     }
 
     private fun removeItem(commerceItem: CommerceItem) {
-        removeCartItem(commerceItem.commerceItemInfo.commerceId).enqueue(
+        OneAppService().removeCartItem(commerceItem.commerceItemInfo.commerceId).enqueue(
             CompletionHandler(
                 (object : IResponseListener<ShoppingCartResponse> {
                     override fun onSuccess(response: ShoppingCartResponse?) {}
@@ -1207,7 +1207,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
 
                         hideEditCart()
                         //TODO: need to refactor
-                        /* Call<SetDeliveryLocationSuburbResponse> setDeliveryLocationSuburb = OneAppService.INSTANCE.setSuburb(lastDeliveryLocation.storePickup ? lastDeliveryLocation.store.getId() : lastDeliveryLocation.suburb.id);
+                        /* Call<SetDeliveryLocationSuburbResponse> setDeliveryLocationSuburb = OneAppService().INSTANCE.setSuburb(lastDeliveryLocation.storePickup ? lastDeliveryLocation.store.getId() : lastDeliveryLocation.suburb.id);
                         setDeliveryLocationSuburb.enqueue(new CompletionHandler<>(new IResponseListener<SetDeliveryLocationSuburbResponse>() {
                             @Override
                             public void onSuccess(SetDeliveryLocationSuburbResponse setDeliveryLocationSuburbResponse) {

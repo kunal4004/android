@@ -66,7 +66,7 @@ class SurveyProcessRequestVocViewModel @Inject constructor(): ViewModel() {
             onFailed()
             return
         }
-        val submitVocSurveyRepliesRequest = OneAppService.submitVocSurveyReplies(surveyDetails!!, surveyAnswers!!)
+        val submitVocSurveyRepliesRequest = OneAppService().submitVocSurveyReplies(surveyDetails!!, surveyAnswers!!)
         submitVocSurveyRepliesRequest.enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {

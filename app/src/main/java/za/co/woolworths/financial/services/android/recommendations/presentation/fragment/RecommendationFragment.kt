@@ -234,7 +234,7 @@ class RecommendationFragment :
         }
 
         showProgressBar()
-        OneAppService.getInventorySkuForStore(
+        OneAppService().getInventorySkuForStore(
             storeId, addItemToCart?.catalogRefId
                 ?: "", isUserBrowsing
         ).enqueue(CompletionHandler(object : IResponseListener<SkusInventoryForStoreResponse> {
