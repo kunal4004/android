@@ -88,6 +88,7 @@
         android:layout_marginEnd="@dimen/twenty_four_dp"
         android:layout_marginBottom="@dimen/sixteen_dp"
         android:background="@drawable/black_background_with_corner_5"
+        android:fontFamily="@font/futura_semi_bold"
         android:letterSpacing="0.08"
         android:lineSpacingExtra="@dimen/five_sp"
         android:text="@string/confirm"
@@ -106,16 +107,17 @@
         android:layout_marginStart="@dimen/twenty_four_dp"
         android:layout_marginEnd="@dimen/twenty_four_dp"
         android:layout_marginBottom="@dimen/thirty_six_dp"
-        android:fontFamily="@font/futura_light"
+        android:fontFamily="@font/futura_medium"
         android:gravity="center"
         android:lineHeight="@dimen/twenty_dp"
         android:lineSpacingExtra="@dimen/seven_sp"
         android:text="@string/dont_want_substitute"
         android:textAlignment="center"
         android:textAllCaps="true"
-        android:textColor="@color/color_666666"
+        android:textColor="@color/black"
         android:textSize="@dimen/twelve_sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnConfirm" />
 </androidx.constraintlayout.widget.ConstraintLayout>

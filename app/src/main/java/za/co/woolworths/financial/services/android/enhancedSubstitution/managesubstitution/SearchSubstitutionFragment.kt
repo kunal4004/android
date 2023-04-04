@@ -1,9 +1,11 @@
 package za.co.woolworths.financial.services.android.enhancedSubstitution.managesubstitution
 
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.View.OnClickListener
 import android.view.inputmethod.EditorInfo
+import android.widget.EditText
 import androidx.core.text.HtmlCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -23,21 +25,48 @@ import za.co.woolworths.financial.services.android.enhancedSubstitution.viewmode
 import za.co.woolworths.financial.services.android.enhancedSubstitution.viewmodel.ProductSubstitutionViewModelFactory
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
+import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
+import za.co.woolworths.financial.services.android.ui.extension.withArgs
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.FoodProductNotAvailableForCollectionDialog
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.ProductDetailsFindInStoreDialog
 import za.co.woolworths.financial.services.android.util.KeyboardUtil
+import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 
-class SearchSubstitutionFragment  : BaseFragmentBinding<LayoutSearchSubstitutionFragmentBinding>(
-        LayoutSearchSubstitutionFragmentBinding::inflate
-) , ProductListSelectionListener, OnClickListener {
+
+class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionFragmentBinding>(
+    LayoutSearchSubstitutionFragmentBinding::inflate
+), ProductListSelectionListener, OnClickListener,
+    FoodProductNotAvailableForCollectionDialog.IProductNotAvailableForCollectionDialogListener {
+
     private var searchProductSubstitutionAdapter: SearchProductSubstitutionAdapter? = null
     private lateinit var productSubstitutionViewModel: ProductSubstitutionViewModel
     private var productList: ProductList? = null
+    private var searchText: String? = null
+    private var commarceItemId: String? = ""
+
+    companion object {
+
+        fun newInstance(
+                commarceItemId: String?,
+        ) = SearchSubstitutionFragment().withArgs {
+            putString(ManageSubstitutionFragment.COMMARCE_ITEM_ID, commarceItemId)
+        }
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setUpViewModel()
+        initView()
+    }
+
+    private fun initView() {
         searchProductSubstitutionAdapter = SearchProductSubstitutionAdapter(this)
+        arguments?.apply {
+            commarceItemId = getString(ManageSubstitutionFragment.COMMARCE_ITEM_ID, "")
+        }
 
         binding.recyclerView?.apply {
             setHasFixedSize(true)
@@ -57,9 +86,10 @@ class SearchSubstitutionFragment  : BaseFragmentBinding<LayoutSearchSubstitution
 
         binding.tvSearchProduct.setOnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                val productsRequestParams = getRequestParamsBody(v?.text.toString())
-                if (v?.text?.length != 0) {
-                    getSubstututeProductList(productsRequestParams)
+                searchText = v?.text?.toString()
+                val productsRequestParams = searchText?.let { getRequestParamsBody(it) }
+                if (searchText?.length != 0) {
+                    productsRequestParams?.let { getSubstituteProductList(it) }
                 }
                 false
             } else {
@@ -72,37 +102,49 @@ class SearchSubstitutionFragment  : BaseFragmentBinding<LayoutSearchSubstitution
         binding.txtCancelSearch?.setOnClickListener(this)
         binding.rootLayout?.setOnClickListener(this)
 
-        closeKeyBoard();
+        closeKeyBoard()
     }
 
     private fun setUpViewModel() {
         productSubstitutionViewModel = ViewModelProvider(
-                this,
-                ProductSubstitutionViewModelFactory(ProductSubstitutionRepository(SubstitutionApiHelper()))
-        ).get(ProductSubstitutionViewModel::class.java)
+            this,
+            ProductSubstitutionViewModelFactory(ProductSubstitutionRepository(SubstitutionApiHelper()))
+        )[ProductSubstitutionViewModel::class.java]
     }
 
-    private fun getSubstututeProductList(requestParams: ProductsRequestParams) {
-        binding.shimmerLayout?.visibility = View.VISIBLE
-        binding.shimmerLayout.startShimmer()
-        lifecycleScope.launch {
-            productSubstitutionViewModel?.getAllSearchedSubstitutions(
-                    requestParams)?.collectLatest {
-                binding.txtSubstitutionCount?.visibility = View.VISIBLE
-
-                productSubstitutionViewModel._pagingResponse.observe(viewLifecycleOwner, {
-                    val totalItemCount: String = "<b>" + it.numItemsInTotal?.toString() + "</b>" .plus(getString(R.string.item_found))
-                    val formattedItemCount = HtmlCompat.fromHtml(totalItemCount, HtmlCompat.FROM_HTML_MODE_COMPACT)
-                    binding.txtSubstitutionCount.text = formattedItemCount
-                })
-                searchProductSubstitutionAdapter?.submitData(it)
-                binding.shimmerLayout.stopShimmer()
-                binding.shimmerLayout.visibility = View.GONE
+    private fun getSubstituteProductList(requestParams: ProductsRequestParams) {
+        binding.apply {
+            shimmerLayout?.visibility = View.VISIBLE
+            shimmerLayout.startShimmer()
+            lifecycleScope.launch {
+                productSubstitutionViewModel?.getAllSearchedSubstitutions(
+                    requestParams
+                )?.collectLatest {
+                    productSubstitutionViewModel._pagingResponse.observe(
+                        viewLifecycleOwner
+                    ) { pagingResponse ->
+                        val totalItemCount: String =
+                            "<b>" + pagingResponse.numItemsInTotal?.toString() + "</b>".plus(
+                                getString(R.string.item_found)
+                            )
+                        val formattedItemCount =
+                            HtmlCompat.fromHtml(totalItemCount, HtmlCompat.FROM_HTML_MODE_COMPACT)
+                        txtSubstitutionCount?.visibility = View.VISIBLE
+                        txtSubstitutionCount.text = formattedItemCount
+                    }
+                    searchProductSubstitutionAdapter?.submitData(it)
+                    shimmerLayout.setShimmer(null)
+                    shimmerLayout.stopShimmer()
+                    shimmerLayout.visibility = View.GONE
+                }
             }
         }
 
         searchProductSubstitutionAdapter?.addLoadStateListener {
             if (it.refresh is LoadState.Error) {
+                binding.shimmerLayout.setShimmer(null)
+                binding.shimmerLayout.stopShimmer()
+                binding.shimmerLayout.visibility = View.GONE
                 showErrorView()
             }
         }
@@ -115,11 +157,11 @@ class SearchSubstitutionFragment  : BaseFragmentBinding<LayoutSearchSubstitution
 
     private fun getRequestParamsBody(searchTerm: String): ProductsRequestParams {
         /*todo need to remove hardcode values once UI is ready */
-        var productsRequestParams = ProductsRequestParams(
-                searchTerm = searchTerm,
-                searchType = ProductsRequestParams.SearchType.SEARCH,
-                responseType = ProductsRequestParams.ResponseType.DETAIL,
-                pageOffset = 0,
+        val productsRequestParams = ProductsRequestParams(
+            searchTerm = searchTerm,
+            searchType = ProductsRequestParams.SearchType.SEARCH,
+            responseType = ProductsRequestParams.ResponseType.DETAIL,
+            pageOffset = 0,
         )
         productsRequestParams.filterContent = false
         productsRequestParams.sendDeliveryDetailsParams = true
@@ -128,26 +170,115 @@ class SearchSubstitutionFragment  : BaseFragmentBinding<LayoutSearchSubstitution
 
     override fun clickOnProductSelection(productList: ProductList?) {
         binding.btnConfirm.isEnabled = true
-        binding.btnConfirm.background = resources.getDrawable(R.drawable.black_background_with_corner_5, null)
+        binding.btnConfirm.background = resources.getDrawable(R.drawable.black_color_drawable, null)
         this.productList = productList
     }
 
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.btnConfirm -> confirmProductSelection()
-            R.id.crossIamgeView -> binding.tvSearchProduct?.text?.clear()
+            R.id.crossIamgeView -> {
+                binding.tvSearchProduct?.text?.clear()
+                if (!searchText.isNullOrEmpty()) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        fragmentManager?.beginTransaction()?.detach(this)?.commitNow()
+                        fragmentManager?.beginTransaction()?.attach(this)?.commitNow()
+                    } else {
+                        fragmentManager?.beginTransaction()?.detach(this)?.attach(this)?.commit()
+                    }
+                }
+            }
             R.id.txtCancelSearch -> (activity as BottomNavigationActivity)?.popFragment()
         }
     }
 
-    fun confirmProductSelection() {
+    private fun confirmProductSelection() {
         /* call inventory api */
+        callInventoryApi()
         /* call add substitution api */
     }
+
+    private fun callInventoryApi() {
+
+        val storeId: String? = Utils.getPreferredDeliveryLocation()?.let {
+            it.fulfillmentDetails.storeId
+        }
+
+        if (productList?.sku == null || storeId?.isNullOrEmpty() == true) {
+            return
+        }
+
+        productSubstitutionViewModel.getInventoryForSubstitution(storeId, productList?.sku!!)
+        productSubstitutionViewModel.inventorySubstitution.observe(viewLifecycleOwner) {
+
+            it.getContentIfNotHandled()?.let { resource ->
+                when (resource.status) {
+                    Status.LOADING -> {
+                    }
+                    Status.SUCCESS -> {
+                        resource?.data?.skuInventory?.let { inventoryList ->
+                            if (inventoryList?.isNullOrEmpty() == true || inventoryList?.getOrNull(0)?.quantity == 0) {
+                                productOutOfStockErrorMessage()
+                                return@observe
+                            }
+                        }
+                        navigateToPdpScreen()
+                    }
+                    Status.ERROR -> {
+                        /*todo error view if inventory api is failed*/
+                    }
+                }
+            }
+        }
+    }
+
+    fun navigateToPdpScreen() {
+
+        if (commarceItemId?.isEmpty() == true) {
+            /*navigate to pdp with selected product  object and call add to cart api in order to add substitute there*/
+        } else {
+            /*add subsitute api here since we have commarceId because product is already added in cart */
+        }
+    }
+
+    private fun productOutOfStockErrorMessage() {
+        try {
+            activity?.supportFragmentManager?.beginTransaction()?.apply {
+                val productDetailsFindInStoreDialog =
+                    FoodProductNotAvailableForCollectionDialog.newInstance(
+                    )
+                productDetailsFindInStoreDialog.show(
+                    this,
+                    ProductDetailsFindInStoreDialog::class.java.simpleName
+                )
+            }
+        } catch (ex: IllegalStateException) {
+            FirebaseManager.logException(ex)
+        }
+    }
+
+    fun hideKeyBoard(view: View?) {
+        if (view !is EditText) {
+            view?.setOnTouchListener { v, event ->
+                KeyboardUtil.hideSoftKeyboard(activity)
+                false
+            }
+        }
+    }
+
     private fun closeKeyBoard() {
         val view = activity?.currentFocus
         if (view != null) {
             KeyboardUtil.hideSoftKeyboard(activity)
         }
     }
+
+    override fun onChangeDeliveryOption() {
+
+    }
+
+    override fun onFindInStore() {
+
+    }
+
 }

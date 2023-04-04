@@ -7,6 +7,8 @@ import retrofit2.Callback
 import retrofit2.http.*
 import za.co.absa.openbankingapi.woolworths.integration.dto.PayUResponse
 import za.co.woolworths.financial.services.android.checkout.service.network.*
+import za.co.woolworths.financial.services.android.enhancedSubstitution.model.AddSubstitutionRequest
+import za.co.woolworths.financial.services.android.enhancedSubstitution.model.AddSubstitutionResponse
 import za.co.woolworths.financial.services.android.enhancedSubstitution.model.ProductSubstitution
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.request.SaveAddressLocationRequest
@@ -55,9 +57,7 @@ import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.SelectedVoucher
 import za.co.woolworths.financial.services.android.onecartgetstream.model.OCAuthenticationResponse
 import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.RecommendationResponse
-import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.RecommendationRequest
-import za.co.woolworths.financial.services.android.ui.fragments.contact_us.enquiry.EmailUsRequest
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.ReviewFeedback
 
 interface ApiInterface {
@@ -1533,14 +1533,6 @@ interface ApiInterface {
     ) : retrofit2.Response<RecommendationResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @POST("wfs/app/recommendations")
-    suspend fun recommendation(
-        @Header("sessionToken") sessionToken: String,
-        @Header("deviceIdentityToken") deviceIdentityToken: String,
-        @Body recommendationRequest: Event
-    ) : retrofit2.Response<RecommendationResponse>
-
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("wfs/app/v4/user/featureEnablement")
     fun getFeatureEnablement(
         @Header("sessionToken") sessionToken: String,
@@ -1594,7 +1586,7 @@ interface ApiInterface {
             @Query("filterContent") filterContent: Boolean?,
             @Query("deliveryType") deliveryType: String?,
             @Query("deliveryDetails") deliveryDetails: String?
-    ): retrofit2.Response<ProductView>
+    ): ProductView
 
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip")
@@ -1619,6 +1611,14 @@ interface ApiInterface {
             @Query("filterContent") filterContent: Boolean?,
             @Query("deliveryType") deliveryType: String?,
             @Query("deliveryDetails") deliveryDetails: String?
-    ): retrofit2.Response<ProductView>
+    ): ProductView
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @POST("wfs/app/v4/cart/add-substitution")
+    suspend fun addSubstitution(
+            @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
+            @Body addSubstitutionRequest: AddSubstitutionRequest
+    ): retrofit2.Response<AddSubstitutionResponse>
 }
 

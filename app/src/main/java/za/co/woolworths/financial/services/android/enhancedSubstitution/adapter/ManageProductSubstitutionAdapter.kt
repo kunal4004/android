@@ -9,9 +9,9 @@ import za.co.woolworths.financial.services.android.enhancedSubstitution.ProductS
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 
 class ManageProductSubstitutionAdapter(
-    var headerItem: SubstitutionRecylerViewItem.SubstitutionOptionHeader,
-    var subStitutionProductList: List<SubstitutionRecylerViewItem.SubstitutionProducts>,
-    var productSubstitutionListListener: ProductSubstitutionListListener
+    private var headerItem: SubstitutionRecylerViewItem.SubstitutionOptionHeader,
+    private var substitutionProductList: List<SubstitutionRecylerViewItem.SubstitutionProducts>,
+    private var productSubstitutionListListener: ProductSubstitutionListListener
 ) : RecyclerView.Adapter<SubstitutionViewHolder>() {
 
     companion object {
@@ -19,15 +19,17 @@ class ManageProductSubstitutionAdapter(
         const val VIEW_TYPE_SUBSTITUTION_LIST = 1
     }
 
+    private var lastSelectedPosition = -1
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SubstitutionViewHolder {
         when (viewType) {
-            VIEW_TYPE_SUBSTITUTION_HEADER -> return SubstitutionViewHolder.SubstitueOptionwHolder(
+            VIEW_TYPE_SUBSTITUTION_HEADER -> return SubstitutionViewHolder.SubstituteOptionHolder(
                 LayoutManageSubstitutionBinding.inflate(
                     LayoutInflater.from(parent.context), parent, false
                 )
             )
 
-            VIEW_TYPE_SUBSTITUTION_LIST -> return SubstitutionViewHolder.SubstitueProductViewHolder(
+            VIEW_TYPE_SUBSTITUTION_LIST -> return SubstitutionViewHolder.SubstituteProductViewHolder(
                     ShoppingListCommerceItemBinding.inflate(
                     LayoutInflater.from(parent.context), parent, false
                 ), parent.context)
@@ -41,19 +43,29 @@ class ManageProductSubstitutionAdapter(
 
     override fun onBindViewHolder(holder: SubstitutionViewHolder, position: Int) {
         when (holder) {
-            is SubstitutionViewHolder.SubstitueOptionwHolder -> holder.bind(headerItem, productSubstitutionListListener)
-            is SubstitutionViewHolder.SubstitueProductViewHolder -> holder.bind(subStitutionProductList[position])
+            is SubstitutionViewHolder.SubstituteOptionHolder -> {
+                holder.bind(headerItem, productSubstitutionListListener)
+            }
+            is SubstitutionViewHolder.SubstituteProductViewHolder ->  {
+                holder.binding.cbShoppingList.isChecked = lastSelectedPosition == position
+                holder.bind(substitutionProductList[position])
+                holder.binding.cbShoppingList.setOnClickListener {
+                    lastSelectedPosition = position
+                    notifyDataSetChanged()
+                    productSubstitutionListListener?.clickOnSubstituteProduct()
+                }
+            }
         }
     }
 
     override fun getItemCount(): Int {
-        return subStitutionProductList.size
+        return substitutionProductList.size
     }
 
     override fun getItemViewType(position: Int): Int {
         if(isPositionHeader(position))
-            return VIEW_TYPE_SUBSTITUTION_HEADER;
-        return VIEW_TYPE_SUBSTITUTION_LIST;
+            return VIEW_TYPE_SUBSTITUTION_HEADER
+        return VIEW_TYPE_SUBSTITUTION_LIST
     }
 
     private fun isPositionHeader(position: Int): Boolean {
