@@ -49,6 +49,7 @@
             android:background="@color/color_F1B1A6"
             android:fontFamily="@font/opensans_regular"
             android:paddingHorizontal="@dimen/_21sdp"
+            android:textColor="@color/black"
             android:paddingVertical="@dimen/_16sdp"
             android:text="@string/substitution_retry_msg"
             android:textSize="@dimen/_11sdp" />

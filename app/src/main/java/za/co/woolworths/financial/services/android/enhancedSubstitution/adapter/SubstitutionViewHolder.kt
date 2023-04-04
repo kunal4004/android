@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.LayoutManageSubstitutionBinding
+import com.awfs.coordination.databinding.LayoutNoSubstituteBinding
 import com.awfs.coordination.databinding.ShoppingListCommerceItemBinding
 import za.co.woolworths.financial.services.android.enhancedSubstitution.ProductSubstitutionListListener
 import za.co.woolworths.financial.services.android.models.dto.ProductList
@@ -102,4 +103,13 @@ sealed class SubstitutionViewHolder(binding: ViewBinding) : RecyclerView.ViewHol
         }
 
     }
+
+    class NoSubstituteProductViewHolder(
+        val binding: LayoutNoSubstituteBinding,
+        var context: Context,
+    ) : SubstitutionViewHolder(binding) {
+
+    }
+
+
 }

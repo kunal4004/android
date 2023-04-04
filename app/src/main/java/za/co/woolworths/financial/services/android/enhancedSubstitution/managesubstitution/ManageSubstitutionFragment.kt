@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.enhancedSubstitution.managesubstitution
 
+import android.graphics.Typeface
 import android.os.Bundle
 import android.text.*
 import android.text.method.LinkMovementMethod
@@ -154,6 +155,7 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
                     )
                     textPaint.isUnderlineText = true
                     textPaint.isFakeBoldText = true
+                    textPaint.typeface = Typeface.DEFAULT_BOLD
                 }
 
                 override fun onClick(view: View) {
