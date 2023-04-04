@@ -63,6 +63,7 @@ import za.co.woolworths.financial.services.android.enhancedSubstitution.viewmode
 import za.co.woolworths.financial.services.android.enhancedSubstitution.viewmodel.ProductSubstitutionViewModelFactory
 import za.co.woolworths.financial.services.android.enhancedSubstitution.managesubstitution.ManageSubstitutionFragment
 import za.co.woolworths.financial.services.android.enhancedSubstitution.managesubstitution.SearchSubstitutionFragment
+import za.co.woolworths.financial.services.android.enhancedSubstitution.model.SubstitutionInfo
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
@@ -251,6 +252,7 @@ class ProductDetailsFragment :
     private var commarceItemId: String? = ""
     private var substitutionProductItem: ProductList? = null
     private var isSubstiuteItemAdded = false
+    private var substitutionInfo:SubstitutionInfo? = null
 
     @OpenTermAndLighting
     @Inject
@@ -1081,7 +1083,7 @@ class ProductDetailsFragment :
         if (KotlinUtils.getDeliveryType()?.deliveryType == Delivery.DASH.type) {
             if (selectionChoice == SHOPPER_CHOICE) {
                 /*set substitute id as empty*/
-                substitutionId = ""
+                substitutionId = substitutionInfo?.id
             } else if (selectionChoice == USER_CHOICE) {
                 if (commarceItemId?.isEmpty() == true) {
                     /* not added to cart yet */
@@ -1645,8 +1647,9 @@ class ProductDetailsFragment :
                     }
                     Status.SUCCESS -> {
                         binding.progressBar.visibility = View.GONE
+                        substitutionInfo = resource.data?.data?.getOrNull(0)?.substitutionInfo
                         selectionChoice = SHOPPER_CHOICE
-                        substitutionId = resource.data?.data?.getOrNull(0)?.substitutionInfo?.id
+                        substitutionId = substitutionInfo?.id
                         showSubstitutionLayout(isInventoryCalled, resource)
                     }
                     Status.ERROR -> {
@@ -1725,7 +1728,7 @@ class ProductDetailsFragment :
 
 
     private fun hideSubstitutionLayout() {
-        binding?.productDetailOptionsAndInformation?.root?.visibility = View.GONE
+        binding?.productDetailOptionsAndInformation?.substitutionLayout?.root?.visibility = View.GONE
     }
 
     private fun ProductDetailsFragmentBinding.hideRatingAndReview() {
