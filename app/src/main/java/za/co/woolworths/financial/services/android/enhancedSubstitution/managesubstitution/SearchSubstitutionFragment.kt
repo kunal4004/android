@@ -9,6 +9,7 @@ import android.widget.EditText
 import androidx.annotation.StringRes
 import androidx.core.os.bundleOf
 import androidx.core.text.HtmlCompat
+import androidx.core.widget.doOnTextChanged
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.setFragmentResult
@@ -21,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.LayoutSearchSubstitutionFragmentBinding
+import com.facebook.shimmer.Shimmer
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.enhancedSubstitution.ProductListSelectionListener
@@ -55,14 +57,14 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
     private lateinit var productSubstitutionViewModel: ProductSubstitutionViewModel
     private var productList: ProductList? = null
     private var searchText: String? = null
-    private var commarceItemId: String? = ""
+    private var commerceItemId: String? = ""
 
     companion object {
 
         fun newInstance(
-                commarceItemId: String?,
+            commerceItemId: String?,
         ) = SearchSubstitutionFragment().withArgs {
-            putString(ManageSubstitutionFragment.COMMARCE_ITEM_ID, commarceItemId)
+            putString(ManageSubstitutionFragment.COMMERCE_ITEM_ID, commerceItemId)
         }
 
         const val SELECTED_SUBSTITUTED_PRODUCT = "SELECTED_SUBSTITUTED_PRODUCT"
@@ -77,11 +79,91 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
     }
 
     private fun initView() {
-        searchProductSubstitutionAdapter = SearchProductSubstitutionAdapter(this)
         arguments?.apply {
-            commarceItemId = getString(ManageSubstitutionFragment.COMMARCE_ITEM_ID, "")
+            commerceItemId = getString(ManageSubstitutionFragment.COMMERCE_ITEM_ID, "")
+        }
+        binding.apply {
+            tvSearchProduct.setOnEditorActionListener { v, actionId, event ->
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    searchText = v?.text?.toString()
+                    val productsRequestParams = searchText?.let { getRequestParamsBody(it) }
+                    if (searchText?.length != 0) {
+                        productsRequestParams?.let { getSubstituteProductList(it) }
+                    }
+                    false
+                } else {
+                    false
+                }
+            }
+            tvSearchProduct.doOnTextChanged { text, start, before, count ->
+                if (text.isNullOrEmpty() && before == 1) {
+                    reloadFragment()
+                }
+            }
+
+            btnConfirm?.setOnClickListener(this@SearchSubstitutionFragment)
+            crossIamgeView?.setOnClickListener(this@SearchSubstitutionFragment)
+            txtCancelSearch?.setOnClickListener(this@SearchSubstitutionFragment)
+            rootLayout?.setOnClickListener(this@SearchSubstitutionFragment)
         }
 
+        closeKeyBoard()
+    }
+
+    private fun setUpViewModel() {
+        productSubstitutionViewModel = ViewModelProvider(
+            this,
+            ProductSubstitutionViewModelFactory(ProductSubstitutionRepository(SubstitutionApiHelper()))
+        )[ProductSubstitutionViewModel::class.java]
+    }
+
+    private fun getSubstituteProductList(requestParams: ProductsRequestParams) {
+        initializeRecyclerView() // when we change the already searched text we need to show shimmer view again.
+        binding.apply {
+            lifecycleScope.launch {
+                productSubstitutionViewModel?.getAllSearchedSubstitutions(
+                    requestParams
+                )?.collectLatest {
+                    productSubstitutionViewModel._pagingResponse.observe(
+                        viewLifecycleOwner
+                    ) { pagingResponse ->
+                        val totalItemCount: String =
+                            "<b>" + pagingResponse.numItemsInTotal?.toString() + "</b>".plus(
+                                getString(R.string.item_found)
+                            )
+                        val formattedItemCount =
+                            HtmlCompat.fromHtml(totalItemCount, HtmlCompat.FROM_HTML_MODE_COMPACT)
+                        txtSubstitutionCount.text = formattedItemCount
+                    }
+                    searchProductSubstitutionAdapter?.submitData(it)
+                }
+            }
+        }
+
+        searchProductSubstitutionAdapter?.addLoadStateListener {
+            when (it.refresh) {
+                is LoadState.Loading -> {
+                    showShimmerView()
+                    binding.txtSubstitutionCount?.visibility = View.GONE
+                }
+                is LoadState.NotLoading -> {
+                    hideShimmerView()
+                    binding.txtSubstitutionCount?.visibility = View.VISIBLE
+                }
+                is LoadState.Error -> {
+                    hideShimmerView()
+                    showErrorView(getString(R.string.common_error_unfortunately_something_went_wrong))
+
+                }
+                else -> {
+                    // Nothing to do
+                }
+            }
+        }
+    }
+
+    private fun initializeRecyclerView() {
+        searchProductSubstitutionAdapter = SearchProductSubstitutionAdapter(this)
         binding.recyclerView?.apply {
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(context)
@@ -97,71 +179,19 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
                 }
             })
         }
-
-        binding.tvSearchProduct.setOnEditorActionListener { v, actionId, event ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                searchText = v?.text?.toString()
-                val productsRequestParams = searchText?.let { getRequestParamsBody(it) }
-                if (searchText?.length != 0) {
-                    productsRequestParams?.let { getSubstituteProductList(it) }
-                }
-                false
-            } else {
-                false
-            }
-        }
-
-        binding.btnConfirm?.setOnClickListener(this)
-        binding.crossIamgeView?.setOnClickListener(this)
-        binding.txtCancelSearch?.setOnClickListener(this)
-        binding.rootLayout?.setOnClickListener(this)
-
-        closeKeyBoard()
     }
 
-    private fun setUpViewModel() {
-        productSubstitutionViewModel = ViewModelProvider(
-                this,
-                ProductSubstitutionViewModelFactory(ProductSubstitutionRepository(SubstitutionApiHelper()))
-        )[ProductSubstitutionViewModel::class.java]
+    private fun showShimmerView() {
+        binding.shimmerLayout?.visibility = View.VISIBLE
+        val shimmer = Shimmer.AlphaHighlightBuilder().build()
+        binding.shimmerLayout.setShimmer(shimmer)
+        binding.shimmerLayout.startShimmer()
     }
 
-    private fun getSubstituteProductList(requestParams: ProductsRequestParams) {
-        binding.apply {
-            shimmerLayout?.visibility = View.VISIBLE
-            shimmerLayout.startShimmer()
-            lifecycleScope.launch {
-                productSubstitutionViewModel?.getAllSearchedSubstitutions(
-                        requestParams
-                )?.collectLatest {
-                    productSubstitutionViewModel._pagingResponse.observe(
-                            viewLifecycleOwner
-                    ) { pagingResponse ->
-                        val totalItemCount: String =
-                                "<b>" + pagingResponse.numItemsInTotal?.toString() + "</b>".plus(
-                                        getString(R.string.item_found)
-                                )
-                        val formattedItemCount =
-                                HtmlCompat.fromHtml(totalItemCount, HtmlCompat.FROM_HTML_MODE_COMPACT)
-                        txtSubstitutionCount?.visibility = View.VISIBLE
-                        txtSubstitutionCount.text = formattedItemCount
-                    }
-                    searchProductSubstitutionAdapter?.submitData(it)
-                    shimmerLayout.setShimmer(null)
-                    shimmerLayout.stopShimmer()
-                    shimmerLayout.visibility = View.GONE
-                }
-            }
-        }
-
-        searchProductSubstitutionAdapter?.addLoadStateListener {
-            if (it.refresh is LoadState.Error) {
-                binding.shimmerLayout.setShimmer(null)
-                binding.shimmerLayout.stopShimmer()
-                binding.shimmerLayout.visibility = View.GONE
-                showErrorView(getString(R.string.common_error_unfortunately_something_went_wrong))
-            }
-        }
+    private fun hideShimmerView() {
+        binding.shimmerLayout.setShimmer(null)
+        binding.shimmerLayout.stopShimmer()
+        binding.shimmerLayout.visibility = View.GONE
     }
 
     private fun showErrorView(desc: String) {
@@ -197,15 +227,19 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
             R.id.crossIamgeView -> {
                 binding.tvSearchProduct?.text?.clear()
                 if (!searchText.isNullOrEmpty()) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                        fragmentManager?.beginTransaction()?.detach(this)?.commitNow()
-                        fragmentManager?.beginTransaction()?.attach(this)?.commitNow()
-                    } else {
-                        fragmentManager?.beginTransaction()?.detach(this)?.attach(this)?.commit()
-                    }
+                    reloadFragment()
                 }
             }
             R.id.txtCancelSearch -> (activity as BottomNavigationActivity)?.popFragment()
+        }
+    }
+
+    private fun reloadFragment() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            fragmentManager?.beginTransaction()?.detach(this)?.commitNow()
+            fragmentManager?.beginTransaction()?.attach(this)?.commitNow()
+        } else {
+            fragmentManager?.beginTransaction()?.detach(this)?.attach(this)?.commit()
         }
     }
 
@@ -253,7 +287,7 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
         }
     }
 
-    fun navigateToPdpScreen() {
+    private fun navigateToPdpScreen() {
 
         if (commarceItemId?.isEmpty() == true) {
             /*navigate to pdp with selected product  object and then call add to cart api in order to add substitute there*/
