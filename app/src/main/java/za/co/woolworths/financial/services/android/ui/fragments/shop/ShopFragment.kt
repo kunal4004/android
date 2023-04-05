@@ -263,8 +263,9 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                                 removeNotificationToast()
                             }
                             CLICK_AND_COLLECT_TAB.index -> {
-                                //Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMYLISTS, this)
                                 showBlackToolTip(Delivery.CNC)
+                                showClickAndCollectToolTip( KotlinUtils.isStoreSelectedForBrowsing,
+                                    getDeliveryType()?.storeId)
                                 setEventsForSwitchingBrowsingType(Delivery.CNC.name)
                                 KotlinUtils.browsingDeliveryType = Delivery.CNC
                                 removeNotificationToast()
@@ -543,7 +544,13 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         if (KotlinUtils.isLocationSame == true && KotlinUtils.placeId != null) {
             (KotlinUtils.browsingDeliveryType
                 ?: Delivery.getType(getDeliveryType()?.deliveryType))?.let {
-                showBlackToolTip(it)
+                if(it == Delivery.CNC){
+                    showClickAndCollectToolTip( KotlinUtils.isStoreSelectedForBrowsing,
+                        getDeliveryType()?.storeId)
+                }
+                else {
+                    showBlackToolTip(it)
+                }
             }
         }
         setDeliveryView()
@@ -1079,7 +1086,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                 Delivery.CNC -> {
                     showClickAndCollectToolTip(
                         KotlinUtils.isStoreSelectedForBrowsing,
-                        KotlinUtils.browsingCncStore?.storeId
+                        getDeliveryType()?.storeId
                     )
                 }
                 Delivery.DASH -> {
@@ -1180,7 +1187,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         browsingStoreId: String? = "",
     ) {
         binding.apply {
-            if (KotlinUtils.isCncTabCrossClicked == true || browsingStoreId == null) {
+            if (KotlinUtils.isCncTabCrossClicked == true || browsingStoreId.isNullOrEmpty()) {
                 blackToolTipLayout.root.visibility = View.GONE
                 return
             }
