@@ -39,7 +39,7 @@
                 android:layout_width="@dimen/thirty_two_dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/ten_dp"
-                android:layout_marginTop="@dimen/twenty_five_dp"
+                android:layout_marginTop="@dimen/thirty_four_dp"
                 android:elevation="@dimen/five_dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -82,7 +82,7 @@
                         android:id="@+id/toolbar_pet_insurance"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/fifteen_dp" />
+                        android:layout_marginTop="@dimen/thirty_dp" />
                 </RelativeLayout>
 
 

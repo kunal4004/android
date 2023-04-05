@@ -1595,7 +1595,7 @@
     <string name="select_your_collection_store">Select your collection store:</string>
     <string name="select_your_delivery_location">Select your delivery location:</string>
     <string name="remove_these_items_continue">remove these items &amp; continue</string>
-    <string name="item_not_available_for_collection_title">Item not available</string>
+    <string name="item_not_available_for_collection_title">To purchase this item, please change your delivery option to Standard Delivery or Click &amp; Collect.</string>
     <string name="item_not_available_for_collection_desc">To purchase, please try \'Find In Store\', or change delivery option to Standard.</string>
     <string name="change_delivery_option">CHANGE DELIVERY OPTION</string>
     <string name="remove_items_dialog_title">These items will be removed</string>
@@ -2961,8 +2961,8 @@
     <string name="pet_insurance_apply_now_title">Introducing Woolies \nPet Insurance</string>
     <string name="pet_insurance_apply_now_affordable_title">Affordable</string>
     <string name="pet_insurance_apply_now_affordable_desc">Premiums from only R115 a month, with multiple pet discounts</string>
-    <string name="pet_insurance_apply_now_comprehensive_title">Comprehensive</string>
-    <string name="pet_insurance_apply_now_comprehensive_desc">Extensive benefits &amp; cover options for routine care, accidents, illnesses and third party liability</string>
+    <string name="pet_insurance_apply_now_comprehensive_title">Extensive Cover</string>
+    <string name="pet_insurance_apply_now_comprehensive_desc">Considerable benefits &amp; cover options for routine care, accidents, illnesses and third party liability</string>
     <string name="pet_insurance_apply_now_control_title">You\'re in Control</string>
     <string name="pet_insurance_apply_now_control_desc">Optional excess waiver and medical saving benefits</string>
     <string name="pet_insurance_care">PET</string>
