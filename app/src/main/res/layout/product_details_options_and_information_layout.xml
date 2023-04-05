@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/default_background"
+    android:paddingBottom="@dimen/eight_dp"
     android:orientation="vertical"
     >
 
@@ -244,16 +245,6 @@
         <ImageView style="@style/card_item_end_icon_style" />
     </RelativeLayout>
 
-    <include
-        android:id="@+id/layoutRecommendationContainer"
-        layout="@layout/recommendation_fragment_container_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/eight_dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/productIngredientsInformation" />
-
     <RelativeLayout
         android:id="@+id/headerCustomerReview"
         style="@style/card_items_header_layout_style"
@@ -261,7 +252,7 @@
         android:layout_marginTop="@dimen/eight_dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/layoutRecommendationContainer">
+        app:layout_constraintTop_toBottomOf="@id/productIngredientsInformation">
 
         <TextView
             android:id="@+id/tvCustomerReviewCount"
@@ -372,4 +363,14 @@
             android:layout_marginBottom="@dimen/twenty_five_dp"
             android:fontFamily="@font/futura_semi_bold" />
     </RelativeLayout>
+
+    <include
+        android:id="@+id/layoutRecommendationContainer"
+        layout="@layout/recommendation_fragment_container_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/eight_dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/rlViewMoreReview" />
 </androidx.constraintlayout.widget.ConstraintLayout>

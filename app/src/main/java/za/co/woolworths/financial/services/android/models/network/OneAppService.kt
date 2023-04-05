@@ -50,7 +50,6 @@ import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.SelectedVoucher
 import za.co.woolworths.financial.services.android.onecartgetstream.model.OCAuthenticationResponse
 import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.RecommendationResponse
-import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.RecommendationRequest
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.RatingAndReviewData
 import za.co.woolworths.financial.services.android.util.KotlinUtils
@@ -1262,15 +1261,6 @@ object OneAppService : RetrofitConfig() {
     }
 
     suspend fun recommendation(recommendationRequest: RecommendationRequest): retrofit2.Response<RecommendationResponse> {
-        return withContext(Dispatchers.IO) {
-            mApiInterface.recommendation(
-                getSessionToken(),
-                getDeviceIdentityToken(),
-                recommendationRequest
-            )
-        }
-    }
-    suspend fun recommendation(recommendationRequest: Event): retrofit2.Response<RecommendationResponse> {
         return withContext(Dispatchers.IO) {
             mApiInterface.recommendation(
                 getSessionToken(),

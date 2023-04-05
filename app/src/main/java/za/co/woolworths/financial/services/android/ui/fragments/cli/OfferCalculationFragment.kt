@@ -46,10 +46,12 @@ import za.co.woolworths.financial.services.android.util.controller.IncreaseLimit
 import java.io.IOException
 import java.io.Serializable
 import java.util.*
+import kotlin.math.abs
+import kotlin.math.sign
 
 class OfferCalculationFragment : CLIFragment(R.layout.offer_calculation_fragment), View.OnClickListener, NetworkChangeListener {
 
-    private lateinit var binding: OfferCalculationFragmentBinding
+    private var binding: OfferCalculationFragmentBinding? = null
     private var declineOfferInterface: DeclineOfferInterface? = null
     private var mHashIncomeDetail: HashMap<String, String>? = null
     private var mHashExpenseDetail: HashMap<String, String>? = null
@@ -60,10 +62,10 @@ class OfferCalculationFragment : CLIFragment(R.layout.offer_calculation_fragment
     private var mConnectionBroadcast: BroadcastReceiver? = null
     private var mErrorHandlerView: ErrorHandlerView? = null
     private var editorWasShown = false
-    private lateinit var woolworthsApplication: WoolworthsApplication
+    private var woolworthsApplication: WoolworthsApplication? = null
     private var mAlreadyLoaded = false
-    private var mCLiId = 0
-    private lateinit var mGlobalState: WGlobalState
+    private var mCLiId : Int? = 0
+    private var mGlobalState: WGlobalState? = null
     private var mEventStatus: EventStatus? = null
     private var loadState: LoadState? = null
     private val disposables = CompositeDisposable()
@@ -96,8 +98,8 @@ class OfferCalculationFragment : CLIFragment(R.layout.offer_calculation_fragment
             } catch (ignored: IllegalArgumentException) {
             }
             mConnectionBroadcast = Utils.connectionBroadCast(getActivity(), this)
-            woolworthsApplication = getActivity()?.application as WoolworthsApplication
-            mGlobalState = woolworthsApplication!!.wGlobalState
+            woolworthsApplication = getActivity()?.application as? WoolworthsApplication
+            mGlobalState = woolworthsApplication?.wGlobalState
             init()
             seekBar()
             val bundle = this.arguments
@@ -109,10 +111,10 @@ class OfferCalculationFragment : CLIFragment(R.layout.offer_calculation_fragment
                     incomeDetail = bundle.getSerializable(IncreaseLimitController.INCOME_DETAILS)
                     expenseDetail = bundle.getSerializable(IncreaseLimitController.EXPENSE_DETAILS)
                 }
-                setInvisibleView(binding.tvSlideToEditSeekInfo)
+                binding?.tvSlideToEditSeekInfo?.let { setInvisibleView(it) }
                 mCliStepIndicatorListener?.onStepSelected(3)
-                mObjOffer = (activity as CLIPhase2Activity?)?.offerActiveObject()
-                mCLiId = mObjOffer!!.cliId
+                mObjOffer = (activity as? CLIPhase2Activity?)?.offerActiveObject()
+                mCLiId = mObjOffer?.cliId
                 if (incomeDetail != null) {
                     mHashIncomeDetail = incomeDetail as HashMap<String, String>?
                 }
@@ -127,51 +129,53 @@ class OfferCalculationFragment : CLIFragment(R.layout.offer_calculation_fragment
                     }
                 }
             }
-            disposables.add(woolworthsApplication
-                .bus()
-                .toObservable()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { `object` ->
-                    if (`object` is CLIOfferDecision) {
-                        cliDelcineOfferRequest(mGlobalState.getDeclineDecision())
-                    } else if (`object` is BusStation) {
-                        val busStation = `object`
-                        if (!TextUtils.isEmpty(busStation.string) && busStation.string.equals(
-                                getString(
-                                    R.string.decline
-                                ), ignoreCase = true
-                            )
-                        ) {
-                            finishActivity()
-                        } else if (busStation.number != null) {
-                            binding.sbSlideAmount?.post {
-                                mNewCLIAmount = busStation.number
-                                var drawnDownAmount = busStation.drawnDownAmount
-                                drawnDownAmount -= drawnDownAmount % 100
-                                binding.sbSlideAmount?.progress = mNewCLIAmount
-                                // Parse minimum credit amount if amount received is of negative type
-                                if (mNewCLIAmount <= 0 || drawnDownAmount < currentCredit) {
-                                    var mCurrentCredit = currentCredit
-                                    mCurrentCredit -= mCurrentCredit % 100
-                                    openCreditLimitDecreaseFragmentDialog(mCurrentCredit)
-                                } else {
-                                    if (drawnDownAmount < mCreditRequestMax && drawnDownAmount > currentCredit) {
-                                        openCreditLimitDecreaseFragmentDialog(drawnDownAmount)
+            woolworthsApplication?.let {
+                it.bus()
+                    .toObservable()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe { `object` ->
+                        if (`object` is CLIOfferDecision) {
+                            mGlobalState?.declineDecision?.let {
+                                cliDelcineOfferRequest(it)
+                            }
+                        } else if (`object` is BusStation) {
+                            if (!TextUtils.isEmpty(`object`.string) && `object`.string.equals(
+                                    getString(
+                                        R.string.decline
+                                    ), ignoreCase = true
+                                )
+                            ) {
+                                finishActivity()
+                            } else if (`object`.number != null) {
+                                binding?.sbSlideAmount?.post {
+                                    mNewCLIAmount = `object`.number
+                                    var drawnDownAmount = `object`.drawnDownAmount
+                                    drawnDownAmount -= drawnDownAmount % 100
+                                    binding?.sbSlideAmount?.progress = mNewCLIAmount
+                                    // Parse minimum credit amount if amount received is of negative type
+                                    if (mNewCLIAmount <= 0 || drawnDownAmount < currentCredit) {
+                                        var mCurrentCredit = currentCredit
+                                        mCurrentCredit -= mCurrentCredit % 100
+                                        openCreditLimitDecreaseFragmentDialog(mCurrentCredit)
+                                    } else {
+                                        if (drawnDownAmount in ((currentCredit + 1) until mCreditRequestMax)) {
+                                            openCreditLimitDecreaseFragmentDialog(drawnDownAmount)
+                                        }
                                     }
                                 }
                             }
+                        } else if (`object` is CustomPopUpWindow) {
+                            mCliPhase2Activity?.performClicked()
                         }
-                    } else if (`object` is CustomPopUpWindow) {
-                        if (mCliPhase2Activity != null) mCliPhase2Activity?.performClicked()
-                    }
-                })
+                    }?.let { disposables.add(it) }
+            }
         }
     }
 
     private fun seekBar() {
-        binding.apply {
-            sbSlideAmount?.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
+        binding?.apply {
+            sbSlideAmount.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
                 override fun onStopTrackingTouch(seekBar: SeekBar) {
                     if (mCreditRequestMax > mCurrentCredit) {
                         openCreditLimitDecreaseFragmentDialog(mNewCLIAmount)
@@ -181,15 +185,15 @@ class OfferCalculationFragment : CLIFragment(R.layout.offer_calculation_fragment
                 override fun onStartTrackingTouch(seekBar: SeekBar) {
                     if (mCreditRequestMax < mCurrentCredit) {
                         val amount = formatAmount(mCreditRequestMax)
-                        tvSlideToEditAmount?.setText(amount)
-                        tvCurrentCreditLimitAmount?.setText(formatAmount(currentCredit - INCREASE_PROGRESS_BY))
-                        tvNewCreditLimitAmount?.setText(amount)
+                        tvSlideToEditAmount.setText(amount)
+                        tvCurrentCreditLimitAmount.setText(formatAmount(currentCredit - INCREASE_PROGRESS_BY))
+                        tvNewCreditLimitAmount.setText(amount)
                         mGlobalState?.creditLimit = amount
-                        tvAdditionalCreditLimitAmount?.setText(
+                        tvAdditionalCreditLimitAmount.setText(
                             additionalAmountSignSum(
                                 calculateAdditionalAmount(
                                     mCurrentCredit,
-                                    tvNewCreditLimitAmount?.text.toString()
+                                    tvNewCreditLimitAmount.text.toString()
                                 )
                             )
                         )
@@ -201,21 +205,23 @@ class OfferCalculationFragment : CLIFragment(R.layout.offer_calculation_fragment
                     if (mCreditRequestMax <= mCurrentCredit) {
                         seekBar.progress = 0
                     } else {
-                        progress = progress / INCREASE_PROGRESS_BY
-                        progress = progress * INCREASE_PROGRESS_BY
-                        mNewCLIAmount = mCurrentCredit + progress
-                        tvSlideToEditAmount?.setText(formatAmount(mNewCLIAmount))
-                        val amount = tvSlideToEditAmount?.text.toString()
-                        tvNewCreditLimitAmount?.setText(amount)
-                        mGlobalState?.creditLimit = amount
-                        tvAdditionalCreditLimitAmount?.setText(
-                            additionalAmountSignSum(
-                                calculateAdditionalAmount(
-                                    currentCredit,
-                                    tvNewCreditLimitAmount?.text.toString()
+                        binding?.apply {
+                            progress /= INCREASE_PROGRESS_BY
+                            progress *= INCREASE_PROGRESS_BY
+                            mNewCLIAmount = mCurrentCredit + progress
+                            tvSlideToEditAmount.setText(formatAmount(mNewCLIAmount))
+                            val amount = tvSlideToEditAmount.text.toString()
+                            tvNewCreditLimitAmount.setText(amount)
+                            mGlobalState?.creditLimit = amount
+                            tvAdditionalCreditLimitAmount.setText(
+                                additionalAmountSignSum(
+                                    calculateAdditionalAmount(
+                                        currentCredit,
+                                        tvNewCreditLimitAmount.text.toString()
+                                    )
                                 )
                             )
-                        )
+                        }
                     }
                 }
             })
@@ -224,7 +230,7 @@ class OfferCalculationFragment : CLIFragment(R.layout.offer_calculation_fragment
 
     private fun cliCreateApplication(createOfferRequest: CreateOfferRequest) {
         onLoad()
-        showView(binding.includeCliNextButton.llNextButtonLayout)
+        showView(binding?.includeCliNextButton?.llNextButtonLayout)
         createOfferTask = OneAppService.cliCreateApplication(createOfferRequest)
         createOfferTask?.enqueue(
             CompletionHandler(
@@ -251,7 +257,7 @@ class OfferCalculationFragment : CLIFragment(R.layout.offer_calculation_fragment
                         if (activity != null && error != null) {
                             activity.runOnUiThread(Runnable {
                                 latestBackgroundTask(LATEST_BACKGROUND_CALL.CREATE_OFFER)
-                                hideView(binding.includeCliNextButton.llNextButtonLayout)
+                                hideView(binding?.includeCliNextButton?.llNextButtonLayout)
                                 loadFailure()
                                 hideDeclineButton()
                                 mErrorHandlerView?.responseError(view, error.message)
@@ -265,7 +271,7 @@ class OfferCalculationFragment : CLIFragment(R.layout.offer_calculation_fragment
 
     private fun cliUpdateApplication(createOfferRequest: CreateOfferRequest, cliId: String) {
         onLoad()
-        showView(binding.includeCliNextButton.llNextButtonLayout)
+        showView(binding?.includeCliNextButton?.llNextButtonLayout)
         cliUpdateApplication = OneAppService.cliUpdateApplication(createOfferRequest, cliId)
         cliUpdateApplication?.enqueue(
             CompletionHandler(
@@ -294,7 +300,7 @@ class OfferCalculationFragment : CLIFragment(R.layout.offer_calculation_fragment
                             activity.runOnUiThread(Runnable {
                                 latestBackgroundTask(LATEST_BACKGROUND_CALL.UPDATE_APPLICATION)
                                 loadFailure()
-                                hideView(binding.includeCliNextButton.llNextButtonLayout)
+                                hideView(binding?.includeCliNextButton?.llNextButtonLayout)
                                 hideDeclineButton()
                                 mErrorHandlerView?.responseError(view, error.message)
                             })
@@ -339,7 +345,7 @@ class OfferCalculationFragment : CLIFragment(R.layout.offer_calculation_fragment
     }
 
     private fun init() {
-        binding.apply {
+        binding?.apply {
             mCliPhase2Activity = activity as CLIPhase2Activity?
             mErrorHandlerView = ErrorHandlerView(activity, includeNoConnectionLayout.noConnectionLayout, this@OfferCalculationFragment)
             mErrorHandlerView?.setMargin(includeNoConnectionLayout.noConnectionLayout, 0, 0, 0, 0)
@@ -347,10 +353,10 @@ class OfferCalculationFragment : CLIFragment(R.layout.offer_calculation_fragment
             increaseLimitController.setQuarterHeight(llEmptyLayout)
             showView(includeCliNextButton.llNextButtonLayout)
             disableView(includeCliNextButton.llNextButtonLayout)
-            includeCliNextButton.btnContinue?.setOnClickListener(this@OfferCalculationFragment)
-            tvSlideToEditAmount?.setOnClickListener(this@OfferCalculationFragment)
+            includeCliNextButton.btnContinue.setOnClickListener(this@OfferCalculationFragment)
+            tvSlideToEditAmount.setOnClickListener(this@OfferCalculationFragment)
             includeNoConnectionLayout.btnRetry.setOnClickListener(this@OfferCalculationFragment)
-            includeCliNextButton.btnContinue?.text = activity?.resources?.getString(R.string.accept_offer)
+            includeCliNextButton.btnContinue.text = activity?.resources?.getString(R.string.accept_offer)
             showView(includeCliNextButton.btnContinue)
             mCliPhase2Activity?.showDeclineOffer()
             try {
@@ -364,15 +370,15 @@ class OfferCalculationFragment : CLIFragment(R.layout.offer_calculation_fragment
     private fun additionalAmountSignSum(additionalCreditLimit: Int): String {
         var additionalCreditLimit = additionalCreditLimit
         val strAdditionalCreditLimit: String
-        when (Math.signum(additionalCreditLimit.toFloat()).toInt()) {
+        when (sign(additionalCreditLimit.toFloat()).toInt()) {
             0 -> strAdditionalCreditLimit = formatAmount(additionalCreditLimit)
             1 -> strAdditionalCreditLimit = "+ " + formatAmount(additionalCreditLimit)
             -1 -> {
-                additionalCreditLimit = Math.abs(additionalCreditLimit)
+                additionalCreditLimit = abs(additionalCreditLimit)
                 strAdditionalCreditLimit = "- " + formatAmount(additionalCreditLimit)
             }
             else -> {
-                additionalCreditLimit = Math.abs(additionalCreditLimit)
+                additionalCreditLimit = abs(additionalCreditLimit)
                 strAdditionalCreditLimit = formatAmount(additionalCreditLimit)
             }
         }
@@ -384,7 +390,7 @@ class OfferCalculationFragment : CLIFragment(R.layout.offer_calculation_fragment
     }
 
     private fun onLoad() {
-        binding.apply {
+        binding?.apply {
             setBackgroundColor(llEmptyLayout, R.color.white)
             setBackgroundColor(includeCliNextButton.llNextButtonLayout, R.color.white)
             setBackgroundColor(flTopLayout, R.color.white)
@@ -410,7 +416,7 @@ class OfferCalculationFragment : CLIFragment(R.layout.offer_calculation_fragment
     }
 
     private fun onLoadComplete() {
-        binding.apply {
+        binding?.apply {
             setBackgroundColor(llEmptyLayout, R.color.default_background)
             setBackgroundColor(flTopLayout, R.color.default_background)
             setBackgroundColor(includeCliNextButton.llNextButtonLayout, R.color.default_background)
@@ -452,7 +458,7 @@ class OfferCalculationFragment : CLIFragment(R.layout.offer_calculation_fragment
     }
 
     private fun onAcceptOfferLoad() {
-        binding.apply {
+        binding?.apply {
             showView(includeCliNextButton.mWoolworthsProgressBar)
             includeCliNextButton.mWoolworthsProgressBar?.indeterminateDrawable?.setColorFilter(
                 Color.WHITE,
@@ -463,11 +469,11 @@ class OfferCalculationFragment : CLIFragment(R.layout.offer_calculation_fragment
     }
 
     private fun onAcceptOfferCompleted() {
-        binding.apply {
+        binding?.apply {
             hideView(includeCliNextButton.mWoolworthsProgressBar)
             showView(includeCliNextButton.btnContinue)
-            includeCliNextButton.btnContinue?.setTextColor(Color.WHITE)
-            includeCliNextButton.btnContinue?.contentDescription = getString(R.string.accept_offer)
+            includeCliNextButton.btnContinue.setTextColor(Color.WHITE)
+            includeCliNextButton.btnContinue.contentDescription = getString(R.string.accept_offer)
         }
     }
 
@@ -497,7 +503,7 @@ class OfferCalculationFragment : CLIFragment(R.layout.offer_calculation_fragment
                 }
                 onAcceptOfferLoad()
                 val newCreditLimitAmount = Utils.numericFieldOnly(
-                    binding.tvNewCreditLimitAmount?.text.toString()
+                    binding?.tvNewCreditLimitAmount?.text.toString()
                 )
                 val createOfferDecision = CLIOfferDecision(
                     WoolworthsApplication.getProductOfferingId(),
@@ -591,7 +597,7 @@ class OfferCalculationFragment : CLIFragment(R.layout.offer_calculation_fragment
             }
             R.id.tvSlideToEditAmount -> try {
                 val args = Bundle()
-                val slideAmount = binding.tvSlideToEditAmount?.text.toString()
+                val slideAmount = binding?.tvSlideToEditAmount?.text.toString()
                 args.putInt("slideAmount", Utils.numericFieldOnly(slideAmount))
                 args.putInt("currentCredit", mCurrentCredit)
                 args.putInt("creditRequestMax", mCreditRequestMax)
@@ -613,14 +619,14 @@ class OfferCalculationFragment : CLIFragment(R.layout.offer_calculation_fragment
                     activity
                 )
             ) {
-                showView(binding.includeCliNextButton.llNextButtonLayout)
+                showView(binding?.includeCliNextButton?.llNextButtonLayout)
                 mErrorHandlerView?.hideErrorHandlerLayout()
                 cliApplicationRequest(mEventStatus)
             }
         }
     }
 
-    fun createOffer(
+    private fun createOffer(
         hashIncomeDetail: HashMap<String, String>?,
         hashExpenseDetail: HashMap<String, String>?,
         maritalStatus: ConfigMaritalStatus?
@@ -635,7 +641,7 @@ class OfferCalculationFragment : CLIFragment(R.layout.offer_calculation_fragment
             roundOffCentValues(hashExpenseDetail?.get("MAINTENANCE_EXPENSES")),
             roundOffCentValues(hashExpenseDetail?.get("MONTHLY_CREDIT_EXPENSES")),
             roundOffCentValues(hashExpenseDetail?.get("OTHER_EXPENSES")),
-            maritalStatus!!.statusId
+            maritalStatus?.statusId ?: 0
         )
     }
 
@@ -673,38 +679,40 @@ class OfferCalculationFragment : CLIFragment(R.layout.offer_calculation_fragment
                             mCreditRequestMax = offer.creditRequestMax
                             val mDifferenceCreditLimit = mCreditRequestMax - mCurrentCredit
                             mCLiId = mObjOffer.cliId
-                            if (mCreditRequestMax <= mCurrentCredit) {
-                                sbSlideAmount?.max = 0
-                                val amount = formatAmount(0)
-                                tvSlideToEditAmount?.setText(amount)
-                                tvCurrentCreditLimitAmount?.setText(amount)
-                                tvNewCreditLimitAmount?.setText(amount)
-                                mGlobalState?.creditLimit = amount
-                                tvAdditionalCreditLimitAmount?.setText(amount)
-                            } else {
-                                tvCurrentCreditLimitAmount?.setText(formatAmount(currentCredit - INCREASE_PROGRESS_BY))
-                                sbSlideAmount?.max = mDifferenceCreditLimit
-                                sbSlideAmount?.incrementProgressBy(INCREASE_PROGRESS_BY)
-                                animSeekBarToMaximum()
-                                tvNewCreditLimitAmount?.setText(tvSlideToEditAmount?.text.toString())
-                                tvAdditionalCreditLimitAmount?.setText(
-                                    additionalAmountSignSum(
-                                        calculateAdditionalAmount(
-                                            currentCredit,
-                                            tvNewCreditLimitAmount?.text.toString()
+                            binding?.apply {
+                                if (mCreditRequestMax <= mCurrentCredit) {
+                                    sbSlideAmount.max = 0
+                                    val amount = formatAmount(0)
+                                    tvSlideToEditAmount.text = amount
+                                    tvCurrentCreditLimitAmount.text = amount
+                                    tvNewCreditLimitAmount.text = amount
+                                    mGlobalState?.creditLimit = amount
+                                    tvAdditionalCreditLimitAmount.text = amount
+                                } else {
+                                    tvCurrentCreditLimitAmount.setText(formatAmount(currentCredit - INCREASE_PROGRESS_BY))
+                                    sbSlideAmount.max = mDifferenceCreditLimit
+                                    sbSlideAmount.incrementProgressBy(INCREASE_PROGRESS_BY)
+                                    animSeekBarToMaximum()
+                                    tvNewCreditLimitAmount.text = tvSlideToEditAmount.text.toString()
+                                    tvAdditionalCreditLimitAmount.text =
+                                        additionalAmountSignSum(
+                                            calculateAdditionalAmount(
+                                                currentCredit,
+                                                tvNewCreditLimitAmount.text.toString()
+                                            )
+                                        )
+
+                                    val newCreditLimitAmount = Utils.numericFieldOnly(
+                                        tvNewCreditLimitAmount.text.toString()
+                                    )
+                                    mGlobalState?.setDecisionDeclineOffer(
+                                        CLIOfferDecision(
+                                            WoolworthsApplication.getProductOfferingId(),
+                                            newCreditLimitAmount,
+                                            false
                                         )
                                     )
-                                )
-                                val newCreditLimitAmount = Utils.numericFieldOnly(
-                                    tvNewCreditLimitAmount?.text.toString()
-                                )
-                                mGlobalState?.setDecisionDeclineOffer(
-                                    CLIOfferDecision(
-                                        WoolworthsApplication.getProductOfferingId(),
-                                        newCreditLimitAmount,
-                                        false
-                                    )
-                                )
+                                }
                             }
                             onLoadComplete()
                         } else if (nextStep.lowercase(Locale.getDefault())
@@ -790,9 +798,9 @@ class OfferCalculationFragment : CLIFragment(R.layout.offer_calculation_fragment
                     if (latest_background_call != null) {
                         when (latest_background_call) {
                             LATEST_BACKGROUND_CALL.DECLINE_OFFER -> woolworthsApplication
-                                .bus()
-                                .send(CLIOfferDecision())
-                            LATEST_BACKGROUND_CALL.ACCEPT_OFFER -> binding.includeCliNextButton.btnContinue?.performClick()
+                                ?.bus()
+                                ?.send(CLIOfferDecision())
+                            LATEST_BACKGROUND_CALL.ACCEPT_OFFER -> binding?.includeCliNextButton?.btnContinue?.performClick()
                             else -> {}
                         }
                     }
@@ -808,12 +816,12 @@ class OfferCalculationFragment : CLIFragment(R.layout.offer_calculation_fragment
     }
 
     fun animSeekBarToMaximum() {
-        binding.apply {
+        binding?.apply {
             val anim = ValueAnimator.ofInt(0, sbSlideAmount.max)
             anim.duration = SLIDE_ANIM_DURATION.toLong()
             anim.addUpdateListener { animation ->
                 val animProgress = animation.animatedValue as Int
-                sbSlideAmount?.progress = animProgress
+                sbSlideAmount.progress = animProgress
             }
             anim.addListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator) {
@@ -834,7 +842,7 @@ class OfferCalculationFragment : CLIFragment(R.layout.offer_calculation_fragment
         }
     }
 
-    fun cliApplicationRequest(eventStatus: EventStatus?) {
+    private fun cliApplicationRequest(eventStatus: EventStatus?) {
         when (eventStatus) {
             EventStatus.CREATE_APPLICATION -> cliCreateApplication(
                 createOffer(
@@ -864,15 +872,10 @@ class OfferCalculationFragment : CLIFragment(R.layout.offer_calculation_fragment
     }
 
     fun finishActivity() {
-        val activity: Activity? = activity
-        if (activity != null) {
-            if (woolworthsApplication != null) {
-                woolworthsApplication
-                    .bus()
-                    .send(BusStation(true))
-            }
-            activity.finish()
-            activity.overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
+        woolworthsApplication?.bus()?.send(BusStation(true))
+        activity?.apply {
+            finish()
+            overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
         }
     }
 
