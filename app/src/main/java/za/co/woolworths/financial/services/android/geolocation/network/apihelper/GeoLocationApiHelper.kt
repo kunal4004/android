@@ -4,12 +4,13 @@ import android.content.Context
 import retrofit2.await
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.request.SaveAddressLocationRequest
+import za.co.woolworths.financial.services.android.models.network.AppContextProviderImpl
 import za.co.woolworths.financial.services.android.models.network.RetrofitConfig
 import za.co.woolworths.financial.services.android.util.NetworkManager
 import javax.inject.Inject
 
 
-class GeoLocationApiHelper @Inject constructor() : RetrofitConfig() {
+class GeoLocationApiHelper @Inject constructor() : RetrofitConfig(AppContextProviderImpl()) {
 
     suspend fun getSavedAddress() =
         mApiInterface.getSavedAddresses("", "", getSessionToken(), getDeviceIdentityToken()).await()

@@ -9,9 +9,10 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
 
-open class NetworkConfig: AppContextProviderInterface {
+open class NetworkConfig(private val appContextProvider: AppContextProviderInterface) {
 
-    override fun appContext(): Context = WoolworthsApplication.getAppContext()
+    private val appContext: Context
+        get() = appContextProvider.appContext()
 
     fun getDeviceManufacturer(): String = Build.MANUFACTURER
 
@@ -24,7 +25,7 @@ open class NetworkConfig: AppContextProviderInterface {
     fun getApiId(): String = WoolworthsApplication.getApiId()
 
     fun getNetworkCarrier(): String {
-        val networkCarrier = Util.getNetworkCarrier(appContext())
+        val networkCarrier = Util.getNetworkCarrier(appContext)
         return if (networkCarrier.isEmpty()) "Unavailable" else Utils.removeUnicodesFromString(networkCarrier)
     }
 

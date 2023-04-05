@@ -2,10 +2,10 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.main.co
 
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.flow.catch
 import retrofit2.Response
 import retrofit2.http.*
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.models.network.AppContextProviderImpl
 import za.co.woolworths.financial.services.android.models.network.NetworkConfig
 import za.co.woolworths.financial.services.android.models.network.RetrofitException
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.Result
@@ -14,7 +14,7 @@ import java.io.IOException
 import java.net.ConnectException
 import javax.inject.Inject
 
-open class CoreDataSource @Inject constructor() : NetworkConfig() {
+open class CoreDataSource @Inject constructor() : NetworkConfig(AppContextProviderImpl()) {
 
     /**
      * Sealed class type-restricts the result of IO calls to success and failure. The type

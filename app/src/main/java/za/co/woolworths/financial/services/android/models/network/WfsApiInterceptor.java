@@ -20,8 +20,14 @@ import za.co.woolworths.financial.services.android.util.analytics.FirebaseManage
  * Created by eesajacobs on 2016/12/29.
  */
 
-public class WfsApiInterceptor extends NetworkConfig implements Interceptor {
+public class WfsApiInterceptor implements Interceptor {
     public static final String TAG = "WfsApiInterceptor";
+
+    private NetworkConfig networkConfig;
+
+    public WfsApiInterceptor(NetworkConfig networkConfig) {
+        this.networkConfig = networkConfig;
+    }
 
     @Override
     public Response intercept(Chain chain) throws IOException {

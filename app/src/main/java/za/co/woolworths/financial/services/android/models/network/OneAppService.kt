@@ -53,7 +53,7 @@ import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
 import java.net.URLEncoder
 
-class OneAppService : RetrofitConfig() {
+class OneAppService(private val appContextProvider: AppContextProviderInterface = AppContextProviderImpl()) : RetrofitConfig(appContextProvider) {
 
     companion object {
         var forceNetworkUpdate: Boolean = false
@@ -464,7 +464,7 @@ class OneAppService : RetrofitConfig() {
                 )
         }
 
-        return if (Utils.isLocationEnabled(appContext())) {
+        return if (Utils.isLocationEnabled(appContextProvider.appContext())) {
             mApiInterface.getProducts(
                 "",
                 "",
@@ -610,7 +610,7 @@ class OneAppService : RetrofitConfig() {
         val deliveryType =
             if (isUserBrowsing) KotlinUtils.browsingDeliveryType?.type ?: Delivery.STANDARD.type
             else KotlinUtils.getDeliveryType()?.deliveryType ?: Delivery.STANDARD.type
-        return if (Utils.isLocationEnabled(appContext())) {
+        return if (Utils.isLocationEnabled(appContextProvider.appContext())) {
             mApiInterface.productDetail(
                 "",
                 "",

@@ -11,7 +11,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import za.co.wigroup.androidutils.Util
 import java.util.concurrent.TimeUnit
 
-abstract class RetrofitConfig : NetworkConfig() {
+abstract class RetrofitConfig(appContextProvider: AppContextProviderInterface) : NetworkConfig(appContextProvider) {
 
     companion object {
         const val READ_CONNECT_TIMEOUT_UNIT: Long = 45
@@ -23,10 +23,10 @@ abstract class RetrofitConfig : NetworkConfig() {
         val httpBuilder = OkHttpClient.Builder()
         val logging = HttpLoggingInterceptor()
 
-        logging.level = if (Util.isDebug(appContext())) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
+        logging.level = if (Util.isDebug(appContextProvider.appContext())) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
 
         with(httpBuilder) {
-            addInterceptor(WfsApiInterceptor())
+            addInterceptor(WfsApiInterceptor(NetworkConfig(AppContextProviderImpl())))
             addInterceptor(CommonHeaderInterceptor())
             readTimeout(if (BuildConfig.ENV.equals("qa", true)) READ_CONNECT_TIMEOUT_UNIT_QA else READ_CONNECT_TIMEOUT_UNIT, TimeUnit.SECONDS)
             connectTimeout(if (BuildConfig.ENV.equals("qa", true)) READ_CONNECT_TIMEOUT_UNIT_QA else READ_CONNECT_TIMEOUT_UNIT, TimeUnit.SECONDS)
