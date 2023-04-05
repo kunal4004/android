@@ -7,9 +7,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.os.Parcelable
 import android.text.TextUtils
-import android.util.Log
 import android.view.View
 import android.webkit.CookieManager
 import android.webkit.WebView
@@ -40,7 +38,7 @@ import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
 import java.net.URI
-import java.net.URLDecoder
+
 
 class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_web),
     AdvancedWebView.Listener {
