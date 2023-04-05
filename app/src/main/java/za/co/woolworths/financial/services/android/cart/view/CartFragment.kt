@@ -518,64 +518,68 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
 
     private fun cartBeginEventAnalytics() {
         val beginCheckoutParams = Bundle()
-        beginCheckoutParams.putString(
-            FirebaseAnalytics.Param.CURRENCY,
-            FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE
-        )
-        orderSummary?.total?.let {
-            beginCheckoutParams.putDouble(
-                FirebaseAnalytics.Param.VALUE,
-                it
+        beginCheckoutParams.apply {
+            putString(
+                FirebaseAnalytics.Param.CURRENCY,
+                FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE
             )
-        }
-        viewModel?.getCartItemList()?.let {
-            val itemArrayEvent = arrayListOf<Bundle>()
-            for (cartItem in it) {
-                val beginCheckoutItem = Bundle()
-                beginCheckoutItem.putString(
-                    FirebaseAnalytics.Param.ITEM_ID,
-                    cartItem.commerceItemInfo?.productId
+            orderSummary?.total?.let {
+                putDouble(
+                    FirebaseAnalytics.Param.VALUE,
+                    it
                 )
-                beginCheckoutItem.putString(
-                    FirebaseAnalytics.Param.ITEM_NAME,
-                    cartItem.commerceItemInfo.productDisplayName
-                )
-                beginCheckoutItem.putDouble(
-                    FirebaseAnalytics.Param.PRICE,
-                    cartItem.priceInfo.amount
-                )
-
-                beginCheckoutItem.putString(
-                    FirebaseAnalytics.Param.ITEM_BRAND,
-                    cartItem.commerceItemInfo?.productDisplayName
-                )
-                beginCheckoutItem.putString(
-                    FirebaseAnalytics.Param.ITEM_VARIANT,
-                    cartItem.commerceItemInfo?.size
-                )
-
-                beginCheckoutItem.putString(
-                    FirebaseAnalytics.Param.ITEM_CATEGORY,
-                    cartItem.commerceItemInfo.productDisplayName
-                )
-                beginCheckoutItem.putInt(
-                    FirebaseAnalytics.Param.QUANTITY,
-                    cartItem.commerceItemInfo.quantity
-                )
-                itemArrayEvent.add(beginCheckoutItem)
-
             }
-            beginCheckoutParams.putParcelableArray(
-                FirebaseAnalytics.Param.ITEMS,
-                itemArrayEvent.toTypedArray()
-            )
 
+            viewModel?.getCartItemList()?.let {
+                val itemArrayEvent = arrayListOf<Bundle>()
+                for (cartItem in it) {
+                    val beginCheckoutItem = Bundle()
+                    beginCheckoutItem.apply {
+                        putString(
+                            FirebaseAnalytics.Param.ITEM_ID,
+                            cartItem.commerceItemInfo?.productId
+                        )
+                        putString(
+                            FirebaseAnalytics.Param.ITEM_NAME,
+                            cartItem.commerceItemInfo.productDisplayName
+                        )
+                        putDouble(
+                            FirebaseAnalytics.Param.PRICE,
+                            cartItem.priceInfo.amount
+                        )
+
+                        putString(
+                            FirebaseAnalytics.Param.ITEM_BRAND,
+                            cartItem.commerceItemInfo?.productDisplayName
+                        )
+                        putString(
+                            FirebaseAnalytics.Param.ITEM_VARIANT,
+                            cartItem.commerceItemInfo?.size
+                        )
+
+                        putString(
+                            FirebaseAnalytics.Param.ITEM_CATEGORY,
+                            cartItem.commerceItemInfo.productDisplayName
+                        )
+                        putInt(
+                            FirebaseAnalytics.Param.QUANTITY,
+                            cartItem.commerceItemInfo.quantity
+                        )
+                        itemArrayEvent.add(this)
+                    }
+                }
+                putParcelableArray(
+                    FirebaseAnalytics.Param.ITEMS,
+                    itemArrayEvent.toTypedArray()
+                )
+            }
+
+            AnalyticsManager.logEvent(
+                FirebaseManagerAnalyticsProperties.CART_BEGIN_CHECKOUT,
+                this
+            )
         }
 
-        AnalyticsManager.logEvent(
-            FirebaseManagerAnalyticsProperties.CART_BEGIN_CHECKOUT,
-            beginCheckoutParams
-        )
     }
 
     override fun onItemDeleteClickInEditMode(commerceItem: CommerceItem) {

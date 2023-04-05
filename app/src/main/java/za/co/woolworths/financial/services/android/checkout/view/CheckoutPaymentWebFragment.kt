@@ -162,67 +162,74 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
         when (paymentStatusType) {
             PaymentStatus.PAYMENT_SUCCESS.type -> {
                 val eventParams = Bundle()
-                cartItemList?.let {
-                    val itemsArray = arrayListOf<Bundle>()
-                    for (cartItem in it) {
-                        val selectItems = Bundle()
-                        selectItems.putString(
-                            FirebaseAnalytics.Param.ITEM_ID,
-                            cartItem.commerceItemInfo.productId
-                        )
+                eventParams.apply {
 
-                        selectItems.putString(
-                            FirebaseAnalytics.Param.ITEM_NAME,
-                            cartItem.commerceItemInfo.productDisplayName
-                        )
+                    cartItemList?.let {
+                        val itemsArray = arrayListOf<Bundle>()
+                        for (cartItem in it) {
+                            val selectItems = Bundle()
+                            selectItems.apply {
+                                putString(
+                                    FirebaseAnalytics.Param.ITEM_ID,
+                                    cartItem.commerceItemInfo.productId
+                                )
 
-                        selectItems.putDouble(
-                            FirebaseAnalytics.Param.PRICE,
-                            cartItem.priceInfo.amount
-                        )
+                                putString(
+                                    FirebaseAnalytics.Param.ITEM_NAME,
+                                    cartItem.commerceItemInfo.productDisplayName
+                                )
 
-                        selectItems.putString(
-                            FirebaseAnalytics.Param.ITEM_BRAND,
-                            cartItem.commerceItemInfo?.productDisplayName
-                        )
-                        selectItems.putString(
-                            FirebaseAnalytics.Param.ITEM_VARIANT,
-                            cartItem.commerceItemInfo?.size
-                        )
+                                putDouble(
+                                    FirebaseAnalytics.Param.PRICE,
+                                    cartItem.priceInfo.amount
+                                )
 
-                        selectItems.putString(
-                            FirebaseAnalytics.Param.ITEM_CATEGORY,
-                            cartItem.commerceItemInfo.productDisplayName
+                                putString(
+                                    FirebaseAnalytics.Param.ITEM_BRAND,
+                                    cartItem.commerceItemInfo?.productDisplayName
+                                )
+                                putString(
+                                    FirebaseAnalytics.Param.ITEM_VARIANT,
+                                    cartItem.commerceItemInfo?.size
+                                )
+
+                                putString(
+                                    FirebaseAnalytics.Param.ITEM_CATEGORY,
+                                    cartItem.commerceItemInfo.productDisplayName
+                                )
+                                putInt(
+                                    FirebaseAnalytics.Param.QUANTITY,
+                                    cartItem.commerceItemInfo.quantity
+                                )
+                                itemsArray.add(this)
+
+                            }
+
+                        }
+
+                        putParcelableArray(
+                            FirebaseAnalytics.Param.ITEMS,
+                            itemsArray.toTypedArray()
                         )
-                        selectItems.putInt(
-                            FirebaseAnalytics.Param.QUANTITY,
-                            cartItem.commerceItemInfo.quantity
-                        )
-                        itemsArray.add(selectItems)
                     }
+                    putString(
+                        FirebaseAnalytics.Param.CURRENCY,
+                        CURRENCY_VALUE
+                    )
+                    putString(
+                        FirebaseAnalytics.Param.PAYMENT_TYPE,
+                        paymentArguments[PAYMENT_TYPE]
+                    )
+                    putDouble(
+                        FirebaseAnalytics.Param.VALUE,
+                        paymentArguments[PAYMENT_VALUE]?.toDouble() ?: 0.0
+                    )
 
-                    eventParams.putParcelableArray(
-                        FirebaseAnalytics.Param.ITEMS,
-                        itemsArray.toTypedArray()
+                    AnalyticsManager.logEvent(
+                        FirebaseManagerAnalyticsProperties.ADD_PAYMENT_INFO,
+                        this
                     )
                 }
-                eventParams.putString(
-                    FirebaseAnalytics.Param.CURRENCY,
-                    CURRENCY_VALUE
-                )
-                eventParams.putString(
-                    FirebaseAnalytics.Param.PAYMENT_TYPE,
-                    paymentArguments[PAYMENT_TYPE]
-                )
-                eventParams.putDouble(
-                    FirebaseAnalytics.Param.VALUE,
-                    paymentArguments[PAYMENT_VALUE]?.toDouble() ?: 0.0
-                )
-
-                AnalyticsManager.logEvent(
-                    FirebaseManagerAnalyticsProperties.ADD_PAYMENT_INFO,
-                    eventParams
-                )
                 navigateToOrderConfirmation()
             }
             PaymentStatus.PAYMENT_ABANDON.type -> {
