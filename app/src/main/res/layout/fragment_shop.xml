@@ -51,7 +51,7 @@
                 android:id="@+id/tvToolbarSubtitle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/myriad_pro_semi_bold"
+                android:fontFamily="@font/opensans_semi_bold"
                 android:maxLines="1"
                 android:ellipsize="end"
                 android:text="Default Location"

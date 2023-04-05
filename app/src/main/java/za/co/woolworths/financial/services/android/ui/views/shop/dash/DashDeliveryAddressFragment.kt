@@ -172,7 +172,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
         binding.layoutDashSetAddress.imgView?.setImageResource(R.drawable.img_dash_delivery)
         binding.layoutDashSetAddress.txtDashTitle?.text = getString(R.string.dash_delivery_msg)
         binding.layoutDashSetAddress.txtDashSubTitle?.text = getString(R.string.dash_delivery_title)
-        binding.layoutDashSetAddress.btnDashSetAddress?.text = getString(R.string.set_address)
+        binding.layoutDashSetAddress.btnDashSetAddress?.text = getString(R.string.set_location)
         binding.layoutDashSetAddress.btnDashSetAddress?.setOnClickListener(this)
     }
 
