@@ -429,34 +429,10 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
 
     private fun navigateToCheckout(response: SavedAddressResponse?) {
         val activity: Activity = requireActivity()
+        cartBeginEventAnalytics()
         if (((getPreferredDeliveryType() == Delivery.STANDARD)
                     && !TextUtils.isEmpty(response?.defaultAddressNickname))
         ) {
-            //   - CNAV : Checkout  activity
-            val beginCheckoutParams = Bundle()
-            beginCheckoutParams.putString(
-                FirebaseAnalytics.Param.CURRENCY,
-                FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE
-            )
-
-            val beginCheckoutItem = Bundle()
-            beginCheckoutItem.putString(
-                FirebaseAnalytics.Param.QUANTITY,
-                FirebaseManagerAnalyticsProperties.PropertyValues.INDEX_VALUE
-            )
-            beginCheckoutItem.putString(
-                FirebaseAnalytics.Param.ITEM_BRAND,
-                FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE
-            )
-
-            beginCheckoutParams.putParcelableArray(
-                FirebaseAnalytics.Param.ITEMS,
-                arrayOf(beginCheckoutItem)
-            )
-            AnalyticsManager.logEvent(
-                FirebaseManagerAnalyticsProperties.CART_BEGIN_CHECKOUT,
-                beginCheckoutParams
-            )
 
             val checkoutActivityIntent = Intent(activity, CheckoutActivity::class.java)
             checkoutActivityIntent.apply {
@@ -538,6 +514,68 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                 liquorCompliance = liquorCompliance
             )
         }
+    }
+
+    private fun cartBeginEventAnalytics() {
+        val beginCheckoutParams = Bundle()
+        beginCheckoutParams.putString(
+            FirebaseAnalytics.Param.CURRENCY,
+            FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE
+        )
+        orderSummary?.total?.let {
+            beginCheckoutParams.putDouble(
+                FirebaseAnalytics.Param.VALUE,
+                it
+            )
+        }
+        viewModel?.getCartItemList()?.let {
+            val itemArrayEvent = arrayListOf<Bundle>()
+            for (cartItem in it) {
+                val beginCheckoutItem = Bundle()
+                beginCheckoutItem.putString(
+                    FirebaseAnalytics.Param.ITEM_ID,
+                    cartItem.commerceItemInfo?.productId
+                )
+                beginCheckoutItem.putString(
+                    FirebaseAnalytics.Param.ITEM_NAME,
+                    cartItem.commerceItemInfo.productDisplayName
+                )
+                beginCheckoutItem.putDouble(
+                    FirebaseAnalytics.Param.PRICE,
+                    cartItem.priceInfo.amount
+                )
+
+                beginCheckoutItem.putString(
+                    FirebaseAnalytics.Param.ITEM_BRAND,
+                    cartItem.commerceItemInfo?.productDisplayName
+                )
+                beginCheckoutItem.putString(
+                    FirebaseAnalytics.Param.ITEM_VARIANT,
+                    cartItem.commerceItemInfo?.size
+                )
+
+                beginCheckoutItem.putString(
+                    FirebaseAnalytics.Param.ITEM_CATEGORY,
+                    cartItem.commerceItemInfo.productDisplayName
+                )
+                beginCheckoutItem.putInt(
+                    FirebaseAnalytics.Param.QUANTITY,
+                    cartItem.commerceItemInfo.quantity
+                )
+                itemArrayEvent.add(beginCheckoutItem)
+
+            }
+            beginCheckoutParams.putParcelableArray(
+                FirebaseAnalytics.Param.ITEMS,
+                itemArrayEvent.toTypedArray()
+            )
+
+        }
+
+        AnalyticsManager.logEvent(
+            FirebaseManagerAnalyticsProperties.CART_BEGIN_CHECKOUT,
+            beginCheckoutParams
+        )
     }
 
     override fun onItemDeleteClickInEditMode(commerceItem: CommerceItem) {

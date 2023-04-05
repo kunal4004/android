@@ -7,7 +7,9 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.os.Parcelable
 import android.text.TextUtils
+import android.util.Log
 import android.view.View
 import android.webkit.CookieManager
 import android.webkit.WebView
@@ -38,6 +40,7 @@ import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
 import java.net.URI
+import java.net.URLDecoder
 
 class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_web),
     AdvancedWebView.Listener {
@@ -154,72 +157,73 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
             )
             if (jsonToAnalyticsList != null)
                 paymentArguments[TRANSACTION_ID] = jsonToAnalyticsList?.transaction_id ?: ""
+                paymentArguments[PAYMENT_VALUE] = jsonToAnalyticsList?.value?.toString() ?: "0.0"
+                paymentArguments[PAYMENT_TYPE] = jsonToAnalyticsList?.payment_type ?: ""
         }
 
         when (paymentStatusType) {
             PaymentStatus.PAYMENT_SUCCESS.type -> {
-                val selectItem = Bundle()
-                val paymentType = uri.getQueryParameter(PAYMENT_TYPE)
-                val paymentValue = uri.getQueryParameter(PAYMENT_VALUE)
+                val eventParams = Bundle()
                 cartItemList?.let {
+                    val itemsArray = arrayListOf<Bundle>()
                     for (cartItem in it) {
-                        selectItem.putString(
+                        val selectItems = Bundle()
+                        selectItems.putString(
                             FirebaseAnalytics.Param.ITEM_ID,
                             cartItem.commerceItemInfo.productId
                         )
 
-                        selectItem.putString(
+                        selectItems.putString(
                             FirebaseAnalytics.Param.ITEM_NAME,
                             cartItem.commerceItemInfo.productDisplayName
                         )
 
-                        selectItem.putDouble(
+                        selectItems.putDouble(
                             FirebaseAnalytics.Param.PRICE,
                             cartItem.priceInfo.amount
                         )
 
-                        selectItem.putString(
+                        selectItems.putString(
                             FirebaseAnalytics.Param.ITEM_BRAND,
                             cartItem.commerceItemInfo?.productDisplayName
                         )
-                        selectItem.putString(
+                        selectItems.putString(
                             FirebaseAnalytics.Param.ITEM_VARIANT,
                             cartItem.commerceItemInfo?.size
                         )
 
-                        selectItem.putString(
+                        selectItems.putString(
                             FirebaseAnalytics.Param.ITEM_CATEGORY,
                             cartItem.commerceItemInfo.productDisplayName
                         )
-                        selectItem.putInt(
+                        selectItems.putInt(
                             FirebaseAnalytics.Param.QUANTITY,
                             cartItem.commerceItemInfo.quantity
                         )
-
-                        selectItem.putString(
-                            FirebaseAnalytics.Param.CURRENCY,
-                            CURRENCY_VALUE
-                        )
-                        selectItem.putString(
-                            FirebaseAnalytics.Param.PAYMENT_TYPE,
-                            paymentType.toString()
-                        )
-                        selectItem.putString(
-                            FirebaseAnalytics.Param.VALUE,
-                            paymentValue.toString()
-                        )
-
-
-                        selectItem.putParcelableArray(
-                            FirebaseAnalytics.Param.ITEMS,
-                            arrayOf(selectItem)
-                        )
+                        itemsArray.add(selectItems)
                     }
+
+                    eventParams.putParcelableArray(
+                        FirebaseAnalytics.Param.ITEMS,
+                        itemsArray.toTypedArray()
+                    )
                 }
+                eventParams.putString(
+                    FirebaseAnalytics.Param.CURRENCY,
+                    CURRENCY_VALUE
+                )
+                eventParams.putString(
+                    FirebaseAnalytics.Param.PAYMENT_TYPE,
+                    paymentArguments[PAYMENT_TYPE]
+                )
+                eventParams.putDouble(
+                    FirebaseAnalytics.Param.VALUE,
+                    paymentArguments[PAYMENT_VALUE]?.toDouble() ?: 0.0
+                )
 
                 AnalyticsManager.logEvent(
                     FirebaseManagerAnalyticsProperties.ADD_PAYMENT_INFO,
-                    selectItem
+                    eventParams
                 )
                 navigateToOrderConfirmation()
             }
