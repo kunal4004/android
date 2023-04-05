@@ -10,4 +10,6 @@ object Constants {
     const val PRODUCT_ID_FOR_DISCOUNT = "DISCOUNT"
     const val QUANTITY_FOR_DISCOUNT = 1
     const val QUANTITY_FOR_SHIPPING = 1
+    const val EVENT_TYPE_PAGEVIEW = "monetate:context:PageView"
+    const val EVENT_TYPE_CART = "monetate:context:Cart"
 }

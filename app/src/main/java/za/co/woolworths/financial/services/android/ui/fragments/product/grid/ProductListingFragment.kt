@@ -72,6 +72,8 @@ import za.co.woolworths.financial.services.android.ui.adapters.holder.RecyclerVi
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants.EVENT_TYPE_CART
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants.EVENT_TYPE_PAGEVIEW
 import za.co.woolworths.financial.services.android.ui.views.*
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ProductListingFindInStoreNoQuantityFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SelectYourQuantityFragment
@@ -835,10 +837,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
         val cartLinesValue: MutableList<CartProducts> = arrayListOf()
 
         bundle.putParcelable(
-            BundleKeysConstants.RECOMMENDATIONS_EVENT_DATA, Event(eventType = "monetate:context:PageView", url = "/cart", pageType = "cart", null, null, null)
+            BundleKeysConstants.RECOMMENDATIONS_EVENT_DATA, Event(eventType = EVENT_TYPE_PAGEVIEW, url = "/searchSortAndFilterV2", pageType = "emptySearch", null, null, null)
         )
         bundle.putParcelable(
-            BundleKeysConstants.RECOMMENDATIONS_EVENT_DATA_TYPE, Event(eventType = "monetate:context:Cart", null, null, null, null, cartLinesValue
+            BundleKeysConstants.RECOMMENDATIONS_EVENT_DATA_TYPE, Event(eventType = EVENT_TYPE_CART, null, null, null, null, cartLinesValue
             )
         )
         val navHostFragment =
