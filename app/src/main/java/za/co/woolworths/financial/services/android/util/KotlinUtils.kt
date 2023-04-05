@@ -75,12 +75,14 @@ import za.co.woolworths.financial.services.android.models.dto.app_config.chat.Co
 import za.co.woolworths.financial.services.android.models.dto.cart.FulfillmentDetails
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
-import za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.LinkDeviceConfirmationActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
+import za.co.woolworths.financial.services.android.ui.activities.webview.activities.WInternalWebPageActivity
 import za.co.woolworths.financial.services.android.ui.extension.*
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.Constants.IS_PET_INSURANCE
+import za.co.woolworths.financial.services.android.ui.fragments.account.petinsurance.PetInsurancePendingFragment
 import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.AbsaApiFailureHandler
 import za.co.woolworths.financial.services.android.ui.fragments.onboarding.OnBoardingFragment.Companion.ON_BOARDING_SCREEN_TYPE
 import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
@@ -1435,6 +1437,9 @@ class KotlinUtils {
         fun isFicaEnabled(): Boolean {
             return Utils.isFeatureEnabled(accountOptions?.ficaRefresh?.minimumSupportedAppBuildNumber)
         }
+        fun isPetInsuranceEnabled(): Boolean {
+            return Utils.isFeatureEnabled(accountOptions?.insuranceProducts?.minimumSupportedAppBuildNumber)
+        }
 
         fun saveAnonymousUserLocationDetails(shoppingDeliveryLocation: ShoppingDeliveryLocation) {
             Utils.sessionDaoSave(
@@ -1537,6 +1542,38 @@ class KotlinUtils {
                 actionText = context.getString(R.string.got_it),
                 infoIcon = R.drawable.icon_dash_delivery_scooter
             )
+        }
+
+        fun showPetInsurancePendingDialog(fragmentManager: FragmentManager) {
+            val petInsurancePendingFragment =
+                PetInsurancePendingFragment.newInstance()
+            petInsurancePendingFragment.show(
+                fragmentManager,
+                PetInsurancePendingFragment::class.java.simpleName
+            )
+        }
+
+        fun petInsuranceRedirect(
+            activity: Activity?,
+            url: String?,
+            isWebView: Boolean,
+            collectionsExitUrl: String?
+        ) {
+            activity?.apply {
+                val openInternalWebView = Intent(this, WInternalWebPageActivity::class.java)
+                openInternalWebView.putExtra("externalLink", url)
+                openInternalWebView.putExtra(IS_PET_INSURANCE, true)
+                if (isWebView) {
+                    openInternalWebView.putExtra(COLLECTIONS_EXIT_URL, collectionsExitUrl)
+                    startActivityForResult(
+                        openInternalWebView,
+                        MyAccountsFragment.PET_INSURANCE_REQUEST_CODE
+                    )
+                } else {
+                    openUrlInPhoneBrowser(url, activity)
+                    activity.finish()
+                }
+            }
         }
 
         fun getFormattedNickName(nickname: String?, address: CharSequence?, context: Context?): SpannableStringBuilder {

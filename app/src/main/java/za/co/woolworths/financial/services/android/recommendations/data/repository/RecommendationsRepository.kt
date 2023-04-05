@@ -7,4 +7,5 @@ import za.co.woolworths.financial.services.android.recommendations.data.response
 interface RecommendationsRepository {
 
     suspend fun getRecommendationResponse(recommendationRequest: RecommendationRequest?): Resource<RecommendationResponse>
+
 }
