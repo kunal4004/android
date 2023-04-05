@@ -196,15 +196,11 @@ class SurveyVocViewModelTest {
     fun performOptOutRequest_ApiServiceToSucceed_RequestSentSuccessfully() {
         // Arrange
         val responseMock = Response.success<Void>(null)
-        val callMock = mock(CallVoidStub::class.java)//spy(CallStub<Void>())
+        val callMock = mock(CallVoidStub::class.java)
 
-        doReturn(callMock).`when`(mockApiService).optOutVocSurvey()
-//        `when`(mockApiService.optOutVocSurvey())
-//            .thenReturn(callMock)
+        `when`(mockApiService.optOutVocSurvey())
+            .thenReturn(callMock)
 
-//        doAnswer {
-//            (it.arguments[0] as Callback<Void>).onResponse(callMock, responseMock)
-//        }.`when`(callMock.enqueue(any()))
         `when`(callMock.enqueue(any()))
             .then {
                 val callback = it.arguments[0] as Callback<Void>
