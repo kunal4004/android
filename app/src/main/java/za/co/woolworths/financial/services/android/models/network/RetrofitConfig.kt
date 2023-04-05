@@ -1,17 +1,13 @@
 package za.co.woolworths.financial.services.android.models.network
 
-import androidx.annotation.VisibleForTesting
 import com.awfs.coordination.BuildConfig
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
-import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
-import retrofit2.converter.gson.GsonConverterFactory
 import za.co.wigroup.androidutils.Util
 import java.util.concurrent.TimeUnit
 
-abstract class RetrofitConfig(appContextProvider: AppContextProviderInterface) : NetworkConfig(appContextProvider) {
+abstract class RetrofitConfig(appContextProvider: AppContextProviderInterface, apiInterfaceProvider: RetrofitApiProviderInterface) : NetworkConfig(appContextProvider) {
 
     companion object {
         const val READ_CONNECT_TIMEOUT_UNIT: Long = 45
@@ -33,23 +29,8 @@ abstract class RetrofitConfig(appContextProvider: AppContextProviderInterface) :
             writeTimeout(if (BuildConfig.ENV.equals("qa", true)) READ_CONNECT_TIMEOUT_UNIT_QA else READ_CONNECT_TIMEOUT_UNIT, TimeUnit.SECONDS)
             interceptors().add(logging)
         }
-        mApiInterface = getRetrofit(httpBuilder)
-    }
-
-    private fun getRetrofit(httpBuilder: OkHttpClient.Builder): ApiInterface {
-        return Retrofit.Builder()
-                .baseUrl(BuildConfig.HOST + "/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .client(httpBuilder.build())
-                .build()
-                .create(ApiInterface::class.java)
+        mApiInterface = apiInterfaceProvider.getRetrofit(httpBuilder)
     }
 
     fun cancelRequest(call: Call<*>?) = call?.apply { if (!isCanceled) cancel() }
-
-    @VisibleForTesting
-    fun testGetRetrofit(httpBuilder: OkHttpClient.Builder): ApiInterface {
-        return getRetrofit(httpBuilder)
-    }
 }

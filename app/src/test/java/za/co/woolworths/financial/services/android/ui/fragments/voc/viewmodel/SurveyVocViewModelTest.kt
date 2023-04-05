@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.voc.viewmodel
 
 import android.content.Context
+import org.junit.After
 import org.junit.Assert
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -8,27 +9,50 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers
-import org.mockito.Mockito
+import org.mockito.MockedStatic
+import org.mockito.Mockito.*
 import org.powermock.api.mockito.PowerMockito
 import org.powermock.core.classloader.annotations.PrepareForTest
 import org.powermock.modules.junit4.PowerMockRunner
-import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.wigroup.androidutils.Util
 import za.co.woolworths.financial.services.android.models.dto.voc.SurveyDetails
 import za.co.woolworths.financial.services.android.models.dto.voc.SurveyQuestion
+import za.co.woolworths.financial.services.android.models.network.AppContextProviderStub
+import za.co.woolworths.financial.services.android.models.network.CallVoidStub
 import za.co.woolworths.financial.services.android.models.network.OneAppService
+import za.co.woolworths.financial.services.android.models.network.RetrofitApiProviderStub
+import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 
+@RunWith(PowerMockRunner::class)
+@PrepareForTest(Util::class, Utils::class)
 class SurveyVocViewModelTest {
 
+    private lateinit var mockStaticUtil: MockedStatic<Util>
+    private lateinit var mockStaticUtils: MockedStatic<Utils>
+    private lateinit var mockApiService: OneAppService
     private lateinit var SUT: SurveyVocViewModel
 
     @Before
-    fun setUp() {
-        Mockito.`when`(OneAppService().appContext())
-            .thenAnswer { Mockito.mock(Context::class.java) }
+    fun setup() {
+        mockStaticUtil = mockStatic(Util::class.java)
+        mockStaticUtils = mockStatic(Utils::class.java)
+
+        `when`(Util.isDebug(ArgumentMatchers.any(Context::class.java)))
+            .thenReturn(false)
+        `when`(Utils.getUniqueDeviceID())
+            .thenReturn("")
+
+        mockApiService = mock(
+            OneAppService::class.java,
+            withSettings()
+                .useConstructor(
+                    AppContextProviderStub(),
+                    RetrofitApiProviderStub()
+                )
+        )
 
         SUT = SurveyVocViewModel()
 
@@ -73,7 +97,13 @@ class SurveyVocViewModelTest {
             type = "GENEX",
             questions = questions
         )
-        SUT.configure(survey)
+        SUT.configure(survey, mockApiService)
+    }
+
+    @After
+    fun tearDown() {
+        mockStaticUtil.close()
+        mockStaticUtils.close()
     }
 
     @Test
@@ -166,10 +196,16 @@ class SurveyVocViewModelTest {
     fun performOptOutRequest_ApiServiceToSucceed_RequestSentSuccessfully() {
         // Arrange
         val responseMock = Response.success<Void>(null)
-        val callMock = Mockito.mock(Call::class.java) as Call<Void>
-        Mockito.`when`(OneAppService().optOutVocSurvey())
-            .thenAnswer { callMock }
-        Mockito.`when`(callMock.enqueue(ArgumentMatchers.any()))
+        val callMock = mock(CallVoidStub::class.java)//spy(CallStub<Void>())
+
+        doReturn(callMock).`when`(mockApiService).optOutVocSurvey()
+//        `when`(mockApiService.optOutVocSurvey())
+//            .thenReturn(callMock)
+
+//        doAnswer {
+//            (it.arguments[0] as Callback<Void>).onResponse(callMock, responseMock)
+//        }.`when`(callMock.enqueue(any()))
+        `when`(callMock.enqueue(any()))
             .then {
                 val callback = it.arguments[0] as Callback<Void>
                 callback.onResponse(callMock, responseMock)
@@ -179,19 +215,19 @@ class SurveyVocViewModelTest {
         SUT.performOptOutRequest()
 
         // Assert
-        Mockito.verify(OneAppService).optOutVocSurvey()
-        Mockito.verify(callMock).enqueue(ArgumentMatchers.any())
+        verify(mockApiService).optOutVocSurvey()
+        verify(callMock).enqueue(ArgumentMatchers.any())
     }
 
     @Test
     fun performOptOutRequest_ApiServiceToFail_RequestFailed() {
         // Arrange
         val exception = RuntimeException("Something went wrong")
-        val callMock = Mockito.mock(Call::class.java) as Call<Void>
+        val callMock = CallVoidStub()
 
-        Mockito.`when`(OneAppService().optOutVocSurvey())
+        `when`(mockApiService.optOutVocSurvey())
             .thenReturn(callMock)
-        Mockito.`when`(callMock.enqueue(ArgumentMatchers.any()))
+        `when`(callMock.enqueue(any()))
             .then {
                 val callback = it.arguments[0] as Callback<Void>
                 callback.onFailure(callMock, exception)
@@ -204,9 +240,9 @@ class SurveyVocViewModelTest {
         SUT.performOptOutRequest()
 
         // Assert
-        Mockito.verify(OneAppService).optOutVocSurvey()
-        Mockito.verify(callMock).enqueue(ArgumentMatchers.any())
-        Mockito.verify(FirebaseManager).logException(exceptionArgument.capture())
+        verify(mockApiService).optOutVocSurvey()
+        verify(callMock).enqueue(ArgumentMatchers.any())
+        verify(FirebaseManager).logException(exceptionArgument.capture())
         assertEquals(exceptionArgument.value, exception)
     }
 }

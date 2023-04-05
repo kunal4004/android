@@ -12,7 +12,7 @@ import za.co.woolworths.financial.services.android.models.network.*
 /**
  * Created by Kunal Uttarwar on 04/06/21.
  */
-class CheckoutAddAddressNewUserApiHelper : RetrofitConfig(AppContextProviderImpl()) {
+class CheckoutAddAddressNewUserApiHelper : RetrofitConfig(AppContextProviderImpl(), RetrofitApiProviderImpl()) {
 
     fun getSuburbs(provinceId: String): Response<SuburbsResponse> =
         OneAppService().getSuburbs(provinceId).execute()

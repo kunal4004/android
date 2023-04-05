@@ -53,7 +53,10 @@ import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
 import java.net.URLEncoder
 
-class OneAppService(private val appContextProvider: AppContextProviderInterface = AppContextProviderImpl()) : RetrofitConfig(appContextProvider) {
+class OneAppService(
+    val appContextProvider: AppContextProviderInterface = AppContextProviderImpl(),
+    val retrofitApiProvider: RetrofitApiProviderInterface = RetrofitApiProviderImpl()
+) : RetrofitConfig(appContextProvider, retrofitApiProvider) {
 
     companion object {
         var forceNetworkUpdate: Boolean = false
