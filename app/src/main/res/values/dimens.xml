@@ -269,5 +269,6 @@
     <dimen name="hundred_and_fifty_five_dp">155dp</dimen>
     <dimen name="hundred_and_sixty_dp">160dp</dimen>
     <dimen name="hundred_and_twelve_dp">112dp</dimen>
+    <dimen name="minus_one_point_five_sp">-1.5sp</dimen>
 </resources>
 
