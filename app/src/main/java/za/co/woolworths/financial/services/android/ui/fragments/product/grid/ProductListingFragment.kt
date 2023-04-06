@@ -130,6 +130,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
     private var localDeliveryType: String? = null
     private var localDeliveryTypeForHiddenChange: String? = null
     private var mPromotionalCopy: String? = null
+    private var isChanelPage = false
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -142,6 +143,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
                     ProductsRequestParams.SearchType.valueOf(getString(SEARCH_TYPE, "SEARCH"))
                 mSearchTerm = getString(SEARCH_TERM, "")
                 mSortOption = getString(SORT_OPTION, "")
+                isChanelPage = getBoolean(IS_CHANEL_PAGE, false)
 
                 (getSerializable(BRAND_NAVIGATION_DETAILS) as? BrandNavigationDetails)?.let { brandNavigationDetails ->
                     mNavigationState = brandNavigationDetails.navigationState ?: ""
@@ -438,7 +440,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
                         navigationState = mNavigationState
                     ),
                     isUserBrowsing,
-                    arguments?.getBoolean(EXTRA_SEND_DELIVERY_DETAILS_PARAMS, false)
+                    arguments?.getBoolean(EXTRA_SEND_DELIVERY_DETAILS_PARAMS, false),
+                    isChanelPage
                 )
             )
         }
@@ -603,6 +606,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
     }
 
     private fun onChanelSuccess(response: ProductView) {
+        isChanelPage = true
         binding.chanelLayout.root.visibility = VISIBLE
         binding.plpRelativeLayout.visibility = GONE
         val brandLandingAdapter = BrandLandingAdapter(
@@ -919,7 +923,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
             mSearchTerm,
             mNavigationState,
             mSortOption,
-            filterContent
+            filterContent,
+            isChanelPage
         )
     }
 
@@ -1747,7 +1752,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
                     navigationState = navigationState
                 ),
                 isUserBrowsing,
-                arguments?.getBoolean(EXTRA_SEND_DELIVERY_DETAILS_PARAMS, false)
+                arguments?.getBoolean(EXTRA_SEND_DELIVERY_DETAILS_PARAMS, false),
+                isChanelPage
             )
         )
     }
@@ -1780,6 +1786,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
         private const val SEARCH_TERM = "SEARCH_TERM"
         const val IS_BROWSING = "is_browsing"
         private const val SORT_OPTION = "SORT_OPTION"
+        private const val IS_CHANEL_PAGE = "IS_CHANEL_PAGE"
         private const val BRAND_NAVIGATION_DETAILS = "BRAND_NAVIGATION_DETAILS"
 
         fun newInstance(
@@ -1802,7 +1809,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
             sub_category_name: String?,
             brandNavigationDetails: BrandNavigationDetails?,
             isBrowsing: Boolean,
-            sendDeliveryDetails: Boolean?
+            sendDeliveryDetails: Boolean?,
+            isChanelPage: Boolean
         ) = ProductListingFragment().withArgs {
             putString(SEARCH_TYPE, searchType?.name)
             putString(SEARCH_TERM, searchTerm)
@@ -1810,6 +1818,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
             putSerializable(BRAND_NAVIGATION_DETAILS, brandNavigationDetails)
             putBoolean(IS_BROWSING, isBrowsing)
             putBoolean(EXTRA_SEND_DELIVERY_DETAILS_PARAMS, sendDeliveryDetails ?: false)
+            putBoolean(IS_CHANEL_PAGE, isChanelPage)
         }
 
         fun newInstance(
@@ -1819,7 +1828,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
             sortOption: String,
             brandNavigationDetails: BrandNavigationDetails?,
             isBrowsing: Boolean,
-            sendDeliveryDetails: Boolean?
+            sendDeliveryDetails: Boolean?,
+            isChanelPage: Boolean
         ) = ProductListingFragment().withArgs {
             putString(SEARCH_TYPE, searchType?.name)
             putString(SUB_CATEGORY_NAME, sub_category_name)
@@ -1828,6 +1838,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
             putSerializable(BRAND_NAVIGATION_DETAILS, brandNavigationDetails)
             putBoolean(IS_BROWSING, isBrowsing)
             putBoolean(EXTRA_SEND_DELIVERY_DETAILS_PARAMS, sendDeliveryDetails == true)
+            putBoolean(IS_CHANEL_PAGE, isChanelPage)
         }
     }
 
@@ -1918,7 +1929,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
                     "",
                     brandNavigationDetails,
                     isUserBrowsing,
-                    arguments?.getBoolean(EXTRA_SEND_DELIVERY_DETAILS_PARAMS, false)
+                    arguments?.getBoolean(EXTRA_SEND_DELIVERY_DETAILS_PARAMS, false),
+                    isChanelPage
                 )
             )
         }
@@ -1967,7 +1979,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
                     "",
                     brandNavigationDetails,
                     isUserBrowsing,
-                    arguments?.getBoolean(EXTRA_SEND_DELIVERY_DETAILS_PARAMS, false)
+                    arguments?.getBoolean(EXTRA_SEND_DELIVERY_DETAILS_PARAMS, false),
+                    isChanelPage
                 )
             )
         }
