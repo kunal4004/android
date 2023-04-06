@@ -665,7 +665,9 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
     }
 
     fun scrollToTop() {
-        binding?.rvDashDelivery?.scrollToPosition(0)
+        if (::binding.isInitialized) {
+            binding?.rvDashDelivery?.scrollToPosition(0)
+        }
     }
 
     private fun navigateToConfirmAddressScreen() {
