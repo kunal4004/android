@@ -12,6 +12,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.RecommendationsLayoutBinding
+import com.google.android.flexbox.FlexDirection
+import com.google.android.flexbox.FlexWrap
+import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.gson.Gson
 import com.skydoves.balloon.balloon
 import dagger.hilt.android.AndroidEntryPoint
@@ -104,8 +107,10 @@ class RecommendationFragment :
             recommendationsLayoutBinding?.recommendationsProductsRecyclerview?.visibility =
                 View.VISIBLE
             context?.let {
-                recommendationsLayoutBinding?.recommendationsProductsRecyclerview?.layoutManager =
-                    LinearLayoutManager(it, RecyclerView.HORIZONTAL, false)
+                val layoutManager = FlexboxLayoutManager(context)
+                layoutManager.flexDirection = FlexDirection.ROW
+                layoutManager.flexWrap = FlexWrap.NOWRAP
+                recommendationsLayoutBinding.recommendationsProductsRecyclerview.layoutManager = layoutManager
 
                 mProductListRecommendationAdapter =
                     ProductListRecommendationAdapter(productsList, this, activity)
