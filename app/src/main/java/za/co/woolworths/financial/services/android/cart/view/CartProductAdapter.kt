@@ -142,7 +142,7 @@ class CartProductAdapter(
                 productHolder.clCartItems.layoutParams = param
                 val commerceItemInfo: CommerceItemInfo? = commerceItem.commerceItemInfo
                 //setListCheckBoxVisibility(editMode, productHolder)
-                productHolder.tvTitle.setText(if (commerceItemInfo == null) "" else commerceItemInfo.getProductDisplayName())
+                productHolder.tvTitle.text = (if (commerceItemInfo == null) "" else commerceItemInfo.getProductDisplayName())
                 Utils.truncateMaxLine(productHolder.tvTitle)
                 productHolder.quantity.setText(commerceItemInfo?.getQuantity()?.toString() ?: "")
                 productHolder.price.setText(formatAmountToRandAndCentWithSpace(commerceItem.getPriceInfo()
@@ -679,7 +679,7 @@ class CartProductAdapter(
     }
 
     inner class ProductHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val tvTitle: WTextView
+        val tvTitle: TextView
         val tvColorSize: WTextView
         val quantity: WTextView
         val price: WTextView
