@@ -62,6 +62,8 @@ import za.co.woolworths.financial.services.android.enhancedSubstitution.reposito
 import za.co.woolworths.financial.services.android.enhancedSubstitution.viewmodel.ProductSubstitutionViewModel
 import za.co.woolworths.financial.services.android.enhancedSubstitution.viewmodel.ProductSubstitutionViewModelFactory
 import za.co.woolworths.financial.services.android.enhancedSubstitution.managesubstitution.ManageSubstitutionFragment
+import za.co.woolworths.financial.services.android.enhancedSubstitution.managesubstitution.SearchSubstitutionFragment
+import za.co.woolworths.financial.services.android.enhancedSubstitution.model.SubstitutionInfo
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
@@ -248,6 +250,9 @@ class ProductDetailsFragment :
     private var selectionChoice: String = ""
     private var substitutionId: String? = ""
     private var commarceItemId: String? = ""
+    private var substitutionProductItem: ProductList? = null
+    private var isSubstiuteItemAdded = false
+    private var substitutionInfo:SubstitutionInfo? = null
 
     @OpenTermAndLighting
     @Inject
@@ -367,7 +372,25 @@ class ProductDetailsFragment :
             // As User selects to change the delivery location. So we will call confirm place API and will change the users location.
             binding.getUpdatedValidateResponse()
         }
+
+        setFragmentResultListener(SearchSubstitutionFragment.SELECTED_SUBSTITUTED_PRODUCT) { _, bundle ->
+            // User Selects product from search screen and came back to pdp
+            bundle?.apply {
+                if (bundle.containsKey(SearchSubstitutionFragment.SUBSTITUTION_ITEM_KEY)) {
+                   // item is not added in cart yet i.e. commerce id is empty so need to click on add to cart in order to add substitute
+                    substitutionProductItem = getSerializable(SearchSubstitutionFragment.SUBSTITUTION_ITEM_KEY) as? ProductList
+                    replaceSubstituteItemCell()
+                }
+                if (bundle.containsKey(SearchSubstitutionFragment.SUBSTITUTION_ITEM_ADDED)) {
+                    // item is added in cart yet i.e. commerce id is not empty so call getSubstitution api to refresh substitution cell
+                    isSubstiuteItemAdded = getBoolean(SearchSubstitutionFragment.SUBSTITUTION_ITEM_ADDED, false)
+                    callGetSubstitutionApi(true)
+                }
+            }
+        }
     }
+
+
 
     //firebase event view_item
     private fun addViewItemEvent(productDetails: ProductDetails) {
@@ -1062,13 +1085,13 @@ class ProductDetailsFragment :
         if (KotlinUtils.getDeliveryType()?.deliveryType == Delivery.DASH.type) {
             if (selectionChoice == SHOPPER_CHOICE) {
                 /*set substitute id as empty*/
-                substitutionId = ""
+                substitutionId = substitutionInfo?.id
             } else if (selectionChoice == USER_CHOICE) {
                 if (commarceItemId?.isEmpty() == true) {
                     /* not added to cart yet */
                     /* substituted product can come from manage substitution screen or
                     * search substitution screen  */
-                    substitutionId = productList?.sku
+                    substitutionId = substitutionProductItem?.productId
                 } else {
                     substitutionId = commarceItemId
                 }
@@ -1088,8 +1111,8 @@ class ProductDetailsFragment :
                 productDetails?.productId,
                 getSelectedSku()?.sku,
                 if (it > getSelectedSku()?.quantity!!) getSelectedSku()?.quantity!! else it,
-                selectionChoice,
-                substitutionId
+                    selectionChoice,
+                    substitutionId
             )
         }
         val listOfItems = ArrayList<AddItemToCart>()
@@ -1575,8 +1598,9 @@ class ProductDetailsFragment :
                 showEnhancedSubstitutionDialog()
             }
 
-            callGetSubstitutionApi(isInventoryCalled)
-            //showSubstitutionLayoutOne(isInventoryCalled)
+
+              callGetSubstitutionApi(isInventoryCalled)
+
 
             if (isAllProductsOutOfStock() && isInventoryCalled) {
                 productOutOfStockErrorMessage()
@@ -1595,7 +1619,6 @@ class ProductDetailsFragment :
             } else {
                 this.txtSubstitutionEdit?.background = resources.getDrawable(R.drawable.black_background_with_corner_5,
                         null)
-
             }
 
             this.txtSubstitutionEdit?.setOnClickListener {
@@ -1626,6 +1649,9 @@ class ProductDetailsFragment :
                     }
                     Status.SUCCESS -> {
                         binding.progressBar.visibility = View.GONE
+                        substitutionInfo = resource.data?.data?.getOrNull(0)?.substitutionInfo
+                        selectionChoice = SHOPPER_CHOICE
+                        substitutionId = substitutionInfo?.id
                         showSubstitutionLayout(isInventoryCalled, resource)
                     }
                     Status.ERROR -> {
@@ -1636,6 +1662,23 @@ class ProductDetailsFragment :
             }
         }
     }
+
+    private fun replaceSubstituteItemCell() {
+        selectionChoice = USER_CHOICE
+        substitutionId = commarceItemId
+        binding?.productDetailOptionsAndInformation?.substitutionLayout?.apply {
+            if (SessionUtilities.getInstance().isUserAuthenticated
+                    && KotlinUtils.getDeliveryType()?.deliveryType == Delivery.DASH.type
+            ) {
+                this?.root?.visibility = View.VISIBLE
+            } else {
+                this.root?.visibility = View.GONE
+            }
+
+            txtSubstitutionTitle.text = substitutionProductItem?.productName
+        }
+    }
+
 
     private fun showSubstitutionLayout(isInventoryCalled: Boolean, resource: Resource<ProductSubstitution>) {
 
@@ -1663,14 +1706,11 @@ class ProductDetailsFragment :
 
             if (resource.data?.data?.getOrNull(0)?.substitutionSelection == USER_CHOICE) {
                 txtSubstitutionTitle.text = resource.data?.data?.getOrNull(0)?.substitutionInfo?.displayName
-                selectionChoice = USER_CHOICE
-                substitutionId = resource.data?.data?.getOrNull(0)?.substitutionInfo?.id
             } else {
                 txtSubstitutionTitle.text = getString(R.string.let_my_shooper_choose_for_me)
                 selectionChoice = SHOPPER_CHOICE
                 substitutionId = ""
             }
-
                 this.txtSubstitutionEdit?.setOnClickListener {
                     if (isAllProductsOutOfStock() && isInventoryCalled) {
                         /*pop up for out of stock*/
@@ -1690,7 +1730,7 @@ class ProductDetailsFragment :
 
 
     private fun hideSubstitutionLayout() {
-        binding?.productDetailOptionsAndInformation?.root?.visibility = View.GONE
+        binding?.productDetailOptionsAndInformation?.substitutionLayout?.root?.visibility = View.GONE
     }
 
     private fun ProductDetailsFragmentBinding.hideRatingAndReview() {
@@ -2310,7 +2350,12 @@ class ProductDetailsFragment :
                     }
 
                     /* assign  updated commarceItem id here */
-
+                    addItemToCartResponse?.data?.getOrNull(0)?.substitutionInfoList?.forEach {
+                        if (it.parentProductId == productDetails?.productId) {
+                            commarceItemId = it.commerceItemId
+                            return@forEach
+                        }
+                    }
                 }
                 addToCartEvent(productDetails)
             }

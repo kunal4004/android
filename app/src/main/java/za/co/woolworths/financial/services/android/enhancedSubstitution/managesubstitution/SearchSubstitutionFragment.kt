@@ -6,8 +6,10 @@ import android.view.View
 import android.view.View.OnClickListener
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
+import androidx.core.os.bundleOf
 import androidx.core.text.HtmlCompat
 import androidx.core.widget.doOnTextChanged
+import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
@@ -22,14 +24,18 @@ import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.enhancedSubstitution.ProductListSelectionListener
 import za.co.woolworths.financial.services.android.enhancedSubstitution.adapter.SearchProductSubstitutionAdapter
 import za.co.woolworths.financial.services.android.enhancedSubstitution.apihelper.SubstitutionApiHelper
+import za.co.woolworths.financial.services.android.enhancedSubstitution.model.AddSubstitutionRequest
 import za.co.woolworths.financial.services.android.enhancedSubstitution.repository.ProductSubstitutionRepository
 import za.co.woolworths.financial.services.android.enhancedSubstitution.viewmodel.ProductSubstitutionViewModel
 import za.co.woolworths.financial.services.android.enhancedSubstitution.viewmodel.ProductSubstitutionViewModelFactory
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
 import za.co.woolworths.financial.services.android.models.network.Status
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.Companion.USER_CHOICE
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.FoodProductNotAvailableForCollectionDialog
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ProductDetailsFindInStoreDialog
 import za.co.woolworths.financial.services.android.util.KeyboardUtil
@@ -39,9 +45,9 @@ import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBind
 
 
 class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionFragmentBinding>(
-    LayoutSearchSubstitutionFragmentBinding::inflate
+        LayoutSearchSubstitutionFragmentBinding::inflate
 ), ProductListSelectionListener, OnClickListener,
-    FoodProductNotAvailableForCollectionDialog.IProductNotAvailableForCollectionDialogListener {
+        FoodProductNotAvailableForCollectionDialog.IProductNotAvailableForCollectionDialogListener {
 
     private var searchProductSubstitutionAdapter: SearchProductSubstitutionAdapter? = null
     private lateinit var productSubstitutionViewModel: ProductSubstitutionViewModel
@@ -56,6 +62,10 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
         ) = SearchSubstitutionFragment().withArgs {
             putString(ManageSubstitutionFragment.COMMERCE_ITEM_ID, commerceItemId)
         }
+
+        const val SELECTED_SUBSTITUTED_PRODUCT = "SELECTED_SUBSTITUTED_PRODUCT"
+        const val SUBSTITUTION_ITEM_KEY = "SUBSTITUTION_ITEM_KEY"
+        const val SUBSTITUTION_ITEM_ADDED = "SUBSTITUTION_ITEM_ADDED"
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -138,7 +148,8 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
                 }
                 is LoadState.Error -> {
                     hideShimmerView()
-                    showErrorView()
+                    showErrorView(getString(R.string.common_error_unfortunately_something_went_wrong))
+
                 }
                 else -> {
                     // Nothing to do
@@ -179,18 +190,21 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
         binding.shimmerLayout.visibility = View.GONE
     }
 
-    private fun showErrorView() {
-        /*todo error view if search api is failed*/
-
+    private fun showErrorView(desc: String) {
+        /*todo show new error view if search api is failed*/
+        Utils.displayValidationMessage(
+                activity,
+                CustomPopUpWindow.MODAL_LAYOUT.ERROR,
+                desc
+        )
     }
 
     private fun getRequestParamsBody(searchTerm: String): ProductsRequestParams {
-        /*todo need to remove hardcode values once UI is ready */
         val productsRequestParams = ProductsRequestParams(
-            searchTerm = searchTerm,
-            searchType = ProductsRequestParams.SearchType.SEARCH,
-            responseType = ProductsRequestParams.ResponseType.DETAIL,
-            pageOffset = 0,
+                searchTerm = searchTerm,
+                searchType = ProductsRequestParams.SearchType.SEARCH,
+                responseType = ProductsRequestParams.ResponseType.DETAIL,
+                pageOffset = 0,
         )
         productsRequestParams.filterContent = false
         productsRequestParams.sendDeliveryDetailsParams = true
@@ -228,11 +242,9 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
     private fun confirmProductSelection() {
         /* call inventory api */
         callInventoryApi()
-        /* call add substitution api */
     }
 
     private fun callInventoryApi() {
-
         val storeId: String? = Utils.getPreferredDeliveryLocation()?.let {
             it.fulfillmentDetails.storeId
         }
@@ -241,24 +253,33 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
             return
         }
 
+
         productSubstitutionViewModel.getInventoryForSubstitution(storeId, productList?.sku!!)
         productSubstitutionViewModel.inventorySubstitution.observe(viewLifecycleOwner) {
 
             it.getContentIfNotHandled()?.let { resource ->
                 when (resource.status) {
                     Status.LOADING -> {
+                        binding.progressBar?.visibility = View.VISIBLE
                     }
                     Status.SUCCESS -> {
                         resource?.data?.skuInventory?.let { inventoryList ->
-                            if (inventoryList?.isNullOrEmpty() == true || inventoryList?.getOrNull(0)?.quantity == 0) {
-                                productOutOfStockErrorMessage()
-                                return@observe
+                            val configQuantity: Int? = AppConfigSingleton.enhanceSubstitution?.thresholdQuantityForSubstitutionProduct
+                            val inventoryQuantity: Int? = inventoryList?.getOrNull(0)?.quantity
+                            if (inventoryQuantity != null && configQuantity != null) {
+                                if (inventoryList?.isNullOrEmpty() == true || inventoryQuantity < configQuantity) {
+                                    binding.progressBar?.visibility = View.GONE
+                                    productOutOfStockErrorMessage()
+                                    return@observe
+                                }
                             }
+                            navigateToPdpScreen()
                         }
-                        navigateToPdpScreen()
                     }
                     Status.ERROR -> {
+                        binding.progressBar?.visibility = View.GONE
                         /*todo error view if inventory api is failed*/
+                        showErrorView(getString(R.string.common_error_unfortunately_something_went_wrong))
                     }
                 }
             }
@@ -268,21 +289,64 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
     private fun navigateToPdpScreen() {
 
         if (commerceItemId?.isEmpty() == true) {
-            /*navigate to pdp with selected product  object and call add to cart api in order to add substitute there*/
+            /*navigate to pdp with selected product  object and then call add to cart api in order to add substitute there*/
+            binding.progressBar?.visibility = View.GONE
+            setResultAndNaviagationToPdpWithProduct(SELECTED_SUBSTITUTED_PRODUCT, bundleOf(SUBSTITUTION_ITEM_KEY to productList))
         } else {
             /*add subsitute api here since we have commarceId because product is already added in cart */
+            val addSubstitutionRequest = AddSubstitutionRequest(
+                    substitutionSelection = USER_CHOICE,
+                    substitutionId = productList?.sku,
+                    commerceItemId = commerceItemId
+            )
+            productSubstitutionViewModel?.addSubstitutionForProduct(addSubstitutionRequest)
+            productSubstitutionViewModel?.addSubstitutionResponse?.observe(viewLifecycleOwner, {
+                it.getContentIfNotHandled()?.let { resource ->
+                    when (resource.status) {
+                        Status.LOADING -> {
+                            binding.progressBar?.visibility = View.VISIBLE
+                        }
+                        Status.SUCCESS -> {
+                            binding.progressBar?.visibility = View.GONE
+
+                            /* if we get form exception need to show error popup*/
+                            resource?.data?.data?.getOrNull(0)?.formExceptions?.getOrNull(0)?.let {
+                               if (it.message?.isNotEmpty() == true) {
+                                   showErrorView(it.message)
+                               }
+                                return@observe
+                            }
+
+                            /* navigate to pdp and call getSubs. api*/
+                            setResultAndNaviagationToPdpWithProduct(SELECTED_SUBSTITUTED_PRODUCT, bundleOf(SUBSTITUTION_ITEM_ADDED to true))
+                        }
+                        Status.ERROR -> {
+                            binding.progressBar?.visibility = View.GONE
+                            /*todo show error view if add subs api is failed */
+                            showErrorView(getString(R.string.common_error_unfortunately_something_went_wrong))
+                        }
+                    }
+                }
+            })
         }
+    }
+
+    private fun setResultAndNaviagationToPdpWithProduct(requestKey: String, bundle: Bundle) {
+        /*send product details to pdp screen*/
+        setFragmentResult(requestKey, bundle)
+        (activity as? BottomNavigationActivity)?.popFragment()
+        (activity as? BottomNavigationActivity)?.popFragment()
     }
 
     private fun productOutOfStockErrorMessage() {
         try {
             activity?.supportFragmentManager?.beginTransaction()?.apply {
                 val productDetailsFindInStoreDialog =
-                    FoodProductNotAvailableForCollectionDialog.newInstance(
-                    )
+                        FoodProductNotAvailableForCollectionDialog.newInstance(
+                        )
                 productDetailsFindInStoreDialog.show(
-                    this,
-                    ProductDetailsFindInStoreDialog::class.java.simpleName
+                        this,
+                        ProductDetailsFindInStoreDialog::class.java.simpleName
                 )
             }
         } catch (ex: IllegalStateException) {
