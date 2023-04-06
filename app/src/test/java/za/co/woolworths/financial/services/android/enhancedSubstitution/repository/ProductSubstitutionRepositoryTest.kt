@@ -4,17 +4,19 @@ import kotlinx.coroutines.test.runTest
 import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Assert
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Test
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
 import retrofit2.Response
+import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhanceSubstitutonHelperTest.Companion.COMMARCE_ITEM_ID
 import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhanceSubstitutonHelperTest.Companion.SKU_ID
 import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhanceSubstitutonHelperTest.Companion.STORE_ID
+import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhanceSubstitutonHelperTest.Companion.SUBSTITUTION_ID
 import za.co.woolworths.financial.services.android.enhancedSubstitution.apihelper.SubstitutionApiHelper
-import za.co.woolworths.financial.services.android.enhancedSubstitution.model.Data
-import za.co.woolworths.financial.services.android.enhancedSubstitution.model.ProductSubstitution
-import za.co.woolworths.financial.services.android.enhancedSubstitution.model.SubstitutionInfo
+import za.co.woolworths.financial.services.android.enhancedSubstitution.apihelper.SubstitutionApiHelperTest
+import za.co.woolworths.financial.services.android.enhancedSubstitution.model.*
 import za.co.woolworths.financial.services.android.models.dto.SkuInventory
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse
 import za.co.woolworths.financial.services.android.models.network.Status
@@ -27,6 +29,9 @@ class ProductSubstitutionRepositoryTest {
 
     @Mock
     private lateinit var skusInventoryForStoreResponse: SkusInventoryForStoreResponse
+
+    @Mock
+    private lateinit var addSubstitutionResponse: AddSubstitutionResponse
 
     @Mock
     private lateinit var substitutionApiHelper: SubstitutionApiHelper
@@ -101,6 +106,43 @@ class ProductSubstitutionRepositoryTest {
         Mockito.`when`(substitutionApiHelper.fetchInventoryForSubstitution(STORE_ID, SKU_ID)).thenReturn(Response.error(504, "".toResponseBody()))
         val productSubstitutionRepository = ProductSubstitutionRepository(substitutionApiHelper)
         val result = productSubstitutionRepository.getInventoryForSubstitution(STORE_ID, SKU_ID)
+        Assert.assertEquals(Status.ERROR, result.status)
+    }
+
+    @Test
+    fun test_emptyResponse_addSubstitutions() = runTest {
+        val addSubstitutionRequest = AddSubstitutionRequest(SubstitutionApiHelperTest.USER_CHOICE, SUBSTITUTION_ID, COMMARCE_ITEM_ID)
+
+        Mockito.`when`(substitutionApiHelper.addSubstitution(addSubstitutionRequest)).thenReturn(Response.success(addSubstitutionResponse))
+        val sut = ProductSubstitutionRepository(substitutionApiHelper)
+        val result = sut.addSubstitution(addSubstitutionRequest)
+        Assert.assertEquals(0, result.data?.data?.size)
+    }
+
+    @Test
+    fun test_addSubstitute() = runTest {
+
+        val addSubstitutionRequest = AddSubstitutionRequest(
+                SubstitutionApiHelperTest.USER_CHOICE, SUBSTITUTION_ID, COMMARCE_ITEM_ID)
+        val dataList = mutableListOf<DataX>()
+        val substitutionList = mutableListOf<Any>()
+        dataList.add(DataX(substitutionList))
+        val response = Response("-1","success" )
+        val addSubstitutionResponse = AddSubstitutionResponse(dataList, 200, response)
+        Mockito.`when`(substitutionApiHelper.addSubstitution(addSubstitutionRequest)).thenReturn(Response.success(addSubstitutionResponse))
+        val productSubstitutionRepository = ProductSubstitutionRepository(substitutionApiHelper)
+        val result = productSubstitutionRepository.addSubstitution(addSubstitutionRequest)
+        Assert.assertNotNull(addSubstitutionResponse)
+        Assert.assertEquals(1 , result.data?.data?.size)
+    }
+
+    @Test
+    fun test_error_addSubstitutions() = runTest {
+        val addSubstitutionRequest = AddSubstitutionRequest(SubstitutionApiHelperTest.USER_CHOICE, SUBSTITUTION_ID, COMMARCE_ITEM_ID)
+
+        Mockito.`when`(substitutionApiHelper.addSubstitution(addSubstitutionRequest)).thenReturn(Response.error(504, "".toResponseBody()))
+        val productSubstitutionRepository = ProductSubstitutionRepository(substitutionApiHelper)
+        val result = productSubstitutionRepository.addSubstitution(addSubstitutionRequest)
         Assert.assertEquals(Status.ERROR, result.status)
     }
 }

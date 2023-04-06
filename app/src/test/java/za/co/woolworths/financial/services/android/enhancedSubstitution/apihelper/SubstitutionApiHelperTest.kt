@@ -10,9 +10,14 @@ import org.junit.Test
 import org.mockito.ArgumentMatchers.anyString
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhanceSubstitutonHelperTest.Companion.COMMARCE_ITEM_ID
+import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhanceSubstitutonHelperTest.Companion.DEVICE_TOKEN
 import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhanceSubstitutonHelperTest.Companion.PRODUCT_ID
+import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhanceSubstitutonHelperTest.Companion.SESSION_TOKEN
 import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhanceSubstitutonHelperTest.Companion.SKU_ID
 import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhanceSubstitutonHelperTest.Companion.STORE_ID
+import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhanceSubstitutonHelperTest.Companion.SUBSTITUTION_ID
+import za.co.woolworths.financial.services.android.enhancedSubstitution.model.AddSubstitutionRequest
 import za.co.woolworths.financial.services.android.models.network.ApiInterface
 
 class SubstitutionApiHelperTest {
@@ -35,7 +40,7 @@ class SubstitutionApiHelperTest {
         val mockResponse = MockResponse()
         mockResponse.setBody("{}")
         mockWebServer.enqueue(mockResponse)
-        val response = apiHelper.getSubstitution(anyString(), anyString(), PRODUCT_ID)
+        val response = apiHelper.getSubstitution(SESSION_TOKEN, DEVICE_TOKEN, PRODUCT_ID)
         mockWebServer.takeRequest()
         Assert.assertEquals(null , response.body()?.data?.isNullOrEmpty())
     }
@@ -46,7 +51,7 @@ class SubstitutionApiHelperTest {
         mockResponse.setResponseCode(200)
         mockResponse.setBody(RESPONSE)
         mockWebServer.enqueue(mockResponse)
-        val response = apiHelper.getSubstitution(anyString(), anyString(), PRODUCT_ID)
+        val response = apiHelper.getSubstitution(SESSION_TOKEN, DEVICE_TOKEN, PRODUCT_ID)
         mockWebServer.takeRequest()
         Assert.assertEquals(1 , response.body()?.data?.size)
         Assert.assertEquals(USER_CHOICE , response.body()?.data?.getOrNull(0)?.substitutionSelection)
@@ -58,7 +63,7 @@ class SubstitutionApiHelperTest {
         mockResponse.setResponseCode(200)
         mockResponse.setBody(WRONG_RESPONSE)
         mockWebServer.enqueue(mockResponse)
-        val response = apiHelper.getSubstitution(anyString(), anyString(), PRODUCT_ID)
+        val response = apiHelper.getSubstitution(SESSION_TOKEN, DEVICE_TOKEN, PRODUCT_ID)
         mockWebServer.takeRequest()
         Assert.assertEquals(0 , response.body()?.data?.size)
     }
@@ -70,7 +75,7 @@ class SubstitutionApiHelperTest {
         mockResponse.setResponseCode(200)
         mockResponse.setBody(INVENTORY_RESPONSE)
         mockWebServer.enqueue(mockResponse)
-        val response = apiHelper.fetchDashInventorySKUForStore(anyString(), anyString(), STORE_ID, SKU_ID)
+        val response = apiHelper.fetchDashInventorySKUForStore(SESSION_TOKEN, DEVICE_TOKEN, STORE_ID, SKU_ID)
         mockWebServer.takeRequest()
         Assert.assertEquals(1 , response.body()?.skuInventory?.size)
         Assert.assertNotNull(response?.body())
@@ -81,7 +86,7 @@ class SubstitutionApiHelperTest {
         val mockResponse = MockResponse()
         mockResponse.setBody("{}")
         mockWebServer.enqueue(mockResponse)
-        val response = apiHelper.fetchDashInventorySKUForStore(anyString(), anyString(), STORE_ID, SKU_ID)
+        val response = apiHelper.fetchDashInventorySKUForStore(SESSION_TOKEN, DEVICE_TOKEN, STORE_ID, SKU_ID)
         mockWebServer.takeRequest()
         Assert.assertNotNull(response?.body())
         Assert.assertNotEquals("473", response?.body()?.storeId )
@@ -93,9 +98,38 @@ class SubstitutionApiHelperTest {
         mockResponse.setResponseCode(200)
         mockResponse.setBody(WRONG_INVENTORY_RESPONSE)
         mockWebServer.enqueue(mockResponse)
-        val response = apiHelper.fetchDashInventorySKUForStore(anyString(), anyString(), STORE_ID, SKU_ID)
+        val response = apiHelper.fetchDashInventorySKUForStore(SESSION_TOKEN, DEVICE_TOKEN, STORE_ID, SKU_ID)
         mockWebServer.takeRequest()
         Assert.assertEquals(0 , response.body()?.skuInventory?.size)
+    }
+
+    @Test
+    fun test_withNullOrEmptyResponse_addSubstitution() = runTest {
+        val mockResponse = MockResponse()
+        mockResponse.setBody("{}")
+        mockWebServer.enqueue(mockResponse)
+        val addSubstitutionRequest = AddSubstitutionRequest(USER_CHOICE, SUBSTITUTION_ID, COMMARCE_ITEM_ID)
+        val response = apiHelper.addSubstitution(SESSION_TOKEN, DEVICE_TOKEN,  addSubstitutionRequest)
+        mockWebServer.takeRequest()
+        Assert.assertNotNull(response?.body())
+        Assert.assertEquals(true, response?.body()?.data.isNullOrEmpty() )
+    }
+
+    @Test
+    fun test_wrongResponse_addSubstitution() = runTest {
+        val mockResponse = MockResponse()
+        mockResponse.setResponseCode(200)
+        mockResponse.setBody(WRONG_ADD_SUBSTITUTION_RESPONSE)
+        val addSubstitutionRequest = AddSubstitutionRequest(USER_CHOICE, SUBSTITUTION_ID, COMMARCE_ITEM_ID)
+        mockWebServer.enqueue(mockResponse)
+        val response = apiHelper.addSubstitution(SESSION_TOKEN, DEVICE_TOKEN, addSubstitutionRequest)
+        mockWebServer.takeRequest()
+        Assert.assertEquals(0 , response.body()?.data?.size)
+    }
+
+    @Test
+    fun test_AddSubstituion_addSubstitution(){
+        /* todo */
     }
 
     @After
@@ -122,7 +156,7 @@ class SubstitutionApiHelperTest {
                 "    \"httpCode\": 200\n" +
                 "}"
 
-        private val USER_CHOICE = "USER_CHOICE"
+        val USER_CHOICE = "USER_CHOICE"
 
         private val WRONG_RESPONSE = "{\n" +
                 "    \"response\": {\n" +
@@ -160,5 +194,19 @@ class SubstitutionApiHelperTest {
                 "    },\n" +
                 "    \"httpCode\": 200\n" +
                 "}"
+
+        private val WRONG_ADD_SUBSTITUTION_RESPONSE = "{\n" +
+                "    \"response\": {\n" +
+                "        \"code\": \"-1\",\n" +
+                "        \"desc\": \"Success\"\n" +
+                "    },\n" +
+                "    \"data\": [\n" +
+                "       \n" +
+                "        \n" +
+                "    ],\n" +
+                "    \"httpCode\": 200\n" +
+                "}"
+
+
     }
 }
