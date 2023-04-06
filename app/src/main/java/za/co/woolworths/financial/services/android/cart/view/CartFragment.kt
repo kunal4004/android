@@ -1284,7 +1284,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
 
         cartItems?.forEach { item ->
             cartLinesValue.addAll(item.commerceItems.map {
-                CartProducts(it.commerceItemInfo.productId, it.commerceItemInfo.quantity, it.priceInfo.amount, it.commerceItemInfo.catalogRefId, Constants.CURRENCY_VALUE)
+                CartProducts(it.commerceItemInfo.productId, it.commerceItemInfo.quantity, it.priceInfo.amount, it.commerceItemInfo.productId, Constants.CURRENCY_VALUE)
             })
         }
 

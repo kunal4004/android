@@ -21,7 +21,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -41,15 +43,13 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.SearchHistory;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.ChanelMessageDialogFragment;
-import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
-import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class ProductSearchActivity extends AppCompatActivity
         implements View.OnClickListener, ChanelMessageDialogFragment.IChanelMessageDialogDismissListener {
     public LinearLayoutManager mLayoutManager;
     public Toolbar toolbar;
-    private WEditTextView mEditSearchProduct;
+    private EditText mEditSearchProduct;
     private LinearLayout recentSearchLayout;
     private LinearLayout recentSearchList;
     private String mSearchTextHint = "";
@@ -234,7 +234,7 @@ public class ProductSearchActivity extends AppCompatActivity
         if (status && searchHistories != null) {
             for (int i = 0; i < searchHistories.size(); i++) {
                 View v = getLayoutInflater().inflate(R.layout.recent_search_list_item, null);
-                WTextView recentSearchListitem = v.findViewById(R.id.recentSerachListItem);
+                TextView recentSearchListitem = v.findViewById(R.id.recentSerachListItem);
                 recentSearchListitem.setText(searchHistories.get(i).searchedValue);
                 recentSearchList.addView(v);
                 int position = recentSearchList.indexOfChild(v) - 1;
