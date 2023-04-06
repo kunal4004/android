@@ -53,9 +53,9 @@ import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
 import java.net.URLEncoder
 
-class OneAppService(
-    val appContextProvider: AppContextProviderInterface = AppContextProviderImpl(),
-    val retrofitApiProvider: RetrofitApiProviderInterface = RetrofitApiProviderImpl()
+open class OneAppService(
+    private val appContextProvider: AppContextProviderInterface = AppContextProviderImpl(),
+    retrofitApiProvider: RetrofitApiProviderInterface = RetrofitApiProviderImpl()
 ) : RetrofitConfig(appContextProvider, retrofitApiProvider) {
 
     companion object {
@@ -1153,7 +1153,7 @@ class OneAppService(
         )
     }
 
-    fun optOutVocSurvey(): Call<Void> {
+    open fun optOutVocSurvey(): Call<Void> {
         return mApiInterface.optOutVocSurvey(
             userAgent = "",
             userAgentVersion = "",
