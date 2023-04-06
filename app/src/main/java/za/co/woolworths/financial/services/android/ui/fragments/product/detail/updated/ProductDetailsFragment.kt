@@ -1602,7 +1602,7 @@ class ProductDetailsFragment :
             if (resource.data?.data?.get(0)?.substitutionSelection == USER_CHOICE) {
                 txtSubstitutionTitle.text = resource.data?.data?.get(0)?.substitutionInfo?.displayName
             } else {
-                txtSubstitutionTitle.text = getString(R.string.let_my_shooper_choose_for_me)
+                txtSubstitutionTitle.text = getString(R.string.substitute_default)
             }
 
                 this.txtSubstitutionEdit?.setOnClickListener {

@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.cart.view
 import android.animation.ObjectAnimator
 import android.app.Activity
 import android.graphics.Color
+import android.graphics.Paint
 import android.graphics.PorterDuff
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
@@ -23,6 +24,7 @@ import com.daimajia.swipe.adapters.RecyclerSwipeAdapter
 import za.co.woolworths.financial.services.android.cart.service.network.CartItemGroup
 import za.co.woolworths.financial.services.android.cart.viewmodel.CartUtils.Companion.getAppliedVouchersCount
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.enhancedSubstitution.model.SubstitutionInfo
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton.liquor
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton.lowStock
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
@@ -76,6 +78,7 @@ class CartProductAdapter(
         fun onPromoDiscountInfo()
         fun onItemDeleteClick(commerceId: CommerceItem)
         fun onCheckBoxChange(isChecked: Boolean, commerceItem: CommerceItem)
+        fun onSubstituteProductClick()
     }
 
     private var editMode = false
@@ -170,10 +173,27 @@ class CartProductAdapter(
                 productHolder.quantity.setText(commerceItemInfo?.getQuantity()?.toString() ?: "")
                 productHolder.price.setText(
                     formatAmountToRandAndCentWithSpace(
-                        commerceItem.getPriceInfo()
+                        commerceItem.priceInfo
                             .getAmount()
                     )
                 )
+//                "substitutionInfo":{
+//                    "substitutionSelection":"USER_CHOICE",
+//                    "substitutionId":"20068905",
+//                    "displayName":"Free Range Jumbo Eggs 6 pk",
+//                    "isSubstitutionInStock":"true"
+//                }
+                if (productHolder.bindingAdapterPosition == 2) {
+                    commerceItem.substitutionInfo = SubstitutionInfo(
+                        substitutionSelection = "USER_CHOICE",
+                        substitutionId = "20068905",
+                        displayName = "Free Range Jumbo Eggs 6 pk",
+                        isSubstitutionInStock = true,
+                        id = "20068905"
+                    )
+                }
+
+                productHolder.bindSubstitutionInfo(commerceItem.substitutionInfo)
                 val productImageUrl =
                     if (commerceItemInfo == null) "" else commerceItemInfo.externalImageRefV2
                 setPicture(productHolder.productImage, productImageUrl)
@@ -193,10 +213,10 @@ class CartProductAdapter(
                     if (quantityIsLoading) GONE else VISIBLE
 
                 //Set Promotion Text START
-                if (commerceItem.getPriceInfo().discountedAmount > 0) {
+                if (commerceItem.priceInfo.discountedAmount > 0) {
                     productHolder.promotionalText.setText(
                         " " + formatAmountToRandAndCentWithSpace(
-                            commerceItem.getPriceInfo().discountedAmount
+                            commerceItem.priceInfo.discountedAmount
                         )
                     )
                     productHolder.llPromotionalText.visibility = VISIBLE
@@ -226,7 +246,7 @@ class CartProductAdapter(
 
                 // Set Color and Size START
                 if (itemRow.category.equals("FOOD", ignoreCase = true)) {
-                    productHolder.tvColorSize.visibility = INVISIBLE
+                    productHolder.tvColorSize.visibility = GONE
                 } else {
                     val sizeColor = getSizeColor(commerceItemInfo)
                     productHolder.tvColorSize.setText(sizeColor)
@@ -782,6 +802,7 @@ class CartProductAdapter(
         val price: WTextView
         val promotionalText: WTextView
         val btnDeleteRow: ImageView
+        private val substitutionIcon: ImageView
         val llQuantity: LinearLayout
         val productImage: ImageView
         val clCartItems: ConstraintLayout
@@ -793,6 +814,7 @@ class CartProductAdapter(
         val swipeLayout: SwipeLayout
         val cartLowStock: View
         val txtCartLowStock: TextView
+        private val tvSubstituteItem: TextView
         val minusDeleteCountImage: ImageView
         val minusDeleteCountImageLayout: RelativeLayout
         val addCountImageLayout: RelativeLayout
@@ -824,6 +846,45 @@ class CartProductAdapter(
             cbShoppingList = view.findViewById(R.id.cbShoppingList)
             pbLoadProduct = view.findViewById(R.id.pbLoadProduct)
             swipeRight = view.findViewById(R.id.swipeRight)
+            tvSubstituteItem = view.findViewById(R.id.tvSubstituteItem)
+            tvSubstituteItem.paintFlags += Paint.UNDERLINE_TEXT_FLAG
+            substitutionIcon = view.findViewById(R.id.substitutionIcon)
+            substitutionIcon.setImageResource(R.drawable.union_row)
+            substitutionIcon.visibility = VISIBLE
+        }
+
+        fun bindSubstitutionInfo(substitutionInfo: SubstitutionInfo?) {
+            if (KotlinUtils.getPreferredDeliveryType() == Delivery.DASH) {
+                tvSubstituteItem.visibility = VISIBLE
+                substitutionIcon.visibility = VISIBLE
+                tvSubstituteItem.text = mContext?.getString(R.string.substitute_default) ?: ""
+            } else {
+                tvSubstituteItem.visibility = GONE
+                substitutionIcon.visibility = GONE
+                return
+            }
+
+            tvSubstituteItem.setOnClickListener {
+                onItemClick.onSubstituteProductClick()
+            }
+
+            if(substitutionInfo == null) {
+                return
+            }
+            with(substitutionInfo) {
+                when (substitutionSelection) {
+                    SubstitutionChoice.USER_CHOICE.toString() -> {
+                        substitutionIcon.setImageResource(R.drawable.ic_edit_black)
+                        tvSubstituteItem.text = displayName
+                    }
+                    SubstitutionChoice.NO.toString() -> {
+                        tvSubstituteItem.text = mContext?.getString(R.string.dont_want_substitute) ?: ""
+                    }
+                    else -> {
+                        tvSubstituteItem.text = mContext?.getString(R.string.substitute_default) ?: ""
+                    }
+                }
+            }
         }
     }
 
@@ -1052,4 +1113,10 @@ class CartProductAdapter(
         this.voucherDetails = voucherDetails
         liquorComplianceInfo = liquorCompliance
     }
+}
+
+enum class SubstitutionChoice {
+    USER_CHOICE,
+    SHOPPER_CHOICE,
+    NO
 }

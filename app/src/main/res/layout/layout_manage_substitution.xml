@@ -26,7 +26,7 @@
         android:lineSpacingExtra="@dimen/_2sdp"
         android:maxLines="1"
         android:fontFamily="@font/opensans_regular"
-        android:text="@string/let_my_shooper_choose_for_me"
+        android:text="@string/substitute_default"
         android:textColor="@color/black"
         android:layout_marginTop="@dimen/eighteen_dp"
         android:textSize="@dimen/thirteen_sp"

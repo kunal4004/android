@@ -41,7 +41,7 @@
         android:layout_marginBottom="@dimen/sixteen_dp"
         android:drawableLeft="@drawable/union_row"
         android:drawablePadding="@dimen/eight_dp"
-        android:text="@string/let_my_shooper_choose_for_me"
+        android:text="@string/substitute_default"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/view" />
