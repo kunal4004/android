@@ -1,14 +1,12 @@
 package za.co.woolworths.financial.services.android.ui.adapters
 
 import android.content.Context
-import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.*
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.ShoppingListCommerceItemBinding
@@ -18,9 +16,7 @@ import za.co.woolworths.financial.services.android.models.dto.OtherSkus
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItem
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ProductAvailability
-import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListDetailViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListItemsNavigator
-import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.CONST_NO_SIZE
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getPreferredDeliveryType
@@ -173,7 +169,7 @@ class ShoppingListItemsAdapter(
             itemBinding?.apply {
 
                 cartProductImage.setImageURI(shoppingListItem.externalImageRefV2)
-                tvTitle.setText(shoppingListItem.displayName)
+                tvTitle.text = (shoppingListItem.displayName)
                 tvPrice.setText(formatAmountToRandAndCentWithSpace(shoppingListItem.price))
                 // Set Color and Size START
                 tvColorSize.text =
@@ -352,7 +348,7 @@ class ShoppingListItemsAdapter(
     }
 
     internal inner class HeaderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val tvSearchText: WTextView
+        val tvSearchText: TextView
 
         init {
             tvSearchText = itemView.findViewById(R.id.textProductSearch)
