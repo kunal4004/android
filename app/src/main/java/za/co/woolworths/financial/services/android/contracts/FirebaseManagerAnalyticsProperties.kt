@@ -493,6 +493,7 @@ open class FirebaseManagerAnalyticsProperties {
             const val SUCCESSFUL: String = "successful"
             const val REASON: String = "Reason"
             const val STATUS = "status"
+            const val STATUS_URL = "status_url"
             const val TRANSACTION_ID = "transaction_id"
             const val PAYMENT_STATUS = "payment_status"
 
