@@ -1595,7 +1595,7 @@
     <string name="select_your_collection_store">Select your collection store:</string>
     <string name="select_your_delivery_location">Select your delivery location:</string>
     <string name="remove_these_items_continue">remove these items &amp; continue</string>
-    <string name="item_not_available_for_collection_title">Item not available</string>
+    <string name="item_not_available_for_collection_title">To purchase this item, please change your delivery option to Standard Delivery or Click &amp; Collect.</string>
     <string name="item_not_available_for_collection_desc">To purchase, please try \'Find In Store\', or change delivery option to Standard.</string>
     <string name="change_delivery_option">CHANGE DELIVERY OPTION</string>
     <string name="remove_items_dialog_title">These items will be removed</string>
@@ -2564,8 +2564,8 @@
     <string name="address_type">Address Type:</string>
     <string name="add_street_address">Street Address:</string>
     <string name="dash_free_collection">"Free Collection"</string>
-    <string name="dash_item_limit">%d Item Limit</string>
-    <string name="dash_delivery_fee">R%d Delivery Fee</string>
+    <string name="dash_item_limit">Item Limit</string>
+    <string name="dash_delivery_fee">Delivery Fee</string>
     <string name="select_delivery_timeslot">Select Delivery Timeslot</string>
     <string name="dash_delivery_date">Delivery Date</string>
     <string name="dash_delivery_timeslot">Delivery Timeslot</string>
@@ -2975,4 +2975,6 @@
     <string name="choose_substitute">Choose My Own Substitute</string>
     <string name="dont_want_substitute"><u>i don\'t want a substitute</u></string>
     <string name="more_details">More Details</string>
+    <string name="promotion_txt">you have saved</string>
+    <string name="item_found">\t ITEMS FOUND</string>
 </resources>

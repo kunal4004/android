@@ -5,6 +5,7 @@ import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
 import za.co.woolworths.financial.services.android.ui.adapters.holder.ProductListingViewType
+import java.io.Serializable
 import java.util.*
 
 @Parcelize
@@ -80,4 +81,4 @@ data class ProductList(
     @SerializedName("reviewCount")
     @Expose
     var reviewCount: String? = null
-) : Parcelable
+) : Parcelable, Serializable

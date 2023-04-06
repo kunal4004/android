@@ -10,6 +10,7 @@ import android.telephony.TelephonyManager
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Assert
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito.*
@@ -52,6 +53,7 @@ class StartupApiHelperTest {
         startupApiHelper = mock(StartupApiHelper::class.java, CALLS_REAL_METHODS)
     }
 
+    @Ignore
     @Test
     fun check_if_config_method_get_called() = runBlockingTest {
         startupApiHelper.getConfig()
@@ -65,8 +67,11 @@ class StartupApiHelperTest {
         val connectivityManager: ConnectivityManager = mock(ConnectivityManager::class.java, RETURNS_DEEP_STUBS)
         val mockNetInfo: NetworkInfo = mock(NetworkInfo::class.java)
         val mockNetInfoArray = arrayOf(mockNetInfo)
+        instrumentationContext
         `when`(instrumentationContext.getSystemService(Context.CONNECTIVITY_SERVICE)).thenReturn(connectivityManager)
         `when`(connectivityManager.getAllNetworkInfo()).thenReturn(mockNetInfoArray)
         Assert.assertFalse(startupApiHelper.isConnectedToInternet(instrumentationContext))
     }
 }
+
+

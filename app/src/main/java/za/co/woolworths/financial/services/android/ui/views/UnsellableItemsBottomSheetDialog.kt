@@ -13,6 +13,7 @@ import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerce
 import za.co.woolworths.financial.services.android.ui.adapters.UnsellableItemsListAdapter
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
 /**
@@ -102,6 +103,9 @@ class UnsellableItemsBottomSheetDialog: WBottomSheetDialogFragment(),
             }
 
             R.id.removeItems -> {
+                commerceItems?.let { unsellableItems ->
+                    FirebaseAnalyticsEventHelper.removeFromCartUnsellable(unsellableItems)
+                }
                 UnSellableItemsLiveData.value = true
                 confirmRemoveItems()
             }

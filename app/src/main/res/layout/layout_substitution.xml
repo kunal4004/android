@@ -8,14 +8,15 @@
 
     <TextView
         android:id="@+id/txt_substitution"
+        android:fontFamily="@font/futura_semi_bold"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/twenty_four_dp"
         android:layout_marginTop="@dimen/twenty_four_dp"
-        android:fontFamily="@font/futura_bold"
         android:text="@string/substitutions"
-        android:textColor="@color/black"
+        android:gravity="center_vertical"
         android:textSize="@dimen/eighteen_sp"
+        android:textColor="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -34,15 +35,20 @@
 
     <TextView
         android:id="@+id/txt_substitution_title"
-        android:layout_width="wrap_content"
+        style="@style/opensans_regular_text_style_14sp_black"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/twenty_four_dp"
         android:layout_marginTop="@dimen/twenty_four_dp"
+        android:layout_marginEnd="16dp"
         android:layout_marginBottom="@dimen/sixteen_dp"
         android:drawableLeft="@drawable/union_row"
+        android:ellipsize="end"
         android:drawablePadding="@dimen/eight_dp"
+        android:maxLines="1"
         android:text="@string/substitute_default"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/txt_substitution_edit"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/view" />
 
@@ -56,10 +62,10 @@
         android:layout_marginBottom="@dimen/sixteen_dp"
         android:background="@drawable/black_background_with_corner_5"
         android:gravity="center"
-        android:letterSpacing="0.1"
         android:text="@string/change_label"
+        android:letterSpacing="0.1"
+        style="@style/futura_semi_bold_white_12_text_style"
         android:textAllCaps="true"
-        android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/view" />

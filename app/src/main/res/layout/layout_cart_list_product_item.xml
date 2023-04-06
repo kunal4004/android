@@ -135,9 +135,9 @@
                 fresco:failureImage="@drawable/woolworth_logo_icon"
                 tools:src="@drawable/woolworth_logo_icon" />
 
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvTitle"
-                style="@style/style_cart_item_title"
+                style="@style/style_cart_item_title_opensens_regular_14"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/sixteen_dp"
