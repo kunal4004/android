@@ -44,7 +44,6 @@ import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
 import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.ui.adapters.StoreSearchListAdapter;
-import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.RecycleViewClickListner;
@@ -61,7 +60,7 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
 	LinearLayout recentSearchLayout;
 	LinearLayout recentSearchList;
 	RelativeLayout searchErrorLayout;
-	WTextView recentSearchListitem;
+	TextView recentSearchListitem;
 	SearchHistory search;
 	public static final String TAG = "SearchStoresActivity";
 	private ErrorHandlerView mErrorHandlerView;
@@ -323,7 +322,7 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
 		if (status && searchHistories != null) {
 			for (int i = 0; i < searchHistories.size(); i++) {
 				View v = getLayoutInflater().inflate(R.layout.recent_search_list_item, null);
-				recentSearchListitem = (WTextView) v.findViewById(R.id.recentSerachListItem);
+				recentSearchListitem = v.findViewById(R.id.recentSerachListItem);
 				recentSearchListitem.setText(searchHistories.get(i).searchedValue);
 				recentSearchList.addView(v);
 				int position = recentSearchList.indexOfChild(v) - 1;
