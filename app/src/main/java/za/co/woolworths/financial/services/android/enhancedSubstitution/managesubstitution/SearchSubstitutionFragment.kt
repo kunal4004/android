@@ -264,11 +264,14 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
                     }
                     Status.SUCCESS -> {
                         resource?.data?.skuInventory?.let { inventoryList ->
-                            val configQuantity = AppConfigSingleton.enhanceSubstitution?.thresholdQuantityForSubstitutionProduct
-                            if (inventoryList?.isNullOrEmpty() == true || inventoryList?.getOrNull(0)?.quantity!! < configQuantity!!) {
-                                binding.progressBar?.visibility = View.GONE
-                                productOutOfStockErrorMessage()
-                                return@observe
+                            val configQuantity: Int? = AppConfigSingleton.enhanceSubstitution?.thresholdQuantityForSubstitutionProduct
+                            val inventoryQuantity: Int? = inventoryList?.getOrNull(0)?.quantity
+                            if (inventoryQuantity != null && configQuantity != null) {
+                                if (inventoryList?.isNullOrEmpty() == true || inventoryQuantity < configQuantity) {
+                                    binding.progressBar?.visibility = View.GONE
+                                    productOutOfStockErrorMessage()
+                                    return@observe
+                                }
                             }
                             navigateToPdpScreen()
                         }
@@ -301,6 +304,7 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
                 it.getContentIfNotHandled()?.let { resource ->
                     when (resource.status) {
                         Status.LOADING -> {
+                            binding.progressBar?.visibility = View.VISIBLE
                         }
                         Status.SUCCESS -> {
                             binding.progressBar?.visibility = View.GONE

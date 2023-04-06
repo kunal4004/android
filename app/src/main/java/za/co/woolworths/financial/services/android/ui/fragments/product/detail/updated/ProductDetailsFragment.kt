@@ -374,13 +374,15 @@ class ProductDetailsFragment :
         }
 
         setFragmentResultListener(SearchSubstitutionFragment.SELECTED_SUBSTITUTED_PRODUCT) { _, bundle ->
-            // As User selects to change the delivery location. So we will call confirm place API and will change the users location.
+            // User Selects product from search screen and came back to pdp
             bundle?.apply {
                 if (bundle.containsKey(SearchSubstitutionFragment.SUBSTITUTION_ITEM_KEY)) {
+                   // item is not added in cart yet i.e. commerce id is empty so need to click on add to cart in order to add substitute
                     substitutionProductItem = getSerializable(SearchSubstitutionFragment.SUBSTITUTION_ITEM_KEY) as? ProductList
                     replaceSubstituteItemCell()
                 }
                 if (bundle.containsKey(SearchSubstitutionFragment.SUBSTITUTION_ITEM_ADDED)) {
+                    // item is added in cart yet i.e. commerce id is not empty so call getSubstitution api to refresh substitution cell
                     isSubstiuteItemAdded = getBoolean(SearchSubstitutionFragment.SUBSTITUTION_ITEM_ADDED, false)
                     callGetSubstitutionApi(true)
                 }
