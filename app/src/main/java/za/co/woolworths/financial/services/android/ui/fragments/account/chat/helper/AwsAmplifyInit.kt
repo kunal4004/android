@@ -13,8 +13,8 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
-import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.KotlinUtils
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 
 class AmplifyInit {
 
@@ -27,7 +27,7 @@ class AmplifyInit {
     fun isAWSAmplifyConfigured() = Amplify.API.plugins.isNotEmpty() && Amplify.Auth.plugins.isNotEmpty()
 
     init {
-        GlobalScope.launch(Dispatchers.Main) {
+        GlobalScope.launch(Dispatchers.IO) {
             try {
                 if (!isAWSAmplifyConfigured()) {
                     val context = WoolworthsApplication.getAppContext()

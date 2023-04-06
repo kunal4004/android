@@ -139,11 +139,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/ten_dp"
-                android:fontFamily="@font/myriad_pro_regular"
+                android:fontFamily="@font/opensans_regular"
                 android:gravity="top"
                 android:text="@string/standard_delivery"
                 android:textColor="@color/black"
-                android:textSize="@dimen/twelve_sp"
+                android:textSize="@dimen/eleven_sp"
                 app:layout_constraintBottom_toTopOf="@+id/tvDeliverySubtitle"
                 app:layout_constraintStart_toEndOf="@id/imgDelivery"
                 app:layout_constraintTop_toTopOf="parent"
@@ -231,11 +231,12 @@
                         android:clickable="false"
                         android:src="@drawable/ic_search" />
 
-                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/textProductSearch"
                         android:layout_width="match_parent"
                         android:layout_height="60dp"
                         android:layout_alignParentTop="true"
+                        android:fontFamily="@font/opensans_regular"
                         android:background="@android:color/transparent"
                         android:clickable="false"
                         android:gravity="start|center"
@@ -246,8 +247,7 @@
                         android:paddingRight="@dimen/default_margin"
                         android:textColor="@color/black"
                         android:textColorHint="@color/product_search_hint"
-                        android:textSize="@dimen/fifteen_dp"
-                        app:WTextView_font="myriadpro_regular" />
+                        android:textSize="@dimen/twelve_sp"/>
 
                 </RelativeLayout>
             </LinearLayout>
