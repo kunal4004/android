@@ -2951,7 +2951,6 @@
     <string name="substitution_how_it_works_subtitle">If no substitutions are selected, our shoppers will choose one for you. If you don’t want an alternative product, you can edit your choice to “I don’t want a substitute” instead.</string>
 
     <string name="substitutions">Substitutions</string>
-    <string name="let_my_shooper_choose_for_me">Let My Shopper Choose For Me</string>
 
     <string name="timeslot_title">All Dash Timeslots Are Fully Booked.</string>
     <string name="timeslot_desc">Check back later to see if any new delivery slots become available.</string>
@@ -2971,6 +2970,7 @@
     <string name="pet_insurance_care">PET</string>
     <string name="error_message_400">We are unable to process your request, Please \ncontact our call centre on \n0861 50 20 10</string>
 
+    <string name="substitute_default">Let My Shopper Choose For Me</string>
     <string name="search_alternative_product">Search for an alternative product</string>
     <string name="choose_substitute">Choose My Own Substitute</string>
     <string name="dont_want_substitute"><u>i don\'t want a substitute</u></string>
