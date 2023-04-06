@@ -100,6 +100,7 @@ import za.co.woolworths.financial.services.android.recommendations.presentation.
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants
 import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.ui.wfs.common.getIpAddress
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 import java.net.ConnectException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
@@ -1625,6 +1626,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     }
 
     private fun removeItemAPI(commerceItem: CommerceItem) {
+        postAnalyticsRemoveFromCart(listOf(commerceItem))
         mCommerceItem = commerceItem
         viewModel.removeCartItem(commerceItem.commerceItemInfo.getCommerceId())
     }
@@ -2363,9 +2365,18 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             mCommerceItem?.let { removeItemAPI(it) }
         }
         setFragmentResultListener(ON_CONFIRM_REMOVE_ALL) { _, _ ->
+            val list = arrayListOf<CommerceItem>()
+            cartItems?.forEach {
+                list.addAll(it.commerceItems)
+            }
+            postAnalyticsRemoveFromCart(list)
             enableItemDelete(false)
             viewModel.removeAllCartItem()
         }
+    }
+
+    private fun postAnalyticsRemoveFromCart(commerceItems: List<CommerceItem>){
+        FirebaseAnalyticsEventHelper.removeFromCart(commerceItems)
     }
 
     fun enableItemDelete(enable: Boolean) {

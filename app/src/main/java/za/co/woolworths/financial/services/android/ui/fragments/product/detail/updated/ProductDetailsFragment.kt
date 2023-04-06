@@ -127,6 +127,7 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_FAIL_IMAGE_LOAD
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.saveAnonymousUserLocationDetails
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.logException
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.setCrashlyticsString
 import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
@@ -2133,41 +2134,10 @@ class ProductDetailsFragment :
 
     //firebase event add_to_cart
     private fun addToCartEvent(productDetails: ProductDetails?) {
-        val addToCartParams = Bundle()
-        addToCartParams.putString(FirebaseAnalytics.Param.CURRENCY,
-            FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE)
-        productDetails?.price?.let {
-            addToCartParams.putDouble(FirebaseAnalytics.Param.VALUE,
-                it.toDouble())
+        val quantity = getSelectedQuantity()
+        if (quantity != null && productDetails != null){
+            FirebaseAnalyticsEventHelper.addToCart(productDetails, quantity)
         }
-        for (products in 0..(productDetails?.otherSkus?.size ?: 0)) {
-            val addToCartItem = Bundle()
-            addToCartItem.putString(FirebaseAnalytics.Param.ITEM_ID, productDetails?.productId)
-            addToCartItem.putString(FirebaseAnalytics.Param.ITEM_NAME,
-                productDetails?.productName)
-            addToCartItem.putString(FirebaseAnalytics.Param.ITEM_CATEGORY,
-                productDetails?.categoryName)
-            addToCartItem.putString(FirebaseAnalytics.Param.ITEM_BRAND,
-                productDetails?.brandText)
-            addToCartItem.putString(FirebaseAnalytics.Param.ITEM_LIST_NAME,
-                productDetails?.categoryName)
-            addToCartItem.putString(FirebaseAnalytics.Param.ITEM_VARIANT,
-                productDetails?.colourSizeVariants)
-            addToCartItem.putString(FirebaseAnalytics.Param.QUANTITY,
-                FirebaseManagerAnalyticsProperties.PropertyValues.INDEX_VALUE)
-            productDetails?.price?.let {
-                addToCartItem.putDouble(FirebaseAnalytics.Param.PRICE,
-                    it.toDouble())
-            }
-            addToCartItem.putString(FirebaseAnalytics.Param.AFFILIATION,
-                FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE)
-            addToCartItem.putString(FirebaseAnalytics.Param.INDEX,
-                FirebaseManagerAnalyticsProperties.PropertyValues.INDEX_VALUE)
-            addToCartParams.putParcelableArray(FirebaseAnalytics.Param.ITEMS,
-                arrayOf(addToCartItem))
-        }
-        AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.ADD_TO_CART_PDP,
-            addToCartParams)
     }
 
     private fun addItemToShoppingList() {
