@@ -41,6 +41,7 @@ import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.capitaliseFirstLetter
 import za.co.woolworths.financial.services.android.util.NetworkManager
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.util.*
 
@@ -76,7 +77,7 @@ class CartProductAdapter(
         fun onPromoDiscountInfo()
         fun onItemDeleteClick(commerceId: CommerceItem)
         fun onCheckBoxChange(isChecked: Boolean, commerceItem: CommerceItem)
-        fun onSubstituteProductClick()
+        fun onSubstituteProductClick(substitutionSelection: String, commerceId: String)
         fun onCartRefresh()
     }
 
@@ -190,7 +191,11 @@ class CartProductAdapter(
                     )
                 }
 
-                productHolder.bindSubstitutionInfo(commerceItem.substitutionInfo)
+                productHolder.bindSubstitutionInfo(
+                    commerceItem.substitutionInfo,
+                    commerceItemInfo?.commerceId
+                )
+
                 val productImageUrl =
                     if (commerceItemInfo == null) "" else commerceItemInfo.externalImageRefV2
                 setPicture(productHolder.productImage, productImageUrl)
@@ -672,7 +677,7 @@ class CartProductAdapter(
             substitutionIcon.visibility = VISIBLE
         }
 
-        fun bindSubstitutionInfo(substitutionInfo: SubstitutionInfo?) {
+        fun bindSubstitutionInfo(substitutionInfo: SubstitutionInfo?, commerceId: String?) {
             if (KotlinUtils.getPreferredDeliveryType() == Delivery.DASH) {
                 tvSubstituteItem.visibility = VISIBLE
                 substitutionIcon.visibility = VISIBLE
@@ -684,9 +689,15 @@ class CartProductAdapter(
             }
 
             tvSubstituteItem.setOnClickListener {
-                onItemClick.onSubstituteProductClick()
+                if(commerceId.isNullOrEmpty()) {
+                    FirebaseManager.logException(IllegalArgumentException("CommerceId not found."))
+                    return@setOnClickListener
+                }
+                onItemClick.onSubstituteProductClick(
+                    substitutionInfo?.substitutionSelection ?: SubstitutionChoice.SHOPPER_CHOICE.toString(),
+                    commerceId
+                )
             }
-
             if (substitutionInfo == null) {
                 return
             }
