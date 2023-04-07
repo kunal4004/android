@@ -17,6 +17,7 @@ import za.co.woolworths.financial.services.android.models.dto.Suburb
 import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
 import za.co.woolworths.financial.services.android.ui.adapters.UnsellableItemsListAdapter
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 
 class UnsellableItemsFragment : AppCompatDialogFragment(R.layout.unsellable_items_fragment), View.OnClickListener {
 
@@ -92,6 +93,9 @@ class UnsellableItemsFragment : AppCompatDialogFragment(R.layout.unsellable_item
             }
 
             R.id.removeItems -> {
+                commerceItems?.let { unsellableItems ->
+                    FirebaseAnalyticsEventHelper.removeFromCartUnsellable(unsellableItems)
+                }
                 UnSellableItemsLiveData.value = true
                 confirmRemoveItems()
             }

@@ -15,6 +15,7 @@ import za.co.woolworths.financial.services.android.ui.extension.asEnumOrDefault
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants
+import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.capitaliseFirstLetterInEveryWord
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.WFormatter
 
@@ -66,6 +67,7 @@ class CreditCardDeliveryStatusFragment : CreditCardDeliveryBaseFragment(R.layout
     }
 
     fun CreditCardDeliveryStatusLayoutBinding.configureUI() {
+        deliveryStatusTitle.visibility = View.VISIBLE
         when (statusResponse?.deliveryStatus?.statusDescription?.asEnumOrDefault(CreditCardDeliveryStatus.DEFAULT)) {
             CreditCardDeliveryStatus.CARD_RECEIVED -> {
                 cardReceivedOrAppointmentScheduled()
@@ -88,8 +90,8 @@ class CreditCardDeliveryStatusFragment : CreditCardDeliveryBaseFragment(R.layout
             }
             CreditCardDeliveryStatus.CANCELLED -> {
                 progressIcon.setBackgroundResource(R.drawable.icon_credit_card_delivery_failed)
-                deliveryDate.text = bindString(R.string.card_delivery_cancelled)
-                deliveryStatusTitle.text = bindString(R.string.cancelled_cc_delivery_desc)
+                deliveryDate.text = statusResponse?.deliveryStatus?.displayTitle?.capitaliseFirstLetterInEveryWord() ?: bindString(R.string.card_delivery_cancelled)
+                deliveryStatusTitle.visibility = View.GONE
                 callTheCallCenter.visibility = View.VISIBLE
 
                 statusResponse?.slotDetails?.appointmentDate?.let {
