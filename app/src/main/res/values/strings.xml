@@ -2469,7 +2469,7 @@
     <string name="absa_statement_error_try_again_later">We\'re unable to retrieve your Statement. Please try again later.</string>
     <string name="choose_a_location">Choose A Location</string>
     <string name="use_an_address_the_name_of_a_complex_or_your_closest_landmark_eg_a_woolies_store">Use an address, the name of a complex, or your closest landmark (e.g. a Woolies store).</string>
-    <string name="enter_new_location">Enter New location</string>
+    <string name="enter_new_location">Enter New Location</string>
     <string name="my_saved_addresses">My Saved Addresses</string>
     <string name="current_location">Current Location</string>
     <string name="update_address">Update Address</string>
