@@ -175,21 +175,6 @@ class CartProductAdapter(
                             .getAmount()
                     )
                 )
-//                "substitutionInfo":{
-//                    "substitutionSelection":"USER_CHOICE",
-//                    "substitutionId":"20068905",
-//                    "displayName":"Free Range Jumbo Eggs 6 pk",
-//                    "isSubstitutionInStock":"true"
-//                }
-                if (productHolder.bindingAdapterPosition == 2) {
-                    commerceItem.substitutionInfo = SubstitutionInfo(
-                        substitutionSelection = "USER_CHOICE",
-                        substitutionId = "20068905",
-                        displayName = "Free Range Jumbo Eggs 6 pk",
-                        isSubstitutionInStock = true,
-                        id = "20068905"
-                    )
-                }
 
                 productHolder.bindSubstitutionInfo(
                     commerceItem.substitutionInfo,
