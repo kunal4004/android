@@ -31,7 +31,7 @@ import za.co.woolworths.financial.services.android.util.analytics.FirebaseManage
 
 @RunWith(PowerMockRunner::class)
 @PrepareForTest(Util::class, Utils::class, FirebaseManager::class, FirebaseApp::class, FirebaseCrashlytics::class)
-class SurveyVocViewModelTest {
+internal class SurveyVocViewModelTest {
 
     private lateinit var mockStaticUtil: MockedStatic<Util>
     private lateinit var mockStaticUtils: MockedStatic<Utils>
@@ -42,7 +42,7 @@ class SurveyVocViewModelTest {
     private lateinit var SUT: SurveyVocViewModel
 
     @Before
-    fun setup() {
+    fun setUp() {
         mockStaticUtil = mockStatic(Util::class.java)
         mockStaticUtils = mockStatic(Utils::class.java)
         mockFirebaseManager = mockStatic(FirebaseManager::class.java)
@@ -60,10 +60,8 @@ class SurveyVocViewModelTest {
 
         mockApiService = OneAppServiceTestDouble()
 
-        SUT = SurveyVocViewModel()
-
-        val questions = ArrayList<SurveyQuestion>()
-        questions.add(
+        val dummyQuestions = ArrayList<SurveyQuestion>()
+        dummyQuestions.add(
             SurveyQuestion(
                 id = 1,
                 type = "NUMERIC",
@@ -73,7 +71,7 @@ class SurveyVocViewModelTest {
                 maxValue = 11
             )
         )
-        questions.add(
+        dummyQuestions.add(
             SurveyQuestion(
                 id = 2,
                 type = "FREE_TEXT",
@@ -81,29 +79,31 @@ class SurveyVocViewModelTest {
                 required = false
             )
         )
-        questions.add(
+        dummyQuestions.add(
             SurveyQuestion(
-                id = 2,
+                id = 3,
                 type = "FREE_TEXT",
                 title = "This is a required free-text question.",
                 required = true
             )
         )
-        questions.add(
+        dummyQuestions.add(
             SurveyQuestion(
-                id = 3,
+                id = 4,
                 type = "UNKNOWN_TYPE",
                 title = "This is an optional question with an unknown type, to make sure it is ignored on builds not having such implementation yet.",
                 required = false
             )
         )
-        val survey = SurveyDetails(
+        val dummySurvey = SurveyDetails(
             id = 1,
             name = "Survey to test validation.",
             type = "GENEX",
-            questions = questions
+            questions = dummyQuestions
         )
-        SUT.configure(survey, mockApiService)
+
+        SUT = SurveyVocViewModel()
+        SUT.configure(dummySurvey, mockApiService)
     }
 
     @After
@@ -137,7 +137,7 @@ class SurveyVocViewModelTest {
     fun isSurveyAnswersValid_HasExpectedAnswers_ReturnsTrue() {
         // Arrange
         SUT.setAnswer(1, 6)
-        SUT.setAnswer(2, "Lorem ipsum")
+        SUT.setAnswer(3, "Lorem ipsum")
 
         // Act
         val result = SUT.isSurveyAnswersValid()
@@ -150,7 +150,7 @@ class SurveyVocViewModelTest {
     fun isSurveyAnswersValid_HasInvalidAnswer_ReturnsFalse() {
         // Arrange
         SUT.setAnswer(1, 6)
-        SUT.setAnswer(2, "")
+        SUT.setAnswer(3, "")
 
         // Act
         val result = SUT.isSurveyAnswersValid()
@@ -199,6 +199,25 @@ class SurveyVocViewModelTest {
 
         // Assert
         assertEquals("Free text answer is expected to have changed", result, "Lorem ipsum")
+    }
+
+    @Test
+    fun getAnswers_HasExpectedAnswers_ReturnsListOfAnswers() {
+        // Arrange
+        val answer1 = 6
+        val answer2 = "Lorem ipsum"
+        val answer3 = "Sit dolor it"
+        SUT.setAnswer(1, answer1)
+        SUT.setAnswer(2, answer2)
+        SUT.setAnswer(3, answer3)
+
+        // Act
+        val result = SUT.getAnswers()
+
+        // Assert
+        assertEquals("Correct answer value is expected", result[1]?.answerId, answer1)
+        assertEquals("Correct answer value is expected", result[2]?.textAnswer, answer2)
+        assertEquals("Correct answer value is expected", result[3]?.textAnswer, answer3)
     }
 
     @Test

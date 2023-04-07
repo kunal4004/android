@@ -1136,7 +1136,7 @@ open class OneAppService(
         )
     }
 
-    fun submitVocSurveyReplies(
+    open fun submitVocSurveyReplies(
         surveyDetails: SurveyDetails,
         surveyAnswers: HashMap<Long, SurveyAnswer>
     ): Call<Void> {
