@@ -162,7 +162,7 @@ class OrderConfirmationFragment :
 
     private fun displayVocifNeeded(response: SubmittedOrderResponse) {
         var deliveryType = response.orderSummary?.fulfillmentDetails?.deliveryType
-        VoiceOfCustomerManager.showVocSurveyIfNeeded(
+        VoiceOfCustomerManager().showVocSurveyIfNeeded(
             activity,
             KotlinUtils.vocShoppingHandling(deliveryType)
         )

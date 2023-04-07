@@ -153,7 +153,7 @@ class OrderDetailsFragment : BaseFragmentBinding<OrderDetailsFragmentBinding>(Or
     private fun bindData(ordersResponse: OrderDetailsResponse) {
         dataList = buildDataForOrderDetailsView(ordersResponse)
         binding.orderDetails.adapter = requireActivity().let { OrderDetailsAdapter(it, this, dataList) }
-        VoiceOfCustomerManager.showVocSurveyIfNeeded(
+        VoiceOfCustomerManager().showVocSurveyIfNeeded(
             activity,
             KotlinUtils.vocShoppingHandling(orderDetailsResponse?.orderSummary?.fulfillmentDetails?.deliveryType)
         )

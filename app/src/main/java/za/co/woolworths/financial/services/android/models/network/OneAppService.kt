@@ -1127,7 +1127,7 @@ open class OneAppService(
         )
     }
 
-    fun getVocSurvey(triggerEvent: VocTriggerEvent): Call<SurveyDetailsResponse> {
+    open fun getVocSurvey(triggerEvent: VocTriggerEvent): Call<SurveyDetailsResponse> {
         return mApiInterface.getVocSurvey(
             userAgent = "",
             userAgentVersion = "",

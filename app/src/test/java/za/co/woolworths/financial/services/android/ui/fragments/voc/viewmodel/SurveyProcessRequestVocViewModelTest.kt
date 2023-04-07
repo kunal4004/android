@@ -12,7 +12,6 @@ import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.ArgumentCaptor
 import org.mockito.MockedStatic
 import org.mockito.Mockito.*
 import org.powermock.core.classloader.annotations.PrepareForTest
@@ -307,8 +306,6 @@ internal class SurveyProcessRequestVocViewModelTest {
         callMock.mockFailureThrowable = exception
         mockApiService.mockCall = callMock
 
-        val exceptionArgument = ArgumentCaptor.forClass(Throwable::class.java)
-
         SUT.configure(dummySurvey, dummyAnswers, mockApiService)
 
         // Act
@@ -319,10 +316,6 @@ internal class SurveyProcessRequestVocViewModelTest {
         verify(mockFailureCallback, times(1)).invoke()
         assertEquals(mockApiService.countSubmitVocSurveyReplies, 1)
         assertEquals(callMock.countEnqueue, 1)
-        // TODO UNIT TEST: Find what's wrong with the below code
-//        verify(FirebaseManager::class.java, times(1))
-//        FirebaseManager.logException(exceptionArgument.capture())
-//        assertEquals(exceptionArgument.value, exception)
     }
 
     class OneAppServiceTestDouble: OneAppService(AppContextProviderStub(), RetrofitApiProviderStub()) {
@@ -363,7 +356,7 @@ internal class SurveyProcessRequestVocViewModelTest {
 
         override fun isCanceled(): Boolean = false
 
-        override fun request(): Request = mock(Request::class.java)
+        override fun request(): Request = mock(Request::class.java, RETURNS_MOCKS)
 
         override fun timeout(): Timeout = mock(Timeout::class.java)
     }
