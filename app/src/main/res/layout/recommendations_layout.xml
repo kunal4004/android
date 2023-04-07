@@ -68,7 +68,6 @@
             android:animateLayoutChanges="false"
             android:paddingLeft="@dimen/five_dp"
             android:paddingRight="@dimen/five_dp"
-            android:scrollbars="horizontal"
             android:smoothScrollbar="true" />
 
         <include

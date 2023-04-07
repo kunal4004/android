@@ -18,6 +18,7 @@ import androidx.constraintlayout.widget.ConstraintSet
 import androidx.constraintlayout.widget.ConstraintSet.*
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.core.text.HtmlCompat
 import androidx.core.view.contains
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
@@ -263,8 +264,9 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                                 removeNotificationToast()
                             }
                             CLICK_AND_COLLECT_TAB.index -> {
-                                //Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMYLISTS, this)
                                 showBlackToolTip(Delivery.CNC)
+                                showClickAndCollectToolTip( KotlinUtils.isStoreSelectedForBrowsing,
+                                    getDeliveryType()?.storeId)
                                 setEventsForSwitchingBrowsingType(Delivery.CNC.name)
                                 KotlinUtils.browsingDeliveryType = Delivery.CNC
                                 removeNotificationToast()
@@ -543,7 +545,13 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         if (KotlinUtils.isLocationSame == true && KotlinUtils.placeId != null) {
             (KotlinUtils.browsingDeliveryType
                 ?: Delivery.getType(getDeliveryType()?.deliveryType))?.let {
-                showBlackToolTip(it)
+                if(it == Delivery.CNC){
+                    showClickAndCollectToolTip( KotlinUtils.isStoreSelectedForBrowsing,
+                        getDeliveryType()?.storeId)
+                }
+                else {
+                    showBlackToolTip(it)
+                }
             }
         }
         setDeliveryView()
@@ -1079,7 +1087,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                 Delivery.CNC -> {
                     showClickAndCollectToolTip(
                         KotlinUtils.isStoreSelectedForBrowsing,
-                        KotlinUtils.browsingCncStore?.storeId
+                        getDeliveryType()?.storeId
                     )
                 }
                 Delivery.DASH -> {
@@ -1180,7 +1188,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         browsingStoreId: String? = "",
     ) {
         binding.apply {
-            if (KotlinUtils.isCncTabCrossClicked == true || browsingStoreId == null) {
+            if (KotlinUtils.isCncTabCrossClicked == true || browsingStoreId.isNullOrEmpty()) {
                 blackToolTipLayout.root.visibility = View.GONE
                 return
             }
@@ -1346,19 +1354,26 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                         DASH_DIVIDER
                     )
                         ?.toFloat()!!
-                blackToolTipLayout.productAvailableText?.text = resources.getString(
-                    R.string.dash_item_limit,
-                    it.onDemand?.quantityLimit?.foodMaximumQuantity
-                )
+                blackToolTipLayout.productAvailableText?.text =
+                    HtmlCompat.fromHtml(
+                        "<font><b>" + it.onDemand?.quantityLimit?.foodMaximumQuantity + "</b></font>"
+                            .plus(" ").plus(resources.getString(
+                                R.string.dash_item_limit)),
+                        HtmlCompat.FROM_HTML_MODE_COMPACT
+                    )
 
                 if (it.onDemand?.firstAvailableFoodDeliveryTime?.isNullOrEmpty() == true) {
                     blackToolTipLayout?.deliveryIconLayout?.visibility = View.GONE
                 } else {
                     blackToolTipLayout?.deliveryIconLayout?.visibility = View.VISIBLE
-                    blackToolTipLayout.deliveryFeeText?.text = resources.getString(
-                        R.string.dash_delivery_fee,
-                        it.onDemand?.firstAvailableFoodDeliveryCost
-                    )
+                    blackToolTipLayout.deliveryFeeText?.text =
+                        HtmlCompat.fromHtml(
+                            "<font><b>" + it.onDemand?.firstAvailableFoodDeliveryCost + "</b></font>"
+                                .plus(" ").plus(resources.getString(
+                                    R.string.dash_delivery_fee)),
+                            HtmlCompat.FROM_HTML_MODE_COMPACT
+                        )
+
                 }
             }
         }

@@ -9,5 +9,5 @@ data class SubstitutionInfo(
         val displayName: String,
         @SerializedName("id")
         @Expose
-        val id: String
+        val id: String = ""
 )
