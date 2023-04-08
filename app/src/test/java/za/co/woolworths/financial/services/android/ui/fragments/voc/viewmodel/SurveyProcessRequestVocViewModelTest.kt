@@ -181,7 +181,7 @@ internal class SurveyProcessRequestVocViewModelTest {
     }
 
     @Test
-    fun configure_RateSliderOptionalQuestion_AnswerRemovedIfNull() {
+    fun configure_RateSliderOptionalQuestion_AnswerRemovedWhenNull() {
         // Arrange
         dummyQuestions.find { it.id == 1L }?.required = false
         val dummyAnswers = HashMap<Long, SurveyAnswer>()
@@ -197,7 +197,7 @@ internal class SurveyProcessRequestVocViewModelTest {
     }
 
     @Test
-    fun configure_FreeTextOptionalQuestion_AnswerRemovedIfNull() {
+    fun configure_FreeTextOptionalQuestion_AnswerRemovedWhenNull() {
         // Arrange
         dummyQuestions.find { it.id == 2L }?.required = false
         val dummyAnswers = HashMap<Long, SurveyAnswer>()
