@@ -2189,14 +2189,14 @@
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">@dimen/fourty_eight_dp</item>
         <item name="android:background">@drawable/recipient_details_input_edittext_bg</item>
-        <item name="android:fontFamily">@font/myriad_pro_regular</item>
+        <item name="android:fontFamily">@font/opensans_regular</item>
         <item name="android:gravity">center_vertical</item>
-        <item name="android:paddingStart">@dimen/sixteen_dp</item>
+        <item name="android:paddingStart">@dimen/ten_dp</item>
         <item name="android:paddingEnd">@dimen/sixteen_dp</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:singleLine">true</item>
         <item name="android:imeOptions">actionNext</item>
-        <item name="android:textSize">@dimen/sixteen_sp</item>
+        <item name="android:textSize">@dimen/fourteen_sp</item>
     </style>
 
     <style name="onBoardingButtonStyle">
@@ -3164,6 +3164,55 @@
 
     <style name="opensans_extra_bold" >
         <item name="android:fontFamily">@font/opensans_extra_bold</item>
+    </style>
+
+    <style name="opensans_regular_12_text_style" parent="opensens_regular">
+        <item name="android:textSize">@dimen/twelve_sp</item>
+    </style>
+
+    <style name="opensans_semi_bold_13_text_style" parent="opensens_semi_bold">
+        <item name="android:textSize">@dimen/thirteen_sp</item>
+    </style>
+
+    <style name="opensans_semi_bold_13_black_text_style" parent="opensens_semi_bold">
+        <item name="android:textSize">@dimen/thirteen_sp</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="add_address_auto_complete_edittext_style">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">@dimen/fourty_seven_dp</item>
+        <item name="android:layout_marginTop">@dimen/six_dp</item>
+        <item name="android:background">@drawable/recipient_details_input_edittext_bg</item>
+        <item name="android:fontFamily">@font/opensans_regular</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingStart">@dimen/ten_dp</item>
+        <item name="android:paddingEnd">@dimen/sixteen_dp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:imeOptions">actionNext</item>
+        <item name="android:textSize">@dimen/fourteen_sp</item>
+    </style>
+
+    <style name="add_address_screen_placeholders_style" parent="@style/opensens_regular">
+        <item name="android:lineSpacingExtra">@dimen/two_sp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">@dimen/thirteen_sp</item>
+        <item name="android:translationY">@dimen/_minus_zero_pt_nine_sp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+    </style>
+    <style name="open_sans_regular_black_with_rounded_corner" parent="opensens_regular">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:background">@drawable/checkout_delivering_title_round_button</item>
+    </style>
+
+    <style name="add_address_screen_error_msg_style" parent="opensens_regular">
+        <item name="android:textColor">@color/input_error_color_code</item>
+        <item name="android:textSize">@dimen/thirteen_sp</item>
+        <item name="android:layout_width">@dimen/zero_dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">@dimen/four_dp</item>
     </style>
 
 </resources>
