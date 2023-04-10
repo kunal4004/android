@@ -63,13 +63,13 @@
 
             <TextView
                 android:id="@+id/foodItemTitle"
-                style="@style/myriad_pro_semi_bold_black"
+                style="@style/opensens_semi_bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/four_dp_"
                 android:text="@string/food_items"
                 android:textColor="@color/white"
-                android:textSize="@dimen/twelve_sp" />
+                android:textSize="@dimen/eleven_sp" />
 
             <TextView
                 android:id="@+id/foodItemDateText"
@@ -83,13 +83,13 @@
 
             <TextView
                 android:id="@+id/fashionItemTitle"
-                style="@style/myriad_pro_semi_bold_black"
+                style="@style/opensens_semi_bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/six_dp"
                 android:text="@string/fashion_beauty_home"
                 android:textColor="@color/white"
-                android:textSize="@dimen/twelve_sp" />
+                android:textSize="@dimen/eleven_sp" />
 
             <TextView
                 android:id="@+id/fashionItemDateText"
@@ -111,8 +111,7 @@
                 android:id="@+id/cartIconLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/default_margin"
-                android:orientation="horizontal">
+                android:layout_marginTop="@dimen/default_margin">
 
                 <ImageButton
                     android:id="@+id/cartIcon"
@@ -123,19 +122,19 @@
                     android:padding="@dimen/two_dp"
                     android:src="@drawable/icon_cart_white"
                     app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/productAvailableText"
-                    style="@style/myriad_pro_regular"
+                    style="@style/opensens_regular"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/ten_dp"
-                    android:paddingTop="@dimen/three_dp"
-                    android:paddingBottom="@dimen/three_dp"
                     android:textColor="@color/color_D8D8D8"
-                    android:textSize="@dimen/twelve_sp"
+                    android:textSize="@dimen/eleven_sp"
                     app:layout_constraintStart_toEndOf="@+id/cartIcon"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -144,8 +143,7 @@
                 android:id="@+id/deliveryIconLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/six_dp"
-                android:orientation="horizontal">
+                android:layout_marginTop="@dimen/six_dp">
 
                 <ImageButton
                     android:id="@+id/deliveryIcon"
@@ -156,19 +154,19 @@
                     android:padding="@dimen/two_dp"
                     android:src="@drawable/icon_delivery_white"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
 
                 <TextView
                     android:id="@+id/deliveryFeeText"
-                    style="@style/myriad_pro_regular"
+                    style="@style/opensens_regular"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/ten_dp"
-                    android:paddingTop="@dimen/three_dp"
-                    android:paddingBottom="@dimen/three_dp"
+                    android:layout_marginStart="12dp"
                     android:textColor="@color/color_D8D8D8"
-                    android:textSize="@dimen/twelve_sp"
+                    android:textSize="@dimen/eleven_sp"
                     app:layout_constraintStart_toEndOf="@+id/deliveryIcon"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>

@@ -18,6 +18,7 @@ import androidx.constraintlayout.widget.ConstraintSet
 import androidx.constraintlayout.widget.ConstraintSet.*
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.core.text.HtmlCompat
 import androidx.core.view.contains
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
@@ -624,7 +625,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                         )
                     )
                     tvToolbarTitle?.text = requireContext().getString(R.string.dash_delivery)
-                    tvToolbarSubtitle?.text = requireContext().getString(R.string.set_your_address)
+                    tvToolbarSubtitle?.text = requireContext().getString(R.string.set_location_title)
                 }
                 else -> {
                     imgToolbarStart?.setImageDrawable(
@@ -1353,19 +1354,26 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                         DASH_DIVIDER
                     )
                         ?.toFloat()!!
-                blackToolTipLayout.productAvailableText?.text = resources.getString(
-                    R.string.dash_item_limit,
-                    it.onDemand?.quantityLimit?.foodMaximumQuantity
-                )
+                blackToolTipLayout.productAvailableText?.text =
+                    HtmlCompat.fromHtml(
+                        "<font><b>" + it.onDemand?.quantityLimit?.foodMaximumQuantity + "</b></font>"
+                            .plus(" ").plus(resources.getString(
+                                R.string.dash_item_limit)),
+                        HtmlCompat.FROM_HTML_MODE_COMPACT
+                    )
 
                 if (it.onDemand?.firstAvailableFoodDeliveryTime?.isNullOrEmpty() == true) {
                     blackToolTipLayout?.deliveryIconLayout?.visibility = View.GONE
                 } else {
                     blackToolTipLayout?.deliveryIconLayout?.visibility = View.VISIBLE
-                    blackToolTipLayout.deliveryFeeText?.text = resources.getString(
-                        R.string.dash_delivery_fee,
-                        it.onDemand?.firstAvailableFoodDeliveryCost
-                    )
+                    blackToolTipLayout.deliveryFeeText?.text =
+                        HtmlCompat.fromHtml(
+                            "<font><b>" + it.onDemand?.firstAvailableFoodDeliveryCost + "</b></font>"
+                                .plus(" ").plus(resources.getString(
+                                    R.string.dash_delivery_fee)),
+                            HtmlCompat.FROM_HTML_MODE_COMPACT
+                        )
+
                 }
             }
         }
