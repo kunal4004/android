@@ -3200,9 +3200,9 @@
     <style name="add_address_screen_error_msg_style" parent="opensens_regular">
         <item name="android:textColor">@color/input_error_color_code</item>
         <item name="android:textSize">@dimen/thirteen_sp</item>
-        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_width">@dimen/zero_dp</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginTop">4dp</item>
+        <item name="android:layout_marginTop">@dimen/four_dp</item>
     </style>
 
 </resources>
