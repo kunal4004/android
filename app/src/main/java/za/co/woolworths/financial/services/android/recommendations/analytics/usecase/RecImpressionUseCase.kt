@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.recommendations.analytics.us
 import za.co.woolworths.financial.services.android.models.network.Resource
 import za.co.woolworths.financial.services.android.recommendations.data.repository.RecommendationsRepository
 import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.RecommendationResponse
+import za.co.woolworths.financial.services.android.recommendations.data.response.request.CommonRecommendationEvent
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.RecommendationRequest
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants
@@ -35,7 +36,8 @@ class RecImpressionUseCase @Inject constructor(
                         products = null,
                         url = null
                     )
-                ), monetateId = monetateId
+                ).plus(CommonRecommendationEvent.commonRecommendationEvents()),
+                monetateId = monetateId
             )
         }
     }

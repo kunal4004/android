@@ -23,6 +23,7 @@ import za.co.woolworths.financial.services.android.models.network.CompletionHand
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.Action
 import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.Product
+import za.co.woolworths.financial.services.android.recommendations.data.response.request.CommonRecommendationEvent
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.RecommendationRequest
 import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationEventHandler
@@ -127,10 +128,7 @@ class RecommendationFragment :
             bundle?.getParcelable<Event>(BundleKeysConstants.RECOMMENDATIONS_EVENT_DATA) as Event
         val reccommendationsDataEventTypeSecond =
             bundle?.getParcelable<Event>(BundleKeysConstants.RECOMMENDATIONS_EVENT_DATA_TYPE) as Event
-        val reccommendationsUserAgent =
-            bundle?.getParcelable<Event>(BundleKeysConstants.RECOMMENDATIONS_USER_AGENT) as Event
-        val reccommendationsIPAddress =
-            bundle?.getParcelable<Event>(BundleKeysConstants.RECOMMENDATIONS_IP_ADDRESS) as Event
+
         var recMonetateId: String? = null
         if (Utils.getMonetateId() != null) {
             recMonetateId = Utils.getMonetateId()
@@ -140,9 +138,7 @@ class RecommendationFragment :
             events = listOf(
                 reccommendationsDataEventTypeFirst,
                 reccommendationsDataEventTypeSecond,
-                reccommendationsUserAgent,
-                reccommendationsIPAddress
-            ),
+            ).plus(CommonRecommendationEvent.commonRecommendationEvents()),
             monetateId = recMonetateId
         )
 

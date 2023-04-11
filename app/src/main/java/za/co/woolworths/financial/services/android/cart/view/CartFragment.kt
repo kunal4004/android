@@ -82,7 +82,6 @@ import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseVie
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView.IWalkthroughActionListener
 import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ActionSheetDialogFragment
-import za.co.woolworths.financial.services.android.ui.wfs.common.getIpAddress
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_EXPECTATION_FAILED_502
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
@@ -1344,18 +1343,6 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         )
         bundle.putParcelable(
             BundleKeysConstants.RECOMMENDATIONS_EVENT_DATA_TYPE, Event(eventType = "monetate:context:Cart", null, null, null, null, cartLinesValue
-            )
-        )
-        bundle.putParcelable(
-            BundleKeysConstants.RECOMMENDATIONS_USER_AGENT, Event(
-                eventType = BundleKeysConstants.RECOMMENDATIONS_USER_AGENT,
-                userAgent = System.getProperty("http.agent") ?: ""
-            )
-        )
-        bundle.putParcelable(
-            BundleKeysConstants.RECOMMENDATIONS_IP_ADDRESS,
-            Event(eventType = BundleKeysConstants.RECOMMENDATIONS_IP_ADDRESS,
-                ipAddress = getIpAddress(requireActivity())
             )
         )
 

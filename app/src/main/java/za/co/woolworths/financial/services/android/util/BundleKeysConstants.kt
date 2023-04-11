@@ -1,5 +1,7 @@
 package za.co.woolworths.financial.services.android.util
 
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants
+
 class BundleKeysConstants {
 
     companion object {
@@ -47,8 +49,6 @@ class BundleKeysConstants {
 
         const val RECOMMENDATIONS_EVENT_DATA = "recommendations_event_data"
         const val RECOMMENDATIONS_EVENT_DATA_TYPE = "recommendations_event_data_type"
-        const val RECOMMENDATIONS_USER_AGENT = "monetate:context:UserAgent"
-        const val RECOMMENDATIONS_IP_ADDRESS = "monetate:context:IpAddress"
     }
 
 }

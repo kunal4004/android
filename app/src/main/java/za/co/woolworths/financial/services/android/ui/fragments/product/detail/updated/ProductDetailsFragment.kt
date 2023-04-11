@@ -1142,18 +1142,6 @@ class ProductDetailsFragment :
                 products = listOf(productX), cartLines = listOf()
             )
         )
-        bundle.putParcelable(
-            BundleKeysConstants.RECOMMENDATIONS_USER_AGENT, Event(
-                eventType = BundleKeysConstants.RECOMMENDATIONS_USER_AGENT,
-                userAgent = System.getProperty("http.agent") ?: ""
-            )
-        )
-        bundle.putParcelable(
-            BundleKeysConstants.RECOMMENDATIONS_IP_ADDRESS,
-            Event(eventType = BundleKeysConstants.RECOMMENDATIONS_IP_ADDRESS,
-                ipAddress = getIpAddress(requireActivity())
-            )
-        )
 
         val navHostFragment =
             childFragmentManager.findFragmentById(R.id.navHostRecommendation) as NavHostFragment
