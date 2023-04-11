@@ -153,8 +153,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         implements BottomNavigator, FragNavController.TransactionListener, FragNavController.RootFragmentListener,
         PermissionResultCallback, ToastUtils.ToastInterface, IToastInterface, Observer {
 
-    public static final int INDEX_PRODUCT = FragNavController.TAB1;
-    public static final int INDEX_TODAY = FragNavController.TAB2;
+    public static final int INDEX_TODAY = FragNavController.TAB1;
+    public static final int INDEX_PRODUCT = FragNavController.TAB2;
     public static final int INDEX_CART = FragNavController.TAB3;
     public static final int INDEX_REWARD = FragNavController.TAB4;
     public static final int INDEX_ACCOUNT = FragNavController.TAB5;
