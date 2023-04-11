@@ -580,25 +580,14 @@ class RecommendationFragment :
         override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
             when (newState) {
                 RecyclerView.SCROLL_STATE_IDLE -> {
-                    println("recommendationProductsScrollListener: IDLE")
                     getVisibleProductsPosition()?.let {
                         recommendationViewModel.visibleRecommendationProducts(
                             it
                         )
                     }
                 }
-                RecyclerView.SCROLL_STATE_DRAGGING -> println("recommendationProductsScrollListener: Scrolling now | DRAGGING")
-                RecyclerView.SCROLL_STATE_SETTLING -> println("recommendationProductsScrollListener: Scroll Settling")
-                else -> {
-                    println("recommendationProductsScrollListener: ELSE")
-                }
             }
         }
-
-        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-            super.onScrolled(recyclerView, dx, dy)
-        }
-
     }
 
     private fun getVisibleProductsPosition(): List<Int>? {
@@ -609,7 +598,6 @@ class RecommendationFragment :
             for (i in firstItem..lastItem) {
                 list.add(i)
             }
-            //println("DETECTED ITEMS: $list")
             return list
         }
         return null

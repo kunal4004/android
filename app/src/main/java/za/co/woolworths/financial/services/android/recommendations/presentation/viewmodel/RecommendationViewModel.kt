@@ -1,7 +1,5 @@
 package za.co.woolworths.financial.services.android.recommendations.presentation.viewmodel
 
-import android.os.Handler
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -16,7 +14,6 @@ import za.co.woolworths.financial.services.android.recommendations.data.response
 import za.co.woolworths.financial.services.android.ui.extension.isConnectedToNetwork
 import za.co.woolworths.financial.services.android.util.Utils
 import javax.inject.Inject
-import kotlin.collections.ArrayList
 
 @HiltViewModel
 class RecommendationViewModel @Inject constructor(
@@ -31,18 +28,9 @@ class RecommendationViewModel @Inject constructor(
 
     private val _visibleRecommendationItemRequest = MutableLiveData<Boolean?>()
     val visibleRecommendationItemRequest: LiveData<Boolean?> = _visibleRecommendationItemRequest
-    private var handler: Handler? = null
 
     fun setCurrentSelectedTab(tabPosition: Int) {
         currentSelectedTab = tabPosition
-        parentPageScrolledToRecommendation()
-//        if(handler == null) {
-//            handler = Handler(Looper.getMainLooper())
-//            handler?.postDelayed(runnable, 1000)
-//        }
-    }
-
-    private val runnable = Runnable {
         parentPageScrolledToRecommendation()
     }
 
@@ -116,9 +104,6 @@ class RecommendationViewModel @Inject constructor(
     }
 
     private fun submitRecImpressionEvent(recTokens: List<String>) {
-        Log.e("TAG", "submittedRecImpressions Size : ${submittedRecImpressions.size}")
-        Log.e("TAG", "submittedRecImpressions : $submittedRecImpressions")
-        Log.e("TAG", "New Eligible recTokens : $recTokens")
         if (isConnectedToNetwork() == true) {
             WoolworthsApplication.getInstance().recommendationAnalytics.submitRecImpressions(
                 recTokens
