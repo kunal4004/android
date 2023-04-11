@@ -16,7 +16,7 @@ android {
     def minor = "9"
     def fix = "0"
     def jobNumberProduction = 214
-    def jobNumberQa = 684
+    def jobNumberQa = 685
 
     buildFeatures {
         dataBinding true
@@ -300,10 +300,9 @@ dependencies {
     implementation 'com.github.MasayukiSuda:BubbleLayout:v1.2.1'
 
     // Import the Firebase BoM
-    implementation platform('com.google.firebase:firebase-bom:30.3.1')
+    implementation platform('com.google.firebase:firebase-bom:31.4.0')
     implementation 'io.grpc:grpc-okhttp:1.32.2'
     implementation 'com.google.firebase:firebase-messaging-ktx'
-    implementation 'com.google.firebase:firebase-core'
     implementation 'com.google.firebase:firebase-config-ktx'
     implementation 'com.google.firebase:firebase-invites:17.0.0'
     implementation 'com.google.firebase:firebase-perf-ktx'
