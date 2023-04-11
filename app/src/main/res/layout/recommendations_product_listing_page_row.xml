@@ -152,6 +152,7 @@
         android:textSize="@dimen/eleven_sp"
         android:visibility="gone"
         app:layout_constrainedHeight="true"
+        app:layout_constraintBottom_toTopOf="@+id/onlinePromotionalTextView2"
         app:layout_constraintEnd_toStartOf="@+id/endMarginGuideline"
         app:layout_constraintStart_toStartOf="@+id/startMarginGuideline"
         app:layout_constraintTop_toBottomOf="@+id/rating_bar"
@@ -173,10 +174,10 @@
         android:textSize="@dimen/eleven_sp"
         android:visibility="gone"
         app:layout_constrainedHeight="true"
+        app:layout_constraintBottom_toTopOf="@+id/tvSaveText"
         app:layout_constraintEnd_toStartOf="@+id/endMarginGuideline"
         app:layout_constraintStart_toStartOf="@+id/startMarginGuideline"
         app:layout_constraintTop_toBottomOf="@+id/onlinePromotionalTextView1"
-        app:layout_constraintBottom_toTopOf="@id/includeProductListingPriceLayout"
         tools:text="R15.00"
         tools:visibility="visible" />
 
@@ -190,12 +191,12 @@
         android:includeFontPadding="false"
         android:textColor="@color/promo_text_color"
         android:textSize="@dimen/ten_sp"
-        android:visibility="gone"
+        android:visibility="invisible"
         app:layout_constrainedHeight="true"
-        app:layout_constraintBottom_toTopOf="@+id/includeProductListingPriceLayout"
         app:layout_constraintEnd_toStartOf="@+id/endMarginGuideline"
         app:layout_constraintStart_toStartOf="@+id/startMarginGuideline"
         app:layout_constraintTop_toBottomOf="@+id/onlinePromotionalTextView2"
+        app:layout_constraintBottom_toTopOf="@+id/includeProductListingPriceLayout"
         tools:text="Save R2000.00"
         tools:visibility="visible" />
 
