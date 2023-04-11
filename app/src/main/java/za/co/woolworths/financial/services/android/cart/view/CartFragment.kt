@@ -8,7 +8,9 @@ import android.content.IntentFilter
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
+import android.view.MotionEvent
 import android.view.View
+import android.view.View.OnTouchListener
 import android.view.WindowManager
 import android.widget.ScrollView
 import androidx.appcompat.app.AppCompatActivity
@@ -56,6 +58,10 @@ import za.co.woolworths.financial.services.android.models.network.OneAppService.
 import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.models.service.event.CartState
 import za.co.woolworths.financial.services.android.models.service.event.ProductState
+import za.co.woolworths.financial.services.android.recommendations.data.response.request.CartProducts
+import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
+import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationEventHandler
+import za.co.woolworths.financial.services.android.recommendations.presentation.viewmodel.RecommendationViewModel
 import za.co.woolworths.financial.services.android.ui.activities.CartCheckoutActivity
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
@@ -67,12 +73,16 @@ import za.co.woolworths.financial.services.android.ui.fragments.cart.GiftWithPur
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.RemoveProductsFromCartDialogFragment.Companion.newInstance
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.RemoveProductsFromCartDialogFragment.IRemoveProductsFromCartDialog
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants
 import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
+import za.co.woolworths.financial.services.android.ui.views.LockableNestedScrollViewV2
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory.Companion.buildAddToCartSuccessToast
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory.Companion.showItemsLimitToastOnAddToCart
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView.IWalkthroughActionListener
+import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ActionSheetDialogFragment
+import za.co.woolworths.financial.services.android.ui.wfs.common.getIpAddress
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_EXPECTATION_FAILED_502
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
@@ -89,18 +99,12 @@ import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.up
 import za.co.woolworths.financial.services.android.util.QueryBadgeCounter.Companion.instance
 import za.co.woolworths.financial.services.android.util.ToastUtils.ToastInterface
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.logException
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.setCrashlyticsString
 import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.util.wenum.Delivery.Companion.getType
-import za.co.woolworths.financial.services.android.recommendations.data.response.request.CartProducts
-import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
-import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationEventHandler
-import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants
-import za.co.woolworths.financial.services.android.ui.views.WTextView
-import za.co.woolworths.financial.services.android.ui.wfs.common.getIpAddress
-import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 import java.net.ConnectException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
@@ -114,6 +118,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     private val viewModel: CartViewModel by viewModels(
         ownerProducer = { this }
     )
+    private val recommendationViewModel: RecommendationViewModel by viewModels()
 
     private val TAG = this.javaClass.simpleName
     private var mNumberOfListSelected = 0
@@ -202,6 +207,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         )
         initializeLoggedInUserCartUI()
         setPriceInformationVisibility(false)
+        addScrollListeners()
     }
 
     private fun initializeLoggedInUserCartUI() {
@@ -2388,6 +2394,29 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         if(isAdded){
             loadShoppingCart()
             binding.nestedScrollView.fullScroll(ScrollView.FOCUS_UP)
+        }
+    }
+
+    private fun addScrollListeners() {
+        binding.nestedScrollView.apply {
+            setOnTouchListener(onTouchListener)
+            setOnScrollStoppedListener(onScrollStoppedListener)
+        }
+    }
+
+    private val onTouchListener = OnTouchListener { _, event ->
+        if (event?.action == MotionEvent.ACTION_UP) {
+            binding.nestedScrollView.startScrollerTask();
+        }
+        false
+    }
+
+    private val onScrollStoppedListener = object: LockableNestedScrollViewV2.OnScrollStoppedListener {
+        override fun onScrollStopped() {
+            val visible = binding.nestedScrollView.isViewVisible(binding.layoutRecommendationContainer.root)
+            if (visible) {
+                recommendationViewModel.parentPageScrolledToRecommendation()
+            }
         }
     }
 
