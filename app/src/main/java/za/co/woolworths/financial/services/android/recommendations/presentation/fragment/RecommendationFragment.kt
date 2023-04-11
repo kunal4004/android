@@ -58,13 +58,9 @@ class RecommendationFragment :
     private var oneTimeInventoryErrorDialogDisplay: Boolean = false
     private var _recommendationsLayoutBinding: RecommendationsLayoutBinding? = null
     private val recommendationsLayoutBinding get() = _recommendationsLayoutBinding!!
-
-    //private val recommendationViewModel: RecommendationViewModel by viewModels()
     private val recommendationViewModel: RecommendationViewModel by viewModels(ownerProducer = { requireParentFragment().requireParentFragment() })
     private var mProductCategoryAdapter: ProductCategoryAdapter? = null
     private var mProductListRecommendationAdapter: ProductListRecommendationAdapter? = null
-
-    //    private var recommendationLayoutManager: FlexboxLayoutManager? = null
     private var recommendationLayoutManager: LinearLayoutManager? = null
 
     override fun onCreateView(
@@ -114,9 +110,6 @@ class RecommendationFragment :
             context?.let {
                 recommendationLayoutManager =
                     LinearLayoutManager(it, LinearLayoutManager.HORIZONTAL, false)
-//                recommendationLayoutManager = FlexboxLayoutManager(context)
-//                recommendationLayoutManager?.flexDirection = FlexDirection.ROW
-//                recommendationLayoutManager?.flexWrap = FlexWrap.NOWRAP
                 recommendationsLayoutBinding.recommendationsProductsRecyclerview.layoutManager =
                     recommendationLayoutManager
 
