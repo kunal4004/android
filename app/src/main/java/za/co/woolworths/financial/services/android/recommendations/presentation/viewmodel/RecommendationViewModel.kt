@@ -104,6 +104,10 @@ class RecommendationViewModel @Inject constructor(
     }
 
     private fun submitRecImpressionEvent(recTokens: List<String>) {
+        if (recTokens.isEmpty()) {
+            return
+        }
+
         if (isConnectedToNetwork() == true) {
             WoolworthsApplication.getInstance().recommendationAnalytics.submitRecImpressions(
                 recTokens

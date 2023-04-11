@@ -5,6 +5,7 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 object Constants {
     const val EVENT_TYPE_PURCHASE = "monetate:context:Purchase"
     const val EVENT_TYPE_REC_CLICKS = "monetate:record:RecClicks"
+    const val EVENT_TYPE_REC_IMPRESSIONS = "monetate:record:RecImpressions"
     const val CURRENCY_VALUE: String = FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE
 
     const val PRODUCT_ID_FOR_SHIPPING = "SHIPPING"

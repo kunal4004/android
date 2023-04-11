@@ -20,7 +20,7 @@ class RecImpressionUseCase @Inject constructor(
 
     private fun prepareEvent(recTokens: List<String>): RecommendationRequest? {
         val monetateId = Utils.getMonetateId()
-        val eventType = Constants.EVENT_TYPE_REC_CLICKS
+        val eventType = Constants.EVENT_TYPE_REC_IMPRESSIONS
         return if (recTokens.isEmpty() || monetateId.isNullOrEmpty()) {
             null
         } else {
