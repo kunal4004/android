@@ -88,7 +88,7 @@ class RecommendationFragment :
         recommendationsLayoutBinding?.recommendationsCategoryRecyclerview?.adapter =
             mProductCategoryAdapter
 
-        actionItemList.get(0).products?.let { showRecProductsList(it) }
+        actionItemList.getOrNull(0)?.products?.let { showRecProductsList(it) }
 
         mProductCategoryAdapter?.onItemClick = {
             showRecProductsList(it)

@@ -148,9 +148,6 @@ class MyRecycleViewHolder(val mProductListingPageRowBinding: RecommendationsProd
                     }
                 }
             }
-        } else {
-            onlinePromotionalTextView1?.text = ""
-            onlinePromotionalTextView2?.text = ""
         }
     }
 
