@@ -123,6 +123,7 @@ class RecommendationFragment :
     }
 
     private fun getRecommendationDetails() {
+        recommendationViewModel.clearSubmittedRecImpressions()
         val bundle = arguments?.getBundle(BundleKeysConstants.BUNDLE)
         val reccommendationsDataEventTypeFirst =
             bundle?.getParcelable<Event>(BundleKeysConstants.RECOMMENDATIONS_EVENT_DATA) as Event

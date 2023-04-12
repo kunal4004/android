@@ -20,6 +20,10 @@ class RecommendationViewModel @Inject constructor(
     private val recommendationsRepository: RecommendationsRepository
 ) : ViewModel() {
 
+    companion object {
+        const val MIN_VISIBLE_RECOMMENDATION_ITEMS = 2
+    }
+
     private var currentSelectedTab = 0
     private var submittedRecImpressions: ArrayList<String> = arrayListOf()
 
@@ -31,7 +35,37 @@ class RecommendationViewModel @Inject constructor(
 
     fun setCurrentSelectedTab(tabPosition: Int) {
         currentSelectedTab = tabPosition
-        parentPageScrolledToRecommendation()
+        recImpressionOnTabChanged(currentSelectedTab)
+    }
+
+    private fun recImpressionOnTabChanged(tabPosition: Int) {
+        val productCount = recommendationResponseData.value?.size ?: 0
+
+        if (tabPosition < 0 || tabPosition >= productCount) {
+            return
+        }
+
+        val eligibleItemCountForRecImpression =
+            if (productCount > MIN_VISIBLE_RECOMMENDATION_ITEMS) {
+                MIN_VISIBLE_RECOMMENDATION_ITEMS
+            } else {
+                productCount
+            }
+        val recTokens = arrayListOf<String>()
+        for (i in 0 until eligibleItemCountForRecImpression) {
+            if (!recommendationResponseData.value?.get(tabPosition)?.products?.get(i)?.recToken.isNullOrEmpty()) {
+                recTokens.add(recommendationResponseData.value?.get(tabPosition)?.products?.get(i)?.recToken!!)
+            }
+        }
+
+        filterAndSubmitRecImpression(
+            tokensVisited = recTokens, submittedTokens = submittedRecImpressions
+        )
+    }
+
+    fun clearSubmittedRecImpressions() {
+        submittedRecImpressions.clear()
+        currentSelectedTab = 0
     }
 
     fun getRecommendationResponse(recommendationRequest: RecommendationRequest) {
@@ -62,20 +96,23 @@ class RecommendationViewModel @Inject constructor(
         }
         val tokensVisited = tokensFromPosition(currentSelectedTab, validPositions)
 
-        val eligibleTokensToSubmit = if (submittedRecImpressions.isNotEmpty()) {
-            filterRecTokens(
-                tokensVisited = tokensVisited, submittedTokens = submittedRecImpressions
-            )
-        } else {
-            tokensVisited
-        }
+        filterAndSubmitRecImpression(
+            tokensVisited = tokensVisited, submittedTokens = submittedRecImpressions
+        )
+    }
 
+    private fun filterAndSubmitRecImpression(
+        tokensVisited: List<String>, submittedTokens: List<String>?
+    ) {
+        val eligibleTokensToSubmit = filterRecTokens(
+            tokensVisited = tokensVisited, submittedTokens = submittedTokens
+        )
         submitRecImpressionEvent(eligibleTokensToSubmit)
     }
 
     private fun tokensFromPosition(tabPosition: Int, itemPosition: List<Int>): List<String> {
         val recTokens = arrayListOf<String>()
-        if (!recommendationResponseData.value.isNullOrEmpty() && tabPosition < (recommendationResponseData.value?.size
+        if (tabPosition >= 0 && !recommendationResponseData.value.isNullOrEmpty() && tabPosition < (recommendationResponseData.value?.size
                 ?: 0)
         ) {
             itemPosition.forEach { position ->
