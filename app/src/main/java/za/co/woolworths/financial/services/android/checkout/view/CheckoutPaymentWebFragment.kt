@@ -74,8 +74,7 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentCheckoutPaymentWebBinding.bind(view)
-        cartItemList =
-            checkNotNull(arguments?.getSerializable(CheckoutAddressManagementBaseFragment.CART_ITEM_LIST) as ArrayList<CommerceItem>?)
+        cartItemList = arguments?.getSerializable(CheckoutAddressManagementBaseFragment.CART_ITEM_LIST) as ArrayList<CommerceItem>?
         initPaymentWebView()
     }
 
