@@ -153,6 +153,10 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         implements BottomNavigator, FragNavController.TransactionListener, FragNavController.RootFragmentListener,
         PermissionResultCallback, ToastUtils.ToastInterface, IToastInterface, Observer {
 
+    /*
+    As per requirement open WToday screen first when app open
+    but Today Tab position should be 2nd (1 Position)
+     */
     public static final int INDEX_TODAY = FragNavController.TAB1;
     public static final int INDEX_PRODUCT = FragNavController.TAB2;
     public static final int INDEX_CART = FragNavController.TAB3;
@@ -249,6 +253,9 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 .eager(true)
                 .rootFragmentListener(this, 5)
                 .build();
+        // Adding default position for WToday Tab with index(INDEX_PRODUCT that is position 1) (When open app)
+        // Tab order remain same in order to Shop,Today, My Cart,WRewards,My Account
+        getBottomNavigationById().setCurrentItem(INDEX_PRODUCT);
         renderUI();
 
         initBadgeCounter();
