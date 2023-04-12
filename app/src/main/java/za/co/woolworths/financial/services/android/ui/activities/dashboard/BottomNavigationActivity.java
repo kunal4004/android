@@ -154,8 +154,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         PermissionResultCallback, ToastUtils.ToastInterface, IToastInterface, Observer {
 
     /*
-    As per requirement open WToday screen first when app open
-    but Today Tab position should be 2nd (1 Position)
+    As per requirement open WToday screen when app open(default screen)
+    but Today Tab position should be 2nd (1 Position) remain in same order
      */
     public static final int INDEX_TODAY = FragNavController.TAB1;
     public static final int INDEX_PRODUCT = FragNavController.TAB2;
