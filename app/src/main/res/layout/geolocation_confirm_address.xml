@@ -223,7 +223,6 @@
             android:fontFamily="@font/opensans_semi_bold"
             android:paddingHorizontal="@dimen/twenty_four_dp"
             android:paddingVertical="@dimen/five_dp"
-            android:text="28 Eastlake Island Drive"
             android:textColor="@color/black"
             android:textSize="@dimen/eighteen_sp"
             android:translationY="@dimen/minus_one_point_five_sp"

@@ -8,9 +8,10 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
-import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
@@ -61,6 +62,8 @@ import za.co.woolworths.financial.services.android.util.LocalConstant.Companion.
 import za.co.woolworths.financial.services.android.util.LocalConstant.Companion.DEFAULT_LONGITUDE
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.location.DynamicGeocoder
+import za.co.woolworths.financial.services.android.util.location.Event
+import za.co.woolworths.financial.services.android.util.location.Locator
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import javax.inject.Inject
 
@@ -102,11 +105,13 @@ class ConfirmAddressMapFragment :
     private var isStreetNumberAndRouteFromSearch: Boolean? = false
     private var isPoiAddress: Boolean? = false
     private var address2: String? = ""
+    private lateinit var locator: Locator
 
     override fun onViewCreated(
         view: View, savedInstanceState: Bundle?,
     ) {
         super.onViewCreated(view, savedInstanceState)
+        locator = Locator(activity as AppCompatActivity)
         binding = GeolocationConfirmAddressBinding.bind(view)
         binding.dynamicMapView?.initializeMap(savedInstanceState, this)
     }
@@ -125,6 +130,7 @@ class ConfirmAddressMapFragment :
         deliveryType = args.mapData.deliveryType
         clearAddress()
         confirmAddressClick()
+        onNavigationMapArrowClicked()
         addFragmentListner()
         turnLocationSettingsOn()
         cancelClick()
@@ -138,6 +144,14 @@ class ConfirmAddressMapFragment :
                 showErrorDialog()
             }
         }
+    }
+
+    private fun onNavigationMapArrowClicked() {
+       binding?.navigationMapArrow?.setOnClickListener {
+           Utils.getLastSavedLocation()?.let {
+               moveMapCamera(it.latitude,it.longitude)
+           }
+       }
     }
 
     private fun showErrorDialog() {
@@ -217,6 +231,7 @@ class ConfirmAddressMapFragment :
 
     private fun clearAddressText() {
         binding.autoCompleteTextView.setText("")
+        binding.tvLocationNikName.text = ""
     }
 
     private fun clearMapDetails() {
@@ -515,6 +530,7 @@ class ConfirmAddressMapFragment :
                     placeId = item?.placeId.toString()
                     placeName = item?.primaryText.toString()
                     binding?.autoCompleteTextView?.setText(placeName)
+                    binding?.tvLocationNikName?.text = placeName
                     isAddressFromSearch = true
                     isMainPlaceName = true
                     isStreetNumberAndRouteFromSearch = true
@@ -619,6 +635,7 @@ class ConfirmAddressMapFragment :
             } else {
                 errorMassageDivider?.visibility = View.GONE
                 errorMessage?.visibility = View.GONE
+                errorMessageTitle?.visibility = View.GONE
                 confirmAddress?.isEnabled = true
             }
         }
@@ -648,6 +665,7 @@ class ConfirmAddressMapFragment :
     private fun moveMapCamera(latitude: Double?, longitude: Double?) {
         if (latitude != null && longitude != null) {
             binding?.imgMapMarker?.visibility = View.VISIBLE
+            binding?.navigationMapArrow?.visibility = View.VISIBLE
             binding?.confirmAddress?.isEnabled = true
         }
         isAddAddress = false
@@ -693,6 +711,12 @@ class ConfirmAddressMapFragment :
                             city,
                             state
                         )
+                    )
+                    binding?.tvLocationNikName?.text = getString(
+                        R.string.geo_map_address,
+                        address1,
+                        "",
+                        ""
                     )
                 }
                 isAddressFromSearch = false
@@ -866,6 +890,7 @@ class ConfirmAddressMapFragment :
                     noLocationLayout?.noLocationRootLayout?.visibility = View.VISIBLE
                     dynamicMapView?.visibility = View.GONE
                     imgMapMarker?.visibility = View.GONE
+                    navigationMapArrow?.visibility = View.GONE
                     confirmAddressLayout?.visibility = View.GONE
                 }
                 return@apply
