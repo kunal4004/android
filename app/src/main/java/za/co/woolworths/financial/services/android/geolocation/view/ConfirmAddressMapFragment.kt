@@ -906,12 +906,12 @@ class ConfirmAddressMapFragment :
                 moveMapCamera(mLatitude?.toDoubleOrNull(), mLongitude?.toDoubleOrNull())
                 binding.apply {
                     dynamicMapView?.visibility = View.VISIBLE
-                    mapFrameLayout.visibility = View.VISIBLE
-                    autoCompleteTextView.isEnabled = true
+                    mapFrameLayout?.visibility = View.VISIBLE
+                    autoCompleteTextView?.isEnabled = true
                     dynamicMapView?.setAllGesturesEnabled(true)
                     if (isAddAddress != null && isAddressSearch == false) {
-                        confirmAddress.isEnabled = false
-                        imgMapMarker.visibility = View.GONE
+                        confirmAddress?.isEnabled = false
+                        imgMapMarker?.visibility = View.GONE
                         tvMarkerHint?.visibility = View.GONE
                     }
                 }
