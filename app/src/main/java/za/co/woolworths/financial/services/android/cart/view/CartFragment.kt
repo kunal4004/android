@@ -40,6 +40,7 @@ import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddress
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.enhancedSubstitution.managesubstitution.ManageSubstitutionFragment
+import za.co.woolworths.financial.services.android.enhancedSubstitution.managesubstitution.SearchSubstitutionFragment
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils.Companion.getDelivertyType
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils.Companion.getPlaceId
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils.Companion.getSelectedPlaceId
@@ -2376,6 +2377,15 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             postAnalyticsRemoveFromCart(list)
             enableItemDelete(false)
             viewModel.removeAllCartItem()
+        }
+
+        setFragmentResultListener(SearchSubstitutionFragment.SELECTED_SUBSTITUTED_PRODUCT) { _, bundle ->
+            // User Substitute product from search screen and came back to cart
+            bundle.apply {
+                if (bundle.containsKey(SearchSubstitutionFragment.SUBSTITUTION_ITEM_ADDED)) {
+                    loadShoppingCart()
+                }
+            }
         }
     }
 
