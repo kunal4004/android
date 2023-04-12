@@ -1,18 +1,30 @@
-package za.co.woolworths.financial.services.android.recommendations.presentation.fragment
+package za.co.woolworths.financial.services.android.recommendations.presentation.adapter.viewholder
 
 import android.text.Html
 import android.text.TextUtils
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.databinding.RecommendationsProductListingPageRowBinding
+import com.google.android.flexbox.AlignItems
+import com.google.android.flexbox.FlexboxLayoutManager
 import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.Product
 import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.PromotionImages
+import za.co.woolworths.financial.services.android.recommendations.presentation.fragment.RecommendationFragment
+import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationsProductListingListener
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.featureutils.RatingAndReviewUtil
 import za.co.woolworths.financial.services.android.util.ImageManager
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 
 class MyRecycleViewHolder(val mProductListingPageRowBinding: RecommendationsProductListingPageRowBinding) :
     RecyclerView.ViewHolder(mProductListingPageRowBinding.root) {
+
+    init {
+        val layoutParams = itemView.layoutParams
+        if (layoutParams is FlexboxLayoutManager.LayoutParams) {
+            layoutParams.flexShrink = 0.0f
+            layoutParams.alignSelf = AlignItems.FLEX_START //this will align each itemView on Top
+        }
+    }
 
     fun setProductItem(
         productList: Product,
@@ -42,6 +54,9 @@ class MyRecycleViewHolder(val mProductListingPageRowBinding: RecommendationsProd
     private fun setOnClickListener(navigator: RecommendationsProductListingListener, productList: Product
     ) {
         mProductListingPageRowBinding.imProductImage.setOnClickListener { navigator.openProductDetailView(productList) }
+        mProductListingPageRowBinding.brandName.setOnClickListener { navigator.openProductDetailView(productList) }
+        mProductListingPageRowBinding.tvRangeName.setOnClickListener { navigator.openProductDetailView(productList) }
+        mProductListingPageRowBinding.tvProductName.setOnClickListener { navigator.openProductDetailView(productList) }
     }
 
     private fun setProductImage(productList: Product) {
@@ -187,7 +202,8 @@ class MyRecycleViewHolder(val mProductListingPageRowBinding: RecommendationsProd
         mProductListingPageRowBinding.apply {
             root.context?.apply {
                 productList?.apply {
-                    includeProductListingPriceLayout.imQuickShopAddToCartIcon.visibility = if (productType.equals(RecommendationFragment.ITEM_TYPE_FOOD, ignoreCase = true)) View.VISIBLE else View.GONE
+                    includeProductListingPriceLayout.imQuickShopAddToCartIcon.visibility = if (productType.equals(
+                            RecommendationFragment.ITEM_TYPE_FOOD, ignoreCase = true)) View.VISIBLE else View.GONE
                 }
             }
         }

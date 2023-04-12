@@ -321,10 +321,11 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
         bundle?.putBoolean(
             IS_COMING_CONFIRM_ADD, false)
         bundle?.putString(DELIVERY_TYPE, deliveryType)
-        findNavController().navigate(
-            R.id.action_deliveryAddressConfirmationFragment_to_clickAndCollectStoresFragment,
-            bundleOf(BUNDLE to bundle)
-        )
+
+        view?.let {
+            GeoUtils.navigateSafe(it, R.id.action_deliveryAddressConfirmationFragment_to_clickAndCollectStoresFragment,
+                bundleOf(BUNDLE to bundle))
+        }
     }
 
     private fun GeoLocationDeliveryAddressBinding.addFragmentListner() {
@@ -334,7 +335,6 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
                 if (it.storeName != null) {
                     geoDeliveryText?.text = KotlinUtils.capitaliseFirstLetter(it.storeName)
                 }
-                editDelivery?.text = bindString(R.string.edit)
                 btnConfirmAddress?.isEnabled = true
                 btnConfirmAddress?.setBackgroundColor(
                     ContextCompat.getColor(
@@ -722,7 +722,6 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
         btnConfirmAddress.isEnabled = true
         btnConfirmAddress.setBackgroundColor(ContextCompat.getColor(requireContext(),
             R.color.black))
-        editDelivery.text = getString(R.string.edit)
         changeFulfillmentTitleTextView.text = bindString(R.string.standard_delivery)
         changeFulfillmentSubTitleTextView.text = bindString(R.string.standard_title_text)
         if (validateLocationResponse != null && validateLocationResponse?.validatePlace?.deliverable == false && progressBar.visibility == View.GONE) {
@@ -929,7 +928,7 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
         var earliestDashDate =
             validateLocationResponse?.validatePlace?.onDemand?.firstAvailableFoodDeliveryTime
         if (earliestDashDate.isNullOrEmpty())
-            earliestDashDate = getString(R.string.earliest_delivery_no_date_available)
+            earliestDashDate = getString(R.string.no_timeslots_available_title)
         geoDeliveryView?.visibility = View.VISIBLE
         earliestDeliveryDashLabel?.text = requireContext().getString(R.string.earliest_dash_delivery_timeslot)
         setVisibilityDeliveryDates(null, null, earliestDashDate)
@@ -991,7 +990,6 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
 
     private fun GeoLocationDeliveryAddressBinding.setGeoDeliveryTextForCnc() {
         geoDeliveryText.text = KotlinUtils.capitaliseFirstLetter(mStoreName)
-        editDelivery.text = bindString(R.string.edit)
         btnConfirmAddress.isEnabled = true
         btnConfirmAddress.setBackgroundColor(
             ContextCompat.getColor(

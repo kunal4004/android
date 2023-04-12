@@ -147,7 +147,7 @@
                 android:contentDescription="@string/cd_ccd_labelconfirmedtimeslot"
                 android:letterSpacing="0.1"
                 android:textSize="@dimen/thirty_five_sp"
-                app:layout_constraintRight_toRightOf="@id/right_guideline"
+                app:layout_constraintEnd_toStartOf="@id/progressIcon"
                 app:layout_constraintStart_toStartOf="@id/left_guideline"
                 app:layout_constraintTop_toTopOf="@id/progressIcon" />
 
@@ -157,7 +157,6 @@
                 android:layout_marginTop="@dimen/eight_dp"
                 android:letterSpacing="0.05"
                 android:textSize="@dimen/eighteen_sp"
-                app:layout_constraintBottom_toBottomOf="@id/progressIcon"
                 app:layout_constraintRight_toRightOf="@id/right_guideline"
                 app:layout_constraintStart_toStartOf="@id/left_guideline"
                 app:layout_constraintTop_toBottomOf="@id/deliveryDate" />
@@ -184,7 +183,7 @@
                 android:textSize="@dimen/fifteen_sp"
                 app:layout_constraintEnd_toEndOf="@id/right_guideline"
                 app:layout_constraintStart_toStartOf="@id/left_guideline"
-                app:layout_constraintTop_toBottomOf="@id/progressIcon" />
+                app:layout_constraintTop_toBottomOf="@id/deliveryDayAndTime" />
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/left_guideline"

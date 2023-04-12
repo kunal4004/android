@@ -69,11 +69,13 @@ public class SessionUtilities {
 	}
 
 	public String getUserEmail() {
-		JWTDecodedModel userDetail = getJwt();
-		if (userDetail != null) {
+		try {
+			JWTDecodedModel userDetail = getJwt();
 			return userDetail.email.get(0);
+		} catch (Exception e) {
+			Log.e(TAG, e.getMessage());
+			return null;
 		}
-		return null;
 	}
 
 	public String getSessionToken() {

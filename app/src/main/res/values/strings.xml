@@ -7,6 +7,7 @@
 
     <string name="credit_card">CREDIT CARD</string>
     <string name="personal_loan">PERSONAL LOAN</string>
+    <string name="pet_insurance">PET INSURANCE</string>
     <string name="available_funds">Available Funds</string>
     <string name="total_amount_due">Total Amount Due</string>
     <string name="deduction_day">Deduction Day:</string>
@@ -91,6 +92,7 @@
     <string name="txt_general_enquiry">General enquiries</string>
 
     <string name="contact_us_financial_services">Financial Services</string>
+    <string name="contact_us_general_enquiries">General Enquiries</string>
     <string name="contact_us_customer_service">Customer Services</string>
     <string name="contact_us_wrewards">WRewards</string>
     <string name="contact_us_myschool">MySchool enquiries</string>
@@ -477,11 +479,12 @@
     <string name="delete">DELETE</string>
     <string name="are_you_sure">Are You Sure?</string>
     <string name="delete_confirmation_text">If you remove these products from your cart, you can still shop for them in the app.</string>
+    <string name="delete_confirmation_list_text">If you remove this product from your list, you can still shop for it in the app.</string>
 
     <!-- new list item-->
     <string name="create_list">create list</string>
     <string name="new_list">new list</string>
-    <string name="shopping_search_hint">Search products to add to your list</string>
+    <string name="shopping_search_hint">Add Items To Your List</string>
     <string name="total_item">Total*</string>
     <string name="rlOtherDiscounts"><![CDATA[WRewards Savings & Other Discounts]]></string>
     <string name="out_of_stock">out of stock</string>
@@ -963,6 +966,7 @@
     <string name="activate">ACTIVATE</string>
     <string name="linked_personal_loan_layout">Linked Personal Loan</string>
     <string name="apply_personal_loan_layout">Apply Personal Loan</string>
+    <string name="apply_pet_insurance_layout">Apply Pet Insurance</string>
     <string name="messages_layout">Messages</string>
     <string name="store_locator_layout">Store Locator</string>
     <string name="need_help_layout">Need Help</string>
@@ -1591,7 +1595,7 @@
     <string name="select_your_collection_store">Select your collection store:</string>
     <string name="select_your_delivery_location">Select your delivery location:</string>
     <string name="remove_these_items_continue">remove these items &amp; continue</string>
-    <string name="item_not_available_for_collection_title">Item not available</string>
+    <string name="item_not_available_for_collection_title">To purchase this item, please change your delivery option to Standard Delivery or Click &amp; Collect.</string>
     <string name="item_not_available_for_collection_desc">To purchase, please try \'Find In Store\', or change delivery option to Standard.</string>
     <string name="change_delivery_option">CHANGE DELIVERY OPTION</string>
     <string name="remove_items_dialog_title">These items will be removed</string>
@@ -2272,7 +2276,7 @@
     <string name="save_address">SAVE ADDRESS</string>
     <string name="change_details">change details</string>
     <string name="delete_address">delete address</string>
-    <string name="places_address_error_msg">Please enter a valid Address</string>
+    <string name="places_address_error_msg">This field is required.</string>
     <string name="address_nickname_error_msg">This field is required.</string>
     <string name="add_new_address_error_msg">Please select or add a delivery address.</string>
 
@@ -2371,7 +2375,7 @@
     <string name="province_colon_text_view">Province:</string>
     <string name="postal_code_colon_text_view">Postal Code:</string>
     <string name="optional_hint">Optional</string>
-    <string name="places_autocomplete_tv_hint">Enter a new address</string>
+    <string name="places_autocomplete_tv_hint">Enter Location</string>
     <string name="add_a_new_address">Add A New Address</string>
     <string name="add_address">Add Address</string>
     <string name="change_suburb">change suburb</string>
@@ -2463,9 +2467,9 @@
     <string name="unavailable_item">Unfortunately this item is unavailable in %1$s. Try changing your delivery location and try again.</string>
     <string name="out_of_stock_item">Unfortunately this item is out of stock in %1$s. Try changing your delivery location and try again.</string>
     <string name="absa_statement_error_try_again_later">We\'re unable to retrieve your Statement. Please try again later.</string>
-    <string name="confirm_your_loc">Confirm Your Location</string>
-    <string name="we_use_your_location_to_give_you_the_most_naccurate_stock_availabilty_and_pricing">You can use an address, the name of a complex, or your closest landmark (e.g. a Woolies store).</string>
-    <string name="enter_new_location">Enter new location</string>
+    <string name="choose_a_location">Choose A Location</string>
+    <string name="use_an_address_the_name_of_a_complex_or_your_closest_landmark_eg_a_woolies_store">Use an address, the name of a complex, or your closest landmark (e.g. a Woolies store).</string>
+    <string name="enter_new_location">Enter New Location</string>
     <string name="my_saved_addresses">My Saved Addresses</string>
     <string name="current_location">Current Location</string>
     <string name="update_address">Update Address</string>
@@ -2537,14 +2541,18 @@
     <string name="set_your_address">Set your address</string>
     <string name="select_your_preferred_store">Select your preferred store</string>
     <string name="set_address">SET ADDRESS</string>
-    <string name="dash_delivery_title">To view and shop with Woolies Dash,\n we need your address.</string>
-    <string name="dash_delivery_msg">Set Your Address \n To Start Shopping.</string>
+    <string name="dash_delivery_title">We’ll gather your full delivery address later on, when you checkout.</string>
+    <string name="dash_delivery_msg">To view or shop with Woolies Dash, we need your location.</string>
     <string name="device_location_service_disabled">Your Device’s Location Services Are Disabled.</string>
     <string name="device_location_service_disabled_subTitle">To view and shop using Click &amp; Collect, we need your location.</string>
     <string name="btn_turn_on_location_text">Turn location on</string>
     <string name="all_products_available">All Products Available</string>
     <string name="next_dash_delivery_timeslot_text">Next Dash Delivery Timeslot</string>
     <string name="my_shopping_lists">My Shopping Lists</string>
+    <string name="title_mylist_dash_tooltip">Some items aren’t available using <b>Dash.</b></string>
+    <string name="title_mylist_collection_tooltip">Some items aren’t available for <b>Collection.</b></string>
+    <string name="title_mylist_standard_tooltip">Some items aren’t available using <b>Standard.</b></string>
+    <string name="change_delivery_method_mylist_tooltip">Get them using a different delivery method.</string>
     <string name="hi">HI&#160;</string>
     <string name="tip_your_dash_driver">Tip Your Dash Driver</string>
     <string name="enter_your_own_amount">Enter your own amount between R%1d - R%2d</string>
@@ -2556,8 +2564,8 @@
     <string name="address_type">Address Type:</string>
     <string name="add_street_address">Street Address:</string>
     <string name="dash_free_collection">"Free Collection"</string>
-    <string name="dash_item_limit">%d Item Limit</string>
-    <string name="dash_delivery_fee">R%d Delivery Fee</string>
+    <string name="dash_item_limit">Item Limit</string>
+    <string name="dash_delivery_fee">Delivery Fee</string>
     <string name="select_delivery_timeslot">Select Delivery Timeslot</string>
     <string name="dash_delivery_date">Delivery Date</string>
     <string name="dash_delivery_timeslot">Delivery Timeslot</string>
@@ -2612,7 +2620,7 @@
     <string name="vtsc_card_not_arrived_notified_desc">A customer service agent will be in touch to arrange VIP delivery.</string>
 
     <string name="product_details_color_count">+ %d More</string>
-    <string name="geo_loc_error_msg">We can’t seem to find you. Please enter the number and name of your street, the location of your closest landmark, or drag the pin to your exact location.</string>
+    <string name="geo_loc_error_msg">Please use a general location <b>near you</b> instead. Search for an address, the name of a complex, your closest landmark (e.g. a Woolies store) or drag the pin to a location nearby.</string>
     <string name="geo_loc_error_msg_on_edit_address">We can’t seem to find you. Please enter number and name of your street, to get
         your exact location.</string>
     <string name="fashion_beauty_geo">Fashion,Beauty,Home</string>
@@ -2834,8 +2842,21 @@
     <string name="cancelled">Cancelled</string>
     <string name="order">Order\u0020</string>
     <string name="a_report_for_this_review_has_already_been_submitted">A report for this review has already been submitted.</string>
+
+    <plurals name="plural_add_to_cart">
+        <item quantity="one">ADD %d ITEM TO CART</item>
+        <item quantity="other">ADD %d ITEMS TO CART</item>
+    </plurals>
+
+    <plurals name="plural_add_to_list">
+        <item quantity="one">ADD %d ITEM TO LIST</item>
+        <item quantity="other">ADD %d ITEMS TO LIST</item>
+    </plurals>
     <string name="reduce_count_button">Reduce Count Button</string>
     <string name="add_item_count">Add item count</string>
+    <string name="unavailable">Unavailable</string>
+    <string name="unavailable_with_dash">Unavailable With Dash</string>
+    <string name="unavailable_with_collection">Unavailable for Collection</string>
     <string name="get_replacement_card_action_button_text_label_on_overlay">get_replacement_card_action_button_text_label_on_overlay</string>
     <plurals name="category_item">
         <item quantity="one">%1$s %2$s Item</item>
@@ -2912,9 +2933,47 @@
     <string name="only_fashion_beauty_and_home_products_available" >%1$s\nOnly Fashion, Beauty and Home products available.</string>
     <string name="food_fashion_beauty_and_home_products_available">%1$s\nFood, Fashion, Beauty and Home products available.</string>
     <string name="food_fashion_beauty_and_home_products_available_tool_tip">Food, Fashion, Beauty and Home products available.</string>
+
     <string name="only_fashion_beauty_and_home_products_available_text" >Only Fashion, Beauty and Home products available.</string>
     <string name="cnc_title_text_2">Limited shop of %1$s food items.</string>
 
     <string name="recommendations_title">Recommended</string>
 
+    <string name="confirm_your_product_details">Confirm Your Product Details</string>
+    <string name="show_less">Show Less</string>
+
+    <string name="enhanced_substitution_title">Introducing Custom Substitutions</string>
+    <string name="enhanced_substitution_desc">Add or remove substitutes as you shop your favourite products, or let our shoppers choose for you!</string>
+    <string name="enhanced_substitution_btn">Manage substitutions</string>
+    <string name="got_it_btn"><u>GOT IT</u></string>
+
+    <string name="substitutions">Substitutions</string>
+    <string name="let_my_shooper_choose_for_me">Let My Shopper Choose For Me</string>
+
+    <string name="timeslot_title">All Dash Timeslots Are Fully Booked.</string>
+    <string name="timeslot_desc">Check back later to see if any new delivery slots become available.</string>
+
+    <!--Pet Insurance -->
+    <string name="pet_insurance_covered"> • COVERED</string>
+    <string name="pet_insurance_pending"> • PENDING</string>
+    <string name="pet_insurance_pending_title">Your Woolies Pet Insurance Application is Being Processed.</string>
+    <string name="pet_insurance_pending_desc">Your application has been received, and approval is pending.</string>
+    <string name="pet_insurance_apply_now_title">Introducing Woolies \nPet Insurance</string>
+    <string name="pet_insurance_apply_now_affordable_title">Affordable</string>
+    <string name="pet_insurance_apply_now_affordable_desc">Premiums from only R115 a month, with multiple pet discounts</string>
+    <string name="pet_insurance_apply_now_comprehensive_title">Extensive Cover</string>
+    <string name="pet_insurance_apply_now_comprehensive_desc">Considerable benefits &amp; cover options for routine care, accidents, illnesses and third party liability</string>
+    <string name="pet_insurance_apply_now_control_title">You\'re in Control</string>
+    <string name="pet_insurance_apply_now_control_desc">Optional excess waiver and medical saving benefits</string>
+    <string name="pet_insurance_care">PET</string>
+    <string name="error_message_400">We are unable to process your request, Please \ncontact our call centre on \n0861 50 20 10</string>
+    <string name="geo_loc_error_msg_title">We can’t seem to find you here.</string>
+    <string name="street_address_lbl">Street Address:*</string>
+    <string name="recipient_name_placeholder">Recipient Name: *</string>
+    <string name="additional_details">Additional Details:</string>
+    <string name="office_details">Office Details:*</string>
+    <string name="complex_estate">Complex/Estate:*</string>
+    <string name="unit_number_floor">Unit Number/Floor:*</string>
+    <string name="change_address_btn_text">CHANGE</string>
+    <string name="use">USE\u0020</string>
 </resources>

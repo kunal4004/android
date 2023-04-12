@@ -18,6 +18,7 @@ import androidx.constraintlayout.widget.ConstraintSet
 import androidx.constraintlayout.widget.ConstraintSet.*
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.core.text.HtmlCompat
 import androidx.core.view.contains
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
@@ -263,8 +264,9 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                                 removeNotificationToast()
                             }
                             CLICK_AND_COLLECT_TAB.index -> {
-                                //Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMYLISTS, this)
                                 showBlackToolTip(Delivery.CNC)
+                                showClickAndCollectToolTip( KotlinUtils.isStoreSelectedForBrowsing,
+                                    getDeliveryType()?.storeId)
                                 setEventsForSwitchingBrowsingType(Delivery.CNC.name)
                                 KotlinUtils.browsingDeliveryType = Delivery.CNC
                                 removeNotificationToast()
@@ -474,7 +476,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
 
                                     val fulfillmentDeliveryLocation = Utils.getPreferredDeliveryLocation()
                                     val nickname =  validateLocationResponse?.validatePlace?.placeDetails?.nickname
-                                    fulfillmentDeliveryLocation.fulfillmentDetails.address?.nickname = nickname
+                                    fulfillmentDeliveryLocation?.fulfillmentDetails?.address?.nickname = nickname
                                     Utils.savePreferredDeliveryLocation(fulfillmentDeliveryLocation)
 
                                     updateCurrentTab(getDeliveryType()?.deliveryType)
@@ -543,7 +545,13 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         if (KotlinUtils.isLocationSame == true && KotlinUtils.placeId != null) {
             (KotlinUtils.browsingDeliveryType
                 ?: Delivery.getType(getDeliveryType()?.deliveryType))?.let {
-                showBlackToolTip(it)
+                if(it == Delivery.CNC){
+                    showClickAndCollectToolTip( KotlinUtils.isStoreSelectedForBrowsing,
+                        getDeliveryType()?.storeId)
+                }
+                else {
+                    showBlackToolTip(it)
+                }
             }
         }
         setDeliveryView()
@@ -617,7 +625,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                         )
                     )
                     tvToolbarTitle?.text = requireContext().getString(R.string.dash_delivery)
-                    tvToolbarSubtitle?.text = requireContext().getString(R.string.set_your_address)
+                    tvToolbarSubtitle?.text = requireContext().getString(R.string.set_location_title)
                 }
                 else -> {
                     imgToolbarStart?.setImageDrawable(
@@ -958,11 +966,14 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                     changeFullfilmentCollectionStoreFragment?.scrollToTop()
                 }
                 DASH_TAB.index -> {
-                    val dashDeliveryAddressFragment = viewpagerMain?.adapter?.instantiateItem(
-                        viewpagerMain,
-                        viewpagerMain.currentItem
-                    ) as? DashDeliveryAddressFragment
-                    dashDeliveryAddressFragment?.scrollToTop()
+                    activity?.lifecycleScope?.launchWhenCreated {
+                        val dashDeliveryAddressFragment = viewpagerMain?.adapter?.instantiateItem(
+                            viewpagerMain,
+                            viewpagerMain.currentItem
+                        ) as? DashDeliveryAddressFragment
+                        if (dashDeliveryAddressFragment is DashDeliveryAddressFragment)
+                            dashDeliveryAddressFragment.scrollToTop()
+                    }
                 }
             }
         }
@@ -1076,7 +1087,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                 Delivery.CNC -> {
                     showClickAndCollectToolTip(
                         KotlinUtils.isStoreSelectedForBrowsing,
-                        KotlinUtils.browsingCncStore?.storeId
+                        getDeliveryType()?.storeId
                     )
                 }
                 Delivery.DASH -> {
@@ -1139,12 +1150,16 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
             validateLocationResponse?.validatePlace?.let {
                 blackToolTipLayout.fashionItemDateText?.visibility = View.VISIBLE
                 blackToolTipLayout.foodItemTitle?.visibility = View.VISIBLE
+                blackToolTipLayout.foodItemDateText?.visibility = View.VISIBLE
                 blackToolTipLayout.fashionItemTitle?.visibility = View.VISIBLE
                 blackToolTipLayout.deliveryIconLayout?.visibility = View.GONE
+
+                blackToolTipLayout.fashionItemTitle?.text = getString(R.string.fashion_beauty_home)
 
                 if (it.firstAvailableFoodDeliveryDate?.isNullOrEmpty() == true) {
                     blackToolTipLayout.deliveryCollectionTitle?.visibility = View.GONE
                     blackToolTipLayout.foodItemDateText?.visibility = View.GONE
+                    blackToolTipLayout.foodItemTitle?.visibility = View.GONE
                 }
 
                 if (it.firstAvailableOtherDeliveryDate?.isNullOrEmpty() == true) {
@@ -1173,7 +1188,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         browsingStoreId: String? = "",
     ) {
         binding.apply {
-            if (KotlinUtils.isCncTabCrossClicked == true || browsingStoreId == null) {
+            if (KotlinUtils.isCncTabCrossClicked == true || browsingStoreId.isNullOrEmpty()) {
                 blackToolTipLayout.root.visibility = View.GONE
                 return
             }
@@ -1288,7 +1303,8 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                 return
             }
 
-            if (validateLocationResponse?.validatePlace?.onDemand?.firstAvailableFoodDeliveryTime?.isNullOrEmpty() == true) {
+            if (validateLocationResponse?.validatePlace?.onDemand?.firstAvailableFoodDeliveryTime?.isNullOrEmpty() == true
+                && Delivery.getType(getDeliveryType()?.deliveryType)?.type != Delivery.DASH.type) {
                 blackToolTipLayout.root.visibility = View.GONE
                 return
             }
@@ -1302,8 +1318,9 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
             }
             KotlinUtils.fullfillmentTypeClicked = Delivery.DASH.name
             validateLocationResponse?.validatePlace?.let {
-                blackToolTipLayout.deliveryCollectionTitle?.text =
-                    getString(R.string.next_dash_delivery_timeslot_text)
+
+                val timeSlots = it?.onDemand?.deliveryTimeSlots
+
                 blackToolTipLayout.foodItemTitle?.visibility = View.GONE
                 blackToolTipLayout.fashionItemDateText?.visibility = View.GONE
                 blackToolTipLayout.deliveryIconLayout?.visibility = View.VISIBLE
@@ -1312,8 +1329,23 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                 blackToolTipLayout.deliveryIcon?.visibility = View.VISIBLE
                 blackToolTipLayout.deliveryFeeText?.visibility = View.VISIBLE
 
-                blackToolTipLayout.foodItemDateText?.text =
-                    it.onDemand?.firstAvailableFoodDeliveryTime
+                if (timeSlots?.isNullOrEmpty() == true && it?.onDemand?.deliverable == true) {
+                    blackToolTipLayout.deliveryCollectionTitle?.text =
+                        getString(R.string.next_dash_delivery_timeslot_text)
+                    blackToolTipLayout.foodItemDateText?.visibility = View.VISIBLE
+                    blackToolTipLayout.foodItemDateText?.text =
+                        getString(R.string.no_timeslots_available_title)
+                    blackToolTipLayout.fashionItemTitle.visibility = View.VISIBLE
+                    blackToolTipLayout.fashionItemTitle.text = getString(R.string.timeslot_desc)
+                } else {
+                    blackToolTipLayout.deliveryCollectionTitle?.text =
+                        getString(R.string.next_dash_delivery_timeslot_text)
+                    blackToolTipLayout.foodItemDateText?.visibility = View.VISIBLE
+                    blackToolTipLayout.foodItemDateText?.text =
+                        it.onDemand?.firstAvailableFoodDeliveryTime
+                    blackToolTipLayout.fashionItemTitle.visibility = View.GONE
+                }
+
                 blackToolTipLayout.cartIcon?.setImageResource(R.drawable.icon_cart_white)
                 blackToolTipLayout.deliveryIcon?.setImageResource(R.drawable.icon_scooter_white)
                 blackToolTipLayout.bubbleLayout?.setArrowDirection(ArrowDirection.TOP)
@@ -1322,14 +1354,27 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                         DASH_DIVIDER
                     )
                         ?.toFloat()!!
-                blackToolTipLayout.productAvailableText?.text = resources.getString(
-                    R.string.dash_item_limit,
-                    it.onDemand?.quantityLimit?.foodMaximumQuantity
-                )
-                blackToolTipLayout.deliveryFeeText?.text = resources.getString(
-                    R.string.dash_delivery_fee,
-                    it.onDemand?.firstAvailableFoodDeliveryCost
-                )
+                blackToolTipLayout.productAvailableText?.text =
+                    HtmlCompat.fromHtml(
+                        "<font><b>" + it.onDemand?.quantityLimit?.foodMaximumQuantity + "</b></font>"
+                            .plus(" ").plus(resources.getString(
+                                R.string.dash_item_limit)),
+                        HtmlCompat.FROM_HTML_MODE_COMPACT
+                    )
+
+                if (it.onDemand?.firstAvailableFoodDeliveryTime?.isNullOrEmpty() == true) {
+                    blackToolTipLayout?.deliveryIconLayout?.visibility = View.GONE
+                } else {
+                    blackToolTipLayout?.deliveryIconLayout?.visibility = View.VISIBLE
+                    blackToolTipLayout.deliveryFeeText?.text =
+                        HtmlCompat.fromHtml(
+                            "<font><b>" + it.onDemand?.firstAvailableFoodDeliveryCost + "</b></font>"
+                                .plus(" ").plus(resources.getString(
+                                    R.string.dash_delivery_fee)),
+                            HtmlCompat.FROM_HTML_MODE_COMPACT
+                        )
+
+                }
             }
         }
     }

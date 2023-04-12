@@ -22,6 +22,7 @@ import com.awfs.coordination.databinding.CreateListFromShoppingListViewBinding
 import com.awfs.coordination.databinding.CreateNewListBinding
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import dagger.hilt.android.AndroidEntryPoint
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
@@ -39,6 +40,7 @@ import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_SESSION_TIMEOUT_440
 
+@AndroidEntryPoint
 class CreateShoppingListFragment : Fragment(), View.OnClickListener {
 
     private lateinit var bindingCreateListFromShoppingView: CreateListFromShoppingListViewBinding

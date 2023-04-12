@@ -35,5 +35,6 @@ class RecommendationsRepositoryImpl @Inject constructor(
             Resource.error(R.string.error_internet_connection, null)
         }
     }
+
 }
 

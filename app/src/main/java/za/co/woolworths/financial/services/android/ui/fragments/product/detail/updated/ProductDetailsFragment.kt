@@ -91,7 +91,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.shop.Pro
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.BaseProductUtils
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.ColourSizeVariants
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
-import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListDetailFragment.ADD_TO_CART_SUCCESS_RESULT
+import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListDetailFragment.Companion.ADD_TO_CART_SUCCESS_RESULT
 import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.UnsellableItemsBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView
@@ -114,6 +114,7 @@ import za.co.woolworths.financial.services.android.ui.vto.ui.gallery.ImageResult
 import za.co.woolworths.financial.services.android.ui.vto.utils.PermissionUtil
 import za.co.woolworths.financial.services.android.ui.vto.utils.SdkUtility
 import za.co.woolworths.financial.services.android.ui.vto.utils.VirtualTryOnUtil
+import za.co.woolworths.financial.services.android.ui.wfs.common.getIpAddress
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_1000_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_1500_MS
@@ -126,6 +127,7 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_FAIL_IMAGE_LOAD
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.saveAnonymousUserLocationDetails
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.logException
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.setCrashlyticsString
 import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
@@ -1137,6 +1139,18 @@ class ProductDetailsFragment :
                 products = listOf(productX), cartLines = listOf()
             )
         )
+        bundle.putParcelable(
+            BundleKeysConstants.RECOMMENDATIONS_USER_AGENT, Event(
+                eventType = BundleKeysConstants.RECOMMENDATIONS_USER_AGENT,
+                userAgent = System.getProperty("http.agent") ?: ""
+            )
+        )
+        bundle.putParcelable(
+            BundleKeysConstants.RECOMMENDATIONS_IP_ADDRESS,
+            Event(eventType = BundleKeysConstants.RECOMMENDATIONS_IP_ADDRESS,
+                ipAddress = getIpAddress(requireActivity())
+            )
+        )
 
         val navHostFragment =
             childFragmentManager.findFragmentById(R.id.navHostRecommendation) as NavHostFragment
@@ -1230,9 +1244,21 @@ class ProductDetailsFragment :
 
     private fun loadSizeAndColor() {
         if (hasColor)
-            binding.showColors()
+            binding?.showColors()
+        else {
+            binding?.sizeColorSelectorLayout?.apply {
+                colorSelectorLayout.visibility = View.GONE
+                divider1.visibility = View.GONE
+            }
+        }
         if (hasSize)
-            binding.showSize()
+            binding?.showSize()
+        else {
+            binding?.sizeColorSelectorLayout?.apply {
+                sizeSelectorLayout.visibility = View.GONE
+                divider2.visibility = View.GONE
+            }
+        }
 
         if (productDetailsPresenter?.isSizeGuideApplicable(
                 productDetails?.colourSizeVariants,
@@ -1275,6 +1301,7 @@ class ProductDetailsFragment :
             }
 
             colorSelectorLayout?.visibility = View.VISIBLE
+            divider1.visibility = View.VISIBLE
         }
     }
 
@@ -2107,41 +2134,10 @@ class ProductDetailsFragment :
 
     //firebase event add_to_cart
     private fun addToCartEvent(productDetails: ProductDetails?) {
-        val addToCartParams = Bundle()
-        addToCartParams.putString(FirebaseAnalytics.Param.CURRENCY,
-            FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE)
-        productDetails?.price?.let {
-            addToCartParams.putDouble(FirebaseAnalytics.Param.VALUE,
-                it.toDouble())
+        val quantity = getSelectedQuantity()
+        if (quantity != null && productDetails != null){
+            FirebaseAnalyticsEventHelper.addToCart(productDetails, quantity)
         }
-        for (products in 0..(productDetails?.otherSkus?.size ?: 0)) {
-            val addToCartItem = Bundle()
-            addToCartItem.putString(FirebaseAnalytics.Param.ITEM_ID, productDetails?.productId)
-            addToCartItem.putString(FirebaseAnalytics.Param.ITEM_NAME,
-                productDetails?.productName)
-            addToCartItem.putString(FirebaseAnalytics.Param.ITEM_CATEGORY,
-                productDetails?.categoryName)
-            addToCartItem.putString(FirebaseAnalytics.Param.ITEM_BRAND,
-                productDetails?.brandText)
-            addToCartItem.putString(FirebaseAnalytics.Param.ITEM_LIST_NAME,
-                productDetails?.categoryName)
-            addToCartItem.putString(FirebaseAnalytics.Param.ITEM_VARIANT,
-                productDetails?.colourSizeVariants)
-            addToCartItem.putString(FirebaseAnalytics.Param.QUANTITY,
-                FirebaseManagerAnalyticsProperties.PropertyValues.INDEX_VALUE)
-            productDetails?.price?.let {
-                addToCartItem.putDouble(FirebaseAnalytics.Param.PRICE,
-                    it.toDouble())
-            }
-            addToCartItem.putString(FirebaseAnalytics.Param.AFFILIATION,
-                FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE)
-            addToCartItem.putString(FirebaseAnalytics.Param.INDEX,
-                FirebaseManagerAnalyticsProperties.PropertyValues.INDEX_VALUE)
-            addToCartParams.putParcelableArray(FirebaseAnalytics.Param.ITEMS,
-                arrayOf(addToCartItem))
-        }
-        AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.ADD_TO_CART_PDP,
-            addToCartParams)
     }
 
     private fun addItemToShoppingList() {

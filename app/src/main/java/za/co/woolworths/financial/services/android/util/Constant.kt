@@ -16,6 +16,6 @@ class Constant {
         const val FASHION_BEAUTY_HOME_WARE="Fashion, Beauty & Homeware Only"
         const val FOOD_ITEMS_ONLY="Food Items Only"
         const val ALL_WOOL_WORTHS_PRODUCTS_ONLY="All Woolworths Products"
-
+        const val PARGO="pargo"
     }
 }

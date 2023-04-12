@@ -10,21 +10,21 @@ import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingLi
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.fragments.barcode.BarcodeScanFragment
-import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.ADDED_TO_SHOPPING_LIST_RESULT_CODE
-import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.SHOPPING_LIST_SEARCH_RESULT_REQUEST_CODE
+import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.Companion.ADDED_TO_SHOPPING_LIST_RESULT_CODE
+import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.Companion.SHOPPING_LIST_SEARCH_RESULT_REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.RuntimePermissionActivity
 import za.co.woolworths.financial.services.android.util.Utils
 
 class BarcodeScanActivity : RuntimePermissionActivity() {
 
-    lateinit var binding: BarcodeScanActivityBinding
+    var binding: BarcodeScanActivityBinding? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = BarcodeScanActivityBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        setContentView(binding?.root)
         Utils.updateStatusBarBackground(this, R.color.black, true)
-        binding.configureActionBar()
+        binding?.configureActionBar()
         if (savedInstanceState == null) {
             addFragment(
                     fragment = BarcodeScanFragment.newInstance(),
@@ -53,7 +53,7 @@ class BarcodeScanActivity : RuntimePermissionActivity() {
         supportFragmentManager?.apply {
             if (backStackEntryCount > 0) {
                 popBackStack()
-                binding.setHomeIndicator(backStackEntryCount == 0)
+                binding?.setHomeIndicator(backStackEntryCount == 0)
             } else {
                 finish()
                 overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)

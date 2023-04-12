@@ -26,8 +26,10 @@ import com.facebook.shimmer.Shimmer
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor
 import za.co.woolworths.financial.services.android.checkout.service.network.*
+import za.co.woolworths.financial.services.android.checkout.utils.AddShippingInfoEventsAnalytics
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.Companion.REGEX_DELIVERY_INSTRUCTIONS
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.FoodSubstitution
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.SAVED_ADDRESS_KEY
@@ -46,6 +48,7 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
+import za.co.woolworths.financial.services.android.models.dto.CommerceItem
 import za.co.woolworths.financial.services.android.models.dto.LiquorCompliance
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
@@ -63,7 +66,9 @@ import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.viewmodels.ShoppingCartLiveData
 import java.util.regex.Pattern
 import za.co.woolworths.financial.services.android.util.StoreUtils
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class CheckoutReturningUserCollectionFragment :
     Fragment(R.layout.fragment_checkout_returning_user_collection),
     ShoppingBagsRadioGroupAdapter.EventListner, View.OnClickListener, CollectionTimeSlotsListener,
@@ -84,6 +89,11 @@ class CheckoutReturningUserCollectionFragment :
     private var navController: NavController? = null
     private var liquorImageUrl: String? = ""
     private var liquorOrder: Boolean? = false
+    private var cartItemList: ArrayList<CommerceItem>? = null
+    private var orderTotalValue: Double = -1.0
+    @Inject
+    lateinit var addShippingInfoEventsAnalytics : AddShippingInfoEventsAnalytics
+
     private val deliveryInstructionsTextWatcher: TextWatcher = object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
         override fun afterTextChanged(s: Editable?) {
@@ -123,6 +133,8 @@ class CheckoutReturningUserCollectionFragment :
         (activity as? CheckoutActivity)?.apply {
             showBackArrowWithTitle(bindString(R.string.checkout))
         }
+        cartItemList =
+            checkNotNull(arguments?.getSerializable(CheckoutAddressManagementBaseFragment.CART_ITEM_LIST) as ArrayList<CommerceItem>?)
         setupViewModel()
         initializeCollectingFromView()
         initializeCollectingDetailsView()
@@ -955,6 +967,7 @@ class CheckoutReturningUserCollectionFragment :
 
                     txtOrderTotalValue?.text =
                         CurrencyFormatter.formatAmountToRandAndCentWithSpace(it.total)
+                    orderTotalValue = it.total
                     if (KotlinUtils.getPreferredDeliveryType() == Delivery.CNC) {
                         txtOrderSummaryDeliveryFee?.text =
                             context?.getString(R.string.collection_fee)
@@ -1030,6 +1043,11 @@ class CheckoutReturningUserCollectionFragment :
             }
             R.id.txtContinueToPaymentCollection -> {
                 onCheckoutPaymentClick()
+                cartItemList?.let {
+                    addShippingInfoEventsAnalytics.sendEventData(it,
+                        FirebaseManagerAnalyticsProperties.PropertyValues.SHIPPING_TIER_VALUE_CNC,
+                        orderTotalValue)
+                }
             }
         }
     }
@@ -1293,7 +1311,9 @@ class CheckoutReturningUserCollectionFragment :
     private fun navigateToPaymentWebpage(webTokens: ShippingDetailsResponse) {
         view?.findNavController()?.navigate(
             R.id.action_checkoutReturningUserCollectionFragment_to_checkoutPaymentWebFragment,
-            bundleOf(CheckoutPaymentWebFragment.KEY_ARGS_WEB_TOKEN to webTokens)
+            bundleOf(CheckoutPaymentWebFragment.KEY_ARGS_WEB_TOKEN to webTokens,
+                CheckoutAddressManagementBaseFragment.CART_ITEM_LIST to cartItemList
+            )
         )
     }
 

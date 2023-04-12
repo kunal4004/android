@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.recommendations.presentation.fragment
+package za.co.woolworths.financial.services.android.recommendations.presentation.adapter
 
 import android.graphics.Color
 import android.view.LayoutInflater

@@ -21,7 +21,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -41,21 +43,21 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.SearchHistory;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.ChanelMessageDialogFragment;
-import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
-import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class ProductSearchActivity extends AppCompatActivity
         implements View.OnClickListener, ChanelMessageDialogFragment.IChanelMessageDialogDismissListener {
     public LinearLayoutManager mLayoutManager;
     public Toolbar toolbar;
-    private WEditTextView mEditSearchProduct;
+    private EditText mEditSearchProduct;
     private LinearLayout recentSearchLayout;
     private LinearLayout recentSearchList;
     private String mSearchTextHint = "";
     private String mListID;
     private boolean isUserBrowsingDash;
-    public static final int PRODUCT_SEARCH_ACTIVITY_REQUEST_CODE = 1244;
+    public static final String EXTRA_SEARCH_TEXT_HINT = "SEARCH_TEXT_HINT";
+    public static final String EXTRA_LIST_ID = "listId";
+    public static final int PRODUCT_SEARCH_ACTIVITY_RESULT_CODE = 1244;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +80,7 @@ public class ProductSearchActivity extends AppCompatActivity
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             isUserBrowsingDash = bundle.getBoolean(EXTRA_SEND_DELIVERY_DETAILS_PARAMS, false);
-            if (!TextUtils.isEmpty(bundle.getString("SEARCH_TEXT_HINT"))) {
+            if (!TextUtils.isEmpty(bundle.getString(EXTRA_SEARCH_TEXT_HINT))) {
                 mListID = bundle.getString(MY_LIST_LIST_ID);
                 mSearchTextHint = getString(R.string.shopping_search_hint);
                 mEditSearchProduct.setHint(mSearchTextHint);
@@ -148,7 +150,7 @@ public class ProductSearchActivity extends AppCompatActivity
                     intent.putExtra(MY_LIST_LIST_ID, mListID);
                     intent.putExtra(MY_LIST_LIST_NAME, search.searchedValue);
                     intent.putExtra(EXTRA_SEND_DELIVERY_DETAILS_PARAMS, isUserBrowsingDash);
-                    setActivityResult(intent, PRODUCT_SEARCH_ACTIVITY_REQUEST_CODE);
+                    setActivityResult(intent, PRODUCT_SEARCH_ACTIVITY_RESULT_CODE);
 				}
 		}
 	}
@@ -232,7 +234,7 @@ public class ProductSearchActivity extends AppCompatActivity
         if (status && searchHistories != null) {
             for (int i = 0; i < searchHistories.size(); i++) {
                 View v = getLayoutInflater().inflate(R.layout.recent_search_list_item, null);
-                WTextView recentSearchListitem = v.findViewById(R.id.recentSerachListItem);
+                TextView recentSearchListitem = v.findViewById(R.id.recentSerachListItem);
                 recentSearchListitem.setText(searchHistories.get(i).searchedValue);
                 recentSearchList.addView(v);
                 int position = recentSearchList.indexOfChild(v) - 1;

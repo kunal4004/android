@@ -12,11 +12,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.RecommendationsLayoutBinding
+import com.google.android.flexbox.FlexDirection
+import com.google.android.flexbox.FlexWrap
+import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.gson.Gson
 import com.skydoves.balloon.balloon
 import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
@@ -26,10 +30,14 @@ import za.co.woolworths.financial.services.android.recommendations.data.response
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.RecommendationRequest
 import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationEventHandler
+import za.co.woolworths.financial.services.android.recommendations.presentation.adapter.ProductCategoryAdapter
+import za.co.woolworths.financial.services.android.recommendations.presentation.adapter.ProductListRecommendationAdapter
+import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationsProductListingListener
 import za.co.woolworths.financial.services.android.recommendations.presentation.viewmodel.RecommendationViewModel
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.adapters.holder.RecyclerViewViewHolderItems
+import za.co.woolworths.financial.services.android.ui.extension.isConnectedToNetwork
 import za.co.woolworths.financial.services.android.ui.views.AddedToCartBalloonFactory
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SelectYourQuantityFragment
@@ -99,8 +107,10 @@ class RecommendationFragment :
             recommendationsLayoutBinding?.recommendationsProductsRecyclerview?.visibility =
                 View.VISIBLE
             context?.let {
-                recommendationsLayoutBinding?.recommendationsProductsRecyclerview?.layoutManager =
-                    LinearLayoutManager(it, RecyclerView.HORIZONTAL, false)
+                val layoutManager = FlexboxLayoutManager(context)
+                layoutManager.flexDirection = FlexDirection.ROW
+                layoutManager.flexWrap = FlexWrap.NOWRAP
+                recommendationsLayoutBinding.recommendationsProductsRecyclerview.layoutManager = layoutManager
 
                 mProductListRecommendationAdapter =
                     ProductListRecommendationAdapter(productsList, this, activity)
@@ -116,6 +126,10 @@ class RecommendationFragment :
             bundle?.getParcelable<Event>(BundleKeysConstants.RECOMMENDATIONS_EVENT_DATA) as Event
         val reccommendationsDataEventTypeSecond =
             bundle?.getParcelable<Event>(BundleKeysConstants.RECOMMENDATIONS_EVENT_DATA_TYPE) as Event
+        val reccommendationsUserAgent =
+            bundle?.getParcelable<Event>(BundleKeysConstants.RECOMMENDATIONS_USER_AGENT) as Event
+        val reccommendationsIPAddress =
+            bundle?.getParcelable<Event>(BundleKeysConstants.RECOMMENDATIONS_IP_ADDRESS) as Event
         var recMonetateId: String? = null
         if (Utils.getMonetateId() != null) {
             recMonetateId = Utils.getMonetateId()
@@ -124,7 +138,9 @@ class RecommendationFragment :
         val recommendationRequest = RecommendationRequest(
             events = listOf(
                 reccommendationsDataEventTypeFirst,
-                reccommendationsDataEventTypeSecond
+                reccommendationsDataEventTypeSecond,
+                reccommendationsUserAgent,
+                reccommendationsIPAddress
             ),
             monetateId = recMonetateId
         )
@@ -166,6 +182,9 @@ class RecommendationFragment :
     }
 
     override fun openProductDetailView(productList: Product) {
+        if(isConnectedToNetwork() == true) {
+            WoolworthsApplication.getInstance().recommendationAnalytics.submitRecClicks(products = listOf(productList))
+        }
         // Move to shop tab.
         if (requireActivity() !is BottomNavigationActivity) {
             return
