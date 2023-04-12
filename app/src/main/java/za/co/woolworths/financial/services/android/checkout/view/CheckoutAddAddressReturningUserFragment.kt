@@ -169,8 +169,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         (activity as? CheckoutActivity)?.apply {
             showBackArrowWithTitle(bindString(R.string.checkout))
         }
-        cartItemList =
-            checkNotNull(arguments?.getSerializable(CART_ITEM_LIST) as ArrayList<CommerceItem>?)
+        cartItemList = arguments?.getSerializable(CART_ITEM_LIST) as ArrayList<CommerceItem>?
         initViews()
     }
 
