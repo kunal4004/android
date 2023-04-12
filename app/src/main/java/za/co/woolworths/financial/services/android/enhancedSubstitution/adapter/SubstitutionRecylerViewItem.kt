@@ -1,16 +1,12 @@
 package za.co.woolworths.financial.services.android.enhancedSubstitution.adapter
 
-sealed class SubstitutionRecylerViewItem {
+import za.co.woolworths.financial.services.android.enhancedSubstitution.model.SubstitutionProducts
 
-    class SubstitutionOptionHeader(
-        val searchHint: String
-    ) : SubstitutionRecylerViewItem()
+data class SubstitutionRecylerViewItem(
+        var viewType: Int,
+        var substituteProducts: ArrayList<SubstitutionProducts>?
+)
 
-    class SubstitutionProducts(
-        val id: Int,
-        val productTitle: String,
-        val productThumbnail: String,
-        val promotionText: String,
-        val productPrice: String
-    ) : SubstitutionRecylerViewItem()
-}
+
+
+
