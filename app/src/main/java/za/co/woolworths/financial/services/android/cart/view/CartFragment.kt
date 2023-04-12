@@ -515,7 +515,8 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                 savedAddressResponse = response,
                 defaultAddress = null,
                 whoISCollecting = "",
-                liquorCompliance = liquorCompliance
+                liquorCompliance = liquorCompliance,
+                cartItemList = viewModel.getCartItemList()
             )
         }
     }

@@ -251,7 +251,7 @@ class CartRepository @Inject constructor() {
                             fulfillmentStoreId!!.replace("\"".toRegex(), "")
                         productList.add(commerceItem)
                         isFBHOnly = if(!itemsObject.has(ProductType.FOOD_COMMERCE_ITEM.value)) {
-                            commerceItem.fulfillmentType == StoreUtils.Companion.FulfillmentType.CLOTHING_ITEMS?.type
+                            commerceItem.fulfillmentType == StoreUtils.Companion.FulfillmentType.CLOTHING_ITEMS?.type || commerceItem.fulfillmentType == StoreUtils.Companion.FulfillmentType.CRG_ITEMS?.type
                         } else false
                     }
                     this.cartItemList = productList
