@@ -674,12 +674,18 @@ class CartProductAdapter(
             }
 
             tvSubstituteItem.setOnClickListener {
-                if(commerceId.isNullOrEmpty()) {
+                if (commerceId.isNullOrEmpty()) {
                     FirebaseManager.logException(IllegalArgumentException("CommerceId not found."))
                     return@setOnClickListener
                 }
+                val substitutionSelection =
+                    if (substitutionInfo?.substitutionSelection?.isNullOrEmpty() == false) {
+                        substitutionInfo.substitutionSelection
+                    }
+                    else  SubstitutionChoice.SHOPPER_CHOICE.toString()
+
                 onItemClick.onSubstituteProductClick(
-                    substitutionInfo?.substitutionSelection ?: SubstitutionChoice.SHOPPER_CHOICE.toString(),
+                    substitutionSelection,
                     commerceId
                 )
             }
@@ -687,6 +693,11 @@ class CartProductAdapter(
                 return
             }
             with(substitutionInfo) {
+
+                if (!isSubstitutionInStock) {
+                    return
+                }
+
                 when (substitutionSelection) {
                     SubstitutionChoice.USER_CHOICE.toString() -> {
                         substitutionIcon.setImageResource(R.drawable.ic_edit_black)
@@ -694,7 +705,7 @@ class CartProductAdapter(
                     }
                     SubstitutionChoice.NO.toString() -> {
                         tvSubstituteItem.text =
-                            mContext?.getString(R.string.dont_want_substitute) ?: ""
+                            mContext?.getString(R.string.dont_substitute) ?: ""
                     }
                     else -> {
                         tvSubstituteItem.text =

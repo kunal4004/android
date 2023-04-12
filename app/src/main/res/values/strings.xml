@@ -2974,6 +2974,7 @@
     <string name="search_alternative_product">Search for an alternative product</string>
     <string name="choose_substitute">Choose My Own Substitute</string>
     <string name="dont_want_substitute"><u>i don\'t want a substitute</u></string>
+    <string name="dont_substitute">Don\'t Substitute</string>
     <string name="more_details">More Details</string>
     <string name="promotion_txt">you have saved</string>
     <string name="item_found">\t ITEMS FOUND</string>
