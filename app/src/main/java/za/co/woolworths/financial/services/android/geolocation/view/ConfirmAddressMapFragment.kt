@@ -105,13 +105,11 @@ class ConfirmAddressMapFragment :
     private var isStreetNumberAndRouteFromSearch: Boolean? = false
     private var isPoiAddress: Boolean? = false
     private var address2: String? = ""
-    private lateinit var locator: Locator
 
     override fun onViewCreated(
         view: View, savedInstanceState: Bundle?,
     ) {
         super.onViewCreated(view, savedInstanceState)
-        locator = Locator(activity as AppCompatActivity)
         binding = GeolocationConfirmAddressBinding.bind(view)
         binding.dynamicMapView?.initializeMap(savedInstanceState, this)
     }
@@ -196,6 +194,7 @@ class ConfirmAddressMapFragment :
                         if (isAddAddress!! && isAddressSearch == false) {
                             confirmAddress.isEnabled = false
                             imgMapMarker.visibility = View.GONE
+                            tvMarkerHint?.visibility = View.GONE
                         }
                     } else {
                         autoCompleteTextView.isEnabled = false
@@ -650,6 +649,7 @@ class ConfirmAddressMapFragment :
             }
         } else {
             binding?.imgMapMarker?.visibility = View.GONE
+            binding?.tvMarkerHint?.visibility = View.GONE
             binding?.confirmAddress?.isEnabled = false
             binding.dynamicMapView?.moveCamera(
                 latitude = DEFAULT_LATITUDE,
@@ -665,6 +665,7 @@ class ConfirmAddressMapFragment :
     private fun moveMapCamera(latitude: Double?, longitude: Double?) {
         if (latitude != null && longitude != null) {
             binding?.imgMapMarker?.visibility = View.VISIBLE
+            binding?.tvMarkerHint?.visibility = View.VISIBLE
             binding?.navigationMapArrow?.visibility = View.VISIBLE
             binding?.confirmAddress?.isEnabled = true
         }
@@ -890,6 +891,7 @@ class ConfirmAddressMapFragment :
                     noLocationLayout?.noLocationRootLayout?.visibility = View.VISIBLE
                     dynamicMapView?.visibility = View.GONE
                     imgMapMarker?.visibility = View.GONE
+                    tvMarkerHint?.visibility = View.GONE
                     navigationMapArrow?.visibility = View.GONE
                     confirmAddressLayout?.visibility = View.GONE
                 }
@@ -910,6 +912,7 @@ class ConfirmAddressMapFragment :
                     if (isAddAddress != null && isAddressSearch == false) {
                         confirmAddress.isEnabled = false
                         imgMapMarker.visibility = View.GONE
+                        tvMarkerHint?.visibility = View.GONE
                     }
                 }
             }
