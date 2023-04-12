@@ -13,7 +13,7 @@
         android:layout_width="0dp"
         android:layout_height="@dimen/hundred_and_eighty_dp"
         android:adjustViewBounds="true"
-        android:background="@color/color_f9f9f9"
+        android:background="@color/white"
         android:contentDescription="@string/plp_productImageLayout"
 
         app:layout_constraintEnd_toEndOf="parent"
@@ -24,7 +24,7 @@
             android:id="@+id/imProductImage"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/color_f9f9f9" />
+            android:background="@color/white" />
     </FrameLayout>
 
     <TextView
