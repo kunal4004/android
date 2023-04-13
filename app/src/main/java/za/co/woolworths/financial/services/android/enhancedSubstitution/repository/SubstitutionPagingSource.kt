@@ -35,7 +35,6 @@ class SubstitutionPagingSource(
                 nextKey = nextKey
             )
         } catch (e: Exception) {
-            FirebaseManager.logException(e.message)
             LoadResult.Error(e)
         }
     }

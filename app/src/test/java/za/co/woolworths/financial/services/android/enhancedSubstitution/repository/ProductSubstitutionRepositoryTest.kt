@@ -17,6 +17,7 @@ import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhanceS
 import za.co.woolworths.financial.services.android.enhancedSubstitution.apihelper.SubstitutionApiHelper
 import za.co.woolworths.financial.services.android.enhancedSubstitution.apihelper.SubstitutionApiHelperTest
 import za.co.woolworths.financial.services.android.enhancedSubstitution.model.*
+import za.co.woolworths.financial.services.android.models.dto.FormException
 import za.co.woolworths.financial.services.android.models.dto.SkuInventory
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse
 import za.co.woolworths.financial.services.android.models.network.Status
@@ -126,7 +127,8 @@ class ProductSubstitutionRepositoryTest {
                 SubstitutionApiHelperTest.USER_CHOICE, SUBSTITUTION_ID, COMMARCE_ITEM_ID)
         val dataList = mutableListOf<DataX>()
         val substitutionList = mutableListOf<Any>()
-        dataList.add(DataX(substitutionList))
+        val formExcepions = mutableListOf<FormException>()
+        dataList.add(DataX(substitutionList, formExcepions))
         val response = Response("-1","success" )
         val addSubstitutionResponse = AddSubstitutionResponse(dataList, 200, response)
         Mockito.`when`(substitutionApiHelper.addSubstitution(addSubstitutionRequest)).thenReturn(Response.success(addSubstitutionResponse))

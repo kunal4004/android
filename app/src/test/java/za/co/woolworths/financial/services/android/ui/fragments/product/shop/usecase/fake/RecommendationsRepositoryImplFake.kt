@@ -56,7 +56,7 @@ class RecommendationsRepositoryImplFake : RecommendationsRepository {
         }
     }
 
-    override suspend fun getRecommendationResponse(requestEvent: Event?): Resource<RecommendationResponse> {
+   /* override suspend fun getRecommendationResponse(requestEvent: Event?): Resource<RecommendationResponse> {
         TODO("Not yet implemented")
-    }
+    }*/
 }
