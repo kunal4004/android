@@ -8,6 +8,7 @@
     android:orientation="vertical">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_alignParentTop="true"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -120,7 +121,6 @@
             android:layout_marginTop="0dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/rcvShoppingListItems"
             android:id="@+id/deliveryLocationConstLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
