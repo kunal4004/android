@@ -576,15 +576,29 @@ class ConfirmAddressMapFragment :
                     )
                 } else {
                     errorMassageDivider?.visibility = View.VISIBLE
+                    errorMessageTitle?.visibility = View.VISIBLE
                     errorMessage?.visibility = View.VISIBLE
-                    errorMessage?.text = getString(R.string.geo_loc_error_msg)
+                    errorMessageTitle?.text = getString(R.string.geo_loc_error_msg_title)
+                    errorMessage?.text = getText(R.string.geo_loc_error_msg)
                     errorMessage?.setTextColor(
                         ContextCompat.getColor(
                             requireContext(),
-                            R.color.red
+                            R.color.color_D0021B
                         )
                     )
                     errorMessage?.setBackgroundColor(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.white
+                        )
+                    )
+                    errorMessageTitle?.setTextColor(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.color_D0021B
+                        )
+                    )
+                    errorMessageTitle?.setBackgroundColor(
                         ContextCompat.getColor(
                             requireContext(),
                             R.color.white
@@ -596,6 +610,7 @@ class ConfirmAddressMapFragment :
             } else {
                 errorMassageDivider?.visibility = View.GONE
                 errorMessage?.visibility = View.GONE
+                errorMessageTitle?.visibility = View.GONE
                 confirmAddress?.isEnabled = true
             }
         }
