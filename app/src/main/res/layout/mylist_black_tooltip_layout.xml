@@ -92,12 +92,15 @@
                     android:id="@+id/changeLocationButton"
                     style="@style/futura_semi_bold_black"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/sixteen_dp"
+                    android:layout_height="@dimen/twenty_four_dp"
                     android:background="@drawable/rounded_grid_border_text_view"
-                    android:padding="@dimen/_6sdp"
                     android:text="@string/change_label"
+                    android:gravity="center"
+                    android:textAlignment="center"
+                    android:paddingHorizontal="@dimen/six_dp"
                     android:textAllCaps="true"
+                    android:letterSpacing="0.05"
+                    android:textSize="@dimen/twelve_sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent" />
 
