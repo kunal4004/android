@@ -2,7 +2,6 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:background="@color/white"
     android:layout_height="wrap_content">
 
     <com.daasuu.bl.BubbleLayout
@@ -40,6 +39,8 @@
                     style="@style/futura_medium"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/futura_light"
+                    android:letterSpacing="0.05"
                     android:paddingTop="@dimen/five_dp"
                     android:paddingBottom="@dimen/five_dp"
                     android:text="@string/title_mylist_dash_tooltip"
@@ -82,7 +83,7 @@
                     android:layout_height="wrap_content"
                     android:padding="@dimen/_2sdp"
                     android:text="@string/change_delivery_method_mylist_tooltip"
-                    android:textColor="@color/white"
+                    android:textColor="@color/color_D8D8D8"
                     android:textSize="@dimen/twelve_sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -94,12 +95,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="@dimen/twenty_four_dp"
                     android:background="@drawable/rounded_grid_border_text_view"
-                    android:text="@string/change_label"
                     android:gravity="center"
-                    android:textAlignment="center"
-                    android:paddingHorizontal="@dimen/six_dp"
-                    android:textAllCaps="true"
                     android:letterSpacing="0.05"
+                    android:paddingHorizontal="@dimen/six_dp"
+                    android:text="@string/change_label"
+                    android:textAlignment="center"
+                    android:textAllCaps="true"
                     android:textSize="@dimen/twelve_sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent" />

@@ -5,14 +5,20 @@ import android.app.Activity.RESULT_OK
 import android.content.BroadcastReceiver
 import android.content.Intent
 import android.content.IntentFilter
+import android.graphics.Typeface.BOLD
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.text.Spannable
+import android.text.style.StyleSpan
 import android.view.*
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.ui.text.font.Typeface
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
+import androidx.core.text.buildSpannedString
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
@@ -266,24 +272,25 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
     }
 
     private fun showBlackToolTip() {
-        when (getPreferredDeliveryType()) {
-            Delivery.STANDARD -> {
-                bindingListDetails.blackToolTipLayout.deliveryCollectionTitle.text =
-                    getText(R.string.title_mylist_standard_tooltip)
-            }
-            Delivery.CNC -> {
-                bindingListDetails.blackToolTipLayout.deliveryCollectionTitle.text =
-                    getText(R.string.title_mylist_collection_tooltip)
-            }
-            Delivery.DASH -> {
-                bindingListDetails.blackToolTipLayout.deliveryCollectionTitle.text =
-                    getText(R.string.title_mylist_dash_tooltip)
-            }
-            else -> {
-                return
-                // No need to change anything.
-            }
+        val delivery = when (getPreferredDeliveryType()) {
+            Delivery.CNC -> R.string.label_collection
+            Delivery.DASH -> R.string.label_dash
+            else -> return
         }
+
+        bindingListDetails.blackToolTipLayout.deliveryCollectionTitle.text =
+            buildSpannedString {
+                val text = getText(R.string.title_mylist_dash_tooltip)
+                append(text)
+                append(getText(delivery))
+                val typefaceBold = ResourcesCompat.getFont(requireContext(), R.font.futura_semi_bold)
+                setSpan(
+                    CustomTypefaceSpan("futura", typefaceBold),
+                    text.length,
+                    length,
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            }
+
         bindingListDetails.blackToolTipLayout?.root?.visibility = VISIBLE
         timer?.cancel()
         // Check the time from the config for blackToolTip dismiss.
