@@ -82,7 +82,7 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
            baseFragBundle?.putSerializable(CheckoutAddressManagementBaseFragment.CART_ITEM_LIST, cartItemList)
 
         }
-         loadNavHostFragment()
+        loadNavHostFragment()
     }
 
     fun setActionBar() {
@@ -138,7 +138,7 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
         navHostFrag = supportFragmentManager.findFragmentById(R.id.navHostFragment) as NavHostFragment
         val graph =
             navHostFrag.navController.navInflater.inflate(R.navigation.nav_graph_checkout)
-        
+
         graph.startDestination = getStartDestinationGraph()
         findNavController(R.id.navHostFragment).setGraph(graph, baseFragBundle)
     }
