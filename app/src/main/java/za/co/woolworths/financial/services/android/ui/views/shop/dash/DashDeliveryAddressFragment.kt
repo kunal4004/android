@@ -68,9 +68,7 @@ import java.util.*
 class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), IProductListing,
     View.OnClickListener, OnDemandNavigationListener, OnDashLandingNavigationListener {
 
-    private val viewModel: ShopViewModel by viewModels(
-        ownerProducer = { requireParentFragment() }
-    )
+    private val viewModel: ShopViewModel by viewModels()
 
     private lateinit var binding: FragmentDashDeliveryBinding
     private lateinit var dashDeliveryAdapter: DashDeliveryAdapter
@@ -174,7 +172,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
         binding.layoutDashSetAddress.imgView?.setImageResource(R.drawable.img_dash_delivery)
         binding.layoutDashSetAddress.txtDashTitle?.text = getString(R.string.dash_delivery_msg)
         binding.layoutDashSetAddress.txtDashSubTitle?.text = getString(R.string.dash_delivery_title)
-        binding.layoutDashSetAddress.btnDashSetAddress?.text = getString(R.string.set_address)
+        binding.layoutDashSetAddress.btnDashSetAddress?.text = getString(R.string.set_location)
         binding.layoutDashSetAddress.btnDashSetAddress?.setOnClickListener(this)
     }
 
@@ -667,7 +665,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
     }
 
     fun scrollToTop() {
-        binding.rvDashDelivery?.scrollToPosition(0)
+        binding?.rvDashDelivery?.scrollToPosition(0)
     }
 
     private fun navigateToConfirmAddressScreen() {

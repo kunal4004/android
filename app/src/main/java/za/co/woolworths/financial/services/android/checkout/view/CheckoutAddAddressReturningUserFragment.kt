@@ -11,6 +11,7 @@ import android.view.View
 import android.view.View.*
 import android.widget.CompoundButton
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResultListener
@@ -22,8 +23,10 @@ import com.awfs.coordination.R
 import com.awfs.coordination.databinding.CheckoutAddAddressRetuningUserBinding
 import com.facebook.shimmer.Shimmer
 import com.facebook.shimmer.ShimmerFrameLayout
+import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor
 import za.co.woolworths.financial.services.android.checkout.service.network.*
+import za.co.woolworths.financial.services.android.checkout.utils.AddShippingInfoEventsAnalytics
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.DeliveryType.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.FulfillmentsType.FOOD
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.FulfillmentsType.OTHER
@@ -43,6 +46,7 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
+import za.co.woolworths.financial.services.android.models.dto.CommerceItem
 import za.co.woolworths.financial.services.android.models.dto.LiquorCompliance
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary
 import za.co.woolworths.financial.services.android.models.dto.app_config.native_checkout.ConfigShoppingBagsOptions
@@ -64,10 +68,12 @@ import za.co.woolworths.financial.services.android.util.pushnotification.Notific
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.viewmodels.ShoppingCartLiveData
 import java.util.regex.Pattern
+import javax.inject.Inject
 
 /**
  * Created by Kunal Uttarwar on 27/05/21.
  */
+@AndroidEntryPoint
 class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFragment(R.layout.checkout_add_address_retuning_user),
     OnClickListener,
     CheckoutDeliveryTypeSelectionListAdapter.EventListner,
@@ -87,9 +93,11 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     private var placesId: String? = ""
     private var storeId: String? = ""
     private var nickName: String? = ""
-
     private var liquorImageUrl: String? = ""
     private var liquorOrder: Boolean? = false
+    private var orderTotalValue: Double = -1.0
+    @Inject
+    lateinit var addShippingInfoEventsAnalytics : AddShippingInfoEventsAnalytics
 
     private val deliveryInstructionsTextWatcher: TextWatcher = object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -123,7 +131,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     private var shimmerComponentArray: List<Pair<ShimmerFrameLayout, View>> = ArrayList()
 
     private var defaultAddress: Address? = null
-
+    private var cartItemList: ArrayList<CommerceItem>? = null
 
     enum class FoodSubstitution(val rgb: String) {
         PHONE_CONFIRM("YES_CALL_CONFIRM"),
@@ -161,6 +169,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         (activity as? CheckoutActivity)?.apply {
             showBackArrowWithTitle(bindString(R.string.checkout))
         }
+        cartItemList = arguments?.getSerializable(CART_ITEM_LIST) as ArrayList<CommerceItem>?
         initViews()
     }
 
@@ -410,25 +419,27 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                 deliveringToAddress.append(defaultAddressNickname)
 
                 // Extract default address display name
-                savedAddresses.addresses?.forEach { address ->
-                    if (savedAddresses.defaultAddressNickname.equals(address.nickname)) {
-                        this.defaultAddress = address
-                        suburbId = address.suburbId ?: ""
-                        placesId = address?.placesId
-                        storeId = address?.storeId
-                        nickName = address?.nickname
-                        val addressName = SpannableString(address.address1)
-                        val typeface1 =
-                            ResourcesCompat.getFont(context, R.font.myriad_pro_regular)
-                        addressName.setSpan(
-                            StyleSpan(typeface1!!.style),
-                            0, addressName.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                        )
-                        deliveringToAddress.append(addressName)
-                        return@forEach
-                    }
-                    if (savedAddresses.defaultAddressNickname.isNullOrEmpty()) {
-                        binding.checkoutDeliveryDetailsLayout.root.visibility = GONE
+                run list@{
+                    savedAddresses.addresses?.forEach { address ->
+                        if (savedAddresses.defaultAddressNickname.equals(address.nickname)) {
+                            this.defaultAddress = address
+                            suburbId = address.suburbId ?: ""
+                            placesId = address?.placesId
+                            storeId = address?.storeId
+                            nickName = address?.nickname
+                            val addressName = SpannableString(address.address1)
+                            val typeface1 =
+                                ResourcesCompat.getFont(context, R.font.myriad_pro_regular)
+                            addressName.setSpan(
+                                StyleSpan(typeface1!!.style),
+                                0, addressName.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                            )
+                            deliveringToAddress.append(addressName)
+                            return@list
+                        }
+                        if (savedAddresses.defaultAddressNickname.isNullOrEmpty()) {
+                            binding.checkoutDeliveryDetailsLayout.root.visibility = GONE
+                        }
                     }
                 }
                 binding.checkoutDeliveryDetailsLayout.tvNativeCheckoutDeliveringTitle.text = requireContext().getString(R.string.standard_delivery)
@@ -565,6 +576,8 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
 
                 binding.layoutCheckoutDeliveryOrderSummary.txtOrderTotalValue.text =
                     CurrencyFormatter.formatAmountToRandAndCentWithSpace(it.total)
+                orderTotalValue = it.total
+
             }
         }
     }
@@ -822,22 +835,6 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                 FIRST.week,
                 ONLY_FOOD
             )
-            val foodItemDate =
-                confirmDeliveryAddressResponse?.timedDeliveryFirstAvailableDates?.food
-            val arguments = HashMap<String, String>()
-            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.CURRENCY] =
-                FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE
-            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ORDER_TOTAL_VALUE] =
-                selectedSlotResponseFood?.orderSummary?.total.toString()
-            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_DATE] =
-                foodItemDate.toString()
-            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.SHIPPING_TIER] =
-                FirebaseManagerAnalyticsProperties.PropertyValues.SHIPPING_TIER_VALUE_FOOD
-            Utils.triggerFireBaseEvents(
-                FirebaseManagerAnalyticsProperties.ADD_SHIPPING_INFO,
-                arguments,
-                activity
-            )
 
         } else if (OTHER.type == selectedSlotResponseFood?.fulfillmentTypes?.join && OTHER.type == selectedSlotResponseFood?.fulfillmentTypes?.other) {
             // For mix basket
@@ -856,22 +853,6 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                     MIXED_OTHER
                 ) // Sending params MIXED_OTHER here to get mixed_other grid while click on timeslot radiobutton.
             }
-            val foodItemDate =
-                confirmDeliveryAddressResponse?.timedDeliveryFirstAvailableDates?.food
-            val arguments = HashMap<String, String>()
-            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.CURRENCY] =
-                FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE
-            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ORDER_TOTAL_VALUE] =
-                selectedSlotResponseFood?.orderSummary?.total.toString()
-            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_DATE] =
-                foodItemDate.toString()
-            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.SHIPPING_TIER] =
-                FirebaseManagerAnalyticsProperties.PropertyValues.SHIPPING_TIER_VALUE_MIXED
-            Utils.triggerFireBaseEvents(
-                FirebaseManagerAnalyticsProperties.ADD_SHIPPING_INFO,
-                arguments,
-                activity
-            )
         } else {
             // for Other
             if (selectedSlotResponseFood?.requiredToDisplayODD == true) {
@@ -887,21 +868,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             binding.layoutDeliveryInstructions.txtNeedBags.visibility = GONE
             binding.layoutDeliveryInstructions.newShoppingBagsLayout.root.visibility = GONE
         }
-        val foodItemDate = confirmDeliveryAddressResponse?.timedDeliveryFirstAvailableDates?.food
-        val arguments = HashMap<String, String>()
-        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.CURRENCY] =
-            FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE
-        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ORDER_TOTAL_VALUE] =
-            selectedSlotResponseFood?.orderSummary?.total.toString()
-        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_DATE] =
-            foodItemDate.toString()
-        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.SHIPPING_TIER] =
-            FirebaseManagerAnalyticsProperties.PropertyValues.SHIPPING_TIER_VALUE_OTHER
-        Utils.triggerFireBaseEvents(
-            FirebaseManagerAnalyticsProperties.ADD_SHIPPING_INFO,
-            arguments,
-            activity
-        )
+
     }
 
     private fun showDeliverySubTypeShimmerView() {
@@ -978,6 +945,8 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                         placesId,
                         false,
                         true,
+                        false,
+                        false,
                         true,
                         savedAddress,
                         defaultAddress,
@@ -991,14 +960,11 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                 activity?.finish()
             }
             R.id.txtContinueToPayment -> {
-                Utils.triggerFireBaseEvents(
-                    FirebaseManagerAnalyticsProperties.CHECKOUT_CONTINUE_TO_PAYMENT,
-                    hashMapOf(
-                        FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
-                                FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_CONTINUE_TO_PAYMENT
-                    ),
-                    activity
-                )
+                cartItemList?.let {
+                    addShippingInfoEventsAnalytics.sendEventData(it,
+                        FirebaseManagerAnalyticsProperties.PropertyValues.SHIPPING_TIER_VALUE_STD,
+                        orderTotalValue)
+                }
                 onCheckoutPaymentClick()
             }
         }
@@ -1137,6 +1103,10 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                     }
                 }
                 // scroll to other slot selection layout
+                binding.checkoutHowWouldYouDeliveredLayout?.selectDeliveryTimeSlotSubTitle?.setTextColor( ContextCompat.getColor(
+                    requireContext(),
+                    R.color.color_D0021B
+                ))
                 binding.deliverySummaryScrollView?.smoothScrollTo(
                     0,
                     binding.checkoutHowWouldYouDeliveredLayout?.root?.top ?: 0
@@ -1165,6 +1135,10 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                         }
                         else -> {
                             if (TextUtils.isEmpty(selectedOtherSlot?.slotId)) {
+                                binding.checkoutHowWouldYouDeliveredLayout?.selectDeliveryTimeSlotSubTitle?.setTextColor( ContextCompat.getColor(
+                                    requireContext(),
+                                    R.color.color_D0021B
+                                ))
                                 // scroll to other slot selection layout
                                 binding.deliverySummaryScrollView?.smoothScrollTo(
                                     0,
@@ -1189,6 +1163,10 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                         binding.checkoutTimeSlotSelectionLayout.txtSelectDeliveryTimeSlotFoodError?.visibility = VISIBLE
                     } else if (TextUtils.isEmpty(selectedOtherSlot?.slotId)) {
                         // scroll to other slot selection layout
+                        binding.checkoutHowWouldYouDeliveredLayout?.selectDeliveryTimeSlotSubTitle?.setTextColor( ContextCompat.getColor(
+                            requireContext(),
+                            R.color.color_D0021B
+                        ))
                         binding.deliverySummaryScrollView?.smoothScrollTo(
                             0,
                             binding.checkoutHowWouldYouDeliveredLayout?.root?.top ?: 0
@@ -1196,6 +1174,19 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                     }
                 }
             }
+            //Default
+            otherType == DEFAULT -> {
+                // scroll to other slot selection layout
+                binding.checkoutHowWouldYouDeliveredLayout?.selectDeliveryTimeSlotSubTitle?.setTextColor( ContextCompat.getColor(
+                    requireContext(),
+                    R.color.color_D0021B
+                ))
+                binding.deliverySummaryScrollView?.smoothScrollTo(
+                    0,
+                    binding.checkoutHowWouldYouDeliveredLayout?.root?.top ?: 0
+                )
+            }
+
             else -> return true
         }
         return true
@@ -1204,7 +1195,10 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     private fun navigateToPaymentWebpage(webTokens: ShippingDetailsResponse) {
         view?.findNavController()?.navigate(
             R.id.action_CheckoutAddAddressReturningUserFragment_to_checkoutPaymentWebFragment,
-            bundleOf(KEY_ARGS_WEB_TOKEN to webTokens)
+            bundleOf(KEY_ARGS_WEB_TOKEN to webTokens,
+                CART_ITEM_LIST to cartItemList
+            )
+
         )
     }
 
@@ -1323,6 +1317,11 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         oddSelectedPosition = position
         selectedOpenDayDeliverySlot = openDayDeliverySlot
 
+        binding.checkoutHowWouldYouDeliveredLayout?.selectDeliveryTimeSlotSubTitle?.setTextColor( ContextCompat.getColor(
+            requireContext(),
+            R.color.checkout_delivering_title
+        ))
+
         Utils.triggerFireBaseEvents(
             FirebaseManagerAnalyticsProperties.CHECKOUT_DELIVERY_OPTION_.plus(openDayDeliverySlot.deliveryType),
             hashMapOf(
@@ -1421,4 +1420,5 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             binding.ageConfirmationLayout.radioBtnAgeConfirmation?.isChecked = true
         }
     }
+
 }

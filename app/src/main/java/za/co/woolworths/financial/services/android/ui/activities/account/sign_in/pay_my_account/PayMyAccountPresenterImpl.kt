@@ -2,8 +2,6 @@ package za.co.woolworths.financial.services.android.ui.activities.account.sign_i
 
 import android.app.Activity
 import com.awfs.coordination.R
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IPaymentOptionContract
 import za.co.woolworths.financial.services.android.models.dto.Account
@@ -14,9 +12,6 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 import za.co.woolworths.financial.services.android.util.Utils
-import za.co.woolworths.financial.services.android.util.WFormatter
-import java.lang.RuntimeException
-import kotlin.jvm.Throws
 
 class PayMyAccountPresenterImpl(private var mainView: IPaymentOptionContract.PayMyAccountView?, private var model: IPaymentOptionContract.PayMyAccountModel) : IPaymentOptionContract.PayMyAccountPresenter, IPaymentOptionContract.PayMyAccountModel {
 
@@ -37,7 +32,7 @@ class PayMyAccountPresenterImpl(private var mainView: IPaymentOptionContract.Pay
     }
 
     override fun getElectronicFundTransferBankingDetail(): Map<String, String>? {
-        return getAccount()?.bankingDetails?.let { bankingDetails -> Gson().fromJson(bankingDetails, object : TypeToken<Map<String, String>>() {}.type)  }
+        return getAccount()?.bankingDetails
     }
 
     override fun displayPaymentDetail() {

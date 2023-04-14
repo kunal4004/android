@@ -13,10 +13,10 @@ apply plugin: 'kotlin-parcelize'
 android {
 
     def major = "9"
-    def minor = "6"
-    def fix = "1"
-    def jobNumberProduction = 211
-    def jobNumberQa = 664
+    def minor = "9"
+    def fix = "0"
+    def jobNumberProduction = 214
+    def jobNumberQa = 687
 
     buildFeatures {
         dataBinding true
@@ -257,6 +257,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'androidx.appcompat:appcompat:1.3.0-rc01'
 
+
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     implementation 'com.facebook.fresco:fresco:2.0.0'
     implementation 'com.facebook.fresco:animated-gif:2.0.0'
@@ -299,10 +300,9 @@ dependencies {
     implementation 'com.github.MasayukiSuda:BubbleLayout:v1.2.1'
 
     // Import the Firebase BoM
-    implementation platform('com.google.firebase:firebase-bom:30.3.1')
+    implementation platform('com.google.firebase:firebase-bom:31.4.0')
     implementation 'io.grpc:grpc-okhttp:1.32.2'
     implementation 'com.google.firebase:firebase-messaging-ktx'
-    implementation 'com.google.firebase:firebase-core'
     implementation 'com.google.firebase:firebase-config-ktx'
     implementation 'com.google.firebase:firebase-invites:17.0.0'
     implementation 'com.google.firebase:firebase-perf-ktx'

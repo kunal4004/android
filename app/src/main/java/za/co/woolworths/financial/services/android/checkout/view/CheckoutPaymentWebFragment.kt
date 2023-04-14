@@ -19,22 +19,38 @@ import androidx.navigation.findNavController
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentCheckoutPaymentWebBinding
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import za.co.woolworths.financial.services.android.checkout.service.network.PaymentAnalyticsData
 import za.co.woolworths.financial.services.android.checkout.service.network.ShippingDetailsResponse
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyNames.*
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyNames.Companion.PAYMENT_STATUS
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyNames.Companion.STATUS
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyNames.Companion.STATUS_URL
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyNames.Companion.TRANSACTION_ID
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyValues.Companion.CURRENCY_VALUE
+import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
+import za.co.woolworths.financial.services.android.models.dto.CommerceItem
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.util.AdvancedWebView
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
 import java.net.URI
 
-class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_web), AdvancedWebView.Listener {
+
+class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_web),
+    AdvancedWebView.Listener {
 
     companion object {
         const val KEY_ARGS_WEB_TOKEN = "web_tokens"
         const val KEY_STATUS = "status"
         const val REQUEST_KEY_PAYMENT_STATUS = "payment_status"
         const val PAYMENT_TYPE = "payment_type"
+        const val PAYMENT_VALUE = "value"
+
     }
 
     enum class PaymentStatus(val type: String) {
@@ -45,6 +61,8 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
     }
 
     private lateinit var binding: FragmentCheckoutPaymentWebBinding
+    private var currentSuccessURI = ""
+    private var cartItemList: ArrayList<CommerceItem>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,6 +74,7 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentCheckoutPaymentWebBinding.bind(view)
+        cartItemList = arguments?.getSerializable(CheckoutAddressManagementBaseFragment.CART_ITEM_LIST) as ArrayList<CommerceItem>?
         initPaymentWebView()
     }
 
@@ -105,8 +124,9 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
         binding.paymentSuccessConfirmationLayout?.root?.visibility = View.VISIBLE
         Handler(Looper.getMainLooper()).postDelayed({
             binding.paymentSuccessConfirmationLayout?.root?.visibility = View.GONE
-            view?.findNavController()
-                ?.navigate(R.id.action_checkoutPaymentWebFragment_orderConfirmationFragment)
+            view?.let {
+                GeoUtils.navigateSafe(it, R.id.action_checkoutPaymentWebFragment_orderConfirmationFragment, null)
+            }
         }, AppConstant.DELAY_1500_MS)
     }
 
@@ -121,20 +141,104 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
 
     private fun onStatusChanged(url: String) {
         val uri = Uri.parse(url)
-        when (uri.getQueryParameter(KEY_STATUS)) {
+        currentSuccessURI = url
+        val paymentStatusType = uri.getQueryParameter(KEY_STATUS)
+        val transactionAnalytics = uri.getQueryParameter("analytics")
+        val paymentArguments = HashMap<String, String>()
+        if (!paymentStatusType.isNullOrEmpty()) {
+            paymentArguments[STATUS] = paymentStatusType
+            paymentArguments[STATUS_URL] = currentSuccessURI
+        }
+
+        if (!transactionAnalytics.isNullOrEmpty()) {
+            val jsonToAnalyticsList = Gson().fromJson<PaymentAnalyticsData?>(
+                transactionAnalytics,
+                object : TypeToken<PaymentAnalyticsData?>() {}.type
+            )
+            if (jsonToAnalyticsList != null)
+                paymentArguments[TRANSACTION_ID] = jsonToAnalyticsList?.transaction_id ?: ""
+            paymentArguments[PAYMENT_VALUE] = jsonToAnalyticsList?.value?.toString() ?: "0.0"
+            paymentArguments[PAYMENT_TYPE] = jsonToAnalyticsList?.payment_type ?: ""
+        }
+
+        when (paymentStatusType) {
             PaymentStatus.PAYMENT_SUCCESS.type -> {
-                val paymentType = uri.getQueryParameter(PAYMENT_TYPE)
-                val arguments = HashMap<String, String>()
-                arguments[FirebaseAnalytics.Param.CURRENCY] = FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE
-                arguments[FirebaseAnalytics.Param.PAYMENT_TYPE] = paymentType.toString()
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.ADD_PAYMENT_INFO, arguments, activity)
+                val eventParams = Bundle()
+                eventParams.apply {
+
+                    cartItemList?.let {
+                        val itemsArray = arrayListOf<Bundle>()
+                        for (cartItem in it) {
+                            val selectItems = Bundle()
+                            selectItems.apply {
+                                putString(
+                                    FirebaseAnalytics.Param.ITEM_ID,
+                                    cartItem.commerceItemInfo.productId
+                                )
+
+                                putString(
+                                    FirebaseAnalytics.Param.ITEM_NAME,
+                                    cartItem.commerceItemInfo.productDisplayName
+                                )
+
+                                putDouble(
+                                    FirebaseAnalytics.Param.PRICE,
+                                    cartItem.priceInfo.amount
+                                )
+
+                                putString(
+                                    FirebaseAnalytics.Param.ITEM_BRAND,
+                                    cartItem.commerceItemInfo?.productDisplayName
+                                )
+                                putString(
+                                    FirebaseAnalytics.Param.ITEM_VARIANT,
+                                    cartItem.commerceItemInfo?.size
+                                )
+
+                                putString(
+                                    FirebaseAnalytics.Param.ITEM_CATEGORY,
+                                    cartItem.commerceItemInfo.productDisplayName
+                                )
+                                putInt(
+                                    FirebaseAnalytics.Param.QUANTITY,
+                                    cartItem.commerceItemInfo.quantity
+                                )
+                                itemsArray.add(this)
+
+                            }
+
+                        }
+
+                        putParcelableArray(
+                            FirebaseAnalytics.Param.ITEMS,
+                            itemsArray.toTypedArray()
+                        )
+                    }
+                    putString(
+                        FirebaseAnalytics.Param.CURRENCY,
+                        CURRENCY_VALUE
+                    )
+                    putString(
+                        FirebaseAnalytics.Param.PAYMENT_TYPE,
+                        paymentArguments[PAYMENT_TYPE]
+                    )
+                    putDouble(
+                        FirebaseAnalytics.Param.VALUE,
+                        paymentArguments[PAYMENT_VALUE]?.toDouble() ?: 0.0
+                    )
+
+                    AnalyticsManager.logEvent(
+                        FirebaseManagerAnalyticsProperties.ADD_PAYMENT_INFO,
+                        this
+                    )
+                }
                 navigateToOrderConfirmation()
             }
             PaymentStatus.PAYMENT_ABANDON.type -> {
                 view?.findNavController()?.navigateUp()
             }
             PaymentStatus.PAYMENT_UNAUTHENTICATED.type, PaymentStatus.PAYMENT_ERROR.type -> {
-                if(!isAdded){
+                if (!isAdded) {
                     return
                 }
                 setFragmentResult(
@@ -145,6 +249,8 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
                 view?.findNavController()?.navigateUp()
             }
         }
+        if (!paymentArguments.isNullOrEmpty())
+            Utils.triggerFireBaseEvents(PAYMENT_STATUS, paymentArguments, activity)
     }
 
     override fun onPageError(errorCode: Int, description: String?, failingUrl: String?) {
@@ -156,6 +262,14 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
             val intent = Intent(this, ErrorHandlerActivity::class.java)
             intent.putExtra(ErrorHandlerActivity.ERROR_TYPE, errorType)
             startActivityForResult(intent, ErrorHandlerActivity.ERROR_PAGE_REQUEST_CODE)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (currentSuccessURI.isNotEmpty() && isAdded) {
+            onStatusChanged(currentSuccessURI)
+            currentSuccessURI = getString(R.string.empty)
         }
     }
 
@@ -178,7 +292,7 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
         mimeType: String?,
         contentLength: Long,
         contentDisposition: String?,
-        userAgent: String?
+        userAgent: String?,
     ) {
     }
 

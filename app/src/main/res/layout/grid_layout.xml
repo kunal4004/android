@@ -42,19 +42,22 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_gravity="center"
-                android:layout_marginStart="@dimen/five_dp"
-                android:fontFamily="@font/myriad_pro_regular"
+                android:layout_marginStart="@dimen/eight_dp"
+                android:fontFamily="@font/opensans_semi_bold"
                 android:gravity="center"
                 android:minHeight="@dimen/twenty_dp"
                 android:text="@string/standard_delivery"
                 android:textColor="@color/black"
-                android:textSize="@dimen/twelve_sp" />
+                android:textSize="@dimen/ten_dp" />
 
             <ImageView
-                android:layout_width="@dimen/twenty_dp"
-                android:layout_height="@dimen/twenty_dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@id/toolbarPLPAddress"
+                android:layout_alignBottom="@id/toolbarPLPAddress"
                 android:layout_toEndOf="@id/toolbarPLPAddress"
-                android:src="@drawable/vector_drawable_down_arrow" />
+                android:layout_marginStart="@dimen/eight_dp"
+                android:src="@drawable/ic_dwon" />
 
             <TextView
                 android:id="@+id/toolbarPLPTitle"
@@ -97,19 +100,11 @@
             android:id="@+id/sortAndRefineLayout"
             layout="@layout/sort_and_refine_selection_layout" />
 
-        <include
-            android:id="@+id/promotionalTextBannerLayout"
-            layout="@layout/promotional_text_plp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/sortAndRefineLayout"
-            android:visibility="gone" />
-
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@+id/incConfirmButtonLayout"
-            android:layout_below="@+id/promotionalTextBannerLayout"
+            android:layout_below="@+id/sortAndRefineLayout"
             android:layout_alignParentStart="true">
 
             <androidx.recyclerview.widget.RecyclerView
@@ -131,6 +126,14 @@
                 android:gravity="center"
                 android:visibility="gone" />
         </FrameLayout>
+
+        <include
+            android:id="@+id/layoutRecommendationContainer"
+            layout="@layout/recommendation_fragment_container_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/eighty_dp"
+            android:layout_alignParentBottom="true" />
 
         <include
             android:id="@+id/incConfirmButtonLayout"

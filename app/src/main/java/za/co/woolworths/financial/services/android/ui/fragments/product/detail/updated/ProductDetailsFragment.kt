@@ -28,13 +28,12 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
-import androidx.fragment.app.FragmentTransaction
-import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.setFragmentResultListener
-import androidx.fragment.app.viewModels
+import androidx.core.os.bundleOf
+import androidx.fragment.app.*
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.ProductDetailsFragmentBinding
@@ -64,6 +63,9 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
+import za.co.woolworths.financial.services.android.recommendations.data.response.request.ProductX
+import za.co.woolworths.financial.services.android.recommendations.presentation.viewmodel.RecommendationViewModel
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.MultipleImageActivity
@@ -85,12 +87,14 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.detail.I
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.OutOfStockMessageDialogFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.size_guide.SkinProfileDialog
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment.Companion.SET_DELIVERY_LOCATION_REQUEST_CODE
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.FoodProductNotAvailableForCollectionDialog
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.ProductNotAvailableForCollectionDialog
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.BaseProductUtils
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.ColourSizeVariants
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
-import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListDetailFragment.ADD_TO_CART_SUCCESS_RESULT
+import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListDetailFragment.Companion.ADD_TO_CART_SUCCESS_RESULT
 import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
+import za.co.woolworths.financial.services.android.ui.views.LockableNestedScrollViewV2
 import za.co.woolworths.financial.services.android.ui.views.UnsellableItemsBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ProductDetailsFindInStoreDialog
@@ -112,6 +116,7 @@ import za.co.woolworths.financial.services.android.ui.vto.ui.gallery.ImageResult
 import za.co.woolworths.financial.services.android.ui.vto.utils.PermissionUtil
 import za.co.woolworths.financial.services.android.ui.vto.utils.SdkUtility
 import za.co.woolworths.financial.services.android.ui.vto.utils.VirtualTryOnUtil
+import za.co.woolworths.financial.services.android.ui.wfs.common.getIpAddress
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_1000_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_1500_MS
@@ -124,6 +129,7 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_FAIL_IMAGE_LOAD
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.saveAnonymousUserLocationDetails
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.logException
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.setCrashlyticsString
 import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
@@ -146,7 +152,7 @@ class ProductDetailsFragment :
     ProductNotAvailableForCollectionDialog.IProductNotAvailableForCollectionDialogListener,
     VtoSelectOptionListener, WMaterialShowcaseView.IWalkthroughActionListener, VtoTryAgainListener,
     View.OnTouchListener, ReviewThumbnailAdapter.ThumbnailClickListener,
-    ViewTreeObserver.OnScrollChangedListener {
+    FoodProductNotAvailableForCollectionDialog.IProductNotAvailableForCollectionDialogListener{
 
     var productDetails: ProductDetails? = null
     private var subCategoryTitle: String? = null
@@ -225,6 +231,8 @@ class ProductDetailsFragment :
     private var isRnRAPICalled = false
     private var prodId: String = "-1"
     private lateinit var moreReviewViewModel: RatingAndReviewViewModel
+    private val dialogInstance = FoodProductNotAvailableForCollectionDialog.newInstance()
+    private val recommendationViewModel: RecommendationViewModel by viewModels()
 
     @OpenTermAndLighting
     @Inject
@@ -293,12 +301,19 @@ class ProductDetailsFragment :
     }
 
     private fun setUpCartCountPDP() {
+        val cartIconMargin = requireContext().resources.getDimensionPixelSize(R.dimen.five_dp)
+        val params = ConstraintLayout.LayoutParams(
+            ConstraintLayout.LayoutParams.WRAP_CONTENT,
+            ConstraintLayout.LayoutParams.WRAP_CONTENT
+        )
         if (SessionUtilities.getInstance().isUserAuthenticated && QueryBadgeCounter.instance.cartCount <= 0) {
             binding.openCart.cartCountTextView?.visibility = View.GONE
         } else if (SessionUtilities.getInstance().isUserAuthenticated && QueryBadgeCounter.instance.cartCount > 0) {
             binding.openCart.cartCountTextView?.visibility = View.VISIBLE
             binding.openCart.cartCountTextView?.text =
                 QueryBadgeCounter.instance.cartCount.toString()
+            params.setMargins(cartIconMargin, 0, 0, 0)
+            binding.openCart.cartCountImage.setLayoutParams(params)
         }
     }
 
@@ -352,7 +367,7 @@ class ProductDetailsFragment :
         isOutOfStockFragmentAdded = false
         configureDefaultUI()
         scrollView.setOnTouchListener(this@ProductDetailsFragment)
-        scrollView.viewTreeObserver.addOnScrollChangedListener(this@ProductDetailsFragment)
+        scrollView.setOnScrollStoppedListener(onScrollStoppedListener)
 
         hideRatingAndReview()
         setupViewModel()
@@ -1057,12 +1072,24 @@ class ProductDetailsFragment :
             if (!this.productDetails?.productType.equals(
                     getString(R.string.food_product_type),
                     ignoreCase = true
-                ) && (KotlinUtils.getPreferredDeliveryType() == Delivery.CNC
-                        || KotlinUtils.getPreferredDeliveryType() == Delivery.DASH)
+                ) && (KotlinUtils.getPreferredDeliveryType() == Delivery.DASH)
             ) {
                 showProductUnavailable()
                 showProductNotAvailableForCollection()
                 return
+            } else if(KotlinUtils.getPreferredDeliveryType() == Delivery.CNC) {
+                //Food only
+                if(this.productDetails?.fulfillmentType == StoreUtils.Companion.FulfillmentType.FOOD_ITEMS?.type && Utils.retrieveStoreId(this.productDetails?.fulfillmentType) == "") {
+                    showProductUnavailable()
+                    foodProductNotAvailableForCollection()
+                    return
+                }  //FBH only
+                else if((this.productDetails?.fulfillmentType == StoreUtils.Companion.FulfillmentType.CLOTHING_ITEMS?.type || this.productDetails?.fulfillmentType == StoreUtils.Companion.FulfillmentType.CRG_ITEMS?.type) &&
+                    (Utils.retrieveStoreId(this.productDetails?.fulfillmentType) == "")) {
+                    showProductUnavailable()
+                    showProductNotAvailableForCollection()
+                    return
+                }
             }
         }
 
@@ -1097,6 +1124,38 @@ class ProductDetailsFragment :
             productOutOfStockErrorMessage()
         } else {
             showErrorWhileLoadingProductDetails()
+        }
+        sendRecommendationsDetail()
+    }
+
+    private fun sendRecommendationsDetail() {
+        val bundle = Bundle()
+        val productX = ProductX(productDetails?.productId.toString())
+        bundle.putParcelable(
+            BundleKeysConstants.RECOMMENDATIONS_EVENT_DATA, Event(
+                eventType = "monetate:context:PageView", url = "/pdp", pageType = "pdp", categories = listOf(), null, null
+            )
+        )
+
+        bundle.putParcelable(
+            BundleKeysConstants.RECOMMENDATIONS_EVENT_DATA_TYPE, Event(eventType = "monetate:context:ProductDetailView", null, null, null,
+                products = listOf(productX), cartLines = listOf()
+            )
+        )
+
+        val navHostFragment =
+            childFragmentManager.findFragmentById(R.id.navHostRecommendation) as NavHostFragment
+        val navController = navHostFragment?.navController
+        val navGraph = navController?.navInflater?.inflate(R.navigation.nav_recommendation_graph)
+
+        navGraph?.startDestination = R.id.recommendationFragment
+        navGraph?.let {
+            navController?.graph = it
+        }
+        navGraph?.let {
+            navController?.setGraph(
+                it, bundleOf("bundle" to bundle)
+            )
         }
     }
 
@@ -1176,9 +1235,21 @@ class ProductDetailsFragment :
 
     private fun loadSizeAndColor() {
         if (hasColor)
-            binding.showColors()
+            binding?.showColors()
+        else {
+            binding?.sizeColorSelectorLayout?.apply {
+                colorSelectorLayout.visibility = View.GONE
+                divider1.visibility = View.GONE
+            }
+        }
         if (hasSize)
-            binding.showSize()
+            binding?.showSize()
+        else {
+            binding?.sizeColorSelectorLayout?.apply {
+                sizeSelectorLayout.visibility = View.GONE
+                divider2.visibility = View.GONE
+            }
+        }
 
         if (productDetailsPresenter?.isSizeGuideApplicable(
                 productDetails?.colourSizeVariants,
@@ -1221,6 +1292,7 @@ class ProductDetailsFragment :
             }
 
             colorSelectorLayout?.visibility = View.VISIBLE
+            divider1.visibility = View.VISIBLE
         }
     }
 
@@ -2053,41 +2125,10 @@ class ProductDetailsFragment :
 
     //firebase event add_to_cart
     private fun addToCartEvent(productDetails: ProductDetails?) {
-        val addToCartParams = Bundle()
-        addToCartParams.putString(FirebaseAnalytics.Param.CURRENCY,
-            FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE)
-        productDetails?.price?.let {
-            addToCartParams.putDouble(FirebaseAnalytics.Param.VALUE,
-                it.toDouble())
+        val quantity = getSelectedQuantity()
+        if (quantity != null && productDetails != null){
+            FirebaseAnalyticsEventHelper.addToCart(productDetails, quantity)
         }
-        for (products in 0..(productDetails?.otherSkus?.size ?: 0)) {
-            val addToCartItem = Bundle()
-            addToCartItem.putString(FirebaseAnalytics.Param.ITEM_ID, productDetails?.productId)
-            addToCartItem.putString(FirebaseAnalytics.Param.ITEM_NAME,
-                productDetails?.productName)
-            addToCartItem.putString(FirebaseAnalytics.Param.ITEM_CATEGORY,
-                productDetails?.categoryName)
-            addToCartItem.putString(FirebaseAnalytics.Param.ITEM_BRAND,
-                productDetails?.brandText)
-            addToCartItem.putString(FirebaseAnalytics.Param.ITEM_LIST_NAME,
-                productDetails?.categoryName)
-            addToCartItem.putString(FirebaseAnalytics.Param.ITEM_VARIANT,
-                productDetails?.colourSizeVariants)
-            addToCartItem.putString(FirebaseAnalytics.Param.QUANTITY,
-                FirebaseManagerAnalyticsProperties.PropertyValues.INDEX_VALUE)
-            productDetails?.price?.let {
-                addToCartItem.putDouble(FirebaseAnalytics.Param.PRICE,
-                    it.toDouble())
-            }
-            addToCartItem.putString(FirebaseAnalytics.Param.AFFILIATION,
-                FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE)
-            addToCartItem.putString(FirebaseAnalytics.Param.INDEX,
-                FirebaseManagerAnalyticsProperties.PropertyValues.INDEX_VALUE)
-            addToCartParams.putParcelableArray(FirebaseAnalytics.Param.ITEMS,
-                arrayOf(addToCartItem))
-        }
-        AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.ADD_TO_CART_PDP,
-            addToCartParams)
     }
 
     private fun addItemToShoppingList() {
@@ -2205,7 +2246,7 @@ class ProductDetailsFragment :
                             if (!this.productDetails?.productType.equals(
                                     getString(R.string.food_product_type),
                                     ignoreCase = true
-                                ) && KotlinUtils.getPreferredDeliveryType() == Delivery.CNC
+                                )
                             ) {
                                 storeIdForInventory = ""
                                 clearStockAvailability()
@@ -2767,7 +2808,7 @@ class ProductDetailsFragment :
                     if (!it.vitality.isNullOrEmpty()) images.add(it.vitality ?: "")
                     if (!it.newImage.isNullOrEmpty()) images.add(it.newImage ?: "")
                     if (!it.reduced.isNullOrEmpty()) images.add(it.reduced ?: "")
-
+                    if (!it.wList.isNullOrEmpty()) images.add(it.wList ?: "")
                 }
 
                 priceLayout.promotionalImages?.removeAllViews()
@@ -3841,25 +3882,10 @@ class ProductDetailsFragment :
     }
 
     override fun onTouch(v: View?, event: MotionEvent?): Boolean {
-        return false
-    }
-
-    override fun onScrollChanged() {
-        binding.scrollView?.let {
-            if (!it.canScrollVertically(1) && !isRnRAPICalled) {
-                productDetails?.isRnREnabled?.let {
-                    if (productDetails?.isRnREnabled == true && RatingAndReviewUtil.isRatingAndReviewConfigavailbel())
-                        productDetails?.productId?.let {
-                            productDetailsPresenter?.loadRatingNReview(it, 1, 0)
-                            isRnRAPICalled = true
-                            showProgressBar()
-                            RatingAndReviewUtil.reportedReviews.clear()
-                            RatingAndReviewUtil.likedReviews.clear()
-                        }
-                }
-            }
+        if (event?.action == MotionEvent.ACTION_UP) {
+            binding.scrollView.startScrollerTask()
         }
-
+        return false
     }
 
     private fun showRatingDetailsDailog() {
@@ -3945,6 +3971,42 @@ class ProductDetailsFragment :
         }
     }
 
+    override fun foodProductNotAvailableForCollection() {
+        activity?.apply {
+            if (dialogInstance != null && !dialogInstance.isVisible)
+                dialogInstance.show(
+                    this@ProductDetailsFragment.childFragmentManager,
+                    FoodProductNotAvailableForCollectionDialog::class.java.simpleName
+                )
+        }
+    }
+
+    private val onScrollStoppedListener = object: LockableNestedScrollViewV2.OnScrollStoppedListener {
+        override fun onScrollStopped() {
+            val visible = binding.scrollView.isViewVisible(binding.productDetailOptionsAndInformation.layoutRecommendationContainer.root)
+            if(visible){
+                recommendationViewModel.parentPageScrolledToRecommendation()
+            }
+            if (!binding.scrollView.canScrollVertically(1)) {
+                loadRatingAndReviews()
+            }
+        }
+    }
+
+    private fun loadRatingAndReviews() {
+        if (!isRnRAPICalled) {
+            productDetails?.isRnREnabled?.let {
+                if (productDetails?.isRnREnabled == true && RatingAndReviewUtil.isRatingAndReviewConfigavailbel())
+                    productDetails?.productId?.let {
+                        productDetailsPresenter?.loadRatingNReview(it, 1, 0)
+                        isRnRAPICalled = true
+                        showProgressBar()
+                        RatingAndReviewUtil.reportedReviews.clear()
+                        RatingAndReviewUtil.likedReviews.clear()
+                    }
+            }
+        }
+    }
 
 }
 

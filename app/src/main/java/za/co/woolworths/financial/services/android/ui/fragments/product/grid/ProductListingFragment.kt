@@ -20,12 +20,14 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.core.text.HtmlCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -54,6 +56,8 @@ import za.co.woolworths.financial.services.android.models.dto.brandlandingpage.D
 import za.co.woolworths.financial.services.android.models.dto.brandlandingpage.Navigation
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
+import za.co.woolworths.financial.services.android.recommendations.data.response.request.CartProducts
+import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.DISMISS_POP_WINDOW_CLICKED
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
@@ -68,6 +72,8 @@ import za.co.woolworths.financial.services.android.ui.adapters.holder.RecyclerVi
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants.EVENT_TYPE_CART
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants.EVENT_TYPE_PAGEVIEW
 import za.co.woolworths.financial.services.android.ui.views.*
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ProductListingFindInStoreNoQuantityFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SelectYourQuantityFragment
@@ -129,6 +135,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
     private val confirmAddressViewModel: ConfirmAddressViewModel by activityViewModels()
     private var localDeliveryType: String? = null
     private var localDeliveryTypeForHiddenChange: String? = null
+    private var mPromotionalCopy: String? = null
+    private var isChanelPage = false
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -141,6 +149,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
                     ProductsRequestParams.SearchType.valueOf(getString(SEARCH_TYPE, "SEARCH"))
                 mSearchTerm = getString(SEARCH_TERM, "")
                 mSortOption = getString(SORT_OPTION, "")
+                isChanelPage = getBoolean(IS_CHANEL_PAGE, false)
 
                 (getSerializable(BRAND_NAVIGATION_DETAILS) as? BrandNavigationDetails)?.let { brandNavigationDetails ->
                     mNavigationState = brandNavigationDetails.navigationState ?: ""
@@ -217,16 +226,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
         }
     }
 
-    private fun showPromotionalBanner(response: ProductView) {
-        binding.promotionalTextBannerLayout.root.visibility = VISIBLE
-        val htmlDataPromotionalText = response.richText
-        binding.promotionalTextBannerLayout.apply {
-            promotionalTextDesc.text =
-                HtmlCompat.fromHtml(htmlDataPromotionalText, HtmlCompat.FROM_HTML_MODE_LEGACY)
-            promotionalTextDesc.movementMethod = LinkMovementMethod.getInstance()
-        }
-    }
-
     private fun addFragmentListner() {
         setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_CLICK_RESULT) { _, _ ->
             // As User selects to change the delivery location. So we will call confirm place API and will change the users location.
@@ -271,6 +270,13 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
                                     navigateToUnsellableItemsFragment(
                                         it as ArrayList<UnSellableCommerceItem>,
                                         KotlinUtils.browsingDeliveryType?.name
+                                    )
+                                }
+                                val placeId = validateLocationResponse?.validatePlace?.placeDetails?.placeId
+                                if(placeId != null) {
+                                    val store = GeoUtils.getStoreDetails(
+                                            placeId,
+                                            validateLocationResponse?.validatePlace?.stores
                                     )
                                 }
                             } else
@@ -440,7 +446,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
                         navigationState = mNavigationState
                     ),
                     isUserBrowsing,
-                    arguments?.getBoolean(EXTRA_SEND_DELIVERY_DETAILS_PARAMS, false)
+                    arguments?.getBoolean(EXTRA_SEND_DELIVERY_DETAILS_PARAMS, false),
+                    isChanelPage
                 )
             )
         }
@@ -538,10 +545,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
         }
         binding.plpRelativeLayout.visibility = VISIBLE
 
-        if (!response.richText.isNullOrEmpty()) {
-            showPromotionalBanner(response)
-        }
-
         val productLists = response.products
         if (mProductList?.isNullOrEmpty() == true)
 
@@ -609,6 +612,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
     }
 
     private fun onChanelSuccess(response: ProductView) {
+        isChanelPage = true
         binding.chanelLayout.root.visibility = VISIBLE
         binding.plpRelativeLayout.visibility = GONE
         val brandLandingAdapter = BrandLandingAdapter(
@@ -742,6 +746,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
         mProductList?.clear()
         mProductList = ArrayList()
         mProductList = productLists
+        mPromotionalCopy = productView?.richText ?: ""
         if (!listContainHeader()) {
             val headerProduct = ProductList()
             headerProduct.rowType = ProductListingViewType.HEADER
@@ -756,7 +761,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
                 it,
                 mBannerLabel,
                 mBannerImage,
-                mIsComingFromBLP
+                mIsComingFromBLP,
+                mPromotionalCopy
             )
         }
         val mRecyclerViewLayoutManager: GridLayoutManager?
@@ -791,7 +797,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
                     it,
                     mBannerLabel,
                     mBannerImage,
-                    mIsComingFromBLP
+                    mIsComingFromBLP,
+                    mPromotionalCopy
                 )
             }
         binding.productsRecyclerView.apply {
@@ -813,6 +820,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
                     // Detect scrolling up
                     if (dy > 0)
                         loadData()
+
+                    // No search recommendation
+                    if (lastVisibleItem == 0)
+                        showRecommendedProducts()
                 }
             })
 
@@ -822,6 +833,33 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
             //and therefore we can most likely expect a IndexOutOfBoundsException
             if (visibility == View.INVISIBLE)
                 visibility = VISIBLE
+        }
+    }
+
+    private fun showRecommendedProducts() {
+        val bundle = Bundle()
+        val cartLinesValue: MutableList<CartProducts> = arrayListOf()
+
+        bundle.putParcelable(
+            BundleKeysConstants.RECOMMENDATIONS_EVENT_DATA, Event(eventType = EVENT_TYPE_PAGEVIEW, url = "/searchSortAndFilterV2", pageType = "emptySearch", null, null, null)
+        )
+        bundle.putParcelable(
+            BundleKeysConstants.RECOMMENDATIONS_EVENT_DATA_TYPE, Event(eventType = EVENT_TYPE_CART, null, null, null, null, cartLinesValue
+            )
+        )
+        val navHostFragment =
+            childFragmentManager.findFragmentById(R.id.navHostRecommendation) as NavHostFragment
+        val navController = navHostFragment?.navController
+        val navGraph = navController?.navInflater?.inflate(R.navigation.nav_recommendation_graph)
+
+        navGraph?.startDestination = R.id.recommendationFragment
+        navGraph?.let {
+            navController?.graph = it
+        }
+        navGraph?.let {
+            navController?.setGraph(
+                it, bundleOf("bundle" to bundle)
+            )
         }
     }
 
@@ -922,7 +960,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
             mSearchTerm,
             mNavigationState,
             mSortOption,
-            filterContent
+            filterContent,
+            isChanelPage
         )
     }
 
@@ -1750,7 +1789,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
                     navigationState = navigationState
                 ),
                 isUserBrowsing,
-                arguments?.getBoolean(EXTRA_SEND_DELIVERY_DETAILS_PARAMS, false)
+                arguments?.getBoolean(EXTRA_SEND_DELIVERY_DETAILS_PARAMS, false),
+                isChanelPage
             )
         )
     }
@@ -1783,6 +1823,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
         private const val SEARCH_TERM = "SEARCH_TERM"
         const val IS_BROWSING = "is_browsing"
         private const val SORT_OPTION = "SORT_OPTION"
+        private const val IS_CHANEL_PAGE = "IS_CHANEL_PAGE"
         private const val BRAND_NAVIGATION_DETAILS = "BRAND_NAVIGATION_DETAILS"
 
         fun newInstance(
@@ -1805,7 +1846,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
             sub_category_name: String?,
             brandNavigationDetails: BrandNavigationDetails?,
             isBrowsing: Boolean,
-            sendDeliveryDetails: Boolean?
+            sendDeliveryDetails: Boolean?,
+            isChanelPage: Boolean
         ) = ProductListingFragment().withArgs {
             putString(SEARCH_TYPE, searchType?.name)
             putString(SEARCH_TERM, searchTerm)
@@ -1813,6 +1855,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
             putSerializable(BRAND_NAVIGATION_DETAILS, brandNavigationDetails)
             putBoolean(IS_BROWSING, isBrowsing)
             putBoolean(EXTRA_SEND_DELIVERY_DETAILS_PARAMS, sendDeliveryDetails ?: false)
+            putBoolean(IS_CHANEL_PAGE, isChanelPage)
         }
 
         fun newInstance(
@@ -1822,7 +1865,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
             sortOption: String,
             brandNavigationDetails: BrandNavigationDetails?,
             isBrowsing: Boolean,
-            sendDeliveryDetails: Boolean?
+            sendDeliveryDetails: Boolean?,
+            isChanelPage: Boolean
         ) = ProductListingFragment().withArgs {
             putString(SEARCH_TYPE, searchType?.name)
             putString(SUB_CATEGORY_NAME, sub_category_name)
@@ -1831,6 +1875,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
             putSerializable(BRAND_NAVIGATION_DETAILS, brandNavigationDetails)
             putBoolean(IS_BROWSING, isBrowsing)
             putBoolean(EXTRA_SEND_DELIVERY_DETAILS_PARAMS, sendDeliveryDetails == true)
+            putBoolean(IS_CHANEL_PAGE, isChanelPage)
         }
     }
 
@@ -1921,7 +1966,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
                     "",
                     brandNavigationDetails,
                     isUserBrowsing,
-                    arguments?.getBoolean(EXTRA_SEND_DELIVERY_DETAILS_PARAMS, false)
+                    arguments?.getBoolean(EXTRA_SEND_DELIVERY_DETAILS_PARAMS, false),
+                    isChanelPage
                 )
             )
         }
@@ -1970,7 +2016,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
                     "",
                     brandNavigationDetails,
                     isUserBrowsing,
-                    arguments?.getBoolean(EXTRA_SEND_DELIVERY_DETAILS_PARAMS, false)
+                    arguments?.getBoolean(EXTRA_SEND_DELIVERY_DETAILS_PARAMS, false),
+                    isChanelPage
                 )
             )
         }

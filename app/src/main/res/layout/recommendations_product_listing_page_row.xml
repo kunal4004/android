@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/constProductContainer"
+    android:layout_width="@dimen/hundred_and_eighty_dp"
+    android:layout_height="@dimen/three_handred_fourty"
+    android:layout_marginEnd="@dimen/sixteen_dp"
+    android:background="@color/white">
+
+    <FrameLayout
+        android:id="@+id/mainImgLayout"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/hundred_and_eighty_dp"
+        android:adjustViewBounds="true"
+        android:background="@color/white"
+        android:contentDescription="@string/plp_productImageLayout"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/imProductImage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/productVariantTextView"
+        style="@style/futura_semi_bold_black"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/eight_dp"
+        android:background="@drawable/transperant_options_button"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:lineSpacingMultiplier="1"
+        android:padding="@dimen/five_dp"
+        android:textSize="@dimen/eleven_sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/mainImgLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="Product variant"
+        tools:visibility="visible" />
+
+    <View
+        android:id="@+id/horizontalProductSeparator"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/one_dp"
+        android:background="@color/recent_search_bg"
+        app:layout_constraintBottom_toBottomOf="@id/mainImgLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/brandName"
+        style="@style/futura_semi_bold_black"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_marginTop="@dimen/eight_dp"
+        android:includeFontPadding="false"
+        android:lineSpacingMultiplier="1.09"
+        android:maxLines="2"
+        android:ellipsize="end"
+        android:textAllCaps="true"
+        android:layout_marginEnd="@dimen/sixteen_dp"
+        android:textSize="@dimen/eleven_sp"
+        android:visibility="gone"
+        app:layout_constrainedHeight="true"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/mainImgLayout"
+        tools:text="@string/brands"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/tvRangeName"
+        style="@style/futura_semi_bold_black"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:layout_marginEnd="@dimen/sixteen_dp"
+        android:textSize="@dimen/eleven_sp"
+        android:visibility="gone"
+        app:layout_constrainedHeight="true"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/brandName"
+        tools:text="Healthy Glow Natural Eyeshadow Palette"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/tvProductName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/plp_textViewProductName"
+        android:ellipsize="end"
+        android:fontFamily="@font/opensans_regular"
+        android:gravity="top|start"
+        android:layout_marginEnd="@dimen/sixteen_dp"
+        android:includeFontPadding="false"
+        android:lineSpacingExtra="@dimen/two_sp"
+        android:lineSpacingMultiplier="1"
+        android:maxLines="2"
+        android:textColor="@color/black"
+        android:textSize="@dimen/thirteen_sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvRangeName"
+        app:layout_goneMarginTop="@dimen/eight_dp"
+        tools:text="Original Free Range Venison Droëwors Nibbles 25g" />
+
+    <RatingBar
+        android:id="@+id/rating_bar"
+        style="@style/StarRating"
+        android:layout_width="@dimen/zero_dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/eight_dp"
+        android:isIndicator="true"
+        android:numStars="5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvProductName" />
+
+    <TextView
+        android:id="@+id/txt_rating_count"
+        style="@style/reviewCount"
+        android:layout_width="@dimen/zero_dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/eight_dp"
+        android:gravity="start"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/rating_bar"
+        app:layout_constraintStart_toEndOf="@+id/rating_bar"
+        app:layout_constraintTop_toBottomOf="@+id/tvProductName"
+        app:layout_constraintTop_toTopOf="@+id/rating_bar" />
+
+    <TextView
+        android:id="@+id/onlinePromotionalTextView1"
+        style="@style/futura_medium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/labelPromotionOne"
+        android:ellipsize="end"
+        android:gravity="top|start"
+        android:maxLines="2"
+        android:paddingTop="@dimen/five_dp"
+        android:layout_marginEnd="@dimen/sixteen_dp"
+        android:textAllCaps="true"
+        android:textColor="@color/two_line_promo_text_color_plp"
+        android:textSize="@dimen/eleven_sp"
+        android:visibility="gone"
+        app:layout_constrainedHeight="true"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rating_bar"
+        tools:text="Buy one get one free"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/onlinePromotionalTextView2"
+        style="@style/futura_medium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/five_dp"
+        android:contentDescription="@string/labelPromotionTwo"
+        android:ellipsize="end"
+        android:gravity="top|start"
+        android:maxLines="1"
+        android:layout_marginEnd="@dimen/sixteen_dp"
+        android:textAllCaps="true"
+        android:textColor="@color/two_line_promo_text_color_plp"
+        android:textSize="@dimen/eleven_sp"
+        android:visibility="gone"
+        app:layout_constrainedHeight="true"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/onlinePromotionalTextView1"
+        tools:text="R15.00"
+        tools:visibility="visible" />
+
+
+    <include
+        android:id="@+id/includeProductListingPriceLayout"
+        layout="@layout/product_listing_price_layout"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/thirty_two_dp"
+        android:layout_marginTop="@dimen/eight_dp"
+        android:layout_marginBottom="@dimen/five_dp"
+        android:layout_marginEnd="@dimen/eight_dp"
+        app:layout_constrainedHeight="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <include
+        android:id="@+id/productListingPromotionalImage"
+        layout="@layout/product_listing_promotional_images"
+        app:layout_constrainedHeight="true"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

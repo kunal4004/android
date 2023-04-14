@@ -3,9 +3,8 @@ package za.co.woolworths.financial.services.android.checkout.view
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextUtils
-import android.text.TextWatcher
+import android.text.*
+import android.text.style.StyleSpan
 import android.view.View
 import android.widget.CompoundButton
 import androidx.annotation.VisibleForTesting
@@ -27,8 +26,10 @@ import com.facebook.shimmer.Shimmer
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor
 import za.co.woolworths.financial.services.android.checkout.service.network.*
+import za.co.woolworths.financial.services.android.checkout.utils.AddShippingInfoEventsAnalytics
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.Companion.REGEX_DELIVERY_INSTRUCTIONS
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.FoodSubstitution
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.SAVED_ADDRESS_KEY
@@ -47,6 +48,7 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
+import za.co.woolworths.financial.services.android.models.dto.CommerceItem
 import za.co.woolworths.financial.services.android.models.dto.LiquorCompliance
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
@@ -63,7 +65,10 @@ import za.co.woolworths.financial.services.android.util.pushnotification.Notific
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.viewmodels.ShoppingCartLiveData
 import java.util.regex.Pattern
+import za.co.woolworths.financial.services.android.util.StoreUtils
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class CheckoutReturningUserCollectionFragment :
     Fragment(R.layout.fragment_checkout_returning_user_collection),
     ShoppingBagsRadioGroupAdapter.EventListner, View.OnClickListener, CollectionTimeSlotsListener,
@@ -84,6 +89,11 @@ class CheckoutReturningUserCollectionFragment :
     private var navController: NavController? = null
     private var liquorImageUrl: String? = ""
     private var liquorOrder: Boolean? = false
+    private var cartItemList: ArrayList<CommerceItem>? = null
+    private var orderTotalValue: Double = -1.0
+    @Inject
+    lateinit var addShippingInfoEventsAnalytics : AddShippingInfoEventsAnalytics
+
     private val deliveryInstructionsTextWatcher: TextWatcher = object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
         override fun afterTextChanged(s: Editable?) {
@@ -123,6 +133,7 @@ class CheckoutReturningUserCollectionFragment :
         (activity as? CheckoutActivity)?.apply {
             showBackArrowWithTitle(bindString(R.string.checkout))
         }
+        cartItemList = arguments?.getSerializable(CheckoutAddressManagementBaseFragment.CART_ITEM_LIST) as ArrayList<CommerceItem>?
         setupViewModel()
         initializeCollectingFromView()
         initializeCollectingDetailsView()
@@ -184,6 +195,15 @@ class CheckoutReturningUserCollectionFragment :
             Pair<ShimmerFrameLayout, View>(
                 binding.nativeCheckoutFoodSubstitutionLayout.radioGroupFoodSubstitutionShimmerFrameLayout,
                 binding.nativeCheckoutFoodSubstitutionLayout.radioGroupFoodSubstitution
+            ),
+
+            Pair<ShimmerFrameLayout, View>(
+                binding.layoutCollectionInstructions.checkoutCollectionDetailsInfoLayout.collectionDetailsTitleShimmerFrameLayout,
+                binding.layoutCollectionInstructions.checkoutCollectionDetailsInfoLayout.tvCollectionDetailsTitle
+            ),
+            Pair<ShimmerFrameLayout, View>(
+                binding.layoutCollectionInstructions.checkoutCollectionDetailsInfoLayout.collectionDetailsTextShimmerFrameLayout,
+                binding.layoutCollectionInstructions.checkoutCollectionDetailsInfoLayout.tvCollectionDetailsText
             ),
 
             Pair<ShimmerFrameLayout, View>(
@@ -376,7 +396,7 @@ class CheckoutReturningUserCollectionFragment :
                 stopShimmerView()
                 when (response) {
                     is ConfirmDeliveryAddressResponse -> {
-                        when (response.httpCode ?: 400) {
+                        when (response.httpCode ?: AppConstant.HTTP_SESSION_TIMEOUT_400) {
                             AppConstant.HTTP_OK -> {
                                 storePickupInfoResponse = response
                                 if (!isAdded) {
@@ -410,23 +430,12 @@ class CheckoutReturningUserCollectionFragment :
 
                                 isItemLimitExceeded =
                                     (response.orderSummary?.totalItemsCount ?: 0) > maxItemLimit
-                                if (isItemLimitExceeded) {
+                                if (isItemLimitExceeded && !isFBHOnly()) {
                                     showMaxItemView()
                                 }
 
                                 initializeOrderSummary(response.orderSummary)
-                                response.sortedJoinDeliverySlots?.apply {
-                                    val firstAvailableDateSlot = getFirstAvailableSlot(this)
-                                    initializeDatesAndTimeSlots(firstAvailableDateSlot)
-                                    // Set default time slot selected
-                                    var selectedSlotIndex = 0
-                                    ArrayList(firstAvailableDateSlot?.slots).forEachIndexed { index, slot ->
-                                        if (slot.slotId.equals(selectedTimeSlot?.slotId)) {
-                                            selectedSlotIndex = index
-                                        }
-                                    }
-                                    collectionTimeSlotsAdapter.setSelectedItem(selectedSlotIndex)
-                                }
+                                updateCollectionItemsForCheckout()
                                 if (response.orderSummary?.hasMinimumBasketAmount == false) {
                                     KotlinUtils.showMinCartValueError(
                                         requireActivity() as AppCompatActivity,
@@ -677,6 +686,125 @@ class CheckoutReturningUserCollectionFragment :
         binding.checkoutCollectingUserInfoLayout.root.setOnClickListener(this)
     }
 
+    /**
+     * collection label message for FBH item into cart
+     */
+    private fun collectionMessageForFBHItem() {
+        val deliveryInDays = storePickupInfoResponse?.openDayDeliverySlots?.get(0)?.deliveryInDays
+        binding.layoutCollectionInstructions?.checkoutCollectionDetailsInfoLayout?.root?.visibility = View.VISIBLE
+
+        val collectionDetailsTextString  = context?.resources?.getString(R.string.collection_details_text).toString() +
+                " " + deliveryInDays?.lowercase() + ". " + (context?.resources?.getString(R.string.notify_text_label))
+        val spannableStringBuilder = SpannableStringBuilder(collectionDetailsTextString)
+        val styleSpam = StyleSpan(android.graphics.Typeface.BOLD)
+        spannableStringBuilder.setSpan(styleSpam, (collectionDetailsTextString.length - 41),
+                collectionDetailsTextString.length, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
+
+        binding.layoutCollectionInstructions.checkoutCollectionDetailsInfoLayout?.tvCollectionDetailsText?.text = spannableStringBuilder
+    }
+    /**
+     * check if cart items have only FBH products
+     */
+    private fun isFBHOnly() : Boolean {
+         storePickupInfoResponse?.let {
+           return it.fulfillmentTypes?.join == StoreUtils.Companion.FulfillmentType.CLOTHING_ITEMS?.type
+                    && it.openDayDeliverySlots?.isNullOrEmpty() == false
+                    && it.fulfillmentTypes?.join != StoreUtils.Companion.FulfillmentType.FOOD_ITEMS?.type
+                    && it.fulfillmentTypes?.food != StoreUtils.Companion.FulfillmentType.FOOD_ITEMS?.type
+            }
+            return false
+        }
+    /**
+     * Update collection item view according to Food, FBH and mixed item with title on checkout
+     * screen
+     */
+    private fun updateCollectionItemsForCheckout() {
+        //FBH only
+        if(isFBHOnly()) {
+            collectionMessageForFBHItem()
+            binding.apply {
+                checkoutCollectingTimeDetailsLayout?.root?.visibility = View.GONE
+                with(layoutCollectionInstructions) {
+                    txtNeedBags?.visibility = View.GONE
+                    nativeCheckoutFoodSubstitutionLayout?.root?.visibility = View.GONE
+                    viewHorizontalCollectionBottomSeparator?.visibility = View.VISIBLE
+                    instructionTxtShimmerFrameLayout?.visibility = View.GONE
+                    switchNeedBags?.visibility = View.GONE
+                    specialInstructionSwitchShimmerFrameLayout?.visibility = View.GONE
+                    shoppingBagSeparator?.visibility = View.GONE
+                    viewGiftHorizontalSeparator?.visibility = View.GONE
+                }
+            }
+        } //mixed cart - FBH + Food
+        else if((storePickupInfoResponse?.fulfillmentTypes?.other == StoreUtils.Companion.FulfillmentType.CLOTHING_ITEMS?.type
+                        && storePickupInfoResponse?.openDayDeliverySlots?.isNullOrEmpty() == false
+                        && storePickupInfoResponse?.sortedFoodDeliverySlots?.isNullOrEmpty() == false
+                        && storePickupInfoResponse?.fulfillmentTypes?.food == StoreUtils.Companion.FulfillmentType.FOOD_ITEMS?.type
+                        && storePickupInfoResponse?.fulfillmentTypes?.join == StoreUtils.Companion.FulfillmentType.CLOTHING_ITEMS?.type)) {
+            collectionMessageForFBHItem()
+            binding?.apply {
+                checkoutCollectingTimeDetailsLayout.tvCollectionTimeDetailsTitle?.text = bindString(R.string.mixed_cart_food_item_title)
+                with(layoutCollectionInstructions) {
+                    checkoutCollectionDetailsInfoLayout?.tvCollectionDetailsTitle?.text = bindString(R.string.mixed_cart_other_item_title)
+
+                    specialInstructionSwitchShimmerFrameLayout?.visibility = View.GONE
+                    viewGiftHorizontalSeparator?.visibility = View.GONE
+                    instructionTxtShimmerFrameLayout?.visibility = View.GONE
+                    shoppingBagSeparator?.visibility = View.VISIBLE
+                    switchNeedBags?.visibility = View.VISIBLE
+                    txtNeedBags?.visibility = View.VISIBLE
+                    viewHorizontalCollectionSeparator?.visibility = View.GONE
+                    viewHorizontalCollectionBottomSeparator?.visibility = View.GONE
+                }
+            }
+            storePickupInfoResponse?.sortedFoodDeliverySlots?.apply {
+                val firstAvailableDateSlot = getFirstAvailableFoodSlot(this)
+                initializeDatesAndTimeSlots(firstAvailableDateSlot)
+                // Set default time slot selected
+                var selectedSlotIndex = 0
+                firstAvailableDateSlot?.let { week ->
+                    ArrayList(week?.slots).forEachIndexed { index, slot ->
+                        if (slot?.slotId.equals(selectedTimeSlot?.slotId)) {
+                            selectedSlotIndex = index
+                        }
+                    }
+                    collectionTimeSlotsAdapter.setSelectedItem(selectedSlotIndex)
+                }
+            }
+
+        }   //Food only
+        else if(storePickupInfoResponse?.sortedJoinDeliverySlots?.isNullOrEmpty() == false
+                && storePickupInfoResponse?.fulfillmentTypes?.other != StoreUtils.Companion.FulfillmentType.CLOTHING_ITEMS?.type
+                && storePickupInfoResponse?.fulfillmentTypes?.join == StoreUtils.Companion.FulfillmentType.FOOD_ITEMS?.type) {
+
+            binding.apply {
+                with(layoutCollectionInstructions) {
+                    txtNeedBags?.visibility = View.VISIBLE
+                    instructionTxtShimmerFrameLayout?.visibility = View.GONE
+                    switchNeedBags?.visibility = View.VISIBLE
+                    specialInstructionSwitchShimmerFrameLayout?.visibility = View.GONE
+                    shoppingBagSeparator?.visibility = View.VISIBLE
+                    viewGiftHorizontalSeparator?.visibility = View.GONE
+                    viewHorizontalCollectionSeparator?.visibility = View.GONE
+                    viewHorizontalCollectionBottomSeparator?.visibility = View.GONE
+                }
+            }
+            storePickupInfoResponse?.sortedJoinDeliverySlots?.apply {
+                val firstAvailableDateSlot = getFirstAvailableSlot(this)
+                initializeDatesAndTimeSlots(firstAvailableDateSlot)
+                // Set default time slot selected
+                var selectedSlotIndex = 0
+                firstAvailableDateSlot?.let { week ->
+                    ArrayList(week?.slots).forEachIndexed { index, slot ->
+                        if (slot?.slotId.equals(selectedTimeSlot?.slotId)) {
+                            selectedSlotIndex = index
+                        }
+                    }
+                    collectionTimeSlotsAdapter.setSelectedItem(selectedSlotIndex)
+                }
+            }
+        }
+    }
     fun initializeDeliveryInstructions() {
         with(binding.layoutCollectionInstructions) {
             edtTxtSpecialDeliveryInstruction?.addTextChangedListener(deliveryInstructionsTextWatcher)
@@ -838,6 +966,12 @@ class CheckoutReturningUserCollectionFragment :
 
                     txtOrderTotalValue?.text =
                         CurrencyFormatter.formatAmountToRandAndCentWithSpace(it.total)
+                    orderTotalValue = it.total
+                    if (KotlinUtils.getPreferredDeliveryType() == Delivery.CNC) {
+                        txtOrderSummaryDeliveryFee?.text =
+                            context?.getString(R.string.collection_fee)
+                    }
+
                 }
             }
         }
@@ -870,21 +1004,23 @@ class CheckoutReturningUserCollectionFragment :
                 }
 
                 KotlinUtils.presentEditDeliveryGeoLocationActivity(
-                    requireActivity(),
-                    COLLECTION_SLOT_SLECTION_REQUEST_CODE,
-                    GeoUtils.getDelivertyType(),
-                    GeoUtils.getPlaceId(),
-                    false,
-                    true,
-                    true,
-                    savedAddressResponse,
-                    defaultAddress,
-                    Utils.toJson(whoIsCollectingDetails),
-                    liquorOrder?.let { liquorOrder ->
-                        liquorImageUrl?.let { liquorImageUrl ->
-                            LiquorCompliance(liquorOrder, liquorImageUrl)
+                        requireActivity(),
+                        COLLECTION_SLOT_SLECTION_REQUEST_CODE,
+                        GeoUtils.getDelivertyType(),
+                        GeoUtils.getPlaceId(),
+                        false,
+                        true,
+                        false,
+                        false,
+                        true,
+                        savedAddressResponse,
+                        defaultAddress,
+                        Utils.toJson(whoIsCollectingDetails),
+                        liquorOrder?.let { liquorOrder ->
+                            liquorImageUrl?.let { liquorImageUrl ->
+                                LiquorCompliance(liquorOrder, liquorImageUrl)
+                            }
                         }
-                    }
                 )
                 activity?.finish()
             }
@@ -906,6 +1042,11 @@ class CheckoutReturningUserCollectionFragment :
             }
             R.id.txtContinueToPaymentCollection -> {
                 onCheckoutPaymentClick()
+                cartItemList?.let {
+                    addShippingInfoEventsAnalytics.sendEventData(it,
+                        FirebaseManagerAnalyticsProperties.PropertyValues.SHIPPING_TIER_VALUE_CNC,
+                        orderTotalValue)
+                }
             }
         }
     }
@@ -976,7 +1117,7 @@ class CheckoutReturningUserCollectionFragment :
 
     private fun onCheckoutPaymentClick() {
 
-        if (isItemLimitExceeded) {
+        if (isItemLimitExceeded && !isFBHOnly()) {
             showMaxItemView()
             return
         }
@@ -990,7 +1131,7 @@ class CheckoutReturningUserCollectionFragment :
 
         val body = getShipmentDetailsBody()
         if (TextUtils.isEmpty(body.oddDeliverySlotId) && TextUtils.isEmpty(body.foodDeliverySlotId)
-            && TextUtils.isEmpty(body.otherDeliverySlotId)
+            && TextUtils.isEmpty(body.otherDeliverySlotId) && !isFBHOnly()
         ) {
             return
         }
@@ -1083,11 +1224,11 @@ class CheckoutReturningUserCollectionFragment :
         if (liquorOrder == true) {
             ageConsentConfirmed = true
         }
-        foodShipOnDate = selectedTimeSlot?.stringShipOnDate
+        foodShipOnDate = if(selectedTimeSlot?.stringShipOnDate != null) selectedTimeSlot?.stringShipOnDate else ""
         otherShipOnDate = ""
-        foodDeliverySlotId = selectedTimeSlot?.slotId
+        foodDeliverySlotId = if(selectedTimeSlot?.slotId !=null) selectedTimeSlot?.slotId else ""
         otherDeliverySlotId = ""
-        oddDeliverySlotId = ""
+        oddDeliverySlotId = if(storePickupInfoResponse?.openDayDeliverySlots?.size!! > 0 && storePickupInfoResponse?.openDayDeliverySlots?.get(0)?.deliverySlotId != null) storePickupInfoResponse?.openDayDeliverySlots?.get(0)?.deliverySlotId else ""
         foodDeliveryStartHour = selectedTimeSlot?.intHourFrom?.toLong() ?: 0
         otherDeliveryStartHour = 0
         substituesAllowed = selectedFoodSubstitution.rgb
@@ -1151,12 +1292,12 @@ class CheckoutReturningUserCollectionFragment :
     }
 
     private fun isRequiredFieldsMissing(): Boolean {
-        if (!TextUtils.isEmpty(selectedTimeSlot?.slotId)) {
-            binding.checkoutCollectingTimeDetailsLayout.txtSelectCollectionTimeSlotFoodError?.visibility =
-                View.GONE
+        if (!TextUtils.isEmpty(selectedTimeSlot?.slotId) || isFBHOnly()) {
+            binding.checkoutCollectingTimeDetailsLayout.txtSelectCollectionTimeSlotFoodError?.visibility = View.GONE
             return false
         }
         // scroll to slot selection layout
+        if(!isFBHOnly())
         binding.checkoutReturningCollectionScrollView?.smoothScrollTo(
             0,
             binding.checkoutCollectingTimeDetailsLayout?.root?.top ?: 0
@@ -1169,7 +1310,9 @@ class CheckoutReturningUserCollectionFragment :
     private fun navigateToPaymentWebpage(webTokens: ShippingDetailsResponse) {
         view?.findNavController()?.navigate(
             R.id.action_checkoutReturningUserCollectionFragment_to_checkoutPaymentWebFragment,
-            bundleOf(CheckoutPaymentWebFragment.KEY_ARGS_WEB_TOKEN to webTokens)
+            bundleOf(CheckoutPaymentWebFragment.KEY_ARGS_WEB_TOKEN to webTokens,
+                CheckoutAddressManagementBaseFragment.CART_ITEM_LIST to cartItemList
+            )
         )
     }
 
@@ -1187,5 +1330,23 @@ class CheckoutReturningUserCollectionFragment :
     fun testSetStorePickupInfoResponse(mockStorePickupInfoResponse: ConfirmDeliveryAddressResponse) {
         storePickupInfoResponse = mockStorePickupInfoResponse
     }
-
+    fun getFirstAvailableFoodSlot(list: List<SortedFoodDeliverySlot>): Week? {
+        if (list.isNullOrEmpty()) {
+            return null
+        }
+        list.forEach { sortedFoodDeliverySlot ->
+            if (!sortedFoodDeliverySlot.week.isNullOrEmpty()) {
+                sortedFoodDeliverySlot.week?.forEach { weekDay ->
+                    if (!weekDay.slots.isNullOrEmpty()) {
+                        weekDay.slots?.forEach { slot ->
+                            if(slot.available == true) {
+                                return weekDay
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return null
+    }
 }

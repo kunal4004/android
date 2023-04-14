@@ -5,5 +5,6 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class ConfigClickAndCollect(
-    var maxItemsAllowedText: String?
+    var maxItemsAllowedText: String?,
+    var collectionFeeDescription: String?
 ) : Parcelable

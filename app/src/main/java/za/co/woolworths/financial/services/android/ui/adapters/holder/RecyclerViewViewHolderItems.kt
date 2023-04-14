@@ -35,13 +35,14 @@ class RecyclerViewViewHolderItems(val itemBinding: ProductListingPageRowBinding)
         }
     }
 
-    private fun setOnClickListener(navigator: IProductListing, productList: ProductList) {
-        itemView.setOnClickListener { navigator.openProductDetailView(productList) }
+    private fun setOnClickListener(navigator: IProductListing, productList: ProductList) = itemBinding?.apply {
+        tvProductName.setOnClickListener { navigator.openProductDetailView(productList) }
+        mainImgLayout.setOnClickListener { navigator.openProductDetailView(productList) }
+        brandName.setOnClickListener { navigator.openProductDetailView(productList) }
+        tvRangeName.setOnClickListener { navigator.openProductDetailView(productList) }
     }
 
     private fun setProductName(productList: ProductList?) = itemBinding.apply {
-        tvProductName.maxLines = 3
-        tvProductName.minLines = 1
         tvProductName?.text = productList?.productName ?: ""
     }
 
@@ -52,8 +53,8 @@ class RecyclerViewViewHolderItems(val itemBinding: ProductListingPageRowBinding)
        ) {
                val ratings:Float = productList.averageRating!!.toFloat()
                if (ratings == 0.0f) {
-                   ratingBar.visibility = View.INVISIBLE
-                   txtRatingCount.visibility = View.INVISIBLE
+                   ratingBar.visibility = View.GONE
+                   txtRatingCount.visibility = View.GONE
                } else {
                    ratingBar.visibility = VISIBLE
                    txtRatingCount.visibility = VISIBLE
@@ -62,8 +63,8 @@ class RecyclerViewViewHolderItems(val itemBinding: ProductListingPageRowBinding)
                }
 
        }  else {
-           ratingBar.visibility = View.INVISIBLE
-           txtRatingCount.visibility = View.INVISIBLE
+           ratingBar.visibility = View.GONE
+           txtRatingCount.visibility = View.GONE
        }
 
     }
@@ -150,6 +151,7 @@ class RecyclerViewViewHolderItems(val itemBinding: ProductListingPageRowBinding)
             ImageManager.setPictureWithoutPlaceHolder(productListingPromotionalImage.imReward, imPromo?.wRewards ?: "")
             ImageManager.setPictureWithoutPlaceHolder(productListingPromotionalImage.imVitality, imPromo?.vitality ?: "")
             ImageManager.setPictureWithoutPlaceHolder(productListingPromotionalImage.imNewImage, imPromo?.newImage ?: "")
+            ImageManager.setPictureWithoutPlaceHolder(productListingPromotionalImage.imageWList, imPromo?.wList ?: "")
             if (VirtualTryOnUtil.isVtoConfigAvailable()) {
                 ImageManager.setPictureWithoutPlaceHolder(productListingPromotionalImage.imgTryItOn, virtualTryOn ?: "")
             }

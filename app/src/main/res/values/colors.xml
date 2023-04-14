@@ -11,6 +11,7 @@
     <color name="indicator_selected">#686663</color>
     <color name="indicator_border">#00000000</color>
     <color name="black_off">#343434</color>
+    <color name="color_000000">#000000</color>
     <color name="black_overlay">#66000000</color>
     <color name="recent_search_bg">#efefef</color>
     <color name="semi_transparent_black">#50000000</color>
@@ -185,4 +186,5 @@
     <color name="inactive_label_color">#928F8F</color>
     <color name="color_EEEEEE">#EEEEEE</color>
     <color name="color_EDF4FB">#EDF4FB</color>
+    <color name="color_C3E300">#C3E300</color>
 </resources>

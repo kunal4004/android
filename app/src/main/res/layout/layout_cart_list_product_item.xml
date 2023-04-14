@@ -47,19 +47,6 @@
         android:gravity="start|center"
         android:orientation="horizontal">
 
-        <ProgressBar
-            android:id="@+id/pbLoadProduct"
-            android:layout_width="@dimen/twenty_four_dp"
-            android:layout_height="@dimen/twenty_four_dp"
-            android:layout_centerVertical="true"
-            android:layout_marginHorizontal="@dimen/eighteen_dp"
-            android:indeterminateTint="@color/black"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:visibility="visible" />
-
         <CheckBox
             android:id="@+id/cbShoppingList"
             android:layout_width="wrap_content"
@@ -72,6 +59,20 @@
             android:padding="@dimen/seven_dp"
             android:saveEnabled="false"
             android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible" />
+
+        <ProgressBar
+            android:id="@+id/pbLoadProduct"
+            android:layout_width="@dimen/twenty_four_dp"
+            android:layout_height="@dimen/twenty_four_dp"
+            android:layout_centerVertical="true"
+            android:layout_marginHorizontal="@dimen/eighteen_dp"
+            android:indeterminateTint="@color/black"
+            android:visibility="gone"
+            style="?android:attr/progressBarStyleLarge"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -91,7 +92,7 @@
 
             <ProgressBar
                 android:id="@+id/pbDeleteProgress"
-                style="?android:attr/progressBarStyleSmall"
+                style="?android:attr/progressBarStyleLarge"
                 android:layout_width="@dimen/twenty_four_dp"
                 android:layout_height="@dimen/twenty_four_dp"
                 android:layout_gravity="center_vertical"
@@ -134,9 +135,9 @@
                 fresco:failureImage="@drawable/woolworth_logo_icon"
                 tools:src="@drawable/woolworth_logo_icon" />
 
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvTitle"
-                style="@style/style_cart_item_title"
+                style="@style/style_cart_item_title_opensens_regular_14"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/sixteen_dp"
@@ -261,51 +262,97 @@
 
             </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/promotionalTextLayout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:visibility="gone"
-                app:layout_constrainedWidth="true"
-                app:layout_constraintBottom_toTopOf="@id/tvPrice"
-                app:layout_constraintStart_toStartOf="@id/cartLowStock">
-
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/promotional_text"
-                    android:textColor="@color/color_9D9D9D"
-                    android:textSize="@dimen/ten_sp"
-                    app:WTextView_font="medium" />
-
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
-                    android:id="@+id/promotionalText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/color_9D9D9D"
-                    android:textSize="@dimen/ten_sp"
-                    app:WTextView_font="medium" />
-            </LinearLayout>
-
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
-                android:id="@+id/tvPrice"
-                style="@style/style_cart_item_price"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginVertical="@dimen/fifteen_dp"
-                android:ellipsize="end"
-                android:gravity="center|start"
-                android:maxLines="1"
-                android:minHeight="@dimen/thirty_two_dp"
                 app:layout_constrainedWidth="true"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toBottomOf="@+id/llQuantity"
                 app:layout_constraintEnd_toStartOf="@id/llQuantity"
-                app:layout_constraintStart_toStartOf="@id/tvProductAvailability"
-                app:layout_constraintTop_toBottomOf="@id/cartLowStock"
-                app:layout_goneMarginTop="@dimen/twenty_four_dp"
-                tools:text="R17.45" />
+                app:layout_constraintStart_toStartOf="@id/cartLowStock"
+                app:layout_constraintTop_toTopOf="@+id/llQuantity"
+                app:layout_goneMarginEnd="0dp">
 
+                <LinearLayout
+                    android:id="@+id/promotionalTextLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:visibility="gone"
+                    app:layout_constrainedWidth="true"
+                    app:layout_constraintBottom_toTopOf="@+id/fromPriceLabelTextView"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    tools:visibility="visible">
+
+                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/promotional_text"
+                        android:textColor="@color/color_9D9D9D"
+                        android:textSize="@dimen/ten_sp"
+                        app:WTextView_font="medium" />
+
+                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                        android:id="@+id/promotionalText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/color_9D9D9D"
+                        android:textSize="@dimen/ten_sp"
+                        app:WTextView_font="medium"
+                        tools:text="R1400.00" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/fromPriceLabelTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/futura_semi_bold_ttf"
+                    android:text="From"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/fifteen_sp"
+                    android:visibility="gone"
+                    app:layout_constraintBaseline_toBaselineOf="@id/tvWasPrice"
+                    app:layout_constraintBottom_toTopOf="@id/tvPrice"
+                    app:layout_constraintStart_toStartOf="parent"
+                    tools:visibility="visible" />
+
+                <TextView
+                    android:id="@+id/tvWasPrice"
+                    style="@style/style_cart_item_price"
+                    android:layout_width="match_parent"
+                    app:layout_constrainedWidth="true"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/futura_semi_bold_ttf"
+                    android:gravity="center|start"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:textColor="@color/was_price_color"
+                    app:layout_constraintBottom_toTopOf="@id/tvPrice"
+                    app:layout_constraintStart_toEndOf="@id/fromPriceLabelTextView"
+                    tools:text="1300"
+                    tools:visibility="visible" />
+
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    android:id="@+id/tvPrice"
+                    style="@style/style_cart_item_price"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:gravity="center|start"
+                    app:flow_verticalAlign="center"
+                    app:layout_constrainedWidth="true"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    tools:text="R12083642873647.45" />
+
+                <androidx.constraintlayout.widget.Group
+                    android:id="@+id/strikeThroughGroup"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:visibility="gone"
+                    app:constraint_referenced_ids="fromPriceLabelTextView, tvWasPrice" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <View

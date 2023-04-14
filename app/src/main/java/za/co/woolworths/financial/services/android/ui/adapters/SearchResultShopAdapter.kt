@@ -2,21 +2,22 @@ package za.co.woolworths.financial.services.android.ui.adapters
 
 import android.content.Context
 import android.text.Html
-import android.text.TextUtils
 import android.view.LayoutInflater
-import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.BottomProgressBarBinding
 import com.awfs.coordination.databinding.ItemFoundLayoutBinding
-import com.awfs.coordination.databinding.ShopSearchProductItemBinding
+import com.awfs.coordination.databinding.LayoutCartListProductItemBinding
 import com.daimajia.swipe.adapters.RecyclerSwipeAdapter
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.ui.adapters.holder.ProductListingViewType
 import za.co.woolworths.financial.services.android.ui.adapters.holder.SearchResultPriceItem
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultNavigator
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.CONST_NO_SIZE
 
 class SearchResultShopAdapter(
     private val context: Context, var productList: List<ProductList>?,
@@ -41,7 +42,11 @@ class SearchResultShopAdapter(
 
     private fun getSimpleViewHolder(parent: ViewGroup): SimpleViewHolder {
         return SimpleViewHolder(
-            ShopSearchProductItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            LayoutCartListProductItemBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            )
         )
     }
 
@@ -59,21 +64,28 @@ class SearchResultShopAdapter(
             }
             is ProgressViewHolder -> {
                 if (!value) {
-                    holder.itemBinding.pbFooterProgress.visibility = View.VISIBLE
+                    holder.itemBinding.pbFooterProgress.visibility = VISIBLE
                     holder.itemBinding.pbFooterProgress.isIndeterminate = true
-                } else holder.itemBinding.pbFooterProgress.visibility = View.GONE
+                } else holder.itemBinding.pbFooterProgress.visibility = GONE
             }
             is SimpleViewHolder -> {
                 holder.setPrice(productList)
-                holder.setProductName(productList)
+                holder.itemBinding?.apply {
+                    promotionalTextLayout.visibility = GONE
+                    llQuantity.visibility = GONE
+                    strikeThroughGroup.visibility = VISIBLE
+                    promotionalTextLayout.visibility = GONE
+
+                    cbShoppingList.visibility = VISIBLE
+                    cbShoppingList.isChecked = productList.itemWasChecked
+                    tvTitle.text = Html.fromHtml(productList.productName)
+                    tvQuantity.setText("1")
+                    tvColorSize.setText(productList.displayColorSizeText ?: "")
+                    swipe.isRightSwipeEnabled = false
+                }
                 holder.setCartImage(productList)
-                holder.setChecked(productList)
-                holder.setDefaultQuantity()
                 holder.showProgressBar(productList.viewIsLoading)
-                holder.disableSwipeToDelete(false)
-                holder.setTvColorSize(productList)
-                holder.hideDropdownIcon()
-                holder.itemBinding.btnDeleteRow.setOnClickListener {
+                holder.itemBinding.cbShoppingList.setOnClickListener {
                     /**
                      * Disable clothing type selection when product detail api is loading
                      * food item type can still be selected.
@@ -82,11 +94,13 @@ class SearchResultShopAdapter(
                      * Disable clothing type selection when product detail api is loading
                      * food item type can still be selected.
                      */
-                    val productList: ProductList = this@SearchResultShopAdapter.productList!![holder.adapterPosition]
-                    val productType = productList.productType
+                    val productList: ProductList? =
+                        this@SearchResultShopAdapter.productList?.get(holder.adapterPosition)
+                            ?: null
+                    val productType = productList?.productType ?: ""
                     if (!productType.equals(FOOD_PRODUCT, ignoreCase = true)) {
                         val unlockSelection = !viewIsLoading()
-                        holder.itemBinding.btnDeleteRow.isChecked = unlockSelection
+                        holder.itemBinding.cbShoppingList.isChecked = unlockSelection
                         if (unlockSelection) {
                             onCheckItemClick(holder)
                         }
@@ -107,13 +121,11 @@ class SearchResultShopAdapter(
     private fun onCheckItemClick(vh: SimpleViewHolder) {
         val position = vh.adapterPosition
         val selectedProduct = productList!![position]
-        val otherSkuSize = getOtherSkuSize(selectedProduct)
         // ProductDetails of type clothing or OtherSkus > 0
         if (clothingTypeProduct(selectedProduct)) {
             selectedProduct.viewIsLoading = !selectedProduct.viewIsLoading
             if (selectedProduct.itemWasChecked) selectedProduct.viewIsLoading = false
-            selectedProduct.itemWasChecked = productWasChecked(selectedProduct)
-            mSearchResultNavigator!!.onCheckedItem(
+            mSearchResultNavigator?.onCheckedItem(
                 productList,
                 selectedProduct,
                 selectedProduct.viewIsLoading
@@ -121,8 +133,8 @@ class SearchResultShopAdapter(
             notifyItemChanged(position)
         } else {
             selectedProduct.itemWasChecked = productWasChecked(selectedProduct)
-            mSearchResultNavigator!!.onFoodTypeChecked(productList, selectedProduct)
-            mSearchResultNavigator.minOneItemSelected(productList)
+            mSearchResultNavigator?.onFoodTypeChecked(productList, selectedProduct)
+            mSearchResultNavigator?.minOneItemSelected(productList)
             notifyItemChanged(position)
         }
     }
@@ -134,22 +146,12 @@ class SearchResultShopAdapter(
     private fun onItemClick(vh: SimpleViewHolder) {
         val position = vh.adapterPosition
         val selectedProduct = productList!![position]
-        val otherSkuSize = getOtherSkuSize(selectedProduct)
         // ProductDetails of type clothing or OtherSkus > 0
         if (clothingTypeProduct(selectedProduct)) {
             mSearchResultNavigator!!.onClothingTypeSelect(selectedProduct)
         } else {
             mSearchResultNavigator!!.onFoodTypeSelect(selectedProduct)
         }
-    }
-
-    private fun getOtherSkuSize(selectedProduct: ProductList): Int {
-        val otherSkuList = selectedProduct.otherSkus
-        var otherSkuSize = 0
-        if (otherSkuList != null) {
-            otherSkuSize = otherSkuList.size
-        }
-        return otherSkuSize
     }
 
     private fun productWasChecked(prodList: ProductList): Boolean {
@@ -160,21 +162,15 @@ class SearchResultShopAdapter(
         return R.id.swipe
     }
 
-    private inner class SimpleViewHolder(val itemBinding: ShopSearchProductItemBinding) : RecyclerView.ViewHolder(itemBinding.root) {
-
-        fun setDefaultQuantity() {
-            itemBinding.tvQuantity.setText("1")
-        }
+    private inner class SimpleViewHolder(val itemBinding: LayoutCartListProductItemBinding) :
+        RecyclerView.ViewHolder(itemBinding.root) {
 
         fun setCartImage(productItem: ProductList) {
-            val externalImageRefV2 = productItem.externalImageRefV2
-            if (itemBinding.cartProductImage != null && !TextUtils.isEmpty(externalImageRefV2)) itemBinding.cartProductImage.setImageURI(
-                externalImageRefV2 + (if ((externalImageRefV2!!.indexOf("?") > 0)) "w=" + 85 + "&q=" + 85 else "?w=" + 85 + "&q=" + 85)
-            )
-        }
-
-        fun setProductName(productItem: ProductList) {
-            itemBinding.tvTitle.text = Html.fromHtml(productItem.productName)
+            productItem.externalImageRefV2?.let { url ->
+                itemBinding.cartProductImage?.setImageURI(
+                    url + (if ((url.indexOf("?") > 0)) "w=" + 85 + "&q=" + 85 else "?w=" + 85 + "&q=" + 85)
+                )
+            }
         }
 
         fun setPrice(productItem: ProductList) {
@@ -182,33 +178,19 @@ class SearchResultShopAdapter(
             priceItem.setPrice(productItem, itemBinding, true)
         }
 
-        fun setChecked(productList: ProductList) {
-            itemBinding.btnDeleteRow.isChecked = productList.itemWasChecked
-        }
-
         fun showProgressBar(visible: Boolean) {
-            itemBinding.pbLoadProduct.visibility = if (visible) View.VISIBLE else View.GONE
-            itemBinding.btnDeleteRow.visibility = if (visible) View.GONE else View.VISIBLE
-        }
-
-        fun disableSwipeToDelete(enable: Boolean) {
-            itemBinding.swipe.isRightSwipeEnabled = enable
-        }
-
-        fun setTvColorSize(productlist: ProductList) {
-            itemBinding.tvColorSize.setText(if (TextUtils.isEmpty(productlist.displayColorSizeText)) "" else productlist.displayColorSizeText)
-        }
-
-        fun hideDropdownIcon() {
-            itemBinding.imPrice.visibility = View.GONE
+            itemBinding.pbLoadProduct.visibility = if (visible) VISIBLE else GONE
+            itemBinding.btnDeleteRow.visibility = if (visible) GONE else VISIBLE
         }
     }
 
-    private inner class ProgressViewHolder(val itemBinding: BottomProgressBarBinding) : RecyclerView.ViewHolder(itemBinding.root) {
+    private inner class ProgressViewHolder(val itemBinding: BottomProgressBarBinding) :
+        RecyclerView.ViewHolder(itemBinding.root) {
 
     }
 
-    private inner class HeaderViewHolder(val itemBinding: ItemFoundLayoutBinding) : RecyclerView.ViewHolder(itemBinding.root) {
+    private inner class HeaderViewHolder(val itemBinding: ItemFoundLayoutBinding) :
+        RecyclerView.ViewHolder(itemBinding.root) {
 
         fun setTotalItem(productList: ProductList) {
             if (null != productList.numberOfItems) itemBinding.tvNumberOfItem.text =
@@ -241,20 +223,32 @@ class SearchResultShopAdapter(
     }
 
     fun setSelectedSku(selectedProduct: ProductList, selectedSKU: OtherSkus) {
-        if (productList != null) {
-            for (pList: ProductList in productList!!) {
-                if (pList === selectedProduct) {
-                    pList.sku = selectedSKU.sku
-                    val colour =
-                        if (TextUtils.isEmpty(selectedSKU.colour)) "" else (selectedSKU.colour)!!
-                    val size = if (TextUtils.isEmpty(selectedSKU.size)) "" else (selectedSKU.size)!!
-                    val colourSize = TextUtils.isEmpty(colour) || TextUtils.isEmpty(size)
-                    pList.displayColorSizeText =
-                        if (colourSize) (colour + "" + size) else ("$colour, $size")
-                }
+
+        productList?.forEachIndexed { index, productList ->
+            if (productList === selectedProduct) {
+                productList.sku = selectedSKU.sku
+                productList.displayColorSizeText = buildColorSizeText(
+                    selectedSKU.colour,
+                    selectedSKU.size
+                )
+                notifyItemChanged(index, productList)
+                return@forEachIndexed
             }
-            notifyDataSetChanged()
         }
+    }
+
+    private fun buildColorSizeText(colour: String?, size: String?): String = buildString {
+        append(colour ?: "")
+        if (!colour.isNullOrEmpty() && colour.equals(size, ignoreCase = true)) {
+            return@buildString
+        }
+
+        if(size.isNullOrEmpty() || CONST_NO_SIZE.equals(size, ignoreCase = true)) {
+            return@buildString
+        }
+
+        append(if (!colour.isNullOrEmpty()) ", " else "")
+        append(size)
     }
 
     fun onDeselectSKU(selectedProduct: ProductList, selectedSKU: OtherSkus?) {
@@ -287,6 +281,29 @@ class SearchResultShopAdapter(
             }
         }
         return false
+    }
+
+    fun setSelectedProduct(selectedProduct: ProductList) {
+        // Ensure that the product list is not null
+        if(productList.isNullOrEmpty()) {
+            return
+        }
+
+        // Find the index of the selected product within the list
+        val index = productList!!.indexOf(selectedProduct)
+        if (index < 0 || index >= productList!!.size) {
+            // Return if the index is out of range
+            return
+        }
+
+        // Update the selected item's properties
+        val selectedItem = productList!!.getOrNull(index)?.apply {
+            viewIsLoading = false
+            itemWasChecked = true
+        }
+
+        // Notify the adapter that the selected item has changed
+        notifyItemChanged(index, selectedItem)
     }
 
     companion object {

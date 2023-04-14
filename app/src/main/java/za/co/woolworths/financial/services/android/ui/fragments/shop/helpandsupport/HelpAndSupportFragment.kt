@@ -7,12 +7,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.LayoutHelpAndSupportFragementBinding
 import za.co.woolworths.financial.services.android.models.dto.OrderDetailsResponse
+import za.co.woolworths.financial.services.android.onecartgetstream.OCChatActivity
 import za.co.woolworths.financial.services.android.ui.activities.CancelOrderProgressActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.CancelOrderConfirmationDialogFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.CancelOrderProgressFragment
+import za.co.woolworths.financial.services.android.ui.fragments.shop.OrderTrackingWebViewActivity
 import za.co.woolworths.financial.services.android.ui.fragments.shop.TaxInvoiceLIstFragment
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.Utils
@@ -129,10 +131,19 @@ class HelpAndSupportFragment : BaseFragmentBinding<LayoutHelpAndSupportFragement
     }
 
     override fun openChatSupport() {
-        //  TODO("Not yet implemented")
+        orderDetailsResponse?.orderSummary?.orderId?.let { orderId ->
+            startActivity(OCChatActivity.newIntent(requireActivity(), orderId))
+        }
     }
 
     override fun openTrackYourOrder() {
-        // TODO("Not yet implemented")
+        orderDetailsResponse?.orderSummary?.driverTrackingURL?.let { driverTrackingURL->
+            activity?.apply {startActivity(OrderTrackingWebViewActivity.newIntent(requireActivity(), driverTrackingURL))
+                overridePendingTransition(
+                    R.anim.slide_from_right,
+                    R.anim.slide_out_to_left
+                )
+            }
+        }
     }
 }

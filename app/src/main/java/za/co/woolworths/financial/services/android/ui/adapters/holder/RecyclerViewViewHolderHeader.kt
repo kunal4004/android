@@ -1,6 +1,8 @@
 package za.co.woolworths.financial.services.android.ui.adapters.holder
 
+import android.text.method.LinkMovementMethod
 import android.view.View
+import androidx.core.text.HtmlCompat
 import androidx.fragment.app.FragmentActivity
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.ItemFoundLayoutBinding
@@ -38,6 +40,20 @@ class RecyclerViewViewHolderHeader(val itemBinding: ItemFoundLayoutBinding) : Re
                 itemBinding.chanelImgBanner?.setOnClickListener {
                     navigator?.openBrandLandingPage()
                 }
+            }
+        }
+    }
+
+    fun setPromotionalBanner(promotionalRichText: String?) {
+        if(!promotionalRichText.isNullOrEmpty()) {
+            itemBinding.promotionalTextBannerLayout.root.visibility = View.VISIBLE
+            itemBinding.promotionalTextBannerLayout.apply {
+                promotionalTextDesc.text =
+                    HtmlCompat.fromHtml(
+                        promotionalRichText.toString(),
+                        HtmlCompat.FROM_HTML_MODE_LEGACY
+                    )
+                promotionalTextDesc.movementMethod = LinkMovementMethod.getInstance()
             }
         }
     }

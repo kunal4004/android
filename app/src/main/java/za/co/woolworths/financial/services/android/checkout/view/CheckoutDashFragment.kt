@@ -36,10 +36,13 @@ import com.facebook.shimmer.Shimmer
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.gson.JsonElement
+import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor
 import za.co.woolworths.financial.services.android.checkout.service.network.*
+import za.co.woolworths.financial.services.android.checkout.utils.AddShippingInfoEventsAnalytics
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.Companion.REGEX_DELIVERY_INSTRUCTIONS
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.FoodSubstitution
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment.Companion.CART_ITEM_LIST
 import za.co.woolworths.financial.services.android.checkout.view.CollectionDatesBottomSheetDialog.Companion.ARGS_KEY_COLLECTION_DATES
 import za.co.woolworths.financial.services.android.checkout.view.CollectionDatesBottomSheetDialog.Companion.ARGS_KEY_SELECTED_POSITION
 import za.co.woolworths.financial.services.android.checkout.view.CustomDriverTipBottomSheetDialog.Companion.MAX_TIP_VALUE
@@ -53,6 +56,7 @@ import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelF
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyNames.Companion.DELIVERY_DATE
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyNames.Companion.ORDER_TOTAL_VALUE
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyValues.Companion.SHIPPING_TIER_VALUE_DASH
 import za.co.woolworths.financial.services.android.contracts.IToastInterface
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
@@ -77,14 +81,16 @@ import za.co.woolworths.financial.services.android.util.pushnotification.Notific
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.viewmodels.ShoppingCartLiveData
 import java.util.regex.Pattern
+import javax.inject.Inject
 
-
+@AndroidEntryPoint
 class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_dash),
     ShoppingBagsRadioGroupAdapter.EventListner, View.OnClickListener, CollectionTimeSlotsListener,
     CustomDriverTipBottomSheetDialog.ClickListner, CompoundButton.OnCheckedChangeListener,
     IToastInterface {
 
     private var isItemLimitExceeded: Boolean = false
+    private var isTimeSlotsNotAvailable: Boolean = false
     private lateinit var binding: FragmentCheckoutReturningUserDashBinding
 
     private var orderTotalValue: Double = -1.0
@@ -111,6 +117,8 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
     private var liquorImageUrl: String? = ""
     private var liquorOrder: Boolean? = false
     private var cartItemList: ArrayList<CommerceItem>? = null
+    @Inject
+    lateinit var addShippingInfoEventsAnalytics :AddShippingInfoEventsAnalytics
 
     private val deliveryInstructionsTextWatcher: TextWatcher = object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -468,7 +476,7 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
                                 }
 
                                 isItemLimitExceeded =
-                                    (response.orderSummary?.totalItemsCount ?: -1) > maxItemLimit
+                                    response.orderSummary?.fulfillmentDetails?.allowsCheckout == false
                                 if(isItemLimitExceeded) {
                                     showMaxItemView()
                                 }
@@ -518,6 +526,13 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
     }
 
     private fun initializeDatesAndTimeSlots(selectedWeekSlot: Week?) {
+
+        if (selectedWeekSlot == null) {
+            binding.checkoutCollectingTimeDetailsLayout?.root?.visibility = View.GONE
+            showNoTimeSlotsView()
+            return
+        }
+
         val slots = selectedWeekSlot?.slots?.filter { slot ->
             slot.available == true
         }
@@ -836,26 +851,30 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
                 deliveringToAddress.append(defaultAddressNickname)
 
                 // Extract default address display name
-                savedAddresses.addresses?.forEach { address ->
-                    if (savedAddresses.defaultAddressNickname.equals(address.nickname)) {
-                        this.defaultAddress = address
-                        suburbId = address.suburbId ?: ""
-                        placesId = address?.placesId
-                        storeId = address?.storeId
-                        nickName = address?.nickname
-                        val addressName = SpannableString(address.address1)
-                        val typeface1 =
-                            ResourcesCompat.getFont(context, R.font.myriad_pro_regular)
-                        addressName.setSpan(
-                            StyleSpan(typeface1!!.style),
-                            0, addressName.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                        )
-                        deliveringToAddress.append(addressName)
-                        return@forEach
+
+                run list@{
+                    savedAddresses.addresses?.forEach { address ->
+                        if (savedAddresses.defaultAddressNickname.equals(address.nickname)) {
+                            this.defaultAddress = address
+                            suburbId = address.suburbId ?: ""
+                            placesId = address?.placesId
+                            storeId = address?.storeId
+                            nickName = address?.nickname
+                            val addressName = SpannableString(address.address1)
+                            val typeface1 =
+                                ResourcesCompat.getFont(context, R.font.myriad_pro_regular)
+                            addressName.setSpan(
+                                StyleSpan(typeface1!!.style),
+                                0, addressName.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                            )
+                            deliveringToAddress.append(addressName)
+                            return@list
+                        }
                     }
-                    if (savedAddresses.defaultAddressNickname.isNullOrEmpty()) {
-                        binding.checkoutCollectingFromLayout?.root?.visibility = GONE
-                    }
+                }
+
+                if (savedAddresses.defaultAddressNickname.isNullOrEmpty()) {
+                    binding.checkoutCollectingFromLayout?.root?.visibility = GONE
                 }
                 binding.checkoutCollectingFromLayout.tvNativeCheckoutDeliveringValue?.text =
                     deliveringToAddress
@@ -1045,6 +1064,8 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
                     placesId,
                     false,
                     true,
+                    false,
+                    false,
                     true,
                     savedAddress,
                     defaultAddress,
@@ -1062,6 +1083,11 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
             }
             R.id.txtContinueToPayment -> {
                 onCheckoutPaymentClick()
+                cartItemList?.let {
+                    addShippingInfoEventsAnalytics.sendEventData(it,
+                        SHIPPING_TIER_VALUE_DASH,orderTotalValue)
+                }
+
             }
         }
     }
@@ -1126,6 +1152,11 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
             return
         }
 
+        if (isTimeSlotsNotAvailable) {
+            showNoTimeSlotsView()
+            return
+        }
+
         if (isRequiredFieldsMissing() || isAgeConfirmationLiquorCompliance()) {
             return
         }
@@ -1152,7 +1183,6 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
                             )
                             return@observe
                         }
-                        setEventForShippingDetails()
                         navigateToPaymentWebpage(response)
                     }
                     is Throwable -> {
@@ -1188,71 +1218,19 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
         )
     }
 
-    private fun setEventForShippingDetails() {
-        if (cartItemList.isNullOrEmpty() == true) {
-            return
-        }
-        val driverTipItemParams = Bundle()
-        driverTipItemParams.putString(
-            FirebaseAnalytics.Param.CURRENCY,
-            FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE
+    private fun showNoTimeSlotsView() {
+        isTimeSlotsNotAvailable = true
+        binding.txtContinueToPayment?.background = ContextCompat.getDrawable(
+            requireContext(),
+            R.drawable.grey_background_with_corner_6
         )
-
-        driverTipItemParams.putDouble(
-            ORDER_TOTAL_VALUE,
-            orderTotalValue
-        )
-
-        driverTipItemParams.putString(
-            DELIVERY_DATE,
-            confirmDeliveryAddressResponse?.timedDeliveryFirstAvailableDates?.join
-        )
-
-        driverTipItemParams.putString(
-            FirebaseAnalytics.Param.SHIPPING_TIER,
-            FirebaseManagerAnalyticsProperties.PropertyValues.SHIPPING_TIER_VALUE_FOOD
-        )
-
-        driverTipItemParams.putString(
-            FirebaseManagerAnalyticsProperties.PropertyNames.DASH_TIP,
-            removeRandFromAmount(selectedDriverTipValue)
-        )
-
-        for (cartItem in cartItemList!!) {
-            val addShippingInfoItem = Bundle()
-            addShippingInfoItem.putString(
-                FirebaseAnalytics.Param.ITEM_ID,
-                cartItem.commerceItemInfo.productId
-            )
-
-            addShippingInfoItem.putString(
-                FirebaseAnalytics.Param.ITEM_NAME,
-                cartItem.commerceItemInfo.productDisplayName
-            )
-
-            addShippingInfoItem.putDouble(
-                FirebaseAnalytics.Param.PRICE,
-                cartItem.priceInfo.amount
-            )
-
-            addShippingInfoItem.putString(
-                FirebaseAnalytics.Param.ITEM_BRAND,
-                cartItem.commerceItemInfo?.productDisplayName
-            )
-
-            addShippingInfoItem.putInt(
-                FirebaseAnalytics.Param.QUANTITY,
-                cartItem.commerceItemInfo.quantity
-            )
-            driverTipItemParams.putParcelableArray(
-                FirebaseAnalytics.Param.ITEMS,
-                arrayOf(addShippingInfoItem)
-            )
-        }
-
-        AnalyticsManager.logEvent(
-            FirebaseManagerAnalyticsProperties.ADD_SHIPPING_INFO,
-            driverTipItemParams
+        KotlinUtils.showGeneralInfoDialog(
+            requireActivity().supportFragmentManager,
+            getString(R.string.timeslot_desc),
+            getString(R.string.timeslot_title),
+            getString(R.string.got_it),
+            R.drawable.icon_dash_delivery_scooter,
+            false
         )
     }
 
@@ -1384,7 +1362,10 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
     private fun navigateToPaymentWebpage(webTokens: ShippingDetailsResponse) {
         view?.findNavController()?.navigate(
             R.id.action_checkoutDashFragment_to_checkoutPaymentWebFragment,
-            bundleOf(CheckoutPaymentWebFragment.KEY_ARGS_WEB_TOKEN to webTokens)
+
+            bundleOf(CheckoutPaymentWebFragment.KEY_ARGS_WEB_TOKEN to webTokens,
+                CART_ITEM_LIST to cartItemList
+            )
         )
     }
 
