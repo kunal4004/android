@@ -8,8 +8,6 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -663,26 +661,28 @@ class ConfirmAddressMapFragment :
     override fun onMarkerClicked(marker: DynamicMapMarker) {}
 
     private fun moveMapCamera(latitude: Double?, longitude: Double?) {
-        if (latitude != null && longitude != null) {
-            binding?.imgMapMarker?.visibility = View.VISIBLE
-            binding?.tvMarkerHint?.visibility = View.VISIBLE
-            binding?.navigationMapArrow?.visibility = View.VISIBLE
-            binding?.confirmAddress?.isEnabled = true
-        }
-        isAddAddress = false
-        binding.dynamicMapView?.animateCamera(latitude, longitude, zoom = 18f)
-        binding.dynamicMapView?.setOnCameraMoveListener {
-            binding.dynamicMapView?.setOnCameraIdleListener {
-                val latitude = binding.dynamicMapView?.getCameraPositionTargetLatitude()
-                val longitude = binding.dynamicMapView?.getCameraPositionTargetLongitude()
-                latitude?.let { lat ->
-                    longitude?.let { longitude ->
-                        getAddressFromLatLng(lat, longitude)
+        binding.apply {
+            if (latitude != null && longitude != null) {
+                imgMapMarker?.visibility = View.VISIBLE
+                tvMarkerHint?.visibility = View.VISIBLE
+                navigationMapArrow?.visibility = View.VISIBLE
+                confirmAddress?.isEnabled = true
+            }
+            isAddAddress = false
+            dynamicMapView?.animateCamera(latitude, longitude, zoom = 18f)
+            dynamicMapView?.setOnCameraMoveListener {
+                dynamicMapView?.setOnCameraIdleListener {
+                    val latitude = dynamicMapView?.getCameraPositionTargetLatitude()
+                    val longitude = dynamicMapView?.getCameraPositionTargetLongitude()
+                    latitude?.let { lat ->
+                        longitude?.let { longitude ->
+                            getAddressFromLatLng(lat, longitude)
+                        }
                     }
+                    mLatitude = latitude?.toString()
+                    mLongitude = longitude?.toString()
+                    getPlaceId(latitude, longitude)
                 }
-                mLatitude = latitude?.toString()
-                mLongitude = longitude?.toString()
-                getPlaceId(latitude, longitude)
             }
         }
     }
