@@ -273,5 +273,6 @@
     <dimen name="_minus_zero_pt_nine_sp">-0.9sp</dimen>
     <dimen name="_minus_zero_pt_eight_sp">-0.8sp</dimen>
     <dimen name="_2.46sp">2.46sp</dimen>
+    <dimen name="three_handred_fourty">340dp</dimen>
 </resources>
 

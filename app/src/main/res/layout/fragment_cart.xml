@@ -85,17 +85,17 @@
             android:layout_below="@id/cartToolbar"
             android:background="#1a000000" />
 
-        <androidx.core.widget.NestedScrollView
+        <za.co.woolworths.financial.services.android.ui.views.LockableNestedScrollViewV2
             android:id="@+id/nestedScrollView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@id/toolbarSeparator"
+            android:layout_above="@id/rlCheckOut"
             android:fillViewport="true">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:paddingBottom="@dimen/ninety_dp"
                 android:orientation="vertical">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
@@ -205,7 +205,7 @@
                         android:layout_height="wrap_content"
                         layout="@layout/cart_product_basket_prices"/>
             </LinearLayout>
-        </androidx.core.widget.NestedScrollView>
+        </za.co.woolworths.financial.services.android.ui.views.LockableNestedScrollViewV2>
 
         <LinearLayout
             android:id="@+id/rlCheckOut"
