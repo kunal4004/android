@@ -113,7 +113,7 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
 
     override fun onResume() {
         super.onResume()
-        checkForLocationPermissionAndSetLocationAddress()
+      //  checkForLocationPermissionAndSetLocationAddress()
         binding.updateInitialStateOnResume()
     }
 
@@ -165,7 +165,7 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
 
         inCurrentLocation?.swEnableLocation?.setOnCheckedChangeListener { _, checked ->
             if(checked){
-               Toast.makeText(requireContext(),"Need to implement in next story",Toast.LENGTH_SHORT).show()
+                KotlinUtils.openAccessMyLocationDeviceSettings(EnableLocationSettingsFragment.ACCESS_MY_LOCATION_REQUEST_CODE, activity)
             }
         }
     }
