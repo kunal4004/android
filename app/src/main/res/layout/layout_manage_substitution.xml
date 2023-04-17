@@ -63,45 +63,16 @@
             app:layout_constraintStart_toEndOf="@+id/rbOwnSubstitute"
             app:layout_constraintTop_toTopOf="@+id/rbOwnSubstitute" />
 
-        <View
-            android:id="@+id/viewGroup"
+        <include
+            android:id="@+id/list_substitute"
+            android:layout_marginTop="@dimen/sixteen_dp"
+            app:layout_constraintTop_toBottomOf="@+id/tvShopperChoose"
+            layout="@layout/layout_substitute_list"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/tvSearchProduct"
-            app:layout_constraintBottom_toBottomOf="@+id/recyclerView"
-            android:layout_width="0dp"
-            android:layout_height="0dp"/>
-
-        <TextView
-            android:id="@+id/tvSearchProduct"
             android:layout_width="@dimen/zero_dp"
-            android:layout_height="@dimen/fourty_dp"
-            android:layout_marginStart="@dimen/sixteen_dp"
-            android:layout_marginTop="@dimen/fourty_three_dp"
-            android:layout_marginEnd="@dimen/sixteen_dp"
-            android:background="@drawable/bg_search_corner_4"
-            android:drawableStart="@drawable/ic_search"
-            android:drawablePadding="@dimen/ten_dp"
-            android:fontFamily="@font/opensans_regular"
-            android:gravity="center_vertical"
-            android:hint="@string/search_alternative_product"
-            android:padding="@dimen/ten_dp"
-            android:textColor="@color/color_9D9D9D"
-            android:textColorHint="@color/product_search_hint"
-            android:textSize="@dimen/twelve_sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvShopperChoose" />
+            android:layout_height="wrap_content"/>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvSearchProduct"
-            tools:listitem="@layout/shopping_list_commerce_item" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.core.widget.NestedScrollView>

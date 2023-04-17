@@ -5,7 +5,6 @@ import android.view.View
 import android.view.View.OnClickListener
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.ManageSubstitutionDetailsLayoutBinding
 import za.co.woolworths.financial.services.android.enhancedSubstitution.ProductSubstitutionListListener
@@ -61,22 +60,22 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
             manageProductSubstitutionAdapter = ManageProductSubstitutionAdapter(
                     getKiboList(), this@ManageSubstitutionFragment
             )
-            recyclerView?.apply {
+            this.listSubstitute?.recyclerView?.apply {
                 layoutManager = LinearLayoutManager(context)
                 adapter = manageProductSubstitutionAdapter
                 isNestedScrollingEnabled = false
             }
 
 
-            tvSearchProduct.onClick {
+            this.listSubstitute?.tvSearchProduct?.onClick {
                 /*navigate to new search screen*/
                 openSubstitutionSearchScreen()
             }
             rbShopperChoose?.setOnCheckedChangeListener { buttonView, isChecked ->
                 if (isChecked) {
                     rbOwnSubstitute?.isChecked = false
-                    tvSearchProduct?.isEnabled = false
-                    recyclerView?.isEnabled = false
+                    this.listSubstitute?.tvSearchProduct?.isEnabled = false
+                    this.listSubstitute?.recyclerView?.isEnabled = false
                     clickOnLetMyShooperChooseOption()
                 }
             }
@@ -84,7 +83,7 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
             rbOwnSubstitute?.setOnCheckedChangeListener { buttonView, isChecked ->
                 if (isChecked) {
                     rbShopperChoose?.isChecked = false
-                    tvSearchProduct?.isEnabled = true
+                    this.listSubstitute?.tvSearchProduct?.isEnabled = true
                     clickOnMySubstitutioneOption()
                 }
             }
@@ -164,7 +163,7 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
                 resources.getDrawable(R.drawable.black_color_drawable, null)
         manageProductSubstitutionAdapter?.isShopperchooseptionSelected = true
         manageProductSubstitutionAdapter?.notifyDataSetChanged()
-        Utils.fadeInFadeOutAnimation(binding.layoutManageSubstitution.root, true)
+        Utils.fadeInFadeOutAnimation(binding.layoutManageSubstitution.listSubstitute.root, true)
     }
 
     private fun clickOnMySubstitutioneOption() {
@@ -172,7 +171,7 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
         binding.btnConfirm?.background = resources.getDrawable(R.drawable.grey_bg_drawable, null)
         manageProductSubstitutionAdapter?.isShopperchooseptionSelected = false
         manageProductSubstitutionAdapter?.notifyDataSetChanged()
-        Utils.fadeInFadeOutAnimation(binding.layoutManageSubstitution.root, false)
+        Utils.fadeInFadeOutAnimation(binding.layoutManageSubstitution.listSubstitute.root, false)
     }
 
     override fun clickOnSubstituteProduct() {
