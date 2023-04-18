@@ -36,9 +36,9 @@ import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWind
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.Companion.USER_CHOICE
-import za.co.woolworths.financial.services.android.ui.fragments.product.shop.FoodProductNotAvailableForCollectionDialog
-import za.co.woolworths.financial.services.android.ui.views.actionsheet.ProductDetailsFindInStoreDialog
+import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.util.KeyboardUtil
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
@@ -46,8 +46,7 @@ import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBind
 
 class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionFragmentBinding>(
         LayoutSearchSubstitutionFragmentBinding::inflate
-), ProductListSelectionListener, OnClickListener,
-        FoodProductNotAvailableForCollectionDialog.IProductNotAvailableForCollectionDialogListener {
+), ProductListSelectionListener, OnClickListener {
 
     private var searchProductSubstitutionAdapter: SearchProductSubstitutionAdapter? = null
     private lateinit var productSubstitutionViewModel: ProductSubstitutionViewModel
@@ -117,21 +116,25 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
         initializeRecyclerView() // when we change the already searched text we need to show shimmer view again.
         binding.apply {
             lifecycleScope.launch {
-                productSubstitutionViewModel?.getAllSearchedSubstitutions(
-                    requestParams
-                )?.collectLatest {
-                    productSubstitutionViewModel._pagingResponse.observe(
-                        viewLifecycleOwner
-                    ) { pagingResponse ->
-                        val totalItemCount: String =
-                            "<b>" + pagingResponse.numItemsInTotal?.toString() + "</b>".plus(
-                                getString(R.string.item_found)
-                            )
-                        val formattedItemCount =
-                            HtmlCompat.fromHtml(totalItemCount, HtmlCompat.FROM_HTML_MODE_COMPACT)
-                        txtSubstitutionCount.text = formattedItemCount
+                try {
+                    productSubstitutionViewModel?.getAllSearchedSubstitutions(
+                            requestParams
+                    )?.collectLatest {
+                        productSubstitutionViewModel._pagingResponse.observe(
+                                viewLifecycleOwner
+                        ) { pagingResponse ->
+                            val totalItemCount: String =
+                                    "<b>" + pagingResponse.numItemsInTotal?.toString() + "</b>".plus(
+                                            getString(R.string.item_found)
+                                    )
+                            val formattedItemCount =
+                                    HtmlCompat.fromHtml(totalItemCount, HtmlCompat.FROM_HTML_MODE_COMPACT)
+                            txtSubstitutionCount.text = formattedItemCount
+                        }
+                        searchProductSubstitutionAdapter?.submitData(it)
                     }
-                    searchProductSubstitutionAdapter?.submitData(it)
+                } catch (exception:Exception) {
+                    FirebaseManager.logException(exception)
                 }
             }
         }
@@ -148,8 +151,18 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
                 }
                 is LoadState.Error -> {
                     hideShimmerView()
-                    showErrorView(getString(R.string.common_error_unfortunately_something_went_wrong))
 
+                    // getting the error
+                    val error = when {
+                        it.prepend is LoadState.Error -> it.prepend as LoadState.Error
+                        it.append is LoadState.Error -> it.append as LoadState.Error
+                        it.refresh is LoadState.Error -> it.refresh as LoadState.Error
+                        else -> null
+                    }
+                    FirebaseManager.logException(error?.error?.message)
+                    error?.error?.message?.let {
+                        message -> showErrorView(message)
+                    }
                 }
                 else -> {
                     // Nothing to do
@@ -192,11 +205,7 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
 
     private fun showErrorView(desc: String) {
         /*todo show new error view if search api is failed*/
-        Utils.displayValidationMessage(
-                activity,
-                CustomPopUpWindow.MODAL_LAYOUT.ERROR,
-                desc
-        )
+        Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, desc)
     }
 
     private fun getRequestParamsBody(searchTerm: String): ProductsRequestParams {
@@ -271,9 +280,11 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
                                     binding.progressBar?.visibility = View.GONE
                                     productOutOfStockErrorMessage()
                                     return@observe
+                                } else {
+                                    navigateToPdpScreen()
                                 }
                             }
-                            navigateToPdpScreen()
+
                         }
                     }
                     Status.ERROR -> {
@@ -339,19 +350,14 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
     }
 
     private fun productOutOfStockErrorMessage() {
-        try {
-            activity?.supportFragmentManager?.beginTransaction()?.apply {
-                val productDetailsFindInStoreDialog =
-                        FoodProductNotAvailableForCollectionDialog.newInstance(
-                        )
-                productDetailsFindInStoreDialog.show(
-                        this,
-                        ProductDetailsFindInStoreDialog::class.java.simpleName
-                )
-            }
-        } catch (ex: IllegalStateException) {
-            FirebaseManager.logException(ex)
-        }
+        KotlinUtils.showGeneralInfoDialog(
+                requireActivity().supportFragmentManager,
+                getString(R.string.item_outofstock_error),
+                getString(R.string.out_of_stock_dialog_title),
+                getString(R.string.got_it),
+                R.drawable.es_no_stock_available,
+                false
+        )
     }
 
     fun hideKeyBoard(view: View?) {
@@ -369,13 +375,4 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
             KeyboardUtil.hideSoftKeyboard(activity)
         }
     }
-
-    override fun onChangeDeliveryOption() {
-
-    }
-
-    override fun onFindInStore() {
-
-    }
-
 }

@@ -2951,6 +2951,7 @@
     <string name="substitution_how_it_works_subtitle">If no substitutions are selected, our shoppers will choose one for you. If you don’t want an alternative product, you can edit your choice to “I don’t want a substitute” instead.</string>
 
     <string name="substitutions">Substitutions</string>
+    <string name="item_outofstock_error">You can’t set this product as a substitute because it is out of stock. Please find another item to use instead.</string>
 
     <string name="timeslot_title">All Dash Timeslots Are Fully Booked.</string>
     <string name="timeslot_desc">Check back later to see if any new delivery slots become available.</string>
