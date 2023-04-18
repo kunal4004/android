@@ -47,7 +47,6 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
     private var whoIsCollectingString: String? = null
     private var isComingFromCnc: Boolean? = false
     private var mSavedAddressPosition = 0
-    var isEditAddressScreenNeeded = true
     var cartItemList:ArrayList<CommerceItem>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,7 +56,6 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
         setActionBar()
         intent?.extras?.apply {
             savedAddressResponse = getSerializable(SAVED_ADDRESS_KEY) as? SavedAddressResponse
-            isEditAddressScreenNeeded = getBoolean(CheckoutAddressConfirmationFragment.IS_EDIT_ADDRESS_SCREEN, false)
             geoSlotSelection = getBoolean(GEO_SLOT_SELECTION, false)
             dashSlotSelection = getBoolean(DASH_SLOT_SELECTION, false)
             cartItemList = getSerializable(CheckoutAddressManagementBaseFragment.CART_ITEM_LIST) as? ArrayList<CommerceItem>?
@@ -138,20 +136,6 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
         navHostFrag = supportFragmentManager.findFragmentById(R.id.navHostFragment) as NavHostFragment
         val graph =
             navHostFrag.navController.navInflater.inflate(R.navigation.nav_graph_checkout)
-
-        if (checkIfAddressHasNoUnitComplexNo() && (whoIsCollectingString.isNullOrEmpty() || isComingFromCnc == false) && isEditAddressScreenNeeded) {
-            // Show edit address screen to add Unit complex no to address.
-            baseFragBundle?.putString(
-                CheckoutAddressConfirmationListAdapter.EDIT_SAVED_ADDRESS_RESPONSE_KEY,
-                Utils.toJson(savedAddressResponse))
-
-            baseFragBundle?.putInt(CheckoutAddressConfirmationListAdapter.EDIT_ADDRESS_POSITION_KEY,
-                mSavedAddressPosition)
-            graph.startDestination = R.id.CheckoutAddAddressNewUserFragment
-            findNavController(R.id.navHostFragment).setGraph(graph,
-                bundleOf(BundleKeysConstants.BUNDLE to baseFragBundle))
-            return
-        }
 
         graph.startDestination = getStartDestinationGraph()
         findNavController(R.id.navHostFragment).setGraph(graph, baseFragBundle)
