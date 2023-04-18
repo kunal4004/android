@@ -100,7 +100,8 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
     private fun getKiboList(): ArrayList<SubstitutionProducts> {
         val list = ArrayList<SubstitutionProducts>()
         /*prepare list from kibo api and set to recycler view */
-        list.add(
+        /* todo this will be uncommented once kibo api is integrated*/
+        /*list.add(
                 SubstitutionProducts(
                         1, "Banana1", "", "you have 5", "R21"
                 )
@@ -124,7 +125,7 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
                 SubstitutionProducts(
                         1, "Banana2", "", "you have 5", "R21"
                 )
-                )
+                )*/
         return list
     }
 
