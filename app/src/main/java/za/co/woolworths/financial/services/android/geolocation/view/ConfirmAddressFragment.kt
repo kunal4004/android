@@ -219,6 +219,7 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
                     isAddressAvailable = true
                     inCurrentLocation?.tvCurrentLocation?.text = address.addressLine
                     inCurrentLocation?.ivArrow?.visibility = View.VISIBLE
+                    inCurrentLocation?.swEnableLocation?.visibility = View.GONE
                 } ?: kotlin.run {
                     binding.disableCurrentLocation()
                     isAddressAvailable = false

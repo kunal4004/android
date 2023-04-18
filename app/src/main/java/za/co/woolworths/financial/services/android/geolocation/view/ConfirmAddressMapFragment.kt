@@ -10,7 +10,6 @@ import android.view.View
 import android.widget.AdapterView
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
-import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
@@ -61,6 +60,8 @@ import za.co.woolworths.financial.services.android.util.LocalConstant.Companion.
 import za.co.woolworths.financial.services.android.util.LocalConstant.Companion.DEFAULT_LONGITUDE
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.location.DynamicGeocoder
+import za.co.woolworths.financial.services.android.util.location.Event
+import za.co.woolworths.financial.services.android.util.location.Locator
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import javax.inject.Inject
 
@@ -125,6 +126,7 @@ class ConfirmAddressMapFragment :
         deliveryType = args.mapData.deliveryType
         clearAddress()
         confirmAddressClick()
+        onNavigationMapArrowClicked()
         addFragmentListner()
         turnLocationSettingsOn()
         cancelClick()
@@ -138,6 +140,14 @@ class ConfirmAddressMapFragment :
                 showErrorDialog()
             }
         }
+    }
+
+    private fun onNavigationMapArrowClicked() {
+       binding?.navigationMapArrow?.setOnClickListener {
+           Utils.getLastSavedLocation()?.let {
+               moveMapCamera(it.latitude,it.longitude)
+           }
+       }
     }
 
     private fun showErrorDialog() {
@@ -182,6 +192,7 @@ class ConfirmAddressMapFragment :
                         if (isAddAddress!! && isAddressSearch == false) {
                             confirmAddress.isEnabled = false
                             imgMapMarker.visibility = View.GONE
+                            tvMarkerHint?.visibility = View.GONE
                         }
                     } else {
                         autoCompleteTextView.isEnabled = false
@@ -217,6 +228,7 @@ class ConfirmAddressMapFragment :
 
     private fun clearAddressText() {
         binding.autoCompleteTextView.setText("")
+        binding.tvLocationNikName.text = ""
     }
 
     private fun clearMapDetails() {
@@ -515,6 +527,7 @@ class ConfirmAddressMapFragment :
                     placeId = item?.placeId.toString()
                     placeName = item?.primaryText.toString()
                     binding?.autoCompleteTextView?.setText(placeName)
+                    binding?.tvLocationNikName?.text = placeName
                     isAddressFromSearch = true
                     isMainPlaceName = true
                     isStreetNumberAndRouteFromSearch = true
@@ -619,6 +632,7 @@ class ConfirmAddressMapFragment :
             } else {
                 errorMassageDivider?.visibility = View.GONE
                 errorMessage?.visibility = View.GONE
+                errorMessageTitle?.visibility = View.GONE
                 confirmAddress?.isEnabled = true
             }
         }
@@ -633,6 +647,7 @@ class ConfirmAddressMapFragment :
             }
         } else {
             binding?.imgMapMarker?.visibility = View.GONE
+            binding?.tvMarkerHint?.visibility = View.GONE
             binding?.confirmAddress?.isEnabled = false
             binding.dynamicMapView?.moveCamera(
                 latitude = DEFAULT_LATITUDE,
@@ -646,24 +661,28 @@ class ConfirmAddressMapFragment :
     override fun onMarkerClicked(marker: DynamicMapMarker) {}
 
     private fun moveMapCamera(latitude: Double?, longitude: Double?) {
-        if (latitude != null && longitude != null) {
-            binding?.imgMapMarker?.visibility = View.VISIBLE
-            binding?.confirmAddress?.isEnabled = true
-        }
-        isAddAddress = false
-        binding.dynamicMapView?.animateCamera(latitude, longitude, zoom = 18f)
-        binding.dynamicMapView?.setOnCameraMoveListener {
-            binding.dynamicMapView?.setOnCameraIdleListener {
-                val latitude = binding.dynamicMapView?.getCameraPositionTargetLatitude()
-                val longitude = binding.dynamicMapView?.getCameraPositionTargetLongitude()
-                latitude?.let { lat ->
-                    longitude?.let { longitude ->
-                        getAddressFromLatLng(lat, longitude)
+        binding.apply {
+            if (latitude != null && longitude != null) {
+                imgMapMarker?.visibility = View.VISIBLE
+                tvMarkerHint?.visibility = View.VISIBLE
+                navigationMapArrow?.visibility = View.VISIBLE
+                confirmAddress?.isEnabled = true
+            }
+            isAddAddress = false
+            dynamicMapView?.animateCamera(latitude, longitude, zoom = 18f)
+            dynamicMapView?.setOnCameraMoveListener {
+                dynamicMapView?.setOnCameraIdleListener {
+                    val latitude = dynamicMapView?.getCameraPositionTargetLatitude()
+                    val longitude = dynamicMapView?.getCameraPositionTargetLongitude()
+                    latitude?.let { lat ->
+                        longitude?.let { longitude ->
+                            getAddressFromLatLng(lat, longitude)
+                        }
                     }
+                    mLatitude = latitude?.toString()
+                    mLongitude = longitude?.toString()
+                    getPlaceId(latitude, longitude)
                 }
-                mLatitude = latitude?.toString()
-                mLongitude = longitude?.toString()
-                getPlaceId(latitude, longitude)
             }
         }
     }
@@ -693,6 +712,12 @@ class ConfirmAddressMapFragment :
                             city,
                             state
                         )
+                    )
+                    binding?.tvLocationNikName?.text = getString(
+                        R.string.geo_map_address,
+                        address1,
+                        "",
+                        ""
                     )
                 }
                 isAddressFromSearch = false
@@ -866,6 +891,8 @@ class ConfirmAddressMapFragment :
                     noLocationLayout?.noLocationRootLayout?.visibility = View.VISIBLE
                     dynamicMapView?.visibility = View.GONE
                     imgMapMarker?.visibility = View.GONE
+                    tvMarkerHint?.visibility = View.GONE
+                    navigationMapArrow?.visibility = View.GONE
                     confirmAddressLayout?.visibility = View.GONE
                 }
                 return@apply
@@ -879,12 +906,13 @@ class ConfirmAddressMapFragment :
                 moveMapCamera(mLatitude?.toDoubleOrNull(), mLongitude?.toDoubleOrNull())
                 binding.apply {
                     dynamicMapView?.visibility = View.VISIBLE
-                    mapFrameLayout.visibility = View.VISIBLE
-                    autoCompleteTextView.isEnabled = true
+                    mapFrameLayout?.visibility = View.VISIBLE
+                    autoCompleteTextView?.isEnabled = true
                     dynamicMapView?.setAllGesturesEnabled(true)
                     if (isAddAddress != null && isAddressSearch == false) {
-                        confirmAddress.isEnabled = false
-                        imgMapMarker.visibility = View.GONE
+                        confirmAddress?.isEnabled = false
+                        imgMapMarker?.visibility = View.GONE
+                        tvMarkerHint?.visibility = View.GONE
                     }
                 }
             }
