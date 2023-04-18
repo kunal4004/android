@@ -9,7 +9,7 @@
     <ImageView
         android:id="@+id/imgLiquorBanner"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/sixty_four_dp"
         android:paddingHorizontal="@dimen/_91sdp"
         android:paddingVertical="@dimen/_8sdp"
         app:layout_constraintBottom_toBottomOf="parent"
