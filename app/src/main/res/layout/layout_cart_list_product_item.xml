@@ -164,6 +164,7 @@
                 android:layout_height="@dimen/fifteen_dp"
                 android:layout_marginVertical="@dimen/twelve_dp"
                 android:src="@drawable/union_row"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="@+id/tvSubstituteItem"
                 app:layout_constraintStart_toStartOf="@id/tvTitle"
                 app:layout_constraintTop_toTopOf="@+id/tvSubstituteItem" />
