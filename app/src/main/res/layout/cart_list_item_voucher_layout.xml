@@ -5,7 +5,23 @@
     android:layout_height="wrap_content"
     android:background="@color/white">
 
-
+    <include
+        android:id="@+id/payFlexInfoMain"
+        layout="@layout/payflex_info_layout"
+        android:layout_width="@dimen/zero_dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="@+id/right_guideline"
+        app:layout_constraintStart_toStartOf="@+id/left_guideline"
+        app:layout_constraintTop_toBottomOf="@id/space" />
+    <View
+        android:id="@+id/payflex_border"
+        android:layout_width="@dimen/zero_dp"
+        android:layout_height="@dimen/one_dp"
+        android:background="@color/color_D8D8D8"
+        app:layout_constraintEnd_toEndOf="@+id/right_guideline"
+        app:layout_constraintStart_toStartOf="@+id/left_guideline"
+        app:layout_constraintTop_toBottomOf="@id/payFlexInfoMain"
+        />
     <RelativeLayout
         android:id="@+id/rlAvailableCashVouchers"
         style="@style/clickable_card_item_layout_style"
@@ -13,7 +29,7 @@
         android:padding="0dp"
         app:layout_constraintEnd_toEndOf="@+id/right_guideline"
         app:layout_constraintStart_toStartOf="@+id/left_guideline"
-        app:layout_constraintTop_toBottomOf="@id/space">
+        app:layout_constraintTop_toBottomOf="@id/payflex_border">
 
 
         <TextView

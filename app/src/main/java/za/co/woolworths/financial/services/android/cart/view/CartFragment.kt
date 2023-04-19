@@ -786,6 +786,14 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
 
     private fun updatePriceInformation() {
         val priceHolder = binding.includedPrice
+        if(viewModel.isFBHOnly()){
+            priceHolder.vouchersMain.payFlexInfoMain.payFlexInfoConstraintLayout.visibility = View.GONE
+            priceHolder.vouchersMain.payflexBorder.visibility = View.GONE
+        }else{
+            priceHolder.vouchersMain.payFlexInfoMain.payFlexInfoConstraintLayout.visibility = View.VISIBLE
+            priceHolder.vouchersMain.payflexBorder.visibility = View.VISIBLE
+        }
+
         if (orderSummary != null) {
             setPriceInformationVisibility(true)
             orderSummary?.basketTotal?.let {
