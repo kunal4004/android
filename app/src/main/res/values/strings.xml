@@ -2976,4 +2976,5 @@
     <string name="unit_number_floor">Unit Number/Floor:*</string>
     <string name="change_address_btn_text">CHANGE</string>
     <string name="use">USE\u0020</string>
+    <string name="payflex_is_unavailable_when_buying_food_items_and_gift_cards">Payflex is unavailable when buying Food items and Gift Cards.</string>
 </resources>
