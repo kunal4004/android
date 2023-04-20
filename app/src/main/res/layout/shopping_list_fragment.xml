@@ -20,7 +20,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:animateLayoutChanges="true"
-                android:background="@color/default_background"
+                android:background="@color/default_background_F3F3F3"
                 android:descendantFocusability="blocksDescendants"
                 android:orientation="vertical">
 
@@ -29,7 +29,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/white_bg_pressed"
-                    android:layout_marginVertical="@dimen/ten_dp">
+                    android:layout_marginTop="@dimen/two_dp">
 
                     <ImageView
                         android:id="@+id/deliverLocationIcon"
@@ -102,6 +102,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/white"
+                    android:layout_marginTop="@dimen/eight_dp"
                     android:gravity="center_vertical"
                     android:paddingTop="@dimen/twenty_six_dp"
                     android:paddingBottom="@dimen/twenty_six_dp">
@@ -125,15 +126,10 @@
 
                 </RelativeLayout>
 
-                <View
-                    style="@style/horizontal_divider_bold_style"
-                    android:layout_marginStart="@dimen/sixteen_dp"
-                    android:layout_marginEnd="@dimen/sixteen_dp" />
-
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@color/default_background">
+                    android:background="@color/white">
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rcvShoppingLists"
