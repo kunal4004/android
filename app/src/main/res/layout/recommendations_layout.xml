@@ -19,14 +19,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_begin="@dimen/_19sdp" />
+        app:layout_constraintGuide_begin="@dimen/twenty_four_dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guidelineBottom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_end="@dimen/_19sdp" />
+        app:layout_constraintGuide_end="@dimen/ten_dp" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/recommendationsText"
@@ -53,18 +53,18 @@
         android:clipToPadding="false"/>
 
     <FrameLayout
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_alignParentStart="true"
         android:layout_marginTop="@dimen/ten_dp"
         app:layout_constraintBottom_toBottomOf="@id/guidelineBottom"
         app:layout_constraintStart_toStartOf="@+id/guidelineStart"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/recommendationsCategoryRecyclerview">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recommendationsProductsRecyclerview"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:animateLayoutChanges="false"
             android:paddingLeft="@dimen/five_dp"
             android:paddingRight="@dimen/five_dp"
