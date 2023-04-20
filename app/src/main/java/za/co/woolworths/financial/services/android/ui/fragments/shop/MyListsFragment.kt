@@ -92,7 +92,7 @@ class MyListsFragment : DepartmentExtensionFragment(R.layout.shopping_list_fragm
         setupToolbar()
         activity?.let {
             val itemDecorator = DividerItemDecoration(it, DividerItemDecoration.VERTICAL)
-            ContextCompat.getDrawable(it, R.drawable.divider)
+            ContextCompat.getDrawable(it, R.drawable.inset_divider_24dp)
                 ?.let { it1 -> itemDecorator.setDrawable(it1) }
             binding.rcvShoppingLists?.addItemDecoration(itemDecorator)
             binding.rcvShoppingLists?.layoutManager =
