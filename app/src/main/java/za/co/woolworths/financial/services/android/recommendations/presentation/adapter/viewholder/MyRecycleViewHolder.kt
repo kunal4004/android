@@ -5,8 +5,6 @@ import android.text.TextUtils
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.databinding.RecommendationsProductListingPageRowBinding
-import com.google.android.flexbox.AlignItems
-import com.google.android.flexbox.FlexboxLayoutManager
 import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.Product
 import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.PromotionImages
 import za.co.woolworths.financial.services.android.recommendations.presentation.fragment.RecommendationFragment
@@ -18,13 +16,6 @@ import za.co.woolworths.financial.services.android.util.KotlinUtils
 class MyRecycleViewHolder(val mProductListingPageRowBinding: RecommendationsProductListingPageRowBinding) :
     RecyclerView.ViewHolder(mProductListingPageRowBinding.root) {
 
-    init {
-        val layoutParams = itemView.layoutParams
-        if (layoutParams is FlexboxLayoutManager.LayoutParams) {
-            layoutParams.flexShrink = 0.0f
-            layoutParams.alignSelf = AlignItems.FLEX_START //this will align each itemView on Top
-        }
-    }
 
     fun setProductItem(
         productList: Product,
@@ -157,9 +148,6 @@ class MyRecycleViewHolder(val mProductListingPageRowBinding: RecommendationsProd
                     }
                 }
             }
-        } else {
-            onlinePromotionalTextView1?.text = ""
-            onlinePromotionalTextView2?.text = ""
         }
     }
 
@@ -170,8 +158,8 @@ class MyRecycleViewHolder(val mProductListingPageRowBinding: RecommendationsProd
             ) {
                 val ratings: Float = productList.averageRating!!.toFloat()
                 if (ratings == 0.0f) {
-                    ratingBar.visibility = View.INVISIBLE
-                    txtRatingCount.visibility = View.INVISIBLE
+                    ratingBar.visibility = View.GONE
+                    txtRatingCount.visibility = View.GONE
                 } else {
                     ratingBar.visibility = View.VISIBLE
                     txtRatingCount.visibility = View.VISIBLE
@@ -181,8 +169,8 @@ class MyRecycleViewHolder(val mProductListingPageRowBinding: RecommendationsProd
                 }
 
             } else {
-                ratingBar.visibility = View.INVISIBLE
-                txtRatingCount.visibility = View.INVISIBLE
+                ratingBar.visibility = View.GONE
+                txtRatingCount.visibility = View.GONE
             }
 
         }
