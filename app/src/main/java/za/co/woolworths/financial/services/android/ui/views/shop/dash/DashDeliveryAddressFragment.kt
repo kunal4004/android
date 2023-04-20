@@ -12,7 +12,7 @@ import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
-import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
@@ -68,8 +68,7 @@ import java.util.*
 class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), IProductListing,
     View.OnClickListener, OnDemandNavigationListener, OnDashLandingNavigationListener {
 
-    private val viewModel: ShopViewModel by viewModels()
-
+    private lateinit var viewModel: ShopViewModel
     private lateinit var binding: FragmentDashDeliveryBinding
     private lateinit var dashDeliveryAdapter: DashDeliveryAdapter
     private var isQuickShopClicked = false
@@ -78,18 +77,22 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        dashDeliveryAdapter =
-            DashDeliveryAdapter(
-                requireContext(), onDemandNavigationListener = this,
-                dashLandingNavigationListener = this, this
-            )
+
+        if (ifFragmentAttached()) {
+            dashDeliveryAdapter =
+                DashDeliveryAdapter(
+                    requireContext(), onDemandNavigationListener = this,
+                    dashLandingNavigationListener = this, this
+                )
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel = ViewModelProvider(this).get(ShopViewModel::class.java)
         binding = FragmentDashDeliveryBinding.bind(view)
 
-        if (!isVisible) {
+        if (!isVisible || !isAdded) {
             return
         }
         initViews()
@@ -170,9 +173,9 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
         hideSearchBar()
         binding.layoutDashSetAddress?.root?.visibility = View.VISIBLE
         binding.layoutDashSetAddress.imgView?.setImageResource(R.drawable.img_dash_delivery)
-        binding.layoutDashSetAddress.txtDashTitle?.text = getString(R.string.dash_delivery_msg)
-        binding.layoutDashSetAddress.txtDashSubTitle?.text = getString(R.string.dash_delivery_title)
-        binding.layoutDashSetAddress.btnDashSetAddress?.text = getString(R.string.set_location)
+        binding.layoutDashSetAddress.txtDashTitle?.text = context?.resources?.getString(R.string.dash_delivery_msg)
+        binding.layoutDashSetAddress.txtDashSubTitle?.text = context?.resources?.getString(R.string.dash_delivery_title)
+        binding.layoutDashSetAddress.btnDashSetAddress?.text = context?.resources?.getString(R.string.set_location)
         binding.layoutDashSetAddress.btnDashSetAddress?.setOnClickListener(this)
     }
 
@@ -180,9 +183,9 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
         hideSearchBar()
         binding.layoutDashSetAddress?.root?.visibility = View.VISIBLE
         binding.layoutDashSetAddress.imgView?.setImageResource(R.drawable.location_disabled)
-        binding.layoutDashSetAddress.txtDashTitle?.text = getString(R.string.no_location_title)
-        binding.layoutDashSetAddress.txtDashSubTitle?.text = getString(R.string.no_location_desc)
-        binding.layoutDashSetAddress.btnDashSetAddress?.text = getString(R.string.change_location)
+        binding.layoutDashSetAddress.txtDashTitle?.text = context?.resources?.getString(R.string.no_location_title)
+        binding.layoutDashSetAddress.txtDashSubTitle?.text = context?.resources?.getString(R.string.no_location_desc)
+        binding.layoutDashSetAddress.btnDashSetAddress?.text = context?.resources?.getString(R.string.change_location)
         binding.layoutDashSetAddress.btnDashSetAddress?.setOnClickListener(this)
     }
 
@@ -249,7 +252,9 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                     }
                     Status.ERROR -> {
                         binding.progressBar.visibility = View.GONE
-                        showErrorView(requireContext().getString(resource.message), resource.data)
+                        if (ifFragmentAttached()) {
+                            showErrorView(context?.getString(resource.message), resource.data)
+                        }
                     }
                 }
             }
@@ -424,11 +429,13 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                                 }
                                 else -> {
                                     response.response.desc = formException.message
-                                    Utils.displayValidationMessage(
-                                        requireContext(),
-                                        CustomPopUpWindow.MODAL_LAYOUT.ERROR,
-                                        response.response.desc
-                                    )
+                                    if (ifFragmentAttached()) {
+                                        Utils.displayValidationMessage(
+                                            context,
+                                            CustomPopUpWindow.MODAL_LAYOUT.ERROR,
+                                            response.response.desc
+                                        )
+                                    }
                                 }
                             }
                             return@observe
@@ -462,11 +469,13 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                                 }
                             }
                             else -> response?.response?.desc?.let { desc ->
-                                Utils.displayValidationMessage(
-                                    requireContext(),
-                                    CustomPopUpWindow.MODAL_LAYOUT.ERROR,
-                                    desc
-                                )
+                                if (ifFragmentAttached()) {
+                                    Utils.displayValidationMessage(
+                                        requireContext(),
+                                        CustomPopUpWindow.MODAL_LAYOUT.ERROR,
+                                        desc
+                                    )
+                                }
                             }
                         }
                     }
@@ -525,11 +534,14 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                             }
 
                             else -> response?.response?.desc?.let { desc ->
-                                Utils.displayValidationMessage(
-                                    requireContext(),
-                                    CustomPopUpWindow.MODAL_LAYOUT.ERROR,
-                                    desc
-                                )
+                                if (ifFragmentAttached()) {
+                                    Utils.displayValidationMessage(
+                                        requireContext(),
+                                        CustomPopUpWindow.MODAL_LAYOUT.ERROR,
+                                        desc
+                                    )
+                                }
+
                             }
                         }
                     }
@@ -587,6 +599,14 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
             }
         }
 
+    }
+
+    fun ifFragmentAttached():Boolean {
+
+        if (isAdded && context != null) {
+            return  true
+        }
+        return false
     }
 
     private fun openCartActivity() {
@@ -660,7 +680,9 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
     private fun setupRecyclerView() {
         binding.rvDashDelivery?.apply {
             adapter = dashDeliveryAdapter
-            layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
+            if (ifFragmentAttached()) {
+                layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
+            }
         }
     }
 
@@ -772,11 +794,13 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
         // Now first check for if delivery location and browsing location is same.
         // if same no issues. If not then show changing delivery location popup.
         if (!getDeliveryType()?.deliveryType.equals(Delivery.DASH.type)) {
-            KotlinUtils.showChangeDeliveryTypeDialog(
-                requireContext(), requireFragmentManager(),
-                KotlinUtils.browsingDeliveryType
-            )
-            return
+            if (ifFragmentAttached()) {
+                KotlinUtils.showChangeDeliveryTypeDialog(
+                    requireContext(), requireFragmentManager(),
+                    KotlinUtils.browsingDeliveryType
+                )
+                return
+            }
         }
         addToCart(addItemToCart)
     }
@@ -838,7 +862,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
         activity?.let { activity ->
             when (error) {
                 is ConnectException, is UnknownHostException -> {
-                    ErrorHandlerView(activity).showToast(getString(R.string.no_connection))
+                    ErrorHandlerView(activity).showToast(context?.resources?.getString(R.string.no_connection))
                 }
                 else -> return
             }
