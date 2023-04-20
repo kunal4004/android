@@ -35,10 +35,9 @@
                         android:id="@+id/deliverLocationIcon"
                         android:layout_width="@dimen/twenty_six_dp"
                         android:layout_height="@dimen/twenty_six_dp"
-                        android:layout_marginStart="@dimen/thirty_three_dp"
-                        android:layout_margin="@dimen/five_dp"
-                        android:layout_marginTop="18dp"
-                        android:layout_marginBottom="18dp"
+                        android:layout_marginStart="@dimen/twenty_four_dp"
+                        android:layout_marginTop="@dimen/eighteen_dp"
+                        android:layout_marginBottom="@dimen/eighteen_dp"
                         android:src="@drawable/ic_delivery_circle"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -89,6 +88,13 @@
                         app:layout_constraintTop_toTopOf="@id/tvDeliveryLocation" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <include
+                    android:id="@+id/includeSignOutTemplate"
+                    layout="@layout/my_list_empty_template"
+                    android:visibility="gone"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
 
                 <RelativeLayout
                     android:visibility="gone"
@@ -157,12 +163,6 @@
     <include
         android:id="@+id/incConnectionLayout"
         layout="@layout/no_connection_handler"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-    <include
-        android:id="@+id/includeSignOutTemplate"
-        layout="@layout/my_list_empty_template"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 </FrameLayout>

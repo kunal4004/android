@@ -123,10 +123,9 @@
 
             <ImageView
                 android:id="@+id/imgDelivery"
-                android:layout_width="@dimen/thirty_two_dp"
-                android:layout_height="@dimen/thirty_two_dp"
-                android:layout_margin="@dimen/five_dp"
-                android:layout_marginStart="@dimen/twenty_six_dp"
+                android:layout_width="@dimen/twenty_six_dp"
+                android:layout_height="@dimen/twenty_six_dp"
+                android:layout_marginStart="@dimen/twenty_four_dp"
                 android:layout_marginTop="@dimen/eighteen_dp"
                 android:layout_marginBottom="@dimen/eighteen_dp"
                 android:src="@drawable/ic_delivery_circle"
