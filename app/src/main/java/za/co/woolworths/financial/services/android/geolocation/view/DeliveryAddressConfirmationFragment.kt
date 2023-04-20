@@ -15,6 +15,7 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.awfs.coordination.R
@@ -54,6 +55,7 @@ import za.co.woolworths.financial.services.android.models.network.StorePickupInf
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.cart.view.CartFragment
+import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
 import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.UnsellableItemsBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.VtoErrorBottomSheetDialog
@@ -82,7 +84,6 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.saveAnonymousUserLocationDetails
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
-import za.co.woolworths.financial.services.android.viewmodels.ShoppingCartLiveData
 import javax.inject.Inject
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_ADDRESS2
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
@@ -114,6 +115,7 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
     private  var address2:String?=null
 
     val confirmAddressViewModel: ConfirmAddressViewModel by activityViewModels()
+    private val checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel by activityViewModels()
 
     @Inject
     lateinit var vtoErrorBottomSheetDialog: VtoErrorBottomSheetDialog
@@ -1043,7 +1045,8 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
             isUnSellableItemsRemoved = it
             if (isUnSellableItemsRemoved == true) {
                 binding.sendConfirmLocation()
-                loadShoppingCart()
+               // loadShoppingCart()
+              // checkoutAddAddressNewUserViewModel.getShoppingCartData()
                 UnSellableItemsLiveData.value = false
             }
         }
@@ -1059,8 +1062,12 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
                                     when (response?.httpCode) {
                                         HTTP_OK -> {
                                             val isNoLiquorOrder = response.data[0].liquorOrder
-                                            if(isNoLiquorOrder == false)
-                                                ShoppingCartLiveData.value = isNoLiquorOrder
+                                         //   if(isNoLiquorOrder == false) {
+                                                // ShoppingCart._shoppingCartLiveData.value = isNoLiquorOrder
+//                                                lifecycleScope.launch {
+//                                                    liquorPref.disableLiquor(isNoLiquorOrder)
+//                                                }
+                                         //   }
                                         }
                                         HTTP_SESSION_TIMEOUT_440 -> {
                                             SessionUtilities.getInstance()
