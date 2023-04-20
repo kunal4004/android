@@ -8,9 +8,9 @@ import kotlinx.parcelize.Parcelize
 data class SubstitutionInfo(
     @SerializedName("displayName")
     val displayName: String,
-    val substitutionSelection: String?,
+    val substitutionSelection: String? = null,
     val isSubstitutionInStock: Boolean = false,
     @SerializedName("id")
-    val id: String,
-    val substitutionId: String?
+    val id: String = "",
+    val substitutionId: String? = null
 ): Parcelable
