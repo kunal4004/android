@@ -23,8 +23,10 @@ import com.awfs.coordination.R
 import com.awfs.coordination.databinding.CheckoutAddAddressRetuningUserBinding
 import com.facebook.shimmer.Shimmer
 import com.facebook.shimmer.ShimmerFrameLayout
+import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor
 import za.co.woolworths.financial.services.android.checkout.service.network.*
+import za.co.woolworths.financial.services.android.checkout.utils.AddShippingInfoEventsAnalytics
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.DeliveryType.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.FulfillmentsType.FOOD
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.FulfillmentsType.OTHER
@@ -44,6 +46,7 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
+import za.co.woolworths.financial.services.android.models.dto.CommerceItem
 import za.co.woolworths.financial.services.android.models.dto.LiquorCompliance
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary
 import za.co.woolworths.financial.services.android.models.dto.app_config.native_checkout.ConfigShoppingBagsOptions
@@ -65,10 +68,12 @@ import za.co.woolworths.financial.services.android.util.pushnotification.Notific
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.viewmodels.ShoppingCartLiveData
 import java.util.regex.Pattern
+import javax.inject.Inject
 
 /**
  * Created by Kunal Uttarwar on 27/05/21.
  */
+@AndroidEntryPoint
 class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFragment(R.layout.checkout_add_address_retuning_user),
     OnClickListener,
     CheckoutDeliveryTypeSelectionListAdapter.EventListner,
@@ -88,9 +93,11 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     private var placesId: String? = ""
     private var storeId: String? = ""
     private var nickName: String? = ""
-
     private var liquorImageUrl: String? = ""
     private var liquorOrder: Boolean? = false
+    private var orderTotalValue: Double = -1.0
+    @Inject
+    lateinit var addShippingInfoEventsAnalytics : AddShippingInfoEventsAnalytics
 
     private val deliveryInstructionsTextWatcher: TextWatcher = object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -124,7 +131,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     private var shimmerComponentArray: List<Pair<ShimmerFrameLayout, View>> = ArrayList()
 
     private var defaultAddress: Address? = null
-
+    private var cartItemList: ArrayList<CommerceItem>? = null
 
     enum class FoodSubstitution(val rgb: String) {
         PHONE_CONFIRM("YES_CALL_CONFIRM"),
@@ -162,6 +169,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         (activity as? CheckoutActivity)?.apply {
             showBackArrowWithTitle(bindString(R.string.checkout))
         }
+        cartItemList = arguments?.getSerializable(CART_ITEM_LIST) as ArrayList<CommerceItem>?
         initViews()
     }
 
@@ -568,6 +576,8 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
 
                 binding.layoutCheckoutDeliveryOrderSummary.txtOrderTotalValue.text =
                     CurrencyFormatter.formatAmountToRandAndCentWithSpace(it.total)
+                orderTotalValue = it.total
+
             }
         }
     }
@@ -825,22 +835,6 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                 FIRST.week,
                 ONLY_FOOD
             )
-            val foodItemDate =
-                confirmDeliveryAddressResponse?.timedDeliveryFirstAvailableDates?.food
-            val arguments = HashMap<String, String>()
-            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.CURRENCY] =
-                FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE
-            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ORDER_TOTAL_VALUE] =
-                selectedSlotResponseFood?.orderSummary?.total.toString()
-            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_DATE] =
-                foodItemDate.toString()
-            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.SHIPPING_TIER] =
-                FirebaseManagerAnalyticsProperties.PropertyValues.SHIPPING_TIER_VALUE_FOOD
-            Utils.triggerFireBaseEvents(
-                FirebaseManagerAnalyticsProperties.ADD_SHIPPING_INFO,
-                arguments,
-                activity
-            )
 
         } else if (OTHER.type == selectedSlotResponseFood?.fulfillmentTypes?.join && OTHER.type == selectedSlotResponseFood?.fulfillmentTypes?.other) {
             // For mix basket
@@ -859,22 +853,6 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                     MIXED_OTHER
                 ) // Sending params MIXED_OTHER here to get mixed_other grid while click on timeslot radiobutton.
             }
-            val foodItemDate =
-                confirmDeliveryAddressResponse?.timedDeliveryFirstAvailableDates?.food
-            val arguments = HashMap<String, String>()
-            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.CURRENCY] =
-                FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE
-            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ORDER_TOTAL_VALUE] =
-                selectedSlotResponseFood?.orderSummary?.total.toString()
-            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_DATE] =
-                foodItemDate.toString()
-            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.SHIPPING_TIER] =
-                FirebaseManagerAnalyticsProperties.PropertyValues.SHIPPING_TIER_VALUE_MIXED
-            Utils.triggerFireBaseEvents(
-                FirebaseManagerAnalyticsProperties.ADD_SHIPPING_INFO,
-                arguments,
-                activity
-            )
         } else {
             // for Other
             if (selectedSlotResponseFood?.requiredToDisplayODD == true) {
@@ -890,21 +868,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             binding.layoutDeliveryInstructions.txtNeedBags.visibility = GONE
             binding.layoutDeliveryInstructions.newShoppingBagsLayout.root.visibility = GONE
         }
-        val foodItemDate = confirmDeliveryAddressResponse?.timedDeliveryFirstAvailableDates?.food
-        val arguments = HashMap<String, String>()
-        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.CURRENCY] =
-            FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE
-        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ORDER_TOTAL_VALUE] =
-            selectedSlotResponseFood?.orderSummary?.total.toString()
-        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_DATE] =
-            foodItemDate.toString()
-        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.SHIPPING_TIER] =
-            FirebaseManagerAnalyticsProperties.PropertyValues.SHIPPING_TIER_VALUE_OTHER
-        Utils.triggerFireBaseEvents(
-            FirebaseManagerAnalyticsProperties.ADD_SHIPPING_INFO,
-            arguments,
-            activity
-        )
+
     }
 
     private fun showDeliverySubTypeShimmerView() {
@@ -996,14 +960,11 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                 activity?.finish()
             }
             R.id.txtContinueToPayment -> {
-                Utils.triggerFireBaseEvents(
-                    FirebaseManagerAnalyticsProperties.CHECKOUT_CONTINUE_TO_PAYMENT,
-                    hashMapOf(
-                        FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
-                                FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_CONTINUE_TO_PAYMENT
-                    ),
-                    activity
-                )
+                cartItemList?.let {
+                    addShippingInfoEventsAnalytics.sendEventData(it,
+                        FirebaseManagerAnalyticsProperties.PropertyValues.SHIPPING_TIER_VALUE_STD,
+                        orderTotalValue)
+                }
                 onCheckoutPaymentClick()
             }
         }
@@ -1234,7 +1195,10 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     private fun navigateToPaymentWebpage(webTokens: ShippingDetailsResponse) {
         view?.findNavController()?.navigate(
             R.id.action_CheckoutAddAddressReturningUserFragment_to_checkoutPaymentWebFragment,
-            bundleOf(KEY_ARGS_WEB_TOKEN to webTokens)
+            bundleOf(KEY_ARGS_WEB_TOKEN to webTokens,
+                CART_ITEM_LIST to cartItemList
+            )
+
         )
     }
 
@@ -1456,4 +1420,5 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             binding.ageConfirmationLayout.radioBtnAgeConfirmation?.isChecked = true
         }
     }
+
 }

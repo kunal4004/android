@@ -6,6 +6,7 @@ import za.co.woolworths.financial.services.android.models.network.Resource
 import za.co.woolworths.financial.services.android.recommendations.data.repository.RecommendationsRepository
 import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.RecommendationResponse
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.CartProducts
+import za.co.woolworths.financial.services.android.recommendations.data.response.request.CommonRecommendationEvent
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.RecommendationRequest
 import za.co.woolworths.financial.services.android.util.Utils
@@ -41,7 +42,7 @@ class SubmitRecommendationsUseCase @Inject constructor(
                         orderId = orderId,
                         purchaseLines = productLines
                     )
-                ),
+                ).plus(CommonRecommendationEvent.commonRecommendationEvents()),
                 monetateId = monetateId
             )
         }

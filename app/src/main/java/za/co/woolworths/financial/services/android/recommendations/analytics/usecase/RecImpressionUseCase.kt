@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.recommendations.analytics.us
 
 import za.co.woolworths.financial.services.android.models.network.Resource
 import za.co.woolworths.financial.services.android.recommendations.data.repository.RecommendationsRepository
-import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.Product
 import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.RecommendationResponse
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.CommonRecommendationEvent
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
@@ -11,27 +10,26 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.shop.use
 import za.co.woolworths.financial.services.android.util.Utils
 import javax.inject.Inject
 
-class RecClickUseCase @Inject constructor(
+class RecImpressionUseCase @Inject constructor(
     private val recommendationsRepository: RecommendationsRepository
 ) {
 
-    suspend operator fun invoke(products: List<Product>): Resource<RecommendationResponse> {
-        val event = prepareEvent(products)
+    suspend operator fun invoke(recTokens: List<String>): Resource<RecommendationResponse> {
+        val event = prepareEvent(recTokens)
         return recommendationsRepository.getRecommendationResponse(event)
     }
 
-    private fun prepareEvent(products: List<Product>): RecommendationRequest? {
+    private fun prepareEvent(recTokens: List<String>): RecommendationRequest? {
         val monetateId = Utils.getMonetateId()
-        val eventType = Constants.EVENT_TYPE_REC_CLICKS
-        val recClicks = products.mapNotNull { it.recToken }.filter { it.isNotEmpty() }
-        return if (recClicks.isEmpty() || monetateId.isNullOrEmpty()) {
+        val eventType = Constants.EVENT_TYPE_REC_IMPRESSIONS
+        return if (recTokens.isEmpty() || monetateId.isNullOrEmpty()) {
             null
         } else {
             RecommendationRequest(
                 events = listOf(
                     Event(
                         eventType = eventType,
-                        recClicks = recClicks,
+                        recImpressions = recTokens,
                         cartLines = null,
                         categories = null,
                         pageType = null,
