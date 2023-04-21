@@ -3,7 +3,7 @@ version: 2.1
 jobs:
   build-and-test:
     docker:
-      - image: circleci/android:api-33-node
+      - image: cimg/android:2023.04
     environment:
       JVM_OPTS: -Xms1024m -Xmx4096m -XX:MaxMetaspaceSize=768m -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8
       GRADLE_OPTS: -Dorg.gradle.daemon=false
