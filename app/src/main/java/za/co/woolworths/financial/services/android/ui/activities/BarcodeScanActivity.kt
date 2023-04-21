@@ -17,14 +17,14 @@ import za.co.woolworths.financial.services.android.util.Utils
 
 class BarcodeScanActivity : RuntimePermissionActivity() {
 
-    lateinit var binding: BarcodeScanActivityBinding
+    var binding: BarcodeScanActivityBinding? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = BarcodeScanActivityBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        setContentView(binding?.root)
         Utils.updateStatusBarBackground(this, R.color.black, true)
-        binding.configureActionBar()
+        binding?.configureActionBar()
         if (savedInstanceState == null) {
             addFragment(
                     fragment = BarcodeScanFragment.newInstance(),
@@ -53,7 +53,7 @@ class BarcodeScanActivity : RuntimePermissionActivity() {
         supportFragmentManager?.apply {
             if (backStackEntryCount > 0) {
                 popBackStack()
-                binding.setHomeIndicator(backStackEntryCount == 0)
+                binding?.setHomeIndicator(backStackEntryCount == 0)
             } else {
                 finish()
                 overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)

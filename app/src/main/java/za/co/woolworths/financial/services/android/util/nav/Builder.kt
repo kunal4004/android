@@ -20,7 +20,7 @@ class Builder(private val savedInstanceState: Bundle?, val fragmentManager: Frag
     internal val rootFragments: MutableList<Fragment> = mutableListOf()
 
     @FragNavController.TabIndex
-    internal var selectedTabIndex = FragNavController.TAB1
+    internal var selectedTabIndex = FragNavController.TAB2
 
     @FragNavController.FragmentHideStrategy
     internal var fragmentHideStrategy = FragNavController.DETACH

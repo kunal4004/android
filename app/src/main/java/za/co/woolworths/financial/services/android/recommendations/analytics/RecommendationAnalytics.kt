@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.recommendations.analytics
 
 import kotlinx.coroutines.*
 import za.co.woolworths.financial.services.android.recommendations.analytics.usecase.RecClickUseCase
+import za.co.woolworths.financial.services.android.recommendations.analytics.usecase.RecImpressionUseCase
 import za.co.woolworths.financial.services.android.recommendations.data.repository.RecommendationsRepository
 import za.co.woolworths.financial.services.android.recommendations.data.repository.RecommendationsRepositoryImpl
 import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.Product
@@ -25,6 +26,14 @@ class RecommendationAnalytics private constructor(
         }
     }
 
+    override fun submitRecImpressions(recTokens: List<String>) {
+        if (coroutineScope.isActive) {
+            coroutineScope.launch {
+                recommendationUseCase.recImpressionUseCase()(recTokens = recTokens)
+            }
+        }
+    }
+
     companion object :
         SingletonHolder<RecommendationAnalytics, RecommendationUseCases, CoroutineScope>(::RecommendationAnalytics)
 }
@@ -32,6 +41,7 @@ class RecommendationAnalytics private constructor(
 class RecommendationUseCaseProvider : RecommendationUseCases {
 
     private var recClickUseCase: RecClickUseCase? = null
+    private var recImpressionUseCase: RecImpressionUseCase? = null
 
     override fun recClickUseCase(): RecClickUseCase {
         if (recClickUseCase == null) {
@@ -39,6 +49,14 @@ class RecommendationUseCaseProvider : RecommendationUseCases {
             recClickUseCase = RecClickUseCase(repository)
         }
         return recClickUseCase!!
+    }
+
+    override fun recImpressionUseCase(): RecImpressionUseCase {
+        if (recImpressionUseCase == null) {
+            val repository: RecommendationsRepository = RecommendationsRepositoryImpl()
+            recImpressionUseCase = RecImpressionUseCase(repository)
+        }
+        return recImpressionUseCase!!
     }
 }
 
