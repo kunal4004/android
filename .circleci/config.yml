@@ -19,7 +19,7 @@ jobs:
           command: yes | sdkmanager --update || exit 0
       - run:
           name: Bundle Install
-          command: bundle check || bundle install --path vendor/bundle
+          command: bundle install
       - restore_cache:
           name: Restore Gradle Dependencies Cache
           keys:
