@@ -15,7 +15,6 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.awfs.coordination.R
@@ -55,7 +54,6 @@ import za.co.woolworths.financial.services.android.models.network.StorePickupInf
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.cart.view.CartFragment
-import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
 import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.UnsellableItemsBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.VtoErrorBottomSheetDialog
@@ -115,7 +113,6 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
     private  var address2:String?=null
 
     val confirmAddressViewModel: ConfirmAddressViewModel by activityViewModels()
-    private val checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel by activityViewModels()
 
     @Inject
     lateinit var vtoErrorBottomSheetDialog: VtoErrorBottomSheetDialog
@@ -1046,7 +1043,6 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
             if (isUnSellableItemsRemoved == true) {
                 binding.sendConfirmLocation()
                // loadShoppingCart()
-              // checkoutAddAddressNewUserViewModel.getShoppingCartData()
                 UnSellableItemsLiveData.value = false
             }
         }
@@ -1064,9 +1060,6 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
                                             val isNoLiquorOrder = response.data[0].liquorOrder
                                          //   if(isNoLiquorOrder == false) {
                                                 // ShoppingCart._shoppingCartLiveData.value = isNoLiquorOrder
-//                                                lifecycleScope.launch {
-//                                                    liquorPref.disableLiquor(isNoLiquorOrder)
-//                                                }
                                          //   }
                                         }
                                         HTTP_SESSION_TIMEOUT_440 -> {
