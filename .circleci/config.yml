@@ -17,7 +17,6 @@ jobs:
       - run:
           name: Accept all SDK updates
           command: yes | sdkmanager --update || exit 0
-      - run: gem update --system && gem install bundler
       - run:
           name: Bundle Install
           command: bundle check || bundle install --path vendor/bundle
