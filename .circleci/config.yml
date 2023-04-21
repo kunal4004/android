@@ -24,6 +24,9 @@ jobs:
           paths:
             - ~/.gradle/caches/
             - ~/.gradle/wrapper/
+      - run: 
+          name: Bundle Install
+          command: bundle install
       - run:
           name: Run Tests
           command: bundle exec fastlane $FL_TEST_LANE variant:huaweiQa
