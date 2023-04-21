@@ -9,7 +9,7 @@ import za.co.woolworths.financial.services.android.util.analytics.FirebaseManage
 import java.io.IOException
 import javax.inject.Inject
 
-class LiquourRepositoryImpl @Inject constructor() : LiquorRepository {
+class LiquorRepositoryImpl @Inject constructor() : LiquorRepository {
     override suspend fun getShoppingCartData(): Resource<ShoppingCartResponse> {
         return try {
             val response = OneAppService.getShoppingCartV2()

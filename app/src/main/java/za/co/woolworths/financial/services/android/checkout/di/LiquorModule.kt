@@ -5,12 +5,12 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
 import za.co.woolworths.financial.services.android.checkout.repository.LiquorRepository
-import za.co.woolworths.financial.services.android.checkout.repository.LiquourRepositoryImpl
+import za.co.woolworths.financial.services.android.checkout.repository.LiquorRepositoryImpl
 
 
 @Module
 @InstallIn(ViewModelComponent::class)
 abstract class LiquorModule {
     @Binds
-    abstract fun bindLiquorRepository(liquourRepositoryImpl: LiquourRepositoryImpl): LiquorRepository
+    abstract fun bindLiquorRepository(liquorRepositoryImpl: LiquorRepositoryImpl): LiquorRepository
 }
