@@ -42,6 +42,7 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.TA
 import za.co.woolworths.financial.services.android.geolocation.view.PargoStoreInfoBottomSheetDialog
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.geolocation.view.FBHInfoBottomSheetDialog
+
 class ChangeFullfilmentCollectionStoreFragment :
     DepartmentExtensionFragment(R.layout.layout_dash_collection_store),
     StoreListAdapter.OnStoreSelected, View.OnClickListener, TextWatcher {
@@ -56,7 +57,7 @@ class ChangeFullfilmentCollectionStoreFragment :
     private var parentFragment: ShopFragment? = null
     private var mDepartmentAdapter: DepartmentAdapter? = null
     private var saveInstanceState: Bundle? = null
-    private var updatedPlace:PlaceDetails?=null
+    private var updatedPlace: PlaceDetails? = null
     private var isFragmentVisible: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -74,17 +75,20 @@ class ChangeFullfilmentCollectionStoreFragment :
 
     override fun onResume() {
         super.onResume()
-        binding.layoutClickAndCollectStore.apply {
-            etEnterNewAddress?.addTextChangedListener(this@ChangeFullfilmentCollectionStoreFragment)
+        if (parentFragment?.getCurrentFragmentIndex() == ShopFragment.SelectedTabIndex.CLICK_AND_COLLECT_TAB.index) {
+            init()
         }
-        init()
     }
 
     override fun noConnectionLayout(isVisible: Boolean) {
-        binding.layoutClickAndCollectStore?.noClickAndCollectConnectionLayout?.root?.visibility = if (isVisible) View.VISIBLE else View.GONE
+        binding.layoutClickAndCollectStore?.noClickAndCollectConnectionLayout?.root?.visibility =
+            if (isVisible) View.VISIBLE else View.GONE
     }
 
     fun init() {
+        binding.layoutClickAndCollectStore.apply {
+            etEnterNewAddress?.addTextChangedListener(this@ChangeFullfilmentCollectionStoreFragment)
+        }
         binding.layoutClickAndCollectStore.tvConfirmStore?.setOnClickListener(this)
         binding.layoutClickAndCollectStore.btChange?.setOnClickListener(this)
 
@@ -130,8 +134,8 @@ class ChangeFullfilmentCollectionStoreFragment :
         if (validatePlace == null) {
             val mPlaceId = getDeliveryType()?.address?.placeId ?: return
             if (!mPlaceId.isNullOrEmpty()) {
-             /* if place id is not null means previously location is set but validate place api
-               is not called yet or not in sync. so need to call again */
+                /* if place id is not null means previously location is set but validate place api
+                  is not called yet or not in sync. so need to call again */
                 executeValidatePlaceApi(mPlaceId)
             } else {
                 showSetLocationUi()
@@ -163,20 +167,22 @@ class ChangeFullfilmentCollectionStoreFragment :
                     when (validateLocationResponse.httpCode) {
                         AppConstant.HTTP_OK -> {
                             binding.cncProgressBar.visibility = View.GONE
-                            binding.layoutClickAndCollectStore.tvStoresNearMe?.text = resources.getString(
-                                R.string.near_stores,
-                                validateLocationResponse?.validatePlace?.stores?.size
-                            )
-                            updatedAddressStoreList = validateLocationResponse?.validatePlace?.stores
-                            updatedPlace=validateLocationResponse?.validatePlace?.placeDetails
+                            binding.layoutClickAndCollectStore.tvStoresNearMe?.text =
+                                resources.getString(
+                                    R.string.near_stores,
+                                    validateLocationResponse?.validatePlace?.stores?.size
+                                )
+                            updatedAddressStoreList =
+                                validateLocationResponse?.validatePlace?.stores
+                            updatedPlace = validateLocationResponse?.validatePlace?.placeDetails
                             binding.layoutClickAndCollectStore.tvAddress?.text =
                                 KotlinUtils.capitaliseFirstLetter(validateLocationResponse?.validatePlace?.placeDetails?.address1)
                             placeId = validateLocationResponse?.validatePlace?.placeDetails?.placeId
                             setStoreList(validateLocationResponse?.validatePlace?.stores)
-                            if(placeId != null) {
+                            if (placeId != null) {
                                 val store = GeoUtils.getStoreDetails(
-                                        placeId,
-                                        validateLocationResponse?.validatePlace?.stores
+                                    placeId,
+                                    validateLocationResponse?.validatePlace?.stores
                                 )
                             }
                         }
@@ -195,7 +201,7 @@ class ChangeFullfilmentCollectionStoreFragment :
     private fun setStoreList(stores: List<Store>?) {
         binding.layoutEdgeCaseScreen?.root?.visibility = View.GONE
         binding.layoutClickAndCollectStore?.root?.visibility = View.VISIBLE
-        binding.layoutClickAndCollectStore?.topPaddingView?.visibility=View.VISIBLE
+        binding.layoutClickAndCollectStore?.topPaddingView?.visibility = View.VISIBLE
         binding.layoutClickAndCollectStore?.backButton?.visibility = View.GONE
         binding.layoutClickAndCollectStore.rvStoreList.layoutManager =
             activity?.let { activity -> LinearLayoutManager(activity) }
@@ -211,7 +217,7 @@ class ChangeFullfilmentCollectionStoreFragment :
                         this
                     )
                 }
-                if(isFragmentVisible) {
+                if (isFragmentVisible) {
                     binding.layoutClickAndCollectStore.rvStoreList.runWhenReady {
                         if (!AppInstanceObject.get().featureWalkThrough.new_fbh_cnc) {
                             firstTimeFBHCNCIntroDialog()
@@ -245,7 +251,8 @@ class ChangeFullfilmentCollectionStoreFragment :
             layoutEdgeCaseScreen?.root?.visibility = View.VISIBLE
             layoutEdgeCaseScreen.imgView?.setImageResource(R.drawable.ic_cnc_set_location)
             layoutEdgeCaseScreen.txtDashTitle?.text = bindString(R.string.collection_store_title)
-            layoutEdgeCaseScreen.txtDashSubTitle?.text = bindString(R.string.suburb_not_deliverable_description)
+            layoutEdgeCaseScreen.txtDashSubTitle?.text =
+                bindString(R.string.suburb_not_deliverable_description)
             layoutEdgeCaseScreen.btnDashSetAddress?.text = bindString(R.string.change_location)
             layoutEdgeCaseScreen.btnDashSetAddress?.setOnClickListener {
                 navigateToConfirmAddressScreen()
@@ -277,13 +284,12 @@ class ChangeFullfilmentCollectionStoreFragment :
     }
 
 
-
-
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.tvConfirmStore -> {
                 callConfirmLocationApi()
             }
+
             R.id.btChange -> {
                 navigateToConfirmAddressScreen()
             }
@@ -383,8 +389,13 @@ class ChangeFullfilmentCollectionStoreFragment :
                     SubCategoryFragment.KEY_ARGS_ROOT_CATEGORY,
                     Utils.toJson(rootCategory)
                 )
-                bundle.putBoolean(AppConstant.Keys.EXTRA_SEND_DELIVERY_DETAILS_PARAMS,
-                    arguments?.getBoolean(AppConstant.Keys.EXTRA_SEND_DELIVERY_DETAILS_PARAMS, false) ?: false)
+                bundle.putBoolean(
+                    AppConstant.Keys.EXTRA_SEND_DELIVERY_DETAILS_PARAMS,
+                    arguments?.getBoolean(
+                        AppConstant.Keys.EXTRA_SEND_DELIVERY_DETAILS_PARAMS,
+                        false
+                    ) ?: false
+                )
                 bundle.putString(SubCategoryFragment.KEY_ARGS_VERSION, version)
                 bundle.putBoolean(
                     SubCategoryFragment.KEY_ARGS_IS_LOCATION_ENABLED,
@@ -392,18 +403,25 @@ class ChangeFullfilmentCollectionStoreFragment :
                 )
                 bundle.putBoolean(
                     AppConstant.Keys.EXTRA_SEND_DELIVERY_DETAILS_PARAMS,
-                    arguments?.getBoolean(AppConstant.Keys.EXTRA_SEND_DELIVERY_DETAILS_PARAMS, false) ?: false
+                    arguments?.getBoolean(
+                        AppConstant.Keys.EXTRA_SEND_DELIVERY_DETAILS_PARAMS,
+                        false
+                    ) ?: false
                 )
                 //     location?.let { bundle.putParcelable(SubCategoryFragment.KEY_ARGS_LOCATION, it) }
                 drillDownCategoryFragment.arguments = bundle
                 return drillDownCategoryFragment
             }
+
             else -> ProductListingFragment.newInstance(
                 ProductsRequestParams.SearchType.NAVIGATE,
                 rootCategory.categoryName,
                 rootCategory.dimValId,
                 isBrowsing = true,
-                sendDeliveryDetails = arguments?.getBoolean(AppConstant.Keys.EXTRA_SEND_DELIVERY_DETAILS_PARAMS, false)
+                sendDeliveryDetails = arguments?.getBoolean(
+                    AppConstant.Keys.EXTRA_SEND_DELIVERY_DETAILS_PARAMS,
+                    false
+                )
             )
         }
     }
@@ -474,8 +492,10 @@ class ChangeFullfilmentCollectionStoreFragment :
             WoolworthsApplication.getCncBrowsingValidatePlaceDetails()?.stores
         stores?.let {
             for (store in it) {
-                if (store.storeName?.contains(s.toString(),
-                        true) == true || store.storeAddress?.contains(s.toString(), true) == true
+                if (store.storeName?.contains(
+                        s.toString(),
+                        true
+                    ) == true || store.storeAddress?.contains(s.toString(), true) == true
                 ) {
                     list.add(store)
                 }
@@ -495,10 +515,12 @@ class ChangeFullfilmentCollectionStoreFragment :
             TAG_CHANGEFULLFILMENT_COLLECTION_STORE_FRAGMENT
         )
     }
+
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
         super.setUserVisibleHint(isVisibleToUser)
-        isFragmentVisible=isVisibleToUser
+        isFragmentVisible = isVisibleToUser
     }
+
     private fun firstTimeFBHCNCIntroDialog() {
         val fbh = FBHInfoBottomSheetDialog()
         activity?.supportFragmentManager?.let { fbh.show(it, AppConstant.TAG_FBH_CNC_FRAGMENT) }

@@ -88,8 +88,8 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentDashDeliveryBinding.bind(view)
-
-        if (!isVisible) {
+        val parentFragment = (activity as? BottomNavigationActivity)?.currentFragment as? ShopFragment
+        if (!isVisible || parentFragment?.getCurrentFragmentIndex() != ShopFragment.SelectedTabIndex.DASH_TAB.index) {
             return
         }
         initViews()
