@@ -78,6 +78,7 @@ import za.co.woolworths.financial.services.android.models.network.Resource
 import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.ProductX
+import za.co.woolworths.financial.services.android.recommendations.presentation.viewmodel.RecommendationViewModel
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.MultipleImageActivity
@@ -107,6 +108,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.utils.Co
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListDetailFragment.Companion.ADD_TO_CART_SUCCESS_RESULT
 import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
+import za.co.woolworths.financial.services.android.ui.views.LockableNestedScrollViewV2
 import za.co.woolworths.financial.services.android.ui.views.UnsellableItemsBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ProductDetailsFindInStoreDialog
@@ -164,7 +166,6 @@ class ProductDetailsFragment :
     ProductNotAvailableForCollectionDialog.IProductNotAvailableForCollectionDialogListener,
     VtoSelectOptionListener, WMaterialShowcaseView.IWalkthroughActionListener, VtoTryAgainListener,
     View.OnTouchListener, ReviewThumbnailAdapter.ThumbnailClickListener,
-    ViewTreeObserver.OnScrollChangedListener,
     FoodProductNotAvailableForCollectionDialog.IProductNotAvailableForCollectionDialogListener,
     EnhancedSubstitutionListener {
 
@@ -254,6 +255,8 @@ class ProductDetailsFragment :
     private var substitutionProductItem: ProductList? = null
     private var isSubstiuteItemAdded = false
     private var substitutionInfo:SubstitutionInfo? = null
+
+    private val recommendationViewModel: RecommendationViewModel by viewModels()
 
     @OpenTermAndLighting
     @Inject
@@ -436,7 +439,7 @@ class ProductDetailsFragment :
         isOutOfStockFragmentAdded = false
         configureDefaultUI()
         scrollView.setOnTouchListener(this@ProductDetailsFragment)
-        scrollView.viewTreeObserver.addOnScrollChangedListener(this@ProductDetailsFragment)
+        scrollView.setOnScrollStoppedListener(onScrollStoppedListener)
 
         hideRatingAndReview()
         setupViewModel()
@@ -1237,18 +1240,6 @@ class ProductDetailsFragment :
         bundle.putParcelable(
             BundleKeysConstants.RECOMMENDATIONS_EVENT_DATA_TYPE, Event(eventType = "monetate:context:ProductDetailView", null, null, null,
                 products = listOf(productX), cartLines = listOf()
-            )
-        )
-        bundle.putParcelable(
-            BundleKeysConstants.RECOMMENDATIONS_USER_AGENT, Event(
-                eventType = BundleKeysConstants.RECOMMENDATIONS_USER_AGENT,
-                userAgent = System.getProperty("http.agent") ?: ""
-            )
-        )
-        bundle.putParcelable(
-            BundleKeysConstants.RECOMMENDATIONS_IP_ADDRESS,
-            Event(eventType = BundleKeysConstants.RECOMMENDATIONS_IP_ADDRESS,
-                ipAddress = getIpAddress(requireActivity())
             )
         )
 
@@ -4133,25 +4124,10 @@ class ProductDetailsFragment :
     }
 
     override fun onTouch(v: View?, event: MotionEvent?): Boolean {
-        return false
-    }
-
-    override fun onScrollChanged() {
-        binding.scrollView?.let {
-            if (!it.canScrollVertically(1) && !isRnRAPICalled) {
-                productDetails?.isRnREnabled?.let {
-                    if (productDetails?.isRnREnabled == true && RatingAndReviewUtil.isRatingAndReviewConfigavailbel())
-                        productDetails?.productId?.let {
-                            productDetailsPresenter?.loadRatingNReview(it, 1, 0)
-                            isRnRAPICalled = true
-                            showProgressBar()
-                            RatingAndReviewUtil.reportedReviews.clear()
-                            RatingAndReviewUtil.likedReviews.clear()
-                        }
-                }
-            }
+        if (event?.action == MotionEvent.ACTION_UP) {
+            binding.scrollView.startScrollerTask()
         }
-
+        return false
     }
 
     private fun showRatingDetailsDailog() {
@@ -4244,6 +4220,33 @@ class ProductDetailsFragment :
                     this@ProductDetailsFragment.childFragmentManager,
                     FoodProductNotAvailableForCollectionDialog::class.java.simpleName
                 )
+        }
+    }
+
+    private val onScrollStoppedListener = object: LockableNestedScrollViewV2.OnScrollStoppedListener {
+        override fun onScrollStopped() {
+            val visible = binding.scrollView.isViewVisible(binding.productDetailOptionsAndInformation.layoutRecommendationContainer.root)
+            if(visible){
+                recommendationViewModel.parentPageScrolledToRecommendation()
+            }
+            if (!binding.scrollView.canScrollVertically(1)) {
+                loadRatingAndReviews()
+            }
+        }
+    }
+
+    private fun loadRatingAndReviews() {
+        if (!isRnRAPICalled) {
+            productDetails?.isRnREnabled?.let {
+                if (productDetails?.isRnREnabled == true && RatingAndReviewUtil.isRatingAndReviewConfigavailbel())
+                    productDetails?.productId?.let {
+                        productDetailsPresenter?.loadRatingNReview(it, 1, 0)
+                        isRnRAPICalled = true
+                        showProgressBar()
+                        RatingAndReviewUtil.reportedReviews.clear()
+                        RatingAndReviewUtil.likedReviews.clear()
+                    }
+            }
         }
     }
 

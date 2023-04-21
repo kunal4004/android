@@ -5,62 +5,19 @@ import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.awfs.coordination.R
-import com.awfs.coordination.databinding.LayoutManageSubstitutionBinding
 import com.awfs.coordination.databinding.ShoppingListCommerceItemBinding
-import za.co.woolworths.financial.services.android.enhancedSubstitution.ProductSubstitutionListListener
+import za.co.woolworths.financial.services.android.enhancedSubstitution.model.SubstitutionProducts
 import za.co.woolworths.financial.services.android.models.dto.ProductList
-import za.co.woolworths.financial.services.android.ui.extension.onClick
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace
 
 sealed class SubstitutionViewHolder(binding: ViewBinding) : RecyclerView.ViewHolder(binding.root) {
-
-    class SubstituteOptionHolder(val binding: LayoutManageSubstitutionBinding) :
-        SubstitutionViewHolder(binding) {
-
-        fun bind(
-            substitutionProducts: SubstitutionRecylerViewItem.SubstitutionOptionHeader?,
-            productSubstitutionListListener: ProductSubstitutionListListener?,
-        ) {
-            binding.tvSearchProduct?.apply {
-                text = substitutionProducts?.searchHint
-                onClick {
-                    /*navigate to new search screen*/
-                    productSubstitutionListListener?.openSubstitutionSearchScreen()
-                }
-            }
-
-            binding.rbShopperChoose?.apply {
-                setOnCheckedChangeListener { buttonView, isChecked ->
-                    if (isChecked) {
-                        binding.rbOwnSubstitute?.isChecked = false
-                        binding.tvSearchProduct?.isEnabled = false
-                        productSubstitutionListListener?.clickOnLetMyShooperChooseOption()
-                    }
-                }
-            }
-
-            binding.rbOwnSubstitute?.apply {
-                if (binding.rbShopperChoose.isChecked) {
-                    binding.rbShopperChoose?.isChecked = false
-                }
-
-                setOnCheckedChangeListener { buttonView, isChecked ->
-                    if (isChecked) {
-                        binding.rbShopperChoose?.isChecked = false
-                        binding.tvSearchProduct?.isEnabled = true
-                        productSubstitutionListListener?.clickOnMySubstitutioneOption()
-                    }
-                }
-            }
-        }
-    }
 
     class SubstituteProductViewHolder(
         val binding: ShoppingListCommerceItemBinding,
         var context: Context,
     ) : SubstitutionViewHolder(binding) {
 
-        fun bind(substitutionProducts: SubstitutionRecylerViewItem.SubstitutionProducts?) {
+        fun bind(substitutionProducts: SubstitutionProducts?) {
             binding?.apply {
                 root.isSwipeEnabled = false
                 llQuantity?.visibility = View.GONE
@@ -75,7 +32,6 @@ sealed class SubstitutionViewHolder(binding: ViewBinding) : RecyclerView.ViewHol
                 binding.tvPromotionText.text = substitutionProducts?.promotionText
                 cartProductImage?.setImageURI(substitutionProducts?.productThumbnail)
             }
-
         }
 
         fun bind(productList: ProductList?) {
@@ -98,8 +54,6 @@ sealed class SubstitutionViewHolder(binding: ViewBinding) : RecyclerView.ViewHol
                 }
                 cartProductImage?.setImageURI(productList?.externalImageRefV2)
             }
-
         }
-
     }
 }

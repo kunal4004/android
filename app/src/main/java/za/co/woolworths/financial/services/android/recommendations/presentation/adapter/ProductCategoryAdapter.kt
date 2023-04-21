@@ -14,7 +14,7 @@ class ProductCategoryAdapter(private val actionItemList: List<Action>?) :
     RecyclerView.Adapter<ProductCategoryAdapter.MyRecViewHolder>() {
 
     var row_index = 0
-    var onItemClick: ((List<Product>?) -> Unit)? = null
+    var onItemClick: ((Int, List<Product>?) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyRecViewHolder {
         return MyRecViewHolder(
@@ -53,7 +53,7 @@ class ProductCategoryAdapter(private val actionItemList: List<Action>?) :
 
             }
             itemView.setOnClickListener {
-                onItemClick?.invoke(actionItem.products)
+                onItemClick?.invoke(absoluteAdapterPosition, actionItem.products)
                 row_index = position;
                 notifyDataSetChanged();
 

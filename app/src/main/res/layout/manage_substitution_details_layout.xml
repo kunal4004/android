@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -32,37 +33,34 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imgBack" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
+    <include
+        android:id="@+id/layout_manage_substitution"
+        layout="@layout/layout_manage_substitution"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="@dimen/sixteen_dp"
-        android:fadeScrollbars="false"
-        android:orientation="vertical"
-        android:scrollbars="vertical"
-        app:layout_constraintBottom_toTopOf="@+id/viewSeprator"
+        app:layout_constraintBottom_toTopOf="@+id/viewSeparator"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtManageTitle"
-        tools:listitem="@layout/shopping_list_commerce_item" />
+        app:layout_constraintTop_toBottomOf="@+id/txtManageTitle" />
 
     <View
-        android:id="@+id/viewSeprator"
+        android:visibility="gone"
+        android:id="@+id/viewSeparator"
         android:layout_width="match_parent"
         android:layout_height="@dimen/eight_dp"
         android:background="@color/shimmer_view_background"
-        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/btnConfirm"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/recyclerView" />
+        app:layout_constraintTop_toBottomOf="@+id/layout_manage_substitution" />
 
     <Button
         android:id="@+id/btnConfirm"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/twenty_four_dp"
-        android:layout_marginTop="@dimen/twenty_four_dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="@dimen/twenty_four_dp"
         android:layout_marginBottom="@dimen/sixteen_dp"
         android:background="@drawable/grey_bg_drawable"
@@ -76,7 +74,7 @@
         app:layout_constraintBottom_toTopOf="@+id/dontWantText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/viewSeprator" />
+        app:layout_constraintTop_toBottomOf="@+id/viewSeparator" />
 
     <TextView
         android:id="@+id/dontWantText"
@@ -96,6 +94,5 @@
         android:textSize="@dimen/twelve_sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnConfirm" />
+        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
