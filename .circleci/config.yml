@@ -1,0 +1,44 @@
+version: 2.1
+
+jobs:
+  build-and-test:
+    docker:
+      - image: circleci/android:api-33-node
+    environment:
+      JVM_OPTS: -Xms1024m -Xmx4096m -XX:MaxMetaspaceSize=768m -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8
+      GRADLE_OPTS: -Dorg.gradle.daemon=false
+      FL_TEST_LANE: tests
+    steps:
+      - checkout
+      - restore_cache:
+          name: Restore Gradle Dependencies Cache
+          keys:
+            - v1-dependencies-{{ checksum "build.gradle" }}
+            - v1-dependencies-
+      - run:
+          name: Download Dependencies
+          command: ./gradlew androidDependencies
+      - save_cache:
+          name: Save Gradle Dependencies to Cache
+          key: v1-dependencies-{{ checksum "build.gradle" }}
+          paths:
+            - ~/.gradle/caches/
+            - ~/.gradle/wrapper/
+      - run:
+          name: Run Tests
+          command: bundle exec fastlane $FL_TEST_LANE variant:huaweiQa
+      - store_artifacts:
+          path: app/build/reports/
+          destination: reports
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - build-and-test:
+          filters:
+            branches:
+              ignore:
+                - /release\/.*/
+                - production
+                - dev
