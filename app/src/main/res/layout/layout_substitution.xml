@@ -46,7 +46,7 @@
         android:ellipsize="end"
         android:drawablePadding="@dimen/eight_dp"
         android:maxLines="1"
-        android:text="@string/let_my_shooper_choose_for_me"
+        android:text="@string/substitute_default"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/txt_substitution_edit"
         app:layout_constraintStart_toStartOf="parent"

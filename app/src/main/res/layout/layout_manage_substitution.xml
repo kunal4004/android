@@ -30,7 +30,7 @@
             android:fontFamily="@font/opensans_regular"
             android:lineSpacingExtra="@dimen/_2sdp"
             android:maxLines="1"
-            android:text="@string/let_my_shooper_choose_for_me"
+            android:text="@string/substitute_default"
             android:textColor="@color/black"
             android:textSize="@dimen/thirteen_sp"
             app:layout_constraintBottom_toBottomOf="@+id/rbShopperChoose"

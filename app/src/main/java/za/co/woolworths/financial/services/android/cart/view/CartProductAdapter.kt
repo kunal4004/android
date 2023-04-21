@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.cart.view
 import android.animation.ObjectAnimator
 import android.app.Activity
 import android.graphics.Color
+import android.graphics.Paint
 import android.graphics.PorterDuff
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
@@ -22,6 +23,7 @@ import com.daimajia.swipe.SwipeLayout
 import com.daimajia.swipe.adapters.RecyclerSwipeAdapter
 import za.co.woolworths.financial.services.android.cart.service.network.CartItemGroup
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.enhancedSubstitution.model.SubstitutionInfo
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton.lowStock
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
@@ -39,6 +41,7 @@ import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.capitaliseFirstLetter
 import za.co.woolworths.financial.services.android.util.NetworkManager
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.util.*
 
@@ -74,6 +77,7 @@ class CartProductAdapter(
         fun onPromoDiscountInfo()
         fun onItemDeleteClick(commerceId: CommerceItem)
         fun onCheckBoxChange(isChecked: Boolean, commerceItem: CommerceItem)
+        fun onSubstituteProductClick(substitutionSelection: String, commerceId: String)
         fun onCartRefresh()
     }
 
@@ -103,7 +107,8 @@ class CartProductAdapter(
                 )
             }
             else -> {
-                throw IllegalArgumentException("Invalid view type"
+                throw IllegalArgumentException(
+                    "Invalid view type"
                 )
             }
         }
@@ -160,15 +165,22 @@ class CartProductAdapter(
                 productHolder.clCartItems.layoutParams = param
                 val commerceItemInfo: CommerceItemInfo? = commerceItem.commerceItemInfo
                 //setListCheckBoxVisibility(editMode, productHolder)
-                productHolder.tvTitle.text = (if (commerceItemInfo == null) "" else commerceItemInfo.getProductDisplayName())
+                productHolder.tvTitle.text =
+                    (if (commerceItemInfo == null) "" else commerceItemInfo.getProductDisplayName())
                 Utils.truncateMaxLine(productHolder.tvTitle)
                 productHolder.quantity.setText(commerceItemInfo?.getQuantity()?.toString() ?: "")
                 productHolder.price.setText(
                     formatAmountToRandAndCentWithSpace(
-                        commerceItem.getPriceInfo()
+                        commerceItem.priceInfo
                             .getAmount()
                     )
                 )
+
+                productHolder.bindSubstitutionInfo(
+                    commerceItem.substitutionInfo,
+                    commerceItemInfo?.commerceId
+                )
+
                 val productImageUrl =
                     if (commerceItemInfo == null) "" else commerceItemInfo.externalImageRefV2
                 setPicture(productHolder.productImage, productImageUrl)
@@ -188,10 +200,10 @@ class CartProductAdapter(
                     if (quantityIsLoading) GONE else VISIBLE
 
                 //Set Promotion Text START
-                if (commerceItem.getPriceInfo().discountedAmount > 0) {
+                if (commerceItem.priceInfo.discountedAmount > 0) {
                     productHolder.promotionalText.setText(
                         " " + formatAmountToRandAndCentWithSpace(
-                            commerceItem.getPriceInfo().discountedAmount
+                            commerceItem.priceInfo.discountedAmount
                         )
                     )
                     productHolder.llPromotionalText.visibility = VISIBLE
@@ -221,7 +233,7 @@ class CartProductAdapter(
 
                 // Set Color and Size START
                 if (itemRow.category.equals("FOOD", ignoreCase = true)) {
-                    productHolder.tvColorSize.visibility = INVISIBLE
+                    productHolder.tvColorSize.visibility = GONE
                 } else {
                     val sizeColor = getSizeColor(commerceItemInfo)
                     productHolder.tvColorSize.setText(sizeColor)
@@ -599,6 +611,7 @@ class CartProductAdapter(
         val price: WTextView
         val promotionalText: WTextView
         val btnDeleteRow: ImageView
+        private val substitutionIcon: ImageView
         val llQuantity: LinearLayout
         val productImage: ImageView
         val clCartItems: ConstraintLayout
@@ -610,6 +623,7 @@ class CartProductAdapter(
         val swipeLayout: SwipeLayout
         val cartLowStock: View
         val txtCartLowStock: TextView
+        private val tvSubstituteItem: TextView
         val minusDeleteCountImage: ImageView
         val minusDeleteCountImageLayout: RelativeLayout
         val addCountImageLayout: RelativeLayout
@@ -641,6 +655,64 @@ class CartProductAdapter(
             cbShoppingList = view.findViewById(R.id.cbShoppingList)
             pbLoadProduct = view.findViewById(R.id.pbLoadProduct)
             swipeRight = view.findViewById(R.id.swipeRight)
+            tvSubstituteItem = view.findViewById(R.id.tvSubstituteItem)
+            tvSubstituteItem.paintFlags += Paint.UNDERLINE_TEXT_FLAG
+            substitutionIcon = view.findViewById(R.id.substitutionIcon)
+            substitutionIcon.setImageResource(R.drawable.union_row)
+            substitutionIcon.visibility = VISIBLE
+        }
+
+        fun bindSubstitutionInfo(substitutionInfo: SubstitutionInfo?, commerceId: String?) {
+            if (KotlinUtils.getPreferredDeliveryType() == Delivery.DASH) {
+                tvSubstituteItem.visibility = VISIBLE
+                substitutionIcon.visibility = VISIBLE
+                tvSubstituteItem.text = mContext?.getString(R.string.substitute_default) ?: ""
+            } else {
+                tvSubstituteItem.visibility = GONE
+                substitutionIcon.visibility = GONE
+                return
+            }
+
+            tvSubstituteItem.setOnClickListener {
+                if (commerceId.isNullOrEmpty()) {
+                    FirebaseManager.logException(IllegalArgumentException("CommerceId not found."))
+                    return@setOnClickListener
+                }
+                val substitutionSelection =
+                    if (substitutionInfo?.substitutionSelection?.isNullOrEmpty() == false) {
+                        substitutionInfo.substitutionSelection
+                    }
+                    else  SubstitutionChoice.SHOPPER_CHOICE.toString()
+
+                onItemClick.onSubstituteProductClick(
+                    substitutionSelection,
+                    commerceId
+                )
+            }
+            if (substitutionInfo == null) {
+                return
+            }
+            with(substitutionInfo) {
+
+                if (!isSubstitutionInStock) {
+                    return
+                }
+
+                when (substitutionSelection) {
+                    SubstitutionChoice.USER_CHOICE.toString() -> {
+                        substitutionIcon.setImageResource(R.drawable.ic_edit_black)
+                        tvSubstituteItem.text = displayName
+                    }
+                    SubstitutionChoice.NO.toString() -> {
+                        tvSubstituteItem.text =
+                            mContext?.getString(R.string.dont_substitute) ?: ""
+                    }
+                    else -> {
+                        tvSubstituteItem.text =
+                            mContext?.getString(R.string.substitute_default) ?: ""
+                    }
+                }
+            }
         }
     }
 
@@ -866,4 +938,10 @@ class CartProductAdapter(
         this.orderSummary = orderSummary
         mContext = context
     }
+}
+
+enum class SubstitutionChoice {
+    USER_CHOICE,
+    SHOPPER_CHOICE,
+    NO
 }

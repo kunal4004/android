@@ -2,12 +2,12 @@ package za.co.woolworths.financial.services.android.enhancedSubstitution.reposit
 
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.PagingSource
-import com.nhaarman.mockitokotlin2.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
+import org.mockito.BDDMockito.given
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 import za.co.woolworths.financial.services.android.enhancedSubstitution.apihelper.SubstitutionApiHelper
