@@ -4,12 +4,23 @@ jobs:
   build-and-test:
     docker:
       - image: cimg/android:2023.04
+    working_directory: ~/woolworths-android
     environment:
       JVM_OPTS: -Xms1024m -Xmx4096m -XX:MaxMetaspaceSize=768m -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8
       GRADLE_OPTS: -Dorg.gradle.daemon=false
       FL_TEST_LANE: tests
     steps:
       - checkout
+      - run:
+          name: Accept all SDK licenses
+          command: yes | sdkmanager --licenses || exit 0
+      - run:
+          name: Accept all SDK updates
+          command: yes | sdkmanager --update || exit 0
+      - run: gem update --system && gem install bundler
+      - run:
+          name: Bundle Install
+          command: bundle check || bundle install --path vendor/bundle
       - restore_cache:
           name: Restore Gradle Dependencies Cache
           keys:
@@ -24,15 +35,14 @@ jobs:
           paths:
             - ~/.gradle/caches/
             - ~/.gradle/wrapper/
-      - run: 
-          name: Bundle Install
-          command: bundle install
       - run:
           name: Run Tests
           command: bundle exec fastlane $FL_TEST_LANE variant:huaweiQa
       - store_artifacts:
           path: app/build/reports/
           destination: reports
+      - store_test_results:
+          path: app/build/test-results
 
 workflows:
   version: 2
