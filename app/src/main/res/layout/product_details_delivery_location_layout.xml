@@ -39,6 +39,8 @@
     <TextView
         android:id="@+id/currentDeliveryLocation"
         style="@style/myriad_pro_semi_bold_black_15_text_style"
+        android:maxLines="1"
+        android:ellipsize="end"
         android:layout_marginTop="@dimen/twenty_dp"
         android:layout_marginRight="@dimen/ten_dp"
         app:layout_constraintEnd_toStartOf="@id/editDeliveryLocation"

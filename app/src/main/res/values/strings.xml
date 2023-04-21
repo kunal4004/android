@@ -2951,7 +2951,6 @@
     <string name="substitution_how_it_works_subtitle">If no substitutions are selected, our shoppers will choose one for you. If you don’t want an alternative product, you can edit your choice to “I don’t want a substitute” instead.</string>
 
     <string name="substitutions">Substitutions</string>
-    <string name="let_my_shooper_choose_for_me">Let My Shopper Choose For Me</string>
     <string name="item_outofstock_error">You can’t set this product as a substitute because it is out of stock. Please find another item to use instead.</string>
 
     <string name="timeslot_title">All Dash Timeslots Are Fully Booked.</string>
@@ -2981,9 +2980,11 @@
     <string name="change_address_btn_text">CHANGE</string>
     <string name="use">USE\u0020</string>
 
+    <string name="substitute_default">Let My Shopper Choose For Me</string>
     <string name="search_alternative_product">Search for an alternative product</string>
     <string name="choose_substitute">Choose My Own Substitute</string>
     <string name="dont_want_substitute"><u>i don\'t want a substitute</u></string>
+    <string name="dont_substitute">Don\'t Substitute</string>
     <string name="more_details">More Details</string>
     <string name="promotion_txt">you have saved</string>
     <string name="item_found">\t ITEMS FOUND</string>
