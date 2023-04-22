@@ -48,8 +48,6 @@ class ChangeFullfilmentCollectionStoreFragment :
     StoreListAdapter.OnStoreSelected, View.OnClickListener, TextWatcher {
 
     private lateinit var binding: LayoutDashCollectionStoreBinding
-
-    private var validatePlace: ValidatePlace? = null
     private var updatedAddressStoreList: List<Store>? = mutableListOf()
     private var storeId: String? = null
     private var placeId: String? = null
@@ -59,11 +57,6 @@ class ChangeFullfilmentCollectionStoreFragment :
     private var saveInstanceState: Bundle? = null
     private var updatedPlace: PlaceDetails? = null
     private var isFragmentVisible: Boolean = false
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        validatePlace = arguments?.get(AppConstant.Keys.ARG_VALIDATE_PLACE) as? ValidatePlace
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -364,7 +357,7 @@ class ChangeFullfilmentCollectionStoreFragment :
 
                             /* reset browsing data for cnc and dash both once fulfillment location is confirmed */
 
-                            WoolworthsApplication.setValidatedSuburbProducts(validatePlace)
+                            WoolworthsApplication.setValidatedSuburbProducts(WoolworthsApplication.getCncBrowsingValidatePlaceDetails())
                             setBrowsingDataInformation()
                             setDeliveryView()
                             parentFragment?.showClickAndCollectToolTipUi(storeId)
