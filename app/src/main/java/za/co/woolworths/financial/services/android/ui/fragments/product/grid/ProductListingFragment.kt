@@ -1268,10 +1268,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
             mSubCategoryName
         )
         selectItemParams.putString(
-            FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_BRAND,
-            productList.brandText
-        )
-        selectItemParams.putString(
             FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_RATING,
             productList.averageRating
         )
