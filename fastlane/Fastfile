@@ -3,7 +3,7 @@ default_platform(:android)
 platform :android do
   desc "Runs all the tests"
   lane :tests do |options|
-    variant = options[:variant] || "huaweiQa"
+    variant = options[:variant] || "huaweiQaDebugUnitTest"
     gradle(
       task: "test", 
       properties: {
