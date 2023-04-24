@@ -2246,7 +2246,7 @@ class ProductDetailsFragment :
                             if (!this.productDetails?.productType.equals(
                                     getString(R.string.food_product_type),
                                     ignoreCase = true
-                                )
+                                ) && (KotlinUtils.getPreferredDeliveryType() == Delivery.DASH)
                             ) {
                                 storeIdForInventory = ""
                                 clearStockAvailability()
