@@ -1192,14 +1192,15 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
             }
             KotlinUtils.fullfillmentTypeClicked = Delivery.CNC.name
             validateLocationResponse?.validatePlace?.let { validatePlace ->
-                blackToolTipLayout.deliveryCollectionTitle?.text =
-                    getString(R.string.earliest_collection_Date)
+
                 val store = GeoUtils.getStoreDetails(
                     getStoreId(isStoreSelectedForBrowsing, browsingStoreId),
                     validatePlace.stores
                 )
 
                 store?.apply {
+                  blackToolTipLayout.deliveryCollectionTitle?.text =
+                        getString(R.string.earliest_collection_Date)
                     val collectionQuantity =
                         quantityLimit?.foodMaximumQuantity
                     blackToolTipLayout.deliveryIconLayout?.visibility = View.VISIBLE
@@ -1251,9 +1252,9 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                     blackToolTipLayout.cartIcon?.setImageResource(R.drawable.icon_cart_white)
                     blackToolTipLayout.deliveryIcon?.setImageResource(R.drawable.white_shopping_bag_icon)
                     blackToolTipLayout.bubbleLayout?.setArrowDirection(ArrowDirection.TOP_CENTER)
-                }
-
-
+              } ?: run {
+                    blackToolTipLayout.root.visibility = View.GONE
+                    }
             }
         }
     }
