@@ -1271,6 +1271,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
             FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_BRAND,
             productList.brandText
         )
+        selectItemParams.putString(
+            FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_RATING,
+            productList.averageRating
+        )
         for (products in 0..(mProductList?.size ?: 0)) {
             val selectItem = Bundle()
             selectItem.putString(FirebaseAnalytics.Param.ITEM_ID, productList.productId)
