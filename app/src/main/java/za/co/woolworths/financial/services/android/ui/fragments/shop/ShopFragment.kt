@@ -265,8 +265,6 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                             }
                             CLICK_AND_COLLECT_TAB.index -> {
                                 showBlackToolTip(Delivery.CNC)
-                                showClickAndCollectToolTip( KotlinUtils.isStoreSelectedForBrowsing,
-                                    getDeliveryType()?.storeId)
                                 setEventsForSwitchingBrowsingType(Delivery.CNC.name)
                                 KotlinUtils.browsingDeliveryType = Delivery.CNC
                                 removeNotificationToast()
@@ -544,15 +542,9 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         if (KotlinUtils.isLocationSame == true && KotlinUtils.placeId != null) {
             (KotlinUtils.browsingDeliveryType
                 ?: Delivery.getType(getDeliveryType()?.deliveryType))?.let {
-                if(it == Delivery.CNC){
-                    showClickAndCollectToolTip( KotlinUtils.isStoreSelectedForBrowsing,
-                        getDeliveryType()?.storeId)
-                }
-                else {
                     showBlackToolTip(it)
                 }
             }
-        }
         setDeliveryView()
     }
 
@@ -1086,7 +1078,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                 Delivery.CNC -> {
                     showClickAndCollectToolTip(
                         KotlinUtils.isStoreSelectedForBrowsing,
-                        getDeliveryType()?.storeId
+                        KotlinUtils.browsingCncStore?.storeId
                     )
                 }
                 Delivery.DASH -> {
