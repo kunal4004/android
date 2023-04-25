@@ -1179,8 +1179,8 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         browsingStoreId: String? = "",
     ) {
         var browsingStoreOrStoreId:String?=browsingStoreId
-        if(browsingStoreOrStoreId.isNullOrEmpty()){
-            browsingStoreOrStoreId= getDeliveryType()?.storeId?:""
+        if (browsingStoreOrStoreId.isNullOrEmpty()) {
+            browsingStoreOrStoreId = getDeliveryType()?.storeId ?: ""
         }
         binding.apply {
             if (KotlinUtils.isCncTabCrossClicked == true || browsingStoreOrStoreId.isNullOrEmpty()) {
