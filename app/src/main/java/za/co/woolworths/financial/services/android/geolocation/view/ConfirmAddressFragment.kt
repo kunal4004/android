@@ -80,11 +80,12 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
     private var isFromDashTab: Boolean = false
     private var deliveryType: String? = null
     private var isAddressAvailable: Boolean = false
-    private val confirmAddressViewModel: ConfirmAddressViewModel by activityViewModels()
 
     companion object {
         fun newInstance() = ConfirmAddressFragment()
     }
+
+    private val confirmAddressViewModel: ConfirmAddressViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -560,7 +561,7 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
                                     activity?.finish()
                                 } else {
                                     if (getDeliveryType() == null) {
-                                        // User don't have any location (sign in or sign out both) then move user to change fulfillment screen.
+                                        // User don't have any location (signin or signout both) then move user to change fulfillment screen.
                                         navigateToLastScreen(address)
                                         return@let
                                     }
