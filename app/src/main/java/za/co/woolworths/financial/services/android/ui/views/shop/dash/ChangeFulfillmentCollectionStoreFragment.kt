@@ -43,7 +43,7 @@ import za.co.woolworths.financial.services.android.geolocation.view.PargoStoreIn
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.geolocation.view.FBHInfoBottomSheetDialog
 
-class ChangeFullfilmentCollectionStoreFragment :
+class ChangeFulfillmentCollectionStoreFragment :
     DepartmentExtensionFragment(R.layout.layout_dash_collection_store),
     StoreListAdapter.OnStoreSelected, View.OnClickListener, TextWatcher {
 
@@ -74,16 +74,18 @@ class ChangeFullfilmentCollectionStoreFragment :
     }
 
     override fun noConnectionLayout(isVisible: Boolean) {
-        binding.layoutClickAndCollectStore?.noClickAndCollectConnectionLayout?.root?.visibility =
-            if (isVisible) View.VISIBLE else View.GONE
+        binding.let {
+            it.layoutClickAndCollectStore.noClickAndCollectConnectionLayout.root.visibility =
+                if (isVisible) View.VISIBLE else View.GONE
+        }
     }
 
     fun init() {
         binding.layoutClickAndCollectStore.apply {
-            etEnterNewAddress?.addTextChangedListener(this@ChangeFullfilmentCollectionStoreFragment)
+            etEnterNewAddress.addTextChangedListener(this@ChangeFulfillmentCollectionStoreFragment)
         }
-        binding.layoutClickAndCollectStore.tvConfirmStore?.setOnClickListener(this)
-        binding.layoutClickAndCollectStore.btChange?.setOnClickListener(this)
+        binding.layoutClickAndCollectStore.tvConfirmStore.setOnClickListener(this)
+        binding.layoutClickAndCollectStore.btChange.setOnClickListener(this)
 
         var isPermissionGranted = false
         activity?.apply {
@@ -126,7 +128,7 @@ class ChangeFullfilmentCollectionStoreFragment :
     private fun setStoreCollectionData(validatePlace: ValidatePlace?) {
         if (validatePlace == null) {
             val mPlaceId = getDeliveryType()?.address?.placeId ?: return
-            if (!mPlaceId.isNullOrEmpty()) {
+            if (mPlaceId.isNotEmpty()) {
                 /* if place id is not null means previously location is set but validate place api
                   is not called yet or not in sync. so need to call again */
                 executeValidatePlaceApi(mPlaceId)
@@ -139,7 +141,7 @@ class ChangeFullfilmentCollectionStoreFragment :
             showNoCollectionStoresUi()
             return
         }
-        binding.layoutClickAndCollectStore.tvStoresNearMe?.text = resources.getString(
+        binding.layoutClickAndCollectStore.tvStoresNearMe.text = resources.getString(
             R.string.near_stores,
             validatePlace.stores?.size
         )
@@ -160,7 +162,7 @@ class ChangeFullfilmentCollectionStoreFragment :
                     when (validateLocationResponse.httpCode) {
                         AppConstant.HTTP_OK -> {
                             binding.cncProgressBar.visibility = View.GONE
-                            binding.layoutClickAndCollectStore.tvStoresNearMe?.text =
+                            binding.layoutClickAndCollectStore.tvStoresNearMe.text =
                                 resources.getString(
                                     R.string.near_stores,
                                     validateLocationResponse?.validatePlace?.stores?.size
@@ -168,25 +170,19 @@ class ChangeFullfilmentCollectionStoreFragment :
                             updatedAddressStoreList =
                                 validateLocationResponse?.validatePlace?.stores
                             updatedPlace = validateLocationResponse?.validatePlace?.placeDetails
-                            binding.layoutClickAndCollectStore.tvAddress?.text =
+                            binding.layoutClickAndCollectStore.tvAddress.text =
                                 KotlinUtils.capitaliseFirstLetter(validateLocationResponse?.validatePlace?.placeDetails?.address1)
                             placeId = validateLocationResponse?.validatePlace?.placeDetails?.placeId
                             setStoreList(validateLocationResponse?.validatePlace?.stores)
-                            if (placeId != null) {
-                                val store = GeoUtils.getStoreDetails(
-                                    placeId,
-                                    validateLocationResponse?.validatePlace?.stores
-                                )
-                            }
                         }
                     }
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
-                binding.cncProgressBar?.visibility = View.GONE
+                binding.cncProgressBar.visibility = View.GONE
             } catch (e: JsonSyntaxException) {
                 e.printStackTrace()
-                binding.cncProgressBar?.visibility = View.GONE
+                binding.cncProgressBar.visibility = View.GONE
             }
         }
     }
@@ -199,7 +195,7 @@ class ChangeFullfilmentCollectionStoreFragment :
         binding.layoutClickAndCollectStore.rvStoreList.layoutManager =
             activity?.let { activity -> LinearLayoutManager(activity) }
         if (stores?.isNotEmpty() == true) {
-            binding.layoutClickAndCollectStore.tvConfirmStore?.isEnabled = false
+            binding.layoutClickAndCollectStore.tvConfirmStore.isEnabled = false
             val storesListWithHeaders =
                 StoreUtils.getStoresListWithHeaders(StoreUtils.sortedStoreList(stores))
             if (storesListWithHeaders.isNotEmpty()) {
@@ -227,12 +223,12 @@ class ChangeFullfilmentCollectionStoreFragment :
         binding.apply {
             layoutClickAndCollectStore?.root?.visibility = View.GONE
             layoutEdgeCaseScreen?.root?.visibility = View.VISIBLE
-            layoutEdgeCaseScreen.imgView?.setImageResource(R.drawable.ic_cnc_set_location)
-            layoutEdgeCaseScreen.txtDashTitle?.text = bindString(R.string.set_location_title)
-            layoutEdgeCaseScreen.txtDashSubTitle?.text =
+            layoutEdgeCaseScreen.imgView.setImageResource(R.drawable.ic_cnc_set_location)
+            layoutEdgeCaseScreen.txtDashTitle.text = bindString(R.string.set_location_title)
+            layoutEdgeCaseScreen.txtDashSubTitle.text =
                 bindString(R.string.device_location_service_disabled_subTitle)
-            layoutEdgeCaseScreen.btnDashSetAddress?.text = bindString(R.string.set_location)
-            layoutEdgeCaseScreen.btnDashSetAddress?.setOnClickListener {
+            layoutEdgeCaseScreen.btnDashSetAddress.text = bindString(R.string.set_location)
+            layoutEdgeCaseScreen.btnDashSetAddress.setOnClickListener {
                 navigateToConfirmAddressScreen()
             }
         }
@@ -242,12 +238,12 @@ class ChangeFullfilmentCollectionStoreFragment :
         binding.apply {
             layoutClickAndCollectStore?.root?.visibility = View.GONE
             layoutEdgeCaseScreen?.root?.visibility = View.VISIBLE
-            layoutEdgeCaseScreen.imgView?.setImageResource(R.drawable.ic_cnc_set_location)
-            layoutEdgeCaseScreen.txtDashTitle?.text = bindString(R.string.collection_store_title)
-            layoutEdgeCaseScreen.txtDashSubTitle?.text =
+            layoutEdgeCaseScreen.imgView.setImageResource(R.drawable.ic_cnc_set_location)
+            layoutEdgeCaseScreen.txtDashTitle.text = bindString(R.string.collection_store_title)
+            layoutEdgeCaseScreen.txtDashSubTitle.text =
                 bindString(R.string.suburb_not_deliverable_description)
-            layoutEdgeCaseScreen.btnDashSetAddress?.text = bindString(R.string.change_location)
-            layoutEdgeCaseScreen.btnDashSetAddress?.setOnClickListener {
+            layoutEdgeCaseScreen.btnDashSetAddress.text = bindString(R.string.change_location)
+            layoutEdgeCaseScreen.btnDashSetAddress.setOnClickListener {
                 navigateToConfirmAddressScreen()
             }
         }
@@ -273,7 +269,7 @@ class ChangeFullfilmentCollectionStoreFragment :
 
     override fun onStoreSelected(store: Store?) {
         storeId = store?.storeId
-        binding.layoutClickAndCollectStore.tvConfirmStore?.isEnabled = true
+        binding.layoutClickAndCollectStore.tvConfirmStore.isEnabled = true
     }
 
 
@@ -367,7 +363,7 @@ class ChangeFullfilmentCollectionStoreFragment :
                 }
             } catch (e: Exception) {
                 FirebaseManager.logException(e)
-                binding.cncProgressBar?.visibility = View.GONE
+                binding.cncProgressBar.visibility = View.GONE
             }
         }
     }
@@ -456,7 +452,7 @@ class ChangeFullfilmentCollectionStoreFragment :
             ::departmentItemClicked
         ) //{ rootCategory: RootCategory -> departmentItemClicked(rootCategory)}
         activity?.let {
-            binding.rvCategoryLayout.rclDepartment?.apply {
+            binding.rvCategoryLayout.rclDepartment.apply {
                 layoutManager = LinearLayoutManager(it, LinearLayoutManager.VERTICAL, false)
                 adapter = mDepartmentAdapter
             }

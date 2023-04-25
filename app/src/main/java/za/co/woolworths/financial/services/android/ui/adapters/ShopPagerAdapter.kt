@@ -7,7 +7,7 @@ import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.viewpager.widget.PagerAdapter
 import za.co.woolworths.financial.services.android.ui.fragments.shop.StandardDeliveryFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.OnChildFragmentEvents
-import za.co.woolworths.financial.services.android.ui.views.shop.dash.ChangeFullfilmentCollectionStoreFragment
+import za.co.woolworths.financial.services.android.ui.views.shop.dash.ChangeFulfillmentCollectionStoreFragment
 import za.co.woolworths.financial.services.android.ui.views.shop.dash.DashDeliveryAddressFragment
 import za.co.woolworths.financial.services.android.util.AppConstant.Keys.Companion.ARG_SEND_DELIVERY_DETAILS
 import za.co.woolworths.financial.services.android.util.AppConstant.Keys.Companion.EXTRA_SEND_DELIVERY_DETAILS_PARAMS
@@ -29,7 +29,7 @@ class ShopPagerAdapter(
                 standardDeliveryFragment
             }
             1 -> {
-                val collectionFragment = ChangeFullfilmentCollectionStoreFragment()
+                val collectionFragment = ChangeFulfillmentCollectionStoreFragment()
                 collectionFragment.arguments = bundleOf(
                     EXTRA_SEND_DELIVERY_DETAILS_PARAMS to listener.isSendDeliveryDetails()
                 )
