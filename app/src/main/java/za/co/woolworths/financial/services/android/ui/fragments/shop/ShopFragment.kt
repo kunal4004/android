@@ -1178,8 +1178,12 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         isStoreSelectedForBrowsing: Boolean = false,
         browsingStoreId: String? = "",
     ) {
+        var browsingStoreOrStoreId:String?=browsingStoreId
+        if(browsingStoreOrStoreId.isNullOrEmpty()){
+            browsingStoreOrStoreId= getDeliveryType()?.storeId?:""
+        }
         binding.apply {
-            if (KotlinUtils.isCncTabCrossClicked == true || browsingStoreId.isNullOrEmpty()) {
+            if (KotlinUtils.isCncTabCrossClicked == true || browsingStoreOrStoreId.isNullOrEmpty()) {
                 blackToolTipLayout.root.visibility = View.GONE
                 return
             }
@@ -1194,7 +1198,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
             validateLocationResponse?.validatePlace?.let { validatePlace ->
 
                 val store = GeoUtils.getStoreDetails(
-                    getStoreId(isStoreSelectedForBrowsing, browsingStoreId),
+                    getStoreId(isStoreSelectedForBrowsing, browsingStoreOrStoreId),
                     validatePlace.stores
                 )
 
@@ -1252,7 +1256,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                     blackToolTipLayout.cartIcon?.setImageResource(R.drawable.icon_cart_white)
                     blackToolTipLayout.deliveryIcon?.setImageResource(R.drawable.white_shopping_bag_icon)
                     blackToolTipLayout.bubbleLayout?.setArrowDirection(ArrowDirection.TOP_CENTER)
-              } ?: run {
+                } ?: run {
                     blackToolTipLayout.root.visibility = View.GONE
                     }
             }
