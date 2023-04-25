@@ -85,11 +85,12 @@
             android:layout_below="@id/cartToolbar"
             android:background="#1a000000" />
 
-        <androidx.core.widget.NestedScrollView
+        <za.co.woolworths.financial.services.android.ui.views.LockableNestedScrollViewV2
             android:id="@+id/nestedScrollView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@id/toolbarSeparator"
+            android:layout_above="@id/rlCheckOut"
             android:fillViewport="true">
 
             <LinearLayout
@@ -182,7 +183,6 @@
                     android:id="@+id/rvCartList"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginBottom="@dimen/twenty_dp"
                     android:nestedScrollingEnabled="false"
                     android:scrollbars="none" />
 
@@ -194,14 +194,22 @@
                 <include layout="@layout/no_connection_handler" />
 
                 <include
-                    android:id="@+id/layoutRecommendationContainer"
-                    layout="@layout/recommendation_fragment_container_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/eighty_dp"/>
+                    android:id="@+id/liquorComplianceMain"
+                    layout="@layout/liquor_compliance_banner"/>
 
+                <include
+                        android:id="@+id/layoutRecommendationContainer"
+                        layout="@layout/recommendation_fragment_container_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                <include
+                        android:id="@+id/includedPrice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        layout="@layout/cart_product_basket_prices"/>
             </LinearLayout>
-        </androidx.core.widget.NestedScrollView>
+        </za.co.woolworths.financial.services.android.ui.views.LockableNestedScrollViewV2>
 
         <LinearLayout
             android:id="@+id/rlCheckOut"
