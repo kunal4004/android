@@ -173,10 +173,6 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
                 } else {
                     inCurrentLocation?.swEnableLocation?.isChecked = true
                 }
-            } else {
-                if(Utils.isLocationEnabled(requireContext())) {
-                    inCurrentLocation?.swEnableLocation?.isChecked = true
-                }
             }
         }
     }
