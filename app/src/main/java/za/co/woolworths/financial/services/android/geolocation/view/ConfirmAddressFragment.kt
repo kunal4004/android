@@ -200,7 +200,8 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
             }*/
 
             // If location services enabled, extract latitude and longitude
-            if (binding.inCurrentLocation?.swEnableLocation?.isChecked == true || Utils.isLocationEnabled(this)) {
+            if (binding.inCurrentLocation?.swEnableLocation?.isChecked == true ||
+                    Utils.isLocationEnabled(this)) {
                 if(Utils.isLocationEnabled(this)) {
                     binding.inCurrentLocation?.swEnableLocation?.isChecked = true
                     startLocationDiscoveryProcess()
