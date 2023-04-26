@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SessionExpiredDialogFragment;
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager;
 
 import static za.co.woolworths.financial.services.android.ui.views.actionsheet.ActionSheetDialogFragment.DIALOG_REQUEST_CODE;
 
@@ -32,14 +33,19 @@ public class SessionExpiredUtilities {
 	}
 
 	public void showSessionExpireDialog(AppCompatActivity activity, Fragment fragment) {
+		if(activity == null || !fragment.isAdded()) {
+			return;
+		}
 		try {
 			Utils.clearCacheHistory();
 			FragmentManager fm = activity.getSupportFragmentManager();
 			SessionExpiredDialogFragment sessionExpiredDialogFragment = SessionExpiredDialogFragment.newInstance(SessionUtilities.getInstance().getSTSParameters());
 			sessionExpiredDialogFragment.setTargetFragment(fragment, DIALOG_REQUEST_CODE);
 			sessionExpiredDialogFragment.show(fm, SessionExpiredDialogFragment.class.getSimpleName());
+		} catch (IllegalStateException e) {
+			FirebaseManager.logException(e);
 		} catch (NullPointerException ex) {
-			Log.d(TAG, ex.getMessage());
+			FirebaseManager.logException(ex);
 		}
 	}
 }
