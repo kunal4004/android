@@ -113,7 +113,7 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
 
     override fun onResume() {
         super.onResume()
-      //  checkForLocationPermissionAndSetLocationAddress()
+        checkForLocationPermissionAndSetLocationAddress()
         binding.updateInitialStateOnResume()
     }
 
@@ -163,9 +163,17 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
             binding.initViews()
         }
 
-        inCurrentLocation?.swEnableLocation?.setOnCheckedChangeListener { _, checked ->
-            if(checked){
-                KotlinUtils.openAccessMyLocationDeviceSettings(EnableLocationSettingsFragment.ACCESS_MY_LOCATION_REQUEST_CODE, activity)
+        inCurrentLocation?.swEnableLocation?.setOnClickListener {
+            if (inCurrentLocation?.swEnableLocation?.isChecked == true) {
+                if (!Utils.isLocationEnabled(requireContext())) {
+                    KotlinUtils.openAccessMyLocationDeviceSettings(EnableLocationSettingsFragment.ACCESS_MY_LOCATION_REQUEST_CODE, activity)
+                } else {
+                    inCurrentLocation?.swEnableLocation?.isChecked = true
+                }
+            } else {
+                if(Utils.isLocationEnabled(requireContext())) {
+                    inCurrentLocation?.swEnableLocation?.isChecked = true
+                }
             }
         }
     }
@@ -180,17 +188,24 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
     private fun checkForLocationPermissionAndSetLocationAddress() {
         activity?.apply {
             //Check if user has location services enabled. If not, notify user as per current store locator functionality.
-            if (!Utils.isLocationEnabled(this)) {
+           /* if (!Utils.isLocationEnabled(this)) {
                 val enableLocationSettingsFragment = EnableLocationSettingsFragment()
                 enableLocationSettingsFragment?.show(
                     supportFragmentManager,
                     EnableLocationSettingsFragment::class.java.simpleName
                 )
                 return@apply
-            }
+            }*/
 
             // If location services enabled, extract latitude and longitude
-            startLocationDiscoveryProcess()
+            if (binding.inCurrentLocation?.swEnableLocation?.isChecked == true || Utils.isLocationEnabled(this)) {
+                if(Utils.isLocationEnabled(this)) {
+                    binding.inCurrentLocation?.swEnableLocation?.isChecked = true
+                    startLocationDiscoveryProcess()
+                } else {
+                    binding.inCurrentLocation?.swEnableLocation?.isChecked = false
+                }
+            }
         }
     }
 
@@ -294,7 +309,6 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
     private fun ConfirmAddressBottomSheetDialogBinding.disableCurrentLocation() {
         inCurrentLocation?.ivArrow?.visibility = View.GONE
         inCurrentLocation?.swEnableLocation?.visibility = View.VISIBLE
-        inCurrentLocation?.swEnableLocation?.isChecked = false
         inCurrentLocation?.tvCurrentLocation?.text = requireContext().getString(R.string.enable_location_services)
     }
 

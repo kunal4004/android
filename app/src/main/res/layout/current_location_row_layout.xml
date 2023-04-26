@@ -56,6 +56,7 @@
         android:theme="@style/SwitchTheme"
         android:thumb="@drawable/customswitchselector"
         android:track="@drawable/custom_track"
+        android:checked="false"
         android:layout_marginEnd="@dimen/twenty_six_dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
