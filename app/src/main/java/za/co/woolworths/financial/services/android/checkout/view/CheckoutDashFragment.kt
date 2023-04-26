@@ -404,11 +404,9 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
 
     private fun stopShimmerView() {
         shimmerComponentArray.forEach {
-            if (it.first.isShimmerStarted) {
                 it.first.stopShimmer()
                 it.first.setShimmer(null)
                 it.second.visibility = View.VISIBLE
-            }
         }
 
         binding.layoutDeliveryInstructions.txtNeedBags?.visibility = View.VISIBLE
