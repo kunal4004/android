@@ -72,7 +72,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.shop.StandardDel
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList.Companion.DISPLAY_TOAST_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.OnChildFragmentEvents
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView
-import za.co.woolworths.financial.services.android.ui.views.shop.dash.ChangeFullfilmentCollectionStoreFragment
+import za.co.woolworths.financial.services.android.ui.views.shop.dash.ChangeFulfillmentCollectionStoreFragment
 import za.co.woolworths.financial.services.android.ui.views.shop.dash.DashDeliveryAddressFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_3000_MS
@@ -837,7 +837,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                     fragment as? StandardDeliveryFragment
                 }
                 CLICK_AND_COLLECT_TAB.index -> {
-                    fragment as? ChangeFullfilmentCollectionStoreFragment
+                    fragment as? ChangeFulfillmentCollectionStoreFragment
                 }
                 DASH_TAB.index -> {
                     fragment as? DashDeliveryAddressFragment
@@ -878,12 +878,12 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                 // But we want forcefully user to come on CNC tab even though the location is not CNC.
                 delay(AppConstant.DELAY_500_MS)
                 updateCurrentTab(BundleKeysConstants.CNC)
-                val changeFullfilmentCollectionStoreFragment =
+                val changeFulfillmentCollectionStoreFragment =
                     binding.viewpagerMain?.adapter?.instantiateItem(
                         binding.viewpagerMain,
                         binding.viewpagerMain.currentItem
-                    ) as? ChangeFullfilmentCollectionStoreFragment
-                changeFullfilmentCollectionStoreFragment?.init()
+                    ) as? ChangeFulfillmentCollectionStoreFragment
+                changeFulfillmentCollectionStoreFragment?.init()
             }
         }
 
@@ -911,7 +911,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                     viewpagerMain?.adapter?.instantiateItem(
                         viewpagerMain,
                         viewpagerMain.currentItem
-                    ) as? ChangeFullfilmentCollectionStoreFragment
+                    ) as? ChangeFulfillmentCollectionStoreFragment
                 }
                 DASH_TAB.index -> {
                     viewpagerMain?.adapter?.instantiateItem(
@@ -957,12 +957,12 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                     }
                 }
                 CLICK_AND_COLLECT_TAB.index -> {
-                    val changeFullfilmentCollectionStoreFragment =
+                    val changeFulfillmentCollectionStoreFragment =
                         viewpagerMain?.adapter?.instantiateItem(
                             viewpagerMain,
                             viewpagerMain.currentItem
-                        ) as? ChangeFullfilmentCollectionStoreFragment
-                    changeFullfilmentCollectionStoreFragment?.scrollToTop()
+                        ) as? ChangeFulfillmentCollectionStoreFragment
+                    changeFulfillmentCollectionStoreFragment?.scrollToTop()
                 }
                 DASH_TAB.index -> {
                     activity?.lifecycleScope?.launchWhenCreated {
