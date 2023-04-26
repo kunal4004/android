@@ -163,7 +163,7 @@ class SubCategoryFragment :
     }
 
     private fun subcategoryOtherHttpResponse(response: Response) {
-        if (!TextUtils.isEmpty(response.desc)) {
+        if (!TextUtils.isEmpty(response.desc) && activity != null) {
             Utils.displayValidationMessageForResult(
                 activity,
                 CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc, ERROR_DIALOG_REQUEST
