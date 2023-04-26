@@ -17,11 +17,12 @@
         app:popupTheme="@style/StoreSearch"
         app:theme="@style/StoreSearch">
 
-        <za.co.woolworths.financial.services.android.ui.views.WEditTextView
+        <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/toolbarText"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@android:color/transparent"
+            android:fontFamily="@font/opensans_regular"
             android:gravity="start|center"
             android:hint="@string/product_search_hint"
             android:imeOptions="actionDone"
@@ -30,8 +31,7 @@
             android:textColor="@color/black"
             android:textColorHint="@color/product_search_hint"
             android:textCursorDrawable="@drawable/cursor_custom_color"
-            android:textSize="@dimen/fifteen_dp"
-            app:WEditTextView_font="myriadpro_regular" />
+            android:textSize="@dimen/twelve_sp" />
     </androidx.appcompat.widget.Toolbar>
 
     <LinearLayout

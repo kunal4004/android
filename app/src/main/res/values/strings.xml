@@ -1595,7 +1595,7 @@
     <string name="select_your_collection_store">Select your collection store:</string>
     <string name="select_your_delivery_location">Select your delivery location:</string>
     <string name="remove_these_items_continue">remove these items &amp; continue</string>
-    <string name="item_not_available_for_collection_title">Item not available</string>
+    <string name="item_not_available_for_collection_title">To purchase this item, please change your delivery option to Standard Delivery or Click &amp; Collect.</string>
     <string name="item_not_available_for_collection_desc">To purchase, please try \'Find In Store\', or change delivery option to Standard.</string>
     <string name="change_delivery_option">CHANGE DELIVERY OPTION</string>
     <string name="remove_items_dialog_title">These items will be removed</string>
@@ -2469,7 +2469,7 @@
     <string name="absa_statement_error_try_again_later">We\'re unable to retrieve your Statement. Please try again later.</string>
     <string name="choose_a_location">Choose A Location</string>
     <string name="use_an_address_the_name_of_a_complex_or_your_closest_landmark_eg_a_woolies_store">Use an address, the name of a complex, or your closest landmark (e.g. a Woolies store).</string>
-    <string name="enter_new_location">Enter New location</string>
+    <string name="enter_new_location">Enter New Location</string>
     <string name="my_saved_addresses">My Saved Addresses</string>
     <string name="current_location">Current Location</string>
     <string name="update_address">Update Address</string>
@@ -2564,8 +2564,8 @@
     <string name="address_type">Address Type:</string>
     <string name="add_street_address">Street Address:</string>
     <string name="dash_free_collection">"Free Collection"</string>
-    <string name="dash_item_limit">%d Item Limit</string>
-    <string name="dash_delivery_fee">R%d Delivery Fee</string>
+    <string name="dash_item_limit">Item Limit</string>
+    <string name="dash_delivery_fee">Delivery Fee</string>
     <string name="select_delivery_timeslot">Select Delivery Timeslot</string>
     <string name="dash_delivery_date">Delivery Date</string>
     <string name="dash_delivery_timeslot">Delivery Timeslot</string>
@@ -2938,9 +2938,6 @@
     <string name="cnc_title_text_2">Limited shop of %1$s food items.</string>
 
     <string name="recommendations_title">Recommended</string>
-    <string name="sign_in_to_see_saved_addresses"><u>SIGN IN</u> TO SEE SAVED ADDRESSES</string>
-    <string name="enable_location_services">Enable Location Services</string>
-
 
     <string name="confirm_your_product_details">Confirm Your Product Details</string>
     <string name="show_less">Show Less</string>
@@ -2970,12 +2967,8 @@
     <string name="pet_insurance_apply_now_control_desc">Optional excess waiver and medical saving benefits</string>
     <string name="pet_insurance_care">PET</string>
     <string name="error_message_400">We are unable to process your request, Please \ncontact our call centre on \n0861 50 20 10</string>
+    <!--Geo location Enhancements -->
     <string name="geo_loc_error_msg_title">We can’t seem to find you here.</string>
-    <string name="no_location_settings_msg">Search for an address, the name of a complex, or your closest landmark (e.g. a Woolies store).</string>
-    <string name="location_settings_mesg"><u>Turn Location Settings On</u></string>
-    <string name="adjust_to_exact_location">Adjust to exact location</string>
-    <string name="use_location">USE LOCATION</string>
-
     <string name="street_address_lbl">Street Address:*</string>
     <string name="recipient_name_placeholder">Recipient Name: *</string>
     <string name="additional_details">Additional Details:</string>
@@ -2984,4 +2977,12 @@
     <string name="unit_number_floor">Unit Number/Floor:*</string>
     <string name="change_address_btn_text">CHANGE</string>
     <string name="use">USE\u0020</string>
+    <string name="no_location_settings_msg">Search for an address, the name of a complex, or your closest landmark (e.g. a Woolies store).</string>
+    <string name="location_settings_mesg"><u>Turn Location Settings On</u></string>
+    <string name="adjust_to_exact_location">Adjust to exact location</string>
+    <string name="use_location">USE LOCATION</string>
+    <string name="sign_in_to_see_saved_addresses"><u>SIGN IN</u> TO SEE SAVED ADDRESSES</string>
+    <string name="enable_location_services">Enable Location Services</string>
+
+
 </resources>

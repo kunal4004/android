@@ -7,6 +7,7 @@ import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
+import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
@@ -110,14 +111,16 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     fun showBackArrowWithTitle(titleText: String) {
-        binding.toolbar?.visibility = View.VISIBLE
-        setSupportActionBar(binding.toolbar)
-        binding.toolbarText?.text = titleText
-        supportActionBar?.apply {
-            title = ""
-            setDisplayShowTitleEnabled(false)
-            setDisplayHomeAsUpEnabled(true)
-            setHomeAsUpIndicator(R.drawable.back24)
+        lifecycleScope.launchWhenCreated {
+            binding.toolbar?.visibility = View.VISIBLE
+            setSupportActionBar(binding.toolbar)
+            binding.toolbarText?.text = titleText
+            supportActionBar?.apply {
+                title = ""
+                setDisplayShowTitleEnabled(false)
+                setDisplayHomeAsUpEnabled(true)
+                setHomeAsUpIndicator(R.drawable.back24)
+            }
         }
     }
 
