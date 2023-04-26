@@ -704,7 +704,7 @@
     <string name="tax_invoices">TAX INVOICES</string>
     <string name="shop_create_a_list">Create A New List</string>
     <string name="shop_create_list">Create New List</string>
-    <string name="shop_sign_out_order_title">sign in to view\nand create lists</string>
+    <string name="shop_sign_out_order_title">SIGN IN TO VIEW\nAND CREATE LISTS</string>
     <string name="shop_sign_out_order_desc">Search for products to start adding items to this list.</string>
     <string name="order_invoice_title_prefix">PDF:\u0020</string>
     <string name="delivery_suburb">Delivery Suburb:</string>
