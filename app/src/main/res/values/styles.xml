@@ -2158,6 +2158,21 @@
         <item name="android:textSize">@dimen/sixteen_sp</item>
     </style>
 
+    <style name="checkout_edittext_style">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">@dimen/fourty_eight_dp</item>
+        <item name="android:layout_marginTop">@dimen/six_dp</item>
+        <item name="android:background">@drawable/recipient_details_input_edittext_bg</item>
+        <item name="android:fontFamily">@font/opensans_regular</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingStart">@dimen/sixteen_dp</item>
+        <item name="android:paddingEnd">@dimen/sixteen_dp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:imeOptions">actionNext</item>
+        <item name="android:textSize">@dimen/fourteen_sp</item>
+    </style>
+
     <style name="map_search_address">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">@dimen/fourty_eight_dp</item>
@@ -2183,20 +2198,6 @@
         <item name="android:singleLine">true</item>
         <item name="android:imeOptions">actionNext</item>
         <item name="android:textSize">@dimen/sixteen_sp</item>
-    </style>
-
-    <style name="checkout_edittext_style">
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_height">@dimen/fourty_eight_dp</item>
-        <item name="android:background">@drawable/recipient_details_input_edittext_bg</item>
-        <item name="android:fontFamily">@font/opensans_regular</item>
-        <item name="android:gravity">center_vertical</item>
-        <item name="android:paddingStart">@dimen/ten_dp</item>
-        <item name="android:paddingEnd">@dimen/sixteen_dp</item>
-        <item name="android:textColor">@color/black</item>
-        <item name="android:singleLine">true</item>
-        <item name="android:imeOptions">actionNext</item>
-        <item name="android:textSize">@dimen/fourteen_sp</item>
     </style>
 
     <style name="onBoardingButtonStyle">
@@ -2851,6 +2852,9 @@
 
     <style name="FoodSubstRadioButtonStyle" parent="@android:style/Widget.CompoundButton.RadioButton">
         <item name="android:button">@drawable/food_substitution_radio_button</item>
+        <item name="android:fontFamily">@font/opensans_regular</item>
+        <item name="android:textColor">@color/color_666666</item>
+        <item name="android:textSize">@dimen/thirteen_sp</item>
     </style>
 
     <style name="guideLineDefaultStyle">
@@ -3170,6 +3174,11 @@
         <item name="android:textSize">@dimen/twelve_sp</item>
     </style>
 
+    <style name="opensans_regular_13_black" parent="opensens_regular">
+        <item name="android:textSize">@dimen/thirteen_sp</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
     <style name="opensans_semi_bold_13_text_style" parent="opensens_semi_bold">
         <item name="android:textSize">@dimen/thirteen_sp</item>
     </style>
@@ -3213,6 +3222,11 @@
         <item name="android:layout_width">@dimen/zero_dp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginTop">@dimen/four_dp</item>
+    </style>
+
+    <style name="opensans_regular_13_222222_rounded_corner" parent="opensans_regular_13_black">
+        <item name="android:textColor">@color/color_222222</item>
+        <item name="android:background">@drawable/checkout_delivering_title_round_button</item>
     </style>
 
 </resources>

@@ -24,7 +24,7 @@
 
     <TextView
         android:id="@+id/title"
-        style="@style/myriad_pro_semi_bold_black_15_text_style"
+        style="@style/opensans_semi_bold_13_black_text_style"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/twelve_dp"
@@ -34,7 +34,6 @@
         android:orientation="vertical"
         android:singleLine="true"
         android:text="@string/title_text"
-        android:textColor="@color/black"
         app:layout_constrainedHeight="true"
         app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toTopOf="@+id/subTitle"
@@ -44,16 +43,14 @@
 
     <TextView
         android:id="@+id/subTitle"
-        style="@style/myriad_pro_regular"
+        style="@style/opensans_regular_12_text_style"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/two_dp"
         android:lineHeight="@dimen/twenty_four_dp"
         android:orientation="vertical"
-        android:textColor="@color/checkout_delivering_title"
-        android:textSize="@dimen/fourteen_sp"
+        android:textColor="@color/color_444444"
         android:visibility="gone"
-        tools:visibility="visible"
         app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
