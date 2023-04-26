@@ -168,7 +168,8 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
         inCurrentLocation?.swEnableLocation?.setOnClickListener {
             if (inCurrentLocation?.swEnableLocation?.isChecked == true) {
                 if (!Utils.isLocationEnabled(requireContext())) {
-                    KotlinUtils.openAccessMyLocationDeviceSettings(EnableLocationSettingsFragment.ACCESS_MY_LOCATION_REQUEST_CODE, activity)
+                    KotlinUtils.openAccessMyLocationDeviceSettings(
+                            EnableLocationSettingsFragment.ACCESS_MY_LOCATION_REQUEST_CODE, activity)
                 } else {
                     inCurrentLocation?.swEnableLocation?.isChecked = true
                 }
