@@ -560,11 +560,11 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         //verify if the show dash order is true
         refreshInAppNotificationToast()
 
-        if (((KotlinUtils.isLocationSame == false || KotlinUtils.isNickNameChanged == true) && KotlinUtils.placeId != null) || WoolworthsApplication.getValidatePlaceDetails() == null) {
+        if (((KotlinUtils.isLocationPlaceIdSame == false || KotlinUtils.isNickNameChanged == true) && KotlinUtils.placeId != null) || WoolworthsApplication.getValidatePlaceDetails() == null) {
             executeValidateSuburb()
         } else if (Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.deliveryType.isNullOrEmpty() && KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.deliveryType.isNullOrEmpty()) {
             return
-        } else if (KotlinUtils.isLocationSame == true && KotlinUtils.placeId != null) {
+        } else if (KotlinUtils.isLocationPlaceIdSame == true && KotlinUtils.placeId != null) {
             setDeliveryView()
             (KotlinUtils.browsingDeliveryType
                 ?: Delivery.getType(getDeliveryType()?.deliveryType))?.let {
@@ -1162,7 +1162,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
 
     private fun showStandardDeliveryToolTip() {
         binding.apply {
-            if (KotlinUtils.isLocationSame == false) {
+            if (KotlinUtils.isLocationPlaceIdSame == false) {
                 blackToolTipLayout.root.visibility = View.VISIBLE
             }
 
@@ -1316,7 +1316,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
     private fun showDashToolTip(validateLocationResponse: ValidateLocationResponse?) {
         binding?.apply {
             val dashDeliverable = validateLocationResponse?.validatePlace?.onDemand?.deliverable
-            if (KotlinUtils.isLocationSame == false) {
+            if (KotlinUtils.isLocationPlaceIdSame == false) {
                 blackToolTipLayout.root.visibility = View.VISIBLE
             }
 

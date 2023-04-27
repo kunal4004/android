@@ -376,7 +376,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                         KotlinUtils.apply {
                             response.orderSummary?.fulfillmentDetails?.address?.placeId.let { responsePlaceId ->
                                 this.placeId = responsePlaceId
-                                isLocationSame = responsePlaceId.equals(savedPlaceId)
+                                isLocationPlaceIdSame = responsePlaceId.equals(savedPlaceId)
                                 isDeliveryLocationTabCrossClicked =
                                     responsePlaceId.equals(savedPlaceId)
                                 isCncTabCrossClicked = responsePlaceId.equals(savedPlaceId)
