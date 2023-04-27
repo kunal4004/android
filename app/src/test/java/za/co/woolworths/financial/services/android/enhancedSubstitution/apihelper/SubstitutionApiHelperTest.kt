@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.enhancedSubstitution.apihelper
 
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
@@ -9,21 +10,22 @@ import org.junit.Before
 import org.junit.Test
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhanceSubstitutonHelperTest.Companion.COMMARCE_ITEM_ID
-import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhanceSubstitutonHelperTest.Companion.DEVICE_TOKEN
-import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhanceSubstitutonHelperTest.Companion.PRODUCT_ID
-import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhanceSubstitutonHelperTest.Companion.SESSION_TOKEN
-import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhanceSubstitutonHelperTest.Companion.SKU_ID
-import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhanceSubstitutonHelperTest.Companion.STORE_ID
-import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhanceSubstitutonHelperTest.Companion.SEARCH_TYPE
-import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhanceSubstitutonHelperTest.Companion.RESPONSE_TYPE
-import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhanceSubstitutonHelperTest.Companion.DELIVERY_TYPE
-import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhanceSubstitutonHelperTest.Companion.SUBSTITUTION_ID
+import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhanceSubstitutionHelperTest.Companion.COMMARCE_ITEM_ID
+import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhanceSubstitutionHelperTest.Companion.DEVICE_TOKEN
+import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhanceSubstitutionHelperTest.Companion.PRODUCT_ID
+import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhanceSubstitutionHelperTest.Companion.SESSION_TOKEN
+import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhanceSubstitutionHelperTest.Companion.SKU_ID
+import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhanceSubstitutionHelperTest.Companion.STORE_ID
+import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhanceSubstitutionHelperTest.Companion.SEARCH_TYPE
+import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhanceSubstitutionHelperTest.Companion.RESPONSE_TYPE
+import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhanceSubstitutionHelperTest.Companion.DELIVERY_TYPE
+import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhanceSubstitutionHelperTest.Companion.SUBSTITUTION_ID
 
 import za.co.woolworths.financial.services.android.enhancedSubstitution.model.AddSubstitutionRequest
 import za.co.woolworths.financial.services.android.models.network.ApiInterface
 import za.co.woolworths.financial.services.android.util.Utils
 
+@ExperimentalCoroutinesApi
 class SubstitutionApiHelperTest {
 
     private lateinit var mockWebServer: MockWebServer
@@ -34,10 +36,10 @@ class SubstitutionApiHelperTest {
 
         mockWebServer = MockWebServer()
         apiHelper = Retrofit.Builder()
-                .baseUrl(mockWebServer.url("/"))
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
-                .create(ApiInterface::class.java)
+            .baseUrl(mockWebServer.url("/"))
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(ApiInterface::class.java)
     }
 
     @Test
@@ -58,8 +60,8 @@ class SubstitutionApiHelperTest {
         mockWebServer.enqueue(mockResponse)
         val response = apiHelper.getSubstitution(SESSION_TOKEN, DEVICE_TOKEN, PRODUCT_ID)
         mockWebServer.takeRequest()
-        Assert.assertEquals(1 , response.body()?.data?.size)
-        Assert.assertEquals(USER_CHOICE , response.body()?.data?.getOrNull(0)?.substitutionSelection)
+        Assert.assertEquals(1, response.body()?.data?.size)
+        Assert.assertEquals(USER_CHOICE, response.body()?.data?.getOrNull(0)?.substitutionSelection)
     }
 
     @Test
@@ -70,7 +72,7 @@ class SubstitutionApiHelperTest {
         mockWebServer.enqueue(mockResponse)
         val response = apiHelper.getSubstitution(SESSION_TOKEN, DEVICE_TOKEN, PRODUCT_ID)
         mockWebServer.takeRequest()
-        Assert.assertEquals(0 , response.body()?.data?.size)
+        Assert.assertEquals(0, response.body()?.data?.size)
     }
 
 
@@ -80,9 +82,10 @@ class SubstitutionApiHelperTest {
         mockResponse.setResponseCode(200)
         mockResponse.setBody(INVENTORY_RESPONSE)
         mockWebServer.enqueue(mockResponse)
-        val response = apiHelper.fetchDashInventorySKUForStore(SESSION_TOKEN, DEVICE_TOKEN, STORE_ID, SKU_ID)
+        val response =
+            apiHelper.fetchDashInventorySKUForStore(SESSION_TOKEN, DEVICE_TOKEN, STORE_ID, SKU_ID)
         mockWebServer.takeRequest()
-        Assert.assertEquals(1 , response.body()?.skuInventory?.size)
+        Assert.assertEquals(1, response.body()?.skuInventory?.size)
         Assert.assertNotNull(response?.body())
     }
 
@@ -91,10 +94,11 @@ class SubstitutionApiHelperTest {
         val mockResponse = MockResponse()
         mockResponse.setBody("{}")
         mockWebServer.enqueue(mockResponse)
-        val response = apiHelper.fetchDashInventorySKUForStore(SESSION_TOKEN, DEVICE_TOKEN, STORE_ID, SKU_ID)
+        val response =
+            apiHelper.fetchDashInventorySKUForStore(SESSION_TOKEN, DEVICE_TOKEN, STORE_ID, SKU_ID)
         mockWebServer.takeRequest()
         Assert.assertNotNull(response?.body())
-        Assert.assertNotEquals("473", response?.body()?.storeId )
+        Assert.assertNotEquals("473", response?.body()?.storeId)
     }
 
     @Test
@@ -103,9 +107,10 @@ class SubstitutionApiHelperTest {
         mockResponse.setResponseCode(200)
         mockResponse.setBody(WRONG_INVENTORY_RESPONSE)
         mockWebServer.enqueue(mockResponse)
-        val response = apiHelper.fetchDashInventorySKUForStore(SESSION_TOKEN, DEVICE_TOKEN, STORE_ID, SKU_ID)
+        val response =
+            apiHelper.fetchDashInventorySKUForStore(SESSION_TOKEN, DEVICE_TOKEN, STORE_ID, SKU_ID)
         mockWebServer.takeRequest()
-        Assert.assertEquals(0 , response.body()?.skuInventory?.size)
+        Assert.assertEquals(0, response.body()?.skuInventory?.size)
     }
 
     @Test
@@ -113,11 +118,13 @@ class SubstitutionApiHelperTest {
         val mockResponse = MockResponse()
         mockResponse.setBody("{}")
         mockWebServer.enqueue(mockResponse)
-        val addSubstitutionRequest = AddSubstitutionRequest(USER_CHOICE, SUBSTITUTION_ID, COMMARCE_ITEM_ID)
-        val response = apiHelper.addSubstitution(SESSION_TOKEN, DEVICE_TOKEN,  addSubstitutionRequest)
+        val addSubstitutionRequest =
+            AddSubstitutionRequest(USER_CHOICE, SUBSTITUTION_ID, COMMARCE_ITEM_ID)
+        val response =
+            apiHelper.addSubstitution(SESSION_TOKEN, DEVICE_TOKEN, addSubstitutionRequest)
         mockWebServer.takeRequest()
         Assert.assertNotNull(response?.body())
-        Assert.assertEquals(true, response?.body()?.data.isNullOrEmpty() )
+        Assert.assertEquals(true, response?.body()?.data.isNullOrEmpty())
     }
 
     @Test
@@ -125,15 +132,17 @@ class SubstitutionApiHelperTest {
         val mockResponse = MockResponse()
         mockResponse.setResponseCode(200)
         mockResponse.setBody(WRONG_ADD_SUBSTITUTION_RESPONSE)
-        val addSubstitutionRequest = AddSubstitutionRequest(USER_CHOICE, SUBSTITUTION_ID, COMMARCE_ITEM_ID)
+        val addSubstitutionRequest =
+            AddSubstitutionRequest(USER_CHOICE, SUBSTITUTION_ID, COMMARCE_ITEM_ID)
         mockWebServer.enqueue(mockResponse)
-        val response = apiHelper.addSubstitution(SESSION_TOKEN, DEVICE_TOKEN, addSubstitutionRequest)
+        val response =
+            apiHelper.addSubstitution(SESSION_TOKEN, DEVICE_TOKEN, addSubstitutionRequest)
         mockWebServer.takeRequest()
-        Assert.assertEquals(0 , response.body()?.data?.size)
+        Assert.assertEquals(0, response.body()?.data?.size)
     }
 
     @Test
-    fun test_AddSubstituion_addSubstitution(){
+    fun test_AddSubstitution_addSubstitution() {
         /* todo */
     }
 
@@ -143,24 +152,24 @@ class SubstitutionApiHelperTest {
         mockResponse.setBody("{}")
         mockWebServer.enqueue(mockResponse)
         val response = apiHelper.getSearchedProducts(
-                userAgent = "",
-                "",
-                "",
-                "",
-                SESSION_TOKEN,
-                DEVICE_TOKEN,
-                "",
-                SEARCH_TYPE,
-                RESPONSE_TYPE,
-                0,
-                Utils.PAGE_SIZE,
-                "",
-                "",
-                "",
-                STORE_ID,
-                false,
-                DELIVERY_TYPE,
-                "105-plist3620006-false-true"
+            userAgent = "",
+            "",
+            "",
+            "",
+            SESSION_TOKEN,
+            DEVICE_TOKEN,
+            "",
+            SEARCH_TYPE,
+            RESPONSE_TYPE,
+            0,
+            Utils.PAGE_SIZE,
+            "",
+            "",
+            "",
+            STORE_ID,
+            false,
+            DELIVERY_TYPE,
+            "105-plist3620006-false-true"
         )
         mockWebServer.takeRequest()
         Assert.assertEquals(null, response?.pagingResponse)
@@ -174,27 +183,27 @@ class SubstitutionApiHelperTest {
         mockResponse.setBody(WRONG_SEARCH_API)
         mockWebServer.enqueue(mockResponse)
         val response = apiHelper.getSearchedProducts(
-                userAgent = "",
-                "",
-                "",
-                "",
-                SESSION_TOKEN,
-                DEVICE_TOKEN,
-                "",
-                SEARCH_TYPE,
-                RESPONSE_TYPE,
-                0,
-                Utils.PAGE_SIZE,
-                "",
-                "",
-                "",
-                STORE_ID,
-                false,
-                DELIVERY_TYPE,
-                ""
+            userAgent = "",
+            "",
+            "",
+            "",
+            SESSION_TOKEN,
+            DEVICE_TOKEN,
+            "",
+            SEARCH_TYPE,
+            RESPONSE_TYPE,
+            0,
+            Utils.PAGE_SIZE,
+            "",
+            "",
+            "",
+            STORE_ID,
+            false,
+            DELIVERY_TYPE,
+            ""
         )
         mockWebServer.takeRequest()
-        Assert.assertEquals(0 , response.products?.size)
+        Assert.assertEquals(0, response.products?.size)
     }
 
     @Test
@@ -204,27 +213,27 @@ class SubstitutionApiHelperTest {
         mockResponse.setBody(SEARCH_RESPONSE)
         mockWebServer.enqueue(mockResponse)
         val response = apiHelper.getSearchedProducts(
-                userAgent = "",
-                "",
-                "",
-                "",
-                SESSION_TOKEN,
-                DEVICE_TOKEN,
-                "",
-                SEARCH_TYPE,
-                RESPONSE_TYPE,
-                0,
-                Utils.PAGE_SIZE,
-                "",
-                "",
-                "",
-                STORE_ID,
-                false,
-                DELIVERY_TYPE,
-                ""
+            userAgent = "",
+            "",
+            "",
+            "",
+            SESSION_TOKEN,
+            DEVICE_TOKEN,
+            "",
+            SEARCH_TYPE,
+            RESPONSE_TYPE,
+            0,
+            Utils.PAGE_SIZE,
+            "",
+            "",
+            "",
+            STORE_ID,
+            false,
+            DELIVERY_TYPE,
+            ""
         )
         mockWebServer.takeRequest()
-        Assert.assertEquals(1 , response.products?.size)
+        Assert.assertEquals(1, response.products?.size)
     }
 
     @After
@@ -233,7 +242,7 @@ class SubstitutionApiHelperTest {
     }
 
     companion object {
-        private val RESPONSE = "{\n" +
+        private const val RESPONSE = "{\n" +
                 "    \"response\": {\n" +
                 "        \"code\": \"-1\",\n" +
                 "        \"desc\": \"Success\"\n" +
@@ -251,9 +260,9 @@ class SubstitutionApiHelperTest {
                 "    \"httpCode\": 200\n" +
                 "}"
 
-        val USER_CHOICE = "USER_CHOICE"
+        const val USER_CHOICE = "USER_CHOICE"
 
-        private val WRONG_RESPONSE = "{\n" +
+        private const val WRONG_RESPONSE = "{\n" +
                 "    \"response\": {\n" +
                 "        \"code\": \"-1\",\n" +
                 "        \"desc\": \"Success\"\n" +
@@ -264,7 +273,7 @@ class SubstitutionApiHelperTest {
                 "    \"httpCode\": 200\n" +
                 "}"
 
-        private val INVENTORY_RESPONSE  = "{\n" +
+        private const val INVENTORY_RESPONSE = "{\n" +
                 "    \"storeId\": \"473\",\n" +
                 "    \"skuInventory\": [\n" +
                 "        {\n" +
@@ -279,7 +288,7 @@ class SubstitutionApiHelperTest {
                 "    \"httpCode\": 200\n" +
                 "}"
 
-        private val WRONG_INVENTORY_RESPONSE  = "{\n" +
+        private const val WRONG_INVENTORY_RESPONSE = "{\n" +
                 "    \"storeId\": \"\",\n" +
                 "    \"skuInventory\": [\n" +
                 "      \n" +
@@ -290,7 +299,7 @@ class SubstitutionApiHelperTest {
                 "    \"httpCode\": 200\n" +
                 "}"
 
-        private val WRONG_ADD_SUBSTITUTION_RESPONSE = "{\n" +
+        private const val WRONG_ADD_SUBSTITUTION_RESPONSE = "{\n" +
                 "    \"response\": {\n" +
                 "        \"code\": \"-1\",\n" +
                 "        \"desc\": \"Success\"\n" +
@@ -302,7 +311,7 @@ class SubstitutionApiHelperTest {
                 "    \"httpCode\": 200\n" +
                 "}"
 
-        private val WRONG_SEARCH_API = "{\n" +
+        private const val WRONG_SEARCH_API = "{\n" +
                 "    \"isBanners\": false,\n" +
                 "    \"products\": [],\n" +
                 "    \"pagingResponse\": {\n" +
@@ -372,7 +381,7 @@ class SubstitutionApiHelperTest {
                 "    \"httpCode\": 200\n" +
                 "}"
 
-        private val SEARCH_RESPONSE  = "{\n" +
+        private const val SEARCH_RESPONSE = "{\n" +
                 "    \"isBanners\": false,\n" +
                 "    \"products\": [\n" +
                 "        {\n" +

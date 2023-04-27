@@ -1,6 +1,6 @@
 package za.co.woolworths.financial.services.android.enhancedSubstitution
 
-class EnhanceSubstitutonHelperTest {
+class EnhanceSubstitutionHelperTest {
     companion object {
          const val STORE_ID = "473"
          const val PRODUCT_ID = "123456"

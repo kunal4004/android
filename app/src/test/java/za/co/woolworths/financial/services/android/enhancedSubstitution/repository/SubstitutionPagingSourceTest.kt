@@ -2,11 +2,12 @@ package za.co.woolworths.financial.services.android.enhancedSubstitution.reposit
 
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.PagingSource
-import com.nhaarman.mockitokotlin2.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
+import org.mockito.BDDMockito.given
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 import za.co.woolworths.financial.services.android.enhancedSubstitution.apihelper.SubstitutionApiHelper
@@ -15,6 +16,7 @@ import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.dto.ProductView
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
 
+@ExperimentalCoroutinesApi
 class SubstitutionPagingSourceTest {
 
     @Mock
@@ -23,8 +25,8 @@ class SubstitutionPagingSourceTest {
     @Mock
     private lateinit var _pagingResponse: MutableLiveData<PagingResponse>
 
-    lateinit var substitutionPagingSource: SubstitutionPagingSource
-    lateinit var requestParams: ProductsRequestParams
+    private lateinit var substitutionPagingSource: SubstitutionPagingSource
+    private lateinit var requestParams: ProductsRequestParams
 
     @Before
     fun setup() {
@@ -69,7 +71,7 @@ class SubstitutionPagingSourceTest {
     fun testGetSearchResponse() = runTest {
         val productView = ProductView()
         val productCollection = ArrayList<ProductList>()
-        productCollection?.add(ProductList(
+        productCollection.add(ProductList(
                 isRnREnabled = true,
                 averageRating = "5.0",
                 reviewCount = "1",
