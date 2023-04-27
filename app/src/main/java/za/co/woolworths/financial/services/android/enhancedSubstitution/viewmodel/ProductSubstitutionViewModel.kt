@@ -37,7 +37,7 @@ class ProductSubstitutionViewModel(
     fun getProductSubstitution(productId: String?) {
         viewModelScope.launch {
             _productSubstitution.postValue(Event(Resource.loading(null)))
-            val result = repository.getProductSubstitution(productId)
+             val result = repository.getProductSubstitution(productId)
             _productSubstitution.value = Event(result)
         }
     }

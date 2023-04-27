@@ -1,8 +1,7 @@
 package za.co.woolworths.financial.services.android.enhancedSubstitution
 
 import android.content.Context
-import android.text.Html
-import androidx.core.text.HtmlCompat
+import androidx.core.widget.TextViewCompat
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.TemporaryFreezeCartLayoutBinding
@@ -37,6 +36,11 @@ class EnhancedSubstitutionBottomSheetDialog @Inject constructor() :
             listener.openManageSubstituion()
             dialog.dismiss()
         }
+
+        TextViewCompat.setTextAppearance(binding.title, R.style.style_substititon_popup_title);
+        TextViewCompat.setTextAppearance(binding.description, R.style.style_substititon_popup_desc);
+        TextViewCompat.setTextAppearance(binding.confirmFreezeCardButton, R.style.style_substititon_popup_button);
+
         binding.cancelTextView?.apply {
             setOnClickListener {
                 dialog.dismiss()
