@@ -15,7 +15,12 @@ import android.view.ViewGroup.VISIBLE
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
-import androidx.constraintlayout.widget.ConstraintSet.*
+import androidx.constraintlayout.widget.ConstraintSet.BOTTOM
+import androidx.constraintlayout.widget.ConstraintSet.END
+import androidx.constraintlayout.widget.ConstraintSet.MATCH_CONSTRAINT
+import androidx.constraintlayout.widget.ConstraintSet.PARENT_ID
+import androidx.constraintlayout.widget.ConstraintSet.START
+import androidx.constraintlayout.widget.ConstraintSet.WRAP_CONTENT
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.text.HtmlCompat
@@ -50,7 +55,6 @@ import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dto.OrdersResponse
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams.SearchType
 import za.co.woolworths.financial.services.android.models.dto.RootCategories
-import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse
 import za.co.woolworths.financial.services.android.models.dto.dash.LastOrderDetailsResponse
 import za.co.woolworths.financial.services.android.models.network.Parameter
@@ -62,29 +66,39 @@ import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingLi
 import za.co.woolworths.financial.services.android.ui.activities.BarcodeScanActivity
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.*
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_ACCOUNT
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_PRODUCT
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity
 import za.co.woolworths.financial.services.android.ui.adapters.ShopPagerAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.OrderDetailsFragment.Companion.getInstance
-import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment.SelectedTabIndex.*
+import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment.SelectedTabIndex.CLICK_AND_COLLECT_TAB
+import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment.SelectedTabIndex.DASH_TAB
+import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment.SelectedTabIndex.STANDARD_TAB
 import za.co.woolworths.financial.services.android.ui.fragments.shop.StandardDeliveryFragment.Companion.DEPARTMENT_LOGIN_REQUEST
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList.Companion.DISPLAY_TOAST_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.OnChildFragmentEvents
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView
 import za.co.woolworths.financial.services.android.ui.views.shop.dash.ChangeFulfillmentCollectionStoreFragment
 import za.co.woolworths.financial.services.android.ui.views.shop.dash.DashDeliveryAddressFragment
-import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_3000_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.REQUEST_CODE_BARCODE_ACTIVITY
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.REQUEST_CODE_ORDER_DETAILS_PAGE
 import za.co.woolworths.financial.services.android.util.AppConstant.Keys.Companion.ARG_FROM_NOTIFICATION
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.CNC_SET_ADDRESS_REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DASH_SET_ADDRESS_REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.REQUEST_CODE
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getDeliveryType
+import za.co.woolworths.financial.services.android.util.PermissionResultCallback
+import za.co.woolworths.financial.services.android.util.PermissionUtils
 import za.co.woolworths.financial.services.android.util.ScreenManager.SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE
+import za.co.woolworths.financial.services.android.util.SessionUtilities
+import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
@@ -236,10 +250,10 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
             permissions.add(android.Manifest.permission.CAMERA)
         }
 
-        binding.apply {
-            tvSearchProduct?.setOnClickListener { navigateToProductSearch() }
-            imBarcodeScanner?.setOnClickListener { checkCameraPermission() }
-            shopToolbar?.setOnClickListener { onEditDeliveryLocation() }
+        binding?.apply {
+            tvSearchProduct.setOnClickListener { navigateToProductSearch() }
+            imBarcodeScanner.setOnClickListener { checkCameraPermission() }
+            shopToolbar.setOnClickListener { onEditDeliveryLocation() }
 
             shopPagerAdapter = ShopPagerAdapter(childFragmentManager, mTabTitle, this@ShopFragment)
             viewpagerMain.offscreenPageLimit = 2
@@ -295,7 +309,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                     updateTabIconUI(position)
                 }
             })
-            tabsMain?.setupWithViewPager(viewpagerMain)
+            tabsMain.setupWithViewPager(viewpagerMain)
             updateTabIconUI(STANDARD_TAB.index)
             addObserverInAppNotificationToast()
         }
@@ -428,9 +442,9 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
     }
 
     fun showSearchAndBarcodeUi() {
-        binding.apply {
-            tvSearchProduct?.visibility = View.VISIBLE
-            imBarcodeScanner?.visibility = View.VISIBLE
+        binding?.apply {
+            tvSearchProduct.visibility = View.VISIBLE
+            imBarcodeScanner.visibility = View.VISIBLE
         }
     }
 
@@ -451,24 +465,24 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
     }
 
     fun hideSearchAndBarcodeUi() {
-        binding.apply {
-            tvSearchProduct?.visibility = View.GONE
-            imBarcodeScanner?.visibility = View.GONE
+        binding?.apply {
+            tvSearchProduct.visibility = View.GONE
+            imBarcodeScanner.visibility = View.GONE
         }
     }
 
     private fun executeValidateSuburb() {
         val placeId = getDeliveryType()?.address?.placeId ?: return
-        binding.apply {
+        binding?.apply {
             placeId?.let {
-                shopProgressbar?.visibility = View.VISIBLE
-                tabsMain?.isClickable = false
+                shopProgressbar.visibility = View.VISIBLE
+                tabsMain.isClickable = false
                 lifecycleScope.launch {
                     try {
                         validateLocationResponse =
                             confirmAddressViewModel.getValidateLocation(it)
-                        shopProgressbar?.visibility = View.GONE
-                        tabsMain?.isClickable = true
+                        shopProgressbar.visibility = View.GONE
+                        tabsMain.isClickable = true
                         if (validateLocationResponse != null) {
                             when (validateLocationResponse?.httpCode) {
                                 AppConstant.HTTP_OK -> {
@@ -508,13 +522,13 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                             }
                         }
                     } catch (e: Exception) {
-                        shopProgressbar?.visibility = View.GONE
-                        tabsMain?.isClickable = true
+                        shopProgressbar.visibility = View.GONE
+                        tabsMain.isClickable = true
                         FirebaseManager.logException(e)
                         /*TODO : show error screen*/
                     } catch (e: JsonSyntaxException) {
-                        shopProgressbar?.visibility = View.GONE
-                        tabsMain?.isClickable = true
+                        shopProgressbar.visibility = View.GONE
+                        tabsMain.isClickable = true
                         FirebaseManager.logException(e)
                     }
                 }
@@ -548,11 +562,10 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
 
         if (((KotlinUtils.isLocationSame == false || KotlinUtils.isNickNameChanged == true) && KotlinUtils.placeId != null) || WoolworthsApplication.getValidatePlaceDetails() == null) {
             executeValidateSuburb()
-        }
-        if (Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.deliveryType.isNullOrEmpty() && KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.deliveryType.isNullOrEmpty()) {
+        } else if (Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.deliveryType.isNullOrEmpty() && KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.deliveryType.isNullOrEmpty()) {
             return
-        }
-        if (KotlinUtils.isLocationSame == true && KotlinUtils.placeId != null) {
+        } else if (KotlinUtils.isLocationSame == true && KotlinUtils.placeId != null) {
+            setDeliveryView()
             (KotlinUtils.browsingDeliveryType
                 ?: Delivery.getType(getDeliveryType()?.deliveryType))?.let {
                 if (it == Delivery.CNC) {
@@ -564,8 +577,9 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                     showBlackToolTip(it)
                 }
             }
+        } else {
+            setDeliveryView()
         }
-        setDeliveryView()
     }
 
     private fun refreshInAppNotificationToast() {
@@ -1181,13 +1195,13 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
 
                 blackToolTipLayout.fashionItemTitle?.text = getString(R.string.fashion_beauty_home)
 
-                if (it.firstAvailableFoodDeliveryDate?.isNullOrEmpty() == true) {
+                if (it.firstAvailableFoodDeliveryDate.isNullOrEmpty() == true) {
                     blackToolTipLayout.deliveryCollectionTitle?.visibility = View.GONE
                     blackToolTipLayout.foodItemDateText?.visibility = View.GONE
                     blackToolTipLayout.foodItemTitle?.visibility = View.GONE
                 }
 
-                if (it.firstAvailableOtherDeliveryDate?.isNullOrEmpty() == true) {
+                if (it.firstAvailableOtherDeliveryDate.isNullOrEmpty() == true) {
                     blackToolTipLayout.fashionItemTitle?.visibility = View.GONE
                     blackToolTipLayout.fashionItemDateText?.visibility = View.GONE
                 }
@@ -1300,7 +1314,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
     }
 
     private fun showDashToolTip(validateLocationResponse: ValidateLocationResponse?) {
-        binding.apply {
+        binding?.apply {
             val dashDeliverable = validateLocationResponse?.validatePlace?.onDemand?.deliverable
             if (KotlinUtils.isLocationSame == false) {
                 blackToolTipLayout.root.visibility = View.VISIBLE
@@ -1320,50 +1334,50 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
 
             blackToolTipLayout.root.visibility = View.VISIBLE
             blackToolTipLayout.bubbleLayout.arrowDirection = ArrowDirection.TOP
-            blackToolTipLayout.bubbleLayout?.arrowPosition =
+            blackToolTipLayout.bubbleLayout.arrowPosition =
                 tabsMain.width - tabsMain.getTabAt(DASH_TAB.index)?.view?.width?.div(
                     DASH_DIVIDER
                 )
                     ?.toFloat()!!
             if (getDeliveryType() == null || Delivery.getType(getDeliveryType()?.deliveryType)?.type == Delivery.DASH.type) {
-                blackToolTipLayout.changeButtonLayout?.visibility = View.GONE
+                blackToolTipLayout.changeButtonLayout.visibility = View.GONE
             } else {
-                blackToolTipLayout.changeButtonLayout?.visibility = View.VISIBLE
-                blackToolTipLayout.changeText?.text = getText(R.string.shop_using_dash_delivery)
+                blackToolTipLayout.changeButtonLayout.visibility = View.VISIBLE
+                blackToolTipLayout.changeText.text = getText(R.string.shop_using_dash_delivery)
             }
             KotlinUtils.fullfillmentTypeClicked = Delivery.DASH.name
             validateLocationResponse?.validatePlace?.let {
 
                 val timeSlots = it?.onDemand?.deliveryTimeSlots
 
-                blackToolTipLayout.foodItemTitle?.visibility = View.GONE
-                blackToolTipLayout.fashionItemDateText?.visibility = View.GONE
-                blackToolTipLayout.deliveryIconLayout?.visibility = View.VISIBLE
-                blackToolTipLayout.cartIconLayout?.visibility = View.VISIBLE
-                blackToolTipLayout.fashionItemTitle?.visibility = View.GONE
-                blackToolTipLayout.deliveryIcon?.visibility = View.VISIBLE
-                blackToolTipLayout.deliveryFeeText?.visibility = View.VISIBLE
+                blackToolTipLayout.foodItemTitle.visibility = View.GONE
+                blackToolTipLayout.fashionItemDateText.visibility = View.GONE
+                blackToolTipLayout.deliveryIconLayout.visibility = View.VISIBLE
+                blackToolTipLayout.cartIconLayout.visibility = View.VISIBLE
+                blackToolTipLayout.fashionItemTitle.visibility = View.GONE
+                blackToolTipLayout.deliveryIcon.visibility = View.VISIBLE
+                blackToolTipLayout.deliveryFeeText.visibility = View.VISIBLE
 
                 if (timeSlots?.isNullOrEmpty() == true && it?.onDemand?.deliverable == true) {
-                    blackToolTipLayout.deliveryCollectionTitle?.text =
+                    blackToolTipLayout.deliveryCollectionTitle.text =
                         getString(R.string.next_dash_delivery_timeslot_text)
-                    blackToolTipLayout.foodItemDateText?.visibility = View.VISIBLE
-                    blackToolTipLayout.foodItemDateText?.text =
+                    blackToolTipLayout.foodItemDateText.visibility = View.VISIBLE
+                    blackToolTipLayout.foodItemDateText.text =
                         getString(R.string.no_timeslots_available_title)
                     blackToolTipLayout.fashionItemTitle.visibility = View.VISIBLE
                     blackToolTipLayout.fashionItemTitle.text = getString(R.string.timeslot_desc)
                 } else {
-                    blackToolTipLayout.deliveryCollectionTitle?.text =
+                    blackToolTipLayout.deliveryCollectionTitle.text =
                         getString(R.string.next_dash_delivery_timeslot_text)
-                    blackToolTipLayout.foodItemDateText?.visibility = View.VISIBLE
-                    blackToolTipLayout.foodItemDateText?.text =
+                    blackToolTipLayout.foodItemDateText.visibility = View.VISIBLE
+                    blackToolTipLayout.foodItemDateText.text =
                         it.onDemand?.firstAvailableFoodDeliveryTime
                     blackToolTipLayout.fashionItemTitle.visibility = View.GONE
                 }
 
-                blackToolTipLayout.cartIcon?.setImageResource(R.drawable.icon_cart_white)
-                blackToolTipLayout.deliveryIcon?.setImageResource(R.drawable.icon_scooter_white)
-                blackToolTipLayout.productAvailableText?.text =
+                blackToolTipLayout.cartIcon.setImageResource(R.drawable.icon_cart_white)
+                blackToolTipLayout.deliveryIcon.setImageResource(R.drawable.icon_scooter_white)
+                blackToolTipLayout.productAvailableText.text =
                     HtmlCompat.fromHtml(
                         "<font><b>" + it.onDemand?.quantityLimit?.foodMaximumQuantity + "</b></font>"
                             .plus(" ").plus(
@@ -1375,10 +1389,10 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                     )
 
                 if (it.onDemand?.firstAvailableFoodDeliveryTime?.isNullOrEmpty() == true) {
-                    blackToolTipLayout?.deliveryIconLayout?.visibility = View.GONE
+                    blackToolTipLayout.deliveryIconLayout.visibility = View.GONE
                 } else {
-                    blackToolTipLayout?.deliveryIconLayout?.visibility = View.VISIBLE
-                    blackToolTipLayout.deliveryFeeText?.text =
+                    blackToolTipLayout.deliveryIconLayout.visibility = View.VISIBLE
+                    blackToolTipLayout.deliveryFeeText.text =
                         HtmlCompat.fromHtml(
                             "<font><b>" + it.onDemand?.firstAvailableFoodDeliveryCost + "</b></font>"
                                 .plus(" ").plus(
@@ -1661,11 +1675,11 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
     private fun enableOrDisableFashionItems(isEnabled: Boolean) {
         binding.blackToolTipLayout?.apply {
             if (isEnabled) {
-                fashionItemTitle?.visibility = View.VISIBLE
-                fashionItemDateText?.visibility = View.VISIBLE
+                fashionItemTitle.visibility = View.VISIBLE
+                fashionItemDateText.visibility = View.VISIBLE
             } else {
-                fashionItemTitle?.visibility = View.GONE
-                fashionItemDateText?.visibility = View.GONE
+                fashionItemTitle.visibility = View.GONE
+                fashionItemDateText.visibility = View.GONE
             }
         }
     }
@@ -1673,11 +1687,11 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
     private fun enableOrDisableFoodItems(isEnabled: Boolean) {
         binding.blackToolTipLayout?.apply {
             if (isEnabled) {
-                foodItemTitle?.visibility = View.VISIBLE
-                foodItemDateText?.visibility = View.VISIBLE
+                foodItemTitle.visibility = View.VISIBLE
+                foodItemDateText.visibility = View.VISIBLE
             } else {
-                foodItemTitle?.visibility = View.GONE
-                foodItemDateText?.visibility = View.GONE
+                foodItemTitle.visibility = View.GONE
+                foodItemDateText.visibility = View.GONE
             }
         }
 
