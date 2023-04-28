@@ -468,7 +468,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         getBottomNavigationById().setTypeface(tfMyriadProT);
         getBottomNavigationById().setTextSize(10);
         // set icon size
-        int iconSize = 28;
+        int iconSize = 24;
         getBottomNavigationById().setIconSize(iconSize, iconSize);
         getBottomNavigationById().enableAnimation(false);
         getBottomNavigationById().enableShiftingMode(false);

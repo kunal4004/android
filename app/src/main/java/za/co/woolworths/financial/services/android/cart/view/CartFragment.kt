@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
+import android.text.Spannable
 import android.text.TextUtils
 import android.util.Log
 import android.view.MotionEvent
@@ -15,7 +16,9 @@ import android.view.WindowManager
 import android.widget.ScrollView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
+import androidx.core.text.buildSpannedString
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
@@ -1206,13 +1209,21 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             orderSummary?.minimumBasketAmount?.let { minBasketAmount ->
                 binding.txtMinSpendErrorMsg.apply {
                     visibility = View.VISIBLE
-                    text =
-                        String.format(
-                            getString(
-                                R.string.minspend_error_msg_cart,
-                                CurrencyFormatter.formatAmountToRandNoDecimal(minBasketAmount)
-                            )
+                    text = buildSpannedString {
+                        val amount = CurrencyFormatter.formatAmountToRandNoDecimal(minBasketAmount)
+                        val error = String.format(
+                            getString(R.string.minspend_error_msg_cart, amount)
                         )
+                        append(error)
+                        val start = error.indexOf(amount) - 1
+                        val typeface = ResourcesCompat.getFont(context, R.font.opensans_semi_bold)
+                        setSpan(
+                            CustomTypefaceSpan("opensans", typeface),
+                            start,
+                            start.plus(amount.length).plus(1),
+                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                        )
+                    }
                 }
             }
             binding.btnCheckOut.isEnabled = false
