@@ -67,7 +67,7 @@
 
     <TextView
         android:id="@+id/recipientNameErrorMsg"
-        style="@style/opensans_regular_13_black"
+        style="@style/opensans_regular_12_text_style"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/fifteen_dp"
@@ -107,7 +107,7 @@
 
     <TextView
         android:id="@+id/cellphoneNumberErrorMsg"
-        style="@style/opensans_regular_13_black"
+        style="@style/opensans_regular_12_text_style"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/fifteen_dp"
