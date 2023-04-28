@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.util.analytics
 
 import android.os.Bundle
-import android.util.Log
 import com.google.firebase.analytics.FirebaseAnalytics
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.CommerceItem
@@ -11,7 +10,6 @@ import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerce
 import za.co.woolworths.financial.services.android.util.analytics.dto.AnalyticProductItem
 import za.co.woolworths.financial.services.android.util.analytics.dto.toAnalyticItem
 import za.co.woolworths.financial.services.android.util.analytics.dto.toBundle
-import kotlin.math.min
 
 object FirebaseAnalyticsEventHelper {
 
@@ -141,13 +139,6 @@ object FirebaseAnalyticsEventHelper {
             category?.let {
                 putString(FirebaseAnalytics.Param.ITEM_LIST_NAME, category)
             }
-        }
-
-        Log.d("FirebaseAnalyticsEventHelper", "ITEMS size: ${analyticItems.size}")
-        val s = analyticsParams.toString()
-        val chunkSize = 2048
-        for (i in s.indices step chunkSize) {
-            Log.d("FirebaseAnalyticsEventHelper", s.substring(i, min(s.length, i + chunkSize)));
         }
 
         AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.VIEW_ITEM_LIST, analyticsParams)
