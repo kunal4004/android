@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
+import android.text.Spannable
 import android.text.TextUtils
 import android.util.Log
 import android.view.MotionEvent
@@ -15,7 +16,9 @@ import android.view.WindowManager
 import android.widget.ScrollView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
+import androidx.core.text.buildSpannedString
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
@@ -419,7 +422,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         val isEditMode = toggleEditMode()
         binding.btnEditCart.setText(if (isEditMode) R.string.cancel else R.string.edit)
         binding.btnClearCart.visibility = if (isEditMode) View.VISIBLE else View.GONE
-        setPriceInformationVisibility(!isEditMode)
+        setPriceInformationVisibility(!isEditMode, isEditMode)
         setDeliveryLocationEnabled(!isEditMode)
         if (!isEditMode)
             setMinimumCartErrorMessage()
@@ -689,8 +692,11 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         return isEditMode
     }
 
-    private fun setPriceInformationVisibility(visibility: Boolean){
+    private fun setPriceInformationVisibility(visibility: Boolean, isEditModeChanged : Boolean = false) {
         binding.includedPrice.orderSummeryLayout.visibility = if(visibility) View.VISIBLE else View.GONE
+        if(!visibility && !isEditModeChanged) {
+            setLiquorBannerVisibility(false)
+        }
     }
 
     private fun setPriceValue(textView: WTextView, value: Double) {
@@ -929,18 +935,25 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             ) else onEnterPromoCode()
         }
         priceHolder.promoDiscountInfo.setOnClickListener { onPromoDiscountInfo() }
-        if (liquorCompliance != null && liquorCompliance!!.isLiquorOrder) {
-            priceHolder.liquorComplianceMain.liquorBannerRootConstraintLayout.visibility = View.VISIBLE
-            if (!AppConfigSingleton.liquor?.noLiquorImgUrl.isNullOrEmpty()) ImageManager.setPicture(
-                priceHolder.liquorComplianceMain.imgLiquorBanner,
-                AppConfigSingleton.liquor?.noLiquorImgUrl
-            )
-        } else {
-            priceHolder.liquorComplianceMain.liquorBannerRootConstraintLayout.visibility = View.GONE
-        }
+        updateLiquorBanner()
         if (getPreferredDeliveryType() == Delivery.CNC) {
             priceHolder.deliveryFeeLabel.text = getString(R.string.collection_fee)
         }
+    }
+    private fun updateLiquorBanner() {
+        if (liquorCompliance != null && liquorCompliance!!.isLiquorOrder) {
+            setLiquorBannerVisibility(true)
+            if (!AppConfigSingleton.liquor?.noLiquorImgUrl.isNullOrEmpty()) ImageManager.setPicture(
+                    binding.liquorComplianceMain.imgLiquorBanner,
+                    AppConfigSingleton.liquor?.noLiquorImgUrl
+            )
+        } else {
+            setLiquorBannerVisibility(false)
+        }
+    }
+
+    private fun setLiquorBannerVisibility(visibility : Boolean) {
+        binding.liquorComplianceMain.liquorBannerRootConstraintLayout.visibility = if(visibility) View.VISIBLE else View.GONE
     }
 
     private fun triggerFirebaseEventForCart(appliedVouchersCount: Int) {
@@ -969,6 +982,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                     it
                 )
             }
+        updateLiquorBanner()
         setItemLimitsBanner()
         if ((cartResponse?.cartItems?.size ?: 0) > 0 && cartProductAdapter != null) {
             val emptyCartItemGroups = ArrayList<CartItemGroup>(0)
@@ -1195,13 +1209,21 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             orderSummary?.minimumBasketAmount?.let { minBasketAmount ->
                 binding.txtMinSpendErrorMsg.apply {
                     visibility = View.VISIBLE
-                    text =
-                        String.format(
-                            getString(
-                                R.string.minspend_error_msg_cart,
-                                CurrencyFormatter.formatAmountToRandNoDecimal(minBasketAmount)
-                            )
+                    text = buildSpannedString {
+                        val amount = CurrencyFormatter.formatAmountToRandNoDecimal(minBasketAmount)
+                        val error = String.format(
+                            getString(R.string.minspend_error_msg_cart, amount)
                         )
+                        append(error)
+                        val start = error.indexOf(amount) - 1
+                        val typeface = ResourcesCompat.getFont(context, R.font.opensans_semi_bold)
+                        setSpan(
+                            CustomTypefaceSpan("opensans", typeface),
+                            start,
+                            start.plus(amount.length).plus(1),
+                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                        )
+                    }
                 }
             }
             binding.btnCheckOut.isEnabled = false
