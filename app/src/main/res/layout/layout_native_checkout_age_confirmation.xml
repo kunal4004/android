@@ -44,7 +44,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@color/white"
-            android:fontFamily="@font/myriad_pro_regular"
+            android:fontFamily="@font/opensans_regular"
             android:text="@string/native_checkout_delivery_age_confirmation_desc"
             android:textColor="@color/black" />
 
@@ -67,7 +67,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@color/white"
-            android:fontFamily="@font/myriad_pro_regular"
+            android:fontFamily="@font/opensans_regular"
             android:text="@string/native_checkout_delivery_age_confirmation_desc_note"
             android:textColor="@color/black" />
 
@@ -92,11 +92,11 @@
             android:layout_height="wrap_content"
             android:background="@color/white"
             android:checked="false"
-            android:fontFamily="@font/myriad_pro_semi_bold"
+            android:fontFamily="@font/opensans_semi_bold"
             android:paddingHorizontal="@dimen/ten_dp"
             android:text="@string/native_checkout_delivery_age_confirm"
             android:textColor="@color/black"
-            android:textSize="@dimen/fifteen_sp"
+            android:textSize="@dimen/thirteen_sp"
             app:layout_constrainedWidth="true" />
 
     </com.facebook.shimmer.ShimmerFrameLayout>
