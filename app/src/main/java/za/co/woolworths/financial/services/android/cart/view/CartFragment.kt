@@ -419,7 +419,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         val isEditMode = toggleEditMode()
         binding.btnEditCart.setText(if (isEditMode) R.string.cancel else R.string.edit)
         binding.btnClearCart.visibility = if (isEditMode) View.VISIBLE else View.GONE
-        setPriceInformationVisibility(!isEditMode)
+        setPriceInformationVisibility(!isEditMode, isEditMode)
         setDeliveryLocationEnabled(!isEditMode)
         if (!isEditMode)
             setMinimumCartErrorMessage()
@@ -689,8 +689,11 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         return isEditMode
     }
 
-    private fun setPriceInformationVisibility(visibility: Boolean){
+    private fun setPriceInformationVisibility(visibility: Boolean, isEditModeChanged : Boolean = false) {
         binding.includedPrice.orderSummeryLayout.visibility = if(visibility) View.VISIBLE else View.GONE
+        if(!visibility && !isEditModeChanged) {
+            setLiquorBannerVisibility(false)
+        }
     }
 
     private fun setPriceValue(textView: WTextView, value: Double) {
@@ -929,18 +932,25 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             ) else onEnterPromoCode()
         }
         priceHolder.promoDiscountInfo.setOnClickListener { onPromoDiscountInfo() }
-        if (liquorCompliance != null && liquorCompliance!!.isLiquorOrder) {
-            priceHolder.liquorComplianceMain.liquorBannerRootConstraintLayout.visibility = View.VISIBLE
-            if (!AppConfigSingleton.liquor?.noLiquorImgUrl.isNullOrEmpty()) ImageManager.setPicture(
-                priceHolder.liquorComplianceMain.imgLiquorBanner,
-                AppConfigSingleton.liquor?.noLiquorImgUrl
-            )
-        } else {
-            priceHolder.liquorComplianceMain.liquorBannerRootConstraintLayout.visibility = View.GONE
-        }
+        updateLiquorBanner()
         if (getPreferredDeliveryType() == Delivery.CNC) {
             priceHolder.deliveryFeeLabel.text = getString(R.string.collection_fee)
         }
+    }
+    private fun updateLiquorBanner() {
+        if (liquorCompliance != null && liquorCompliance!!.isLiquorOrder) {
+            setLiquorBannerVisibility(true)
+            if (!AppConfigSingleton.liquor?.noLiquorImgUrl.isNullOrEmpty()) ImageManager.setPicture(
+                    binding.liquorComplianceMain.imgLiquorBanner,
+                    AppConfigSingleton.liquor?.noLiquorImgUrl
+            )
+        } else {
+            setLiquorBannerVisibility(false)
+        }
+    }
+
+    private fun setLiquorBannerVisibility(visibility : Boolean) {
+        binding.liquorComplianceMain.liquorBannerRootConstraintLayout.visibility = if(visibility) View.VISIBLE else View.GONE
     }
 
     private fun triggerFirebaseEventForCart(appliedVouchersCount: Int) {
@@ -969,6 +979,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                     it
                 )
             }
+        updateLiquorBanner()
         setItemLimitsBanner()
         if ((cartResponse?.cartItems?.size ?: 0) > 0 && cartProductAdapter != null) {
             val emptyCartItemGroups = ArrayList<CartItemGroup>(0)
