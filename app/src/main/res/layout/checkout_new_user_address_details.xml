@@ -50,12 +50,14 @@
 
     <TextView
         android:id="@+id/deliveringAddressTypesErrorMsg"
-        style="@style/myriad_pro_regular"
+        style="@style/opensans_regular_13_black"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constrainedWidth="true"
         android:layout_marginTop="@dimen/fifteen_dp"
         android:lineSpacingMultiplier="1.40"
         android:text="@string/delivering_address_types_error_msg"
         android:textColor="@color/input_error_color_code"
-        android:textSize="@dimen/fourteen_sp"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="@id/right_guideline"
         app:layout_constraintStart_toStartOf="@id/left_guideline"
@@ -86,12 +88,13 @@
 
     <TextView
         android:id="@+id/addressNicknameErrorMsg"
-        style="@style/myriad_pro_regular"
+        style="@style/opensans_regular_13_black"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/fifteen_dp"
         android:lineSpacingMultiplier="1.40"
         android:text="@string/address_nickname_error_msg"
         android:textColor="@color/input_error_color_code"
-        android:textSize="@dimen/fourteen_sp"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="@id/right_guideline"
         app:layout_constraintStart_toStartOf="@id/left_guideline"
@@ -124,12 +127,13 @@
 
     <TextView
         android:id="@+id/unitComplexFloorEditTextErrorMsg"
-        style="@style/myriad_pro_regular"
+        style="@style/opensans_regular_13_black"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/fifteen_dp"
         android:lineSpacingMultiplier="1.40"
         android:text="@string/address_nickname_error_msg"
         android:textColor="@color/input_error_color_code"
-        android:textSize="@dimen/fourteen_sp"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="@id/right_guideline"
         app:layout_constraintStart_toStartOf="@id/left_guideline"
