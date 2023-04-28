@@ -287,7 +287,6 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
             })
             tabsMain?.setupWithViewPager(viewpagerMain)
             updateTabIconUI(STANDARD_TAB.index)
-            showShopFeatureWalkThrough()
             addObserverInAppNotificationToast()
         }
     }
@@ -1379,7 +1378,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         }
     }
 
-    private fun showShopFeatureWalkThrough() {
+     fun showShopFeatureWalkThrough() {
         (activity as? BottomNavigationActivity)?.let {
             // Prevent dialog to display in other section when fragment is not visible
             if (it.currentFragment !is ShopFragment || !isAdded || AppInstanceObject.get().featureWalkThrough.shopping || !Utils.isFeatureWalkThroughTutorialsEnabled())
