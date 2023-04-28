@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.checkout.view
 
 import android.animation.ObjectAnimator
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
@@ -65,18 +64,10 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.Companion.ADDRESS_OFFICE
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils.Companion.getSelectedDefaultName
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
-import za.co.woolworths.financial.services.android.models.dto.Province
-import za.co.woolworths.financial.services.android.models.dto.Suburb
-import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
-import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
-import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment.Companion.KEY_ARGS_BUNDLE
-import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment.Companion.KEY_ARGS_PROVINCE
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment.Companion.KEY_ARGS_SCREEN_NAME
-import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment.Companion.KEY_ARGS_SUBURB
-import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment.Companion.KEY_ARGS_UNSELLABLE_COMMERCE_ITEMS
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorDialogFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_100_MS
@@ -222,7 +213,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         initView()
         listOfInputFields = listOf(
             binding.autoCompleteTextView,
-            binding.addressStreetNameEditText,
+           // binding.addressStreetNameEditText,
             binding.recipientAddressLayout.addressNicknameEditText,
             binding.recipientAddressLayout.unitComplexFloorEditText,
             binding.recipientDetailsLayout.recipientNameEditText,
@@ -332,15 +323,8 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             }
         }
 
-        binding.recipientAddressLayout.unitComplexFloorEditText?.apply {
-            afterTextChanged {
-                selectedAddress.savedAddress.address2 = it
-                if (it.isNotEmpty())
-                    showErrorInputField(this, View.GONE)
-            }
-        }
 
-        binding.addressStreetNameEditText?.apply {
+        binding.recipientAddressLayout.unitComplexFloorEditText.apply {
             afterTextChanged {
                 selectedAddress.savedAddress.address2 = it
                 if (it.isNotEmpty())
@@ -719,9 +703,9 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                     //if addressType is poi and Changed From Complex/Estate to other type then need to clear all fields
                     if (isPoiAddress == true && !selectedDeliveryAddressType?.equals(Constant.COMPLEX_ESTATE)!!) {
                         binding.autoCompleteTextView?.setText("")
-                        binding.addressStreetNamePlaceHolder?.visibility = View.GONE
-                        binding.addressStreetNameEditText?.visibility = View.GONE
-                        binding.addressStreetNameEditTextErrorMsg?.visibility = View.GONE
+                       // binding.addressStreetNamePlaceHolder?.visibility = View.GONE
+                       // binding.addressStreetNameEditText?.visibility = View.GONE
+                       // binding.addressStreetNameEditTextErrorMsg?.visibility = View.GONE
                         binding.recipientAddressLayout.unitComplexFloorPlaceHolder?.visibility = View.VISIBLE
                         binding.recipientAddressLayout.unitComplexFloorEditText?.visibility = View.VISIBLE
                         binding.recipientAddressLayout.unitComplexFloorEditTextErrorMsg?.visibility = View.GONE
@@ -900,25 +884,8 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                 }
             }
             return
-        } else {
-            if (isPoiAddress == true) {
-                binding.addressStreetNameEditText?.let {
-                    if (it.text.trim().isEmpty()) {
-                        showErrorInputField(it, View.VISIBLE)
-                        return
-                    }
-                }
-            } else {
-                if (selectedDeliveryAddressType != Constant.HOUSE && isPoiAddress == false) {
-                    binding.recipientAddressLayout.unitComplexFloorEditText?.let {
-                        if (it.text.trim().isEmpty()) {
-                            showErrorInputField(it, View.VISIBLE)
-                            return
-                        }
-                    }
-                }
-            }
         }
+
         if (selectedAddress.savedAddress.address1.isNullOrEmpty()) {
             showErrorDialog()
             return
@@ -1047,14 +1014,6 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
     }
 
 
-    private fun showErrorScreen(errorType: Int, errorMessage: String?) {
-        activity?.apply {
-            val intent = Intent(this, ErrorHandlerActivity::class.java)
-            intent.putExtra("errorType", errorType)
-            intent.putExtra("errorMessage", errorMessage)
-            startActivityForResult(intent, ErrorHandlerActivity.ERROR_PAGE_REQUEST_CODE)
-        }
-    }
 
     fun isNickNameAlreadyExist(response: AddAddressResponse): Boolean {
         if (!response.validationErrors.isNullOrEmpty()) {
@@ -1076,47 +1035,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         )
     }
 
-    /**
-     * This function is to navigate to Unsellable Items screen.
-     * @param [unSellableCommerceItems] list of items that are not deliverable in the selected location
-     * @param [deliverable] boolean flag to determine if provided list of items are deliverable
-     *
-     * @see [Suburb]
-     * @see [Province]
-     * @see [UnSellableCommerceItem]
-     */
-    private fun navigateToUnsellableItemsFragment(
-        unSellableCommerceItems: MutableList<UnSellableCommerceItem>,
-        deliverable: Boolean,
-        screenName: String,
-    ) {
-        val suburb = Suburb()
-        val province = Province()
-        suburb.apply {
-            id = selectedAddress.savedAddress.suburbId
-            name = selectedAddress.savedAddress.suburb
-            postalCode = selectedAddress.savedAddress.postalCode
-            suburbDeliverable = deliverable
-        }
-        province.apply {
-            name = selectedAddress.provinceName
-            id = selectedAddress.savedAddress.region
-        }
 
-        navController?.navigate(
-            R.id.action_checkoutAddAddressNewUserFragment_to_geoUnsellableItemsFragment,
-            bundleOf(
-                KEY_ARGS_BUNDLE to bundleOf(
-                    SAVED_ADDRESS_KEY to savedAddressResponse,
-                    DELIVERY_TYPE to DeliveryType.DELIVERY.name,
-                    KEY_ARGS_SUBURB to Utils.toJson(suburb),
-                    KEY_ARGS_PROVINCE to Utils.toJson(province),
-                    KEY_ARGS_UNSELLABLE_COMMERCE_ITEMS to Utils.toJson(unSellableCommerceItems),
-                    KEY_ARGS_SCREEN_NAME to screenName
-                )
-            )
-        )
-    }
 
     private fun getAddAddressRequestBody(): AddAddressRequestBody {
         return AddAddressRequestBody(
@@ -1203,70 +1122,6 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             }
     }
 
-    private fun callChangeAddressApi(nickName: String) {
-        binding.loadingProgressBar.visibility = View.VISIBLE
-        checkoutAddAddressNewUserViewModel.changeAddress(
-            nickName
-        ).observe(viewLifecycleOwner) { response ->
-            binding.loadingProgressBar.visibility = View.GONE
-            when (response) {
-                is ChangeAddressResponse -> {
-                    when (response.httpCode) {
-                        HTTP_OK, HTTP_OK_201 -> {
-
-                            if (response.deliverable == null) {
-                                showErrorScreen(
-                                    ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON,
-                                    getString(R.string.common_error_message_without_contact_info)
-                                )
-                                return@observe
-                            }
-
-                            // If deliverable false then show cant deliver popup
-                            // Don't allow user to navigate to Checkout page when deliverable : [false].
-                            if (response.deliverable == false) {
-                                showSuburbNotDeliverableBottomSheetDialog(
-                                    ERROR_CODE_SUBURB_NOT_DELIVERABLE
-                                )
-                                return@observe
-                            }
-
-                            // Check if any unSellableCommerceItems[ ] > 0 display the items in modal as per the design
-                            if (!response.unSellableCommerceItems.isNullOrEmpty()) {
-                                navigateToUnsellableItemsFragment(
-                                    response.unSellableCommerceItems,
-                                    response.deliverable ?: false,
-                                    SCREEN_NAME_EDIT_ADDRESS
-                                )
-                                return@observe
-                            }
-
-                            // else functionality complete.
-                            setFragmentResult(
-                                UPDATE_SAVED_ADDRESS_REQUEST_KEY, bundleOf(
-                                    SAVED_ADDRESS_KEY to savedAddressResponse
-                                )
-                            )
-                            navController?.navigateUp()
-                            selectedAddressId = ""
-                        }
-                        else -> {
-                            showErrorScreen(
-                                ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON,
-                                getString(R.string.common_error_message_without_contact_info)
-                            )
-                        }
-                    }
-                }
-                is Throwable -> {
-                    showErrorScreen(
-                        ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON,
-                        getString(R.string.common_error_message_without_contact_info)
-                    )
-                }
-            }
-        }
-    }
 
     private fun isNickNameExist(): Boolean {
         var isExist = false
@@ -1395,20 +1250,11 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                         binding.recipientAddressLayout.root.y.toInt()
                     )
                 }
-                R.id.addressStreetNameEditText -> {
-                    if (isPoiAddress == true && isValidAddress) {
-                        binding.addressStreetNameEditTextErrorMsg.text =
-                            bindString(R.string.street_name_error_msg)
-                        showAnimationErrorMessage(
-                            binding.addressStreetNameEditTextErrorMsg,
-                            visible,
-                            binding.recipientAddressLayout.root.y.toInt()
-                        )
-                    }
-                }
+
                 R.id.unitComplexFloorEditText -> {
+
                     //For other than House AddressType UnitComplex is  mandatory
-                    if (selectedDeliveryAddressType != null && selectedDeliveryAddressType != Constant.HOUSE && isPoiAddress == false) {
+                    if ( selectedDeliveryAddressType != Constant.HOUSE ) {
                         binding.recipientAddressLayout.unitComplexFloorEditTextErrorMsg?.text =
                             bindString(R.string.address_nickname_error_msg)
                         showAnimationErrorMessage(
@@ -1416,10 +1262,8 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                             visible,
                             binding.recipientAddressLayout.root.y.toInt()
                         )
-                    } else {
-                        //For House AddressType UnitComplex is not mandatory
-                        binding.recipientAddressLayout.unitComplexFloorEditText?.setBackgroundResource(R.drawable.recipient_details_input_edittext_bg)
                     }
+
                 }
             }
         }
@@ -1490,13 +1334,14 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
 
     private fun enablePOIAddressTextFields() {
         //for enabling the StreetName place holder and EditText
-        binding.addressStreetNamePlaceHolder?.visibility = View.VISIBLE
-        binding.addressStreetNameEditText?.setText("")
-        binding.addressStreetNameEditText?.visibility = View.VISIBLE
+       // binding.addressStreetNamePlaceHolder?.visibility = View.VISIBLE
+       // binding.addressStreetNameEditText?.setText("")
+       // binding.addressStreetNameEditText?.visibility = View.VISIBLE
 
         //for disabling the unitComplex place holder and EditText
-        binding.recipientAddressLayout.unitComplexFloorPlaceHolder?.visibility = View.GONE
-        binding.recipientAddressLayout.unitComplexFloorEditText?.visibility = View.GONE
+        binding.recipientAddressLayout.unitComplexFloorPlaceHolder?.visibility = View.VISIBLE
+        binding.recipientAddressLayout.unitComplexFloorEditText?.visibility = View.VISIBLE
+
         binding.recipientAddressLayout.unitComplexFloorEditTextErrorMsg?.visibility = View.GONE
 
         //need to set Address Type as Complex/Estate
@@ -1509,9 +1354,9 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
 
     private fun disablePOIAddressTextFields() {
         //for disabling the StreetName place holder and EditText for NON POI Address
-        binding.addressStreetNamePlaceHolder?.visibility = View.GONE
-        binding.addressStreetNameEditText?.visibility = View.GONE
-        binding.addressStreetNameEditTextErrorMsg?.visibility = View.GONE
+      //  binding.addressStreetNamePlaceHolder?.visibility = View.GONE
+       // binding.addressStreetNameEditText?.visibility = View.GONE
+       // binding.addressStreetNameEditTextErrorMsg?.visibility = View.GONE
         //for enabling the unitComplex place holder and EditText if it is Non POI Address
         binding.recipientAddressLayout.unitComplexFloorPlaceHolder?.visibility = View.VISIBLE
         binding.recipientAddressLayout.unitComplexFloorEditText?.visibility = View.VISIBLE
@@ -1522,23 +1367,15 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         //based on the AddressType changing the PlaceHolder for UnitNo/Complex/Floor/Building
 
         when (addressType) {
+            Constant.OFFICE,Constant.APARTMENT,
             Constant.COMPLEX_ESTATE->{
                 binding.recipientAddressLayout.unitComplexFloorPlaceHolder?.text =
-                    getString(R.string.complex_estate)
-            }
-            Constant.OFFICE->{
-                binding.recipientAddressLayout.unitComplexFloorPlaceHolder?.text =
-                    getString(R.string.office_details)
-            }
-            Constant.APARTMENT,
-            -> {
-                binding.recipientAddressLayout.unitComplexFloorPlaceHolder?.text =
-                    getString(R.string.unit_number_floor)
+                    getString(R.string.additional_details)
             }
             else
             -> {
                 binding.recipientAddressLayout.unitComplexFloorPlaceHolder?.text =
-                    getString(R.string.additional_details)
+                    getString(R.string.house_details)
                 binding.recipientAddressLayout.unitComplexFloorEditTextErrorMsg?.visibility = View.GONE
             }
         }

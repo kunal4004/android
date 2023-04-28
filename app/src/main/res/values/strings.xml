@@ -2971,7 +2971,7 @@
     <string name="geo_loc_error_msg_title">We can’t seem to find you here.</string>
     <string name="street_address_lbl">Street Address:*</string>
     <string name="recipient_name_placeholder">Recipient Name: *</string>
-    <string name="additional_details">Additional Details:</string>
+    <string name="additional_details">Additional Location Details: *</string>
     <string name="office_details">Office Details:*</string>
     <string name="complex_estate">Complex/Estate:*</string>
     <string name="unit_number_floor">Unit Number/Floor:*</string>
@@ -2983,6 +2983,7 @@
     <string name="use_location">USE LOCATION</string>
     <string name="sign_in_to_see_saved_addresses"><u>SIGN IN</u> TO SEE SAVED ADDRESSES</string>
     <string name="enable_location_services">Enable Location Services</string>
+    <string name="house_details">House Details:</string>
 
 
 </resources>
