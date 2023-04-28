@@ -15,8 +15,8 @@ android {
     def major = "9"
     def minor = "9"
     def fix = "0"
-    def jobNumberProduction = 214
-    def jobNumberQa = 689
+    def jobNumberProduction = 215
+    def jobNumberQa = 690
 
     buildFeatures {
         dataBinding true
