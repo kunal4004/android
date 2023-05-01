@@ -1625,6 +1625,11 @@ fun RecyclerView.runWhenReady(action: () -> Unit) {
     viewTreeObserver.addOnGlobalLayoutListener(globalLayoutListener)
 }
 
+var EditText.value
+    get() = this.text.toString()
+    set(value) {
+        this.setText(value)
+    }
 
 
 

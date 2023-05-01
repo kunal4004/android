@@ -2984,6 +2984,7 @@
     <string name="sign_in_to_see_saved_addresses"><u>SIGN IN</u> TO SEE SAVED ADDRESSES</string>
     <string name="enable_location_services">Enable Location Services</string>
     <string name="house_details">House Details:</string>
-
+    <string name="un_Indexed_address_popup_title">Please share any details that will help us identify this location more clearly.</string>
+    <string name="un_Indexed_address_popup_additional_info_placeholder">Add a location description, or additional instructions:</string>
 
 </resources>

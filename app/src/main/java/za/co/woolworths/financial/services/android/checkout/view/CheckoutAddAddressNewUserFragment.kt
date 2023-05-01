@@ -68,6 +68,7 @@ import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment.Companion.KEY_ARGS_SCREEN_NAME
+import za.co.woolworths.financial.services.android.ui.fragments.poi.PoiBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorDialogFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_100_MS
@@ -84,6 +85,7 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.KeyboardUtils.Companion.hideKeyboardIfVisible
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.location.DynamicGeocoder
+import za.co.woolworths.financial.services.android.viewmodels.UnIndexedAddressLiveData
 import java.net.HttpURLConnection.HTTP_OK
 import java.util.regex.Pattern
 import kotlin.coroutines.CoroutineContext
@@ -92,7 +94,7 @@ import kotlin.coroutines.CoroutineContext
  * Created by Kunal Uttarwar on 29/05/21.
  */
 class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(R.layout.checkout_add_address_new_user),
-    View.OnClickListener, CoroutineScope, ErrorHandlerBottomSheetDialog.ClickListener {
+    View.OnClickListener, CoroutineScope, ErrorHandlerBottomSheetDialog.ClickListener ,PoiBottomSheetDialog.ClickListener,UnIndexedAddressIdentifiedListener{
 
     private lateinit var binding: CheckoutAddAddressNewUserBinding
     private var deliveringOptionsList: List<String>? = null
@@ -116,6 +118,8 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
     private var isPoiAddress: Boolean? = false
     private var address2: String? = ""
     private var oldNickName: String? = ""
+    private var unIndexedAddressIdentified:Boolean?=false
+
 
     companion object {
         const val SCREEN_NAME_EDIT_ADDRESS: String = "SCREEN_NAME_EDIT_ADDRESS"
@@ -240,7 +244,9 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                 }
             }
         }
+        addUnIndexedIdentifiedListener()
     }
+
 
     private fun setTextFields() {
         oldNickName = selectedAddress?.savedAddress?.nickname
@@ -372,15 +378,18 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             Places.initialize(context, getString(R.string.maps_google_api_key))
             val placesClient = Places.createClient(context)
             val placesAdapter =
-                GooglePlacesAdapter(requireActivity(), placesClient)
+                GooglePlacesAdapter(requireActivity(), placesClient ,this@CheckoutAddAddressNewUserFragment)
             binding.autoCompleteTextView?.apply {
                 setAdapter(placesAdapter)
+
             }
             binding.autoCompleteTextView?.onItemClickListener =
                 AdapterView.OnItemClickListener { parent, _, position, _ ->
                     val item = parent.getItemAtPosition(position) as? PlaceAutocomplete
                     placeId = item?.placeId.toString()
                     placeName = item?.primaryText.toString()
+                    UnIndexedAddressLiveData.value = true
+                    hideOrShowUnIndexedAddressErrorMessages(false)
                     val placeFields: MutableList<Place.Field> = mutableListOf(
                         Place.Field.ID,
                         Place.Field.NAME,
@@ -410,6 +419,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                                         .show()
                                 }
                             }
+
                     }
                 }
         }
@@ -1392,5 +1402,52 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
            }
        }
     }
+
+
+
+    override fun onConfirmClick(streetName: String) {
+        address2 = streetName
+        binding.recipientAddressLayout.unitComplexFloorEditText.value = streetName
+
+    }
+
+
+    override fun unIndexedAddressIdentified(addressText: String?) {
+        unIndexedAddressIdentified = true
+        hideOrShowUnIndexedAddressErrorMessages(true)
+    }
+
+
+    private fun addUnIndexedIdentifiedListener() {
+        UnIndexedAddressLiveData.value=false
+        UnIndexedAddressLiveData.observe(viewLifecycleOwner) {
+            if (it == true && unIndexedAddressIdentified == true) {
+                val poiBottomSheetDialog =
+                    PoiBottomSheetDialog(this@CheckoutAddAddressNewUserFragment, false)
+
+                poiBottomSheetDialog.show(
+                    requireActivity().supportFragmentManager,
+                    PoiBottomSheetDialog::class.java.simpleName
+                )
+            }
+
+        }
+    }
+
+    private fun hideOrShowUnIndexedAddressErrorMessages(isEnabled:Boolean?){
+        if(isEnabled==true){
+           binding.errorMessageTitle.visibility=View.VISIBLE
+           binding.errorMessage.visibility=View.VISIBLE
+
+        }
+        else{
+
+            binding.errorMessageTitle.visibility=View.GONE
+            binding.errorMessage.visibility=View.GONE
+        }
+
+
+    }
+
 
 }

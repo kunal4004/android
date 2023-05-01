@@ -39,7 +39,7 @@ import za.co.woolworths.financial.services.android.geolocation.view.DeliveryAddr
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
-import za.co.woolworths.financial.services.android.ui.fragments.poi.MapsPoiBottomSheetDialog
+import za.co.woolworths.financial.services.android.ui.fragments.poi.PoiBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.EnableLocationSettingsFragment
 import za.co.woolworths.financial.services.android.ui.views.maps.DynamicMapDelegate
@@ -60,14 +60,12 @@ import za.co.woolworths.financial.services.android.util.LocalConstant.Companion.
 import za.co.woolworths.financial.services.android.util.LocalConstant.Companion.DEFAULT_LONGITUDE
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.location.DynamicGeocoder
-import za.co.woolworths.financial.services.android.util.location.Event
-import za.co.woolworths.financial.services.android.util.location.Locator
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class ConfirmAddressMapFragment :
-    Fragment(R.layout.geolocation_confirm_address), DynamicMapDelegate, VtoTryAgainListener, MapsPoiBottomSheetDialog.ClickListner {
+    Fragment(R.layout.geolocation_confirm_address), DynamicMapDelegate, VtoTryAgainListener, PoiBottomSheetDialog.ClickListener,UnIndexedAddressIdentifiedListener {
 
     private lateinit var binding: GeolocationConfirmAddressBinding
     private var mAddress: String? = null
@@ -517,7 +515,7 @@ class ConfirmAddressMapFragment :
             Places.initialize(context, getString(R.string.maps_google_api_key))
             val placesClient = Places.createClient(context)
             val placesAdapter =
-                GooglePlacesAdapter(requireActivity(), placesClient)
+                GooglePlacesAdapter(requireActivity(), placesClient,this@ConfirmAddressMapFragment)
             binding?.autoCompleteTextView?.apply {
                 setAdapter(placesAdapter)
             }
@@ -592,9 +590,9 @@ class ConfirmAddressMapFragment :
             if (result == true) {
                 if (isPoiAddress == true) {
                     confirmAddress?.isEnabled = false
-                    MapsPoiBottomSheetDialog(this@ConfirmAddressMapFragment).show(
+                    PoiBottomSheetDialog(this@ConfirmAddressMapFragment,true).show(
                         requireActivity().supportFragmentManager,
-                        MapsPoiBottomSheetDialog::class.java.simpleName
+                        PoiBottomSheetDialog::class.java.simpleName
                     )
                 } else {
                     errorMassageDivider?.visibility = View.VISIBLE
@@ -943,6 +941,10 @@ class ConfirmAddressMapFragment :
         address2 = streetName
         if (!address2.isNullOrEmpty())
             binding.confirmAddress?.isEnabled = true
+    }
+
+    override fun unIndexedAddressIdentified(addressText: String?) {
+        TODO("Not yet implemented")
     }
 }
 
