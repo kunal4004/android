@@ -63,4 +63,23 @@ object FirebaseAnalyticsEventHelper {
         )
     }
 
+    fun viewCart(commerceItems: List<CommerceItem>, value: Double) {
+        val analyticItems = commerceItems.map { it.toAnalyticItem() }
+        val addToCartParams = Bundle()
+        addToCartParams.apply {
+            putString(
+                FirebaseAnalytics.Param.CURRENCY,
+                FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE
+            )
+            putDouble(FirebaseAnalytics.Param.VALUE, value)
+            putParcelableArray(
+                FirebaseAnalytics.Param.ITEMS, analyticItems.map { it.toBundle() }.toTypedArray()
+            )
+
+        }
+        AnalyticsManager.logEvent(
+            FirebaseManagerAnalyticsProperties.VIEW_CART, addToCartParams
+        )
+    }
+
 }
