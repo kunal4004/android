@@ -2412,6 +2412,9 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
 
     private val onScrollStoppedListener = object: LockableNestedScrollViewV2.OnScrollStoppedListener {
         override fun onScrollStopped() {
+            if(!isAdded){
+                return
+            }
             val visible = binding.nestedScrollView.isViewVisible(binding.layoutRecommendationContainer.root)
             if (visible) {
                 recommendationViewModel.parentPageScrolledToRecommendation()
