@@ -98,7 +98,7 @@ class GooglePlacesAdapter(context: Activity, geoData: PlacesClient,unIndexedAddr
                 } else {
                     // The API did not return any results, invalidate the data set.
                     if(constraint != null && constraint.toString().trim().length >= SEARCH_LENGTH){
-                        mUnIndexedAddressIdentifiedListener.unIndexedAddressIdentified(constraint.toString().trim())
+                        mUnIndexedAddressIdentifiedListener.unIndexedAddressIdentified()
                         notifyDataSetInvalidated()
                     }
                 }

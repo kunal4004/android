@@ -47,6 +47,7 @@ import za.co.woolworths.financial.services.android.ui.views.maps.model.DynamicMa
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.VtoErrorBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.listener.VtoTryAgainListener
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_500_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_CONFIRM_ADD
@@ -61,6 +62,7 @@ import za.co.woolworths.financial.services.android.util.LocalConstant.Companion.
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.location.DynamicGeocoder
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
+import za.co.woolworths.financial.services.android.viewmodels.UnIndexedAddressLiveData
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -87,6 +89,7 @@ class ConfirmAddressMapFragment :
     private var isAddressFromSearch: Boolean = false
     private var isMoveMapCameraFirstTime: Boolean? = true
     private var isAddressSearch: Boolean? = false
+    private var unIndexedAddressIdentified:Boolean?=false
 
     val confirmAddressViewModel: ConfirmAddressViewModel by activityViewModels()
 
@@ -138,6 +141,8 @@ class ConfirmAddressMapFragment :
                 showErrorDialog()
             }
         }
+
+        addUnIndexedIdentifiedListener()
     }
 
     private fun onNavigationMapArrowClicked() {
@@ -680,6 +685,9 @@ class ConfirmAddressMapFragment :
                     mLatitude = latitude?.toString()
                     mLongitude = longitude?.toString()
                     getPlaceId(latitude, longitude)
+
+
+
                 }
             }
         }
@@ -803,6 +811,12 @@ class ConfirmAddressMapFragment :
                         type = POI
                     }
 
+                    if(unIndexedAddressIdentified==true){
+
+                        type=POI
+                    }
+
+
 
                     placeName?.let {
                         if (!it.equals(
@@ -813,15 +827,15 @@ class ConfirmAddressMapFragment :
                             sendAddressData(it, "$streetNumber $routeName", type)
                             isMainPlaceName = false
                         } else {
-                            sendAddressData("$streetNumber $routeName", type)
+                            sendAddressData("$streetNumber $routeName","",type )
                             isMainPlaceName = false
                         }
-                    } ?: sendAddressData("$streetNumber $routeName", type)
+                    } ?: sendAddressData("$streetNumber $routeName","", type)
 
                     try {
                         view?.let {
                             lifecycleScope.launchWhenStarted {
-                                delay(AppConstant.DELAY_500_MS)
+                                delay(DELAY_500_MS)
                                 if (streetNumber.isNullOrEmpty() && routeName.isNullOrEmpty())
                                     showSelectedLocationError(true)
                                 else
@@ -831,6 +845,7 @@ class ConfirmAddressMapFragment :
                     } catch (e: Exception) {
                         FirebaseManager.logException(e)
                     }
+
 
                 }.addOnFailureListener {
                     if (!isAdded || !isVisible) return@addOnFailureListener
@@ -863,6 +878,8 @@ class ConfirmAddressMapFragment :
             view?.let {
                 lifecycleScope.launch {
                     confirmAddressViewModel.postSaveAddress(saveAddressLocationRequest)
+                    delay(DELAY_500_MS)
+                    UnIndexedAddressLiveData.value = true
                 }
             }
         } catch (e: Exception) {
@@ -943,8 +960,24 @@ class ConfirmAddressMapFragment :
             binding.confirmAddress?.isEnabled = true
     }
 
-    override fun unIndexedAddressIdentified(addressText: String?) {
-        TODO("Not yet implemented")
+    override fun unIndexedAddressIdentified() {
+        unIndexedAddressIdentified = true
+        showSelectedLocationError(true)
     }
+
+    private fun addUnIndexedIdentifiedListener() {
+        UnIndexedAddressLiveData.value=false
+        UnIndexedAddressLiveData.observe(viewLifecycleOwner) {
+            if (it == true && unIndexedAddressIdentified == true && isPoiAddress == false) {
+                PoiBottomSheetDialog(this@ConfirmAddressMapFragment, false).show(
+                    requireActivity().supportFragmentManager,
+                    PoiBottomSheetDialog::class.java.simpleName
+                )
+            }
+
+        }
+    }
+
+
 }
 

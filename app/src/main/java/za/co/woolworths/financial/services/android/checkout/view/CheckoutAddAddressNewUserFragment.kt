@@ -1415,7 +1415,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
     }
 
 
-    override fun unIndexedAddressIdentified(addressText: String?) {
+    override fun unIndexedAddressIdentified() {
         unIndexedAddressIdentified = true
         hideOrShowUnIndexedAddressErrorMessages(true)
     }

@@ -105,6 +105,7 @@
         android:layout_height="@dimen/_2sdp"
         android:background="@color/gray"
         android:visibility="gone"
+        android:layout_marginTop="@dimen/sixteen_dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/searchLayout" />
@@ -123,8 +124,8 @@
         android:text="@string/geo_loc_error_msg_title"
         android:textColor="@color/red"
         android:textSize="@dimen/sixteen_sp"
-        android:translationY="@dimen/minus_one_point_five_sp"
         android:visibility="gone"
+        android:translationY="@dimen/minus_one_point_five_sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/errorMassageDivider" />
