@@ -31,26 +31,25 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/sixteen_dp"
                 android:src="@drawable/back24"
-                app:layout_constraintStart_toStartOf="@id/left_guideline"
-                app:layout_constraintTop_toTopOf="parent" />
-
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="@id/left_guideline" />
             <TextView
                 android:id="@+id/whereWeDeliveringTitle"
                 style="@style/futura_semi_bold_black"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/twenty_four_dp"
                 android:paddingTop="@dimen/two_dp"
                 android:paddingBottom="@dimen/two_dp"
+                android:layout_marginTop="@dimen/twenty_four_dp"
                 android:text="@string/where_are_we_delivering"
                 android:textSize="@dimen/twenty_sp"
                 app:layout_constraintRight_toRightOf="@id/right_guideline"
                 app:layout_constraintStart_toStartOf="@id/left_guideline"
-                app:layout_constraintTop_toBottomOf="@id/backButton" />
+                app:layout_constraintTop_toBottomOf="@id/backButton"/>
 
             <AutoCompleteTextView
                 android:id="@+id/autoCompleteTextView"
-                style="@style/checkout_edittext_style"
+                style="@style/credi_card_delivery_edittext_style"
                 android:layout_marginTop="@dimen/nineteen_dp"
                 android:drawableStart="@drawable/mapview"
                 android:drawablePadding="@dimen/eight_dp"
@@ -62,13 +61,12 @@
 
             <TextView
                 android:id="@+id/autocompletePlaceErrorMsg"
-                style="@style/opensans_regular_12_text_style"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                style="@style/myriad_pro_regular"
                 android:layout_marginTop="@dimen/fifteen_dp"
                 android:lineSpacingMultiplier="1.40"
                 android:text="@string/places_address_error_msg"
                 android:textColor="@color/input_error_color_code"
+                android:textSize="@dimen/fourteen_sp"
                 android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="@id/right_guideline"
                 app:layout_constraintStart_toStartOf="@id/left_guideline"
@@ -77,39 +75,38 @@
 
             <TextView
                 android:id="@+id/addressStreetNamePlaceHolder"
-                style="@style/opensans_regular_13_black"
+                style="@style/myriad_pro_regular_black"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/twenty_four_dp"
                 android:background="@color/white"
                 android:contentDescription="@string/cd_ccd_labelsuburb"
                 android:text="@string/address_street_name_text_view"
+                android:textSize="@dimen/fourteen_sp"
                 android:visibility="gone"
                 app:layout_constraintStart_toStartOf="@id/left_guideline"
                 app:layout_constraintTop_toBottomOf="@id/autocompletePlaceErrorMsg" />
 
             <EditText
                 android:id="@+id/addressStreetNameEditText"
-                style="@style/checkout_edittext_style"
                 android:layout_width="0dp"
-                android:layout_marginTop="@dimen/_3sdp"
+                style="@style/checkout_edittext_style"
                 android:maxLength="@integer/fifty"
                 android:visibility="gone"
+                android:layout_marginTop="@dimen/_3sdp"
                 app:layout_constraintEnd_toEndOf="@id/right_guideline"
                 app:layout_constraintStart_toStartOf="@id/left_guideline"
                 app:layout_constraintTop_toBottomOf="@id/addressStreetNamePlaceHolder" />
 
+
             <TextView
                 android:id="@+id/addressStreetNameEditTextErrorMsg"
-                style="@style/opensans_regular_12_text_style"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                style="@style/myriad_pro_regular"
                 android:layout_marginTop="@dimen/fifteen_dp"
                 android:lineSpacingMultiplier="1.40"
                 android:text="@string/places_address_error_msg"
                 android:textColor="@color/input_error_color_code"
+                android:textSize="@dimen/fourteen_sp"
                 android:visibility="gone"
-                app:layout_constrainedWidth="true"
                 app:layout_constraintEnd_toEndOf="@id/right_guideline"
                 app:layout_constraintStart_toStartOf="@id/left_guideline"
                 app:layout_constraintTop_toBottomOf="@id/addressStreetNameEditText" />
