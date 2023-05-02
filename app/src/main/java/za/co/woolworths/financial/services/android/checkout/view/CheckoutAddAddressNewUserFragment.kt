@@ -388,7 +388,6 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                     val item = parent.getItemAtPosition(position) as? PlaceAutocomplete
                     placeId = item?.placeId.toString()
                     placeName = item?.primaryText.toString()
-                    UnIndexedAddressLiveData.value = true
                     hideOrShowUnIndexedAddressErrorMessages(false)
                     val placeFields: MutableList<Place.Field> = mutableListOf(
                         Place.Field.ID,
@@ -600,6 +599,8 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             latitude = place.latLng?.latitude
             longitude = place.latLng?.longitude
             placesId = placeId
+            UnIndexedAddressLiveData.value = true
+
         }
 
         val setTextAndCheckIfSelectedProvinceExist = {
@@ -632,6 +633,8 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         } else {
             setTextAndCheckIfSelectedProvinceExist.invoke()
         }
+
+
     }
 
     fun checkIfSelectedProvinceExist() {
@@ -1421,19 +1424,21 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
     private fun addUnIndexedIdentifiedListener() {
         UnIndexedAddressLiveData.value=false
         UnIndexedAddressLiveData.observe(viewLifecycleOwner) {
-            if (it == true && unIndexedAddressIdentified == true) {
+            if (it == true && unIndexedAddressIdentified == true && isPoiAddress == false) {
 
                 isValidAddress = true
                 enablePOIAddressTextFields()
-                val poiBottomSheetDialog =
-                    PoiBottomSheetDialog(this@CheckoutAddAddressNewUserFragment, false)
-
-                poiBottomSheetDialog.show(
+                    PoiBottomSheetDialog(this@CheckoutAddAddressNewUserFragment, false).show(
                     requireActivity().supportFragmentManager,
                     PoiBottomSheetDialog::class.java.simpleName
 
 
                 )
+            }else if(isPoiAddress == true){
+                PoiBottomSheetDialog(this@CheckoutAddAddressNewUserFragment, true).show(
+                    requireActivity().supportFragmentManager,
+                    PoiBottomSheetDialog::class.java.simpleName)
+
             }
 
         }
