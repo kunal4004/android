@@ -828,14 +828,14 @@ class ConfirmAddressMapFragment :
             apiAddress1,
             type
         )
-        try {
-            view?.let {
-                lifecycleScope.launch {
+        view?.let {
+            lifecycleScope.launch {
+                try {
                     confirmAddressViewModel.postSaveAddress(saveAddressLocationRequest)
+                } catch (e: Exception) {
+                    // Ignored (for example, HttpException for error 502)
                 }
             }
-        } catch (e: Exception) {
-            FirebaseManager.logException(e)
         }
     }
 
