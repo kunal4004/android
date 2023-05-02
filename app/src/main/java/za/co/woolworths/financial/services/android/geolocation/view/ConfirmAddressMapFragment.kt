@@ -67,7 +67,8 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class ConfirmAddressMapFragment :
-    Fragment(R.layout.geolocation_confirm_address), DynamicMapDelegate, VtoTryAgainListener, PoiBottomSheetDialog.ClickListener,UnIndexedAddressIdentifiedListener {
+    Fragment(R.layout.geolocation_confirm_address), DynamicMapDelegate, VtoTryAgainListener,
+    PoiBottomSheetDialog.ClickListener, UnIndexedAddressIdentifiedListener {
 
     private lateinit var binding: GeolocationConfirmAddressBinding
     private var mAddress: String? = null
@@ -89,7 +90,9 @@ class ConfirmAddressMapFragment :
     private var isAddressFromSearch: Boolean = false
     private var isMoveMapCameraFirstTime: Boolean? = true
     private var isAddressSearch: Boolean? = false
-    private var unIndexedAddressIdentified:Boolean?=false
+    private var unIndexedAddressIdentified: Boolean? = false
+    private var unIndexedBottomSheetDialog: PoiBottomSheetDialog? = null
+    private var poiBottomSheetDialog: PoiBottomSheetDialog? = null
 
     val confirmAddressViewModel: ConfirmAddressViewModel by activityViewModels()
 
@@ -146,11 +149,11 @@ class ConfirmAddressMapFragment :
     }
 
     private fun onNavigationMapArrowClicked() {
-       binding?.navigationMapArrow?.setOnClickListener {
-           Utils.getLastSavedLocation()?.let {
-               moveMapCamera(it.latitude,it.longitude)
-           }
-       }
+        binding?.navigationMapArrow?.setOnClickListener {
+            Utils.getLastSavedLocation()?.let {
+                moveMapCamera(it.latitude, it.longitude)
+            }
+        }
     }
 
     private fun showErrorDialog() {
@@ -221,10 +224,14 @@ class ConfirmAddressMapFragment :
             findNavController().navigateUp()
         }
     }
+
     private fun turnLocationSettingsOn() {
         binding.apply {
             noLocationLayout?.turnOnSubTitle?.setOnClickListener {
-                KotlinUtils.openAccessMyLocationDeviceSettings(EnableLocationSettingsFragment.ACCESS_MY_LOCATION_REQUEST_CODE, activity)
+                KotlinUtils.openAccessMyLocationDeviceSettings(
+                    EnableLocationSettingsFragment.ACCESS_MY_LOCATION_REQUEST_CODE,
+                    activity
+                )
             }
         }
     }
@@ -520,7 +527,7 @@ class ConfirmAddressMapFragment :
             Places.initialize(context, getString(R.string.maps_google_api_key))
             val placesClient = Places.createClient(context)
             val placesAdapter =
-                GooglePlacesAdapter(requireActivity(), placesClient,this@ConfirmAddressMapFragment)
+                GooglePlacesAdapter(requireActivity(), placesClient, this@ConfirmAddressMapFragment)
             binding?.autoCompleteTextView?.apply {
                 setAdapter(placesAdapter)
             }
@@ -567,7 +574,7 @@ class ConfirmAddressMapFragment :
                                     showErrorDialog()
                                 }
                         }
-                    } catch(e: Exception){
+                    } catch (e: Exception) {
                         FirebaseManager.logException(e)
                     }
                 }
@@ -595,10 +602,16 @@ class ConfirmAddressMapFragment :
             if (result == true) {
                 if (isPoiAddress == true) {
                     confirmAddress?.isEnabled = false
-                    PoiBottomSheetDialog(this@ConfirmAddressMapFragment,true).show(
-                        requireActivity().supportFragmentManager,
-                        PoiBottomSheetDialog::class.java.simpleName
-                    )
+                    if (poiBottomSheetDialog == null) {
+                        poiBottomSheetDialog =
+                            PoiBottomSheetDialog(this@ConfirmAddressMapFragment, true)
+                    }
+                    if(poiBottomSheetDialog?.isVisible==false){
+                        poiBottomSheetDialog?.show(
+                            requireActivity().supportFragmentManager,
+                            PoiBottomSheetDialog::class.java.simpleName
+                        )
+                    }
                 } else {
                     errorMassageDivider?.visibility = View.VISIBLE
                     errorMessageTitle?.visibility = View.VISIBLE
@@ -685,7 +698,6 @@ class ConfirmAddressMapFragment :
                     mLatitude = latitude?.toString()
                     mLongitude = longitude?.toString()
                     getPlaceId(latitude, longitude)
-
 
 
                 }
@@ -811,9 +823,9 @@ class ConfirmAddressMapFragment :
                         type = POI
                     }
 
-                    if(unIndexedAddressIdentified==true){
+                    if (unIndexedAddressIdentified == true) {
 
-                        type=POI
+                        type = POI
                     }
 
 
@@ -827,10 +839,10 @@ class ConfirmAddressMapFragment :
                             sendAddressData(it, "$streetNumber $routeName", type)
                             isMainPlaceName = false
                         } else {
-                            sendAddressData("$streetNumber $routeName","",type )
+                            sendAddressData("$streetNumber $routeName", "", type)
                             isMainPlaceName = false
                         }
-                    } ?: sendAddressData("$streetNumber $routeName","", type)
+                    } ?: sendAddressData("$streetNumber $routeName", "", type)
 
                     try {
                         view?.let {
@@ -966,13 +978,20 @@ class ConfirmAddressMapFragment :
     }
 
     private fun addUnIndexedIdentifiedListener() {
-        UnIndexedAddressLiveData.value=false
+        UnIndexedAddressLiveData.value = false
         UnIndexedAddressLiveData.observe(viewLifecycleOwner) {
             if (it == true && unIndexedAddressIdentified == true && isPoiAddress == false) {
-                PoiBottomSheetDialog(this@ConfirmAddressMapFragment, false).show(
-                    requireActivity().supportFragmentManager,
-                    PoiBottomSheetDialog::class.java.simpleName
-                )
+
+                if (unIndexedBottomSheetDialog == null) {
+                    unIndexedBottomSheetDialog =
+                        PoiBottomSheetDialog(this@ConfirmAddressMapFragment, false)
+                }
+                if (unIndexedBottomSheetDialog?.isVisible == false) {
+                    unIndexedBottomSheetDialog?.show(
+                        requireActivity().supportFragmentManager,
+                        PoiBottomSheetDialog::class.java.simpleName
+                    )
+                }
             }
 
         }
