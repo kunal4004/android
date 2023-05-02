@@ -179,12 +179,10 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     }
 
     private fun initViews() {
-       // setupViewModel()
         initializeVariables()
         addFragmentListner()
         initializeDeliveringToView()
         initializeDeliveryFoodOtherItems()
-        //isUnSellableLiquorItemRemoved()
         loadShoppingCart()
         getLiquorComplianceDetails()
         expandableGrid.apply {
@@ -212,22 +210,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         }
     }
 
-    private fun isUnSellableLiquorItemRemoved() {
-        /*ShoppingCart.shoppingCartLiveData.observe(viewLifecycleOwner) { isLiquorOrder ->
-            if (isLiquorOrder == false) {
-                binding.ageConfirmationLayout?.root?.visibility = View.GONE
-                binding.ageConfirmationLayout.liquorComplianceBannerLayout?.root?.visibility =
-                        View.GONE
-                Utils.fadeInFadeOutAnimation(binding.txtContinueToPayment, false)
-                liquorOrder = isLiquorOrder
-                baseFragBundle?.apply {
-                    remove(Constant.LIQUOR_ORDER)
-                    remove(Constant.NO_LIQUOR_IMAGE_URL)
-                }
-                ShoppingCart._shoppingCartLiveData.value = true // set its default value as true
-            }
-        } */
-    }
+
 
     //LiquorCompliance
     private fun getLiquorComplianceDetails() {
@@ -547,7 +530,6 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     }
 
     private fun initializeDeliveryFoodOtherItems() {
-      //  setupViewModel()
         binding.checkoutTimeSlotSelectionLayout.previousImgBtnFood.setOnClickListener(this)
         binding.checkoutTimeSlotSelectionLayout.nextImgBtnFood.setOnClickListener(this)
         binding.checkoutHowWouldYouDeliveredLayout.gridLayoutDeliveryOptions.previousImgBtnOther.setOnClickListener(this)
@@ -593,16 +575,6 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         }
     }
 
-    /*private fun setupViewModel() {
-        checkoutAddAddressNewUserViewModel = ViewModelProviders.of(
-            this,
-            ViewModelFactory(
-                CheckoutAddAddressNewUserInteractor(
-                    CheckoutAddAddressNewUserApiHelper()
-                )
-            )
-        ).get(CheckoutAddAddressNewUserViewModel::class.java)
-    }*/
 
     private fun startShimmerView() {
         expandableGrid.setUpShimmerView()

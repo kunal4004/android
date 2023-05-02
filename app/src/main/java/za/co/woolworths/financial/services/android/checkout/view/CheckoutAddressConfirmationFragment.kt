@@ -88,7 +88,6 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
 
         if (activity is CheckoutActivity)
             (activity as? CheckoutActivity)?.showBackArrowWithoutTitle()
-       // setupViewModel()
         initView()
         addFragmentResultListener()
     }
@@ -720,16 +719,6 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
         }
     }
 
-    /*private fun setupViewModel() {
-        checkoutAddAddressNewUserViewModel = ViewModelProviders.of(
-            this,
-            ViewModelFactory(
-                CheckoutAddAddressNewUserInteractor(
-                    CheckoutAddAddressNewUserApiHelper()
-                )
-            )
-        ).get(CheckoutAddAddressNewUserViewModel::class.java)
-    }*/
 
     private fun navigateToUnsellableItemsFragment(
         unSellableCommerceItems: List<UnSellableCommerceItem>,

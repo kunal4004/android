@@ -14,10 +14,7 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProviders
-import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
@@ -48,18 +45,14 @@ import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAd
 import za.co.woolworths.financial.services.android.checkout.viewmodel.WhoIsCollectingDetails
 import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.app_config.native_checkout.ConfigShoppingBagsOptions
-import za.co.woolworths.financial.services.android.models.network.CompletionHandler
-import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.models.network.StorePickupInfoBody
-import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment
@@ -98,8 +91,7 @@ class CheckoutReturningUserCollectionFragment :
     private var orderTotalValue: Double = -1.0
     @Inject
     lateinit var addShippingInfoEventsAnalytics : AddShippingInfoEventsAnalytics
-   // @Inject
-    //lateinit var liquorPref : LiquorPref
+
     private val deliveryInstructionsTextWatcher: TextWatcher = object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
         override fun afterTextChanged(s: Editable?) {
@@ -140,11 +132,9 @@ class CheckoutReturningUserCollectionFragment :
             showBackArrowWithTitle(bindString(R.string.checkout))
         }
         cartItemList = arguments?.getSerializable(CheckoutAddressManagementBaseFragment.CART_ITEM_LIST) as ArrayList<CommerceItem>?
-       // setupViewModel()
         initializeCollectingFromView()
         initializeCollectingDetailsView()
         initializeCollectionTimeSlots()
-       // isUnSellableLiquorItemRemoved()
         loadShoppingCart()
         getLiquorComplianceDetails()
         callStorePickupInfoAPI()
@@ -155,20 +145,6 @@ class CheckoutReturningUserCollectionFragment :
         setFragmentResults()
     }
 
-    private fun isUnSellableLiquorItemRemoved() {
-       /* ShoppingCartLiveData.observe(viewLifecycleOwner) { isLiquorOrder ->
-            if (isLiquorOrder == false) {
-                binding.ageConfirmationLayoutCollection?.root?.visibility = View.GONE
-                binding.ageConfirmationLayoutCollection.liquorComplianceBannerLayout?.root?.visibility =
-                    View.GONE
-                ShoppingCartLiveData.value = true
-            }
-        }*/
-      /*val isLiquorOrder = liquorPref.isLiquorOrder()
-       if(isLiquorOrder) {
-
-       }*/
-    }
 
     private fun setFragmentResults() {
 
@@ -385,17 +361,7 @@ class CheckoutReturningUserCollectionFragment :
         initializeDeliveryInstructions()
     }
 
-    /*private fun setupViewModel() {
-        checkoutAddAddressNewUserViewModel = ViewModelProviders.of(
-            this,
-            ViewModelFactory(
-                CheckoutAddAddressNewUserInteractor(
-                    CheckoutAddAddressNewUserApiHelper()
-                )
-            )
-        ).get(CheckoutAddAddressNewUserViewModel::class.java)
-    }
-*/
+
     private fun callStorePickupInfoAPI() {
         initShimmerView()
 

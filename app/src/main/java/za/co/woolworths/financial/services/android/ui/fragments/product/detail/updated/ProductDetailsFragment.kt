@@ -292,7 +292,6 @@ class ProductDetailsFragment :
         super.onViewCreated(view, savedInstanceState)
         mFuseLocationAPISingleton = FuseLocationAPISingleton
         binding.initViews()
-      //  setUpConfirmAddressViewModel()
         addFragmentListner()
         setUniqueIds()
         productDetails?.let { addViewItemEvent(it) }

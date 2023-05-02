@@ -15,7 +15,6 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingCartRespon
 import za.co.woolworths.financial.services.android.models.network.Event
 import za.co.woolworths.financial.services.android.models.network.Resource
 import za.co.woolworths.financial.services.android.models.network.StorePickupInfoBody
-import za.co.woolworths.financial.services.android.onecartgetstream.model.OCAuthenticationResponse
 import javax.inject.Inject
 
 /**

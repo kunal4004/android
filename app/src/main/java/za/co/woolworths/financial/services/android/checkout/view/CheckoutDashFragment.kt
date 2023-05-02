@@ -25,7 +25,6 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
@@ -160,10 +159,8 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
         (activity as? CheckoutActivity)?.apply {
             showBackArrowWithTitle(bindString(R.string.checkout))
         }
-       // setupViewModel()
         initializeDashingToView()
         initializeDashTimeSlots()
-        //isUnSellableLiquorItemRemoved()
         loadShoppingCart()
         getLiquorComplianceDetails()
         hideGiftOption()
@@ -174,22 +171,7 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
         binding.checkoutCollectingFromLayout?.root?.setOnClickListener(this)
     }
 
-    private fun isUnSellableLiquorItemRemoved() {
-       /* ShoppingCart.shoppingCartLiveData.observe(viewLifecycleOwner) { isLiquorOrder ->
-            if (isLiquorOrder == false) {
-                binding.ageConfirmationLayout?.root?.visibility = View.GONE
-                binding.ageConfirmationLayout.liquorComplianceBannerLayout?.root?.visibility =
-                        View.GONE
-                Utils.fadeInFadeOutAnimation(binding.txtContinueToPayment, false)
-                liquorOrder = isLiquorOrder
-                CheckoutAddressManagementBaseFragment.baseFragBundle?.apply {
-                    remove(Constant.LIQUOR_ORDER)
-                    remove(Constant.NO_LIQUOR_IMAGE_URL)
-                }
-                ShoppingCart._shoppingCartLiveData.value = true // set its default value as true
-            }
-        }*/
-    }
+
 
     private fun hideInstructionLayout() {
         binding.layoutDeliveryInstructions.txtNeedBags?.visibility = GONE
@@ -423,16 +405,7 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
         initializeDriverTipView()
     }
 
-    /*private fun setupViewModel() {
-        checkoutAddAddressNewUserViewModel = ViewModelProviders.of(
-            this,
-            ViewModelFactory(
-                CheckoutAddAddressNewUserInteractor(
-                    CheckoutAddAddressNewUserApiHelper()
-                )
-            )
-        ).get(CheckoutAddAddressNewUserViewModel::class.java)
-    }*/
+
 
     private fun callConfirmLocationAPI() {
         initShimmerView()

@@ -1042,57 +1042,12 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
             isUnSellableItemsRemoved = it
             if (isUnSellableItemsRemoved == true) {
                 binding.sendConfirmLocation()
-               // loadShoppingCart()
                 UnSellableItemsLiveData.value = false
             }
         }
     }
 
-    private fun loadShoppingCart() {
-        val shoppingCartResponseCall = OneAppService.getShoppingCart()
-        shoppingCartResponseCall.enqueue(
-                CompletionHandler(
-                        (object : IResponseListener<ShoppingCartResponse> {
-                            override fun onSuccess(response: ShoppingCartResponse?) {
-                                try {
-                                    when (response?.httpCode) {
-                                        HTTP_OK -> {
-                                            val isNoLiquorOrder = response.data[0].liquorOrder
-                                         //   if(isNoLiquorOrder == false) {
-                                                // ShoppingCart._shoppingCartLiveData.value = isNoLiquorOrder
-                                         //   }
-                                        }
-                                        HTTP_SESSION_TIMEOUT_440 -> {
-                                            SessionUtilities.getInstance()
-                                                    .setSessionState(SessionDao.SESSION_STATE.INACTIVE)
-                                            SessionExpiredUtilities.getInstance().showSessionExpireDialog(
-                                                    requireActivity() as AppCompatActivity?,
-                                                    this@DeliveryAddressConfirmationFragment
-                                            )
-                                        }
-                                        else -> {
-                                            response?.response?.let {
-                                                Utils.displayValidationMessage(
-                                                        requireActivity(),
-                                                        CustomPopUpWindow.MODAL_LAYOUT.ERROR,
-                                                        it.desc,
-                                                        true
-                                                )
-                                            }
-                                        }
-                                    }
-                                } catch (ex: Exception) {
-                                    FirebaseManager.logException(ex)
-                                }
-                            }
 
-                            override fun onFailure(error: Throwable?) {
-
-                            }
-                        }), ShoppingCartResponse::class.java
-                )
-        )
-    }
 
     private fun GeoLocationDeliveryAddressBinding.showErrorDialog() {
         if(!isAdded && !isVisible) return

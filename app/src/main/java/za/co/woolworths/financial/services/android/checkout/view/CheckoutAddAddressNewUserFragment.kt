@@ -224,7 +224,6 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             binding.recipientDetailsLayout.recipientNameEditText,
             binding.recipientDetailsLayout.cellphoneNumberEditText
         )
-       // setupViewModel()
         init()
         addFragmentResultListener()
         // Show prepopulate fields on edit address
@@ -363,16 +362,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             }
         }
     }
-    /*private fun setupViewModel() {
-        checkoutAddAddressNewUserViewModel = ViewModelProviders.of(
-            this,
-            ViewModelFactory(
-                CheckoutAddAddressNewUserInteractor(
-                    CheckoutAddAddressNewUserApiHelper()
-                )
-            )
-        ).get(CheckoutAddAddressNewUserViewModel::class.java)
-    }*/
+
 
     private fun init() {
         deliveringOptionsList = AppConfigSingleton.nativeCheckout?.addressTypes
