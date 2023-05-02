@@ -107,6 +107,7 @@
         <EditText
             android:id="@+id/vehicleColourEditText"
             style="@style/checkout_edittext_style"
+            android:hint="@string/optional_hint"
             android:layout_width="match_parent"
             android:inputType="textEmailAddress"
             android:maxLength="@integer/twenty" />

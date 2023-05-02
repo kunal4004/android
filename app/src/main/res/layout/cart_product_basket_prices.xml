@@ -7,9 +7,7 @@
               android:orientation="vertical">
 
     <include
-        layout="@layout/liquor_compliance_banner"/>
-
-    <include
+        android:id="@+id/vouchersMain"
         layout="@layout/cart_list_item_voucher_layout"/>
 
     <View
