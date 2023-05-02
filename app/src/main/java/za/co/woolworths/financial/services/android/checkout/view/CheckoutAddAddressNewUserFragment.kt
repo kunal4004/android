@@ -1422,12 +1422,17 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         UnIndexedAddressLiveData.value=false
         UnIndexedAddressLiveData.observe(viewLifecycleOwner) {
             if (it == true && unIndexedAddressIdentified == true) {
+
+                isValidAddress = true
+                enablePOIAddressTextFields()
                 val poiBottomSheetDialog =
                     PoiBottomSheetDialog(this@CheckoutAddAddressNewUserFragment, false)
 
                 poiBottomSheetDialog.show(
                     requireActivity().supportFragmentManager,
                     PoiBottomSheetDialog::class.java.simpleName
+
+
                 )
             }
 
