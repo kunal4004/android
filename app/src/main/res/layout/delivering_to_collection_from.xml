@@ -19,12 +19,12 @@
 
     <TextView
         android:id="@+id/optionTitle"
-        style="@style/myriad_pro_regular"
+        style="@style/opensans_regular_13_black"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/ten_dp"
         android:gravity="center_horizontal"
         android:text="@string/collecting_from"
-        android:textColor="@color/black"
-        android:textSize="@dimen/sixteen_sp"
         app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
         app:layout_constraintRight_toRightOf="@+id/right_guideline"
         app:layout_constraintTop_toBottomOf="@+id/optionImage" />
@@ -65,24 +65,21 @@
 
         <TextView
             android:id="@+id/deliveryTextView"
-            style="@style/myriad_pro_regular"
+            style="@style/opensans_regular_13_black"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="0.3"
             android:gravity="center_vertical"
             android:text="@string/delivery_semicolon"
-            android:textColor="@color/gray"
-            android:textSize="@dimen/fourteen_sp" />
+            android:textColor="@color/color_666666" />
 
         <TextView
             android:id="@+id/deliveryDateTimeTextView"
-            style="@style/myriad_pro_regular"
+            style="@style/opensans_regular_13_black"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="0.7"
-            android:gravity="end"
-            android:textColor="@color/color_444444"
-            android:textSize="@dimen/twelve_sp" />
+            android:gravity="end" />
     </LinearLayout>
 
     <LinearLayout
@@ -97,24 +94,21 @@
         app:layout_constraintTop_toBottomOf="@+id/separator">
 
         <TextView
-            style="@style/myriad_pro_regular"
+            style="@style/opensans_regular_13_black"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="0.3"
             android:gravity="center_vertical"
             android:text="@string/food_items_semicolon"
-            android:textColor="@color/gray"
-            android:textSize="@dimen/fourteen_sp" />
+            android:textColor="@color/color_666666" />
 
         <TextView
             android:id="@+id/foodDeliveryDateTimeTextView"
-            style="@style/myriad_pro_regular"
+            style="@style/opensans_regular_13_black"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="0.7"
-            android:gravity="end"
-            android:textColor="@color/color_444444"
-            android:textSize="@dimen/twelve_sp" />
+            android:gravity="end" />
     </LinearLayout>
 
     <LinearLayout
@@ -127,43 +121,41 @@
         app:layout_constraintTop_toBottomOf="@+id/foodDeliveryLinearLayout">
 
         <TextView
-            style="@style/myriad_pro_regular"
+            style="@style/opensans_regular_13_black"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="0.3"
             android:gravity="center_vertical"
             android:text="@string/other_items_semicolon"
-            android:textColor="@color/gray"
-            android:textSize="@dimen/fourteen_sp" />
+            android:textColor="@color/color_666666" />
 
         <TextView
             android:id="@+id/otherDeliveryDateTimeTextView"
-            style="@style/myriad_pro_regular"
+            style="@style/opensans_regular_13_black"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="0.7"
             android:gravity="end"
-            android:visibility="gone"
-            android:textColor="@color/color_444444"
-            android:textSize="@dimen/twelve_sp" />
+            tools:visibility="visible"
+            android:visibility="gone" />
     </LinearLayout>
 
     <TextView
         android:id="@+id/infoDeliveryDateTimeTextView"
-        style="@style/myriad_pro_regular"
+        style="@style/opensens_regular"
         android:layout_width="@dimen/zero_dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/zero_dp"
         android:gravity="end"
         android:text="@string/weekends_and_public_holidays_excluded"
         android:textColor="@color/color_444444"
         android:textSize="@dimen/ten_sp"
         android:visibility="gone"
-        android:layout_marginTop="@dimen/zero_dp"
+        tools:visibility="visible"
         app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
         app:layout_constraintRight_toRightOf="@+id/right_guideline"
         app:layout_constraintTop_toBottomOf="@+id/otherDeliveryLinearLayout"
-        app:layout_goneMarginTop="@dimen/_35sdp"
-        />
+        app:layout_goneMarginTop="@dimen/_35sdp" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/dashDeliveryLinearLayout"
