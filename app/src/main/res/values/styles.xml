@@ -1172,7 +1172,7 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_centerVertical">true</item>
-        <item name="android:textSize">14sp</item>
+        <item name="android:textSize">13sp</item>
         <item name="fontFamily">@font/opensans_regular</item>
         <item name="android:textColor">@color/black</item>
     </style>
