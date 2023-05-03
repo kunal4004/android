@@ -848,10 +848,13 @@ class ConfirmAddressMapFragment :
                         view?.let {
                             lifecycleScope.launchWhenStarted {
                                 delay(DELAY_500_MS)
-                                if (streetNumber.isNullOrEmpty() && routeName.isNullOrEmpty())
+                                if (streetNumber.isNullOrEmpty() && routeName.isNullOrEmpty()) {
                                     showSelectedLocationError(true)
-                                else
+                                }
+                                else {
+                                    UnIndexedAddressLiveData.value = true
                                     showSelectedLocationError(false)
+                                }
                             }
                         }
                     } catch (e: Exception) {
@@ -890,8 +893,7 @@ class ConfirmAddressMapFragment :
             view?.let {
                 lifecycleScope.launch {
                     confirmAddressViewModel.postSaveAddress(saveAddressLocationRequest)
-                    delay(DELAY_500_MS)
-                    UnIndexedAddressLiveData.value = true
+
                 }
             }
         } catch (e: Exception) {
