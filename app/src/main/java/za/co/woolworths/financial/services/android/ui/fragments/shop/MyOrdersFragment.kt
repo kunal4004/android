@@ -165,7 +165,7 @@ class MyOrdersFragment : BaseFragmentBinding<FragmentShopMyOrdersBinding>(Fragme
         activity?.runOnUiThread {
             mErrorHandlerView?.hideEmpyState()
             if (!isPullToRefresh) showLoading()
-            requestOrders = OneAppService.getOrders().apply {
+            requestOrders = OneAppService().getOrders().apply {
                 enqueue(CompletionHandler(object : IResponseListener<OrdersResponse> {
                     override fun onSuccess(ordersResponse: OrdersResponse?) {
                         if (isAdded) {
