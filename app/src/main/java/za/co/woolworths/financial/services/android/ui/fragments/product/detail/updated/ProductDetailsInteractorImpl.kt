@@ -12,7 +12,7 @@ import za.co.woolworths.financial.services.android.util.PostItemToCart
 class ProductDetailsInteractorImpl() : ProductDetailsContract.ProductDetailsInteractor {
 
     override fun getProductDetails(productRequest: ProductRequest, onFinishListener: ProductDetailsContract.ProductDetailsInteractor.OnFinishListener) {
-        request(OneAppService.productDetail(productRequest.productId, productRequest.skuId, productRequest.isUserBrowsing), onFinishListener)
+        request(OneAppService().productDetail(productRequest.productId, productRequest.skuId, productRequest.isUserBrowsing), onFinishListener)
     }
 
     override fun getStockAvailability(
@@ -21,7 +21,7 @@ class ProductDetailsInteractorImpl() : ProductDetailsContract.ProductDetailsInte
         onFinishListener: ProductDetailsContract.ProductDetailsInteractor.OnFinishListener,
         isUserBrowsing: Boolean
     ) {
-        request(OneAppService.getInventorySkuForStore(storeID, multiSKU, isUserBrowsing), onFinishListener)
+        request(OneAppService().getInventorySkuForStore(storeID, multiSKU, isUserBrowsing), onFinishListener)
     }
 
     override fun postAddItemToCart(addItemToCart: List<AddItemToCart>, onFinishListener: ProductDetailsContract.ProductDetailsInteractor.OnFinishListener) {
@@ -38,12 +38,12 @@ class ProductDetailsInteractorImpl() : ProductDetailsContract.ProductDetailsInte
 
     override fun getLocationItems(otherSkus: OtherSkus?, onFinishListener: ProductDetailsContract.ProductDetailsInteractor.OnFinishListener) {
         WoolworthsApplication.getInstance().wGlobalState?.let {mWGlobalState->
-            otherSkus?.let { it.sku?.let { it1 -> OneAppService.getLocationsItem(it1, mWGlobalState.startRadius.toString(), mWGlobalState.endRadius.toString()) } }?.let { request(it,onFinishListener) }
+            otherSkus?.let { it.sku?.let { it1 -> OneAppService().getLocationsItem(it1, mWGlobalState.startRadius.toString(), mWGlobalState.endRadius.toString()) } }?.let { request(it,onFinishListener) }
         }
     }
 
     override fun getRaringNReview(productID: String, limit: Int, offset: Int, onFinishListener: ProductDetailsContract.ProductDetailsInteractor.OnFinishListener) {
-        request(OneAppService.getRatingNReview(productID,limit,offset), onFinishListener)
+        request(OneAppService().getRatingNReview(productID,limit,offset), onFinishListener)
     }
 
     private inline fun <reified RESPONSE_OBJECT> request(call: Call<RESPONSE_OBJECT>, requestListener: ProductDetailsContract.ProductDetailsInteractor.OnFinishListener) {

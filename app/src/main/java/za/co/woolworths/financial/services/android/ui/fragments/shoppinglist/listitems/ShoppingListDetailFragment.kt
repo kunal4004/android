@@ -34,7 +34,7 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.item_limits.ProductCountMap
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
-import za.co.woolworths.financial.services.android.models.network.OneAppService.deleteShoppingListItem
+import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
@@ -448,7 +448,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                 bindingListDetails.rlCheckOut.visibility = GONE
             }
         }
-        val shoppingListItemsResponseCall = deleteShoppingListItem(
+        val shoppingListItemsResponseCall = OneAppService().deleteShoppingListItem(
             viewModel.listId, mId, mProductId, mCatalogRefId
         )
         bindingListDetails.loadingBar.visibility = VISIBLE

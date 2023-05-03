@@ -362,11 +362,9 @@ class CheckoutReturningUserCollectionFragment :
 
     fun stopShimmerView() {
         shimmerComponentArray.forEach {
-            if (it.first.isShimmerStarted) {
                 it.first.stopShimmer()
                 it.first.setShimmer(null)
                 it.second.visibility = View.VISIBLE
-            }
         }
 
         binding.layoutCollectionInstructions.txtNeedBags?.visibility = View.VISIBLE

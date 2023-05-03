@@ -107,7 +107,7 @@ class CancelOrderProgressFragment : BaseFragmentBinding<CancelOrderProgressFragm
             cancelOrderProcessingLayout.root.visibility = View.VISIBLE
         }
 
-        val orderDetailRequest = OneAppService.queryServiceCancelOrder(orderId)
+        val orderDetailRequest = OneAppService().queryServiceCancelOrder(orderId)
         orderDetailRequest.enqueue(CompletionHandler(object : IResponseListener<CancelOrderResponse> {
             override fun onSuccess(cancelOrderResponse: CancelOrderResponse?) {
                 cancelOrderResponse?.apply {

@@ -19,7 +19,7 @@ import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDevice
 import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDeviceResponse
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
-import za.co.woolworths.financial.services.android.models.network.OneAppService.getResponseOnCreateUpdateDevice
+import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getUniqueDeviceID
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import javax.inject.Inject
@@ -83,7 +83,7 @@ class NotificationUtils @Inject constructor(@ApplicationContext private val cont
             //Sending Token and app instance Id to App server
             //Need to be done after Login
             val createUpdateDeviceCall =
-                getResponseOnCreateUpdateDevice(device)
+                OneAppService().getResponseOnCreateUpdateDevice(device)
             createUpdateDeviceCall.enqueue(
                 CompletionHandler(
                     object : IResponseListener<CreateUpdateDeviceResponse> {

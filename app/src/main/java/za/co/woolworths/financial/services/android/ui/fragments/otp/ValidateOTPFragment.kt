@@ -47,7 +47,7 @@ class ValidateOTPFragment : Fragment(R.layout.validate_otp_fragment) {
     }
 
     private fun initValidateOTP() {
-        OneAppService.validateOTP(ValidateOTPRequest(otpMethodType.name, otpValue), productOfferingId).enqueue(CompletionHandler(object : IResponseListener<ValidateOTPResponse> {
+        OneAppService().validateOTP(ValidateOTPRequest(otpMethodType.name, otpValue), productOfferingId).enqueue(CompletionHandler(object : IResponseListener<ValidateOTPResponse> {
             override fun onSuccess(response: ValidateOTPResponse?) {
                 response?.apply {
                     this@ValidateOTPFragment.validateOTPResponse = this

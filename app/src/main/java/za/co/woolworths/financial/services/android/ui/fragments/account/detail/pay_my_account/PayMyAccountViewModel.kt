@@ -164,7 +164,7 @@ open class PayMyAccountViewModel: ViewModel() {
 
     fun queryServicePayUPaymentMethod(onSuccessResult: (MutableList<GetPaymentMethod>?) -> Unit, onSessionExpired: (String?) -> Unit, onGeneralError: (String) -> Unit, onFailureHandler: (Throwable?) -> Unit) {
         var payUMethodType: PAYUMethodType
-        mQueryServiceGetPaymentMethods = request(OneAppService.queryServicePayUMethod(), object : IGenericAPILoaderView<Any> {
+        mQueryServiceGetPaymentMethods = request(OneAppService().queryServicePayUMethod(), object : IGenericAPILoaderView<Any> {
             override fun onSuccess(response: Any?) {
                 (response as? PaymentMethodsResponse)?.apply {
                     setPaymentMethodsResponse(this)
@@ -369,7 +369,7 @@ open class PayMyAccountViewModel: ViewModel() {
 
     fun queryServiceDeletePaymentMethod(card: GetPaymentMethod?, position: Int, result: () -> Unit, failure: () -> Unit) {
         deleteCardList?.add(Pair(card, position))
-        mQueryServiceDeletePaymentMethod = request(OneAppService.queryServicePayURemovePaymentMethod(card?.token ?: ""), object : IGenericAPILoaderView<Any> {
+        mQueryServiceDeletePaymentMethod = request(OneAppService().queryServicePayURemovePaymentMethod(card?.token ?: ""), object : IGenericAPILoaderView<Any> {
             override fun onSuccess(response: Any?) {
                 (response as? DeleteResponse)?.apply {
                     when (httpCode) {
@@ -484,7 +484,7 @@ open class PayMyAccountViewModel: ViewModel() {
     // Retrieve 3d secure merchant url
     fun queryServicePostPayU(result: (PayUResponse?) -> Unit, stsParams: (String?) -> Unit, generalHttpCodeFailure: (String?) -> Unit, failure: (Throwable?) -> Unit) {
         val payURequestBody = payURequestBody()
-        mQueryServicePostPayU = request(OneAppService.queryServicePostPayU(payURequestBody), object : IGenericAPILoaderView<Any> {
+        mQueryServicePostPayU = request(OneAppService().queryServicePostPayU(payURequestBody), object : IGenericAPILoaderView<Any> {
 
             override fun onSuccess(response: Any?) {
                 (response as? PayUResponse)?.apply {

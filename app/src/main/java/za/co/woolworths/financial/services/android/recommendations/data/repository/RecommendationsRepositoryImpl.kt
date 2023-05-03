@@ -17,7 +17,7 @@ class RecommendationsRepositoryImpl @Inject constructor(
     override suspend fun getRecommendationResponse(recommendationRequest: RecommendationRequest?): Resource<RecommendationResponse> {
 
         return try {
-            val response = recommendationRequest?.let { OneAppService.recommendation(it) }
+            val response = recommendationRequest?.let { OneAppService().recommendation(it) }
             if (response?.isSuccessful == true) {
                 response.body()?.let {
                     return when (it.httpCode) {
