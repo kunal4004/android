@@ -78,7 +78,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if (ifFragmentAttached()) {
+        if (isFragmentAttached()) {
             dashDeliveryAdapter =
                 DashDeliveryAdapter(
                     requireContext(), onDemandNavigationListener = this,
@@ -252,7 +252,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                     }
                     Status.ERROR -> {
                         binding.progressBar.visibility = View.GONE
-                        if (ifFragmentAttached()) {
+                        if (isFragmentAttached()) {
                             showErrorView(context?.getString(resource.message), resource.data)
                         }
                     }
@@ -429,7 +429,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                                 }
                                 else -> {
                                     response.response.desc = formException.message
-                                    if (ifFragmentAttached()) {
+                                    if (isFragmentAttached()) {
                                         Utils.displayValidationMessage(
                                             context,
                                             CustomPopUpWindow.MODAL_LAYOUT.ERROR,
@@ -469,7 +469,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                                 }
                             }
                             else -> response?.response?.desc?.let { desc ->
-                                if (ifFragmentAttached()) {
+                                if (isFragmentAttached()) {
                                     Utils.displayValidationMessage(
                                         requireContext(),
                                         CustomPopUpWindow.MODAL_LAYOUT.ERROR,
@@ -534,7 +534,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                             }
 
                             else -> response?.response?.desc?.let { desc ->
-                                if (ifFragmentAttached()) {
+                                if (isFragmentAttached()) {
                                     Utils.displayValidationMessage(
                                         requireContext(),
                                         CustomPopUpWindow.MODAL_LAYOUT.ERROR,
@@ -599,14 +599,6 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
             }
         }
 
-    }
-
-    fun ifFragmentAttached():Boolean {
-
-        if (isAdded && context != null) {
-            return  true
-        }
-        return false
     }
 
     private fun openCartActivity() {
@@ -680,7 +672,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
     private fun setupRecyclerView() {
         binding.rvDashDelivery?.apply {
             adapter = dashDeliveryAdapter
-            if (ifFragmentAttached()) {
+            if (isFragmentAttached()) {
                 layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
             }
         }
@@ -794,7 +786,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
         // Now first check for if delivery location and browsing location is same.
         // if same no issues. If not then show changing delivery location popup.
         if (!getDeliveryType()?.deliveryType.equals(Delivery.DASH.type)) {
-            if (ifFragmentAttached()) {
+            if (isFragmentAttached()) {
                 KotlinUtils.showChangeDeliveryTypeDialog(
                     requireContext(), requireFragmentManager(),
                     KotlinUtils.browsingDeliveryType
