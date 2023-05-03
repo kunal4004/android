@@ -5,7 +5,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor
-import za.co.woolworths.financial.services.android.checkout.repository.LiquorRepository
+import za.co.woolworths.financial.services.android.checkout.repository.CheckoutLiquorRepository
 import za.co.woolworths.financial.services.android.checkout.service.network.AddAddressRequestBody
 import za.co.woolworths.financial.services.android.checkout.service.network.ConfirmSelectionRequestBody
 import za.co.woolworths.financial.services.android.checkout.service.network.ShippingDetailsBody
@@ -23,7 +23,7 @@ import javax.inject.Inject
 @HiltViewModel
 class CheckoutAddAddressNewUserViewModel @Inject constructor
 (private val checkoutAddAddressNewUserInteractor: CheckoutAddAddressNewUserInteractor,
- private val liquorRepository: LiquorRepository) :
+ private val checkoutLiquorRepository: CheckoutLiquorRepository) :
         ViewModel() {
 
     private val _shoppingCartData = MutableLiveData<Event<Resource<ShoppingCartResponse>>>()
@@ -34,7 +34,7 @@ class CheckoutAddAddressNewUserViewModel @Inject constructor
     }
     fun getShoppingCartData () {
         viewModelScope.launch {
-            val shoppingCartResponse = liquorRepository.getShoppingCartData()
+            val shoppingCartResponse = checkoutLiquorRepository.getShoppingCartData()
             _shoppingCartData.value = Event(shoppingCartResponse)
         }
     }

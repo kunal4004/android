@@ -60,7 +60,10 @@ import za.co.woolworths.financial.services.android.contracts.IToastInterface
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
-import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.models.dto.CommerceItem
+import za.co.woolworths.financial.services.android.models.dto.LiquorCompliance
+import za.co.woolworths.financial.services.android.models.dto.OrderSummary
+import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
 import za.co.woolworths.financial.services.android.models.dto.app_config.native_checkout.ConfigShoppingBagsOptions
 import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
@@ -1469,16 +1472,16 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
             it.getContentIfNotHandled()?.let { resource ->
                 when (resource.status) {
                     Status.SUCCESS -> {
-                        val isNoLiquorOrder = resource.data?.data?.get(0)?.liquorOrder
+                        val isNoLiquorOrder = resource.data?.data?.getOrNull(0)?.liquorOrder
                         if(isNoLiquorOrder == false) {
                             updateAgeConfirmationUI(isNoLiquorOrder)
                         }
                     }
                     Status.ERROR -> {
-                        Utils.fadeInFadeOutAnimation(binding.txtContinueToPayment, false)
+                        //Do Nothing
                     }
                     else -> {
-                        Utils.fadeInFadeOutAnimation(binding.txtContinueToPayment, false)
+                        //Do Nothing
                     }
                 }
             }

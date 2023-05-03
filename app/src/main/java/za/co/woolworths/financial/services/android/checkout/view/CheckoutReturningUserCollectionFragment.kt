@@ -47,7 +47,10 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
-import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.models.dto.CommerceItem
+import za.co.woolworths.financial.services.android.models.dto.LiquorCompliance
+import za.co.woolworths.financial.services.android.models.dto.OrderSummary
+import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
 import za.co.woolworths.financial.services.android.models.dto.app_config.native_checkout.ConfigShoppingBagsOptions
 import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.models.network.StorePickupInfoBody
@@ -1325,16 +1328,16 @@ class CheckoutReturningUserCollectionFragment :
             it.getContentIfNotHandled()?.let { resource ->
                 when (resource.status) {
                     Status.SUCCESS -> {
-                        val isNoLiquorOrder = resource.data?.data?.get(0)?.liquorOrder
+                        val isNoLiquorOrder = resource.data?.data?.getOrNull(0)?.liquorOrder
                         if(isNoLiquorOrder == false) {
                             updateAgeConfirmationUI(isNoLiquorOrder)
                         }
                     }
                     Status.ERROR -> {
-                        Utils.fadeInFadeOutAnimation(binding.txtContinueToPaymentCollection, false)
+                        //Do Nothing
                     }
                     else -> {
-                        Utils.fadeInFadeOutAnimation(binding.txtContinueToPaymentCollection, false)
+                        //Do Nothing
                     }
                 }
             }

@@ -1400,16 +1400,16 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             it.getContentIfNotHandled()?.let { resource ->
                 when (resource.status) {
                     Status.SUCCESS -> {
-                        val isNoLiquorOrder = resource.data?.data?.get(0)?.liquorOrder
+                        val isNoLiquorOrder = resource.data?.data?.getOrNull(0)?.liquorOrder
                         if(isNoLiquorOrder == false) {
                             updateAgeConfirmationUI(isNoLiquorOrder)
                         }
                     }
                     Status.ERROR -> {
-                        Utils.fadeInFadeOutAnimation(binding.txtContinueToPayment, false)
+                        //Do Nothing
                     }
                     else -> {
-                        Utils.fadeInFadeOutAnimation(binding.txtContinueToPayment, false)
+                        //Do Nothing
                     }
                 }
             }

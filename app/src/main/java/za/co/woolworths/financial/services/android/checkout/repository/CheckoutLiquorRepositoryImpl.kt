@@ -9,7 +9,7 @@ import za.co.woolworths.financial.services.android.util.analytics.FirebaseManage
 import java.io.IOException
 import javax.inject.Inject
 
-class LiquorRepositoryImpl @Inject constructor() : LiquorRepository {
+class CheckoutLiquorRepositoryImpl @Inject constructor() : CheckoutLiquorRepository {
     override suspend fun getShoppingCartData(): Resource<ShoppingCartResponse> {
         return try {
             val response = OneAppService.getShoppingCartV2()
@@ -18,6 +18,8 @@ class LiquorRepositoryImpl @Inject constructor() : LiquorRepository {
                     return when (it.httpCode) {
                         AppConstant.HTTP_OK, AppConstant.HTTP_OK_201 ->
                             Resource.success(it)
+                        AppConstant.HTTP_NOT_FOUND_404 ->
+                                Resource.error(R.string.request_timeout_error, null)
                         else ->
                             Resource.error(R.string.error_unknown, null)
                     }
