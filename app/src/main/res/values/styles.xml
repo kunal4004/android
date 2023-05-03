@@ -1173,8 +1173,8 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_centerVertical">true</item>
         <item name="android:textSize">14sp</item>
-        <item name="WTextView_font">myriadpro_regular</item>
-        <item name="android:textColor">@color/black40</item>
+        <item name="fontFamily">@font/opensans_regular</item>
+        <item name="android:textColor">@color/black</item>
     </style>
 
     <style name="promotion_note_style">
@@ -1183,7 +1183,7 @@
         <item name="android:paddingStart">@dimen/twenty_four_dp</item>
         <item name="android:paddingTop">@dimen/sixteen_dp</item>
         <item name="android:paddingBottom">@dimen/sixteen_dp</item>
-        <item name="fontFamily">@font/myriad_pro_regular</item>
+        <item name="fontFamily">@font/opensans_regular</item>
         <item name="android:clickable">true</item>
         <item name="android:focusable">true</item>
         <item name="android:textColor">@color/color_666666</item>
