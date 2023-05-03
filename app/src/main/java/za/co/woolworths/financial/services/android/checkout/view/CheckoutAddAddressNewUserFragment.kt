@@ -165,11 +165,11 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                     if (savedAddress != null) {
                         selectedAddress.savedAddress = savedAddress
 
-                        if (!savedAddress?.city.isNullOrEmpty()) {
+                        if (!savedAddress.city.isNullOrEmpty()) {
                             selectedAddress?.provinceName = savedAddress.city!!
                         } else {
-                            if (!savedAddress?.region.isNullOrEmpty()) {
-                                selectedAddress?.provinceName = savedAddress?.region!!
+                            if (!savedAddress.region.isNullOrEmpty()) {
+                                selectedAddress?.provinceName = savedAddress.region!!
                             }
 
                         }
@@ -233,12 +233,6 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             if (activity is CheckoutActivity) {
                 (activity as CheckoutActivity).hideBackArrow()
                 if (!navController?.popBackStack()!!) {
-                    // Edit address screen from Cart as user don't have unit no or complex no.
-                    // disable Google address view.
-                    //Below lines commented for Future reference
-                    //binding.autoCompleteTextView?.isEnabled = false
-                    //binding.autoCompleteTextView?.setBackgroundResource(R.drawable.input_box_inactive_bg)
-                   // binding.autoCompleteTextView?.setTextColor(ContextCompat.getColor(requireContext(), R.color.non_editable_edit_text_text_color))
                    binding.saveAddress.text = getString(R.string.save_address)
                 }
             }
@@ -567,7 +561,6 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             }
         } else {
             isValidAddress = true
-           // disablePOIAddressTextFields()
         }
         if (!selectedAddress.provinceName.isNullOrEmpty() && !selectedAddress.savedAddress.suburb.isNullOrEmpty())
             selectedAddress.savedAddress.region = ""
