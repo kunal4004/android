@@ -739,7 +739,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
     }
 
     override fun cancelAPIRequest() {
-        OneAppService.cancelRequest(loadProductRequest)
+        OneAppService().cancelRequest(loadProductRequest)
     }
 
     override fun bindRecyclerViewWithUI(productLists: MutableList<ProductList>) {
@@ -1409,7 +1409,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
         }
 
         showProgressBar()
-        OneAppService.getInventorySkuForStore(
+        OneAppService().getInventorySkuForStore(
             mStoreId, addItemToCart?.catalogRefId
                 ?: "", isUserBrowsing
         ).enqueue(CompletionHandler(object : IResponseListener<SkusInventoryForStoreResponse> {
@@ -1700,7 +1700,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
         showProgressBar()
         val globalState = WoolworthsApplication.getInstance().wGlobalState
         with(globalState) {
-            OneAppService.getLocationsItem(
+            OneAppService().getLocationsItem(
                 mSelectedProductList?.sku
                     ?: "", startRadius.toString(), endRadius.toString()
             ).enqueue(CompletionHandler(object : IResponseListener<LocationResponse> {

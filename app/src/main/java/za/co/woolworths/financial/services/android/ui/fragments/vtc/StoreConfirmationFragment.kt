@@ -130,7 +130,7 @@ class StoreConfirmationFragment : BaseFragmentBinding<FragmentStoreConfirmationB
             return
         }
 
-        val emailRequest = OneAppService.confirmStoreCardEmail(body)
+        val emailRequest = OneAppService().confirmStoreCardEmail(body)
         emailRequest.enqueue(CompletionHandler(object : IResponseListener<GenericResponse> {
             override fun onSuccess(response: GenericResponse?) {
                 activity?.apply {

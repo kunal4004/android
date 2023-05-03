@@ -358,7 +358,7 @@ class WRewardsOverviewFragment : Fragment(R.layout.wrewards_overview_fragment), 
 
     private fun WrewardsOverviewFragmentBinding.loadPromotionsAPI() {
         mErrorHandlerView?.hideErrorHandlerLayout()
-        val promotionsResponseCall = OneAppService.getPromotions()
+        val promotionsResponseCall = OneAppService().getPromotions()
         promotionsResponseCall.enqueue(CompletionHandler(object : IResponseListener<PromotionsResponse> {
             override fun onSuccess(response: PromotionsResponse?) {
                 response?.let { handlePromotionResponse(it) }
