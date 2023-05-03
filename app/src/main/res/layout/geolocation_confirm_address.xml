@@ -63,7 +63,6 @@
             android:dropDownWidth="match_parent"
             android:dropDownAnchor="@+id/autoCompleteTextView"
             android:dropDownVerticalOffset="@dimen/sixteen_dp"
-            android:hint="@string/enter_your_street_number_and_name"
             android:ellipsize="end"
             android:textCursorDrawable = "@null"
             android:maxLines="1"
@@ -83,6 +82,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            android:visibility="gone"
             app:srcCompat="@drawable/close_icon" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -106,7 +106,6 @@
         android:layout_height="@dimen/_2sdp"
         android:background="@color/gray"
         android:visibility="gone"
-        android:layout_marginTop="@dimen/sixteen_dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/searchLayout" />
@@ -125,8 +124,8 @@
         android:text="@string/geo_loc_error_msg_title"
         android:textColor="@color/red"
         android:textSize="@dimen/sixteen_sp"
-        android:visibility="gone"
         android:translationY="@dimen/minus_one_point_five_sp"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/errorMassageDivider" />

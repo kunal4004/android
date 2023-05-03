@@ -39,6 +39,7 @@ import za.co.woolworths.financial.services.android.geolocation.view.DeliveryAddr
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
+import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
 import za.co.woolworths.financial.services.android.ui.fragments.poi.PoiBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.EnableLocationSettingsFragment
@@ -531,6 +532,13 @@ class ConfirmAddressMapFragment :
             binding?.autoCompleteTextView?.apply {
                 setAdapter(placesAdapter)
             }
+            binding.autoCompleteTextView.afterTextChanged {
+                if(it.isEmpty()){
+                    binding.imgRemoveAddress.visibility=View.GONE
+                }else{
+                    binding.imgRemoveAddress.visibility=View.VISIBLE
+                }
+            }
             binding?.autoCompleteTextView?.onItemClickListener =
                 AdapterView.OnItemClickListener { parent, _, position, _ ->
                     val item = parent.getItemAtPosition(position) as? PlaceAutocomplete
@@ -581,21 +589,6 @@ class ConfirmAddressMapFragment :
         }
     }
 
-    private fun showSearchBarHint() {
-        binding.apply {
-            errorMessage?.visibility = View.GONE
-            errorMessageTitle?.visibility = View.GONE
-            errorMassageDivider?.visibility = View.VISIBLE
-            searchBarTipHint?.visibility = View.VISIBLE
-        }
-    }
-
-    private fun hideSearchBarHint() {
-        binding.apply {
-            searchBarTipHint?.visibility = View.GONE
-            errorMassageDivider?.visibility = View.GONE
-        }
-    }
 
     private fun showSelectedLocationError(result: Boolean?) {
         binding?.apply {
