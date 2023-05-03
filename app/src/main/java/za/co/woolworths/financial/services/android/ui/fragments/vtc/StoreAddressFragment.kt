@@ -373,7 +373,7 @@ class StoreAddressFragment : BaseFragmentBinding<FragmentStoreAddressBinding>(
 
     private fun navigateToParticipatingStores(location: Location?) {
         activity?.runOnUiThread {
-            val locationRequestRequest = OneAppService.getStoresForNPC(
+            val locationRequestRequest = OneAppService().getStoresForNPC(
                 location?.latitude
                     ?: 0.0, location?.longitude ?: 0.0, "", null
             )

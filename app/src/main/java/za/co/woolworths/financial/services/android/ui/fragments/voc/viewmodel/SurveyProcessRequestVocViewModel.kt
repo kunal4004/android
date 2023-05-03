@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.voc.viewmodel
 
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import retrofit2.Call
@@ -16,12 +17,21 @@ import javax.inject.Inject
 @HiltViewModel
 class SurveyProcessRequestVocViewModel @Inject constructor(): ViewModel() {
 
+    private lateinit var apiService: OneAppService
     private var surveyDetails: SurveyDetails? = null
     private var surveyAnswers: HashMap<Long, SurveyAnswer>? = null
 
-    fun configure(details: SurveyDetails?, answers: HashMap<Long, SurveyAnswer>?) {
+    @VisibleForTesting (otherwise = VisibleForTesting.PRIVATE)
+    fun getAnswers(): HashMap<Long, SurveyAnswer>? = surveyAnswers
+
+    fun configure(
+        details: SurveyDetails?,
+        answers: HashMap<Long, SurveyAnswer>?,
+        apiService: OneAppService = OneAppService()
+    ) {
         surveyDetails = details
         surveyAnswers = answers
+        this.apiService = apiService
 
         surveyDetails?.questions?.forEach { question ->
             // Pass some data required by Genex
@@ -66,7 +76,7 @@ class SurveyProcessRequestVocViewModel @Inject constructor(): ViewModel() {
             onFailed()
             return
         }
-        val submitVocSurveyRepliesRequest = OneAppService.submitVocSurveyReplies(surveyDetails!!, surveyAnswers!!)
+        val submitVocSurveyRepliesRequest = apiService.submitVocSurveyReplies(surveyDetails!!, surveyAnswers!!)
         submitVocSurveyRepliesRequest.enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {

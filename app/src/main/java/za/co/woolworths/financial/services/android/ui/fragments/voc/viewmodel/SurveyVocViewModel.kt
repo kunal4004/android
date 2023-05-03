@@ -15,11 +15,13 @@ import javax.inject.Inject
 @HiltViewModel
 class SurveyVocViewModel @Inject constructor(): ViewModel() {
 
+    private lateinit var apiService: OneAppService
     private var surveyDetails: SurveyDetails? = null
     private val surveyAnswers = HashMap<Long, SurveyAnswer>()
 
-    fun configure(details: SurveyDetails?) {
-        surveyDetails = details
+    fun configure(details: SurveyDetails?, apiService: OneAppService = OneAppService()) {
+        this.surveyDetails = details
+        this.apiService = apiService
     }
 
     fun getAllowedQuestions(): List<SurveyQuestion> {
@@ -85,7 +87,7 @@ class SurveyVocViewModel @Inject constructor(): ViewModel() {
     }
 
     fun performOptOutRequest() {
-        val optOutVocSurveyRequest = OneAppService.optOutVocSurvey()
+        val optOutVocSurveyRequest = apiService.optOutVocSurvey()
         optOutVocSurveyRequest.enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 // Response not needed
