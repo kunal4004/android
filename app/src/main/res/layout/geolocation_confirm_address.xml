@@ -63,6 +63,7 @@
             android:dropDownWidth="match_parent"
             android:dropDownAnchor="@+id/autoCompleteTextView"
             android:dropDownVerticalOffset="@dimen/sixteen_dp"
+            android:hint="@string/enter_your_street_number_and_name"
             android:ellipsize="end"
             android:textCursorDrawable = "@null"
             android:maxLines="1"
