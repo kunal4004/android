@@ -83,7 +83,7 @@ class RemoveProductsFromCartDialogFragment : WBottomSheetDialogFragment() {
     }
 
     private fun removeItem(commerceId: String) {
-        OneAppService.removeCartItem(commerceId).enqueue(CompletionHandler(object : IResponseListener<ShoppingCartResponse> {
+        OneAppService().removeCartItem(commerceId).enqueue(CompletionHandler(object : IResponseListener<ShoppingCartResponse> {
             override fun onSuccess(shoppingCartResponse: ShoppingCartResponse?) {
                 onItemRemoved(commerceId)
             }

@@ -13,7 +13,7 @@ import za.co.woolworths.financial.services.android.models.network.OneAppService
 class StoreCardAPIRequest {
 
     fun getOTP(otpMethodType: OTPMethodType, response: IResponseListener<LinkNewCardOTP>) {
-        OneAppService.getLinkNewCardOTP(otpMethodType).enqueue(CompletionHandler(object : IResponseListener<LinkNewCardOTP> {
+        OneAppService().getLinkNewCardOTP(otpMethodType).enqueue(CompletionHandler(object : IResponseListener<LinkNewCardOTP> {
             override fun onSuccess(linkNewCardOTP: LinkNewCardOTP?) {
                 linkNewCardOTP?.apply {
                     response.onSuccess(this)
@@ -27,7 +27,7 @@ class StoreCardAPIRequest {
     }
 
     fun unblockCard(productOfferingId: String, requestBody: UnblockStoreCardRequestBody, response: IResponseListener<UnblockStoreCardResponse>) {
-        OneAppService.unblockStoreCard(productOfferingId, requestBody).enqueue(CompletionHandler(object : IResponseListener<UnblockStoreCardResponse> {
+        OneAppService().unblockStoreCard(productOfferingId, requestBody).enqueue(CompletionHandler(object : IResponseListener<UnblockStoreCardResponse> {
             override fun onSuccess(unblockStoreCardResponse: UnblockStoreCardResponse?) {
                 unblockStoreCardResponse?.apply {
                     response.onSuccess(this)
@@ -41,7 +41,7 @@ class StoreCardAPIRequest {
     }
 
     fun blockCard(productOfferingId: String, requestBody: BlockCardRequestBody, response: IResponseListener<BlockMyCardResponse>) {
-        OneAppService.postBlockMyCard(requestBody, productOfferingId).enqueue(CompletionHandler(object : IResponseListener<BlockMyCardResponse> {
+        OneAppService().postBlockMyCard(requestBody, productOfferingId).enqueue(CompletionHandler(object : IResponseListener<BlockMyCardResponse> {
             override fun onSuccess(blockStoreCardResponse: BlockMyCardResponse?) {
                 blockStoreCardResponse?.apply {
                     response.onSuccess(this)

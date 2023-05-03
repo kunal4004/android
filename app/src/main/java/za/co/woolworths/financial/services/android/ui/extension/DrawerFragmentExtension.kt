@@ -11,7 +11,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.utils.On
 fun refineProducts(onRefineProductsResult: OnRefineProductsResult, productsRequestParams: ProductsRequestParams): Call<ProductView> {
     val resultListener: OnRefineProductsResult? = onRefineProductsResult
     productsRequestParams.responseType = ProductsRequestParams.ResponseType.SUMMARY
-    val productRequest = OneAppService.getProducts(productsRequestParams)
+    val productRequest = OneAppService().getProducts(productsRequestParams)
     productRequest.enqueue(CompletionHandler(object : IResponseListener<ProductView> {
         override fun onSuccess(productView: ProductView?) {
             productView?.apply {
