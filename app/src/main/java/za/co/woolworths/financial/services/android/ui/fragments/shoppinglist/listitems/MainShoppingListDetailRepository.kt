@@ -14,7 +14,7 @@ class MainShoppingListDetailRepository @Inject constructor() : ShoppingListDetai
 
     override suspend fun getShoppingListItems(listId: String): Resource<ShoppingListItemsResponse> {
         return try {
-            val response = OneAppService.getShoppingListItems(listId)
+            val response = OneAppService().getShoppingListItems(listId)
             if (response.isSuccessful) {
                 response.body()?.let {
                     return when (it.httpCode) {
@@ -39,7 +39,7 @@ class MainShoppingListDetailRepository @Inject constructor() : ShoppingListDetai
         isUserBrowsing: Boolean
     ): Resource<SkusInventoryForStoreResponse> {
         return try {
-            val response = OneAppService.getInventorySkusForStore(storeId, multiSku, isUserBrowsing)
+            val response = OneAppService().getInventorySkusForStore(storeId, multiSku, isUserBrowsing)
             if (response.isSuccessful) {
                 response.body()?.let {
                     return when (it.httpCode) {

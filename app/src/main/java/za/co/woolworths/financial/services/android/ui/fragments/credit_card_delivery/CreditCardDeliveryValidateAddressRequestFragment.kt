@@ -265,7 +265,7 @@ class CreditCardDeliveryValidateAddressRequestFragment : CreditCardDeliveryBaseF
             it.addressDetails = this.scheduleDeliveryRequest.addressDetails
             it.slotDetails = this.scheduleDeliveryRequest.slotDetails
         }
-        envelopeNumber.let { request(OneAppService.postScheduleDelivery(productOfferingId, envelopeNumber, false, "", scheduleDeliveryRequest)) }
+        envelopeNumber.let { request(OneAppService().postScheduleDelivery(productOfferingId, envelopeNumber, false, "", scheduleDeliveryRequest)) }
     }
 
     private fun getSearchPhase(addressDetails: AddressDetails?): String {

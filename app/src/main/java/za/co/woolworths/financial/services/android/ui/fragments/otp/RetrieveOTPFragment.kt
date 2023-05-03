@@ -50,7 +50,7 @@ class RetrieveOTPFragment : BaseFragmentBinding<RetrieveOtpFragmentBinding>(Retr
     }
 
     private fun initRetrieveOTP(otpMethodType: OTPMethodType) {
-        OneAppService.retrieveOTP(otpMethodType, productOfferingId).enqueue(CompletionHandler(object : IResponseListener<RetrieveOTPResponse> {
+        OneAppService().retrieveOTP(otpMethodType, productOfferingId).enqueue(CompletionHandler(object : IResponseListener<RetrieveOTPResponse> {
             override fun onSuccess(response: RetrieveOTPResponse?) {
                 response?.apply {
                     this@RetrieveOTPFragment.retrieveOTPResponse = this

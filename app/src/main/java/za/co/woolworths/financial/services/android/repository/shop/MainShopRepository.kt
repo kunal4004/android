@@ -21,7 +21,7 @@ class MainShopRepository : ShopRepository {
 
     override suspend fun fetchDashLandingDetails(): Resource<DashCategories> {
         return try {
-            val response = OneAppService.getDashLandingDetails()
+            val response = OneAppService().getDashLandingDetails()
             if (response.isSuccessful) {
                 response.body()?.let {
                     return when (it.httpCode) {
@@ -43,7 +43,7 @@ class MainShopRepository : ShopRepository {
     override suspend fun fetchOnDemandCategories(location: Location?): Resource<DashRootCategories> {
         return try {
 
-            val response = OneAppService.getDashCategoryNavigation(location)
+            val response = OneAppService().getDashCategoryNavigation(location)
             if (response.isSuccessful) {
                 response.body()?.let {
                     return when (it.httpCode) {
@@ -68,7 +68,7 @@ class MainShopRepository : ShopRepository {
     ): Resource<SkusInventoryForStoreResponse> {
         return try {
 
-            val response = OneAppService.fetchInventorySkuForStore(mStoreId, referenceId, false)
+            val response = OneAppService().fetchInventorySkuForStore(mStoreId, referenceId, false)
             if (response.isSuccessful) {
                 response.body()?.let {
                     return when (it.httpCode) {
@@ -89,7 +89,7 @@ class MainShopRepository : ShopRepository {
 
     override suspend fun addItemsToCart(mAddItemsToCart: MutableList<AddItemToCart>): Resource<AddItemToCartResponse> {
        return try {
-            val response = OneAppService.addItemsToCart(mAddItemsToCart)
+            val response = OneAppService().addItemsToCart(mAddItemsToCart)
             if (response.isSuccessful) {
                 response.body()?.let {
                     return when (it.httpCode) {
@@ -119,7 +119,7 @@ class MainShopRepository : ShopRepository {
     override suspend fun validateLocation(placeId: String): Resource<ValidateLocationResponse> {
         return try {
 
-            val response = OneAppService.getValidateLocation(placeId)
+            val response = OneAppService().getValidateLocation(placeId)
             if (response.isSuccessful) {
                 response.body()?.let {
                     return when (it.httpCode) {
@@ -143,7 +143,7 @@ class MainShopRepository : ShopRepository {
 
     override suspend fun confirmPlace(confirmLocationRequest: ConfirmLocationRequest): Resource<ConfirmDeliveryAddressResponse> {
         return try {
-            val response = OneAppService.confirmLocation(confirmLocationRequest)
+            val response = OneAppService().confirmLocation(confirmLocationRequest)
             if (response.isSuccessful) {
                 response.body()?.let {
                     return when (it.httpCode) {
@@ -168,7 +168,7 @@ class MainShopRepository : ShopRepository {
         endRadius: String?
     ): Resource<LocationResponse> {
         return try {
-            val response = OneAppService.productStoreFinder(sku, startRadius, endRadius)
+            val response = OneAppService().productStoreFinder(sku, startRadius, endRadius)
             if (response.isSuccessful) {
                 response.body()?.let {
                     return when (it.httpCode) {
@@ -189,7 +189,7 @@ class MainShopRepository : ShopRepository {
 
     override suspend fun fetchLastDashOrderDetails(): Resource<LastOrderDetailsResponse> {
         return try {
-            val response = OneAppService.getLastDashOrder()
+            val response = OneAppService().getLastDashOrder()
             if (response.isSuccessful) {
                 response.body()?.let {
                     return when (it.httpCode) {

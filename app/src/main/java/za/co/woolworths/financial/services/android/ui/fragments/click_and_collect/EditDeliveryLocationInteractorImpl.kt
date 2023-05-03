@@ -6,19 +6,19 @@ import za.co.woolworths.financial.services.android.ui.extension.request
 
 class EditDeliveryLocationInteractorImpl : EditDeliveryLocationContract.EditDeliveryLocationInteractor {
     override fun executeGetProvinces(requestListener: IGenericAPILoaderView<Any>) {
-        request(OneAppService.getProvinces(), requestListener)
+        request(OneAppService().getProvinces(), requestListener)
     }
 
     override fun executeGetSuburbs(locationId: String, requestListener: IGenericAPILoaderView<Any>) {
-        request(OneAppService.getSuburbs(locationId), requestListener)
+        request(OneAppService().getSuburbs(locationId), requestListener)
     }
 
     override fun executeSetSuburb(suburbId: String, requestListener: IGenericAPILoaderView<Any>) {
-        request(OneAppService.setSuburb(suburbId), requestListener)
+        request(OneAppService().setSuburb(suburbId), requestListener)
     }
 
     override fun executeValidateSelectedSuburb(suburbId: String, isStore:Boolean, requestListener: IGenericAPILoaderView<Any>) {
-        request(OneAppService.validateSelectedSuburb(suburbId, isStore), requestListener)
+        request(OneAppService().validateSelectedSuburb(suburbId, isStore), requestListener)
     }
 
 }
