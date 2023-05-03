@@ -816,7 +816,7 @@ class KotlinUtils {
         }
 
         fun postOneAppEvent(appScreen: String, featureName: String) {
-            request(OneAppService.queryServicePostEvent(featureName, appScreen))
+            request(OneAppService().queryServicePostEvent(featureName, appScreen))
         }
 
         fun parseMoneyValue(

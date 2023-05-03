@@ -528,7 +528,7 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
         }
 
         private fun authenticateOneCart(onSuccess: (String, String, String) -> Unit, onFailure: () -> Unit) {
-            OneAppService.authenticateOneCart().apply {
+            OneAppService().authenticateOneCart().apply {
                 enqueue(CompletionHandler(object : IResponseListener<OCAuthenticationResponse> {
                     override fun onSuccess(response: OCAuthenticationResponse?) {
                         response?.apply {
@@ -596,7 +596,7 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
         }
 
         private fun fetchOrdersPendingPicking(onCompletion: (ArrayList<Order>?) -> Unit) {
-            OneAppService.getOrders().apply {
+            OneAppService().getOrders().apply {
                 enqueue(CompletionHandler(object : IResponseListener<OrdersResponse> {
                     override fun onSuccess(ordersResponse: OrdersResponse?) {
                         ordersResponse?.upcomingOrders?.filter { it.deliveryStatus?.Food?.equals(ORDER_PENDING_PICKING) == true }?.let {
@@ -641,7 +641,7 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
         }
 
         private fun fetchOrderDetails(orderId: String, onSuccess: (OrderSummary) -> Unit, onFailure: () -> Unit) {
-            OneAppService.getOrderDetails(orderId).enqueue(CompletionHandler(object :
+            OneAppService().getOrderDetails(orderId).enqueue(CompletionHandler(object :
                 IResponseListener<OrderDetailsResponse> {
                 override fun onSuccess(ordersResponse: OrderDetailsResponse?) {
                     ordersResponse?.orderSummary?.let {

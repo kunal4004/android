@@ -8,6 +8,6 @@ import za.co.woolworths.financial.services.android.ui.extension.request
 
 class ProductSizeGuideInteractorImpl : ProductSizeGuideContract.ProductSizeGuideInteractor {
     override fun querySizeGuideContent(sizeGuideId: String, requestListener: IGenericAPILoaderView<Any>): Call<SizeGuideResponse>? {
-        return request(OneAppService.getSizeGuideContent(sizeGuideId), requestListener)
+        return request(OneAppService().getSizeGuideContent(sizeGuideId), requestListener)
     }
 }

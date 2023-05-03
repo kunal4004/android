@@ -145,7 +145,7 @@ class PMA3DSecureProcessRequestFragment : ProcessYourRequestFragment(), View.OnC
         processRequestNavHostFragment.includePMAProcessing.processRequestTitleTextView?.text = bindString(R.string.processing_your_payment_label)
         startSpinning()
         val payUPayResultRequest = payMyAccountViewModel.getPayUPayResultRequest()
-        request(payUPayResultRequest?.let { pay -> OneAppService.queryServicePaymentResult(pay) }, object : IGenericAPILoaderView<Any> {
+        request(payUPayResultRequest?.let { pay -> OneAppService().queryServicePaymentResult(pay) }, object : IGenericAPILoaderView<Any> {
 
             override fun onSuccess(response: Any?) {
                 if (!isAdded) return

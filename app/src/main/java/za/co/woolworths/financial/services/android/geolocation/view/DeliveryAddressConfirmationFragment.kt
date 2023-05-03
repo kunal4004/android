@@ -1050,7 +1050,7 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
     }
 
     private fun loadShoppingCart() {
-        val shoppingCartResponseCall = OneAppService.getShoppingCart()
+        val shoppingCartResponseCall = OneAppService().getShoppingCart()
         shoppingCartResponseCall.enqueue(
                 CompletionHandler(
                         (object : IResponseListener<ShoppingCartResponse> {
