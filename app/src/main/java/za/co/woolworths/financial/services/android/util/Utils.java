@@ -1147,13 +1147,15 @@ public class Utils {
     }
 
     public static void displayValidationMessageForResult(Activity context, CustomPopUpWindow.MODAL_LAYOUT key, String description, int requestCode) {
-        Intent openMsg = new Intent(context, CustomPopUpWindow.class);
-        Bundle args = new Bundle();
-        args.putSerializable("key", key);
-        args.putString("description", description);
-        openMsg.putExtras(args);
-        context.startActivityForResult(openMsg, requestCode);
-        ((AppCompatActivity) context).overridePendingTransition(0, 0);
+        if(context != null){
+            Intent openMsg = new Intent(context, CustomPopUpWindow.class);
+            Bundle args = new Bundle();
+            args.putSerializable("key", key);
+            args.putString("description", description);
+            openMsg.putExtras(args);
+            context.startActivityForResult(openMsg, requestCode);
+            ((AppCompatActivity) context).overridePendingTransition(0, 0);
+        }
     }
 
     public static void displayValidationMessageForResult(Fragment fragment, Activity activity, CustomPopUpWindow.MODAL_LAYOUT key, String title, String description, String buttonTitle, int requestCode) {
