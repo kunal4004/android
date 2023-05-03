@@ -406,7 +406,7 @@ class ToastFactory {
         fun liveChatHeadUpNotificationWindow(
             viewLocation: View?,
             activity: Activity?,
-            sendMessageResponse: SendMessageResponse?,
+            sendMessageResponse: SendMessageResponse?
         ): PopupWindow? {
             if (activity?.isFinishing == true) {
                 return null
