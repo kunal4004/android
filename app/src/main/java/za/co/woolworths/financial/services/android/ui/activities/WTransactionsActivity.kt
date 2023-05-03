@@ -19,7 +19,7 @@ import za.co.woolworths.financial.services.android.models.dto.TransactionHistory
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
-import za.co.woolworths.financial.services.android.models.network.OneAppService.getAccountTransactionHistory
+import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.adapters.WTransactionAdapter
 import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleVisibility
@@ -105,7 +105,7 @@ class WTransactionsActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun transactionAsyncAPI(productOfferingId: String?) {
         mExecuteTransactionRequest =
-            productOfferingId?.let { id -> getAccountTransactionHistory(id) }
+            productOfferingId?.let { id -> OneAppService().getAccountTransactionHistory(id) }
         mExecuteTransactionRequest?.enqueue(CompletionHandler(object :
             IResponseListener<TransactionHistoryResponse> {
             override fun onSuccess(response: TransactionHistoryResponse?) {

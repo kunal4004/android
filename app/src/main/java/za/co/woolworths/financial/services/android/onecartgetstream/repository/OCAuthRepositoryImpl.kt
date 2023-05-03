@@ -13,7 +13,7 @@ class OCAuthRepositoryImpl @Inject constructor() : OCAuthRepository {
     override suspend fun getOCAuthToken(): Resource<OCAuthenticationResponse> {
 
         return try {
-            val response = OneAppService.getOCAuthData()
+            val response = OneAppService().getOCAuthData()
             if (response.isSuccessful) {
                 response.body()?.let {
                     Resource.success(it)
