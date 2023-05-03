@@ -48,34 +48,33 @@
             android:layout_marginTop="@dimen/sixteen_dp"
             android:layout_marginBottom="@dimen/four_dp"
             android:text="@string/enter_street_name"
-            android:textSize="@dimen/thirteen_sp"
-            android:textColor="@color/black" />
+            android:textColor="@color/black"
+            android:textSize="@dimen/thirteen_sp" />
 
         <EditText
             android:id="@+id/streetNameEditText"
             style="@style/checkout_edittext_multi_style"
             android:layout_width="match_parent"
             android:layout_marginStart="@dimen/twenty_four_dp"
-            android:layout_marginEnd="@dimen/twenty_four_dp"
             android:layout_marginTop="@dimen/_3sdp"
-            android:inputType="textNoSuggestions|textMultiLine"
-            android:minLines="4"
-            android:maxLines="10"
-            android:maxLength="@integer/fifty"
+            android:layout_marginEnd="@dimen/twenty_four_dp"
             android:autofillHints="name"
-            />
+            android:inputType="textNoSuggestions|textMultiLine"
+            android:maxLength="@integer/fifty"
+            android:maxLines="10"
+            android:minLines="4" />
 
 
         <za.co.woolworths.financial.services.android.ui.views.WButton
             android:id="@+id/confirmButton"
             style="@style/blackButtonStyle"
-            android:enabled="false"
             android:layout_marginLeft="@dimen/twenty_four_dp"
             android:layout_marginTop="@dimen/thirty_two_dp"
             android:layout_marginRight="@dimen/twenty_four_dp"
             android:layout_marginBottom="@dimen/twenty_four_dp"
-            android:text="@string/confirm"
-            android:background="@color/button_disable" />
+            android:background="@color/button_disable"
+            android:enabled="false"
+            android:text="@string/confirm" />
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             android:id="@+id/dismissButton"

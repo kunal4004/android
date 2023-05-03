@@ -217,7 +217,6 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         initView()
         listOfInputFields = listOf(
             binding.autoCompleteTextView,
-           // binding.addressStreetNameEditText,
             binding.recipientAddressLayout.addressNicknameEditText,
             binding.recipientAddressLayout.unitComplexFloorEditText,
             binding.recipientDetailsLayout.recipientNameEditText,
@@ -568,7 +567,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             }
         } else {
             isValidAddress = true
-            disablePOIAddressTextFields()
+           // disablePOIAddressTextFields()
         }
         if (!selectedAddress.provinceName.isNullOrEmpty() && !selectedAddress.savedAddress.suburb.isNullOrEmpty())
             selectedAddress.savedAddress.region = ""
@@ -715,16 +714,12 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
 
                     //if addressType is poi and Changed From Complex/Estate to other type then need to clear all fields
                     if (isPoiAddress == true && !selectedDeliveryAddressType?.equals(Constant.COMPLEX_ESTATE)!!) {
-                        binding.autoCompleteTextView?.setText("")
-                       // binding.addressStreetNamePlaceHolder?.visibility = View.GONE
-                       // binding.addressStreetNameEditText?.visibility = View.GONE
-                       // binding.addressStreetNameEditTextErrorMsg?.visibility = View.GONE
-                        binding.recipientAddressLayout.unitComplexFloorPlaceHolder?.visibility = View.VISIBLE
-                        binding.recipientAddressLayout.unitComplexFloorEditText?.visibility = View.VISIBLE
-                        binding.recipientAddressLayout.unitComplexFloorEditTextErrorMsg?.visibility = View.GONE
-                        binding.suburbEditText?.setText("")
-                        binding.provinceAutocompleteEditText?.setText("")
-                        binding.postalCode?.setText("")
+                        binding.apply {
+                            autoCompleteTextView?.setText("")
+                            suburbEditText?.setText("")
+                            provinceAutocompleteEditText?.setText("")
+                            postalCode?.setText("")
+                        }
                         isPoiAddress = false
                     }
                     changeUnitComplexPlaceHolderOnType(selectedDeliveryAddressType)
@@ -1346,33 +1341,12 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
     }
 
     private fun enablePOIAddressTextFields() {
-        //for enabling the StreetName place holder and EditText
-       // binding.addressStreetNamePlaceHolder?.visibility = View.VISIBLE
-       // binding.addressStreetNameEditText?.setText("")
-       // binding.addressStreetNameEditText?.visibility = View.VISIBLE
-
-        //for disabling the unitComplex place holder and EditText
-        binding.recipientAddressLayout.unitComplexFloorPlaceHolder?.visibility = View.VISIBLE
-        binding.recipientAddressLayout.unitComplexFloorEditText?.visibility = View.VISIBLE
-
-        binding.recipientAddressLayout.unitComplexFloorEditTextErrorMsg?.visibility = View.GONE
-
-        //need to set Address Type as Complex/Estate
-        selectedDeliveryAddressType = Constant.COMPLEX_ESTATE
-
-        binding.recipientAddressLayout.deliveringLayout?.removeAllViews()
+        binding.apply {
+            //need to set Address Type as Complex/Estate
+            selectedDeliveryAddressType = Constant.COMPLEX_ESTATE
+            recipientAddressLayout.deliveringLayout.removeAllViews()
+        }
         showWhereAreWeDeliveringView()
-
-    }
-
-    private fun disablePOIAddressTextFields() {
-        //for disabling the StreetName place holder and EditText for NON POI Address
-      //  binding.addressStreetNamePlaceHolder?.visibility = View.GONE
-       // binding.addressStreetNameEditText?.visibility = View.GONE
-       // binding.addressStreetNameEditTextErrorMsg?.visibility = View.GONE
-        //for enabling the unitComplex place holder and EditText if it is Non POI Address
-        binding.recipientAddressLayout.unitComplexFloorPlaceHolder?.visibility = View.VISIBLE
-        binding.recipientAddressLayout.unitComplexFloorEditText?.visibility = View.VISIBLE
 
     }
 
@@ -1445,19 +1419,14 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
     }
 
     private fun hideOrShowUnIndexedAddressErrorMessages(isEnabled:Boolean?){
-        if(isEnabled==true){
-           binding.errorMessageTitle.visibility=View.VISIBLE
-           binding.errorMessage.visibility=View.VISIBLE
-
+        binding.apply {
+            if (isEnabled == true) {
+                errorMessageTitle.visibility = View.VISIBLE
+                errorMessage.visibility = View.VISIBLE
+            } else {
+                errorMessageTitle.visibility = View.GONE
+                errorMessage.visibility = View.GONE
+            }
         }
-        else{
-
-            binding.errorMessageTitle.visibility=View.GONE
-            binding.errorMessage.visibility=View.GONE
-        }
-
-
     }
-
-
 }
