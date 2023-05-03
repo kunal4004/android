@@ -47,8 +47,7 @@ class UpdateMyAccount(private val swipeRefreshLayout: SwipeRefreshLayout?, priva
     fun accountUpdateActive() = (mRefreshAccountType !== RefreshAccountType.NONE)
 
     fun make(forceNetworkUpdate: Boolean, result: (HashMap<Products, Account?>?) -> Unit, failure: (Throwable?) -> Unit) {
-        val oneAppService = OneAppService
-        mAccountRequest = oneAppService.getAccounts()
+        mAccountRequest = OneAppService().getAccounts()
         OneAppService.forceNetworkUpdate = forceNetworkUpdate
         mAccountRequest?.enqueue(CompletionHandler(object : IResponseListener<AccountsResponse> {
             override fun onSuccess(accountsResponse: AccountsResponse?) {
@@ -68,8 +67,7 @@ class UpdateMyAccount(private val swipeRefreshLayout: SwipeRefreshLayout?, priva
     }
 
     fun fetchAccount(forceNetworkUpdate: Boolean, result: (AccountsResponse?) -> Unit, failure: (Throwable?) -> Unit) {
-        val oneAppService = OneAppService
-        mAccountRequest = oneAppService.getAccounts()
+        mAccountRequest = OneAppService().getAccounts()
         OneAppService.forceNetworkUpdate = forceNetworkUpdate
         mAccountRequest?.enqueue(CompletionHandler(object : IResponseListener<AccountsResponse> {
             override fun onSuccess(accountsResponse: AccountsResponse?) {
@@ -107,7 +105,7 @@ class UpdateMyAccount(private val swipeRefreshLayout: SwipeRefreshLayout?, priva
 
     fun getAccountsByProductGroupCode(products: Products?, result: (AccountsResponse?) -> Unit, failure: (Throwable?) -> Unit) {
         val productOfferingId = products?.productOfferingId ?: 0
-        mAccountRequest = OneAppService.getAccountsByProductOfferingId(productOfferingId.toString())
+        mAccountRequest = OneAppService().getAccountsByProductOfferingId(productOfferingId.toString())
         mAccountRequest?.enqueue(CompletionHandler(object : IResponseListener<AccountsResponse> {
             override fun onSuccess(response: AccountsResponse?) {
                 AccountMasterCache.setAccountsProduct(products,response)

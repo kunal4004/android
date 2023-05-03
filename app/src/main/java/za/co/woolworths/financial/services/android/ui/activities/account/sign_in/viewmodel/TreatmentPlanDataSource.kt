@@ -18,9 +18,9 @@ class TreatmentPlanDataSource @Inject constructor() : ITreatmentPlanDataSource {
             val result = RemoteDataSource.service.fetchCollectionCheckEligibility(
                 userAgent = "",
                 userAgentVersion = "",
-                sessionToken = OneAppService.getSessionToken(),
+                sessionToken = OneAppService().getSessionToken(),
                 productGroupCode = productGroupCode,
-                deviceIdentityToken = OneAppService.getDeviceIdentityToken())
+                deviceIdentityToken = OneAppService().getDeviceIdentityToken())
             ApiResult.Success(result)
         } catch (h: HttpException) {
             ApiResult.Error(h)
