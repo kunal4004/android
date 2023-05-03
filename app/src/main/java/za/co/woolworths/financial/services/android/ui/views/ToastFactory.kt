@@ -406,8 +406,11 @@ class ToastFactory {
         fun liveChatHeadUpNotificationWindow(
             viewLocation: View?,
             activity: Activity?,
-            sendMessageResponse: SendMessageResponse?
-        ): PopupWindow {
+            sendMessageResponse: SendMessageResponse?,
+        ): PopupWindow? {
+            if (activity?.isFinishing == true) {
+                return null
+            }
             val context = WoolworthsApplication.getAppContext()
             val inflater =
                 context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as? LayoutInflater
