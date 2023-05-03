@@ -602,6 +602,9 @@ class ConfirmAddressMapFragment :
             if (result == true) {
                 if (isPoiAddress == true) {
                     confirmAddress?.isEnabled = false
+                    errorMassageDivider?.visibility = View.GONE
+                    errorMessage?.visibility = View.GONE
+                    errorMessageTitle?.visibility = View.GONE
                     if (poiBottomSheetDialog == null) {
                         poiBottomSheetDialog =
                             PoiBottomSheetDialog(this@ConfirmAddressMapFragment, true)
@@ -805,7 +808,7 @@ class ConfirmAddressMapFragment :
                     val placeTypes: MutableList<Place.Type>? = response.place.types
                     if (!placeTypes.isNullOrEmpty()) {
                         for (placeType in placeTypes) {
-                            if (placeType.equals(Place.Type.POINT_OF_INTEREST)) {
+                            if (placeType == Place.Type.POINT_OF_INTEREST) {
                                 isPoiAddress = true
 
                             }
@@ -982,7 +985,7 @@ class ConfirmAddressMapFragment :
     private fun addUnIndexedIdentifiedListener() {
         UnIndexedAddressLiveData.value = false
         UnIndexedAddressLiveData.observe(viewLifecycleOwner) {
-            if (it == true && unIndexedAddressIdentified == true && isPoiAddress == false) {
+            if (it == true && unIndexedAddressIdentified == true ) {
 
                 if (unIndexedBottomSheetDialog == null) {
                     unIndexedBottomSheetDialog =
