@@ -493,6 +493,7 @@ open class FirebaseManagerAnalyticsProperties {
             const val SUCCESSFUL: String = "successful"
             const val REASON: String = "Reason"
             const val STATUS = "status"
+            const val STATUS_URL = "status_url"
             const val TRANSACTION_ID = "transaction_id"
             const val PAYMENT_STATUS = "payment_status"
 
@@ -504,6 +505,8 @@ open class FirebaseManagerAnalyticsProperties {
 
             const val CURRENCY = "currency"
             const val ITEM_LIST_NAME = "item_list_name"
+            const val SHOPPING_LIST_NAME = "Shopping_list_name"
+            const val ITEM_RATING = "Item Rating"
             const val ITEM_BRAND = "item_brand"
             const val ORDER_TOTAL_VALUE = "order_total"
 
@@ -621,10 +624,9 @@ open class FirebaseManagerAnalyticsProperties {
             const val AFFILIATION_VALUE: String = "WWOneApp"
             const val CREATIVE_NAME_VALUE: String = "Product List"
             const val PAYMENT_TYPE_VALUE: String = "Gift Card"
-            const val SHIPPING_TIER_VALUE_FOOD: String = "time slot"
-            const val SHIPPING_TIER_VALUE_MIXED: String = "time slot and value"
-            const val SHIPPING_TIER_VALUE_OTHER: String = "value type"
-
+            const val SHIPPING_TIER_VALUE_DASH: String = "Dash"
+            const val SHIPPING_TIER_VALUE_CNC: String = "CNC"
+            const val SHIPPING_TIER_VALUE_STD: String = "Std"
 
 
 

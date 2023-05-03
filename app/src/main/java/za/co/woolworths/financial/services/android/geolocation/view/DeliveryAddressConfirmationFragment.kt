@@ -335,7 +335,6 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
                 if (it.storeName != null) {
                     geoDeliveryText?.text = KotlinUtils.capitaliseFirstLetter(it.storeName)
                 }
-                editDelivery?.text = bindString(R.string.edit)
                 btnConfirmAddress?.isEnabled = true
                 btnConfirmAddress?.setBackgroundColor(
                     ContextCompat.getColor(
@@ -723,7 +722,6 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
         btnConfirmAddress.isEnabled = true
         btnConfirmAddress.setBackgroundColor(ContextCompat.getColor(requireContext(),
             R.color.black))
-        editDelivery.text = getString(R.string.edit)
         changeFulfillmentTitleTextView.text = bindString(R.string.standard_delivery)
         changeFulfillmentSubTitleTextView.text = bindString(R.string.standard_title_text)
         if (validateLocationResponse != null && validateLocationResponse?.validatePlace?.deliverable == false && progressBar.visibility == View.GONE) {
@@ -992,7 +990,6 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
 
     private fun GeoLocationDeliveryAddressBinding.setGeoDeliveryTextForCnc() {
         geoDeliveryText.text = KotlinUtils.capitaliseFirstLetter(mStoreName)
-        editDelivery.text = bindString(R.string.edit)
         btnConfirmAddress.isEnabled = true
         btnConfirmAddress.setBackgroundColor(
             ContextCompat.getColor(
@@ -1053,7 +1050,7 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
     }
 
     private fun loadShoppingCart() {
-        val shoppingCartResponseCall = OneAppService.getShoppingCart()
+        val shoppingCartResponseCall = OneAppService().getShoppingCart()
         shoppingCartResponseCall.enqueue(
                 CompletionHandler(
                         (object : IResponseListener<ShoppingCartResponse> {

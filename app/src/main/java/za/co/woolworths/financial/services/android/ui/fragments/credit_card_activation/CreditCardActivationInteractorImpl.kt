@@ -9,7 +9,7 @@ import za.co.woolworths.financial.services.android.models.network.OneAppService
 class CreditCardActivationInteractorImpl : CreditCardActivationContract.CreditCardActivationInteractor {
 
     override fun executeCreditCardActivation(requestBody: CreditCardActivationRequestBody, onFinishListener: CreditCardActivationContract.CreditCardActivationInteractor.OnFinishListener) {
-        request(OneAppService.activateCreditCardRequest(requestBody), onFinishListener)
+        request(OneAppService().activateCreditCardRequest(requestBody), onFinishListener)
     }
 
 
