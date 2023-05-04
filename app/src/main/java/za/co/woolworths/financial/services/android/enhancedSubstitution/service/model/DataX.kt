@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.enhancedSubstitution.model
+package za.co.woolworths.financial.services.android.enhancedSubstitution.service.model
 
 import za.co.woolworths.financial.services.android.models.dto.FormException
 

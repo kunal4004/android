@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.enhancedSubstitution.repository
+package za.co.woolworths.financial.services.android.enhancedSubstitution.service.repository
 
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.PagingSource

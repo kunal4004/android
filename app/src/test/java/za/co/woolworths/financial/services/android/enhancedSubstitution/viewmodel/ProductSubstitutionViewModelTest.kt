@@ -20,10 +20,10 @@ import org.mockito.MockitoAnnotations
 import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhanceSubstitutionHelperTest
 import za.co.woolworths.financial.services.android.enhancedSubstitution.apihelper.SubstitutionApiHelperTest
 import za.co.woolworths.financial.services.android.enhancedSubstitution.getOrAwaitValue
-import za.co.woolworths.financial.services.android.enhancedSubstitution.model.AddSubstitutionRequest
-import za.co.woolworths.financial.services.android.enhancedSubstitution.model.AddSubstitutionResponse
-import za.co.woolworths.financial.services.android.enhancedSubstitution.model.ProductSubstitution
-import za.co.woolworths.financial.services.android.enhancedSubstitution.repository.ProductSubstitutionRepository
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.AddSubstitutionRequest
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.AddSubstitutionResponse
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.ProductSubstitution
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.repository.ProductSubstitutionRepository
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse
 import za.co.woolworths.financial.services.android.models.network.Resource
 

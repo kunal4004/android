@@ -2,7 +2,7 @@ package za.co.woolworths.financial.services.android.models.dto;
 
 import java.io.Serializable;
 
-import za.co.woolworths.financial.services.android.enhancedSubstitution.model.SubstitutionInfo;
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.SubstitutionInfo;
 
 /**
  * Created by W7099877 on 2018/02/08.

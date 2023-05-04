@@ -7,9 +7,9 @@ import retrofit2.Callback
 import retrofit2.http.*
 import za.co.absa.openbankingapi.woolworths.integration.dto.PayUResponse
 import za.co.woolworths.financial.services.android.checkout.service.network.*
-import za.co.woolworths.financial.services.android.enhancedSubstitution.model.AddSubstitutionRequest
-import za.co.woolworths.financial.services.android.enhancedSubstitution.model.AddSubstitutionResponse
-import za.co.woolworths.financial.services.android.enhancedSubstitution.model.ProductSubstitution
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.AddSubstitutionRequest
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.AddSubstitutionResponse
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.ProductSubstitution
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.request.SaveAddressLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse

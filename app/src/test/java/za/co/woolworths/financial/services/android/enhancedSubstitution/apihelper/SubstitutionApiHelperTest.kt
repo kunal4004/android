@@ -21,7 +21,7 @@ import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhanceS
 import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhanceSubstitutionHelperTest.Companion.DELIVERY_TYPE
 import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhanceSubstitutionHelperTest.Companion.SUBSTITUTION_ID
 
-import za.co.woolworths.financial.services.android.enhancedSubstitution.model.AddSubstitutionRequest
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.AddSubstitutionRequest
 import za.co.woolworths.financial.services.android.models.network.ApiInterface
 import za.co.woolworths.financial.services.android.util.Utils
 

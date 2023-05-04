@@ -24,8 +24,14 @@ import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhanceS
 import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhanceSubstitutionHelperTest.Companion.STORE_ID
 import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhanceSubstitutionHelperTest.Companion.SUBSTITUTION_ID
 import za.co.woolworths.financial.services.android.enhancedSubstitution.apihelper.SubstitutionApiHelperTest
-import za.co.woolworths.financial.services.android.enhancedSubstitution.model.*
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.AddSubstitutionRequest
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.AddSubstitutionResponse
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.Data
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.DataX
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.ProductSubstitution
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.SubstitutionInfo
 import za.co.woolworths.financial.services.android.enhancedSubstitution.service.network.SubstitutionApiHelper
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.repository.ProductSubstitutionRepository
 import za.co.woolworths.financial.services.android.models.dto.FormException
 import za.co.woolworths.financial.services.android.models.dto.SkuInventory
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse
@@ -84,7 +90,11 @@ class ProductSubstitutionRepositoryTest {
             substitutionSelection = "USER_CHOICE"
         )
         dataList.add(data)
-        val response = Response(code = "-1", desc = "success")
+        val response =
+            za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.Response(
+                code = "-1",
+                desc = "success"
+            )
         val productSubstitution =
             ProductSubstitution(data = dataList, httpCode = 200, response = response)
         Mockito.`when`(substitutionApiHelper.getProductSubstitution(PROD_ID))
@@ -190,7 +200,11 @@ class ProductSubstitutionRepositoryTest {
         val substitutionList = mutableListOf<Any>()
         val formExceptions = mutableListOf<FormException>()
         dataList.add(DataX(substitutionList, formExceptions))
-        val response = Response("-1", "success")
+        val response =
+            za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.Response(
+                "-1",
+                "success"
+            )
         val addSubstitutionResponse = AddSubstitutionResponse(dataList, 200, response)
         `when`(substitutionApiHelper.addSubstitution(addSubstitutionRequest))
             .thenReturn(Response.success(addSubstitutionResponse))

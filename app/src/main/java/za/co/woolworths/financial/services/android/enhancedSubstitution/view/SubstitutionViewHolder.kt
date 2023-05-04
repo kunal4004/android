@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.ShoppingListCommerceItemBinding
-import za.co.woolworths.financial.services.android.enhancedSubstitution.model.SubstitutionProducts
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.SubstitutionProducts
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace
 
