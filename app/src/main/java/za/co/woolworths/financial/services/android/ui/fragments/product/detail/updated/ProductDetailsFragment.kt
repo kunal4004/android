@@ -48,14 +48,13 @@ import com.perfectcorp.perfectlib.MakeupCam
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import retrofit2.HttpException
+import za.co.woolworths.financial.services.android.chanel.listener.EnhancedSubstitutionBottomSheetDialog
+import za.co.woolworths.financial.services.android.chanel.listener.EnhancedSubstitutionListener
 import za.co.woolworths.financial.services.android.chanel.utils.ChanelUtils
 import za.co.woolworths.financial.services.android.common.SingleMessageCommonToast
 import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.ILocationProvider
-import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhancedSubstitutionBottomSheetDialog
-import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhancedSubstitutionListener
-import za.co.woolworths.financial.services.android.enhancedSubstitution.apihelper.SubstitutionApiHelper
 import za.co.woolworths.financial.services.android.enhancedSubstitution.model.ProductSubstitution
 import za.co.woolworths.financial.services.android.enhancedSubstitution.repository.ProductSubstitutionRepository
 import za.co.woolworths.financial.services.android.enhancedSubstitution.viewmodel.ProductSubstitutionViewModel
@@ -63,6 +62,7 @@ import za.co.woolworths.financial.services.android.enhancedSubstitution.viewmode
 import za.co.woolworths.financial.services.android.enhancedSubstitution.managesubstitution.ManageSubstitutionFragment
 import za.co.woolworths.financial.services.android.enhancedSubstitution.managesubstitution.SearchSubstitutionFragment
 import za.co.woolworths.financial.services.android.enhancedSubstitution.model.SubstitutionInfo
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.network.SubstitutionApiHelper
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
@@ -4251,7 +4251,6 @@ class ProductDetailsFragment :
     }
 
     override fun openManageSubstituion() {
-       /*navigate to manage substitution screen*/
         (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(openManageSubstitutionFragment(selectionChoice))
     }
 

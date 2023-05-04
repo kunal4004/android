@@ -23,9 +23,9 @@ import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhanceS
 import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhanceSubstitutionHelperTest.Companion.SKU_ID
 import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhanceSubstitutionHelperTest.Companion.STORE_ID
 import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhanceSubstitutionHelperTest.Companion.SUBSTITUTION_ID
-import za.co.woolworths.financial.services.android.enhancedSubstitution.apihelper.SubstitutionApiHelper
 import za.co.woolworths.financial.services.android.enhancedSubstitution.apihelper.SubstitutionApiHelperTest
 import za.co.woolworths.financial.services.android.enhancedSubstitution.model.*
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.network.SubstitutionApiHelper
 import za.co.woolworths.financial.services.android.models.dto.FormException
 import za.co.woolworths.financial.services.android.models.dto.SkuInventory
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse

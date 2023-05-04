@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import com.awfs.coordination.databinding.ShoppingListCommerceItemBinding
-import za.co.woolworths.financial.services.android.enhancedSubstitution.ProductListSelectionListener
+import za.co.woolworths.financial.services.android.chanel.listener.ProductListSelectionListener
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 
 class SearchProductSubstitutionAdapter(var productListSelectionListener: ProductListSelectionListener) :

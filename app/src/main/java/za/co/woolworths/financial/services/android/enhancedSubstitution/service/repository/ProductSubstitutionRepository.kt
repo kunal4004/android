@@ -5,10 +5,10 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import com.awfs.coordination.R
 import com.google.gson.JsonSyntaxException
-import za.co.woolworths.financial.services.android.enhancedSubstitution.apihelper.SubstitutionApiHelper
 import za.co.woolworths.financial.services.android.enhancedSubstitution.model.AddSubstitutionRequest
 import za.co.woolworths.financial.services.android.enhancedSubstitution.model.AddSubstitutionResponse
 import za.co.woolworths.financial.services.android.enhancedSubstitution.model.ProductSubstitution
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.network.SubstitutionApiHelper
 import za.co.woolworths.financial.services.android.models.dto.PagingResponse
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse

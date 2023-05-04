@@ -7,11 +7,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.ManageSubstitutionDetailsLayoutBinding
-import za.co.woolworths.financial.services.android.enhancedSubstitution.ProductSubstitutionListListener
+import za.co.woolworths.financial.services.android.chanel.listener.ProductSubstitutionListListener
 import za.co.woolworths.financial.services.android.enhancedSubstitution.adapter.ManageProductSubstitutionAdapter
 import za.co.woolworths.financial.services.android.enhancedSubstitution.service.network.SubstitutionApiHelper
 import za.co.woolworths.financial.services.android.enhancedSubstitution.model.SubstitutionProducts
-import za.co.woolworths.financial.services.android.enhancedSubstitution.service.repository.ProductSubstitutionRepository
+import za.co.woolworths.financial.services.android.enhancedSubstitution.repository.ProductSubstitutionRepository
 import za.co.woolworths.financial.services.android.enhancedSubstitution.viewmodel.ProductSubstitutionViewModel
 import za.co.woolworths.financial.services.android.enhancedSubstitution.viewmodel.ProductSubstitutionViewModelFactory
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
@@ -93,9 +93,11 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
     private fun setUpViewModel() {
         productSubstitutionViewModel = ViewModelProvider(
                 this,
-                ProductSubstitutionViewModelFactory(ProductSubstitutionRepository(
+                ProductSubstitutionViewModelFactory(
+                    ProductSubstitutionRepository(
                     SubstitutionApiHelper()
-                ))
+                )
+                )
         )[ProductSubstitutionViewModel::class.java]
     }
 
