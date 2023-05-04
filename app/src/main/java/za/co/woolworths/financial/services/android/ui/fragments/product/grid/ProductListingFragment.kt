@@ -83,6 +83,7 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HT
 import za.co.woolworths.financial.services.android.util.AppConstant.Keys.Companion.EXTRA_SEND_DELIVERY_DETAILS_PARAMS
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.saveAnonymousUserLocationDetails
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.logException
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.setCrashlyticsString
@@ -401,14 +402,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
             )
         }
 
-        val arguments = HashMap<String, String>()
-        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_LIST_NAME] =
-            mSubCategoryName!!
-        Utils.triggerFireBaseEvents(
-            FirebaseManagerAnalyticsProperties.VIEW_ITEM_LIST,
-            arguments,
-            activity
-        )
+        requestInAppReview(FirebaseManagerAnalyticsProperties.VIEW_ITEM_LIST, activity)
 
         if (activity is BottomNavigationActivity
             && (activity as BottomNavigationActivity).currentFragment is ProductListingFragment
@@ -568,6 +562,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
             bindRecyclerViewWithUI(productLists)
 
         } else {
+            viewItemListAnalytics(products = productLists, category = mSubCategoryName)
             this.productView = null
             this.productView = response
             hideFooterView()
@@ -607,6 +602,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
             }
         }
         mProductAdapter?.notifyDataSetChanged()
+    }
+
+    private fun viewItemListAnalytics(products: List<ProductList>, category: String?) {
+        FirebaseAnalyticsEventHelper.viewItemList(products = products, category = category)
     }
 
     private fun onChanelSuccess(response: ProductView) {
