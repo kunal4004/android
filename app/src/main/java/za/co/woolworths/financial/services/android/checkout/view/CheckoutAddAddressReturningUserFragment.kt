@@ -735,11 +735,9 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         expandableGrid.hideDeliveryTypeShimmerView()
 
         shimmerComponentArray.forEach {
-            if (it.first.isShimmerStarted) {
                 it.first.stopShimmer()
                 it.first.setShimmer(null)
                 it.second.visibility = VISIBLE
-            }
         }
 
         binding.layoutDeliveryInstructions.txtNeedBags.visibility = VISIBLE

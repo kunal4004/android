@@ -93,7 +93,7 @@ class BPIOptInCarouselFragment : BaseFragmentBinding<BpiOptInCarouselFragmentBin
 
     private fun getOptInHTMLContent() {
         productGroupCode?.let { productGroupCode ->
-            OneAppService.getBPITermsAndConditionsInfo(productGroupCode).enqueue(CompletionHandler(object : IResponseListener<BPITermsConditionsResponse> {
+            OneAppService().getBPITermsAndConditionsInfo(productGroupCode).enqueue(CompletionHandler(object : IResponseListener<BPITermsConditionsResponse> {
                 override fun onSuccess(response: BPITermsConditionsResponse?) {
                     when(response?.httpCode){
                         AppConstant.HTTP_OK -> {
