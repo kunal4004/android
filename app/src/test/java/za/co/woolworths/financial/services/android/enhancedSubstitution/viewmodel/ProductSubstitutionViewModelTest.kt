@@ -54,7 +54,7 @@ class ProductSubstitutionViewModelTest {
     }
 
     @Test
-    fun test_emptyList_getSubstitutions() = runTest {
+    fun getSubstitutions_withEmptyList() = runTest {
         `when`(
             productSubstitutionRepository
                 .getProductSubstitution("6009195203504")
@@ -68,7 +68,7 @@ class ProductSubstitutionViewModelTest {
     }
 
     @Test
-    fun test_error_getSubstitutions() = runTest {
+    fun getSubstitutions_withError() = runTest {
         `when`(
             productSubstitutionRepository
                 .getProductSubstitution("6009195203504")
@@ -82,7 +82,7 @@ class ProductSubstitutionViewModelTest {
     }
 
     @Test
-    fun test_EmptyResponse_getInventory() = runTest {
+    fun getInventory_withEmptyResponse() = runTest {
         `when`(
             productSubstitutionRepository
                 .getInventoryForSubstitution("473", "6001009025692")
@@ -97,7 +97,7 @@ class ProductSubstitutionViewModelTest {
     }
 
     @Test
-    fun test_error_getInventory() = runTest {
+    fun getInventory_withError() = runTest {
         `when`(
             productSubstitutionRepository
                 .getInventoryForSubstitution("473", "6001009025692")
@@ -112,7 +112,7 @@ class ProductSubstitutionViewModelTest {
 
 
     @Test
-    fun test_EmptyResponse_addSubstitution() = runTest {
+    fun addSubstitution_withEmptyResponse() = runTest {
         val addSubstitutionRequest = AddSubstitutionRequest(
             SubstitutionApiHelperTest.USER_CHOICE,
             EnhanceSubstitutionHelperTest.SUBSTITUTION_ID,
@@ -133,7 +133,7 @@ class ProductSubstitutionViewModelTest {
     }
 
     @Test
-    fun test_error_addSubstitution() = runTest {
+    fun addSubstitution_withError() = runTest {
         val addSubstitutionRequest = AddSubstitutionRequest(
             SubstitutionApiHelperTest.USER_CHOICE,
             EnhanceSubstitutionHelperTest.SUBSTITUTION_ID,
