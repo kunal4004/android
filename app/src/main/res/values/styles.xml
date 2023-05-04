@@ -1162,8 +1162,8 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_centerVertical">true</item>
-        <item name="android:textSize">@dimen/fourteen_dp</item>
-        <item name="WTextView_font">myriadpro_semibold</item>
+        <item name="android:textSize">@dimen/thirteen_sp</item>
+        <item name="android:fontFamily">@font/opensans_semi_bold</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:letterSpacing">@integer/point_eleven</item>
     </style>
