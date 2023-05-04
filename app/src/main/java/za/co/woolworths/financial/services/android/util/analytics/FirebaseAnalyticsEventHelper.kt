@@ -7,6 +7,7 @@ import za.co.woolworths.financial.services.android.models.dto.CommerceItem
 import za.co.woolworths.financial.services.android.models.dto.ProductDetails
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
+import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.Product
 import za.co.woolworths.financial.services.android.util.analytics.dto.AnalyticProductItem
 import za.co.woolworths.financial.services.android.util.analytics.dto.toAnalyticItem
 import za.co.woolworths.financial.services.android.util.analytics.dto.toBundle
@@ -130,6 +131,28 @@ object FirebaseAnalyticsEventHelper {
         }
 
         val analyticItems = products.map { it.toAnalyticItem(category = category) }
+
+        val analyticsParams = Bundle()
+        analyticsParams.apply {
+            putParcelableArray(
+                FirebaseAnalytics.Param.ITEMS, analyticItems.map { it.toBundle() }.toTypedArray()
+            )
+            category?.let {
+                putString(FirebaseAnalytics.Param.ITEM_LIST_NAME, category)
+            }
+        }
+
+        AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.VIEW_ITEM_LIST, analyticsParams)
+    }
+    fun viewItemListEvent(
+        products: List<Product>?,
+        category: String?
+    ) {
+        if (products.isNullOrEmpty()) {
+            return
+        }
+
+        val analyticItems = products.map { it.toAnalyticItem(category = category) }.reversed()
 
         val analyticsParams = Bundle()
         analyticsParams.apply {
