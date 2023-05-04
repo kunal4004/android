@@ -45,6 +45,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/twenty_four_dp"
+            android:layout_marginEnd="@dimen/twenty_four_dp"
             android:layout_marginTop="@dimen/sixteen_dp"
             android:layout_marginBottom="@dimen/four_dp"
             android:text="@string/enter_street_name"

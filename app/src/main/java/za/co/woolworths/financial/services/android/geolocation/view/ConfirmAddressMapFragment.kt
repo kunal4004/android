@@ -8,7 +8,6 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
-import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -533,10 +532,10 @@ class ConfirmAddressMapFragment :
                 setAdapter(placesAdapter)
             }
             binding.autoCompleteTextView.afterTextChanged {
-                if(it.isEmpty()){
-                    binding.imgRemoveAddress.visibility=View.GONE
-                }else{
-                    binding.imgRemoveAddress.visibility=View.VISIBLE
+                if (it.isEmpty()) {
+                    binding.imgRemoveAddress.visibility = View.GONE
+                } else {
+                    binding.imgRemoveAddress.visibility = View.VISIBLE
                 }
             }
             binding?.autoCompleteTextView?.onItemClickListener =
@@ -602,50 +601,28 @@ class ConfirmAddressMapFragment :
                         poiBottomSheetDialog =
                             PoiBottomSheetDialog(this@ConfirmAddressMapFragment, true)
                     }
-                    if(poiBottomSheetDialog?.isVisible==false){
+                    if (poiBottomSheetDialog?.isVisible == false) {
                         poiBottomSheetDialog?.show(
                             requireActivity().supportFragmentManager,
                             PoiBottomSheetDialog::class.java.simpleName
                         )
                     }
                 } else {
-                    errorMassageDivider?.visibility = View.VISIBLE
-                    errorMessageTitle?.visibility = View.VISIBLE
-                    errorMessage?.visibility = View.VISIBLE
-                    errorMessageTitle?.text = getString(R.string.geo_loc_error_msg_title)
-                    errorMessage?.text = getText(R.string.geo_loc_error_msg)
-                    errorMessage?.setTextColor(
-                        ContextCompat.getColor(
-                            requireContext(),
-                            R.color.color_D0021B
-                        )
-                    )
-                    errorMessage?.setBackgroundColor(
-                        ContextCompat.getColor(
-                            requireContext(),
-                            R.color.white
-                        )
-                    )
-                    errorMessageTitle?.setTextColor(
-                        ContextCompat.getColor(
-                            requireContext(),
-                            R.color.color_D0021B
-                        )
-                    )
-                    errorMessageTitle?.setBackgroundColor(
-                        ContextCompat.getColor(
-                            requireContext(),
-                            R.color.white
-                        )
-                    )
-                    confirmAddress?.isEnabled = false
+                    errorMassageDivider.visibility = View.VISIBLE
+                    errorMessageTitle.visibility = View.VISIBLE
+                    errorMessage.visibility = View.VISIBLE
+                    confirmAddress.isEnabled = false
+                    if (imgMapMarker.visibility == View.VISIBLE)
+                        errorMessage.text = getText(R.string.geo_loc_error_msg)
+                    else
+                        errorMessage.text = getText(R.string.geo_loc_error_msg_with_out_pin)
                 }
 
             } else {
-                errorMassageDivider?.visibility = View.GONE
-                errorMessage?.visibility = View.GONE
-                errorMessageTitle?.visibility = View.GONE
-                confirmAddress?.isEnabled = true
+                errorMassageDivider.visibility = View.GONE
+                errorMessage.visibility = View.GONE
+                errorMessageTitle.visibility = View.GONE
+                confirmAddress.isEnabled = true
             }
         }
     }
@@ -846,8 +823,7 @@ class ConfirmAddressMapFragment :
                                 delay(DELAY_500_MS)
                                 if (streetNumber.isNullOrEmpty() && routeName.isNullOrEmpty()) {
                                     showSelectedLocationError(true)
-                                }
-                                else {
+                                } else {
                                     UnIndexedAddressLiveData.value = true
                                     showSelectedLocationError(false)
                                 }
@@ -978,7 +954,7 @@ class ConfirmAddressMapFragment :
     private fun addUnIndexedIdentifiedListener() {
         UnIndexedAddressLiveData.value = false
         UnIndexedAddressLiveData.observe(viewLifecycleOwner) {
-            if (it == true && unIndexedAddressIdentified == true ) {
+            if (it == true && unIndexedAddressIdentified == true) {
 
                 if (unIndexedBottomSheetDialog == null) {
                     unIndexedBottomSheetDialog =

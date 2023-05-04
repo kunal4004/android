@@ -95,7 +95,7 @@
                 android:layout_marginBottom="@dimen/sixteen_dp"
                 android:background="@color/white"
                 android:lineSpacingExtra="@dimen/_1ssp"
-                android:text="@string/geo_loc_error_msg_add_edit_address"
+                android:text="@string/geo_loc_error_msg_with_out_pin"
                 android:textColor="@color/red_color"
                 android:textSize="@dimen/thirteen_sp"
                 android:visibility="gone"
