@@ -10,7 +10,7 @@ import za.co.woolworths.financial.services.android.models.network.OneAppService
 class PostItemToCart {
 
     fun make(addItemToCart: MutableList<AddItemToCart>, requestBuilder: IResponseListener<AddItemToCartResponse>): Call<AddItemToCartResponse> {
-        val postItemRequest = OneAppService.addItemToCart(addItemToCart)
+        val postItemRequest = OneAppService().addItemToCart(addItemToCart)
         postItemRequest.enqueue(CompletionHandler(object : IResponseListener<AddItemToCartResponse> {
             override fun onSuccess(response: AddItemToCartResponse?) {
 

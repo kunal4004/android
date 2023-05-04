@@ -137,8 +137,9 @@ class ColorAndSizeViewModel(
                         is UiState.Success -> {
                             UiState.Success(
                                 currentState.isAvailable,
-                                currentState.sizeGuideId,
-                                sizeList
+                                defaultSelection = true,
+                                sizeGuideId = currentState.sizeGuideId,
+                                data = sizeList
                             )
                         }
                     }
@@ -152,6 +153,7 @@ sealed interface UiState {
     object Loading : UiState
     data class Success(
         val isAvailable: Boolean,
+        val defaultSelection: Boolean = false,
         val sizeGuideId: String? = null,
         val data: List<OtherSkus>
     ) : UiState

@@ -6,9 +6,9 @@ import android.view.ViewGroup
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Text
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -173,7 +173,7 @@ class GenericActionOrCancelDialogFragment : WBottomSheetDialogFragment() {
                     .fillMaxWidth()
                     .height(dimensionResource(id = R.dimen.button_style_height)),
                 colors = ButtonDefaults.buttonColors(
-                    backgroundColor = Color.Black,
+                    containerColor = Color.Black,
                     contentColor = Color.White
                 ),
                 elevation = null,
@@ -205,7 +205,7 @@ class GenericActionOrCancelDialogFragment : WBottomSheetDialogFragment() {
                     .fillMaxWidth()
                     .height(dimensionResource(id = R.dimen.button_style_height)),
                 colors = ButtonDefaults.buttonColors(
-                    backgroundColor = Color.Transparent,
+                    containerColor = Color.Transparent,
                     contentColor = colorResource(R.color.color_7f7f7f)
                 ),
                 elevation = null,
