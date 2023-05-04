@@ -41,7 +41,7 @@
             android:layout_toEndOf="@+id/imProductImage"
             android:ellipsize="end"
             android:maxLines="2"
-            android:textSize="@dimen/thirteen_sp" />
+            android:textSize="@dimen/twelve_sp" />
 
         <TextView
             android:id="@+id/price"
