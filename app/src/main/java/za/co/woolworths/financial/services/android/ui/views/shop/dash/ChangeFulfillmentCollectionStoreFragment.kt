@@ -318,9 +318,9 @@ class ChangeFulfillmentCollectionStoreFragment :
 
                                 KotlinUtils.placeId = placeId
                                 if (Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId == null) {
-                                    KotlinUtils.isLocationSame = true
+                                    KotlinUtils.isLocationPlaceIdSame = true
                                 } else {
-                                    KotlinUtils.isLocationSame =
+                                    KotlinUtils.isLocationPlaceIdSame =
                                         placeId?.equals(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId)
                                 }
 
@@ -337,9 +337,9 @@ class ChangeFulfillmentCollectionStoreFragment :
                             } else {
                                 KotlinUtils.placeId = placeId
                                 if (KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.address?.placeId == null) {
-                                    KotlinUtils.isLocationSame = true
+                                    KotlinUtils.isLocationPlaceIdSame = true
                                 } else {
-                                    KotlinUtils.isLocationSame =
+                                    KotlinUtils.isLocationPlaceIdSame =
                                         placeId?.equals(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId)
                                 }
                                 KotlinUtils.isCncTabCrossClicked =
