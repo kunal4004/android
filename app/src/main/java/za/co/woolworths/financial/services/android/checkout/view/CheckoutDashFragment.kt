@@ -79,7 +79,6 @@ import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManag
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.pushnotification.NotificationUtils
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
-import za.co.woolworths.financial.services.android.viewmodels.ShoppingCartLiveData
 import java.util.regex.Pattern
 import javax.inject.Inject
 

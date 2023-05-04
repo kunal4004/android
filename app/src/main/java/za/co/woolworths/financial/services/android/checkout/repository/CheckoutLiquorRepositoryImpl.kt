@@ -12,7 +12,7 @@ import javax.inject.Inject
 class CheckoutLiquorRepositoryImpl @Inject constructor() : CheckoutLiquorRepository {
     override suspend fun getShoppingCartData(): Resource<ShoppingCartResponse> {
         return try {
-            val response = OneAppService.getShoppingCartV2()
+            val response = OneAppService().getShoppingCartV2()
             if (response.isSuccessful) {
                 response.body()?.let {
                     return when (it.httpCode) {
