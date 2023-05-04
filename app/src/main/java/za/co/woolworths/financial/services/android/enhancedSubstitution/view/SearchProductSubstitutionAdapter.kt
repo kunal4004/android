@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.enhancedSubstitution.adapter
+package za.co.woolworths.financial.services.android.enhancedSubstitution.view
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.enhancedSubstitution.managesubstitution
+package za.co.woolworths.financial.services.android.enhancedSubstitution.view
 
 import android.os.Bundle
 import android.view.View
@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.ManageSubstitutionDetailsLayoutBinding
 import za.co.woolworths.financial.services.android.chanel.listener.ProductSubstitutionListListener
-import za.co.woolworths.financial.services.android.enhancedSubstitution.adapter.ManageProductSubstitutionAdapter
 import za.co.woolworths.financial.services.android.enhancedSubstitution.service.network.SubstitutionApiHelper
 import za.co.woolworths.financial.services.android.enhancedSubstitution.model.SubstitutionProducts
 import za.co.woolworths.financial.services.android.enhancedSubstitution.repository.ProductSubstitutionRepository
