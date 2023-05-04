@@ -48,20 +48,20 @@ import com.perfectcorp.perfectlib.MakeupCam
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import retrofit2.HttpException
-import za.co.woolworths.financial.services.android.chanel.listener.EnhancedSubstitutionListener
 
 import za.co.woolworths.financial.services.android.chanel.utils.ChanelUtils
 import za.co.woolworths.financial.services.android.common.SingleMessageCommonToast
 import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.ILocationProvider
-import za.co.woolworths.financial.services.android.enhancedSubstitution.Utils.listener.EnhancedSubstitutionBottomSheetDialog
+import za.co.woolworths.financial.services.android.enhancedSubstitution.utils.listener.EnhancedSubstitutionBottomSheetDialog
 import za.co.woolworths.financial.services.android.enhancedSubstitution.model.ProductSubstitution
 import za.co.woolworths.financial.services.android.enhancedSubstitution.repository.ProductSubstitutionRepository
 import za.co.woolworths.financial.services.android.enhancedSubstitution.viewmodel.ProductSubstitutionViewModel
 import za.co.woolworths.financial.services.android.enhancedSubstitution.viewmodel.ProductSubstitutionViewModelFactory
 import za.co.woolworths.financial.services.android.enhancedSubstitution.model.SubstitutionInfo
 import za.co.woolworths.financial.services.android.enhancedSubstitution.service.network.SubstitutionApiHelper
+import za.co.woolworths.financial.services.android.enhancedSubstitution.utils.listener.EnhancedSubstitutionListener
 import za.co.woolworths.financial.services.android.enhancedSubstitution.view.ManageSubstitutionFragment
 import za.co.woolworths.financial.services.android.enhancedSubstitution.view.SearchSubstitutionFragment
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper

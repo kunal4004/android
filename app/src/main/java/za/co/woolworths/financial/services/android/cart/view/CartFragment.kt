@@ -41,8 +41,8 @@ import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddress
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
-import za.co.woolworths.financial.services.android.enhancedSubstitution.managesubstitution.ManageSubstitutionFragment
-import za.co.woolworths.financial.services.android.enhancedSubstitution.managesubstitution.SearchSubstitutionFragment
+import za.co.woolworths.financial.services.android.enhancedSubstitution.view.ManageSubstitutionFragment
+import za.co.woolworths.financial.services.android.enhancedSubstitution.view.SearchSubstitutionFragment
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils.Companion.getDelivertyType
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils.Companion.getPlaceId
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils.Companion.getSelectedPlaceId

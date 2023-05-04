@@ -40,8 +40,7 @@ class ProductSubstitutionRepository(private var substitutionApiHelper: Substitut
         } catch (e: JsonSyntaxException) {
             FirebaseManager.logException(e)
             Resource.error(R.string.error_unknown, null)
-        }
-        catch (e: Exception) {
+        } catch (e: Exception) {
             FirebaseManager.logException(e)
             Resource.error(R.string.error_unknown, null)
         }

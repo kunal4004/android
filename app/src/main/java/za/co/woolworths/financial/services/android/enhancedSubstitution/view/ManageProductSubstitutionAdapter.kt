@@ -4,8 +4,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.databinding.ShoppingListCommerceItemBinding
-import za.co.woolworths.financial.services.android.chanel.listener.ProductSubstitutionListListener
 import za.co.woolworths.financial.services.android.enhancedSubstitution.model.SubstitutionProducts
+import za.co.woolworths.financial.services.android.enhancedSubstitution.utils.listener.ProductSubstitutionListListener
 import za.co.woolworths.financial.services.android.util.Utils
 
 class ManageProductSubstitutionAdapter(
