@@ -1609,7 +1609,7 @@ class ProductDetailsFragment :
                 this.txtSubstitutionEdit?.background = resources.getDrawable(R.drawable.grey_background_with_corner_5,
                         null)
             } else {
-                txtSubstitutionTitle.text = context?.getString(R.string.let_my_shooper_choose_for_me)
+                txtSubstitutionTitle.text = context?.getString(R.string.substitute_default)
                 txtSubstitutionEdit.text = context?.getString(R.string.change)
                 this.txtSubstitutionEdit?.background = resources.getDrawable(R.drawable.black_background_with_corner_5,
                         null)
@@ -1663,8 +1663,8 @@ class ProductDetailsFragment :
             txtSubstitutionEdit?.setOnClickListener(this@ProductDetailsFragment)
             if (SessionUtilities.getInstance().isUserAuthenticated) {
                 if (substitutionProductItem == null) {
-                    //  callGetSubstitutionApi(isInventoryCalled)
-                    showSubstitutionLayoutOne(isInventoryCalled)
+                      callGetSubstitutionApi(isInventoryCalled)
+                    //showSubstitutionLayoutOne(isInventoryCalled)
                 } else {
                     /*set Locally product name */
                     selectionChoice = USER_CHOICE
