@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.enhancedSubstitution
+package za.co.woolworths.financial.services.android.chanel.listener
 
 import android.content.Context
 import androidx.fragment.app.Fragment

@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.enhancedSubstitution.apihelper
+package za.co.woolworths.financial.services.android.enhancedSubstitution.service.network
 
 import za.co.woolworths.financial.services.android.enhancedSubstitution.model.AddSubstitutionRequest
 import za.co.woolworths.financial.services.android.models.dto.ProductView

@@ -23,9 +23,9 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.enhancedSubstitution.ProductListSelectionListener
 import za.co.woolworths.financial.services.android.enhancedSubstitution.adapter.SearchProductSubstitutionAdapter
-import za.co.woolworths.financial.services.android.enhancedSubstitution.apihelper.SubstitutionApiHelper
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.network.SubstitutionApiHelper
 import za.co.woolworths.financial.services.android.enhancedSubstitution.model.AddSubstitutionRequest
-import za.co.woolworths.financial.services.android.enhancedSubstitution.repository.ProductSubstitutionRepository
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.repository.ProductSubstitutionRepository
 import za.co.woolworths.financial.services.android.enhancedSubstitution.viewmodel.ProductSubstitutionViewModel
 import za.co.woolworths.financial.services.android.enhancedSubstitution.viewmodel.ProductSubstitutionViewModelFactory
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
