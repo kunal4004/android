@@ -108,7 +108,7 @@ class RecommendationFragment :
 
     private fun submitViewItemListFirebaseEvent(actionItemList: List<Action>, position: Int) {
         if (actionItemList.isNotEmpty() && position >= 0 && position < actionItemList.size) {
-            FirebaseAnalyticsEventHelper.viewItemListEvent(
+            FirebaseAnalyticsEventHelper.viewItemListRecommendations(
                 products = actionItemList[position].products,
                 category = actionItemList[position].componentName
             )
