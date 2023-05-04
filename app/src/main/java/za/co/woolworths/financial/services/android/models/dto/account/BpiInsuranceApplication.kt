@@ -8,7 +8,7 @@ data class BpiInsuranceApplication(
     val displayLabelColor: String?
 ) : Serializable
 
-enum class BpiInsuranceApplicationStatusType(val status: String) {
+enum class BpiInsuranceApplicationStatusType(val status: String) : Serializable {
     OPTED_IN("OPTED_IN"),
     NOT_OPTED_IN("NOT_OPTED_IN"),
     COVERED("COVERED"),

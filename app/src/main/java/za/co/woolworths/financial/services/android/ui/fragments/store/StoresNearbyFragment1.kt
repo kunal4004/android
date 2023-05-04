@@ -38,7 +38,7 @@ import za.co.woolworths.financial.services.android.models.dto.LocationResponse
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails
 import za.co.woolworths.financial.services.android.models.dto.StoreOfferings
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
-import za.co.woolworths.financial.services.android.models.network.OneAppService.queryServiceGetStore
+import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.SearchStoresActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
@@ -468,7 +468,7 @@ class StoresNearbyFragment1 : Fragment(R.layout.fragment_stores_nearby1), Dynami
         onLocationLoadStart()
         val latitude = location?.latitude ?: 0.0
         val longitude = location?.longitude ?: 0.0
-        val locationResponseCall = queryServiceGetStore(latitude, longitude, "")
+        val locationResponseCall = OneAppService().queryServiceGetStore(latitude, longitude, "")
         locationResponseCall.enqueue(CompletionHandler(object : IResponseListener<LocationResponse> {
             override fun onSuccess(locationResponse: LocationResponse?) {
                 enableSearchMenu()

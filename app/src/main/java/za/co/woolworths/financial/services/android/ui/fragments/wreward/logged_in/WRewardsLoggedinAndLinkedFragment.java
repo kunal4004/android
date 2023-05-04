@@ -233,7 +233,7 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 
 	private Call<VoucherResponse> getWRewards() {
 
-		Call<VoucherResponse> voucherRequestCall = OneAppService.INSTANCE.getVouchers();
+		Call<VoucherResponse> voucherRequestCall = new OneAppService().getVouchers();
 		voucherRequestCall.enqueue(new CompletionHandler<>(new IResponseListener<VoucherResponse>() {
 			@Override
 			public void onSuccess(VoucherResponse voucherResponse) {
@@ -312,7 +312,7 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 
 	public void loadCardDetails() {
 
-		wRewardsCardDetails = OneAppService.INSTANCE.getCardDetails();
+		wRewardsCardDetails = new OneAppService().getCardDetails();
 		wRewardsCardDetails.enqueue(new CompletionHandler<>(new IResponseListener<CardDetailsResponse>() {
 			@Override
 			public void onSuccess(CardDetailsResponse response) {
