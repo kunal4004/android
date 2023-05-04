@@ -2962,7 +2962,7 @@
     <string name="pet_insurance_apply_now_comprehensive_title">Extensive Cover</string>
     <string name="pet_insurance_apply_now_comprehensive_desc">Considerable benefits &amp; cover options for routine care, accidents, illnesses and third party liability</string>
     <string name="pet_insurance_apply_now_control_title">You\'re in Control</string>
-    <string name="pet_insurance_apply_now_control_desc">Optional excess waiver and medical saving benefits</string>
+    <string name="pet_insurance_apply_now_control_desc">Optional excess waiver and routine care booster benefits</string>
     <string name="pet_insurance_care">PET</string>
     <string name="error_message_400">We are unable to process your request, Please \ncontact our call centre on \n0861 50 20 10</string>
     <string name="geo_loc_error_msg_title">We can’t seem to find you here.</string>
