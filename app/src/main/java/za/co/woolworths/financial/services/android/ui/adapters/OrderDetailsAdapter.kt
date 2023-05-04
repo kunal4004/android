@@ -2,12 +2,17 @@ package za.co.woolworths.financial.services.android.ui.adapters
 
 import android.app.Activity
 import android.content.Context
+import android.text.Spannable
 import android.text.TextUtils
+import android.text.style.TypefaceSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.compose.ui.text.SpanStyle
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.text.HtmlCompat
+import androidx.core.text.buildSpannedString
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.*
@@ -22,6 +27,7 @@ import za.co.woolworths.financial.services.android.ui.adapters.holder.OrdersBase
 import za.co.woolworths.financial.services.android.ui.fragments.shop.OrderDetailsFragment
 import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
+import za.co.woolworths.financial.services.android.util.CustomTypefaceSpan
 import za.co.woolworths.financial.services.android.util.WFormatter
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
@@ -230,13 +236,26 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
 
     inner class OrderItemViewHolder(val itemBinding: OrderDetailsCommerceItemBinding) : OrdersBaseViewHolder(itemBinding.root) {
         override fun bind(position: Int) {
-            val item = dataList[position].item as CommerceItem
+            val item = dataList[position].item as? CommerceItem ?: return
             itemBinding.apply {
                 item.commerceItemInfo?.externalImageRefV2?.let {
                     setProductImage(imProductImage, it)
                 }
-                itemName?.text = item?.commerceItemInfo?.quantity?.toString()+" x "+item?.commerceItemInfo?.productDisplayName
-                price?.text = CurrencyFormatter.formatAmountToRandAndCentWithSpace(item?.priceInfo?.amount)
+                itemName?.text = buildSpannedString {
+                    val typeface =
+                        ResourcesCompat.getFont(itemBinding.root.context, R.font.opensans_semi_bold)
+                    append(item.commerceItemInfo?.quantity?.toString())
+                    setSpan(
+                        CustomTypefaceSpan("opensans", typeface),
+                        0,
+                        item.commerceItemInfo?.quantity?.toString()?.length ?: 0,
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                    )
+                    append(" x ")
+                    append(item.commerceItemInfo?.productDisplayName)
+
+                }
+                price?.text = CurrencyFormatter.formatAmountToRandAndCentWithSpace(item.priceInfo?.amount)
                 price?.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
                 root.setOnClickListener { listner.onOpenProductDetail(item) }
 
