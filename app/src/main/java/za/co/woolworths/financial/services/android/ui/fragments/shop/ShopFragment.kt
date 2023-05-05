@@ -6,6 +6,7 @@ import android.content.IntentFilter
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Handler
+import android.text.Spannable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,6 +20,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.core.text.HtmlCompat
+import androidx.core.text.buildSpannedString
 import androidx.core.view.contains
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
@@ -379,11 +381,21 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         )
 
         params.orderId?.let { orderId ->
-            inAppNotificationViewBinding?.inappOrderNotificationTitle?.text =
-                requireContext().getString(
+            inAppNotificationViewBinding?.inappOrderNotificationTitle?.text = buildSpannedString {
+                val text = requireContext().getString(
                     R.string.inapp_order_notification_title,
                     orderId
                 )
+                append(text)
+                val index = text.indexOf(orderId)
+                val regularSpan = ResourcesCompat.getFont(requireContext(), R.font.opensans_regular)
+                setSpan(
+                    CustomTypefaceSpan("opensans", regularSpan),
+                    index,
+                    text.length,
+                    Spannable.SPAN_INCLUSIVE_INCLUSIVE
+                )
+            }
         }
         inAppNotificationViewBinding?.inappOrderNotificationSubitle?.text =
             params.orderStatus ?: params.state
@@ -1368,7 +1380,6 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                                     R.string.dash_delivery_fee)),
                             HtmlCompat.FROM_HTML_MODE_COMPACT
                         )
-
                 }
             }
         }
@@ -1614,7 +1625,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
     }
 
     override fun updateUnreadMessageCount(unreadMsgCount: Int) {
-        inAppNotificationViewBinding?.inAppOrderNotificationChatCount?.visibility = GONE
+        inAppNotificationViewBinding?.inAppOrderNotificationChatCount?.visibility = View.GONE
         //TODO: Later requirements for chat bubble.
         /*if (unreadMsgCount <= 0) {
             inAppNotificationViewBinding?.inAppOrderNotificationChatCount?.visibility = GONE
