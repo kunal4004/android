@@ -7,6 +7,6 @@ import za.co.woolworths.financial.services.android.ui.extension.request
 
 class AvailableVoucherInteractorImpl : VoucherAndPromoCodeContract.AvailableVoucherInteractor {
     override fun executeRedeemVouchers(vouchers: List<SelectedVoucher>, requestListener: IGenericAPILoaderView<Any>) {
-        request(OneAppService.applyVouchers(vouchers), requestListener)
+        request(OneAppService().applyVouchers(vouchers), requestListener)
     }
 }

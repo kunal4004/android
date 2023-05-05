@@ -297,7 +297,7 @@ class AddOrderToCartFragment : BaseFragmentBinding<FragmentAddOrderToCartBinding
     }
 
     private fun getInventoryStockForStore(storeId: String, multiSku: String): Call<SkusInventoryForStoreResponse> {
-      val skusInventoryForStoreRequest =    OneAppService.getInventorySkuForStore(
+      val skusInventoryForStoreRequest =    OneAppService().getInventorySkuForStore(
           storeId,
           multiSku,
           false

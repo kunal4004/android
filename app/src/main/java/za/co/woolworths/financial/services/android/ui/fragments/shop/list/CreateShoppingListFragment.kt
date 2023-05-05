@@ -376,7 +376,7 @@ class CreateShoppingListFragment : Fragment(), View.OnClickListener {
         val listName = etNewList?.text?.toString()
         val createListRequest = buildFirstRequest(listName)
         etNewList?.keyListener = null
-        mCreateShoppingList = OneAppService.createList(createListRequest)
+        mCreateShoppingList = OneAppService().createList(createListRequest)
         mCreateShoppingList?.enqueue(CompletionHandler(object : IResponseListener<ShoppingListsResponse> {
             override fun onSuccess(response: ShoppingListsResponse?) {
                 etNewList?.keyListener = mKeyListener
@@ -460,7 +460,7 @@ class CreateShoppingListFragment : Fragment(), View.OnClickListener {
             item.listId = null // remove list id from request body
         }
 
-        mPostShoppingList = listId?.let { listID -> mAddToListRequest?.let { listItem -> OneAppService.addToList(listItem, listID) } }
+        mPostShoppingList = listId?.let { listID -> mAddToListRequest?.let { listItem -> OneAppService().addToList(listItem, listID) } }
 
         mPostShoppingList?.enqueue(CompletionHandler(object : IResponseListener<ShoppingListItemsResponse> {
             override fun onSuccess(shoppingListsResponse: ShoppingListItemsResponse?) {
@@ -552,7 +552,7 @@ class CreateShoppingListFragment : Fragment(), View.OnClickListener {
         val orderRequestList = OrderToShoppingListRequestBody(shoppingList.listId, shoppingList.listName)
 
         orderId?.let { orderID ->
-            val addOrderToListRequest = OneAppService.addOrderToList(orderID, orderRequestList)
+            val addOrderToListRequest = OneAppService().addOrderToList(orderID, orderRequestList)
             addOrderToListRequest.enqueue(CompletionHandler(object : IResponseListener<OrderToListReponse> {
                 override fun onSuccess(orderToListReponse: OrderToListReponse?) {
                     orderToListReponse?.apply {
