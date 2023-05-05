@@ -12,20 +12,20 @@ import za.co.woolworths.financial.services.android.models.network.*
 /**
  * Created by Kunal Uttarwar on 04/06/21.
  */
-class CheckoutAddAddressNewUserApiHelper : RetrofitConfig() {
+class CheckoutAddAddressNewUserApiHelper : RetrofitConfig(AppContextProviderImpl(), RetrofitApiProviderImpl()) {
 
     fun getSuburbs(provinceId: String): Response<SuburbsResponse> =
-        OneAppService.getSuburbs(provinceId).execute()
+        OneAppService().getSuburbs(provinceId).execute()
 
     fun validateSelectedSuburb(
         suburbId: String,
         isStore: Boolean
     ): Response<ValidateSelectedSuburbResponse> =
-        OneAppService.validateSelectedSuburb(suburbId, isStore).execute()
+        OneAppService().validateSelectedSuburb(suburbId, isStore).execute()
 
     fun addAddress(addAddressRequestBody: AddAddressRequestBody): LiveData<Any> {
         val addAddressData = MutableLiveData<Any>()
-        OneAppService.addAddress(addAddressRequestBody).enqueue(CompletionHandler(object :
+        OneAppService().addAddress(addAddressRequestBody).enqueue(CompletionHandler(object :
             IResponseListener<AddAddressResponse> {
             override fun onSuccess(response: AddAddressResponse?) {
                 addAddressData.value = response ?: null
@@ -43,7 +43,7 @@ class CheckoutAddAddressNewUserApiHelper : RetrofitConfig() {
 
     fun deleteAddress(addressId: String): LiveData<Any> {
         val deleteAddressData = MutableLiveData<Any>()
-        OneAppService.deleteAddress(addressId).enqueue(CompletionHandler(object :
+        OneAppService().deleteAddress(addressId).enqueue(CompletionHandler(object :
             IResponseListener<DeleteAddressResponse> {
             override fun onSuccess(response: DeleteAddressResponse?) {
                 deleteAddressData.value = response ?: null
@@ -64,7 +64,7 @@ class CheckoutAddAddressNewUserApiHelper : RetrofitConfig() {
         addressId: String
     ): LiveData<Any> {
         val updateAddressData = MutableLiveData<Any>()
-        OneAppService.editAddress(addAddressRequestBody, addressId)
+        OneAppService().editAddress(addAddressRequestBody, addressId)
             .enqueue(CompletionHandler(object :
                 IResponseListener<AddAddressResponse> {
                 override fun onSuccess(response: AddAddressResponse?) {
@@ -83,7 +83,7 @@ class CheckoutAddAddressNewUserApiHelper : RetrofitConfig() {
 
     fun changeAddress(nickName: String): LiveData<Any> {
         val changeAddressLiveData = MutableLiveData<Any>()
-        OneAppService.changeAddress(nickName).enqueue(CompletionHandler(object :
+        OneAppService().changeAddress(nickName).enqueue(CompletionHandler(object :
             IResponseListener<ChangeAddressResponse> {
             override fun onSuccess(changeAddressResponse: ChangeAddressResponse?) {
                 changeAddressLiveData.value = changeAddressResponse ?: null
@@ -102,7 +102,7 @@ class CheckoutAddAddressNewUserApiHelper : RetrofitConfig() {
 
     fun getShippingDetails(body: ShippingDetailsBody): LiveData<Any> {
         val shippingDetailsResp = MutableLiveData<Any>()
-        OneAppService.getShippingDetails(body).enqueue(CompletionHandler(object :
+        OneAppService().getShippingDetails(body).enqueue(CompletionHandler(object :
             IResponseListener<ShippingDetailsResponse> {
             override fun onSuccess(shippingDetailsResponse: ShippingDetailsResponse?) {
                 shippingDetailsResp.value = shippingDetailsResponse ?: null
@@ -120,7 +120,7 @@ class CheckoutAddAddressNewUserApiHelper : RetrofitConfig() {
 
     fun getStorePickupInfo(body: StorePickupInfoBody): LiveData<Any> {
         val storePickupInfoResp = MutableLiveData<Any>()
-        OneAppService.getStorePickupInfo(body).enqueue(CompletionHandler(object :
+        OneAppService().getStorePickupInfo(body).enqueue(CompletionHandler(object :
             IResponseListener<ConfirmDeliveryAddressResponse> {
             override fun onSuccess(storePickupInfoResponse: ConfirmDeliveryAddressResponse?) {
                 storePickupInfoResp.value = storePickupInfoResponse ?: null
@@ -138,7 +138,7 @@ class CheckoutAddAddressNewUserApiHelper : RetrofitConfig() {
 
     fun setConfirmSelection(confirmSelectionRequestBody: ConfirmSelectionRequestBody): LiveData<Any> {
         val confirmSelectionData = MutableLiveData<Any>()
-        OneAppService.setConfirmSelection(confirmSelectionRequestBody)
+        OneAppService().setConfirmSelection(confirmSelectionRequestBody)
             .enqueue(CompletionHandler(object :
                 IResponseListener<ConfirmSelectionResponse> {
                 override fun onSuccess(confirmSelectionResponse: ConfirmSelectionResponse?) {
@@ -157,7 +157,7 @@ class CheckoutAddAddressNewUserApiHelper : RetrofitConfig() {
 
     fun getConfirmLocationDetails(body: ConfirmLocationRequest): LiveData<Any> {
         val confirmDeliveryAddress = MutableLiveData<Any>()
-        OneAppService.getConfirmDeliveryAddressDetails(body).enqueue(CompletionHandler(object :
+        OneAppService().getConfirmDeliveryAddressDetails(body).enqueue(CompletionHandler(object :
             IResponseListener<ConfirmDeliveryAddressResponse> {
             override fun onSuccess(confirmDeliveryAddressResponse: ConfirmDeliveryAddressResponse?) {
                 confirmDeliveryAddress.value = confirmDeliveryAddressResponse ?: null

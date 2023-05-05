@@ -1058,7 +1058,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 
     public void sendStatement() {
         onLoad();
-        sendUserStatement = OneAppService.INSTANCE.sendStatementRequest(mSendUserStatementRequest);
+        sendUserStatement = new OneAppService().sendStatementRequest(mSendUserStatementRequest);
         sendUserStatement.enqueue(new CompletionHandler<>(new IResponseListener<SendUserStatementResponse>() {
             @Override
             public void onSuccess(SendUserStatementResponse statementResponse) {

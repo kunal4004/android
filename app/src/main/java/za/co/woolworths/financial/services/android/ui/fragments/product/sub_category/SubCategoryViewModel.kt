@@ -8,7 +8,6 @@ import za.co.woolworths.financial.services.android.models.dto.RootCategories
 import za.co.woolworths.financial.services.android.models.dto.SubCategories
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
-import za.co.woolworths.financial.services.android.models.network.OneAppService.getSubCategory
 import za.co.woolworths.financial.services.android.ui.base.BaseViewModel
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants
 import za.co.woolworths.financial.services.android.util.KotlinUtils
@@ -28,7 +27,7 @@ class SubCategoryViewModel : BaseViewModel<SubCategoryNavigator>() {
         location: Location?,
         retryCountOn502: Int = 3
     ) {
-        subCategoryRequest = getSubCategory(categoryId, version)
+        subCategoryRequest = OneAppService().getSubCategory(categoryId, version)
         subCategoryRequest?.enqueue(
             CompletionHandler(
                 object : IResponseListener<SubCategories> {
@@ -77,7 +76,7 @@ class SubCategoryViewModel : BaseViewModel<SubCategoryNavigator>() {
         location: Location?,
         retryCountOn502: Int = 3
     ) {
-        rootCategoryRequest = OneAppService.getRootCategory(isLocationEnabled, location, getDeliveryType())
+        rootCategoryRequest = OneAppService().getRootCategory(isLocationEnabled, location, getDeliveryType())
         rootCategoryRequest?.enqueue(CompletionHandler(object : IResponseListener<RootCategories> {
             override fun onSuccess(response: RootCategories?) {
                 when (response?.httpCode) {

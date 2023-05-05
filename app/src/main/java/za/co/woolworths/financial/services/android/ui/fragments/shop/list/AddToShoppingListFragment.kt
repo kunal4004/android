@@ -108,7 +108,7 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(R.layout.add_to_li
 
     private fun retrieveShoppingList() {
         loadShoppingList(true)
-        val shoppingListRequest = OneAppService.getShoppingLists()
+        val shoppingListRequest = OneAppService().getShoppingLists()
         shoppingListRequest.enqueue(CompletionHandler(object : IResponseListener<ShoppingListsResponse> {
             override fun onSuccess(shoppingListResponse: ShoppingListsResponse?) {
                 activity?.let {
@@ -279,7 +279,7 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(R.layout.add_to_li
 
     private fun addProductToShoppingList(addToListRequest: MutableList<AddToListRequest>, listId: String) {
         shoppingListPostProgress(true)
-       val shoppingListResponseCall =  OneAppService.addToList(addToListRequest, listId)
+       val shoppingListResponseCall =  OneAppService().addToList(addToListRequest, listId)
         shoppingListResponseCall.enqueue(CompletionHandler(object : IResponseListener<ShoppingListItemsResponse> {
             override fun onSuccess(shoppingListResponse: ShoppingListItemsResponse?) {
                 shoppingListResponse?.apply {
@@ -304,7 +304,7 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(R.layout.add_to_li
     private fun addOrderToShoppingList(orderId: String, shoppingList: ShoppingList) {
         shoppingListPostProgress(true)
         val orderRequestList = OrderToShoppingListRequestBody(shoppingList.listId, shoppingList.listName)
-        val orderRequest =  OneAppService.addOrderToList(orderId,orderRequestList)
+        val orderRequest =  OneAppService().addOrderToList(orderId,orderRequestList)
         orderRequest.enqueue(CompletionHandler(object: IResponseListener<OrderToListReponse> {
             override fun onSuccess(orderDetailsResponse: OrderToListReponse?) {
                 orderDetailsResponse?.apply {

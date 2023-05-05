@@ -7,7 +7,6 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.CancelOrderProgressFragmentBinding
-import com.google.firebase.analytics.FirebaseAnalytics
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IProgressAnimationState
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
@@ -23,7 +22,7 @@ import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.npc.ProgressStateFragment
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.Utils
-import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 
 class CancelOrderProgressFragment : BaseFragmentBinding<CancelOrderProgressFragmentBinding>(CancelOrderProgressFragmentBinding::inflate), IProgressAnimationState, View.OnClickListener {
@@ -107,7 +106,7 @@ class CancelOrderProgressFragment : BaseFragmentBinding<CancelOrderProgressFragm
             cancelOrderProcessingLayout.root.visibility = View.VISIBLE
         }
 
-        val orderDetailRequest = OneAppService.queryServiceCancelOrder(orderId)
+        val orderDetailRequest = OneAppService().queryServiceCancelOrder(orderId)
         orderDetailRequest.enqueue(CompletionHandler(object : IResponseListener<CancelOrderResponse> {
             override fun onSuccess(cancelOrderResponse: CancelOrderResponse?) {
                 cancelOrderResponse?.apply {
@@ -137,70 +136,13 @@ class CancelOrderProgressFragment : BaseFragmentBinding<CancelOrderProgressFragm
     }
 
     private fun setEventForCancelOrderForRefund() {
-
-        if(commarceItemList?.isNullOrEmpty() == true) {
-            return
-        }
-
-        val cancelOrderParams = Bundle()
-
-        cancelOrderParams.putString(
-            FirebaseAnalytics.Param.CURRENCY,
-            FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE
+        FirebaseAnalyticsEventHelper.refund(
+            commerceItems = commarceItemList,
+            coupon = null,
+            shipping = orderShippingTotal,
+            value = orderItemTotal,
+            transactionId = orderId
         )
-
-        cancelOrderParams.putString(
-            FirebaseAnalytics.Param.TRANSACTION_ID,
-            orderId
-        )
-
-
-        orderItemTotal?.let {
-            cancelOrderParams.putDouble(
-                FirebaseAnalytics.Param.VALUE,
-                it
-            )
-        }
-
-        orderShippingTotal?.let {
-            cancelOrderParams.putDouble(
-                FirebaseAnalytics.Param.SHIPPING,
-                it
-            )
-        }
-
-        cancelOrderParams.putString(
-            FirebaseManagerAnalyticsProperties.PropertyNames.REFUND_TYPE,
-            FirebaseManagerAnalyticsProperties.PropertyValues.DASH_CANCELLED_ORDER
-        )
-
-        cancelOrderParams.putString(
-            FirebaseManagerAnalyticsProperties.PropertyNames.AFFILIATION,
-            FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE
-        )
-
-        for ( commarceItem in commarceItemList!!) {
-            val cancelOrderItem = Bundle()
-            cancelOrderItem.putString(FirebaseAnalytics.Param.ITEM_ID,
-                commarceItem.commerceItemInfo?.productId)
-
-            cancelOrderItem.putString(FirebaseAnalytics.Param.ITEM_NAME,
-                commarceItem.commerceItemInfo?.productDisplayName)
-
-            commarceItem.priceInfo?.amount?.let {
-                cancelOrderItem.putDouble(FirebaseAnalytics.Param.PRICE,
-                        it)
-            }
-
-            commarceItem.commerceItemInfo?.quantity?.let {
-                cancelOrderItem.putInt(FirebaseAnalytics.Param.QUANTITY,
-                    it
-                )
-            }
-            cancelOrderParams.putParcelableArray(FirebaseAnalytics.Param.ITEMS, arrayOf(cancelOrderItem))
-        }
-
-        AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.REFUND, cancelOrderParams)
     }
 
 
