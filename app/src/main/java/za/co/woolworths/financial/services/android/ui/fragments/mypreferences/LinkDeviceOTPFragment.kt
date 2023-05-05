@@ -341,7 +341,7 @@ class LinkDeviceOTPFragment :
         ?: ""
 
     private fun callGetOTPAPI(otpMethod: String?) {
-        mLinkDeviceOTPReq = otpMethod?.let { type -> OneAppService.getLinkDeviceOtp(type) }
+        mLinkDeviceOTPReq = otpMethod?.let { type -> OneAppService().getLinkDeviceOtp(type) }
         this.otpMethod = otpMethod
 
         if (!NetworkManager.getInstance().isConnectedToNetwork(activity)) {
@@ -589,7 +589,7 @@ class LinkDeviceOTPFragment :
                 ).filter { item -> !item.isNullOrEmpty() }.joinToString(separator = ", ")
             } ?: null
 
-            OneAppService.linkDeviceApi(
+            OneAppService().linkDeviceApi(
                 KotlinUtils.getUserDefinedDeviceName(activity),
                 Utils.getUniqueDeviceID(),
                 locationAddress,
