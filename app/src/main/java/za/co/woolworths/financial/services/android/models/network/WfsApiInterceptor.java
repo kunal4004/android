@@ -20,8 +20,14 @@ import za.co.woolworths.financial.services.android.util.analytics.FirebaseManage
  * Created by eesajacobs on 2016/12/29.
  */
 
-public class WfsApiInterceptor extends NetworkConfig implements Interceptor {
+public class WfsApiInterceptor implements Interceptor {
     public static final String TAG = "WfsApiInterceptor";
+
+    private NetworkConfig networkConfig;
+
+    public WfsApiInterceptor(NetworkConfig networkConfig) {
+        this.networkConfig = networkConfig;
+    }
 
     @Override
     public Response intercept(Chain chain) throws IOException {
@@ -61,7 +67,7 @@ public class WfsApiInterceptor extends NetworkConfig implements Interceptor {
         apiRequestDao.requestType = request.method();
 
         //cache exists. return cached response
-        if (apiResponseDao.id != null && !OneAppService.INSTANCE.getForceNetworkUpdate()) {
+        if (apiResponseDao.id != null && !OneAppService.Companion.getForceNetworkUpdate()) {
             return new Response.Builder()
                     .code(apiResponseDao.code)
                     .message(apiResponseDao.message)
@@ -86,7 +92,7 @@ public class WfsApiInterceptor extends NetworkConfig implements Interceptor {
         //save the newly created apiRequestDao
         apiRequestDao.save();
 
-        OneAppService.INSTANCE.setForceNetworkUpdate(false);
+        OneAppService.Companion.setForceNetworkUpdate(false);
 
         apiResponseDao.apiRequestId = apiRequestDao.id;
         apiResponseDao.message = response.message();

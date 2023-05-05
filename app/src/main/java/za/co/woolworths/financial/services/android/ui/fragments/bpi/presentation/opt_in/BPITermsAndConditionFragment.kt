@@ -128,7 +128,7 @@ class BPITermsAndConditionFragment : BaseFragmentBinding<BpiTermsConditionsFragm
             bpiTaggingEventCode?.let { Utils.triggerFireBaseEvents(it, arguments, activity) }
 
             showProcessingView()
-            OneAppService.emailBPITermsAndConditions(productGroupCode).enqueue(
+            OneAppService().emailBPITermsAndConditions(productGroupCode).enqueue(
                 CompletionHandler(object : IResponseListener<GenericResponse> {
                     override fun onSuccess(response: GenericResponse?) {
                         when(response?.httpCode){
@@ -214,7 +214,7 @@ class BPITermsAndConditionFragment : BaseFragmentBinding<BpiTermsConditionsFragm
 
     private fun BpiTermsConditionsFragmentBinding.setUserEmail() {
         var email = ""
-        val splitToken = OneAppService.getSessionToken().split(".")
+        val splitToken = OneAppService().getSessionToken().split(".")
         if(splitToken.size > 1){
             val decodedBytes = Base64.decode(splitToken[1], Base64.DEFAULT)
             email = JsonParser.parseString(String(decodedBytes)).asJsonObject["email"].asString

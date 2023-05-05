@@ -49,7 +49,7 @@ class ViewAllLinkedDevicesFragment : Fragment(R.layout.fragment_view_all_linked_
     }
 
     private fun unlinkDevice() {
-        OneAppService.deleteDevice(deviceIdentityId, null, null, null)
+        OneAppService().deleteDevice(deviceIdentityId, null, null, null)
             .enqueue(CompletionHandler(
                 object : IResponseListener<ViewAllLinkedDeviceResponse> {
                     override fun onSuccess(response: ViewAllLinkedDeviceResponse?) {
@@ -97,7 +97,7 @@ class ViewAllLinkedDevicesFragment : Fragment(R.layout.fragment_view_all_linked_
 
     private fun FragmentViewAllLinkedDevicesBinding.callRetrieveDevices() {
         progressLoadDevices?.visibility = View.VISIBLE
-        val mViewAllLinkedDevices: Call<ViewAllLinkedDeviceResponse> = OneAppService.getAllLinkedDevices(true)
+        val mViewAllLinkedDevices: Call<ViewAllLinkedDeviceResponse> = OneAppService().getAllLinkedDevices(true)
         mViewAllLinkedDevices.enqueue(CompletionHandler(object : IResponseListener<ViewAllLinkedDeviceResponse> {
             override fun onFailure(error: Throwable?) {
                 //Do Nothing

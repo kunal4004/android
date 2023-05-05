@@ -27,10 +27,7 @@ import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams.SearchType
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
-import za.co.woolworths.financial.services.android.models.network.OneAppService.getProducts
-import za.co.woolworths.financial.services.android.models.network.OneAppService.productDetail
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity
-import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.adapters.SearchResultShopAdapter
@@ -42,7 +39,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.Navig
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_SESSION_TIMEOUT_440
-import java.util.*
 
 class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickListener,
     NetworkChangeListener, ColorAndSizeBottomSheetListener {
@@ -584,7 +580,7 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
 
         onLoadStart(loadMoreData)
         setProductIsLoading(true)
-        val productListCall = getProducts(requestParams!!)
+        val productListCall = OneAppService().getProducts(requestParams!!)
         productListCall.enqueue(
             CompletionHandler(
                 object : IResponseListener<ProductView> {
@@ -626,7 +622,7 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
             Call<ShoppingListItemsResponse> {
         onAddToListLoad(true)
         val shoppingListItemsResponseCall =
-            OneAppService.addToList(addToListRequest as MutableList<AddToListRequest>, listId!!)
+            OneAppService().addToList(addToListRequest as MutableList<AddToListRequest>, listId!!)
         shoppingListItemsResponseCall.enqueue(
             CompletionHandler(
                 object : IResponseListener<ShoppingListItemsResponse> {
@@ -702,7 +698,7 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
 
     private fun getProductDetail(productRequest: ProductRequest): Call<ProductDetailResponse> {
         val productDetailRequest =
-            productDetail(productRequest.productId, productRequest.skuId, false)
+            OneAppService().productDetail(productRequest.productId, productRequest.skuId, false)
         productDetailRequest.enqueue(
             CompletionHandler(
                 object : IResponseListener<ProductDetailResponse> {

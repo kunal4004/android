@@ -74,7 +74,7 @@ class OrderConfirmationFragment :
     }
 
     private fun getOrderDetails() {
-        OneAppService.getSubmittedOrder()
+        OneAppService().getSubmittedOrder()
             .enqueue(CompletionHandler(object : IResponseListener<SubmittedOrderResponse> {
                 override fun onSuccess(response: SubmittedOrderResponse?) {
                     when (response) {
@@ -166,7 +166,7 @@ class OrderConfirmationFragment :
 
     private fun displayVocifNeeded(response: SubmittedOrderResponse) {
         var deliveryType = response.orderSummary?.fulfillmentDetails?.deliveryType
-        VoiceOfCustomerManager.showVocSurveyIfNeeded(
+        VoiceOfCustomerManager().showVocSurveyIfNeeded(
             activity,
             KotlinUtils.vocShoppingHandling(deliveryType)
         )

@@ -8,9 +8,12 @@ import java.io.Serializable
 
 @Parcelize
 data class InsuranceType(
-        @SerializedName("description")
-        @Expose var description: String,
-        @SerializedName("covered")
-        @Expose var covered: Boolean,
-        @SerializedName("effectiveDate")
-        @Expose var effectiveDate: String) : Parcelable { constructor() : this("", false, "") }
+    @SerializedName("description")
+    @Expose var description: String,
+    @SerializedName("covered")
+    @Expose var covered: Boolean,
+    @SerializedName("effectiveDate")
+    @Expose var effectiveDate: String
+) : Parcelable, Serializable {
+    constructor() : this("", false, "")
+}
