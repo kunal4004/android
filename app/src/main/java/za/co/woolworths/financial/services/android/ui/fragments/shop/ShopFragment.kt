@@ -3,7 +3,6 @@ package za.co.woolworths.financial.services.android.ui.fragments.shop
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.content.IntentFilter
-import android.graphics.Typeface
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Handler
@@ -17,6 +16,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.constraintlayout.widget.ConstraintSet.*
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.core.text.HtmlCompat
 import androidx.core.view.contains
@@ -89,6 +89,7 @@ import za.co.woolworths.financial.services.android.util.analytics.FirebaseManage
 import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.viewmodels.shop.ShopViewModel
+
 
 @AndroidEntryPoint
 class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBinding::inflate),
@@ -684,15 +685,13 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
     ): View? {
         val shopCustomTabBinding =
             ShopCustomTabBinding.inflate(requireActivity().layoutInflater, null, false)
-        tabWidth = shopCustomTabBinding.root?.width?.let {
-            it.toFloat()
-        }
-        shopCustomTabBinding?.tvTitle?.text = tabTitle?.getOrNull(pos)
-        shopCustomTabBinding?.foodOnlyText?.visibility = if (pos == 2) View.VISIBLE else View.GONE
+        shopCustomTabBinding ?: return null
+        tabWidth = shopCustomTabBinding.root.width.toFloat()
+        shopCustomTabBinding.tvTitle.text = tabTitle?.getOrNull(pos)
+        shopCustomTabBinding.foodOnlyText.visibility = if (pos == 2) View.VISIBLE else View.GONE
         if (tabLayout.getTabAt(pos)?.view?.isSelected == true) {
-            val myRiadFont =
-                Typeface.createFromAsset(requireActivity().assets, "fonts/MyriadPro-Semibold.otf")
-            shopCustomTabBinding?.tvTitle?.typeface = myRiadFont
+            val typeface = ResourcesCompat.getFont(requireContext(), R.font.opensans_semi_bold)
+            shopCustomTabBinding.tvTitle.typeface = typeface
         }
         return shopCustomTabBinding.root
     }
