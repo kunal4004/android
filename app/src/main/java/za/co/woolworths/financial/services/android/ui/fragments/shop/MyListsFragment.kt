@@ -123,7 +123,7 @@ class MyListsFragment : DepartmentExtensionFragment(R.layout.shopping_list_fragm
      fun getShoppingList(isPullToRefresh: Boolean) {
         if (isPullToRefresh) binding.swipeToRefresh.isRefreshing = true else loadShoppingList(true)
         noNetworkConnectionLayout(false)
-        mGetShoppingListRequest = OneAppService.getShoppingLists().apply {
+        mGetShoppingListRequest = OneAppService().getShoppingLists().apply {
             enqueue(CompletionHandler(object : IResponseListener<ShoppingListsResponse> {
                 override fun onSuccess(response: ShoppingListsResponse?) {
                     activity?.let {
@@ -355,7 +355,7 @@ class MyListsFragment : DepartmentExtensionFragment(R.layout.shopping_list_fragm
     }
 
     private fun deleteShoppingListItem(shoppingList: ShoppingList) {
-        val deleteShoppingList = OneAppService.deleteShoppingList(shoppingList.listId)
+        val deleteShoppingList = OneAppService().deleteShoppingList(shoppingList.listId)
         deleteShoppingList.enqueue(CompletionHandler(object :
             IResponseListener<ShoppingListsResponse> {
             override fun onSuccess(response: ShoppingListsResponse?) {

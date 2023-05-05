@@ -5,6 +5,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.CommerceItem
 import za.co.woolworths.financial.services.android.models.dto.ProductDetails
+import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
 
 data class AnalyticProductItem(
@@ -34,6 +35,22 @@ fun ProductDetails.toAnalyticItem(quantity: Int = 1): AnalyticProductItem {
         index = FirebaseManagerAnalyticsProperties.PropertyValues.INDEX_VALUE.toInt(),
     )
 }
+
+fun ProductList.toAnalyticItem(category: String?): AnalyticProductItem {
+    return AnalyticProductItem(
+        itemId = productId,
+        itemName = productName,
+        category = category,
+        itemBrand = brandText,
+        itemListName = category,
+        itemVariant = productVariants,
+        quantity = 1, // Required quantity set to 1
+        price = price?.toDouble(),
+        affiliation = FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE,
+        index = FirebaseManagerAnalyticsProperties.PropertyValues.INDEX_VALUE.toInt(),
+    )
+}
+
 
 fun UnSellableCommerceItem.toAnalyticItem(): AnalyticProductItem {
     return AnalyticProductItem(

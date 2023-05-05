@@ -1,0 +1,16 @@
+default_platform(:android)
+
+platform :android do
+  desc "Runs all the tests"
+  lane :tests do |options|
+    variant = options[:variant] || "huaweiQaDebugUnitTest"
+    gradle(
+      task: "test", 
+      properties: {
+        "android.injected.testOnly" => "true",
+        "coverage" => "true"
+      }, 
+      flavor: variant
+    )
+  end
+end

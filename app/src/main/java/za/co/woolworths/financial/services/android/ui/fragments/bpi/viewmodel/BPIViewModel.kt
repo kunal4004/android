@@ -70,7 +70,7 @@ class BPIViewModel : ViewModel() {
             return
         }
 
-        OneAppService.postInsuranceLeadGenOptIn(insurance, insuranceTypeOptInBody).enqueue(
+        OneAppService().postInsuranceLeadGenOptIn(insurance, insuranceTypeOptInBody).enqueue(
             CompletionHandler(object : IResponseListener<GenericResponse> {
                 override fun onSuccess(response: GenericResponse?) {
                     when(response?.httpCode) {

@@ -88,7 +88,7 @@ class TaxInvoiceLIstFragment : Fragment(R.layout.fragment_tax_invoice_list), Tax
     private fun loadTaxInvoice(taxNumber: String) {
         showProgressBar()
 
-        val getInvoiceOrderRequest = OneAppService.getOrderTaxInvoice(taxNumber)
+        val getInvoiceOrderRequest = OneAppService().getOrderTaxInvoice(taxNumber)
         getInvoiceOrderRequest.enqueue(CompletionHandler(object : IResponseListener<OrderTaxInvoiceResponse> {
             override fun onSuccess(orderTaxInvoiceResponse: OrderTaxInvoiceResponse?) {
                 hideProgressBar()
