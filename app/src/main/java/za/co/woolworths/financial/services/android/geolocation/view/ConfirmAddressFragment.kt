@@ -210,9 +210,9 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
     }
 
     private fun startLocationDiscoveryProcess() {
-        locator.getCurrentLocation { locationEvent ->
+        locator?.getCurrentLocationSilently { locationEvent ->
             when (locationEvent) {
-                is Event.Location -> binding.handleLocationEvent(locationEvent)
+                is Event.Location -> binding?.handleLocationEvent(locationEvent)
                 is Event.Permission -> handlePermissionEvent(locationEvent)
             }
         }
