@@ -3215,4 +3215,26 @@
         <item name="android:layout_marginTop">@dimen/four_dp</item>
     </style>
 
+    <style name="open_sans_regular_black_15_text_style" parent="open_sans_regular_black">
+        <item name="android:textSize">@dimen/fifteen_sp</item>
+    </style>
+
+    <style name="open_sans_regular_black" parent="open_sans_regular">
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="open_sans_regular">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">@font/opensans_regular</item>
+    </style>
+
+    <style name="open_sans_semi_bold_black_15_text_style" parent="open_sans_regular_black_15_text_style">
+        <item name="android:fontFamily">@font/opensans_semi_bold</item>
+    </style>
+
+    <style name="open_sans_regular_black_14_text_style" parent="open_sans_regular_black">
+        <item name="android:textSize">@dimen/fourteen_sp</item>
+    </style>
+
 </resources>

@@ -51,7 +51,7 @@
 
     <TextView
         android:id="@+id/tvAddressNickName"
-        style="@style/myriad_pro_semi_bold_black_15_text_style"
+        style="@style/open_sans_semi_bold_black_15_text_style"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/five_dp"
@@ -66,7 +66,7 @@
 
     <TextView
         android:id="@+id/tvAddress"
-        style="@style/myriad_pro_regular_black_14_text_style"
+        style="@style/open_sans_regular_black_14_text_style"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/sixteen_dp"

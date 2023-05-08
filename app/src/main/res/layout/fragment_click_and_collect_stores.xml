@@ -47,11 +47,11 @@
                 style="@style/futura_semi_bold_black_20_text_style"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/twenty_four_dp"
+                android:layout_marginStart="@dimen/seven_dp"
                 android:layout_marginTop="@dimen/twenty_four_dp"
-                android:layout_marginEnd="@dimen/twenty_four_dp"
-                android:lineSpacingExtra="@dimen/_2sdp"
-                android:translationY="-1.1sp"
+                android:layout_marginEnd="@dimen/sixteen_dp"
+                android:lineSpacingExtra="@dimen/two_sp"
+                android:translationY="@dimen/minus_one_point_one_sp"
                 android:text="@string/please_select_the_store_you_are_collecting_from"
                 android:textColor="@color/black"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -60,11 +60,11 @@
 
             <androidx.appcompat.widget.AppCompatEditText
                 android:id="@+id/etEnterNewAddress"
-                style="@style/myriad_pro_regular_black_15_text_style"
+                style="@style/open_sans_regular_black_15_text_style"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/sixteen_dp"
-                android:layout_marginTop="@dimen/twenty_one_dp"
+                android:layout_marginTop="@dimen/sixteen_dp"
                 android:layout_marginEnd="@dimen/sixteen_dp"
                 android:background="@drawable/bg_search_corner_4"
                 android:drawableStart="@drawable/ic_search"
@@ -81,7 +81,7 @@
 
             <TextView
                 android:id="@+id/tvAddress"
-                style="@style/myriad_pro_semi_bold_black_15_text_style"
+                style="@style/open_sans_semi_bold_black_15_text_style"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/twenty_four_dp"
@@ -98,7 +98,7 @@
 
             <TextView
                 android:id="@+id/tvStoresNearMe"
-                style="@style/myriad_pro_regular_black_14_text_style"
+                style="@style/open_sans_regular_black_14_text_style"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/twenty_four_dp"
