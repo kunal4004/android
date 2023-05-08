@@ -5,14 +5,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.viewpager.widget.PagerAdapter
-import za.co.woolworths.financial.services.android.geolocation.network.model.ValidatePlace
 import za.co.woolworths.financial.services.android.ui.fragments.shop.StandardDeliveryFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.OnChildFragmentEvents
-import za.co.woolworths.financial.services.android.ui.views.shop.dash.ChangeFullfilmentCollectionStoreFragment
+import za.co.woolworths.financial.services.android.ui.views.shop.dash.ChangeFulfillmentCollectionStoreFragment
 import za.co.woolworths.financial.services.android.ui.views.shop.dash.DashDeliveryAddressFragment
-import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.AppConstant.Keys.Companion.ARG_SEND_DELIVERY_DETAILS
-import za.co.woolworths.financial.services.android.util.AppConstant.Keys.Companion.ARG_VALIDATE_PLACE
 import za.co.woolworths.financial.services.android.util.AppConstant.Keys.Companion.EXTRA_SEND_DELIVERY_DETAILS_PARAMS
 
 class ShopPagerAdapter(
@@ -21,11 +18,6 @@ class ShopPagerAdapter(
     var listener: OnChildFragmentEvents
 ) : FragmentStatePagerAdapter(fm) {
     private val mTabTitle: MutableList<String>? = tabTitle
-    private var validatePlace: ValidatePlace? = null
-
-    fun setValidateResponse(validatePlace: ValidatePlace?) {
-        this.validatePlace = validatePlace
-    }
 
     override fun getItem(position: Int): Fragment {
         return when (position) {
@@ -37,9 +29,8 @@ class ShopPagerAdapter(
                 standardDeliveryFragment
             }
             1 -> {
-                val collectionFragment = ChangeFullfilmentCollectionStoreFragment()
+                val collectionFragment = ChangeFulfillmentCollectionStoreFragment()
                 collectionFragment.arguments = bundleOf(
-                    ARG_VALIDATE_PLACE to validatePlace,
                     EXTRA_SEND_DELIVERY_DETAILS_PARAMS to listener.isSendDeliveryDetails()
                 )
                 collectionFragment

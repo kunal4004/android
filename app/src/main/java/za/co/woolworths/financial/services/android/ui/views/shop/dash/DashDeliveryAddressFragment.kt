@@ -91,8 +91,8 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this).get(ShopViewModel::class.java)
         binding = FragmentDashDeliveryBinding.bind(view)
-
-        if (!isVisible || !isAdded) {
+        val parentFragment = (activity as? BottomNavigationActivity)?.currentFragment as? ShopFragment
+        if (!isVisible || parentFragment?.getCurrentFragmentIndex() != ShopFragment.SelectedTabIndex.DASH_TAB.index || !isAdded) {
             return
         }
         initViews()
@@ -166,7 +166,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
 
     private fun hideSearchBar() {
         if (this.parentFragment is ShopFragment && KotlinUtils.browsingDeliveryType == Delivery.DASH)
-            (this.parentFragment as ShopFragment).hideSerachAndBarcodeUi() // hide search bar.
+            (this.parentFragment as ShopFragment).hideSearchAndBarcodeUi() // hide search bar.
     }
 
     private fun showSetAddressScreen() {
@@ -381,7 +381,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                         KotlinUtils.apply {
                             response.orderSummary?.fulfillmentDetails?.address?.placeId.let { responsePlaceId ->
                                 this.placeId = responsePlaceId
-                                isLocationSame = responsePlaceId.equals(savedPlaceId)
+                                isLocationPlaceIdSame = responsePlaceId.equals(savedPlaceId)
                                 isDeliveryLocationTabCrossClicked =
                                     responsePlaceId.equals(savedPlaceId)
                                 isCncTabCrossClicked = responsePlaceId.equals(savedPlaceId)
