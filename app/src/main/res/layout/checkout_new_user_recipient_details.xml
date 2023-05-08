@@ -67,13 +67,12 @@
 
     <TextView
         android:id="@+id/recipientNameErrorMsg"
-        style="@style/opensans_regular_12_text_style"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        style="@style/myriad_pro_regular"
         android:layout_marginTop="@dimen/fifteen_dp"
         android:lineSpacingMultiplier="1.40"
         android:text="@string/recipient_name_error_msg"
         android:textColor="@color/input_error_color_code"
+        android:textSize="@dimen/fourteen_sp"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="@id/right_guideline"
         app:layout_constraintStart_toStartOf="@id/left_guideline"
@@ -107,13 +106,12 @@
 
     <TextView
         android:id="@+id/cellphoneNumberErrorMsg"
-        style="@style/opensans_regular_12_text_style"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        style="@style/myriad_pro_regular"
         android:layout_marginTop="@dimen/fifteen_dp"
         android:lineSpacingMultiplier="1.40"
         android:text="@string/mobile_number_error_msg"
         android:textColor="@color/input_error_color_code"
+        android:textSize="@dimen/fourteen_sp"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="@id/right_guideline"
         app:layout_constraintStart_toStartOf="@id/left_guideline"

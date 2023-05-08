@@ -67,7 +67,7 @@
 
     <TextView
         android:id="@+id/taxiDescription"
-        style="@style/opensans_regular_13_black"
+        style="@style/myriad_pro_regular"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/twenty_five_dp"
@@ -76,6 +76,7 @@
         android:paddingBottom="@dimen/fourty_five_dp"
         android:text="@string/e_hailing_description"
         android:textColor="@color/color_444444"
+        android:textSize="@dimen/fifteen_sp"
         android:visibility="gone"
         app:layout_constrainedWidth="true"
         app:layout_constraintEnd_toEndOf="@id/right_guideline"
@@ -106,21 +107,21 @@
         <EditText
             android:id="@+id/vehicleColourEditText"
             style="@style/checkout_edittext_style"
-            android:layout_width="match_parent"
             android:hint="@string/optional_hint"
+            android:textColorHint="@color/color_9D9D9D"
+            android:layout_width="match_parent"
             android:inputType="textEmailAddress"
-            android:maxLength="@integer/twenty"
-            android:textColorHint="@color/color_9D9D9D" />
+            android:maxLength="@integer/twenty" />
 
         <TextView
             android:id="@+id/vehicleColourErrorMsg"
-            style="@style/opensans_regular_12_text_style"
+            style="@style/myriad_pro_regular"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/fifteen_dp"
             android:lineSpacingMultiplier="1.40"
             android:text="@string/address_nickname_error_msg"
             android:textColor="@color/input_error_color_code"
+            android:textSize="@dimen/fourteen_sp"
             android:visibility="gone" />
 
         <TextView
@@ -142,13 +143,13 @@
 
         <TextView
             android:id="@+id/vehicleModelErrorMsg"
-            style="@style/opensans_regular_12_text_style"
+            style="@style/myriad_pro_regular"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/fifteen_dp"
             android:lineSpacingMultiplier="1.40"
             android:text="@string/address_nickname_error_msg"
             android:textColor="@color/input_error_color_code"
+            android:textSize="@dimen/fourteen_sp"
             android:visibility="gone" />
 
         <TextView
@@ -167,9 +168,9 @@
             style="@style/checkout_edittext_style"
             android:layout_width="match_parent"
             android:hint="@string/optional_hint"
+            android:textColorHint="@color/color_9D9D9D"
             android:imeOptions="actionDone"
-            android:maxLength="@integer/twenty"
-            android:textColorHint="@color/color_9D9D9D" />
+            android:maxLength="@integer/twenty" />
 
     </LinearLayout>
 
