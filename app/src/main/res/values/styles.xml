@@ -3030,7 +3030,7 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:textColor">#80000000</item>
         <item name="android:singleLine">true</item>
-        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
+        <item name="android:fontFamily">@font/opensans_regular</item>
         <item name="android:textSize">16sp</item>
         <item name="android:layout_marginStart">16dp</item>
         <item name="android:paddingEnd">0dp</item>
