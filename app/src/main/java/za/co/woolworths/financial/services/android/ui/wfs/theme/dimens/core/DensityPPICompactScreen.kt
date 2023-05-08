@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.wfs.theme.dimens.core
 
-import android.util.Log
 import androidx.compose.runtime.Composable
 import za.co.woolworths.financial.services.android.ui.wfs.theme.*
 import za.co.woolworths.financial.services.android.ui.wfs.theme.dimens.*
@@ -58,7 +57,6 @@ enum class DensityDpiDimension(private val dpi: Int) {
                 screenWidthDp <= DPI600.dpi -> sw600FontDimensions
                 else -> smallFontDimensions
             }
-//            Log.e("screenWidth", "dimens $dimens")
             return dimens
         }
 
