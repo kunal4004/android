@@ -116,7 +116,6 @@ import za.co.woolworths.financial.services.android.ui.vto.ui.gallery.ImageResult
 import za.co.woolworths.financial.services.android.ui.vto.utils.PermissionUtil
 import za.co.woolworths.financial.services.android.ui.vto.utils.SdkUtility
 import za.co.woolworths.financial.services.android.ui.vto.utils.VirtualTryOnUtil
-import za.co.woolworths.financial.services.android.ui.wfs.common.getIpAddress
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_1000_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_1500_MS
@@ -874,7 +873,7 @@ class ProductDetailsFragment :
                             val savedPlaceId = KotlinUtils.getDeliveryType()?.address?.placeId
                             KotlinUtils.apply {
                                 this.placeId = confirmLocationRequest.address.placeId
-                                isLocationSame =
+                                isLocationPlaceIdSame =
                                     confirmLocationRequest.address.placeId?.equals(
                                         savedPlaceId)
                             }
@@ -2246,7 +2245,7 @@ class ProductDetailsFragment :
                             if (!this.productDetails?.productType.equals(
                                     getString(R.string.food_product_type),
                                     ignoreCase = true
-                                )
+                                ) && (KotlinUtils.getPreferredDeliveryType() == Delivery.DASH)
                             ) {
                                 storeIdForInventory = ""
                                 clearStockAvailability()
@@ -3983,6 +3982,9 @@ class ProductDetailsFragment :
 
     private val onScrollStoppedListener = object: LockableNestedScrollViewV2.OnScrollStoppedListener {
         override fun onScrollStopped() {
+            if(!isAdded){
+                return
+            }
             val visible = binding.scrollView.isViewVisible(binding.productDetailOptionsAndInformation.layoutRecommendationContainer.root)
             if(visible){
                 recommendationViewModel.parentPageScrolledToRecommendation()

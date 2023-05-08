@@ -1,18 +1,14 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shop
 
-import android.Manifest
 import android.app.Activity
 import android.app.Activity.RESULT_OK
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentShopDepartmentBinding
@@ -33,13 +29,17 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.grid.Pro
 import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.list.DepartmentExtensionFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.EnableLocationSettingsFragment
-import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.AppConstant
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.REQUEST_CODE
+import za.co.woolworths.financial.services.android.util.GetCartSummary
+import za.co.woolworths.financial.services.android.util.KotlinUtils
+import za.co.woolworths.financial.services.android.util.SessionUtilities
+import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.location.Event
 import za.co.woolworths.financial.services.android.util.location.EventType
 import za.co.woolworths.financial.services.android.util.location.Locator
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
-import za.co.woolworths.financial.services.android.viewmodels.shop.ShopViewModel
 
 @AndroidEntryPoint
 class StandardDeliveryFragment : DepartmentExtensionFragment(R.layout.fragment_shop_department) {
@@ -54,9 +54,6 @@ class StandardDeliveryFragment : DepartmentExtensionFragment(R.layout.fragment_s
     private var parentFragment: ShopFragment? = null
     private var isDashEnabled = false
     private var localPlaceId: String? = null
-    private val shopViewModel: ShopViewModel by viewModels(
-        ownerProducer = { requireParentFragment() }
-    )
 
     companion object {
         var DEPARTMENT_LOGIN_REQUEST = 1717
@@ -79,7 +76,11 @@ class StandardDeliveryFragment : DepartmentExtensionFragment(R.layout.fragment_s
                 hasFocus
             )
         }
-        initView()
+        val parentFragment =
+            (activity as? BottomNavigationActivity)?.currentFragment as? ShopFragment
+        if (parentFragment?.getCurrentFragmentIndex() == ShopFragment.SelectedTabIndex.STANDARD_TAB.index) {
+            initView()
+        }
     }
 
     override fun noConnectionLayout(isVisible: Boolean) {
@@ -95,14 +96,6 @@ class StandardDeliveryFragment : DepartmentExtensionFragment(R.layout.fragment_s
         setUpRecyclerView(mutableListOf())
         setListener()
         localPlaceId = KotlinUtils.getPreferredPlaceId()
-
-        var isPermissionGranted = false
-        activity?.apply {
-            isPermissionGranted = ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-        }
 
         if (isFragmentVisible) {
             if (isDashEnabled) {
