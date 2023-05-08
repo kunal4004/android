@@ -527,6 +527,11 @@ class ConfirmAddressMapFragment :
                     placeId = item?.placeId.toString()
                     placeName = item?.primaryText.toString()
                     binding?.autoCompleteTextView?.setText(placeName)
+                    if(!Utils.isLocationEnabled(requireContext())) {
+                        binding.autoCompleteTextView?.clearFocus()
+                        hideKeyboard(requireActivity())
+                        return@OnItemClickListener
+                    }
                     binding?.tvLocationNikName?.text = placeName
                     isAddressFromSearch = true
                     isMainPlaceName = true
