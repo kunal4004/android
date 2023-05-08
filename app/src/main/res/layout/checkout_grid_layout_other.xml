@@ -63,13 +63,12 @@
 
         <TextView
             android:id="@+id/previousOtherTextView"
-            style="@style/myriad_pro_regular"
+            style="@style/opensans_semi_bold_12_text_style"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="@dimen/two_dp"
             android:text="@string/previous_week_text"
-            android:textColor="@color/checkout_delivering_title"
-            android:textSize="@dimen/fourteen_sp" />
+            android:textColor="@color/checkout_delivering_title" />
 
         <View
             android:layout_width="0dp"
@@ -78,13 +77,12 @@
 
         <TextView
             android:id="@+id/nextOtherTextView"
-            style="@style/myriad_pro_regular"
+            style="@style/opensans_semi_bold_12_text_style"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="@dimen/two_dp"
             android:text="@string/next_week_text"
-            android:textColor="@color/checkout_delivering_title"
-            android:textSize="@dimen/fourteen_sp" />
+            android:textColor="@color/checkout_delivering_title" />
 
         <ImageButton
             android:id="@+id/nextImgBtnOther"
