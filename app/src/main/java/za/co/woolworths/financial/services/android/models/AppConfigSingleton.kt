@@ -224,13 +224,6 @@ object AppConfigSingleton {
                 ratingsAndReviews= this
             }
 
-            appConfig.lowStockIndicator?.apply {
-                minimumSupportedAppBuildNumber.let {
-                    isEnabled = Utils.isFeatureEnabled(minimumSupportedAppBuildNumber)
-                    lowStock = this
-                }
-            }
-
             appConfig.glassBox?.apply {
                 minimumSupportedAppBuildNumber.let {
                     isEnabled = Utils.isFeatureEnabled(minimumSupportedAppBuildNumber)
