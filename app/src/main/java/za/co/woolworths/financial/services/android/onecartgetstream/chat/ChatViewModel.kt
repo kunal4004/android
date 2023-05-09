@@ -71,7 +71,7 @@ class ChatViewModel : ViewModel() {
                 typingIndicator()
 
             } else {
-                _state.postValue(ChatState.Error(result.error().message))
+                _state.postValue(ChatState.Error(""))
                 postOtherUserPresence(false)
             }
         }
