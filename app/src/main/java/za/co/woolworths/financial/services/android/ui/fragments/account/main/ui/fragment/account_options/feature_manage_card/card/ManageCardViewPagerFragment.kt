@@ -56,7 +56,7 @@ class ManageCardViewPagerFragment : Fragment(R.layout.manage_card_viewpager_frag
                                 onPagerSelected(listOfStoreCardFeatures,currentPosition, isPopupVisibleInAccountLanding = false, isPopupVisibleInCardDetailLanding = false)
                             }
                             CoroutineScope(Dispatchers.Main).launch {
-                                VoiceOfCustomerManager.showPendingSurveyIfNeeded(requireContext())
+                                VoiceOfCustomerManager().showPendingSurveyIfNeeded(requireContext())
                                 handleBlockUnBlockStoreCardResult()
                             }
                         }

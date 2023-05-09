@@ -26,10 +26,7 @@ import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
-import za.co.woolworths.financial.services.android.models.network.OneAppService.cliEmailResponse
-import za.co.woolworths.financial.services.android.models.network.OneAppService.cliUpdateBankDetail
-import za.co.woolworths.financial.services.android.models.network.OneAppService.getBankAccountTypes
-import za.co.woolworths.financial.services.android.models.network.OneAppService.getDeaBanks
+import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.models.service.event.LoadState
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.cli.CLIPhase2Activity
@@ -120,7 +117,7 @@ class DocumentFragment : CLIFragment(R.layout.document_fragment), DocumentAdapte
 
     private fun cliDeaBankRequest() {
         onLoad(binding.pbDeaBank)
-        cliGetDeaBank = getDeaBanks()
+        cliGetDeaBank = OneAppService().getDeaBanks()
         cliGetDeaBank?.enqueue(
             CompletionHandler(
                 object : IResponseListener<DeaBanks> {
@@ -178,7 +175,7 @@ class DocumentFragment : CLIFragment(R.layout.document_fragment), DocumentAdapte
             bankAccountTypesList?.clear()
             accountTypeAdapter?.notifyDataSetChanged()
         }
-        cliGetBankAccountTypes = getBankAccountTypes()
+        cliGetBankAccountTypes = OneAppService().getBankAccountTypes()
         cliGetBankAccountTypes?.enqueue(
             CompletionHandler(
                 object : IResponseListener<BankAccountTypes> {
@@ -583,7 +580,7 @@ class DocumentFragment : CLIFragment(R.layout.document_fragment), DocumentAdapte
         bankDetail.accountType = selectedAccountType
         bankDetail.bankName = selectedBankType
         bankDetail.accountNumber = binding.etAccountNumber?.text.toString().trim { it <= ' ' }
-        cliUpdateBankDetails = cliUpdateBankDetail(bankDetail)
+        cliUpdateBankDetails = OneAppService().cliUpdateBankDetail(bankDetail)
         cliUpdateBankDetails?.enqueue(
             CompletionHandler(
                 object : IResponseListener<UpdateBankDetailResponse> {
@@ -641,7 +638,7 @@ class DocumentFragment : CLIFragment(R.layout.document_fragment), DocumentAdapte
 
     fun initSendEmailRequest() {
         disableSubmitButton()
-        cliSendEmail = cliEmailResponse()
+        cliSendEmail = OneAppService().cliEmailResponse()
         cliSendEmail?.enqueue(
             CompletionHandler(
                 object : IResponseListener<CLIEmailResponse> {

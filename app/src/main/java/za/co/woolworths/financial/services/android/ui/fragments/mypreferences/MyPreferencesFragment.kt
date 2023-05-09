@@ -121,7 +121,7 @@ class MyPreferencesFragment : BaseFragmentBinding<FragmentMyPreferencesBinding>(
 
     private fun callDeleteAccountApi() {
         showProgress()
-        deleteAccountApi = OneAppService.deleteAccount()
+        deleteAccountApi = OneAppService().deleteAccount()
         deleteAccountApi?.enqueue(CompletionHandler(object :
             IResponseListener<DeleteAccountResponse> {
 
@@ -192,7 +192,7 @@ class MyPreferencesFragment : BaseFragmentBinding<FragmentMyPreferencesBinding>(
             retryLinkDeviceLinearLayout?.visibility = View.VISIBLE
             retryLinkDeviceTextView?.visibility = View.GONE
 
-            mViewAllLinkedDevices = OneAppService.getAllLinkedDevices(isUpdateAccountCache)
+            mViewAllLinkedDevices = OneAppService().getAllLinkedDevices(isUpdateAccountCache)
             mViewAllLinkedDevices?.enqueue(CompletionHandler(object :
                 IResponseListener<ViewAllLinkedDeviceResponse> {
 

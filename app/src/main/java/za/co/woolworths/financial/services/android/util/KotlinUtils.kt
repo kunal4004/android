@@ -59,7 +59,6 @@ import za.co.woolworths.financial.services.android.geolocation.model.request.Con
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
 import za.co.woolworths.financial.services.android.geolocation.network.model.Store
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidatePlace
-import za.co.woolworths.financial.services.android.geolocation.view.FBHInfoBottomSheetDialog
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton.accountOptions
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton.liquor
@@ -125,7 +124,7 @@ class KotlinUtils {
 
         var isStoreSelectedForBrowsing: Boolean = false
         var placeId: String? = null
-        var isLocationSame: Boolean? = false
+        var isLocationPlaceIdSame: Boolean? = false
         var isNickNameChanged: Boolean? = false
         var isDeliveryLocationTabCrossClicked: Boolean? = false
         var isCncTabCrossClicked: Boolean? = false
@@ -817,7 +816,7 @@ class KotlinUtils {
         }
 
         fun postOneAppEvent(appScreen: String, featureName: String) {
-            request(OneAppService.queryServicePostEvent(featureName, appScreen))
+            request(OneAppService().queryServicePostEvent(featureName, appScreen))
         }
 
         fun parseMoneyValue(

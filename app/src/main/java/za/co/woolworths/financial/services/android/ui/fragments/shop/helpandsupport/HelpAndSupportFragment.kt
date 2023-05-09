@@ -6,6 +6,7 @@ import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.LayoutHelpAndSupportFragementBinding
+import za.co.woolworths.financial.services.android.models.dto.CommerceItem
 import za.co.woolworths.financial.services.android.models.dto.OrderDetailsResponse
 import za.co.woolworths.financial.services.android.onecartgetstream.OCChatActivity
 import za.co.woolworths.financial.services.android.ui.activities.CancelOrderProgressActivity
@@ -25,13 +26,15 @@ class HelpAndSupportFragment : BaseFragmentBinding<LayoutHelpAndSupportFragement
 
     private var orderDetailsResponse: OrderDetailsResponse? = null
     var isNavigatedFromMyAccounts: Boolean = false
+    private var orderItemList: ArrayList<CommerceItem>? = null
 
     companion object {
         const val STORE_CARD_DETAIL = "STORE_CARD_DETAIL"
         const val KEY_ARGS_ORDER_STATUS = "orderStatusResponse"
 
-        fun newInstance(orderDetailsResponse: OrderDetailsResponse?) = HelpAndSupportFragment().withArgs {
+        fun newInstance(orderDetailsResponse: OrderDetailsResponse?, orderItemList: ArrayList<CommerceItem>) = HelpAndSupportFragment().withArgs {
             putSerializable(KEY_ARGS_ORDER_STATUS, orderDetailsResponse)
+            putSerializable(AppConstant.ORDER_ITEM_LIST, orderItemList)
         }
     }
 
@@ -41,8 +44,9 @@ class HelpAndSupportFragment : BaseFragmentBinding<LayoutHelpAndSupportFragement
     }
 
     private fun setUpHelpAndSupportUi() {
-        orderDetailsResponse = arguments?.let {
-            it.getSerializable(KEY_ARGS_ORDER_STATUS) as? OrderDetailsResponse
+         arguments?.let {
+             orderDetailsResponse = it.getSerializable(KEY_ARGS_ORDER_STATUS) as? OrderDetailsResponse
+             orderItemList = arguments?.getSerializable(AppConstant.ORDER_ITEM_LIST) as? ArrayList<CommerceItem>?
         }
         val dataList = prepareHelpAndSupportList(orderDetailsResponse)
         val adapter = HelpAndSupportAdapter(context, dataList, this)
@@ -99,6 +103,10 @@ class HelpAndSupportFragment : BaseFragmentBinding<LayoutHelpAndSupportFragement
             orderDetailsResponse?.orderSummary?.let {
                 it.orderId?.let { _ ->
                     intent.putExtra(CancelOrderProgressFragment.ORDER_ID, it.orderId)
+                    intent.putExtra(AppConstant.ORDER_ITEM_LIST, orderItemList)
+                    intent.putExtra(AppConstant.ORDER_ITEM_TOTAL, orderDetailsResponse?.orderSummary?.total)
+                    intent.putExtra(AppConstant.ORDER_SHIPPING_TOTAL, orderDetailsResponse?.orderSummary?.estimatedDelivery)
+
                     intent.putExtra(AppConstant.NAVIGATED_FROM_MY_ACCOUNTS, isNavigatedFromMyAccounts)
                     startActivityForResult(intent, CancelOrderProgressFragment.REQUEST_CODE_CANCEL_ORDER)
                     overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
