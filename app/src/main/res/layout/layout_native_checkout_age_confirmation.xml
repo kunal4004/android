@@ -45,6 +45,7 @@
             android:layout_height="wrap_content"
             android:background="@color/white"
             android:fontFamily="@font/opensans_regular"
+            android:textSize="@dimen/thirteen_sp"
             android:text="@string/native_checkout_delivery_age_confirmation_desc"
             android:textColor="@color/black" />
 
@@ -67,9 +68,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@color/white"
-            android:fontFamily="@font/opensans_regular"
-            android:text="@string/native_checkout_delivery_age_confirmation_desc_note"
-            android:textColor="@color/black" />
+            style="@style/opensans_semi_bold_13_black_text_style"
+            android:text="@string/native_checkout_delivery_age_confirmation_desc_note" />
 
     </com.facebook.shimmer.ShimmerFrameLayout>
 
