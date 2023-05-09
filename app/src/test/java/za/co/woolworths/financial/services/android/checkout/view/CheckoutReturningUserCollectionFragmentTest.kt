@@ -135,7 +135,7 @@ class CheckoutReturningUserCollectionFragmentTest : Fragment() {
     }
 
     fun <T> LiveData<T>.observeOnce(onChangeHandler: (T) -> Unit) {
-        val observer = OneTimeObserver(handler = onChangeHandler)
+        val observer = OneTimeObserver(handler = onChangeHandler, lifecycle)
         observe(observer, observer)
     }
 

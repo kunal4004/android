@@ -2486,7 +2486,7 @@ class ProductDetailsFragment :
                             if (!this.productDetails?.productType.equals(
                                     getString(R.string.food_product_type),
                                     ignoreCase = true
-                                )
+                                ) && (KotlinUtils.getPreferredDeliveryType() == Delivery.DASH)
                             ) {
                                 storeIdForInventory = ""
                                 clearStockAvailability()
@@ -4226,6 +4226,9 @@ class ProductDetailsFragment :
 
     private val onScrollStoppedListener = object: LockableNestedScrollViewV2.OnScrollStoppedListener {
         override fun onScrollStopped() {
+            if(!isAdded){
+                return
+            }
             val visible = binding.scrollView.isViewVisible(binding.productDetailOptionsAndInformation.layoutRecommendationContainer.root)
             if(visible){
                 recommendationViewModel.parentPageScrolledToRecommendation()

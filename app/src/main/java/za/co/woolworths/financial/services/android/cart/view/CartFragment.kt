@@ -56,7 +56,7 @@ import za.co.woolworths.financial.services.android.models.dto.item_limits.Produc
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.CouponClaimCode
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.VoucherDetails
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
-import za.co.woolworths.financial.services.android.models.network.OneAppService.removeCartItem
+import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.models.service.event.CartState
 import za.co.woolworths.financial.services.android.models.service.event.ProductState
@@ -84,6 +84,7 @@ import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseVie
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView.IWalkthroughActionListener
 import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ActionSheetDialogFragment
+import za.co.woolworths.financial.services.android.ui.wfs.common.getIpAddress
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_EXPECTATION_FAILED_502
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
@@ -1380,7 +1381,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     }
 
     private fun removeItem(commerceItem: CommerceItem) {
-        removeCartItem(commerceItem.commerceItemInfo.commerceId).enqueue(
+        OneAppService().removeCartItem(commerceItem.commerceItemInfo.commerceId).enqueue(
             CompletionHandler(
                 (object : IResponseListener<ShoppingCartResponse> {
                     override fun onSuccess(response: ShoppingCartResponse?) {}
@@ -1452,7 +1453,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
 
                         hideEditCart()
                         //TODO: need to refactor
-                        /* Call<SetDeliveryLocationSuburbResponse> setDeliveryLocationSuburb = OneAppService.INSTANCE.setSuburb(lastDeliveryLocation.storePickup ? lastDeliveryLocation.store.getId() : lastDeliveryLocation.suburb.id);
+                        /* Call<SetDeliveryLocationSuburbResponse> setDeliveryLocationSuburb = OneAppService().INSTANCE.setSuburb(lastDeliveryLocation.storePickup ? lastDeliveryLocation.store.getId() : lastDeliveryLocation.suburb.id);
                         setDeliveryLocationSuburb.enqueue(new CompletionHandler<>(new IResponseListener<SetDeliveryLocationSuburbResponse>() {
                             @Override
                             public void onSuccess(SetDeliveryLocationSuburbResponse setDeliveryLocationSuburbResponse) {
@@ -2426,6 +2427,9 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
 
     private val onScrollStoppedListener = object: LockableNestedScrollViewV2.OnScrollStoppedListener {
         override fun onScrollStopped() {
+            if(!isAdded){
+                return
+            }
             val visible = binding.nestedScrollView.isViewVisible(binding.layoutRecommendationContainer.root)
             if (visible) {
                 recommendationViewModel.parentPageScrolledToRecommendation()

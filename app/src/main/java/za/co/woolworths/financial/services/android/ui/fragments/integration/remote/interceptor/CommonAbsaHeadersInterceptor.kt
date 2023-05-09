@@ -2,10 +2,12 @@ package za.co.woolworths.financial.services.android.ui.fragments.integration.rem
 
 import okhttp3.Interceptor
 import okhttp3.Response
+import za.co.woolworths.financial.services.android.models.network.AppContextProviderImpl
+import za.co.woolworths.financial.services.android.models.network.RetrofitApiProviderImpl
 import za.co.woolworths.financial.services.android.models.network.RetrofitConfig
 import za.co.woolworths.financial.services.android.ui.fragments.integration.helper.AbsaTemporaryDataSourceSingleton
 
-class CommonAbsaHeadersInterceptor : Interceptor, RetrofitConfig() {
+class CommonAbsaHeadersInterceptor : Interceptor, RetrofitConfig(AppContextProviderImpl(), RetrofitApiProviderImpl()) {
     override fun intercept(chain: Interceptor.Chain): Response = chain.run {
         val requestBuilder = request().newBuilder()
 

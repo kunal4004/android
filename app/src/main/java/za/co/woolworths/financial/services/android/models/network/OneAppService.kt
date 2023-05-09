@@ -14,12 +14,7 @@ import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburb
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.Response
-import za.co.woolworths.financial.services.android.models.dto.account.AppGUIDModel
-import za.co.woolworths.financial.services.android.models.dto.account.AppGUIDRequestType
-import za.co.woolworths.financial.services.android.models.dto.account.FeatureEnablementModel
-import za.co.woolworths.financial.services.android.models.dto.account.FicaModel
-import za.co.woolworths.financial.services.android.models.dto.account.PetInsuranceModel
-import za.co.woolworths.financial.services.android.models.dto.account.getRequestBody
+import za.co.woolworths.financial.services.android.models.dto.account.*
 import za.co.woolworths.financial.services.android.models.dto.bpi.BPIBody
 import za.co.woolworths.financial.services.android.models.dto.bpi.InsuranceTypeOptInBody
 import za.co.woolworths.financial.services.android.models.dto.cart.SubmittedOrderResponse
@@ -59,9 +54,14 @@ import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
 import java.net.URLEncoder
 
-object OneAppService : RetrofitConfig() {
+open class OneAppService(
+    private val appContextProvider: AppContextProviderInterface = AppContextProviderImpl(),
+    retrofitApiProvider: RetrofitApiProviderInterface = RetrofitApiProviderImpl()
+) : RetrofitConfig(appContextProvider, retrofitApiProvider) {
 
-    var forceNetworkUpdate: Boolean = false
+    companion object {
+        var forceNetworkUpdate: Boolean = false
+    }
 
     fun login(loginRequest: LoginRequest): Call<LoginResponse> {
         return mApiInterface.login(
@@ -468,7 +468,7 @@ object OneAppService : RetrofitConfig() {
                 )
         }
 
-        return if (Utils.isLocationEnabled(appContext())) {
+        return if (Utils.isLocationEnabled(appContextProvider.appContext())) {
             mApiInterface.getProducts(
                 "",
                 "",
@@ -614,7 +614,7 @@ object OneAppService : RetrofitConfig() {
         val deliveryType =
             if (isUserBrowsing) KotlinUtils.browsingDeliveryType?.type ?: Delivery.STANDARD.type
             else KotlinUtils.getDeliveryType()?.deliveryType ?: Delivery.STANDARD.type
-        return if (Utils.isLocationEnabled(appContext())) {
+        return if (Utils.isLocationEnabled(appContextProvider.appContext())) {
             mApiInterface.productDetail(
                 "",
                 "",
@@ -1128,7 +1128,7 @@ object OneAppService : RetrofitConfig() {
         )
     }
 
-    fun getVocSurvey(triggerEvent: VocTriggerEvent): Call<SurveyDetailsResponse> {
+    open fun getVocSurvey(triggerEvent: VocTriggerEvent): Call<SurveyDetailsResponse> {
         return mApiInterface.getVocSurvey(
             userAgent = "",
             userAgentVersion = "",
@@ -1137,7 +1137,7 @@ object OneAppService : RetrofitConfig() {
         )
     }
 
-    fun submitVocSurveyReplies(
+    open fun submitVocSurveyReplies(
         surveyDetails: SurveyDetails,
         surveyAnswers: HashMap<Long, SurveyAnswer>
     ): Call<Void> {
@@ -1154,7 +1154,7 @@ object OneAppService : RetrofitConfig() {
         )
     }
 
-    fun optOutVocSurvey(): Call<Void> {
+    open fun optOutVocSurvey(): Call<Void> {
         return mApiInterface.optOutVocSurvey(
             userAgent = "",
             userAgentVersion = "",

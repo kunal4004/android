@@ -153,7 +153,7 @@ class ChatViewModel : ViewModel() {
         error: (Throwable?) -> Unit
     ) {
         creditCardTokenAPI =
-            request(OneAppService.getCreditCardToken(), object : IGenericAPILoaderView<Any> {
+            request(OneAppService().getCreditCardToken(), object : IGenericAPILoaderView<Any> {
 
                 override fun onSuccess(response: Any?) {
 

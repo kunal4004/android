@@ -20,7 +20,7 @@ public class MyAccountsViewModel extends BaseViewModel<MyAccountsNavigator> {
 
 
 	public Call<MessageResponse> loadMessageCount() {
-		Call<MessageResponse> messageRequestCall =  OneAppService.INSTANCE.getMessagesResponse(5, 1);
+		Call<MessageResponse> messageRequestCall = new OneAppService().getMessagesResponse(5, 1);
 		messageRequestCall.enqueue(new CompletionHandler<>(new IResponseListener<MessageResponse>() {
 			@Override
 			public void onSuccess(MessageResponse messageResponse) {

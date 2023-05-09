@@ -67,10 +67,6 @@ import za.co.woolworths.financial.services.android.util.StatementUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent;
 
-import static za.co.woolworths.financial.services.android.ui.activities.WPdfViewerActivity.FILE_NAME;
-import static za.co.woolworths.financial.services.android.ui.activities.WPdfViewerActivity.FILE_VALUE;
-import static za.co.woolworths.financial.services.android.ui.activities.WPdfViewerActivity.PAGE_TITLE;
-
 public class StatementFragment extends Fragment implements StatementAdapter.StatementListener, View.OnClickListener, NetworkChangeListener {
 
     public static final String TAG = "StatementFragment";
@@ -222,7 +218,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
         showViewProgress();
         final FragmentActivity activity = getActivity();
         if (activity == null || !isAdded()) return;
-        mGetPdfFile = OneAppService.INSTANCE.getPDFResponse(mGetStatementFile);
+        mGetPdfFile = new OneAppService().getPDFResponse(mGetStatementFile);
         mGetPdfFile.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(@NotNull Call<ResponseBody> call, @NotNull Response<ResponseBody> response) {
@@ -233,9 +229,9 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
                                 if (response.body() != null) {
                                     String fileName = "statement_" + mSelectedStatement.docDesc;
                                     Intent openPdfIntent = new Intent(activity, WPdfViewerActivity.class);
-                                    openPdfIntent.putExtra(FILE_NAME, fileName.replaceAll(" ", "_").toLowerCase());
-                                    openPdfIntent.putExtra(FILE_VALUE, response.body().bytes());
-                                    openPdfIntent.putExtra(PAGE_TITLE, mSelectedStatement.docDesc);
+                                    openPdfIntent.putExtra(WPdfViewerActivity.FILE_NAME, fileName.replaceAll(" ", "_").toLowerCase());
+                                    openPdfIntent.putExtra(WPdfViewerActivity.FILE_VALUE, response.body().bytes());
+                                    openPdfIntent.putExtra(WPdfViewerActivity.PAGE_TITLE, mSelectedStatement.docDesc);
                                     activity.startActivity(openPdfIntent);
                                 }
                             } catch (Exception ex) {
@@ -321,7 +317,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
     private void getStatement() {
         onLoad();
         UserStatement userStatement = new UserStatement(String.valueOf(WoolworthsApplication.getProductOfferingId()), Utils.getDate(6), Utils.getDate(0));
-        cliGetStatements = OneAppService.INSTANCE.getStatementResponse(userStatement);
+        cliGetStatements = new OneAppService().getStatementResponse(userStatement);
         cliGetStatements.enqueue(new CompletionHandler<>(new IResponseListener<StatementResponse>() {
             @Override
             public void onSuccess(StatementResponse statementResponse) {
