@@ -193,7 +193,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
                     .withReportUrl(AppConfigSingleton.getGlassBox().getReportUrl())
                     .build());
         } catch (Exception e) {
-            e.printStackTrace();
+            FirebaseManager.Companion.logException(e);
         }
     }
 
