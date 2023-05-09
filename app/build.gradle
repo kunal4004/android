@@ -291,7 +291,7 @@ dependencies {
 
     api 'com.google.zxing:android-core:3.3.0'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'
-    implementation "androidx.lifecycle:lifecycle-common-java8:2.5.1"
+    implementation "androidx.lifecycle:lifecycle-common-java8:2.6.1"
 
     implementation 'me.relex:circleindicator:2.1.6'
     implementation 'com.squareup.retrofit2:converter-scalars:2.9.0'
@@ -411,10 +411,6 @@ dependencies {
     implementation 'androidx.work:work-runtime:2.7.1'
     implementation 'androidx.paging:paging-common-ktx:3.0.1'
     implementation 'androidx.paging:paging-runtime-ktx:3.0.1'
-
-
-    /*Mockito */
-
 }
 
 apply plugin: 'com.google.gms.google-services'
