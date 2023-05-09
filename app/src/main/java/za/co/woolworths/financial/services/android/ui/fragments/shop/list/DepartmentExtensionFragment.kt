@@ -83,7 +83,7 @@ abstract class DepartmentExtensionFragment(@LayoutRes contentLayoutId: Int) : Fr
         if (networkConnectionStatus()) {
             noConnectionLayout(false)
             val isLocationEnabled = if (context != null) Utils.isLocationEnabled(context) else false
-            rootCategoryCall = OneAppService.getRootCategory(
+            rootCategoryCall = OneAppService().getRootCategory(
                 isLocationEnabled,
                 location,
                 KotlinUtils.browsingDeliveryType?.type

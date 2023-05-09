@@ -1,10 +1,11 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote
 
 import retrofit2.Response
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.Result
+import za.co.woolworths.financial.services.android.models.network.AppContextProviderImpl
 import za.co.woolworths.financial.services.android.models.network.NetworkConfig
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.Result
 
-abstract class BaseDataSource : NetworkConfig() {
+abstract class BaseDataSource : NetworkConfig(AppContextProviderImpl()) {
 
     protected suspend fun <T> getResult(call: suspend () -> Response<T>): Result<T> {
         try {

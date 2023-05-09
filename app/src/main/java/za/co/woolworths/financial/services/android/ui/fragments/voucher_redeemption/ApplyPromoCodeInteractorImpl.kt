@@ -8,6 +8,6 @@ import za.co.woolworths.financial.services.android.ui.extension.request
 
 class ApplyPromoCodeInteractorImpl : VoucherAndPromoCodeContract.ApplyPromoCodeInteractor {
     override fun executeApplyPromoCode(promoCode: String, requestListener: IGenericAPILoaderView<Any>) {
-        request(OneAppService.applyPromoCode(CouponClaimCode(promoCode)), requestListener)
+        request(OneAppService().applyPromoCode(CouponClaimCode(promoCode)), requestListener)
     }
 }

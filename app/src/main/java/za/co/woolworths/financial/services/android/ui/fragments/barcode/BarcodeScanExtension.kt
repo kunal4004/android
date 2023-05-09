@@ -39,7 +39,7 @@ abstract class BarcodeScanExtension(@LayoutRes contentLayoutId: Int) : Fragment(
         progressBarVisibility(true)
         networkConnectivityStatus()
         asyncTaskIsRunning(true)
-        mRetrieveProductDetail = getProductRequestBody()?.let { OneAppService.getProducts(it) }
+        mRetrieveProductDetail = getProductRequestBody()?.let { OneAppService().getProducts(it) }
         mRetrieveProductDetail?.enqueue(CompletionHandler(object : IResponseListener<ProductView> {
             override fun onSuccess(response: ProductView?) {
                 if (isAdded && WoolworthsApplication.isApplicationInForeground()) {
@@ -86,7 +86,7 @@ abstract class BarcodeScanExtension(@LayoutRes contentLayoutId: Int) : Fragment(
 
     private fun retrieveProductDetail(productRequest: ProductRequest): Call<ProductDetailResponse>? {
 
-        val productDetailRequestCall = OneAppService.productDetail(productRequest.productId, productRequest.skuId)
+        val productDetailRequestCall = OneAppService().productDetail(productRequest.productId, productRequest.skuId)
 
         productDetailRequestCall.enqueue(CompletionHandler(object : IResponseListener<ProductDetailResponse> {
             override fun onSuccess(response: ProductDetailResponse?) {

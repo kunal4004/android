@@ -1,16 +1,9 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account;
 
-import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_ACCOUNT;
-import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_CART;
-import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_REWARD;
-import static za.co.woolworths.financial.services.android.ui.fragments.account.fica.FicaViewModel.GET_REFRESH_STATUS;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
+import za.co.woolworths.financial.services.android.ui.fragments.account.fica.FicaViewModel;
 import static za.co.woolworths.financial.services.android.ui.fragments.account.main.util.Constants.ACCOUNT_PRODUCT_PAYLOAD;
 import static za.co.woolworths.financial.services.android.ui.fragments.mypreferences.MyPreferencesFragment.IS_NON_WFS_USER;
-import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_EXPECTATION_FAILED_502;
-import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_OK;
-import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_SESSION_TIMEOUT_400;
-import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_SESSION_TIMEOUT_440;
-import static za.co.woolworths.financial.services.android.util.AppConstant.RESULT_CODE_DELETE_ACCOUNT;
 import static za.co.woolworths.financial.services.android.util.Utils.ACCOUNT_CHARGED_OFF;
 import static za.co.woolworths.financial.services.android.util.Utils.hideView;
 import static za.co.woolworths.financial.services.android.util.Utils.sessionDaoSave;
@@ -139,6 +132,7 @@ import za.co.woolworths.financial.services.android.ui.views.actionsheet.Accounts
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.RootedDeviceInfoFragment;
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SignOutFragment;
 import za.co.woolworths.financial.services.android.ui.wfs.contact_us.fragment.ContactUsFragment;
+import za.co.woolworths.financial.services.android.util.AppConstant;
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants;
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
@@ -475,7 +469,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             if ((bottomNavigationActivity.getCurrentSection() == R.id.navigate_to_account)
                     && (currentFragment instanceof MyAccountsFragment)) {
                 if (SessionUtilities.getInstance().isUserAuthenticated()) {
-                    Call<ViewAllLinkedDeviceResponse> mViewAllLinkedDevices = OneAppService.INSTANCE.getAllLinkedDevices(isForced);
+                    Call<ViewAllLinkedDeviceResponse> mViewAllLinkedDevices = new OneAppService().getAllLinkedDevices(isForced);
                     mViewAllLinkedDevices.enqueue(new CompletionHandler(new IResponseListener<ViewAllLinkedDeviceResponse>() {
                         @Override
                         public void onFailure(@org.jetbrains.annotations.Nullable Throwable error) {
@@ -585,7 +579,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
 
         if (getBottomNavigationActivity() != null && getBottomNavigationActivity().getCurrentFragment() != null
                 && getBottomNavigationActivity().getCurrentFragment() instanceof MyAccountsFragment
-                && NetworkManager.getInstance().isConnectedToNetwork(activity) && httpCode == HTTP_EXPECTATION_FAILED_502) {
+                && NetworkManager.getInstance().isConnectedToNetwork(activity) && httpCode == AppConstant.HTTP_EXPECTATION_FAILED_502) {
             initialize();
         }
     }
@@ -1139,7 +1133,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                         showView(retryStoreCardTextView);
                     mUpdateMyAccount.cancelRetryStoreCardAnimation();
                     switch (accountsResponse.httpCode) {
-                        case HTTP_OK:
+                        case AppConstant.HTTP_OK:
                             if (accountsResponse.accountList != null && accountsResponse.accountList.size() > 0) {
                                 Account account = accountsResponse.accountList.get(0);
                                 mAccountResponse.accountList.add(account);
@@ -1167,12 +1161,12 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                             }
                             break;
 
-                        case HTTP_SESSION_TIMEOUT_440:
+                        case AppConstant.HTTP_SESSION_TIMEOUT_440:
                             SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, mAccountResponse.response.stsParams);
                             onSessionExpired(activity);
                             initialize();
                             break;
-                        case HTTP_SESSION_TIMEOUT_400:
+                        case AppConstant.HTTP_SESSION_TIMEOUT_400:
                             showView(retryStoreCardTextView);
                             mUpdateMyAccount.cancelAnimation();
                             defaultErrorMessage(accountsResponse);
@@ -1202,7 +1196,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
 
     public static void updateLinkedDevices() {
         if (SessionUtilities.getInstance().isUserAuthenticated()) {
-            OneAppService.INSTANCE.getAllLinkedDevices(true).enqueue(
+            new OneAppService().getAllLinkedDevices(true).enqueue(
                     new CompletionHandler(new IResponseListener<ViewAllLinkedDeviceResponse>() {
                         @Override
                         public void onFailure(@org.jetbrains.annotations.Nullable Throwable error) {
@@ -1259,7 +1253,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                     showView(retryPersonalLoanTextView);
                     mUpdateMyAccount.cancelRetryPersonalLoanAnimation();
                     switch (accountsResponse.httpCode) {
-                        case HTTP_OK:
+                        case AppConstant.HTTP_OK:
                             if (accountsResponse.accountList != null && accountsResponse.accountList.size() > 0) {
                                 Account account = accountsResponse.accountList.get(0);
                                 mAccountResponse.accountList.add(account);
@@ -1283,12 +1277,12 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                             }
                             break;
 
-                        case HTTP_SESSION_TIMEOUT_440:
+                        case AppConstant.HTTP_SESSION_TIMEOUT_440:
                             SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, mAccountResponse.response.stsParams);
                             onSessionExpired(activity);
                             initialize();
                             break;
-                        case HTTP_SESSION_TIMEOUT_400:
+                        case AppConstant.HTTP_SESSION_TIMEOUT_400:
                             showView(retryPersonalLoanTextView);
                             defaultErrorMessage(accountsResponse);
                             break;
@@ -1328,7 +1322,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                     showView(retryCreditCardTextView);
                     mUpdateMyAccount.cancelRetryCreditCardAnimation();
                     switch (accountsResponse.httpCode) {
-                        case HTTP_OK:
+                        case AppConstant.HTTP_OK:
                             if (accountsResponse.accountList != null && accountsResponse.accountList.size() > 0) {
                                 Account account = accountsResponse.accountList.get(0);
                                 mAccountResponse.accountList.add(account);
@@ -1352,13 +1346,13 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                             }
                             break;
 
-                        case HTTP_SESSION_TIMEOUT_440:
+                        case AppConstant.HTTP_SESSION_TIMEOUT_440:
                             SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, mAccountResponse.response.stsParams);
                             onSessionExpired(activity);
                             initialize();
                             break;
 
-                        case HTTP_SESSION_TIMEOUT_400:
+                        case AppConstant.HTTP_SESSION_TIMEOUT_400:
                             showView(retryCreditCardTextView);
                             defaultErrorMessage(accountsResponse);
                             break;
@@ -1426,8 +1420,8 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             if (activity == null) return null;
             mAccountResponse = mUpdateMyAccount.mAccountResponse;
             switch (mAccountResponse.httpCode) {
-                case HTTP_EXPECTATION_FAILED_502:
-                case HTTP_OK:
+                case AppConstant.HTTP_EXPECTATION_FAILED_502:
+                case AppConstant.HTTP_OK:
                     mAccountsHashMap = accountsHashMap;
                     FirebaseAnalyticsUserProperty.Companion.setUserPropertiesPreDelinquencyPaymentDueDate(accountsHashMap);
                     FirebaseAnalyticsUserProperty.Companion.setUserPropertiesPreDelinquencyForDebitOrder(accountsHashMap);
@@ -1469,7 +1463,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
 
                     break;
 
-                case HTTP_SESSION_TIMEOUT_440:
+                case AppConstant.HTTP_SESSION_TIMEOUT_440:
                     mUpdateMyAccount.swipeToRefreshAccount(false);
                     SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, mAccountResponse.response.stsParams);
                     onSessionExpired(activity);
@@ -1601,7 +1595,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                     && (currentFragment instanceof MyAccountsFragment)) {
                 if (SessionUtilities.getInstance().isUserAuthenticated()
                         && SessionUtilities.getInstance().isC2User()) {
-                    messageRequestCall = OneAppService.INSTANCE.getMessagesResponse(5, 1);
+                    messageRequestCall = new OneAppService().getMessagesResponse(5, 1);
                     messageRequestCall.enqueue(new CompletionHandler<>(new IResponseListener<MessageResponse>() {
                         @Override
                         public void onSuccess(MessageResponse messageResponse) {
@@ -1621,7 +1615,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     public void ficaRequest() {
         if (SessionUtilities.getInstance().isUserAuthenticated() && KotlinUtils.Companion.isFicaEnabled()
                 && KotlinUtils.Companion.hasADayPassed(Utils.getSessionDaoValue(SessionDao.KEY.FICA_LAST_REQUEST_TIME))) {
-            OneAppService.INSTANCE.getFicaResponse().enqueue(new Callback<FicaModel>() {
+            new OneAppService().getFicaResponse().enqueue(new Callback<FicaModel>() {
                 @Override
                 public void onResponse(Call<FicaModel> call, Response<FicaModel> response) {
                     if (getActivity() != null) {
@@ -1629,7 +1623,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                         if (ficaModel != null) {
                             if (ficaModel.getRefreshStatus().getRefreshDue()) {
                                 Intent intent = new Intent(getActivity(), FicaActivity.class);
-                                intent.putExtra(GET_REFRESH_STATUS, ficaModel.getRefreshStatus());
+                                intent.putExtra(FicaViewModel.GET_REFRESH_STATUS, ficaModel.getRefreshStatus());
                                 startActivity(intent);
                                 getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
                             }
@@ -1655,7 +1649,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
         Activity activity = getActivity();
         if (activity == null) return;
         Utils.setBadgeCounter(unreadCount);
-        addBadge(INDEX_ACCOUNT, unreadCount);
+        addBadge(BottomNavigationActivity.INDEX_ACCOUNT, unreadCount);
         if (unreadCount > 0) {
             hideView(messagesRightArrow);
             showView(messageCounter);
@@ -1752,7 +1746,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             setAccountResponse(activity, null);
             onSignOut();
             initialize();
-        } else if (resultCode == RESULT_CODE_DELETE_ACCOUNT) {
+        } else if (resultCode == AppConstant.RESULT_CODE_DELETE_ACCOUNT) {
             Activity activity = getActivity();
             if (activity == null) return;
             SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE);
@@ -1782,15 +1776,15 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     }
 
     private void removeAllBottomNavigationIconBadgeCount() {
-        addBadge(INDEX_REWARD, 0);
-        addBadge(INDEX_ACCOUNT, 0);
-        addBadge(INDEX_CART, 0);
+        addBadge(BottomNavigationActivity.INDEX_REWARD, 0);
+        addBadge(BottomNavigationActivity.INDEX_ACCOUNT, 0);
+        addBadge(BottomNavigationActivity.INDEX_CART, 0);
     }
 
     private void addBadge(int section, int count) {
         Activity activity = getActivity();
         if (activity instanceof BottomNavigationActivity) {
-            ((BottomNavigationActivity) activity).addBadge(INDEX_ACCOUNT, count);
+            ((BottomNavigationActivity) activity).addBadge(BottomNavigationActivity.INDEX_ACCOUNT, count);
         }
     }
 
