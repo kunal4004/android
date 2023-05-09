@@ -7,6 +7,7 @@ import za.co.woolworths.financial.services.android.models.dto.CommerceItem
 import za.co.woolworths.financial.services.android.models.dto.ProductDetails
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
+import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.Product
 
 data class AnalyticProductItem(
     val itemId: String? = null,
@@ -30,6 +31,21 @@ fun ProductDetails.toAnalyticItem(quantity: Int = 1): AnalyticProductItem {
         itemListName = categoryName,
         itemVariant = colourSizeVariants,
         quantity = quantity,
+        price = price?.toDouble(),
+        affiliation = FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE,
+        index = FirebaseManagerAnalyticsProperties.PropertyValues.INDEX_VALUE.toInt(),
+    )
+}
+
+fun Product.toAnalyticItem(category: String?): AnalyticProductItem {
+    return AnalyticProductItem(
+        itemId = productId,
+        itemName = productName,
+        category = category,
+        itemBrand = brandText,
+        itemListName = category,
+        itemVariant = productVariants,
+        quantity = 1, // Required quantity set to 1
         price = price?.toDouble(),
         affiliation = FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE,
         index = FirebaseManagerAnalyticsProperties.PropertyValues.INDEX_VALUE.toInt(),
