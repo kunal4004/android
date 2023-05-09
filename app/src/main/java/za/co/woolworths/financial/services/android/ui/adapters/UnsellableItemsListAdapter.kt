@@ -36,7 +36,7 @@ class UnsellableItemsListAdapter(var commerceItems: ArrayList<UnSellableCommerce
                 swipe.isSwipeEnabled = false
                 tvTitle.text = commerceItem.productDisplayName ?: ""
                 Utils.truncateMaxLine(tvTitle)
-                llQuantity.visibility = View.INVISIBLE
+                llQuantity.visibility = View.GONE
                 tvPrice.text = commerceItem.price.amount.let {
                     CurrencyFormatter.formatAmountToRandAndCentWithSpace(it)
                 }
