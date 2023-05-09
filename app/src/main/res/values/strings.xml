@@ -2549,9 +2549,7 @@
     <string name="all_products_available">All Products Available</string>
     <string name="next_dash_delivery_timeslot_text">Next Dash Delivery Timeslot</string>
     <string name="my_shopping_lists">My Shopping Lists</string>
-    <string name="title_mylist_dash_tooltip">Some items aren’t available using <b>Dash.</b></string>
-    <string name="title_mylist_collection_tooltip">Some items aren’t available for <b>Collection.</b></string>
-    <string name="title_mylist_standard_tooltip">Some items aren’t available using <b>Standard.</b></string>
+    <string name="title_mylist_dash_tooltip">Some items aren’t available using</string>
     <string name="change_delivery_method_mylist_tooltip">Get them using a different delivery method.</string>
     <string name="hi">HI&#160;</string>
     <string name="tip_your_dash_driver">Tip Your Dash Driver</string>
@@ -2978,4 +2976,7 @@
     <string name="unit_number_floor">Unit Number/Floor:*</string>
     <string name="change_address_btn_text">CHANGE</string>
     <string name="use">USE\u0020</string>
+    <string name="label_collection">\u0020Collection.</string>
+    <string name="label_dash">\u0020Dash.</string>
+    <string name="shop_by_category">Shop By Category</string>
 </resources>

@@ -40,7 +40,7 @@ abstract class WTodayExtension : Fragment(R.layout.wtoday_main_fragment) {
 
     fun retrieveProduct(productId: String, skuId: String) {
         progressBarVisibility(true)
-        mGetProductDetail =  OneAppService.productDetail(productId, skuId).apply {
+        mGetProductDetail =  OneAppService().productDetail(productId, skuId).apply {
             enqueue(CompletionHandler(object : IResponseListener<ProductDetailResponse> {
                 override fun onSuccess(response: ProductDetailResponse?) {
                     if (!WoolworthsApplication.isApplicationInForeground() && !isAdded && !isVisible && !userVisibleHint && !isHidden)

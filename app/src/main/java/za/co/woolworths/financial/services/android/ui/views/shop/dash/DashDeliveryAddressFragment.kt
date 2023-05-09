@@ -88,8 +88,8 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentDashDeliveryBinding.bind(view)
-
-        if (!isVisible) {
+        val parentFragment = (activity as? BottomNavigationActivity)?.currentFragment as? ShopFragment
+        if (!isVisible || parentFragment?.getCurrentFragmentIndex() != ShopFragment.SelectedTabIndex.DASH_TAB.index) {
             return
         }
         initViews()
@@ -163,7 +163,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
 
     private fun hideSearchBar() {
         if (this.parentFragment is ShopFragment && KotlinUtils.browsingDeliveryType == Delivery.DASH)
-            (this.parentFragment as ShopFragment).hideSerachAndBarcodeUi() // hide search bar.
+            (this.parentFragment as ShopFragment).hideSearchAndBarcodeUi() // hide search bar.
     }
 
     private fun showSetAddressScreen() {
@@ -376,7 +376,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                         KotlinUtils.apply {
                             response.orderSummary?.fulfillmentDetails?.address?.placeId.let { responsePlaceId ->
                                 this.placeId = responsePlaceId
-                                isLocationSame = responsePlaceId.equals(savedPlaceId)
+                                isLocationPlaceIdSame = responsePlaceId.equals(savedPlaceId)
                                 isDeliveryLocationTabCrossClicked =
                                     responsePlaceId.equals(savedPlaceId)
                                 isCncTabCrossClicked = responsePlaceId.equals(savedPlaceId)
@@ -665,7 +665,9 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
     }
 
     fun scrollToTop() {
-        binding?.rvDashDelivery?.scrollToPosition(0)
+        if (::binding.isInitialized) {
+            binding?.rvDashDelivery?.scrollToPosition(0)
+        }
     }
 
     private fun navigateToConfirmAddressScreen() {

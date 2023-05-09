@@ -130,7 +130,7 @@ import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory;
 import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
-import za.co.woolworths.financial.services.android.ui.views.shop.dash.ChangeFullfilmentCollectionStoreFragment;
+import za.co.woolworths.financial.services.android.ui.views.shop.dash.ChangeFulfillmentCollectionStoreFragment;
 import za.co.woolworths.financial.services.android.util.AppConstant;
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
 import za.co.woolworths.financial.services.android.util.DeepLinkingUtils;
@@ -153,12 +153,9 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         implements BottomNavigator, FragNavController.TransactionListener, FragNavController.RootFragmentListener,
         PermissionResultCallback, ToastUtils.ToastInterface, IToastInterface, Observer {
 
-    /*
-    As per requirement open WToday screen when app open(default screen)
-    but Today Tab position should be 2nd (1 Position) remain in same order
-     */
-    public static final int INDEX_TODAY = FragNavController.TAB1;
-    public static final int INDEX_PRODUCT = FragNavController.TAB2;
+
+    public static final int INDEX_PRODUCT = FragNavController.TAB1;
+    public static final int INDEX_TODAY = FragNavController.TAB2;
     public static final int INDEX_CART = FragNavController.TAB3;
     public static final int INDEX_REWARD = FragNavController.TAB4;
     public static final int INDEX_ACCOUNT = FragNavController.TAB5;
@@ -253,9 +250,9 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 .eager(true)
                 .rootFragmentListener(this, 5)
                 .build();
-        // Adding default position for WToday Tab with index(INDEX_PRODUCT that is position 1) (When open app)
+        // Adding default position for WToday Tab with index(INDEX_TODAY that is position 1) (When open app)
         // Tab order remain same in order to Shop,Today, My Cart,WRewards,My Account
-        getBottomNavigationById().setCurrentItem(INDEX_PRODUCT);
+        getBottomNavigationById().setCurrentItem(INDEX_TODAY);
         renderUI();
 
         initBadgeCounter();
@@ -781,6 +778,11 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             isNewSession = false;
             ((ShopFragment) fragment).setShopDefaultTab();
         }
+
+       if(getCurrentFragment() instanceof ShopFragment) {
+            ShopFragment fragment1 = (ShopFragment) getCurrentFragment();
+            fragment1.showShopFeatureWalkThrough();
+        }
     }
 
     private void replaceAccountIcon(@NonNull MenuItem item) {
@@ -1065,7 +1067,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             fragment.onRequestPermissionsResult(requestCode, permissions, grantResults);
         } else if (fragment instanceof ProductDetailsFragment) {
             fragment.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        } else if (fragment instanceof ChangeFullfilmentCollectionStoreFragment) {
+        } else if (fragment instanceof ChangeFulfillmentCollectionStoreFragment) {
             fragment.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
 

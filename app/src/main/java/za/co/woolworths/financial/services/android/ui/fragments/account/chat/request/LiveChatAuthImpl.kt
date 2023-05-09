@@ -5,6 +5,7 @@ import com.amplifyframework.auth.options.AuthSignOutOptions
 import com.amplifyframework.auth.result.AuthSignInResult
 import com.amplifyframework.core.Amplify.Auth
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionStateType
+import za.co.woolworths.financial.services.android.models.network.AppContextProviderImpl
 import za.co.woolworths.financial.services.android.models.network.NetworkConfig
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.contract.ILiveChatAuth
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatDBRepository
@@ -16,7 +17,7 @@ class LiveChatAuthImpl : ILiveChatAuth {
     private val liveChatListAllAgentConversation = LiveChatDBRepository()
 
     override fun signIn(onSuccess: (AuthSignInResult) -> Unit, onFailure: (Any) -> Unit) {
-        val networkConfig = NetworkConfig()
+        val networkConfig = NetworkConfig(AppContextProviderImpl())
         val username = networkConfig.getApiId()
         val password = networkConfig.getSha1Password()
         try {

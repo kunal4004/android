@@ -1,11 +1,11 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.core.data.remote.interceptors
 
-import com.amazonaws.util.VersionInfoUtils.getUserAgent
 import okhttp3.Interceptor
+import za.co.woolworths.financial.services.android.models.network.AppContextProviderImpl
 import za.co.woolworths.financial.services.android.models.network.CommonHeaderUtils
 import za.co.woolworths.financial.services.android.models.network.NetworkConfig
 
-class CommonHeaderInterceptor : NetworkConfig(), Interceptor {
+class CommonHeaderInterceptor : NetworkConfig(AppContextProviderImpl()), Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): okhttp3.Response {
         val request = chain.request()

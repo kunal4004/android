@@ -12,7 +12,7 @@ import za.co.woolworths.financial.services.android.ui.activities.maintenance.Net
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.logException
 import java.net.SocketTimeoutException
 
-class CommonHeaderInterceptor : NetworkConfig() , Interceptor {
+class CommonHeaderInterceptor : NetworkConfig(AppContextProviderImpl()) , Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): okhttp3.Response {
         val request = chain.request()
