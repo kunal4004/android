@@ -18,16 +18,15 @@ class ShopPagerAdapter(
     var listener: OnChildFragmentEvents
 ) : FragmentStatePagerAdapter(fm) {
     private val mTabTitle: MutableList<String>? = tabTitle
+    private val dashFragment = DashDeliveryAddressFragment().apply {
+        arguments = bundleOf(
+            ARG_SEND_DELIVERY_DETAILS to listener.isSendDeliveryDetails()
+        )
+    }
 
     override fun getItem(position: Int): Fragment {
         return when (position) {
-            0 -> {
-                val standardDeliveryFragment = StandardDeliveryFragment()
-                standardDeliveryFragment.arguments = bundleOf(
-                    EXTRA_SEND_DELIVERY_DETAILS_PARAMS to listener.isSendDeliveryDetails()
-                )
-                standardDeliveryFragment
-            }
+
             1 -> {
                 val collectionFragment = ChangeFulfillmentCollectionStoreFragment()
                 collectionFragment.arguments = bundleOf(
@@ -35,12 +34,15 @@ class ShopPagerAdapter(
                 )
                 collectionFragment
             }
+
+            2 -> dashFragment
+
             else -> {
-                val dashFragment = DashDeliveryAddressFragment()
-                dashFragment.arguments = bundleOf(
-                    ARG_SEND_DELIVERY_DETAILS to listener.isSendDeliveryDetails()
+                val standardDeliveryFragment = StandardDeliveryFragment()
+                standardDeliveryFragment.arguments = bundleOf(
+                    EXTRA_SEND_DELIVERY_DETAILS_PARAMS to listener.isSendDeliveryDetails()
                 )
-                dashFragment
+                standardDeliveryFragment
             }
         }
     }
