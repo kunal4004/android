@@ -198,6 +198,9 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                         else
                             binding.blackToolTipLayout.root.visibility = View.GONE
                     }
+                    // TODO StandardTooltip, CNCTooltip
+                    is ShopTooltipUiState.StandardTooltip,
+                    is ShopTooltipUiState.CNCTooltip-> {}
                     else -> binding.blackToolTipLayout.root.visibility = View.GONE
                 }
             }.launchIn(lifecycleScope)

@@ -4,6 +4,8 @@ sealed class ShopTooltipUiState {
 
     object Hidden: ShopTooltipUiState()
 
+    object StandardTooltip: ShopTooltipUiState()
+    object CNCTooltip: ShopTooltipUiState()
     data class DashTooltip(
         val visibility: Boolean = false,
         val changeButtonVisibility: Boolean = false,

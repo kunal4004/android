@@ -188,9 +188,11 @@ class ShopViewModel @Inject constructor(
     fun onTabClick(validateLocationResponse: ValidateLocationResponse? = null, position: Int) {
         viewModelScope.launch(Dispatchers.IO) {
 
-            _tooltipUiState.update {
+            _tooltipUiState.update { currentState ->
                 when (position) {
                     // TODO: Include Standard and CNC
+                    0 -> { ShopTooltipUiState.StandardTooltip }
+                    1 -> { ShopTooltipUiState.CNCTooltip }
                     2 -> {  // Index of dash tab
 
                         KotlinUtils.browsingDeliveryType = Delivery.DASH
