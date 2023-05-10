@@ -1710,10 +1710,12 @@ class ProductDetailsFragment :
     }
 
     override fun updateAuxiliaryImages(imagesList: List<String>) {
-        ProductViewPagerAdapter(activity, imagesList, this@ProductDetailsFragment).apply {
-            binding.productImagesViewPager?.let { pager ->
-                pager.adapter = this
-                binding.productImagesViewPagerIndicator.setViewPager(pager)
+        context?.let {
+            ProductViewPagerAdapter(it, emptyList(), this@ProductDetailsFragment).apply {
+                binding.productImagesViewPager?.let { pager ->
+                    pager.adapter = this
+                    binding.productImagesViewPagerIndicator.setViewPager(pager)
+                }
             }
         }
     }

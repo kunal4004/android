@@ -1,71 +1,55 @@
-package za.co.woolworths.financial.services.android.ui.adapters;
+package za.co.woolworths.financial.services.android.ui.adapters
 
-import android.content.Context;
+import android.content.Context
+import za.co.woolworths.financial.services.android.util.ImageManager.Companion.setPicture
+import androidx.viewpager.widget.PagerAdapter
+import android.view.ViewGroup
+import android.view.LayoutInflater
+import android.view.View
+import android.widget.ImageView
+import com.awfs.coordination.R
+import java.util.ArrayList
 
-import androidx.viewpager.widget.PagerAdapter;
-
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-
-import com.awfs.coordination.R;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import za.co.woolworths.financial.services.android.util.ImageManager;
-
-public class ProductViewPagerAdapter extends PagerAdapter {
-
-    public interface MultipleImageInterface {
-        void SelectedImage(String otherSkus);
+class ProductViewPagerAdapter(
+    private val mContext: Context,
+    private var mExternalImageRefList: List<String>?,
+    private val multipleImageInterface: MultipleImageInterface
+) : PagerAdapter() {
+    interface MultipleImageInterface {
+        fun SelectedImage(otherSkus: String?)
     }
 
-    private MultipleImageInterface multipleImageInterface;
-
-    private final Context mContext;
-    private List<String> mExternalImageRefList;
-
-    public ProductViewPagerAdapter(Context mContext, List<String> externalImageRefList,
-                                   MultipleImageInterface multipleImageInterface) {
-        this.mContext = mContext;
-        this.multipleImageInterface = multipleImageInterface;
-        this.mExternalImageRefList = externalImageRefList;
+    override fun instantiateItem(collection: ViewGroup, position: Int): Any {
+        val inflater = LayoutInflater.from(mContext)
+        val v = inflater.inflate(R.layout.product_view, collection, false) as ViewGroup
+        val image = mExternalImageRefList?.getOrNull(position)
+        val mProductImage = v.findViewById<ImageView>(R.id.imProductView)
+        setPicture(mProductImage, image)
+        collection.addView(v, 0)
+        v.setOnClickListener { v1: View? ->
+            multipleImageInterface.SelectedImage(
+                mExternalImageRefList?.getOrNull(position)
+            )
+        }
+        return v
     }
 
-    @Override
-    public Object instantiateItem(ViewGroup collection, final int position) {
-        LayoutInflater inflater = LayoutInflater.from(mContext);
-        ViewGroup v = (ViewGroup) inflater.inflate(R.layout.product_view, collection, false);
-        String image = mExternalImageRefList.get(position);
-        ImageView mProductImage = v.findViewById(R.id.imProductView);
-        ImageManager.Companion.setPicture(mProductImage, image);
-        collection.addView(v, 0);
-
-        v.setOnClickListener(v1 -> multipleImageInterface.SelectedImage(mExternalImageRefList.get(position)));
-        return v;
+    override fun destroyItem(collection: ViewGroup, position: Int, view: Any) {
+        collection.removeView(view as? View)
     }
 
-    @Override
-    public void destroyItem(ViewGroup collection, int position, Object view) {
-        collection.removeView((View) view);
+    override fun getCount(): Int {
+        return mExternalImageRefList?.size?:0
     }
 
-    @Override
-    public int getCount() {
-        return mExternalImageRefList.size();
+    override fun isViewFromObject(view: View, `object`: Any): Boolean {
+        return view === `object`
     }
 
-    @Override
-    public boolean isViewFromObject(View view, Object object) {
-        return view == object;
-    }
-
-    public void updatePagerItems(List<String> mAuxiliaryImage) {
-        this.mExternalImageRefList = new ArrayList<>();
-        this.notifyDataSetChanged();
-        this.mExternalImageRefList = mAuxiliaryImage;
-        this.notifyDataSetChanged();
+    fun updatePagerItems(mAuxiliaryImage: List<String>) {
+        mExternalImageRefList = ArrayList()
+        notifyDataSetChanged()
+        mExternalImageRefList = mAuxiliaryImage
+        notifyDataSetChanged()
     }
 }
