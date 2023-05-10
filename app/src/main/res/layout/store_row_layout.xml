@@ -56,6 +56,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/five_dp"
         android:lineSpacingExtra="@dimen/_2sdp"
+        android:textColor="@color/black"
         android:ellipsize="end"
         android:maxLines="1"
         android:translationY="-1sp"

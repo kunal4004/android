@@ -65,6 +65,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/sixteen_dp"
                 android:layout_marginTop="@dimen/sixteen_dp"
+                android:textColorHint="@color/color_9D9D9D"
+                android:textColor="@color/black"
                 android:layout_marginEnd="@dimen/sixteen_dp"
                 android:background="@drawable/bg_search_corner_4"
                 android:drawableStart="@drawable/ic_search"
