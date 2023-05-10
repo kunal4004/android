@@ -18,21 +18,6 @@ import za.co.woolworths.financial.services.android.models.network.StorePickupInf
 class CheckoutAddAddressNewUserViewModel(private val checkoutAddAddressNewUserInteractor: CheckoutAddAddressNewUserInteractor) :
     ViewModel() {
 
-    fun initGetSuburbs(provinceId: String) = liveData(Dispatchers.IO) {
-        emit(NativeCheckoutResource.loading(data = null))
-        try {
-            emit(
-                NativeCheckoutResource.success(
-                    data = checkoutAddAddressNewUserInteractor.getSuburbs(
-                        provinceId
-                    ).body()
-                )
-            )
-        } catch (exception: Exception) {
-            emit(NativeCheckoutResource.error(data = null, msg = exception.toString()))
-        }
-    }
-
     fun validateSelectedSuburb(suburbId: String, isStore: Boolean) = liveData(Dispatchers.IO) {
         emit(NativeCheckoutResource.loading(data = null))
         try {

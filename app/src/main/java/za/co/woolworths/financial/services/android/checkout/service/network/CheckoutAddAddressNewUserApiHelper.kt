@@ -14,9 +14,6 @@ import za.co.woolworths.financial.services.android.models.network.*
  */
 class CheckoutAddAddressNewUserApiHelper : RetrofitConfig(AppContextProviderImpl(), RetrofitApiProviderImpl()) {
 
-    fun getSuburbs(provinceId: String): Response<SuburbsResponse> =
-        OneAppService().getSuburbs(provinceId).execute()
-
     fun validateSelectedSuburb(
         suburbId: String,
         isStore: Boolean
