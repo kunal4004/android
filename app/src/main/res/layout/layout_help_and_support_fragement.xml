@@ -33,11 +33,10 @@
         android:id="@+id/tvExperiecingLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/eight_dp"
-        android:fontFamily="@font/myriad_pro_regular"
-        android:textColor="@color/color_444444"
+        android:layout_marginTop="@dimen/sixteen_dp"
+        style="@style/opensans_regular_12_text_style"
+        android:textColor="@color/black"
         android:text="@string/dash_experiencing_issue"
-        android:textSize="@dimen/fifteen_sp"
         app:layout_constraintStart_toStartOf="@+id/guidelineStart"
         app:layout_constraintTop_toBottomOf="@+id/tvHelpAndSupportLabel" />
 

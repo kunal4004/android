@@ -149,7 +149,7 @@
         android:gravity="end"
         android:text="@string/weekends_and_public_holidays_excluded"
         android:textColor="@color/color_444444"
-        android:textSize="@dimen/ten_sp"
+        android:textSize="@dimen/eleven_sp"
         android:visibility="gone"
         tools:visibility="visible"
         app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
