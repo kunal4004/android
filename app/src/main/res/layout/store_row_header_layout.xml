@@ -24,6 +24,7 @@
         android:maxLines="1"
         android:textSize="@dimen/ten_sp"
         android:lineSpacingExtra="@dimen/four_sp"
+        android:letterSpacing="@integer/point_one"
         app:layout_constraintTop_toBottomOf="@+id/viewSeparator"
         app:layout_constraintStart_toStartOf="parent"
         tools:text="@string/these_stores_stock"
