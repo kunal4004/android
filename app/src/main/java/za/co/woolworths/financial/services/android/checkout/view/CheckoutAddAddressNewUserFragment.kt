@@ -7,7 +7,11 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
-import android.widget.*
+import android.widget.AdapterView
+import android.widget.EditText
+import android.widget.HorizontalScrollView
+import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -16,7 +20,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
-import androidx.lifecycle.ViewModelProviders
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
@@ -32,9 +36,15 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor
-import za.co.woolworths.financial.services.android.checkout.service.network.*
-import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressNewUserFragment.ProvinceSuburbType.*
+import za.co.woolworths.financial.services.android.checkout.service.network.AddAddressRequestBody
+import za.co.woolworths.financial.services.android.checkout.service.network.AddAddressResponse
+import za.co.woolworths.financial.services.android.checkout.service.network.Address
+import za.co.woolworths.financial.services.android.checkout.service.network.ChangeAddressResponse
+import za.co.woolworths.financial.services.android.checkout.service.network.DeleteAddressResponse
+import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressNewUserFragment.ProvinceSuburbType.BOTH
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressNewUserFragment.ProvinceSuburbType.ONLY_PROVINCE
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressNewUserFragment.ProvinceSuburbType.ONLY_SUBURB
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.ADD_NEW_ADDRESS_KEY
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.DELETE_SAVED_ADDRESS_REQUEST_KEY
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.SAVED_ADDRESS_KEY
@@ -54,10 +64,16 @@ import za.co.woolworths.financial.services.android.checkout.view.adapter.Checkou
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutAddressConfirmationListAdapter.Companion.EDIT_SAVED_ADDRESS_RESPONSE_KEY
 import za.co.woolworths.financial.services.android.checkout.view.adapter.GooglePlacesAdapter
 import za.co.woolworths.financial.services.android.checkout.view.adapter.PlaceAutocomplete
-import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.*
+import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.ADMINISTRATIVE_AREA_LEVEL_1
+import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.LOCALITY
+import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.POSTAL_CODE
+import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.PREMISE
+import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.ROUTE
+import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.STREET_NUMBER
+import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.SUBLOCALITY_LEVEL_1
+import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.SUBLOCALITY_LEVEL_2
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
 import za.co.woolworths.financial.services.android.checkout.viewmodel.SelectedPlacesAddress
-import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelFactory
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.Companion.ADDRESS_APARTMENT
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.Companion.ADDRESS_COMPLEX_ESTATE
@@ -78,19 +94,25 @@ import za.co.woolworths.financial.services.android.ui.fragments.click_and_collec
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment.Companion.KEY_ARGS_SUBURB
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment.Companion.KEY_ARGS_UNSELLABLE_COMMERCE_ITEMS
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorDialogFragment
-import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_100_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_500_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.FIFTY
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK_201
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.TEN
+import za.co.woolworths.financial.services.android.util.AuthenticateUtils
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DELIVERY_TYPE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_CHECKOUT
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_SLOT_SELECTION
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_PLACE_ID
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.SAVED_ADDRESS_RESPONSE
+import za.co.woolworths.financial.services.android.util.Constant
+import za.co.woolworths.financial.services.android.util.DeliveryType
 import za.co.woolworths.financial.services.android.util.KeyboardUtils.Companion.hideKeyboardIfVisible
+import za.co.woolworths.financial.services.android.util.KotlinUtils
+import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.location.DynamicGeocoder
 import java.net.HttpURLConnection.HTTP_OK
@@ -111,7 +133,6 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
     private var selectedDeliveryAddressType: String? = null
     var selectedAddress = SelectedPlacesAddress()
     private var savedAddressResponse: SavedAddressResponse? = null
-    private lateinit var checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel
     private var selectedAddressId = ""
     private var isAddNewAddress = false
     private var provinceSuburbEnableType: ProvinceSuburbType? = null
@@ -125,6 +146,8 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
     private var isPoiAddress: Boolean? = false
     private var address2: String? = ""
     private var oldNickName: String? = ""
+
+    private val checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel by viewModels()
 
     companion object {
         const val SCREEN_NAME_EDIT_ADDRESS: String = "SCREEN_NAME_EDIT_ADDRESS"
@@ -228,7 +251,6 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             binding.recipientDetailsLayout.recipientNameEditText,
             binding.recipientDetailsLayout.cellphoneNumberEditText
         )
-        setupViewModel()
         init()
         addFragmentResultListener()
         // Show prepopulate fields on edit address
@@ -366,16 +388,6 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                 }
             }
         }
-    }
-    private fun setupViewModel() {
-        checkoutAddAddressNewUserViewModel = ViewModelProviders.of(
-            this,
-            ViewModelFactory(
-                CheckoutAddAddressNewUserInteractor(
-                    CheckoutAddAddressNewUserApiHelper()
-                )
-            )
-        ).get(CheckoutAddAddressNewUserViewModel::class.java)
     }
 
     private fun init() {

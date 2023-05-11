@@ -3,7 +3,11 @@ package za.co.woolworths.financial.services.android.checkout.view
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.text.*
+import android.text.Editable
+import android.text.Spannable
+import android.text.SpannableStringBuilder
+import android.text.TextUtils
+import android.text.TextWatcher
 import android.text.style.StyleSpan
 import android.view.View
 import android.widget.CompoundButton
@@ -13,7 +17,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
-import androidx.lifecycle.ViewModelProviders
+import androidx.fragment.app.viewModels
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
@@ -27,8 +31,15 @@ import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import dagger.hilt.android.AndroidEntryPoint
-import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor
-import za.co.woolworths.financial.services.android.checkout.service.network.*
+import za.co.woolworths.financial.services.android.checkout.service.network.Address
+import za.co.woolworths.financial.services.android.checkout.service.network.ConfirmDeliveryAddressResponse
+import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
+import za.co.woolworths.financial.services.android.checkout.service.network.ShippingDetailsBody
+import za.co.woolworths.financial.services.android.checkout.service.network.ShippingDetailsResponse
+import za.co.woolworths.financial.services.android.checkout.service.network.Slot
+import za.co.woolworths.financial.services.android.checkout.service.network.SortedFoodDeliverySlot
+import za.co.woolworths.financial.services.android.checkout.service.network.SortedJoinDeliverySlot
+import za.co.woolworths.financial.services.android.checkout.service.network.Week
 import za.co.woolworths.financial.services.android.checkout.utils.AddShippingInfoEventsAnalytics
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.Companion.REGEX_DELIVERY_INSTRUCTIONS
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.FoodSubstitution
@@ -41,7 +52,6 @@ import za.co.woolworths.financial.services.android.checkout.view.ErrorHandlerBot
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CollectionTimeSlotsAdapter
 import za.co.woolworths.financial.services.android.checkout.view.adapter.ShoppingBagsRadioGroupAdapter
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
-import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelFactory
 import za.co.woolworths.financial.services.android.checkout.viewmodel.WhoIsCollectingDetails
 import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
@@ -57,15 +67,21 @@ import za.co.woolworths.financial.services.android.models.network.StorePickupInf
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment
-import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
+import za.co.woolworths.financial.services.android.util.Constant
+import za.co.woolworths.financial.services.android.util.CurrencyFormatter
+import za.co.woolworths.financial.services.android.util.ImageManager
+import za.co.woolworths.financial.services.android.util.KotlinUtils
+import za.co.woolworths.financial.services.android.util.StoreUtils
+import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.WFormatter
 import za.co.woolworths.financial.services.android.util.WFormatter.DATE_FORMAT_EEEE_COMMA_dd_MMMM
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.pushnotification.NotificationUtils
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.viewmodels.ShoppingCartLiveData
 import java.util.regex.Pattern
-import za.co.woolworths.financial.services.android.util.StoreUtils
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -81,7 +97,6 @@ class CheckoutReturningUserCollectionFragment :
     private var selectedShoppingBagType: Double? = null
     private lateinit var collectionTimeSlotsAdapter: CollectionTimeSlotsAdapter
     private var storePickupInfoResponse: ConfirmDeliveryAddressResponse? = null
-    private lateinit var checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel
     private var selectedFoodSubstitution = FoodSubstitution.SIMILAR_SUBSTITUTION
     private var whoIsCollectingDetails: WhoIsCollectingDetails? = null
     private var savedAddressResponse = SavedAddressResponse()
@@ -91,6 +106,8 @@ class CheckoutReturningUserCollectionFragment :
     private var liquorOrder: Boolean? = false
     private var cartItemList: ArrayList<CommerceItem>? = null
     private var orderTotalValue: Double = -1.0
+
+    private val checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel by viewModels()
 
     @Inject
     lateinit var addShippingInfoEventsAnalytics: AddShippingInfoEventsAnalytics
@@ -136,7 +153,6 @@ class CheckoutReturningUserCollectionFragment :
         }
         cartItemList =
             arguments?.getSerializable(CheckoutAddressManagementBaseFragment.CART_ITEM_LIST) as ArrayList<CommerceItem>?
-        setupViewModel()
         initializeCollectingFromView()
         initializeCollectingDetailsView()
         initializeCollectionTimeSlots()
@@ -375,17 +391,6 @@ class CheckoutReturningUserCollectionFragment :
 
         initializeFoodSubstitution()
         initializeDeliveryInstructions()
-    }
-
-    private fun setupViewModel() {
-        checkoutAddAddressNewUserViewModel = ViewModelProviders.of(
-            this,
-            ViewModelFactory(
-                CheckoutAddAddressNewUserInteractor(
-                    CheckoutAddAddressNewUserApiHelper()
-                )
-            )
-        )[CheckoutAddAddressNewUserViewModel::class.java]
     }
 
     private fun callStorePickupInfoAPI() {
@@ -1328,11 +1333,6 @@ class CheckoutReturningUserCollectionFragment :
     @VisibleForTesting
     fun testSetShimmerArray(mockedArray: List<Pair<ShimmerFrameLayout, View>>) {
         shimmerComponentArray = mockedArray
-    }
-
-    @VisibleForTesting
-    fun testSetViewModelInstance(viewModel: CheckoutAddAddressNewUserViewModel) {
-        checkoutAddAddressNewUserViewModel = viewModel
     }
 
     @VisibleForTesting
