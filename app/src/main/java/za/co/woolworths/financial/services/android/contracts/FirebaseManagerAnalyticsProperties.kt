@@ -211,6 +211,7 @@ open class FirebaseManagerAnalyticsProperties {
         const val SHOP_PDP_NATIVE_SHARE = "shop_pdp_nat_shar"
         const val SHOP_PDP_NATIVE_SHARE_DP_LNK = "shop_pdp_nat_shar_dp_lnk"
         const val CART_CLCK_CLLCT_CNFRM_LMT = "cart_clck_cllct_cnfrm_lmt"
+        const val BUSINESS_UNIT = "business_unit"
 
         //Native Checkout
         const val CHANGE_FULFILLMENT_DELIVERY = "chckout_dlvry"
