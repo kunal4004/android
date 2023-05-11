@@ -5,6 +5,8 @@
     android:id="@+id/storeSelectorLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginStart="@dimen/ten_dp"
+    android:layout_marginEnd="@dimen/ten_dp"
     tools:context="za.co.woolworths.financial.services.android.checkout.view.CollectionDatesBottomSheetDialog">
 
     <androidx.constraintlayout.widget.Guideline
