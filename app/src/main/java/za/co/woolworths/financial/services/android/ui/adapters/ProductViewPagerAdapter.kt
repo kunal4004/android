@@ -45,11 +45,4 @@ class ProductViewPagerAdapter(
     override fun isViewFromObject(view: View, any: Any): Boolean {
         return view === any
     }
-
-    fun updatePagerItems(mAuxiliaryImage: List<String>) {
-        mExternalImageRefList = ArrayList()
-        notifyDataSetChanged()
-        mExternalImageRefList = mAuxiliaryImage
-        notifyDataSetChanged()
-    }
 }
