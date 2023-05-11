@@ -158,6 +158,7 @@ class CheckoutReturningUserCollectionFragment :
         initializeCollectionTimeSlots()
         isUnSellableLiquorItemRemoved()
         getLiquorComplianceDetails()
+        initShimmerView()
         callStorePickupInfoAPI()
         binding.txtContinueToPaymentCollection.setOnClickListener(this)
         binding.ageConfirmationLayoutCollection.radioBtnAgeConfirmation.setOnCheckedChangeListener(
@@ -359,7 +360,6 @@ class CheckoutReturningUserCollectionFragment :
                 binding.checkoutCollectingUserInfoLayout.imageViewCaretForwardCollection
             )
         )
-        startShimmerView()
     }
 
     fun startShimmerView() {
@@ -394,8 +394,7 @@ class CheckoutReturningUserCollectionFragment :
     }
 
     private fun callStorePickupInfoAPI() {
-        initShimmerView()
-
+        startShimmerView()
         isItemLimitExceeded = false
         checkoutAddAddressNewUserViewModel?.getStorePickupInfo(getStorePickupInfoBody())
             ?.observe(viewLifecycleOwner) { response ->

@@ -131,8 +131,9 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
     private var liquorImageUrl: String? = ""
     private var liquorOrder: Boolean? = false
     private var cartItemList: ArrayList<CommerceItem>? = null
+
     @Inject
-    lateinit var addShippingInfoEventsAnalytics :AddShippingInfoEventsAnalytics
+    lateinit var addShippingInfoEventsAnalytics: AddShippingInfoEventsAnalytics
 
     private val deliveryInstructionsTextWatcher: TextWatcher = object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -186,9 +187,9 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
     private fun isUnSellableLiquorItemRemoved() {
         ShoppingCartLiveData.observe(viewLifecycleOwner) { isLiquorOrder ->
             if (isLiquorOrder == false) {
-                binding.ageConfirmationLayout?.root?.visibility = View.GONE
+                binding.ageConfirmationLayout?.root?.visibility = GONE
                 binding.ageConfirmationLayout.liquorComplianceBannerLayout?.root?.visibility =
-                    View.GONE
+                    GONE
                 ShoppingCartLiveData.value = true
             }
         }
@@ -206,6 +207,7 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
                 ERROR_TYPE_CONFIRM_COLLECTION_ADDRESS -> {
                     callConfirmLocationAPI()
                 }
+
                 ERROR_TYPE_SHIPPING_DETAILS_COLLECTION -> {
                     onCheckoutPaymentClick()
                 }
@@ -245,9 +247,9 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
                         binding.ageConfirmationLayout.radioBtnAgeConfirmation?.isChecked = true
                     }
                 }
-            } else if (containsKey(CheckoutAddressManagementBaseFragment.CART_ITEM_LIST)) {
+            } else if (containsKey(CART_ITEM_LIST)) {
                 cartItemList =
-                    getSerializable(CheckoutAddressManagementBaseFragment.CART_ITEM_LIST) as ArrayList<CommerceItem>?
+                    getSerializable(CART_ITEM_LIST) as ArrayList<CommerceItem>?
             } else {
                 binding.ageConfirmationLayout?.root?.visibility = GONE
                 binding.ageConfirmationLayout.liquorComplianceBannerLayout?.root?.visibility = GONE
@@ -417,9 +419,9 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
 
     private fun stopShimmerView() {
         shimmerComponentArray.forEach {
-                it.first.stopShimmer()
-                it.first.setShimmer(null)
-                it.second.visibility = View.VISIBLE
+            it.first.stopShimmer()
+            it.first.setShimmer(null)
+            it.second.visibility = View.VISIBLE
         }
 
         binding.layoutDeliveryInstructions.txtNeedBags?.visibility = View.VISIBLE
@@ -459,13 +461,11 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
                                     return@observe
                                 }
 
-                                if (response.orderSummary?.totalItemsCount ?: 0 <= 0) {
+                                if ((response.orderSummary?.totalItemsCount ?: 0) <= 0) {
                                     showEmptyCart()
                                     return@observe
                                 }
-                                var maxItemLimit: Int = -1
                                 response.orderSummary?.fulfillmentDetails?.let {
-                                    maxItemLimit = it.foodMaximumQuantity ?: -1
                                     if (!it.deliveryType.isNullOrEmpty()) {
                                         Utils.savePreferredDeliveryLocation(
                                             ShoppingDeliveryLocation(
@@ -477,7 +477,7 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
 
                                 isItemLimitExceeded =
                                     response.orderSummary?.fulfillmentDetails?.allowsCheckout == false
-                                if(isItemLimitExceeded) {
+                                if (isItemLimitExceeded) {
                                     showMaxItemView()
                                 }
 
@@ -505,6 +505,7 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
                                     dashTimeSlotsAdapter.setSelectedItem(selectedSlotIndex)
                                 }
                             }
+
                             else -> {
                                 presentErrorDialog(
                                     getString(R.string.common_error_unfortunately_something_went_wrong),
@@ -514,6 +515,7 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
                             }
                         }
                     }
+
                     is Throwable -> {
                         presentErrorDialog(
                             getString(R.string.common_error_unfortunately_something_went_wrong),
@@ -528,7 +530,7 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
     private fun initializeDatesAndTimeSlots(selectedWeekSlot: Week?) {
 
         if (selectedWeekSlot == null) {
-            binding.checkoutCollectingTimeDetailsLayout?.root?.visibility = View.GONE
+            binding.checkoutCollectingTimeDetailsLayout?.root?.visibility = GONE
             showNoTimeSlotsView()
             return
         }
@@ -982,9 +984,11 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
 
                     selectedFoodSubstitution = FoodSubstitution.CHAT
                 }
+
                 R.id.radioBtnSimilarSubst -> {
                     selectedFoodSubstitution = FoodSubstitution.SIMILAR_SUBSTITUTION
                 }
+
                 R.id.radioBtnNoThanks -> {
                     Utils.triggerFireBaseEvents(
                         FirebaseManagerAnalyticsProperties.CHECKOUT_FOOD_SUBSTITUTE_NO_THANKS,
@@ -1004,7 +1008,7 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
      * Initializes Order Summary data from confirmDeliveryAddress or storePickUp API .
      */
     private fun initializeOrderSummary(orderSummary: OrderSummary?) {
-        orderSummary?.let { it ->
+        orderSummary?.let {
             binding.layoutCheckoutDeliveryOrderSummary.txtOrderSummaryYourCartValue?.text =
                 CurrencyFormatter.formatAmountToRandAndCentWithSpace(it.basketTotal)
             it.discountDetails?.let { discountDetails ->
@@ -1062,15 +1066,15 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
                     CheckoutAddAddressReturningUserFragment.SLOT_SELECTION_REQUEST_CODE,
                     KotlinUtils.getPreferredDeliveryType(),
                     placesId,
-                    false,
-                    true,
-                    false,
-                    false,
-                    true,
-                    savedAddress,
-                    defaultAddress,
-                    "",
-                    liquorOrder?.let { liquorOrder ->
+                    isFromDashTab = false,
+                    isComingFromCheckout = true,
+                    isMixedBasket = false,
+                    isFBHOnly = false,
+                    isComingFromSlotSelection = true,
+                    savedAddressResponse = savedAddress,
+                    defaultAddress = defaultAddress,
+                    whoISCollecting = "",
+                    liquorCompliance = liquorOrder?.let { liquorOrder ->
                         liquorImageUrl?.let { liquorImageUrl ->
                             LiquorCompliance(liquorOrder, liquorImageUrl)
                         }
@@ -1078,21 +1082,25 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
                 )
                 activity?.finish()
             }
+
             R.id.chooseDateLayout -> {
                 onChooseDateClicked()
             }
+
             R.id.txtContinueToPayment -> {
                 onCheckoutPaymentClick()
                 cartItemList?.let {
-                    addShippingInfoEventsAnalytics.sendEventData(it,
-                        SHIPPING_TIER_VALUE_DASH,orderTotalValue)
+                    addShippingInfoEventsAnalytics.sendEventData(
+                        it,
+                        SHIPPING_TIER_VALUE_DASH, orderTotalValue
+                    )
                 }
 
             }
         }
     }
 
-    fun onChooseDateClicked() {
+    private fun onChooseDateClicked() {
         confirmDeliveryAddressResponse?.sortedJoinDeliverySlots?.apply {
             // No available dates to select
             if (this.isNullOrEmpty()) {
@@ -1185,6 +1193,7 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
                         }
                         navigateToPaymentWebpage(response)
                     }
+
                     is Throwable -> {
                         presentErrorDialog(
                             getString(R.string.common_error_unfortunately_something_went_wrong),
@@ -1306,9 +1315,7 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
             if (binding.layoutDeliveryInstructions.switchSpecialDeliveryInstruction?.isChecked == true) binding.layoutDeliveryInstructions.edtTxtSpecialDeliveryInstruction?.text.toString() else ""
         giftMessage = ""
         suburbId = ""
-        storeId = Utils.getPreferredDeliveryLocation()?.let {
-            it.fulfillmentDetails.storeId
-        }
+        storeId = Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.storeId
         deliveryType = Delivery.DASH.type
         address =
             ConfirmLocationAddress(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId)
@@ -1363,7 +1370,8 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
         view?.findNavController()?.navigate(
             R.id.action_checkoutDashFragment_to_checkoutPaymentWebFragment,
 
-            bundleOf(CheckoutPaymentWebFragment.KEY_ARGS_WEB_TOKEN to webTokens,
+            bundleOf(
+                CheckoutPaymentWebFragment.KEY_ARGS_WEB_TOKEN to webTokens,
                 CART_ITEM_LIST to cartItemList
             )
         )
@@ -1390,18 +1398,20 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
         }
     }
 
-    fun openAppNotificationSettings(context: Context) {
+    private fun openAppNotificationSettings(context: Context) {
         val intent = Intent().apply {
             when {
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.O -> {
                     action = Settings.ACTION_APP_NOTIFICATION_SETTINGS
                     putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
                 }
+
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP -> {
                     action = "android.settings.APP_NOTIFICATION_SETTINGS"
                     putExtra("app_package", context.packageName)
                     putExtra("app_uid", context.applicationInfo.uid)
                 }
+
                 else -> {
                     action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
                     addCategory(Intent.CATEGORY_DEFAULT)
