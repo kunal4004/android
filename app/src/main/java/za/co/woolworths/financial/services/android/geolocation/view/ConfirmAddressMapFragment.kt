@@ -908,6 +908,7 @@ class ConfirmAddressMapFragment :
                     dynamicMapView?.visibility = View.VISIBLE
                     mapFrameLayout?.visibility = View.VISIBLE
                     confirmAddressLayout?.visibility = View.VISIBLE
+                    navigationMapArrow?.visibility = View.VISIBLE
                     autoCompleteTextView?.isEnabled = true
                     dynamicMapView?.setAllGesturesEnabled(true)
                     if (isAddAddress != null && isAddressSearch == false) {
