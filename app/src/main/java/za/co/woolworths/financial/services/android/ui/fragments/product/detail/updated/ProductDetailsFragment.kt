@@ -39,7 +39,6 @@ import com.awfs.coordination.R
 import com.awfs.coordination.databinding.ProductDetailsFragmentBinding
 import com.awfs.coordination.databinding.PromotionalImageBinding
 import com.facebook.FacebookSdk.getApplicationContext
-import com.google.api.ResourceProto.resource
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
@@ -192,6 +191,7 @@ class ProductDetailsFragment :
     private val REQUEST_SUBURB_CHANGE_FOR_LIQUOR = 156
     private val SSO_REQUEST_ADD_TO_SHOPPING_LIST = 1011
     private val SSO_REQUEST_FOR_SUBURB_CHANGE_STOCK = 1012
+    private val SSO_REQUEST_FOR_ENHANCE_SUBSTITUTION = 1013
     private var permissionUtils: PermissionUtils? = null
     private var mFuseLocationAPISingleton: FuseLocationAPISingleton? = null
     private var isApiCallInProgress: Boolean = false
@@ -383,7 +383,7 @@ class ProductDetailsFragment :
                 if (bundle.containsKey(SearchSubstitutionFragment.SUBSTITUTION_ITEM_KEY)) {
                    // item is not added in cart yet i.e. commerce id is empty so need to click on add to cart in order to add substitute
                     substitutionProductItem = getSerializable(SearchSubstitutionFragment.SUBSTITUTION_ITEM_KEY) as? ProductList
-                    replaceSubstituteItemCell()
+                    showSubstituteItemCell(true, substitutionProductItem)
                 }
                 if (bundle.containsKey(SearchSubstitutionFragment.SUBSTITUTION_ITEM_ADDED)) {
                     // item is added in cart yet i.e. commerce id is not empty so call getSubstitution api to refresh substitution cell
@@ -612,6 +612,7 @@ class ProductDetailsFragment :
             }
             R.id.tvReport -> navigateToReportReviewScreen()
             R.id.iv_like -> likeButtonClicked()
+            R.id.txt_substitution_edit -> substitutionEditButtonClick()
         }
     }
 
@@ -1093,8 +1094,7 @@ class ProductDetailsFragment :
             } else if (selectionChoice == USER_CHOICE) {
                 if (commarceItemId?.isEmpty() == true) {
                     /* not added to cart yet */
-                    /* substituted product can come from manage substitution screen or
-                    * search substitution screen  */
+                    /* substituted product will come from manage substitution screen or search substitution screen  */
                     substitutionId = substitutionProductItem?.productId
                 } else {
                     substitutionId = commarceItemId
@@ -1590,9 +1590,7 @@ class ProductDetailsFragment :
                 showEnhancedSubstitutionDialog()
             }
 
-
-              callGetSubstitutionApi(isInventoryCalled)
-
+            showSubstituteItemCell(isInventoryCalled, substitutionProductItem)
 
             if (isAllProductsOutOfStock() && isInventoryCalled) {
                 productOutOfStockErrorMessage()
@@ -1606,31 +1604,27 @@ class ProductDetailsFragment :
         binding?.productDetailOptionsAndInformation?.substitutionLayout?.apply {
 
             if (isAllProductsOutOfStock() && isInventoryCalled) {
+                txtSubstitutionTitle.text = context?.getString(R.string.oos_label)
+                txtSubstitutionEdit?.visibility = View.GONE
                 this.txtSubstitutionEdit?.background = resources.getDrawable(R.drawable.grey_background_with_corner_5,
                         null)
             } else {
+                txtSubstitutionTitle.text = context?.getString(R.string.substitute_default)
+                txtSubstitutionEdit.text = context?.getString(R.string.change)
                 this.txtSubstitutionEdit?.background = resources.getDrawable(R.drawable.black_background_with_corner_5,
                         null)
             }
 
-            this.txtSubstitutionEdit?.setOnClickListener {
-                if (isAllProductsOutOfStock() && isInventoryCalled) {
-                    /*pop up for out of stock*/
-                    productOutOfStockErrorMessage(true)
-                } else {
-                    /*navigate to manage substitution screen*/
-                    (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
-                           ManageSubstitutionFragment()
-                    )
-                }
-            }
+         //   substitutionEditButtonClick(txtSubstitutionEdit)
         }
     }
 
     private fun callGetSubstitutionApi(isInventoryCalled: Boolean) {
-        if (isAllProductsOutOfStock() && isInventoryCalled) {
+
+        if (!SessionUtilities.getInstance().isUserAuthenticated || (isAllProductsOutOfStock() && isInventoryCalled)) {
             return
         }
+
         productSubstitutionViewModel.getProductSubstitution(productDetails?.productId)
         productSubstitutionViewModel.productSubstitution.observe(viewLifecycleOwner) {
 
@@ -1655,67 +1649,71 @@ class ProductDetailsFragment :
         }
     }
 
-    private fun replaceSubstituteItemCell() {
-        selectionChoice = USER_CHOICE
-        substitutionId = commarceItemId
-        binding?.productDetailOptionsAndInformation?.substitutionLayout?.apply {
-            if (SessionUtilities.getInstance().isUserAuthenticated
-                    && KotlinUtils.getDeliveryType()?.deliveryType == Delivery.DASH.type
-            ) {
-                this?.root?.visibility = View.VISIBLE
-            } else {
-                this.root?.visibility = View.GONE
-            }
+    private fun showSubstituteItemCell(
+        isInventoryCalled: Boolean,
+        substitutionProductItem: ProductList? = null
+    ) {
+        if (KotlinUtils.getDeliveryType()?.deliveryType != Delivery.DASH.type) {
+            binding?.productDetailOptionsAndInformation?.substitutionLayout?.root?.visibility = View.GONE
+            return
+        }
 
-            txtSubstitutionTitle.text = substitutionProductItem?.productName
+        binding.productDetailOptionsAndInformation?.substitutionLayout?.apply {
+            root.visibility = View.VISIBLE
+            txtSubstitutionEdit?.setOnClickListener(this@ProductDetailsFragment)
+            if (SessionUtilities.getInstance().isUserAuthenticated) {
+                if (substitutionProductItem == null) {
+                      callGetSubstitutionApi(isInventoryCalled)
+                    //showSubstitutionLayoutOne(isInventoryCalled)
+                } else {
+                    /*set Locally product name */
+                    selectionChoice = USER_CHOICE
+                    substitutionId = commarceItemId
+                    txtSubstitutionTitle?.text = substitutionProductItem?.productName
+                    txtSubstitutionEdit.text = context?.getString(R.string.change)
+                }
+            } else {
+                txtSubstitutionTitle.text = context?.getString(R.string.sign_in_label)
+                txtSubstitutionEdit.text = context?.getString(R.string.sign_in)
+            }
         }
     }
 
 
-    private fun showSubstitutionLayout(isInventoryCalled: Boolean, resource: Resource<ProductSubstitution>) {
+    private fun showSubstitutionLayout(
+        isInventoryCalled: Boolean,
+        resource: Resource<ProductSubstitution>
+    ) {
 
         binding?.productDetailOptionsAndInformation?.substitutionLayout?.apply {
-            if (SessionUtilities.getInstance().isUserAuthenticated
-                    && KotlinUtils.getDeliveryType()?.deliveryType == Delivery.DASH.type
-            ) {
-                this?.root?.visibility = View.VISIBLE
-            } else {
-                this.root?.visibility = View.GONE
-            }
-
-            if (isAllProductsOutOfStock() && isInventoryCalled) {
-                this.txtSubstitutionEdit?.background = resources.getDrawable(R.drawable.grey_background_with_corner_5,
-                        null)
-            } else {
-                this.txtSubstitutionEdit?.background = resources.getDrawable(R.drawable.black_background_with_corner_5,
-                        null)
-            }
-
             if (resource?.data?.data?.isNullOrEmpty() == true) {
                 hideSubstitutionLayout()
                 return
             }
 
+            if (isAllProductsOutOfStock() && isInventoryCalled) {
+                this.txtSubstitutionEdit?.background = resources.getDrawable(
+                    R.drawable.grey_background_with_corner_5,
+                    null
+                )
+            } else {
+                this.txtSubstitutionEdit?.background = resources.getDrawable(
+                    R.drawable.black_background_with_corner_5,
+                    null
+                )
+            }
+
             if (resource.data?.data?.getOrNull(0)?.substitutionSelection == USER_CHOICE) {
-                txtSubstitutionTitle.text = resource.data?.data?.getOrNull(0)?.substitutionInfo?.displayName
+                txtSubstitutionTitle.text =
+                    resource.data?.data?.getOrNull(0)?.substitutionInfo?.displayName
             } else {
                 txtSubstitutionTitle.text = getString(R.string.substitute_default)
                 selectionChoice = SHOPPER_CHOICE
                 substitutionId = ""
             }
-                this.txtSubstitutionEdit?.setOnClickListener {
-                    if (isAllProductsOutOfStock() && isInventoryCalled) {
-                        /*pop up for out of stock*/
-                        productOutOfStockErrorMessage(true)
-                    } else {
-                        /*navigate to manage substitution screen*/
-                        (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
-                            openManageSubstitutionFragment(resource?.data?.data?.getOrNull(0)?.substitutionSelection)
-                        )
-                    }
-                }
-            }
+            txtSubstitutionEdit?.text = getString(R.string.change)
         }
+    }
 
     private fun openManageSubstitutionFragment(substiutionSelection: String?)  =
             ManageSubstitutionFragment.newInstance(substiutionSelection, commarceItemId)
@@ -2595,6 +2593,9 @@ class ProductDetailsFragment :
                                 Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
                             )
                         }
+                    }
+                    SSO_REQUEST_FOR_ENHANCE_SUBSTITUTION -> {
+                        updateStockAvailability(true)
                     }
                 }
             }
@@ -4255,6 +4256,19 @@ class ProductDetailsFragment :
 
     override fun openManageSubstituion() {
        /*navigate to manage substitution screen*/
+        (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(openManageSubstitutionFragment(selectionChoice))
+    }
+
+    private fun substitutionEditButtonClick() {
+        if (SessionUtilities.getInstance().isUserAuthenticated) {
+            if (isAllProductsOutOfStock()) {
+                productOutOfStockErrorMessage(true)
+            } else {
+                (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(openManageSubstitutionFragment(selectionChoice))
+            }
+        } else {
+            ScreenManager.presentSSOSignin(activity, SSO_REQUEST_FOR_ENHANCE_SUBSTITUTION)
+        }
     }
 }
 

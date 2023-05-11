@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.enhancedSubstitution.adapter
 
 import android.content.Context
 import android.view.View
+import androidx.core.widget.TextViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.awfs.coordination.R
@@ -41,8 +42,8 @@ sealed class SubstitutionViewHolder(binding: ViewBinding) : RecyclerView.ViewHol
                 tvProductAvailability?.visibility = View.INVISIBLE
                 tvColorSize?.visibility = View.INVISIBLE
 
-                tvTitle.setTextAppearance(context, R.style.style_substitution_title)
-                tvPrice.setTextAppearance(context, R.style.style_substitution_price)
+                TextViewCompat.setTextAppearance(tvTitle, R.style.style_substitution_title);
+                TextViewCompat.setTextAppearance(tvPrice, R.style.style_substitution_price);
 
                 tvTitle.text = productList?.productName
                 tvPrice.text = formatAmountToRandAndCentWithSpace(productList?.price)

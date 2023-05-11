@@ -12,7 +12,8 @@ import za.co.woolworths.financial.services.android.util.Utils
 
 class SubstitutionApiHelper : RetrofitConfig(AppContextProviderImpl(), RetrofitApiProviderImpl()) {
 
-    suspend fun getProductSubstitution(productId: String?) = mApiInterface.getSubstitution(
+    suspend fun getProductSubstitution(productId: String?) =
+        mApiInterface.getSubstitution(
             getSessionToken(),
             getDeviceIdentityToken(),
             productId
