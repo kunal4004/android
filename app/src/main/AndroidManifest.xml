@@ -645,6 +645,12 @@
             android:name="za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.ReviewerInfoDetailsActivity"
             android:exported="true"
             android:theme="@style/Theme.AppCompat.Transparent.NoActionBar" />
+
+        <!--Glassbox SDK for recording screen session-->
+        <service android:name="com.clarisite.mobile.GlassboxJobX"
+            android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE"/>
+
     </application>
 
 </manifest>
