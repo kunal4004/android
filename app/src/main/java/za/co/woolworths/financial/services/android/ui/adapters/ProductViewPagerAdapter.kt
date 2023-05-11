@@ -21,17 +21,17 @@ class ProductViewPagerAdapter(
 
     override fun instantiateItem(collection: ViewGroup, position: Int): Any {
         val inflater = LayoutInflater.from(mContext)
-        val v = inflater.inflate(R.layout.product_view, collection, false) as ViewGroup
+        val view = inflater.inflate(R.layout.product_view, collection, false) as ViewGroup
         val image = mExternalImageRefList?.getOrNull(position)
-        val mProductImage = v.findViewById<ImageView>(R.id.imProductView)
+        val mProductImage = view.findViewById<ImageView>(R.id.imProductView)
         setPicture(mProductImage, image)
-        collection.addView(v, 0)
-        v.setOnClickListener { v1: View? ->
+        collection.addView(view, 0)
+        view.setOnClickListener { v1: View? ->
             multipleImageInterface.SelectedImage(
                 mExternalImageRefList?.getOrNull(position)
             )
         }
-        return v
+        return view
     }
 
     override fun destroyItem(collection: ViewGroup, position: Int, view: Any) {
@@ -42,8 +42,8 @@ class ProductViewPagerAdapter(
         return mExternalImageRefList?.size?:0
     }
 
-    override fun isViewFromObject(view: View, `object`: Any): Boolean {
-        return view === `object`
+    override fun isViewFromObject(view: View, any: Any): Boolean {
+        return view === any
     }
 
     fun updatePagerItems(mAuxiliaryImage: List<String>) {
