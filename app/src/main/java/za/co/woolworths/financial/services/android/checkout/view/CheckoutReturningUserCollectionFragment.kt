@@ -192,7 +192,7 @@ class CheckoutReturningUserCollectionFragment :
         }
     }
 
-    private fun initShimmerView() {
+    fun initShimmerView() {
 
         shimmerComponentArray = listOf(
             Pair<ShimmerFrameLayout, View>(
@@ -825,7 +825,7 @@ class CheckoutReturningUserCollectionFragment :
         }
     }
 
-    private fun initializeDeliveryInstructions() {
+    fun initializeDeliveryInstructions() {
         with(binding.layoutCollectionInstructions) {
             edtTxtSpecialDeliveryInstruction?.addTextChangedListener(deliveryInstructionsTextWatcher)
             edtTxtGiftInstructions?.addTextChangedListener(deliveryInstructionsTextWatcher)
@@ -928,7 +928,7 @@ class CheckoutReturningUserCollectionFragment :
      *
      * @see [FoodSubstitution]
      */
-    private fun initializeFoodSubstitution() {
+    fun initializeFoodSubstitution() {
         selectedFoodSubstitution = FoodSubstitution.SIMILAR_SUBSTITUTION
         binding.nativeCheckoutFoodSubstitutionLayout.radioGroupFoodSubstitution?.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {
@@ -1097,7 +1097,7 @@ class CheckoutReturningUserCollectionFragment :
         }
     }
 
-    private fun navigateToCollectionDateDialog(weekDaysList: ArrayList<Week>) {
+    fun navigateToCollectionDateDialog(weekDaysList: ArrayList<Week>) {
         navController?.navigate(
             R.id.action_checkoutReturningUserCollectionFragment_to_collectionDatesBottomSheetDialog,
             bundleOf(

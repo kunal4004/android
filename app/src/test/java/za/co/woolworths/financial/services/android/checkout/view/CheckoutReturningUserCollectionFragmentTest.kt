@@ -88,9 +88,7 @@ class CheckoutReturningUserCollectionFragmentTest : Fragment() {
         )
         checkoutAddAddressNewUserViewModel =
             CheckoutAddAddressNewUserViewModel(checkoutAddAddressNewUserInteractor)
-        checkoutReturningUserCollectionFragment.testSetViewModelInstance(
-            checkoutAddAddressNewUserViewModel
-        )
+        //checkoutReturningUserCollectionFragment.testSetViewModelInstance( checkoutAddAddressNewUserViewModel )
     }
 
     @Test
