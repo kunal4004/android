@@ -111,7 +111,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/bg_input_edittext"
-            android:fontFamily="@font/myriad_pro_regular"
+            android:fontFamily="@font/opensans_regular"
             android:gravity="start|top"
             android:hint="@string/native_checkout_delivery_special_instructions_hint"
             android:maxLength="240"
@@ -119,7 +119,7 @@
             android:padding="@dimen/ten_dp"
             android:textColor="@color/black"
             android:textColorHint="@color/color_cccccc"
-            android:textSize="@dimen/fifteen_sp"
+            android:textSize="@dimen/fourteen_sp"
             android:visibility="gone" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -217,7 +217,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/bg_input_edittext"
-            android:fontFamily="@font/myriad_pro_regular"
+            android:fontFamily="@font/opensans_regular"
             android:gravity="start|top"
             android:hint="@string/native_checkout_delivery_gift_instructions_hint"
             android:maxLength="240"
@@ -225,7 +225,7 @@
             android:padding="@dimen/ten_dp"
             android:textColor="@color/black"
             android:textColorHint="@color/color_cccccc"
-            android:textSize="@dimen/fifteen_sp"
+            android:textSize="@dimen/fourteen_sp"
             android:visibility="gone"
             app:layout_constrainedWidth="true"
             app:layout_constraintEnd_toEndOf="parent"
