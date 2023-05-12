@@ -1,14 +1,12 @@
 package za.co.woolworths.financial.services.android.ui.adapters
 
 import android.content.Context
-import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.*
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.ShoppingListCommerceItemBinding
@@ -18,9 +16,7 @@ import za.co.woolworths.financial.services.android.models.dto.OtherSkus
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItem
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ProductAvailability
-import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListDetailViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListItemsNavigator
-import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.CONST_NO_SIZE
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getPreferredDeliveryType
@@ -173,7 +169,7 @@ class ShoppingListItemsAdapter(
             itemBinding?.apply {
 
                 cartProductImage.setImageURI(shoppingListItem.externalImageRefV2)
-                tvTitle.setText(shoppingListItem.displayName)
+                tvTitle.text = (shoppingListItem.displayName)
                 tvPrice.setText(formatAmountToRandAndCentWithSpace(shoppingListItem.price))
                 // Set Color and Size START
                 tvColorSize.text =
@@ -222,6 +218,7 @@ class ShoppingListItemsAdapter(
 
         fun bindUnavailableProduct() {
             itemBinding?.apply {
+                adapterClickable(true)
                 val msg = getUnavailableMsgByDeliveryType(itemBinding.root.context)
                 tvProductAvailability.text = msg
                 tvProductAvailability.visibility = VISIBLE
@@ -230,6 +227,7 @@ class ShoppingListItemsAdapter(
 
         fun bindOutOfStockProduct() {
             itemBinding?.apply {
+                adapterClickable(true)
                 tvProductAvailability.text =
                     itemBinding.root.context.getString(R.string.out_of_stock)
                 tvProductAvailability.visibility = VISIBLE
@@ -350,7 +348,7 @@ class ShoppingListItemsAdapter(
     }
 
     internal inner class HeaderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val tvSearchText: WTextView
+        val tvSearchText: TextView
 
         init {
             tvSearchText = itemView.findViewById(R.id.textProductSearch)
@@ -359,14 +357,16 @@ class ShoppingListItemsAdapter(
 
     @Synchronized
     fun setList(listItems: ArrayList<ShoppingListItem>?) {
-        if (listItems.isNullOrEmpty()) {
-            return
+        synchronized(this) {
+            if (listItems.isNullOrEmpty()) {
+                return
+            }
+            type = getPreferredDeliveryType()
+            userShouldSetSuburb = userShouldSetSuburb()
+            shoppingListItems = listItems
+            notifyItemRangeChanged(0, (shoppingListItems?.size ?: 0).plus(1))
+            closeAllItems()
         }
-        type = getPreferredDeliveryType()
-        userShouldSetSuburb = userShouldSetSuburb()
-        shoppingListItems = listItems
-        notifyItemRangeChanged(0, shoppingListItems?.size ?: 0)
-        closeAllItems()
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -393,7 +393,19 @@ class ShoppingListItemsAdapter(
             it.userQuantity = 0
             it.isSelected = false
         }
-        notifyItemRangeChanged(0, shoppingListItems?.size ?: 0)
+        notifyItemRangeChanged(0, (shoppingListItems?.size ?: 0).plus(1))
         navigator.onItemSelectionChange(false)
+    }
+
+    fun deleteListItem(mCatalogRefId: String) {
+        synchronized(this) {
+            val item = shoppingListItems?.find { it.catalogRefId.equals(mCatalogRefId, ignoreCase = true) }
+            val index = shoppingListItems?.indexOf(item) ?: -1
+            if(index < 0 || index >= (shoppingListItems?.size ?: -1)) {
+                return
+            }
+            shoppingListItems?.remove(item)
+            notifyItemRemoved(index + 1)
+        }
     }
 }

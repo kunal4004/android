@@ -65,13 +65,17 @@ public class ProductListingExtensionFragment extends BaseFragmentBinding<GridLay
         return mIsLoading;
     }
 
-    public void setProductRequestBody(ProductsRequestParams.SearchType searchType, String searchTerm, String navigationState, String sortOption, Boolean filterContent) {
+    public void setProductRequestBody(ProductsRequestParams.SearchType searchType, String searchTerm, String navigationState, String sortOption, Boolean filterContent, Boolean isChanelPage) {
         this.productsRequestParams = new ProductsRequestParams(searchTerm, searchType, ProductsRequestParams.ResponseType.DETAIL, pageOffset);
         this.productsRequestParams.setRefinement(navigationState);
         this.productsRequestParams.setSortOption(sortOption);
         this.productsRequestParams.setFilterContent(filterContent);
         this.productsRequestParams.isUserBrowsing = getArguments() != null && getArguments().getBoolean(IS_BROWSING, false);
         this.productsRequestParams.sendDeliveryDetailsParams = getArguments() != null && getArguments().getBoolean(EXTRA_SEND_DELIVERY_DETAILS_PARAMS, false);
+        if (isChanelPage && navigationState != null && !navigationState.isEmpty()){
+            this.productsRequestParams.setSearchTerm(navigationState);
+            this.productsRequestParams.setSearchType(ProductsRequestParams.SearchType.NAVIGATE);
+        }
     }
 
     public ProductsRequestParams getProductRequestBody() {
@@ -81,7 +85,7 @@ public class ProductListingExtensionFragment extends BaseFragmentBinding<GridLay
     public void executeLoadProduct(final Activity activity, ProductsRequestParams requestParams) {
         getNavigator().onLoadStart(getLoadMoreData());
         setProductIsLoading(true);
-        retrieveProduct = OneAppService.INSTANCE.getProducts(requestParams);
+        retrieveProduct = new OneAppService().getProducts(requestParams);
         retrieveProduct.enqueue(new CompletionHandler<>(new IResponseListener<ProductView>() {
             @Override
             public void onSuccess(ProductView productView) {

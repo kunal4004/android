@@ -7,6 +7,7 @@ import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
+import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
@@ -110,14 +111,16 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     fun showBackArrowWithTitle(titleText: String) {
-        binding.toolbar?.visibility = View.VISIBLE
-        setSupportActionBar(binding.toolbar)
-        binding.toolbarText?.text = titleText
-        supportActionBar?.apply {
-            title = ""
-            setDisplayShowTitleEnabled(false)
-            setDisplayHomeAsUpEnabled(true)
-            setHomeAsUpIndicator(R.drawable.back24)
+        lifecycleScope.launchWhenCreated {
+            binding.toolbar?.visibility = View.VISIBLE
+            setSupportActionBar(binding.toolbar)
+            binding.toolbarText?.text = titleText
+            supportActionBar?.apply {
+                title = ""
+                setDisplayShowTitleEnabled(false)
+                setDisplayHomeAsUpEnabled(true)
+                setHomeAsUpIndicator(R.drawable.back24)
+            }
         }
     }
 
@@ -201,11 +204,12 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     override fun onBackPressed() {
+        if (this == null) return
         // Hide keyboard in case it was visible from a previous screen
         KeyboardUtils.hideKeyboardIfVisible(this)
 
-        val fragmentList: MutableList<androidx.fragment.app.Fragment> =
-            navHostFrag.childFragmentManager.fragments
+        val fragmentList: MutableList<androidx.fragment.app.Fragment>? =
+            navHostFrag?.childFragmentManager?.fragments
 
         //in Navigation component if Back stack entry count is 0 means it has last fragment presented.
         // if > 0 means others are in backstack but fragment list size will always be 1

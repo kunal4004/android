@@ -21,15 +21,15 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
-import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.Action
 import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.Product
+import za.co.woolworths.financial.services.android.recommendations.data.response.request.CommonRecommendationEvent
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.RecommendationRequest
 import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationEventHandler
+import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationsProductListingListener
 import za.co.woolworths.financial.services.android.recommendations.presentation.adapter.ProductCategoryAdapter
 import za.co.woolworths.financial.services.android.recommendations.presentation.adapter.ProductListRecommendationAdapter
-import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationsProductListingListener
 import za.co.woolworths.financial.services.android.recommendations.presentation.viewmodel.RecommendationViewModel
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
@@ -39,6 +39,7 @@ import za.co.woolworths.financial.services.android.ui.views.AddedToCartBalloonFa
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SelectYourQuantityFragment
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 import java.net.ConnectException
@@ -59,9 +60,11 @@ class RecommendationFragment :
     private var oneTimeInventoryErrorDialogDisplay: Boolean = false
     private var _recommendationsLayoutBinding: RecommendationsLayoutBinding? = null
     private val recommendationsLayoutBinding get() = _recommendationsLayoutBinding!!
-    private val recommendationViewModel: RecommendationViewModel by viewModels()
+    private val recommendationViewModel: RecommendationViewModel by viewModels(ownerProducer = { requireParentFragment().requireParentFragment() })
     private var mProductCategoryAdapter: ProductCategoryAdapter? = null
     private var mProductListRecommendationAdapter: ProductListRecommendationAdapter? = null
+    private var recommendationLayoutManager: LinearLayoutManager? = null
+    private var isViewItemListEventTriggeredOnPageLoad = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -88,10 +91,27 @@ class RecommendationFragment :
         recommendationsLayoutBinding?.recommendationsCategoryRecyclerview?.adapter =
             mProductCategoryAdapter
 
-        actionItemList.get(0).products?.let { showRecProductsList(it) }
-
-        mProductCategoryAdapter?.onItemClick = {
+        actionItemList.getOrNull(0)?.products?.let {
+            if(!isViewItemListEventTriggeredOnPageLoad) {
+                submitViewItemListFirebaseEvent(actionItemList, 0)
+                isViewItemListEventTriggeredOnPageLoad = true
+            }
             showRecProductsList(it)
+        }
+
+        mProductCategoryAdapter?.onItemClick = { position, products ->
+            recommendationViewModel.setCurrentSelectedTab(position)
+            submitViewItemListFirebaseEvent(actionItemList, position)
+            showRecProductsList(products)
+        }
+    }
+
+    private fun submitViewItemListFirebaseEvent(actionItemList: List<Action>, position: Int) {
+        if (actionItemList.isNotEmpty() && position >= 0 && position < actionItemList.size) {
+            FirebaseAnalyticsEventHelper.viewItemListRecommendations(
+                products = actionItemList[position].products,
+                category = actionItemList[position].componentName
+            )
         }
     }
 
@@ -100,12 +120,17 @@ class RecommendationFragment :
             recommendationsLayoutBinding?.recommendationsProductsRecyclerview?.visibility =
                 View.GONE
         } else {
-
+            recommendationsLayoutBinding.recommendationsProductsRecyclerview.clearOnScrollListeners()
+            recommendationsLayoutBinding?.recommendationsProductsRecyclerview?.addOnScrollListener(
+                recommendationProductsScrollListener
+            )
             recommendationsLayoutBinding?.recommendationsProductsRecyclerview?.visibility =
                 View.VISIBLE
             context?.let {
-                recommendationsLayoutBinding?.recommendationsProductsRecyclerview?.layoutManager =
-                    LinearLayoutManager(it, RecyclerView.HORIZONTAL, false)
+                recommendationLayoutManager =
+                    LinearLayoutManager(it, LinearLayoutManager.HORIZONTAL, false)
+                recommendationsLayoutBinding.recommendationsProductsRecyclerview.layoutManager =
+                    recommendationLayoutManager
 
                 mProductListRecommendationAdapter =
                     ProductListRecommendationAdapter(productsList, this, activity)
@@ -116,15 +141,13 @@ class RecommendationFragment :
     }
 
     private fun getRecommendationDetails() {
+        recommendationViewModel.clearSubmittedRecImpressions()
         val bundle = arguments?.getBundle(BundleKeysConstants.BUNDLE)
         val reccommendationsDataEventTypeFirst =
             bundle?.getParcelable<Event>(BundleKeysConstants.RECOMMENDATIONS_EVENT_DATA) as Event
         val reccommendationsDataEventTypeSecond =
             bundle?.getParcelable<Event>(BundleKeysConstants.RECOMMENDATIONS_EVENT_DATA_TYPE) as Event
-        val reccommendationsUserAgent =
-            bundle?.getParcelable<Event>(BundleKeysConstants.RECOMMENDATIONS_USER_AGENT) as Event
-        val reccommendationsIPAddress =
-            bundle?.getParcelable<Event>(BundleKeysConstants.RECOMMENDATIONS_IP_ADDRESS) as Event
+
         var recMonetateId: String? = null
         if (Utils.getMonetateId() != null) {
             recMonetateId = Utils.getMonetateId()
@@ -134,37 +157,30 @@ class RecommendationFragment :
             events = listOf(
                 reccommendationsDataEventTypeFirst,
                 reccommendationsDataEventTypeSecond,
-                reccommendationsUserAgent,
-                reccommendationsIPAddress
-            ),
+            ).plus(CommonRecommendationEvent.commonRecommendationEvents()),
             monetateId = recMonetateId
         )
 
         recommendationViewModel.getRecommendationResponse(recommendationRequest)
 
-        recommendationViewModel.recommendationResponseData.observe(viewLifecycleOwner) {
-            it.getContentIfNotHandled()?.let { response ->
-                when (response.status) {
-                    Status.SUCCESS -> {
-                        if(response.data?.actions.isNullOrEmpty())
-                        {
-                            recommendationsLayoutBinding.recommendationsMainLayout.visibility= View.GONE
-                        }else {
-                            recommendationsLayoutBinding.recommendationsMainLayout.visibility= View.VISIBLE
-                            recommendationsLayoutBinding.recommendationsText.text = getString(R.string.recommendations_title)
-                            if (!response.data?.monetateId.isNullOrEmpty()) {
-                                Utils.saveMonetateId(response.data?.monetateId)
-                            }
-                            response.data?.actions?.let { response ->
-                                showProductCategory(response)
-                            }
-                        }
-                    }
-                    Status.ERROR -> {
-                    }
-                    else -> {
-                        // Nothing
-                    }
+        recommendationViewModel.recommendationResponseData.observe(viewLifecycleOwner) { actionItems ->
+            if (actionItems.isNullOrEmpty()) {
+                recommendationsLayoutBinding.recommendationsMainLayout.visibility = View.GONE
+            } else {
+                recommendationsLayoutBinding.recommendationsMainLayout.visibility = View.VISIBLE
+                recommendationsLayoutBinding.recommendationsText.text =
+                    getString(R.string.recommendations_title)
+
+                showProductCategory(actionItems)
+            }
+        }
+
+        recommendationViewModel.visibleRecommendationItemRequest.observe(viewLifecycleOwner) { visibleProductsRequested ->
+            if (visibleProductsRequested == true) {
+                getVisibleProductsPosition()?.let {
+                    recommendationViewModel.visibleRecommendationProducts(
+                        it
+                    )
                 }
             }
         }
@@ -234,7 +250,7 @@ class RecommendationFragment :
         }
 
         showProgressBar()
-        OneAppService.getInventorySkuForStore(
+        OneAppService().getInventorySkuForStore(
             storeId, addItemToCart?.catalogRefId
                 ?: "", isUserBrowsing
         ).enqueue(CompletionHandler(object : IResponseListener<SkusInventoryForStoreResponse> {
@@ -565,6 +581,34 @@ class RecommendationFragment :
                 else -> return
             }
         }
+    }
+
+    private val recommendationProductsScrollListener = object : RecyclerView.OnScrollListener() {
+
+        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+            when (newState) {
+                RecyclerView.SCROLL_STATE_IDLE -> {
+                    getVisibleProductsPosition()?.let {
+                        recommendationViewModel.visibleRecommendationProducts(
+                            it
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    private fun getVisibleProductsPosition(): List<Int>? {
+        recommendationLayoutManager?.let { layoutManager ->
+            val firstItem = layoutManager.findFirstVisibleItemPosition()
+            val lastItem = layoutManager.findLastVisibleItemPosition()
+            val list = arrayListOf<Int>()
+            for (i in firstItem..lastItem) {
+                list.add(i)
+            }
+            return list
+        }
+        return null
     }
 }
 
