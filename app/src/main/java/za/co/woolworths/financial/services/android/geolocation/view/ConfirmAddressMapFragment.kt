@@ -671,6 +671,9 @@ class ConfirmAddressMapFragment :
     private fun moveMapCamera(latitude: Double?, longitude: Double?) {
         binding.apply {
             if (latitude != null && longitude != null) {
+                if(noLocationLayout?.noLocationRootLayout?.visibility == View.VISIBLE) {
+                    return@apply
+                }
                 imgMapMarker?.visibility = View.VISIBLE
                 tvMarkerHint?.visibility = View.VISIBLE
                 navigationMapArrow?.visibility = View.VISIBLE
