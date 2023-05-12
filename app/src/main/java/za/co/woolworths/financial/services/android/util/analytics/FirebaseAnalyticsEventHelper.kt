@@ -63,7 +63,7 @@ object FirebaseAnalyticsEventHelper {
         )
     }
 
-    fun viewCart(commerceItems: List<CommerceItem>, value: Double) {
+    fun viewCartAnalyticsEvent(commerceItems: List<CommerceItem>, value: Double) {
         val analyticItems = commerceItems.map { it.toAnalyticItem() }
         val addToCartParams = Bundle()
         addToCartParams.apply {

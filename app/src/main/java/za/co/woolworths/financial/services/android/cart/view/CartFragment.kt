@@ -1346,7 +1346,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     }
 
     private fun viewCartEvent(commerceItems: List<CommerceItem>, value: Double) {
-        FirebaseAnalyticsEventHelper.viewCart(commerceItems, value)
+        FirebaseAnalyticsEventHelper.viewCartAnalyticsEvent(commerceItems, value)
     }
 
     private fun showRecommendedProducts() {
