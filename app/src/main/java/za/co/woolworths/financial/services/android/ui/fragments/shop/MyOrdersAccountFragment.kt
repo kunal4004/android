@@ -110,7 +110,7 @@ class MyOrdersAccountFragment : BaseFragmentBinding<ShopFragmentBinding>(ShopFra
         binding.apply {
             mErrorHandlerView?.hideEmpyState()
             if (!isPullToRefresh) showLoading()
-            requestOrders = OneAppService.getOrders().apply {
+            requestOrders = OneAppService().getOrders().apply {
                 enqueue(CompletionHandler(object : IResponseListener<OrdersResponse> {
                     override fun onSuccess(response: OrdersResponse?) {
                         if (isAdded) {

@@ -272,7 +272,7 @@ class LoanWithdrawalFragment : LoanBaseFragment(), View.OnClickListener {
                     creditLimit
                 )
                 showProgressDialog(true)
-                mPostLoanIssue = OneAppService.issueLoan(issueLoanRequest)
+                mPostLoanIssue = OneAppService().issueLoan(issueLoanRequest)
                 mPostLoanIssue?.enqueue(CompletionHandler(object :
                     IResponseListener<IssueLoanResponse> {
                     override fun onSuccess(issueLoanResponse: IssueLoanResponse?) {

@@ -320,7 +320,7 @@ class LinkPrimaryDeviceOTPFragment : BaseFragmentBinding<FragmentUnlinkDeviceOtp
         ?: ""
 
     private fun callGetOTPAPI(otpMethod: String?) {
-        mLinkDeviceOTPReq = otpMethod?.let { type -> OneAppService.getLinkDeviceOtp(type) }
+        mLinkDeviceOTPReq = otpMethod?.let { type -> OneAppService().getLinkDeviceOtp(type) }
         this.otpMethod = otpMethod
 
         if (!NetworkManager.getInstance().isConnectedToNetwork(activity)) {
@@ -521,7 +521,7 @@ class LinkPrimaryDeviceOTPFragment : BaseFragmentBinding<FragmentUnlinkDeviceOtp
     private fun performDeletePrimaryDevice() {
         val oldPrimaryDevice = (activity as? MyPreferencesActivity)?.userPrimaryDevice
         oldPrimaryDevice?.deviceIdentityId?.toString()?.let { deviceIdentityId ->
-            OneAppService.deleteDevice(
+            OneAppService().deleteDevice(
                 deviceIdentityId,
                 newPrimaryDevice?.deviceIdentityId.toString(),
                 otpNumber,
@@ -595,7 +595,7 @@ class LinkPrimaryDeviceOTPFragment : BaseFragmentBinding<FragmentUnlinkDeviceOtp
     }
 
     private fun performChangePrimaryDevice(device: UserDevice?) {
-        OneAppService.changePrimaryDeviceApi(
+        OneAppService().changePrimaryDeviceApi(
             device?.deviceIdentityId.toString(),
             otpNumber,
             otpMethod
