@@ -3,12 +3,14 @@ package za.co.woolworths.financial.services.android.enhancedSubstitution.service
 import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.AddSubstitutionRequest
 import za.co.woolworths.financial.services.android.models.dto.ProductView
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
+import za.co.woolworths.financial.services.android.models.network.AppContextProviderImpl
 import za.co.woolworths.financial.services.android.models.network.OneAppService
+import za.co.woolworths.financial.services.android.models.network.RetrofitApiProviderImpl
 import za.co.woolworths.financial.services.android.models.network.RetrofitConfig
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 
-class SubstitutionApiHelper : RetrofitConfig() {
+class SubstitutionApiHelper : RetrofitConfig(AppContextProviderImpl(), RetrofitApiProviderImpl()) {
 
     suspend fun getProductSubstitution(productId: String?) =
         mApiInterface.getSubstitution(
@@ -18,7 +20,7 @@ class SubstitutionApiHelper : RetrofitConfig() {
     )
 
     suspend fun getSearchedProducts(requestParams: ProductsRequestParams): ProductView {
-        val (suburbId: String?, storeId: String?) = OneAppService.getSuburbOrStoreId()
+        val (suburbId: String?, storeId: String?) = OneAppService().getSuburbOrStoreId()
 
         val (deliveryType, deliveryDetails) = when {
             !requestParams.sendDeliveryDetailsParams -> {
@@ -31,7 +33,7 @@ class SubstitutionApiHelper : RetrofitConfig() {
                 )
         }
 
-        return if (Utils.isLocationEnabled(appContext())) {
+        return if (Utils.isLocationEnabled(AppContextProviderImpl().appContext())) {
             mApiInterface.getSearchedProducts(
                     userAgent = "",
                     "",

@@ -72,7 +72,7 @@ open class BPIRetrieveOtpFragment : BaseFragmentBinding<BpiRetrieveOtpFragmentBi
 
     private fun initRetrieveOTP(otpMethodType: OTPMethodType) {
         startProgress()
-        OneAppService.retrieveOTP(otpMethodType, productOfferingId).enqueue(CompletionHandler(object : IResponseListener<RetrieveOTPResponse> {
+        OneAppService().retrieveOTP(otpMethodType, productOfferingId).enqueue(CompletionHandler(object : IResponseListener<RetrieveOTPResponse> {
             override fun onSuccess(response: RetrieveOTPResponse?) {
                 response?.apply {
                     this@BPIRetrieveOtpFragment.retrieveOTPResponse = this

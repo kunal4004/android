@@ -1670,6 +1670,7 @@ class ProductDetailsFragment :
                     selectionChoice = USER_CHOICE
                     substitutionId = commarceItemId
                     txtSubstitutionTitle?.text = substitutionProductItem?.productName
+                    txtSubstitutionEdit.text = context?.getString(R.string.change)
                 }
             } else {
                 txtSubstitutionTitle.text = context?.getString(R.string.sign_in_label)
@@ -1685,6 +1686,10 @@ class ProductDetailsFragment :
     ) {
 
         binding?.productDetailOptionsAndInformation?.substitutionLayout?.apply {
+            if (resource?.data?.data?.isNullOrEmpty() == true) {
+                hideSubstitutionLayout()
+                return
+            }
 
             if (isAllProductsOutOfStock() && isInventoryCalled) {
                 this.txtSubstitutionEdit?.background = resources.getDrawable(
@@ -1698,11 +1703,6 @@ class ProductDetailsFragment :
                 )
             }
 
-            if (resource?.data?.data?.isNullOrEmpty() == true) {
-                hideSubstitutionLayout()
-                return
-            }
-
             if (resource.data?.data?.getOrNull(0)?.substitutionSelection == USER_CHOICE) {
                 txtSubstitutionTitle.text =
                     resource.data?.data?.getOrNull(0)?.substitutionInfo?.displayName
@@ -1711,6 +1711,7 @@ class ProductDetailsFragment :
                 selectionChoice = SHOPPER_CHOICE
                 substitutionId = ""
             }
+            txtSubstitutionEdit?.text = getString(R.string.change)
         }
     }
 
@@ -2485,7 +2486,7 @@ class ProductDetailsFragment :
                             if (!this.productDetails?.productType.equals(
                                     getString(R.string.food_product_type),
                                     ignoreCase = true
-                                )
+                                ) && (KotlinUtils.getPreferredDeliveryType() == Delivery.DASH)
                             ) {
                                 storeIdForInventory = ""
                                 clearStockAvailability()
@@ -4225,6 +4226,9 @@ class ProductDetailsFragment :
 
     private val onScrollStoppedListener = object: LockableNestedScrollViewV2.OnScrollStoppedListener {
         override fun onScrollStopped() {
+            if(!isAdded){
+                return
+            }
             val visible = binding.scrollView.isViewVisible(binding.productDetailOptionsAndInformation.layoutRecommendationContainer.root)
             if(visible){
                 recommendationViewModel.parentPageScrolledToRecommendation()
