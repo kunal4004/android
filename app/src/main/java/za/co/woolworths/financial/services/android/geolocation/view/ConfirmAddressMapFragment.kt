@@ -185,6 +185,9 @@ class ConfirmAddressMapFragment :
 
                 binding?.apply {
                     if (isNetworkAvailable) {
+                        if(noLocationLayout?.noLocationRootLayout?.visibility == View.VISIBLE) {
+                            return@apply
+                        }
                         dynamicMapView?.visibility = View.VISIBLE
                         mapFrameLayout.visibility = View.VISIBLE
                         autoCompleteTextView.isEnabled = true
