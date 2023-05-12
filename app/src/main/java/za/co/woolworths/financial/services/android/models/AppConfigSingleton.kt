@@ -72,6 +72,8 @@ object AppConfigSingleton {
     var lowStock: ConfigLowStock? = null
     var tooltipSettings: TooltipSettings? = null
     var ratingsAndReviews : RatingsAndReviews? = null
+    @JvmStatic
+    var glassBox : GlassBox? = null
 
     init {
         AppConfigRepository().getAppConfigData()?.let { appConfig ->
@@ -221,6 +223,15 @@ object AppConfigSingleton {
                 minimumSupportedAppBuildNumber.let { isEnabled = Utils.isFeatureEnabled(it) }
                 ratingsAndReviews= this
             }
+
+            appConfig.glassBox?.apply {
+                minimumSupportedAppBuildNumber.let {
+                    isEnabled = Utils.isFeatureEnabled(minimumSupportedAppBuildNumber)
+                    glassBox = this
+                }
+            }
+
+
         }
     }
 }

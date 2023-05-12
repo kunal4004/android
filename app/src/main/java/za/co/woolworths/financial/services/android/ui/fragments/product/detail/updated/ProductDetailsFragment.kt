@@ -338,8 +338,12 @@ class ProductDetailsFragment :
             viewItem.putString(FirebaseAnalytics.Param.ITEM_VARIANT,
                 productDetails?.colourSizeVariants)
             viewItem.putString(FirebaseAnalytics.Param.ITEM_BRAND, productDetails?.brandText)
-            viewItemListParams.putString(FirebaseAnalytics.Param.ITEM_LIST_NAME,
+            viewItem.putString(FirebaseAnalytics.Param.ITEM_LIST_NAME,
                 productDetails?.categoryName)
+            viewItem.putString(FirebaseAnalytics.Param.ITEM_LIST_NAME,
+                productDetails?.categoryName)
+            viewItem.putString(FirebaseManagerAnalyticsProperties.BUSINESS_UNIT,
+                productDetails?.productType)
             viewItemListParams.putParcelableArray(FirebaseAnalytics.Param.ITEMS, arrayOf(viewItem))
         }
         AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.VIEW_ITEM_EVENT,
@@ -3836,7 +3840,7 @@ class ProductDetailsFragment :
                 it.bottomToBottom = R.id.layoutLowStockColor
                 selectedColor?.layoutParams = it
                 layoutLowStockColor.root.visibility = View.VISIBLE
-                layoutLowStockIndicator.txtLowStockIndicator?.text =
+                layoutLowStockColor.txtLowStockIndicator.text =
                     AppConfigSingleton.lowStock?.lowStockCopy
                 colorPlaceholder?.visibility = View.GONE
             }
