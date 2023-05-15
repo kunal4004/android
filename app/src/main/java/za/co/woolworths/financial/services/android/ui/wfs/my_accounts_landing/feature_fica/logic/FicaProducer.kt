@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_fica.data.network
+package za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_fica.logic
 
 import android.app.Activity
 import android.content.Intent
