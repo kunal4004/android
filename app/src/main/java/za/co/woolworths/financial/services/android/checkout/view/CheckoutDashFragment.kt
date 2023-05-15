@@ -9,7 +9,12 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.text.*
+import android.text.Editable
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.SpannableStringBuilder
+import android.text.TextUtils
+import android.text.TextWatcher
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
 import android.view.View
@@ -24,7 +29,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
-import androidx.lifecycle.ViewModelProviders
+import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.findNavController
@@ -37,8 +42,14 @@ import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.gson.JsonElement
 import dagger.hilt.android.AndroidEntryPoint
-import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor
-import za.co.woolworths.financial.services.android.checkout.service.network.*
+import za.co.woolworths.financial.services.android.checkout.service.network.Address
+import za.co.woolworths.financial.services.android.checkout.service.network.ConfirmDeliveryAddressResponse
+import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
+import za.co.woolworths.financial.services.android.checkout.service.network.ShippingDetailsBody
+import za.co.woolworths.financial.services.android.checkout.service.network.ShippingDetailsResponse
+import za.co.woolworths.financial.services.android.checkout.service.network.Slot
+import za.co.woolworths.financial.services.android.checkout.service.network.SortedJoinDeliverySlot
+import za.co.woolworths.financial.services.android.checkout.service.network.Week
 import za.co.woolworths.financial.services.android.checkout.utils.AddShippingInfoEventsAnalytics
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.Companion.REGEX_DELIVERY_INSTRUCTIONS
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.FoodSubstitution
@@ -52,10 +63,7 @@ import za.co.woolworths.financial.services.android.checkout.view.ErrorHandlerBot
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CollectionTimeSlotsAdapter
 import za.co.woolworths.financial.services.android.checkout.view.adapter.ShoppingBagsRadioGroupAdapter
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
-import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelFactory
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyNames.Companion.DELIVERY_DATE
-import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyNames.Companion.ORDER_TOTAL_VALUE
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyValues.Companion.SHIPPING_TIER_VALUE_DASH
 import za.co.woolworths.financial.services.android.contracts.IToastInterface
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
@@ -71,9 +79,15 @@ import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory.Companion.buildPushNotificationAlertToast
-import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
+import za.co.woolworths.financial.services.android.util.Constant
+import za.co.woolworths.financial.services.android.util.CurrencyFormatter
+import za.co.woolworths.financial.services.android.util.ImageManager
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.removeRandFromAmount
+import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.WFormatter
 import za.co.woolworths.financial.services.android.util.WFormatter.DATE_FORMAT_EEEE_COMMA_dd_MMMM
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
@@ -106,7 +120,7 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
     private var selectedShoppingBagType: Double? = null
     private lateinit var dashTimeSlotsAdapter: CollectionTimeSlotsAdapter
     private var confirmDeliveryAddressResponse: ConfirmDeliveryAddressResponse? = null
-    private lateinit var checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel
+    private val checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel by viewModels()
     private var selectedFoodSubstitution = FoodSubstitution.SIMILAR_SUBSTITUTION
     private var shimmerComponentArray: List<Pair<ShimmerFrameLayout, View>> = ArrayList()
     private var navController: NavController? = null
@@ -157,7 +171,6 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
         (activity as? CheckoutActivity)?.apply {
             showBackArrowWithTitle(bindString(R.string.checkout))
         }
-        setupViewModel()
         initializeDashingToView()
         initializeDashTimeSlots()
         isUnSellableLiquorItemRemoved()
@@ -413,17 +426,6 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
         binding.layoutDeliveryInstructions.switchNeedBags?.visibility = View.VISIBLE
         initializeDeliveryInstructions()
         initializeDriverTipView()
-    }
-
-    private fun setupViewModel() {
-        checkoutAddAddressNewUserViewModel = ViewModelProviders.of(
-            this,
-            ViewModelFactory(
-                CheckoutAddAddressNewUserInteractor(
-                    CheckoutAddAddressNewUserApiHelper()
-                )
-            )
-        ).get(CheckoutAddAddressNewUserViewModel::class.java)
     }
 
     private fun callConfirmLocationAPI() {

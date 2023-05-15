@@ -4,18 +4,27 @@ import android.app.Activity.RESULT_CANCELED
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.text.*
+import android.text.Editable
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.SpannableStringBuilder
+import android.text.TextUtils
+import android.text.TextWatcher
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
 import android.view.View
-import android.view.View.*
+import android.view.View.FOCUS_UP
+import android.view.View.GONE
+import android.view.View.INVISIBLE
+import android.view.View.OnClickListener
+import android.view.View.VISIBLE
 import android.widget.CompoundButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResultListener
-import androidx.lifecycle.ViewModelProviders
+import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -24,10 +33,19 @@ import com.awfs.coordination.databinding.CheckoutAddAddressRetuningUserBinding
 import com.facebook.shimmer.Shimmer
 import com.facebook.shimmer.ShimmerFrameLayout
 import dagger.hilt.android.AndroidEntryPoint
-import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor
-import za.co.woolworths.financial.services.android.checkout.service.network.*
+import za.co.woolworths.financial.services.android.checkout.service.network.Address
+import za.co.woolworths.financial.services.android.checkout.service.network.ConfirmDeliveryAddressResponse
+import za.co.woolworths.financial.services.android.checkout.service.network.OpenDayDeliverySlot
+import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
+import za.co.woolworths.financial.services.android.checkout.service.network.ShippingDetailsBody
+import za.co.woolworths.financial.services.android.checkout.service.network.ShippingDetailsResponse
+import za.co.woolworths.financial.services.android.checkout.service.network.Slot
 import za.co.woolworths.financial.services.android.checkout.utils.AddShippingInfoEventsAnalytics
-import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.DeliveryType.*
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.DeliveryType.DEFAULT
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.DeliveryType.MIXED_FOOD
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.DeliveryType.MIXED_OTHER
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.DeliveryType.ONLY_FOOD
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.DeliveryType.ONLY_OTHER
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.FulfillmentsType.FOOD
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.FulfillmentsType.OTHER
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.WeekCounter.FIRST
@@ -41,7 +59,6 @@ import za.co.woolworths.financial.services.android.checkout.view.adapter.Checkou
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutDeliveryTypeSelectionShimmerAdapter
 import za.co.woolworths.financial.services.android.checkout.view.adapter.ShoppingBagsRadioGroupAdapter
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
-import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelFactory
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
@@ -115,7 +132,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         }
     }
     private var confirmDeliveryAddressResponse: ConfirmDeliveryAddressResponse? = null
-    private lateinit var checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel
+    private val checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel by viewModels()
     private lateinit var expandableGrid: ExpandableGrid
     private var selectedSlotResponseFood: ConfirmDeliveryAddressResponse? = null
     private var selectedSlotResponseOther: ConfirmDeliveryAddressResponse? = null
@@ -174,7 +191,6 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     }
 
     private fun initViews() {
-        setupViewModel()
         initializeVariables()
         addFragmentListner()
         initializeDeliveringToView()
@@ -536,7 +552,6 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     }
 
     private fun initializeDeliveryFoodOtherItems() {
-        setupViewModel()
         binding.checkoutTimeSlotSelectionLayout.previousImgBtnFood.setOnClickListener(this)
         binding.checkoutTimeSlotSelectionLayout.nextImgBtnFood.setOnClickListener(this)
         binding.checkoutHowWouldYouDeliveredLayout.gridLayoutDeliveryOptions.previousImgBtnOther.setOnClickListener(this)
@@ -580,17 +595,6 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
 
             }
         }
-    }
-
-    private fun setupViewModel() {
-        checkoutAddAddressNewUserViewModel = ViewModelProviders.of(
-            this,
-            ViewModelFactory(
-                CheckoutAddAddressNewUserInteractor(
-                    CheckoutAddAddressNewUserApiHelper()
-                )
-            )
-        ).get(CheckoutAddAddressNewUserViewModel::class.java)
     }
 
     private fun startShimmerView() {

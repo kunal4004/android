@@ -161,20 +161,6 @@ interface ApiInterface {
     ): Call<LocationResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("wfs/app/v4/user/locations")
-    fun getStoresLocation(
-            @Header("userAgent") userAgent: String,
-            @Header("userAgentVersion") userAgentVersion: String,
-            @Header("sessionToken") sessionToken: String,
-            @Header("deviceIdentityToken") deviceIdentityToken: String,
-            @Query("lat") lat: String,
-            @Query("lon") lon: String,
-            @Query("searchString") searchString: String,
-            @Query("radius") radius: String,
-            @Query("includeDetails") includeDetails: Boolean
-    ): Call<LocationResponse>
-
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("wfs/app/v4/locationItems/{sku}")
     fun getStoresLocationItem(
 
@@ -414,58 +400,6 @@ interface ApiInterface {
             @Header("deviceIdentityToken") deviceIdentityToken: String): Call<FAQ>
 
 
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip")
-    @GET("wfs/app/v4/products/{productId}")
-    fun getProductDetail(
-            @Header("deviceModel") deviceModel: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("os") os: String,
-            @Header("network") network: String,
-            @Header("apiId") apiId: String,
-            @Header("userAgent") userAgent: String,
-            @Header("userAgentVersion") userAgentVersion: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("sessionToken") sessionToken: String,
-            @Header("deviceIdentityToken") deviceIdentityToken: String,
-            @Path("productId") productId: String,
-            @Query("sku") sku: String): Call<WProduct>
-
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip")
-    @GET("wfs/app/v4/products/{productId}")
-    fun getProductDetail(
-            @Header("deviceModel") deviceModel: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("os") os: String,
-            @Header("network") network: String,
-            @Header("apiId") apiId: String,
-            @Header("userAgent") userAgent: String,
-            @Header("userAgentVersion") userAgentVersion: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("sessionToken") sessionToken: String,
-            @Header("deviceIdentityToken") deviceIdentityToken: String,
-            @Path("productId") productId: String,
-            @Query("sku") sku: String,
-            callback: Callback<String>)
-
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip")
-    @GET("wfs/app/v4/products/{productId}")
-    fun getProductDetail(
-            @Header("deviceModel") deviceModel: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("os") os: String,
-            @Header("network") network: String,
-            @Header("apiId") apiId: String,
-            @Header("userAgent") userAgent: String,
-            @Header("userAgentVersion") userAgentVersion: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("longitude") longitude: Double,
-            @Header("latitude") latitude: Double,
-            @Header("sessionToken") sessionToken: String,
-            @Header("deviceIdentityToken") deviceIdentityToken: String,
-            @Path("productId") productId: String,
-            @Query("sku") sku: String,
-            callback: Callback<String>)
-
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:14400")
     @GET("wfs/app/v4/reward/cardDetails")
     fun getCardDetails(
@@ -593,16 +527,6 @@ interface ApiInterface {
     ): Call<ChangeAddressResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @POST("wfs/app/v4/cart/checkout/confirmDeliveryAddress")
-    fun getConfirmDeliveryAddressDetails(
-        @Header("userAgent") userAgent: String,
-        @Header("userAgentVersion") userAgentVersion: String,
-        @Header("sessionToken") sessionToken: String,
-        @Header("deviceIdentityToken") deviceIdentityToken: String,
-        @Body confirmDeliveryAddressBody: ConfirmDeliveryAddressBody
-    ): Call<ConfirmDeliveryAddressResponse>
-
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("wfs/app/v4/cart/checkout/shippingDetails")
     fun getShippingDetails(
         @Header("userAgent") userAgent: String,
@@ -631,24 +555,6 @@ interface ApiInterface {
         @Header("deviceIdentityToken") deviceIdentityToken: String,
         @Body confirmSelectionRequestBody: ConfirmSelectionRequestBody
     ): Call<ConfirmSelectionResponse>
-
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("wfs/app/v4/location/{locationId}")
-    fun getSuburbs(
-            @Header("userAgent") userAgent: String,
-            @Header("userAgentVersion") userAgentVersion: String,
-            @Header("sessionToken") sessionToken: String,
-            @Header("deviceIdentityToken") deviceIdentityToken: String,
-            @Path("locationId") locationId: String
-    ): Call<SuburbsResponse>
-
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @POST("wfs/app/v4/cart/suburb")
-    fun setDeliveryLocationSuburb(
-
-            @Header("sessionToken") sessionToken: String,
-            @Header("deviceIdentityToken") deviceIdentityToken: String,
-            @Body suburbRequest: SetDeliveryLocationSuburbRequest): Call<SetDeliveryLocationSuburbResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("wfs/app/v4/cartV2")
@@ -820,14 +726,6 @@ interface ApiInterface {
             @Query("catalogRefId") catalogRefId: String): Call<ShoppingListItemsResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("wfs/app/v4/inventory/multiSku/{multipleSku}")
-    fun getInventorySKU(
-
-            @Header("sessionToken") sessionToken: String,
-            @Header("deviceIdentityToken") deviceIdentityToken: String,
-            @Path("multipleSku") multipleSku: String): Call<SkuInventoryResponse>
-
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("wfs/app/v4/inventory/store/{store_id}/multiSku/{multipleSku}")
     suspend fun getInventorySKUForStore(
 
@@ -916,14 +814,6 @@ interface ApiInterface {
             @Query("deliveryType") deliveryType: String?,
             @Query("deliveryDetails") deliveryDetails: String?
     ): Call<ProductView>
-
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @POST("wfs/app/v4/cart/checkoutComplete")
-    fun postCheckoutSuccess(
-
-            @Header("sessionToken") sessionToken: String,
-            @Header("deviceIdentityToken") deviceIdentityToken: String,
-            @Body checkoutSuccess: CheckoutSuccess): Call<Void>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("wfs/app/v4/order")
