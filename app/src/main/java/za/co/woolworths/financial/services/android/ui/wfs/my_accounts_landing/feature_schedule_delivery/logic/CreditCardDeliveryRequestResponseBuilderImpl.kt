@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_schedule_delivery.data.network
+package za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_schedule_delivery.logic
 
 
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton.creditCardDelivery

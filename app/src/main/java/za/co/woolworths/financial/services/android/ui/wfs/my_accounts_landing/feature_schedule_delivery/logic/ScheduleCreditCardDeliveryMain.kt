@@ -10,8 +10,6 @@ import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.ex
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.enumtype.CreditCardType
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.model.UserAccountResponse
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.schema.ApplyNowStateMapToAccountBinNumber
-import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_schedule_delivery.data.network.CreditCardDeliveryRequestBuilder
-import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_schedule_delivery.data.network.CreditCardDeliveryRequestResponseBuilderImpl
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_schedule_delivery.data.network.CreditCardDeliveryRemoteDataSource
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_schedule_delivery.data.network.CreditCardDeliveryRemoteDataSourceImpl
 
