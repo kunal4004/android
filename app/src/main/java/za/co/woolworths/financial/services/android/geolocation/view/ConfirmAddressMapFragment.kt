@@ -185,12 +185,12 @@ class ConfirmAddressMapFragment :
 
                 binding?.apply {
                     if (isNetworkAvailable) {
+                        autoCompleteTextView.isEnabled = true
                         if(noLocationLayout?.noLocationRootLayout?.visibility == View.VISIBLE) {
                             return@apply
                         }
                         dynamicMapView?.visibility = View.VISIBLE
                         mapFrameLayout.visibility = View.VISIBLE
-                        autoCompleteTextView.isEnabled = true
                         dynamicMapView?.setAllGesturesEnabled(true)
                         if (isAddAddress!! && isAddressSearch == false) {
                             confirmAddress.isEnabled = false

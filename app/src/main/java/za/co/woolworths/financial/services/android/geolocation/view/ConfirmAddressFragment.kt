@@ -203,11 +203,13 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
                     binding.inCurrentLocation?.swEnableLocation?.isChecked = true
                     startLocationDiscoveryProcess()
                 } else {
+                    isAddressAvailable = false
                     binding.disableCurrentLocation()
                     binding.inCurrentLocation?.swEnableLocation?.isChecked = false
                 }
             } else {
                 if(!Utils.isLocationEnabled(this)) {
+                    isAddressAvailable = false
                     binding.disableCurrentLocation()
                     binding.inCurrentLocation?.swEnableLocation?.isChecked = false
                 }
