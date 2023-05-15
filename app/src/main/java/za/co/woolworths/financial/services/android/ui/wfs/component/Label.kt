@@ -1,22 +1,13 @@
 package za.co.woolworths.financial.services.android.ui.wfs.component
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.testTag
-import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
@@ -31,6 +22,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.awfs.coordination.R
+import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.extensions.testAutomationTag
 import za.co.woolworths.financial.services.android.ui.wfs.theme.*
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -62,12 +54,12 @@ fun LabelTitleLarge(params: LabelProperties) {
         Text(
             color = params.textColor ?: Color.Black,
             text = it,
-            modifier = params.modifier.testTag(label),
+            modifier = params.modifier.testAutomationTag(label),
             letterSpacing = params.letterSpacing ?: 0.sp,
             lineHeight = params.lineSpacingExtra,
             textAlign = params.textAlign,
             style = MaterialTheme.typography.titleLarge,
-            fontSize = params.fontSize ?: Dimens.eighteen_sp,
+            fontSize = params.fontSize ?: FontDimensions.sp18,
             maxLines = 4
         )
     }
@@ -83,13 +75,11 @@ fun LabelTitleCustomStyleLarge(params: LabelProperties) {
         Text(
             color = params.textColor ?: Color.Black,
             text = it,
-            modifier = params.modifier.testTag(label),
+            modifier = params.modifier.testAutomationTag(label),
             letterSpacing = params.letterSpacing ?: 0.sp,
             textAlign = params.textAlign,
             style = params.style,
-            fontSize = params.fontSize ?: 18.sp,
-
-            )
+            fontSize = params.fontSize ?: FontDimensions.sp18)
     }
 }
 
@@ -103,12 +93,12 @@ fun LabelMedium(params: LabelProperties = LabelProperties()) {
         Text(
             color = params.textColor ?: Color.Black,
             text = it,
-            modifier = params.modifier.testTag(label),
+            modifier = params.modifier.testAutomationTag(label),
             textDecoration = params.textDecoration,
             letterSpacing = params.letterSpacing ?: 0.sp,
             textAlign = params.textAlign,
             style = MaterialTheme.typography.titleMedium,
-            fontSize = params.fontSize ?: 16.sp,
+            fontSize = params.fontSize ?: FontDimensions.sp16,
         )
     }
 }
@@ -125,10 +115,10 @@ fun LabelSmall(params: LabelProperties = LabelProperties()) {
             textAlign = params.textAlign,
             textDecoration = params.textDecoration,
             style = MaterialTheme.typography.titleSmall,
-            fontSize = params.fontSize ?: 14.sp,
+            fontSize = params.fontSize ?: FontDimensions.sp14,
             modifier = params.modifier
                 .fillMaxWidth()
-                .testTag(label),
+                .testAutomationTag(label),
             letterSpacing = params.letterSpacing ?: 0.sp
         )
     }
@@ -154,7 +144,7 @@ fun LabelPhoneNumber(params: LabelProperties = LabelProperties()) {
             style = params.style,
             modifier = params.modifier
                 .fillMaxWidth()
-                .padding(start = 24.dp, end = 24.dp),
+                .padding(start = Margin.start, end = Margin.end),
             onClick = {
                 label
                     .getStringAnnotations(phoneNumber, it, it)
@@ -174,7 +164,7 @@ data class LabelProperties(
     val fontSize: TextUnit? = null,
     val letterSpacing: TextUnit? = null,
     val textColor: Color? = null,
-    val testTag: String? = null,
+    val locator: String? = null,
     val isUpperCased: Boolean = false,
     val annotatedString: AnnotatedString? = null,
     val weight: Int? = null,
@@ -213,28 +203,8 @@ fun SectionHeaderTitleLabel(params: LabelProperties) {
 fun HeaderItemShimmer(brush: Brush?, locator: String) {
     Row(modifier = Modifier
         .padding(start = 27.dp, top = 24.dp)
-        .testTag(locator)) {
+        .testAutomationTag(locator)) {
         brush?.let { ShimmerLabel(brush = it, width = 0.45f, height = 12.dp) }
-    }
-}
-
-
-@Composable
-fun ItemLabelTitle(params: LabelProperties) {
-    var label = params.label ?: params.stringId?.let { stringResource(id = it) }
-    if (params.isUpperCased) {
-        label = label?.uppercase()
-    }
-    label?.let {
-        Text(
-            color = params.textColor ?: White,
-            text = it,
-            modifier = params.modifier.testTag(label),
-            letterSpacing = params.letterSpacing ?: 1.sp,
-            textAlign = params.textAlign,
-            style = futuraFamilyHeader3(),
-            fontSize = params.fontSize ?: 12.sp
-        )
     }
 }
 
@@ -249,7 +219,7 @@ fun LabelLightText(params: LabelProperties = LabelProperties()) {
         Text(
             color = params.textColor ?: Color.Black,
             text = it,
-            modifier = params.modifier.testTag(label),
+            modifier = params.modifier.testAutomationTag(label),
             letterSpacing = params.letterSpacing ?: 1.sp,
             textAlign = params.textAlign,
             style = futuraFamilyHeader3(),
@@ -259,38 +229,14 @@ fun LabelLightText(params: LabelProperties = LabelProperties()) {
 }
 
 @Composable
-fun ButtonText(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    shape: Shape = MaterialTheme.shapes.small,
-    border: BorderStroke? = null,
-    colors: ButtonColors = ButtonDefaults.buttonColors(containerColor = WhiteWithOpacity10), // Changing this default to use my own color scheme ,
-    content: @Composable RowScope.() -> Unit
-): Unit =
-    Button(
-        onClick = onClick,
-        modifier = modifier,
-        enabled = enabled,
-        contentPadding = PaddingValues(0.dp),
-        interactionSource = interactionSource,
-        shape = shape,
-        border = border,
-        colors = colors,
-        content = content
-    )
-
-
-@Composable
 fun ButtonLabel(
-    text: String,
     modifier: Modifier = Modifier.padding(
         start = Dimens.ten_dp,
         end = Dimens.ten_dp,
         top = Dimens.six_dp,
         bottom = Dimens.four_dp
     ),
+    text: String,
     color: Color = White,
     fontSize: TextUnit = Dimens.twelve_sp,
     fontStyle: FontStyle? = null,
@@ -325,14 +271,11 @@ fun ButtonLabel(
         style = style
     )
 }
-
-
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun TextWFuturaMedium(
     text: String,
-    isUpperCased: Boolean = false,
     modifier: Modifier = Modifier,
+    isUpperCased: Boolean = false,
     minLines : Int = 1,
     color: Color = White,
     fontSize: TextUnit = Dimens.fourteen_sp,
@@ -351,12 +294,8 @@ fun TextWFuturaMedium(
     style: TextStyle = LocalTextStyle.current) {
     Text(
         text = text,
-        modifier = modifier
-            .semantics {
-                testTagsAsResourceId = true
-                testTag = locator
-            }
-            .testTag(locator),
+        modifier = modifier.then(Modifier
+            .testAutomationTag(locator = locator)),
         color = color,
         fontSize = fontSize,
         fontStyle = fontStyle,
