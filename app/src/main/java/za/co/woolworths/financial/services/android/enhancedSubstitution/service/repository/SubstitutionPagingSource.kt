@@ -1,13 +1,12 @@
-package za.co.woolworths.financial.services.android.enhancedSubstitution.repository
+package za.co.woolworths.financial.services.android.enhancedSubstitution.service.repository
 
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import za.co.woolworths.financial.services.android.enhancedSubstitution.apihelper.SubstitutionApiHelper
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.network.SubstitutionApiHelper
 import za.co.woolworths.financial.services.android.models.dto.PagingResponse
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
-import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 
 class SubstitutionPagingSource(
     private var apiHelper: SubstitutionApiHelper,

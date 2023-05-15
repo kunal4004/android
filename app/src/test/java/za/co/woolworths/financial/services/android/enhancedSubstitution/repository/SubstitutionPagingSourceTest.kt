@@ -10,7 +10,8 @@ import org.junit.Test
 import org.mockito.BDDMockito.given
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
-import za.co.woolworths.financial.services.android.enhancedSubstitution.apihelper.SubstitutionApiHelper
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.network.SubstitutionApiHelper
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.repository.SubstitutionPagingSource
 import za.co.woolworths.financial.services.android.models.dto.PagingResponse
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.dto.ProductView
@@ -37,12 +38,10 @@ class SubstitutionPagingSourceTest {
                 ProductsRequestParams.ResponseType.DETAIL,
                 0)
         substitutionPagingSource = SubstitutionPagingSource(apiHelper, requestParams, _pagingResponse)
-
-
     }
 
     @Test
-    fun testLoadFailWithError() = runTest {
+    fun getSearch_loadFailWithError() = runTest {
         val error = RuntimeException("404", Throwable())
         given(apiHelper.getSearchedProducts(requestParams)).willThrow(error)
         val expectedResult = PagingSource.LoadResult.Error<Int, ProductList>(error)
@@ -53,7 +52,7 @@ class SubstitutionPagingSourceTest {
     }
 
     @Test
-    fun testLoadFailWithNullResponse() = runTest {
+    fun getSearch_loadFailWithNullResponse() = runTest {
         given(apiHelper.getSearchedProducts(requestParams)).willReturn(null)
         val expectedResult = PagingSource.LoadResult.Error<Int, ProductList>(NullPointerException())
         assertEquals(
@@ -68,7 +67,7 @@ class SubstitutionPagingSourceTest {
     }
 
     @Test
-    fun testGetSearchResponse() = runTest {
+    fun getSearch_loadWithCorrectResponse() = runTest {
         val productView = ProductView()
         val productCollection = ArrayList<ProductList>()
         productCollection.add(ProductList(

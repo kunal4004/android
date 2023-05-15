@@ -6,10 +6,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
 import kotlinx.coroutines.launch
-import za.co.woolworths.financial.services.android.enhancedSubstitution.model.AddSubstitutionRequest
-import za.co.woolworths.financial.services.android.enhancedSubstitution.model.AddSubstitutionResponse
-import za.co.woolworths.financial.services.android.enhancedSubstitution.model.ProductSubstitution
-import za.co.woolworths.financial.services.android.enhancedSubstitution.repository.ProductSubstitutionRepository
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.AddSubstitutionRequest
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.AddSubstitutionResponse
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.ProductSubstitution
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.repository.ProductSubstitutionRepository
 import za.co.woolworths.financial.services.android.models.dto.PagingResponse
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse
@@ -17,7 +17,8 @@ import za.co.woolworths.financial.services.android.models.network.Event
 import za.co.woolworths.financial.services.android.models.network.Resource
 
 class ProductSubstitutionViewModel(
-        private val repository: ProductSubstitutionRepository) : ViewModel() {
+        private val repository: ProductSubstitutionRepository
+) : ViewModel() {
 
     private val _productSubstitution = MutableLiveData<Event<Resource<ProductSubstitution>>>()
     val productSubstitution: LiveData<Event<Resource<ProductSubstitution>>>

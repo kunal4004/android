@@ -48,21 +48,22 @@ import com.perfectcorp.perfectlib.MakeupCam
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import retrofit2.HttpException
+
 import za.co.woolworths.financial.services.android.chanel.utils.ChanelUtils
 import za.co.woolworths.financial.services.android.common.SingleMessageCommonToast
 import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.ILocationProvider
-import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhancedSubstitutionBottomSheetDialog
-import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhancedSubstitutionListener
-import za.co.woolworths.financial.services.android.enhancedSubstitution.apihelper.SubstitutionApiHelper
-import za.co.woolworths.financial.services.android.enhancedSubstitution.model.ProductSubstitution
-import za.co.woolworths.financial.services.android.enhancedSubstitution.repository.ProductSubstitutionRepository
+import za.co.woolworths.financial.services.android.enhancedSubstitution.utils.listener.EnhancedSubstitutionBottomSheetDialog
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.ProductSubstitution
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.repository.ProductSubstitutionRepository
 import za.co.woolworths.financial.services.android.enhancedSubstitution.viewmodel.ProductSubstitutionViewModel
 import za.co.woolworths.financial.services.android.enhancedSubstitution.viewmodel.ProductSubstitutionViewModelFactory
-import za.co.woolworths.financial.services.android.enhancedSubstitution.managesubstitution.ManageSubstitutionFragment
-import za.co.woolworths.financial.services.android.enhancedSubstitution.managesubstitution.SearchSubstitutionFragment
-import za.co.woolworths.financial.services.android.enhancedSubstitution.model.SubstitutionInfo
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.SubstitutionInfo
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.network.SubstitutionApiHelper
+import za.co.woolworths.financial.services.android.enhancedSubstitution.utils.listener.EnhancedSubstitutionListener
+import za.co.woolworths.financial.services.android.enhancedSubstitution.view.ManageSubstitutionFragment
+import za.co.woolworths.financial.services.android.enhancedSubstitution.view.SearchSubstitutionFragment
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
@@ -129,7 +130,6 @@ import za.co.woolworths.financial.services.android.ui.vto.ui.gallery.ImageResult
 import za.co.woolworths.financial.services.android.ui.vto.utils.PermissionUtil
 import za.co.woolworths.financial.services.android.ui.vto.utils.SdkUtility
 import za.co.woolworths.financial.services.android.ui.vto.utils.VirtualTryOnUtil
-import za.co.woolworths.financial.services.android.ui.wfs.common.getIpAddress
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_1000_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_1500_MS
@@ -254,7 +254,7 @@ class ProductDetailsFragment :
     private var commarceItemId: String? = ""
     private var substitutionProductItem: ProductList? = null
     private var isSubstiuteItemAdded = false
-    private var substitutionInfo:SubstitutionInfo? = null
+    private var substitutionInfo: SubstitutionInfo? = null
 
     private val recommendationViewModel: RecommendationViewModel by viewModels()
 
@@ -4255,7 +4255,6 @@ class ProductDetailsFragment :
     }
 
     override fun openManageSubstituion() {
-       /*navigate to manage substitution screen*/
         (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(openManageSubstitutionFragment(selectionChoice))
     }
 
