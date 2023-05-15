@@ -513,6 +513,7 @@ open class FirebaseManagerAnalyticsProperties {
 
             const val ITEM_ID = "item_id"
             const val ITEM_NAME = "item_name"
+            const val ITEM_RATING = "item_rating"
             const val COUPON = "coupon"
             const val DISCOUNT = "DISCOUNT"
             const val INDEX = "index"
