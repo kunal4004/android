@@ -507,7 +507,6 @@ open class FirebaseManagerAnalyticsProperties {
             const val CURRENCY = "currency"
             const val ITEM_LIST_NAME = "item_list_name"
             const val SHOPPING_LIST_NAME = "Shopping_list_name"
-            const val ITEM_RATING = "Item Rating"
             const val ITEM_BRAND = "item_brand"
             const val ORDER_TOTAL_VALUE = "order_total"
 
