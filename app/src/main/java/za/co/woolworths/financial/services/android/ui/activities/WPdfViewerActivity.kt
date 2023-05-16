@@ -128,7 +128,7 @@ class WPdfViewerActivity : AppCompatActivity(), PermissionResultCallback {
 
     private fun checkPermissionBeforeSharing() {
         // Permission check is not required for WRITE_EXTERNAL_STORAGE on Android 11+
-        if (Build.VERSION.SDK_INT < 30) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
             permissionUtils?.checkPermission(
                 permissions,
                 1
