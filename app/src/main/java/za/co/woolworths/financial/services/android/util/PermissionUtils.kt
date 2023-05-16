@@ -34,7 +34,7 @@ class PermissionUtils(var context: Context, permissionResultCallback: Permission
     ) {
         permissionList = permissions
         this.requestCode = requestCode
-        if (Build.VERSION.SDK_INT >= 23 && checkAndRequestPermissions(permissions, requestCode)) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkAndRequestPermissions(permissions, requestCode)) {
             permissionResultCallback.permissionGranted(requestCode)
         } else {
             permissionResultCallback.permissionGranted(requestCode)
