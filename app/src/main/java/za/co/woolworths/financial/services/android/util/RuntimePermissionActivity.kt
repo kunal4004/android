@@ -11,7 +11,7 @@ abstract class RuntimePermissionActivity : AppCompatActivity(), PermissionResult
 
     fun setUpRuntimePermission(permissions: ArrayList<String>) {
         permissionUtils = PermissionUtils(this, this)
-        permissionUtils?.checkPermission(permissions, "Explain here why the app needs permissions", 1)
+        permissionUtils?.checkPermission(permissions, 1)
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {

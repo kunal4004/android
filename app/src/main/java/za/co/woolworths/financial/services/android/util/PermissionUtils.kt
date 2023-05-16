@@ -16,7 +16,6 @@ class PermissionUtils(var context: Context, permissionResultCallback: Permission
     var permissionResultCallback: PermissionResultCallback
     private var permissionList = ArrayList<String>()
     var listPermissionsNeeded = ArrayList<String>()
-    private var dialogContent = ""
     private var requestCode = 0
 
     init {
@@ -27,16 +26,13 @@ class PermissionUtils(var context: Context, permissionResultCallback: Permission
      * Check the API Level & Permission
      *
      * @param permissions
-     * @param dialogContent
      * @param requestCode
      */
     fun checkPermission(
         permissions: ArrayList<String>,
-        dialogContent: String,
         requestCode: Int
     ) {
         permissionList = permissions
-        this.dialogContent = dialogContent
         this.requestCode = requestCode
         if (Build.VERSION.SDK_INT >= 23 && checkAndRequestPermissions(permissions, requestCode)) {
             permissionResultCallback.permissionGranted(requestCode)

@@ -131,7 +131,6 @@ class WPdfViewerActivity : AppCompatActivity(), PermissionResultCallback {
         if (Build.VERSION.SDK_INT < 30) {
             permissionUtils?.checkPermission(
                 permissions,
-                "Explain here why the app needs permissions",
                 1
             )
         } else {

@@ -669,7 +669,6 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         }
         permissionUtils?.checkPermission(
             permissions,
-            "Explain here why the app needs permissions",
             1
         )
     }

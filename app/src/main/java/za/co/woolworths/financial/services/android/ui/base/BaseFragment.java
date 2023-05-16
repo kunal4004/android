@@ -360,7 +360,7 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 
 
 	public void checkLocationPermission(BottomNavigator bottomNavigator, ArrayList<String> permissionType, int request_code) {
-		bottomNavigator.getRuntimePermission().checkPermission(permissionType, "Explain here why the app needs permissions", request_code);
+		bottomNavigator.getRuntimePermission().checkPermission(permissionType, request_code);
 	}
 
 	public void slideDownOnToolbarNavigationOnClickListener() {
