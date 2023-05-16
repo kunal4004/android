@@ -8,7 +8,11 @@ import androidx.core.app.ShareCompat
 import androidx.core.content.FileProvider
 import com.awfs.coordination.BuildConfig
 import com.awfs.coordination.databinding.ActivityOrederTaxInvoiceBinding
-import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.KotlinUtils
+import za.co.woolworths.financial.services.android.util.OneAppEvents
+import za.co.woolworths.financial.services.android.util.PermissionResultCallback
+import za.co.woolworths.financial.services.android.util.PermissionUtils
+import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import java.io.File
 import java.io.FileOutputStream
@@ -122,14 +126,14 @@ class WPdfViewerActivity : AppCompatActivity(), PermissionResultCallback {
     }
 
     private fun checkPermissionBeforeSharing() {
-        permissionUtils?.check_permission(
+        permissionUtils?.checkPermission(
             permissions,
             "Explain here why the app needs permissions",
             1
         )
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         permissionUtils?.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
