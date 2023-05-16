@@ -71,12 +71,12 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/twenty_four_dp"
             android:textSize="@dimen/fifteen_sp"
-            android:fontFamily="@font/myriad_pro_regular"
+            android:fontFamily="@font/opensans_regular"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/reviewProductImagesViewPager" />
 
         <TextView
-            android:fontFamily="@font/myriad_pro_semi_bold"
+            android:fontFamily="@font/opensans_semi_bold"
             android:id="@+id/tv_skin_label"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -94,7 +94,7 @@
             android:id="@+id/skin_detail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/myriad_pro_regular"
+            android:fontFamily="@font/opensans_regular"
             android:paddingBottom="@dimen/sixteen_dp"
             android:textSize="@dimen/fifteen_sp"
             android:textColor="@color/account_amount_color"
@@ -166,7 +166,7 @@
                 android:layout_marginEnd="@dimen/twenty_four_dp"
                 android:layout_marginBottom="@dimen/twelve_dp"
                 android:drawablePadding="@dimen/eight_dp"
-                android:fontFamily="@font/myriad_pro_semi_bold"
+                android:fontFamily="@font/opensans_semi_bold"
                 android:text="@string/verified_buyer_label"
                 android:textColor="@color/color_49BB77"
                 android:textSize="@dimen/fifteen_sp"
