@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.activities
 
 import android.Manifest
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ShareCompat
@@ -126,11 +127,16 @@ class WPdfViewerActivity : AppCompatActivity(), PermissionResultCallback {
     }
 
     private fun checkPermissionBeforeSharing() {
-        permissionUtils?.checkPermission(
-            permissions,
-            "Explain here why the app needs permissions",
-            1
-        )
+        // Permission check is not required for WRITE_EXTERNAL_STORAGE on Android 11+
+        if (Build.VERSION.SDK_INT < 30) {
+            permissionUtils?.checkPermission(
+                permissions,
+                "Explain here why the app needs permissions",
+                1
+            )
+        } else {
+            shareInvoice()
+        }
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
@@ -138,7 +144,7 @@ class WPdfViewerActivity : AppCompatActivity(), PermissionResultCallback {
         permissionUtils?.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
-    override fun permissionGranted(request_code: Int) {
+    override fun permissionGranted(requestCode: Int) {
         shareInvoice()
     }
 }

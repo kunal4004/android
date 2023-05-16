@@ -19,15 +19,15 @@ abstract class RuntimePermissionActivity : AppCompatActivity(), PermissionResult
         permissionUtils?.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
-    override fun permissionGranted(request_code: Int) {
+    override fun permissionGranted(requestCode: Int) {
         onRuntimePermissionRequestGranted()
     }
 
-    override fun permissionDenied(request_code: Int) {
+    override fun permissionDenied(requestCode: Int) {
         onRuntimePermissonRequestDenied()
     }
 
-    override fun neverAskAgain(request_code: Int) {
+    override fun neverAskAgain(requestCode: Int) {
         onRuntimePermissonRequestDenied()
     }
 

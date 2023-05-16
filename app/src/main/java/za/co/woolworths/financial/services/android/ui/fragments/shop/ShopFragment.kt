@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shop
 
 import android.app.Activity.RESULT_OK
-import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Typeface
@@ -784,7 +783,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         }
     }
 
-    override fun permissionGranted(request_code: Int) {
+    override fun permissionGranted(requestCode: Int) {
         navigateToBarcode()
     }
 

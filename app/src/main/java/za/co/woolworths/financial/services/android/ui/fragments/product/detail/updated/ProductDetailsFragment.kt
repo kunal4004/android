@@ -2424,7 +2424,7 @@ class ProductDetailsFragment :
         return false
     }
 
-    override fun permissionGranted(request_code: Int) {
+    override fun permissionGranted(requestCode: Int) {
         findItemInStore()
     }
 

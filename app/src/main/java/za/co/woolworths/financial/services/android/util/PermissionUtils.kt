@@ -38,10 +38,8 @@ class PermissionUtils(var context: Context, permissionResultCallback: Permission
         permissionList = permissions
         this.dialogContent = dialogContent
         this.requestCode = requestCode
-        if (Build.VERSION.SDK_INT >= 23) {
-            if (checkAndRequestPermissions(permissions, requestCode)) {
-                permissionResultCallback.permissionGranted(requestCode)
-            }
+        if (Build.VERSION.SDK_INT >= 23 && checkAndRequestPermissions(permissions, requestCode)) {
+            permissionResultCallback.permissionGranted(requestCode)
         } else {
             permissionResultCallback.permissionGranted(requestCode)
         }
