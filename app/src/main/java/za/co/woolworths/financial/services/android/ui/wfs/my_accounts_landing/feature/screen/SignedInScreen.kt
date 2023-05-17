@@ -4,13 +4,12 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.runtime.*
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.FastOutLinearInEasing
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -66,7 +65,6 @@ fun SignedInScreen(
     val userAccountsByProductOfferingId by viewModel.getUserAccountsByProductOfferingId.collectAsStateWithLifecycle()
     val petInsuranceState by viewModel.fetchPetInsuranceState.collectAsStateWithLifecycle()
     val scheduleDeliveryNetworkState by viewModel.scheduleDeliveryNetworkState.collectAsStateWithLifecycle()
-
     val isAccountLoading = userAccounts.isLoading
 
     with(viewModel) {
@@ -102,12 +100,19 @@ fun UserAccountLandingViewModel.BiometricsCollector(onClick: (OnAccountItemClick
 }
 
 @Composable
-fun UserAccountLandingViewModel.PetInsuranceCollector(petInsuranceState: NetworkStatusUI<PetInsuranceModel>,
+fun UserAccountLandingViewModel.PetInsuranceCollector(
+                                                      petInsuranceState: NetworkStatusUI<PetInsuranceModel>,
                                                       onClick: (OnAccountItemClickListener) -> Unit) {
     if (!petInsuranceState.isLoading) {
-        petInsuranceState.data?.let { petModel -> this.handlePetInsuranceResult(petModel){ insuranceProduct ->
-            onClick(AccountLandingInstantLauncher.PetInsuranceNotCoveredAwarenessModel(insuranceProduct))
-        } }
+        petInsuranceState.data?.let { petModel ->
+            this.handlePetInsuranceResult(petModel) { insuranceProduct ->
+                onClick(
+                    AccountLandingInstantLauncher.PetInsuranceNotCoveredAwarenessModel(
+                        insuranceProduct
+                    )
+                )
+            }
+        }
     }
 }
 
@@ -169,9 +174,7 @@ private fun UserAccountLandingViewModel.SignInContainer(
                     })
                 {
                     LazyColumn(
-                        modifier = Modifier.fillMaxSize(),
-                        state = rememberLazyListState()
-                    ) {
+                        modifier = Modifier.fillMaxSize()) {
 
                         myProductsSection(
                             isLoading = isAccountLoading,
@@ -393,6 +396,7 @@ private fun LazyListScope.myProductsSection(
                 )
             }
 
+
             is AccountProductCardsGroup.PetInsurance -> item {
 
                 if (loadingOptions.isAccountLoading) {
@@ -401,18 +405,18 @@ private fun LazyListScope.myProductsSection(
                         key = productItems.properties.automationLocatorKey
                     )
                 }
+
                 AnimatedVisibility(
                     visible = !loadingOptions.isAccountLoading,
-                    enter = slideInHorizontally(animationSpec = tween(durationMillis = animationDurationMilis400)),
-                    exit =  fadeOut()
-                ) {
-                    PetInsuranceView(
-                        productGroup = productItems,
-                        petInsuranceDefaultConfig = viewModel.getPetInsuranceMobileConfig()?.defaultCopyPetPending,
-                        onProductClick = onProductClick
-
-                    )
+                    enter = slideInHorizontally(animationSpec = tween(durationMillis = animationDurationMilis400,  easing = LinearEasing))) {
+                        PetInsuranceView(
+                            productGroup = productItems,
+                            petInsuranceDefaultConfig = viewModel.getPetInsuranceMobileConfig()?.defaultCopyPetPending,
+                            onProductClick = onProductClick)
                 }
+
+
+
             }
 
             else -> item {
