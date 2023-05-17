@@ -530,11 +530,7 @@ class ConfirmAddressMapFragment :
                     placeId = item?.placeId.toString()
                     placeName = item?.primaryText.toString()
                     binding?.autoCompleteTextView?.setText(placeName)
-                    if(!Utils.isLocationEnabled(requireContext())) {
-                        binding.autoCompleteTextView?.clearFocus()
-                        hideKeyboard(requireActivity())
-                        return@OnItemClickListener
-                    }
+                    enableMapView()
                     binding?.tvLocationNikName?.text = placeName
                     isAddressFromSearch = true
                     isMainPlaceName = true
@@ -908,26 +904,30 @@ class ConfirmAddressMapFragment :
                 }
                 return@apply
             } else {
-                binding.noLocationLayout?.noLocationRootLayout?.visibility = View.GONE
+                enableMapView()
+            }
+        }
+    }
 
-                binding.dynamicMapView?.onResume()
-                if (binding.dynamicMapView?.isMapInstantiated() == true) {
-                    isMoveMapCameraFirstTime = false
-                }
-                moveMapCamera(mLatitude?.toDoubleOrNull(), mLongitude?.toDoubleOrNull())
-                binding.apply {
-                    dynamicMapView?.visibility = View.VISIBLE
-                    mapFrameLayout?.visibility = View.VISIBLE
-                    confirmAddressLayout?.visibility = View.VISIBLE
-                    navigationMapArrow?.visibility = View.VISIBLE
-                    autoCompleteTextView?.isEnabled = true
-                    dynamicMapView?.setAllGesturesEnabled(true)
-                    if (isAddAddress != null && isAddressSearch == false) {
-                        confirmAddress?.isEnabled = false
-                        imgMapMarker?.visibility = View.GONE
-                        tvMarkerHint?.visibility = View.GONE
-                    }
-                }
+    private fun enableMapView() {
+        binding.noLocationLayout?.noLocationRootLayout?.visibility = View.GONE
+
+        binding.dynamicMapView?.onResume()
+        if (binding.dynamicMapView?.isMapInstantiated() == true) {
+            isMoveMapCameraFirstTime = false
+        }
+        moveMapCamera(mLatitude?.toDoubleOrNull(), mLongitude?.toDoubleOrNull())
+        binding.apply {
+            dynamicMapView?.visibility = View.VISIBLE
+            mapFrameLayout?.visibility = View.VISIBLE
+            confirmAddressLayout?.visibility = View.VISIBLE
+            navigationMapArrow?.visibility = View.VISIBLE
+            autoCompleteTextView?.isEnabled = true
+            dynamicMapView?.setAllGesturesEnabled(true)
+            if (isAddAddress != null && isAddressSearch == false) {
+                confirmAddress?.isEnabled = false
+                imgMapMarker?.visibility = View.GONE
+                tvMarkerHint?.visibility = View.GONE
             }
         }
     }
