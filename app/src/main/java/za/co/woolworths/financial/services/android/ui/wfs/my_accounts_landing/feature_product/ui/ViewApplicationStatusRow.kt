@@ -20,7 +20,7 @@ import za.co.woolworths.financial.services.android.ui.wfs.component.TextOpenSans
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.analytics.AutomationTestScreenLocator
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.extensions.bounceClick
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.extensions.testAutomationTag
-import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.enumtype.UserAccountLandingProductGroup
+import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.enumtype.AccountProductCardsGroup
 import za.co.woolworths.financial.services.android.ui.wfs.theme.Dimens
 import za.co.woolworths.financial.services.android.ui.wfs.theme.FontDimensions
 import za.co.woolworths.financial.services.android.ui.wfs.theme.FunctionalGreys
@@ -30,8 +30,8 @@ import za.co.woolworths.financial.services.android.ui.wfs.theme.White
 
 
 @Composable
-fun ProductViewApplicationStatusView(applicationStatus: UserAccountLandingProductGroup.ApplicationStatus,
- onClick: (UserAccountLandingProductGroup) -> Unit) {
+fun ProductViewApplicationStatusView(applicationStatus: AccountProductCardsGroup.ApplicationStatus,
+                                     onClick: (AccountProductCardsGroup) -> Unit) {
     val shimmerOptions = applicationStatus.shimmerOptions
     shimmerOptions?.brush ?: return
 
