@@ -2967,6 +2967,7 @@
     <string name="error_message_400">We are unable to process your request, Please \ncontact our call centre on \n0861 50 20 10</string>
     <string name="label_collection">\u0020Collection.</string>
     <string name="label_dash">\u0020Dash.</string>
+    <string name="shop_by_category">Shop By Category</string>
     <!--Geo location Enhancements -->
     <string name="geo_loc_error_msg_title">We can’t seem to find you here.</string>
     <string name="street_address_lbl">Street Address:*</string>
@@ -2983,6 +2984,5 @@
     <string name="use_location">USE LOCATION</string>
     <string name="sign_in_to_see_saved_addresses"><u>SIGN IN</u> TO SEE SAVED ADDRESSES</string>
     <string name="enable_location_services">Enable Location Services</string>
-
-
 </resources>
+

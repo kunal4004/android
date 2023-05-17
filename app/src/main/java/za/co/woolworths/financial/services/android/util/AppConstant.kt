@@ -157,7 +157,6 @@ class AppConstant {
              *****************************************************************************************/
             const val ARG_NOTIFICATION_PARAMETERS: String = "parameters"
             const val ARG_ORDER: String = "order"
-            const val ARG_VALIDATE_PLACE = "validatePlace"
             const val ARG_SEND_DELIVERY_DETAILS = "sendDeliveryDetails"
             const val ARG_FROM_NOTIFICATION = "fromNotification"
 

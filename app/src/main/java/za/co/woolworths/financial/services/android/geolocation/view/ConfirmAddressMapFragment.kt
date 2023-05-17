@@ -470,7 +470,7 @@ class ConfirmAddressMapFragment :
                             )
 
                             KotlinUtils.placeId = placeId
-                            KotlinUtils.isLocationSame =
+                            KotlinUtils.isLocationPlaceIdSame =
                                 placeId?.equals(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId)
 
                             WoolworthsApplication.setValidatedSuburbProducts(

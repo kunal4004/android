@@ -662,7 +662,7 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
                             )
 
                             KotlinUtils.placeId = placeId
-                            KotlinUtils.isLocationSame =
+                            KotlinUtils.isLocationPlaceIdSame =
                                 placeId?.equals(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId)
 
                             WoolworthsApplication.setValidatedSuburbProducts(
