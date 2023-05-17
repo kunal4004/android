@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -47,7 +48,7 @@ fun ApplicationInfoView(
                 modifier = Modifier
                     .fillMaxWidth(),
                 color = Gray)
-            SpacerHeight6dp()
+            SpacerHeight6dp(bgColor = Color.Transparent)
             TextOpenSansFontFamily(text = stringResource(id = applicationInfo.fspNumberInfo),
                 textAlign = TextAlign.Center,
                 fontSize = FontDimensions.sp11,
