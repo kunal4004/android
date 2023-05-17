@@ -2,8 +2,6 @@ package za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.f
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.runtime.*
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
@@ -398,25 +396,25 @@ private fun LazyListScope.myProductsSection(
 
 
             is AccountProductCardsGroup.PetInsurance -> item {
-
                 if (loadingOptions.isAccountLoading) {
                     ProductShimmerView(
                         brush = shimmerOptions.brush,
                         key = productItems.properties.automationLocatorKey
                     )
                 }
-
-                AnimatedVisibility(
-                    visible = !loadingOptions.isAccountLoading,
-                    enter = slideInHorizontally(animationSpec = tween(durationMillis = animationDurationMilis400,  easing = LinearEasing))) {
+                    AnimatedVisibility(
+                        visible = !loadingOptions.isAccountLoading,
+                        enter = slideInHorizontally(
+                            animationSpec =
+                            tween(durationMillis = animationDurationMilis400, easing = LinearEasing)
+                        )
+                    ) {
                         PetInsuranceView(
                             productGroup = productItems,
                             petInsuranceDefaultConfig = viewModel.getPetInsuranceMobileConfig()?.defaultCopyPetPending,
-                            onProductClick = onProductClick)
+                            onProductClick = onProductClick
+                        )
                 }
-
-
-
             }
 
             else -> item {
@@ -486,9 +484,6 @@ fun UserAccountLandingViewModel.UiElements(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .animateContentSize(
-                tween(300, easing = FastOutLinearInEasing)
-            )
     ) {
         when (content) {
             CommonItem.Divider -> DividerThicknessOne()

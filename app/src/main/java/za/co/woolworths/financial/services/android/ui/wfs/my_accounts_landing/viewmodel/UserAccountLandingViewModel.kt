@@ -144,14 +144,12 @@ class UserAccountLandingViewModel @Inject constructor(
     }
 
     fun setUserAuthenticated(resultCode: Int?) {
-        viewModelScope.launch {
             if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
                 showShimmer(isC2User())
                 queryAccountLandingService(true)
                 isUserAuthenticated.value = Authenticated
                 isBiometricPopupEnabled = isBiometricScreenNeeded()
             }
-        }
     }
 
     private fun showShimmer(isVisible: Boolean) {
@@ -192,6 +190,7 @@ class UserAccountLandingViewModel @Inject constructor(
     private fun queryUserAccountService(isRefreshing: Boolean? = false) {
         if (!isC2User()) {
             _mapOfFinalProductItems.clear()
+            userAccountResponse = null
             constructMapOfMyOffers()
             showShimmer(false)
             return
@@ -336,7 +335,7 @@ class UserAccountLandingViewModel @Inject constructor(
     }
 
     fun isC2UserOrMyProductItemExist(): Boolean {
-        return isC2User() || _mapOfFinalProductItems.isNotEmpty()
+        return isC2User() || userAccountResponse?.products?.isNotEmpty() == true
     }
 
     fun listOfSignInItem() = listOfSignInItems(appVersion = getAppVersion())
