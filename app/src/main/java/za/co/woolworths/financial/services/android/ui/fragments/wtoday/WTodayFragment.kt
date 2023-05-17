@@ -186,6 +186,13 @@ class WTodayFragment : WTodayExtension(), IWTodayInterface {
         binding.flProgressContainer?.visibility = if (isDisplayed) VISIBLE else GONE
     }
 
+
+    /**
+    Important: in future if any change required
+    like currently WToday tab is default tab
+    if default tab change then this notification Permission
+     should be there.
+     */
     private fun askNotificationPermission() {
         // This is only necessary for API level >= 33 (TIRAMISU)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
