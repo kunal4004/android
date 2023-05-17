@@ -20,10 +20,10 @@ import org.mockito.MockitoAnnotations
 import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhanceSubstitutionHelperTest
 import za.co.woolworths.financial.services.android.enhancedSubstitution.apihelper.SubstitutionApiHelperTest
 import za.co.woolworths.financial.services.android.enhancedSubstitution.getOrAwaitValue
-import za.co.woolworths.financial.services.android.enhancedSubstitution.model.AddSubstitutionRequest
-import za.co.woolworths.financial.services.android.enhancedSubstitution.model.AddSubstitutionResponse
-import za.co.woolworths.financial.services.android.enhancedSubstitution.model.ProductSubstitution
-import za.co.woolworths.financial.services.android.enhancedSubstitution.repository.ProductSubstitutionRepository
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.AddSubstitutionRequest
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.AddSubstitutionResponse
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.ProductSubstitution
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.repository.ProductSubstitutionRepository
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse
 import za.co.woolworths.financial.services.android.models.network.Resource
 
@@ -54,7 +54,7 @@ class ProductSubstitutionViewModelTest {
     }
 
     @Test
-    fun test_emptyList_getSubstitutions() = runTest {
+    fun getSubstitutions_withEmptyList() = runTest {
         `when`(
             productSubstitutionRepository
                 .getProductSubstitution("6009195203504")
@@ -68,7 +68,7 @@ class ProductSubstitutionViewModelTest {
     }
 
     @Test
-    fun test_error_getSubstitutions() = runTest {
+    fun getSubstitutions_withError() = runTest {
         `when`(
             productSubstitutionRepository
                 .getProductSubstitution("6009195203504")
@@ -82,7 +82,7 @@ class ProductSubstitutionViewModelTest {
     }
 
     @Test
-    fun test_EmptyResponse_getInventory() = runTest {
+    fun getInventory_withEmptyResponse() = runTest {
         `when`(
             productSubstitutionRepository
                 .getInventoryForSubstitution("473", "6001009025692")
@@ -97,7 +97,7 @@ class ProductSubstitutionViewModelTest {
     }
 
     @Test
-    fun test_error_getInventory() = runTest {
+    fun getInventory_withError() = runTest {
         `when`(
             productSubstitutionRepository
                 .getInventoryForSubstitution("473", "6001009025692")
@@ -112,7 +112,7 @@ class ProductSubstitutionViewModelTest {
 
 
     @Test
-    fun test_EmptyResponse_addSubstitution() = runTest {
+    fun addSubstitution_withEmptyResponse() = runTest {
         val addSubstitutionRequest = AddSubstitutionRequest(
             SubstitutionApiHelperTest.USER_CHOICE,
             EnhanceSubstitutionHelperTest.SUBSTITUTION_ID,
@@ -133,7 +133,7 @@ class ProductSubstitutionViewModelTest {
     }
 
     @Test
-    fun test_error_addSubstitution() = runTest {
+    fun addSubstitution_withError() = runTest {
         val addSubstitutionRequest = AddSubstitutionRequest(
             SubstitutionApiHelperTest.USER_CHOICE,
             EnhanceSubstitutionHelperTest.SUBSTITUTION_ID,

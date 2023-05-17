@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.enhancedSubstitution
+package za.co.woolworths.financial.services.android.enhancedSubstitution.utils.listener
 
 import android.content.Context
 import androidx.core.widget.TextViewCompat

@@ -21,7 +21,7 @@ import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhanceS
 import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhanceSubstitutionHelperTest.Companion.DELIVERY_TYPE
 import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhanceSubstitutionHelperTest.Companion.SUBSTITUTION_ID
 
-import za.co.woolworths.financial.services.android.enhancedSubstitution.model.AddSubstitutionRequest
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.AddSubstitutionRequest
 import za.co.woolworths.financial.services.android.models.network.ApiInterface
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -33,7 +33,6 @@ class SubstitutionApiHelperTest {
 
     @Before
     fun setUp() {
-
         mockWebServer = MockWebServer()
         apiHelper = Retrofit.Builder()
             .baseUrl(mockWebServer.url("/"))
@@ -43,7 +42,7 @@ class SubstitutionApiHelperTest {
     }
 
     @Test
-    fun test_withNullOrEmptyResponse_getSubstitutions() = runTest {
+    fun getSubstitutionsRequest_returnNullOrEmptyResponse_() = runTest {
         val mockResponse = MockResponse()
         mockResponse.setBody("{}")
         mockWebServer.enqueue(mockResponse)
@@ -53,7 +52,7 @@ class SubstitutionApiHelperTest {
     }
 
     @Test
-    fun test_SubstitutionResponse_getSubstitutions() = runTest {
+    fun getSubstitutionsRequest_returnCorrectSubstitutionResponse() = runTest {
         val mockResponse = MockResponse()
         mockResponse.setResponseCode(200)
         mockResponse.setBody(RESPONSE)
@@ -65,7 +64,7 @@ class SubstitutionApiHelperTest {
     }
 
     @Test
-    fun test_wrongResponse_getSubstitutions() = runTest {
+    fun getSubstitutionsRequest_returnWrongResponse()= runTest {
         val mockResponse = MockResponse()
         mockResponse.setResponseCode(200)
         mockResponse.setBody(WRONG_RESPONSE)
@@ -77,7 +76,7 @@ class SubstitutionApiHelperTest {
 
 
     @Test
-    fun test_InventoryResponse_getInventory() = runTest {
+    fun getInventorRequest_returnCorrectInventoryResponse() = runTest {
         val mockResponse = MockResponse()
         mockResponse.setResponseCode(200)
         mockResponse.setBody(INVENTORY_RESPONSE)
@@ -90,7 +89,7 @@ class SubstitutionApiHelperTest {
     }
 
     @Test
-    fun test_withNullOrEmptyResponse_getInventory() = runTest {
+    fun getInventoryRequest_returnNullOrEmptyResponse() = runTest {
         val mockResponse = MockResponse()
         mockResponse.setBody("{}")
         mockWebServer.enqueue(mockResponse)
@@ -102,7 +101,7 @@ class SubstitutionApiHelperTest {
     }
 
     @Test
-    fun test_wrongResponse_getInventory() = runTest {
+    fun getInventoryRequest_returnWrongResponse() = runTest {
         val mockResponse = MockResponse()
         mockResponse.setResponseCode(200)
         mockResponse.setBody(WRONG_INVENTORY_RESPONSE)
@@ -114,7 +113,7 @@ class SubstitutionApiHelperTest {
     }
 
     @Test
-    fun test_withNullOrEmptyResponse_addSubstitution() = runTest {
+    fun addSubstitutionRequest_returnEmptyResponse() = runTest {
         val mockResponse = MockResponse()
         mockResponse.setBody("{}")
         mockWebServer.enqueue(mockResponse)
@@ -128,7 +127,7 @@ class SubstitutionApiHelperTest {
     }
 
     @Test
-    fun test_wrongResponse_addSubstitution() = runTest {
+    fun addSubstitutionRequest_returnWrongResponse() = runTest {
         val mockResponse = MockResponse()
         mockResponse.setResponseCode(200)
         mockResponse.setBody(WRONG_ADD_SUBSTITUTION_RESPONSE)
@@ -141,13 +140,9 @@ class SubstitutionApiHelperTest {
         Assert.assertEquals(0, response.body()?.data?.size)
     }
 
-    @Test
-    fun test_AddSubstitution_addSubstitution() {
-        /* todo */
-    }
 
     @Test
-    fun test_withNullOrEmptyResponse_getSearchApi() = runTest {
+    fun getSearchApiRequest_returnNullOrEmptyResponse() = runTest {
         val mockResponse = MockResponse()
         mockResponse.setBody("{}")
         mockWebServer.enqueue(mockResponse)
@@ -177,10 +172,11 @@ class SubstitutionApiHelperTest {
     }
 
     @Test
-    fun test_wrongResponse_emptySearch_getSearchAndSortFilterApi() = runTest {
+    fun getSearchAndSortFilterApi_withWrongRequest_returnWrongResponse() = runTest {
+        /*search term is empty*/
         val mockResponse = MockResponse()
         mockResponse.setResponseCode(200)
-        mockResponse.setBody(WRONG_SEARCH_API)
+        mockResponse.setBody(WRONG_SEARCH_API_Response)
         mockWebServer.enqueue(mockResponse)
         val response = apiHelper.getSearchedProducts(
             userAgent = "",
@@ -207,7 +203,7 @@ class SubstitutionApiHelperTest {
     }
 
     @Test
-    fun test_ProductView_getSearchApi() = runTest {
+    fun getSearchApi_returnProductViewResponse() = runTest {
         val mockResponse = MockResponse()
         mockResponse.setResponseCode(200)
         mockResponse.setBody(SEARCH_RESPONSE)
@@ -311,7 +307,7 @@ class SubstitutionApiHelperTest {
                 "    \"httpCode\": 200\n" +
                 "}"
 
-        private const val WRONG_SEARCH_API = "{\n" +
+        private const val WRONG_SEARCH_API_Response = "{\n" +
                 "    \"isBanners\": false,\n" +
                 "    \"products\": [],\n" +
                 "    \"pagingResponse\": {\n" +
