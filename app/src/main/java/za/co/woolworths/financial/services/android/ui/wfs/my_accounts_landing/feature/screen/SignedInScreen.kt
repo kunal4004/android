@@ -173,13 +173,10 @@ private fun UserAccountLandingViewModel.SignInContainer(
                         state = rememberLazyListState()
                     ) {
 
-                        var dummyReComposer = mutableStateOf(false) // don't even need to remember, long as it compiles
-
                         myProductsSection(
                             isLoading = isAccountLoading,
                             brush = brush,
                             viewModel = this@SignInContainer,
-                            dummyReComposer = dummyReComposer,
                             onProductClick = onProductClick)
 
                         item {
@@ -376,7 +373,6 @@ private fun LazyListScope.myProductsSection(
     isLoading: Boolean,
     brush: Brush,
     viewModel: UserAccountLandingViewModel,
-    dummyReComposer : MutableState<Boolean>,
     onProductClick: (AccountProductCardsGroup) -> Unit
 ) {
     val shimmerOptions = ShimmerOptions(brush = brush)
@@ -416,7 +412,6 @@ private fun LazyListScope.myProductsSection(
                         onProductClick = onProductClick
 
                     )
-                    dummyReComposer.value = true
                 }
             }
 

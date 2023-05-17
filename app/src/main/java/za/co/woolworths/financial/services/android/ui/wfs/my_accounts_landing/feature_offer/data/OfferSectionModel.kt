@@ -6,7 +6,7 @@ import za.co.woolworths.financial.services.android.ui.wfs.core.NetworkStatusUI
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_offer.schema.OfferProductType
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.enumtype.AccountOfferKeys
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.enumtype.AccountProductKeys
-import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.enumtype.UserAccountLandingProductGroup
+import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.enumtype.AccountProductCardsGroup
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.schema.CommonItem
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_view_free_credit_report.ViewFreeCreditReportImpl
 import javax.inject.Inject
@@ -16,7 +16,7 @@ interface IOfferSectionModel {
     fun initialOfferList(): MutableMap<AccountOfferKeys, CommonItem.OfferItem?>
     fun getOfferProductByOfferKey(key: AccountOfferKeys): CommonItem.OfferItem
     fun constructMapOfMyOffers(
-        mapOfMyProducts: MutableMap<String, UserAccountLandingProductGroup?>,
+        mapOfMyProducts: MutableMap<String, AccountProductCardsGroup?>,
         petInsuranceState: MutableStateFlow<NetworkStatusUI<PetInsuranceModel>>
     ): MutableMap<AccountOfferKeys, CommonItem.OfferItem?>
 }
@@ -50,7 +50,7 @@ class OfferSectionModel @Inject constructor(
     }
 
     override fun constructMapOfMyOffers(
-        mapOfMyProducts: MutableMap<String, UserAccountLandingProductGroup?>,
+        mapOfMyProducts: MutableMap<String, AccountProductCardsGroup?>,
         petInsuranceState: MutableStateFlow<NetworkStatusUI<PetInsuranceModel>>
     ): MutableMap<AccountOfferKeys, CommonItem.OfferItem?> {
 

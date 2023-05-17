@@ -1,5 +1,9 @@
 package za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_offer.ui
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.items
@@ -21,6 +25,7 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import za.co.woolworths.financial.services.android.ui.wfs.component.*
+import za.co.woolworths.financial.services.android.ui.wfs.core.animationDurationMilis400
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.analytics.AutomationTestScreenLocator.Locator.box_shimmer_image
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.analytics.AutomationTestScreenLocator.Locator.my_offers_row
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.analytics.AutomationTestScreenLocator.Locator.sign_out_my_offers_background_image
@@ -78,11 +83,11 @@ fun OfferViewMainList(
     isLoading: Boolean = false,
     isBottomSpacerShown : Boolean = false,
     brush: Brush? = null,
-    onClick: (OfferClickEvent) -> Unit
-) {
-    val listOfOffers = items.values.toMutableList()
+    onClick: (OfferClickEvent) -> Unit) {
 
+    val listOfOffers = items.values.toMutableList()
     val listOfOfferSize = listOfOffers.size
+
     if (listOfOfferSize == 1) {
         val offer = listOfOffers[0]
         val locator = offer?.automationLocatorKey
@@ -92,7 +97,8 @@ fun OfferViewMainList(
                 OfferViewCard(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .testAutomationTag(createLocator(my_offers_row, locator)), item, onClick = onClick
+                        .testAutomationTag(createLocator(my_offers_row, locator)), item,
+                    onClick = onClick
                 ) {
                     OfferViewRow(item = item,  isLoading,
                     brush,listSize = listOfOfferSize)
@@ -105,19 +111,60 @@ fun OfferViewMainList(
     } else {
         LazyListRowSnap(modifier = Modifier.testAutomationTag(sign_out_my_offers_carousel)) {
             item { SpacerWidth24dp() }
-            items(items = listOfOffers, itemContent = { item ->
+            items(items = listOfOffers, itemContent = {item ->
                 item ?: return@items
                 val locator = item.automationLocatorKey
-                Row(modifier = Modifier.testAutomationTag(createLocator(default = my_offers_row, locator))) {
-                    OfferViewCard(modifier = Modifier.fillMaxWidth(), item, onClick = onClick) {
-                        OfferViewRow(item = item, isLoading = isLoading, brush = brush, listSize = listOfOfferSize)
-                    }
-                    SpacerWidth16dp()
+
+                if(!item.data.isAnimationEnabled) {
+                    OfferCards(locator, item, onClick, isLoading, brush, listOfOfferSize)
+                }
+
+                AnimatedVisibility(visible = item.data.isAnimationEnabled,
+                enter = slideInHorizontally (animationSpec = tween(durationMillis = animationDurationMilis400)),
+                exit = fadeOut()) {
+                    OfferCards(locator, item, onClick, isLoading, brush, listOfOfferSize)
                 }
             })
         }
     }
 }
+
+@Composable
+private fun OfferCards(
+    locator: String,
+    item: CommonItem.OfferItem,
+    onClick: (OfferClickEvent) -> Unit,
+    isLoading: Boolean,
+    brush: Brush?,
+    listOfOfferSize: Int
+) {
+    Row(
+        modifier = Modifier.testAutomationTag(
+            createLocator(
+                default = my_offers_row,
+                locator
+            )
+        )
+    ) {
+        OfferViewCard(
+            modifier =
+            Modifier
+                .fillMaxWidth()
+                .testAutomationTag(createLocator(my_offers_row, locator)),
+            item,
+            onClick = onClick
+        ) {
+            OfferViewRow(
+                item = item,
+                isLoading = isLoading,
+                brush = brush,
+                listSize = listOfOfferSize
+            )
+        }
+        SpacerWidth16dp()
+    }
+}
+
 @Composable
 fun OfferViewRow(
     item: CommonItem.OfferItem,
@@ -229,15 +276,15 @@ fun OfferViewCard(
     onClick: (OfferClickEvent) -> Unit,
     content: @Composable () -> Unit
 ) {
-    Card(
-        shape = MaterialTheme.shapes.small,
-        colors = CardDefaults.cardColors(containerColor = Color.Transparent),
-        modifier = modifier.then(
-            Modifier
-                .testAutomationTag(sign_out_my_offers_container_card)
-                .bounceClick { onClick(item.onClick) }
-        )) {
-        content()
-    }
+        Card(
+            shape = MaterialTheme.shapes.small,
+            colors = CardDefaults.cardColors(containerColor = Color.Transparent),
+            modifier = modifier.then(
+                Modifier
+                    .testAutomationTag(sign_out_my_offers_container_card)
+                    .bounceClick { onClick(item.onClick) }
+            )) {
+            content()
+        }
 }
 
