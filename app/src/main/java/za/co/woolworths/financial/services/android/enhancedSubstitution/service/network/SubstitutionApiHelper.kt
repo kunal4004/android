@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.enhancedSubstitution.service.network
 
 import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.AddSubstitutionRequest
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.GetKiboProductRequest
 import za.co.woolworths.financial.services.android.models.dto.ProductView
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
 import za.co.woolworths.financial.services.android.models.network.AppContextProviderImpl
@@ -89,5 +90,16 @@ class SubstitutionApiHelper : RetrofitConfig(AppContextProviderImpl(), RetrofitA
             addSubstitutionRequest
     )
 
+    suspend fun fetchKiboProducts(kiboProductRequest: GetKiboProductRequest) = mApiInterface.getKiboProductsFromResponse(
+        getSessionToken(),
+        getDeviceIdentityToken(),
+        kiboProductRequest
+    )
 
+    suspend fun getInventoryForSku(storeId: String, multipleSku: String) = mApiInterface.getInventorySKUForStore(
+        getSessionToken(),
+        getDeviceIdentityToken(),
+        store_id = storeId,
+        multipleSku = multipleSku
+    )
 }

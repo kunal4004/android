@@ -7,9 +7,7 @@ import retrofit2.Callback
 import retrofit2.http.*
 import za.co.absa.openbankingapi.woolworths.integration.dto.PayUResponse
 import za.co.woolworths.financial.services.android.checkout.service.network.*
-import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.AddSubstitutionRequest
-import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.AddSubstitutionResponse
-import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.ProductSubstitution
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.*
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.request.SaveAddressLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
@@ -1620,5 +1618,13 @@ interface ApiInterface {
             @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Body addSubstitutionRequest: AddSubstitutionRequest
     ): retrofit2.Response<AddSubstitutionResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "environment: www-win-dev7")
+    @POST("wfs/app/recommendations/kibo-substitution-list")
+    suspend fun getKiboProductsFromResponse(
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Body addSubstitutionRequest: GetKiboProductRequest
+    ): retrofit2.Response<KiboProductResponse>
 }
 
