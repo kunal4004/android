@@ -27,7 +27,7 @@ interface IProfileIntent {
 }
 
 class ProfileIntent @Inject constructor(private val activity : Activity?,
-private val  analytics: AccountLandingFirebaseManagerImpl
+                                        private val  analytics: AccountLandingFirebaseManagerImpl
 ) : IProfileIntent {
 
     companion object {
