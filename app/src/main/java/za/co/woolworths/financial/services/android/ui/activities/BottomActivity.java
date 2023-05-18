@@ -172,12 +172,12 @@ public abstract class BottomActivity extends AppCompatActivity implements Permis
 		closeSlideUpPanel();
 	}
 
-	public void permissionGranted(int request_code) {
+	public void permissionGranted(int requestCode) {
 		//TODO:: Parse result_code and use only onActivityResult line
-		onActivityResult(request_code, 200, null);
-		switch (request_code) {
+		onActivityResult(requestCode, 200, null);
+		switch (requestCode) {
 			case 2:
-				onActivityResult(request_code, 200, null);
+				onActivityResult(requestCode, 200, null);
 				break;
 
 			default:
