@@ -38,7 +38,8 @@ fun ViewRetryMyCoverButtonGroup(
     buttonType: MyProductButtonType,
     buttonState: ButtonState,
     viewButtonLabel: String,
-    retryButtonLabel: String
+    retryButtonLabel: String,
+    locator: String
 ) {
     Column(
         modifier = Modifier
@@ -50,35 +51,28 @@ fun ViewRetryMyCoverButtonGroup(
     ) {
 
         when (buttonType) {
-            MyProductButtonType.VIEW -> {
-                val viewLocator = my_products_section_box_constraint_row_good_standing_view_button
-                SurfaceTextButton(
-                    locator = viewLocator,
+            MyProductButtonType.VIEW -> SurfaceTextButton(
+                    locator = createLocator(default = my_products_section_box_constraint_row_good_standing_view_button, key= locator),
                     isClickable = false,
                     buttonState = buttonState,
                     buttonLabel = viewButtonLabel
                 ) {}
-            }
 
-            MyProductButtonType.RETRY -> {
-                val retryLocator = my_products_section_box_constraint_row_good_standing_retry_button
-                SurfaceTextButton(
-                    locator = retryLocator,
+
+            MyProductButtonType.RETRY -> SurfaceTextButton(
+                    locator =  createLocator(default = my_products_section_box_constraint_row_good_standing_retry_button, key= locator),
                     isClickable = false,
                     buttonState = buttonState,
                     buttonLabel = retryButtonLabel
                 ) {}
-            }
 
-            MyProductButtonType.MY_COVER -> {
-                val myCoverLocator = my_products_section_box_constraint_row_good_standing_my_cover_button
-                SurfaceTextButton(
-                    locator = myCoverLocator,
+
+            MyProductButtonType.MY_COVER -> SurfaceTextButton(
+                    locator = createLocator(default = my_products_section_box_constraint_row_good_standing_my_cover_button, key= locator),
                     isClickable = false,
                     buttonState = buttonState,
                     buttonLabel = petInsuranceDefaultConfig?.action ?: ""
                 ) {}
-            }
         }
     }
 }

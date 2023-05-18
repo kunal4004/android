@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.f
 
 import android.app.Activity
 import android.content.Intent
+import androidx.activity.result.ActivityResult
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
@@ -10,9 +11,11 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountSection
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.BetterActivityResult
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.Constants
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.enumtype.AccountProductCardsGroup
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_view_application_status.ViewApplicationStatusImpl
+import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.viewmodel.UserAccountLandingViewModel
 import za.co.woolworths.financial.services.android.util.Utils
 import javax.inject.Inject
 
@@ -24,7 +27,10 @@ interface ProductIntent {
     fun createSilverCreditCardIntent(deepLinkParams: String?= null,userAccountResponse: String)
     fun createGoldCreditCardIntent(deepLinkParams: String?= null,userAccountResponse: String)
     fun createViewApplicationStatusIntent(viewApplicationStatus: ViewApplicationStatusImpl)
-    fun createLinkYourWooliesCardIntent()
+    fun createLinkYourWooliesCardIntent(
+        activityLauncher: BetterActivityResult<Intent, ActivityResult>?,
+        viewModel: UserAccountLandingViewModel
+    )
 }
 
 class ProductIntentImpl @Inject constructor(private val activity: Activity?) : ProductIntent {
@@ -74,15 +80,21 @@ class ProductIntentImpl @Inject constructor(private val activity: Activity?) : P
         }
     }
 
-    override fun createLinkYourWooliesCardIntent() {
+    override fun createLinkYourWooliesCardIntent(
+        activityLauncher: BetterActivityResult<Intent, ActivityResult>?,
+        viewModel: UserAccountLandingViewModel
+    ) {
         activity?.apply {
-            val intent = Intent(this, SSOActivity::class.java)
-            intent.putExtra(SSOActivity.TAG_PROTOCOL, SSOActivity.Protocol.HTTPS.rawValue())
-            intent.putExtra(SSOActivity.TAG_HOST, SSOActivity.Host.STS.rawValue())
-            intent.putExtra(SSOActivity.TAG_PATH, SSOActivity.Path.SIGNIN.rawValue())
-            intent.putExtra(SSOActivity.TAG_SCOPE, "C2Id")
-            startActivityForResult(intent, SSOActivity.SSOActivityResult.LAUNCH.rawValue())
-            overridePendingTransition(0, 0)
+           val linkYourWooliesCardIntent =  Intent(this, SSOActivity::class.java).apply {
+                intent.putExtra(SSOActivity.TAG_PROTOCOL, SSOActivity.Protocol.HTTPS.rawValue())
+                intent.putExtra(SSOActivity.TAG_HOST, SSOActivity.Host.STS.rawValue())
+                intent.putExtra(SSOActivity.TAG_PATH, SSOActivity.Path.SIGNIN.rawValue())
+                intent.putExtra(SSOActivity.TAG_SCOPE, "C2Id")
+            }
+
+            activityLauncher?.launch(linkYourWooliesCardIntent) { result ->
+                viewModel.setUserAuthenticated(result.resultCode)
+            }
         }
     }
 

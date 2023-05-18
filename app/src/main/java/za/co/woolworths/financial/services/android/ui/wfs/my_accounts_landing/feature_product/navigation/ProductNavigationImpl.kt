@@ -63,7 +63,7 @@ class ProductNavigationImpl @Inject constructor(private val viewApplicationStatu
                 is AccountProductCardsGroup.SilverCreditCard -> productIntent.createBlackCreditCardIntent(deepLinkParams = deepLinkParams, userAccountResponse = response)
                 is AccountProductCardsGroup.ApplicationStatus -> productIntent.createViewApplicationStatusIntent(viewApplicationStatus)
                 is AccountProductCardsGroup.PetInsurance -> petNavigation.navigateToPetInsurance(activityLauncher = activityResultLauncher, viewModel = this@accountCardsAction, productGroup = productGroup)
-                is AccountProductCardsGroup.LinkYourWooliesCard -> productIntent.createLinkYourWooliesCardIntent()
+                is AccountProductCardsGroup.LinkYourWooliesCard -> productIntent.createLinkYourWooliesCardIntent(activityLauncher = activityResultLauncher, viewModel = this@accountCardsAction)
             }
         }
     }

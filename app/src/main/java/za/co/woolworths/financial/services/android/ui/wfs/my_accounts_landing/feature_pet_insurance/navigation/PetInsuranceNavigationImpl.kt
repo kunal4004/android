@@ -89,7 +89,7 @@ class PetInsuranceNavigationImpl @Inject constructor(private val activity: Activ
                 intent.putExtra(KotlinUtils.COLLECTIONS_EXIT_URL, "")
                 activityLauncher?.launch(intent) { result ->
                     if (result.resultCode == Activity.RESULT_OK) {
-                        queryAccountLandingService()
+                        queryPetInsuranceProduct()
                     }
                 }
             }
