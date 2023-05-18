@@ -18,10 +18,10 @@ class MobileConfigsContentDataSource @Inject constructor(private val service: Wf
     IMobileConfigsContentDataSource, CoreDataSource(), WfsApiService by service {
 
     override suspend fun fetchContactUsConfigFromMobileConfig()
-    = performSafeNetworkApiCall { service.queryServiceMobileConfigsContent(MobileConfigsContentId.ContactUs.id) }
+    = executeSafeNetworkApiCall { service.queryServiceMobileConfigsContent(MobileConfigsContentId.ContactUs.id) }
 
     override suspend fun postContactUsEmail(emailUsRequest: EmailUsRequest?) =
-        performSafeNetworkApiCall {
+        executeSafeNetworkApiCall {
             service.userSendEmail(
                 deviceIdentityToken = getDeviceIdentityToken(),
                 emailUsRequest = emailUsRequest

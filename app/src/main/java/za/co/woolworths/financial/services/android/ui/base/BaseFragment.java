@@ -5,14 +5,12 @@ import android.content.Context;
 import android.content.res.TypedArray;
 
 import androidx.annotation.LayoutRes;
-import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -362,7 +360,7 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 
 
 	public void checkLocationPermission(BottomNavigator bottomNavigator, ArrayList<String> permissionType, int request_code) {
-		bottomNavigator.getRuntimePermission().check_permission(permissionType, "Explain here why the app needs permissions", request_code);
+		bottomNavigator.getRuntimePermission().checkPermission(permissionType, request_code);
 	}
 
 	public void slideDownOnToolbarNavigationOnClickListener() {
