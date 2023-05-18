@@ -12,10 +12,10 @@ data class MarginDimensions(
     val bottom: Dp = 24.dp,
     val dp3: Dp = 3.dp,
     val dp16: Dp = 16.dp,
-    val dp8: Dp = 24.dp,
-    val dp6: Dp = 24.dp,
-    val dp4: Dp = 24.dp,
-    val dp10: Dp = 24.dp,
+    val dp8: Dp = 8.dp,
+    val dp6: Dp = 6.dp,
+    val dp4: Dp = 4.dp,
+    val dp10: Dp = 10.dp,
     val account_landing_general_icon_spacing_end: Dp = 24.dp
 )
 
