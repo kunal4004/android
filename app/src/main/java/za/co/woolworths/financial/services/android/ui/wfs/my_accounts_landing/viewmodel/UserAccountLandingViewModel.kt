@@ -319,7 +319,7 @@ class UserAccountLandingViewModel @Inject constructor(
         }
     }
 
-    private fun queryPetInsuranceProduct() {
+    fun queryPetInsuranceProduct() {
         if (isAccountFragmentVisible) {
             viewModelScope.launch {
                 product.queryPetInsuranceRemoteService(_fetchPetInsuranceState)
