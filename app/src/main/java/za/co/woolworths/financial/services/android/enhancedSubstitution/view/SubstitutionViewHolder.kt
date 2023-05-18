@@ -29,10 +29,9 @@ sealed class SubstitutionViewHolder(binding: ViewBinding) : RecyclerView.ViewHol
                 TextViewCompat.setTextAppearance(tvPrice, R.style.style_substitution_price);
 
                 tvTitle.text = item?.title
-               /* tvPrice.text = context.resources.getString(R.string.rand_text)
-                    .plus("\t").plus(substitutionProducts?.productPrice)*/
                 tvPrice.minHeight = context.resources.getDimension(R.dimen.two_dp).toInt()
-                binding.tvPromotionText.text = item?.PROMOTION1
+                tvPrice.text = formatAmountToRandAndCentWithSpace(item?.plist3620006)
+                binding.tvPromotionText.text = item?.PROMOTION
                 cartProductImage.setImageURI(item?.imageLink)
             }
         }
