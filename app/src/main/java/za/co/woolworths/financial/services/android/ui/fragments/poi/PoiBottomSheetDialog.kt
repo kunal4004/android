@@ -44,7 +44,7 @@ class PoiBottomSheetDialog(private val clickListener: ClickListener, private val
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (streetNameEditText.text.toString().length > 4) {
+                if (streetNameEditText.text.toString().trim().length > 4) {
                     context?.let {
                         confirmButton.isEnabled = true
                         confirmButton.setBackgroundColor(ContextCompat.getColor(it, R.color.black))
@@ -83,7 +83,7 @@ class PoiBottomSheetDialog(private val clickListener: ClickListener, private val
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.confirmButton -> {
-                val street: String? = binding.streetNameEditText.text?.toString()
+                val street: String? = binding.streetNameEditText.text.trim().toString()
                 if (!street.isNullOrEmpty()) {
                     clickListener.onConfirmClick(street)
                 }
