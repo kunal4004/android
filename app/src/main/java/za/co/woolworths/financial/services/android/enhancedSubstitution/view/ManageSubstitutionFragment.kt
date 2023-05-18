@@ -91,14 +91,10 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
                 openSubstitutionSearchScreen()
             }
             if (selectionChoice == SubstitutionChoice.SHOPPER_CHOICE.name || selectionChoice == SubstitutionChoice.NO.name) {
-                rbShopperChoose.isChecked = true
-                rbOwnSubstitute.isChecked = false
-                listSubstitute.tvSearchProduct.isEnabled = false
+                handleOptionsForShopperchoice()
                 enableConfirmButton()
             } else {
-                rbShopperChoose.isChecked = false
-                rbOwnSubstitute.isChecked = true
-                listSubstitute.tvSearchProduct.isEnabled = true
+                handleOptionsForOwnSubstitution()
                 disableConfirmButton()
             }
         }
@@ -331,18 +327,14 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
     }
 
     private fun clickOnLetMyShooperChooseOption() {
-        binding.layoutManageSubstitution.rbShopperChoose.isChecked = true
-        binding.layoutManageSubstitution.rbOwnSubstitute.isChecked = false
-        binding.layoutManageSubstitution.listSubstitute.tvSearchProduct.isEnabled = false
+        handleOptionsForShopperchoice()
         enableConfirmButton()
         manageProductSubstitutionAdapter?.isShopperchooseOptionSelected = true
         manageProductSubstitutionAdapter?.notifyDataSetChanged()
     }
 
     private fun clickOnOwnSubstitutioneOption() {
-        binding.layoutManageSubstitution.rbOwnSubstitute.isChecked = true
-        binding.layoutManageSubstitution.rbShopperChoose.isChecked = false
-        binding.layoutManageSubstitution.listSubstitute.tvSearchProduct.isEnabled = true
+        handleOptionsForOwnSubstitution()
         disableConfirmButton()
         manageProductSubstitutionAdapter?.isShopperchooseOptionSelected = false
         manageProductSubstitutionAdapter?.notifyDataSetChanged()
@@ -364,5 +356,22 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
         binding.btnConfirm.isEnabled = false
         binding.btnConfirm.background =
             ResourcesCompat.getDrawable(resources, R.drawable.grey_bg_drawable, null)
+    }
+
+    fun handleOptionsForShopperchoice() {
+        binding.layoutManageSubstitution.apply {
+            rbShopperChoose.isChecked = true
+            rbOwnSubstitute.isChecked = false
+            listSubstitute.tvSearchProduct.isEnabled = false
+        }
+    }
+
+    fun handleOptionsForOwnSubstitution() {
+        binding.layoutManageSubstitution.apply {
+            rbOwnSubstitute.isChecked = true
+            rbShopperChoose.isChecked = false
+            listSubstitute.tvSearchProduct.isEnabled = true
+        }
+
     }
 }

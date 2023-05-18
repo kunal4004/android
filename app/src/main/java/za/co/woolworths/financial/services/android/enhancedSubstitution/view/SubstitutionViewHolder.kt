@@ -21,6 +21,7 @@ sealed class SubstitutionViewHolder(binding: ViewBinding) : RecyclerView.ViewHol
         fun bind(item: Item?, isShopperchooseOptionSelected:Boolean) {
             binding.apply {
                 cbShoppingList.isClickable = !isShopperchooseOptionSelected
+                cbShoppingList.isChecked = !isShopperchooseOptionSelected
                 root.isSwipeEnabled = false
                 llQuantity.visibility = View.GONE
                 tvProductAvailability.visibility = View.INVISIBLE
