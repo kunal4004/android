@@ -34,7 +34,7 @@ class SearchProductSubstitutionAdapter(var productListSelectionListener: Product
         }
     }
     override fun getItemViewType(position: Int): Int {
-        return position;
+        return position
     }
 
     object Comparator : DiffUtil.ItemCallback<ProductList>() {

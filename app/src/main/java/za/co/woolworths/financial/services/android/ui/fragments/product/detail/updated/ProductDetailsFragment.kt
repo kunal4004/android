@@ -48,6 +48,7 @@ import com.perfectcorp.perfectlib.MakeupCam
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import retrofit2.HttpException
+import za.co.woolworths.financial.services.android.cart.view.SubstitutionChoice
 
 import za.co.woolworths.financial.services.android.chanel.utils.ChanelUtils
 import za.co.woolworths.financial.services.android.common.SingleMessageCommonToast
@@ -254,7 +255,6 @@ class ProductDetailsFragment :
     private var commarceItemId: String? = ""
     private var substitutionProductItem: ProductList? = null
     private var isSubstiuteItemAdded = false
-    private var substitutionInfo: SubstitutionInfo? = null
 
     private val recommendationViewModel: RecommendationViewModel by viewModels()
 
@@ -293,8 +293,6 @@ class ProductDetailsFragment :
         const val IS_BROWSING = "isBrowsing"
         const val BRAND_NAVIGATION_DETAILS = "BRAND_NAVIGATION_DETAILS"
 
-        const val USER_CHOICE = "USER_CHOICE"
-        const val SHOPPER_CHOICE = "SHOPPER_CHOICE"
         const val PRODUCTLIST = "PRODUCT_LIST"
         fun newInstance(
                 productList: ProductList?,
@@ -390,8 +388,17 @@ class ProductDetailsFragment :
                     isSubstiuteItemAdded = getBoolean(SearchSubstitutionFragment.SUBSTITUTION_ITEM_ADDED, false)
                     callGetSubstitutionApi(true)
                 }
+                if (bundle.containsKey(ManageSubstitutionFragment.DONT_WANT_SUBSTITUTE_LISTENER)) {
+                    binding.productDetailOptionsAndInformation.substitutionLayout.apply {
+                        txtSubstitutionTitle.text = context?.getString(R.string.dont_substitute)
+                        txtSubstitutionEdit.text = context?.getString(R.string.change)
+                        selectionChoice = SubstitutionChoice.NO.name
+                        substitutionId = ""
+                    }
+                }
             }
         }
+
     }
 
 
@@ -1085,23 +1092,6 @@ class ProductDetailsFragment :
             return
         }
 
-        /*checks added for enhance substitution feature*/
-
-        if (KotlinUtils.getDeliveryType()?.deliveryType == Delivery.DASH.type) {
-            if (selectionChoice == SHOPPER_CHOICE) {
-                /*set substitute id as empty*/
-                substitutionId = substitutionInfo?.id
-            } else if (selectionChoice == USER_CHOICE) {
-                if (commarceItemId?.isEmpty() == true) {
-                    /* not added to cart yet */
-                    /* substituted product will come from manage substitution screen or search substitution screen  */
-                    substitutionId = substitutionProductItem?.productId
-                } else {
-                    substitutionId = commarceItemId
-                }
-            }
-        }
-
         //finally add to cart after all checks
         getSelectedSku()?.apply {
             addToCartForSelectedSKU()
@@ -1599,26 +1589,6 @@ class ProductDetailsFragment :
         }
     }
 
-    private fun showSubstitutionLayoutOne(isInventoryCalled: Boolean) {
-
-        binding?.productDetailOptionsAndInformation?.substitutionLayout?.apply {
-
-            if (isAllProductsOutOfStock() && isInventoryCalled) {
-                txtSubstitutionTitle.text = context?.getString(R.string.oos_label)
-                txtSubstitutionEdit?.visibility = View.GONE
-                this.txtSubstitutionEdit?.background = resources.getDrawable(R.drawable.grey_background_with_corner_5,
-                        null)
-            } else {
-                txtSubstitutionTitle.text = context?.getString(R.string.substitute_default)
-                txtSubstitutionEdit.text = context?.getString(R.string.change)
-                this.txtSubstitutionEdit?.background = resources.getDrawable(R.drawable.black_background_with_corner_5,
-                        null)
-            }
-
-         //   substitutionEditButtonClick(txtSubstitutionEdit)
-        }
-    }
-
     private fun callGetSubstitutionApi(isInventoryCalled: Boolean) {
 
         if (!SessionUtilities.getInstance().isUserAuthenticated || (isAllProductsOutOfStock() && isInventoryCalled)) {
@@ -1635,9 +1605,6 @@ class ProductDetailsFragment :
                     }
                     Status.SUCCESS -> {
                         binding.progressBar.visibility = View.GONE
-                        substitutionInfo = resource.data?.data?.getOrNull(0)?.substitutionInfo
-                        selectionChoice = SHOPPER_CHOICE
-                        substitutionId = substitutionInfo?.id
                         showSubstitutionLayout(isInventoryCalled, resource)
                     }
                     Status.ERROR -> {
@@ -1664,10 +1631,9 @@ class ProductDetailsFragment :
             if (SessionUtilities.getInstance().isUserAuthenticated) {
                 if (substitutionProductItem == null) {
                       callGetSubstitutionApi(isInventoryCalled)
-                    //showSubstitutionLayoutOne(isInventoryCalled)
                 } else {
                     /*set Locally product name */
-                    selectionChoice = USER_CHOICE
+                    selectionChoice = SubstitutionChoice.USER_CHOICE.name
                     substitutionId = commarceItemId
                     txtSubstitutionTitle?.text = substitutionProductItem?.productName
                     txtSubstitutionEdit.text = context?.getString(R.string.change)
@@ -1703,12 +1669,14 @@ class ProductDetailsFragment :
                 )
             }
 
-            if (resource.data?.data?.getOrNull(0)?.substitutionSelection == USER_CHOICE) {
+            if (resource.data?.data?.getOrNull(0)?.substitutionSelection == SubstitutionChoice.USER_CHOICE.name) {
                 txtSubstitutionTitle.text =
                     resource.data?.data?.getOrNull(0)?.substitutionInfo?.displayName
+                selectionChoice = SubstitutionChoice.USER_CHOICE.name
+                substitutionId =  resource.data?.data?.getOrNull(0)?.substitutionInfo?.id
             } else {
                 txtSubstitutionTitle.text = getString(R.string.substitute_default)
-                selectionChoice = SHOPPER_CHOICE
+                selectionChoice = SubstitutionChoice.SHOPPER_CHOICE.name
                 substitutionId = ""
             }
             txtSubstitutionEdit?.text = getString(R.string.change)
@@ -1716,7 +1684,7 @@ class ProductDetailsFragment :
     }
 
     private fun openManageSubstitutionFragment(substiutionSelection: String?)  =
-            ManageSubstitutionFragment.newInstance(substiutionSelection, commarceItemId)
+            ManageSubstitutionFragment.newInstance(substiutionSelection, commarceItemId, prodId, getSelectedSku()?.sku)
 
 
     private fun hideSubstitutionLayout() {
