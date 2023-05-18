@@ -53,6 +53,11 @@ open class FirebaseManagerAnalyticsProperties {
         const val REFINE_EVENT_PROMO_OFF: String = "sortsfilters_promo_off"
         const val REFINE_EVENT_SEE_RESULT: String = "sortsfilters_seersb"
         const val REFINE_EVENT_BACK_BUTTON: String = "sortsfilters_seersb"
+
+        // Pet Insurance event
+        const val PET_INSURANCE_AWARENESS_MODEL_LEARN_MORE = "learn_more"
+        const val PET_INSURANCE_GET_INSURANCE_PRODUCT = "get_insurance_products"
+
         const val SHOP_PRODUCTDETAIL_NUTRITIONAL_INFORMATION: String = "shop_pdp_ni"
         const val SHOP_PRODUCTDETAILS_INFORMATION: String = "shop_pdp_prod_det"
         const val SHOP_PRODUCTDETAIL_INGREDIENTS_INFORMATION: String = "shop_pdp_ingr"
