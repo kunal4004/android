@@ -25,7 +25,7 @@ data class CardNotReceived(
 class CardNotReceivedDataSource @Inject constructor(@ApplicationContext val context: Context, private val wfsApiService: WfsApiService) :
     CoreDataSource(), ICardNotReceivedService, WfsApiService by wfsApiService {
 
-    override suspend fun queryServiceNotifyCardNotYetReceived() = performSafeNetworkApiCall {
+    override suspend fun queryServiceNotifyCardNotYetReceived() = executeSafeNetworkApiCall {
 
         val jwtDecodedModel = SessionUtilities.getInstance().jwt
         val preferredEmail = jwtDecodedModel.email?.get(0)
