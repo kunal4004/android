@@ -21,6 +21,9 @@ import com.awfs.coordination.R
 import com.awfs.coordination.databinding.ActivitySplashScreenBinding
 import com.awfs.coordination.databinding.ActivityStartupBinding
 import com.awfs.coordination.databinding.ActivityStartupResourcenotfoundBinding
+import com.clarisite.mobile.Glassbox
+import com.clarisite.mobile.StartupSettings.StartupSettingsBuilder.aSettingsBuilder
+import com.clarisite.mobile.exceptions.GlassboxRecordingException
 import com.google.android.gms.tasks.Task
 import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseOptions
@@ -36,6 +39,7 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.firebase.FirebaseConfigUtils
 import za.co.woolworths.financial.services.android.firebase.model.ConfigData
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton.glassBox
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.onecartgetstream.common.constant.OCConstant
 import za.co.woolworths.financial.services.android.onecartgetstream.common.constant.OCConstant.Companion.startOCChatService
@@ -403,6 +407,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                             bindingStartup.showNonVideoViewWithErrorLayout()
                         }
                     }
+                    initializeGlassBoxSDK()
                 }
                 ResponseStatus.LOADING -> {
                     setupLoadingScreen()
@@ -625,6 +630,18 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
 
     }
 
+    //GlassBox SDK for record screen session
+    private fun initializeGlassBoxSDK() {
+        try {
+            Glassbox.start(aSettingsBuilder()
+                .withApplicationCtx(this)
+                .withReportUrl(glassBox?.appId)
+                .withAppId(glassBox?.reportUrl)
+                .build())
+        } catch (e: GlassboxRecordingException) {
+            FirebaseManager.logException(e)
+        }
+    }
 
     @VisibleForTesting
     fun testsetupLoadingScreen() {
