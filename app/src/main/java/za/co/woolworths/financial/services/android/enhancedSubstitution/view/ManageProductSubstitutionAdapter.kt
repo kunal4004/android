@@ -9,11 +9,11 @@ import za.co.woolworths.financial.services.android.enhancedSubstitution.utils.li
 
 class ManageProductSubstitutionAdapter(
     var substitutionProductList: ArrayList<Item>,
-    private var productSubstitutionListListener: ProductSubstitutionListListener,
-    var isShopperchooseOptionSelected:Boolean = false,
+    private var productSubstitutionListListener: ProductSubstitutionListListener
 ) : RecyclerView.Adapter<SubstitutionViewHolder>() {
 
     private var lastSelectedPosition = -1
+    private var shopperOptionSelected = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SubstitutionViewHolder {
 
@@ -26,7 +26,7 @@ class ManageProductSubstitutionAdapter(
     override fun onBindViewHolder(holder: SubstitutionViewHolder, position: Int) {
         when (holder) {
             is SubstitutionViewHolder.SubstituteProductViewHolder -> {
-                holder.bind(substitutionProductList.getOrNull(position), isShopperchooseOptionSelected)
+                holder.bind(substitutionProductList.getOrNull(position))
                 if (lastSelectedPosition == position) {
                     holder.binding.cbShoppingList.isChecked = true
                 } else {
@@ -37,11 +37,23 @@ class ManageProductSubstitutionAdapter(
                     notifyDataSetChanged()
                     productSubstitutionListListener.clickOnSubstituteProduct(substitutionProductList.getOrNull(position))
                 }
+
+                if (this.shopperOptionSelected) {
+                    holder.binding.cbShoppingList.isClickable = false
+                    holder.binding.cbShoppingList.isChecked = false
+                } else {
+                    holder.binding.cbShoppingList.isClickable = true
+                }
             }
         }
     }
 
     override fun getItemCount(): Int {
         return substitutionProductList.size
+    }
+
+    fun setRadioButtonDisabled(disabled: Boolean) {
+        this.shopperOptionSelected = disabled
+        notifyDataSetChanged()
     }
 }

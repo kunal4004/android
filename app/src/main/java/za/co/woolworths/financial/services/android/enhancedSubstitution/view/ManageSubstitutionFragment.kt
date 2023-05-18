@@ -11,7 +11,6 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.ManageSubstitutionDetailsLayoutBinding
 import com.facebook.shimmer.Shimmer
@@ -127,7 +126,7 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
         binding.layoutManageSubstitution.listSubstitute.shimmerLayout.apply {
             setShimmer(null)
             stopShimmer()
-            visibility = View.GONE
+            visibility = GONE
         }
     }
 
@@ -210,10 +209,10 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
         manageProductSubstitutionAdapter = itemList?.let { it1 ->
             ManageProductSubstitutionAdapter(
                 it1,
-                this@ManageSubstitutionFragment,
-                binding.layoutManageSubstitution.rbOwnSubstitute.isChecked
+                this@ManageSubstitutionFragment
             )
         }
+        manageProductSubstitutionAdapter?.setRadioButtonDisabled(binding.layoutManageSubstitution.rbShopperChoose.isChecked)
         binding.layoutManageSubstitution.listSubstitute.recyclerView.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = manageProductSubstitutionAdapter
@@ -291,10 +290,10 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
             it.getContentIfNotHandled()?.let { resource ->
                 when (resource.status) {
                     Status.LOADING -> {
-                        binding.progressBar.visibility = View.VISIBLE
+                        binding.progressBar.visibility = VISIBLE
                     }
                     Status.SUCCESS -> {
-                        binding.progressBar.visibility = View.GONE
+                        binding.progressBar.visibility = GONE
 
                         /* if we get form exception need to show error popup*/
                         resource.data?.data?.getOrNull(0)?.formExceptions?.getOrNull(0)?.let {
@@ -308,7 +307,7 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
                         (activity as? BottomNavigationActivity)?.popFragment()
                     }
                     Status.ERROR -> {
-                        binding.progressBar.visibility = View.GONE
+                        binding.progressBar.visibility = GONE
                     }
                 }
             }
@@ -333,15 +332,13 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
     private fun clickOnLetMyShooperChooseOption() {
         handleOptionsForShopperchoice()
         enableConfirmButton()
-        manageProductSubstitutionAdapter?.isShopperchooseOptionSelected = true
-        manageProductSubstitutionAdapter?.notifyDataSetChanged()
+        manageProductSubstitutionAdapter?.setRadioButtonDisabled(true)
     }
 
     private fun clickOnOwnSubstitutioneOption() {
         handleOptionsForOwnSubstitution()
         disableConfirmButton()
-        manageProductSubstitutionAdapter?.isShopperchooseOptionSelected = false
-        manageProductSubstitutionAdapter?.notifyDataSetChanged()
+        manageProductSubstitutionAdapter?.setRadioButtonDisabled(false)
         Utils.fadeInFadeOutAnimation(binding.layoutManageSubstitution.listSubstitute.root, false)
     }
 
