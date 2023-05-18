@@ -122,7 +122,8 @@ fun OfferViewMainList(
                 if (!item.data.isAnimationEnabled) {
                     OfferCards(locator, item, onClick, isLoading, brush, listOfOfferSize)
                 }
-                if (viewModel.fetchAccountDidLoadOnce) {
+
+                if (!viewModel.petInsuranceDidLoadOnce) {
                     AnimatedVisibility(
                         visible = item.data.isAnimationEnabled,
                         enter = slideInHorizontally(animationSpec = tween(durationMillis = animationDurationMilis400, easing = LinearEasing)),
@@ -130,12 +131,11 @@ fun OfferViewMainList(
                     ) {
                         OfferCards(locator, item, onClick, isLoading, brush, listOfOfferSize)
                     }
+                   viewModel.petInsuranceDidLoadOnce = true
                 }
 
-                if (!viewModel.fetchAccountDidLoadOnce) {
-                    if ( item.data.isAnimationEnabled) {
+                if (viewModel.petInsuranceDidLoadOnce &&  item.data.isAnimationEnabled) {
                         OfferCards(locator, item, onClick, isLoading, brush, listOfOfferSize)
-                    }
                 }
             })
 

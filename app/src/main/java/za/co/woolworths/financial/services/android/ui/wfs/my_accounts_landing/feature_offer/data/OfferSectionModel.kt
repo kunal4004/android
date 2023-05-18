@@ -36,12 +36,12 @@ class OfferSectionModel @Inject constructor(
     }
 
     override fun buildInitialOfferList(): MutableMap<AccountOfferKeys, CommonItem.OfferItem?> {
-        return mutableMapOf<AccountOfferKeys, CommonItem.OfferItem?>().apply {
-            put(AccountOfferKeys.ViewApplicationStatus, OfferProductType.ViewApplicationStatus.value(false))
-            put(AccountOfferKeys.CreditCardApplyNow, OfferProductType.BlackCreditCardApplyNow.value())
-            put(AccountOfferKeys.StoreCardApplyNow, OfferProductType.StoreCardApplyNow.value())
-            put(AccountOfferKeys.PersonalLoanApplyNow, OfferProductType.PersonalLoanApplyNow.value())
-        }
+        return mutableMapOf(
+            AccountOfferKeys.ViewApplicationStatus to OfferProductType.ViewApplicationStatus.value(false),
+            AccountOfferKeys.CreditCardApplyNow to OfferProductType.BlackCreditCardApplyNow.value(),
+            AccountOfferKeys.StoreCardApplyNow to OfferProductType.StoreCardApplyNow.value(),
+            AccountOfferKeys.PersonalLoanApplyNow to OfferProductType.PersonalLoanApplyNow.value()
+        )
     }
 
     override fun getOfferProductByOfferKey(key: AccountOfferKeys): CommonItem.OfferItem {
@@ -82,8 +82,8 @@ class OfferSectionModel @Inject constructor(
             accountOfferKeys.add(AccountOfferKeys.CreditReport)
         }
 
-        accountOfferKeys.forEach {
-            mapOfMyOffers[it] =  getOfferProductByOfferKey(it)
+        for (key in accountOfferKeys) {
+            mapOfMyOffers += key to getOfferProductByOfferKey(key = key)
         }
 
         return mapOfMyOffers

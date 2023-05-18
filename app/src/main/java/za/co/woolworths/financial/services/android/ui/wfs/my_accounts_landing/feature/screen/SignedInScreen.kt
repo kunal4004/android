@@ -1,7 +1,9 @@
 package za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature.screen
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.runtime.*
 import androidx.compose.foundation.layout.*
@@ -103,7 +105,6 @@ fun UserAccountLandingViewModel.PetInsuranceCollector(
                                                       onClick: (OnAccountItemClickListener) -> Unit) {
     if (!petInsuranceState.isLoading) {
         petInsuranceState.data?.let { petModel ->
-            petInsuranceDidLoadOnce = true
             this.handlePetInsuranceResult(petModel) { insuranceProduct ->
                 onClick(
                     AccountLandingInstantLauncher.PetInsuranceNotCoveredAwarenessModel(
@@ -408,12 +409,16 @@ private fun LazyListScope.myProductsSection(
                 }
 
                 if (!viewModel.petInsuranceDidLoadOnce) {
+                    viewModel.petInsuranceDidLoadOnce = true
+                    AnimatedVisibility(visible =!loadingOptions.isAccountLoading,
+                    enter = slideInHorizontally(tween(durationMillis = animationDurationMilis400, easing = LinearEasing))) {
                         PetInsuranceView(
                             modifier= Modifier.animateItemPlacement(tween(durationMillis = animationDurationMilis400, easing = LinearEasing)),
                             productGroup = productItems,
                             petInsuranceDefaultConfig = viewModel.getPetInsuranceMobileConfig()?.defaultCopyPetPending,
                             onProductClick = onProductClick
                         )
+                    }
                 }
 
                 if (viewModel.petInsuranceDidLoadOnce && !loadingOptions.isAccountLoading) {

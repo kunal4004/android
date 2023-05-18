@@ -236,7 +236,7 @@ class UserAccountLandingViewModel @Inject constructor(
                     else -> Unit
                 }
             }
-            mapOfMyProducts[validItem.productGroupCode] = product
+            mapOfMyProducts += validItem.productGroupCode to product
         }
 
         if (mapOfMyProducts.isNotEmpty()) {
@@ -433,9 +433,9 @@ class UserAccountLandingViewModel @Inject constructor(
         if(_mapOfFinalProductItems[AccountOfferKeys.PetInsurance.value] == null && !_fetchPetInsuranceState.value.hasError) {
             val tempOfferList = _mapOfMyOffers.toMutableMap()
             _mapOfMyOffers.clear()
-            _mapOfMyOffers[AccountOfferKeys.PetInsurance] = OfferProductType.PetInsurance.value()
-            tempOfferList.forEach { (key, value) ->
-                _mapOfMyOffers[key] = value
+            _mapOfMyOffers += AccountOfferKeys.PetInsurance to OfferProductType.PetInsurance.value()
+            for(temp in tempOfferList)  {
+                _mapOfMyOffers += temp.key to temp.value
             }
 
         }

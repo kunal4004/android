@@ -77,12 +77,12 @@ class MyProductsProducerImpl @Inject constructor(
                 }
                 CoveredStatus.PENDING, CoveredStatus.COVERED -> {
                     val viewApplicationStatus = mapOfMyProducts[AccountProductKeys.ViewApplicationStatus.value]
-
-                        viewApplicationStatus?.let { mapOfMyProducts.remove(AccountProductKeys.ViewApplicationStatus.value) }
-                        mapOfMyProducts[AccountProductKeys.PetInsurance.value] = transformSingleProductResult(AccountProductKeys.PetInsurance.value, petInsuranceProduct)
-
+                        viewApplicationStatus?.let {
+                            mapOfMyProducts -= AccountProductKeys.ViewApplicationStatus.value
+                        }
+                    mapOfMyProducts += AccountProductKeys.PetInsurance.value to transformSingleProductResult(AccountProductKeys.PetInsurance.value, petInsuranceProduct)
                         if (status.isVisible(userAccountResponse?.products?.size)) {
-                            mapOfMyProducts[AccountProductKeys.ViewApplicationStatus.value] = viewApplicationStatus
+                            mapOfMyProducts += AccountProductKeys.ViewApplicationStatus.value to  viewApplicationStatus
                         }
 
                 }
