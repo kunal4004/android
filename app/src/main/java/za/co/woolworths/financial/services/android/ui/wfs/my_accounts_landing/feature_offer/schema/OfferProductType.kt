@@ -28,7 +28,8 @@ enum class OfferProductType {
                 image = R.drawable.my_offer_pet_insurance_background,
                 title = R.string.my_offer_wpet_care_classic_plan_label,
                 description = R.string.my_offer_wpet_care_classic_plan_desc,
-                buttonId = R.string.my_offer_wpet_care_classic_plan_button_label
+                buttonId = R.string.my_offer_wpet_care_classic_plan_button_label,
+                 isAnimationEnabled = true
             ),
             properties = OfferViewColors.Dark.color(),
             onClick = OfferClickEvent.PetInsurance,
@@ -111,5 +112,6 @@ data class MyOfferData(
     @StringRes val title: Int,
     @StringRes val description: Int,
     @StringRes val buttonId: Int,
-    @DrawableRes val image: Int
+    @DrawableRes val image: Int,
+    val isAnimationEnabled : Boolean = false
 )

@@ -147,7 +147,7 @@ class MyProductsHandlerImpl @Inject constructor(private val status: ViewApplicat
         mapOfMyProducts: MutableMap<String, AccountProductCardsGroup?>) {
         if (status.isVisible(validProductList?.size)) {
             val viewApplicationStatusProduct = transformProductDetailToProductGroup(key = AccountProductKeys.ViewApplicationStatus, productDetails = null)
-            mapOfMyProducts[AccountProductKeys.ViewApplicationStatus.value] = viewApplicationStatusProduct
+            mapOfMyProducts += AccountProductKeys.ViewApplicationStatus.value to viewApplicationStatusProduct
         }
     }
 

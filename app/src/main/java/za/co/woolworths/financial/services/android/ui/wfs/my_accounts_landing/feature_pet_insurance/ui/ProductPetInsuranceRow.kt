@@ -27,6 +27,7 @@ import za.co.woolworths.financial.services.android.ui.wfs.component.SpacerHeight
 import za.co.woolworths.financial.services.android.ui.wfs.component.SpacerWidth4dp
 import za.co.woolworths.financial.services.android.ui.wfs.component.TextOpenSansFontFamily
 import za.co.woolworths.financial.services.android.ui.wfs.component.TextWFuturaMedium
+import za.co.woolworths.financial.services.android.ui.wfs.core.animationDurationMilis400
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.analytics.AutomationTestScreenLocator.Locator.my_product_pet_insurance_plan_type_title
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.analytics.AutomationTestScreenLocator.Locator.my_product_policy_number_label
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.analytics.AutomationTestScreenLocator.Locator.my_product_policy_number_value
@@ -177,40 +178,44 @@ fun PetInsuranceView(
     onProductClick: (AccountProductCardsGroup) -> Unit) {
     val locator = properties.automationLocatorKey
     val productContainerLocator = createLocator(my_products_section_box, locator)
-    val title = stringResource(id = properties.productTitle)
 
-    Box(modifier = modifier
-        .wrapContentSize()
-        .testAutomationTag(productContainerLocator)
-        .padding(start = Margin.start, end = Margin.end, top = Margin.dp16)
-        .bounceClick { onProductClick.invoke(productGroup) },
-    ) {
-        ConstraintLayout(constraintSet = createConstraints()) {
-            BackgroundImage(properties, title, locator)
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .layoutId(columnRef)
-            ) {
-                Column(
+        Box(
+            modifier = modifier
+                .wrapContentSize()
+                .testAutomationTag(productContainerLocator)
+                .padding(start = Margin.start, end = Margin.end, top = Margin.dp16)
+                .bounceClick { onProductClick.invoke(productGroup) },
+        ) {
+            ConstraintLayout(constraintSet = createConstraints()) {
+                BackgroundImage(properties,  stringResource(id = properties.productTitle), locator)
+                Row(
                     modifier = Modifier
-                        .fillMaxWidth(0.69f)
-                        .fillMaxHeight()
-                        .padding(start = Margin.start),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.Start
+                        .fillMaxWidth()
+                        .layoutId(columnRef)
                 ) {
-                    ProductPetInsuranceRow(insuranceProduct = productGroup.insuranceProducts, petInsuranceDefaultConfig, properties)
-                }
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth(0.69f)
+                            .fillMaxHeight()
+                            .padding(start = Margin.start),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.Start
+                    ) {
+                        ProductPetInsuranceRow(
+                            insuranceProduct = productGroup.insuranceProducts,
+                            petInsuranceDefaultConfig,
+                            properties
+                        )
+                    }
 
-                ViewRetryMyCoverButtonGroup(
-                    petInsuranceDefaultConfig,
-                    buttonType = MyProductButtonType.MY_COVER,
-                    buttonState = ButtonState.IDLE,
-                    viewButtonLabel =  "",
-                    retryButtonLabel = ""
-                )
+                    ViewRetryMyCoverButtonGroup(
+                        petInsuranceDefaultConfig,
+                        buttonType = MyProductButtonType.MY_COVER,
+                        buttonState = ButtonState.IDLE,
+                        viewButtonLabel = "",
+                        retryButtonLabel = ""
+                    )
+                }
             }
-        }
     }
 }

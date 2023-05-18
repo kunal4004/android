@@ -69,19 +69,10 @@ class DeviceSecurityActivityResult @Inject constructor(private val activity : Ac
         viewModel ?: return
         CoroutineScope(Dispatchers.Main).launch {
             when (resultCode) {
-                RESULT_CODE_LINK_DEVICE -> {
-                    with(viewModel) {
-                        remote.getAllLinkedDevices(true)
-                        performClick()
-                    }
-                }
-
-                Activity.RESULT_CANCELED -> viewModel.performClick()
-
-                RESULT_CODE_DEVICE_LINKED -> {
-                    viewModel.remote.getAllLinkedDevices(false)
-                }
+                RESULT_CODE_LINK_DEVICE -> viewModel.remote.getAllLinkedDevices(true)
+                RESULT_CODE_DEVICE_LINKED -> viewModel.remote.getAllLinkedDevices(false)
             }
+            viewModel.performClick()
         }
     }
 

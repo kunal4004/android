@@ -49,7 +49,7 @@ class MyAccountProductModel @Inject constructor(private val offerSectionModel: O
         return mutableListOf(
             MyAccountSectionHeaderType.MyOffers.title(),
             CommonItem.Spacer24dp,
-            CommonItem.UserOffersAccount(offers = offerSectionModel.initialOfferList())
+            CommonItem.UserOffersAccount(offers = offerSectionModel.buildInitialOfferList())
         )
     }
     override fun listOfSignInItems(

@@ -6,17 +6,17 @@ import za.co.woolworths.financial.services.android.ui.wfs.core.NetworkStatusUI
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_offer.schema.OfferProductType
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.enumtype.AccountOfferKeys
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.enumtype.AccountProductKeys
-import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.enumtype.UserAccountLandingProductGroup
+import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.enumtype.AccountProductCardsGroup
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.schema.CommonItem
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_view_free_credit_report.ViewFreeCreditReportImpl
 import javax.inject.Inject
 
 interface IOfferSectionModel {
-    fun allOfferItems(): MutableMap<AccountOfferKeys, CommonItem.OfferItem>
-    fun initialOfferList(): MutableMap<AccountOfferKeys, CommonItem.OfferItem?>
+    fun buildAllOfferList(): MutableMap<AccountOfferKeys, CommonItem.OfferItem>
+    fun buildInitialOfferList(): MutableMap<AccountOfferKeys, CommonItem.OfferItem?>
     fun getOfferProductByOfferKey(key: AccountOfferKeys): CommonItem.OfferItem
     fun constructMapOfMyOffers(
-        mapOfMyProducts: MutableMap<String, UserAccountLandingProductGroup?>,
+        mapOfMyProducts: MutableMap<String, AccountProductCardsGroup?>,
         petInsuranceState: MutableStateFlow<NetworkStatusUI<PetInsuranceModel>>
     ): MutableMap<AccountOfferKeys, CommonItem.OfferItem?>
 }
@@ -24,7 +24,7 @@ interface IOfferSectionModel {
 class OfferSectionModel @Inject constructor(
     private val creditReportView: ViewFreeCreditReportImpl): IOfferSectionModel {
 
-    override fun allOfferItems(): MutableMap<AccountOfferKeys, CommonItem.OfferItem> {
+    override fun buildAllOfferList(): MutableMap<AccountOfferKeys, CommonItem.OfferItem> {
         return mutableMapOf(
             AccountOfferKeys.StoreCardApplyNow to OfferProductType.StoreCardApplyNow.value(),
             AccountOfferKeys.PersonalLoanApplyNow to OfferProductType.PersonalLoanApplyNow.value(),
@@ -35,22 +35,22 @@ class OfferSectionModel @Inject constructor(
         )
     }
 
-    override fun initialOfferList(): MutableMap<AccountOfferKeys, CommonItem.OfferItem?> {
-        return mutableMapOf<AccountOfferKeys, CommonItem.OfferItem?>().apply {
-            put(AccountOfferKeys.ViewApplicationStatus, OfferProductType.ViewApplicationStatus.value(false))
-            put(AccountOfferKeys.CreditCardApplyNow, OfferProductType.BlackCreditCardApplyNow.value())
-            put(AccountOfferKeys.StoreCardApplyNow, OfferProductType.StoreCardApplyNow.value())
-            put(AccountOfferKeys.PersonalLoanApplyNow, OfferProductType.PersonalLoanApplyNow.value())
-        }
+    override fun buildInitialOfferList(): MutableMap<AccountOfferKeys, CommonItem.OfferItem?> {
+        return mutableMapOf(
+            AccountOfferKeys.ViewApplicationStatus to OfferProductType.ViewApplicationStatus.value(false),
+            AccountOfferKeys.CreditCardApplyNow to OfferProductType.BlackCreditCardApplyNow.value(),
+            AccountOfferKeys.StoreCardApplyNow to OfferProductType.StoreCardApplyNow.value(),
+            AccountOfferKeys.PersonalLoanApplyNow to OfferProductType.PersonalLoanApplyNow.value()
+        )
     }
 
     override fun getOfferProductByOfferKey(key: AccountOfferKeys): CommonItem.OfferItem {
-        val offers = allOfferItems()
+        val offers = buildAllOfferList()
         return offers[key] ?: OfferProductType.StoreCardApplyNow.value()
     }
 
     override fun constructMapOfMyOffers(
-        mapOfMyProducts: MutableMap<String, UserAccountLandingProductGroup?>,
+        mapOfMyProducts: MutableMap<String, AccountProductCardsGroup?>,
         petInsuranceState: MutableStateFlow<NetworkStatusUI<PetInsuranceModel>>
     ): MutableMap<AccountOfferKeys, CommonItem.OfferItem?> {
 
@@ -82,8 +82,8 @@ class OfferSectionModel @Inject constructor(
             accountOfferKeys.add(AccountOfferKeys.CreditReport)
         }
 
-        accountOfferKeys.forEach {
-            mapOfMyOffers[it] =  getOfferProductByOfferKey(it)
+        for (key in accountOfferKeys) {
+            mapOfMyOffers += key to getOfferProductByOfferKey(key = key)
         }
 
         return mapOfMyOffers

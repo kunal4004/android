@@ -69,6 +69,7 @@ class AutomationTestScreenLocator {
         const val pet_insurance = "pet_insurance"
         const val view_free_credit_report = "view_free_credit_report"
         const val application_status = "application_status"
+        const val my_application_status_card = "my_application_status_card"
 
         const val  black_credit_card_apply_now_key: String = "black_credit_card_apply_now"
         const val  store_card_apply_now_key: String = "store_card_apply_now_key"
