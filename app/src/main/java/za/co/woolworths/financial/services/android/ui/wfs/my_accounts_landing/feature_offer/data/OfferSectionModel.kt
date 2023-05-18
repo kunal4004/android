@@ -12,8 +12,8 @@ import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.fe
 import javax.inject.Inject
 
 interface IOfferSectionModel {
-    fun allOfferItems(): MutableMap<AccountOfferKeys, CommonItem.OfferItem>
-    fun initialOfferList(): MutableMap<AccountOfferKeys, CommonItem.OfferItem?>
+    fun buildAllOfferList(): MutableMap<AccountOfferKeys, CommonItem.OfferItem>
+    fun buildInitialOfferList(): MutableMap<AccountOfferKeys, CommonItem.OfferItem?>
     fun getOfferProductByOfferKey(key: AccountOfferKeys): CommonItem.OfferItem
     fun constructMapOfMyOffers(
         mapOfMyProducts: MutableMap<String, AccountProductCardsGroup?>,
@@ -24,7 +24,7 @@ interface IOfferSectionModel {
 class OfferSectionModel @Inject constructor(
     private val creditReportView: ViewFreeCreditReportImpl): IOfferSectionModel {
 
-    override fun allOfferItems(): MutableMap<AccountOfferKeys, CommonItem.OfferItem> {
+    override fun buildAllOfferList(): MutableMap<AccountOfferKeys, CommonItem.OfferItem> {
         return mutableMapOf(
             AccountOfferKeys.StoreCardApplyNow to OfferProductType.StoreCardApplyNow.value(),
             AccountOfferKeys.PersonalLoanApplyNow to OfferProductType.PersonalLoanApplyNow.value(),
@@ -35,17 +35,17 @@ class OfferSectionModel @Inject constructor(
         )
     }
 
-    override fun initialOfferList(): MutableMap<AccountOfferKeys, CommonItem.OfferItem?> {
-        return mutableMapOf<AccountOfferKeys, CommonItem.OfferItem?>().apply {
-            put(AccountOfferKeys.ViewApplicationStatus, OfferProductType.ViewApplicationStatus.value(false))
-            put(AccountOfferKeys.CreditCardApplyNow, OfferProductType.BlackCreditCardApplyNow.value())
-            put(AccountOfferKeys.StoreCardApplyNow, OfferProductType.StoreCardApplyNow.value())
-            put(AccountOfferKeys.PersonalLoanApplyNow, OfferProductType.PersonalLoanApplyNow.value())
-        }
+    override fun buildInitialOfferList(): MutableMap<AccountOfferKeys, CommonItem.OfferItem?> {
+        return mutableMapOf(
+            AccountOfferKeys.ViewApplicationStatus to OfferProductType.ViewApplicationStatus.value(false),
+            AccountOfferKeys.CreditCardApplyNow to OfferProductType.BlackCreditCardApplyNow.value(),
+            AccountOfferKeys.StoreCardApplyNow to OfferProductType.StoreCardApplyNow.value(),
+            AccountOfferKeys.PersonalLoanApplyNow to OfferProductType.PersonalLoanApplyNow.value()
+        )
     }
 
     override fun getOfferProductByOfferKey(key: AccountOfferKeys): CommonItem.OfferItem {
-        val offers = allOfferItems()
+        val offers = buildAllOfferList()
         return offers[key] ?: OfferProductType.StoreCardApplyNow.value()
     }
 
@@ -82,8 +82,8 @@ class OfferSectionModel @Inject constructor(
             accountOfferKeys.add(AccountOfferKeys.CreditReport)
         }
 
-        accountOfferKeys.forEach {
-            mapOfMyOffers[it] =  getOfferProductByOfferKey(it)
+        for (key in accountOfferKeys) {
+            mapOfMyOffers += key to getOfferProductByOfferKey(key = key)
         }
 
         return mapOfMyOffers

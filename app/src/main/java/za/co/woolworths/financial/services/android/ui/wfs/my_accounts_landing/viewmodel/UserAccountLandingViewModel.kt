@@ -90,6 +90,8 @@ class UserAccountLandingViewModel @Inject constructor(
 
     private var userAccountResponse: UserAccountResponse? = null
     var accountProductCardsGroup : AccountProductCardsGroup? = null
+    var fetchAccountDidLoadOnce : Boolean = false
+    var petInsuranceDidLoadOnce : Boolean = false
 
     private var _mapOfFinalProductItems = mutableMapOf<String, AccountProductCardsGroup?>()
     val mapOfFinalProductItems: MutableMap<String, AccountProductCardsGroup?> = _mapOfFinalProductItems
@@ -139,19 +141,19 @@ class UserAccountLandingViewModel @Inject constructor(
     fun setUserUnAuthenticated(resultCode: Int?) {
         if (resultCode == SSOActivity.SSOActivityResult.SIGNED_OUT.rawValue()) {
             initProductAndOfferItem()
+            fetchAccountDidLoadOnce = false
+            petInsuranceDidLoadOnce = false
             isUserAuthenticated.value = NotAuthenticated
         }
     }
 
     fun setUserAuthenticated(resultCode: Int?) {
-        viewModelScope.launch {
             if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
                 showShimmer(isC2User())
                 queryAccountLandingService(true)
                 isUserAuthenticated.value = Authenticated
                 isBiometricPopupEnabled = isBiometricScreenNeeded()
             }
-        }
     }
 
     private fun showShimmer(isVisible: Boolean) {
@@ -175,7 +177,7 @@ class UserAccountLandingViewModel @Inject constructor(
     private fun populateMapOfMyOffers() {
         _mapOfMyOffers.apply {
             clear()
-            putAll(offerUseCase.initialOfferList())
+            putAll(offerUseCase.buildInitialOfferList())
         }
     }
 
@@ -192,6 +194,7 @@ class UserAccountLandingViewModel @Inject constructor(
     private fun queryUserAccountService(isRefreshing: Boolean? = false) {
         if (!isC2User()) {
             _mapOfFinalProductItems.clear()
+            userAccountResponse = null
             constructMapOfMyOffers()
             showShimmer(false)
             return
@@ -203,6 +206,7 @@ class UserAccountLandingViewModel @Inject constructor(
 
     fun handleUserAccountResponse(userAccountResponse: UserAccountResponse?) {
         this.userAccountResponse = userAccountResponse
+        this.fetchAccountDidLoadOnce = true
         handleUserPropertiesOnGetAccountResponseSuccess(userAccountResponse)
         val mapOfMyProducts: MutableMap<String, AccountProductCardsGroup?> = mutableMapOf()
 
@@ -232,7 +236,7 @@ class UserAccountLandingViewModel @Inject constructor(
                     else -> Unit
                 }
             }
-            mapOfMyProducts[validItem.productGroupCode] = product
+            mapOfMyProducts += validItem.productGroupCode to product
         }
 
         if (mapOfMyProducts.isNotEmpty()) {
@@ -336,10 +340,10 @@ class UserAccountLandingViewModel @Inject constructor(
     }
 
     fun isC2UserOrMyProductItemExist(): Boolean {
-        return isC2User() || _mapOfFinalProductItems.isNotEmpty()
+        return isC2User() || userAccountResponse?.products?.isNotEmpty() == true
     }
 
-    fun listOfSignInItem() = listOfSignInItems(appVersion = getAppVersion())
+    fun buildSignInList() = listOfSignInItems(appVersion = getAppVersion())
 
     fun listOfSignedOutItem() = listOfSignedOutItems(appVersion = getAppVersion())
 
@@ -429,9 +433,9 @@ class UserAccountLandingViewModel @Inject constructor(
         if(_mapOfFinalProductItems[AccountOfferKeys.PetInsurance.value] == null && !_fetchPetInsuranceState.value.hasError) {
             val tempOfferList = _mapOfMyOffers.toMutableMap()
             _mapOfMyOffers.clear()
-            _mapOfMyOffers[AccountOfferKeys.PetInsurance] = OfferProductType.PetInsurance.value()
-            tempOfferList.forEach { (key, value) ->
-                _mapOfMyOffers[key] = value
+            _mapOfMyOffers += AccountOfferKeys.PetInsurance to OfferProductType.PetInsurance.value()
+            for(temp in tempOfferList)  {
+                _mapOfMyOffers += temp.key to temp.value
             }
 
         }
