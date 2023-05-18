@@ -9,6 +9,7 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.ManageSubstitutionDetailsLayoutBinding
 import com.facebook.shimmer.Shimmer
@@ -287,9 +288,11 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
             it.getContentIfNotHandled()?.let { resource ->
                 when (resource.status) {
                     Status.LOADING -> {
-
+                        binding.progressBar.visibility = View.VISIBLE
                     }
                     Status.SUCCESS -> {
+                        binding.progressBar.visibility = View.GONE
+
                         /* if we get form exception need to show error popup*/
                         resource.data?.data?.getOrNull(0)?.formExceptions?.getOrNull(0)?.let {
                             if (it.message?.isNotEmpty() == true) {
@@ -302,7 +305,7 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
                         (activity as? BottomNavigationActivity)?.popFragment()
                     }
                     Status.ERROR -> {
-
+                        binding.progressBar.visibility = View.GONE
                     }
                 }
             }
