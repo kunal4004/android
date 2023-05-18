@@ -130,7 +130,7 @@ class UserAccountsLandingFragment : Fragment() {
             navigation.setScreenNameMyAccount()
             navigation.hideToolbar()
                 if (isUserAuthenticated.value == Authenticated) {
-                    queryAccountLandingService(isApiUpdateForced = false)
+                    queryAccountLandingService(isApiUpdateForced = !fetchAccountDidLoadOnce)
                 }
             }
         }

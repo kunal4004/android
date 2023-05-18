@@ -1,12 +1,11 @@
 package za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature.screen
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.runtime.*
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.FastOutLinearInEasing
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.runtime.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
@@ -66,7 +65,6 @@ fun SignedInScreen(
     val userAccountsByProductOfferingId by viewModel.getUserAccountsByProductOfferingId.collectAsStateWithLifecycle()
     val petInsuranceState by viewModel.fetchPetInsuranceState.collectAsStateWithLifecycle()
     val scheduleDeliveryNetworkState by viewModel.scheduleDeliveryNetworkState.collectAsStateWithLifecycle()
-
     val isAccountLoading = userAccounts.isLoading
 
     with(viewModel) {
@@ -102,12 +100,19 @@ fun UserAccountLandingViewModel.BiometricsCollector(onClick: (OnAccountItemClick
 }
 
 @Composable
-fun UserAccountLandingViewModel.PetInsuranceCollector(petInsuranceState: NetworkStatusUI<PetInsuranceModel>,
+fun UserAccountLandingViewModel.PetInsuranceCollector(
+                                                      petInsuranceState: NetworkStatusUI<PetInsuranceModel>,
                                                       onClick: (OnAccountItemClickListener) -> Unit) {
     if (!petInsuranceState.isLoading) {
-        petInsuranceState.data?.let { petModel -> this.handlePetInsuranceResult(petModel){ insuranceProduct ->
-            onClick(AccountLandingInstantLauncher.PetInsuranceNotCoveredAwarenessModel(insuranceProduct))
-        } }
+        petInsuranceState.data?.let { petModel ->
+            this.handlePetInsuranceResult(petModel) { insuranceProduct ->
+                onClick(
+                    AccountLandingInstantLauncher.PetInsuranceNotCoveredAwarenessModel(
+                        insuranceProduct
+                    )
+                )
+            }
+        }
     }
 }
 
@@ -170,8 +175,7 @@ private fun UserAccountLandingViewModel.SignInContainer(
                 {
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),
-                        state = rememberLazyListState()
-                    ) {
+                        state = rememberLazyListState()) {
 
                         myProductsSection(
                             isLoading = isAccountLoading,
@@ -328,7 +332,7 @@ private fun LazyListScope.profileAndGeneralViewGroup(
     brush: Brush,
     onClick: (OnAccountItemClickListener) -> Unit
 ) {
-    viewModel.listOfSignInItem().forEach {
+    viewModel.buildSignInList().forEach {
         item {
             viewModel.UiElements(isLoading = isLoading, it, brush, onClick)
         }
@@ -359,6 +363,7 @@ private fun LazyListScope.offerViewGroup(
 
     item {
         OfferCarousel(
+            viewModel=viewModel,
             myOffers = viewModel.mapOfMyOffers,
             isLoading = isLoading,
             isBottomSpacerShown = viewModel.isC2User(),
@@ -369,6 +374,7 @@ private fun LazyListScope.offerViewGroup(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 private fun LazyListScope.myProductsSection(
     isLoading: Boolean,
     brush: Brush,
@@ -393,24 +399,33 @@ private fun LazyListScope.myProductsSection(
                 )
             }
 
-            is AccountProductCardsGroup.PetInsurance -> item {
 
+            is AccountProductCardsGroup.PetInsurance -> item (key = item.key) {
                 if (loadingOptions.isAccountLoading) {
                     ProductShimmerView(
                         brush = shimmerOptions.brush,
                         key = productItems.properties.automationLocatorKey
                     )
                 }
-                AnimatedVisibility(
-                    visible = !loadingOptions.isAccountLoading,
-                    enter = slideInHorizontally(animationSpec = tween(durationMillis = animationDurationMilis400)),
-                    exit =  fadeOut()
-                ) {
+
+                if (!viewModel.petInsuranceDidLoadOnce) {
+                    viewModel.petInsuranceDidLoadOnce = true
+                    AnimatedVisibility(visible =!loadingOptions.isAccountLoading,
+                    enter = slideInHorizontally(tween(durationMillis = animationDurationMilis400, easing = LinearEasing))) {
+                        PetInsuranceView(
+                            modifier= Modifier.animateItemPlacement(tween(durationMillis = animationDurationMilis400, easing = LinearEasing)),
+                            productGroup = productItems,
+                            petInsuranceDefaultConfig = viewModel.getPetInsuranceMobileConfig()?.defaultCopyPetPending,
+                            onProductClick = onProductClick
+                        )
+                    }
+                }
+
+                if (viewModel.petInsuranceDidLoadOnce && !loadingOptions.isAccountLoading) {
                     PetInsuranceView(
                         productGroup = productItems,
                         petInsuranceDefaultConfig = viewModel.getPetInsuranceMobileConfig()?.defaultCopyPetPending,
                         onProductClick = onProductClick
-
                     )
                 }
             }
@@ -482,9 +497,6 @@ fun UserAccountLandingViewModel.UiElements(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .animateContentSize(
-                tween(300, easing = FastOutLinearInEasing)
-            )
     ) {
         when (content) {
             CommonItem.Divider -> DividerThicknessOne()

@@ -48,7 +48,7 @@ fun SignedOutScreen(
                     ToolbarView(title)
                 }
                 is CommonItem.UserAccountApplicationInfo -> ApplicationInfoView(applicationInfo = data)
-                is CommonItem.UserOffersAccount -> OfferCarousel(data.offers){ onClick(it) }
+                is CommonItem.UserOffersAccount -> OfferCarousel(viewModel = viewModel, data.offers){ onClick(it) }
 
                 is GeneralProductType -> GeneralItem(data, isLoading = false) { onClick(it) }
                 is SignedOut.OnBoarding -> OnBoardingCarousel(items = data.walkThrough) { onClick(it) }
