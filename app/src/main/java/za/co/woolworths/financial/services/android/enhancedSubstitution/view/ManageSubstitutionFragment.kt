@@ -2,8 +2,10 @@ package za.co.woolworths.financial.services.android.enhancedSubstitution.view
 
 import android.os.Bundle
 import android.text.TextUtils
+import android.view.MotionEvent
 import android.view.View
-import android.view.View.OnClickListener
+import android.view.View.*
+import android.view.ViewTreeObserver
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
@@ -33,7 +35,7 @@ import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBind
 
 class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetailsLayoutBinding>(
     ManageSubstitutionDetailsLayoutBinding::inflate
-), OnClickListener, ProductSubstitutionListListener {
+), OnClickListener, ProductSubstitutionListListener, View.OnTouchListener, ViewTreeObserver.OnScrollChangedListener {
 
     private var manageProductSubstitutionAdapter: ManageProductSubstitutionAdapter? = null
     private var selectionChoice = ""
@@ -98,6 +100,8 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
                 disableConfirmButton()
             }
         }
+        binding.layoutManageSubstitution.nestedScrollView.setOnTouchListener(this)
+        binding.layoutManageSubstitution.nestedScrollView.viewTreeObserver.addOnScrollChangedListener(this)
     }
 
     private fun setUpViewModel() {
@@ -113,7 +117,7 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
     private fun showShimmerView() {
         val shimmer = Shimmer.AlphaHighlightBuilder().build()
         binding.layoutManageSubstitution.listSubstitute.shimmerLayout.apply {
-            visibility = View.VISIBLE
+            visibility = VISIBLE
             setShimmer(shimmer)
             startShimmer()
         }
@@ -373,5 +377,21 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
             listSubstitute.tvSearchProduct.isEnabled = true
         }
 
+    }
+
+    override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+        return false
+    }
+
+    override fun onScrollChanged() {
+        binding.layoutManageSubstitution.nestedScrollView.apply {
+            val view = this.getChildAt(this.childCount - 1)
+            val bottomDetector: Int = view.bottom - (this.height + this.scrollY)
+            if (bottomDetector == 0) {
+              binding.viewSeparator.visibility = VISIBLE
+            } else {
+               binding.viewSeparator.visibility = GONE
+            }
+        }
     }
 }
