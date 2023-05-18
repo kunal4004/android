@@ -14,6 +14,7 @@ data class FontDimensions(
     val sp16: TextUnit = 16.sp,
     val sp18: TextUnit = 18.sp,
     val sp20: TextUnit = 20.sp,
+    val policyNumberValue15Sp : TextUnit = 15.sp
 )
 
 val smallFontDimensions by lazy { FontDimensions() }
@@ -26,7 +27,9 @@ val sw320FontDimensions by lazy {
 val sw360FontDimensions by lazy {
     FontDimensions(
         sp15 = 14.sp,
-        sp16 = 15.sp
+        sp16 = 15.sp,
+        policyNumberValue15Sp = 13.sp
+
     )
 }
 

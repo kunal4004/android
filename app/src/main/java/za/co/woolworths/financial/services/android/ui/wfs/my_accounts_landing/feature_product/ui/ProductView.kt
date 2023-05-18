@@ -29,7 +29,6 @@ import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.fe
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.enumtype.ProductTransformer
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.enumtype.RetryOptions
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.enumtype.AccountProductCardsGroup
-import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.model.ProductDetails
 import za.co.woolworths.financial.services.android.ui.wfs.theme.Margin
 
 @Composable
@@ -39,7 +38,6 @@ fun ProductContainerSwitcher(productGroup: AccountProductCardsGroup,
     when (productGroup) {
 
         is AccountProductCardsGroup.BlackCreditCard -> ProductViewItem(
-            productDetails = productGroup.productDetails,
             retryOptions = productGroup.retryOptions,
             transformer = productGroup.transformer,
             properties = productGroup.properties,
@@ -55,7 +53,6 @@ fun ProductContainerSwitcher(productGroup: AccountProductCardsGroup,
         )
 
         is AccountProductCardsGroup.GoldCreditCard -> ProductViewItem(
-            productDetails = productGroup.productDetails,
             retryOptions = productGroup.retryOptions,
             transformer = productGroup.transformer,
             properties = productGroup.properties,
@@ -71,7 +68,6 @@ fun ProductContainerSwitcher(productGroup: AccountProductCardsGroup,
         )
 
         is AccountProductCardsGroup.SilverCreditCard -> ProductViewItem(
-            productDetails = productGroup.productDetails,
             retryOptions = productGroup.retryOptions,
             transformer = productGroup.transformer,
             properties = productGroup.properties,
@@ -87,7 +83,6 @@ fun ProductContainerSwitcher(productGroup: AccountProductCardsGroup,
         )
 
         is AccountProductCardsGroup.PersonalLoan -> ProductViewItem(
-            productDetails = productGroup.productDetails,
             retryOptions = productGroup.retryOptions,
             transformer = productGroup.transformer,
             properties = productGroup.properties,
@@ -103,7 +98,6 @@ fun ProductContainerSwitcher(productGroup: AccountProductCardsGroup,
         )
 
         is AccountProductCardsGroup.StoreCard -> ProductViewItem(
-            productDetails = productGroup.productDetails,
             retryOptions = productGroup.retryOptions,
             transformer = productGroup.transformer,
             properties = productGroup.properties,
@@ -125,7 +119,6 @@ fun ProductContainerSwitcher(productGroup: AccountProductCardsGroup,
 
 @Composable
 fun ProductViewItem(
-    productDetails: ProductDetails?,
     retryOptions: RetryOptions,
     transformer: ProductTransformer,
     properties: ProductProperties,
@@ -193,6 +186,7 @@ fun ProductViewItem(
                 }
 
                 ViewRetryMyCoverButtonGroup(
+                    locator = locator,
                     buttonType = if (isRetryButtonEnabled) MyProductButtonType.RETRY else MyProductButtonType.VIEW,
                     buttonState = buttonState,
                     viewButtonLabel = stringResource(id = properties.viewButton).uppercase(),

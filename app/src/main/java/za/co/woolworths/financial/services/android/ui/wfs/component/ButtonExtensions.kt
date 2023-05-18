@@ -124,7 +124,9 @@ fun SurfaceTextButton(
                 false -> {
                     ButtonLabel(
                         text = buttonLabel.uppercase(), color = White,
-                        modifier = Modifier.wrapContentWidth().wrapContentHeight()
+                        modifier = Modifier.wrapContentWidth()
+                            .wrapContentHeight()
+                            .testAutomationTag(locator = locator)
                     )
                 }
             }
