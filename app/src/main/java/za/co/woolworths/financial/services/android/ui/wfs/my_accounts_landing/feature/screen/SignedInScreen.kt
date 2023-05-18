@@ -22,6 +22,7 @@ import za.co.woolworths.financial.services.android.ui.wfs.component.*
 import za.co.woolworths.financial.services.android.ui.wfs.component.pull_to_refresh.WfsPullToRefreshUI
 import za.co.woolworths.financial.services.android.ui.wfs.core.NetworkStatusUI
 import za.co.woolworths.financial.services.android.ui.wfs.core.RetrofitFailureResult
+import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.extensions.testAutomationTag
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_chat.ui.WfsChatView
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_general.stabletype.GeneralProductType
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_general.ui.GeneralItem
@@ -459,7 +460,8 @@ private fun LazyListScope.productHeaderView(
             text = title,
             locator = locator,
             color = Color.Black,
-            modifier = Modifier.padding(start = Margin.start, top = Margin.end),
+            modifier = Modifier.padding(start = Margin.start, top = Margin.end)
+                .testAutomationTag(locator),
             isLoading = isLoading,
             brush = brush
         )

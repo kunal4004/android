@@ -27,7 +27,6 @@ import za.co.woolworths.financial.services.android.ui.wfs.component.SpacerHeight
 import za.co.woolworths.financial.services.android.ui.wfs.component.SpacerWidth4dp
 import za.co.woolworths.financial.services.android.ui.wfs.component.TextOpenSansFontFamily
 import za.co.woolworths.financial.services.android.ui.wfs.component.TextWFuturaMedium
-import za.co.woolworths.financial.services.android.ui.wfs.core.animationDurationMilis400
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.analytics.AutomationTestScreenLocator.Locator.my_product_pet_insurance_plan_type_title
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.analytics.AutomationTestScreenLocator.Locator.my_product_policy_number_label
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.analytics.AutomationTestScreenLocator.Locator.my_product_policy_number_value
@@ -213,7 +212,8 @@ fun PetInsuranceView(
                         buttonType = MyProductButtonType.MY_COVER,
                         buttonState = ButtonState.IDLE,
                         viewButtonLabel = "",
-                        retryButtonLabel = ""
+                        retryButtonLabel = "",
+                        locator
                     )
                 }
             }
