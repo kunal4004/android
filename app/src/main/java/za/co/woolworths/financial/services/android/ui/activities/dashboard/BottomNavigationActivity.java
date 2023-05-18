@@ -131,6 +131,7 @@ import za.co.woolworths.financial.services.android.ui.views.ToastFactory;
 import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.ui.views.shop.dash.ChangeFulfillmentCollectionStoreFragment;
+import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature.fragment.UserAccountsLandingFragment;
 import za.co.woolworths.financial.services.android.util.AppConstant;
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
 import za.co.woolworths.financial.services.android.util.DeepLinkingUtils;
@@ -854,9 +855,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
                 case R.id.navigate_to_account:
                     clearStack();
-                    if (mNavController.getCurrentFrag() instanceof MyAccountsFragment) {
-                        MyAccountsFragment currentAccountFragment = (MyAccountsFragment) mNavController.getCurrentFrag();
-                        currentAccountFragment.scrollToTop();
+                    if (mNavController.getCurrentFrag() instanceof UserAccountsLandingFragment) {
                         Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSMENU, BottomNavigationActivity.this);
                     }
                     break;
@@ -944,7 +943,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             case INDEX_REWARD:
                 return new WRewardsFragment();
             case INDEX_ACCOUNT:
-                MyAccountsFragment myAccountsFragment = new MyAccountsFragment();
+                UserAccountsLandingFragment myAccountsFragment = new UserAccountsLandingFragment();
                 myAccountsFragment.setArguments(mBundle);
                 return myAccountsFragment;
         }
