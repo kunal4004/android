@@ -136,7 +136,7 @@ fun ProductPetInsuranceRow(
                 locator = my_product_policy_number_value,
                 fontFamily = OpenSansFontFamily,
                 fontWeight = FontWeight.SemiBold,
-                fontSize = FontDimensions.sp15,
+                fontSize = FontDimensions.policyNumberValue15Sp,
                 color = White
             )
         }
@@ -175,18 +175,16 @@ fun PetInsuranceView(
     productGroup: AccountProductCardsGroup.PetInsurance,
     petInsuranceDefaultConfig: DefaultCopyPetPending?,
     onProductClick: (AccountProductCardsGroup) -> Unit) {
-    val locator = properties.automationLocatorKey
-    val productContainerLocator = createLocator(my_products_section_box, locator)
 
         Box(
             modifier = modifier
                 .wrapContentSize()
-                .testAutomationTag(productContainerLocator)
+                .testAutomationTag(createLocator(my_products_section_box, properties.automationLocatorKey))
                 .padding(start = Margin.start, end = Margin.end, top = Margin.dp16)
                 .bounceClick { onProductClick.invoke(productGroup) },
         ) {
             ConstraintLayout(constraintSet = createConstraints()) {
-                BackgroundImage(properties,  stringResource(id = properties.productTitle), locator)
+                BackgroundImage(properties,  stringResource(id = properties.productTitle), properties.automationLocatorKey)
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -213,7 +211,7 @@ fun PetInsuranceView(
                         buttonState = ButtonState.IDLE,
                         viewButtonLabel = "",
                         retryButtonLabel = "",
-                        locator
+                        locator = properties.automationLocatorKey
                     )
                 }
             }
