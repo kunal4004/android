@@ -26,20 +26,17 @@ class ManageProductSubstitutionAdapter(
     override fun onBindViewHolder(holder: SubstitutionViewHolder, position: Int) {
         when (holder) {
             is SubstitutionViewHolder.SubstituteProductViewHolder -> {
-                if (isShopperchooseOptionSelected) {
-                    holder.binding.cbShoppingList.isClickable = false
+                holder.bind(substitutionProductList.getOrNull(position), isShopperchooseOptionSelected)
+                if (lastSelectedPosition == position) {
+                    holder.binding.cbShoppingList.isChecked = true
                 } else {
-                    holder.binding.cbShoppingList.isClickable = true
-                    holder.binding.cbShoppingList.isChecked = lastSelectedPosition == position
-                    holder.binding.cbShoppingList.setOnClickListener {
-                        lastSelectedPosition = position
-                        notifyDataSetChanged()
-                        productSubstitutionListListener.clickOnSubstituteProduct(
-                            substitutionProductList.getOrNull(position)
-                        )
-                    }
+                    holder.binding.cbShoppingList.isChecked = false
                 }
-                holder.bind(substitutionProductList.getOrNull(position))
+                holder.binding.cbShoppingList.setOnClickListener {
+                    lastSelectedPosition = position
+                    notifyDataSetChanged()
+                    productSubstitutionListListener.clickOnSubstituteProduct(substitutionProductList.getOrNull(position))
+                }
             }
         }
     }

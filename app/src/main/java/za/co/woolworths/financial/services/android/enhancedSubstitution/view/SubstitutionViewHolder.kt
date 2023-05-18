@@ -18,15 +18,16 @@ sealed class SubstitutionViewHolder(binding: ViewBinding) : RecyclerView.ViewHol
         var context: Context,
     ) : SubstitutionViewHolder(binding) {
 
-        fun bind(item: Item?) {
+        fun bind(item: Item?, isShopperchooseOptionSelected:Boolean) {
             binding.apply {
+                cbShoppingList.isClickable = !isShopperchooseOptionSelected
                 root.isSwipeEnabled = false
                 llQuantity.visibility = View.GONE
                 tvProductAvailability.visibility = View.INVISIBLE
                 tvColorSize.visibility = View.INVISIBLE
 
-                TextViewCompat.setTextAppearance(tvTitle, R.style.style_substitution_title);
-                TextViewCompat.setTextAppearance(tvPrice, R.style.style_substitution_price);
+                TextViewCompat.setTextAppearance(tvTitle, R.style.style_substitution_title)
+                TextViewCompat.setTextAppearance(tvPrice, R.style.style_substitution_price)
 
                 tvTitle.text = item?.title
                 tvPrice.minHeight = context.resources.getDimension(R.dimen.two_dp).toInt()
@@ -43,12 +44,12 @@ sealed class SubstitutionViewHolder(binding: ViewBinding) : RecyclerView.ViewHol
                 tvProductAvailability.visibility = View.INVISIBLE
                 tvColorSize.visibility = View.INVISIBLE
 
-                TextViewCompat.setTextAppearance(tvTitle, R.style.style_substitution_title);
-                TextViewCompat.setTextAppearance(tvPrice, R.style.style_substitution_price);
+                TextViewCompat.setTextAppearance(tvTitle, R.style.style_substitution_title)
+                TextViewCompat.setTextAppearance(tvPrice, R.style.style_substitution_price)
 
                 tvTitle.text = productList?.productName
                 tvPrice.text = formatAmountToRandAndCentWithSpace(productList?.price)
-                if (productList?.promotions.isNullOrEmpty() == true) {
+                if (productList?.promotions.isNullOrEmpty()) {
                     tvPromotionText.visibility = View.VISIBLE
                     tvPromotionText.setText(productList?.promotions?.getOrNull(0)?.promotionalText)
                 } else {

@@ -93,9 +93,13 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
             if (selectionChoice == SubstitutionChoice.SHOPPER_CHOICE.name || selectionChoice == SubstitutionChoice.NO.name) {
                 rbShopperChoose.isChecked = true
                 rbOwnSubstitute.isChecked = false
+                listSubstitute.tvSearchProduct.isEnabled = false
+                enableConfirmButton()
             } else {
                 rbShopperChoose.isChecked = false
                 rbOwnSubstitute.isChecked = true
+                listSubstitute.tvSearchProduct.isEnabled = true
+                disableConfirmButton()
             }
         }
     }
@@ -109,7 +113,6 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
             )
         )[ProductSubstitutionViewModel::class.java]
     }
-
 
     private fun showShimmerView() {
         val shimmer = Shimmer.AlphaHighlightBuilder().build()
@@ -331,8 +334,7 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
         binding.layoutManageSubstitution.rbShopperChoose.isChecked = true
         binding.layoutManageSubstitution.rbOwnSubstitute.isChecked = false
         binding.layoutManageSubstitution.listSubstitute.tvSearchProduct.isEnabled = false
-        binding.btnConfirm.background =
-            ResourcesCompat.getDrawable(resources, R.drawable.black_color_drawable, null)
+        enableConfirmButton()
         manageProductSubstitutionAdapter?.isShopperchooseOptionSelected = true
         manageProductSubstitutionAdapter?.notifyDataSetChanged()
     }
@@ -341,18 +343,26 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
         binding.layoutManageSubstitution.rbOwnSubstitute.isChecked = true
         binding.layoutManageSubstitution.rbShopperChoose.isChecked = false
         binding.layoutManageSubstitution.listSubstitute.tvSearchProduct.isEnabled = true
-        binding.btnConfirm.isEnabled = false
-        binding.btnConfirm.background =
-            ResourcesCompat.getDrawable(resources, R.drawable.grey_bg_drawable, null)
+        disableConfirmButton()
         manageProductSubstitutionAdapter?.isShopperchooseOptionSelected = false
         manageProductSubstitutionAdapter?.notifyDataSetChanged()
         Utils.fadeInFadeOutAnimation(binding.layoutManageSubstitution.listSubstitute.root, false)
     }
 
     override fun clickOnSubstituteProduct(item: Item?) {
+        enableConfirmButton()
+        this.item = item
+    }
+
+    fun enableConfirmButton() {
         binding.btnConfirm.isEnabled = true
         binding.btnConfirm.background =
             ResourcesCompat.getDrawable(resources, R.drawable.black_color_drawable, null)
-        this.item = item
+    }
+
+    fun disableConfirmButton() {
+        binding.btnConfirm.isEnabled = false
+        binding.btnConfirm.background =
+            ResourcesCompat.getDrawable(resources, R.drawable.grey_bg_drawable, null)
     }
 }
