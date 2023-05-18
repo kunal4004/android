@@ -1,9 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_pet_insurance.ui
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideInHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -182,7 +178,6 @@ fun PetInsuranceView(
     onProductClick: (AccountProductCardsGroup) -> Unit) {
     val locator = properties.automationLocatorKey
     val productContainerLocator = createLocator(my_products_section_box, locator)
-    val title = stringResource(id = properties.productTitle)
 
         Box(
             modifier = modifier
@@ -192,7 +187,7 @@ fun PetInsuranceView(
                 .bounceClick { onProductClick.invoke(productGroup) },
         ) {
             ConstraintLayout(constraintSet = createConstraints()) {
-                BackgroundImage(properties, title, locator)
+                BackgroundImage(properties,  stringResource(id = properties.productTitle), locator)
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()

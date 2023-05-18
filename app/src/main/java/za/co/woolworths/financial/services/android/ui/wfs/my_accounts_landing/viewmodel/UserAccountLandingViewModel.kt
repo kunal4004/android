@@ -90,6 +90,8 @@ class UserAccountLandingViewModel @Inject constructor(
 
     private var userAccountResponse: UserAccountResponse? = null
     var accountProductCardsGroup : AccountProductCardsGroup? = null
+    var fetchAccountDidLoadOnce : Boolean = false
+    var petInsuranceDidLoadOnce : Boolean = false
 
     private var _mapOfFinalProductItems = mutableMapOf<String, AccountProductCardsGroup?>()
     val mapOfFinalProductItems: MutableMap<String, AccountProductCardsGroup?> = _mapOfFinalProductItems
@@ -139,6 +141,8 @@ class UserAccountLandingViewModel @Inject constructor(
     fun setUserUnAuthenticated(resultCode: Int?) {
         if (resultCode == SSOActivity.SSOActivityResult.SIGNED_OUT.rawValue()) {
             initProductAndOfferItem()
+            fetchAccountDidLoadOnce = false
+            petInsuranceDidLoadOnce = false
             isUserAuthenticated.value = NotAuthenticated
         }
     }
@@ -173,7 +177,7 @@ class UserAccountLandingViewModel @Inject constructor(
     private fun populateMapOfMyOffers() {
         _mapOfMyOffers.apply {
             clear()
-            putAll(offerUseCase.initialOfferList())
+            putAll(offerUseCase.buildInitialOfferList())
         }
     }
 
@@ -202,6 +206,7 @@ class UserAccountLandingViewModel @Inject constructor(
 
     fun handleUserAccountResponse(userAccountResponse: UserAccountResponse?) {
         this.userAccountResponse = userAccountResponse
+        this.fetchAccountDidLoadOnce = true
         handleUserPropertiesOnGetAccountResponseSuccess(userAccountResponse)
         val mapOfMyProducts: MutableMap<String, AccountProductCardsGroup?> = mutableMapOf()
 
@@ -338,7 +343,7 @@ class UserAccountLandingViewModel @Inject constructor(
         return isC2User() || userAccountResponse?.products?.isNotEmpty() == true
     }
 
-    fun listOfSignInItem() = listOfSignInItems(appVersion = getAppVersion())
+    fun buildSignInList() = listOfSignInItems(appVersion = getAppVersion())
 
     fun listOfSignedOutItem() = listOfSignedOutItems(appVersion = getAppVersion())
 

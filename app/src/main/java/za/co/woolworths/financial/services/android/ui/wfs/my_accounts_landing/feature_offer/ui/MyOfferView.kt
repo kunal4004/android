@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_offer.ui
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
@@ -46,6 +47,7 @@ import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.fe
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.schema.CommonItem
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.schema.OfferClickEvent
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.ui.MyProductTitleText
+import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.viewmodel.UserAccountLandingViewModel
 import za.co.woolworths.financial.services.android.ui.wfs.theme.Dimens
 import za.co.woolworths.financial.services.android.ui.wfs.theme.FloatDimensions
 import za.co.woolworths.financial.services.android.ui.wfs.theme.FontDimensions
@@ -72,13 +74,14 @@ fun OfferViewMainPreview() {
                 item { SpacerWidth24dp() }
             }
             SpacerHeight24dp()
-            OfferViewMainList(listOfOffers) {}
+           // OfferViewMainList(listOfOffers) {}
         }
     }
 }
 
 @Composable
 fun OfferViewMainList(
+    viewModel: UserAccountLandingViewModel,
     items: MutableMap<AccountOfferKeys, CommonItem.OfferItem?>,
     isLoading: Boolean = false,
     isBottomSpacerShown : Boolean = false,
@@ -115,16 +118,28 @@ fun OfferViewMainList(
                 item ?: return@items
                 val locator = item.automationLocatorKey
 
-                if(!item.data.isAnimationEnabled) {
+
+                if (!item.data.isAnimationEnabled) {
                     OfferCards(locator, item, onClick, isLoading, brush, listOfOfferSize)
+                }
+                if (viewModel.fetchAccountDidLoadOnce) {
+                    AnimatedVisibility(
+                        visible = item.data.isAnimationEnabled,
+                        enter = slideInHorizontally(animationSpec = tween(durationMillis = animationDurationMilis400, easing = LinearEasing)),
+                        exit = fadeOut()
+                    ) {
+                        OfferCards(locator, item, onClick, isLoading, brush, listOfOfferSize)
+                    }
                 }
 
-                AnimatedVisibility(visible = item.data.isAnimationEnabled,
-                enter = slideInHorizontally (animationSpec = tween(durationMillis = animationDurationMilis400)),
-                exit = fadeOut()) {
-                    OfferCards(locator, item, onClick, isLoading, brush, listOfOfferSize)
+                if (!viewModel.fetchAccountDidLoadOnce) {
+                    if ( item.data.isAnimationEnabled) {
+                        OfferCards(locator, item, onClick, isLoading, brush, listOfOfferSize)
+                    }
                 }
             })
+
+
         }
     }
 }

@@ -1,13 +1,13 @@
 package za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature.screen
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.runtime.*
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideInHorizontally
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.runtime.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -103,6 +103,7 @@ fun UserAccountLandingViewModel.PetInsuranceCollector(
                                                       onClick: (OnAccountItemClickListener) -> Unit) {
     if (!petInsuranceState.isLoading) {
         petInsuranceState.data?.let { petModel ->
+            petInsuranceDidLoadOnce = true
             this.handlePetInsuranceResult(petModel) { insuranceProduct ->
                 onClick(
                     AccountLandingInstantLauncher.PetInsuranceNotCoveredAwarenessModel(
@@ -172,7 +173,8 @@ private fun UserAccountLandingViewModel.SignInContainer(
                     })
                 {
                     LazyColumn(
-                        modifier = Modifier.fillMaxSize()) {
+                        modifier = Modifier.fillMaxSize(),
+                        state = rememberLazyListState()) {
 
                         myProductsSection(
                             isLoading = isAccountLoading,
@@ -329,7 +331,7 @@ private fun LazyListScope.profileAndGeneralViewGroup(
     brush: Brush,
     onClick: (OnAccountItemClickListener) -> Unit
 ) {
-    viewModel.listOfSignInItem().forEach {
+    viewModel.buildSignInList().forEach {
         item {
             viewModel.UiElements(isLoading = isLoading, it, brush, onClick)
         }
@@ -360,6 +362,7 @@ private fun LazyListScope.offerViewGroup(
 
     item {
         OfferCarousel(
+            viewModel=viewModel,
             myOffers = viewModel.mapOfMyOffers,
             isLoading = isLoading,
             isBottomSpacerShown = viewModel.isC2User(),
@@ -370,6 +373,7 @@ private fun LazyListScope.offerViewGroup(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 private fun LazyListScope.myProductsSection(
     isLoading: Boolean,
     brush: Brush,
@@ -395,25 +399,29 @@ private fun LazyListScope.myProductsSection(
             }
 
 
-            is AccountProductCardsGroup.PetInsurance -> item {
+            is AccountProductCardsGroup.PetInsurance -> item (key = item.key) {
                 if (loadingOptions.isAccountLoading) {
                     ProductShimmerView(
                         brush = shimmerOptions.brush,
                         key = productItems.properties.automationLocatorKey
                     )
                 }
-                    AnimatedVisibility(
-                        visible = !loadingOptions.isAccountLoading,
-                        enter = slideInHorizontally(
-                            animationSpec =
-                            tween(durationMillis = animationDurationMilis400, easing = LinearEasing)
-                        )
-                    ) {
+
+                if (!viewModel.petInsuranceDidLoadOnce) {
                         PetInsuranceView(
+                            modifier= Modifier.animateItemPlacement(tween(durationMillis = animationDurationMilis400, easing = LinearEasing)),
                             productGroup = productItems,
                             petInsuranceDefaultConfig = viewModel.getPetInsuranceMobileConfig()?.defaultCopyPetPending,
                             onProductClick = onProductClick
                         )
+                }
+
+                if (viewModel.petInsuranceDidLoadOnce && !loadingOptions.isAccountLoading) {
+                    PetInsuranceView(
+                        productGroup = productItems,
+                        petInsuranceDefaultConfig = viewModel.getPetInsuranceMobileConfig()?.defaultCopyPetPending,
+                        onProductClick = onProductClick
+                    )
                 }
             }
 
