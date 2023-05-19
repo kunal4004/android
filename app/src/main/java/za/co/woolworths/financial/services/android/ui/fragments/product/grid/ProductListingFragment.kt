@@ -34,6 +34,7 @@ import com.awfs.coordination.databinding.GridLayoutBinding
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.gson.JsonSyntaxException
 import com.skydoves.balloon.balloon
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.chanel.utils.ChanelUtils
 import za.co.woolworths.financial.services.android.chanel.views.ChanelNavigationClickListener
@@ -92,7 +93,7 @@ import java.net.ConnectException
 import java.net.UnknownHostException
 import java.util.*
 
-
+@AndroidEntryPoint
 open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBinding::inflate),
     GridNavigator,
     IProductListing, View.OnClickListener, SortOptionsAdapter.OnSortOptionSelected,
