@@ -24,6 +24,7 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
@@ -712,6 +713,7 @@ class ProductDetailsFragment :
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun ProductDetailsFragmentBinding.configureDefaultUI() {
 
         updateStockAvailabilityLocation()
@@ -729,9 +731,18 @@ class ProductDetailsFragment :
                     it.kilogramPrice
                 )
             }
+            payFlexWidget.setOnTouchListener { _, _ -> true }
+            payFlexWidgetLay.invalidate()
+            payFlexWidgetLay.setOnClickListener {
+                Toast.makeText(requireContext(),"payFlex clicked",Toast.LENGTH_SHORT).show()
+            }
+            payFlexWidget.settings.javaScriptEnabled = true
+            payFlexWidget.loadData(loadpayFlexWidget(productDetails?.price),"text/html", "UTF-8")
             auxiliaryImages.add(activity?.let { it1 -> getImageByWidth(it.externalImageRefV2, it1) }
                 .toString())
             updateAuxiliaryImages(auxiliaryImages)
+
+
         }
 
         mFreeGiftPromotionalImage = productDetails?.promotionImages?.freeGift
@@ -751,6 +762,10 @@ class ProductDetailsFragment :
                 )
             )
         }
+    }
+
+    private fun loadpayFlexWidget(amount: String?): String {
+        return "<!DOCTYPE html PUBLIC><html><head><meta charset=\"UTF-8\"><meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"></head><body><script async src=\"https://widgets.payflex.co.za/your-merchant-name/partpay-widget-0.1.3.js?type=calculator&min=10&max=2000&amount=$amount\" type=\"application/javascript\"></script></body></html>"
     }
 
     private fun ProductDetailsFragmentBinding.setupBrandView() {
@@ -1491,6 +1506,9 @@ class ProductDetailsFragment :
                 productOutOfStockErrorMessage()
                 return
             }
+            /*if((productDetails?.fulfillmentType == StoreUtils.Companion.FulfillmentType.CLOTHING_ITEMS?.type || productDetails?.fulfillmentType == StoreUtils.Companion.FulfillmentType.CRG_ITEMS?.type) &&
+                (Utils.retrieveStoreId(productDetails?.fulfillmentType) == "")) {*/
+           // }
         }
     }
 

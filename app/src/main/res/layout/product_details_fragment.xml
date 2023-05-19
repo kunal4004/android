@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/productLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -178,6 +179,27 @@
                     app:layout_constraintEnd_toStartOf="@+id/right_guideline"
                     app:layout_constraintStart_toStartOf="@+id/left_guideline"
                     app:layout_constraintTop_toBottomOf="@id/ratingLayout" />
+                <LinearLayout
+                    android:id="@+id/payFlexWidgetLay"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/fifty_dp"
+                    android:orientation="vertical"
+                    android:clickable="true"
+                    android:descendantFocusability="blocksDescendants"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/priceLayout"
+                    android:focusable="true">
+                <WebView
+                    android:id="@+id/payFlexWidget"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clickable="false"
+                    android:focusableInTouchMode="false"
+                    android:touchscreenBlocksFocus="false"
+                    android:focusable="false"
+                    tools:ignore="WebViewLayout" />
+                </LinearLayout>
 
                 <TextView
                     android:id="@+id/onlinePromotionalTextView1"
@@ -191,7 +213,7 @@
                     android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="@id/right_guideline"
                     app:layout_constraintStart_toStartOf="@id/left_guideline"
-                    app:layout_constraintTop_toBottomOf="@+id/priceLayout" />
+                    app:layout_constraintTop_toBottomOf="@+id/payFlexWidgetLay" />
 
                 <TextView
                     android:id="@+id/onlinePromotionalTextView2"
