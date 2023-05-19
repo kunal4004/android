@@ -2411,7 +2411,7 @@ class ProductDetailsFragment :
 
 
     private fun checkRunTimePermissionForLocation(): Boolean {
-        permissionUtils = PermissionUtils(activity, this)
+        permissionUtils = PermissionUtils(requireContext(), this)
         permissionUtils?.apply {
             val permissions = ArrayList<String>()
             permissions.add(Manifest.permission.ACCESS_FINE_LOCATION)
@@ -2420,7 +2420,7 @@ class ProductDetailsFragment :
         return false
     }
 
-    override fun permissionGranted(request_code: Int) {
+    override fun permissionGranted(requestCode: Int) {
         findItemInStore()
     }
 
@@ -2442,7 +2442,7 @@ class ProductDetailsFragment :
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
-        permissions: Array<out String>,
+        permissions: Array<String>,
         grantResults: IntArray,
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)

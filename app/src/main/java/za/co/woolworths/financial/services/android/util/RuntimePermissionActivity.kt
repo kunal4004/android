@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.util
 
 import androidx.appcompat.app.AppCompatActivity
-import java.util.ArrayList
 
 abstract class RuntimePermissionActivity : AppCompatActivity(), PermissionResultCallback {
 
@@ -10,25 +9,25 @@ abstract class RuntimePermissionActivity : AppCompatActivity(), PermissionResult
     abstract fun onRuntimePermissionRequestGranted()
     abstract fun onRuntimePermissonRequestDenied()
 
-    fun setUpRuntimePermission(permissions: ArrayList<String>?) {
+    fun setUpRuntimePermission(permissions: ArrayList<String>) {
         permissionUtils = PermissionUtils(this, this)
-        permissionUtils?.check_permission(permissions, "Explain here why the app needs permissions", 1)
+        permissionUtils?.checkPermission(permissions, 1)
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         permissionUtils?.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
-    override fun permissionGranted(request_code: Int) {
+    override fun permissionGranted(requestCode: Int) {
         onRuntimePermissionRequestGranted()
     }
 
-    override fun permissionDenied(request_code: Int) {
+    override fun permissionDenied(requestCode: Int) {
         onRuntimePermissonRequestDenied()
     }
 
-    override fun neverAskAgain(request_code: Int) {
+    override fun neverAskAgain(requestCode: Int) {
         onRuntimePermissonRequestDenied()
     }
 
