@@ -64,7 +64,7 @@
 
         <TextView
             android:id="@+id/tipNoteTextView"
-            style="@style/myriad_pro_regular"
+            style="@style/opensens_regular"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/twenty_dp"
@@ -74,7 +74,7 @@
             android:paddingTop="@dimen/one_dp"
             android:paddingBottom="@dimen/one_dp"
             android:text="@string/driver_tip_note"
-            android:textSize="@dimen/twelve_sp"
+            android:textSize="@dimen/eleven_sp"
             android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tipOptionScrollViewShimmerFrameLayout" />
