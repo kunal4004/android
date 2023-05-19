@@ -14,14 +14,14 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.applynow
 import za.co.woolworths.financial.services.android.ui.fragments.account.applynow.IApplyNowBottomSheetImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.applynow.data.ApplyNowRepo
 import za.co.woolworths.financial.services.android.ui.fragments.account.applynow.data.IApplyNowRepo
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.getViewStateFlowForNetworkCall
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.mapNetworkCallToViewStateFlow
 import javax.inject.Inject
 
 @HiltViewModel
 class ApplyNowViewModel @Inject constructor(val bottomSheet: ApplyNowBottomSheetImpl,repo: ApplyNowRepo) : ViewModel(),
     IApplyNowBottomSheetImpl by bottomSheet ,IApplyNowRepo by repo{
 
-    suspend fun applyNowResponse(contentId:String) = getViewStateFlowForNetworkCall { queryServiceApplyNow(contentId) }
+    suspend fun applyNowResponse(contentId:String) = mapNetworkCallToViewStateFlow { queryServiceApplyNow(contentId) }
 
     var applyNowResponse: MutableStateFlow<ApplyNowModel?> = MutableStateFlow(null)
     var applyNowState = ApplyNowState.BLACK_CREDIT_CARD

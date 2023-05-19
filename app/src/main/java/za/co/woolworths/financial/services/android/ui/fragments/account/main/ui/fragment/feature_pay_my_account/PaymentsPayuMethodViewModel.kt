@@ -9,7 +9,7 @@ import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.models.dto.pma.PaymentMethodsResponse
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.ViewState
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.getViewStateFlowForNetworkCall
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.mapNetworkCallToViewStateFlow
 import javax.inject.Inject
 
 @HiltViewModel
@@ -20,7 +20,7 @@ class PaymentsPayuMethodViewModel @Inject constructor(val request: PaymentsPayuM
     val paymentMethodsResponseResult: SharedFlow<ViewState<PaymentMethodsResponse>> get() = _paymentMethodsResponseResult
 
     fun requestPaymentPayuMethod() = viewModelScope.launch {
-        getViewStateFlowForNetworkCall { requestPaymentsPayuMethods() }.collect {
+        mapNetworkCallToViewStateFlow { requestPaymentsPayuMethods() }.collect {
             _paymentMethodsResponseResult.emit(it)
         }
     }

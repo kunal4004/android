@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import za.co.woolworths.financial.services.android.models.dto.account.AppGUIDModel
 import za.co.woolworths.financial.services.android.models.dto.account.AppGUIDRequestType
 import za.co.woolworths.financial.services.android.models.dto.account.getRequestBody
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.getViewStateFlowForNetworkCall
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.mapNetworkCallToViewStateFlow
 import za.co.woolworths.financial.services.android.ui.fragments.account.petinsurance.apply.data.IPetInsuranceApplyNowRepo
 import za.co.woolworths.financial.services.android.ui.fragments.account.petinsurance.apply.data.PetInsuranceApplyNowRepo
 import javax.inject.Inject
@@ -14,7 +14,7 @@ import javax.inject.Inject
 @HiltViewModel
 class PetInsuranceApplyNowViewModel @Inject constructor( repo: PetInsuranceApplyNowRepo) : ViewModel(),
     IPetInsuranceApplyNowRepo by repo {
-    suspend fun getAppGUID() = getViewStateFlowForNetworkCall {
+    suspend fun getAppGUID() = mapNetworkCallToViewStateFlow {
         queryServicetAppGUID(getRequestBody(AppGUIDRequestType.PET_INSURANCE)) }
     var appGUIDResponse: MutableStateFlow<AppGUIDModel?> = MutableStateFlow(null)
 
