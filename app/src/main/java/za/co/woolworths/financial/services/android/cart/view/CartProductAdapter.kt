@@ -679,8 +679,9 @@ class CartProductAdapter(
                     return@setOnClickListener
                 }
                 val substitutionSelection =
-                    if (substitutionInfo?.substitutionSelection?.isNullOrEmpty() == false) {
-                        substitutionInfo.substitutionSelection
+                    if (!substitutionInfo?.substitutionSelection.isNullOrEmpty()) {
+                        substitutionInfo?.substitutionSelection
+                            ?: SubstitutionChoice.SHOPPER_CHOICE.toString()
                     }
                     else  SubstitutionChoice.SHOPPER_CHOICE.toString()
 
