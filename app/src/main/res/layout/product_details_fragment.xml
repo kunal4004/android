@@ -195,10 +195,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:clickable="false"
+                    android:duplicateParentState="true"
                     android:focusableInTouchMode="false"
                     android:touchscreenBlocksFocus="false"
                     android:focusable="false"
                     tools:ignore="WebViewLayout" />
+
                 </LinearLayout>
 
                 <TextView
