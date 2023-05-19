@@ -15,7 +15,8 @@ import za.co.woolworths.financial.services.android.models.dto.EligibilityPlan
 import za.co.woolworths.financial.services.android.models.dto.EligibilityPlanResponse
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.ViewState
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.getViewStateFlowForNetworkCall
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.mapNetworkCallToViewStateFlow
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.mapNetworkCallToViewStateFlow
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.local.AccountDataClass
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.local.IAccountDataClass
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.repository.storecard.CollectionRepository
@@ -115,7 +116,7 @@ class AccountProductsHomeViewModel @Inject constructor(
 
     fun requestAccountsCollectionsCheckEligibility(isShown : Boolean) = viewModelScope.launch {
         showAccountInArrearsPopup = isShown
-        getViewStateFlowForNetworkCall { queryServiceCheckCustomerEligibilityPlan() }.collectLatest {
+        mapNetworkCallToViewStateFlow { queryServiceCheckCustomerEligibilityPlan() }.collectLatest {
             _accountsCollectionsCheckEligibility.emit(it)
         }
     }

@@ -13,10 +13,10 @@ apply plugin: 'kotlin-parcelize'
 android {
 
     def major = "9"
-    def minor = "9"
-    def fix = "2"
+    def minor = "10"
+    def fix = "0"
     def jobNumberProduction = 217
-    def jobNumberQa = 692
+    def jobNumberQa = 693
 
     buildFeatures {
         dataBinding true
@@ -32,7 +32,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion "1.4.3"
+        kotlinCompilerExtensionVersion = "1.4.7"
     }
 
     kotlinOptions {
@@ -62,7 +62,6 @@ android {
         dexOptions {
             javaMaxHeapSize "2560M"
         }
-
         buildConfigField("String", "HOST", '"' + System.env.WigroupServer_API_URL + '"')
         buildConfigField("String", "SHA1", '"' + System.env.WigroupServer_API_HASH + '"')
         buildConfigField("String", "ENV", '"' + System.env.Environment + '"')
@@ -342,6 +341,7 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.3.1'
     implementation 'com.google.android.play:core:1.10.0'
 
+
     // Power Mockito
     testImplementation "org.powermock:powermock-api-mockito2:2.0.2"
     testImplementation "org.powermock:powermock-module-junit4:2.0.2"
@@ -364,8 +364,9 @@ dependencies {
     androidTestImplementation 'androidx.test:rules:1.4.0-alpha04'
 
     // UI testing with Espresso
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0-alpha04'
-
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.0-alpha01'
+    androidTestImplementation('androidx.test:runner:1.5.2')
+    androidTestImplementation('androidx.test:rules:1.5.0')
     // Data store
     implementation "androidx.datastore:datastore-preferences:1.0.0"
 
@@ -394,16 +395,16 @@ dependencies {
     huaweiProductionImplementation "io.getstream:stream-chat-android-pushprovider-huawei:$stream_version"
 
     // Jetpack Compose
-    implementation 'androidx.activity:activity-compose'
+    implementation "androidx.activity:activity-compose:1.7.1"
     implementation "androidx.compose.material3:material3"
     implementation "androidx.compose.material3:material3-window-size-class"
     implementation 'androidx.compose.animation:animation'
     implementation 'androidx.compose.ui:ui-tooling'
     implementation "androidx.lifecycle:lifecycle-runtime-compose"
     implementation "androidx.constraintlayout:constraintlayout-compose:1.1.0-alpha09"
+    debugImplementation "androidx.compose.ui:ui-test-manifest:1.4.3"
 
     implementation 'androidx.lifecycle:lifecycle-viewmodel-compose'
-    androidTestImplementation 'androidx.compose.ui:ui-test-junit4'
 
     implementation 'androidx.work:work-runtime:2.7.1'
     implementation 'androidx.paging:paging-common-ktx:3.0.1'
