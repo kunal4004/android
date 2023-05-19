@@ -18,11 +18,6 @@ class ShopPagerAdapter(
     var listener: OnChildFragmentEvents
 ) : FragmentStatePagerAdapter(fm) {
     private val mTabTitle: MutableList<String>? = tabTitle
-    private val dashFragment = DashDeliveryAddressFragment().apply {
-        arguments = bundleOf(
-            ARG_SEND_DELIVERY_DETAILS to listener.isSendDeliveryDetails()
-        )
-    }
 
     override fun getItem(position: Int): Fragment {
         return when (position) {
@@ -35,7 +30,11 @@ class ShopPagerAdapter(
                 collectionFragment
             }
 
-            2 -> dashFragment
+            2 -> DashDeliveryAddressFragment().apply {
+                arguments = bundleOf(
+                    ARG_SEND_DELIVERY_DETAILS to listener.isSendDeliveryDetails()
+                )
+            }
 
             else -> {
                 val standardDeliveryFragment = StandardDeliveryFragment()
