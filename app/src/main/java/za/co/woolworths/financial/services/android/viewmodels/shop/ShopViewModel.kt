@@ -200,8 +200,8 @@ class ShopViewModel @Inject constructor(
                         validateLocationResponse?.validatePlace?.onDemand?.let {
                             var visibility =
                                 (it.deliverable && !it.firstAvailableFoodDeliveryTime.isNullOrEmpty())
-
-                            visibility = visibility && KotlinUtils.isDashTabCrossClicked == false
+                            // Close button isn't clicked
+                            visibility = !(KotlinUtils.isDashTabCrossClicked ?: false) && visibility
 
                             val changeButtonVisibility =
                                 KotlinUtils.getDeliveryType() == null || Delivery.getType(
