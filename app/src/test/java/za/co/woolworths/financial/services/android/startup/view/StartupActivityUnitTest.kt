@@ -21,7 +21,6 @@ import org.junit.rules.TestRule
 import org.junit.runner.RunWith
 import org.mockito.Mockito.*
 import org.mockito.junit.MockitoJUnitRunner
-import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.startup.utils.ConfigResource
 import za.co.woolworths.financial.services.android.startup.viewmodel.StartupViewModel
 import za.co.woolworths.financial.services.android.utils.TestCoroutineRule
@@ -55,11 +54,12 @@ class StartupActivityUnitTest : Activity() {
 
  /*  @Test
     fun check_all_methods_from_init() = runBlockingTest {
-        doNothing().`when`(startupActivity).showNonVideoViewWithErrorLayout()
-        startupActivity.init()
-        verify(startupViewModel, times(1)).setSessionDao(SessionDao.KEY.SPLASH_VIDEO, "1")
-        verify(startupActivity, times(1)).showNonVideoViewWithErrorLayout()
-        verify(startupViewModel, times(1)).isConnectedToInternet(startupActivity)
+        // TODO UNIT TEST: The following code is not aligned with recent implementation, and needs to be updated.
+//        doNothing().`when`(startupActivity).showNonVideoViewWithErrorLayout()
+//        startupActivity.init()
+//        verify(startupViewModel, times(1)).setSessionDao(SessionDao.KEY.SPLASH_VIDEO, "1")
+//        verify(startupActivity, times(1)).showNonVideoViewWithErrorLayout()
+//        verify(startupViewModel, times(1)).isConnectedToInternet(startupActivity)
     }
 */
     @Ignore
@@ -72,35 +72,38 @@ class StartupActivityUnitTest : Activity() {
 
   /*  @Test
     fun showsVideoView_for_first_time() {
-        `when`(startupViewModel.getSessionDao(SessionDao.KEY.SPLASH_VIDEO)).thenReturn(true)
-        doNothing().`when`(startupActivity).showVideoView()
-        startupActivity.testsetupLoadingScreen()
-        verify(startupActivity, times(1)).showVideoView()
+        // TODO UNIT TEST: The following code is not aligned with recent implementation, and needs to be updated.
+//        `when`(startupViewModel.getSessionDao(SessionDao.KEY.SPLASH_VIDEO)).thenReturn(true)
+//        doNothing().`when`(startupActivity).showVideoView()
+//        startupActivity.testsetupLoadingScreen()
+//        verify(startupActivity, times(1)).showVideoView()
     }*/
 
  /*   @Test
     fun showsNonVideoView_for_second_time() {
-        doNothing().`when`(startupActivity).showNonVideoViewWithoutErrorLayout()
-        startupActivity.testsetupLoadingScreen()
-        verify(startupActivity, times(1)).showNonVideoViewWithoutErrorLayout()
+        // TODO UNIT TEST: The following code is not aligned with recent implementation, and needs to be updated.
+//        doNothing().`when`(startupActivity).showNonVideoViewWithoutErrorLayout()
+//        startupActivity.testsetupLoadingScreen()
+//        verify(startupActivity, times(1)).showNonVideoViewWithoutErrorLayout()
     }*/
 
    /* @Test
     fun testPresentNextScreen() {
-        doNothing().`when`(startupActivity).showNonVideoViewWithoutErrorLayout()
-        val intent: Intent = mock()
-        val bundle: Bundle = mock()
-        intent.putExtras(bundle)
-        startupActivity.testSetIntent(intent)
-
-        `when`(intent.action).thenReturn("android.intent.action.VIEW")
-        `when`(intent.data).thenReturn(mock())
-        doNothing().`when`(startupActivity).handleAppLink(any())
-
-        startupActivity.presentNextScreenOrServerMessage()
-        verify(startupActivity, times(1)).showNonVideoViewWithoutErrorLayout()
-        verify(startupActivity, times(1)).presentNextScreen()
-        verify(startupActivity, times(1)).handleAppLink(any())
+        // TODO UNIT TEST: The following code is not aligned with recent implementation, and needs to be updated.
+//        doNothing().`when`(startupActivity).showNonVideoViewWithoutErrorLayout()
+//        val intent: Intent = mock()
+//        val bundle: Bundle = mock()
+//        intent.putExtras(bundle)
+//        startupActivity.testSetIntent(intent)
+//
+//        `when`(intent.action).thenReturn("android.intent.action.VIEW")
+//        `when`(intent.data).thenReturn(mock())
+//        doNothing().`when`(startupActivity).handleAppLink(any())
+//
+//        startupActivity.presentNextScreenOrServerMessage()
+//        verify(startupActivity, times(1)).showNonVideoViewWithoutErrorLayout()
+//        verify(startupActivity, times(1)).presentNextScreen()
+//        verify(startupActivity, times(1)).handleAppLink(any())
     }*/
 
     @Ignore
@@ -122,15 +125,16 @@ class StartupActivityUnitTest : Activity() {
 /*
     @Test
     fun testonStartInit() {
-        `when`(startupViewModel.isAppMinimized).thenReturn(true)
-        `when`(startupViewModel.isServerMessageShown).thenReturn(true)
-        doNothing().`when`(startupActivity).showNonVideoViewWithoutErrorLayout()
-        doNothing().`when`(startupActivity).getConfig()
-        startupActivity.onStartInit()
-        verify(startupActivity, times(1)).getConfig()
-        verify(startupActivity, times(1)).showNonVideoViewWithoutErrorLayout()
-        Assert.assertTrue(startupViewModel.isServerMessageShown)
-        Assert.assertTrue(startupViewModel.isAppMinimized)
+        // TODO UNIT TEST: The following code is not aligned with recent implementation, and needs to be updated.
+//        `when`(startupViewModel.isAppMinimized).thenReturn(true)
+//        `when`(startupViewModel.isServerMessageShown).thenReturn(true)
+//        doNothing().`when`(startupActivity).showNonVideoViewWithoutErrorLayout()
+//        doNothing().`when`(startupActivity).getConfig()
+//        startupActivity.onStartInit()
+//        verify(startupActivity, times(1)).getConfig()
+//        verify(startupActivity, times(1)).showNonVideoViewWithoutErrorLayout()
+//        Assert.assertTrue(startupViewModel.isServerMessageShown)
+//        Assert.assertTrue(startupViewModel.isAppMinimized)
     }*/
 
     @Test
@@ -159,13 +163,14 @@ class StartupActivityUnitTest : Activity() {
 
  /*   @Test
     fun testonClick_for_retry_without_internet() {
-        val view: View = mock()
-        `when`(view.id).thenReturn(R.id.retry)
-        `when`(startupViewModel.isConnectedToInternet(startupActivity)).thenReturn(false)
-        doNothing().`when`(startupActivity).showNonVideoViewWithErrorLayout()
-        startupActivity.onClick(view)
-        verify(startupViewModel, times(1)).isConnectedToInternet(startupActivity)
-        verify(startupActivity, times(1)).showNonVideoViewWithErrorLayout()
+        // TODO UNIT TEST: The following code is not aligned with recent implementation, and needs to be updated.
+//        val view: View = mock()
+//        `when`(view.id).thenReturn(R.id.retry)
+//        `when`(startupViewModel.isConnectedToInternet(startupActivity)).thenReturn(false)
+//        doNothing().`when`(startupActivity).showNonVideoViewWithErrorLayout()
+//        startupActivity.onClick(view)
+//        verify(startupViewModel, times(1)).isConnectedToInternet(startupActivity)
+//        verify(startupActivity, times(1)).showNonVideoViewWithErrorLayout()
     }*/
 
     @Test
@@ -181,13 +186,14 @@ class StartupActivityUnitTest : Activity() {
 
     @Test
     fun testonCompletion() {
-        val mediaPlayer: MediaPlayer = mock()
-        doNothing().`when`(startupActivity).showNonVideoViewWithoutErrorLayout()
-        `when`(startupViewModel.videoPlayerShouldPlay).thenReturn(true)
-        startupActivity.onCompletion(mediaPlayer)
-        Assert.assertFalse(startupViewModel.isVideoPlaying)
-        Assert.assertTrue(startupViewModel.videoPlayerShouldPlay)
-        verify(startupActivity, times(1)).showNonVideoViewWithoutErrorLayout()
+        // TODO UNIT TEST: The following code is not aligned with recent implementation, and needs to be updated.
+//        val mediaPlayer: MediaPlayer = mock()
+//        doNothing().`when`(startupActivity).showNonVideoViewWithoutErrorLayout()
+//        `when`(startupViewModel.videoPlayerShouldPlay).thenReturn(true)
+//        startupActivity.onCompletion(mediaPlayer)
+//        Assert.assertFalse(startupViewModel.isVideoPlaying)
+//        Assert.assertTrue(startupViewModel.videoPlayerShouldPlay)
+//        verify(startupActivity, times(1)).showNonVideoViewWithoutErrorLayout()
     }
 */
 

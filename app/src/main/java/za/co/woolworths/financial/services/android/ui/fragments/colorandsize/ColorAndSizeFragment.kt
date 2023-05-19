@@ -14,14 +14,12 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentColorAndSizeBinding
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus
 import za.co.woolworths.financial.services.android.models.dto.ProductDetails
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail
@@ -58,7 +56,7 @@ class ColorAndSizeFragment : WBottomSheetDialogFragment(), ColorAndSizeListener 
                             setSizeLayoutVisibility(GONE)
                             return@onEach
                         }
-                        initSizeList(state.isAvailable, state.sizeGuideId, state.data)
+                        initSizeList(state.isAvailable, state.defaultSelection, state.sizeGuideId, state.data)
                         setSizeLayoutVisibility(VISIBLE)
                     }
                 }
@@ -99,7 +97,12 @@ class ColorAndSizeFragment : WBottomSheetDialogFragment(), ColorAndSizeListener 
         }
     }
 
-    private fun initSizeList(hasSize: Boolean, sizeGuideId: String?, sizeList: List<OtherSkus>) {
+    private fun initSizeList(
+        hasSize: Boolean,
+        defaultSelection: Boolean,
+        sizeGuideId: String?,
+        sizeList: List<OtherSkus>
+    ) {
         if (!isAdded) return
 
         binding.sizeColorSelectorLayout.apply {
@@ -127,6 +130,15 @@ class ColorAndSizeFragment : WBottomSheetDialogFragment(), ColorAndSizeListener 
                     }
                 }
             }
+            if (!defaultSelection) {
+                binding.tvConfirmButton.isEnabled = false
+                binding.tvConfirmButton.alpha = 0.5f
+                return
+            }
+
+            binding.tvConfirmButton.isEnabled = true
+            binding.tvConfirmButton.alpha = 1f
+
             if (sizeList.size == 1) {
                 sizeList.getOrNull(0)?.let {
                     sizeAdapter?.setSelection(sizeList.getOrNull(0))
@@ -175,6 +187,8 @@ class ColorAndSizeFragment : WBottomSheetDialogFragment(), ColorAndSizeListener 
     }
 
     override fun onSizeSelection(selectedSku: OtherSkus) {
+        binding.tvConfirmButton.isEnabled = true
+        binding.tvConfirmButton.alpha = 1f
         viewModel.selectedSku = selectedSku
         showSelectedSize()
     }

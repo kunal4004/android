@@ -23,7 +23,7 @@ import com.daimajia.swipe.SwipeLayout
 import com.daimajia.swipe.adapters.RecyclerSwipeAdapter
 import za.co.woolworths.financial.services.android.cart.service.network.CartItemGroup
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.enhancedSubstitution.model.SubstitutionInfo
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.SubstitutionInfo
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton.lowStock
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest

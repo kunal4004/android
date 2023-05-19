@@ -39,7 +39,6 @@ import com.awfs.coordination.R
 import com.awfs.coordination.databinding.ProductDetailsFragmentBinding
 import com.awfs.coordination.databinding.PromotionalImageBinding
 import com.facebook.FacebookSdk.getApplicationContext
-import com.google.api.ResourceProto.resource
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
@@ -49,21 +48,23 @@ import com.perfectcorp.perfectlib.MakeupCam
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import retrofit2.HttpException
+import za.co.woolworths.financial.services.android.cart.view.SubstitutionChoice
+
 import za.co.woolworths.financial.services.android.chanel.utils.ChanelUtils
 import za.co.woolworths.financial.services.android.common.SingleMessageCommonToast
 import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.ILocationProvider
-import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhancedSubstitutionBottomSheetDialog
-import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhancedSubstitutionListener
-import za.co.woolworths.financial.services.android.enhancedSubstitution.apihelper.SubstitutionApiHelper
-import za.co.woolworths.financial.services.android.enhancedSubstitution.model.ProductSubstitution
-import za.co.woolworths.financial.services.android.enhancedSubstitution.repository.ProductSubstitutionRepository
+import za.co.woolworths.financial.services.android.enhancedSubstitution.utils.listener.EnhancedSubstitutionBottomSheetDialog
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.ProductSubstitution
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.repository.ProductSubstitutionRepository
 import za.co.woolworths.financial.services.android.enhancedSubstitution.viewmodel.ProductSubstitutionViewModel
 import za.co.woolworths.financial.services.android.enhancedSubstitution.viewmodel.ProductSubstitutionViewModelFactory
-import za.co.woolworths.financial.services.android.enhancedSubstitution.managesubstitution.ManageSubstitutionFragment
-import za.co.woolworths.financial.services.android.enhancedSubstitution.managesubstitution.SearchSubstitutionFragment
-import za.co.woolworths.financial.services.android.enhancedSubstitution.model.SubstitutionInfo
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.SubstitutionInfo
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.network.SubstitutionApiHelper
+import za.co.woolworths.financial.services.android.enhancedSubstitution.utils.listener.EnhancedSubstitutionListener
+import za.co.woolworths.financial.services.android.enhancedSubstitution.view.ManageSubstitutionFragment
+import za.co.woolworths.financial.services.android.enhancedSubstitution.view.SearchSubstitutionFragment
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
@@ -130,7 +131,6 @@ import za.co.woolworths.financial.services.android.ui.vto.ui.gallery.ImageResult
 import za.co.woolworths.financial.services.android.ui.vto.utils.PermissionUtil
 import za.co.woolworths.financial.services.android.ui.vto.utils.SdkUtility
 import za.co.woolworths.financial.services.android.ui.vto.utils.VirtualTryOnUtil
-import za.co.woolworths.financial.services.android.ui.wfs.common.getIpAddress
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_1000_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_1500_MS
@@ -192,6 +192,7 @@ class ProductDetailsFragment :
     private val REQUEST_SUBURB_CHANGE_FOR_LIQUOR = 156
     private val SSO_REQUEST_ADD_TO_SHOPPING_LIST = 1011
     private val SSO_REQUEST_FOR_SUBURB_CHANGE_STOCK = 1012
+    private val SSO_REQUEST_FOR_ENHANCE_SUBSTITUTION = 1013
     private var permissionUtils: PermissionUtils? = null
     private var mFuseLocationAPISingleton: FuseLocationAPISingleton? = null
     private var isApiCallInProgress: Boolean = false
@@ -254,7 +255,6 @@ class ProductDetailsFragment :
     private var commarceItemId: String? = ""
     private var substitutionProductItem: ProductList? = null
     private var isSubstiuteItemAdded = false
-    private var substitutionInfo:SubstitutionInfo? = null
 
     private val recommendationViewModel: RecommendationViewModel by viewModels()
 
@@ -293,8 +293,6 @@ class ProductDetailsFragment :
         const val IS_BROWSING = "isBrowsing"
         const val BRAND_NAVIGATION_DETAILS = "BRAND_NAVIGATION_DETAILS"
 
-        const val USER_CHOICE = "USER_CHOICE"
-        const val SHOPPER_CHOICE = "SHOPPER_CHOICE"
         const val PRODUCTLIST = "PRODUCT_LIST"
         fun newInstance(
                 productList: ProductList?,
@@ -383,15 +381,24 @@ class ProductDetailsFragment :
                 if (bundle.containsKey(SearchSubstitutionFragment.SUBSTITUTION_ITEM_KEY)) {
                    // item is not added in cart yet i.e. commerce id is empty so need to click on add to cart in order to add substitute
                     substitutionProductItem = getSerializable(SearchSubstitutionFragment.SUBSTITUTION_ITEM_KEY) as? ProductList
-                    replaceSubstituteItemCell()
+                    showSubstituteItemCell(true, substitutionProductItem)
                 }
                 if (bundle.containsKey(SearchSubstitutionFragment.SUBSTITUTION_ITEM_ADDED)) {
                     // item is added in cart yet i.e. commerce id is not empty so call getSubstitution api to refresh substitution cell
                     isSubstiuteItemAdded = getBoolean(SearchSubstitutionFragment.SUBSTITUTION_ITEM_ADDED, false)
                     callGetSubstitutionApi(true)
                 }
+                if (bundle.containsKey(ManageSubstitutionFragment.DONT_WANT_SUBSTITUTE_LISTENER)) {
+                    binding.productDetailOptionsAndInformation.substitutionLayout.apply {
+                        txtSubstitutionTitle.text = context?.getString(R.string.dont_substitute)
+                        txtSubstitutionEdit.text = context?.getString(R.string.change)
+                        selectionChoice = SubstitutionChoice.NO.name
+                        substitutionId = ""
+                    }
+                }
             }
         }
+
     }
 
 
@@ -612,6 +619,7 @@ class ProductDetailsFragment :
             }
             R.id.tvReport -> navigateToReportReviewScreen()
             R.id.iv_like -> likeButtonClicked()
+            R.id.txt_substitution_edit -> substitutionEditButtonClick()
         }
     }
 
@@ -1082,24 +1090,6 @@ class ProductDetailsFragment :
             }
             updateAddToCartButtonForSelectedSKU()
             return
-        }
-
-        /*checks added for enhance substitution feature*/
-
-        if (KotlinUtils.getDeliveryType()?.deliveryType == Delivery.DASH.type) {
-            if (selectionChoice == SHOPPER_CHOICE) {
-                /*set substitute id as empty*/
-                substitutionId = substitutionInfo?.id
-            } else if (selectionChoice == USER_CHOICE) {
-                if (commarceItemId?.isEmpty() == true) {
-                    /* not added to cart yet */
-                    /* substituted product can come from manage substitution screen or
-                    * search substitution screen  */
-                    substitutionId = substitutionProductItem?.productId
-                } else {
-                    substitutionId = commarceItemId
-                }
-            }
         }
 
         //finally add to cart after all checks
@@ -1590,9 +1580,7 @@ class ProductDetailsFragment :
                 showEnhancedSubstitutionDialog()
             }
 
-
-              callGetSubstitutionApi(isInventoryCalled)
-
+            showSubstituteItemCell(isInventoryCalled, substitutionProductItem)
 
             if (isAllProductsOutOfStock() && isInventoryCalled) {
                 productOutOfStockErrorMessage()
@@ -1601,36 +1589,12 @@ class ProductDetailsFragment :
         }
     }
 
-    private fun showSubstitutionLayoutOne(isInventoryCalled: Boolean) {
-
-        binding?.productDetailOptionsAndInformation?.substitutionLayout?.apply {
-
-            if (isAllProductsOutOfStock() && isInventoryCalled) {
-                this.txtSubstitutionEdit?.background = resources.getDrawable(R.drawable.grey_background_with_corner_5,
-                        null)
-            } else {
-                this.txtSubstitutionEdit?.background = resources.getDrawable(R.drawable.black_background_with_corner_5,
-                        null)
-            }
-
-            this.txtSubstitutionEdit?.setOnClickListener {
-                if (isAllProductsOutOfStock() && isInventoryCalled) {
-                    /*pop up for out of stock*/
-                    productOutOfStockErrorMessage(true)
-                } else {
-                    /*navigate to manage substitution screen*/
-                    (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
-                           ManageSubstitutionFragment()
-                    )
-                }
-            }
-        }
-    }
-
     private fun callGetSubstitutionApi(isInventoryCalled: Boolean) {
-        if (isAllProductsOutOfStock() && isInventoryCalled) {
+
+        if (!SessionUtilities.getInstance().isUserAuthenticated || (isAllProductsOutOfStock() && isInventoryCalled)) {
             return
         }
+
         productSubstitutionViewModel.getProductSubstitution(productDetails?.productId)
         productSubstitutionViewModel.productSubstitution.observe(viewLifecycleOwner) {
 
@@ -1641,9 +1605,6 @@ class ProductDetailsFragment :
                     }
                     Status.SUCCESS -> {
                         binding.progressBar.visibility = View.GONE
-                        substitutionInfo = resource.data?.data?.getOrNull(0)?.substitutionInfo
-                        selectionChoice = SHOPPER_CHOICE
-                        substitutionId = substitutionInfo?.id
                         showSubstitutionLayout(isInventoryCalled, resource)
                     }
                     Status.ERROR -> {
@@ -1655,70 +1616,75 @@ class ProductDetailsFragment :
         }
     }
 
-    private fun replaceSubstituteItemCell() {
-        selectionChoice = USER_CHOICE
-        substitutionId = commarceItemId
-        binding?.productDetailOptionsAndInformation?.substitutionLayout?.apply {
-            if (SessionUtilities.getInstance().isUserAuthenticated
-                    && KotlinUtils.getDeliveryType()?.deliveryType == Delivery.DASH.type
-            ) {
-                this?.root?.visibility = View.VISIBLE
-            } else {
-                this.root?.visibility = View.GONE
-            }
+    private fun showSubstituteItemCell(
+        isInventoryCalled: Boolean,
+        substitutionProductItem: ProductList? = null
+    ) {
+        if (KotlinUtils.getDeliveryType()?.deliveryType != Delivery.DASH.type) {
+            binding?.productDetailOptionsAndInformation?.substitutionLayout?.root?.visibility = View.GONE
+            return
+        }
 
-            txtSubstitutionTitle.text = substitutionProductItem?.productName
+        binding.productDetailOptionsAndInformation?.substitutionLayout?.apply {
+            root.visibility = View.VISIBLE
+            txtSubstitutionEdit?.setOnClickListener(this@ProductDetailsFragment)
+            if (SessionUtilities.getInstance().isUserAuthenticated) {
+                if (substitutionProductItem == null) {
+                      callGetSubstitutionApi(isInventoryCalled)
+                } else {
+                    /*set Locally product name */
+                    selectionChoice = SubstitutionChoice.USER_CHOICE.name
+                    substitutionId = commarceItemId
+                    txtSubstitutionTitle?.text = substitutionProductItem?.productName
+                    txtSubstitutionEdit.text = context?.getString(R.string.change)
+                }
+            } else {
+                txtSubstitutionTitle.text = context?.getString(R.string.sign_in_label)
+                txtSubstitutionEdit.text = context?.getString(R.string.sign_in)
+            }
         }
     }
 
 
-    private fun showSubstitutionLayout(isInventoryCalled: Boolean, resource: Resource<ProductSubstitution>) {
+    private fun showSubstitutionLayout(
+        isInventoryCalled: Boolean,
+        resource: Resource<ProductSubstitution>
+    ) {
 
         binding?.productDetailOptionsAndInformation?.substitutionLayout?.apply {
-            if (SessionUtilities.getInstance().isUserAuthenticated
-                    && KotlinUtils.getDeliveryType()?.deliveryType == Delivery.DASH.type
-            ) {
-                this?.root?.visibility = View.VISIBLE
-            } else {
-                this.root?.visibility = View.GONE
-            }
-
-            if (isAllProductsOutOfStock() && isInventoryCalled) {
-                this.txtSubstitutionEdit?.background = resources.getDrawable(R.drawable.grey_background_with_corner_5,
-                        null)
-            } else {
-                this.txtSubstitutionEdit?.background = resources.getDrawable(R.drawable.black_background_with_corner_5,
-                        null)
-            }
-
             if (resource?.data?.data?.isNullOrEmpty() == true) {
                 hideSubstitutionLayout()
                 return
             }
 
-            if (resource.data?.data?.getOrNull(0)?.substitutionSelection == USER_CHOICE) {
-                txtSubstitutionTitle.text = resource.data?.data?.getOrNull(0)?.substitutionInfo?.displayName
+            if (isAllProductsOutOfStock() && isInventoryCalled) {
+                this.txtSubstitutionEdit?.background = resources.getDrawable(
+                    R.drawable.grey_background_with_corner_5,
+                    null
+                )
+            } else {
+                this.txtSubstitutionEdit?.background = resources.getDrawable(
+                    R.drawable.black_background_with_corner_5,
+                    null
+                )
+            }
+
+            if (resource.data?.data?.getOrNull(0)?.substitutionSelection == SubstitutionChoice.USER_CHOICE.name) {
+                txtSubstitutionTitle.text =
+                    resource.data?.data?.getOrNull(0)?.substitutionInfo?.displayName
+                selectionChoice = SubstitutionChoice.USER_CHOICE.name
+                substitutionId =  resource.data?.data?.getOrNull(0)?.substitutionInfo?.id
             } else {
                 txtSubstitutionTitle.text = getString(R.string.substitute_default)
-                selectionChoice = SHOPPER_CHOICE
+                selectionChoice = SubstitutionChoice.SHOPPER_CHOICE.name
                 substitutionId = ""
             }
-                this.txtSubstitutionEdit?.setOnClickListener {
-                    if (isAllProductsOutOfStock() && isInventoryCalled) {
-                        /*pop up for out of stock*/
-                        productOutOfStockErrorMessage(true)
-                    } else {
-                        /*navigate to manage substitution screen*/
-                        (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
-                            openManageSubstitutionFragment(resource?.data?.data?.getOrNull(0)?.substitutionSelection)
-                        )
-                    }
-                }
-            }
+            txtSubstitutionEdit?.text = getString(R.string.change)
         }
+    }
 
     private fun openManageSubstitutionFragment(substiutionSelection: String?)  =
-            ManageSubstitutionFragment.newInstance(substiutionSelection, commarceItemId)
+            ManageSubstitutionFragment.newInstance(substiutionSelection, commarceItemId, prodId, getSelectedSku()?.sku)
 
 
     private fun hideSubstitutionLayout() {
@@ -2488,7 +2454,7 @@ class ProductDetailsFragment :
                             if (!this.productDetails?.productType.equals(
                                     getString(R.string.food_product_type),
                                     ignoreCase = true
-                                )
+                                ) && (KotlinUtils.getPreferredDeliveryType() == Delivery.DASH)
                             ) {
                                 storeIdForInventory = ""
                                 clearStockAvailability()
@@ -2595,6 +2561,9 @@ class ProductDetailsFragment :
                                 Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
                             )
                         }
+                    }
+                    SSO_REQUEST_FOR_ENHANCE_SUBSTITUTION -> {
+                        updateStockAvailability(true)
                     }
                 }
             }
@@ -4225,6 +4194,9 @@ class ProductDetailsFragment :
 
     private val onScrollStoppedListener = object: LockableNestedScrollViewV2.OnScrollStoppedListener {
         override fun onScrollStopped() {
+            if(!isAdded){
+                return
+            }
             val visible = binding.scrollView.isViewVisible(binding.productDetailOptionsAndInformation.layoutRecommendationContainer.root)
             if(visible){
                 recommendationViewModel.parentPageScrolledToRecommendation()
@@ -4251,7 +4223,19 @@ class ProductDetailsFragment :
     }
 
     override fun openManageSubstituion() {
-       /*navigate to manage substitution screen*/
+        (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(openManageSubstitutionFragment(selectionChoice))
+    }
+
+    private fun substitutionEditButtonClick() {
+        if (SessionUtilities.getInstance().isUserAuthenticated) {
+            if (isAllProductsOutOfStock()) {
+                productOutOfStockErrorMessage(true)
+            } else {
+                (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(openManageSubstitutionFragment(selectionChoice))
+            }
+        } else {
+            ScreenManager.presentSSOSignin(activity, SSO_REQUEST_FOR_ENHANCE_SUBSTITUTION)
+        }
     }
 }
 

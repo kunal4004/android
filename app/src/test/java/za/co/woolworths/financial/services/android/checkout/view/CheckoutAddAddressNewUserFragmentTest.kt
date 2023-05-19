@@ -15,9 +15,7 @@ import za.co.woolworths.financial.services.android.checkout.view.adapter.Checkou
 import za.co.woolworths.financial.services.android.checkout.viewmodel.SelectedPlacesAddress
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dto.Province
-import za.co.woolworths.financial.services.android.models.dto.Suburb
 import za.co.woolworths.financial.services.android.models.dto.app_config.native_checkout.ConfigNativeCheckout
-import za.co.woolworths.financial.services.android.util.DeliveryType
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.utils.BundleMock
 import za.co.woolworths.financial.services.android.utils.TestCoroutineRule
@@ -49,83 +47,86 @@ class CheckoutAddAddressNewUserFragmentTest : Fragment() {
 /*
  @Test
     fun check_if_onlyProvinceEnabled() = runBlockingTest {
-
-        val province = Province()
-        province.apply {
-            id = "1"
-            name = "Western Cape"
-        }
-        checkoutAddAddressNewUserFragment.selectedAddress = SelectedPlacesAddress()
-        checkoutAddAddressNewUserFragment.selectedAddress.provinceName = "Free State"
-        checkoutAddAddressNewUserFragment.selectedAddress.savedAddress.suburb = "BaysWater"
-        val mockProvinceList: MutableList<Province> = ArrayList()
-        mockProvinceList.add(province)
-        checkoutAddAddressNewUserFragment.checkIfSelectedProvinceExist(mockProvinceList)
-
-        verify(checkoutAddAddressNewUserFragment, times(1)).disableSuburbSelection()
-        verify(checkoutAddAddressNewUserFragment, times(1)).enableProvinceSelection()
-        verify(checkoutAddAddressNewUserFragment, times(1)).enablePostalCode()
+        // TODO UNIT TEST: The following code is not aligned with recent implementation, and needs to be updated.
+//        val province = Province()
+//        province.apply {
+//            id = "1"
+//            name = "Western Cape"
+//        }
+//        checkoutAddAddressNewUserFragment.selectedAddress = SelectedPlacesAddress()
+//        checkoutAddAddressNewUserFragment.selectedAddress.provinceName = "Free State"
+//        checkoutAddAddressNewUserFragment.selectedAddress.savedAddress.suburb = "BaysWater"
+//        val mockProvinceList: MutableList<Province> = ArrayList()
+//        mockProvinceList.add(province)
+//        checkoutAddAddressNewUserFragment.checkIfSelectedProvinceExist(mockProvinceList)
+//
+//        verify(checkoutAddAddressNewUserFragment, times(1)).disableSuburbSelection()
+//        verify(checkoutAddAddressNewUserFragment, times(1)).enableProvinceSelection()
+//        verify(checkoutAddAddressNewUserFragment, times(1)).enablePostalCode()
     }
 
      @Test
      fun check_if_onlySuburbEnabled() = runBlockingTest {
-         val province = Province()
-         province.apply {
-             id = "1"
-             name = "Western Cape"
-         }
-         checkoutAddAddressNewUserFragment.selectedAddress = SelectedPlacesAddress()
-         checkoutAddAddressNewUserFragment.selectedAddress.provinceName = "Western Cape"
-         checkoutAddAddressNewUserFragment.selectedAddress.savedAddress.suburb = ""
-         val mockProvinceList: MutableList<Province> = ArrayList()
-         mockProvinceList.add(province)
-         checkoutAddAddressNewUserFragment.checkIfSelectedProvinceExist(mockProvinceList)
-
-         verify(checkoutAddAddressNewUserFragment, times(1)).disableProvinceSelection()
-         verify(checkoutAddAddressNewUserFragment, times(1)).resetSuburbSelection()
-         verify(checkoutAddAddressNewUserFragment, times(1)).enableSuburbSelection()
-         verify(checkoutAddAddressNewUserFragment, times(1)).enablePostalCode()
+         // TODO UNIT TEST: The following code is not aligned with recent implementation, and needs to be updated.
+//val province = Province()
+ //        province.apply {
+ //            id = "1"
+ //            name = "Western Cape"
+ //        }
+ //        checkoutAddAddressNewUserFragment.selectedAddress = SelectedPlacesAddress()
+ //        checkoutAddAddressNewUserFragment.selectedAddress.provinceName = "Western Cape"
+ //        checkoutAddAddressNewUserFragment.selectedAddress.savedAddress.suburb = ""
+ //        val mockProvinceList: MutableList<Province> = ArrayList()
+ //        mockProvinceList.add(province)
+ //        checkoutAddAddressNewUserFragment.checkIfSelectedProvinceExist(mockProvinceList)
+//
+ //        verify(checkoutAddAddressNewUserFragment, times(1)).disableProvinceSelection()
+ //        verify(checkoutAddAddressNewUserFragment, times(1)).resetSuburbSelection()
+ //        verify(checkoutAddAddressNewUserFragment, times(1)).enableSuburbSelection()
+ //        verify(checkoutAddAddressNewUserFragment, times(1)).enablePostalCode()
      }
 
      @Test
      fun check_onProvienceSelected_gets_called() {
-         checkoutAddAddressNewUserFragment.selectedAddress = SelectedPlacesAddress()
-         val province = Province()
-         province.apply {
-             id = "1"
-             name = "Western Cape"
-         }
-         checkoutAddAddressNewUserFragment.onProvinceSelected(province)
-
-         verify(checkoutAddAddressNewUserFragment, times(1)).enableEditText()
+         // TODO UNIT TEST: The following code is not aligned with recent implementation, and needs to be updated.
+//checkoutAddAddressNewUserFragment.selectedAddress = SelectedPlacesAddress()
+ //        val province = Province()
+ //        province.apply {
+ //            id = "1"
+ //            name = "Western Cape"
+ //        }
+ //        checkoutAddAddressNewUserFragment.onProvinceSelected(province)
+//
+ //        verify(checkoutAddAddressNewUserFragment, times(1)).enableEditText()
      }
 
      @Test
      fun check_methodCalls_onSuburbSelected() {
-         checkoutAddAddressNewUserFragment.deliveryType = DeliveryType.DELIVERY
-         checkoutAddAddressNewUserFragment.selectedAddress = SelectedPlacesAddress()
-         val mockSuburb = Suburb()
-         mockSuburb.apply {
-             name = "Cape Town"
-             id = "123"
-             postalCode = "789"
-         }
-         checkoutAddAddressNewUserFragment.onSuburbSelected(mockSuburb)
-
-         Assert.assertEquals(
-             checkoutAddAddressNewUserFragment.selectedAddress.savedAddress.suburb,
-             mockSuburb.name
-         )
-         Assert.assertEquals(
-             checkoutAddAddressNewUserFragment.selectedAddress.savedAddress.suburbId,
-             mockSuburb.id
-         )
-         Assert.assertEquals(
-             checkoutAddAddressNewUserFragment.selectedAddress.savedAddress.postalCode,
-             mockSuburb.postalCode
-         )
-         verify(checkoutAddAddressNewUserFragment, times(1)).enableEditText()
-         verify(checkoutAddAddressNewUserFragment, times(1)).disablePostalCode()
+         // TODO UNIT TEST: The following code is not aligned with recent implementation, and needs to be updated.
+//checkoutAddAddressNewUserFragment.deliveryType = DeliveryType.DELIVERY
+ //        checkoutAddAddressNewUserFragment.selectedAddress = SelectedPlacesAddress()
+ //        val mockSuburb = Suburb()
+ //        mockSuburb.apply {
+ //            name = "Cape Town"
+ //            id = "123"
+ //            postalCode = "789"
+ //        }
+ //        checkoutAddAddressNewUserFragment.onSuburbSelected(mockSuburb)
+//
+ //        Assert.assertEquals(
+ //            checkoutAddAddressNewUserFragment.selectedAddress.savedAddress.suburb,
+ //            mockSuburb.name
+ //        )
+ //        Assert.assertEquals(
+ //            checkoutAddAddressNewUserFragment.selectedAddress.savedAddress.suburbId,
+ //            mockSuburb.id
+ //        )
+ //        Assert.assertEquals(
+ //            checkoutAddAddressNewUserFragment.selectedAddress.savedAddress.postalCode,
+ //            mockSuburb.postalCode
+ //        )
+ //        verify(checkoutAddAddressNewUserFragment, times(1)).enableEditText()
+ //        verify(checkoutAddAddressNewUserFragment, times(1)).disablePostalCode()
      }
  */
     @Ignore

@@ -14,18 +14,18 @@ import za.co.woolworths.financial.services.android.ui.extension.request
 class AccountCardDetailModelImpl : IAccountCardDetailsContract.AccountCardDetailModel {
 
     override fun queryServiceGetAccountStoreCardCards(storeCardsRequestBody: StoreCardsRequestBody?, requestListener: IGenericAPILoaderView<Any>): Call<StoreCardsResponse>? {
-        return request(storeCardsRequestBody?.let { body -> OneAppService.getStoreCards(body) }, requestListener)
+        return request(storeCardsRequestBody?.let { body -> OneAppService().getStoreCards(body) }, requestListener)
     }
 
     override fun queryServiceGetUserCLIOfferActive(productOfferingId: String, requestListener: IGenericAPILoaderView<Any>): Call<OfferActive>? {
-        return request(OneAppService.getActiveOfferRequest(productOfferingId), requestListener)
+        return request(OneAppService().getActiveOfferRequest(productOfferingId), requestListener)
     }
 
     override fun queryServiceGetCreditCartToken(requestListener: IGenericAPILoaderView<Any>): Call<CreditCardTokenResponse>? {
-        return request(OneAppService.getCreditCardToken(), requestListener)
+        return request(OneAppService().getCreditCardToken(), requestListener)
     }
 
     override fun queryServiceGetCreditCardDeliveryStatus(productOfferingId: String, envelopeReference: String, requestListener: IGenericAPILoaderView<Any>): Call<CreditCardDeliveryStatusResponse>? {
-        return request(OneAppService.getCreditCardDeliveryStatus(envelopeReference, productOfferingId), requestListener)
+        return request(OneAppService().getCreditCardDeliveryStatus(envelopeReference, productOfferingId), requestListener)
     }
 }
