@@ -124,7 +124,7 @@ class MyAccountsRemoteApiViewModel @Inject constructor(
     }
 
     fun requestGetStoreCardCards() = viewModelScope.launch {
-        getViewStateFlowForNetworkCall { dataSource.queryServiceGetStoreCards() }.collect{
+        mapNetworkCallToViewStateFlow { dataSource.queryServiceGetStoreCards() }.collect{
             _storeCardResponseResult.value = it
         }
     }
@@ -137,7 +137,7 @@ class MyAccountsRemoteApiViewModel @Inject constructor(
     }
 
     fun queryServiceCardNotYetReceived() = viewModelScope.launch {
-        getViewStateFlowForNetworkCall {  cardNotReceived.queryServiceNotifyCardNotYetReceived()}.collect{
+        mapNetworkCallToViewStateFlow {  cardNotReceived.queryServiceNotifyCardNotYetReceived()}.collect{
             _notifyCardNotReceived.emit(it)
         }
     }
@@ -155,14 +155,14 @@ class MyAccountsRemoteApiViewModel @Inject constructor(
 
     fun queryServiceBlockPayWithCardStoreCard() = viewModelScope.launch {
         mStoreCardType = StoreCardType.VirtualTempCard(block = BlockStoreCardType.BLOCK)
-        getViewStateFlowForNetworkCall {
+        mapNetworkCallToViewStateFlow {
             queryServiceBlockStoreCard(storeCardType = mStoreCardType)
         }.collect {
         }
     }
 
     fun queryServiceUnBlockPayWithCardStoreCard() = viewModelScope.launch {
-        getViewStateFlowForNetworkCall {
+        mapNetworkCallToViewStateFlow {
             mStoreCardType = StoreCardType.VirtualTempCard(block = BlockStoreCardType.UNBLOCK)
             queryServiceUnBlockStoreCard(storeCardType = mStoreCardType)
         }.collect {
