@@ -178,6 +178,8 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
         getLiquorComplianceDetails()
         hideGiftOption()
         hideInstructionLayout()
+        initShimmerView()
+        initializeDriverTipList()
         callConfirmLocationAPI()
         setFragmentResults()
         binding.txtContinueToPayment?.setOnClickListener(this)
@@ -398,7 +400,6 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
                 binding.layoutDriverTip.tipOptionScrollView
             )
         )
-        startShimmerView()
     }
 
     private fun startShimmerView() {
@@ -427,11 +428,11 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
         binding.layoutDeliveryInstructions.txtNeedBags?.visibility = View.VISIBLE
         binding.layoutDeliveryInstructions.switchNeedBags?.visibility = View.VISIBLE
         initializeDeliveryInstructions()
-        initializeDriverTipView()
+        showDriverTipView()
     }
 
     private fun callConfirmLocationAPI() {
-        initShimmerView()
+        startShimmerView()
         val confirmLocationAddress =
             ConfirmLocationAddress(defaultAddress?.placesId, defaultAddress?.nickname)
         val body = ConfirmLocationRequest(
@@ -445,7 +446,7 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
                 stopShimmerView()
                 when (response) {
                     is ConfirmDeliveryAddressResponse -> {
-                        when (response.httpCode ?: 400) {
+                        when (response.httpCode ?: AppConstant.HTTP_SESSION_TIMEOUT_400) {
                             AppConstant.HTTP_OK -> {
                                 confirmDeliveryAddressResponse = response
                                 if (!isAdded) {
@@ -640,15 +641,13 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
         }
     }
 
-    private fun initializeDriverTipView() {
+    private fun initializeDriverTipList() {
         //Todo This value will come from Config once it is available.
         driverTipOptionsList = ArrayList()
         driverTipOptionsList!!.add("R10")
         driverTipOptionsList!!.add("R20")
         driverTipOptionsList!!.add("R30")
         driverTipOptionsList!!.add("Own Amount")
-
-        showDriverTipView()
     }
 
     private fun showDriverTipView() {
@@ -1051,7 +1050,6 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.checkoutCollectingFromLayout -> {
-
                 Utils.triggerFireBaseEvents(
                     FirebaseManagerAnalyticsProperties.CHECKOUT_COLLECTION_USER_EDIT,
                     hashMapOf(
@@ -1095,7 +1093,6 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
                         SHIPPING_TIER_VALUE_DASH, orderTotalValue
                     )
                 }
-
             }
         }
     }
@@ -1154,7 +1151,6 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
     }
 
     private fun onCheckoutPaymentClick() {
-
         if (isItemLimitExceeded) {
             showMaxItemView()
             return
@@ -1168,13 +1164,13 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
         if (isRequiredFieldsMissing() || isAgeConfirmationLiquorCompliance()) {
             return
         }
-        setEventForDriverTip()
         val body = getShipmentDetailsBody()
         if (TextUtils.isEmpty(body.oddDeliverySlotId) && TextUtils.isEmpty(body.foodDeliverySlotId)
             && TextUtils.isEmpty(body.otherDeliverySlotId)
         ) {
             return
         }
+        setEventForDriverTip()
         binding.loadingBar?.visibility = View.VISIBLE
         setScreenClickEvents(false)
         checkoutAddAddressNewUserViewModel.getShippingDetails(body)
@@ -1249,7 +1245,6 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
         }
 
         val driverTipItemParams = Bundle()
-
         driverTipItemParams.putString(
             FirebaseAnalytics.Param.CURRENCY,
             FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE
@@ -1270,18 +1265,9 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
 
     private fun presentErrorDialog(title: String, subTitle: String, errorType: Int) {
         val bundle = Bundle()
-        bundle.putString(
-            ErrorHandlerBottomSheetDialog.ERROR_TITLE,
-            title
-        )
-        bundle.putString(
-            ErrorHandlerBottomSheetDialog.ERROR_DESCRIPTION,
-            subTitle
-        )
-        bundle.putInt(
-            ErrorHandlerBottomSheetDialog.ERROR_TYPE,
-            errorType
-        )
+        bundle.putString(ErrorHandlerBottomSheetDialog.ERROR_TITLE, title)
+        bundle.putString(ErrorHandlerBottomSheetDialog.ERROR_DESCRIPTION, subTitle)
+        bundle.putInt(ErrorHandlerBottomSheetDialog.ERROR_TYPE, errorType)
         view?.findNavController()?.navigate(
             R.id.action_checkoutDashFragment_to_errorHandlerBottomSheetDialog,
             bundle
@@ -1407,7 +1393,7 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
                 }
 
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP -> {
-                    action = "android.settings.APP_NOTIFICATION_SETTINGS"
+                    action = Settings.ACTION_APP_NOTIFICATION_SETTINGS
                     putExtra("app_package", context.packageName)
                     putExtra("app_uid", context.applicationInfo.uid)
                 }
