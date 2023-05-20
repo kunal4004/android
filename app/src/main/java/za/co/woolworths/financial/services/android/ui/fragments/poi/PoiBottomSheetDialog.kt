@@ -1,12 +1,16 @@
 package za.co.woolworths.financial.services.android.ui.fragments.poi
 
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.PoiMapBottomSheetDialogBinding
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
@@ -37,6 +41,18 @@ class PoiBottomSheetDialog(private val clickListener: ClickListener, private val
     }
 
     private fun PoiMapBottomSheetDialogBinding.initClick() {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                ViewCompat.setOnApplyWindowInsetsListener(dialog?.window?.decorView!!) { _, insets ->
+                    val imeHeight = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+                    val navigationBarHeight =
+                        insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
+                    root.setPadding(0, 0, 0, imeHeight - navigationBarHeight)
+                    insets
+                }
+            } else {
+                @Suppress("DEPRECATION")
+                dialog?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+            }
         confirmButton.setOnClickListener(this@PoiBottomSheetDialog)
         dismissButton.setOnClickListener(this@PoiBottomSheetDialog)
         streetNameEditText.addTextChangedListener(object : TextWatcher {
