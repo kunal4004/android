@@ -56,6 +56,10 @@ import za.co.woolworths.financial.services.android.onecartgetstream.model.OCAuth
 import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.RecommendationResponse
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.RecommendationRequest
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.ReviewFeedback
+import za.co.woolworths.financial.services.android.dynamicyield.data.response.request.DynamicVariantRequestEvent
+import za.co.woolworths.financial.services.android.dynamicyield.data.response.getResponse.DynamicYieldChooseVariationResponse
+import za.co.woolworths.financial.services.android.ui.activities.product.dynamicyield.response.getresponse.DyKeywordSearchResponse
+import za.co.woolworths.financial.services.android.ui.activities.product.dynamicyield.response.request.DyKeywordSearchRequestEvent
 
 interface ApiInterface {
 
@@ -1550,5 +1554,21 @@ interface ApiInterface {
         @Header("deviceIdentityToken") deviceIdentityToken: String,
         @Body appGUIDRequestModel: AppGUIDRequestModel
     ):  Call<AppGUIDModel>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @POST("wfs/app/dynamicYield/chooseVariation")
+    fun dynamicYieldChooseVariation(
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Body dynamicVariantRequestEvent: DynamicVariantRequestEvent
+    ) : Call<DynamicYieldChooseVariationResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @POST("wfs/app/v2/collect/user/event")
+    fun dynamicYieldKeywordSearch(
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Body dyKeywordSearchRequestEvent: DyKeywordSearchRequestEvent
+    ) : Call<DyKeywordSearchResponse>
 }
 

@@ -47,6 +47,10 @@ import za.co.woolworths.financial.services.android.onecartgetstream.model.OCAuth
 import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.RecommendationResponse
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.RecommendationRequest
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.RatingAndReviewData
+import za.co.woolworths.financial.services.android.dynamicyield.data.response.request.DynamicVariantRequestEvent
+import za.co.woolworths.financial.services.android.dynamicyield.data.response.getResponse.DynamicYieldChooseVariationResponse
+import za.co.woolworths.financial.services.android.ui.activities.product.dynamicyield.response.getresponse.DyKeywordSearchResponse
+import za.co.woolworths.financial.services.android.ui.activities.product.dynamicyield.response.request.DyKeywordSearchRequestEvent
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
@@ -1289,6 +1293,22 @@ open class OneAppService(
             getSessionToken(),
             getDeviceIdentityToken(),
             getRequestBody(appGUIDRequestType)
+        )
+    }
+
+     fun dynamicYieldChooseVariation(dynamicVariantRequestEvent: DynamicVariantRequestEvent): Call<DynamicYieldChooseVariationResponse> {
+        return mApiInterface.dynamicYieldChooseVariation(
+                getSessionToken(),
+                getDeviceIdentityToken(),
+                dynamicVariantRequestEvent
+            )
+    }
+
+    fun dynamicYieldKeywordSearch(dyKeywordSearchRequestEvent: DyKeywordSearchRequestEvent): Call<DyKeywordSearchResponse> {
+        return mApiInterface.dynamicYieldKeywordSearch(
+            getSessionToken(),
+            getDeviceIdentityToken(),
+            dyKeywordSearchRequestEvent
         )
     }
 }

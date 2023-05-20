@@ -20,10 +20,7 @@ import android.text.Html
 import android.text.TextUtils
 import android.view.*
 import android.webkit.MimeTypeMap
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
@@ -53,6 +50,10 @@ import za.co.woolworths.financial.services.android.common.SingleMessageCommonToa
 import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.ILocationProvider
+import za.co.woolworths.financial.services.android.dynamicyield.data.response.getResponse.DynamicYieldChooseVariationResponse
+import za.co.woolworths.financial.services.android.dynamicyield.data.response.request.*
+import za.co.woolworths.financial.services.android.dynamicyield.data.response.request.Data
+import za.co.woolworths.financial.services.android.dynamicyield.presentation.viewmodel.DynamicYieldViewModel
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
@@ -232,6 +233,7 @@ class ProductDetailsFragment :
     private lateinit var moreReviewViewModel: RatingAndReviewViewModel
     private val dialogInstance = FoodProductNotAvailableForCollectionDialog.newInstance()
     private val recommendationViewModel: RecommendationViewModel by viewModels()
+    private lateinit var dYviewModel: DynamicYieldViewModel
 
     @OpenTermAndLighting
     @Inject
@@ -297,6 +299,47 @@ class ProductDetailsFragment :
         setUniqueIds()
         productDetails?.let { addViewItemEvent(it) }
         setUpCartCountPDP()
+        prepareDynamicYieldRequestEvent()
+        dyViewModel()
+    }
+
+    private fun dyViewModel() {
+        dYviewModel = ViewModelProvider(this).get(DynamicYieldViewModel::class.java)
+        dYviewModel.getDyLiveData().observe(viewLifecycleOwner, Observer<DynamicYieldChooseVariationResponse?> {
+            if (it == null){
+                Toast.makeText(activity, "failed to hit Dynamic yield", Toast.LENGTH_LONG).show()
+            } else {
+                Toast.makeText(activity,"Success Dynamic Yield", Toast.LENGTH_LONG).show()
+            }
+        })
+    }
+
+    private fun prepareDynamicYieldRequestEvent(): DynamicVariantRequestEvent {
+        val user = User("hjds", "1234")
+        val device = Device("123:09:00:00", "Realme 3pro")
+        val pageAttributes = PageAttributes("some values")
+        val skuids= ArrayList<String>()
+        val otherSkus = productDetails?.otherSkus
+        productDetails?.otherSkus?.forEach {
+            skuids.add(it.sku!!)
+        }
+        val productId = productDetails!!.productId
+
+
+        val data = Data(productId, skuids)
+        val page = Page(listOf(data) as List<Data>, "khurda", "PRODUCT")
+        val session = Session("12345")
+        val options = Options(true)
+        val contextDY = ContextDY(device, page, pageAttributes)
+
+        val  dynamicVariantRequestEvent = DynamicVariantRequestEvent(
+            contextDY,
+            options = options,
+            session = session,
+            user = user
+        )
+        return dynamicVariantRequestEvent
+        dYviewModel.createDyRequest(dynamicVariantRequestEvent)
     }
 
     private fun setUpCartCountPDP() {

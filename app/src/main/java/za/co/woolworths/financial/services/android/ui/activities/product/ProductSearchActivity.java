@@ -24,10 +24,13 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.awfs.coordination.R;
@@ -42,6 +45,15 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.SearchHistory;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
+import za.co.woolworths.financial.services.android.ui.activities.product.dynamicyield.response.getresponse.DyKeywordSearchResponse;
+import za.co.woolworths.financial.services.android.ui.activities.product.dynamicyield.response.request.Context;
+import za.co.woolworths.financial.services.android.ui.activities.product.dynamicyield.response.request.Device;
+import za.co.woolworths.financial.services.android.ui.activities.product.dynamicyield.response.request.DyKeywordSearchRequestEvent;
+import za.co.woolworths.financial.services.android.ui.activities.product.dynamicyield.response.request.Events;
+import za.co.woolworths.financial.services.android.ui.activities.product.dynamicyield.response.request.Properties;
+import za.co.woolworths.financial.services.android.ui.activities.product.dynamicyield.response.request.Session;
+import za.co.woolworths.financial.services.android.ui.activities.product.dynamicyield.response.request.User;
+import za.co.woolworths.financial.services.android.ui.activities.product.dynamicyield.viewmodel.DyKeywordSearchViewModel;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.ChanelMessageDialogFragment;
 import za.co.woolworths.financial.services.android.util.Utils;
 
@@ -58,6 +70,7 @@ public class ProductSearchActivity extends AppCompatActivity
     public static final String EXTRA_SEARCH_TEXT_HINT = "SEARCH_TEXT_HINT";
     public static final String EXTRA_LIST_ID = "listId";
     public static final int PRODUCT_SEARCH_ACTIVITY_RESULT_CODE = 1244;
+    private DyKeywordSearchViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +99,34 @@ public class ProductSearchActivity extends AppCompatActivity
                 mEditSearchProduct.setHint(mSearchTextHint);
             }
         }
+        initViewModel();
+        prepareDyKeywordSearchRequestEvent();
+    }
+
+    private void prepareDyKeywordSearchRequestEvent() {
+        String editSearchProduct = mEditSearchProduct.getText().toString();
+        User user = new User("hjds", "1234");
+        Session session = new Session("898989");
+        Device device = new Device("102:22:22:2");
+        Context context = new Context(device);
+        Properties properties = new Properties(editSearchProduct,"keyword-search-v1");
+        Events events = new Events("keywordSearchV1",properties);
+        DyKeywordSearchRequestEvent dyKeywordSearchRequestEvent = new DyKeywordSearchRequestEvent(session,context,user, (List<Events>) events);
+        viewModel.createKeywordSearch(dyKeywordSearchRequestEvent);
+    }
+
+    private void initViewModel() {
+        viewModel = new ViewModelProvider(this).get(DyKeywordSearchViewModel.class);
+        viewModel.getCreateKeywordSearchObserver().observe(this, new Observer<DyKeywordSearchResponse>() {
+            @Override
+            public void onChanged(DyKeywordSearchResponse dyKeywordSearchResponse) {
+                if (dyKeywordSearchResponse == null) {
+                    Toast.makeText(ProductSearchActivity.this, "failed", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(ProductSearchActivity.this, "Success", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
     }
 
     private void initUI() {
