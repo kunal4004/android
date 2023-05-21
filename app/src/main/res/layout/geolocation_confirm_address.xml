@@ -69,6 +69,7 @@
             android:scrollbars="vertical"
             android:cursorVisible="true"
             android:focusable="true"
+            android:hint="@string/enter_your_street_number_and_name"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/imgRemoveAddress"
             app:layout_constraintStart_toStartOf="parent"
@@ -82,6 +83,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            android:visibility="gone"
             app:srcCompat="@drawable/close_icon" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -104,9 +106,10 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/_2sdp"
         android:background="@color/gray"
-        android:visibility="gone"
+        android:layout_marginTop="@dimen/seventeen_dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@+id/searchLayout" />
 
     <androidx.appcompat.widget.AppCompatTextView
@@ -121,7 +124,7 @@
         android:paddingEnd="@dimen/sixteen_dp"
         android:paddingBottom="@dimen/two_dp"
         android:text="@string/geo_loc_error_msg_title"
-        android:textColor="@color/red"
+        android:textColor="@color/red_color"
         android:textSize="@dimen/sixteen_sp"
         android:translationY="@dimen/minus_one_point_five_sp"
         android:visibility="gone"
@@ -140,7 +143,7 @@
         android:paddingEnd="@dimen/sixteen_dp"
         android:paddingBottom="@dimen/sixteen_dp"
         android:text="@string/geo_loc_error_msg"
-        android:textColor="@color/red"
+        android:textColor="@color/red_color"
         android:textSize="@dimen/thirteen_sp"
         android:translationY="@dimen/minus_one_point_five_sp"
         android:visibility="gone"
