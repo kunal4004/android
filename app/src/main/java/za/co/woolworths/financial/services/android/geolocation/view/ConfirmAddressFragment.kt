@@ -203,6 +203,12 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
                     binding.inCurrentLocation?.swEnableLocation?.isChecked = true
                     startLocationDiscoveryProcess()
                 } else {
+                    binding.disableCurrentLocation()
+                    binding.inCurrentLocation?.swEnableLocation?.isChecked = false
+                }
+            } else {
+                if(!Utils.isLocationEnabled(this)) {
+                    binding.disableCurrentLocation()
                     binding.inCurrentLocation?.swEnableLocation?.isChecked = false
                 }
             }
@@ -210,9 +216,9 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
     }
 
     private fun startLocationDiscoveryProcess() {
-        locator.getCurrentLocation { locationEvent ->
+        locator?.getCurrentLocationSilently { locationEvent ->
             when (locationEvent) {
-                is Event.Location -> binding.handleLocationEvent(locationEvent)
+                is Event.Location -> binding?.handleLocationEvent(locationEvent)
                 is Event.Permission -> handlePermissionEvent(locationEvent)
             }
         }
@@ -656,7 +662,7 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
                             )
 
                             KotlinUtils.placeId = placeId
-                            KotlinUtils.isLocationSame =
+                            KotlinUtils.isLocationPlaceIdSame =
                                 placeId?.equals(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId)
 
                             WoolworthsApplication.setValidatedSuburbProducts(

@@ -71,7 +71,7 @@
             android:focusable="true"
             android:hint="@string/enter_your_street_number_and_name"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/imgRemoveAddress"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 

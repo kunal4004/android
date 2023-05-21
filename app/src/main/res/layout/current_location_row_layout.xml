@@ -61,7 +61,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/tvCurrentLocationLabel"
+        app:layout_constraintStart_toEndOf="@+id/tvCurrentLocation"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias=".8"/>
     <ImageView
@@ -73,7 +73,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         android:visibility="gone"
-        app:layout_constraintStart_toEndOf="@+id/tvCurrentLocationLabel"
+        app:layout_constraintStart_toEndOf="@+id/tvCurrentLocation"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_caret_black"
         app:layout_constraintVertical_bias=".8"/>

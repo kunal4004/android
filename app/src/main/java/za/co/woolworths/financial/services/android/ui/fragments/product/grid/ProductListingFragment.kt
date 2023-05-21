@@ -9,7 +9,6 @@ import android.location.Location
 import android.os.Bundle
 import android.os.Handler
 import android.os.Parcelable
-import android.text.method.LinkMovementMethod
 import android.view.Gravity
 import android.view.View
 import android.view.View.GONE
@@ -21,7 +20,6 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
-import androidx.core.text.HtmlCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.activityViewModels
@@ -350,7 +348,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
                             val savedPlaceId = KotlinUtils.getDeliveryType()?.address?.placeId
                             KotlinUtils.apply {
                                 this.placeId = confirmLocationRequest.address.placeId
-                                isLocationSame =
+                                isLocationPlaceIdSame =
                                     confirmLocationRequest.address.placeId?.equals(savedPlaceId)
                             }
 
@@ -1309,8 +1307,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
             mSubCategoryName
         )
         selectItemParams.putString(
-            FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_BRAND,
-            productList.brandText
+            FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_RATING,
+            productList.averageRating
         )
         for (products in 0..(mProductList?.size ?: 0)) {
             val selectItem = Bundle()

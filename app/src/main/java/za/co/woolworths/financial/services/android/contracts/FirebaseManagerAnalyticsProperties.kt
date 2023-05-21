@@ -211,6 +211,7 @@ open class FirebaseManagerAnalyticsProperties {
         const val SHOP_PDP_NATIVE_SHARE = "shop_pdp_nat_shar"
         const val SHOP_PDP_NATIVE_SHARE_DP_LNK = "shop_pdp_nat_shar_dp_lnk"
         const val CART_CLCK_CLLCT_CNFRM_LMT = "cart_clck_cllct_cnfrm_lmt"
+        const val BUSINESS_UNIT = "business_unit"
 
         //Native Checkout
         const val CHANGE_FULFILLMENT_DELIVERY = "chckout_dlvry"
@@ -506,12 +507,12 @@ open class FirebaseManagerAnalyticsProperties {
             const val CURRENCY = "currency"
             const val ITEM_LIST_NAME = "item_list_name"
             const val SHOPPING_LIST_NAME = "Shopping_list_name"
-            const val ITEM_RATING = "Item Rating"
             const val ITEM_BRAND = "item_brand"
             const val ORDER_TOTAL_VALUE = "order_total"
 
             const val ITEM_ID = "item_id"
             const val ITEM_NAME = "item_name"
+            const val ITEM_RATING = "item_rating"
             const val COUPON = "coupon"
             const val DISCOUNT = "DISCOUNT"
             const val INDEX = "index"
