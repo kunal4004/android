@@ -1308,8 +1308,8 @@
     <style name="calender_details_text_style">
         <item name="android:letterSpacing">0.06</item>
         <item name="android:textColor">@color/black</item>
-        <item name="android:textSize">@dimen/sixteen_dp</item>
-        <item name="fontFamily">@font/myriad_pro_regular</item>
+        <item name="android:textSize">@dimen/thirteen_sp</item>
+        <item name="fontFamily">@font/opensans_regular</item>
     </style>
 
     <style name="absa_page_title_style" parent="absa_page_title_text_style">
@@ -3137,9 +3137,9 @@
 
     <style name="pargo_info_description_text_style">
         <item name="android:lineSpacingExtra">1.4dp</item>
-        <item name="android:textColor">@color/black</item>
-        <item name="android:textSize">15sp</item>
-        <item name="WTextView_font">myriadpro_regular</item>
+        <item name="android:textColor">@color/color_444444</item>
+        <item name="android:textSize">@dimen/thirteen_sp</item>
+        <item name="fontFamily">@font/opensans_regular</item>
     </style>
 
     <style name="opensens_medium" >
