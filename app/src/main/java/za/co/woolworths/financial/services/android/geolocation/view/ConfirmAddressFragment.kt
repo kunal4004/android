@@ -206,12 +206,10 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
                     binding.disableCurrentLocation()
                     binding.inCurrentLocation?.swEnableLocation?.isChecked = false
                 }
-            } else {
-                if(!Utils.isLocationEnabled(this)) {
-                    isAddressAvailable = false
-                    binding.disableCurrentLocation()
-                    binding.inCurrentLocation?.swEnableLocation?.isChecked = false
-                }
+            } else if (!Utils.isLocationEnabled(this)) {
+                isAddressAvailable = false
+                binding.disableCurrentLocation()
+                binding.inCurrentLocation?.swEnableLocation?.isChecked = false
             }
         }
     }
