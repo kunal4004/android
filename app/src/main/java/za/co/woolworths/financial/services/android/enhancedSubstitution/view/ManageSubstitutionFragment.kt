@@ -127,10 +127,25 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
 
                         resource.data?.data?.let {
                             itemList = it.responses.getOrNull(0)?.actions?.getOrNull(0)?.items
+                            if(itemList.isNullOrEmpty()) {
+                                binding.layoutManageSubstitution.listSubstitute.apply {
+                                    groupEmptySubstituteList.visibility = View.VISIBLE
+                                    recyclerView.visibility = View.GONE
+                                }
+                                return@observe
+                            }
+                            binding.layoutManageSubstitution.listSubstitute.apply {
+                                groupEmptySubstituteList.visibility = View.GONE
+                                recyclerView.visibility = View.VISIBLE
+                            }
                             prepareStockInventoryCallRequest(itemList)
                         }
                     }
                     Status.ERROR -> {
+                        binding.layoutManageSubstitution.listSubstitute.apply {
+                            groupEmptySubstituteList.visibility = View.VISIBLE
+                            recyclerView.visibility = View.GONE
+                        }
                     }
                 }
             }

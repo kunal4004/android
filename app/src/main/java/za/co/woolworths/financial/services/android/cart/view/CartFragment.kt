@@ -84,7 +84,6 @@ import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseVie
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView.IWalkthroughActionListener
 import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ActionSheetDialogFragment
-import za.co.woolworths.financial.services.android.ui.wfs.common.getIpAddress
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_EXPECTATION_FAILED_502
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
@@ -630,9 +629,14 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             }
     }
 
-    override fun onSubstituteProductClick(substitutionSelection: String, commerceId: String) {
+    override fun onSubstituteProductClick(
+        substitutionSelection: String,
+        commerceId: String,
+        productId: String?,
+        catalogRefId: String?
+    ) {
         (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
-            ManageSubstitutionFragment.newInstance(substitutionSelection, commerceId)
+            ManageSubstitutionFragment.newInstance(substitutionSelection, commerceId, productId, catalogRefId)
         )
     }
 
