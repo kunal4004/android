@@ -23,7 +23,7 @@ class ManageProductSubstitutionAdapter(
                     ), parent.context)
     }
 
-    override fun onBindViewHolder(holder: SubstitutionViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: SubstitutionViewHolder,  position: Int) {
         when (holder) {
             is SubstitutionViewHolder.SubstituteProductViewHolder -> {
                 holder.bind(substitutionProductList.getOrNull(position))

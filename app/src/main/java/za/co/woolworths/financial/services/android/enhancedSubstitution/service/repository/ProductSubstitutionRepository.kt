@@ -8,7 +8,6 @@ import za.co.woolworths.financial.services.android.enhancedSubstitution.service.
 import za.co.woolworths.financial.services.android.enhancedSubstitution.service.network.SubstitutionApiHelper
 import za.co.woolworths.financial.services.android.models.dto.PagingResponse
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
-import za.co.woolworths.financial.services.android.models.dto.SkuInventoryResponse
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse
 import za.co.woolworths.financial.services.android.models.network.Resource
 import za.co.woolworths.financial.services.android.util.AppConstant
@@ -44,7 +43,7 @@ class ProductSubstitutionRepository(private var substitutionApiHelper: Substitut
 
     fun getAllSearchedSubstitutions(
         requestParams: ProductsRequestParams,
-        _pagingResponse: MutableLiveData<PagingResponse>,
+        _pagingResponse: MutableLiveData<PagingResponse?>,
     ) = Pager(
             config = PagingConfig(
                 pageSize = PAGE_SIZE,

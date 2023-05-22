@@ -34,7 +34,7 @@ import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBind
 
 class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetailsLayoutBinding>(
     ManageSubstitutionDetailsLayoutBinding::inflate
-), OnClickListener, ProductSubstitutionListListener, View.OnTouchListener, ViewTreeObserver.OnScrollChangedListener {
+), OnClickListener, ProductSubstitutionListListener, OnTouchListener, ViewTreeObserver.OnScrollChangedListener {
 
     private var manageProductSubstitutionAdapter: ManageProductSubstitutionAdapter? = null
     private var selectionChoice = ""
@@ -167,7 +167,7 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
     }
 
     private fun getInventoryStock(skudIds: String, multiSku: String, itemList: ArrayList<Item>?) {
-        var configQuantity: Int? =
+        val configQuantity: Int? =
             AppConfigSingleton.enhanceSubstitution?.thresholdQuantityForSubstitutionProduct
         productSubstitutionViewModel.getInventoryForStock(skudIds, multiSku)
         productSubstitutionViewModel.stockInventoryResponse.observe(viewLifecycleOwner) {
@@ -192,7 +192,9 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
                                 it.sku == item.id
                             } == false
                         }
-                        setRecyclerViewForKiboProducts()
+
+                        itemList?.take(5)
+                        setRecyclerViewForKiboProducts(itemList?.take(5) as? ArrayList<Item>?)
                     }
                     Status.ERROR -> {
                         hideShimmerView()
@@ -202,9 +204,9 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
         }
     }
 
-    private fun setRecyclerViewForKiboProducts() {
+    private fun setRecyclerViewForKiboProducts(itemList: ArrayList<Item>?) {
         if (itemList?.isEmpty() == true) {
-            /*todo show empty error scren*/
+            showEmptyErrorScreen()
         }
         manageProductSubstitutionAdapter = itemList?.let { it1 ->
             ManageProductSubstitutionAdapter(
@@ -225,7 +227,11 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
         }
     }
 
-    fun prepareProductRequest(): GetKiboProductRequest {
+    private fun showEmptyErrorScreen(){
+        /*todo implement empty error screen*/
+    }
+
+    private fun prepareProductRequest(): GetKiboProductRequest {
         val product = Product(productId, skuId)
         val list = ArrayList<Product>()
         list.add(product)
@@ -279,14 +285,14 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
         }
     }
 
-    fun callAddSubsAPi() {
+    private fun callAddSubsAPi() {
         val addSubstitutionRequest = AddSubstitutionRequest(
             substitutionSelection = SubstitutionChoice.USER_CHOICE.name,
             substitutionId = skuId,
             commerceItemId = commerceItemId
         )
         productSubstitutionViewModel.addSubstitutionForProduct(addSubstitutionRequest)
-        productSubstitutionViewModel.addSubstitutionResponse?.observe(viewLifecycleOwner, {
+        productSubstitutionViewModel.addSubstitutionResponse.observe(viewLifecycleOwner, {
             it.getContentIfNotHandled()?.let { resource ->
                 when (resource.status) {
                     Status.LOADING -> {
@@ -298,7 +304,7 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
                         /* if we get form exception need to show error popup*/
                         resource.data?.data?.getOrNull(0)?.formExceptions?.getOrNull(0)?.let {
                             if (it.message?.isNotEmpty() == true) {
-                                /*todo show error screen*/
+                                showErrorScreen()
                             }
                             return@observe
                         }
@@ -314,6 +320,10 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
         })
     }
 
+    fun showErrorScreen() {
+
+    }
+
     private fun confirmDontWantSubstitutionForProduct() {
         setFragmentResult(
             SELECTED_SUBSTITUTED_PRODUCT, bundleOf(
@@ -325,7 +335,7 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
 
     private fun openSubstitutionSearchScreen() {
         (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
-            SearchSubstitutionFragment.newInstance(commerceItemId)
+            SearchSubstitutionFragment.newInstance(commerceItemId, productId)
         )
     }
 
@@ -359,7 +369,7 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
             ResourcesCompat.getDrawable(resources, R.drawable.grey_bg_drawable, null)
     }
 
-    fun handleOptionsForShopperchoice() {
+    private fun handleOptionsForShopperchoice() {
         binding.layoutManageSubstitution.apply {
             rbShopperChoose.isChecked = true
             rbOwnSubstitute.isChecked = false
@@ -367,7 +377,7 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
         }
     }
 
-    fun handleOptionsForOwnSubstitution() {
+    private fun handleOptionsForOwnSubstitution() {
         binding.layoutManageSubstitution.apply {
             rbOwnSubstitute.isChecked = true
             rbShopperChoose.isChecked = false
