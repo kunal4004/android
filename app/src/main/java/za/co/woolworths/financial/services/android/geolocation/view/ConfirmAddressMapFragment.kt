@@ -8,6 +8,7 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -16,6 +17,7 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.ConfirmAddressBottomSheetDialogBinding
 import com.awfs.coordination.databinding.GeolocationConfirmAddressBinding
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
@@ -61,6 +63,9 @@ import za.co.woolworths.financial.services.android.util.LocalConstant.Companion.
 import za.co.woolworths.financial.services.android.util.LocalConstant.Companion.DEFAULT_LONGITUDE
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.location.DynamicGeocoder
+import za.co.woolworths.financial.services.android.util.location.Event
+import za.co.woolworths.financial.services.android.util.location.EventType
+import za.co.woolworths.financial.services.android.util.location.Locator
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.viewmodels.UnIndexedAddressLiveData
 import javax.inject.Inject
@@ -107,13 +112,14 @@ class ConfirmAddressMapFragment :
     private var isStreetNumberAndRouteFromSearch: Boolean? = false
     private var isPoiAddress: Boolean? = false
     private var address2: String? = ""
-
+    private lateinit var locator: Locator
     override fun onViewCreated(
         view: View, savedInstanceState: Bundle?,
     ) {
         super.onViewCreated(view, savedInstanceState)
         binding = GeolocationConfirmAddressBinding.bind(view)
         binding.dynamicMapView?.initializeMap(savedInstanceState, this)
+        locator = Locator(activity as AppCompatActivity)
     }
 
     private fun initView() {
@@ -150,9 +156,13 @@ class ConfirmAddressMapFragment :
 
     private fun onNavigationMapArrowClicked() {
         binding?.navigationMapArrow?.setOnClickListener {
-            Utils.getLastSavedLocation()?.let {
-                moveMapCamera(it.latitude, it.longitude)
-            }
+            startLocationDiscoveryProcess()
+        }
+    }
+
+    private fun displayCurrentLocation() {
+        Utils.getLastSavedLocation()?.let {
+            moveMapCamera(it.latitude, it.longitude)
         }
     }
 
@@ -983,6 +993,25 @@ class ConfirmAddressMapFragment :
         }
     }
 
+    private fun startLocationDiscoveryProcess() {
+        locator?.getCurrentLocationSilently { locationEvent ->
+            when (locationEvent) {
+                is Event.Location -> handleLocationEvent(locationEvent)
+                is Event.Permission -> handlePermissionEvent(locationEvent)
+            }
+        }
+    }
 
+    private fun handlePermissionEvent(permissionEvent: Event.Permission) {
+        if (permissionEvent.event == EventType.LOCATION_PERMISSION_NOT_GRANTED) {
+            Utils.saveLastLocation(null, activity)
+            handleLocationEvent(null)
+        }
+    }
+
+    private fun handleLocationEvent(locationEvent: Event.Location?) {
+        Utils.saveLastLocation(locationEvent?.locationData, context)
+        displayCurrentLocation()
+    }
 }
 
