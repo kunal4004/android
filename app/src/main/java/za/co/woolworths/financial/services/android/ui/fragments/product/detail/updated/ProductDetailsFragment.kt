@@ -55,6 +55,7 @@ import za.co.woolworths.financial.services.android.common.SingleMessageCommonToa
 import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.ILocationProvider
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.Item
 import za.co.woolworths.financial.services.android.enhancedSubstitution.utils.listener.EnhancedSubstitutionBottomSheetDialog
 import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.ProductSubstitution
 import za.co.woolworths.financial.services.android.enhancedSubstitution.service.repository.ProductSubstitutionRepository
@@ -254,6 +255,7 @@ class ProductDetailsFragment :
     private var substitutionId: String? = ""
     private var commarceItemId: String? = ""
     private var substitutionProductItem: ProductList? = null
+    private var kiboItem: Item? = null
     private var isSubstiuteItemAdded = false
 
     private val recommendationViewModel: RecommendationViewModel by viewModels()
@@ -379,13 +381,15 @@ class ProductDetailsFragment :
             // User Selects product from search screen and came back to pdp
             bundle?.apply {
                 if (bundle.containsKey(SearchSubstitutionFragment.SUBSTITUTION_ITEM_KEY)) {
-                   // item is not added in cart yet i.e. commerce id is empty so need to click on add to cart in order to add substitute
-                    substitutionProductItem = getSerializable(SearchSubstitutionFragment.SUBSTITUTION_ITEM_KEY) as? ProductList
+                    // item is not added in cart yet i.e. commerce id is empty so need to click on add to cart in order to add substitute
+                    substitutionProductItem =
+                        getSerializable(SearchSubstitutionFragment.SUBSTITUTION_ITEM_KEY) as? ProductList
                     showSubstituteItemCell(true, substitutionProductItem)
                 }
                 if (bundle.containsKey(SearchSubstitutionFragment.SUBSTITUTION_ITEM_ADDED)) {
                     // item is added in cart yet i.e. commerce id is not empty so call getSubstitution api to refresh substitution cell
-                    isSubstiuteItemAdded = getBoolean(SearchSubstitutionFragment.SUBSTITUTION_ITEM_ADDED, false)
+                    isSubstiuteItemAdded =
+                        getBoolean(SearchSubstitutionFragment.SUBSTITUTION_ITEM_ADDED, false)
                     callGetSubstitutionApi(true)
                 }
                 if (bundle.containsKey(ManageSubstitutionFragment.DONT_WANT_SUBSTITUTE_LISTENER)) {
@@ -396,9 +400,16 @@ class ProductDetailsFragment :
                         substitutionId = ""
                     }
                 }
+                if (bundle.containsKey(ManageSubstitutionFragment.LET_MY_SHOPPER_CHOOSE)) {
+                    binding.productDetailOptionsAndInformation.substitutionLayout.apply {
+                        txtSubstitutionTitle.text = context?.getString(R.string.substitute_default)
+                        txtSubstitutionEdit.text = context?.getString(R.string.change)
+                        selectionChoice = SubstitutionChoice.SHOPPER_CHOICE.name
+                        substitutionId = ""
+                    }
+                }
             }
         }
-
     }
 
 
@@ -1574,12 +1585,9 @@ class ProductDetailsFragment :
                 }
             }
 
-
-
             if (!isAllProductsOutOfStock() && isInventoryCalled) {
                 showEnhancedSubstitutionDialog()
             }
-
             showSubstituteItemCell(isInventoryCalled, substitutionProductItem)
 
             if (isAllProductsOutOfStock() && isInventoryCalled) {
@@ -1621,21 +1629,21 @@ class ProductDetailsFragment :
         substitutionProductItem: ProductList? = null
     ) {
         if (KotlinUtils.getDeliveryType()?.deliveryType != Delivery.DASH.type) {
-            binding?.productDetailOptionsAndInformation?.substitutionLayout?.root?.visibility = View.GONE
+            binding.productDetailOptionsAndInformation.substitutionLayout.root?.visibility = View.GONE
             return
         }
 
-        binding.productDetailOptionsAndInformation?.substitutionLayout?.apply {
+        binding.productDetailOptionsAndInformation.substitutionLayout.apply {
             root.visibility = View.VISIBLE
-            txtSubstitutionEdit?.setOnClickListener(this@ProductDetailsFragment)
+            txtSubstitutionEdit.setOnClickListener(this@ProductDetailsFragment)
             if (SessionUtilities.getInstance().isUserAuthenticated) {
                 if (substitutionProductItem == null) {
                       callGetSubstitutionApi(isInventoryCalled)
                 } else {
                     /*set Locally product name */
                     selectionChoice = SubstitutionChoice.USER_CHOICE.name
-                    substitutionId = commarceItemId
-                    txtSubstitutionTitle?.text = substitutionProductItem?.productName
+                    substitutionId = substitutionProductItem.productId
+                    txtSubstitutionTitle.text = substitutionProductItem.productName
                     txtSubstitutionEdit.text = context?.getString(R.string.change)
                 }
             } else {
@@ -1644,6 +1652,25 @@ class ProductDetailsFragment :
             }
         }
     }
+
+    fun showItemCellForUnauthenticatedUser() {
+        if (KotlinUtils.getDeliveryType()?.deliveryType != Delivery.DASH.type) {
+            binding?.productDetailOptionsAndInformation?.substitutionLayout?.root?.visibility =
+                View.GONE
+            return
+        }
+
+        if (!SessionUtilities.getInstance().isUserAuthenticated) {
+            binding.productDetailOptionsAndInformation?.substitutionLayout?.apply {
+                txtSubstitutionTitle.text = context?.getString(R.string.sign_in_label)
+                txtSubstitutionEdit.text = context?.getString(R.string.sign_in)
+            }
+        }
+    }
+
+
+
+
 
 
     private fun showSubstitutionLayout(
