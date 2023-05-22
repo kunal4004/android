@@ -112,9 +112,9 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
 
     fun showBackArrowWithTitle(titleText: String) {
         lifecycleScope.launchWhenCreated {
-            binding.toolbar?.visibility = View.VISIBLE
+            binding.toolbar.visibility = View.VISIBLE
             setSupportActionBar(binding.toolbar)
-            binding.toolbarText?.text = titleText
+            binding.toolbarText.text = titleText
             supportActionBar?.apply {
                 title = ""
                 setDisplayShowTitleEnabled(false)
@@ -125,11 +125,13 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     fun hideBackArrow() {
-        binding.toolbar?.visibility = View.VISIBLE
-        setSupportActionBar(binding.toolbar)
-        supportActionBar?.apply {
-            title = ""
-            setDisplayHomeAsUpEnabled(false)
+        lifecycleScope.launchWhenCreated {
+            binding.toolbar.visibility = View.VISIBLE
+            setSupportActionBar(binding.toolbar)
+            supportActionBar?.apply {
+                title = ""
+                setDisplayHomeAsUpEnabled(false)
+            }
         }
     }
 
