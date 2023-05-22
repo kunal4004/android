@@ -4,17 +4,17 @@ import java.util.ArrayList;
 
 
 public interface PermissionResultCallback {
-	void permissionGranted(int request_code);
+	void permissionGranted(int requestCode);
 
-	default void partialPermissionGranted(int request_code, ArrayList<String> granted_permissions) {
-
-	}
-
-	default void permissionDenied(int request_code) {
+	default void partialPermissionGranted(int requestCode, ArrayList<String> grantedPermissions) {
 
 	}
 
-	default void neverAskAgain(int request_code) {
+	default void permissionDenied(int requestCode) {
+
+	}
+
+	default void neverAskAgain(int requestCode) {
 
 	}
 }
