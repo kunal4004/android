@@ -17,42 +17,16 @@
             android:background="@color/default_background"
             tools:context="za.co.woolworths.financial.services.android.ui.activities.CreditReportTUActivity">
 
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
-                android:id="@+id/WTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/twenty_dp"
-                android:layout_marginStart="11dp"
-                android:background="@color/transparent"
-                android:elevation="@dimen/five_dp"
-                android:fontFamily="@font/futura_bold"
-                android:gravity="center"
-                android:text="@string/pet_insurance_care"
-                android:textColor="@color/black"
-                android:textSize="@dimen/twenty_sp"
-                app:WTextView_font="bold"
-                app:layout_constraintBottom_toBottomOf="@+id/imageView6"
-                app:layout_constraintStart_toEndOf="@+id/imageView6"
-                app:layout_constraintTop_toTopOf="@+id/imageView6" />
-
             <ImageView
-                android:id="@+id/imageView6"
-                android:layout_width="@dimen/thirty_two_dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/ten_dp"
-                android:layout_marginTop="@dimen/thirty_four_dp"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/thirty_six_dp"
+                android:scaleType="fitStart"
+                android:layout_marginStart="@dimen/seven_dp"
+                android:layout_marginTop="@dimen/thirty_nine_dp"
                 android:elevation="@dimen/five_dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/pet_logo" />
-
-            <ImageView
-                android:id="@+id/pet_care_logo"
-                android:layout_width="@dimen/fifty_dp"
-                android:layout_height="@dimen/fifteen_dp"
-                android:elevation="@dimen/five_dp"
-                app:layout_constraintBottom_toBottomOf="@+id/WTextView"
-                app:layout_constraintStart_toEndOf="@+id/WTextView"
-                app:srcCompat="@drawable/pet_care_logo" />
+                app:srcCompat="@drawable/logo_pet_insure" />
 
             <com.google.android.material.appbar.AppBarLayout
                 android:id="@+id/appBarLayout"
