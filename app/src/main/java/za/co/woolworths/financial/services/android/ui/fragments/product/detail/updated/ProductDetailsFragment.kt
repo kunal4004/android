@@ -18,14 +18,12 @@ import android.os.Environment
 import android.os.Handler
 import android.text.Html
 import android.text.TextUtils
-import android.util.Log
 import android.view.*
 import android.webkit.MimeTypeMap
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
@@ -84,11 +82,9 @@ import za.co.woolworths.financial.services.android.ui.activities.rating_and_revi
 import za.co.woolworths.financial.services.android.ui.adapters.*
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerAdapter.MultipleImageInterface
 import za.co.woolworths.financial.services.android.ui.extension.deviceWidth
-import za.co.woolworths.financial.services.android.ui.extension.setSafeOnClickListener
 import za.co.woolworths.financial.services.android.ui.extension.underline
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.OutOfStockMessageDialogFragment
-import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.PayFlexInfoBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.size_guide.SkinProfileDialog
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment.Companion.SET_DELIVERY_LOCATION_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.FoodProductNotAvailableForCollectionDialog
@@ -141,7 +137,6 @@ import za.co.woolworths.financial.services.android.util.pickimagecontract.PickIm
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.io.File
 import javax.inject.Inject
-import kotlin.collections.get
 import kotlin.collections.set
 
 
@@ -735,25 +730,6 @@ class ProductDetailsFragment :
                     it.kilogramPrice
                 )
             }
-            payFlexWidget.setOnTouchListener { _, _ ->
-              //  payFlexWidgetLay.performClick()
-               // PayFlexInfoBottomSheetDialog.newInstance().show(this@ProductDetailsFragment.childFragmentManager,
-                  //  PayFlexInfoBottomSheetDialog::class.java.simpleName)
-                if(bottomSheetWebView==null) {
-                    bottomSheetWebView = BottomSheetWebView(context!!)
-                }
-                bottomSheetWebView?.showWithUrl("https://widgets.payflex.co.za/how_to.html?")
-                true }
-            //payFlexWidgetLay.setOnTouchListener { _, _ -> false }
-            payFlexWidget.setOnClickListener(null)
-            //payFlexWidgetLay.invalidate()
-            Log.e("Hey I am here","HeY  Iam")
-               // payFlexWidgetLay.setOnClickListener {
-                    
-               // }
-            payFlexWidget.settings.javaScriptEnabled = true
-            payFlexWidget.loadData(loadpayFlexWidget(productDetails?.price),"text/html", "UTF-8")
-
 
             auxiliaryImages.add(activity?.let { it1 -> getImageByWidth(it.externalImageRefV2, it1) }
                 .toString())
@@ -1098,6 +1074,7 @@ class ProductDetailsFragment :
         }
 
         binding.setupBrandView()
+        setupBNPLViewForFbhProducts()
 
         if (hasSize)
             setSelectedGroupKey(defaultGroupKey)
@@ -4049,5 +4026,23 @@ class ProductDetailsFragment :
         }
     }
 
+    private fun setupBNPLViewForFbhProducts() {
+        if (this.productDetails?.fulfillmentType == StoreUtils.Companion.FulfillmentType.CLOTHING_ITEMS?.type || this.productDetails?.fulfillmentType == StoreUtils.Companion.FulfillmentType.CRG_ITEMS?.type) {
+            binding.payFlexWidget.apply {
+                visibility = View.VISIBLE
+                setOnTouchListener { _, _ ->
+                    if (bottomSheetWebView == null) {
+                        bottomSheetWebView = BottomSheetWebView(context!!)
+                    }
+                    bottomSheetWebView?.showWithUrl(getString(R.string.bnpl_popup_url))
+                    true
+                }
+                setOnClickListener(null)
+                settings.javaScriptEnabled = true
+                loadData(loadpayFlexWidget(productDetails?.price), "text/html", "UTF-8")
+            }
+        } else {
+            binding.payFlexWidget.visibility = View.GONE
+        }
+    }
 }
-
