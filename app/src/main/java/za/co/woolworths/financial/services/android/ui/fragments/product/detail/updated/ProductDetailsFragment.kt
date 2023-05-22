@@ -4030,11 +4030,13 @@ class ProductDetailsFragment :
         if (this.productDetails?.fulfillmentType == StoreUtils.Companion.FulfillmentType.CLOTHING_ITEMS?.type || this.productDetails?.fulfillmentType == StoreUtils.Companion.FulfillmentType.CRG_ITEMS?.type) {
             binding.payFlexWidget.apply {
                 visibility = View.VISIBLE
-                setOnTouchListener { _, _ ->
-                    if (bottomSheetWebView == null) {
-                        bottomSheetWebView = BottomSheetWebView(context!!)
+                setOnTouchListener { _, motionEvent ->
+                    if(motionEvent.action == MotionEvent.ACTION_DOWN) {
+                        if (bottomSheetWebView == null) {
+                            bottomSheetWebView = BottomSheetWebView(requireContext())
+                        }
+                        bottomSheetWebView?.showWithUrl(getString(R.string.bnpl_popup_url))
                     }
-                    bottomSheetWebView?.showWithUrl(getString(R.string.bnpl_popup_url))
                     true
                 }
                 setOnClickListener(null)
