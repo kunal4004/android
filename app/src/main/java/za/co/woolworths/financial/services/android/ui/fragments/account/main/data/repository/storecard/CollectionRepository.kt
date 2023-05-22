@@ -13,5 +13,5 @@ interface ICollectionRepository {
 class CollectionRepository @Inject constructor(private val service : CollectionRemoteDataSource) :
     CoreDataSource(), ICollectionRepository {
 
-    override suspend fun queryServiceCheckCustomerEligibilityPlan() : Flow<IOTaskResult<EligibilityPlanResponse>> = performSafeNetworkApiCall { service.queryServiceCheckCustomerEligibilityPlan() }
+    override suspend fun queryServiceCheckCustomerEligibilityPlan() : Flow<IOTaskResult<EligibilityPlanResponse>> = executeSafeNetworkApiCall { service.queryServiceCheckCustomerEligibilityPlan() }
 }

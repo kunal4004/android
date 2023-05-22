@@ -28,12 +28,16 @@ import za.co.woolworths.financial.services.android.ui.activities.webview.data.El
 import za.co.woolworths.financial.services.android.ui.activities.webview.usercase.WebViewHandler.Companion.REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.activities.webview.data.WebViewActions
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.BindingBaseActivity
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.Constants
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.eliteplan.ElitePlanModel
 
 @AndroidEntryPoint
 class WInternalWebPageActivity : BindingBaseActivity<InternalWebviewActivityBinding>(InternalWebviewActivityBinding::inflate), View.OnClickListener {
-    val viewModel: WebViewModel by viewModels()
+
+    private val viewModel: WebViewModel by viewModels()
+
+    private var isPetInsurance: Boolean = false
 
     override fun onStart() {
         if (viewModel.webViewClientHandler.webViewData?.treatmentPlan == true) {
@@ -46,7 +50,41 @@ class WInternalWebPageActivity : BindingBaseActivity<InternalWebviewActivityBind
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        intent.extras?.let { viewModel.bundle(it, chromeClient = chromeClient()) }
+        val intentExtras =  intent.extras
+        isPetInsurance = intentExtras?.getBoolean(Constants.IS_PET_INSURANCE, false) == true
+        when (isPetInsurance) {
+            true -> {
+                setPetInsurancePawGifImage()
+                viewModel.navigateToPetInsuranceStatusCOVERED()
+                handleAppGuidResponse()
+            }
+            false -> {
+                intentExtras?.let { viewModel.bundle(it, chromeClient = chromeClient()) }
+                initWebView()
+            }
+        }
+    }
+
+    private fun handleAppGuidResponse() {
+        lifecycleScope.launch {
+            with(viewModel) {
+                fetchAppGuidState.collect { result ->
+                    result.data?.let { response ->
+                        val breakoutParams = breakoutToWebViewParams(response = response)
+                        setBreakoutParams(params = breakoutParams,chromeClient = chromeClient())
+                        initWebView()
+                    }
+                    showProgressBar(result.isLoading)
+                }
+            }
+        }
+    }
+
+    private fun setPetInsurancePawGifImage() {
+        showProgressBar(true)
+    }
+
+    private fun initWebView() {
         init()
         webSetting()
         retryConnect()
@@ -129,7 +167,7 @@ class WInternalWebPageActivity : BindingBaseActivity<InternalWebviewActivityBind
         binding.noConnectionHandler.btnRetry.setOnClickListener { v: View? ->
             if (NetworkManager.getInstance().isConnectedToNetwork(this@WInternalWebPageActivity)) {
                 hideAppBar()
-                showProgressBar()
+                showProgressBar(true)
                 val history = binding.internalWebView.copyBackForwardList()
                 var index = -1
                 while (binding.internalWebView.canGoBackOrForward(index)) {
@@ -144,19 +182,19 @@ class WInternalWebPageActivity : BindingBaseActivity<InternalWebviewActivityBind
         }
     }
 
-    private fun showProgressBar() {
-        binding.mWoolworthsProgressBar.visibility = View.VISIBLE
+    private fun showProgressBar(isShown : Boolean = false) {
+        binding.mWoolworthsProgressBar.visibility = if (isShown) View.VISIBLE else View.GONE
     }
 
     private fun hideProgressBar() {
         if (viewModel.webViewClientHandler.webViewData?.treatmentPlan == true) {
             val handler = Handler()
             handler.postDelayed(
-                { binding.mWoolworthsProgressBar.visibility = View.GONE },
+                {  showProgressBar(false) },
                 AppConstant.DELAY_1000_MS
             )
         } else {
-            runOnUiThread { binding.mWoolworthsProgressBar.visibility = View.GONE }
+            runOnUiThread { showProgressBar(false) }
         }
     }
 
