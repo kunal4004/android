@@ -7,7 +7,6 @@ import android.location.Location
 import android.os.Build
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
@@ -325,7 +324,7 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
     private fun ConfirmAddressBottomSheetDialogBinding.disableCurrentLocation() {
         inCurrentLocation?.ivArrow?.visibility = View.GONE
         inCurrentLocation?.swEnableLocation?.visibility = View.VISIBLE
-        inCurrentLocation?.tvCurrentLocation?.text = requireContext().getString(R.string.enable_location_services)
+        inCurrentLocation?.tvCurrentLocation?.text = getString(R.string.enable_location_services)
     }
 
     override fun onAddressSelected(address: Address, position: Int) {

@@ -3217,4 +3217,16 @@
         <item name="android:layout_marginTop">@dimen/four_dp</item>
     </style>
 
+    <style name="checkout_edittext_multi_style">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">@dimen/hundred_dp</item>
+        <item name="android:background">@drawable/recipient_details_input_edittext_bg</item>
+        <item name="android:fontFamily">@font/opensans_regular</item>
+        <item name="android:padding">@dimen/fourteen_dp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:imeOptions">actionNext</item>
+        <item name="android:textSize">@dimen/fourteen_sp</item>
+        <item name="android:gravity">top</item>
+    </style>
+
 </resources>

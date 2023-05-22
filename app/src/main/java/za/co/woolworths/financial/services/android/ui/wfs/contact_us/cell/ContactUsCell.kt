@@ -16,26 +16,10 @@ import za.co.woolworths.financial.services.android.ui.wfs.component.*
 import za.co.woolworths.financial.services.android.ui.wfs.contact_us.model.Children
 import za.co.woolworths.financial.services.android.ui.wfs.contact_us.model.ChildrenItem
 import za.co.woolworths.financial.services.android.ui.wfs.contact_us.model.ContactUsType
+import za.co.woolworths.financial.services.android.ui.wfs.theme.Margin
 
 @Composable
 fun LabelTitle(params: LabelProperties) {
-    LabelTitleLarge(
-        params = LabelProperties(
-            label = params.label,
-            stringId = params.stringId,
-            fontSize = params.fontSize,
-            isUpperCased = params.isUpperCased,
-            style = params.style,
-            letterSpacing = params.letterSpacing,
-            modifier = params.modifier
-                .fillMaxWidth(),
-            textColor = params.textColor,
-            textAlign = params.textAlign)
-    )
-}
-
-@Composable
-fun LabelCustomTitle(params: LabelProperties) {
     LabelTitleLarge(
         params = LabelProperties(
             label = params.label,
@@ -65,7 +49,7 @@ fun LabelMediumText(params: LabelProperties){
             letterSpacing = params.letterSpacing,
             modifier = params.modifier
                 .fillMaxWidth()
-                .padding(start = 24.dp, top = 22.dp, bottom = 20.dp, end = 15.dp))
+                .padding(start = Margin.start, top = 22.dp, bottom = 20.dp, end = 15.dp))
     )}
 
 @Composable
@@ -171,23 +155,6 @@ fun SingleTextViewTitleRow(params: LabelProperties){
             verticalAlignment = Alignment.CenterVertically
         ) {
             LabelTitleCustomStyleLarge(params)
-        }
-    }
-}
-
-
-@Composable
-fun ButtonRow(params: LabelProperties){
-    val label = params.label ?: params.stringId?.let { stringResource(id = it) } ?: stringResource(id = R.string.app_name)
-    Column {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .testTag(label)
-                .padding(top = 24.dp, bottom = 24.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            LabelMedium(params)
         }
     }
 }

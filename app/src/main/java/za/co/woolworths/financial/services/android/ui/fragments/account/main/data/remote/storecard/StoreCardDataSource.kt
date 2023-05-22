@@ -48,7 +48,7 @@ class StoreCardDataSource @Inject constructor(
 
     override var account: Account? = product
 
-    override suspend fun queryServiceCreditCardToken() = performSafeNetworkApiCall {
+    override suspend fun queryServiceCreditCardToken() = executeSafeNetworkApiCall {
         getCreditCardToken(
             "", "",
             getSessionToken(),
@@ -56,7 +56,7 @@ class StoreCardDataSource @Inject constructor(
         )
     }
 
-    override suspend fun getPaymentPAYUMethod() = performSafeNetworkApiCall {
+    override suspend fun getPaymentPAYUMethod() = executeSafeNetworkApiCall {
         getPaymentPAYUMethod(
             "", "",
             getSessionToken(),
@@ -64,7 +64,7 @@ class StoreCardDataSource @Inject constructor(
         )
     }
 
-    override suspend fun queryServiceGetStoreCards() = performSafeNetworkApiCall {
+    override suspend fun queryServiceGetStoreCards() = executeSafeNetworkApiCall {
 
         val productOfferingId = getProductOfferingId()
         val visionAccountNumber = getVisionAccountNumber()
@@ -85,7 +85,7 @@ class StoreCardDataSource @Inject constructor(
     }
 
     override suspend fun queryServiceBlockStoreCard(blockReason: Int?, position: Int,storeCardType :StoreCardType) =
-        performSafeNetworkApiCall {
+        executeSafeNetworkApiCall {
             val productOfferingId = getProductOfferingId()
             val visionAccountNumber =  getVisionAccountNumber()
             val deviceIdentityToken = super.getDeviceIdentityToken()
@@ -119,7 +119,7 @@ class StoreCardDataSource @Inject constructor(
 
     override suspend fun queryServiceUnBlockStoreCard(
         blockReason: Int?,
-        position: Int,storeCardType :StoreCardType): Flow<IOTaskResult<BlockMyCardResponse>> = performSafeNetworkApiCall {
+        position: Int,storeCardType :StoreCardType): Flow<IOTaskResult<BlockMyCardResponse>> = executeSafeNetworkApiCall {
 
         val productOfferingId = getProductOfferingId()
         val visionAccountNumber = getVisionAccountNumber()

@@ -10,7 +10,8 @@ import za.co.woolworths.financial.services.android.util.KotlinUtils
 
 class ViewApplicationStatusImpl(private val accountsResponse: AccountsResponse?) : ViewApplicationStatusInterface {
 
-    override fun isViewApplicationStatusVisible(): Boolean = accountsResponse?.products?.size ?: 0 != 3
+    override fun isViewApplicationStatusVisible(): Boolean =
+        (accountsResponse?.products?.size ?: 0) != 3
 
     override fun viewApplicationStatusLinkInExternalBrowser(section: MyAccountSection, activity: Activity?) {
         val applyNowLinkUrl = when(section){
