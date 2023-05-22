@@ -88,6 +88,7 @@ import za.co.woolworths.financial.services.android.ui.extension.setSafeOnClickLi
 import za.co.woolworths.financial.services.android.ui.extension.underline
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.OutOfStockMessageDialogFragment
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.PayFlexInfoBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.size_guide.SkinProfileDialog
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment.Companion.SET_DELIVERY_LOCATION_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.FoodProductNotAvailableForCollectionDialog
@@ -733,14 +734,22 @@ class ProductDetailsFragment :
                     it.kilogramPrice
                 )
             }
-            payFlexWidget.setOnTouchListener { _, _ -> true }
-            payFlexWidgetLay.setOnTouchListener { _, _ -> false }
+            payFlexWidget.setOnTouchListener { _, _ ->
+              //  payFlexWidgetLay.performClick()
+                PayFlexInfoBottomSheetDialog.newInstance().show(this@ProductDetailsFragment.childFragmentManager,
+                    PayFlexInfoBottomSheetDialog::class.java.simpleName)
+                true }
+            //payFlexWidgetLay.setOnTouchListener { _, _ -> false }
             payFlexWidget.setOnClickListener(null)
-            payFlexWidgetLay.invalidate()
+            //payFlexWidgetLay.invalidate()
             Log.e("Hey I am here","HeY  Iam")
-
+               // payFlexWidgetLay.setOnClickListener {
+                    
+               // }
             payFlexWidget.settings.javaScriptEnabled = true
             payFlexWidget.loadData(loadpayFlexWidget(productDetails?.price),"text/html", "UTF-8")
+
+
             auxiliaryImages.add(activity?.let { it1 -> getImageByWidth(it.externalImageRefV2, it1) }
                 .toString())
             updateAuxiliaryImages(auxiliaryImages)
