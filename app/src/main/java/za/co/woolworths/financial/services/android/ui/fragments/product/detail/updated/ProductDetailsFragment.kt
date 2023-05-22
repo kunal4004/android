@@ -236,6 +236,7 @@ class ProductDetailsFragment :
     private lateinit var moreReviewViewModel: RatingAndReviewViewModel
     private val dialogInstance = FoodProductNotAvailableForCollectionDialog.newInstance()
     private val recommendationViewModel: RecommendationViewModel by viewModels()
+    private var bottomSheetWebView: BottomSheetWebView? =null
 
     @OpenTermAndLighting
     @Inject
@@ -736,8 +737,12 @@ class ProductDetailsFragment :
             }
             payFlexWidget.setOnTouchListener { _, _ ->
               //  payFlexWidgetLay.performClick()
-                PayFlexInfoBottomSheetDialog.newInstance().show(this@ProductDetailsFragment.childFragmentManager,
-                    PayFlexInfoBottomSheetDialog::class.java.simpleName)
+               // PayFlexInfoBottomSheetDialog.newInstance().show(this@ProductDetailsFragment.childFragmentManager,
+                  //  PayFlexInfoBottomSheetDialog::class.java.simpleName)
+                if(bottomSheetWebView==null) {
+                    bottomSheetWebView = BottomSheetWebView(context!!)
+                }
+                bottomSheetWebView?.showWithUrl("https://widgets.payflex.co.za/how_to.html?")
                 true }
             //payFlexWidgetLay.setOnTouchListener { _, _ -> false }
             payFlexWidget.setOnClickListener(null)
