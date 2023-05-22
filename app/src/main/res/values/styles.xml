@@ -2148,7 +2148,7 @@
         <item name="android:layout_height">@dimen/fourty_eight_dp</item>
         <item name="android:layout_marginTop">@dimen/six_dp</item>
         <item name="android:background">@drawable/recipient_details_input_edittext_bg</item>
-        <item name="android:fontFamily">@font/myriad_pro_regular</item>
+        <item name="android:fontFamily">@font/opensans_regular</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:paddingStart">@dimen/sixteen_dp</item>
         <item name="android:paddingEnd">@dimen/sixteen_dp</item>
@@ -3213,6 +3213,10 @@
         <item name="android:layout_width">@dimen/zero_dp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginTop">@dimen/four_dp</item>
+    </style>
+
+    <style name="open_sans_regular_black" parent="opensens_regular">
+        <item name="android:textColor">@color/black</item>
     </style>
 
 </resources>
