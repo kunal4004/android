@@ -4,7 +4,7 @@ import kotlinx.coroutines.flow.Flow
 import za.co.woolworths.financial.services.android.models.network.GenericResponse
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.CoreDataSource
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.ViewState
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.getViewStateFlowForNetworkCall
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.mapNetworkCallToViewStateFlow
 import za.co.woolworths.financial.services.android.ui.fragments.contact_us.enquiry.EmailUsRequest
 import za.co.woolworths.financial.services.android.ui.wfs.mobileconfig.IMobileConfigsContentDataSource
 import za.co.woolworths.financial.services.android.ui.wfs.mobileconfig.MobileConfigsContentDataSource
@@ -19,9 +19,9 @@ interface IContactUsRepository {
 class ContactUsRepository @Inject constructor(private val source: MobileConfigsContentDataSource) :
     IContactUsRepository, IMobileConfigsContentDataSource by source {
     override suspend fun queryServiceContactUsContentFromMobileConfig()
-    = getViewStateFlowForNetworkCall { fetchContactUsConfigFromMobileConfig() }
+    = mapNetworkCallToViewStateFlow { fetchContactUsConfigFromMobileConfig() }
 
     override suspend fun queryServicePostContactUsEmail(emailUsRequest: EmailUsRequest?)
-    = getViewStateFlowForNetworkCall { postContactUsEmail(emailUsRequest) }
+    = mapNetworkCallToViewStateFlow { postContactUsEmail(emailUsRequest) }
 
 }
