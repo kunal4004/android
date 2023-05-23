@@ -3,7 +3,7 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="20dp">
+    android:paddingTop="@dimen/twenty_dp">
 
     <za.co.woolworths.financial.services.android.util.ObservableWebView
         android:id="@+id/webView"

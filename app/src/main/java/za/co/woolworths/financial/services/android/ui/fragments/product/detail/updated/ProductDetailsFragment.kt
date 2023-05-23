@@ -730,12 +730,9 @@ class ProductDetailsFragment :
                     it.kilogramPrice
                 )
             }
-
             auxiliaryImages.add(activity?.let { it1 -> getImageByWidth(it.externalImageRefV2, it1) }
                 .toString())
             updateAuxiliaryImages(auxiliaryImages)
-
-
         }
 
         mFreeGiftPromotionalImage = productDetails?.promotionImages?.freeGift
