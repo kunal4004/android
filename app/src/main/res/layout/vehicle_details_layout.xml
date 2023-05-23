@@ -36,7 +36,7 @@
 
             <TextView
                 android:id="@+id/myVehicleText"
-                style="@style/myriad_pro_regular_black_with_rounded_corner"
+                style="@style/open_sans_regular_black_with_rounded_corner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/eight_dp"
@@ -51,7 +51,7 @@
 
             <TextView
                 android:id="@+id/taxiText"
-                style="@style/myriad_pro_regular_black_with_rounded_corner"
+                style="@style/open_sans_regular_black_with_rounded_corner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/eight_dp"
@@ -95,7 +95,8 @@
 
         <TextView
             android:id="@+id/vehicleColourPlaceHolder"
-            style="@style/myriad_pro_regular_black"
+            style="@style/open_sans_regular_black"
+            android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:layout_marginTop="@dimen/twenty_four_dp"
             android:contentDescription="@string/cd_ccd_labelstreetaddress"
@@ -114,8 +115,9 @@
 
         <TextView
             android:id="@+id/vehicleColourErrorMsg"
-            style="@style/myriad_pro_regular"
+            style="@style/opensens_regular"
             android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/fifteen_dp"
             android:lineSpacingMultiplier="1.40"
             android:text="@string/address_nickname_error_msg"
@@ -125,8 +127,9 @@
 
         <TextView
             android:id="@+id/vehicleModelPlaceHolder"
-            style="@style/myriad_pro_regular_black"
+            style="@style/open_sans_regular_black"
             android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/twenty_four_dp"
             android:contentDescription="@string/cd_ccd_labelstreetaddress"
             android:paddingTop="@dimen/two_dp"
@@ -142,8 +145,9 @@
 
         <TextView
             android:id="@+id/vehicleModelErrorMsg"
-            style="@style/myriad_pro_regular"
+            style="@style/opensens_regular"
             android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/fifteen_dp"
             android:lineSpacingMultiplier="1.40"
             android:text="@string/address_nickname_error_msg"
@@ -153,8 +157,9 @@
 
         <TextView
             android:id="@+id/vehicleRegistrationPlaceHolder"
-            style="@style/myriad_pro_regular_black"
+            style="@style/open_sans_regular_black"
             android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/twenty_four_dp"
             android:contentDescription="@string/cd_ccd_labelstreetaddress"
             android:paddingTop="@dimen/two_dp"

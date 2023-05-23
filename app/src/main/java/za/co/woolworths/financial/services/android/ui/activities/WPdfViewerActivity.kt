@@ -2,13 +2,18 @@ package za.co.woolworths.financial.services.android.ui.activities
 
 import android.Manifest
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ShareCompat
 import androidx.core.content.FileProvider
 import com.awfs.coordination.BuildConfig
 import com.awfs.coordination.databinding.ActivityOrederTaxInvoiceBinding
-import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.KotlinUtils
+import za.co.woolworths.financial.services.android.util.OneAppEvents
+import za.co.woolworths.financial.services.android.util.PermissionResultCallback
+import za.co.woolworths.financial.services.android.util.PermissionUtils
+import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import java.io.File
 import java.io.FileOutputStream
@@ -122,19 +127,23 @@ class WPdfViewerActivity : AppCompatActivity(), PermissionResultCallback {
     }
 
     private fun checkPermissionBeforeSharing() {
-        permissionUtils?.check_permission(
-            permissions,
-            "Explain here why the app needs permissions",
-            1
-        )
+        // Permission check is not required for WRITE_EXTERNAL_STORAGE on Android 11+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+            permissionUtils?.checkPermission(
+                permissions,
+                1
+            )
+        } else {
+            shareInvoice()
+        }
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         permissionUtils?.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
-    override fun permissionGranted(request_code: Int) {
+    override fun permissionGranted(requestCode: Int) {
         shareInvoice()
     }
 }
