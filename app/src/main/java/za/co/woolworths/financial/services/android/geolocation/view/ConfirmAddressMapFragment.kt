@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.geolocation.view
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.app.Activity
@@ -17,7 +18,6 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.awfs.coordination.R
-import com.awfs.coordination.databinding.ConfirmAddressBottomSheetDialogBinding
 import com.awfs.coordination.databinding.GeolocationConfirmAddressBinding
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
@@ -73,6 +73,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class ConfirmAddressMapFragment :
     Fragment(R.layout.geolocation_confirm_address), DynamicMapDelegate, VtoTryAgainListener,
+    PermissionResultCallback,
     PoiBottomSheetDialog.ClickListener, UnIndexedAddressIdentifiedListener {
 
     private lateinit var binding: GeolocationConfirmAddressBinding
@@ -113,6 +114,7 @@ class ConfirmAddressMapFragment :
     private var isPoiAddress: Boolean? = false
     private var address2: String? = ""
     private lateinit var locator: Locator
+    private var permissionUtils: PermissionUtils? = null
     override fun onViewCreated(
         view: View, savedInstanceState: Bundle?,
     ) {
@@ -120,6 +122,9 @@ class ConfirmAddressMapFragment :
         binding = GeolocationConfirmAddressBinding.bind(view)
         binding.dynamicMapView?.initializeMap(savedInstanceState, this)
         locator = Locator(activity as AppCompatActivity)
+        activity?.apply {
+            permissionUtils = PermissionUtils(requireActivity(), this@ConfirmAddressMapFragment)
+        }
     }
 
     private fun initView() {
@@ -160,7 +165,7 @@ class ConfirmAddressMapFragment :
         }
     }
 
-    private fun displayCurrentLocation() {
+    private fun navigateCurrentLocation() {
         Utils.getLastSavedLocation()?.let {
             moveMapCamera(it.latitude, it.longitude)
         }
@@ -671,7 +676,9 @@ class ConfirmAddressMapFragment :
                 }
                 imgMapMarker?.visibility = View.VISIBLE
                 tvMarkerHint?.visibility = View.VISIBLE
-                navigationMapArrow?.visibility = View.VISIBLE
+                if (Utils.isLocationEnabled(requireContext()) && checkRunTimePermissionForLocation()) {
+                    navigationMapArrow?.visibility = View.VISIBLE
+                }
                 confirmAddress?.isEnabled = true
             }
             isAddAddress = false
@@ -931,7 +938,9 @@ class ConfirmAddressMapFragment :
             dynamicMapView?.visibility = View.VISIBLE
             mapFrameLayout?.visibility = View.VISIBLE
             confirmAddressLayout?.visibility = View.VISIBLE
-            navigationMapArrow?.visibility = View.VISIBLE
+           if (Utils.isLocationEnabled(requireContext()) && checkRunTimePermissionForLocation()) {
+                navigationMapArrow?.visibility = View.VISIBLE
+            }
             autoCompleteTextView?.isEnabled = true
             dynamicMapView?.setAllGesturesEnabled(true)
             if (isAddAddress != null && isAddressSearch == false) {
@@ -1011,7 +1020,20 @@ class ConfirmAddressMapFragment :
 
     private fun handleLocationEvent(locationEvent: Event.Location?) {
         Utils.saveLastLocation(locationEvent?.locationData, context)
-        displayCurrentLocation()
+        navigateCurrentLocation()
+    }
+
+   private fun checkRunTimePermissionForLocation(): Boolean {
+        permissionUtils?.apply {
+            val permissions = ArrayList<String>()
+            permissions.add(Manifest.permission.ACCESS_FINE_LOCATION)
+            return checkAndRequestPermissions(permissions, 3)
+        }
+        return false
+    }
+
+    override fun permissionGranted(requestCode: Int) {
+       // do nothing
     }
 }
 
