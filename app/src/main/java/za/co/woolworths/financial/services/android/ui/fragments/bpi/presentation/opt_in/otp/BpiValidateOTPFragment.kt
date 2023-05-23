@@ -58,7 +58,7 @@ class BpiValidateOTPFragment: Fragment(R.layout.validate_otp_fragment) {
     private fun initValidateOTP() {
         val validateOTPRequest = ValidateOTPRequest(otpMethodType.name, otpValue)
         bpiViewModel?.setValidateOTPRequest(validateOTPRequest)
-        OneAppService.validateOTP(validateOTPRequest, productOfferingId).enqueue(CompletionHandler(object : IResponseListener<ValidateOTPResponse> {
+        OneAppService().validateOTP(validateOTPRequest, productOfferingId).enqueue(CompletionHandler(object : IResponseListener<ValidateOTPResponse> {
             override fun onSuccess(response: ValidateOTPResponse?) {
                 response?.apply {
                     this@BpiValidateOTPFragment.validateOTPResponse = this

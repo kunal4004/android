@@ -33,13 +33,11 @@ import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSiz
 import za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.CustomSizePickerAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.StockFinderSizeColorAdapter;
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment;
 import za.co.woolworths.financial.services.android.util.CenterLayoutManager;
 import za.co.woolworths.financial.services.android.util.ColorInterface;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
-
-import static za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity.RESULT_LOADING_INVENTORY_FAILURE;
-import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.INDEX_ADD_TO_CART;
 
 public class SizeFragmentList extends Fragment implements StockFinderSizeColorAdapter.RecyclerViewClickListener, ColorInterface, CustomSizePickerAdapter.RecyclerViewClickListener {
 
@@ -103,7 +101,7 @@ public class SizeFragmentList extends Fragment implements StockFinderSizeColorAd
 					 * enable API call for cart item only
 					 */
 					if (!shouldShowPrice ||
-							(woolworthsApplication.getWGlobalState().getSaveButtonClick() != INDEX_ADD_TO_CART)) {
+							(woolworthsApplication.getWGlobalState().getSaveButtonClick() != ProductDetailsFragment.INDEX_ADD_TO_CART)) {
 						showInventoryProgressBar(false);
 						setSizeAdapter(otherSkuList);
 						return;
@@ -144,7 +142,7 @@ public class SizeFragmentList extends Fragment implements StockFinderSizeColorAd
 	}
 
 	private Call<SkusInventoryForStoreResponse> getInventoryStockForStore(String storeId, String multiSku) {
-		Call<SkusInventoryForStoreResponse> skusInventoryForStoreRequestCall = OneAppService.INSTANCE.getInventorySkuForStore(storeId, multiSku, false);
+		Call<SkusInventoryForStoreResponse> skusInventoryForStoreRequestCall = new OneAppService().getInventorySkuForStore(storeId, multiSku, false);
 		skusInventoryForStoreRequestCall.enqueue(new CompletionHandler<>(new IResponseListener<SkusInventoryForStoreResponse>() {
 			@Override
 			public void onSuccess(SkusInventoryForStoreResponse skusInventoryForStoreResponse) {
@@ -174,7 +172,7 @@ public class SizeFragmentList extends Fragment implements StockFinderSizeColorAd
 							if (skusInventoryForStoreResponse.response == null) return;
 							Intent intent = new Intent();
 							intent.putExtra("response", Utils.toJson(skusInventoryForStoreResponse.response));
-							confirmColorSizeActivity.closeConfirmColorSizeActivity(RESULT_LOADING_INVENTORY_FAILURE, intent);
+							confirmColorSizeActivity.closeConfirmColorSizeActivity(ConfirmColorSizeActivity.RESULT_LOADING_INVENTORY_FAILURE, intent);
 						}
 						break;
 				}

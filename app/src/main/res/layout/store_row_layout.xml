@@ -5,6 +5,8 @@
     android:id="@+id/storeSelectorLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginStart="@dimen/ten_dp"
+    android:layout_marginEnd="@dimen/ten_dp"
     tools:context="za.co.woolworths.financial.services.android.checkout.view.CollectionDatesBottomSheetDialog">
 
     <androidx.constraintlayout.widget.Guideline
@@ -51,11 +53,12 @@
 
     <TextView
         android:id="@+id/tvAddressNickName"
-        style="@style/myriad_pro_semi_bold_black_15_text_style"
+        style="@style/opensans_semi_bold_13_text_style"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/five_dp"
         android:lineSpacingExtra="@dimen/_2sdp"
+        android:textColor="@color/black"
         android:ellipsize="end"
         android:maxLines="1"
         android:translationY="-1sp"
@@ -66,7 +69,7 @@
 
     <TextView
         android:id="@+id/tvAddress"
-        style="@style/myriad_pro_regular_black_14_text_style"
+        style="@style/opensans_regular_12_text_style"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/sixteen_dp"

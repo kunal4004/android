@@ -92,7 +92,7 @@ class LoanWithdrawalDetailFragment : LoanBaseFragment() {
     private fun authoriseLoanRequest() {
         binding.progressBarVisibility(true)
 
-        mAuthoriseLoan =  OneAppService.authoriseLoan(AuthoriseLoanRequest(mIssueLoan!!.productOfferingId,
+        mAuthoriseLoan =  OneAppService().authoriseLoan(AuthoriseLoanRequest(mIssueLoan!!.productOfferingId,
                 mIssueLoan!!.drawDownAmount,mIssueLoan!!.repaymentPeriod, mInstallmentAmount,
                 mIssueLoan!!.creditLimit))
 

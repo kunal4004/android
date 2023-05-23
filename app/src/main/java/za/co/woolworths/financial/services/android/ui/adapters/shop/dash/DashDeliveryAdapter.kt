@@ -13,6 +13,7 @@ import za.co.woolworths.financial.services.android.contracts.IProductListing
 import za.co.woolworths.financial.services.android.models.dto.RootCategory
 import za.co.woolworths.financial.services.android.models.dto.shop.ProductCatalogue
 import za.co.woolworths.financial.services.android.ui.views.shop.dash.OnDashLandingNavigationListener
+import za.co.woolworths.financial.services.android.ui.views.shop.dash.OnDataUpdateListener
 import za.co.woolworths.financial.services.android.ui.views.shop.dash.OnDemandNavigationListener
 import za.co.woolworths.financial.services.android.util.ImageManager
 
@@ -20,6 +21,7 @@ class DashDeliveryAdapter(
     @NonNull val context: Context,
     val onDemandNavigationListener: OnDemandNavigationListener,
     val dashLandingNavigationListener: OnDashLandingNavigationListener,
+    val onDataUpdateListener: OnDataUpdateListener? = null,
     val iProductListing: IProductListing
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -238,6 +240,7 @@ class DashDeliveryAdapter(
             }
         }
         categoryList = list
+        onDataUpdateListener?.onProductCatalogueUpdate(productCatalogues = dashCategories)
     }
 }
 
