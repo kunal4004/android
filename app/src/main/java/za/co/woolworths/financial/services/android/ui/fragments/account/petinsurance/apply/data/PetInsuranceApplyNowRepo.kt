@@ -13,7 +13,7 @@ interface IPetInsuranceApplyNowRepo{
 class PetInsuranceApplyNowRepo @Inject constructor(private val service : PetInsuranceApplyNowRemoteDataSource) :
     CoreDataSource(), IPetInsuranceApplyNowRepo {
 
-    override suspend fun queryServicetAppGUID(appGUIDRequestModel: AppGUIDRequestModel) : Flow<IOTaskResult<AppGUIDModel>> = performSafeNetworkApiCall {
+    override suspend fun queryServicetAppGUID(appGUIDRequestModel: AppGUIDRequestModel) : Flow<IOTaskResult<AppGUIDModel>> = executeSafeNetworkApiCall {
         service.queryServicegetAppGUID(getDeviceIdentityToken(),appGUIDRequestModel) }
 }
 

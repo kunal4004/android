@@ -16,7 +16,7 @@ class CreditLimitIncreaseDataSource @Inject constructor(
 
     override fun isCliFlowHiddenForProductNotInGoodStanding(): Boolean = !isProductInGoodStanding()
 
-    override suspend fun queryCliServiceOfferActive() = performSafeNetworkApiCall {
+    override suspend fun queryCliServiceOfferActive() = executeSafeNetworkApiCall {
         val productOfferingId = getProductOfferingId().toString()
         queryServiceCliOfferActive(
             deviceIdentityToken = getDeviceIdentityToken(),

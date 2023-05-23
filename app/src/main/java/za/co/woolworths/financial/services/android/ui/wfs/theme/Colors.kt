@@ -14,9 +14,17 @@ val TitleMedium = Color(0xFF666666)
 val HyperlinkColor = Color(0xFF444444)
 val DropdownIndicatorBackground = Color(0xFFD8D8D8)
 val DividerColor = Color(0xFFE5E5E5)
-
+val Gray = Color(0xFFA9A9A9)
+val WhiteWithOpacity30 = Color(0x4DFFFFFF)
+val WhiteWithOpacity70 = Color(0xB3FFFFFF)
+val WhiteWithOpacity10 = Color(0x1AFFFFFF)
+val ShimmerColor =   Color(0xFFF3F3F3)
 val ShimmerColorShades = listOf(
-    Color.LightGray.copy(0.9f),
-    Color.LightGray.copy(0.2f),
-    Color.LightGray.copy(0.9f)
-)
+        ShimmerColor.copy(0.9f),
+        ShimmerColor.copy(0.9f),
+        ShimmerColor.copy(0.9f))
+val BlackOpacity10 = Color(0xFF000000).copy(alpha = 0.1f)
+val FunctionalGreys = Color(0xFFF5F5F5)
+val BrightGray = Color(0xB3EEEEEE)
+val TextLightSilver = Color(0x4D000000)
+
