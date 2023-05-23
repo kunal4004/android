@@ -674,9 +674,10 @@ class ConfirmAddressMapFragment :
                 }
                 imgMapMarker?.visibility = View.VISIBLE
                 tvMarkerHint?.visibility = View.VISIBLE
-                if (Utils.isLocationEnabled(requireContext()) && checkRunTimePermissionForLocation()) {
+                if (Utils.isLocationEnabled(requireContext()) && PermissionUtils.hasPermissions(
+                requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)) {
                     navigationMapArrow?.visibility = View.VISIBLE
-                }
+                } else navigationMapArrow?.visibility = View.GONE
                 confirmAddress?.isEnabled = true
             }
             isAddAddress = false
@@ -936,9 +937,10 @@ class ConfirmAddressMapFragment :
             dynamicMapView?.visibility = View.VISIBLE
             mapFrameLayout?.visibility = View.VISIBLE
             confirmAddressLayout?.visibility = View.VISIBLE
-           if (Utils.isLocationEnabled(requireContext()) && checkRunTimePermissionForLocation()) {
+            if (Utils.isLocationEnabled(requireContext()) && PermissionUtils.hasPermissions(
+                            requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)) {
                 navigationMapArrow?.visibility = View.VISIBLE
-            }
+            } else navigationMapArrow?.visibility = View.GONE
             autoCompleteTextView?.isEnabled = true
             dynamicMapView?.setAllGesturesEnabled(true)
             if (isAddAddress != null && isAddressSearch == false) {
@@ -1019,15 +1021,6 @@ class ConfirmAddressMapFragment :
     private fun handleLocationEvent(locationEvent: Event.Location?) {
         Utils.saveLastLocation(locationEvent?.locationData, context)
         navigateCurrentLocation()
-    }
-
-   private fun checkRunTimePermissionForLocation(): Boolean {
-        permissionUtils?.apply {
-            val permissions = ArrayList<String>()
-            permissions.add(Manifest.permission.ACCESS_FINE_LOCATION)
-            return checkAndRequestPermissions(permissions, 3)
-        }
-        return false
     }
 
     override fun permissionGranted(requestCode: Int) {
