@@ -122,9 +122,7 @@ class ConfirmAddressMapFragment :
         binding = GeolocationConfirmAddressBinding.bind(view)
         binding.dynamicMapView?.initializeMap(savedInstanceState, this)
         locator = Locator(activity as AppCompatActivity)
-        activity?.apply {
-            permissionUtils = PermissionUtils(requireActivity(), this@ConfirmAddressMapFragment)
-        }
+        permissionUtils = PermissionUtils(requireActivity(), this@ConfirmAddressMapFragment)
     }
 
     private fun initView() {
