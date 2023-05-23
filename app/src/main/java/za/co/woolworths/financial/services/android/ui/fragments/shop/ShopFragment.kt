@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shop
 
+import android.Manifest
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.content.IntentFilter
@@ -253,7 +254,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         super.onViewCreated(view, savedInstanceState)
         activity?.apply {
             permissionUtils = PermissionUtils(this, this@ShopFragment)
-            permissions.add(android.Manifest.permission.CAMERA)
+            permissions.add(Manifest.permission.CAMERA)
         }
 
         binding?.apply {
@@ -679,6 +680,15 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         )
     }
 
+    fun checkRunTimePermissionForLocation(): Boolean {
+        permissionUtils?.apply {
+            val permissions = ArrayList<String>()
+            permissions.add(Manifest.permission.ACCESS_FINE_LOCATION)
+            return checkAndRequestPermissions(permissions, 3)
+        }
+        return false
+    }
+
     private fun updateTabIconUI(selectedTab: Int) {
         when(selectedTab) {
             STANDARD_TAB.index -> {
@@ -796,7 +806,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
     }
 
     override fun permissionGranted(requestCode: Int) {
-        navigateToBarcode()
+        if (requestCode == 1) navigateToBarcode()
     }
 
     override fun onRequestPermissionsResult(
