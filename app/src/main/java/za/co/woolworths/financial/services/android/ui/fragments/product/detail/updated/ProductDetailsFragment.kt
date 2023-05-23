@@ -4029,7 +4029,7 @@ class ProductDetailsFragment :
                         if (bottomSheetWebView == null) {
                             bottomSheetWebView = BottomSheetWebView(requireContext())
                         }
-                        bottomSheetWebView?.showWithUrl(getString(R.string.bnpl_popup_url))
+                        bottomSheetWebView?.showWithUrl(AppConstant.PAYFLEX_POP_UP_URL)
                     }
                     true
                 }

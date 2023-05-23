@@ -61,7 +61,7 @@ class BottomSheetWebView(context: Context) : FrameLayout(context) {
     }
 
     fun showWithUrl(url: String) {
-        if(!mBottomSheetDialog?.isShowing!!) {
+        if(!mBottomSheetDialog.isShowing) {
             webView?.loadUrl(url)
             mBottomSheetDialog.show()
         }
