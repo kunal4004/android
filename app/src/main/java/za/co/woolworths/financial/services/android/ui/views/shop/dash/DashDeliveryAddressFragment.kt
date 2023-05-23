@@ -30,6 +30,7 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.shop.Banner
+import za.co.woolworths.financial.services.android.models.dto.shop.ProductCatalogue
 import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
@@ -57,12 +58,14 @@ import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.ge
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getDeliveryType
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.saveAnonymousUserLocationDetails
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.viewmodels.shop.ShopViewModel
 import java.net.ConnectException
 import java.net.UnknownHostException
 import java.util.*
+import kotlin.collections.ArrayList
 
 @AndroidEntryPoint
 class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), IProductListing,
@@ -81,7 +84,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
         dashDeliveryAdapter =
             DashDeliveryAdapter(
                 requireContext(), onDemandNavigationListener = this,
-                dashLandingNavigationListener = this, this
+                dashLandingNavigationListener = this, onDataUpdateListener = onDataUpdateListener, this
             )
     }
 
@@ -970,6 +973,24 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
         when (v?.id) {
             R.id.btn_dash_set_address -> {
                 navigateToConfirmAddressScreen()
+            }
+        }
+    }
+
+    private val onDataUpdateListener = object: OnDataUpdateListener {
+        override fun onProductCatalogueUpdate(productCatalogues: ArrayList<ProductCatalogue>?) {
+            if (productCatalogues.isNullOrEmpty()){
+                return
+            }
+            if (((activity as? BottomNavigationActivity)?.mNavController?.currentFrag as? ShopFragment)?.getCurrentFragmentIndex() == ShopFragment.SelectedTabIndex.DASH_TAB.index){
+                for (catalogues in productCatalogues){
+                    if(DashDeliveryAdapter.TYPE_NAME_PRODUCT_CAROUSEL.lowercase() == catalogues.name?.lowercase()){
+                        FirebaseAnalyticsEventHelper.viewItemList(
+                            products = catalogues.products,
+                            category = catalogues.headerText
+                        )
+                    }
+                }
             }
         }
     }

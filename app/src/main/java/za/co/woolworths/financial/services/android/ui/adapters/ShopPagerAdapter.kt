@@ -21,13 +21,7 @@ class ShopPagerAdapter(
 
     override fun getItem(position: Int): Fragment {
         return when (position) {
-            0 -> {
-                val standardDeliveryFragment = StandardDeliveryFragment()
-                standardDeliveryFragment.arguments = bundleOf(
-                    EXTRA_SEND_DELIVERY_DETAILS_PARAMS to listener.isSendDeliveryDetails()
-                )
-                standardDeliveryFragment
-            }
+
             1 -> {
                 val collectionFragment = ChangeFulfillmentCollectionStoreFragment()
                 collectionFragment.arguments = bundleOf(
@@ -35,12 +29,19 @@ class ShopPagerAdapter(
                 )
                 collectionFragment
             }
-            else -> {
-                val dashFragment = DashDeliveryAddressFragment()
-                dashFragment.arguments = bundleOf(
+
+            2 -> DashDeliveryAddressFragment().apply {
+                arguments = bundleOf(
                     ARG_SEND_DELIVERY_DETAILS to listener.isSendDeliveryDetails()
                 )
-                dashFragment
+            }
+
+            else -> {
+                val standardDeliveryFragment = StandardDeliveryFragment()
+                standardDeliveryFragment.arguments = bundleOf(
+                    EXTRA_SEND_DELIVERY_DETAILS_PARAMS to listener.isSendDeliveryDetails()
+                )
+                standardDeliveryFragment
             }
         }
     }

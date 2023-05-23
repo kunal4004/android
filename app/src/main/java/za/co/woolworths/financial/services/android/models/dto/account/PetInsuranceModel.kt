@@ -1,7 +1,7 @@
 package za.co.woolworths.financial.services.android.models.dto.account
 
 import android.os.Parcelable
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 
 @Parcelize
@@ -10,12 +10,14 @@ data class PetInsuranceModel(
     var httpCode: Int?
 ) : Parcelable
 
-
 @Parcelize
-data class InsuranceProducts(var type: String, var status: String, var planType: String) :
-    Parcelable
-
-enum class CoveredStatus() {
+data class InsuranceProducts(var type: String,
+                             var status: String,
+                             var policyNumber : String? = null,
+                             var planType: String? = null) : Parcelable {
+    fun statusType() = CoveredStatus.valueOf(status)
+}
+enum class CoveredStatus {
     NOT_COVERED,
     COVERED,
     PENDING

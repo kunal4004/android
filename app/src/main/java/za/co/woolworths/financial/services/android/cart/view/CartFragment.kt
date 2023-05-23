@@ -151,6 +151,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     private var cartItemList = ArrayList<CommerceItem>()
     private var isBlackCardHolder : Boolean = false
     private var isOnItemRemoved = false
+    private var isViewCartEventFired = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -1306,6 +1307,10 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                 }
                 setItemLimitsBanner()
                 instance.queryCartSummaryCount()
+                if (!isViewCartEventFired){
+                    viewCartEvent(viewModel.getCartItemList(), orderSummary!!.total )
+                    isViewCartEventFired = true
+                }
                 showRecommendedProducts()
             }
             HTTP_SESSION_TIMEOUT_440 -> {
@@ -1350,6 +1355,10 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
 
             }
         }
+    }
+
+    private fun viewCartEvent(commerceItems: List<CommerceItem>, value: Double) {
+        FirebaseAnalyticsEventHelper.viewCartAnalyticsEvent(commerceItems, value)
     }
 
     private fun showRecommendedProducts() {
