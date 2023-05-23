@@ -15,12 +15,7 @@ import android.view.ViewGroup.VISIBLE
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
-import androidx.constraintlayout.widget.ConstraintSet.BOTTOM
-import androidx.constraintlayout.widget.ConstraintSet.END
-import androidx.constraintlayout.widget.ConstraintSet.MATCH_CONSTRAINT
-import androidx.constraintlayout.widget.ConstraintSet.PARENT_ID
-import androidx.constraintlayout.widget.ConstraintSet.START
-import androidx.constraintlayout.widget.ConstraintSet.WRAP_CONTENT
+import androidx.constraintlayout.widget.ConstraintSet.*
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.text.HtmlCompat
@@ -28,6 +23,8 @@ import androidx.core.view.contains
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.viewpager.widget.ViewPager
@@ -40,6 +37,8 @@ import com.google.android.material.tabs.TabLayout
 import com.google.gson.JsonSyntaxException
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.Companion.DASH_DELIVERY_BROWSE_MODE
@@ -66,39 +65,30 @@ import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingLi
 import za.co.woolworths.financial.services.android.ui.activities.BarcodeScanActivity
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_ACCOUNT
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_PRODUCT
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.*
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity
 import za.co.woolworths.financial.services.android.ui.adapters.ShopPagerAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.OrderDetailsFragment.Companion.getInstance
-import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment.SelectedTabIndex.CLICK_AND_COLLECT_TAB
-import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment.SelectedTabIndex.DASH_TAB
-import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment.SelectedTabIndex.STANDARD_TAB
+import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment.SelectedTabIndex.*
 import za.co.woolworths.financial.services.android.ui.fragments.shop.StandardDeliveryFragment.Companion.DEPARTMENT_LOGIN_REQUEST
+import za.co.woolworths.financial.services.android.ui.fragments.shop.component.ShopTooltipUiState
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList.Companion.DISPLAY_TOAST_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.OnChildFragmentEvents
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView
 import za.co.woolworths.financial.services.android.ui.views.shop.dash.ChangeFulfillmentCollectionStoreFragment
 import za.co.woolworths.financial.services.android.ui.views.shop.dash.DashDeliveryAddressFragment
-import za.co.woolworths.financial.services.android.util.AppConstant
+import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_3000_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.REQUEST_CODE_BARCODE_ACTIVITY
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.REQUEST_CODE_ORDER_DETAILS_PAGE
 import za.co.woolworths.financial.services.android.util.AppConstant.Keys.Companion.ARG_FROM_NOTIFICATION
-import za.co.woolworths.financial.services.android.util.BundleKeysConstants
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.CNC_SET_ADDRESS_REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DASH_SET_ADDRESS_REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.REQUEST_CODE
-import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getDeliveryType
-import za.co.woolworths.financial.services.android.util.PermissionResultCallback
-import za.co.woolworths.financial.services.android.util.PermissionUtils
 import za.co.woolworths.financial.services.android.util.ScreenManager.SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE
-import za.co.woolworths.financial.services.android.util.SessionUtilities
-import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
@@ -198,6 +188,22 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         if (SessionUtilities.getInstance().isUserAuthenticated) {
             shopViewModel.getLastDashOrderDetails()
         }
+        shopViewModel.tooltipUiState
+            .flowWithLifecycle(lifecycle = lifecycle, Lifecycle.State.STARTED)
+            .onEach { state ->
+                when (state) {
+                    is ShopTooltipUiState.DashTooltip -> {
+                        if (state.visibility)
+                            showBlackToolTip(Delivery.DASH)
+                        else
+                            binding.blackToolTipLayout.root.visibility = View.GONE
+                    }
+                    // TODO StandardTooltip, CNCTooltip
+                    is ShopTooltipUiState.StandardTooltip,
+                    is ShopTooltipUiState.CNCTooltip-> {}
+                    else -> binding.blackToolTipLayout.root.visibility = View.GONE
+                }
+            }.launchIn(lifecycleScope)
     }
 
     private fun setEventForDeliveryTypeAndBrowsingType() {
@@ -275,6 +281,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                     activity?.apply {
                         when (position) {
                             STANDARD_TAB.index -> {
+                                shopViewModel.onTabClick(position = position)
                                 Utils.triggerFireBaseEvents(
                                     FirebaseManagerAnalyticsProperties.SHOP_CATEGORIES,
                                     this
@@ -286,6 +293,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                             }
 
                             CLICK_AND_COLLECT_TAB.index -> {
+                                shopViewModel.onTabClick(position = position)
                                 showBlackToolTip(Delivery.CNC)
                                 setEventsForSwitchingBrowsingType(Delivery.CNC.name)
                                 KotlinUtils.browsingDeliveryType = Delivery.CNC
@@ -293,9 +301,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                             }
 
                             DASH_TAB.index -> {
-                                showBlackToolTip(Delivery.DASH)
-                                setEventsForSwitchingBrowsingType(Delivery.DASH.name)
-                                KotlinUtils.browsingDeliveryType = Delivery.DASH
+                                shopViewModel.onTabClick(validateLocationResponse, position)
                                 addObserverInAppNotificationToast()
                             }
                         }
@@ -674,11 +680,18 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
     }
 
     private fun updateTabIconUI(selectedTab: Int) {
-        if (selectedTab == STANDARD_TAB.index) {
-            showSearchAndBarcodeUi()
-        } else if (selectedTab == CLICK_AND_COLLECT_TAB.index && KotlinUtils.browsingCncStore == null && getDeliveryType()?.deliveryType != Delivery.CNC.type) {
-            hideSearchAndBarcodeUi()
+        when(selectedTab) {
+            STANDARD_TAB.index -> {
+                showSearchAndBarcodeUi()
+            }
+            CLICK_AND_COLLECT_TAB.index -> {
+                if (KotlinUtils.browsingCncStore == null
+                    && getDeliveryType()?.deliveryType != Delivery.CNC.type) {
+                    hideSearchAndBarcodeUi()
+                }
+            }
         }
+
         binding.tabsMain?.let { tabLayout ->
             tabLayout.getTabAt(selectedTab)?.customView?.isSelected = true
             for (i in mTabTitle?.indices!!) {
@@ -890,7 +903,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                         binding.viewpagerMain.currentItem
                     ) as? DashDeliveryAddressFragment
                 dashDeliveryAddressFragment?.initViews()
-                showDashToolTip(validateLocationResponse) // externally showing dash tooltip as delivery type is not same.
+                shopViewModel?.onTabClick(validateLocationResponse, DASH_TAB.index) // externally showing dash tooltip as delivery type is not same.
             }
         }
         if (requestCode == CNC_SET_ADDRESS_REQUEST_CODE) {
@@ -1311,21 +1324,8 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
 
     private fun showDashToolTip(validateLocationResponse: ValidateLocationResponse?) {
         binding?.apply {
-            val dashDeliverable = validateLocationResponse?.validatePlace?.onDemand?.deliverable
             if (KotlinUtils.isLocationPlaceIdSame == false) {
                 blackToolTipLayout.root.visibility = View.VISIBLE
-            }
-
-            if (KotlinUtils.isDashTabCrossClicked == true || dashDeliverable == null || dashDeliverable == false) {
-                blackToolTipLayout.root.visibility = View.GONE
-                return
-            }
-
-            if (validateLocationResponse?.validatePlace?.onDemand?.firstAvailableFoodDeliveryTime?.isNullOrEmpty() == true
-                && Delivery.getType(getDeliveryType()?.deliveryType)?.type != Delivery.DASH.type
-            ) {
-                blackToolTipLayout.root.visibility = View.GONE
-                return
             }
 
             blackToolTipLayout.root.visibility = View.VISIBLE
@@ -1333,8 +1333,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
             blackToolTipLayout.bubbleLayout.arrowPosition =
                 tabsMain.width - tabsMain.getTabAt(DASH_TAB.index)?.view?.width?.div(
                     DASH_DIVIDER
-                )
-                    ?.toFloat()!!
+                )?.toFloat()!!
             if (getDeliveryType() == null || Delivery.getType(getDeliveryType()?.deliveryType)?.type == Delivery.DASH.type) {
                 blackToolTipLayout.changeButtonLayout.visibility = View.GONE
             } else {
