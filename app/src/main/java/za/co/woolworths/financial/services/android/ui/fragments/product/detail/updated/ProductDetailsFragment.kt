@@ -2415,7 +2415,7 @@ class ProductDetailsFragment :
 
 
     private fun checkRunTimePermissionForLocation(): Boolean {
-        permissionUtils = PermissionUtils(requireContext(), this)
+        permissionUtils = PermissionUtils(requireActivity(), this)
         permissionUtils?.apply {
             val permissions = ArrayList<String>()
             permissions.add(Manifest.permission.ACCESS_FINE_LOCATION)
