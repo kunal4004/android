@@ -76,7 +76,7 @@ class QueryBadgeCounter : Observable() {
     }
 
     private fun loadVoucherCount(): Call<VoucherCount>? {
-        return request(OneAppService.getVouchersCount(), object : IGenericAPILoaderView<Any> {
+        return request(OneAppService().getVouchersCount(), object : IGenericAPILoaderView<Any> {
             override fun onSuccess(response: Any?) {
                 (response as? VoucherCount)?.apply {
                         when (httpCode) {
@@ -105,7 +105,7 @@ class QueryBadgeCounter : Observable() {
     }
 
     private fun loadMessageCount(): Call<MessageResponse>? {
-        return request(OneAppService.getMessagesResponse(5, 1), object : IGenericAPILoaderView<Any> {
+        return request(OneAppService().getMessagesResponse(5, 1), object : IGenericAPILoaderView<Any> {
             override fun onSuccess(response: Any?) {
                 (response as? MessageResponse)?.unreadCount?.let { unreadCount ->
                     setMessageCount(unreadCount)

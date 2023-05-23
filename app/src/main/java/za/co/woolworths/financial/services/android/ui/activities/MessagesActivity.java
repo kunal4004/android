@@ -156,7 +156,7 @@ public class MessagesActivity extends AppCompatActivity implements MesssagesList
 		mErrorHandlerView.hideErrorHandlerLayout();
 		mCurrentPage = 1;
 		mIsLastPage = false;
-		Call<MessageResponse> messageResponseCall = OneAppService.INSTANCE.getMessagesResponse(PAGE_SIZE, mCurrentPage);
+		Call<MessageResponse> messageResponseCall = new OneAppService().getMessagesResponse(PAGE_SIZE, mCurrentPage);
 		messageResponseCall.enqueue(new CompletionHandler<>(new IResponseListener<MessageResponse>() {
 			@Override
 			public void onSuccess(MessageResponse messageResponse) {
@@ -190,7 +190,7 @@ public class MessagesActivity extends AppCompatActivity implements MesssagesList
 	public Call<MessageResponse> moreMessageAsyncRequest() {
 		mErrorHandlerView.hideErrorHandlerLayout();
 		mIsLoading = true;
-		Call<MessageResponse> moreMessageRequestCall = OneAppService.INSTANCE.getMessagesResponse(PAGE_SIZE,mCurrentPage);
+		Call<MessageResponse> moreMessageRequestCall = new OneAppService().getMessagesResponse(PAGE_SIZE,mCurrentPage);
 		moreMessageRequestCall.enqueue(new CompletionHandler<>(new IResponseListener<MessageResponse>() {
 			@Override
 			public void onSuccess(MessageResponse messageResponse) {
@@ -234,7 +234,7 @@ public class MessagesActivity extends AppCompatActivity implements MesssagesList
 	}
 
 	public void setMeassagesAsRead(final List<MessageDetails> readMessages) {
-	    OneAppService.INSTANCE.getReadMessagesResponse(getJsonString(readMessages)).enqueue(
+	    new OneAppService().getReadMessagesResponse(getJsonString(readMessages)).enqueue(
 	            new CompletionHandler<>(new IResponseListener<ReadMessagesResponse>() {
                     @Override
                     public void onSuccess(ReadMessagesResponse response) {
@@ -395,7 +395,7 @@ public class MessagesActivity extends AppCompatActivity implements MesssagesList
 
 	public Call<DeleteMessageResponse>  deleteMessage(final String id) {
 
-		Call<DeleteMessageResponse> deleteMessageRequestCall = OneAppService.INSTANCE.getDeleteMessagesResponse(id);
+		Call<DeleteMessageResponse> deleteMessageRequestCall = new OneAppService().getDeleteMessagesResponse(id);
 		deleteMessageRequestCall.enqueue(new CompletionHandler<>(new IResponseListener<DeleteMessageResponse>() {
 			@Override
 			public void onSuccess(DeleteMessageResponse response) {

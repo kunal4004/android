@@ -6,9 +6,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Text
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -51,7 +51,7 @@ fun SurveyFooterActionView(
                 .height(dimensionResource(id = R.dimen.button_style_height))
                 .alpha(if (isSubmitEnabled) 1f else 0.5f),
             colors = ButtonDefaults.buttonColors(
-                backgroundColor = Color.Black,
+                containerColor = Color.Black,
                 contentColor = Color.White
             ),
             elevation = null,
@@ -75,7 +75,7 @@ fun SurveyFooterActionView(
                 .fillMaxWidth()
                 .height(dimensionResource(id = R.dimen.button_style_height)),
             colors = ButtonDefaults.buttonColors(
-                backgroundColor = Color.Transparent,
+                containerColor = Color.Transparent,
                 contentColor = colorResource(R.color.gray)
             ),
             elevation = null,

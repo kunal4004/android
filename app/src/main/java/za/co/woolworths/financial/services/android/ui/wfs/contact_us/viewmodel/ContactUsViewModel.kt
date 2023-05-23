@@ -24,7 +24,7 @@ import za.co.woolworths.financial.services.android.ui.wfs.contact_us.model.Conta
 import za.co.woolworths.financial.services.android.ui.wfs.contact_us.model.Content
 import za.co.woolworths.financial.services.android.ui.wfs.contact_us.model.ContactUsRemoteModel
 import za.co.woolworths.financial.services.android.ui.wfs.theme.HyperlinkColor
-import za.co.woolworths.financial.services.android.ui.wfs.theme.MyriadProFontFamily
+import za.co.woolworths.financial.services.android.ui.wfs.theme.OpenSansFontFamily
 import za.co.woolworths.financial.services.android.util.Utils
 import javax.inject.Inject
 
@@ -92,7 +92,7 @@ class ContactUsViewModel @Inject constructor(private val repository: ContactUsRe
             }
             addStyle(
                 style = SpanStyle(color = HyperlinkColor,
-                    fontFamily = MyriadProFontFamily,
+                    fontFamily = OpenSansFontFamily,
                     fontWeight = FontWeight.Bold,
                     fontSize = 15.sp,
                     textDecoration = TextDecoration.Underline),

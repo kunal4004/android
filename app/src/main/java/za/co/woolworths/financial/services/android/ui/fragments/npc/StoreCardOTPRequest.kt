@@ -32,7 +32,7 @@ class StoreCardOTPRequest(private val activity: AppCompatActivity?, private val 
 
     fun make(requestListener: IOTPLinkStoreCard<LinkNewCardOTP>) {
         requestListener.showProgress()
-        storeOTPService = OneAppService.getLinkNewCardOTP(otpMethodType)
+        storeOTPService = OneAppService().getLinkNewCardOTP(otpMethodType)
         storeOTPService?.enqueue(
                 CompletionHandler(object : IResponseListener<LinkNewCardOTP> {
                     override fun onSuccess(response: LinkNewCardOTP?) {
@@ -86,7 +86,7 @@ class StoreCardOTPRequest(private val activity: AppCompatActivity?, private val 
 
     fun linkStoreCardRequest(requestListener: IOTPLinkStoreCard<LinkNewCardResponse>?, linkStoreCard: LinkStoreCard) {
         requestListener?.showProgress()
-        OneAppService.linkStoreCardRequest(linkStoreCard).enqueue(CompletionHandler(object : IResponseListener<LinkNewCardResponse> {
+        OneAppService().linkStoreCardRequest(linkStoreCard).enqueue(CompletionHandler(object : IResponseListener<LinkNewCardResponse> {
             override fun onSuccess(response: LinkNewCardResponse?) {
                 linkStoreCardHasFailed = false
                 when (response?.httpCode) {
@@ -115,7 +115,7 @@ class StoreCardOTPRequest(private val activity: AppCompatActivity?, private val 
     }
 
     fun getStoreCards(requestListener: IOTPLinkStoreCard<StoreCardsResponse>?, account: Account): Call<StoreCardsResponse>? {
-        val getStoreCardsRequest = account.accountNumber?.let { StoreCardsRequestBody(it, account.productOfferingId) }?.let { OneAppService.getStoreCards(it) }
+        val getStoreCardsRequest = account.accountNumber?.let { StoreCardsRequestBody(it, account.productOfferingId) }?.let { OneAppService().getStoreCards(it) }
         getStoreCardsRequest?.enqueue(CompletionHandler(object : IResponseListener<StoreCardsResponse> {
             override fun onSuccess(response: StoreCardsResponse?) {
                 getCardCallHasFailed = false

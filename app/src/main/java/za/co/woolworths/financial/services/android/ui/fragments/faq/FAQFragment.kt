@@ -14,7 +14,7 @@ import za.co.woolworths.financial.services.android.models.dto.FAQ
 import za.co.woolworths.financial.services.android.models.dto.FAQDetail
 import za.co.woolworths.financial.services.android.models.dto.Response
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
-import za.co.woolworths.financial.services.android.models.network.OneAppService.getFAQ
+import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
@@ -134,7 +134,7 @@ class FAQFragment : BaseFragmentBinding<FaqFragmentBinding>(FaqFragmentBinding::
     }
 
     private fun faqRequest(): Call<FAQ>? {
-        val faqCall = getFAQ()
+        val faqCall = OneAppService().getFAQ()
         faqCall.enqueue(CompletionHandler(object : IResponseListener<FAQ> {
             override fun onSuccess(faq: FAQ?) {
                 when (faq?.httpCode) {

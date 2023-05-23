@@ -16,9 +16,7 @@ import retrofit2.Response
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton.accountOptions
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.account.*
-import za.co.woolworths.financial.services.android.models.network.OneAppService.getAppGUIDResponse
-import za.co.woolworths.financial.services.android.models.network.OneAppService.getFeatureEnablementResponse
-import za.co.woolworths.financial.services.android.models.network.OneAppService.getPetInsuranceResponse
+import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.fragments.account.UpdateMyAccount
 import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.Constants.PET
@@ -43,7 +41,7 @@ class PetInsuranceHandler constructor(
 
     fun featureEnablementRequest() {
         if (SessionUtilities.getInstance().isUserAuthenticated && isPetInsuranceEnabled()) {
-            getFeatureEnablementResponse().enqueue(object : Callback<FeatureEnablementModel?> {
+            OneAppService().getFeatureEnablementResponse().enqueue(object : Callback<FeatureEnablementModel?> {
                 override fun onResponse(
                     call: Call<FeatureEnablementModel?>,
                     response: Response<FeatureEnablementModel?>
@@ -77,7 +75,7 @@ class PetInsuranceHandler constructor(
     fun petInsuranceRequest() {
         if (SessionUtilities.getInstance().isUserAuthenticated && isPetInsuranceEnabled()) {
             petInsuranceShowLoading(true)
-            getPetInsuranceResponse().enqueue(object : Callback<PetInsuranceModel?> {
+            OneAppService().getPetInsuranceResponse().enqueue(object : Callback<PetInsuranceModel?> {
                 override fun onResponse(
                     call: Call<PetInsuranceModel?>,
                     response: Response<PetInsuranceModel?>
@@ -111,7 +109,7 @@ class PetInsuranceHandler constructor(
 
     fun appGUIDRequest(appGUIDRequestType: AppGUIDRequestType?) {
         petInsuranceShowLoading(true)
-        getAppGUIDResponse(appGUIDRequestType!!).enqueue(object : Callback<AppGUIDModel?> {
+        OneAppService().getAppGUIDResponse(appGUIDRequestType!!).enqueue(object : Callback<AppGUIDModel?> {
             override fun onResponse(call: Call<AppGUIDModel?>, response: Response<AppGUIDModel?>) {
                 val appGUIDModel = response.body()
                 if (appGUIDModel != null) {
