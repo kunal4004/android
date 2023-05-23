@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shop
 
+import android.Manifest
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.content.IntentFilter
@@ -226,7 +227,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         super.onViewCreated(view, savedInstanceState)
         activity?.apply {
             permissionUtils = PermissionUtils(this, this@ShopFragment)
-            permissions.add(android.Manifest.permission.CAMERA)
+            permissions.add(Manifest.permission.CAMERA)
         }
 
         binding.apply {
@@ -639,11 +640,19 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                 this
             )
         }
-        permissionUtils?.check_permission(
+        permissionUtils?.checkPermission(
             permissions,
-            "Explain here why the app needs permissions",
             1
         )
+    }
+
+    fun checkRunTimePermissionForLocation(): Boolean {
+        permissionUtils?.apply {
+            val permissions = ArrayList<String>()
+            permissions.add(Manifest.permission.ACCESS_FINE_LOCATION)
+            return checkAndRequestPermissions(permissions, 3)
+        }
+        return false
     }
 
     private fun updateTabIconUI(selectedTab: Int) {
@@ -757,13 +766,14 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         }
     }
 
-    override fun permissionGranted(request_code: Int) {
+    override fun permissionGranted(requestCode: Int) {
+        if (requestCode == 1)
         navigateToBarcode()
     }
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
-        permissions: Array<out String>,
+        permissions: Array<String>,
         grantResults: IntArray,
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
@@ -1615,7 +1625,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
     }
 
     override fun updateUnreadMessageCount(unreadMsgCount: Int) {
-        inAppNotificationViewBinding?.inAppOrderNotificationChatCount?.visibility = GONE
+        inAppNotificationViewBinding?.inAppOrderNotificationChatCount?.visibility = View.GONE
         //TODO: Later requirements for chat bubble.
         /*if (unreadMsgCount <= 0) {
             inAppNotificationViewBinding?.inAppOrderNotificationChatCount?.visibility = GONE

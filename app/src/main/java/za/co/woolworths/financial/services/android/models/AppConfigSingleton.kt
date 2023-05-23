@@ -101,7 +101,6 @@ object AppConfigSingleton {
             }
 
             appConfig.dashConfig?.apply {
-                minimumSupportedAppBuildNumber.let { isEnabled = Utils.isFeatureEnabled(it) }
                 dashConfig = this
             }
 
