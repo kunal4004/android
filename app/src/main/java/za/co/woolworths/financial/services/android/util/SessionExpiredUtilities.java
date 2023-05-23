@@ -33,9 +33,6 @@ public class SessionExpiredUtilities {
 	}
 
 	public void showSessionExpireDialog(AppCompatActivity activity, Fragment fragment) {
-		if(activity == null || !fragment.isAdded()) {
-			return;
-		}
 		try {
 			if(activity == null || fragment == null) {
 				return;
