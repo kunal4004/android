@@ -85,7 +85,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
             dashDeliveryAdapter =
                 DashDeliveryAdapter(
                     requireContext(), onDemandNavigationListener = this,
-                    dashLandingNavigationListener = this, this
+                    dashLandingNavigationListener = this, onDataUpdateListener = onDataUpdateListener, this
                 )
         }
     }
