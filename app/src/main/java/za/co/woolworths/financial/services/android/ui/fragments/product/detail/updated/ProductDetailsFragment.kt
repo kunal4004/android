@@ -1500,9 +1500,6 @@ class ProductDetailsFragment :
                 productOutOfStockErrorMessage()
                 return
             }
-            /*if((productDetails?.fulfillmentType == StoreUtils.Companion.FulfillmentType.CLOTHING_ITEMS?.type || productDetails?.fulfillmentType == StoreUtils.Companion.FulfillmentType.CRG_ITEMS?.type) &&
-                (Utils.retrieveStoreId(productDetails?.fulfillmentType) == "")) {*/
-           // }
         }
     }
 
