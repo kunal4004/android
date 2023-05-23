@@ -1058,7 +1058,7 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
                                 try {
                                     when (response?.httpCode) {
                                         HTTP_OK -> {
-                                            val isNoLiquorOrder = response.data[0].liquorOrder
+                                            val isNoLiquorOrder = response?.data?.getOrNull(0)?.liquorOrder
                                             if(isNoLiquorOrder == false)
                                                 ShoppingCartLiveData.value = isNoLiquorOrder
                                         }
