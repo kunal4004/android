@@ -457,6 +457,7 @@
     <string name="messages">Messages</string>
     <string name="order_history">Order History</string>
     <string name="link_your_woolies_card_today">Link Your Woolies Card Today</string>
+    <string name="link_your_woolies_card">Link your Woolies card</string>
 
     <!-- Bottom navigation activity -->
 
@@ -526,6 +527,7 @@
     <string name="walkthrough_biometrics_desc">You can now easily access secure features in the app by using the biometrics reader on your device.</string>
     <string name="previous">previous</string>
     <string name="need_help">Need Help</string>
+    <string name="faq">FAQ</string>
     <string name="tips_tricks">Tips &amp; Tricks</string>
     <string name="tips_tricks_titles_vouchers">Vouchers</string>
     <string name="tips_tricks_titles_stores">Find a Product in-Store</string>
@@ -1210,7 +1212,7 @@
     <string name="goldCreditCardCollection_row_3">Utility bill or original bank statement dates within the last three months, as proof of residence.</string>
 
     <string name="black_credit_card_title">Black Credit Card</string>
-    <string name="blackCreditCard_desc">The most rewarding way to shop at Woolies.</string>
+    <string name="blackCreditCard_desc">The most rewarding way to shop at woolies</string>
 
     <string name="blackCreditCardQualify_row_1">Be 18 years of age, or older</string>
     <string name="blackCreditCardQualify_row_2">Have a valid RSA ID Number</string>
@@ -1572,7 +1574,7 @@
 
     <!-- OnBoarding screen items -->
     <string name="on_boarding_screen_title_1">Welcome to the world of Woolies. It’s the next level in shopping, rewards and financial services.</string>
-    <string name="on_boarding_screen_title_2">Shop same day delivery with Woolies Dash, choose a timeslot with standard delivery, or use our Click &amp; Collect and visit one of our stores.</string>
+    <string name="on_boarding_screen_title_2">Get inspired with the newest products and trends, find items in store and shop your favourites anytime,anywhere.</string>
     <string name="on_boarding_screen_title_3">Instantly save more. Sign up for WRewards on your phone, and access your virtual card, vouchers, and promotions on the go.</string>
     <string name="on_boarding_screen_title_4">Access all your Woolworths financial products right here. View your balances, check your transaction history or apply for something new.</string>
     <string name="on_boarding_lets_go">let\'s go</string>
@@ -2199,7 +2201,6 @@
     <string name="requiredForm">required forms</string>
     <string name="submitForm">You will also need to submit</string>
     <string name="submitDescription">In order to process your claim we will need the following documents.</string>
-    <string name="view_application_status">View Application Status</string>
     <string name="app_version_info">App Version %s (%s)</string>
     <string name="fsp_number_info">Woolworths Financial Services (FSP15289 and NCRCP49)</string>
     <string name="product_details_out_of_stock">Unfortunately this item is out of stock in %s. Try changing your delivery location and try again.</string>
@@ -2669,11 +2670,13 @@
     <string name="error_internet_connection">Couldn\'t reach the server. Check your internet connection.</string>
 
 
-    <string name="title_text_has_your_card_not_arrived_in_the_post">title_text_has_your_card_not_arrived_in_the_post</string>
+    <string name="has_your_card_not_arrived_in_the_post">has_your_card_not_arrived_in_the_post</string>
+    <string name="envelope_image">envelope_image</string>
     <string name="copy_text_has_your_card_not_arrived_in_the_post">"copy_text_has_your_card_not_arrived_in_the_post "</string>
     <string name="button_my_card_hasnt_arrived">"button_my_card_hasnt_arrived "</string>
     <string name="title_text_thanks_for_letting_us_know">title_text_thanks_for_letting_us_know</string>
     <string name="copy_text_thanks_for_letting_us_know">copy_text_thanks_for_letting_us_know</string>
+    <string name="progress_thanks_for_letting_us_know">progress_thanks_for_letting_us_know</string>
     <string name="button_thanks_for_letting_us_know">button_thanks_for_letting_us_know</string>
     <string name="vtsc_oops_err_title">vtsc_oops_err_title</string>
     <string name="vtsc_oops_error_message">vtsc_oops_error_message</string>
@@ -2861,6 +2864,27 @@
         <item quantity="other">%1$s %2$s Items</item>
     </plurals>
     <string name="select_your_marital_status">Select your marital status</string>
+
+    <string name="my_products">My Products</string>
+    <string name="credit_card_account_label">CREDIT CARD ACCOUNT</string>
+    <string name="store_card_account_label">STORE CARD ACCOUNT</string>
+    <string name="my_offers_label">My Offers</string>
+    <string name="hide">Hide</string>
+    <string name="show">Show</string>
+    <string name="my_credit_report_label">MY CREDIT REPORT</string>
+    <string name="my_credit_status_sub_label"><![CDATA[View your free credit report & more]]></string>
+    <string name="increase_your_credit_limit_label">INCREASE CREDIT LIMIT</string>
+    <string name="increase_your_credit_limit_sub_label">You can increase your credit limit to R10 000.</string>
+    <string name="acc_my_profile">My Profile</string>
+    <string name="acc_product_available">Available:</string>
+    <string name="cptr_pull_to_refresh">Pull to refresh</string>
+    <string name="cptr_release_to_refresh">Release to refresh</string>
+    <string name="cptr_refreshing">Refreshing…</string>
+    <string name="wpet_care_classic_plan_label">WPET CARE CLASSIC PLAN</string>
+    <string name="wpet_care_classic_plan_label_policy_number">Policy Number:</string>
+    <string name="my_offers_increase_personal_loan_label">increase personal loan</string>
+    <string name="my_offers_increase_personal_loan_desc">Increase your personal loan limit to R40 000</string>
+
     <string name="apply_for_credit_card">apply for credit card</string>
     <string name="available_vouchers">vouchers available</string>
     <string name="wrewards_voucher">WRewards Vouchers</string>
@@ -2888,7 +2912,6 @@
     <string name="quarterly_voucher">Quarterly Voucher</string>
     <string name="can_not_redeem_cash_back_vouchers">Can’t redeem this voucher</string>
     <string name="learn_more">Learn More</string>
-
 
     <!--  FBH CNC -->
 
@@ -2928,9 +2951,44 @@
     <string name="all_fashion_beauty_home_avlbl"><b>All</b> Fashion, Beauty and Home Products Available</string>
     <string name="all_food_items_avlbl"><b>All</b> Food Products Available</string>
 
-    <string name="only_fashion_beauty_and_home_products_available" >%1$s\nOnly Fashion, Beauty and Home products available.</string>
+    <string name="only_fashion_beauty_and_home_products_available">%1$s\nOnly Fashion, Beauty and Home products available.</string>
     <string name="food_fashion_beauty_and_home_products_available">%1$s\nFood, Fashion, Beauty and Home products available.</string>
     <string name="food_fashion_beauty_and_home_products_available_tool_tip">Food, Fashion, Beauty and Home products available.</string>
+
+    <string name="my_offer_wpet_care_classic_plan_label">Pet insurance</string>
+    <string name="my_offer_wpet_care_classic_plan_desc">Give your furry friend the cover they deserve</string>
+    <string name="my_offer_wpet_care_classic_plan_button_label">get cover</string>
+
+    <string name="my_offer_woolworth_store_card_label">Woolworths store card</string>
+    <string name="my_offer_woolworth_store_card_desc">Shop Food, Fashion, Beauty and Home</string>
+
+    <string name="my_offer_credit_card_quality_up_to_R25000">You qualify for a credit card of up to R25 000*</string>
+    <string name="my_offer_personal_loan_account_label">Personal Loan Account</string>
+    <string name="my_offer_personal_loan_account_desc">You could qualify for a personal loan</string>
+    <string name="my_offer_personal_loan_account_sign_in_desc">You qualify for a loan of up to R80 000</string>
+
+    <string name="my_offer_black_credit_card_dec">Increase your limit and get more</string>
+    <string name="my_offer_personal_loan_sign_out_qualify_desc">You qualify for a Personal Loan</string>
+    <string name="my_offer_retry_idle_message">Can’t Load Balance</string>
+    <string name="my_offer_retry_loading_message">Loading …</string>
+    <string name="my_offer_view_application_status_description">Already applied for a Woolies product?</string>
+    <string name="my_offer_view_application_status_description_sign_out">Did you apply for a Woolies account?</string>
+    <string name="my_offer_view_application_status_button">View Status</string>
+    <string name="view_application_status">Application status</string>
+    <string name="my_offer_credit_card_in_arrears_title">CREDIT CARD IN ARREARS</string>
+    <string name="my_offer_credit_card_in_arrears_description">Get a monthly plan to payback your debt Typography</string>
+
+    <string name="my_offer_personal_loan_in_arrears_title">PERSONAL LOAN IN ARREARS</string>
+    <string name="my_offer_personal_loan_in_arrears_description">Get a monthly plan to payback your debt</string>
+
+    <string name="my_offer_store_card_in_arrears_title">STORE CARD IN ARREARS</string>
+    <string name="my_offer_store_card_in_arrears_description">[Description missing]</string>
+
+    <string name="my_offers_woolworths_store_card_description">Get R10 000 to spend at Woolies</string>
+
+    <string name="my_products_loading">Loading…</string>
+    <string name="my_products_cant_load_product">Can\'t Load Balance</string>
+    <string name="application_status">Application Status</string>
 
     <string name="only_fashion_beauty_and_home_products_available_text" >Only Fashion, Beauty and Home products available.</string>
     <string name="cnc_title_text_2">Limited shop of %1$s food items.</string>
@@ -2962,9 +3020,10 @@
     <string name="pet_insurance_apply_now_comprehensive_title">Extensive Cover</string>
     <string name="pet_insurance_apply_now_comprehensive_desc">Considerable benefits &amp; cover options for routine care, accidents, illnesses and third party liability</string>
     <string name="pet_insurance_apply_now_control_title">You\'re in Control</string>
-    <string name="pet_insurance_apply_now_control_desc">Optional excess waiver and medical saving benefits</string>
+    <string name="pet_insurance_apply_now_control_desc">Optional excess waiver and routine care booster benefits</string>
     <string name="pet_insurance_care">PET</string>
     <string name="error_message_400">We are unable to process your request, Please \ncontact our call centre on \n0861 50 20 10</string>
+    <string name="paws.pet.loading">Loading…</string>
     <string name="geo_loc_error_msg_title">We can’t seem to find you here.</string>
     <string name="street_address_lbl">Street Address:*</string>
     <string name="recipient_name_placeholder">Recipient Name: *</string>
@@ -2974,6 +3033,9 @@
     <string name="unit_number_floor">Unit Number/Floor:*</string>
     <string name="change_address_btn_text">CHANGE</string>
     <string name="use">USE\u0020</string>
+    <string name="pet_insurance_my_cover">My Cover</string>
+    <string name="pet_care_title">WPet Care</string>
     <string name="label_collection">\u0020Collection.</string>
     <string name="label_dash">\u0020Dash.</string>
+    <string name="shop_by_category">Shop By Category</string>
 </resources>
