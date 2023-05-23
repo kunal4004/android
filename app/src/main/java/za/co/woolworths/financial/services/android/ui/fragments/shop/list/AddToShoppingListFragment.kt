@@ -25,6 +25,9 @@ import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.ORDER_ID
+import za.co.woolworths.financial.services.android.util.AppConstant.Keys.Companion.BUNDLE_WISHLIST_EVENT_DATA
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
+import za.co.woolworths.financial.services.android.util.analytics.dto.AddToWishListFirebaseEventData
 
 class AddToShoppingListFragment : DepartmentExtensionFragment(R.layout.add_to_list_content), View.OnClickListener {
 
@@ -37,6 +40,7 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(R.layout.add_to_li
     private var mAddToShoppingListAdapter: AddToShoppingListAdapter? = null
     private var mErrorDialogDidAppear: Boolean = false
     private var mAutoConnect: AutoConnect? = null
+    private var mAddToWishListEventData: AddToWishListFirebaseEventData? = null
 
     enum class AutoConnect {
         ADD_ORDER_TO_LIST,
@@ -45,10 +49,11 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(R.layout.add_to_li
 
     companion object {
         const val POST_ADD_TO_SHOPPING_LIST = "POST_ADD_TO_SHOPPING_LIST"
-        fun newInstance(postListRequest: String?, order_id: String?) = AddToShoppingListFragment().apply {
+        fun newInstance(postListRequest: String?, order_id: String?, addToWishListEventData: AddToWishListFirebaseEventData? = null) = AddToShoppingListFragment().apply {
             arguments = Bundle(2).apply {
                 putString(POST_ADD_TO_SHOPPING_LIST, postListRequest)
                 putString(ORDER_ID, order_id)
+                putParcelable(BUNDLE_WISHLIST_EVENT_DATA, addToWishListEventData)
             }
         }
     }
@@ -80,6 +85,7 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(R.layout.add_to_li
         arguments?.let {
             mAddToListArgs = arguments?.getString(POST_ADD_TO_SHOPPING_LIST)
             mOrderId = arguments?.getString(ORDER_ID)
+            mAddToWishListEventData = it.getParcelable(BUNDLE_WISHLIST_EVENT_DATA)
         }
     }
 
@@ -330,6 +336,7 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(R.layout.add_to_li
             when (httpCode) {
                 0 -> {
                     mShoppingListGroup?.apply {
+                        callAddToWishlistFirebaseEvent(listId)
                         // Will replace the value of an existing key and will create it if doesn't exist
                         val shopList = get(listId)
                         shopList!!.wasSentToServer = true
@@ -369,6 +376,7 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(R.layout.add_to_li
             when (httpCode) {
                 200 -> {
                     mShoppingListGroup?.apply {
+                        callAddToWishlistFirebaseEvent(listId)
                         // Will replace the value of an existing key and will create it if doesn't exist
                         val shopList = get(listId)
                         shopList!!.wasSentToServer = true
@@ -404,13 +412,28 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(R.layout.add_to_li
         }
     }
 
+    private fun callAddToWishlistFirebaseEvent(shoppingListId: String?) {
+        if (shoppingListId.isNullOrEmpty()){
+            return
+        }
+        mAddToWishListEventData?.let { eventData ->
+            mShoppingListGroup?.let { shoppingListGroup ->
+                val shoppingListName = shoppingListGroup[shoppingListId]?.listName
+                if (!shoppingListName.isNullOrEmpty()){
+                    eventData.shoppingListName = shoppingListName
+                    FirebaseAnalyticsEventHelper.addToWishlistEvent(eventData)
+                }
+            }
+        }
+    }
+
     private fun showShoppingListSuccessToast() {
         NavigateToShoppingList.requestToastOnNavigateBack(activity, POST_ADD_TO_SHOPPING_LIST, mShoppingListGroup)
     }
 
     private fun navigateToCreateShoppingListFragment(state: Boolean) {
         replaceFragment(
-                fragment = CreateShoppingListFragment.newInstance(mShoppingListGroup, mAddToListArgs, state, mOrderId),
+                fragment = CreateShoppingListFragment.newInstance(mShoppingListGroup, mAddToListArgs, state, mOrderId, addToWishListEventData = mAddToWishListEventData),
                 tag = CreateShoppingListFragment::class.java.simpleName,
                 containerViewId = R.id.flShoppingListContainer,
                 allowStateLoss = false,
@@ -431,7 +454,7 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(R.layout.add_to_li
             }
 
             (it as? AppCompatActivity)?.addFragment(
-                    fragment = CreateShoppingListFragment.newInstance(mShoppingListGroup, mAddToListArgs, state, mOrderId),
+                    fragment = CreateShoppingListFragment.newInstance(mShoppingListGroup, mAddToListArgs, state, mOrderId, addToWishListEventData = mAddToWishListEventData),
                     tag = CreateShoppingListFragment::class.java.simpleName,
                     containerViewId = R.id.flShoppingListContainer,
                     allowStateLoss = false,
