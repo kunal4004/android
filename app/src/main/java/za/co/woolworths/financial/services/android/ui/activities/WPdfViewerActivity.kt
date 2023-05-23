@@ -70,18 +70,21 @@ class WPdfViewerActivity : AppCompatActivity(), PermissionResultCallback {
     private fun ActivityOrederTaxInvoiceBinding.configureUI() {
         toolbarText.text = pageTitle
         pdfView.fromBytes(fileData)
-                .enableDoubletap(true)
-                .defaultPage(0)
-                .scrollHandle(null)
-                .enableAnnotationRendering(false)
-                .enableAntialiasing(false)
-                .spacing(0)
-                .load()
+            .enableDoubletap(true)
+            .defaultPage(0)
+            .scrollHandle(null)
+            .enableAnnotationRendering(false)
+            .enableAntialiasing(false)
+            .spacing(0)
+            .load()
     }
 
     private fun shareInvoice() {
         gtmTag?.let {
-            KotlinUtils.postOneAppEvent(OneAppEvents.AppScreen.ABSA_SHARE_STATEMENT,OneAppEvents.FeatureName.ABSA)
+            KotlinUtils.postOneAppEvent(
+                OneAppEvents.AppScreen.ABSA_SHARE_STATEMENT,
+                OneAppEvents.FeatureName.ABSA
+            )
             Utils.triggerFireBaseEvents(it, this)
         }
         try {
@@ -97,13 +100,19 @@ class WPdfViewerActivity : AppCompatActivity(), PermissionResultCallback {
         }
 
 
-        val uri = cacheFile?.let { FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".WFileProvider", it) }
+        val uri = cacheFile?.let {
+            FileProvider.getUriForFile(
+                this,
+                BuildConfig.APPLICATION_ID + ".WFileProvider",
+                it
+            )
+        }
 
         val intent = ShareCompat.IntentBuilder.from(this)
-                .setType("application/pdf")
-                .setStream(uri)
-                .createChooserIntent()
-                .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            .setType("application/pdf")
+            .setStream(uri)
+            .createChooserIntent()
+            .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         startActivityForResult(intent, REQUEST_CODE_SHARE)
 
     }
@@ -138,7 +147,11 @@ class WPdfViewerActivity : AppCompatActivity(), PermissionResultCallback {
         }
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray,
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         permissionUtils?.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
