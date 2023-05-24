@@ -73,7 +73,6 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class ConfirmAddressMapFragment :
     Fragment(R.layout.geolocation_confirm_address), DynamicMapDelegate, VtoTryAgainListener,
-    PermissionResultCallback,
     PoiBottomSheetDialog.ClickListener, UnIndexedAddressIdentifiedListener {
 
     private lateinit var binding: GeolocationConfirmAddressBinding
@@ -114,7 +113,6 @@ class ConfirmAddressMapFragment :
     private var isPoiAddress: Boolean? = false
     private var address2: String? = ""
     private lateinit var locator: Locator
-    private var permissionUtils: PermissionUtils? = null
     override fun onViewCreated(
         view: View, savedInstanceState: Bundle?,
     ) {
@@ -122,7 +120,6 @@ class ConfirmAddressMapFragment :
         binding = GeolocationConfirmAddressBinding.bind(view)
         binding.dynamicMapView?.initializeMap(savedInstanceState, this)
         locator = Locator(activity as AppCompatActivity)
-        permissionUtils = PermissionUtils(requireActivity(), this@ConfirmAddressMapFragment)
     }
 
     private fun initView() {
@@ -1021,10 +1018,6 @@ class ConfirmAddressMapFragment :
     private fun handleLocationEvent(locationEvent: Event.Location?) {
         Utils.saveLastLocation(locationEvent?.locationData, context)
         navigateCurrentLocation()
-    }
-
-    override fun permissionGranted(requestCode: Int) {
-       // do nothing
     }
 }
 
