@@ -13,7 +13,9 @@ data class ConfigPayMyAccount(
     var minimumSupportedAppBuildNumber: Int,
     private var addCardBaseUrl: String?="",
     var paymentSuccessfulTitle:String?,
-    var paymentSuccessfulDescription:String?
+    var paymentSuccessfulDescription:String?,
+    var enterPaymentAmountDialogFooterNote:String?,
+    var payByCardFooterNote:String?
     ) : Parcelable {
 
     fun addCardUrl(productGroupCode: String): String {
