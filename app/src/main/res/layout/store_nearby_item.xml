@@ -1,27 +1,21 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:background="@android:color/transparent"
-              android:layout_marginTop="5dp"
-              android:orientation="vertical"
-              android:paddingLeft="5dp"
-    >
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/transparent"
+    android:elevation="@dimen/six_dp"
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/card_shadow"
+        android:background="@color/white"
         android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="65dp"
+            android:layout_height="@dimen/seventy_two_dp"
             android:orientation="horizontal"
-            android:paddingRight="5dp"
-
-            >
+            android:paddingRight="@dimen/five_dp">
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -29,72 +23,67 @@
                 android:layout_weight="5"
                 android:background="@drawable/border_rightside_only"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="@dimen/sixteen_dp">
 
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/storeName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start"
-                    android:singleLine="true"
                     android:ellipsize="end"
+                    android:fontFamily="@font/futura_semi_bold"
                     android:letterSpacing="0.01"
+                    android:singleLine="true"
                     android:textAllCaps="true"
                     android:textColor="@color/black"
-                    android:textSize="15sp"
-                    app:WTextView_font="medium_bold"
+                    android:textSize="@dimen/fifteen_sp" />
 
-                    />
-
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/offerings"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start"
-                    android:layout_marginTop="4dp"
-                    android:singleLine="true"
+                    android:layout_marginTop="@dimen/four_dp"
                     android:ellipsize="end"
+                    android:fontFamily="@font/futura_medium"
                     android:letterSpacing="0.08"
+                    android:singleLine="true"
                     android:textAllCaps="true"
                     android:textColor="@color/black"
-                    android:textSize="13sp"
-                    app:WTextView_font="medium"
-                    />
+                    android:textSize="@dimen/fourteen_sp" />
 
             </LinearLayout>
 
-            <!-- <View
-                 android:layout_width="1dp"
-                 android:layout_height="match_parent"
-                 android:background="#EAEAEA" />-->
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
+                android:layout_weight="1.5"
+                android:gravity="center"
                 android:orientation="vertical"
                 android:paddingTop="16dp">
 
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/distance"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="12.3"
+                    android:fontFamily="@font/futura_medium"
                     android:gravity="center"
                     android:textColor="@color/black"
-                    android:textSize="20sp"
-                    app:WTextView_font="medium" />
+                    android:textSize="@dimen/twenty_dp" />
 
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/km"
+                    android:fontFamily="@font/futura_medium"
                     android:gravity="center|top"
+                    android:text="@string/km"
                     android:textColor="@color/black"
-                    android:visibility="gone"
-                    android:textSize="12.5sp"
-                    app:WTextView_font="myriadpro_regular" />
+                    android:textSize="@dimen/twelve_sp"
+                    android:visibility="gone" />
+
             </LinearLayout>
+
         </LinearLayout>
 
         <View
@@ -104,37 +93,36 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="79dp"
-            android:paddingLeft="16dp"
-            android:paddingTop="12dp"
-            >
+            android:layout_height="@dimen/eighty_eight_dp"
+            android:paddingTop="@dimen/eleven_dp">
 
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/storeAddress"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
-                android:lineSpacingExtra="4sp"
+                android:layout_marginStart="@dimen/twenty_four_dp"
+                android:layout_marginEnd="@dimen/twenty_four_dp"
+                android:fontFamily="@font/opensans_regular"
+                android:lineSpacingExtra="@dimen/two_sp"
                 android:maxLines="2"
-                android:paddingRight="42dp"
+                android:paddingRight="@dimen/valid_date_guideline_begin_42dp"
                 android:textColor="@color/black"
-                android:textSize="13sp"
-                app:WTextView_font="myriadpro_regular"
+                android:textSize="@dimen/eleven_sp" />
 
 
-                />
-
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/timeing"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:paddingRight="16dp"
-                android:textColor="#ABABAB"
-                android:paddingBottom="10dp"
-                android:textSize="13sp"
-                app:WTextView_font="myriadpro_regular" />
+                android:layout_marginStart="@dimen/twenty_four_dp"
+                android:layout_marginEnd="@dimen/twenty_four_dp"
+                android:fontFamily="@font/opensans_regular"
+                android:paddingBottom="@dimen/twenty_four_dp"
+                android:textColor="@color/color_666666"
+                android:textSize="@dimen/eleven_sp" />
+
         </RelativeLayout>
     </LinearLayout>
 

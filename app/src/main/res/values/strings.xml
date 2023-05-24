@@ -3038,4 +3038,6 @@
     <string name="label_collection">\u0020Collection.</string>
     <string name="label_dash">\u0020Dash.</string>
     <string name="shop_by_category">Shop By Category</string>
+    <string name="open_until">Open until %s</string>
+
 </resources>
