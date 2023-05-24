@@ -36,7 +36,7 @@
 
             <TextView
                 android:id="@+id/myVehicleText"
-                style="@style/open_sans_regular_black_with_rounded_corner"
+                style="@style/opensans_regular_13_222222_rounded_corner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/eight_dp"
@@ -51,7 +51,7 @@
 
             <TextView
                 android:id="@+id/taxiText"
-                style="@style/open_sans_regular_black_with_rounded_corner"
+                style="@style/opensans_regular_13_222222_rounded_corner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/eight_dp"
@@ -67,16 +67,15 @@
 
     <TextView
         android:id="@+id/taxiDescription"
-        style="@style/myriad_pro_regular"
+        style="@style/opensans_regular_13_black"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/twenty_five_dp"
-        android:layout_marginRight="@dimen/fifty_dp"
+        android:layout_marginEnd="@dimen/fifty_dp"
         android:lineSpacingExtra="@dimen/five_dp"
         android:paddingBottom="@dimen/fourty_five_dp"
         android:text="@string/e_hailing_description"
         android:textColor="@color/color_444444"
-        android:textSize="@dimen/fifteen_sp"
         android:visibility="gone"
         app:layout_constrainedWidth="true"
         app:layout_constraintEnd_toEndOf="@id/right_guideline"
@@ -95,47 +94,45 @@
 
         <TextView
             android:id="@+id/vehicleColourPlaceHolder"
-            style="@style/open_sans_regular_black"
-            android:layout_height="wrap_content"
+            style="@style/opensans_regular_13_black"
             android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/twenty_four_dp"
             android:contentDescription="@string/cd_ccd_labelstreetaddress"
             android:paddingTop="@dimen/two_dp"
             android:paddingBottom="@dimen/two_dp"
-            android:text="@string/vehicle_colour"
-            android:textSize="@dimen/fourteen_sp" />
+            android:text="@string/vehicle_colour" />
 
         <EditText
             android:id="@+id/vehicleColourEditText"
             style="@style/checkout_edittext_style"
-            android:hint="@string/optional_hint"
             android:layout_width="match_parent"
+            android:hint="@string/optional_hint"
             android:inputType="textEmailAddress"
-            android:maxLength="@integer/twenty" />
+            android:maxLength="@integer/twenty"
+            android:textColorHint="@color/color_9D9D9D" />
 
         <TextView
             android:id="@+id/vehicleColourErrorMsg"
-            style="@style/opensens_regular"
+            style="@style/opensans_regular_13_black"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/fifteen_dp"
             android:lineSpacingMultiplier="1.40"
             android:text="@string/address_nickname_error_msg"
             android:textColor="@color/input_error_color_code"
-            android:textSize="@dimen/fourteen_sp"
             android:visibility="gone" />
 
         <TextView
             android:id="@+id/vehicleModelPlaceHolder"
-            style="@style/open_sans_regular_black"
+            style="@style/opensans_regular_13_black"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/twenty_four_dp"
             android:contentDescription="@string/cd_ccd_labelstreetaddress"
             android:paddingTop="@dimen/two_dp"
             android:paddingBottom="@dimen/two_dp"
-            android:text="@string/vehicle_model"
-            android:textSize="@dimen/fourteen_sp" />
+            android:text="@string/vehicle_model" />
 
         <EditText
             android:id="@+id/vehicleModelEditText"
@@ -145,27 +142,25 @@
 
         <TextView
             android:id="@+id/vehicleModelErrorMsg"
-            style="@style/opensens_regular"
+            style="@style/opensans_regular_13_black"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/fifteen_dp"
             android:lineSpacingMultiplier="1.40"
             android:text="@string/address_nickname_error_msg"
             android:textColor="@color/input_error_color_code"
-            android:textSize="@dimen/fourteen_sp"
             android:visibility="gone" />
 
         <TextView
             android:id="@+id/vehicleRegistrationPlaceHolder"
-            style="@style/open_sans_regular_black"
+            style="@style/opensans_regular_13_black"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/twenty_four_dp"
             android:contentDescription="@string/cd_ccd_labelstreetaddress"
             android:paddingTop="@dimen/two_dp"
             android:paddingBottom="@dimen/two_dp"
-            android:text="@string/vehicle_registration"
-            android:textSize="@dimen/fourteen_sp" />
+            android:text="@string/vehicle_registration" />
 
         <EditText
             android:id="@+id/vehicleRegistrationEditText"
@@ -173,7 +168,8 @@
             android:layout_width="match_parent"
             android:hint="@string/optional_hint"
             android:imeOptions="actionDone"
-            android:maxLength="@integer/twenty" />
+            android:maxLength="@integer/twenty"
+            android:textColorHint="@color/color_9D9D9D" />
 
     </LinearLayout>
 
