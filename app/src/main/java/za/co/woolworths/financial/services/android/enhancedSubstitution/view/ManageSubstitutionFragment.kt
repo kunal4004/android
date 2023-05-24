@@ -54,6 +54,7 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
         const val SKU_ID = "SKU_ID"
         const val DONT_WANT_SUBSTITUTE_LISTENER = "DONT_WANT_SUBSTITUTE_LISTENER"
         const val LET_MY_SHOPPER_CHOOSE = "LET_MY_SHOPPER_CHOOSE"
+        const val KIBO_PRODUCT_SIZE = 5
 
         fun newInstance(
             substitutionSelectionChoice: String?,
@@ -193,8 +194,16 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
                             } == false
                         }
 
-                        itemList?.take(5)
-                        setRecyclerViewForKiboProducts(itemList?.take(5) as? ArrayList<Item>?)
+                        if (itemList?.isEmpty() == false) {
+                            if (itemList.size > KIBO_PRODUCT_SIZE) {
+                                setRecyclerViewForKiboProducts(itemList.take(KIBO_PRODUCT_SIZE) as? ArrayList<Item>?)
+                            } else {
+                                setRecyclerViewForKiboProducts(itemList)
+                            }
+                        } else {
+                            showEmptyErrorScreen()
+                        }
+
                     }
                     Status.ERROR -> {
                         hideShimmerView()
@@ -205,9 +214,6 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
     }
 
     private fun setRecyclerViewForKiboProducts(itemList: ArrayList<Item>?) {
-        if (itemList?.isEmpty() == true) {
-            showEmptyErrorScreen()
-        }
         manageProductSubstitutionAdapter = itemList?.let { it1 ->
             ManageProductSubstitutionAdapter(
                 it1,
@@ -321,7 +327,7 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
     }
 
     fun showErrorScreen() {
-
+       /*TODO show error screen*/
     }
 
     private fun confirmDontWantSubstitutionForProduct() {

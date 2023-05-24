@@ -14,22 +14,17 @@ import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
 import org.mockito.MockedStatic
-import org.mockito.Mockito
 import org.mockito.Mockito.*
 import org.mockito.MockitoAnnotations
 import org.powermock.api.mockito.PowerMockito
 import retrofit2.Response
+import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhanceSubstitutionHelperTest
 import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhanceSubstitutionHelperTest.Companion.COMMARCE_ITEM_ID
 import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhanceSubstitutionHelperTest.Companion.SKU_ID
 import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhanceSubstitutionHelperTest.Companion.STORE_ID
 import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhanceSubstitutionHelperTest.Companion.SUBSTITUTION_ID
 import za.co.woolworths.financial.services.android.enhancedSubstitution.apihelper.SubstitutionApiHelperTest
-import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.AddSubstitutionRequest
-import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.AddSubstitutionResponse
-import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.Data
-import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.DataX
-import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.ProductSubstitution
-import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.SubstitutionInfo
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.*
 import za.co.woolworths.financial.services.android.enhancedSubstitution.service.network.SubstitutionApiHelper
 import za.co.woolworths.financial.services.android.enhancedSubstitution.service.repository.ProductSubstitutionRepository
 import za.co.woolworths.financial.services.android.models.dto.FormException
@@ -91,13 +86,13 @@ class ProductSubstitutionRepositoryTest {
         )
         dataList.add(data)
         val response =
-            za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.Response(
+           Response(
                 code = "-1",
                 desc = "success"
             )
         val productSubstitution =
             ProductSubstitution(data = dataList, httpCode = 200, response = response)
-        Mockito.`when`(substitutionApiHelper.getProductSubstitution(PROD_ID))
+        `when`(substitutionApiHelper.getProductSubstitution(PROD_ID))
             .thenReturn(Response.success(productSubstitution))
         val productSubstitutionRepository = ProductSubstitutionRepository(substitutionApiHelper)
         val result = productSubstitutionRepository.getProductSubstitution(PROD_ID)
@@ -201,7 +196,7 @@ class ProductSubstitutionRepositoryTest {
         val formExceptions = mutableListOf<FormException>()
         dataList.add(DataX(substitutionList, formExceptions))
         val response =
-            za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.Response(
+           Response(
                 "-1",
                 "success"
             )
@@ -236,12 +231,66 @@ class ProductSubstitutionRepositoryTest {
             SUBSTITUTION_ID,
             COMMARCE_ITEM_ID
         )
-
         `when`(substitutionApiHelper.addSubstitution(addSubstitutionRequest))
             .thenReturn(Response.error(504, "".toResponseBody()))
         val productSubstitutionRepository = ProductSubstitutionRepository(substitutionApiHelper)
         val result = productSubstitutionRepository.addSubstitution(addSubstitutionRequest)
         Assert.assertEquals(Status.ERROR, result.status)
+    }
+
+    @Test
+    fun kiboProducts_returnEmptyResponse() = runTest {
+        val getKiboProductRequest = GetKiboProductRequest(EnhanceSubstitutionHelperTest.prepareKiboProductRequest())
+
+        `when`(substitutionApiHelper.fetchKiboProducts(getKiboProductRequest))
+            .thenReturn(Response.success(EnhanceSubstitutionHelperTest.prepareKiboRequestWithEmptyList()))
+        val sut = ProductSubstitutionRepository(substitutionApiHelper)
+        val result = sut.fetchKiboProducts(getKiboProductRequest)
+        Assert.assertEquals(0, result.data?.data?.responses?.getOrNull(0)?.actions?.getOrNull(0)?.items?.size)
+    }
+
+    @Test
+    fun  kiboProducts_withError() = runTest {
+        val kiboProductRequest = GetKiboProductRequest(EnhanceSubstitutionHelperTest.prepareKiboProductRequest())
+        `when`(substitutionApiHelper.fetchKiboProducts(kiboProductRequest))
+            .thenReturn(Response.error(504, "".toResponseBody()))
+        val productSubstitutionRepository = ProductSubstitutionRepository(substitutionApiHelper)
+        val result = productSubstitutionRepository.fetchKiboProducts(kiboProductRequest)
+        Assert.assertEquals(Status.ERROR, result.status)
+    }
+
+
+    @Test
+    fun getKiboRequest_returnCorrrectResponse() = runTest {
+
+        val getKiboProductRequest = GetKiboProductRequest(EnhanceSubstitutionHelperTest.prepareKiboProductRequest())
+        val kiboProductResponse = prepareKiboResponse()
+        `when`(substitutionApiHelper.fetchKiboProducts(getKiboProductRequest))
+            .thenReturn(Response.success(kiboProductResponse))
+        val productSubstitutionRepository = ProductSubstitutionRepository(substitutionApiHelper)
+        val result = productSubstitutionRepository.fetchKiboProducts(getKiboProductRequest)
+        Assert.assertNotNull(kiboProductResponse)
+        Assert.assertEquals(1, result.data?.data?.responses?.size)
+        Assert.assertEquals("White Thick Slice Bread 700 g", result.data?.data?.responses?.getOrNull(0)?.actions?.getOrNull(0)?.items?.getOrNull(0)?.title)
+    }
+
+    fun prepareKiboResponse(): KiboProductResponse {
+        val item = Item("", "1", title = "White Thick Slice Bread 700 g" , imageLink = "", plist3620006 = 32.6 )
+        val items = ArrayList<Item>()
+        items.add(item)
+        val action = Action(items)
+        val actionList = ArrayList<Action>()
+        actionList.add(action)
+        val actionResponse = ActionResponse( actionList, "1234")
+        val actionResponseList = ArrayList<ActionResponse>()
+        actionResponseList.add(actionResponse)
+        val itemResponse = ItemResponse(actionResponseList)
+        val response =
+            Response(
+                "-1",
+                "success"
+            )
+        return KiboProductResponse(itemResponse, response, 200)
     }
 
     companion object {

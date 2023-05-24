@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.enhancedSubstitution.view
 
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.View.OnClickListener
 import android.view.inputmethod.EditorInfo
