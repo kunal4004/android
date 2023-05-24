@@ -58,12 +58,12 @@ class ProductNavigationImpl @Inject constructor(private val viewApplicationStatu
             when (productGroup) {
                 is AccountProductCardsGroup.StoreCard -> createStoreCardIntent(deepLinkParams = deepLinkParams, productGroup = productGroup)
                 is AccountProductCardsGroup.PersonalLoan -> createPersonalLoanIntent(deepLinkParams = deepLinkParams, userAccountResponse = response)
-                is AccountProductCardsGroup.BlackCreditCard -> productIntent.createBlackCreditCardIntent(deepLinkParams = deepLinkParams, userAccountResponse = response)
-                is AccountProductCardsGroup.GoldCreditCard -> productIntent.createBlackCreditCardIntent(deepLinkParams = deepLinkParams, userAccountResponse = response)
-                is AccountProductCardsGroup.SilverCreditCard -> productIntent.createBlackCreditCardIntent(deepLinkParams = deepLinkParams, userAccountResponse = response)
-                is AccountProductCardsGroup.ApplicationStatus -> productIntent.createViewApplicationStatusIntent(viewApplicationStatus)
+                is AccountProductCardsGroup.BlackCreditCard -> createBlackCreditCardIntent(deepLinkParams = deepLinkParams, userAccountResponse = response)
+                is AccountProductCardsGroup.GoldCreditCard -> createBlackCreditCardIntent(deepLinkParams = deepLinkParams, userAccountResponse = response)
+                is AccountProductCardsGroup.SilverCreditCard -> createBlackCreditCardIntent(deepLinkParams = deepLinkParams, userAccountResponse = response)
+                is AccountProductCardsGroup.ApplicationStatus -> createViewApplicationStatusIntent(viewApplicationStatus)
                 is AccountProductCardsGroup.PetInsurance -> petNavigation.navigateToPetInsurance(activityLauncher = activityResultLauncher, viewModel = this@accountCardsAction, productGroup = productGroup)
-                is AccountProductCardsGroup.LinkYourWooliesCard -> productIntent.createLinkYourWooliesCardIntent(activityLauncher = activityResultLauncher, viewModel = this@accountCardsAction)
+                is AccountProductCardsGroup.LinkYourWooliesCard -> createLinkYourWooliesCardIntent(activityLauncher = activityResultLauncher, viewModel = this@accountCardsAction)
             }
         }
     }

@@ -49,10 +49,11 @@
             android:layout_height="wrap_content"
             android:background="@color/white"
             android:ellipsize="end"
-            android:fontFamily="@font/myriad_pro_regular"
+            android:fontFamily="@font/opensans_regular"
             android:maxLines="1"
-            android:textColor="@color/color_444444"
-            android:textSize="@dimen/fifteen_sp" />
+            tools:text="Constantia Emporium"
+            android:textColor="@color/black"
+            android:textSize="@dimen/thirteen_sp" />
     </com.facebook.shimmer.ShimmerFrameLayout>
 
     <com.facebook.shimmer.ShimmerFrameLayout

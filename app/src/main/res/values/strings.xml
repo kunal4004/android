@@ -706,7 +706,7 @@
     <string name="tax_invoices">TAX INVOICES</string>
     <string name="shop_create_a_list">Create A New List</string>
     <string name="shop_create_list">Create New List</string>
-    <string name="shop_sign_out_order_title">sign in to view\nand create lists</string>
+    <string name="shop_sign_out_order_title">SIGN IN TO VIEW\nAND CREATE LISTS</string>
     <string name="shop_sign_out_order_desc">Search for products to start adding items to this list.</string>
     <string name="order_invoice_title_prefix">PDF:\u0020</string>
     <string name="delivery_suburb">Delivery Suburb:</string>
@@ -3038,6 +3038,7 @@
     <string name="label_collection">\u0020Collection.</string>
     <string name="label_dash">\u0020Dash.</string>
     <string name="shop_by_category">Shop By Category</string>
+    <string name="payflex_is_unavailable_when_buying_food_items_and_gift_cards">Payflex is unavailable when buying Food items and Gift Cards.</string>
     <string name="open_until">Open until %s</string>
 
 </resources>

@@ -24,7 +24,7 @@
         android:layout_width="0dp"
         android:layout_height="@dimen/hundred_dp"
         android:gravity="center"
-        style="@style/futura_medium_black"
+        style="@style/opensans_regular_13_black"
         app:layout_constraintLeft_toRightOf="@id/itemImageView"
         app:layout_constraintRight_toLeftOf="@id/itemPrice"
         app:layout_constraintTop_toTopOf="parent"/>

@@ -85,16 +85,14 @@ class ProductIntentImpl @Inject constructor(private val activity: Activity?) : P
         viewModel: UserAccountLandingViewModel
     ) {
         activity?.apply {
-           val linkYourWooliesCardIntent =  Intent(this, SSOActivity::class.java).apply {
-                intent.putExtra(SSOActivity.TAG_PROTOCOL, SSOActivity.Protocol.HTTPS.rawValue())
-                intent.putExtra(SSOActivity.TAG_HOST, SSOActivity.Host.STS.rawValue())
-                intent.putExtra(SSOActivity.TAG_PATH, SSOActivity.Path.SIGNIN.rawValue())
-                intent.putExtra(SSOActivity.TAG_SCOPE, "C2Id")
-            }
-
-            activityLauncher?.launch(linkYourWooliesCardIntent) { result ->
+           val cardIntent =  Intent(this, SSOActivity::class.java)
+            cardIntent.putExtra(SSOActivity.TAG_PROTOCOL, SSOActivity.Protocol.HTTPS.rawValue())
+            cardIntent.putExtra(SSOActivity.TAG_HOST, SSOActivity.Host.STS.rawValue())
+            cardIntent.putExtra(SSOActivity.TAG_PATH, SSOActivity.Path.SIGNIN.rawValue())
+            cardIntent.putExtra(SSOActivity.TAG_SCOPE, "C2Id")
+            activityLauncher?.launch(cardIntent, onActivityResult =  { result ->
                 viewModel.setUserAuthenticated(result.resultCode)
-            }
+            })
         }
     }
 
@@ -120,7 +118,7 @@ class ProductIntentImpl @Inject constructor(private val activity: Activity?) : P
                 putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, applyNowState)
                 putExtra(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE, userAccountResponse)
                 deepLinkParams?.let {
-                    putExtra(AccountSignedInPresenterImpl.DEEP_LINKING_PARAMS, Utils.objectToJson(deepLinkParams))
+                    putExtra(AccountSignedInPresenterImpl.DEEP_LINKING_PARAMS, deepLinkParams)
                 }
                 context.startActivityForResult(this, MyAccountsFragment.ACCOUNT_CARD_REQUEST_CODE)
                 context.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay)
