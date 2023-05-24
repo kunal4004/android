@@ -16,6 +16,7 @@
             android:layout_width="@dimen/twenty_four_dp"
             android:layout_height="@dimen/twenty_four_dp"
             android:layout_marginStart="@dimen/twenty_four_dp"
+            android:background="@android:color/transparent"
             android:button="@drawable/address_selector_background"
             app:layout_constraintEnd_toStartOf="@+id/txtShopperChoose"
             app:layout_constraintStart_toStartOf="parent"

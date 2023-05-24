@@ -150,8 +150,6 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
                 }
                 is LoadState.Error -> {
                     hideShimmerView()
-
-                    // getting the error
                     val error = when {
                         it.prepend is LoadState.Error -> it.prepend as LoadState.Error
                         it.append is LoadState.Error -> it.append as LoadState.Error
@@ -248,7 +246,6 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
     }
 
     private fun confirmProductSelection() {
-        /* call inventory api */
         callInventoryApi()
     }
 
@@ -259,19 +256,21 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
             return
         }
 
-
         productSubstitutionViewModel.getInventoryForSubstitution(storeId, productList?.sku!!)
         productSubstitutionViewModel.inventorySubstitution.observe(viewLifecycleOwner) {
 
             it.getContentIfNotHandled()?.let { resource ->
                 when (resource.status) {
                     Status.LOADING -> {
-                        binding.progressBar?.visibility = View.VISIBLE
+                        binding.progressBar.visibility = View.VISIBLE
                     }
                     Status.SUCCESS -> {
                         resource.data?.skuInventory?.let { inventoryList ->
-                            val configQuantity: Int? =
+                            var configQuantity: Int? =
                                 AppConfigSingleton.enhanceSubstitution?.thresholdQuantityForSubstitutionProduct
+
+                            /*todo for testing configQuantity is set @ 5  */
+                            configQuantity = 5
                             val inventoryQuantity: Int? = inventoryList.getOrNull(0)?.quantity
                             if (inventoryQuantity != null && configQuantity != null) {
                                 if (inventoryList.isNullOrEmpty() == true || inventoryQuantity < configQuantity) {
@@ -282,7 +281,6 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
                                     navigateToPdpScreen()
                                 }
                             }
-
                         }
                     }
                     Status.ERROR -> {
@@ -319,7 +317,6 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
                         }
                         Status.SUCCESS -> {
                             binding.progressBar.visibility = View.GONE
-
                             /* if we get form exception need to show error popup*/
                             resource.data?.data?.getOrNull(0)?.formExceptions?.getOrNull(0)?.let {
                                 if (it.message?.isNotEmpty() == true) {

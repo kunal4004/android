@@ -1619,7 +1619,7 @@ interface ApiInterface {
             @Body addSubstitutionRequest: AddSubstitutionRequest
     ): retrofit2.Response<AddSubstitutionResponse>
 
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "environment: www-win-dev7")
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "environment: www-win-dev")
     @POST("wfs/app/recommendations/kibo-substitution-list")
     suspend fun getKiboProductsFromResponse(
         @Header("sessionToken") sessionToken: String,
