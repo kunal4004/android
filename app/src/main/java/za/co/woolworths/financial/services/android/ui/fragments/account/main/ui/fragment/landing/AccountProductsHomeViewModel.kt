@@ -1,21 +1,23 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing
 
+import android.os.Bundle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.gson.Gson
+import com.google.gson.JsonObject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.EligibilityPlan
 import za.co.woolworths.financial.services.android.models.dto.EligibilityPlanResponse
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl.Companion.DEEP_LINKING_PARAMS
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.ViewState
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.mapNetworkCallToViewStateFlow
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.mapNetworkCallToViewStateFlow
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.local.AccountDataClass
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.local.IAccountDataClass
@@ -29,7 +31,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.dom
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.overlay.DisplayInArrearsPopup
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.ProductLandingRouterImpl
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanImpl
-import za.co.woolworths.financial.services.android.util.Utils
 import javax.inject.Inject
 
 @HiltViewModel
@@ -48,6 +49,7 @@ class AccountProductsHomeViewModel @Inject constructor(
     ICollectionRepository by collectionRepository,
     IStoreCardNavigator by navigator {
 
+
     @Inject
     lateinit var treatmentPlan: TreatmentPlanImpl
 
@@ -57,6 +59,7 @@ class AccountProductsHomeViewModel @Inject constructor(
 
     private val _isBottomSheetBehaviorExpanded = MutableSharedFlow<Boolean>()
     val isBottomSheetBehaviorExpanded: SharedFlow<Boolean> = _isBottomSheetBehaviorExpanded
+    var mDeepLinkingObject: JsonObject? = null
 
     fun setIsBottomSheetBehaviorExpanded(isExpanded : Boolean){
         viewModelScope.launch { _isBottomSheetBehaviorExpanded.emit(isExpanded) }
@@ -138,4 +141,16 @@ class AccountProductsHomeViewModel @Inject constructor(
     fun emitViewTreatmentPlanPopupInArrearsFromConfig() {
         viewTreatmentPlan?.getPopupData(eligibilityPlan)
     }
+
+    fun setDeepLinkParams(params: Bundle?){
+        params?.getString(DEEP_LINKING_PARAMS)?.let { param ->
+            mDeepLinkingObject = Gson().fromJson(param, JsonObject::class.java)
+        }
+    }
+
+    fun clearDeepLinkParams(){
+        mDeepLinkingObject = null
+    }
+
+    fun isProductGoodStanding() = product?.productOfferingGoodStanding == true
 }

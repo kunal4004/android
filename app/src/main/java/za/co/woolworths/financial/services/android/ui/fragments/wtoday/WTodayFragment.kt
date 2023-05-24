@@ -1,9 +1,11 @@
 package za.co.woolworths.financial.services.android.ui.fragments.wtoday
 
+import android.Manifest
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -15,7 +17,10 @@ import android.view.View.VISIBLE
 import android.webkit.*
 import android.webkit.WebViewClient.ERROR_CONNECT
 import android.webkit.WebViewClient.ERROR_TIMEOUT
+import androidx.core.content.ContextCompat
 import com.awfs.coordination.databinding.WtodayMainFragmentBinding
+import dagger.hilt.android.AndroidEntryPoint
+import za.co.woolworths.financial.services.android.common.notificationpermission.NotificationPermission
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IWTodayInterface
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
@@ -24,9 +29,14 @@ import za.co.woolworths.financial.services.android.ui.extension.isConnectedToNet
 import za.co.woolworths.financial.services.android.ui.extension.isEmailValid
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment
 import za.co.woolworths.financial.services.android.util.Utils
+import javax.inject.Inject
 
 @Suppress("DEPRECATION")
+@AndroidEntryPoint
 class WTodayFragment : WTodayExtension(), IWTodayInterface {
+
+    @Inject
+    lateinit var notificationPermission: NotificationPermission
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,12 +44,14 @@ class WTodayFragment : WTodayExtension(), IWTodayInterface {
             Utils.updateStatusBarBackground(it)
         }
 
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.configureUI()
         binding.setClient()
+        askNotificationPermission()
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -173,4 +185,29 @@ class WTodayFragment : WTodayExtension(), IWTodayInterface {
     override fun progressBarVisibility(isDisplayed: Boolean) {
         binding.flProgressContainer?.visibility = if (isDisplayed) VISIBLE else GONE
     }
+
+
+    /**
+    Important: in future if any change required
+    like currently WToday tab is default tab
+    if default tab change then this notification Permission
+     should be there.
+     */
+    private fun askNotificationPermission() {
+        // This is only necessary for API level >= 33 (TIRAMISU)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(requireActivity(),
+                    Manifest.permission.POST_NOTIFICATIONS) ==
+                PackageManager.PERMISSION_GRANTED
+            ) {
+             // Do Nothing.... can post notifications.
+            } else if (shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
+                notificationPermission.launchNotificationPermission()
+            } else {
+                // ask for the permission
+                notificationPermission.launchNotificationPermission()
+            }
+        }
+    }
+
 }
