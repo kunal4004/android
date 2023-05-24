@@ -77,7 +77,12 @@ class CartProductAdapter(
         fun onPromoDiscountInfo()
         fun onItemDeleteClick(commerceId: CommerceItem)
         fun onCheckBoxChange(isChecked: Boolean, commerceItem: CommerceItem)
-        fun onSubstituteProductClick(substitutionSelection: String, commerceId: String)
+        fun onSubstituteProductClick(
+            substitutionSelection: String,
+            commerceId: String,
+            productId: String?,
+            catalogRefId: String?
+        )
         fun onCartRefresh()
     }
 
@@ -178,7 +183,9 @@ class CartProductAdapter(
 
                 productHolder.bindSubstitutionInfo(
                     commerceItem.substitutionInfo,
-                    commerceItemInfo?.commerceId
+                    commerceItemInfo?.commerceId,
+                    commerceItemInfo?.productId,
+                    commerceItemInfo?.catalogRefId
                 )
 
                 val productImageUrl =
@@ -662,7 +669,12 @@ class CartProductAdapter(
             substitutionIcon.visibility = VISIBLE
         }
 
-        fun bindSubstitutionInfo(substitutionInfo: SubstitutionInfo?, commerceId: String?) {
+        fun bindSubstitutionInfo(
+            substitutionInfo: SubstitutionInfo?,
+            commerceId: String?,
+            productId: String?,
+            catalogRefId: String?
+        ) {
             if (KotlinUtils.getPreferredDeliveryType() == Delivery.DASH) {
                 tvSubstituteItem.visibility = VISIBLE
                 substitutionIcon.visibility = VISIBLE
@@ -679,14 +691,17 @@ class CartProductAdapter(
                     return@setOnClickListener
                 }
                 val substitutionSelection =
-                    if (substitutionInfo?.substitutionSelection?.isNullOrEmpty() == false) {
-                        substitutionInfo.substitutionSelection
+                    if (!substitutionInfo?.substitutionSelection.isNullOrEmpty()) {
+                        substitutionInfo?.substitutionSelection
+                            ?: SubstitutionChoice.SHOPPER_CHOICE.toString()
                     }
                     else  SubstitutionChoice.SHOPPER_CHOICE.toString()
 
                 onItemClick.onSubstituteProductClick(
                     substitutionSelection,
-                    commerceId
+                    commerceId,
+                    productId,
+                    catalogRefId
                 )
             }
             if (substitutionInfo == null) {

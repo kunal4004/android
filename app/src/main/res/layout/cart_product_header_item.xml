@@ -66,7 +66,7 @@
             android:id="@+id/substitutionViewLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_20sdp"
+            android:layout_marginVertical="@dimen/twenty_dp"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             app:layout_constraintTop_toBottomOf="@+id/divider">
@@ -74,18 +74,17 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="left|center_vertical"
+                android:layout_gravity="end|center_vertical"
                 android:layout_weight="1"
-                android:fontFamily="@font/opensans_regular"
+                style="@style/opensans_semi_bold_12_text_style"
                 android:text="@string/substitution_work_info"
-                android:textColor="@color/black"
-                android:textSize="@dimen/twelve_sp" />
+                android:textColor="@color/black" />
 
             <ImageView
                 android:id="@+id/substitutionInfoIcon"
-                android:layout_width="@dimen/_20sdp"
-                android:layout_height="@dimen/_20sdp"
-                android:layout_gravity="right"
+                android:layout_width="@dimen/twenty_four_dp"
+                android:layout_height="@dimen/twenty_four_dp"
+                android:layout_gravity="end"
                 android:contentDescription="icon"
                 android:src="@drawable/icon_info" />
 
@@ -95,7 +94,7 @@
             android:id="@+id/divider2"
             android:layout_width="wrap_content"
             android:layout_height="1dp"
-            android:layout_marginTop="@dimen/_20sdp"
+            android:layout_marginTop="@dimen/twenty_dp"
             android:background="@color/recent_search_bg"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

@@ -3174,6 +3174,10 @@
         <item name="android:textSize">@dimen/thirteen_sp</item>
     </style>
 
+    <style name="opensans_semi_bold_12_text_style" parent="opensens_semi_bold">
+        <item name="android:textSize">@dimen/twelve_sp</item>
+    </style>
+
     <style name="opensans_semi_bold_13_black_text_style" parent="opensens_semi_bold">
         <item name="android:textSize">@dimen/thirteen_sp</item>
         <item name="android:textColor">@color/black</item>
