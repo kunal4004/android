@@ -90,9 +90,9 @@ fun CommerceItem.toAnalyticItem(): AnalyticProductItem {
         category = null,
         itemBrand = null,
         itemListName = null,
-        itemVariant = null,
+        itemVariant = commerceItemInfo.color,
         quantity = commerceItemInfo.quantity,
-        price = priceInfo.listPrice,
+        price = priceInfo.amount,
         affiliation = FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE,
         index = FirebaseManagerAnalyticsProperties.PropertyValues.INDEX_VALUE.toInt(),
     )
