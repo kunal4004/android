@@ -22,11 +22,13 @@ class AbsaNetworkCall @Inject constructor() : IAbsaNetworkCall {
 
     override fun <T> build(clazz: Class<T>, baseUrl: String): T {
         val httpBuilder = okHttpClientBuilder()
+        // Note that ordering of addConverterFactory is important,
+        // else it may cause encoding issues for encrypted JSON content being sent as body
         return Retrofit.Builder()
             .baseUrl(baseUrl)
+            .addConverterFactory(ScalarsConverterFactory.create())
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-            .addConverterFactory(ScalarsConverterFactory.create())
             .client(httpBuilder.build())
             .build()
             .create(clazz)

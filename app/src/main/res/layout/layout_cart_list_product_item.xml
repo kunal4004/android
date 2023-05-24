@@ -66,13 +66,13 @@
 
         <ProgressBar
             android:id="@+id/pbLoadProduct"
+            style="?android:attr/progressBarStyleLarge"
             android:layout_width="@dimen/twenty_four_dp"
             android:layout_height="@dimen/twenty_four_dp"
             android:layout_centerVertical="true"
             android:layout_marginHorizontal="@dimen/eighteen_dp"
             android:indeterminateTint="@color/black"
             android:visibility="gone"
-            style="?android:attr/progressBarStyleLarge"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -147,16 +147,47 @@
                 app:layout_constraintTop_toTopOf="@id/cartProductImage"
                 tools:text="Slim Fit Pique Golfer" />
 
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
+            <TextView
                 android:id="@+id/tvColorSize"
                 style="@style/style_cart_item_details"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/ten_sp"
+                android:fontFamily="@font/opensans_semi_bold"
                 app:layout_constrainedWidth="true"
                 app:layout_constraintStart_toStartOf="@id/tvTitle"
                 app:layout_constraintTop_toBottomOf="@id/tvTitle"
                 tools:text="NAVY BLUE, SMALL" />
+
+            <ImageView
+                android:id="@+id/substitutionIcon"
+                android:layout_width="@dimen/fifteen_dp"
+                android:layout_height="@dimen/fifteen_dp"
+                android:layout_marginVertical="@dimen/twelve_dp"
+                android:src="@drawable/union_row"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/tvSubstituteItem"
+                app:layout_constraintStart_toStartOf="@id/tvTitle"
+                app:layout_constraintTop_toTopOf="@+id/tvSubstituteItem" />
+
+            <TextView
+                android:layout_marginHorizontal="@dimen/four_dp"
+                android:id="@+id/tvSubstituteItem"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/twelve_dp"
+                android:fontFamily="@font/opensans_regular"
+                android:paddingVertical="@dimen/two_dp"
+                android:text="@string/substitute_default"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textSize="@dimen/twelve_sp"
+                android:visibility="gone"
+                app:layout_constrainedWidth="true"
+                app:layout_constraintStart_toEndOf="@id/substitutionIcon"
+                app:layout_constraintTop_toBottomOf="@id/tvColorSize"
+                app:layout_goneMarginTop="@dimen/four_dp"
+                tools:visibility="visible" />
 
             <TextView
                 android:id="@+id/tvProductAvailability"
@@ -164,7 +195,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="@dimen/twelve_dp"
                 android:background="@drawable/delivery_round_btn_black"
-                android:fontFamily="@font/myriad_pro_semi_bold"
+                android:fontFamily="@font/opensans_semi_bold"
                 android:letterSpacing="0.08"
                 android:paddingHorizontal="@dimen/twelve_dp"
                 android:paddingVertical="@dimen/two_dp"
@@ -174,7 +205,7 @@
                 android:visibility="gone"
                 app:layout_constrainedWidth="true"
                 app:layout_constraintStart_toStartOf="@id/tvColorSize"
-                app:layout_constraintTop_toBottomOf="@id/tvColorSize"
+                app:layout_constraintTop_toBottomOf="@id/tvSubstituteItem"
                 tools:visibility="visible" />
 
             <include
@@ -296,6 +327,8 @@
                         android:id="@+id/promotionalText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="1"
                         android:textColor="@color/color_9D9D9D"
                         android:textSize="@dimen/ten_sp"
                         app:WTextView_font="medium"
@@ -320,13 +353,13 @@
                     android:id="@+id/tvWasPrice"
                     style="@style/style_cart_item_price"
                     android:layout_width="match_parent"
-                    app:layout_constrainedWidth="true"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/futura_semi_bold_ttf"
                     android:gravity="center|start"
-                    app:layout_constraintEnd_toEndOf="parent"
                     android:textColor="@color/was_price_color"
+                    app:layout_constrainedWidth="true"
                     app:layout_constraintBottom_toTopOf="@id/tvPrice"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/fromPriceLabelTextView"
                     tools:text="1300"
                     tools:visibility="visible" />
@@ -338,10 +371,11 @@
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:gravity="center|start"
+                    android:maxLines="1"
                     app:flow_verticalAlign="center"
                     app:layout_constrainedWidth="true"
-                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     tools:text="R12083642873647.45" />
 

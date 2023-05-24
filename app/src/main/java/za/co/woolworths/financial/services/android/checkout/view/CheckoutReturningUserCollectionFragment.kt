@@ -133,8 +133,7 @@ class CheckoutReturningUserCollectionFragment :
         (activity as? CheckoutActivity)?.apply {
             showBackArrowWithTitle(bindString(R.string.checkout))
         }
-        cartItemList =
-            checkNotNull(arguments?.getSerializable(CheckoutAddressManagementBaseFragment.CART_ITEM_LIST) as ArrayList<CommerceItem>?)
+        cartItemList = arguments?.getSerializable(CheckoutAddressManagementBaseFragment.CART_ITEM_LIST) as ArrayList<CommerceItem>?
         setupViewModel()
         initializeCollectingFromView()
         initializeCollectingDetailsView()
@@ -363,11 +362,9 @@ class CheckoutReturningUserCollectionFragment :
 
     fun stopShimmerView() {
         shimmerComponentArray.forEach {
-            if (it.first.isShimmerStarted) {
                 it.first.stopShimmer()
                 it.first.setShimmer(null)
                 it.second.visibility = View.VISIBLE
-            }
         }
 
         binding.layoutCollectionInstructions.txtNeedBags?.visibility = View.VISIBLE

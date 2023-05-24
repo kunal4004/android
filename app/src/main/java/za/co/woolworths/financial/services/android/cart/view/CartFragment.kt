@@ -6,14 +6,19 @@ import android.content.BroadcastReceiver
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
+import android.text.Spannable
 import android.text.TextUtils
 import android.util.Log
+import android.view.MotionEvent
 import android.view.View
+import android.view.View.OnTouchListener
 import android.view.WindowManager
 import android.widget.ScrollView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
+import androidx.core.text.buildSpannedString
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
@@ -39,6 +44,8 @@ import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddress
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.enhancedSubstitution.view.ManageSubstitutionFragment
+import za.co.woolworths.financial.services.android.enhancedSubstitution.view.SearchSubstitutionFragment
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils.Companion.getDelivertyType
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils.Companion.getPlaceId
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils.Companion.getSelectedPlaceId
@@ -52,10 +59,14 @@ import za.co.woolworths.financial.services.android.models.dto.item_limits.Produc
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.CouponClaimCode
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.VoucherDetails
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
-import za.co.woolworths.financial.services.android.models.network.OneAppService.removeCartItem
+import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.models.service.event.CartState
 import za.co.woolworths.financial.services.android.models.service.event.ProductState
+import za.co.woolworths.financial.services.android.recommendations.data.response.request.CartProducts
+import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
+import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationEventHandler
+import za.co.woolworths.financial.services.android.recommendations.presentation.viewmodel.RecommendationViewModel
 import za.co.woolworths.financial.services.android.ui.activities.CartCheckoutActivity
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
@@ -67,11 +78,14 @@ import za.co.woolworths.financial.services.android.ui.fragments.cart.GiftWithPur
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.RemoveProductsFromCartDialogFragment.Companion.newInstance
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.RemoveProductsFromCartDialogFragment.IRemoveProductsFromCartDialog
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants
 import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
+import za.co.woolworths.financial.services.android.ui.views.LockableNestedScrollViewV2
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory.Companion.buildAddToCartSuccessToast
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory.Companion.showItemsLimitToastOnAddToCart
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView.IWalkthroughActionListener
+import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ActionSheetDialogFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_EXPECTATION_FAILED_502
@@ -89,18 +103,12 @@ import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.up
 import za.co.woolworths.financial.services.android.util.QueryBadgeCounter.Companion.instance
 import za.co.woolworths.financial.services.android.util.ToastUtils.ToastInterface
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.logException
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.setCrashlyticsString
 import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.util.wenum.Delivery.Companion.getType
-import za.co.woolworths.financial.services.android.recommendations.data.response.request.CartProducts
-import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
-import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationEventHandler
-import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants
-import za.co.woolworths.financial.services.android.ui.views.WTextView
-import za.co.woolworths.financial.services.android.ui.wfs.common.getIpAddress
-import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 import java.net.ConnectException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
@@ -111,11 +119,9 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     View.OnClickListener, NetworkChangeListener, ToastInterface, IWalkthroughActionListener,
     IRemoveProductsFromCartDialog, RecommendationEventHandler {
 
-    private val viewModel: CartViewModel by viewModels(
-        ownerProducer = { this }
-    )
+    private val viewModel: CartViewModel by viewModels()
+    private val recommendationViewModel: RecommendationViewModel by viewModels()
 
-    private val TAG = this.javaClass.simpleName
     private var mNumberOfListSelected = 0
     private var changeQuantityWasClicked = false
     private var errorMessageWasPopUp = false
@@ -143,6 +149,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     private var cartItemList = ArrayList<CommerceItem>()
     private var isBlackCardHolder : Boolean = false
     private var isOnItemRemoved = false
+    private var isViewCartEventFired = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -202,6 +209,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         )
         initializeLoggedInUserCartUI()
         setPriceInformationVisibility(false)
+        addScrollListeners()
     }
 
     private fun initializeLoggedInUserCartUI() {
@@ -414,7 +422,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         val isEditMode = toggleEditMode()
         binding.btnEditCart.setText(if (isEditMode) R.string.cancel else R.string.edit)
         binding.btnClearCart.visibility = if (isEditMode) View.VISIBLE else View.GONE
-        setPriceInformationVisibility(!isEditMode)
+        setPriceInformationVisibility(!isEditMode, isEditMode)
         setDeliveryLocationEnabled(!isEditMode)
         if (!isEditMode)
             setMinimumCartErrorMessage()
@@ -515,7 +523,8 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                 savedAddressResponse = response,
                 defaultAddress = null,
                 whoISCollecting = "",
-                liquorCompliance = liquorCompliance
+                liquorCompliance = liquorCompliance,
+                cartItemList = viewModel.getCartItemList()
             )
         }
     }
@@ -624,9 +633,20 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             }
     }
 
+    override fun onSubstituteProductClick(
+        substitutionSelection: String,
+        commerceId: String,
+        productId: String?,
+        catalogRefId: String?
+    ) {
+        (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
+            ManageSubstitutionFragment.newInstance(substitutionSelection, commerceId, productId, catalogRefId)
+        )
+    }
+
     override fun onCartRefresh() {
         //refresh the pricing view
-        if(cartProductAdapter?.cartItems?.isNullOrEmpty() == true){
+        if (cartProductAdapter?.cartItems?.isNullOrEmpty() == true) {
             setPriceInformationVisibility(false)
         } else {
             updatePriceInformation()
@@ -683,8 +703,11 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         return isEditMode
     }
 
-    private fun setPriceInformationVisibility(visibility: Boolean){
+    private fun setPriceInformationVisibility(visibility: Boolean, isEditModeChanged : Boolean = false) {
         binding.includedPrice.orderSummeryLayout.visibility = if(visibility) View.VISIBLE else View.GONE
+        if(!visibility && !isEditModeChanged) {
+            setLiquorBannerVisibility(false)
+        }
     }
 
     private fun setPriceValue(textView: WTextView, value: Double) {
@@ -923,18 +946,25 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             ) else onEnterPromoCode()
         }
         priceHolder.promoDiscountInfo.setOnClickListener { onPromoDiscountInfo() }
-        if (liquorCompliance != null && liquorCompliance!!.isLiquorOrder) {
-            priceHolder.liquorComplianceMain.liquorBannerRootConstraintLayout.visibility = View.VISIBLE
-            if (!AppConfigSingleton.liquor?.noLiquorImgUrl.isNullOrEmpty()) ImageManager.setPicture(
-                priceHolder.liquorComplianceMain.imgLiquorBanner,
-                AppConfigSingleton.liquor?.noLiquorImgUrl
-            )
-        } else {
-            priceHolder.liquorComplianceMain.liquorBannerRootConstraintLayout.visibility = View.GONE
-        }
+        updateLiquorBanner()
         if (getPreferredDeliveryType() == Delivery.CNC) {
             priceHolder.deliveryFeeLabel.text = getString(R.string.collection_fee)
         }
+    }
+    private fun updateLiquorBanner() {
+        if (liquorCompliance != null && liquorCompliance!!.isLiquorOrder) {
+            setLiquorBannerVisibility(true)
+            if (!AppConfigSingleton.liquor?.noLiquorImgUrl.isNullOrEmpty()) ImageManager.setPicture(
+                    binding.liquorComplianceMain.imgLiquorBanner,
+                    AppConfigSingleton.liquor?.noLiquorImgUrl
+            )
+        } else {
+            setLiquorBannerVisibility(false)
+        }
+    }
+
+    private fun setLiquorBannerVisibility(visibility : Boolean) {
+        binding.liquorComplianceMain.liquorBannerRootConstraintLayout.visibility = if(visibility) View.VISIBLE else View.GONE
     }
 
     private fun triggerFirebaseEventForCart(appliedVouchersCount: Int) {
@@ -963,6 +993,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                     it
                 )
             }
+        updateLiquorBanner()
         setItemLimitsBanner()
         if ((cartResponse?.cartItems?.size ?: 0) > 0 && cartProductAdapter != null) {
             val emptyCartItemGroups = ArrayList<CartItemGroup>(0)
@@ -1189,13 +1220,21 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             orderSummary?.minimumBasketAmount?.let { minBasketAmount ->
                 binding.txtMinSpendErrorMsg.apply {
                     visibility = View.VISIBLE
-                    text =
-                        String.format(
-                            getString(
-                                R.string.minspend_error_msg_cart,
-                                CurrencyFormatter.formatAmountToRandNoDecimal(minBasketAmount)
-                            )
+                    text = buildSpannedString {
+                        val amount = CurrencyFormatter.formatAmountToRandNoDecimal(minBasketAmount)
+                        val error = String.format(
+                            getString(R.string.minspend_error_msg_cart, amount)
                         )
+                        append(error)
+                        val start = error.indexOf(amount) - 1
+                        val typeface = ResourcesCompat.getFont(context, R.font.opensans_semi_bold)
+                        setSpan(
+                            CustomTypefaceSpan("opensans", typeface),
+                            start,
+                            start.plus(amount.length).plus(1),
+                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                        )
+                    }
                 }
             }
             binding.btnCheckOut.isEnabled = false
@@ -1277,6 +1316,10 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                 }
                 setItemLimitsBanner()
                 instance.queryCartSummaryCount()
+                if (!isViewCartEventFired){
+                    viewCartEvent(viewModel.getCartItemList(), orderSummary!!.total )
+                    isViewCartEventFired = true
+                }
                 showRecommendedProducts()
             }
             HTTP_SESSION_TIMEOUT_440 -> {
@@ -1323,6 +1366,10 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         }
     }
 
+    private fun viewCartEvent(commerceItems: List<CommerceItem>, value: Double) {
+        FirebaseAnalyticsEventHelper.viewCartAnalyticsEvent(commerceItems, value)
+    }
+
     private fun showRecommendedProducts() {
         val bundle = Bundle()
         val cartLinesValue: MutableList<CartProducts> = arrayListOf()
@@ -1338,18 +1385,6 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         )
         bundle.putParcelable(
             BundleKeysConstants.RECOMMENDATIONS_EVENT_DATA_TYPE, Event(eventType = "monetate:context:Cart", null, null, null, null, cartLinesValue
-            )
-        )
-        bundle.putParcelable(
-            BundleKeysConstants.RECOMMENDATIONS_USER_AGENT, Event(
-                eventType = BundleKeysConstants.RECOMMENDATIONS_USER_AGENT,
-                userAgent = System.getProperty("http.agent") ?: ""
-            )
-        )
-        bundle.putParcelable(
-            BundleKeysConstants.RECOMMENDATIONS_IP_ADDRESS,
-            Event(eventType = BundleKeysConstants.RECOMMENDATIONS_IP_ADDRESS,
-                ipAddress = getIpAddress(requireActivity())
             )
         )
 
@@ -1370,7 +1405,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     }
 
     private fun removeItem(commerceItem: CommerceItem) {
-        removeCartItem(commerceItem.commerceItemInfo.commerceId).enqueue(
+        OneAppService().removeCartItem(commerceItem.commerceItemInfo.commerceId).enqueue(
             CompletionHandler(
                 (object : IResponseListener<ShoppingCartResponse> {
                     override fun onSuccess(response: ShoppingCartResponse?) {}
@@ -1442,7 +1477,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
 
                         hideEditCart()
                         //TODO: need to refactor
-                        /* Call<SetDeliveryLocationSuburbResponse> setDeliveryLocationSuburb = OneAppService.INSTANCE.setSuburb(lastDeliveryLocation.storePickup ? lastDeliveryLocation.store.getId() : lastDeliveryLocation.suburb.id);
+                        /* Call<SetDeliveryLocationSuburbResponse> setDeliveryLocationSuburb = OneAppService().INSTANCE.setSuburb(lastDeliveryLocation.storePickup ? lastDeliveryLocation.store.getId() : lastDeliveryLocation.suburb.id);
                         setDeliveryLocationSuburb.enqueue(new CompletionHandler<>(new IResponseListener<SetDeliveryLocationSuburbResponse>() {
                             @Override
                             public void onSuccess(SetDeliveryLocationSuburbResponse setDeliveryLocationSuburbResponse) {
@@ -2373,6 +2408,15 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             enableItemDelete(false)
             viewModel.removeAllCartItem()
         }
+
+        setFragmentResultListener(SearchSubstitutionFragment.SELECTED_SUBSTITUTED_PRODUCT) { _, bundle ->
+            // User Substitute product from search screen and came back to cart
+            bundle.apply {
+                if (bundle.containsKey(SearchSubstitutionFragment.SUBSTITUTION_ITEM_ADDED)) {
+                    loadShoppingCart()
+                }
+            }
+        }
     }
 
     private fun postAnalyticsRemoveFromCart(commerceItems: List<CommerceItem>){
@@ -2391,6 +2435,32 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         }
     }
 
+    private fun addScrollListeners() {
+        binding.nestedScrollView.apply {
+            setOnTouchListener(onTouchListener)
+            setOnScrollStoppedListener(onScrollStoppedListener)
+        }
+    }
+
+    private val onTouchListener = OnTouchListener { _, event ->
+        if (event?.action == MotionEvent.ACTION_UP) {
+            binding.nestedScrollView.startScrollerTask();
+        }
+        false
+    }
+
+    private val onScrollStoppedListener = object: LockableNestedScrollViewV2.OnScrollStoppedListener {
+        override fun onScrollStopped() {
+            if(!isAdded){
+                return
+            }
+            val visible = binding.nestedScrollView.isViewVisible(binding.layoutRecommendationContainer.root)
+            if (visible) {
+                recommendationViewModel.parentPageScrolledToRecommendation()
+            }
+        }
+    }
+
     companion object {
         const val CART_BACK_PRESSED_CODE = 9
         const val PDP_LOCATION_CHANGED_BACK_PRESSED_CODE = 18
@@ -2403,6 +2473,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         private const val TAG_ADDED_TO_LIST_TOAST = "ADDED_TO_LIST"
         private const val TAG_AVAILABLE_VOUCHERS_TOAST = "AVAILABLE_VOUCHERS"
         private const val GIFT_ITEM = "GIFT"
+        private val TAG = CartFragment::class.java.simpleName
 
         // constants for deletion confirmation.
         private const val ON_CONFIRM_REMOVE_WITH_DELETE_PRESSED = "remove_with_delete_pressed"

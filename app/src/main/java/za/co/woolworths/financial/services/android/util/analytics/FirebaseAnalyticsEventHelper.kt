@@ -5,7 +5,9 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.CommerceItem
 import za.co.woolworths.financial.services.android.models.dto.ProductDetails
+import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
+import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.Product
 import za.co.woolworths.financial.services.android.util.analytics.dto.AnalyticProductItem
 import za.co.woolworths.financial.services.android.util.analytics.dto.toAnalyticItem
 import za.co.woolworths.financial.services.android.util.analytics.dto.toBundle
@@ -63,4 +65,117 @@ object FirebaseAnalyticsEventHelper {
         )
     }
 
+    fun viewCartAnalyticsEvent(commerceItems: List<CommerceItem>, value: Double) {
+        val analyticItems = commerceItems.map { it.toAnalyticItem() }
+        val addToCartParams = Bundle()
+        addToCartParams.apply {
+            putString(
+                FirebaseAnalytics.Param.CURRENCY,
+                FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE
+            )
+            putDouble(FirebaseAnalytics.Param.VALUE, value)
+            putParcelableArray(
+                FirebaseAnalytics.Param.ITEMS, analyticItems.map { it.toBundle() }.toTypedArray()
+            )
+
+        }
+        AnalyticsManager.logEvent(
+            FirebaseManagerAnalyticsProperties.VIEW_CART, addToCartParams
+        )
+    }
+
+    fun viewItemList(
+        products: List<ProductList>?, category: String?
+    ) {
+        if (products.isNullOrEmpty()) {
+            return
+        }
+
+        val analyticItems = products.map { it.toAnalyticItem(category = category) }
+        triggerViewItemListEvent(products = analyticItems, category = category)
+    }
+
+    fun viewItemListRecommendations(
+        products: List<Product>?, category: String?
+    ) {
+        if (products.isNullOrEmpty()) {
+            return
+        }
+
+        val analyticItems = products.map { it.toAnalyticItem(category = category) }
+        triggerViewItemListEvent(products = analyticItems, category = category)
+    }
+
+    private fun triggerViewItemListEvent(products: List<AnalyticProductItem>, category: String?) {
+        val analyticsParams = Bundle()
+        analyticsParams.apply {
+            putParcelableArray(
+                FirebaseAnalytics.Param.ITEMS, products.map { it.toBundle() }.toTypedArray()
+            )
+            category?.let {
+                putString(FirebaseAnalytics.Param.ITEM_LIST_NAME, category)
+            }
+        }
+
+        AnalyticsManager.logEvent(
+            FirebaseManagerAnalyticsProperties.VIEW_ITEM_LIST, analyticsParams
+        )
+    }
+
+    fun refund(
+        commerceItems: List<CommerceItem>?,
+        value: Double?,
+        transactionId: String?,
+        coupon: String? = null,
+        shipping: Double? = null
+    ) {
+        if (transactionId.isNullOrEmpty() || commerceItems.isNullOrEmpty() || value == null) {
+            return
+        }
+
+        val analyticItems = commerceItems.map { it.toAnalyticItem() }
+
+        val analyticsParams = Bundle()
+        analyticsParams.apply {
+            putString(
+                FirebaseAnalytics.Param.CURRENCY,
+                FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE
+            )
+            putDouble(FirebaseAnalytics.Param.VALUE, value)
+
+            putParcelableArray(
+                FirebaseAnalytics.Param.ITEMS, analyticItems.map { it.toBundle() }.toTypedArray()
+            )
+
+            putString(
+                FirebaseAnalytics.Param.TRANSACTION_ID, transactionId
+            )
+
+            coupon?.let {
+                putString(
+                    FirebaseAnalytics.Param.COUPON, it
+                )
+            }
+
+            shipping?.let {
+                putDouble(
+                    FirebaseAnalytics.Param.SHIPPING, it
+                )
+            }
+
+            putString(
+                FirebaseManagerAnalyticsProperties.PropertyNames.AFFILIATION,
+                FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE
+            )
+
+            putString(
+                FirebaseManagerAnalyticsProperties.PropertyNames.REFUND_TYPE,
+                FirebaseManagerAnalyticsProperties.PropertyValues.DASH_CANCELLED_ORDER
+            )
+        }
+
+        AnalyticsManager.logEvent(
+            FirebaseManagerAnalyticsProperties.REFUND, analyticsParams
+        )
+    }
 }

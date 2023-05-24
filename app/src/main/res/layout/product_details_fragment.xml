@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/productLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -15,7 +16,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
 
-        <za.co.woolworths.financial.services.android.ui.views.LockableNestedScrollView
+        <za.co.woolworths.financial.services.android.ui.views.LockableNestedScrollViewV2
             android:id="@+id/scrollView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -179,6 +180,23 @@
                     app:layout_constraintStart_toStartOf="@+id/left_guideline"
                     app:layout_constraintTop_toBottomOf="@id/ratingLayout" />
 
+                <WebView
+                    android:id="@+id/payFlexWidget"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clickable="false"
+                    android:duplicateParentState="true"
+                    android:focusableInTouchMode="false"
+                    android:touchscreenBlocksFocus="false"
+                    android:focusable="false"
+                    android:visibility="gone"
+                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/priceLayout"
+                    tools:ignore="WebViewLayout" />
+
+
+
                 <TextView
                     android:id="@+id/onlinePromotionalTextView1"
                     style="@style/futura_medium"
@@ -191,7 +209,7 @@
                     android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="@id/right_guideline"
                     app:layout_constraintStart_toStartOf="@id/left_guideline"
-                    app:layout_constraintTop_toBottomOf="@+id/priceLayout" />
+                    app:layout_constraintTop_toBottomOf="@+id/payFlexWidget" />
 
                 <TextView
                     android:id="@+id/onlinePromotionalTextView2"
@@ -294,7 +312,7 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-        </za.co.woolworths.financial.services.android.ui.views.LockableNestedScrollView>
+        </za.co.woolworths.financial.services.android.ui.views.LockableNestedScrollViewV2>
 
 
         <ProgressBar

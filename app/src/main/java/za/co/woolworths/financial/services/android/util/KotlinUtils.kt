@@ -52,13 +52,13 @@ import org.json.JSONObject
 import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.checkout.service.network.Address
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutReturningUserCollectionFragment.Companion.KEY_COLLECTING_DETAILS
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
 import za.co.woolworths.financial.services.android.geolocation.network.model.Store
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidatePlace
-import za.co.woolworths.financial.services.android.geolocation.view.FBHInfoBottomSheetDialog
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton.accountOptions
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton.liquor
@@ -124,7 +124,7 @@ class KotlinUtils {
 
         var isStoreSelectedForBrowsing: Boolean = false
         var placeId: String? = null
-        var isLocationSame: Boolean? = false
+        var isLocationPlaceIdSame: Boolean? = false
         var isNickNameChanged: Boolean? = false
         var isDeliveryLocationTabCrossClicked: Boolean? = false
         var isCncTabCrossClicked: Boolean? = false
@@ -448,7 +448,8 @@ class KotlinUtils {
             savedAddressResponse: SavedAddressResponse? = null,
             defaultAddress: Address? = null,
             whoISCollecting: String? = null,
-            liquorCompliance: LiquorCompliance? = null
+            liquorCompliance: LiquorCompliance? = null,
+            cartItemList: ArrayList<CommerceItem>? = null
         ) {
 
             activity?.apply {
@@ -470,6 +471,7 @@ class KotlinUtils {
                 mBundle.putSerializable(SAVED_ADDRESS_RESPONSE, savedAddressResponse)
                 mBundle.putSerializable(DEFAULT_ADDRESS, defaultAddress)
                 mBundle.putString(KEY_COLLECTING_DETAILS, whoISCollecting)
+                mBundle.putSerializable(CheckoutAddressManagementBaseFragment.CART_ITEM_LIST, cartItemList)
                 mIntent.putExtra(BUNDLE, mBundle)
                 GEO_REQUEST_CODE = requestCode
                 startActivityForResult(mIntent, requestCode)
@@ -814,7 +816,7 @@ class KotlinUtils {
         }
 
         fun postOneAppEvent(appScreen: String, featureName: String) {
-            request(OneAppService.queryServicePostEvent(featureName, appScreen))
+            request(OneAppService().queryServicePostEvent(featureName, appScreen))
         }
 
         fun parseMoneyValue(

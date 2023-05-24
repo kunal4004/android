@@ -6,10 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
 import kotlinx.coroutines.launch
-import za.co.woolworths.financial.services.android.enhancedSubstitution.model.AddSubstitutionRequest
-import za.co.woolworths.financial.services.android.enhancedSubstitution.model.AddSubstitutionResponse
-import za.co.woolworths.financial.services.android.enhancedSubstitution.model.ProductSubstitution
-import za.co.woolworths.financial.services.android.enhancedSubstitution.repository.ProductSubstitutionRepository
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.*
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.repository.ProductSubstitutionRepository
 import za.co.woolworths.financial.services.android.models.dto.PagingResponse
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse
@@ -17,7 +15,8 @@ import za.co.woolworths.financial.services.android.models.network.Event
 import za.co.woolworths.financial.services.android.models.network.Resource
 
 class ProductSubstitutionViewModel(
-        private val repository: ProductSubstitutionRepository) : ViewModel() {
+        private val repository: ProductSubstitutionRepository
+) : ViewModel() {
 
     private val _productSubstitution = MutableLiveData<Event<Resource<ProductSubstitution>>>()
     val productSubstitution: LiveData<Event<Resource<ProductSubstitution>>>
@@ -31,13 +30,22 @@ class ProductSubstitutionViewModel(
     val addSubstitutionResponse: LiveData<Event<Resource<AddSubstitutionResponse>>>
         get() = _addSubstitutionResponse
 
-     val _pagingResponse = MutableLiveData<PagingResponse>()
+    private val _kiboProductResponse = MutableLiveData<Event<Resource<KiboProductResponse>>>()
+    val kiboProductResponse: LiveData<Event<Resource<KiboProductResponse>>>
+        get() = _kiboProductResponse
+
+    private val _stockInventoryResponse = MutableLiveData<Event<Resource<SkusInventoryForStoreResponse>>>()
+    val stockInventoryResponse: LiveData<Event<Resource<SkusInventoryForStoreResponse>>>
+        get() = _stockInventoryResponse
+
+
+    val _pagingResponse = MutableLiveData<PagingResponse>()
 
 
     fun getProductSubstitution(productId: String?) {
         viewModelScope.launch {
             _productSubstitution.postValue(Event(Resource.loading(null)))
-            val result = repository.getProductSubstitution(productId)
+             val result = repository.getProductSubstitution(productId)
             _productSubstitution.value = Event(result)
         }
     }
@@ -59,6 +67,22 @@ class ProductSubstitutionViewModel(
             _addSubstitutionResponse.postValue(Event(Resource.loading(null)))
             val result = repository.addSubstitution(addSubstitutionRequest)
             _addSubstitutionResponse.value = Event(result)
+        }
+    }
+
+    fun getKiboProducts(kiboProductRequest: GetKiboProductRequest) {
+        viewModelScope.launch {
+            _kiboProductResponse.postValue(Event(Resource.loading(null)))
+            val result = repository.fetchKiboProducts(kiboProductRequest)
+            _kiboProductResponse.value = Event(result)
+        }
+    }
+
+    fun getInventoryForStock(storeId: String, multiSku: String) {
+        viewModelScope.launch {
+            _stockInventoryResponse.postValue(Event(Resource.loading(null)))
+            val result = repository.getInventorySKU(storeId, multiSku)
+            _stockInventoryResponse.value = Event(result)
         }
     }
 

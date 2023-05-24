@@ -9,7 +9,6 @@ import android.location.Location
 import android.os.Bundle
 import android.os.Handler
 import android.os.Parcelable
-import android.text.method.LinkMovementMethod
 import android.view.Gravity
 import android.view.View
 import android.view.View.GONE
@@ -20,12 +19,13 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.core.text.HtmlCompat
+import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -34,6 +34,7 @@ import com.awfs.coordination.databinding.GridLayoutBinding
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.gson.JsonSyntaxException
 import com.skydoves.balloon.balloon
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.chanel.utils.ChanelUtils
 import za.co.woolworths.financial.services.android.chanel.views.ChanelNavigationClickListener
@@ -54,6 +55,8 @@ import za.co.woolworths.financial.services.android.models.dto.brandlandingpage.D
 import za.co.woolworths.financial.services.android.models.dto.brandlandingpage.Navigation
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
+import za.co.woolworths.financial.services.android.recommendations.data.response.request.CartProducts
+import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.DISMISS_POP_WINDOW_CLICKED
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
@@ -68,6 +71,8 @@ import za.co.woolworths.financial.services.android.ui.adapters.holder.RecyclerVi
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants.EVENT_TYPE_CART
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants.EVENT_TYPE_PAGEVIEW
 import za.co.woolworths.financial.services.android.ui.views.*
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ProductListingFindInStoreNoQuantityFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SelectYourQuantityFragment
@@ -79,6 +84,7 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HT
 import za.co.woolworths.financial.services.android.util.AppConstant.Keys.Companion.EXTRA_SEND_DELIVERY_DETAILS_PARAMS
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.saveAnonymousUserLocationDetails
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.logException
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.setCrashlyticsString
@@ -87,7 +93,7 @@ import java.net.ConnectException
 import java.net.UnknownHostException
 import java.util.*
 
-
+@AndroidEntryPoint
 open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBinding::inflate),
     GridNavigator,
     IProductListing, View.OnClickListener, SortOptionsAdapter.OnSortOptionSelected,
@@ -343,7 +349,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
                             val savedPlaceId = KotlinUtils.getDeliveryType()?.address?.placeId
                             KotlinUtils.apply {
                                 this.placeId = confirmLocationRequest.address.placeId
-                                isLocationSame =
+                                isLocationPlaceIdSame =
                                     confirmLocationRequest.address.placeId?.equals(savedPlaceId)
                             }
 
@@ -397,14 +403,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
             )
         }
 
-        val arguments = HashMap<String, String>()
-        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_LIST_NAME] =
-            mSubCategoryName!!
-        Utils.triggerFireBaseEvents(
-            FirebaseManagerAnalyticsProperties.VIEW_ITEM_LIST,
-            arguments,
-            activity
-        )
+        requestInAppReview(FirebaseManagerAnalyticsProperties.VIEW_ITEM_LIST, activity)
 
         if (activity is BottomNavigationActivity
             && (activity as BottomNavigationActivity).currentFragment is ProductListingFragment
@@ -564,6 +563,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
             bindRecyclerViewWithUI(productLists)
 
         } else {
+            viewItemListAnalytics(products = productLists, category = mSubCategoryName)
             this.productView = null
             this.productView = response
             hideFooterView()
@@ -603,6 +603,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
             }
         }
         mProductAdapter?.notifyDataSetChanged()
+    }
+
+    private fun viewItemListAnalytics(products: List<ProductList>, category: String?) {
+        FirebaseAnalyticsEventHelper.viewItemList(products = products, category = category)
     }
 
     private fun onChanelSuccess(response: ProductView) {
@@ -733,7 +737,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
     }
 
     override fun cancelAPIRequest() {
-        OneAppService.cancelRequest(loadProductRequest)
+        OneAppService().cancelRequest(loadProductRequest)
     }
 
     override fun bindRecyclerViewWithUI(productLists: MutableList<ProductList>) {
@@ -814,6 +818,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
                     // Detect scrolling up
                     if (dy > 0)
                         loadData()
+
+                    // No search recommendation
+                    if (lastVisibleItem == 0)
+                        showRecommendedProducts()
                 }
             })
 
@@ -823,6 +831,33 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
             //and therefore we can most likely expect a IndexOutOfBoundsException
             if (visibility == View.INVISIBLE)
                 visibility = VISIBLE
+        }
+    }
+
+    private fun showRecommendedProducts() {
+        val bundle = Bundle()
+        val cartLinesValue: MutableList<CartProducts> = arrayListOf()
+
+        bundle.putParcelable(
+            BundleKeysConstants.RECOMMENDATIONS_EVENT_DATA, Event(eventType = EVENT_TYPE_PAGEVIEW, url = "/searchSortAndFilterV2", pageType = "emptySearch", null, null, null)
+        )
+        bundle.putParcelable(
+            BundleKeysConstants.RECOMMENDATIONS_EVENT_DATA_TYPE, Event(eventType = EVENT_TYPE_CART, null, null, null, null, cartLinesValue
+            )
+        )
+        val navHostFragment =
+            childFragmentManager.findFragmentById(R.id.navHostRecommendation) as NavHostFragment
+        val navController = navHostFragment?.navController
+        val navGraph = navController?.navInflater?.inflate(R.navigation.nav_recommendation_graph)
+
+        navGraph?.startDestination = R.id.recommendationFragment
+        navGraph?.let {
+            navController?.graph = it
+        }
+        navGraph?.let {
+            navController?.setGraph(
+                it, bundleOf("bundle" to bundle)
+            )
         }
     }
 
@@ -1273,8 +1308,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
             mSubCategoryName
         )
         selectItemParams.putString(
-            FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_BRAND,
-            productList.brandText
+            FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_RATING,
+            productList.averageRating
         )
         for (products in 0..(mProductList?.size ?: 0)) {
             val selectItem = Bundle()
@@ -1372,7 +1407,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
         }
 
         showProgressBar()
-        OneAppService.getInventorySkuForStore(
+        OneAppService().getInventorySkuForStore(
             mStoreId, addItemToCart?.catalogRefId
                 ?: "", isUserBrowsing
         ).enqueue(CompletionHandler(object : IResponseListener<SkusInventoryForStoreResponse> {
@@ -1663,7 +1698,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
         showProgressBar()
         val globalState = WoolworthsApplication.getInstance().wGlobalState
         with(globalState) {
-            OneAppService.getLocationsItem(
+            OneAppService().getLocationsItem(
                 mSelectedProductList?.sku
                     ?: "", startRadius.toString(), endRadius.toString()
             ).enqueue(CompletionHandler(object : IResponseListener<LocationResponse> {

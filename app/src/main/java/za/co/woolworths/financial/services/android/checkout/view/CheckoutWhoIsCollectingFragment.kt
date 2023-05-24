@@ -26,6 +26,7 @@ import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.cart.view.CartFragment
+import za.co.woolworths.financial.services.android.models.dto.CommerceItem
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
@@ -206,6 +207,8 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(R.
                 checkoutActivityIntent.putExtra(Constant.NO_LIQUOR_IMAGE_URL,
                     getString((Constant.NO_LIQUOR_IMAGE_URL)))
             }
+            checkoutActivityIntent.putExtra(CART_ITEM_LIST,
+                    bundle.getSerializable(CART_ITEM_LIST) as ArrayList<CommerceItem>?)
         }
         checkoutActivityIntent.putExtra(
             KEY_COLLECTING_DETAILS,

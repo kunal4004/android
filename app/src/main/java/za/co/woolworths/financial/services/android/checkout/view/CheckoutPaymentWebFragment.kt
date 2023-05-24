@@ -27,6 +27,7 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyNames.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyNames.Companion.PAYMENT_STATUS
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyNames.Companion.STATUS
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyNames.Companion.STATUS_URL
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyNames.Companion.TRANSACTION_ID
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyValues.Companion.CURRENCY_VALUE
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils
@@ -73,8 +74,7 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentCheckoutPaymentWebBinding.bind(view)
-        cartItemList =
-            checkNotNull(arguments?.getSerializable(CheckoutAddressManagementBaseFragment.CART_ITEM_LIST) as ArrayList<CommerceItem>?)
+        cartItemList = arguments?.getSerializable(CheckoutAddressManagementBaseFragment.CART_ITEM_LIST) as ArrayList<CommerceItem>?
         initPaymentWebView()
     }
 
@@ -145,8 +145,10 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
         val paymentStatusType = uri.getQueryParameter(KEY_STATUS)
         val transactionAnalytics = uri.getQueryParameter("analytics")
         val paymentArguments = HashMap<String, String>()
-        if (!paymentStatusType.isNullOrEmpty())
+        if (!paymentStatusType.isNullOrEmpty()) {
             paymentArguments[STATUS] = paymentStatusType
+            paymentArguments[STATUS_URL] = currentSuccessURI
+        }
 
         if (!transactionAnalytics.isNullOrEmpty()) {
             val jsonToAnalyticsList = Gson().fromJson<PaymentAnalyticsData?>(
@@ -155,8 +157,8 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
             )
             if (jsonToAnalyticsList != null)
                 paymentArguments[TRANSACTION_ID] = jsonToAnalyticsList?.transaction_id ?: ""
-                paymentArguments[PAYMENT_VALUE] = jsonToAnalyticsList?.value?.toString() ?: "0.0"
-                paymentArguments[PAYMENT_TYPE] = jsonToAnalyticsList?.payment_type ?: ""
+            paymentArguments[PAYMENT_VALUE] = jsonToAnalyticsList?.value?.toString() ?: "0.0"
+            paymentArguments[PAYMENT_TYPE] = jsonToAnalyticsList?.payment_type ?: ""
         }
 
         when (paymentStatusType) {

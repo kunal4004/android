@@ -3,14 +3,11 @@ package za.co.woolworths.financial.services.android.util;
 import static android.Manifest.permission_group.STORAGE;
 import static android.graphics.Color.BLACK;
 import static android.graphics.Color.WHITE;
-import static za.co.woolworths.financial.services.android.models.dao.ApiRequestDao.SYMMETRIC_KEY;
-import static za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY.DELIVERY_OPTION;
-import static za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY.FCM_TOKEN;
-import static za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY.IN_APP_REVIEW;
-import static za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY.OC_CHAT_FCM_TOKEN;
-import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.REMOVE_ALL_BADGE_COUNTER;
-import static za.co.woolworths.financial.services.android.util.RequestInAppReviewKt.requestInAppReview;
-import static za.co.woolworths.financial.services.android.ui.activities.webview.usercase.WebViewHandler.ARG_REDIRECT_BLANK_TARGET_LINK_EXTERNAL;
+import za.co.woolworths.financial.services.android.models.dao.ApiRequestDao;
+import za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
+import za.co.woolworths.financial.services.android.util.RequestInAppReviewKt;
+import za.co.woolworths.financial.services.android.ui.activities.webview.usercase.WebViewHandler;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -443,7 +440,7 @@ public class Utils {
         Intent openInternalWebView = new Intent(context, WInternalWebPageActivity.class);
         openInternalWebView.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         openInternalWebView.putExtra("externalLink", url);
-        openInternalWebView.putExtra(ARG_REDIRECT_BLANK_TARGET_LINK_EXTERNAL, mustRedirectBlankTargetLinkToExternal);
+        openInternalWebView.putExtra(WebViewHandler.ARG_REDIRECT_BLANK_TARGET_LINK_EXTERNAL, mustRedirectBlankTargetLinkToExternal);
         context.startActivity(openInternalWebView);
     }
 
@@ -537,12 +534,12 @@ public class Utils {
         }
 
         AnalyticsManager.Companion.logEvent(eventName, params);
-        requestInAppReview(eventName, activity);
+        RequestInAppReviewKt.requestInAppReview(eventName, activity);
     }
 
     public static void triggerFireBaseEvents(String eventName, Activity activity) {
         AnalyticsManager.Companion.logEvent(eventName, null);
-        requestInAppReview(eventName, activity);
+        RequestInAppReviewKt.requestInAppReview(eventName, activity);
     }
 
     public static void setScreenName(Activity activity, String screenName) {
@@ -1012,7 +1009,7 @@ public class Utils {
     }
 
     public static void clearCacheHistory() {
-        QueryBadgeCounter.getInstance().notifyBadgeCounterUpdate(REMOVE_ALL_BADGE_COUNTER);
+        QueryBadgeCounter.getInstance().notifyBadgeCounterUpdate(BottomNavigationActivity.REMOVE_ALL_BADGE_COUNTER);
         Utils.removeFromDb(SessionDao.KEY.DELIVERY_LOCATION_HISTORY);
         Utils.removeFromDb(SessionDao.KEY.STORES_USER_SEARCH);
         Utils.removeFromDb(SessionDao.KEY.STORES_USER_LAST_LOCATION);
@@ -1150,13 +1147,15 @@ public class Utils {
     }
 
     public static void displayValidationMessageForResult(Activity context, CustomPopUpWindow.MODAL_LAYOUT key, String description, int requestCode) {
-        Intent openMsg = new Intent(context, CustomPopUpWindow.class);
-        Bundle args = new Bundle();
-        args.putSerializable("key", key);
-        args.putString("description", description);
-        openMsg.putExtras(args);
-        context.startActivityForResult(openMsg, requestCode);
-        ((AppCompatActivity) context).overridePendingTransition(0, 0);
+        if(context != null){
+            Intent openMsg = new Intent(context, CustomPopUpWindow.class);
+            Bundle args = new Bundle();
+            args.putSerializable("key", key);
+            args.putString("description", description);
+            openMsg.putExtras(args);
+            context.startActivityForResult(openMsg, requestCode);
+            ((AppCompatActivity) context).overridePendingTransition(0, 0);
+        }
     }
 
     public static void displayValidationMessageForResult(Fragment fragment, Activity activity, CustomPopUpWindow.MODAL_LAYOUT key, String title, String description, String buttonTitle, int requestCode) {
@@ -1468,11 +1467,11 @@ public class Utils {
     }
 
     public static String aes256DecryptBase64EncryptedString(String entry) throws DecryptionFailureException {
-        return new String(SymmetricCipher.Aes256Decrypt(SYMMETRIC_KEY, Base64.decode(entry, Base64.DEFAULT)), StandardCharsets.UTF_8);
+        return new String(SymmetricCipher.Aes256Decrypt(ApiRequestDao.SYMMETRIC_KEY, Base64.decode(entry, Base64.DEFAULT)), StandardCharsets.UTF_8);
     }
 
     public static String aes256EncryptStringAsBase64String(String entry) throws DecryptionFailureException {
-        return Base64.encodeToString(SymmetricCipher.Aes256Encrypt(SYMMETRIC_KEY, entry), Base64.DEFAULT);
+        return Base64.encodeToString(SymmetricCipher.Aes256Encrypt(ApiRequestDao.SYMMETRIC_KEY, entry), Base64.DEFAULT);
     }
 
     public static void updateUserVirtualTempCardState(Boolean state) {
@@ -1569,16 +1568,16 @@ public class Utils {
 
     public static void deliverySelectionModalShown() {
         try {
-            String firstTime = Utils.getSessionDaoValue(DELIVERY_OPTION);
+            String firstTime = Utils.getSessionDaoValue(KEY.DELIVERY_OPTION);
             if (firstTime == null) {
-                Utils.sessionDaoSave(DELIVERY_OPTION, "1");
+                Utils.sessionDaoSave(KEY.DELIVERY_OPTION, "1");
             }
         } catch (NullPointerException ignored) {
         }
     }
 
     public static Boolean isDeliverySelectionModalShown() {
-        String firstTime = Utils.getSessionDaoValue(DELIVERY_OPTION);
+        String firstTime = Utils.getSessionDaoValue(KEY.DELIVERY_OPTION);
         return (firstTime != null);
     }
 
@@ -1601,9 +1600,9 @@ public class Utils {
             if (TextUtils.isEmpty(value)) {
                 return;
             }
-            String firstTime = Utils.getSessionDaoValue(FCM_TOKEN);
+            String firstTime = Utils.getSessionDaoValue(KEY.FCM_TOKEN);
             if (firstTime == null) {
-                Utils.sessionDaoSave(FCM_TOKEN, value);
+                Utils.sessionDaoSave(KEY.FCM_TOKEN, value);
             }
         } catch (Exception ignored) {
             FirebaseManager.Companion.logException(ignored);
@@ -1613,7 +1612,7 @@ public class Utils {
     public static String getToken() {
         String token = "";
         try {
-            token = Utils.getSessionDaoValue(FCM_TOKEN);
+            token = Utils.getSessionDaoValue(KEY.FCM_TOKEN);
         } catch (Exception ignored) {
             return null;
         }
@@ -1626,9 +1625,9 @@ public class Utils {
             if (TextUtils.isEmpty(value)) {
                 return;
             }
-            String firstTime = Utils.getSessionDaoValue(OC_CHAT_FCM_TOKEN);
+            String firstTime = Utils.getSessionDaoValue(KEY.OC_CHAT_FCM_TOKEN);
             if (firstTime == null) {
-                Utils.sessionDaoSave(OC_CHAT_FCM_TOKEN, value);
+                Utils.sessionDaoSave(KEY.OC_CHAT_FCM_TOKEN, value);
             }
         } catch (Exception ignored) {
             FirebaseManager.Companion.logException(ignored);
@@ -1638,7 +1637,7 @@ public class Utils {
     public static String getOCChatFCMToken() {
         String token = "";
         try {
-            token = Utils.getSessionDaoValue(OC_CHAT_FCM_TOKEN);
+            token = Utils.getSessionDaoValue(KEY.OC_CHAT_FCM_TOKEN);
         } catch (Exception ignored) {
             return null;
         }
@@ -1660,11 +1659,11 @@ public class Utils {
 
 
     public static void setInAppReviewRequested() {
-        Utils.sessionDaoSave(IN_APP_REVIEW, "1");
+        Utils.sessionDaoSave(KEY.IN_APP_REVIEW, "1");
     }
 
     public static boolean isInAppReviewRequested() {
-        String firstTime = Utils.getSessionDaoValue(IN_APP_REVIEW);
+        String firstTime = Utils.getSessionDaoValue(KEY.IN_APP_REVIEW);
         return (firstTime != null);
     }
 

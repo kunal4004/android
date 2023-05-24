@@ -2,19 +2,22 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.main.co
 
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.flow.catch
 import retrofit2.Response
 import retrofit2.http.*
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.models.network.AppContextProviderImpl
 import za.co.woolworths.financial.services.android.models.network.NetworkConfig
 import za.co.woolworths.financial.services.android.models.network.RetrofitException
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.Result
+import za.co.woolworths.financial.services.android.ui.wfs.core.NetworkStatusUI
+import za.co.woolworths.financial.services.android.ui.wfs.core.mapNetworkCallToViewStateFlow
+import za.co.woolworths.financial.services.android.ui.wfs.core.mapNetworkState
 import za.co.woolworths.financial.services.android.util.NetworkManager
 import java.io.IOException
 import java.net.ConnectException
 import javax.inject.Inject
 
-open class CoreDataSource @Inject constructor() : NetworkConfig() {
+open class CoreDataSource @Inject constructor() : NetworkConfig(AppContextProviderImpl()) {
 
     /**
      * Sealed class type-restricts the result of IO calls to success and failure. The type
@@ -24,7 +27,7 @@ open class CoreDataSource @Inject constructor() : NetworkConfig() {
      */
 
     sealed class IOTaskResult<out DTO : Any> {
-        data class OnSuccess<out DTO : Any>(val data: DTO) : IOTaskResult<DTO>()
+        data class Success<out DTO : Any>(val data: DTO) : IOTaskResult<DTO>()
         data class OnFailure<out DTO : Any>(val data: DTO) : IOTaskResult<DTO>()
         data class OnFailed(val throwable: Throwable) : IOTaskResult<Nothing>()
         object NoConnectionState : IOTaskResult<Nothing>()
@@ -37,55 +40,51 @@ open class CoreDataSource @Inject constructor() : NetworkConfig() {
      * @param messageInCaseOfError Custom error message to wrap around [IOTaskResult.OnFailed]
      * with a default value provided for flexibility
      * @param networkApiCall lambda representing a suspend function for the Retrofit API call
-     * @return [IOTaskResult.OnSuccess] object of type [T], where [T] is the success object wrapped around
-     * [IOTaskResult.OnSuccess] if network call is executed successfully, or [IOTaskResult.OnFailed]
+     * @return [IOTaskResult.Success] object of type [T], where [T] is the success object wrapped around
+     * [IOTaskResult.Success] if network call is executed successfully, or [IOTaskResult.OnFailed]
      * object wrapping an [Exception] class stating the error
      */
+    suspend fun isNetworkConnected(): Boolean {
+        return NetworkManager.getInstance().isConnectedToNetwork(WoolworthsApplication.getInstance())
+    }
 
-    suspend inline fun <reified T : Any> performSafeNetworkApiCall(
+    suspend inline fun <reified T : Any> executeSafeNetworkApiCall(
         crossinline networkApiCall: NetworkAPIInvoke<T>
     ): Flow<IOTaskResult<T>> {
         return flow {
-           // Emit no connection found
-            if (!NetworkManager.getInstance().isConnectedToNetwork(WoolworthsApplication.getInstance())) {
+            if (!isNetworkConnected()) {
                 emit(IOTaskResult.NoConnectionState)
                 return@flow
             }
 
-            // Execute api
-            with(networkApiCall()) {
-                when (isSuccessful) {
-                    true -> {
-                        body()?.let {
-                            emit(IOTaskResult.OnSuccess(it))
-                        } ?: emit(IOTaskResult.Empty)
-                    }
-                    false -> {
-                        emit(
-                            try {
-                                IOTaskResult.OnFailure(parseJson(errorBody()?.string()) as T)
-                            } catch (e: Exception) {
-                                IOTaskResult.OnFailed(
-                                    IOException(
-                                        "API call failed with error - ${
-                                            errorBody()?.string() ?: "Network error"
-                                        }"
-                                    )
-                                )
-                            }
-                        )
-                    }
+            val response = networkApiCall.invoke()
+            if (response.isSuccessful) {
+                val responseBody = response.body()
+                if (responseBody != null) {
+                    emit(IOTaskResult.Success(responseBody))
+                } else {
+                    emit(IOTaskResult.Empty)
+                }
+            } else {
+                try {
+                    val errorBodyString = response.errorBody()?.string() ?: "Network error"
+                    val parsedErrorBody = parseJson(errorBodyString) as T
+                    emit(IOTaskResult.OnFailure(parsedErrorBody))
+                } catch (e: Exception) {
+                    val error = IOException("API call failed with error - ${response.errorBody()?.string() ?: "Network error"}")
+                    emit(IOTaskResult.OnFailed(error))
                 }
             }
         }.catch { exception ->
-            if (exception is ConnectException){
+            if (exception is ConnectException) {
                 emit(IOTaskResult.NoConnectionState)
-            }else {
-                emit(IOTaskResult.OnFailed(IOException("Exception during network API call: ${exception.message}")))
+            } else {
+                val error = IOException("Exception during network API call: ${exception.message}")
+                emit(IOTaskResult.OnFailed(error))
             }
-            return@catch
         }
     }
+
 
 
     private fun <T> error(
@@ -104,6 +103,13 @@ open class CoreDataSource @Inject constructor() : NetworkConfig() {
             else -> za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.ApiError.ServerErrors
         }
     }
+
+    suspend inline fun <reified T : Any> withNetworkAPI(crossinline invokeApi: NetworkAPIInvoke<T>): Flow<ViewState<T>> =
+        mapNetworkCallToViewStateFlow { executeSafeNetworkApiCall(invokeApi) }
+
+    suspend inline fun <reified T : Any> network(crossinline invokeApi: NetworkAPIInvoke<T>): Flow<NetworkStatusUI<T>> =
+        mapNetworkState { executeSafeNetworkApiCall(invokeApi) }
+
 }
 
 enum class ApiError(val value: String) {

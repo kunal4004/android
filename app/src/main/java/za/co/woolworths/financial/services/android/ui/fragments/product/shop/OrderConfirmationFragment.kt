@@ -16,6 +16,9 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import android.graphics.Typeface
+import android.text.style.AbsoluteSizeSpan
+import android.text.style.RelativeSizeSpan
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.viewModels
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentOrderConfirmationBinding
@@ -39,6 +42,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.shop.com
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
+import za.co.woolworths.financial.services.android.util.CustomTypefaceSpan
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
@@ -70,7 +74,7 @@ class OrderConfirmationFragment :
     }
 
     private fun getOrderDetails() {
-        OneAppService.getSubmittedOrder()
+        OneAppService().getSubmittedOrder()
             .enqueue(CompletionHandler(object : IResponseListener<SubmittedOrderResponse> {
                 override fun onSuccess(response: SubmittedOrderResponse?) {
                     when (response) {
@@ -162,7 +166,7 @@ class OrderConfirmationFragment :
 
     private fun displayVocifNeeded(response: SubmittedOrderResponse) {
         var deliveryType = response.orderSummary?.fulfillmentDetails?.deliveryType
-        VoiceOfCustomerManager.showVocSurveyIfNeeded(
+        VoiceOfCustomerManager().showVocSurveyIfNeeded(
             activity,
             KotlinUtils.vocShoppingHandling(deliveryType)
         )
@@ -665,11 +669,19 @@ class OrderConfirmationFragment :
         if (!splitDateTime.isNullOrEmpty() &&
             splitDateTime.size == 2
         ) {
+            val typeface = ResourcesCompat.getFont(requireContext(), R.font.opensans_semi_bold)
+            val textSize = requireContext().resources.getDimensionPixelSize(R.dimen.twelve_sp)
             wordSpan.setSpan(
-                StyleSpan(BOLD),
+                CustomTypefaceSpan("opensans", typeface),
                 0,
                 splitDateTime[0].length + 1,
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+            wordSpan.setSpan(
+                AbsoluteSizeSpan(textSize),
+                0,
+                splitDateTime[0].length + 1,
+                Spannable.SPAN_INCLUSIVE_INCLUSIVE
             )
         }
         return wordSpan

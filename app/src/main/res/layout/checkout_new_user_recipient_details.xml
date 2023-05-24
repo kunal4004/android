@@ -42,7 +42,9 @@
 
         <TextView
             android:id="@+id/recipientNamePlaceHolder"
-            style="@style/myriad_pro_regular_black"
+            style="@style/open_sans_regular_black"
+            android:layout_width="@dimen/zero_dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/twenty_dp"
             android:contentDescription="@string/cd_ccd_labelrecipientname"
             android:paddingTop="@dimen/two_dp"
@@ -65,7 +67,9 @@
 
         <TextView
             android:id="@+id/recipientNameErrorMsg"
-            style="@style/myriad_pro_regular"
+            style="@style/opensens_regular"
+            android:layout_width="@dimen/zero_dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/fifteen_dp"
             android:lineSpacingMultiplier="1.40"
             android:text="@string/recipient_name_error_msg"
@@ -78,7 +82,9 @@
 
         <TextView
             android:id="@+id/cellphoneNumberPlaceHolder"
-            style="@style/myriad_pro_regular_black"
+            style="@style/open_sans_regular_black"
+            android:layout_width="@dimen/zero_dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/twenty_four_dp"
             android:contentDescription="@string/cd_ccd_labelcellphonenumber"
             android:paddingTop="@dimen/two_dp"
@@ -102,7 +108,9 @@
 
         <TextView
             android:id="@+id/cellphoneNumberErrorMsg"
-            style="@style/myriad_pro_regular"
+            style="@style/opensens_regular"
+            android:layout_width="@dimen/zero_dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/fifteen_dp"
             android:lineSpacingMultiplier="1.40"
             android:text="@string/mobile_number_error_msg"

@@ -7,6 +7,7 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.ui.graphics.Color
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -91,7 +92,7 @@ class MyListsFragment : DepartmentExtensionFragment(R.layout.shopping_list_fragm
         setupToolbar()
         activity?.let {
             val itemDecorator = DividerItemDecoration(it, DividerItemDecoration.VERTICAL)
-            ContextCompat.getDrawable(it, R.drawable.divider)
+            ContextCompat.getDrawable(it, R.drawable.inset_divider_24dp)
                 ?.let { it1 -> itemDecorator.setDrawable(it1) }
             binding.rcvShoppingLists?.addItemDecoration(itemDecorator)
             binding.rcvShoppingLists?.layoutManager =
@@ -115,7 +116,6 @@ class MyListsFragment : DepartmentExtensionFragment(R.layout.shopping_list_fragm
             binding.includeSignOutTemplate.btnGoToProduct?.setOnClickListener(this@MyListsFragment)
             rlCreateAList?.setOnClickListener(this@MyListsFragment)
             binding.incConnectionLayout.btnRetry?.setOnClickListener(this@MyListsFragment)
-            binding.includeSignOutTemplate.rlDeliveryLocationLayout?.setOnClickListener(this@MyListsFragment)
             swipeToRefresh?.setOnRefreshListener { getShoppingList(true) }
         }
     }
@@ -123,7 +123,7 @@ class MyListsFragment : DepartmentExtensionFragment(R.layout.shopping_list_fragm
      fun getShoppingList(isPullToRefresh: Boolean) {
         if (isPullToRefresh) binding.swipeToRefresh.isRefreshing = true else loadShoppingList(true)
         noNetworkConnectionLayout(false)
-        mGetShoppingListRequest = OneAppService.getShoppingLists().apply {
+        mGetShoppingListRequest = OneAppService().getShoppingLists().apply {
             enqueue(CompletionHandler(object : IResponseListener<ShoppingListsResponse> {
                 override fun onSuccess(response: ShoppingListsResponse?) {
                     activity?.let {
@@ -241,7 +241,7 @@ class MyListsFragment : DepartmentExtensionFragment(R.layout.shopping_list_fragm
     override fun onClick(view: View?) {
         when (view?.id) {
 
-            R.id.locationSelectedLayout, R.id.rlDeliveryLocationLayout -> {
+            R.id.locationSelectedLayout -> {
                 locationSelectionClicked()
             }
             R.id.btnGoToProduct -> {
@@ -284,14 +284,17 @@ class MyListsFragment : DepartmentExtensionFragment(R.layout.shopping_list_fragm
         binding.apply {
             rlCreateAList?.visibility = GONE
             includeSignOutTemplate.clSignOutTemplate.visibility = VISIBLE
+            includeSignOutTemplate.clSignOutTemplate.setBackgroundColor(
+                ContextCompat.getColor(requireContext(), R.color.white)
+            )
             Utils.getPreferredDeliveryLocation()?.apply {
                 activity?.let {
                     KotlinUtils.setDeliveryAddressView(
                         it,
                         this.fulfillmentDetails,
-                        includeSignOutTemplate.tvDeliveringEmptyTo,
-                        includeSignOutTemplate.tvDeliveryEmptyLocation,
-                        includeSignOutTemplate.truckIcon
+                        binding.tvDeliveringTo,
+                        binding.tvDeliveryLocation,
+                        binding.deliverLocationIcon
                     )
                 }
             }
@@ -303,13 +306,13 @@ class MyListsFragment : DepartmentExtensionFragment(R.layout.shopping_list_fragm
                 btnGoToProduct.text = getString(R.string.button_no_shopping_lists)
                 btnGoToProduct.tag = 1
                 btnGoToProduct.visibility = VISIBLE
-                rlDeliveryLocationLayout.visibility = VISIBLE
+                locationSelectedLayout.visibility = VISIBLE
             }
         }
     }
 
     private fun hideEmptyOverlay() {
-        binding.includeSignOutTemplate.clSignOutTemplate.visibility = GONE
+        binding.includeSignOutTemplate.root.visibility = GONE
     }
 
     private fun showSignOutView() {
@@ -322,7 +325,7 @@ class MyListsFragment : DepartmentExtensionFragment(R.layout.shopping_list_fragm
                 btnGoToProduct.visibility = VISIBLE
                 btnGoToProduct.tag = 0
                 btnGoToProduct.text = getString(R.string.sign_in)
-                rlDeliveryLocationLayout.visibility = GONE
+                locationSelectedLayout.visibility = GONE
             }
         }
     }
@@ -352,7 +355,7 @@ class MyListsFragment : DepartmentExtensionFragment(R.layout.shopping_list_fragm
     }
 
     private fun deleteShoppingListItem(shoppingList: ShoppingList) {
-        val deleteShoppingList = OneAppService.deleteShoppingList(shoppingList.listId)
+        val deleteShoppingList = OneAppService().deleteShoppingList(shoppingList.listId)
         deleteShoppingList.enqueue(CompletionHandler(object :
             IResponseListener<ShoppingListsResponse> {
             override fun onSuccess(response: ShoppingListsResponse?) {

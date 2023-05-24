@@ -85,17 +85,17 @@
             android:layout_below="@id/cartToolbar"
             android:background="#1a000000" />
 
-        <androidx.core.widget.NestedScrollView
+        <za.co.woolworths.financial.services.android.ui.views.LockableNestedScrollViewV2
             android:id="@+id/nestedScrollView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@id/toolbarSeparator"
+            android:layout_above="@id/rlCheckOut"
             android:fillViewport="true">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:paddingBottom="@dimen/ninety_dp"
                 android:orientation="vertical">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
@@ -123,11 +123,11 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/ten_dp"
-                        android:fontFamily="@font/myriad_pro_regular"
+                        android:fontFamily="@font/opensans_regular"
                         android:gravity="top"
                         android:text="@string/standard_delivery"
                         android:textColor="@color/black"
-                        android:textSize="@dimen/twelve_sp"
+                        android:textSize="@dimen/eleven_sp"
                         app:layout_constraintBottom_toTopOf="@+id/tvDeliverySubtitle"
                         app:layout_constraintStart_toEndOf="@id/imgCartDelivery"
                         app:layout_constraintTop_toTopOf="parent"
@@ -140,13 +140,13 @@
                         android:layout_marginStart="@dimen/ten_dp"
                         android:layout_marginTop="@dimen/two_dp"
                         android:layout_marginEnd="@dimen/sixteen_dp"
-                        android:fontFamily="@font/myriad_pro_semi_bold"
+                        android:fontFamily="@font/opensans_semi_bold"
                         android:lineHeight="@dimen/sixteen_dp"
                         android:ellipsize="end"
                         android:maxLines="1"
                         android:text="@string/cart_default_location"
                         android:textColor="@color/black"
-                        android:textSize="@dimen/fourteen_sp"
+                        android:textSize="@dimen/thirteen_sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/iconLocationRight"
                         app:layout_constraintStart_toEndOf="@id/imgCartDelivery"
@@ -194,6 +194,10 @@
                 <include layout="@layout/no_connection_handler" />
 
                 <include
+                    android:id="@+id/liquorComplianceMain"
+                    layout="@layout/liquor_compliance_banner"/>
+
+                <include
                         android:id="@+id/layoutRecommendationContainer"
                         layout="@layout/recommendation_fragment_container_view"
                         android:layout_width="match_parent"
@@ -205,7 +209,7 @@
                         android:layout_height="wrap_content"
                         layout="@layout/cart_product_basket_prices"/>
             </LinearLayout>
-        </androidx.core.widget.NestedScrollView>
+        </za.co.woolworths.financial.services.android.ui.views.LockableNestedScrollViewV2>
 
         <LinearLayout
             android:id="@+id/rlCheckOut"
@@ -235,14 +239,13 @@
             </RelativeLayout>
 
             <TextView
-                android:id="@+id/txt_min_spend_error_msg"
+                android:id="@+id/txtMinSpendErrorMsg"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/sixteen_dp"
-                android:fontFamily="@font/myriad_pro_semi_bold"
                 android:lineHeight="@dimen/fourteen_sp"
+                style="@style/opensans_regular_12_text_style"
                 android:textColor="@color/red"
-                android:textSize="@dimen/_12sdp"
                 android:visibility="gone"
                 tools:text="A minimum spend of R150 is required to checkout." />
         </LinearLayout>

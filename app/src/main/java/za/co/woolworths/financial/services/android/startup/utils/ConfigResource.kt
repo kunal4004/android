@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.startup.utils
 
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse
 import za.co.woolworths.financial.services.android.models.repository.AppConfigRepository
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
@@ -31,6 +32,8 @@ data class ConfigResource(val responseStatus: ResponseStatus, val data: ConfigRe
         fun persistGlobalConfig(response: ConfigResponse?, startupViewModel: StartupViewModel) {
             response?.configs?.apply {
                 AppConfigRepository().saveAppConfigData(this)
+                // Reset the singleton object in case it was already initialized before the cache was saved/updated
+                AppConfigSingleton.initialiseFromCache()
             }
         }
     }
