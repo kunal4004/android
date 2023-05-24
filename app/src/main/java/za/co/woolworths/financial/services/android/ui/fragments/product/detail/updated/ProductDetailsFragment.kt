@@ -419,7 +419,8 @@ class ProductDetailsFragment :
         val viewItemListParams = Bundle()
         viewItemListParams.putString(FirebaseAnalytics.Param.CURRENCY,
             FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE)
-        for (products in 0..(productDetails.otherSkus?.size ?: 0)) {
+        viewItemListParams.putString(FirebaseManagerAnalyticsProperties.BUSINESS_UNIT,
+            productDetails?.productType)
             val viewItem = Bundle()
             viewItem.putString(FirebaseAnalytics.Param.ITEM_ID, productDetails?.productId)
             viewItem.putString(FirebaseAnalytics.Param.ITEM_NAME, productDetails?.productName)
@@ -431,12 +432,7 @@ class ProductDetailsFragment :
             viewItem.putString(FirebaseAnalytics.Param.ITEM_BRAND, productDetails?.brandText)
             viewItem.putString(FirebaseAnalytics.Param.ITEM_LIST_NAME,
                 productDetails?.categoryName)
-            viewItem.putString(FirebaseAnalytics.Param.ITEM_LIST_NAME,
-                productDetails?.categoryName)
-            viewItem.putString(FirebaseManagerAnalyticsProperties.BUSINESS_UNIT,
-                productDetails?.productType)
             viewItemListParams.putParcelableArray(FirebaseAnalytics.Param.ITEMS, arrayOf(viewItem))
-        }
         AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.VIEW_ITEM_EVENT,
             viewItemListParams)
     }
