@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -35,7 +34,15 @@
 
     <include
         android:id="@+id/layout_manage_substitution"
-        layout="@layout/layout_manage_substitution"/>
+        layout="@layout/layout_manage_substitution"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/sixteen_dp"
+        app:layout_constraintBottom_toTopOf="@+id/viewSeparator"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/errorMessageLayout" />
+
     <LinearLayout
         android:id="@+id/errorMessageLayout"
         android:layout_width="match_parent"
@@ -53,28 +60,18 @@
             android:background="@color/color_F1B1A6"
             android:fontFamily="@font/opensans_regular"
             android:paddingHorizontal="@dimen/_21sdp"
-            android:textColor="@color/black"
             android:paddingVertical="@dimen/_16sdp"
             android:text="@string/substitution_retry_msg"
+            android:textColor="@color/black"
             android:textSize="@dimen/_11sdp" />
     </LinearLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="@dimen/sixteen_dp"
-        app:layout_constraintBottom_toTopOf="@+id/viewSeparator"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/errorMessageLayout" />
-
     <View
-        android:visibility="gone"
         android:id="@+id/viewSeparator"
         android:layout_width="match_parent"
         android:layout_height="@dimen/eight_dp"
         android:background="@color/shimmer_view_background"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/btnConfirm"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -88,7 +85,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="@dimen/twenty_four_dp"
         android:layout_marginBottom="@dimen/sixteen_dp"
-        android:background="@drawable/black_background_with_corner_5"
+        android:background="@drawable/grey_bg_drawable"
         android:fontFamily="@font/futura_semi_bold"
         android:letterSpacing="0.08"
         android:lineSpacingExtra="@dimen/five_sp"
@@ -127,9 +124,9 @@
         android:layout_width="@dimen/fourty_dp"
         android:layout_height="@dimen/fourty_dp"
         android:indeterminate="true"
-        android:visibility="gone"
         android:indeterminateTint="@color/black"
         android:indeterminateTintMode="src_atop"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
