@@ -17,13 +17,12 @@
 
         <TextView
             android:id="@+id/txtOrderSummaryYourCart"
+            style="@style/opensans_regular_13_black"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@color/white"
-            android:fontFamily="@font/myriad_pro_regular"
             android:text="@string/native_checkout_delivery_order_summary_your_cart"
-            android:textColor="@color/color_444444"
-            android:textSize="@dimen/fifteen_sp" />
+            android:textColor="@color/color_666666" />
     </com.facebook.shimmer.ShimmerFrameLayout>
 
     <com.facebook.shimmer.ShimmerFrameLayout
@@ -43,7 +42,7 @@
             android:fontFamily="@font/futura_semi_bold"
             android:text="@string/default_discount_value"
             android:textColor="@color/black"
-            android:textSize="@dimen/fifteen_sp"
+            android:textSize="@dimen/fourteen_sp"
             tools:text="R 72.86" />
     </com.facebook.shimmer.ShimmerFrameLayout>
 
@@ -57,13 +56,12 @@
 
     <TextView
         android:id="@+id/txtOrderSummaryDiscount"
+        style="@style/opensans_regular_13_black"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginVertical="@dimen/fifteen_dp"
-        android:fontFamily="@font/myriad_pro_regular"
         android:text="@string/native_checkout_delivery_order_summary_discounts"
-        android:textColor="@color/color_444444"
-        android:textSize="@dimen/fifteen_sp"
+        android:textColor="@color/color_666666"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/viewHorizontalSeparator1" />
 
@@ -74,7 +72,7 @@
         android:fontFamily="@font/futura_semi_bold"
         android:text="@string/default_discount_value"
         android:textColor="@color/black"
-        android:textSize="@dimen/fifteen_sp"
+        android:textSize="@dimen/fourteen_sp"
         app:layout_constraintBottom_toBottomOf="@id/txtOrderSummaryDiscount"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/txtOrderSummaryDiscount"
@@ -97,13 +95,12 @@
 
     <TextView
         android:id="@+id/txtOrderSummaryCompanyDiscount"
+        style="@style/opensans_regular_13_black"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginVertical="@dimen/fifteen_dp"
-        android:fontFamily="@font/myriad_pro_regular"
         android:text="@string/native_checkout_delivery_order_summary_company_discounts"
-        android:textColor="@color/color_444444"
-        android:textSize="@dimen/fifteen_sp"
+        android:textColor="@color/color_666666"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/viewHorizontalSeparator2" />
 
@@ -114,7 +111,7 @@
         android:fontFamily="@font/futura_semi_bold"
         android:text="@string/default_discount_value"
         android:textColor="@color/black"
-        android:textSize="@dimen/fifteen_sp"
+        android:textSize="@dimen/fourteen_sp"
         app:layout_constraintBottom_toBottomOf="@id/txtOrderSummaryCompanyDiscount"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/txtOrderSummaryCompanyDiscount"
@@ -137,13 +134,12 @@
 
     <TextView
         android:id="@+id/txtOrderSummaryPromoCodeDiscount"
+        style="@style/opensans_regular_13_black"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginVertical="@dimen/fifteen_dp"
-        android:fontFamily="@font/myriad_pro_regular"
         android:text="@string/native_checkout_delivery_order_summary_promo_code"
-        android:textColor="@color/color_444444"
-        android:textSize="@dimen/fifteen_sp"
+        android:textColor="@color/color_666666"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/viewHorizontalSeparator3" />
 
@@ -154,7 +150,7 @@
         android:fontFamily="@font/futura_semi_bold"
         android:text="@string/default_discount_value"
         android:textColor="@color/black"
-        android:textSize="@dimen/fifteen_sp"
+        android:textSize="@dimen/fourteen_sp"
         app:layout_constraintBottom_toBottomOf="@id/txtOrderSummaryPromoCodeDiscount"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/txtOrderSummaryPromoCodeDiscount"
@@ -177,13 +173,12 @@
 
     <TextView
         android:id="@+id/txtOrderSummaryWRewardsVouchers"
+        style="@style/opensans_regular_13_black"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginVertical="@dimen/fifteen_dp"
-        android:fontFamily="@font/myriad_pro_regular"
         android:text="@string/native_checkout_delivery_order_summary_wrewards_vouchers"
-        android:textColor="@color/color_444444"
-        android:textSize="@dimen/fifteen_sp"
+        android:textColor="@color/color_666666"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/viewHorizontalSeparator4" />
 
@@ -194,7 +189,7 @@
         android:fontFamily="@font/futura_semi_bold"
         android:text="@string/default_discount_value"
         android:textColor="@color/black"
-        android:textSize="@dimen/fifteen_sp"
+        android:textSize="@dimen/fourteen_sp"
         app:layout_constraintBottom_toBottomOf="@id/txtOrderSummaryWRewardsVouchers"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/txtOrderSummaryWRewardsVouchers"
@@ -217,13 +212,12 @@
 
     <TextView
         android:id="@+id/txtOrderSummaryTotalDiscount"
+        style="@style/opensans_regular_13_black"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginVertical="@dimen/fifteen_dp"
-        android:fontFamily="@font/myriad_pro_regular"
         android:text="@string/native_checkout_delivery_order_summary_total_discount"
-        android:textColor="@color/color_444444"
-        android:textSize="@dimen/fifteen_sp"
+        android:textColor="@color/color_666666"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/viewHorizontalSeparator5" />
 
@@ -234,7 +228,7 @@
         android:fontFamily="@font/futura_semi_bold"
         android:text="@string/default_discount_value"
         android:textColor="@color/black"
-        android:textSize="@dimen/fifteen_sp"
+        android:textSize="@dimen/fourteen_sp"
         app:layout_constraintBottom_toBottomOf="@id/txtOrderSummaryTotalDiscount"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/txtOrderSummaryTotalDiscount"
@@ -266,13 +260,12 @@
 
         <TextView
             android:id="@+id/txtOrderSummaryDeliveryFee"
+            style="@style/opensans_regular_13_black"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@color/white"
-            android:fontFamily="@font/myriad_pro_regular"
             android:text="@string/native_checkout_delivery_order_summary_fee"
-            android:textColor="@color/color_444444"
-            android:textSize="@dimen/fifteen_sp" />
+            android:textColor="@color/color_666666" />
     </com.facebook.shimmer.ShimmerFrameLayout>
 
     <com.facebook.shimmer.ShimmerFrameLayout
@@ -292,7 +285,7 @@
             android:fontFamily="@font/futura_semi_bold"
             android:text="@string/native_checkout_delivery_order_summary_fee_value"
             android:textColor="@color/black"
-            android:textSize="@dimen/fifteen_sp" />
+            android:textSize="@dimen/fourteen_sp" />
     </com.facebook.shimmer.ShimmerFrameLayout>
 
     <View
@@ -361,10 +354,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/white"
-            android:fontFamily="@font/myriad_pro_regular"
+            style="@style/opensens_regular"
             android:lineHeight="@dimen/twenty_two_dp"
             android:text="@string/native_checkout_delivery_order_summary_note"
             android:textColor="@color/color_666666"
-            android:textSize="@dimen/twelve_sp" />
+            android:textSize="@dimen/eleven_sp" />
     </com.facebook.shimmer.ShimmerFrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
