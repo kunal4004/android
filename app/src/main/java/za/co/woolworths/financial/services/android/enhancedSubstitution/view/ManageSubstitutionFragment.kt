@@ -179,7 +179,7 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
 
     private fun showKiboFailureErrorDialog() {
         binding.layoutManageSubstitution.listSubstitute.apply {
-            groupEmptySubstituteList.visibility = VISIBLE
+            groupEmptySubstituteList.visibility = GONE
             recyclerView.visibility = GONE
         }
         disableConfirmButton()
