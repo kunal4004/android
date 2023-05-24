@@ -146,14 +146,12 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
                             itemList = it.responses.getOrNull(0)?.actions?.getOrNull(0)?.items
                             if(itemList.isNullOrEmpty()) {
                                 binding.layoutManageSubstitution.listSubstitute.apply {
-                                    groupEmptySubstituteList.visibility = View.VISIBLE
-                                    recyclerView.visibility = View.GONE
+                                    recyclerView.visibility = GONE
                                 }
                                 return@observe
                             }
                             binding.layoutManageSubstitution.listSubstitute.apply {
-                                groupEmptySubstituteList.visibility = View.GONE
-                                recyclerView.visibility = View.VISIBLE
+                                recyclerView.visibility = VISIBLE
                             }
                             prepareStockInventoryCallRequest(itemList)
                         }
@@ -162,8 +160,7 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
                         hideShimmerView()
                         /*todo need to show error screen*/
                         binding.layoutManageSubstitution.listSubstitute.apply {
-                            groupEmptySubstituteList.visibility = View.VISIBLE
-                            recyclerView.visibility = View.GONE
+                            recyclerView.visibility = GONE
                         }
                     }
                 }
@@ -250,6 +247,7 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
 
     private fun showEmptyErrorScreen(){
         /*todo implement empty error screen*/
+        binding.layoutManageSubstitution.listSubstitute.groupEmptySubstituteList.visibility = VISIBLE
     }
 
     private fun prepareProductRequest(): GetKiboProductRequest {
