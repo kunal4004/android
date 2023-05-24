@@ -20,7 +20,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:animateLayoutChanges="true"
-                android:background="@color/default_background"
+                android:background="@color/default_background_F3F3F3"
                 android:descendantFocusability="blocksDescendants"
                 android:orientation="vertical">
 
@@ -29,16 +29,15 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/white_bg_pressed"
-                    android:layout_marginVertical="@dimen/ten_dp">
+                    android:layout_marginTop="@dimen/two_dp">
 
                     <ImageView
                         android:id="@+id/deliverLocationIcon"
                         android:layout_width="@dimen/twenty_six_dp"
                         android:layout_height="@dimen/twenty_six_dp"
-                        android:layout_marginStart="@dimen/thirty_three_dp"
-                        android:layout_margin="@dimen/five_dp"
-                        android:layout_marginTop="18dp"
-                        android:layout_marginBottom="18dp"
+                        android:layout_marginStart="@dimen/twenty_four_dp"
+                        android:layout_marginTop="@dimen/eighteen_dp"
+                        android:layout_marginBottom="@dimen/eighteen_dp"
                         android:src="@drawable/ic_delivery_circle"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -49,13 +48,11 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/ten_dp"
-                        android:fontFamily="@font/myriad_pro_regular"
+                        android:fontFamily="@font/opensans_regular"
                         android:gravity="top"
-                        android:lineHeight="@dimen/sixteen_sp"
-
                         android:text="@string/standard_delivery"
                         android:textColor="@color/black"
-                        android:textSize="@dimen/twelve_sp"
+                        android:textSize="@dimen/eleven_sp"
                         app:layout_constraintBottom_toTopOf="@+id/tvDeliveryLocation"
                         app:layout_constraintStart_toEndOf="@id/deliverLocationIcon"
                         app:layout_constraintTop_toTopOf="parent"
@@ -65,13 +62,13 @@
                         android:id="@+id/tvDeliveryLocation"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/myriad_pro_semi_bold"
+                        android:fontFamily="@font/opensans_semi_bold"
                         android:gravity="center"
                         android:layout_marginStart="10dp"
                         android:text="@string/cart_default_location"
                         android:textAlignment="center"
                         android:textColor="@color/black"
-                        android:textSize="@dimen/fourteen_sp"
+                        android:textSize="@dimen/thirteen_sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toEndOf="@id/deliverLocationIcon"
                         app:layout_constraintTop_toBottomOf="@+id/tvDeliveringTo" />
@@ -92,12 +89,20 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
+                <include
+                    android:id="@+id/includeSignOutTemplate"
+                    layout="@layout/my_list_empty_template"
+                    android:visibility="gone"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
                 <RelativeLayout
                     android:visibility="gone"
                     android:id="@+id/rlCreateAList"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/white"
+                    android:layout_marginTop="@dimen/eight_dp"
                     android:gravity="center_vertical"
                     android:paddingTop="@dimen/twenty_six_dp"
                     android:paddingBottom="@dimen/twenty_six_dp">
@@ -121,15 +126,10 @@
 
                 </RelativeLayout>
 
-                <View
-                    style="@style/horizontal_divider_bold_style"
-                    android:layout_marginStart="@dimen/sixteen_dp"
-                    android:layout_marginEnd="@dimen/sixteen_dp" />
-
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@color/default_background">
+                    android:background="@color/white">
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rcvShoppingLists"
@@ -142,8 +142,8 @@
                     <ProgressBar
                         android:id="@+id/loadingBar"
                         style="?android:attr/progressBarStyle"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
+                        android:layout_width="@dimen/twenty_four_dp"
+                        android:layout_height="@dimen/twenty_four_dp"
                         android:layout_centerInParent="true"
                         android:layout_gravity="center_vertical|center_horizontal"
                         android:indeterminateTint="@color/black"
@@ -159,12 +159,6 @@
     <include
         android:id="@+id/incConnectionLayout"
         layout="@layout/no_connection_handler"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-    <include
-        android:id="@+id/includeSignOutTemplate"
-        layout="@layout/sign_out_template"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 </FrameLayout>

@@ -6,10 +6,13 @@ import android.text.SpannableString
 import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.awfs.coordination.R
 import com.awfs.coordination.databinding.OrderListItemBinding
 import za.co.woolworths.financial.services.android.models.dto.cart.OrderItem
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
+import za.co.woolworths.financial.services.android.util.CustomTypefaceSpan
 
 class ItemsOrderListAdapter(var items: ArrayList<OrderItem>) : RecyclerView.Adapter<ItemsOrderListAdapter.ItemsOrderListViewHolder>() {
 
@@ -37,8 +40,9 @@ class ItemsOrderListAdapter(var items: ArrayList<OrderItem>) : RecyclerView.Adap
                         .plus(" X ")
                         .plus(orderItem.commerceItemInfo?.productDisplayName)
                 )
+                val typeface = ResourcesCompat.getFont(itemBinding.root.context, R.font.opensans_semi_bold)
                 itemDescriptionSpan.setSpan(
-                    StyleSpan(Typeface.BOLD),
+                    CustomTypefaceSpan("opensans", typeface),
                     0,
                     orderItem.commerceItemInfo?.quantity.toString().length,
                     Spannable.SPAN_EXCLUSIVE_EXCLUSIVE

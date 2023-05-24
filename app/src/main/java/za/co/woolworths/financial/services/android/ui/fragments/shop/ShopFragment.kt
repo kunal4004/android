@@ -1,12 +1,13 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shop
 
+import android.Manifest
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.content.IntentFilter
-import android.graphics.Typeface
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Handler
+import android.text.Spannable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,8 +18,10 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.constraintlayout.widget.ConstraintSet.*
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.core.text.HtmlCompat
+import androidx.core.text.buildSpannedString
 import androidx.core.view.contains
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
@@ -94,6 +97,7 @@ import za.co.woolworths.financial.services.android.util.analytics.FirebaseManage
 import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.viewmodels.shop.ShopViewModel
+
 
 @AndroidEntryPoint
 class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBinding::inflate),
@@ -253,7 +257,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         super.onViewCreated(view, savedInstanceState)
         activity?.apply {
             permissionUtils = PermissionUtils(this, this@ShopFragment)
-            permissions.add(android.Manifest.permission.CAMERA)
+            permissions.add(Manifest.permission.CAMERA)
         }
 
         binding?.apply {
@@ -406,11 +410,21 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         )
 
         params.orderId?.let { orderId ->
-            inAppNotificationViewBinding?.inappOrderNotificationTitle?.text =
-                requireContext().getString(
+            inAppNotificationViewBinding?.inappOrderNotificationTitle?.text = buildSpannedString {
+                val text = requireContext().getString(
                     R.string.inapp_order_notification_title,
                     orderId
                 )
+                append(text)
+                val index = text.indexOf(orderId)
+                val regularSpan = ResourcesCompat.getFont(requireContext(), R.font.opensans_regular)
+                setSpan(
+                    CustomTypefaceSpan("opensans", regularSpan),
+                    index,
+                    text.length,
+                    Spannable.SPAN_INCLUSIVE_INCLUSIVE
+                )
+            }
         }
         inAppNotificationViewBinding?.inappOrderNotificationSubitle?.text =
             params.orderStatus ?: params.state
@@ -679,6 +693,15 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         )
     }
 
+    fun checkRunTimePermissionForLocation(): Boolean {
+        permissionUtils?.apply {
+            val permissions = ArrayList<String>()
+            permissions.add(Manifest.permission.ACCESS_FINE_LOCATION)
+            return checkAndRequestPermissions(permissions, 3)
+        }
+        return false
+    }
+
     private fun updateTabIconUI(selectedTab: Int) {
         when(selectedTab) {
             STANDARD_TAB.index -> {
@@ -728,9 +751,8 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         shopCustomTabBinding?.tvTitle?.text = tabTitle?.getOrNull(pos)
         shopCustomTabBinding?.foodOnlyText?.visibility = if (pos == 2) View.VISIBLE else View.GONE
         if (tabLayout.getTabAt(pos)?.view?.isSelected == true) {
-            val myRiadFont =
-                Typeface.createFromAsset(requireActivity().assets, "fonts/MyriadPro-Semibold.otf")
-            shopCustomTabBinding?.tvTitle?.typeface = myRiadFont
+            val typeface = ResourcesCompat.getFont(requireContext(), R.font.opensans_semi_bold)
+            shopCustomTabBinding.tvTitle.typeface = typeface
         }
         return shopCustomTabBinding.root
     }
@@ -796,7 +818,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
     }
 
     override fun permissionGranted(requestCode: Int) {
-        navigateToBarcode()
+        if (requestCode == 1) navigateToBarcode()
     }
 
     override fun onRequestPermissionsResult(
@@ -1397,7 +1419,6 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                                 ),
                             HtmlCompat.FROM_HTML_MODE_COMPACT
                         )
-
                 }
             }
         }
