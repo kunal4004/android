@@ -1,0 +1,17 @@
+{
+  "response": {
+    "code": "-1",
+    "desc": "Success"
+  },
+  "data": [
+    {
+      "substitutionInfo": {
+        "displayName": "Free Range Jumbo Eggs 6 pk",
+        "id": "20068905"
+      },
+      "links": [],
+      "substitutionSelection": "USER_CHOICE"
+    }
+  ],
+  "httpCode": 200
+}

@@ -8,17 +8,16 @@ import androidx.lifecycle.Observer
 /**
  * Created by Kunal Uttarwar on 23/11/21.
  */
-class OneTimeObserver<T>(private val handler: (T) -> Unit) : Observer<T>, LifecycleOwner {
-    private val lifecycle = LifecycleRegistry(this)
+class OneTimeObserver<T>(private val handler: (T) -> Unit, override val lifecycle: Lifecycle) : Observer<T>, LifecycleOwner {
+    private val lifecycleRegistry = LifecycleRegistry(this)
 
     init {
-        lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
+        lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
     }
 
-    override fun getLifecycle(): Lifecycle = lifecycle
 
     override fun onChanged(t: T) {
         handler(t)
-        lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+        lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     }
 }

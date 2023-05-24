@@ -89,6 +89,7 @@ object AppConfigSingleton {
     var authenticVersionStamp: String? = ""
     var lowStock: ConfigLowStock? = null
     var tooltipSettings: TooltipSettings? = null
+    var enhanceSubstitution: EnhanceSubstitution? = null
     var ratingsAndReviews : RatingsAndReviews? = null
     @JvmStatic
     var glassBox : GlassBox? = null
@@ -239,6 +240,7 @@ object AppConfigSingleton {
             }
 
             this.tooltipSettings = appConfig.toolTipSettings
+            this.enhanceSubstitution = appConfig.enhanceSubstitution
 
             appConfig.ratingsAndReviews?.apply {
                 minimumSupportedAppBuildNumber.let { isEnabled = Utils.isFeatureEnabled(it) }
