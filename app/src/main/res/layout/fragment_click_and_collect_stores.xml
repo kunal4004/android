@@ -60,11 +60,13 @@
 
             <androidx.appcompat.widget.AppCompatEditText
                 android:id="@+id/etEnterNewAddress"
-                style="@style/myriad_pro_regular_black_15_text_style"
+                style="@style/opensans_regular_12_text_style"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/sixteen_dp"
-                android:layout_marginTop="@dimen/twenty_one_dp"
+                android:layout_marginTop="@dimen/sixteen_dp"
+                android:textColorHint="@color/color_9D9D9D"
+                android:textColor="@color/color_222222"
                 android:layout_marginEnd="@dimen/sixteen_dp"
                 android:background="@drawable/bg_search_corner_4"
                 android:drawableStart="@drawable/ic_search"
@@ -81,7 +83,7 @@
 
             <TextView
                 android:id="@+id/tvAddress"
-                style="@style/myriad_pro_semi_bold_black_15_text_style"
+                style="@style/opensans_semi_bold_13_text_style"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/twenty_four_dp"
@@ -98,7 +100,7 @@
 
             <TextView
                 android:id="@+id/tvStoresNearMe"
-                style="@style/myriad_pro_regular_black_14_text_style"
+                style="@style/opensans_regular_12_text_style"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/twenty_four_dp"
@@ -119,11 +121,11 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/twenty_four_dp"
-                android:layout_marginEnd="24dp"
+                android:layout_marginEnd="@dimen/twenty_four_dp"
                 android:background="@drawable/bg_change_button"
                 android:fontFamily="@font/futura_semi_bold"
                 android:gravity="center"
-                android:letterSpacing="0.1"
+                android:letterSpacing="@integer/point_one"
                 android:minHeight="@dimen/twenty_four_dp"
                 android:padding="@dimen/five_dp"
                 android:text="@string/change"
@@ -138,8 +140,6 @@
                 android:id="@+id/rvStoreList"
                 android:layout_width="@dimen/zero_dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/twelve_dp"
-                android:layout_marginEnd="@dimen/twelve_dp"
                 android:layout_marginBottom="@dimen/eight_dp"
                 android:background="@color/white"
                 android:clipToPadding="true"

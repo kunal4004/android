@@ -144,12 +144,27 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
                     Status.SUCCESS -> {
                         resource.data?.data?.let {
                             itemList = it.responses.getOrNull(0)?.actions?.getOrNull(0)?.items
+                            if(itemList.isNullOrEmpty()) {
+                                binding.layoutManageSubstitution.listSubstitute.apply {
+                                    groupEmptySubstituteList.visibility = View.VISIBLE
+                                    recyclerView.visibility = View.GONE
+                                }
+                                return@observe
+                            }
+                            binding.layoutManageSubstitution.listSubstitute.apply {
+                                groupEmptySubstituteList.visibility = View.GONE
+                                recyclerView.visibility = View.VISIBLE
+                            }
                             prepareStockInventoryCallRequest(itemList)
                         }
                     }
                     Status.ERROR -> {
                         hideShimmerView()
                         /*todo need to show error screen*/
+                        binding.layoutManageSubstitution.listSubstitute.apply {
+                            groupEmptySubstituteList.visibility = View.VISIBLE
+                            recyclerView.visibility = View.GONE
+                        }
                     }
                 }
             }

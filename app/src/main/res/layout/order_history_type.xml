@@ -41,7 +41,6 @@
             android:orientation="horizontal"
             app:layout_constraintGuide_begin="@dimen/twenty_four_dp" />
 
-
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/orderNumber"
             android:layout_width="wrap_content"
@@ -49,7 +48,7 @@
             android:fontFamily="@font/futura_semi_bold"
             android:text="@string/order_id"
             android:textColor="@color/black"
-            android:textSize="@dimen/_16sdp"
+            android:textSize="@dimen/eighteen_sp"
             app:layout_constraintStart_toStartOf="@id/guidelineStart"
             app:layout_constraintTop_toTopOf="@id/guidelineTop" />
 
@@ -84,82 +83,82 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/orderTypeTitle"
+            style="@style/opensans_regular_text_style_14sp_black"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_14sdp"
-            android:fontFamily="@font/myriad_pro_regular"
             android:text="@string/order_type"
+            android:textSize="@dimen/eleven_sp"
             android:visibility="gone"
-            android:textColor="@color/color_666666"
-            android:textSize="@dimen/_11ssp"
             app:layout_constraintStart_toStartOf="@id/guidelineStart"
             app:layout_constraintTop_toBottomOf="@+id/orderNumberDivider" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/orderType"
-            style="@style/myriad_pro_semi_bold"
+            style="@style/opensans_semi_bold_13_black_text_style"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_14sdp"
             android:ellipsize="end"
             android:gravity="end"
             android:maxLines="1"
+            android:textSize="@dimen/eleven_sp"
             android:visibility="gone"
-            android:textColor="@color/black"
-            android:textSize="@dimen/_11ssp"
             app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
             app:layout_constraintStart_toEndOf="@+id/orderTypeTitle"
             app:layout_constraintTop_toBottomOf="@+id/orderNumberDivider" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/numberItemTitle"
+            style="@style/opensans_regular_text_style_14sp_black"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_14sdp"
-            android:fontFamily="@font/myriad_pro_regular"
             android:text="@string/number_of_items"
+            android:textSize="@dimen/eleven_sp"
             android:visibility="gone"
-            android:textColor="@color/color_666666"
-            android:textSize="@dimen/_11ssp"
             app:layout_constraintStart_toStartOf="@id/guidelineStart"
             app:layout_constraintTop_toBottomOf="@+id/orderTypeTitle" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/numberItem"
-            style="@style/myriad_pro_semi_bold"
+            style="@style/opensans_semi_bold_13_black_text_style"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_12sdp"
             android:layout_marginTop="@dimen/_14sdp"
             android:ellipsize="end"
             android:gravity="end"
             android:maxLines="1"
+            android:textSize="@dimen/eleven_sp"
             android:visibility="gone"
-            android:textColor="@color/black"
-            android:textSize="@dimen/_11ssp"
             app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
             app:layout_constraintStart_toEndOf="@+id/numberItemTitle"
             app:layout_constraintTop_toBottomOf="@+id/orderTypeTitle" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/purchaseDateTitle"
+            style="@style/opensans_regular_text_style_14sp_black"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_14sdp"
-            android:fontFamily="@font/myriad_pro_regular"
             android:text="@string/purchase_date"
-            android:textColor="@color/color_666666"
-            android:textSize="@dimen/_11ssp"
+            android:textSize="@dimen/eleven_sp"
             app:layout_constraintStart_toStartOf="@id/guidelineStart"
             app:layout_constraintTop_toBottomOf="@+id/numberItemTitle" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/purchaseDate"
-            style="@style/myriad_pro_semi_bold"
+            style="@style/opensans_semi_bold_13_black_text_style"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_12sdp"
             android:layout_marginTop="@dimen/_14sdp"
             android:ellipsize="end"
             android:gravity="end"
             android:maxLines="1"
             android:text=""
-            android:textColor="@color/black"
-            android:textSize="@dimen/_11ssp"
+            android:textSize="@dimen/eleven_sp"
             app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
             app:layout_constraintStart_toEndOf="@+id/purchaseDateTitle"
             app:layout_constraintTop_toBottomOf="@+id/numberItem" />
@@ -167,55 +166,54 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/deliveryAddressTitle"
+            style="@style/opensans_regular_text_style_14sp_black"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_14sdp"
-            android:fontFamily="@font/myriad_pro_regular"
             android:text="@string/delivery_address"
+            android:textSize="@dimen/eleven_sp"
             android:visibility="gone"
-            android:textColor="@color/color_666666"
-            android:textSize="@dimen/_11ssp"
             app:layout_constraintStart_toStartOf="@id/guidelineStart"
             app:layout_constraintTop_toBottomOf="@+id/purchaseDateTitle" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/deliveryAddress"
-            style="@style/myriad_pro_semi_bold"
+            style="@style/opensans_semi_bold_13_black_text_style"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_12sdp"
             android:layout_marginTop="@dimen/_14sdp"
             android:ellipsize="end"
             android:gravity="end"
             android:maxLines="1"
+            android:textSize="@dimen/eleven_sp"
             android:visibility="gone"
-            android:textColor="@color/black"
-            android:textSize="@dimen/_11ssp"
             app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
             app:layout_constraintStart_toEndOf="@+id/purchaseDateTitle"
             app:layout_constraintTop_toBottomOf="@+id/purchaseDateTitle" />
 
-
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/timeslotTitle"
+            style="@style/opensans_regular_text_style_14sp_black"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_14sdp"
-            android:fontFamily="@font/myriad_pro_regular"
             android:text="@string/timeslot"
-            android:textColor="@color/color_666666"
-            android:textSize="@dimen/_11ssp"
+            android:textSize="@dimen/eleven_sp"
             app:layout_constraintStart_toStartOf="@id/guidelineStart"
             app:layout_constraintTop_toBottomOf="@+id/deliveryAddressTitle" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/timeslot"
-            style="@style/myriad_pro_semi_bold"
+            style="@style/opensans_semi_bold_13_black_text_style"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_12sdp"
             android:layout_marginTop="@dimen/_14sdp"
             android:ellipsize="end"
             android:gravity="end"
             android:maxLines="1"
-            android:textColor="@color/black"
-            android:textSize="@dimen/_11ssp"
+            android:textSize="@dimen/eleven_sp"
             app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
             app:layout_constraintStart_toEndOf="@+id/timeslotTitle"
             app:layout_constraintTop_toBottomOf="@+id/deliveryAddressTitle" />

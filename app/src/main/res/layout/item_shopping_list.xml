@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.daimajia.swipe.SwipeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/swipe"
     android:layout_width="match_parent"
-    android:layout_height="70dp">
+    android:layout_height="@dimen/seventy_dp">
 
     <RelativeLayout
         android:layout_width="160dp"
@@ -35,21 +36,21 @@
         android:layout_height="match_parent"
         android:background="@color/white">
 
-        <za.co.woolworths.financial.services.android.ui.views.WTextView
+        <TextView
             android:id="@+id/tvListName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_marginStart="@dimen/twenty_four_dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginEnd="@dimen/eight_dp"
             android:ellipsize="end"
             android:gravity="center|start"
             android:lineSpacingMultiplier="1.67"
             android:singleLine="true"
             android:text="@string/placeholder"
             android:textColor="@color/black"
-            android:textSize="@dimen/fifteen_sp"
-            app:WTextView_font="myriadpro_regular"
+            android:textSize="@dimen/fourteen_sp"
+            android:fontFamily="@font/opensans_regular"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/tvListCount"
             app:layout_constraintStart_toStartOf="parent"
@@ -65,15 +66,15 @@
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_caret_black" />
 
-        <za.co.woolworths.financial.services.android.ui.views.WTextView
+        <TextView
             android:id="@+id/tvListCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:text="item"
-            android:textColor="#999999"
-            android:textSize="@dimen/fourteen_sp"
-            app:WTextView_font="myriadpro_regular"
+            android:layout_marginEnd="@dimen/thirty_eight_dp"
+            tools:text="item"
+            android:textColor="@color/color_9D9D9D"
+            android:textSize="@dimen/thirteen_sp"
+            android:fontFamily="@font/opensans_regular"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/imListNextIcon"
             app:layout_constraintTop_toTopOf="parent" />

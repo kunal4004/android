@@ -14,5 +14,5 @@ class CreditCardDataSource @Inject constructor(private val creditCardService: Wf
     CoreDataSource(), ICreditCardDataSource {
 
     override suspend fun queryServiceCreditCardToken(): Flow<IOTaskResult<CreditCardTokenResponse>> =
-        performSafeNetworkApiCall { creditCardService.getCreditCardToken() }
+        executeSafeNetworkApiCall { creditCardService.getCreditCardToken() }
 }
