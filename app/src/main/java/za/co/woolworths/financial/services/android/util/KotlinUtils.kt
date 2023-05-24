@@ -1625,6 +1625,14 @@ fun RecyclerView.runWhenReady(action: () -> Unit) {
 }
 
 
+fun Fragment.isFragmentAttached():Boolean {
+    if (isAdded && context != null) {
+        return  true
+    }
+    return false
+}
+
+
 
 
 
