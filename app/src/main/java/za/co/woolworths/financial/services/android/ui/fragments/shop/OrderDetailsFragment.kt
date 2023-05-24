@@ -111,7 +111,7 @@ class OrderDetailsFragment : BaseFragmentBinding<OrderDetailsFragmentBinding>(Or
             }
             tvSelectAll.setOnClickListener {
                 (requireActivity() as? BottomNavigationActivity)?.pushFragment(
-                    HelpAndSupportFragment.newInstance(orderDetailsResponse)
+                    HelpAndSupportFragment.newInstance(orderDetailsResponse, orderItemList)
                 )
             }
             argOrderId?.let { orderId -> requestOrderDetails(orderId) }
@@ -255,7 +255,6 @@ class OrderDetailsFragment : BaseFragmentBinding<OrderDetailsFragmentBinding>(Or
                                     orderItemLength
                                 )
                             )
-                        orderItemList = ArrayList<CommerceItem>()
                         orderItemList.add(commerceItem)
                     } catch (e: Exception) {
                         when (e) {

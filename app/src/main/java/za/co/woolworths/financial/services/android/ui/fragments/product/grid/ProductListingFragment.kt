@@ -9,7 +9,6 @@ import android.location.Location
 import android.os.Bundle
 import android.os.Handler
 import android.os.Parcelable
-import android.text.method.LinkMovementMethod
 import android.view.Gravity
 import android.view.View
 import android.view.View.GONE
@@ -21,7 +20,6 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
-import androidx.core.text.HtmlCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.activityViewModels
@@ -36,6 +34,7 @@ import com.awfs.coordination.databinding.GridLayoutBinding
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.gson.JsonSyntaxException
 import com.skydoves.balloon.balloon
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.chanel.utils.ChanelUtils
 import za.co.woolworths.financial.services.android.chanel.views.ChanelNavigationClickListener
@@ -85,6 +84,7 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HT
 import za.co.woolworths.financial.services.android.util.AppConstant.Keys.Companion.EXTRA_SEND_DELIVERY_DETAILS_PARAMS
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.saveAnonymousUserLocationDetails
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.logException
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.setCrashlyticsString
@@ -93,7 +93,7 @@ import java.net.ConnectException
 import java.net.UnknownHostException
 import java.util.*
 
-
+@AndroidEntryPoint
 open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBinding::inflate),
     GridNavigator,
     IProductListing, View.OnClickListener, SortOptionsAdapter.OnSortOptionSelected,
@@ -349,7 +349,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
                             val savedPlaceId = KotlinUtils.getDeliveryType()?.address?.placeId
                             KotlinUtils.apply {
                                 this.placeId = confirmLocationRequest.address.placeId
-                                isLocationSame =
+                                isLocationPlaceIdSame =
                                     confirmLocationRequest.address.placeId?.equals(savedPlaceId)
                             }
 
@@ -403,14 +403,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
             )
         }
 
-        val arguments = HashMap<String, String>()
-        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_LIST_NAME] =
-            mSubCategoryName!!
-        Utils.triggerFireBaseEvents(
-            FirebaseManagerAnalyticsProperties.VIEW_ITEM_LIST,
-            arguments,
-            activity
-        )
+        requestInAppReview(FirebaseManagerAnalyticsProperties.VIEW_ITEM_LIST, activity)
 
         if (activity is BottomNavigationActivity
             && (activity as BottomNavigationActivity).currentFragment is ProductListingFragment
@@ -570,6 +563,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
             bindRecyclerViewWithUI(productLists)
 
         } else {
+            viewItemListAnalytics(products = productLists, category = mSubCategoryName)
             this.productView = null
             this.productView = response
             hideFooterView()
@@ -609,6 +603,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
             }
         }
         mProductAdapter?.notifyDataSetChanged()
+    }
+
+    private fun viewItemListAnalytics(products: List<ProductList>, category: String?) {
+        FirebaseAnalyticsEventHelper.viewItemList(products = products, category = category)
     }
 
     private fun onChanelSuccess(response: ProductView) {
@@ -1310,8 +1308,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
             mSubCategoryName
         )
         selectItemParams.putString(
-            FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_BRAND,
-            productList.brandText
+            FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_RATING,
+            productList.averageRating
         )
         for (products in 0..(mProductList?.size ?: 0)) {
             val selectItem = Bundle()
