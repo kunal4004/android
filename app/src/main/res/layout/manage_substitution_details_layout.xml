@@ -35,7 +35,7 @@
 
     <include
         android:id="@+id/layout_manage_substitution"
-        layout="@layout/layout_manage_substitution"
+        layout="@layout/layout_manage_substitution"/>
     <LinearLayout
         android:id="@+id/errorMessageLayout"
         android:layout_width="match_parent"
