@@ -15,18 +15,20 @@ import za.co.woolworths.financial.services.android.models.network.Event
 import za.co.woolworths.financial.services.android.models.network.Resource
 
 class ProductSubstitutionViewModel(
-        private val repository: ProductSubstitutionRepository
+    private val repository: ProductSubstitutionRepository,
 ) : ViewModel() {
 
     private val _productSubstitution = MutableLiveData<Event<Resource<ProductSubstitution>>>()
     val productSubstitution: LiveData<Event<Resource<ProductSubstitution>>>
         get() = _productSubstitution
 
-    private val _inventorySubstitution = MutableLiveData<Event<Resource<SkusInventoryForStoreResponse>>>()
+    private val _inventorySubstitution =
+        MutableLiveData<Event<Resource<SkusInventoryForStoreResponse>>>()
     val inventorySubstitution: LiveData<Event<Resource<SkusInventoryForStoreResponse>>>
         get() = _inventorySubstitution
 
-    private val _addSubstitutionResponse = MutableLiveData<Event<Resource<AddSubstitutionResponse>>>()
+    private val _addSubstitutionResponse =
+        MutableLiveData<Event<Resource<AddSubstitutionResponse>>>()
     val addSubstitutionResponse: LiveData<Event<Resource<AddSubstitutionResponse>>>
         get() = _addSubstitutionResponse
 
@@ -34,7 +36,8 @@ class ProductSubstitutionViewModel(
     val kiboProductResponse: LiveData<Event<Resource<KiboProductResponse>>>
         get() = _kiboProductResponse
 
-    private val _stockInventoryResponse = MutableLiveData<Event<Resource<SkusInventoryForStoreResponse>>>()
+    private val _stockInventoryResponse =
+        MutableLiveData<Event<Resource<SkusInventoryForStoreResponse>>>()
     val stockInventoryResponse: LiveData<Event<Resource<SkusInventoryForStoreResponse>>>
         get() = _stockInventoryResponse
 
@@ -45,12 +48,12 @@ class ProductSubstitutionViewModel(
     fun getProductSubstitution(productId: String?) {
         viewModelScope.launch {
             _productSubstitution.postValue(Event(Resource.loading(null)))
-             val result = repository.getProductSubstitution(productId)
+            val result = repository.getProductSubstitution(productId)
             _productSubstitution.value = Event(result)
         }
     }
 
-    fun getInventoryForSubstitution(storeId: String, multisku:String) {
+    fun getInventoryForSubstitution(storeId: String, multisku: String) {
         viewModelScope.launch {
             _inventorySubstitution.postValue(Event(Resource.loading(null)))
             val result = repository.getInventoryForSubstitution(storeId, multisku)
@@ -59,7 +62,9 @@ class ProductSubstitutionViewModel(
     }
 
     fun getAllSearchedSubstitutions(requestParams: ProductsRequestParams) =
-            repository.getAllSearchedSubstitutions(requestParams, _pagingResponse).flow.cachedIn(viewModelScope)
+        repository.getAllSearchedSubstitutions(requestParams, _pagingResponse).flow.cachedIn(
+            viewModelScope
+        )
 
 
     fun addSubstitutionForProduct(addSubstitutionRequest: AddSubstitutionRequest) {
