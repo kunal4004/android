@@ -28,7 +28,7 @@ class PayFlexBottomSheetDialog : WBottomSheetDialogFragment() {
         val bottomSheetBehavior = bottomSheetDialog.behavior
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
         bottomSheetBehavior.isDraggable = false
-        var maxHeight: Int = (resources.displayMetrics.heightPixels * 0.75).toInt()
+        var maxHeight: Int = (resources.displayMetrics.heightPixels * 0.8).toInt()
         binding?.payFlexWebView?.layoutParams?.height = maxHeight
         binding?.payFlexWebView?.settings?.javaScriptEnabled = true
         binding?.payFlexWebView?.loadUrl(AppConstant.PAYFLEX_POP_UP_URL)

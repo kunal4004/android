@@ -4028,12 +4028,20 @@ class ProductDetailsFragment :
             binding.payFlexWidget.apply {
                 visibility = View.VISIBLE
                 setOnTouchListener { _, motionEvent ->
-                    if(motionEvent.action == MotionEvent.ACTION_DOWN) {
+                    if (motionEvent.action == MotionEvent.ACTION_DOWN) {
                         if (bottomSheetWebView == null) {
                             bottomSheetWebView = PayFlexBottomSheetDialog()
                         }
-                        bottomSheetWebView?.show(requireActivity().supportFragmentManager,
-                            PayFlexBottomSheetDialog::class.java.simpleName)
+
+                        if (bottomSheetWebView != null && bottomSheetWebView?.isAdded == true) {
+                            false
+                        }
+                        if (bottomSheetWebView?.isVisible == false && bottomSheetWebView?.isAdded == false) {
+                            bottomSheetWebView?.show(
+                                requireActivity().supportFragmentManager,
+                                PayFlexBottomSheetDialog::class.java.simpleName
+                            )
+                        }
                     }
                     true
                 }
