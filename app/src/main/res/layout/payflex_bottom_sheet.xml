@@ -1,0 +1,43 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <include
+        android:id="@+id/incSwipeCloseIndicator"
+        layout="@layout/popup_close_header_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/twenty_four_dp"
+        android:layout_marginEnd="@dimen/twenty_four_dp"
+        android:layout_gravity="top"
+        />
+
+
+    <WebView
+        android:id="@+id/payFlexWebView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fillViewport="true"
+        android:focusable="true"
+        android:layout_marginBottom="@dimen/hundred_dp"
+        android:layout_gravity="center"
+        />
+    <TextView
+        android:id="@+id/got_it"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/fifty_dp"
+        android:layout_margin="@dimen/twenty_four_dp"
+        android:layout_marginStart="@dimen/twenty_four_dp"
+        android:layout_marginTop="@dimen/twenty_four_dp"
+        android:layout_marginEnd="@dimen/twenty_four_dp"
+        android:layout_marginBottom="@dimen/twenty_four_dp"
+        android:background="@color/black"
+        android:fontFamily="@font/futura_semi_bold"
+        android:gravity="center"
+        android:text="@string/got_it"
+        android:textColor="@color/white"
+        android:textSize="@dimen/twelve_sp"
+        android:layout_gravity="bottom"
+        />
+</FrameLayout>
