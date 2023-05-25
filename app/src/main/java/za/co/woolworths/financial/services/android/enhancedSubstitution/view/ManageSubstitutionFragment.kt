@@ -1,11 +1,21 @@
 package za.co.woolworths.financial.services.android.enhancedSubstitution.view
 
+import android.graphics.Typeface
 import android.os.Bundle
+import android.text.Selection
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.TextPaint
 import android.text.TextUtils
+import android.text.method.LinkMovementMethod
+import android.text.style.ClickableSpan
 import android.view.MotionEvent
 import android.view.View
 import android.view.View.*
 import android.view.ViewTreeObserver
+import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
@@ -159,16 +169,61 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
                     }
                     Status.ERROR -> {
                         hideShimmerView()
-                        /*todo need to show error screen*/
-                        binding.layoutManageSubstitution.listSubstitute.apply {
-                            groupEmptySubstituteList.visibility = View.VISIBLE
-                            recyclerView.visibility = View.GONE
-                        }
+                        showKiboFailureErrorDialog()
                     }
                 }
             }
         }
         return list
+    }
+
+    private fun showKiboFailureErrorDialog() {
+        binding.layoutManageSubstitution.listSubstitute.apply {
+            groupEmptySubstituteList.visibility = GONE
+            recyclerView.visibility = GONE
+        }
+        disableConfirmButton()
+        binding.errorMessageLayout.visibility = VISIBLE
+        binding.errorMessage.makeLinks(
+            Pair(getString(R.string.tap_to_retry), OnClickListener {
+                getKiboList()
+            })
+        )
+    }
+
+    /*
+     *  This function is to create a underline and to create a particular link text in a text view.
+     */
+    private fun TextView.makeLinks(vararg links: Pair<String, OnClickListener>) {
+        val spannableString = SpannableString(this.text)
+        var startIndexOfLink = -1
+        for (link in links) {
+            val clickableSpan = object : ClickableSpan() {
+                override fun updateDrawState(textPaint: TextPaint) {
+                    textPaint.color = ContextCompat.getColor(
+                        requireContext(),
+                        R.color.black
+                    )
+                    textPaint.isUnderlineText = true
+                    textPaint.isFakeBoldText = true
+                    textPaint.typeface = Typeface.DEFAULT_BOLD
+                }
+
+                override fun onClick(view: View) {
+                    Selection.setSelection((view as TextView).text as Spannable, 0)
+                    view.invalidate()
+                    link.second.onClick(view)
+                }
+            }
+            startIndexOfLink = this.text.toString().indexOf(link.first, startIndexOfLink + 1)
+            spannableString.setSpan(
+                clickableSpan, startIndexOfLink, startIndexOfLink + link.first.length,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+        }
+        this.movementMethod =
+            LinkMovementMethod.getInstance() // without LinkMovementMethod, link can not be clickable.
+        this.setText(spannableString, TextView.BufferType.SPANNABLE)
     }
 
     private fun prepareStockInventoryCallRequest(itemList: ArrayList<Item>?) {

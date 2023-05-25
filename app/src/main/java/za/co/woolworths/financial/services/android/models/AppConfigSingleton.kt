@@ -20,6 +20,7 @@ import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigQ
 import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigSts
 import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigVirtualTempCard
 import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigVirtualTryOn
+import za.co.woolworths.financial.services.android.models.dto.app_config.EnhanceSubstitution
 import za.co.woolworths.financial.services.android.models.dto.app_config.GlassBox
 import za.co.woolworths.financial.services.android.models.dto.app_config.TooltipSettings
 import za.co.woolworths.financial.services.android.models.dto.app_config.account_options.ConfigAccountOptions
