@@ -18,7 +18,7 @@ class PayFlexBottomSheetDialog : WBottomSheetDialogFragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? {
+    ): View {
         binding = PayflexBottomSheetBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -28,12 +28,19 @@ class PayFlexBottomSheetDialog : WBottomSheetDialogFragment() {
         val bottomSheetBehavior = bottomSheetDialog.behavior
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
         bottomSheetBehavior.isDraggable = false
-        var maxHeight: Int = (resources.displayMetrics.heightPixels * 0.8).toInt()
-        binding?.payFlexWebView?.layoutParams?.height = maxHeight
-        binding?.payFlexWebView?.settings?.javaScriptEnabled = true
-        binding?.payFlexWebView?.loadUrl(AppConstant.PAYFLEX_POP_UP_URL)
-        binding?.gotIt?.setOnClickListener {
-            dismiss()
+
+
+        binding.apply {
+            val maxHeight: Int = (resources.displayMetrics.heightPixels * 0.8).toInt()
+            payFlexWebView.apply {
+                layoutParams.height = maxHeight
+                settings.javaScriptEnabled = true
+                loadUrl(AppConstant.PAYFLEX_POP_UP_URL)
+            }
+            gotIt.setOnClickListener {
+                dismiss()
+            }
         }
+
     }
 }
