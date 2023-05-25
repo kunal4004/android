@@ -3,8 +3,8 @@
     android:id="@+id/openingHoursTextView"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:fontFamily="@font/myriad_pro_regular_otf"
+    android:fontFamily="@font/opensans_regular"
     android:lineSpacingExtra="4sp"
     android:paddingBottom="4dp"
     android:textColor="@color/black"
-    android:textSize="15sp" />
+    android:textSize="@dimen/eleven_sp" />
