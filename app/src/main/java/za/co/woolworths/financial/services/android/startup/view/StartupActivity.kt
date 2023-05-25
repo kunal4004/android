@@ -635,10 +635,10 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
         try {
             Glassbox.start(aSettingsBuilder()
                 .withApplicationCtx(this)
-                .withReportUrl(glassBox?.appId)
-                .withAppId(glassBox?.reportUrl)
+                .withAppId(glassBox?.appId)
+                .withReportUrl(glassBox?.reportUrl)
                 .build())
-        } catch (e: GlassboxRecordingException) {
+        } catch (e: Exception) {
             FirebaseManager.logException(e)
         }
     }
