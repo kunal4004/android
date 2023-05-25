@@ -1265,9 +1265,11 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
 
     private fun presentErrorDialog(title: String, subTitle: String, errorType: Int) {
         val bundle = Bundle()
-        bundle.putString(ErrorHandlerBottomSheetDialog.ERROR_TITLE, title)
-        bundle.putString(ErrorHandlerBottomSheetDialog.ERROR_DESCRIPTION, subTitle)
-        bundle.putInt(ErrorHandlerBottomSheetDialog.ERROR_TYPE, errorType)
+        bundle.apply {
+            putString(ErrorHandlerBottomSheetDialog.ERROR_TITLE, title)
+            putString(ErrorHandlerBottomSheetDialog.ERROR_DESCRIPTION, subTitle)
+            putInt(ErrorHandlerBottomSheetDialog.ERROR_TYPE, errorType)
+        }
         view?.findNavController()?.navigate(
             R.id.action_checkoutDashFragment_to_errorHandlerBottomSheetDialog,
             bundle

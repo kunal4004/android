@@ -239,38 +239,40 @@ class CheckoutAddAddressReturningUserFragment :
     //LiquorCompliance
     private fun getLiquorComplianceDetails() {
         baseFragBundle?.apply {
-            if (containsKey(LIQUOR_ORDER)) {
-                liquorOrder = getBoolean(LIQUOR_ORDER)
-                if (liquorOrder == true && containsKey(NO_LIQUOR_IMAGE_URL)) {
-                    liquorImageUrl = getString(NO_LIQUOR_IMAGE_URL)
-                    binding.ageConfirmationLayout?.root?.visibility = VISIBLE
-                    binding.ageConfirmationLayout.liquorComplianceBannerLayout?.root?.visibility =
-                        VISIBLE
-                    setPicture(
-                        binding.ageConfirmationLayout.liquorComplianceBannerLayout.imgLiquorBanner,
-                        liquorImageUrl
-                    )
+            binding.apply {
+                if (containsKey(LIQUOR_ORDER)) {
+                    liquorOrder = getBoolean(LIQUOR_ORDER)
+                    if (liquorOrder == true && containsKey(NO_LIQUOR_IMAGE_URL)) {
+                        liquorImageUrl = getString(NO_LIQUOR_IMAGE_URL)
+                        ageConfirmationLayout?.root?.visibility = VISIBLE
+                        ageConfirmationLayout.liquorComplianceBannerLayout?.root?.visibility =
+                            VISIBLE
+                        setPicture(
+                            ageConfirmationLayout.liquorComplianceBannerLayout.imgLiquorBanner,
+                            liquorImageUrl
+                        )
 
-                    binding.ageConfirmationLayout.root.visibility = VISIBLE
-                    binding.ageConfirmationLayout.liquorComplianceBannerSeparator.visibility =
-                        VISIBLE
-                    binding.ageConfirmationLayout.liquorComplianceBannerLayout.root.visibility =
-                        VISIBLE
+                        ageConfirmationLayout.root.visibility = VISIBLE
+                        ageConfirmationLayout.liquorComplianceBannerSeparator.visibility =
+                            VISIBLE
+                        ageConfirmationLayout.liquorComplianceBannerLayout.root.visibility =
+                            VISIBLE
 
-                    if (!binding.ageConfirmationLayout.radioBtnAgeConfirmation.isChecked) {
-                        Utils.fadeInFadeOutAnimation(binding.txtContinueToPayment, true)
-                        binding.ageConfirmationLayout.radioBtnAgeConfirmation?.isChecked = false
-                        binding.txtContinueToPayment?.isClickable = false
-                    } else {
-                        Utils.fadeInFadeOutAnimation(binding.txtContinueToPayment, false)
-                        binding.txtContinueToPayment?.isClickable = true
-                        binding.ageConfirmationLayout.radioBtnAgeConfirmation?.isChecked = true
+                        if (!ageConfirmationLayout.radioBtnAgeConfirmation.isChecked) {
+                            Utils.fadeInFadeOutAnimation(txtContinueToPayment, true)
+                            ageConfirmationLayout.radioBtnAgeConfirmation?.isChecked = false
+                            txtContinueToPayment?.isClickable = false
+                        } else {
+                            Utils.fadeInFadeOutAnimation(txtContinueToPayment, false)
+                            txtContinueToPayment?.isClickable = true
+                            ageConfirmationLayout.radioBtnAgeConfirmation?.isChecked = true
+                        }
                     }
+                } else {
+                    ageConfirmationLayout?.root?.visibility = GONE
+                    ageConfirmationLayout.liquorComplianceBannerLayout?.root?.visibility =
+                        GONE
                 }
-            } else {
-                binding.ageConfirmationLayout?.root?.visibility = GONE
-                binding.ageConfirmationLayout.liquorComplianceBannerLayout?.root?.visibility =
-                    GONE
             }
         }
     }
@@ -316,88 +318,90 @@ class CheckoutAddAddressReturningUserFragment :
     }
 
     private fun initializeDeliveryInstructions() {
-        binding.layoutDeliveryInstructions.edtTxtSpecialDeliveryInstruction?.addTextChangedListener(
-            deliveryInstructionsTextWatcher
-        )
-        binding.layoutDeliveryInstructions.edtTxtGiftInstructions?.addTextChangedListener(
-            deliveryInstructionsTextWatcher
-        )
-        binding.layoutDeliveryInstructions.edtTxtInputLayoutSpecialDeliveryInstruction?.visibility =
-            GONE
-        binding.layoutDeliveryInstructions.edtTxtInputLayoutSpecialDeliveryInstruction?.isCounterEnabled =
-            false
-        binding.layoutDeliveryInstructions.edtTxtInputLayoutGiftInstructions?.visibility = GONE
-        binding.layoutDeliveryInstructions.edtTxtInputLayoutGiftInstructions?.isCounterEnabled =
-            false
+        binding.apply {
+            layoutDeliveryInstructions.edtTxtSpecialDeliveryInstruction?.addTextChangedListener(
+                deliveryInstructionsTextWatcher
+            )
+            layoutDeliveryInstructions.edtTxtGiftInstructions?.addTextChangedListener(
+                deliveryInstructionsTextWatcher
+            )
+            layoutDeliveryInstructions.edtTxtInputLayoutSpecialDeliveryInstruction?.visibility =
+                GONE
+            layoutDeliveryInstructions.edtTxtInputLayoutSpecialDeliveryInstruction?.isCounterEnabled =
+                false
+            layoutDeliveryInstructions.edtTxtInputLayoutGiftInstructions?.visibility = GONE
+            layoutDeliveryInstructions.edtTxtInputLayoutGiftInstructions?.isCounterEnabled =
+                false
 
-        binding.layoutDeliveryInstructions.switchSpecialDeliveryInstruction?.setOnCheckedChangeListener { _, isChecked ->
-            if (binding.loadingBar.visibility == VISIBLE) {
-                return@setOnCheckedChangeListener
-            }
-            if (isChecked)
-                Utils.triggerFireBaseEvents(
-                    FirebaseManagerAnalyticsProperties.CHECKOUT_SPECIAL_COLLECTION_INSTRUCTION,
-                    hashMapOf(
-                        FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
-                                FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_SPECIAL_INSTRUCTION
-                    ),
-                    activity
-                )
-            binding.layoutDeliveryInstructions.edtTxtInputLayoutSpecialDeliveryInstruction?.visibility =
-                if (isChecked) VISIBLE else GONE
-            binding.layoutDeliveryInstructions.edtTxtInputLayoutSpecialDeliveryInstruction?.isCounterEnabled =
-                isChecked
-            binding.layoutDeliveryInstructions.edtTxtSpecialDeliveryInstruction?.visibility =
-                if (isChecked) VISIBLE else GONE
-        }
-
-        binding.layoutDeliveryInstructions.switchGiftInstructions?.setOnCheckedChangeListener { _, isChecked ->
-            if (binding.loadingBar.visibility == VISIBLE) {
-                return@setOnCheckedChangeListener
-            }
-            if (isChecked)
-                Utils.triggerFireBaseEvents(
-                    FirebaseManagerAnalyticsProperties.CHECKOUT_IS_THIS_GIFT,
-                    hashMapOf(
-                        FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
-                                FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_IS_THIS_GIFT
-                    ),
-                    activity
-                )
-            binding.layoutDeliveryInstructions.edtTxtInputLayoutGiftInstructions?.visibility =
-                if (isChecked) VISIBLE else GONE
-            binding.layoutDeliveryInstructions.edtTxtInputLayoutGiftInstructions?.isCounterEnabled =
-                isChecked
-            binding.layoutDeliveryInstructions.edtTxtGiftInstructions?.visibility =
-                if (isChecked) VISIBLE else GONE
-        }
-        if (AppConfigSingleton.nativeCheckout?.currentShoppingBag?.isEnabled == true) {
-            binding.layoutDeliveryInstructions.switchNeedBags.visibility = VISIBLE
-            binding.layoutDeliveryInstructions.txtNeedBags?.text =
-                AppConfigSingleton.nativeCheckout?.currentShoppingBag?.title.plus(
-                    AppConfigSingleton.nativeCheckout?.currentShoppingBag?.description
-                )
-            binding.layoutDeliveryInstructions.txtNeedBags.visibility = VISIBLE
-            binding.layoutDeliveryInstructions.viewHorizontalSeparator?.visibility = GONE
-            binding.layoutDeliveryInstructions.newShoppingBagsLayout.root.visibility = GONE
-            binding.layoutDeliveryInstructions.switchNeedBags?.setOnCheckedChangeListener { _, isChecked ->
-                if (isChecked) {
+            layoutDeliveryInstructions.switchSpecialDeliveryInstruction?.setOnCheckedChangeListener { _, isChecked ->
+                if (loadingBar.visibility == VISIBLE) {
+                    return@setOnCheckedChangeListener
+                }
+                if (isChecked)
                     Utils.triggerFireBaseEvents(
-                        FirebaseManagerAnalyticsProperties.CHECKOUT_SHOPPING_BAGS_INFO,
+                        FirebaseManagerAnalyticsProperties.CHECKOUT_SPECIAL_COLLECTION_INSTRUCTION,
                         hashMapOf(
                             FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
-                                    FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_BAGS_INFO
+                                    FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_SPECIAL_INSTRUCTION
                         ),
                         activity
                     )
-                }
+                layoutDeliveryInstructions.edtTxtInputLayoutSpecialDeliveryInstruction?.visibility =
+                    if (isChecked) VISIBLE else GONE
+                layoutDeliveryInstructions.edtTxtInputLayoutSpecialDeliveryInstruction?.isCounterEnabled =
+                    isChecked
+                layoutDeliveryInstructions.edtTxtSpecialDeliveryInstruction?.visibility =
+                    if (isChecked) VISIBLE else GONE
             }
-        } else if (AppConfigSingleton.nativeCheckout?.newShoppingBag?.isEnabled == true) {
-            binding.layoutDeliveryInstructions.switchNeedBags?.visibility = GONE
-            binding.layoutDeliveryInstructions.shoppingBagSeparator?.visibility = GONE
-            binding.layoutDeliveryInstructions.txtNeedBags?.visibility = GONE
-            binding.layoutDeliveryInstructions.newShoppingBagsLayout?.root?.visibility = VISIBLE
-            addShoppingBagsRadioButtons()
+
+            layoutDeliveryInstructions.switchGiftInstructions?.setOnCheckedChangeListener { _, isChecked ->
+                if (loadingBar.visibility == VISIBLE) {
+                    return@setOnCheckedChangeListener
+                }
+                if (isChecked)
+                    Utils.triggerFireBaseEvents(
+                        FirebaseManagerAnalyticsProperties.CHECKOUT_IS_THIS_GIFT,
+                        hashMapOf(
+                            FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                                    FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_IS_THIS_GIFT
+                        ),
+                        activity
+                    )
+                layoutDeliveryInstructions.edtTxtInputLayoutGiftInstructions?.visibility =
+                    if (isChecked) VISIBLE else GONE
+                layoutDeliveryInstructions.edtTxtInputLayoutGiftInstructions?.isCounterEnabled =
+                    isChecked
+                layoutDeliveryInstructions.edtTxtGiftInstructions?.visibility =
+                    if (isChecked) VISIBLE else GONE
+            }
+            if (AppConfigSingleton.nativeCheckout?.currentShoppingBag?.isEnabled == true) {
+                layoutDeliveryInstructions.switchNeedBags.visibility = VISIBLE
+                layoutDeliveryInstructions.txtNeedBags?.text =
+                    AppConfigSingleton.nativeCheckout?.currentShoppingBag?.title.plus(
+                        AppConfigSingleton.nativeCheckout?.currentShoppingBag?.description
+                    )
+                layoutDeliveryInstructions.txtNeedBags.visibility = VISIBLE
+                layoutDeliveryInstructions.viewHorizontalSeparator?.visibility = GONE
+                layoutDeliveryInstructions.newShoppingBagsLayout.root.visibility = GONE
+                layoutDeliveryInstructions.switchNeedBags?.setOnCheckedChangeListener { _, isChecked ->
+                    if (isChecked) {
+                        Utils.triggerFireBaseEvents(
+                            FirebaseManagerAnalyticsProperties.CHECKOUT_SHOPPING_BAGS_INFO,
+                            hashMapOf(
+                                FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                                        FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_BAGS_INFO
+                            ),
+                            activity
+                        )
+                    }
+                }
+            } else if (AppConfigSingleton.nativeCheckout?.newShoppingBag?.isEnabled == true) {
+                layoutDeliveryInstructions.switchNeedBags?.visibility = GONE
+                layoutDeliveryInstructions.shoppingBagSeparator?.visibility = GONE
+                layoutDeliveryInstructions.txtNeedBags?.visibility = GONE
+                layoutDeliveryInstructions.newShoppingBagsLayout?.root?.visibility = VISIBLE
+                addShoppingBagsRadioButtons()
+            }
         }
     }
 
@@ -634,152 +638,154 @@ class CheckoutAddAddressReturningUserFragment :
         expandableGrid.setUpShimmerView()
         expandableGrid.showDeliveryTypeShimmerView()
         showDeliverySubTypeShimmerView()
-        binding.layoutDeliveryInstructions.edtTxtSpecialDeliveryInstruction?.visibility = GONE
-        binding.layoutDeliveryInstructions.edtTxtGiftInstructions?.visibility = GONE
-        binding.layoutDeliveryInstructions.switchSpecialDeliveryInstruction?.isChecked = false
-        binding.layoutDeliveryInstructions.switchGiftInstructions?.isChecked = false
+        binding.apply {
+            layoutDeliveryInstructions.edtTxtSpecialDeliveryInstruction?.visibility = GONE
+            layoutDeliveryInstructions.edtTxtGiftInstructions?.visibility = GONE
+            layoutDeliveryInstructions.switchSpecialDeliveryInstruction?.isChecked = false
+            layoutDeliveryInstructions.switchGiftInstructions?.isChecked = false
 
-        shimmerComponentArray = listOf(
-            Pair<ShimmerFrameLayout, View>(
-                binding.checkoutDeliveryDetailsLayout.deliveringTitleShimmerFrameLayout,
-                binding.checkoutDeliveryDetailsLayout.tvNativeCheckoutDeliveringTitle
-            ),
-            Pair<ShimmerFrameLayout, View>(
-                binding.checkoutDeliveryDetailsLayout.deliveringTitleValueShimmerFrameLayout,
-                binding.checkoutDeliveryDetailsLayout.tvNativeCheckoutDeliveringValue
-            ),
-            Pair<ShimmerFrameLayout, View>(
-                binding.checkoutDeliveryDetailsLayout.forwardImgViewShimmerFrameLayout,
-                binding.checkoutDeliveryDetailsLayout.imageViewCaretForward
-            ),
-            Pair<ShimmerFrameLayout, View>(
-                binding.nativeCheckoutFoodSubstitutionLayout.foodSubstitutionTitleShimmerFrameLayout,
-                binding.nativeCheckoutFoodSubstitutionLayout.txtFoodSubstitutionTitle
-            ),
-            Pair<ShimmerFrameLayout, View>(
-                binding.nativeCheckoutFoodSubstitutionLayout.foodSubstitutionDescShimmerFrameLayout,
-                binding.nativeCheckoutFoodSubstitutionLayout.txtFoodSubstitutionDesc
-            ),
-            Pair<ShimmerFrameLayout, View>(
-                binding.nativeCheckoutFoodSubstitutionLayout.radioGroupFoodSubstitutionShimmerFrameLayout,
-                binding.nativeCheckoutFoodSubstitutionLayout.radioGroupFoodSubstitution
-            ),
+            shimmerComponentArray = listOf(
+                Pair<ShimmerFrameLayout, View>(
+                    checkoutDeliveryDetailsLayout.deliveringTitleShimmerFrameLayout,
+                    checkoutDeliveryDetailsLayout.tvNativeCheckoutDeliveringTitle
+                ),
+                Pair<ShimmerFrameLayout, View>(
+                    checkoutDeliveryDetailsLayout.deliveringTitleValueShimmerFrameLayout,
+                    checkoutDeliveryDetailsLayout.tvNativeCheckoutDeliveringValue
+                ),
+                Pair<ShimmerFrameLayout, View>(
+                    checkoutDeliveryDetailsLayout.forwardImgViewShimmerFrameLayout,
+                    checkoutDeliveryDetailsLayout.imageViewCaretForward
+                ),
+                Pair<ShimmerFrameLayout, View>(
+                    nativeCheckoutFoodSubstitutionLayout.foodSubstitutionTitleShimmerFrameLayout,
+                    nativeCheckoutFoodSubstitutionLayout.txtFoodSubstitutionTitle
+                ),
+                Pair<ShimmerFrameLayout, View>(
+                    nativeCheckoutFoodSubstitutionLayout.foodSubstitutionDescShimmerFrameLayout,
+                    nativeCheckoutFoodSubstitutionLayout.txtFoodSubstitutionDesc
+                ),
+                Pair<ShimmerFrameLayout, View>(
+                    nativeCheckoutFoodSubstitutionLayout.radioGroupFoodSubstitutionShimmerFrameLayout,
+                    nativeCheckoutFoodSubstitutionLayout.radioGroupFoodSubstitution
+                ),
 
-            Pair<ShimmerFrameLayout, View>(
-                binding.ageConfirmationLayout.ageConfirmationTitleShimmerFrameLayout,
-                binding.ageConfirmationLayout.txtAgeConfirmationTitle
-            ),
+                Pair<ShimmerFrameLayout, View>(
+                    ageConfirmationLayout.ageConfirmationTitleShimmerFrameLayout,
+                    ageConfirmationLayout.txtAgeConfirmationTitle
+                ),
 
-            Pair<ShimmerFrameLayout, View>(
-                binding.ageConfirmationLayout.ageConfirmationDescShimmerFrameLayout,
-                binding.ageConfirmationLayout.txtAgeConfirmationDesc
-            ),
+                Pair<ShimmerFrameLayout, View>(
+                    ageConfirmationLayout.ageConfirmationDescShimmerFrameLayout,
+                    ageConfirmationLayout.txtAgeConfirmationDesc
+                ),
 
-            Pair<ShimmerFrameLayout, View>(
-                binding.ageConfirmationLayout.ageConfirmationDescNoteShimmerFrameLayout,
-                binding.ageConfirmationLayout.txtAgeConfirmationDescNote
-            ),
+                Pair<ShimmerFrameLayout, View>(
+                    ageConfirmationLayout.ageConfirmationDescNoteShimmerFrameLayout,
+                    ageConfirmationLayout.txtAgeConfirmationDescNote
+                ),
 
-            Pair<ShimmerFrameLayout, View>(
-                binding.ageConfirmationLayout.radioGroupAgeConfirmationShimmerFrameLayout,
-                binding.ageConfirmationLayout.radioBtnAgeConfirmation
-            ),
+                Pair<ShimmerFrameLayout, View>(
+                    ageConfirmationLayout.radioGroupAgeConfirmationShimmerFrameLayout,
+                    ageConfirmationLayout.radioBtnAgeConfirmation
+                ),
 
-            Pair<ShimmerFrameLayout, View>(
-                binding.ageConfirmationLayout.ageConfirmationTitleShimmerFrameLayout,
-                binding.ageConfirmationLayout.txtAgeConfirmationTitle
-            ),
+                Pair<ShimmerFrameLayout, View>(
+                    ageConfirmationLayout.ageConfirmationTitleShimmerFrameLayout,
+                    ageConfirmationLayout.txtAgeConfirmationTitle
+                ),
 
-            Pair<ShimmerFrameLayout, View>(
-                binding.ageConfirmationLayout.ageConfirmationDescShimmerFrameLayout,
-                binding.ageConfirmationLayout.txtAgeConfirmationDesc
-            ),
+                Pair<ShimmerFrameLayout, View>(
+                    ageConfirmationLayout.ageConfirmationDescShimmerFrameLayout,
+                    ageConfirmationLayout.txtAgeConfirmationDesc
+                ),
 
-            Pair<ShimmerFrameLayout, View>(
-                binding.ageConfirmationLayout.ageConfirmationDescNoteShimmerFrameLayout,
-                binding.ageConfirmationLayout.txtAgeConfirmationDescNote
-            ),
+                Pair<ShimmerFrameLayout, View>(
+                    ageConfirmationLayout.ageConfirmationDescNoteShimmerFrameLayout,
+                    ageConfirmationLayout.txtAgeConfirmationDescNote
+                ),
 
-            Pair<ShimmerFrameLayout, View>(
-                binding.ageConfirmationLayout.radioGroupAgeConfirmationShimmerFrameLayout,
-                binding.ageConfirmationLayout.radioBtnAgeConfirmation
-            ),
+                Pair<ShimmerFrameLayout, View>(
+                    ageConfirmationLayout.radioGroupAgeConfirmationShimmerFrameLayout,
+                    ageConfirmationLayout.radioBtnAgeConfirmation
+                ),
 
-            Pair<ShimmerFrameLayout, View>(
-                binding.ageConfirmationLayout.liquorComplianceBannerShimmerFrameLayout,
-                binding.ageConfirmationLayout.liquorComplianceBannerLayout.root
-            ),
+                Pair<ShimmerFrameLayout, View>(
+                    ageConfirmationLayout.liquorComplianceBannerShimmerFrameLayout,
+                    ageConfirmationLayout.liquorComplianceBannerLayout.root
+                ),
 
-            Pair<ShimmerFrameLayout, View>(
-                binding.layoutDeliveryInstructions.instructionTxtShimmerFrameLayout,
-                binding.layoutDeliveryInstructions.txtSpecialDeliveryInstruction
-            ),
-            Pair<ShimmerFrameLayout, View>(
-                binding.layoutDeliveryInstructions.specialInstructionSwitchShimmerFrameLayout,
-                binding.layoutDeliveryInstructions.switchSpecialDeliveryInstruction
-            ),
-            Pair<ShimmerFrameLayout, View>(
-                binding.layoutDeliveryInstructions.giftInstructionTxtShimmerFrameLayout,
-                binding.layoutDeliveryInstructions.txtGiftInstructions
-            ),
-            Pair<ShimmerFrameLayout, View>(
-                binding.layoutDeliveryInstructions.giftInstructionSwitchShimmerFrameLayout,
-                binding.layoutDeliveryInstructions.switchGiftInstructions
-            ),
-            Pair<ShimmerFrameLayout, View>(
-                binding.layoutCheckoutDeliveryOrderSummary.txtYourCartShimmerFrameLayout,
-                binding.layoutCheckoutDeliveryOrderSummary.txtOrderSummaryYourCart
-            ),
-            Pair<ShimmerFrameLayout, View>(
-                binding.layoutCheckoutDeliveryOrderSummary.yourCartValueShimmerFrameLayout,
-                binding.layoutCheckoutDeliveryOrderSummary.txtOrderSummaryYourCartValue
-            ),
-            Pair<ShimmerFrameLayout, View>(
-                binding.layoutCheckoutDeliveryOrderSummary.deliveryFeeTxtShimmerFrameLayout,
-                binding.layoutCheckoutDeliveryOrderSummary.txtOrderSummaryDeliveryFee
-            ),
-            Pair<ShimmerFrameLayout, View>(
-                binding.layoutCheckoutDeliveryOrderSummary.deliveryFeeValueShimmerFrameLayout,
-                binding.layoutCheckoutDeliveryOrderSummary.txtOrderSummaryDeliveryFeeValue
-            ),
-            Pair<ShimmerFrameLayout, View>(
-                binding.layoutCheckoutDeliveryOrderSummary.summaryNoteShimmerFrameLayout,
-                binding.layoutCheckoutDeliveryOrderSummary.txtOrderSummaryNote
-            ),
-            Pair<ShimmerFrameLayout, View>(
-                binding.layoutCheckoutDeliveryOrderSummary.txtOrderTotalShimmerFrameLayout,
-                binding.layoutCheckoutDeliveryOrderSummary.txtOrderTotalTitle
-            ),
-            Pair<ShimmerFrameLayout, View>(
-                binding.layoutCheckoutDeliveryOrderSummary.orderTotalValueShimmerFrameLayout,
-                binding.layoutCheckoutDeliveryOrderSummary.txtOrderTotalValue
-            ),
-            Pair<ShimmerFrameLayout, View>(
-                binding.continuePaymentTxtShimmerFrameLayout,
-                binding.txtContinueToPayment
-            ),
-            Pair<ShimmerFrameLayout, View>(
-                binding.layoutDeliveryInstructions.newShoppingBagsLayout.newShoppingBagsTitleShimmerFrameLayout,
-                binding.layoutDeliveryInstructions.newShoppingBagsLayout.newShoppingBagsTitle
-            ),
-            Pair<ShimmerFrameLayout, View>(
-                binding.layoutDeliveryInstructions.newShoppingBagsLayout.newShoppingBagsDescShimmerFrameLayout,
-                binding.layoutDeliveryInstructions.newShoppingBagsLayout.txtNewShoppingBagsDesc
-            ),
-            Pair<ShimmerFrameLayout, View>(
-                binding.layoutDeliveryInstructions.newShoppingBagsLayout.radioGroupShoppingBagsShimmerFrameLayout,
-                binding.layoutDeliveryInstructions.newShoppingBagsLayout.radioGroupShoppingBags
+                Pair<ShimmerFrameLayout, View>(
+                    layoutDeliveryInstructions.instructionTxtShimmerFrameLayout,
+                    layoutDeliveryInstructions.txtSpecialDeliveryInstruction
+                ),
+                Pair<ShimmerFrameLayout, View>(
+                    layoutDeliveryInstructions.specialInstructionSwitchShimmerFrameLayout,
+                    layoutDeliveryInstructions.switchSpecialDeliveryInstruction
+                ),
+                Pair<ShimmerFrameLayout, View>(
+                    layoutDeliveryInstructions.giftInstructionTxtShimmerFrameLayout,
+                    layoutDeliveryInstructions.txtGiftInstructions
+                ),
+                Pair<ShimmerFrameLayout, View>(
+                    layoutDeliveryInstructions.giftInstructionSwitchShimmerFrameLayout,
+                    layoutDeliveryInstructions.switchGiftInstructions
+                ),
+                Pair<ShimmerFrameLayout, View>(
+                    layoutCheckoutDeliveryOrderSummary.txtYourCartShimmerFrameLayout,
+                    layoutCheckoutDeliveryOrderSummary.txtOrderSummaryYourCart
+                ),
+                Pair<ShimmerFrameLayout, View>(
+                    layoutCheckoutDeliveryOrderSummary.yourCartValueShimmerFrameLayout,
+                    layoutCheckoutDeliveryOrderSummary.txtOrderSummaryYourCartValue
+                ),
+                Pair<ShimmerFrameLayout, View>(
+                    layoutCheckoutDeliveryOrderSummary.deliveryFeeTxtShimmerFrameLayout,
+                    layoutCheckoutDeliveryOrderSummary.txtOrderSummaryDeliveryFee
+                ),
+                Pair<ShimmerFrameLayout, View>(
+                    layoutCheckoutDeliveryOrderSummary.deliveryFeeValueShimmerFrameLayout,
+                    layoutCheckoutDeliveryOrderSummary.txtOrderSummaryDeliveryFeeValue
+                ),
+                Pair<ShimmerFrameLayout, View>(
+                    layoutCheckoutDeliveryOrderSummary.summaryNoteShimmerFrameLayout,
+                    layoutCheckoutDeliveryOrderSummary.txtOrderSummaryNote
+                ),
+                Pair<ShimmerFrameLayout, View>(
+                    layoutCheckoutDeliveryOrderSummary.txtOrderTotalShimmerFrameLayout,
+                    layoutCheckoutDeliveryOrderSummary.txtOrderTotalTitle
+                ),
+                Pair<ShimmerFrameLayout, View>(
+                    layoutCheckoutDeliveryOrderSummary.orderTotalValueShimmerFrameLayout,
+                    layoutCheckoutDeliveryOrderSummary.txtOrderTotalValue
+                ),
+                Pair<ShimmerFrameLayout, View>(
+                    continuePaymentTxtShimmerFrameLayout,
+                    txtContinueToPayment
+                ),
+                Pair<ShimmerFrameLayout, View>(
+                    layoutDeliveryInstructions.newShoppingBagsLayout.newShoppingBagsTitleShimmerFrameLayout,
+                    layoutDeliveryInstructions.newShoppingBagsLayout.newShoppingBagsTitle
+                ),
+                Pair<ShimmerFrameLayout, View>(
+                    layoutDeliveryInstructions.newShoppingBagsLayout.newShoppingBagsDescShimmerFrameLayout,
+                    layoutDeliveryInstructions.newShoppingBagsLayout.txtNewShoppingBagsDesc
+                ),
+                Pair<ShimmerFrameLayout, View>(
+                    layoutDeliveryInstructions.newShoppingBagsLayout.radioGroupShoppingBagsShimmerFrameLayout,
+                    layoutDeliveryInstructions.newShoppingBagsLayout.radioGroupShoppingBags
+                )
             )
-        )
 
-        binding.layoutDeliveryInstructions.txtNeedBags.visibility = GONE
-        binding.layoutDeliveryInstructions.switchNeedBags.visibility = GONE
+            layoutDeliveryInstructions.txtNeedBags.visibility = GONE
+            layoutDeliveryInstructions.switchNeedBags.visibility = GONE
 
-        val shimmer = Shimmer.AlphaHighlightBuilder().build()
-        shimmerComponentArray.forEach {
-            it.first.setShimmer(shimmer)
-            it.first.startShimmer()
-            it.second.visibility = INVISIBLE
+            val shimmer = Shimmer.AlphaHighlightBuilder().build()
+            shimmerComponentArray.forEach {
+                it.first.setShimmer(shimmer)
+                it.first.startShimmer()
+                it.second.visibility = INVISIBLE
+            }
         }
     }
 
