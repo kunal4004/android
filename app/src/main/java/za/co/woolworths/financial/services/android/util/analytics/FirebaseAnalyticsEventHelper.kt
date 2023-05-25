@@ -216,6 +216,12 @@ object FirebaseAnalyticsEventHelper {
 
         val analyticsParams = Bundle()
         analyticsParams.apply {
+            addToWishListFirebaseEventData.itemRating?.let { rating ->
+                putFloat(FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_RATING, rating)
+            }
+            addToWishListFirebaseEventData.businessUnit?.let { businessUnit ->
+                putString(FirebaseManagerAnalyticsProperties.BUSINESS_UNIT, businessUnit)
+            }
             putDouble(FirebaseAnalytics.Param.VALUE, value)
             putString(
                 FirebaseAnalytics.Param.CURRENCY,
@@ -229,7 +235,6 @@ object FirebaseAnalyticsEventHelper {
                 FirebaseAnalytics.Param.ITEMS, products.map { it.toBundle() }.toTypedArray()
             )
         }
-
         AnalyticsManager.logEvent(
             FirebaseManagerAnalyticsProperties.ADD_TO_WISHLIST, analyticsParams
         )

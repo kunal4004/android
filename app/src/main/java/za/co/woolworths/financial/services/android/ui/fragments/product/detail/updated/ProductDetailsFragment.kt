@@ -2190,7 +2190,10 @@ class ProductDetailsFragment :
                     listOfItems.add(it)
                 }
                 binding.scrollView?.fullScroll(View.FOCUS_UP)
-                val addToWishListEventData = AddToWishListFirebaseEventData(products = listOfNotNull(productDetails?.toAnalyticItem()))
+                val addToWishListEventData = AddToWishListFirebaseEventData(
+                    products = listOfNotNull(productDetails?.toAnalyticItem()),
+                    businessUnit = productDetails?.productType,
+                    itemRating = productDetails?.averageRating)
                 NavigateToShoppingList.openShoppingList(activity, listOfItems, "", false, addToWishListEventData = addToWishListEventData)
             }
         } else {
