@@ -2,7 +2,26 @@ package za.co.woolworths.financial.services.android.models
 
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.dto.RatingsAndReviews
-import za.co.woolworths.financial.services.android.models.dto.app_config.*
+import za.co.woolworths.financial.services.android.models.dto.app_config.BrandLandingPage
+import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigAbsaBankingOpenApiServices
+import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigApplyNowLinks
+import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigClickAndCollect
+import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigCreditCardActivation
+import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigCreditCardDelivery
+import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigCreditView
+import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigCustomerFeedback
+import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigDashConfig
+import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigInAppReview
+import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigLiquor
+import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigLowStock
+import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigPayMyAccount
+import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigProductDetailsPage
+import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigQuickShopDefaultValues
+import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigSts
+import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigVirtualTempCard
+import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigVirtualTryOn
+import za.co.woolworths.financial.services.android.models.dto.app_config.GlassBox
+import za.co.woolworths.financial.services.android.models.dto.app_config.TooltipSettings
 import za.co.woolworths.financial.services.android.models.dto.app_config.account_options.ConfigAccountOptions
 import za.co.woolworths.financial.services.android.models.dto.app_config.balance_protection_insurance.ConfigBalanceProtectionInsurance
 import za.co.woolworths.financial.services.android.models.dto.app_config.chat.ConfigCollections
@@ -16,7 +35,6 @@ import za.co.woolworths.financial.services.android.models.dto.app_config.native_
 import za.co.woolworths.financial.services.android.models.dto.app_config.whatsapp.ConfigWhatsApp
 import za.co.woolworths.financial.services.android.models.repository.AppConfigRepository
 import za.co.woolworths.financial.services.android.util.Utils
-import java.util.*
 
 
 object AppConfigSingleton {
@@ -76,6 +94,10 @@ object AppConfigSingleton {
     var glassBox : GlassBox? = null
 
     init {
+        initialiseFromCache()
+    }
+
+    fun initialiseFromCache() {
         AppConfigRepository().getAppConfigData()?.let { appConfig ->
             appConfig.enviroment?.let { env ->
                 storeCardBlockReasons = env.storeCardBlockReasons
@@ -103,7 +125,6 @@ object AppConfigSingleton {
             }
 
             appConfig.dashConfig?.apply {
-                minimumSupportedAppBuildNumber.let { isEnabled = Utils.isFeatureEnabled(it) }
                 dashConfig = this
             }
 
@@ -230,8 +251,6 @@ object AppConfigSingleton {
                     glassBox = this
                 }
             }
-
-
         }
     }
 }

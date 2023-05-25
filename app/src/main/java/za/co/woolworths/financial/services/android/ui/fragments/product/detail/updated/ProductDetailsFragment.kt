@@ -137,7 +137,6 @@ import za.co.woolworths.financial.services.android.util.pickimagecontract.PickIm
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.io.File
 import javax.inject.Inject
-import kotlin.collections.get
 import kotlin.collections.set
 
 
@@ -232,6 +231,7 @@ class ProductDetailsFragment :
     private lateinit var moreReviewViewModel: RatingAndReviewViewModel
     private val dialogInstance = FoodProductNotAvailableForCollectionDialog.newInstance()
     private val recommendationViewModel: RecommendationViewModel by viewModels()
+    private var bottomSheetWebView: BottomSheetWebView? =null
 
     @OpenTermAndLighting
     @Inject
@@ -328,7 +328,8 @@ class ProductDetailsFragment :
         val viewItemListParams = Bundle()
         viewItemListParams.putString(FirebaseAnalytics.Param.CURRENCY,
             FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE)
-        for (products in 0..(productDetails.otherSkus?.size ?: 0)) {
+        viewItemListParams.putString(FirebaseManagerAnalyticsProperties.BUSINESS_UNIT,
+            productDetails?.productType)
             val viewItem = Bundle()
             viewItem.putString(FirebaseAnalytics.Param.ITEM_ID, productDetails?.productId)
             viewItem.putString(FirebaseAnalytics.Param.ITEM_NAME, productDetails?.productName)
@@ -340,12 +341,7 @@ class ProductDetailsFragment :
             viewItem.putString(FirebaseAnalytics.Param.ITEM_BRAND, productDetails?.brandText)
             viewItem.putString(FirebaseAnalytics.Param.ITEM_LIST_NAME,
                 productDetails?.categoryName)
-            viewItem.putString(FirebaseAnalytics.Param.ITEM_LIST_NAME,
-                productDetails?.categoryName)
-            viewItem.putString(FirebaseManagerAnalyticsProperties.BUSINESS_UNIT,
-                productDetails?.productType)
             viewItemListParams.putParcelableArray(FirebaseAnalytics.Param.ITEMS, arrayOf(viewItem))
-        }
         AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.VIEW_ITEM_EVENT,
             viewItemListParams)
     }
@@ -712,6 +708,7 @@ class ProductDetailsFragment :
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun ProductDetailsFragmentBinding.configureDefaultUI() {
 
         updateStockAvailabilityLocation()
@@ -751,6 +748,10 @@ class ProductDetailsFragment :
                 )
             )
         }
+    }
+
+    private fun loadpayFlexWidget(amount: String?): String {
+        return "<!DOCTYPE html PUBLIC><html><head><meta charset=\"UTF-8\"><meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"></head><body><script async src=\"https://checkout.uat.payflex.co.za/embedded/partpay-widget-0.1.4.js?type=calculator&min=10&max=2000&amount=$amount\" type=\"application/javascript\"></script></body></html>"
     }
 
     private fun ProductDetailsFragmentBinding.setupBrandView() {
@@ -1052,6 +1053,7 @@ class ProductDetailsFragment :
         if (!isAdded || productDetails == null) return
 
         this.productDetails = productDetails
+        callViewPromotionFirebaseEvent()
         otherSKUsByGroupKey = this.productDetails?.otherSkus.let { groupOtherSKUsByColor(it) }
         this.defaultSku = getDefaultSku(otherSKUsByGroupKey)
 
@@ -1066,6 +1068,7 @@ class ProductDetailsFragment :
         }
 
         binding.setupBrandView()
+        setupBNPLViewForFbhProducts()
 
         if (hasSize)
             setSelectedGroupKey(defaultGroupKey)
@@ -1373,6 +1376,12 @@ class ProductDetailsFragment :
             }
         }
         return otherSKUsByGroupKey
+    }
+
+    private fun callViewPromotionFirebaseEvent() {
+        productDetails?.promotionsList?.let { promoList ->
+            FirebaseAnalyticsEventHelper.viewPromotion(productDetails!!, promoList)
+        }
     }
 
     override fun updateDefaultUI(isInventoryCalled: Boolean) {
@@ -1714,10 +1723,12 @@ class ProductDetailsFragment :
     }
 
     override fun updateAuxiliaryImages(imagesList: List<String>) {
-        ProductViewPagerAdapter(activity, imagesList, this@ProductDetailsFragment).apply {
-            binding.productImagesViewPager?.let { pager ->
-                pager.adapter = this
-                binding.productImagesViewPagerIndicator.setViewPager(pager)
+        context?.let {
+            ProductViewPagerAdapter(it, imagesList, this@ProductDetailsFragment).apply {
+                binding.productImagesViewPager?.let { pager ->
+                    pager.adapter = this
+                    binding.productImagesViewPagerIndicator.setViewPager(pager)
+                }
             }
         }
     }
@@ -2415,7 +2426,7 @@ class ProductDetailsFragment :
 
 
     private fun checkRunTimePermissionForLocation(): Boolean {
-        permissionUtils = PermissionUtils(activity, this)
+        permissionUtils = PermissionUtils(requireActivity(), this)
         permissionUtils?.apply {
             val permissions = ArrayList<String>()
             permissions.add(Manifest.permission.ACCESS_FINE_LOCATION)
@@ -2424,7 +2435,7 @@ class ProductDetailsFragment :
         return false
     }
 
-    override fun permissionGranted(request_code: Int) {
+    override fun permissionGranted(requestCode: Int) {
         findItemInStore()
     }
 
@@ -2446,7 +2457,7 @@ class ProductDetailsFragment :
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
-        permissions: Array<out String>,
+        permissions: Array<String>,
         grantResults: IntArray,
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
@@ -4014,5 +4025,25 @@ class ProductDetailsFragment :
         }
     }
 
+    private fun setupBNPLViewForFbhProducts() {
+        if (this.productDetails?.fulfillmentType == StoreUtils.Companion.FulfillmentType.CLOTHING_ITEMS?.type || this.productDetails?.fulfillmentType == StoreUtils.Companion.FulfillmentType.CRG_ITEMS?.type) {
+            binding.payFlexWidget.apply {
+                visibility = View.VISIBLE
+                setOnTouchListener { _, motionEvent ->
+                    if(motionEvent.action == MotionEvent.ACTION_DOWN) {
+                        if (bottomSheetWebView == null) {
+                            bottomSheetWebView = BottomSheetWebView(requireContext())
+                        }
+                        bottomSheetWebView?.showWithUrl(AppConstant.PAYFLEX_POP_UP_URL)
+                    }
+                    true
+                }
+                setOnClickListener(null)
+                settings.javaScriptEnabled = true
+                loadData(loadpayFlexWidget(productDetails?.price), "text/html", "UTF-8")
+            }
+        } else {
+            binding.payFlexWidget.visibility = View.GONE
+        }
+    }
 }
-
