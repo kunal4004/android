@@ -81,44 +81,6 @@ object FirebaseAnalyticsEventHelper {
         )
     }
 
-    fun viewItemList(
-        products: List<ProductList>?, category: String?
-    ) {
-        if (products.isNullOrEmpty()) {
-            return
-        }
-
-        val analyticItems = products.map { it.toAnalyticItem(category = category) }
-        triggerViewItemListEvent(products = analyticItems, category = category)
-    }
-
-    fun viewItemListRecommendations(
-        products: List<Product>?, category: String?
-    ) {
-        if (products.isNullOrEmpty()) {
-            return
-        }
-
-        val analyticItems = products.map { it.toAnalyticItem(category = category) }
-        triggerViewItemListEvent(products = analyticItems, category = category)
-    }
-
-    private fun triggerViewItemListEvent(products: List<AnalyticProductItem>, category: String?) {
-        val analyticsParams = Bundle()
-        analyticsParams.apply {
-            putParcelableArray(
-                FirebaseAnalytics.Param.ITEMS, products.map { it.toBundle() }.toTypedArray()
-            )
-            category?.let {
-                putString(FirebaseAnalytics.Param.ITEM_LIST_NAME, category)
-            }
-        }
-
-        AnalyticsManager.logEvent(
-            FirebaseManagerAnalyticsProperties.VIEW_ITEM_LIST, analyticsParams
-        )
-    }
-
     fun refund(
         commerceItems: List<CommerceItem>?,
         value: Double?,
