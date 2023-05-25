@@ -224,12 +224,14 @@ fun UserAccountLandingViewModel.ScheduleCreditCardDeliveryCollector(
 ) {
     state?.data?.let { response ->
         val creditCardDelivery = onScheduleCreditCardDeliveryResponse(response)
-        onClick(
-            AccountLandingInstantLauncher.ScheduleCreditCardDelivery(
-                response,
-                creditCardDelivery
+        creditCardDelivery?.let { item ->
+            onClick(
+                AccountLandingInstantLauncher.ScheduleCreditCardDelivery(
+                    response,
+                    item
+                )
             )
-        )
+        }
         state.data = null
     }
 }
