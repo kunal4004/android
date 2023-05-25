@@ -10,11 +10,8 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.util.AppConstant
 
-
 class PayFlexBottomSheetDialog : WBottomSheetDialogFragment() {
-
     private lateinit var binding: PayflexBottomSheetBinding
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
@@ -28,8 +25,6 @@ class PayFlexBottomSheetDialog : WBottomSheetDialogFragment() {
         val bottomSheetBehavior = bottomSheetDialog.behavior
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
         bottomSheetBehavior.isDraggable = false
-
-
         binding.apply {
             val maxHeight: Int = (resources.displayMetrics.heightPixels * 0.8).toInt()
             payFlexWebView.apply {
@@ -41,6 +36,5 @@ class PayFlexBottomSheetDialog : WBottomSheetDialogFragment() {
                 dismiss()
             }
         }
-
     }
 }
