@@ -17,8 +17,9 @@ import za.co.woolworths.financial.services.android.models.network.Resource
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import java.io.IOException
+import javax.inject.Inject
 
-class ProductSubstitutionRepository(private var substitutionApiHelper: SubstitutionApiHelper) {
+class ProductSubstitutionRepository @Inject constructor(private var substitutionApiHelper: SubstitutionApiHelper) {
 
     suspend fun getProductSubstitution(productId: String?): Resource<ProductSubstitution> {
         return try {

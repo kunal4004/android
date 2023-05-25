@@ -8,8 +8,8 @@ import android.view.inputmethod.EditorInfo
 import androidx.core.os.bundleOf
 import androidx.core.text.HtmlCompat
 import androidx.core.widget.doOnTextChanged
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,15 +18,13 @@ import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.LayoutSearchSubstitutionFragmentBinding
 import com.facebook.shimmer.Shimmer
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.cart.view.SubstitutionChoice
 import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.AddSubstitutionRequest
-import za.co.woolworths.financial.services.android.enhancedSubstitution.service.network.SubstitutionApiHelper
-import za.co.woolworths.financial.services.android.enhancedSubstitution.service.repository.ProductSubstitutionRepository
 import za.co.woolworths.financial.services.android.enhancedSubstitution.util.listener.ProductListSelectionListener
 import za.co.woolworths.financial.services.android.enhancedSubstitution.viewmodel.ProductSubstitutionViewModel
-import za.co.woolworths.financial.services.android.enhancedSubstitution.viewmodel.ProductSubstitutionViewModelFactory
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
@@ -41,12 +39,13 @@ import za.co.woolworths.financial.services.android.util.analytics.FirebaseManage
 import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 
 
+@AndroidEntryPoint
 class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionFragmentBinding>(
     LayoutSearchSubstitutionFragmentBinding::inflate
 ), ProductListSelectionListener, OnClickListener {
 
     private var searchProductSubstitutionAdapter: SearchProductSubstitutionAdapter? = null
-    private lateinit var productSubstitutionViewModel: ProductSubstitutionViewModel
+    private val productSubstitutionViewModel: ProductSubstitutionViewModel by activityViewModels()
     private var productList: ProductList? = null
     private var searchText: String? = null
     private var commerceItemId: String? = ""
@@ -66,7 +65,6 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setUpViewModel()
         initView()
     }
 
@@ -100,13 +98,6 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
         }
 
         closeKeyBoard()
-    }
-
-    private fun setUpViewModel() {
-        productSubstitutionViewModel = ViewModelProvider(
-            this,
-            ProductSubstitutionViewModelFactory(ProductSubstitutionRepository(SubstitutionApiHelper()))
-        )[ProductSubstitutionViewModel::class.java]
     }
 
     private fun getSubstituteProductList(requestParams: ProductsRequestParams) {

@@ -10,8 +10,9 @@ import za.co.woolworths.financial.services.android.models.network.RetrofitApiPro
 import za.co.woolworths.financial.services.android.models.network.RetrofitConfig
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
+import javax.inject.Inject
 
-class SubstitutionApiHelper : RetrofitConfig(AppContextProviderImpl(), RetrofitApiProviderImpl()) {
+class SubstitutionApiHelper @Inject constructor() : RetrofitConfig(AppContextProviderImpl(), RetrofitApiProviderImpl()) {
 
     suspend fun getProductSubstitution(productId: String?) =
         mApiInterface.getSubstitution(
