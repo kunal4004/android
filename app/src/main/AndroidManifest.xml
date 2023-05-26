@@ -27,6 +27,7 @@
     <uses-permission android:name="com.sonyericsson.home.permission.BROADCAST_BADGE" /> <!-- To check application on background or not for KITKAT -->
     <uses-permission android:name="android.permission.GET_TASKS" /> <!-- Don't require camera, as this requires a rear camera. This allows it to work on the Nexus 7 -->
     <uses-permission android:name="com.huawei.appmarket.service.commondata.permission.GET_COMMON_DATA" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -579,10 +580,6 @@
             android:screenOrientation="portrait"
             android:theme="@style/FaqStyle"
             android:windowSoftInputMode="adjustResize" />
-        <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.DashDetailsActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/FaqStyle" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.CreditReportTUActivity"
             android:screenOrientation="portrait"

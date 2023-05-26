@@ -91,24 +91,22 @@
                 <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
-                    android:background="@drawable/storecarousellegradient"
-                    >
+                    android:layout_alignParentBottom="true">
 
                     <za.co.woolworths.financial.services.android.util.WCustomViewPager
                         android:id="@+id/cardPager"
                         android:layout_width="match_parent"
-                        android:layout_height="145dp"
-                        android:paddingBottom="12dp"
-                        />
+                        android:layout_height="@dimen/hundred_and_sixty_dp"
+                        android:paddingStart="@dimen/twenty_dp"
+                        android:paddingEnd="@dimen/twenty_dp"
+                        android:paddingBottom="@dimen/twelve_dp" />
 
                     <ProgressBar
                         android:id="@+id/storesProgressBar"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
+                        android:layout_width="@dimen/twenty_four_dp"
+                        android:layout_height="@dimen/twenty_four_dp"
                         android:layout_gravity="center"
-                        android:visibility="gone"
-                        />
+                        android:visibility="gone" />
                 </FrameLayout>
             </RelativeLayout>
 

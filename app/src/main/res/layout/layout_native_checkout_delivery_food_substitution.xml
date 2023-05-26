@@ -43,9 +43,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@color/white"
-            android:fontFamily="@font/myriad_pro_regular"
-            android:text="@string/native_checkout_delivery_food_substitution_desc"
-            android:textColor="@color/color_444444" />
+            style="@style/opensans_regular_13_black"
+            android:text="@string/native_checkout_delivery_food_substitution_desc" />
+
     </com.facebook.shimmer.ShimmerFrameLayout>
 
     <com.facebook.shimmer.ShimmerFrameLayout
@@ -76,11 +76,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="@dimen/seven_dp"
-                android:fontFamily="@font/myriad_pro_regular"
                 android:paddingHorizontal="@dimen/ten_dp"
-                android:text="@string/native_checkout_delivery_food_substitution_phone_confirm"
-                android:textColor="@color/color_444444"
-                android:textSize="@dimen/fifteen_sp" />
+                android:text="@string/native_checkout_delivery_food_substitution_phone_confirm" />
 
             <androidx.appcompat.widget.AppCompatRadioButton
                 android:id="@+id/radioBtnSimilarSubst"
@@ -89,11 +86,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="@dimen/seven_dp"
                 android:checked="true"
-                android:fontFamily="@font/myriad_pro_regular"
                 android:paddingHorizontal="@dimen/ten_dp"
-                android:text="@string/native_checkout_delivery_food_substitution_similar_subst"
-                android:textColor="@color/color_444444"
-                android:textSize="@dimen/fifteen_sp" />
+                android:text="@string/native_checkout_delivery_food_substitution_similar_subst" />
 
             <androidx.appcompat.widget.AppCompatRadioButton
                 android:id="@+id/radioBtnNoThanks"
@@ -101,11 +95,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="@dimen/seven_dp"
-                android:fontFamily="@font/myriad_pro_regular"
                 android:paddingHorizontal="@dimen/ten_dp"
-                android:text="@string/native_checkout_delivery_food_substitution_no_thanks"
-                android:textColor="@color/color_444444"
-                android:textSize="@dimen/fifteen_sp" />
+                android:text="@string/native_checkout_delivery_food_substitution_no_thanks" />
 
         </RadioGroup>
     </com.facebook.shimmer.ShimmerFrameLayout>

@@ -16,7 +16,7 @@ class OnDemand : Serializable {
     var quantityLimit: QuantityLimit? = null
 
     @SerializedName("deliverable")
-    var deliverable: Boolean? = null
+    var deliverable: Boolean = false
 
     @SerializedName("storeName")
     var storeName: String? = null

@@ -518,7 +518,7 @@ class CartProductAdapter(
 
     inner class ProductHolder(view: View) : RecyclerView.ViewHolder(view) {
         val tvTitle: TextView
-        val tvColorSize: WTextView
+        val tvColorSize: TextView
         val quantity: WTextView
         val price: WTextView
         val promotionalText: WTextView
