@@ -1249,7 +1249,7 @@ class ProductDetailsFragment :
             }
         }
         if (hasSize)
-            binding?.showSize()
+            showSize()
         else {
             binding?.sizeColorSelectorLayout?.apply {
                 sizeSelectorLayout.visibility = View.GONE
@@ -1302,11 +1302,14 @@ class ProductDetailsFragment :
         }
     }
 
-    private fun ProductDetailsFragmentBinding.showSize() {
-        sizeColorSelectorLayout.apply {
+    private fun showSize() {
+        if(!isAdded || binding == null) {
+            return
+        }
+        binding.sizeColorSelectorLayout.apply {
             productSizeSelectorAdapter = ProductSizeSelectorAdapter(
                 requireActivity(),
-                otherSKUsByGroupKey[getSelectedGroupKey()]!!,
+                otherSKUsByGroupKey[getSelectedGroupKey()] ?: ArrayList(0),
                 productDetails?.lowStockIndicator ?: 0,
                 this@ProductDetailsFragment
             )
@@ -1385,7 +1388,7 @@ class ProductDetailsFragment :
     }
 
     override fun updateDefaultUI(isInventoryCalled: Boolean) {
-        binding.apply {
+        binding?.apply {
             loadSizeAndColor()
             loadPromotionalImages()
             updateAuxiliaryImages(getAuxiliaryImagesByGroupKey())
