@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.geolocation.view
 
+import android.Manifest
 import android.annotation.TargetApi
 import android.app.Activity
 import android.content.Intent
@@ -65,6 +66,7 @@ import java.util.*
 
 class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_dialog),
     SavedAddressAdapter.OnAddressSelected,
+    PermissionResultCallback,
     View.OnClickListener {
 
     private lateinit var binding: ConfirmAddressBottomSheetDialogBinding
@@ -79,7 +81,8 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
     private var isFromDashTab: Boolean = false
     private var deliveryType: String? = null
     private var isAddressAvailable: Boolean = false
-
+    private var permissionUtils: PermissionUtils? = null
+    var permissions: ArrayList<String> = arrayListOf()
     companion object {
         fun newInstance() = ConfirmAddressFragment()
     }
@@ -108,6 +111,10 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
         super.onViewCreated(view, savedInstanceState)
         binding = ConfirmAddressBottomSheetDialogBinding.bind(view)
         locator = Locator(activity as AppCompatActivity)
+        activity?.apply {
+            permissionUtils = PermissionUtils(this, this@ConfirmAddressFragment)
+            permissions.add(Manifest.permission.ACCESS_FINE_LOCATION)
+        }
         binding.initViews()
         addFragmentListener()
     }
@@ -166,11 +173,15 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
 
         inCurrentLocation?.swEnableLocation?.setOnClickListener {
             if (inCurrentLocation?.swEnableLocation?.isChecked == true) {
-                if (!Utils.isLocationEnabled(requireContext())) {
+                if(!PermissionUtils.hasPermissions(
+                                requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)) {
+                    checkLocationPermission()
+                } else if (!Utils.isLocationEnabled(requireContext())) {
                     KotlinUtils.openAccessMyLocationDeviceSettings(
                             EnableLocationSettingsFragment.ACCESS_MY_LOCATION_REQUEST_CODE, activity)
                 } else {
                     inCurrentLocation?.swEnableLocation?.isChecked = true
+                    startLocationDiscoveryProcess()
                 }
             }
         }
@@ -197,21 +208,14 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
             val isLocEnabled = Utils.isLocationEnabled(this)
 
             // If location services enabled, extract latitude and longitude
-            if (binding.inCurrentLocation?.swEnableLocation?.isChecked == true ||
-                    isLocEnabled) {
-                if(isLocEnabled) {
-                    binding.inCurrentLocation?.swEnableLocation?.isChecked = true
+                if(isLocEnabled && PermissionUtils.hasPermissions(
+                                requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)) {
                     startLocationDiscoveryProcess()
                 } else {
                     isAddressAvailable = false
                     binding.disableCurrentLocation()
                     binding.inCurrentLocation?.swEnableLocation?.isChecked = false
                 }
-            } else if (!isLocEnabled) {
-                isAddressAvailable = false
-                binding.disableCurrentLocation()
-                binding.inCurrentLocation?.swEnableLocation?.isChecked = false
-            }
         }
     }
 
@@ -323,6 +327,7 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
     private fun ConfirmAddressBottomSheetDialogBinding.disableCurrentLocation() {
         inCurrentLocation?.ivArrow?.visibility = View.GONE
         inCurrentLocation?.swEnableLocation?.visibility = View.VISIBLE
+        inCurrentLocation?.swEnableLocation?.isChecked = false
         inCurrentLocation?.tvCurrentLocation?.text = getString(R.string.enable_location_services)
     }
 
@@ -833,6 +838,22 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == EnableLocationSettingsFragment.ACCESS_MY_LOCATION_REQUEST_CODE) {
             startLocationDiscoveryProcess()
+        }
+    }
+
+    private fun checkLocationPermission() {
+        permissionUtils?.checkPermission(
+                permissions,
+                3
+        )
+    }
+
+    override fun permissionGranted(requestCode: Int) {
+        if (requestCode == 3) {
+            if (!Utils.isLocationEnabled(requireContext())) {
+                KotlinUtils.openAccessMyLocationDeviceSettings(
+                        EnableLocationSettingsFragment.ACCESS_MY_LOCATION_REQUEST_CODE, activity)
+            }
         }
     }
 }
