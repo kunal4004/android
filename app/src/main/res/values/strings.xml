@@ -3056,5 +3056,6 @@
 </string>
     <string name="empty_subst_list_title">We Can’t Recommend Any Substitutes For This Item Yet.</string>
     <string name="empty_subst_list_desc">Please use the search bar to browse our food catalogue to find a suitable alternative. </string>
+    <string name="fail_add_substitution_title">Failed to add substitute</string>
 
 </resources>

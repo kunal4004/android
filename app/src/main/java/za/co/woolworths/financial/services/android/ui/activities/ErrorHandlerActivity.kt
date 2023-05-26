@@ -31,6 +31,7 @@ class ErrorHandlerActivity : AppCompatActivity() {
         const val ERROR_STORE_CARD_DUPLICATE_CARD_REPLACEMENT: Int = 6
         const val ERROR_TYPE_SUBMITTED_ORDER: Int = 7
         const val ERROR_TYPE_EMPTY_CART: Int = 8
+        const val ERROR_TYPE_ADD_SUBSTITUTION: Int = 9
 
         const val COMMON_WITH_BACK_BUTTON: Int = 5
 

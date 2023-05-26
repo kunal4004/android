@@ -96,17 +96,24 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyle"
-        android:layout_width="@dimen/fourty_dp"
-        android:layout_height="@dimen/fourty_dp"
-        android:indeterminate="true"
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/manageSubstitutionGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="btnConfirm,dontWantText,
+        viewSeparator,layout_manage_substitution,txtManageTitle,imgBack"/>
+
+    <include
+        android:id="@+id/requestProcressLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:visibility="gone"
-        android:indeterminateTint="@color/black"
-        android:indeterminateTintMode="src_atop"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        layout="@layout/process_request_fragment"/>
+
+    <include
+        android:id="@+id/requestSuccessLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        layout="@layout/layout_payment_success_confirmation"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

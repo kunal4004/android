@@ -1,11 +1,14 @@
 package za.co.woolworths.financial.services.android.enhancedSubstitution.view
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.MotionEvent
 import android.view.View
 import android.view.View.*
 import android.view.ViewTreeObserver
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
@@ -26,6 +29,7 @@ import za.co.woolworths.financial.services.android.enhancedSubstitution.viewmode
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.network.Status
+import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.extension.onClick
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
@@ -34,7 +38,8 @@ import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBind
 
 class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetailsLayoutBinding>(
     ManageSubstitutionDetailsLayoutBinding::inflate
-), OnClickListener, ProductSubstitutionListListener, OnTouchListener, ViewTreeObserver.OnScrollChangedListener {
+), OnClickListener, ProductSubstitutionListListener, OnTouchListener,
+    ViewTreeObserver.OnScrollChangedListener {
 
     private var manageProductSubstitutionAdapter: ManageProductSubstitutionAdapter? = null
     private var selectionChoice = ""
@@ -68,6 +73,15 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
             putString(SKU_ID, skuId)
         }
     }
+
+    private val addSubstitutionResult =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+            when (result.resultCode) {
+                ErrorHandlerActivity.ERROR_TYPE_ADD_SUBSTITUTION -> {
+                    callAddSubstitutionApi()
+                }
+            }
+        }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -144,7 +158,7 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
                     Status.SUCCESS -> {
                         resource.data?.data?.let {
                             itemList = it.responses.getOrNull(0)?.actions?.getOrNull(0)?.items
-                            if(itemList.isNullOrEmpty()) {
+                            if (itemList.isNullOrEmpty()) {
                                 binding.layoutManageSubstitution.listSubstitute.apply {
                                     recyclerView.visibility = GONE
                                 }
@@ -158,7 +172,6 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
                     }
                     Status.ERROR -> {
                         hideShimmerView()
-                        /*todo need to show error screen*/
                         binding.layoutManageSubstitution.listSubstitute.apply {
                             recyclerView.visibility = GONE
                         }
@@ -239,15 +252,19 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
             isNestedScrollingEnabled = false
         }
         if (binding.layoutManageSubstitution.rbOwnSubstitute.isChecked) {
-            Utils.fadeInFadeOutAnimation(binding.layoutManageSubstitution.listSubstitute.root, false)
+            Utils.fadeInFadeOutAnimation(
+                binding.layoutManageSubstitution.listSubstitute.root,
+                false
+            )
         } else {
             Utils.fadeInFadeOutAnimation(binding.layoutManageSubstitution.listSubstitute.root, true)
         }
     }
 
-    private fun showEmptyErrorScreen(){
+    private fun showEmptyErrorScreen() {
         /*todo implement empty error screen*/
-        binding.layoutManageSubstitution.listSubstitute.groupEmptySubstituteList.visibility = VISIBLE
+        binding.layoutManageSubstitution.listSubstitute.groupEmptySubstituteList.visibility =
+            VISIBLE
     }
 
     private fun prepareProductRequest(): GetKiboProductRequest {
@@ -264,7 +281,10 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
             R.id.dontWantText -> confirmDontWantSubstitutionForProduct()
             R.id.imgBack -> (activity as? BottomNavigationActivity)?.popFragment()
             R.id.rbShopperChoose -> {
-                Utils.fadeInFadeOutAnimation(binding.layoutManageSubstitution.listSubstitute.root, true)
+                Utils.fadeInFadeOutAnimation(
+                    binding.layoutManageSubstitution.listSubstitute.root,
+                    true
+                )
                 clickOnLetMyShooperChooseOption()
             }
             R.id.rbOwnSubstitute -> clickOnOwnSubstitutioneOption()
@@ -315,32 +335,53 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
             it.getContentIfNotHandled()?.let { resource ->
                 when (resource.status) {
                     Status.LOADING -> {
-                        binding.progressBar.visibility = VISIBLE
+                        binding.requestProcressLayout.root.visibility = VISIBLE
+                        startSpinning()
                     }
                     Status.SUCCESS -> {
-                        binding.progressBar.visibility = GONE
-
+                        binding.requestProcressLayout.root.visibility = GONE
+                        stopSpinning()
                         /* if we get form exception need to show error popup*/
                         resource.data?.data?.getOrNull(0)?.formExceptions?.getOrNull(0)?.let {
                             if (it.message?.isNotEmpty() == true) {
-                                showErrorScreen()
+                                showErrorScreen(ErrorHandlerActivity.ERROR_TYPE_ADD_SUBSTITUTION)
                             }
                             return@observe
                         }
+                        binding.requestSuccessLayout.root.visibility = VISIBLE
                         /* navigate to pdp and call getSubs. api*/
-                        setFragmentResult(SELECTED_SUBSTITUTED_PRODUCT, bundleOf(SearchSubstitutionFragment.SUBSTITUTION_ITEM_ADDED to true))
-                        (activity as? BottomNavigationActivity)?.popFragment()
+                      /*  setFragmentResult(
+                            SELECTED_SUBSTITUTED_PRODUCT,
+                            bundleOf(SearchSubstitutionFragment.SUBSTITUTION_ITEM_ADDED to true)
+                        )
+                        (activity as? BottomNavigationActivity)?.popFragment()*/
+
                     }
                     Status.ERROR -> {
-                        binding.progressBar.visibility = GONE
+                        binding.requestProcressLayout.root.visibility = GONE
+                        stopSpinning()
+                        showErrorScreen(ErrorHandlerActivity.ERROR_TYPE_ADD_SUBSTITUTION)
                     }
                 }
             }
         })
     }
 
-    fun showErrorScreen() {
-       /*TODO show error screen*/
+    fun showErrorScreen(errorType: Int) {
+        val intent = Intent(context, ErrorHandlerActivity::class.java)
+        intent.putExtra(ErrorHandlerActivity.ERROR_TYPE, errorType)
+        addSubstitutionResult.launch(intent)
+    }
+
+    fun stopSpinning() {
+        binding.requestProcressLayout.includeCircleProgressLayout.circularProgressIndicator?.apply {
+            stopSpinning()
+            setValueAnimated(100f)
+        }
+    }
+
+    fun startSpinning() {
+        binding.requestProcressLayout.includeCircleProgressLayout.circularProgressIndicator?.spin()
     }
 
     private fun confirmDontWantSubstitutionForProduct() {
@@ -414,9 +455,9 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
             val view = this.getChildAt(this.childCount - 1)
             val bottomDetector: Int = view.bottom - (this.height + this.scrollY)
             if (bottomDetector == 0) {
-              binding.viewSeparator.visibility = VISIBLE
+                binding.viewSeparator.visibility = VISIBLE
             } else {
-               binding.viewSeparator.visibility = GONE
+                binding.viewSeparator.visibility = GONE
             }
         }
     }
