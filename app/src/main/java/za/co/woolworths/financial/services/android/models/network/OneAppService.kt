@@ -49,8 +49,11 @@ import za.co.woolworths.financial.services.android.recommendations.data.response
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.RatingAndReviewData
 import za.co.woolworths.financial.services.android.dynamicyield.data.response.request.DynamicVariantRequestEvent
 import za.co.woolworths.financial.services.android.dynamicyield.data.response.getResponse.DynamicYieldChooseVariationResponse
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.HomePageRequestEvent
 import za.co.woolworths.financial.services.android.ui.activities.product.dynamicyield.response.getresponse.DyKeywordSearchResponse
 import za.co.woolworths.financial.services.android.ui.activities.product.dynamicyield.response.request.DyKeywordSearchRequestEvent
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.PrepareChangeAttributeRequestEvent
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Response.DyChangeAttributeResponse
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
@@ -1309,6 +1312,22 @@ open class OneAppService(
             getSessionToken(),
             getDeviceIdentityToken(),
             dyKeywordSearchRequestEvent
+        )
+    }
+
+    fun dynamicYieldHomePage(dyHomePageRequestEvent: HomePageRequestEvent): Call<DynamicYieldChooseVariationResponse> {
+        return mApiInterface.dynamicYieldHomePage(
+            getSessionToken(),
+            getDeviceIdentityToken(),
+            dyHomePageRequestEvent
+        )
+    }
+
+    fun dynamicYieldChangeAttribute(dyPrepareChangeAttributeRequestEvent: PrepareChangeAttributeRequestEvent): Call<DyChangeAttributeResponse> {
+        return mApiInterface.dynamicYieldChangeAttribute(
+            getSessionToken(),
+            getDeviceIdentityToken(),
+            dyPrepareChangeAttributeRequestEvent
         )
     }
 }

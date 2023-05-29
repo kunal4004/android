@@ -84,6 +84,12 @@ import za.co.woolworths.financial.services.android.ui.adapters.*
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerAdapter.MultipleImageInterface
 import za.co.woolworths.financial.services.android.ui.extension.deviceWidth
 import za.co.woolworths.financial.services.android.ui.extension.underline
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.*
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.Device
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.Session
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.User
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Response.DyChangeAttributeResponse
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.ViewModel.DyChangeAttributeViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.OutOfStockMessageDialogFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.size_guide.SkinProfileDialog
@@ -140,6 +146,8 @@ import java.io.File
 import javax.inject.Inject
 import kotlin.collections.get
 import kotlin.collections.set
+
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.EventDyChangeAttribute
 
 
 @AndroidEntryPoint
@@ -233,7 +241,7 @@ class ProductDetailsFragment :
     private lateinit var moreReviewViewModel: RatingAndReviewViewModel
     private val dialogInstance = FoodProductNotAvailableForCollectionDialog.newInstance()
     private val recommendationViewModel: RecommendationViewModel by viewModels()
-    private lateinit var dYviewModel: DynamicYieldViewModel
+    //private lateinit var dYviewModel: DynamicYieldViewModel
 
     @OpenTermAndLighting
     @Inject
@@ -248,6 +256,8 @@ class ProductDetailsFragment :
 
     @Inject
     lateinit var vtoSavedPhotoToast: SingleMessageCommonToast
+
+    private lateinit var dyChangeAttributeViewModel: DyChangeAttributeViewModel
 
     companion object {
         const val INDEX_STORE_FINDER = 1
@@ -299,48 +309,12 @@ class ProductDetailsFragment :
         setUniqueIds()
         productDetails?.let { addViewItemEvent(it) }
         setUpCartCountPDP()
-        prepareDynamicYieldRequestEvent()
-        dyViewModel()
+       // prepareDynamicYieldRequestEvent()
+      //  dyViewModel()
+        dyChangeAttributeViewModel()
     }
 
-    private fun dyViewModel() {
-        dYviewModel = ViewModelProvider(this).get(DynamicYieldViewModel::class.java)
-        dYviewModel.getDyLiveData().observe(viewLifecycleOwner, Observer<DynamicYieldChooseVariationResponse?> {
-            if (it == null){
-                Toast.makeText(activity, "failed to hit Dynamic yield", Toast.LENGTH_LONG).show()
-            } else {
-                Toast.makeText(activity,"Success Dynamic Yield", Toast.LENGTH_LONG).show()
-            }
-        })
-    }
 
-    private fun prepareDynamicYieldRequestEvent(): DynamicVariantRequestEvent {
-        val user = User("hjds", "1234")
-        val device = Device("123:09:00:00", "Realme 3pro")
-        val pageAttributes = PageAttributes("some values")
-        val skuids= ArrayList<String>()
-        val otherSkus = productDetails?.otherSkus
-        productDetails?.otherSkus?.forEach {
-            skuids.add(it.sku!!)
-        }
-        val productId = productDetails!!.productId
-
-
-        val data = Data(productId, skuids)
-        val page = Page(listOf(data) as List<Data>, "khurda", "PRODUCT")
-        val session = Session("12345")
-        val options = Options(true)
-        val contextDY = ContextDY(device, page, pageAttributes)
-
-        val  dynamicVariantRequestEvent = DynamicVariantRequestEvent(
-            contextDY,
-            options = options,
-            session = session,
-            user = user
-        )
-        return dynamicVariantRequestEvent
-        dYviewModel.createDyRequest(dynamicVariantRequestEvent)
-    }
 
     private fun setUpCartCountPDP() {
         val cartIconMargin = requireContext().resources.getDimensionPixelSize(R.dimen.five_dp)
@@ -1795,6 +1769,37 @@ class ProductDetailsFragment :
             binding.hideLowStockFromSelectedColor()
 
         }
+        prepareDyChangeAttributeRequestEvent("WHITE")
+    }
+
+    private fun prepareDyChangeAttributeRequestEvent(selectedColor: String): PrepareChangeAttributeRequestEvent {
+        val user = User("-4350463893986789401","-4350463893986789401")
+        val session = Session("ohyr6v42l9zd4bpinnvp7urjjx9lrssw")
+        val device = Device("54.100.200.255")
+        val contextDyChangeAttribute = ContextDyChangeAttribute(device)
+        val propertiesDyChangeAttribute = Properties("Color",selectedColor,"change-attr-v1")
+        val eventsDyChangeAttribute = EventDyChangeAttribute("ChangeAttributeAndroid", propertiesDyChangeAttribute)
+        val e = ArrayList<EventDyChangeAttribute>()
+        e.add(eventsDyChangeAttribute);
+        val prepareChangeAttributeRequestEvent = PrepareChangeAttributeRequestEvent(
+            contextDyChangeAttribute,
+            e,
+            session,
+            user
+        )
+        return prepareChangeAttributeRequestEvent
+        dyChangeAttributeViewModel.createDyChangeAttributeRequest(prepareChangeAttributeRequestEvent)
+    }
+
+    private fun dyChangeAttributeViewModel() {
+        dyChangeAttributeViewModel = ViewModelProvider(this).get(DyChangeAttributeViewModel::class.java)
+        dyChangeAttributeViewModel.getDyLiveData().observe(viewLifecycleOwner, Observer<DyChangeAttributeResponse?> {
+            if (it == null){
+                Toast.makeText(activity, "failed to hit Change Attribute Dynamic yield", Toast.LENGTH_LONG).show()
+            } else {
+                Toast.makeText(activity,"Success to hit Change Attribute Dynamic Yield", Toast.LENGTH_LONG).show()
+            }
+        })
     }
 
     private fun applyEffectOnLiveCamera() {

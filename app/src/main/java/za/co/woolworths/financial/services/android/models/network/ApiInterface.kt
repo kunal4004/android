@@ -58,8 +58,11 @@ import za.co.woolworths.financial.services.android.recommendations.data.response
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.ReviewFeedback
 import za.co.woolworths.financial.services.android.dynamicyield.data.response.request.DynamicVariantRequestEvent
 import za.co.woolworths.financial.services.android.dynamicyield.data.response.getResponse.DynamicYieldChooseVariationResponse
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.HomePageRequestEvent
 import za.co.woolworths.financial.services.android.ui.activities.product.dynamicyield.response.getresponse.DyKeywordSearchResponse
 import za.co.woolworths.financial.services.android.ui.activities.product.dynamicyield.response.request.DyKeywordSearchRequestEvent
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.PrepareChangeAttributeRequestEvent
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Response.DyChangeAttributeResponse
 
 interface ApiInterface {
 
@@ -1564,11 +1567,28 @@ interface ApiInterface {
     ) : Call<DynamicYieldChooseVariationResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @POST("wfs/app/v2/collect/user/event")
+    @POST("wfs/app/dynamicYield/reportEvent")
     fun dynamicYieldKeywordSearch(
         @Header("sessionToken") sessionToken: String,
         @Header("deviceIdentityToken") deviceIdentityToken: String,
         @Body dyKeywordSearchRequestEvent: DyKeywordSearchRequestEvent
     ) : Call<DyKeywordSearchResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @POST("wfs/app/dynamicYield/chooseVariation")
+    fun dynamicYieldHomePage(
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Body dyHomePageRequestEvent: HomePageRequestEvent
+    ) : Call<DynamicYieldChooseVariationResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @POST("wfs/app/dynamicYield/reportEvent")
+    fun dynamicYieldChangeAttribute(
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Body dyPrepareChangeAttributeRequestEvent: PrepareChangeAttributeRequestEvent
+    ) : Call<DyChangeAttributeResponse>
+
 }
 

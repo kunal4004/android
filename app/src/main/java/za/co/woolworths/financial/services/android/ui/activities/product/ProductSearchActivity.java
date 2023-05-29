@@ -70,7 +70,7 @@ public class ProductSearchActivity extends AppCompatActivity
     public static final String EXTRA_SEARCH_TEXT_HINT = "SEARCH_TEXT_HINT";
     public static final String EXTRA_LIST_ID = "listId";
     public static final int PRODUCT_SEARCH_ACTIVITY_RESULT_CODE = 1244;
-    private DyKeywordSearchViewModel viewModel;
+    private DyKeywordSearchViewModel dyKeywordSearchViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,30 +100,30 @@ public class ProductSearchActivity extends AppCompatActivity
             }
         }
         initViewModel();
-        prepareDyKeywordSearchRequestEvent();
     }
 
-    private void prepareDyKeywordSearchRequestEvent() {
-        String editSearchProduct = mEditSearchProduct.getText().toString();
-        User user = new User("hjds", "1234");
-        Session session = new Session("898989");
+    private void prepareDyKeywordSearchRequestEvent(String searchProductBrand) {
+        User user = new User("2445455544238003591", "2445455544238003591");
+        Session session = new Session("2prrq1oslhogtosiwlpgzfiae5sfg6zo");
         Device device = new Device("102:22:22:2");
         Context context = new Context(device);
-        Properties properties = new Properties(editSearchProduct,"keyword-search-v1");
+        Properties properties = new Properties(searchProductBrand,"keyword-search-v1");
         Events events = new Events("keywordSearchV1",properties);
-        DyKeywordSearchRequestEvent dyKeywordSearchRequestEvent = new DyKeywordSearchRequestEvent(session,context,user, (List<Events>) events);
-        viewModel.createKeywordSearch(dyKeywordSearchRequestEvent);
+        ArrayList<Events> e = new ArrayList<>();
+        e.add(events);
+        DyKeywordSearchRequestEvent dyKeywordSearchRequestEvent = new DyKeywordSearchRequestEvent(session,context,user, e);
+        dyKeywordSearchViewModel.createKeywordSearch(dyKeywordSearchRequestEvent);
     }
 
     private void initViewModel() {
-        viewModel = new ViewModelProvider(this).get(DyKeywordSearchViewModel.class);
-        viewModel.getCreateKeywordSearchObserver().observe(this, new Observer<DyKeywordSearchResponse>() {
+        dyKeywordSearchViewModel = new ViewModelProvider(this).get(DyKeywordSearchViewModel.class);
+        dyKeywordSearchViewModel.getCreateKeywordSearchObserver().observe(this, new Observer<DyKeywordSearchResponse>() {
             @Override
             public void onChanged(DyKeywordSearchResponse dyKeywordSearchResponse) {
                 if (dyKeywordSearchResponse == null) {
-                    Toast.makeText(ProductSearchActivity.this, "failed", Toast.LENGTH_LONG).show();
+                    Toast.makeText(ProductSearchActivity.this, "failed to DY keyword search", Toast.LENGTH_LONG).show();
                 } else {
-                    Toast.makeText(ProductSearchActivity.this, "Success", Toast.LENGTH_LONG).show();
+                    Toast.makeText(ProductSearchActivity.this, "Success to DY keyword search", Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -193,6 +193,7 @@ public class ProductSearchActivity extends AppCompatActivity
                     intent.putExtra(EXTRA_SEND_DELIVERY_DETAILS_PARAMS, isUserBrowsingDash);
                     setActivityResult(intent, PRODUCT_SEARCH_ACTIVITY_RESULT_CODE);
 				}
+            prepareDyKeywordSearchRequestEvent(searchProductBrand);
 		}
 	}
 

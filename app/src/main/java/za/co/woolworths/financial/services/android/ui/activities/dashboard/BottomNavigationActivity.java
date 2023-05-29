@@ -50,6 +50,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -60,6 +61,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.awfs.coordination.BR;
@@ -86,6 +88,7 @@ import dagger.hilt.android.AndroidEntryPoint;
 import io.reactivex.functions.Consumer;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.IToastInterface;
+import za.co.woolworths.financial.services.android.dynamicyield.data.response.getResponse.DynamicYieldChooseVariationResponse;
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
 import za.co.woolworths.financial.services.android.models.BrandNavigationDetails;
 import za.co.woolworths.financial.services.android.models.dto.CartSummary;
@@ -103,6 +106,16 @@ import za.co.woolworths.financial.services.android.models.service.event.LoadStat
 import za.co.woolworths.financial.services.android.onecartgetstream.OCChatActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Context;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Device;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.HomePageRequestEvent;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Options;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Page;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.PageAttributes;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.response.DyHomePageViewModel;
+import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity;
+import za.co.woolworths.financial.services.android.ui.activities.product.dynamicyield.response.getresponse.DyKeywordSearchResponse;
+import za.co.woolworths.financial.services.android.ui.activities.product.dynamicyield.viewmodel.DyKeywordSearchViewModel;
 import za.co.woolworths.financial.services.android.ui.base.BaseActivity;
 import za.co.woolworths.financial.services.android.ui.base.SavedInstanceFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.RefinementDrawerFragment;
@@ -148,6 +161,7 @@ import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager;
 import za.co.woolworths.financial.services.android.util.nav.FragNavController;
 import za.co.woolworths.financial.services.android.util.nav.FragNavTransactionOptions;
+import za.co.woolworths.financial.services.android.dynamicyield.presentation.viewmodel.DynamicYieldViewModel;
 
 @AndroidEntryPoint
 public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigationBinding, BottomNavigationViewModel>
@@ -196,6 +210,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     private Boolean isNewSession = false;
     private int currentTabIndex = INDEX_TODAY;
     private int previousTabIndex = INDEX_TODAY;
+    private DyHomePageViewModel dyHomePageViewModel;
 
     @Override
     public int getLayoutId() {
@@ -292,6 +307,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
         queryBadgeCountOnStart();
         addDrawerFragment();
+        dyViewModel();
     }
 
     private void parseDeepLinkData() {
@@ -722,6 +738,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
                 case R.id.navigate_to_shop:
                     onShopTabSelected(item);
+                    prepareDynamicYieldRequestEvent();
                     return true;
 
                 case R.id.navigate_to_cart:
@@ -767,6 +784,33 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             return false;
         }
     };
+
+    private void dyViewModel() {
+        dyHomePageViewModel = new ViewModelProvider(this).get(DyHomePageViewModel.class);
+       dyHomePageViewModel.createDyHomePageLiveData.observe(this, new androidx.lifecycle.Observer<DynamicYieldChooseVariationResponse>() {
+           @Override
+           public void onChanged(DynamicYieldChooseVariationResponse dynamicYieldChooseVariationResponse) {
+               if (dynamicYieldChooseVariationResponse == null) {
+                   Toast.makeText(BottomNavigationActivity.this, "Home Page DY failed", Toast.LENGTH_LONG).show();
+               } else {
+                   Toast.makeText(BottomNavigationActivity.this, "Home Page DY Success", Toast.LENGTH_LONG).show();
+
+               }
+           }
+       });
+    }
+
+    private void prepareDynamicYieldRequestEvent() {
+       // User user = new User("", "");
+        Device device = new Device("54.100.200.255","Mozilla/5.0");
+        PageAttributes pageAttributes = new PageAttributes("someValue");
+        ArrayList list = new ArrayList<>();
+        Page page = new Page(list, "MobileLandingPageAndroid","HOMEPAGE");
+        Context context = new Context(device,page,pageAttributes);
+        Options options = new Options(true);
+        HomePageRequestEvent homePageRequestEvent = new HomePageRequestEvent(context,options);
+        dyHomePageViewModel.createDyRequest(homePageRequestEvent);
+    }
 
     public void onShopTabSelected(MenuItem item) {
         replaceAccountIcon(item);
