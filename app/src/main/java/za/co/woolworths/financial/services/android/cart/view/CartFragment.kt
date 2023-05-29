@@ -1312,7 +1312,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                 }
                 setItemLimitsBanner()
                 instance.queryCartSummaryCount()
-                if (!isViewCartEventFired){
+                if (!isViewCartEventFired && orderSummary != null){
                     viewCartEvent(viewModel.getCartItemList(), orderSummary!!.total )
                     isViewCartEventFired = true
                 }
