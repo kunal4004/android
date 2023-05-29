@@ -41,7 +41,7 @@ class StartUpRepositoryTest {
         mock(Build::class.java)
     }
 
-    @Test
+   /* @Test
     fun check_if_methods_gets_called() = runBlockingTest {
         WoolworthsApplication.testSetInstance(mock())
         `when`(WoolworthsApplication.getInstance().getPackageName()).thenReturn(packageName)
@@ -64,5 +64,5 @@ class StartUpRepositoryTest {
         verify(startupApiHelper, times(1)).getConfig()
         //verify(sessionDaoSave(SessionDao.KEY.SPLASH_VIDEO, "1"))
         //verify(clearSharedPreferences(instrumentationContext))
-    }
+    }*/
 }

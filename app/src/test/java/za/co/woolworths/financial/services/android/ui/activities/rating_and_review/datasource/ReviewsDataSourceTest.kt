@@ -2,16 +2,14 @@ package za.co.woolworths.financial.services.android.ui.activities.rating_and_rev
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.MutableLiveData
-import androidx.paging.PagingSource
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runBlockingTest
-import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
-import org.junit.Test
-import org.mockito.BDDMockito.given
 import org.mockito.Mock
-import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.*
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.RatingReviewResponse
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.Refinements
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.Reviews
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.SortOptions
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.network.apihelper.RatingAndReviewApiHelper
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.network.datasource.ReviewsDataSource
 import za.co.woolworths.financial.services.android.util.TestCoroutineRule
@@ -53,7 +51,7 @@ class ReviewsDataSourceTest {
 //                ratingAndResponseLiveData)
     }
 
-    private fun setUpMockRatingAndReviewResponse() {
+   /* private fun setUpMockRatingAndReviewResponse() {
         mockReview = Reviews(
                 isVerifiedBuyer = true,
                 isStaffMember = false,
@@ -104,7 +102,7 @@ class ReviewsDataSourceTest {
                 )
         ).toString()
         )
-    }
+    }*/
 
  //   @Ignore
 //    fun `reviews paging source refresh - success`() = runBlockingTest {
