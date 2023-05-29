@@ -224,6 +224,7 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
             if (productList?.rowType === ProductListingViewType.FOOTER) {
                 iterator?.remove()
                 productAdapter?.notifyItemRemoved(index)
+                break
             }
             ++index
         }
