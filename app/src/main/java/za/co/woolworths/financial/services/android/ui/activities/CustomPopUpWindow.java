@@ -24,6 +24,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.awfs.coordination.R;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -416,7 +417,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
                                     LinearLayout.LayoutParams.WRAP_CONTENT);
                     view.setLayoutParams(layoutParams);
                     WTextView tvTitle = view.findViewById(R.id.title);
-                    WTextView tvDescription = view.findViewById(R.id.description);
+                    TextView tvDescription = view.findViewById(R.id.description);
                     tvTitle.setText(String.valueOf(entry.getKey()));
                     tvDescription.setText(String.valueOf(entry.getValue()));
                     llSupplyDetailContainer.addView(view);
