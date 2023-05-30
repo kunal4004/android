@@ -18,21 +18,19 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.ManageSubstitutionDetailsLayoutBinding
 import com.facebook.shimmer.Shimmer
+import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.cart.view.SubstitutionChoice
 import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.*
-import za.co.woolworths.financial.services.android.enhancedSubstitution.service.network.SubstitutionApiHelper
-import za.co.woolworths.financial.services.android.enhancedSubstitution.service.repository.ProductSubstitutionRepository
 import za.co.woolworths.financial.services.android.enhancedSubstitution.util.listener.ProductSubstitutionListListener
 import za.co.woolworths.financial.services.android.enhancedSubstitution.view.SearchSubstitutionFragment.Companion.SELECTED_SUBSTITUTED_PRODUCT
 import za.co.woolworths.financial.services.android.enhancedSubstitution.view.SearchSubstitutionFragment.Companion.SUBSTITUTION_ITEM_KEY
 import za.co.woolworths.financial.services.android.enhancedSubstitution.viewmodel.ProductSubstitutionViewModel
-import za.co.woolworths.financial.services.android.enhancedSubstitution.viewmodel.ProductSubstitutionViewModelFactory
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.network.Status
@@ -42,6 +40,7 @@ import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 
+@AndroidEntryPoint
 class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetailsLayoutBinding>(
     ManageSubstitutionDetailsLayoutBinding::inflate
 ), OnClickListener, ProductSubstitutionListListener, OnTouchListener,
@@ -49,7 +48,7 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
 
     private var manageProductSubstitutionAdapter: ManageProductSubstitutionAdapter? = null
     private var selectionChoice = ""
-    private lateinit var productSubstitutionViewModel: ProductSubstitutionViewModel
+    private val productSubstitutionViewModel: ProductSubstitutionViewModel by activityViewModels()
     private var commerceItemId = ""
     private var productId = ""
     private var skuId = ""
@@ -87,7 +86,6 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
             productId = getString(PRODUCT_ID, "")
             skuId = getString(SKU_ID, "")
         }
-        setUpViewModel()
         initView()
         binding.btnConfirm.setOnClickListener(this)
         binding.dontWantText.setOnClickListener(this)
@@ -113,16 +111,6 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
         binding.layoutManageSubstitution.nestedScrollView.viewTreeObserver.addOnScrollChangedListener(
             this
         )
-    }
-
-    private fun setUpViewModel() {
-        productSubstitutionViewModel = ViewModelProvider(
-            this, ProductSubstitutionViewModelFactory(
-                ProductSubstitutionRepository(
-                    SubstitutionApiHelper()
-                )
-            )
-        )[ProductSubstitutionViewModel::class.java]
     }
 
     private fun showShimmerView() {
