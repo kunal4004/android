@@ -4,6 +4,7 @@ import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.models.network.Resource
 import za.co.woolworths.financial.services.android.recommendations.data.repository.RecommendationsRepository
 import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.RecommendationResponse
+import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.RecommendationRequest
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants.PRODUCT_ID_FOR_DISCOUNT
@@ -54,4 +55,8 @@ class RecommendationsRepositoryImplFake : RecommendationsRepository {
             Resource.error(R.string.error_unknown, null)
         }
     }
+
+   /* override suspend fun getRecommendationResponse(requestEvent: Event?): Resource<RecommendationResponse> {
+        TODO("Not yet implemented")
+    }*/
 }
