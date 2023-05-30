@@ -89,9 +89,11 @@ fun SignedInScreen(
 
 @Composable
 fun UserAccountLandingViewModel.BiometricsCollector(onClick: (OnAccountItemClickListener) -> Unit) {
-    if(isBiometricPopupEnabled){
-        onClick(AccountLandingInstantLauncher.BiometricIsRequired)
-        isBiometricPopupEnabled = false
+    LaunchedEffect(Unit) {
+        if (isBiometricPopupEnabled) {
+            onClick(AccountLandingInstantLauncher.BiometricIsRequired)
+            isBiometricPopupEnabled = false
+        }
     }
 }
 
@@ -224,12 +226,14 @@ fun UserAccountLandingViewModel.ScheduleCreditCardDeliveryCollector(
 ) {
     state?.data?.let { response ->
         val creditCardDelivery = onScheduleCreditCardDeliveryResponse(response)
-        onClick(
-            AccountLandingInstantLauncher.ScheduleCreditCardDelivery(
-                response,
-                creditCardDelivery
+        creditCardDelivery?.let { item ->
+            onClick(
+                AccountLandingInstantLauncher.ScheduleCreditCardDelivery(
+                    response,
+                    item
+                )
             )
-        )
+        }
         state.data = null
     }
 }
@@ -460,7 +464,8 @@ private fun LazyListScope.productHeaderView(
             text = title,
             locator = locator,
             color = Color.Black,
-            modifier = Modifier.padding(start = Margin.start, top = Margin.end)
+            modifier = Modifier
+                .padding(start = Margin.start, top = Margin.end)
                 .testAutomationTag(locator),
             isLoading = isLoading,
             brush = brush

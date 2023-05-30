@@ -3,10 +3,7 @@ package za.co.woolworths.financial.services.android.util.analytics
 import android.os.Bundle
 import com.google.firebase.analytics.FirebaseAnalytics
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.models.dto.CommerceItem
-import za.co.woolworths.financial.services.android.models.dto.ProductDetails
-import za.co.woolworths.financial.services.android.models.dto.ProductList
-import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
+import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.Product
 import za.co.woolworths.financial.services.android.util.analytics.dto.AnalyticProductItem
 import za.co.woolworths.financial.services.android.util.analytics.dto.toAnalyticItem
@@ -84,44 +81,6 @@ object FirebaseAnalyticsEventHelper {
         )
     }
 
-    fun viewItemList(
-        products: List<ProductList>?, category: String?
-    ) {
-        if (products.isNullOrEmpty()) {
-            return
-        }
-
-        val analyticItems = products.map { it.toAnalyticItem(category = category) }
-        triggerViewItemListEvent(products = analyticItems, category = category)
-    }
-
-    fun viewItemListRecommendations(
-        products: List<Product>?, category: String?
-    ) {
-        if (products.isNullOrEmpty()) {
-            return
-        }
-
-        val analyticItems = products.map { it.toAnalyticItem(category = category) }
-        triggerViewItemListEvent(products = analyticItems, category = category)
-    }
-
-    private fun triggerViewItemListEvent(products: List<AnalyticProductItem>, category: String?) {
-        val analyticsParams = Bundle()
-        analyticsParams.apply {
-            putParcelableArray(
-                FirebaseAnalytics.Param.ITEMS, products.map { it.toBundle() }.toTypedArray()
-            )
-            category?.let {
-                putString(FirebaseAnalytics.Param.ITEM_LIST_NAME, category)
-            }
-        }
-
-        AnalyticsManager.logEvent(
-            FirebaseManagerAnalyticsProperties.VIEW_ITEM_LIST, analyticsParams
-        )
-    }
-
     fun refund(
         commerceItems: List<CommerceItem>?,
         value: Double?,
@@ -177,5 +136,72 @@ object FirebaseAnalyticsEventHelper {
         AnalyticsManager.logEvent(
             FirebaseManagerAnalyticsProperties.REFUND, analyticsParams
         )
+    }
+
+    fun viewItemList(
+        products: List<ProductList>?, category: String?
+    ) {
+        if (products.isNullOrEmpty()) {
+            return
+        }
+
+        val analyticItems = products.map { it.toAnalyticItem(category = category) }
+        triggerViewItemListEvent(products = analyticItems, category = category)
+    }
+
+    fun viewItemListRecommendations(
+        products: List<Product>?, category: String?
+    ) {
+        if (products.isNullOrEmpty()) {
+            return
+        }
+
+        val analyticItems = products.map { it.toAnalyticItem(category = category) }
+        triggerViewItemListEvent(products = analyticItems, category = category)
+    }
+
+    private fun triggerViewItemListEvent(products: List<AnalyticProductItem>, category: String?) {
+        val analyticsParams = Bundle()
+        analyticsParams.apply {
+            putParcelableArray(
+                FirebaseAnalytics.Param.ITEMS, products.map { it.toBundle() }.toTypedArray()
+            )
+            category?.let {
+                putString(FirebaseAnalytics.Param.ITEM_LIST_NAME, category)
+            }
+        }
+
+        AnalyticsManager.logEvent(
+            FirebaseManagerAnalyticsProperties.VIEW_ITEM_LIST, analyticsParams
+        )
+    }
+
+    fun viewPromotion(productDetail: ProductDetails, promotionsList: List<Promotions>) {
+        if (promotionsList.isEmpty()) {
+            return
+        }
+        val analyticItem = productDetail.toAnalyticItem()
+        val promoText = extractPromotionText(promotionsList)
+
+        val analyticsParams = Bundle()
+        analyticsParams.apply {
+            putParcelableArray(
+                FirebaseAnalytics.Param.ITEMS, arrayOf(analyticItem.toBundle())
+            )
+            putString(FirebaseAnalytics.Param.CREATIVE_NAME, promoText)
+            putString(FirebaseAnalytics.Param.PROMOTION_NAME, promoText)
+            productDetail.productType?.let { productType ->
+                putString(FirebaseManagerAnalyticsProperties.BUSINESS_UNIT, productType)
+            }
+        }
+
+        AnalyticsManager.logEvent(
+            FirebaseManagerAnalyticsProperties.VIEW_PROMOTION, analyticsParams
+        )
+    }
+
+    private fun extractPromotionText(promotionsList: List<Promotions>): String {
+        return promotionsList.map { it.promotionalText }.filterNot { it.isNullOrEmpty() }
+            .joinToString()
     }
 }

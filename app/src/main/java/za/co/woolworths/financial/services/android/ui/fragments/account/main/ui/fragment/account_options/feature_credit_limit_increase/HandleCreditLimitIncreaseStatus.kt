@@ -58,13 +58,13 @@ class HandleCreditLimitIncreaseStatus @Inject constructor() : IHandleCreditLimit
 
     override fun isOfferDisabled(offerActive: OfferActive?): Boolean {
         val nextStep = offerActive?.nextStep
-        val cliStatus = offerActive?.cliStatus
+        val cliStatus = offerActive?.cliStatus?.lowercase()
         return nextStep.isNullOrEmpty() ||
-                nextStep == CreditLimitIncreaseStates.IN_PROGRESS.value ||
-                nextStep == CreditLimitIncreaseStates.DECLINE.value ||
-                nextStep == CreditLimitIncreaseStates.CONTACT_US.value ||
-                nextStep == CreditLimitIncreaseStates.UNAVAILABLE.value ||
-                (nextStep == CreditLimitIncreaseStates.COMPLETE.value
+                nextStep.equals(CreditLimitIncreaseStates.IN_PROGRESS.value, ignoreCase = true) ||
+                nextStep.equals(CreditLimitIncreaseStates.DECLINE.value, ignoreCase = true) ||
+                nextStep.equals(CreditLimitIncreaseStates.CONTACT_US.value, ignoreCase = true) ||
+                nextStep.equals(CreditLimitIncreaseStates.UNAVAILABLE.value, ignoreCase = true) ||
+                (nextStep.equals(CreditLimitIncreaseStates.COMPLETE.value, ignoreCase = true)
                         && cliStatus != CreditLimitIncreaseStates.CLI_CONCLUDED.value)
     }
 
