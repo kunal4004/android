@@ -3179,6 +3179,12 @@
         <item name="android:textColor">@color/black</item>
     </style>
 
+
+    <style name="opensans_regular_14_black" parent="opensens_regular">
+        <item name="android:textSize">@dimen/fourteen_sp</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
     <style name="opensans_semi_bold_13_text_style" parent="opensens_semi_bold">
         <item name="android:textSize">@dimen/thirteen_sp</item>
     </style>
