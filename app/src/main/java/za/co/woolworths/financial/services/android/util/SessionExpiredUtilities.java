@@ -1,14 +1,15 @@
 package za.co.woolworths.financial.services.android.util;
 
+import static za.co.woolworths.financial.services.android.ui.views.actionsheet.ActionSheetDialogFragment.DIALOG_REQUEST_CODE;
+
+import android.util.Log;
+
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.appcompat.app.AppCompatActivity;
-import android.util.Log;
 
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SessionExpiredDialogFragment;
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager;
-
-import static za.co.woolworths.financial.services.android.ui.views.actionsheet.ActionSheetDialogFragment.DIALOG_REQUEST_CODE;
 
 public class SessionExpiredUtilities {
 
@@ -34,12 +35,10 @@ public class SessionExpiredUtilities {
 
 	public void showSessionExpireDialog(AppCompatActivity activity, Fragment fragment) {
 		try {
-			if(activity == null || fragment == null) {
+			if(activity == null || fragment == null || !fragment.isAdded()) {
 				return;
 			}
-			if(!fragment.isAdded()) {
-				return;
-			}
+			
 			Utils.clearCacheHistory();
 			FragmentManager fm = activity.getSupportFragmentManager();
 			if(fm.findFragmentByTag(fragment.getClass().getSimpleName()) == null) {
