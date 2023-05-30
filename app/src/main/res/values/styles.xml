@@ -543,7 +543,7 @@
         <item name="WTextView_font">medium_bold</item>
     </style>
 
-    <style name="cli_permission_description_text">
+    <style name="cli_permission_description_text" parent="opensans_regular_13_black">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginStart">@dimen/thirty_one_dp</item>
@@ -551,8 +551,6 @@
         <item name="android:layout_marginTop">22dp</item>
         <item name="android:lineSpacingExtra">5sp</item>
         <item name="android:textColor">@color/black_50</item>
-        <item name="android:textSize">15sp</item>
-        <item name="WTextView_font">myriadpro_regular</item>
     </style>
 
     <style name="cli_yes_no_button">

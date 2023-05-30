@@ -432,7 +432,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
                 mRelRootContainer = findViewById(R.id.relContainerRootMessage);
                 mRelPopContainer = findViewById(R.id.relPopContainer);
                 WTextView tvDeclineOffer = findViewById(R.id.tvDeclineOffer);
-                WTextView tvDeclineOfferDesc = findViewById(R.id.tvDeclineOfferDesc);
+                TextView tvDeclineOfferDesc = findViewById(R.id.tvDeclineOfferDesc);
                 WButton btnCancelDecline = findViewById(R.id.btnCancelDecline);
                 WButton btnConfirmDecline = findViewById(R.id.btnConfirmDecline);
                 btnConfirmDecline.setText(getString(R.string.cli_yes));

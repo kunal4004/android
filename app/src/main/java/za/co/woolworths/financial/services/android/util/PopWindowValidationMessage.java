@@ -22,6 +22,8 @@ import android.view.animation.TranslateAnimation;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
+
 import com.awfs.coordination.R;
 import java.util.List;
 
@@ -68,7 +70,7 @@ public class PopWindowValidationMessage {
 				mView = mLayoutInflater.inflate(R.layout.error_popup, null);
 				popupWindowSetting(mView);
 				WButton mOverlayBtn = (WButton) mView.findViewById(R.id.btnOverlay);
-				WTextView mOverlayDescription = (WTextView) mView.findViewById(R.id.overlayDescription);
+				TextView mOverlayDescription = (TextView) mView.findViewById(R.id.overlayDescription);
 				if (description != null)
 					mOverlayDescription.setText(description);
 				setAnimation();
@@ -87,7 +89,7 @@ public class PopWindowValidationMessage {
 				mView = mLayoutInflater.inflate(R.layout.open_overlay_got_it, null);
 				popupWindowSetting(mView);
 				WTextView mOverlayTitle = (WTextView) mView.findViewById(R.id.textApplicationNotProceed);
-				mOverlayDescription = (WTextView) mView.findViewById(R.id.overlayDescription);
+				mOverlayDescription = (TextView) mView.findViewById(R.id.overlayDescription);
 				mOverlayBtn = (WButton) mView.findViewById(R.id.btnOverlay);
 				LinearLayout mLinEmail = (LinearLayout) mView.findViewById(R.id.linEmail);
 				mLinEmail.setVisibility(View.GONE);
