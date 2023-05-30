@@ -80,6 +80,7 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
                 baseFragBundle?.putBoolean(LIQUOR_ORDER, getBoolean(LIQUOR_ORDER))
                 baseFragBundle?.putString(NO_LIQUOR_IMAGE_URL, getString(NO_LIQUOR_IMAGE_URL))
             }
+            baseFragBundle?.putBoolean(BundleKeysConstants.IS_COMING_FROM_CHECKOUT, true)
            baseFragBundle?.putSerializable(CheckoutAddressManagementBaseFragment.CART_ITEM_LIST, cartItemList)
 
         }

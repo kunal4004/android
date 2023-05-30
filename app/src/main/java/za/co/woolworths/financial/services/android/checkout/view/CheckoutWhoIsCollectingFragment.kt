@@ -36,7 +36,9 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.PLACE_ID
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.SAVED_ADDRESS_RESPONSE
 import za.co.woolworths.financial.services.android.util.Constant
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.util.regex.Pattern
 
 /**
@@ -115,6 +117,9 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(R.
                 FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
                         FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_COLLECTION_VEHICLE_SELECT
             ), activity)
+
+        setFirebaseEvents(FirebaseManagerAnalyticsProperties.PropertyValues.MY_VEHICLE)
+
         isMyVehicle = true
         binding.vehiclesDetailsLayout.taxiDescription.visibility = View.GONE
         binding.vehiclesDetailsLayout.vehicleDetailsLayout.visibility = View.VISIBLE
@@ -127,6 +132,9 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(R.
                 FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
                         FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_COLLECTION_TAXI_SELECT
             ), activity)
+
+        setFirebaseEvents(FirebaseManagerAnalyticsProperties.PropertyValues.TAXI)
+
         isMyVehicle = false
         binding.vehiclesDetailsLayout.taxiDescription.visibility = View.VISIBLE
         binding.vehiclesDetailsLayout.vehicleDetailsLayout.visibility = View.GONE
@@ -271,6 +279,9 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(R.
                 }
             }
         }
+
+        // When first time visit this page default event is "My Vehicle"
+        setFirebaseEvents(FirebaseManagerAnalyticsProperties.PropertyValues.MY_VEHICLE)
 
         binding.whoIsCollectingDetailsLayout.recipientDetailsTitle?.text = bindString(R.string.who_is_collecting)
         binding.confirmDetails?.setOnClickListener(this)
@@ -433,5 +444,26 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(R.
         view.postDelayed({ onBackPressed() }, AppConstant.DELAY_500_MS)
     }
 
+    private fun setFirebaseEvents(vehicleType : String) {
+        var propertyValueForFormType =
+            if (KotlinUtils.getPreferredDeliveryType() == Delivery.STANDARD){
+                FirebaseManagerAnalyticsProperties.PropertyValues.STANDARD
+            }else if(KotlinUtils.getPreferredDeliveryType() == Delivery.DASH){
+                FirebaseManagerAnalyticsProperties.PropertyValues.DASH
+            }else{
+                FirebaseManagerAnalyticsProperties.PropertyValues.CLICK_AND_COLLECT
+            }
+        //Event form type for address checkout
+        val formTypeParams = hashMapOf(
+            FirebaseManagerAnalyticsProperties.PropertyNames.FORM_TYPE to
+                    propertyValueForFormType,
+            FirebaseManagerAnalyticsProperties.PropertyNames.FORM_NAME to
+                    vehicleType,
+            FirebaseManagerAnalyticsProperties.PropertyNames.FORM_LOCATION to
+                    FirebaseManagerAnalyticsProperties.PropertyValues.CHECKOUT
+        )
+        Utils.triggerFireBaseEvents(
+            FirebaseManagerAnalyticsProperties.FORM_START, formTypeParams, activity)
+    }
 
 }
