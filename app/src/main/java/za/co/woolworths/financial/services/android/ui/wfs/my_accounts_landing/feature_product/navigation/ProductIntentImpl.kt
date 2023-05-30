@@ -118,7 +118,7 @@ class ProductIntentImpl @Inject constructor(private val activity: Activity?) : P
                 putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, applyNowState)
                 putExtra(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE, userAccountResponse)
                 deepLinkParams?.let {
-                    putExtra(AccountSignedInPresenterImpl.DEEP_LINKING_PARAMS, Utils.objectToJson(deepLinkParams))
+                    putExtra(AccountSignedInPresenterImpl.DEEP_LINKING_PARAMS, deepLinkParams)
                 }
                 context.startActivityForResult(this, MyAccountsFragment.ACCOUNT_CARD_REQUEST_CODE)
                 context.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay)

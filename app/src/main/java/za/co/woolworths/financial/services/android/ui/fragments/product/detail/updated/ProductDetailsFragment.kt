@@ -83,6 +83,7 @@ import za.co.woolworths.financial.services.android.ui.adapters.*
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerAdapter.MultipleImageInterface
 import za.co.woolworths.financial.services.android.ui.extension.deviceWidth
 import za.co.woolworths.financial.services.android.ui.extension.underline
+import za.co.woolworths.financial.services.android.ui.fragments.payflex.PayFlexBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.OutOfStockMessageDialogFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.size_guide.SkinProfileDialog
@@ -231,7 +232,7 @@ class ProductDetailsFragment :
     private lateinit var moreReviewViewModel: RatingAndReviewViewModel
     private val dialogInstance = FoodProductNotAvailableForCollectionDialog.newInstance()
     private val recommendationViewModel: RecommendationViewModel by viewModels()
-    private var bottomSheetWebView: BottomSheetWebView? =null
+    private var bottomSheetWebView: PayFlexBottomSheetDialog? =null
 
     @OpenTermAndLighting
     @Inject
@@ -328,7 +329,8 @@ class ProductDetailsFragment :
         val viewItemListParams = Bundle()
         viewItemListParams.putString(FirebaseAnalytics.Param.CURRENCY,
             FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE)
-        for (products in 0..(productDetails.otherSkus?.size ?: 0)) {
+        viewItemListParams.putString(FirebaseManagerAnalyticsProperties.BUSINESS_UNIT,
+            productDetails?.productType)
             val viewItem = Bundle()
             viewItem.putString(FirebaseAnalytics.Param.ITEM_ID, productDetails?.productId)
             viewItem.putString(FirebaseAnalytics.Param.ITEM_NAME, productDetails?.productName)
@@ -340,12 +342,7 @@ class ProductDetailsFragment :
             viewItem.putString(FirebaseAnalytics.Param.ITEM_BRAND, productDetails?.brandText)
             viewItem.putString(FirebaseAnalytics.Param.ITEM_LIST_NAME,
                 productDetails?.categoryName)
-            viewItem.putString(FirebaseAnalytics.Param.ITEM_LIST_NAME,
-                productDetails?.categoryName)
-            viewItem.putString(FirebaseManagerAnalyticsProperties.BUSINESS_UNIT,
-                productDetails?.productType)
             viewItemListParams.putParcelableArray(FirebaseAnalytics.Param.ITEMS, arrayOf(viewItem))
-        }
         AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.VIEW_ITEM_EVENT,
             viewItemListParams)
     }
@@ -1057,6 +1054,7 @@ class ProductDetailsFragment :
         if (!isAdded || productDetails == null) return
 
         this.productDetails = productDetails
+        callViewPromotionFirebaseEvent()
         otherSKUsByGroupKey = this.productDetails?.otherSkus.let { groupOtherSKUsByColor(it) }
         this.defaultSku = getDefaultSku(otherSKUsByGroupKey)
 
@@ -1379,6 +1377,12 @@ class ProductDetailsFragment :
             }
         }
         return otherSKUsByGroupKey
+    }
+
+    private fun callViewPromotionFirebaseEvent() {
+        productDetails?.promotionsList?.let { promoList ->
+            FirebaseAnalyticsEventHelper.viewPromotion(productDetails!!, promoList)
+        }
     }
 
     override fun updateDefaultUI(isInventoryCalled: Boolean) {
@@ -4027,11 +4031,20 @@ class ProductDetailsFragment :
             binding.payFlexWidget.apply {
                 visibility = View.VISIBLE
                 setOnTouchListener { _, motionEvent ->
-                    if(motionEvent.action == MotionEvent.ACTION_DOWN) {
+                    if (motionEvent.action == MotionEvent.ACTION_DOWN) {
                         if (bottomSheetWebView == null) {
-                            bottomSheetWebView = BottomSheetWebView(requireContext())
+                            bottomSheetWebView = PayFlexBottomSheetDialog()
                         }
-                        bottomSheetWebView?.showWithUrl(AppConstant.PAYFLEX_POP_UP_URL)
+
+                        if (bottomSheetWebView != null && bottomSheetWebView?.isAdded == true) {
+                            false
+                        }
+                        if (bottomSheetWebView?.isVisible == false && bottomSheetWebView?.isAdded == false) {
+                            bottomSheetWebView?.show(
+                                requireActivity().supportFragmentManager,
+                                PayFlexBottomSheetDialog::class.java.simpleName
+                            )
+                        }
                     }
                     true
                 }
