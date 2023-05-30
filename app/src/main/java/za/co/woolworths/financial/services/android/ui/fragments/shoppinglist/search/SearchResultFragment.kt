@@ -85,7 +85,7 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         _binding = SearchResultFragmentBinding.inflate(inflater, container, false)
         return _binding?.root
@@ -135,7 +135,7 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
 
     override fun onLoadProductSuccess(
         productLists: MutableList<ProductList>,
-        loadMoreData: Boolean
+        loadMoreData: Boolean,
     ) {
         if (productLists != null) {
             if (!loadMoreData) {
@@ -145,6 +145,7 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
             }
         }
     }
+
     override fun unhandledResponseCode(response: Response) {}
 
     override fun failureResponseHandler(e: String) {
@@ -216,11 +217,16 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
     }
 
     private fun removeFooter() {
-        mProductList?.forEachIndexed { index, productList ->
-            if (productList.rowType === ProductListingViewType.FOOTER) {
-                mProductList?.remove(productList)
+        val iterator = mProductList?.iterator()
+        var index = 0
+        while (iterator?.hasNext() == true) {
+            val productList = iterator?.next()
+            if (productList?.rowType === ProductListingViewType.FOOTER) {
+                iterator?.remove()
                 productAdapter?.notifyItemRemoved(index)
+                break
             }
+            ++index
         }
     }
 
@@ -273,6 +279,7 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
                 mErrorHandlerView?.hideErrorHandler()
                 startProductRequest()
             }
+
             R.id.btnCheckOut -> {
                 cancelRequest(mGetProductDetail)
                 if (productAdapter == null) return
@@ -298,6 +305,7 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
                 mAddToListSize = addToListRequests.size
                 postAddToList(addToListRequests)
             }
+
             else -> {}
         }
     }
@@ -367,7 +375,7 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
     override fun onCheckedItem(
         productLists: MutableList<ProductList>,
         selectedProduct: ProductList,
-        viewIsLoading: Boolean
+        viewIsLoading: Boolean,
     ) {
         this.selectedProduct = selectedProduct
         mProductList = productLists
@@ -422,6 +430,7 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
                     objProduct?.otherSkus?.getOrNull(0)?.let { setSelectedSku(it) }
                         ?: noSizeColorIntent(objProduct.sku)
                 }
+
                 else -> {
                     openColorAndSizeBottomSheetFragment(objProduct)
                 }
@@ -491,7 +500,7 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
 
     override fun onFoodTypeChecked(
         productLists: MutableList<ProductList>,
-        selectedProduct: ProductList
+        selectedProduct: ProductList,
     ) {
         mProductList = productLists
         toggleAddToListBtn(true)
@@ -596,6 +605,7 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
                                     loadMoreData = true
                                 }
                             }
+
                             else -> if (response?.response != null) {
                                 onLoadComplete(loadMoreData)
                                 unhandledResponseCode(response.response)
@@ -633,6 +643,7 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
                                 accountExpired(response)
                                 onAddToListLoad(false)
                             }
+
                             else -> unknownErrorMessage(response)
                         }
                     }
