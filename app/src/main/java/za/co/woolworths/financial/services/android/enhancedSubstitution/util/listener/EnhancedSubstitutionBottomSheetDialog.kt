@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.enhancedSubstitution.utils.listener
+package za.co.woolworths.financial.services.android.enhancedSubstitution.util.listener
 
 import android.content.Context
 import androidx.core.widget.TextViewCompat
@@ -37,9 +37,9 @@ class EnhancedSubstitutionBottomSheetDialog @Inject constructor() :
             dialog.dismiss()
         }
 
-        TextViewCompat.setTextAppearance(binding.title, R.style.style_substititon_popup_title);
-        TextViewCompat.setTextAppearance(binding.description, R.style.style_substititon_popup_desc);
-        TextViewCompat.setTextAppearance(binding.confirmFreezeCardButton, R.style.style_substititon_popup_button);
+        TextViewCompat.setTextAppearance(binding.title, R.style.style_substititon_popup_title)
+        TextViewCompat.setTextAppearance(binding.description, R.style.style_substititon_popup_desc)
+        TextViewCompat.setTextAppearance(binding.confirmFreezeCardButton, R.style.style_substititon_popup_button)
 
         binding.cancelTextView?.apply {
             setOnClickListener {

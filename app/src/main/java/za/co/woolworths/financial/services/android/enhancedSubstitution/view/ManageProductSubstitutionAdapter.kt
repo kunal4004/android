@@ -5,10 +5,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.databinding.ShoppingListCommerceItemBinding
 import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.Item
-import za.co.woolworths.financial.services.android.enhancedSubstitution.utils.listener.ProductSubstitutionListListener
+import za.co.woolworths.financial.services.android.enhancedSubstitution.util.listener.ProductSubstitutionListListener
 
 class ManageProductSubstitutionAdapter(
-    var substitutionProductList: ArrayList<Item>,
+    private var substitutionProductList: ArrayList<Item>,
     private var productSubstitutionListListener: ProductSubstitutionListListener
 ) : RecyclerView.Adapter<SubstitutionViewHolder>() {
 
@@ -27,11 +27,7 @@ class ManageProductSubstitutionAdapter(
         when (holder) {
             is SubstitutionViewHolder.SubstituteProductViewHolder -> {
                 holder.bind(substitutionProductList.getOrNull(position))
-                if (lastSelectedPosition == position) {
-                    holder.binding.cbShoppingList.isChecked = true
-                } else {
-                    holder.binding.cbShoppingList.isChecked = false
-                }
+                holder.binding.cbShoppingList.isChecked = lastSelectedPosition == position
                 holder.binding.cbShoppingList.setOnClickListener {
                     lastSelectedPosition = position
                     notifyDataSetChanged()

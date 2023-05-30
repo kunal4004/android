@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -42,14 +41,37 @@
         app:layout_constraintBottom_toTopOf="@+id/viewSeparator"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtManageTitle" />
+        app:layout_constraintTop_toBottomOf="@+id/errorMessageLayout" />
+
+    <LinearLayout
+        android:id="@+id/errorMessageLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_18sdp"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtManageTitle"
+        tools:visibility="visible">
+
+        <TextView
+            android:id="@+id/errorMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/color_F1B1A6"
+            android:fontFamily="@font/opensans_regular"
+            android:paddingHorizontal="@dimen/_21sdp"
+            android:paddingVertical="@dimen/_16sdp"
+            android:text="@string/substitution_retry_msg"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_11sdp" />
+    </LinearLayout>
 
     <View
-        android:visibility="gone"
         android:id="@+id/viewSeparator"
         android:layout_width="match_parent"
         android:layout_height="@dimen/eight_dp"
         android:background="@color/shimmer_view_background"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/btnConfirm"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -102,9 +124,9 @@
         android:layout_width="@dimen/fourty_dp"
         android:layout_height="@dimen/fourty_dp"
         android:indeterminate="true"
-        android:visibility="gone"
         android:indeterminateTint="@color/black"
         android:indeterminateTintMode="src_atop"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
