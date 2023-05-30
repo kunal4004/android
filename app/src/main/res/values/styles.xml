@@ -3237,6 +3237,14 @@
         <item name="android:textColor">@color/black</item>
     </style>
 
+    <style name="my_accounts_chat_bubble_style">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeBottomLeft">10dp</item>
+        <item name="cornerSizeBottomRight">10dp</item>
+        <item name="cornerSizeTopRight">10dp</item>
+        <item name="cornerSizeTopLeft">10dp</item>
+    </style>
+
     <style name="style_substitution_title">
         <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/black</item>
