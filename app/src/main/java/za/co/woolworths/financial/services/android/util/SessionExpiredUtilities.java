@@ -38,15 +38,15 @@ public class SessionExpiredUtilities {
 			if(activity == null || fragment == null || !fragment.isAdded()) {
 				return;
 			}
-			
 			Utils.clearCacheHistory();
 			FragmentManager fm = activity.getSupportFragmentManager();
-			if(fm.findFragmentByTag(fragment.getClass().getSimpleName()) == null) {
-				return;
-			}
+
+			fm.setFragmentResultListener("" + DIALOG_REQUEST_CODE,
+					fragment.getViewLifecycleOwner(), (requestKey, result) -> {
+						fragment.onActivityResult(DIALOG_REQUEST_CODE, DIALOG_REQUEST_CODE, null);
+					});
 
 			SessionExpiredDialogFragment sessionExpiredDialogFragment = SessionExpiredDialogFragment.newInstance(SessionUtilities.getInstance().getSTSParameters());
-			sessionExpiredDialogFragment.setTargetFragment(fragment, DIALOG_REQUEST_CODE);
 			sessionExpiredDialogFragment.show(fm, SessionExpiredDialogFragment.class.getSimpleName());
 		} catch (NullPointerException | IllegalStateException ex) {
 			FirebaseManager.logException(ex);
