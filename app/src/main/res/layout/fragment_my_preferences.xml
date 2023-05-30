@@ -175,8 +175,9 @@
                     android:layout_height="70dp"
                     android:visibility="visible">
 
-                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    <TextView
                         android:layout_width="wrap_content"
+                        style="@style/opensans_regular_13_black"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:layout_marginLeft="@dimen/twenty_four_dp"
@@ -186,8 +187,7 @@
                         android:lineSpacingExtra="0.4sp"
                         android:text="@string/authenticate_with_touch_id"
                         android:textColor="@color/black"
-                        android:textSize="@dimen/fifteen_sp"
-                        app:WTextView_font="myriadpro_regular" />
+                        />
 
                     <Switch
                         android:id="@+id/auSwitch"
@@ -251,20 +251,20 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/seventy_dp">
 
-                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    <TextView
                         android:id="@+id/linkThisDeviceTextView"
+                        style="@style/opensans_regular_13_black"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
-                        android:layout_marginLeft="@dimen/twenty_four_dp"
-                        android:drawableLeft="@drawable/ic_device_link"
+                        android:layout_marginStart="@dimen/twenty_four_dp"
+                        app:drawableStartCompat="@drawable/ic_device_link"
                         android:drawablePadding="@dimen/sixteen_dp"
                         android:gravity="center_vertical"
                         android:lineSpacingExtra="0.4sp"
                         android:text="@string/my_preferences_link_this_device"
                         android:textColor="@color/black"
-                        android:textSize="@dimen/fifteen_sp"
-                        app:WTextView_font="myriadpro_regular" />
+                       />
 
                     <Switch
                         android:id="@+id/linkDeviceSwitch"
@@ -304,8 +304,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/seventy_dp">
 
-                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    <TextView
                         android:id="@+id/tvMyPrefManageDevicesTitle"
+                        style="@style/opensans_regular_13_black"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
@@ -315,9 +316,7 @@
                         android:gravity="center_vertical"
                         android:lineSpacingExtra="0.4sp"
                         android:text="@string/my_preferences_linked_devices"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/fifteen_sp"
-                        app:WTextView_font="myriadpro_regular" />
+                        />
 
                     <ImageView
                         android:layout_width="wrap_content"
