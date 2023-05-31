@@ -1799,6 +1799,11 @@
         <item name="android:fontFamily">@font/myriad_pro_regular</item>
     </style>
 
+    <style name="ccd_opensans_regular" parent="opensans_regular_13_black">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
     <style name="myriad_pro_semi_bold">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>

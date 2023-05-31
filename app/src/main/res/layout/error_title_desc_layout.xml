@@ -38,17 +38,16 @@
                 android:textSize="16sp"
                 app:WTextView_font="medium_bold" />
 
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
+            <TextView
                 android:id="@+id/textProofIncome"
+                style="@style/opensans_regular_13_black"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:contentDescription="@string/cliOverlayOfferDeclineDesc"
                 android:gravity="center"
                 android:lineSpacingExtra="4dp"
                 android:text="@string/loan_request_high_desc"
-                android:textColor="@color/description_color"
-                android:textSize="15sp"
-                app:WTextView_font="myriadpro_regular" />
+                android:textColor="@color/description_color" />
 
             <View
                 android:layout_width="match_parent"
