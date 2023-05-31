@@ -424,8 +424,10 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
                     }
                 }
             }
-        }
+        })
 
+    }
+        }
     }
 
     fun showErrorScreen(errorType: Int) {
