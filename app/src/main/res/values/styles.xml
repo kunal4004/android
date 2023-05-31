@@ -382,13 +382,13 @@
 
     <style name="style_loan_title">
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:textSize">14sp</item>
+        <item name="android:textSize">12sp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:layout_marginStart">@dimen/default_margin</item>
         <item name="android:lineSpacingExtra">0.1sp</item>
         <item name="android:gravity">center|start</item>
-        <item name="android:fontFamily">@font/myriad_pro_semi_bold_otf</item>
+        <item name="android:fontFamily">@font/opensans_semi_bold</item>
     </style>
 
     <style name="style_loan_item">
