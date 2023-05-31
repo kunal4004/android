@@ -692,7 +692,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                     )
                     // This to call the analytics when default address type selected first time
                     setFirebaseEvents(titleTextView?.text.toString(),
-                        KotlinUtils.getPreferredDeliveryType().toString())
+                        KotlinUtils.getPreferredDeliveryType())
                     binding.recipientAddressLayout.deliveringAddressTypesErrorMsg?.visibility = View.GONE
                     changeUnitComplexPlaceHolderOnType(selectedDeliveryAddressType)
                     if (selectedDeliveryAddressType == ADDRESS_APARTMENT) {
@@ -705,7 +705,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                 titleTextView?.setOnClickListener {
                     setFirebaseEvents(titleTextView?.text.toString())
                     setFirebaseEvents(titleTextView?.text.toString(),
-                        KotlinUtils.getPreferredDeliveryType().toString())
+                        KotlinUtils.getPreferredDeliveryType())
                     resetOtherDeliveringTitle(it.tag as Int)
                     selectedDeliveryAddressType = (it as TextView).text as? String
                     selectedAddress.savedAddress.addressType = selectedDeliveryAddressType
@@ -793,15 +793,18 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         )
     }
 
-    private fun setFirebaseEvents(addressType: String, deliveryType : String) {
+    private fun setFirebaseEvents(addressType: String, deliveryType : Delivery?) {
 
-        var propertyValueForFormType =
-        if (KotlinUtils.getPreferredDeliveryType() == Delivery.STANDARD){
-            FirebaseManagerAnalyticsProperties.PropertyValues.STANDARD
-        }else if(KotlinUtils.getPreferredDeliveryType() == Delivery.DASH){
-            FirebaseManagerAnalyticsProperties.PropertyValues.DASH
-        }else{
-            FirebaseManagerAnalyticsProperties.PropertyValues.CLICK_AND_COLLECT
+        var propertyValueForFormType = when(deliveryType){
+            Delivery.DASH ->  {
+                FirebaseManagerAnalyticsProperties.PropertyValues.DASH
+            }
+            Delivery.CNC -> {
+                FirebaseManagerAnalyticsProperties.PropertyValues.CLICK_AND_COLLECT
+            }
+            else -> {
+                FirebaseManagerAnalyticsProperties.PropertyValues.STANDARD
+            }
         }
 
         val propertyValueForFormLocation = if(isComingFromCheckout){

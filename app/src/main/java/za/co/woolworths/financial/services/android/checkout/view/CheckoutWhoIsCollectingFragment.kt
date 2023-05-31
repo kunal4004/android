@@ -445,14 +445,17 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(R.
     }
 
     private fun setFirebaseEvents(vehicleType : String) {
-        var propertyValueForFormType =
-            if (KotlinUtils.getPreferredDeliveryType() == Delivery.STANDARD){
-                FirebaseManagerAnalyticsProperties.PropertyValues.STANDARD
-            }else if(KotlinUtils.getPreferredDeliveryType() == Delivery.DASH){
+        var propertyValueForFormType = when(KotlinUtils.getPreferredDeliveryType()){
+            Delivery.DASH ->  {
                 FirebaseManagerAnalyticsProperties.PropertyValues.DASH
-            }else{
+            }
+            Delivery.CNC -> {
                 FirebaseManagerAnalyticsProperties.PropertyValues.CLICK_AND_COLLECT
             }
+            else -> {
+                FirebaseManagerAnalyticsProperties.PropertyValues.STANDARD
+            }
+        }
         //Event form type for address checkout
         val formTypeParams = hashMapOf(
             FirebaseManagerAnalyticsProperties.PropertyNames.FORM_TYPE to
