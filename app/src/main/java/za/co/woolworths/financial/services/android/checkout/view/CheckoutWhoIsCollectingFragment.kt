@@ -118,7 +118,7 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(R.
                         FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_COLLECTION_VEHICLE_SELECT
             ), activity)
 
-        setFirebaseEvents(FirebaseManagerAnalyticsProperties.PropertyValues.MY_VEHICLE)
+        setFirebaseEventFormStart(FirebaseManagerAnalyticsProperties.PropertyValues.MY_VEHICLE)
 
         isMyVehicle = true
         binding.vehiclesDetailsLayout.taxiDescription.visibility = View.GONE
@@ -133,7 +133,7 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(R.
                         FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_COLLECTION_TAXI_SELECT
             ), activity)
 
-        setFirebaseEvents(FirebaseManagerAnalyticsProperties.PropertyValues.TAXI)
+        setFirebaseEventFormStart(FirebaseManagerAnalyticsProperties.PropertyValues.TAXI)
 
         isMyVehicle = false
         binding.vehiclesDetailsLayout.taxiDescription.visibility = View.VISIBLE
@@ -281,7 +281,7 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(R.
         }
 
         // When first time visit this page default event is "My Vehicle"
-        setFirebaseEvents(FirebaseManagerAnalyticsProperties.PropertyValues.MY_VEHICLE)
+        setFirebaseEventFormStart(FirebaseManagerAnalyticsProperties.PropertyValues.MY_VEHICLE)
 
         binding.whoIsCollectingDetailsLayout.recipientDetailsTitle?.text = bindString(R.string.who_is_collecting)
         binding.confirmDetails?.setOnClickListener(this)
@@ -444,7 +444,7 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(R.
         view.postDelayed({ onBackPressed() }, AppConstant.DELAY_500_MS)
     }
 
-    private fun setFirebaseEvents(vehicleType : String) {
+    private fun setFirebaseEventFormStart(vehicleType : String) {
         var propertyValueForFormType = when(KotlinUtils.getPreferredDeliveryType()){
             Delivery.DASH ->  {
                 FirebaseManagerAnalyticsProperties.PropertyValues.DASH

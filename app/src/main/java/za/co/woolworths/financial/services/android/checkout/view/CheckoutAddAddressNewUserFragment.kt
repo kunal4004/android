@@ -691,7 +691,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                         )
                     )
                     // This to call the analytics when default address type selected first time
-                    setFirebaseEvents(titleTextView?.text.toString(),
+                    setFirebaseEventFormStart(titleTextView?.text.toString(),
                         KotlinUtils.getPreferredDeliveryType())
                     binding.recipientAddressLayout.deliveringAddressTypesErrorMsg?.visibility = View.GONE
                     changeUnitComplexPlaceHolderOnType(selectedDeliveryAddressType)
@@ -704,7 +704,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                 }
                 titleTextView?.setOnClickListener {
                     setFirebaseEvents(titleTextView?.text.toString())
-                    setFirebaseEvents(titleTextView?.text.toString(),
+                    setFirebaseEventFormStart(titleTextView?.text.toString(),
                         KotlinUtils.getPreferredDeliveryType())
                     resetOtherDeliveringTitle(it.tag as Int)
                     selectedDeliveryAddressType = (it as TextView).text as? String
@@ -793,7 +793,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         )
     }
 
-    private fun setFirebaseEvents(addressType: String, deliveryType : Delivery?) {
+    private fun setFirebaseEventFormStart(addressType: String, deliveryType : Delivery?) {
 
         var propertyValueForFormType = when(deliveryType){
             Delivery.DASH ->  {
