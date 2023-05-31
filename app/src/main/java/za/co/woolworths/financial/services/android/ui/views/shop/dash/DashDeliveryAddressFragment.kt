@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.views.shop.dash
 
 import android.app.Activity
 import android.content.Intent
+import android.content.IntentFilter
 import android.location.Location
 import android.os.Bundle
 import android.os.Handler
@@ -13,6 +14,7 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.ViewModelProvider
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
@@ -32,6 +34,8 @@ import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.shop.Banner
 import za.co.woolworths.financial.services.android.models.dto.shop.ProductCatalogue
 import za.co.woolworths.financial.services.android.models.network.Status
+import za.co.woolworths.financial.services.android.receivers.DashOrderReceiver
+import za.co.woolworths.financial.services.android.receivers.DashOrderReceiverListener
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity
@@ -69,7 +73,8 @@ import kotlin.collections.ArrayList
 
 @AndroidEntryPoint
 class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), IProductListing,
-    View.OnClickListener, OnDemandNavigationListener, OnDashLandingNavigationListener {
+    View.OnClickListener, OnDemandNavigationListener, OnDashLandingNavigationListener,
+    DashOrderReceiverListener {
 
     private lateinit var viewModel: ShopViewModel
     private lateinit var binding: FragmentDashDeliveryBinding
@@ -77,6 +82,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
     private var isQuickShopClicked = false
     private var isUnSellableItemsRemoved: Boolean? = false
     private var mStoreId = ""
+    private var dashOrderReceiver: DashOrderReceiver? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -101,10 +107,44 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
         initViews()
     }
 
+    override fun onResume() {
+        super.onResume()
+        val parentFragment = (activity as? BottomNavigationActivity)?.currentFragment as? ShopFragment
+        if (!isVisible || parentFragment?.getCurrentFragmentIndex() != ShopFragment.SelectedTabIndex.DASH_TAB.index || !isAdded) {
+            return
+        }
+        //verify if the show dash order is true
+        refreshInAppNotificationToast()
+    }
+
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (!hidden){
+            refreshInAppNotificationToast()
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        dashOrderReceiver = DashOrderReceiver()
+        dashOrderReceiver?.setDashOrderReceiverListener(this)
+        dashOrderReceiver?.let {
+            LocalBroadcastManager.getInstance(requireContext()).registerReceiver(
+                it, IntentFilter(DashOrderReceiver.ACTION_LAST_DASH_ORDER)
+            )
+        }
+    }
+
+    override fun onStop() {
+        dashOrderReceiver?.let {
+            LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(it)
+        }
+        super.onStop()
+    }
+
     fun initViews() {
         addFragmentListner()
         isUnSellableItemsRemoved()
-
         val fulfillmentDetails = getDeliveryType() // fulfillment details of signin or signout user.
         if (fulfillmentDetails?.address?.placeId != null) {
             // User don't have location.
@@ -602,6 +642,47 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
             }
         }
 
+        viewModel.lastDashOrder.observe(viewLifecycleOwner) {
+            it.peekContent()?.data?.apply {
+                if (parentFragment is ShopFragment) {
+                    (parentFragment as ShopFragment).also { shopFragment ->
+                        shopFragment.isLastDashOrderAvailable = true
+                        shopFragment.addInAppNotificationToast(this)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun refreshInAppNotificationToast() {
+        if (!SessionUtilities.getInstance().isUserAuthenticated) {
+            if (parentFragment is ShopFragment) {
+                (parentFragment as ShopFragment).removeNotificationToast()
+            }
+            return
+        }
+        if (parentFragment is ShopFragment && !(parentFragment as ShopFragment).isLastDashOrderAvailable) {
+            viewModel.getLastDashOrderDetails()
+            return
+        }
+        viewModel.lastDashOrder.value?.peekContent()?.data?.apply {
+            if (showDashOrder
+                && SessionUtilities.getInstance().isUserAuthenticated
+                && viewModel.lastDashOrderInProgress.value == false
+            ) {
+                viewModel.getLastDashOrderDetails()
+            }
+        }
+    }
+
+    override fun updateUnreadMessageCount(unreadMsgCount: Int) {
+        if (parentFragment is ShopFragment) {
+            (parentFragment as ShopFragment).updateUnreadMessageCount(unreadMsgCount)
+        }
+    }
+
+    override fun updateLastDashOrder() {
+        viewModel.getLastDashOrderDetails()
     }
 
     private fun openCartActivity() {
@@ -756,6 +837,11 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                  viewModel.getDashLandingDetails()
                }
             }
+        }
+        if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
+            // Update Toast if logged in with another user
+            // Use Case: If first user does not have any order, Second user should update Last order details
+            viewModel.getLastDashOrderDetails()
         }
     }
 

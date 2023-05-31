@@ -1120,10 +1120,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 }
 
             case REQUEST_PAYMENT_STATUS:
-                if(getCurrentFragment() instanceof ShopFragment) {
-                    ShopFragment fragment = (ShopFragment) getCurrentFragment();
-                    fragment.makeLastDashOrderDetailsCall();
-                }
                 if (resultCode == REQUEST_CHECKOUT_ON_CONTINUE_SHOPPING) {
                     navigateToTabIndex(BottomNavigationActivity.INDEX_PRODUCT, null);
                     QueryBadgeCounter.getInstance().queryCartSummaryCount();
