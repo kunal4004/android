@@ -125,7 +125,8 @@
             android:orientation="vertical"
             android:visibility="gone">
 
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
+            <TextView
+                style="@style/opensans_regular_13_black"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="36dp"
@@ -135,8 +136,7 @@
                 android:lineSpacingExtra="4sp"
                 android:text="@string/unlinked_account_copy"
                 android:textColor="@color/black_50"
-                android:textSize="15sp"
-                app:WTextView_font="myriadpro_regular" />
+              />
 
             <za.co.woolworths.financial.services.android.ui.views.WButton
                 style="@style/whiteWButtonStyle"
