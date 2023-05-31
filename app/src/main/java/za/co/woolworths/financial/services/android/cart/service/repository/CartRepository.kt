@@ -30,7 +30,7 @@ class CartRepository @Inject constructor() {
 
     suspend fun getShoppingCartV2(): Resource<CartResponse> {
         return try {
-            val response = OneAppService.getShoppingCartV2()
+            val response = OneAppService().getShoppingCartV2()
             if (response.isSuccessful) {
                 response.body()?.let {
                     return when (it.httpCode) {
@@ -51,7 +51,7 @@ class CartRepository @Inject constructor() {
 
     suspend fun getSavedAddress(): Resource<SavedAddressResponse> {
         return try {
-            val response = OneAppService.getSavedAddress()
+            val response = OneAppService().getSavedAddress()
             if (response.isSuccessful) {
                 response.body()?.let {
                     return when (it.httpCode) {
@@ -72,7 +72,7 @@ class CartRepository @Inject constructor() {
 
     suspend fun removeCartItem(commerceId: String): Resource<CartResponse> {
         return try {
-            val response = OneAppService.removeSingleCartItem(commerceId)
+            val response = OneAppService().removeSingleCartItem(commerceId)
             if (response.isSuccessful) {
                 response.body()?.let {
                     return when (it.httpCode) {
@@ -93,7 +93,7 @@ class CartRepository @Inject constructor() {
 
     suspend fun removeAllCartItems(): Resource<CartResponse> {
         return try {
-            val response = OneAppService.removeAllCartItems()
+            val response = OneAppService().removeAllCartItems()
             if (response.isSuccessful) {
                 response.body()?.let {
                     return when (it.httpCode) {
@@ -114,7 +114,7 @@ class CartRepository @Inject constructor() {
 
     suspend fun changeProductQuantityRequest(changeQuantity: ChangeQuantity?): Resource<CartResponse> {
         return try {
-            val response = OneAppService.changeProductQuantityRequest(changeQuantity)
+            val response = OneAppService().changeProductQuantityRequest(changeQuantity)
             if (response.isSuccessful) {
                 response.body()?.let {
                     return when (it.httpCode) {
@@ -135,7 +135,7 @@ class CartRepository @Inject constructor() {
 
     suspend fun onRemovePromoCode(couponClaimCode: CouponClaimCode): Resource<CartResponse> {
         return try {
-            val response = OneAppService.removePromoCode(couponClaimCode)
+            val response = OneAppService().removePromoCode(couponClaimCode)
             if (response.isSuccessful) {
                 response.body()?.let {
                     return when (it.httpCode) {
@@ -156,7 +156,7 @@ class CartRepository @Inject constructor() {
 
     suspend fun getInventorySkuForInventory(store_id: String, multipleSku: String, isUserBrowsing: Boolean): Resource<SkusInventoryForStoreResponse> {
         return try {
-            val response = OneAppService.fetchInventorySkuForStore(store_id, multipleSku, isUserBrowsing)
+            val response = OneAppService().fetchInventorySkuForStore(store_id, multipleSku, isUserBrowsing)
             if (response.isSuccessful) {
                 response.body()?.let {
                     return when (it.httpCode) {

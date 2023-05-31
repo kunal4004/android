@@ -91,7 +91,7 @@
 
     <za.co.woolworths.financial.services.android.ui.views.WTextView
         android:id="@+id/progressDescriptionTextView"
-        style="@style/absa_page_description_text_style"
+        style="@style/opensans_regular_13_black"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/progressTitleTextView"
@@ -102,6 +102,7 @@
         android:background="@color/white"
         android:gravity="center"
         android:text="@string/processing_your_request_desc"
+        android:textColor="@color/color_444444"
         android:visibility="gone" />
 
     <LinearLayout

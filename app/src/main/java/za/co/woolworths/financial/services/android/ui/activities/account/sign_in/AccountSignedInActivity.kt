@@ -91,10 +91,8 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
         mAccountSignedInPresenter?.apply {
             intent?.extras?.let { bundle -> getAccountBundle(bundle) }
             myAccountsRemoteApiViewModel.account = mAccountSignedInPresenter?.getAccount()
-            mAvailableFundsNavHost =
-                supportFragmentManager.findFragmentById(R.id.nav_host_available_fund_fragment) as? NavHostFragment
-            mAccountOptionsNavHost =
-                supportFragmentManager.findFragmentById(R.id.nav_host_overlay_bottom_sheet_fragment) as? NavHostFragment
+            mAvailableFundsNavHost = supportFragmentManager.findFragmentById(R.id.nav_host_available_fund_fragment) as? NavHostFragment
+            mAccountOptionsNavHost = supportFragmentManager.findFragmentById(R.id.nav_host_overlay_bottom_sheet_fragment) as? NavHostFragment
 
             setAvailableFundBundleInfo(
                 mAvailableFundsNavHost?.navController,

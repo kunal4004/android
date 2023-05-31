@@ -55,6 +55,7 @@ class StoreCardActivity : AppCompatActivity() {
         homeViewModel.accountData = Utils.jsonStringToObject(intent.extras?.getString(ACCOUNT_PRODUCT_PAYLOAD),Account::class.java) as Account
         setContentView(binding.root)
         statusBarCompat.setLightStatusAndNavigationBar()
+        homeViewModel.setDeepLinkParams(intent?.extras)
         setupView()
         setObservers()
     }

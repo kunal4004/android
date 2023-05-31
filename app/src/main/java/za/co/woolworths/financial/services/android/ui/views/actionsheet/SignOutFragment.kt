@@ -7,12 +7,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import androidx.core.os.bundleOf
+import androidx.fragment.app.setFragmentResult
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.SignOutFragmentBinding
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
-import za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService
+import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature.fragment.UserAccountsLandingFragment
+import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature.navigation.FragmentResultType
 import za.co.woolworths.financial.services.android.util.ServiceTools
 
 class SignOutFragment : WBottomSheetDialogFragment(), View.OnClickListener {
@@ -56,12 +58,8 @@ class SignOutFragment : WBottomSheetDialogFragment(), View.OnClickListener {
     }
 
     private fun onSignedOutTap() {
-        if (activity is BottomNavigationActivity)
-            (activity as? BottomNavigationActivity)?.onSignedOut()
-
-        if (activity is MyAccountActivity)
-            (activity as? MyAccountActivity)?.onSignedOut()
-
+        setFragmentResult(UserAccountsLandingFragment.userAccountsLandingFragment, bundleOf(
+            FragmentResultType.key to FragmentResultType.SignOut))
     }
 
     private fun convertButtonBackgroundToBlack(view: Button?) {

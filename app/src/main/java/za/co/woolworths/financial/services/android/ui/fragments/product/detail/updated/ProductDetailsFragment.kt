@@ -83,6 +83,7 @@ import za.co.woolworths.financial.services.android.ui.adapters.*
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerAdapter.MultipleImageInterface
 import za.co.woolworths.financial.services.android.ui.extension.deviceWidth
 import za.co.woolworths.financial.services.android.ui.extension.underline
+import za.co.woolworths.financial.services.android.ui.fragments.payflex.PayFlexBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.OutOfStockMessageDialogFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.size_guide.SkinProfileDialog
@@ -116,7 +117,6 @@ import za.co.woolworths.financial.services.android.ui.vto.ui.gallery.ImageResult
 import za.co.woolworths.financial.services.android.ui.vto.utils.PermissionUtil
 import za.co.woolworths.financial.services.android.ui.vto.utils.SdkUtility
 import za.co.woolworths.financial.services.android.ui.vto.utils.VirtualTryOnUtil
-import za.co.woolworths.financial.services.android.ui.wfs.common.getIpAddress
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_1000_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_1500_MS
@@ -138,7 +138,6 @@ import za.co.woolworths.financial.services.android.util.pickimagecontract.PickIm
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.io.File
 import javax.inject.Inject
-import kotlin.collections.get
 import kotlin.collections.set
 
 
@@ -233,6 +232,7 @@ class ProductDetailsFragment :
     private lateinit var moreReviewViewModel: RatingAndReviewViewModel
     private val dialogInstance = FoodProductNotAvailableForCollectionDialog.newInstance()
     private val recommendationViewModel: RecommendationViewModel by viewModels()
+    private var bottomSheetWebView: PayFlexBottomSheetDialog? =null
 
     @OpenTermAndLighting
     @Inject
@@ -329,7 +329,8 @@ class ProductDetailsFragment :
         val viewItemListParams = Bundle()
         viewItemListParams.putString(FirebaseAnalytics.Param.CURRENCY,
             FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE)
-        for (products in 0..(productDetails.otherSkus?.size ?: 0)) {
+        viewItemListParams.putString(FirebaseManagerAnalyticsProperties.BUSINESS_UNIT,
+            productDetails?.productType)
             val viewItem = Bundle()
             viewItem.putString(FirebaseAnalytics.Param.ITEM_ID, productDetails?.productId)
             viewItem.putString(FirebaseAnalytics.Param.ITEM_NAME, productDetails?.productName)
@@ -339,10 +340,9 @@ class ProductDetailsFragment :
             viewItem.putString(FirebaseAnalytics.Param.ITEM_VARIANT,
                 productDetails?.colourSizeVariants)
             viewItem.putString(FirebaseAnalytics.Param.ITEM_BRAND, productDetails?.brandText)
-            viewItemListParams.putString(FirebaseAnalytics.Param.ITEM_LIST_NAME,
+            viewItem.putString(FirebaseAnalytics.Param.ITEM_LIST_NAME,
                 productDetails?.categoryName)
             viewItemListParams.putParcelableArray(FirebaseAnalytics.Param.ITEMS, arrayOf(viewItem))
-        }
         AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.VIEW_ITEM_EVENT,
             viewItemListParams)
     }
@@ -709,6 +709,7 @@ class ProductDetailsFragment :
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun ProductDetailsFragmentBinding.configureDefaultUI() {
 
         updateStockAvailabilityLocation()
@@ -748,6 +749,10 @@ class ProductDetailsFragment :
                 )
             )
         }
+    }
+
+    private fun loadpayFlexWidget(amount: String?): String {
+        return "<!DOCTYPE html PUBLIC><html><head><meta charset=\"UTF-8\"><meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"></head><body><script async src=\"https://checkout.uat.payflex.co.za/embedded/partpay-widget-0.1.4.js?type=calculator&min=10&max=2000&amount=$amount\" type=\"application/javascript\"></script></body></html>"
     }
 
     private fun ProductDetailsFragmentBinding.setupBrandView() {
@@ -874,7 +879,7 @@ class ProductDetailsFragment :
                             val savedPlaceId = KotlinUtils.getDeliveryType()?.address?.placeId
                             KotlinUtils.apply {
                                 this.placeId = confirmLocationRequest.address.placeId
-                                isLocationSame =
+                                isLocationPlaceIdSame =
                                     confirmLocationRequest.address.placeId?.equals(
                                         savedPlaceId)
                             }
@@ -1049,6 +1054,7 @@ class ProductDetailsFragment :
         if (!isAdded || productDetails == null) return
 
         this.productDetails = productDetails
+        callViewPromotionFirebaseEvent()
         otherSKUsByGroupKey = this.productDetails?.otherSkus.let { groupOtherSKUsByColor(it) }
         this.defaultSku = getDefaultSku(otherSKUsByGroupKey)
 
@@ -1063,7 +1069,14 @@ class ProductDetailsFragment :
         }
 
         binding.setupBrandView()
-
+        //Added the BNPL flag checking logic.
+        AppConfigSingleton.bnplConfig?.apply {
+            if (isBnplRequiredInThisVersion && isBnplEnabled) {
+                setupBNPLViewForFbhProducts()
+            } else {
+                binding.payFlexWidget.visibility = View.GONE
+            }
+        }
         if (hasSize)
             setSelectedGroupKey(defaultGroupKey)
 
@@ -1370,6 +1383,12 @@ class ProductDetailsFragment :
             }
         }
         return otherSKUsByGroupKey
+    }
+
+    private fun callViewPromotionFirebaseEvent() {
+        productDetails?.promotionsList?.let { promoList ->
+            FirebaseAnalyticsEventHelper.viewPromotion(productDetails!!, promoList)
+        }
     }
 
     override fun updateDefaultUI(isInventoryCalled: Boolean) {
@@ -1711,10 +1730,12 @@ class ProductDetailsFragment :
     }
 
     override fun updateAuxiliaryImages(imagesList: List<String>) {
-        ProductViewPagerAdapter(activity, imagesList, this@ProductDetailsFragment).apply {
-            binding.productImagesViewPager?.let { pager ->
-                pager.adapter = this
-                binding.productImagesViewPagerIndicator.setViewPager(pager)
+        context?.let {
+            ProductViewPagerAdapter(it, imagesList, this@ProductDetailsFragment).apply {
+                binding.productImagesViewPager?.let { pager ->
+                    pager.adapter = this
+                    binding.productImagesViewPagerIndicator.setViewPager(pager)
+                }
             }
         }
     }
@@ -3837,7 +3858,7 @@ class ProductDetailsFragment :
                 it.bottomToBottom = R.id.layoutLowStockColor
                 selectedColor?.layoutParams = it
                 layoutLowStockColor.root.visibility = View.VISIBLE
-                layoutLowStockIndicator.txtLowStockIndicator?.text =
+                layoutLowStockColor.txtLowStockIndicator.text =
                     AppConfigSingleton.lowStock?.lowStockCopy
                 colorPlaceholder?.visibility = View.GONE
             }
@@ -4011,5 +4032,34 @@ class ProductDetailsFragment :
         }
     }
 
-}
+    private fun setupBNPLViewForFbhProducts() {
+        if (this.productDetails?.fulfillmentType == StoreUtils.Companion.FulfillmentType.CLOTHING_ITEMS?.type || this.productDetails?.fulfillmentType == StoreUtils.Companion.FulfillmentType.CRG_ITEMS?.type) {
+            binding.payFlexWidget.apply {
+                visibility = View.VISIBLE
+                setOnTouchListener { _, motionEvent ->
+                    if (motionEvent.action == MotionEvent.ACTION_DOWN) {
+                        if (bottomSheetWebView == null) {
+                            bottomSheetWebView = PayFlexBottomSheetDialog()
+                        }
 
+                        if (bottomSheetWebView != null && bottomSheetWebView?.isAdded == true) {
+                            false
+                        }
+                        if (bottomSheetWebView?.isVisible == false && bottomSheetWebView?.isAdded == false) {
+                            bottomSheetWebView?.show(
+                                requireActivity().supportFragmentManager,
+                                PayFlexBottomSheetDialog::class.java.simpleName
+                            )
+                        }
+                    }
+                    true
+                }
+                setOnClickListener(null)
+                settings.javaScriptEnabled = true
+                loadData(loadpayFlexWidget(productDetails?.price), "text/html", "UTF-8")
+            }
+        } else {
+            binding.payFlexWidget.visibility = View.GONE
+        }
+    }
+}

@@ -38,7 +38,7 @@ import za.co.woolworths.financial.services.android.models.dto.LocationResponse
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails
 import za.co.woolworths.financial.services.android.models.dto.StoreOfferings
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
-import za.co.woolworths.financial.services.android.models.network.OneAppService.queryServiceGetStore
+import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.SearchStoresActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
@@ -127,7 +127,9 @@ class StoresNearbyFragment1 : Fragment(R.layout.fragment_stores_nearby1), Dynami
             setupToolbar()
             setupBackButtonUI()
             selectUnSelectMarkerDrawable()
-
+            cardPager.clipToPadding = false
+            cardPager.pageMargin = 20
+            cardPager.offscreenPageLimit = 3
             cardPager?.addOnPageChangeListener(this@StoresNearbyFragment1)
             cardPager?.setOnItemClickListener { position ->
                 currentStorePosition = position
@@ -385,7 +387,7 @@ class StoresNearbyFragment1 : Fragment(R.layout.fragment_stores_nearby1), Dynami
                 } else drawMarker(storeDetailsList[i].latitude, storeDetailsList[i].longitude, unSelectedIcon, i)
             }
         }
-        binding.cardPager?.adapter = CardsOnMapAdapter(activity, storeDetailsList)
+        binding.cardPager?.adapter = CardsOnMapAdapter(requireActivity(), storeDetailsList)
     }
 
     @SuppressLint("InflateParams", "SetTextI18n")
@@ -433,7 +435,7 @@ class StoresNearbyFragment1 : Fragment(R.layout.fragment_stores_nearby1), Dynami
                 storeTimingView?.visibility = View.VISIBLE
                 var textView: TextView
                 val typeface: Typeface? =
-                    ResourcesCompat.getFont(activity, R.font.myriad_pro_semi_bold_otf)
+                    ResourcesCompat.getFont(activity, R.font.opensans_bold_ttf)
                 for (i in storeDetail.times.indices) {
                     val v = activity.layoutInflater.inflate(R.layout.opening_hours_textview, null)
                     textView = v?.findViewById<View>(R.id.openingHoursTextView) as TextView
@@ -468,7 +470,7 @@ class StoresNearbyFragment1 : Fragment(R.layout.fragment_stores_nearby1), Dynami
         onLocationLoadStart()
         val latitude = location?.latitude ?: 0.0
         val longitude = location?.longitude ?: 0.0
-        val locationResponseCall = queryServiceGetStore(latitude, longitude, "")
+        val locationResponseCall = OneAppService().queryServiceGetStore(latitude, longitude, "")
         locationResponseCall.enqueue(CompletionHandler(object : IResponseListener<LocationResponse> {
             override fun onSuccess(locationResponse: LocationResponse?) {
                 enableSearchMenu()

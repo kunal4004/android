@@ -27,10 +27,7 @@ import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams.SearchType
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
-import za.co.woolworths.financial.services.android.models.network.OneAppService.getProducts
-import za.co.woolworths.financial.services.android.models.network.OneAppService.productDetail
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity
-import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.adapters.SearchResultShopAdapter
@@ -42,7 +39,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.Navig
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_SESSION_TIMEOUT_440
-import java.util.*
 
 class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickListener,
     NetworkChangeListener, ColorAndSizeBottomSheetListener {
@@ -89,7 +85,7 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         _binding = SearchResultFragmentBinding.inflate(inflater, container, false)
         return _binding?.root
@@ -139,7 +135,7 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
 
     override fun onLoadProductSuccess(
         productLists: MutableList<ProductList>,
-        loadMoreData: Boolean
+        loadMoreData: Boolean,
     ) {
         if (productLists != null) {
             if (!loadMoreData) {
@@ -149,6 +145,7 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
             }
         }
     }
+
     override fun unhandledResponseCode(response: Response) {}
 
     override fun failureResponseHandler(e: String) {
@@ -220,11 +217,16 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
     }
 
     private fun removeFooter() {
-        mProductList?.forEachIndexed { index, productList ->
-            if (productList.rowType === ProductListingViewType.FOOTER) {
-                mProductList?.remove(productList)
+        val iterator = mProductList?.iterator()
+        var index = 0
+        while (iterator?.hasNext() == true) {
+            val productList = iterator?.next()
+            if (productList?.rowType === ProductListingViewType.FOOTER) {
+                iterator?.remove()
                 productAdapter?.notifyItemRemoved(index)
+                break
             }
+            ++index
         }
     }
 
@@ -277,6 +279,7 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
                 mErrorHandlerView?.hideErrorHandler()
                 startProductRequest()
             }
+
             R.id.btnCheckOut -> {
                 cancelRequest(mGetProductDetail)
                 if (productAdapter == null) return
@@ -302,6 +305,7 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
                 mAddToListSize = addToListRequests.size
                 postAddToList(addToListRequests)
             }
+
             else -> {}
         }
     }
@@ -371,7 +375,7 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
     override fun onCheckedItem(
         productLists: MutableList<ProductList>,
         selectedProduct: ProductList,
-        viewIsLoading: Boolean
+        viewIsLoading: Boolean,
     ) {
         this.selectedProduct = selectedProduct
         mProductList = productLists
@@ -426,6 +430,7 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
                     objProduct?.otherSkus?.getOrNull(0)?.let { setSelectedSku(it) }
                         ?: noSizeColorIntent(objProduct.sku)
                 }
+
                 else -> {
                     openColorAndSizeBottomSheetFragment(objProduct)
                 }
@@ -495,7 +500,7 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
 
     override fun onFoodTypeChecked(
         productLists: MutableList<ProductList>,
-        selectedProduct: ProductList
+        selectedProduct: ProductList,
     ) {
         mProductList = productLists
         toggleAddToListBtn(true)
@@ -584,7 +589,7 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
 
         onLoadStart(loadMoreData)
         setProductIsLoading(true)
-        val productListCall = getProducts(requestParams!!)
+        val productListCall = OneAppService().getProducts(requestParams!!)
         productListCall.enqueue(
             CompletionHandler(
                 object : IResponseListener<ProductView> {
@@ -600,6 +605,7 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
                                     loadMoreData = true
                                 }
                             }
+
                             else -> if (response?.response != null) {
                                 onLoadComplete(loadMoreData)
                                 unhandledResponseCode(response.response)
@@ -626,7 +632,7 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
             Call<ShoppingListItemsResponse> {
         onAddToListLoad(true)
         val shoppingListItemsResponseCall =
-            OneAppService.addToList(addToListRequest as MutableList<AddToListRequest>, listId!!)
+            OneAppService().addToList(addToListRequest as MutableList<AddToListRequest>, listId!!)
         shoppingListItemsResponseCall.enqueue(
             CompletionHandler(
                 object : IResponseListener<ShoppingListItemsResponse> {
@@ -637,6 +643,7 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
                                 accountExpired(response)
                                 onAddToListLoad(false)
                             }
+
                             else -> unknownErrorMessage(response)
                         }
                     }
@@ -702,7 +709,7 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
 
     private fun getProductDetail(productRequest: ProductRequest): Call<ProductDetailResponse> {
         val productDetailRequest =
-            productDetail(productRequest.productId, productRequest.skuId, false)
+            OneAppService().productDetail(productRequest.productId, productRequest.skuId, false)
         productDetailRequest.enqueue(
             CompletionHandler(
                 object : IResponseListener<ProductDetailResponse> {

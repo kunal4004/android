@@ -12,7 +12,7 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HT
 class GetCartSummary {
 
     fun getCartSummary(response: IResponseListener<CartSummaryResponse>): Call<CartSummaryResponse> {
-        val cartSummaryRequest = OneAppService.getCartSummary()
+        val cartSummaryRequest = OneAppService().getCartSummary()
         cartSummaryRequest.enqueue(CompletionHandler(object :
             IResponseListener<CartSummaryResponse> {
             override fun onSuccess(cartSummaryResponse: CartSummaryResponse?) {
