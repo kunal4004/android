@@ -803,6 +803,11 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
 
     private fun updatePriceInformation() {
         val priceHolder = binding.includedPrice
+        if(viewModel.isFBHOnly()){
+            priceHolder.vouchersMain.rlpayflexInfo.visibility = View.GONE
+        }else{
+            priceHolder.vouchersMain.rlpayflexInfo.visibility = View.VISIBLE
+        }
         if (orderSummary != null) {
             setPriceInformationVisibility(true)
             orderSummary?.basketTotal?.let {
@@ -1317,7 +1322,11 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                 setItemLimitsBanner()
                 instance.queryCartSummaryCount()
                 if (!isViewCartEventFired){
-                    viewCartEvent(viewModel.getCartItemList(), orderSummary!!.total )
+                    orderSummary?.total ?.let {
+                        viewCartEvent(viewModel.getCartItemList(),
+                            it
+                        )
+                    }
                     isViewCartEventFired = true
                 }
                 showRecommendedProducts()

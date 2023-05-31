@@ -49,26 +49,21 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.cart.view.SubstitutionChoice
-
 import za.co.woolworths.financial.services.android.chanel.utils.ChanelUtils
 import za.co.woolworths.financial.services.android.common.SingleMessageCommonToast
 import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.ILocationProvider
 import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.Item
-import za.co.woolworths.financial.services.android.enhancedSubstitution.utils.listener.EnhancedSubstitutionBottomSheetDialog
 import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.ProductSubstitution
-import za.co.woolworths.financial.services.android.enhancedSubstitution.service.repository.ProductSubstitutionRepository
-import za.co.woolworths.financial.services.android.enhancedSubstitution.viewmodel.ProductSubstitutionViewModel
-import za.co.woolworths.financial.services.android.enhancedSubstitution.viewmodel.ProductSubstitutionViewModelFactory
-import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.SubstitutionInfo
+import za.co.woolworths.financial.services.android.enhancedSubstitution.util.listener.EnhancedSubstitutionBottomSheetDialog
 import za.co.woolworths.financial.services.android.enhancedSubstitution.service.network.SubstitutionApiHelper
-import za.co.woolworths.financial.services.android.enhancedSubstitution.utils.listener.EnhancedSubstitutionListener
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.repository.ProductSubstitutionRepository
+import za.co.woolworths.financial.services.android.enhancedSubstitution.util.listener.EnhancedSubstitutionListener
 import za.co.woolworths.financial.services.android.enhancedSubstitution.view.ManageSubstitutionFragment
 import za.co.woolworths.financial.services.android.enhancedSubstitution.view.SearchSubstitutionFragment
-import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
+import za.co.woolworths.financial.services.android.enhancedSubstitution.viewmodel.ProductSubstitutionViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
-import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.UnSellableItemsLiveData
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.BrandNavigationDetails
@@ -99,6 +94,7 @@ import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerA
 import za.co.woolworths.financial.services.android.ui.extension.deviceWidth
 import za.co.woolworths.financial.services.android.ui.extension.underline
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
+import za.co.woolworths.financial.services.android.ui.fragments.payflex.PayFlexBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.OutOfStockMessageDialogFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.size_guide.SkinProfileDialog
@@ -153,6 +149,7 @@ import za.co.woolworths.financial.services.android.util.pickimagecontract.PickIm
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.io.File
 import javax.inject.Inject
+import kotlin.collections.get
 import kotlin.collections.set
 
 
@@ -224,7 +221,7 @@ class ProductDetailsFragment :
     private val vtoApplyEffectOnImageViewModel: VtoApplyEffectOnImageViewModel? by activityViewModels()
     private val liveCameraViewModel: LiveCameraViewModel? by activityViewModels()
     private val dataPrefViewModel: DataPrefViewModel? by activityViewModels()
-    private lateinit var confirmAddressViewModel: ConfirmAddressViewModel
+    private val confirmAddressViewModel: ConfirmAddressViewModel by activityViewModels()
     private var makeupCamera: MakeupCam? = null
     private var isObserveImageData: Boolean = false
     private var isRefreshImageEffectLiveCamera: Boolean = false
@@ -248,7 +245,7 @@ class ProductDetailsFragment :
     private var prodId: String = "-1"
     private lateinit var moreReviewViewModel: RatingAndReviewViewModel
     private val dialogInstance = FoodProductNotAvailableForCollectionDialog.newInstance()
-    private lateinit var productSubstitutionViewModel: ProductSubstitutionViewModel
+    private val productSubstitutionViewModel: ProductSubstitutionViewModel by activityViewModels()
     private var productList:ProductList? = null
     private var selectionChoice: String = ""
     private var substitutionId: String? = ""
@@ -258,7 +255,7 @@ class ProductDetailsFragment :
     private var isSubstiuteItemAdded = false
 
     private val recommendationViewModel: RecommendationViewModel by viewModels()
-    private var bottomSheetWebView: BottomSheetWebView? =null
+    private var bottomSheetWebView: PayFlexBottomSheetDialog? =null
 
     @OpenTermAndLighting
     @Inject
@@ -331,7 +328,6 @@ class ProductDetailsFragment :
         super.onViewCreated(view, savedInstanceState)
         mFuseLocationAPISingleton = FuseLocationAPISingleton
         binding.initViews()
-        setUpConfirmAddressViewModel()
         addFragmentListner()
         setUniqueIds()
         productDetails?.let { addViewItemEvent(it) }
@@ -419,7 +415,8 @@ class ProductDetailsFragment :
         val viewItemListParams = Bundle()
         viewItemListParams.putString(FirebaseAnalytics.Param.CURRENCY,
             FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE)
-        for (products in 0..(productDetails.otherSkus?.size ?: 0)) {
+        viewItemListParams.putString(FirebaseManagerAnalyticsProperties.BUSINESS_UNIT,
+            productDetails?.productType)
             val viewItem = Bundle()
             viewItem.putString(FirebaseAnalytics.Param.ITEM_ID, productDetails?.productId)
             viewItem.putString(FirebaseAnalytics.Param.ITEM_NAME, productDetails?.productName)
@@ -431,12 +428,7 @@ class ProductDetailsFragment :
             viewItem.putString(FirebaseAnalytics.Param.ITEM_BRAND, productDetails?.brandText)
             viewItem.putString(FirebaseAnalytics.Param.ITEM_LIST_NAME,
                 productDetails?.categoryName)
-            viewItem.putString(FirebaseAnalytics.Param.ITEM_LIST_NAME,
-                productDetails?.categoryName)
-            viewItem.putString(FirebaseManagerAnalyticsProperties.BUSINESS_UNIT,
-                productDetails?.productType)
             viewItemListParams.putParcelableArray(FirebaseAnalytics.Param.ITEMS, arrayOf(viewItem))
-        }
         AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.VIEW_ITEM_EVENT,
             viewItemListParams)
     }
@@ -444,13 +436,6 @@ class ProductDetailsFragment :
     override fun onAttach(context: Context) {
         super.onAttach(context)
         setUpToolBar()
-    }
-
-    private fun setUpConfirmAddressViewModel() {
-        confirmAddressViewModel = ViewModelProvider(
-            this,
-            GeoLocationViewModelFactory(GeoLocationApiHelper())
-        ).get(ConfirmAddressViewModel::class.java)
     }
 
     private fun ProductDetailsFragmentBinding.initViews() {
@@ -517,11 +502,6 @@ class ProductDetailsFragment :
             this,
             RatingAndReviewViewModelFactory(RatingAndReviewApiHelper())
         ).get(RatingAndReviewViewModel::class.java)
-
-        productSubstitutionViewModel = ViewModelProvider(
-                this,
-         ProductSubstitutionViewModelFactory(ProductSubstitutionRepository(SubstitutionApiHelper()))
-        ).get(ProductSubstitutionViewModel::class.java)
     }
 
     private fun ProductDetailsFragmentBinding.updateReportLikeStatus() {
@@ -1157,6 +1137,7 @@ class ProductDetailsFragment :
         if (!isAdded || productDetails == null) return
 
         this.productDetails = productDetails
+        callViewPromotionFirebaseEvent()
         otherSKUsByGroupKey = this.productDetails?.otherSkus.let { groupOtherSKUsByColor(it) }
         this.defaultSku = getDefaultSku(otherSKUsByGroupKey)
 
@@ -1481,6 +1462,12 @@ class ProductDetailsFragment :
             }
         }
         return otherSKUsByGroupKey
+    }
+
+    private fun callViewPromotionFirebaseEvent() {
+        productDetails?.promotionsList?.let { promoList ->
+            FirebaseAnalyticsEventHelper.viewPromotion(productDetails!!, promoList)
+        }
     }
 
     override fun updateDefaultUI(isInventoryCalled: Boolean) {
@@ -4266,11 +4253,20 @@ class ProductDetailsFragment :
             binding.payFlexWidget.apply {
                 visibility = View.VISIBLE
                 setOnTouchListener { _, motionEvent ->
-                    if(motionEvent.action == MotionEvent.ACTION_DOWN) {
+                    if (motionEvent.action == MotionEvent.ACTION_DOWN) {
                         if (bottomSheetWebView == null) {
-                            bottomSheetWebView = BottomSheetWebView(requireContext())
+                            bottomSheetWebView = PayFlexBottomSheetDialog()
                         }
-                        bottomSheetWebView?.showWithUrl(AppConstant.PAYFLEX_POP_UP_URL)
+
+                        if (bottomSheetWebView != null && bottomSheetWebView?.isAdded == true) {
+                            false
+                        }
+                        if (bottomSheetWebView?.isVisible == false && bottomSheetWebView?.isAdded == false) {
+                            bottomSheetWebView?.show(
+                                requireActivity().supportFragmentManager,
+                                PayFlexBottomSheetDialog::class.java.simpleName
+                            )
+                        }
                     }
                     true
                 }

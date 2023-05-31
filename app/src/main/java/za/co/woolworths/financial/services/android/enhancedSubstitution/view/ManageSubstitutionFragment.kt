@@ -1,31 +1,39 @@
 package za.co.woolworths.financial.services.android.enhancedSubstitution.view
 
+import android.graphics.Typeface
 import android.content.Intent
 import android.os.Bundle
+import android.text.Selection
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.TextPaint
 import android.text.TextUtils
+import android.text.method.LinkMovementMethod
+import android.text.style.ClickableSpan
 import android.view.MotionEvent
 import android.view.View
 import android.view.View.*
 import android.view.ViewTreeObserver
+import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.ManageSubstitutionDetailsLayoutBinding
 import com.facebook.shimmer.Shimmer
+import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.cart.view.SubstitutionChoice
 import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.*
-import za.co.woolworths.financial.services.android.enhancedSubstitution.service.network.SubstitutionApiHelper
-import za.co.woolworths.financial.services.android.enhancedSubstitution.service.repository.ProductSubstitutionRepository
-import za.co.woolworths.financial.services.android.enhancedSubstitution.utils.listener.ProductSubstitutionListListener
+import za.co.woolworths.financial.services.android.enhancedSubstitution.util.listener.ProductSubstitutionListListener
 import za.co.woolworths.financial.services.android.enhancedSubstitution.view.SearchSubstitutionFragment.Companion.SELECTED_SUBSTITUTED_PRODUCT
 import za.co.woolworths.financial.services.android.enhancedSubstitution.view.SearchSubstitutionFragment.Companion.SUBSTITUTION_ITEM_KEY
 import za.co.woolworths.financial.services.android.enhancedSubstitution.viewmodel.ProductSubstitutionViewModel
-import za.co.woolworths.financial.services.android.enhancedSubstitution.viewmodel.ProductSubstitutionViewModelFactory
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.network.Status
@@ -36,6 +44,7 @@ import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 
+@AndroidEntryPoint
 class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetailsLayoutBinding>(
     ManageSubstitutionDetailsLayoutBinding::inflate
 ), OnClickListener, ProductSubstitutionListListener, OnTouchListener,
@@ -43,11 +52,11 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
 
     private var manageProductSubstitutionAdapter: ManageProductSubstitutionAdapter? = null
     private var selectionChoice = ""
-    private lateinit var productSubstitutionViewModel: ProductSubstitutionViewModel
+    private val productSubstitutionViewModel: ProductSubstitutionViewModel by activityViewModels()
     private var commerceItemId = ""
     private var productId = ""
     private var skuId = ""
-    private var itemList: ArrayList<Item>? = ArrayList<Item>()
+    private var itemList: ArrayList<Item>? = ArrayList()
     private var storeId = ""
     private var multiSku = ""
     private var item: Item? = null
@@ -91,7 +100,6 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
             productId = getString(PRODUCT_ID, "")
             skuId = getString(SKU_ID, "")
         }
-        setUpViewModel()
         initView()
         binding.btnConfirm.setOnClickListener(this)
         binding.dontWantText.setOnClickListener(this)
@@ -114,18 +122,9 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
                 disableConfirmButton()
             }
         }
-        binding.layoutManageSubstitution.nestedScrollView.setOnTouchListener(this)
-        binding.layoutManageSubstitution.nestedScrollView.viewTreeObserver.addOnScrollChangedListener(this)
-    }
-
-    private fun setUpViewModel() {
-        productSubstitutionViewModel = ViewModelProvider(
-            this, ProductSubstitutionViewModelFactory(
-                ProductSubstitutionRepository(
-                    SubstitutionApiHelper()
-                )
-            )
-        )[ProductSubstitutionViewModel::class.java]
+        binding.layoutManageSubstitution.nestedScrollView.viewTreeObserver.addOnScrollChangedListener(
+            this
+        )
     }
 
     private fun showShimmerView() {
@@ -148,38 +147,89 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
     private fun getKiboList(): ArrayList<SubstitutionProducts> {
         val list = ArrayList<SubstitutionProducts>()
         productSubstitutionViewModel.getKiboProducts(prepareProductRequest())
-        productSubstitutionViewModel.kiboProductResponse.observe(viewLifecycleOwner) {
+        productSubstitutionViewModel.kiboProductResponse.observe(viewLifecycleOwner) { kiboProductResponse ->
 
-            it.getContentIfNotHandled()?.let { resource ->
+            kiboProductResponse.getContentIfNotHandled()?.let { resource ->
                 when (resource.status) {
                     Status.LOADING -> {
                         showShimmerView()
                     }
+
                     Status.SUCCESS -> {
                         resource.data?.data?.let {
                             itemList = it.responses.getOrNull(0)?.actions?.getOrNull(0)?.items
                             if (itemList.isNullOrEmpty()) {
                                 binding.layoutManageSubstitution.listSubstitute.apply {
+                                    groupEmptySubstituteList.visibility = VISIBLE
                                     recyclerView.visibility = GONE
                                 }
                                 return@observe
                             }
                             binding.layoutManageSubstitution.listSubstitute.apply {
+                                groupEmptySubstituteList.visibility = GONE
                                 recyclerView.visibility = VISIBLE
                             }
                             prepareStockInventoryCallRequest(itemList)
                         }
                     }
+
                     Status.ERROR -> {
                         hideShimmerView()
-                        binding.layoutManageSubstitution.listSubstitute.apply {
-                            recyclerView.visibility = GONE
-                        }
+                        showKiboFailureErrorDialog()
                     }
                 }
             }
         }
         return list
+    }
+
+    private fun showKiboFailureErrorDialog() {
+        binding.layoutManageSubstitution.listSubstitute.apply {
+            groupEmptySubstituteList.visibility = GONE
+            recyclerView.visibility = GONE
+        }
+        disableConfirmButton()
+        binding.errorMessageLayout.visibility = VISIBLE
+        binding.errorMessage.makeLinks(
+            Pair(getString(R.string.tap_to_retry), OnClickListener {
+                getKiboList()
+            })
+        )
+    }
+
+    /*
+     *  This function is to create a underline and to create a particular link text in a text view.
+     */
+    private fun TextView.makeLinks(vararg links: Pair<String, OnClickListener>) {
+        val spannableString = SpannableString(this.text)
+        var startIndexOfLink = -1
+        for (link in links) {
+            val clickableSpan = object : ClickableSpan() {
+                override fun updateDrawState(textPaint: TextPaint) {
+                    textPaint.color = ContextCompat.getColor(
+                        requireContext(),
+                        R.color.black
+                    )
+                    textPaint.isUnderlineText = true
+                    textPaint.isFakeBoldText = true
+                    textPaint.typeface = Typeface.DEFAULT_BOLD
+                }
+
+                override fun onClick(view: View) {
+                    Selection.setSelection((view as TextView).text as Spannable, 0)
+                    view.invalidate()
+                    link.second.onClick(view)
+                }
+            }
+            startIndexOfLink = this.text.toString().indexOf(link.first, startIndexOfLink + 1)
+            spannableString.setSpan(
+                clickableSpan, startIndexOfLink, startIndexOfLink + link.first.length,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+        }
+        this.movementMethod =
+            LinkMovementMethod.getInstance() // without LinkMovementMethod, link can not be clickable.
+        this.setText(spannableString, TextView.BufferType.SPANNABLE)
     }
 
     private fun prepareStockInventoryCallRequest(itemList: ArrayList<Item>?) {
@@ -196,9 +246,9 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
         val configQuantity: Int? =
             AppConfigSingleton.enhanceSubstitution?.thresholdQuantityForSubstitutionProduct
         productSubstitutionViewModel.getInventoryForStock(skudIds, multiSku)
-        productSubstitutionViewModel.stockInventoryResponse.observe(viewLifecycleOwner) {
+        productSubstitutionViewModel.stockInventoryResponse.observe(viewLifecycleOwner) { skuInventoryForStoreResponse ->
 
-            it.getContentIfNotHandled()?.let { resource ->
+            skuInventoryForStoreResponse.getContentIfNotHandled()?.let { resource ->
                 when (resource.status) {
                     Status.LOADING -> {
                         showShimmerView()
@@ -230,6 +280,7 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
                         }
 
                     }
+
                     Status.ERROR -> {
                         hideShimmerView()
                     }
@@ -271,8 +322,7 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
         val product = Product(productId, skuId)
         val list = ArrayList<Product>()
         list.add(product)
-        val getKiboProductRequest = GetKiboProductRequest(list)
-        return getKiboProductRequest
+        return GetKiboProductRequest(list)
     }
 
     override fun onClick(v: View?) {
@@ -287,6 +337,7 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
                 )
                 clickOnLetMyShooperChooseOption()
             }
+
             R.id.rbOwnSubstitute -> clickOnOwnSubstitutioneOption()
         }
     }
@@ -305,7 +356,7 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
     }
 
     private fun callAddSubstitutionApi() {
-        if (commerceItemId.isEmpty() == true) {
+        if (commerceItemId.isEmpty()) {
             /*navigate to pdp with selected product  object and call add to cart api in order to add substitute there*/
             val kiboProduct = ProductList()
             kiboProduct.productName = item?.title
@@ -331,6 +382,8 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
             commerceItemId = commerceItemId
         )
         productSubstitutionViewModel.addSubstitutionForProduct(addSubstitutionRequest)
+        productSubstitutionViewModel.addSubstitutionResponse.observe(viewLifecycleOwner) { addSubstitutionResponse ->
+            addSubstitutionResponse.getContentIfNotHandled()?.let { resource ->
         productSubstitutionViewModel.addSubstitutionResponse.observe(viewLifecycleOwner, {
             it.getContentIfNotHandled()?.let { resource ->
                 when (resource.status) {
@@ -338,6 +391,7 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
                         binding.requestProcressLayout.root.visibility = VISIBLE
                         startSpinning()
                     }
+
                     Status.SUCCESS -> {
                         binding.requestProcressLayout.root.visibility = GONE
                         stopSpinning()
@@ -350,13 +404,19 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
                         }
                         binding.requestSuccessLayout.root.visibility = VISIBLE
                         /* navigate to pdp and call getSubs. api*/
-                      /*  setFragmentResult(
+                        /*  setFragmentResult(
                             SELECTED_SUBSTITUTED_PRODUCT,
                             bundleOf(SearchSubstitutionFragment.SUBSTITUTION_ITEM_ADDED to true)
                         )
                         (activity as? BottomNavigationActivity)?.popFragment()*/
 
+                        setFragmentResult(
+                            SELECTED_SUBSTITUTED_PRODUCT,
+                            bundleOf(SearchSubstitutionFragment.SUBSTITUTION_ITEM_ADDED to true)
+                        )
+                        (activity as? BottomNavigationActivity)?.popFragment()
                     }
+
                     Status.ERROR -> {
                         binding.requestProcressLayout.root.visibility = GONE
                         stopSpinning()
@@ -364,7 +424,8 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
                     }
                 }
             }
-        })
+        }
+
     }
 
     fun showErrorScreen(errorType: Int) {
@@ -417,13 +478,13 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
         this.item = item
     }
 
-    fun enableConfirmButton() {
+    private fun enableConfirmButton() {
         binding.btnConfirm.isEnabled = true
         binding.btnConfirm.background =
             ResourcesCompat.getDrawable(resources, R.drawable.black_color_drawable, null)
     }
 
-    fun disableConfirmButton() {
+    private fun disableConfirmButton() {
         binding.btnConfirm.isEnabled = false
         binding.btnConfirm.background =
             ResourcesCompat.getDrawable(resources, R.drawable.grey_bg_drawable, null)
@@ -462,3 +523,4 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
         }
     }
 }
+

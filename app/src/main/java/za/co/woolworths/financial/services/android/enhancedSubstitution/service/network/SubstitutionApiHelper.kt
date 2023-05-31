@@ -10,15 +10,16 @@ import za.co.woolworths.financial.services.android.models.network.RetrofitApiPro
 import za.co.woolworths.financial.services.android.models.network.RetrofitConfig
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
+import javax.inject.Inject
 
-class SubstitutionApiHelper : RetrofitConfig(AppContextProviderImpl(), RetrofitApiProviderImpl()) {
+class SubstitutionApiHelper @Inject constructor() : RetrofitConfig(AppContextProviderImpl(), RetrofitApiProviderImpl()) {
 
     suspend fun getProductSubstitution(productId: String?) =
         mApiInterface.getSubstitution(
             getSessionToken(),
             getDeviceIdentityToken(),
             productId
-    )
+        )
 
     suspend fun getSearchedProducts(requestParams: ProductsRequestParams): ProductView {
         val (suburbId: String?, storeId: String?) = OneAppService().getSuburbOrStoreId()
@@ -27,79 +28,84 @@ class SubstitutionApiHelper : RetrofitConfig(AppContextProviderImpl(), RetrofitA
             !requestParams.sendDeliveryDetailsParams -> {
                 Pair(null, null)
             }
+
             else ->
                 Pair(
-                        KotlinUtils.browsingDeliveryType?.type,
-                        KotlinUtils.getDeliveryDetails(requestParams.isUserBrowsing)
+                    KotlinUtils.browsingDeliveryType?.type,
+                    KotlinUtils.getDeliveryDetails(requestParams.isUserBrowsing)
                 )
         }
 
         return if (Utils.isLocationEnabled(AppContextProviderImpl().appContext())) {
             mApiInterface.getSearchedProducts(
-                    userAgent = "",
-                    "",
-                    "",
-                    "",
-                    getSessionToken(),
-                    getDeviceIdentityToken(),
-                    requestParams.searchTerm,
-                    requestParams.searchType.value,
-                    requestParams.responseType.value,
-                    requestParams.pageOffset,
-                    Utils.PAGE_SIZE,
-                    requestParams.sortOption,
-                    requestParams.refinement,
-                    suburbId = suburbId,
-                    storeId = storeId,
-                    filterContent = requestParams.filterContent,
-                    deliveryType = deliveryType,
-                    deliveryDetails = deliveryDetails
+                userAgent = "",
+                "",
+                "",
+                "",
+                getSessionToken(),
+                getDeviceIdentityToken(),
+                requestParams.searchTerm,
+                requestParams.searchType.value,
+                requestParams.responseType.value,
+                requestParams.pageOffset,
+                Utils.PAGE_SIZE,
+                requestParams.sortOption,
+                requestParams.refinement,
+                suburbId = suburbId,
+                storeId = storeId,
+                filterContent = requestParams.filterContent,
+                deliveryType = deliveryType,
+                deliveryDetails = deliveryDetails
             )
         } else {
             mApiInterface.getSearchedProductsWithoutLocation(
-                    "",
-                    "",
-                    getSessionToken(),
-                    getDeviceIdentityToken(),
-                    requestParams.searchTerm,
-                    requestParams.searchType.value,
-                    requestParams.responseType.value,
-                    requestParams.pageOffset,
-                    Utils.PAGE_SIZE,
-                    requestParams.sortOption,
-                    requestParams.refinement,
-                    suburbId = suburbId,
-                    storeId = storeId,
-                    filterContent = requestParams.filterContent,
-                    deliveryType = deliveryType,
-                    deliveryDetails = deliveryDetails
+                "",
+                "",
+                getSessionToken(),
+                getDeviceIdentityToken(),
+                requestParams.searchTerm,
+                requestParams.searchType.value,
+                requestParams.responseType.value,
+                requestParams.pageOffset,
+                Utils.PAGE_SIZE,
+                requestParams.sortOption,
+                requestParams.refinement,
+                suburbId = suburbId,
+                storeId = storeId,
+                filterContent = requestParams.filterContent,
+                deliveryType = deliveryType,
+                deliveryDetails = deliveryDetails
             )
         }
     }
 
-    suspend fun fetchInventoryForSubstitution(storeId: String ,multipleSku: String) = mApiInterface.fetchDashInventorySKUForStore(
+    suspend fun fetchInventoryForSubstitution(storeId: String, multipleSku: String) =
+        mApiInterface.fetchDashInventorySKUForStore(
             getSessionToken(),
             getDeviceIdentityToken(),
             storeId,
             multipleSku
-    )
+        )
 
-    suspend fun addSubstitution(addSubstitutionRequest: AddSubstitutionRequest) = mApiInterface.addSubstitution(
+    suspend fun addSubstitution(addSubstitutionRequest: AddSubstitutionRequest) =
+        mApiInterface.addSubstitution(
             getSessionToken(),
             getDeviceIdentityToken(),
             addSubstitutionRequest
-    )
+        )
 
-    suspend fun fetchKiboProducts(kiboProductRequest: GetKiboProductRequest) = mApiInterface.getKiboProductsFromResponse(
-        getSessionToken(),
-        getDeviceIdentityToken(),
-        kiboProductRequest
-    )
+    suspend fun fetchKiboProducts(kiboProductRequest: GetKiboProductRequest) =
+        mApiInterface.getKiboProductsFromResponse(
+            getSessionToken(),
+            getDeviceIdentityToken(),
+            kiboProductRequest
+        )
 
-    suspend fun getInventoryForSku(storeId: String, multipleSku: String) = mApiInterface.getInventorySKUForStore(
-        getSessionToken(),
-        getDeviceIdentityToken(),
-        store_id = storeId,
-        multipleSku = multipleSku
-    )
+    suspend fun getInventoryForSku(storeId: String, multipleSku: String) =
+        mApiInterface.getInventorySKUForStore(
+            getSessionToken(),
+            getDeviceIdentityToken(),
+            store_id = storeId,
+            multipleSku = multipleSku
+        )
 }

@@ -4,7 +4,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import com.awfs.coordination.R
-import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.*
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.AddSubstitutionRequest
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.AddSubstitutionResponse
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.GetKiboProductRequest
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.KiboProductResponse
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.ProductSubstitution
 import za.co.woolworths.financial.services.android.enhancedSubstitution.service.network.SubstitutionApiHelper
 import za.co.woolworths.financial.services.android.models.dto.PagingResponse
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
@@ -13,8 +17,9 @@ import za.co.woolworths.financial.services.android.models.network.Resource
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import java.io.IOException
+import javax.inject.Inject
 
-class ProductSubstitutionRepository(private var substitutionApiHelper: SubstitutionApiHelper) {
+class ProductSubstitutionRepository @Inject constructor(private var substitutionApiHelper: SubstitutionApiHelper) {
 
     suspend fun getProductSubstitution(productId: String?): Resource<ProductSubstitution> {
         return try {
@@ -24,6 +29,7 @@ class ProductSubstitutionRepository(private var substitutionApiHelper: Substitut
                     return when (it.httpCode) {
                         AppConstant.HTTP_OK, AppConstant.HTTP_OK_201 ->
                             Resource.success(it)
+
                         else ->
                             Resource.error(R.string.error_unknown, it)
                     }
@@ -34,7 +40,7 @@ class ProductSubstitutionRepository(private var substitutionApiHelper: Substitut
         } catch (e: IOException) {
             FirebaseManager.logException(e)
             Resource.error(R.string.error_internet_connection, null)
-        }  catch (e: Exception) {
+        } catch (e: Exception) {
             FirebaseManager.logException(e)
             Resource.error(R.string.error_unknown, null)
         }
@@ -45,14 +51,14 @@ class ProductSubstitutionRepository(private var substitutionApiHelper: Substitut
         requestParams: ProductsRequestParams,
         _pagingResponse: MutableLiveData<PagingResponse?>,
     ) = Pager(
-            config = PagingConfig(
-                pageSize = PAGE_SIZE,
-                enablePlaceholders = false
-            ),
-            pagingSourceFactory = {
-                SubstitutionPagingSource(substitutionApiHelper, requestParams, _pagingResponse)
-            }
-        )
+        config = PagingConfig(
+            pageSize = PAGE_SIZE,
+            enablePlaceholders = false
+        ),
+        pagingSourceFactory = {
+            SubstitutionPagingSource(substitutionApiHelper, requestParams, _pagingResponse)
+        }
+    )
 
 
     suspend fun getInventoryForSubstitution(
@@ -66,6 +72,7 @@ class ProductSubstitutionRepository(private var substitutionApiHelper: Substitut
                     return when (it.httpCode) {
                         AppConstant.HTTP_OK, AppConstant.HTTP_OK_201 ->
                             Resource.success(it)
+
                         else ->
                             Resource.error(R.string.error_unknown, it)
                     }
@@ -76,7 +83,7 @@ class ProductSubstitutionRepository(private var substitutionApiHelper: Substitut
         } catch (e: IOException) {
             FirebaseManager.logException(e)
             Resource.error(R.string.error_internet_connection, null)
-        } catch (e:Exception) {
+        } catch (e: Exception) {
             FirebaseManager.logException(e)
             Resource.error(R.string.error_unknown, null)
         }
@@ -91,6 +98,7 @@ class ProductSubstitutionRepository(private var substitutionApiHelper: Substitut
                     return when (it.httpCode) {
                         AppConstant.HTTP_OK, AppConstant.HTTP_OK_201 ->
                             Resource.success(it)
+
                         else ->
                             Resource.error(R.string.error_unknown, it)
                     }
@@ -101,7 +109,7 @@ class ProductSubstitutionRepository(private var substitutionApiHelper: Substitut
         } catch (e: IOException) {
             FirebaseManager.logException(e)
             Resource.error(R.string.error_internet_connection, null)
-        } catch (e:Exception) {
+        } catch (e: Exception) {
             FirebaseManager.logException(e)
             Resource.error(R.string.error_unknown, null)
         }
@@ -115,6 +123,7 @@ class ProductSubstitutionRepository(private var substitutionApiHelper: Substitut
                     return when (it.httpCode) {
                         AppConstant.HTTP_OK, AppConstant.HTTP_OK_201 ->
                             Resource.success(it)
+
                         else ->
                             Resource.error(R.string.error_unknown, it)
                     }
@@ -125,20 +134,24 @@ class ProductSubstitutionRepository(private var substitutionApiHelper: Substitut
         } catch (e: IOException) {
             FirebaseManager.logException(e)
             Resource.error(R.string.error_internet_connection, null)
-        }  catch (e:Exception) {
+        } catch (e: Exception) {
             FirebaseManager.logException(e)
             Resource.error(R.string.error_unknown, null)
         }
     }
 
-    suspend fun getInventorySKU(storeId: String, multiSku: String): Resource<SkusInventoryForStoreResponse> {
+    suspend fun getInventorySKU(
+        storeId: String,
+        multiSku: String,
+    ): Resource<SkusInventoryForStoreResponse> {
         return try {
-            val response = substitutionApiHelper.getInventoryForSku(storeId,multiSku)
+            val response = substitutionApiHelper.getInventoryForSku(storeId, multiSku)
             if (response.isSuccessful) {
                 response.body()?.let {
                     return when (it.httpCode) {
                         AppConstant.HTTP_OK, AppConstant.HTTP_OK_201 ->
                             Resource.success(it)
+
                         else ->
                             Resource.error(R.string.error_unknown, it)
                     }
@@ -149,7 +162,7 @@ class ProductSubstitutionRepository(private var substitutionApiHelper: Substitut
         } catch (e: IOException) {
             FirebaseManager.logException(e)
             Resource.error(R.string.error_internet_connection, null)
-        }  catch (e:Exception) {
+        } catch (e: Exception) {
             FirebaseManager.logException(e)
             Resource.error(R.string.error_unknown, null)
         }

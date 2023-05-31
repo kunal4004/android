@@ -260,12 +260,12 @@ class MyStoreCardFragment @Inject constructor() : Fragment(R.layout.fragment_ava
         if (activity is AccountSignedInActivity) {
             viewLifecycleOwner.lifecycleScope.launch {
                 delay(AppConstant.DELAY_100_MS)
-                (activity as? AccountSignedInActivity)?.mAccountSignedInPresenter?.apply {
-                    val deepLinkingObject = getDeepLinkData()
+                (activity as? StoreCardActivity)?.apply {
+                    val deepLinkingObject = homeViewModel.mDeepLinkingObject
                     when (deepLinkingObject?.get("feature")?.asString) {
                         destination -> {
-                            deleteDeepLinkData()
-                            if (isProductInGoodStanding())
+                           homeViewModel.clearDeepLinkParams()
+                            if (homeViewModel.isProductInGoodStanding())
                                 view?.performClick()
                         }
                     }
@@ -275,16 +275,13 @@ class MyStoreCardFragment @Inject constructor() : Fragment(R.layout.fragment_ava
     }
 
     fun FragmentAvailableFundBinding.navigateToDeepLinkView() {
-        if (activity is AccountSignedInActivity) {
-            viewLifecycleOwner.lifecycleScope.launch {
-                delay(AppConstant.DELAY_100_MS)
-                (activity as? AccountSignedInActivity)?.mAccountSignedInPresenter?.apply {
-                    val deepLinkingObject = getDeepLinkData()
-                    when (deepLinkingObject?.get("feature")?.asString) {
-                        AppConstant.DP_LINKING_MY_ACCOUNTS_PRODUCT_STATEMENT -> {
-                            deleteDeepLinkData()
-                            incViewStatementButton.root.performClick()
-                        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            delay(AppConstant.DELAY_100_MS)
+            homeViewModel.mDeepLinkingObject?.let {
+                when (it.get("feature")?.asString) {
+                    AppConstant.DP_LINKING_MY_ACCOUNTS_PRODUCT_STATEMENT -> {
+                        homeViewModel.clearDeepLinkParams()
+                        incViewStatementButton.root.performClick()
                     }
                 }
             }
