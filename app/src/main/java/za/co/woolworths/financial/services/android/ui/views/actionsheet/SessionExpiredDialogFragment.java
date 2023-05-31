@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import android.view.View;
+import android.widget.TextView;
 
 import com.awfs.coordination.R;
 
@@ -27,7 +28,7 @@ public class SessionExpiredDialogFragment extends ActionSheetDialogFragment impl
 	private WButton btnSECancel;
 	private WButton btnSESignIn;
 	private WTextView tvSessionExpiredTitle;
-	private WTextView tvSessionExpiredDesc;
+	private TextView tvSessionExpiredDesc;
 
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
