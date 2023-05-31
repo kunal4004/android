@@ -73,8 +73,8 @@
             android:textColor="@color/black"
             android:textColorHint="@color/chat_hint"
             android:textCursorDrawable="@drawable/cursor_custom_color"
-            android:textSize="@dimen/fifteen_sp"
-            app:WEditTextView_font="myriadpro_regular" />
+            android:textSize="@dimen/thirteen_sp"
+            app:WEditTextView_font="opensans_regular" />
 
         <Button
             android:id="@+id/sendMessageButton"

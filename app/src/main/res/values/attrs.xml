@@ -21,6 +21,9 @@
             <enum name="bold" value="3"/>
             <enum name="myriadpro_regular" value="4"/>
             <enum name="myriadpro_semibold" value="5"/>
+            <enum name="opensans_regular" value="6"/>
+            <enum name="opensansans_semibold" value="7"/>
+
         </attr>
         <attr name="WTextView_spannable_text" format="string"/>
     </declare-styleable>
@@ -32,6 +35,8 @@
             <enum name="bold" value="3"/>
             <enum name="myriadpro_regular" value="4"/>
             <enum name="myriadpro_semibold" value="5"/>
+            <enum name="opensans_regular" value="6"/>
+            <enum name="opensansans_semibold" value="7"/>
         </attr>
         <attr name="WEditTextView_spannable_text" format="string"/>
     </declare-styleable>
@@ -43,6 +48,8 @@
             <enum name="bold" value="3"/>
             <enum name="myriadpro_regular" value="4"/>
             <enum name="myriadpro_semibold" value="5"/>
+            <enum name="opensans_regular" value="6"/>
+            <enum name="opensansans_semibold" value="7"/>
         </attr>
         <attr name="WButton_spannable_text" format="string"/>
     </declare-styleable>
