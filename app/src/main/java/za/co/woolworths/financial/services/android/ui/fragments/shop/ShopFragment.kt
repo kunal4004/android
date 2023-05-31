@@ -117,8 +117,6 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
     OnChildFragmentEvents,
     WMaterialShowcaseView.IWalkthroughActionListener, View.OnClickListener{
 
-    private var isRetrievedUnreadMessagesOnLaunch: Boolean = false
-    var isLastDashOrderAvailable: Boolean = false
     private val confirmAddressViewModel: ConfirmAddressViewModel by activityViewModels()
 
     private var timer: CountDownTimer? = null
@@ -132,7 +130,6 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
     private var user: String = ""
     private var validateLocationResponse: ValidateLocationResponse? = null
     private var tabWidth: Float? = 0f
-    private var inAppNotificationViewBinding: LayoutInappOrderNotificationBinding? = null
     private val fragmentResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode != RESULT_OK) {
@@ -282,7 +279,6 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                                 showBlackToolTip(Delivery.STANDARD)
                                 setEventsForSwitchingBrowsingType(Delivery.STANDARD.name)
                                 KotlinUtils.browsingDeliveryType = Delivery.STANDARD
-                                removeNotificationToast()
                             }
 
                             CLICK_AND_COLLECT_TAB.index -> {
@@ -290,7 +286,6 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                                 showBlackToolTip(Delivery.CNC)
                                 setEventsForSwitchingBrowsingType(Delivery.CNC.name)
                                 KotlinUtils.browsingDeliveryType = Delivery.CNC
-                                removeNotificationToast()
                             }
 
                             DASH_TAB.index -> {
@@ -305,133 +300,6 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
             })
             tabsMain.setupWithViewPager(viewpagerMain)
             updateTabIconUI(STANDARD_TAB.index)
-        }
-    }
-
-    internal fun removeNotificationToast() {
-        // Remove view
-        if (inAppNotificationViewBinding != null && binding.fragmentShop.contains(
-                inAppNotificationViewBinding!!.root
-            )
-        )
-            binding.fragmentShop.removeView(inAppNotificationViewBinding!!.root)
-    }
-
-    internal fun addInAppNotificationToast(params: LastOrderDetailsResponse) {
-        if (!isAdded || activity == null || view == null) {
-            return
-        }
-
-        // Remove view if already added.
-        removeNotificationToast()
-
-        // user should be authenticated
-        if (!SessionUtilities.getInstance().isUserAuthenticated) {
-            return
-        }
-
-        // Show only when showDashOrder flag is true
-        if (!params.showDashOrder) {
-            return
-        }
-
-
-        if (binding.viewpagerMain.currentItem != DASH_TAB.index) {
-            return
-        }
-
-        val inflater = LayoutInflater.from(requireContext())
-        inAppNotificationViewBinding =
-            LayoutInappOrderNotificationBinding.inflate(inflater, binding.fragmentShop, false)
-        inAppNotificationViewBinding?.root?.id = R.id.layoutInappNotification
-        inAppNotificationViewBinding?.root?.layoutParams =
-            ConstraintLayout.LayoutParams(MATCH_CONSTRAINT, WRAP_CONTENT)
-        // Copy LayoutParams and add view
-        val set = ConstraintSet()
-        set.clone(binding.fragmentShop)
-        // Align view to bottom
-        // pin to the bottom of the container
-        inAppNotificationViewBinding?.root?.id?.let {
-            set.clear(it)
-            set.constrainHeight(it, WRAP_CONTENT)
-            set.constrainWidth(it, MATCH_CONSTRAINT)
-            set.connect(
-                it,
-                BOTTOM,
-                PARENT_ID,
-                BOTTOM,
-                requireContext().resources.getDimension(R.dimen.sixteen_dp).toInt()
-            )
-            set.connect(
-                it,
-                START,
-                PARENT_ID,
-                START,
-                requireContext().resources.getDimension(R.dimen.sixteen_dp).toInt()
-            )
-            set.connect(
-                it,
-                END,
-                PARENT_ID,
-                END,
-                requireContext().resources.getDimension(R.dimen.sixteen_dp).toInt()
-            )
-        }
-        binding.fragmentShop.addView(inAppNotificationViewBinding!!.root)
-        // Apply the changes
-        set.applyTo(binding.fragmentShop)
-
-        inAppNotificationViewBinding?.inappOrderNotificationContainer?.setOnClickListener(this)
-        inAppNotificationViewBinding?.inappOrderNotificationContainer?.setTag(
-            R.id.inappOrderNotificationContainer,
-            params.orderId
-        )
-
-        params.orderId?.let { orderId ->
-            inAppNotificationViewBinding?.inappOrderNotificationTitle?.text = buildSpannedString {
-                val text = requireContext().getString(
-                    R.string.inapp_order_notification_title,
-                    orderId
-                )
-                append(text)
-                val index = text.indexOf(orderId)
-                val regularSpan = ResourcesCompat.getFont(requireContext(), R.font.opensans_regular)
-                setSpan(
-                    CustomTypefaceSpan("opensans", regularSpan),
-                    index,
-                    text.length,
-                    Spannable.SPAN_INCLUSIVE_INCLUSIVE
-                )
-            }
-        }
-        inAppNotificationViewBinding?.inappOrderNotificationSubitle?.text =
-            params.orderStatus ?: params.state
-        // Chat / Driver Tracking / Location
-        inAppNotificationViewBinding?.inappOrderNotificationIcon?.apply {
-            setTag(R.id.inappOrderNotificationIcon, params)
-            // Chat enabled STATUS == PACKING i.e. CONFIRMED
-            if (params.isChatEnabled) {
-                visibility = View.VISIBLE
-                setImageResource(R.drawable.ic_chat_icon)
-                setOnClickListener(this@ShopFragment)
-                if (!isRetrievedUnreadMessagesOnLaunch) {
-                    isRetrievedUnreadMessagesOnLaunch = true
-                    params.orderId?.let {
-                        DashChatMessageListeningService.getUnreadMessageForOrder(
-                            requireContext(),
-                            it
-                        )
-                    }
-                }
-            }
-            // Driver tracking enabled STATUS == EN-ROUTE
-            else if (params.isDriverTrackingEnabled) {
-                visibility = View.VISIBLE
-                setImageResource(R.drawable.ic_white_location)
-                setOnClickListener(this@ShopFragment)
-            } else {
-                visibility = View.GONE
-            }
         }
     }
 
@@ -1624,18 +1492,6 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                 R.anim.slide_out_to_left
             )
         }
-    }
-
-    internal fun updateUnreadMessageCount(unreadMsgCount: Int) {
-        inAppNotificationViewBinding?.inAppOrderNotificationChatCount?.visibility = View.GONE
-        //TODO: Later requirements for chat bubble.
-        /*if (unreadMsgCount <= 0) {
-            inAppNotificationViewBinding?.inAppOrderNotificationChatCount?.visibility = GONE
-        } else {
-            inAppNotificationViewBinding?.inAppOrderNotificationChatCount?.text =
-                unreadMsgCount.toString()
-            inAppNotificationViewBinding?.inAppOrderNotificationChatCount?.visibility = VISIBLE
-        }*/
     }
 
     private fun enableOrDisableFashionItems(isEnabled: Boolean) {

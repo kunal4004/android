@@ -7,10 +7,17 @@ import android.location.Location
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.text.Spannable
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
+import androidx.core.text.buildSpannedString
+import androidx.core.view.contains
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.ViewModelProvider
@@ -19,6 +26,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentDashDeliveryBinding
+import com.awfs.coordination.databinding.LayoutInappOrderNotificationBinding
 import com.google.gson.Gson
 import com.skydoves.balloon.balloon
 import dagger.hilt.android.AndroidEntryPoint
@@ -31,9 +39,11 @@ import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.models.dto.dash.LastOrderDetailsResponse
 import za.co.woolworths.financial.services.android.models.dto.shop.Banner
 import za.co.woolworths.financial.services.android.models.dto.shop.ProductCatalogue
 import za.co.woolworths.financial.services.android.models.network.Status
+import za.co.woolworths.financial.services.android.onecartgetstream.service.DashChatMessageListeningService
 import za.co.woolworths.financial.services.android.receivers.DashOrderReceiver
 import za.co.woolworths.financial.services.android.receivers.DashOrderReceiverListener
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
@@ -83,6 +93,9 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
     private var isUnSellableItemsRemoved: Boolean? = false
     private var mStoreId = ""
     private var dashOrderReceiver: DashOrderReceiver? = null
+    private var inAppNotificationViewBinding: LayoutInappOrderNotificationBinding? = null
+    private var isRetrievedUnreadMessagesOnLaunch: Boolean = false
+    private var isLastDashOrderAvailable: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -644,24 +657,18 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
 
         viewModel.lastDashOrder.observe(viewLifecycleOwner) {
             it.peekContent()?.data?.apply {
-                if (parentFragment is ShopFragment) {
-                    (parentFragment as ShopFragment).also { shopFragment ->
-                        shopFragment.isLastDashOrderAvailable = true
-                        shopFragment.addInAppNotificationToast(this)
-                    }
-                }
+                isLastDashOrderAvailable = true
+                addInAppNotificationToast(this)
             }
         }
     }
 
     private fun refreshInAppNotificationToast() {
         if (!SessionUtilities.getInstance().isUserAuthenticated) {
-            if (parentFragment is ShopFragment) {
-                (parentFragment as ShopFragment).removeNotificationToast()
+                removeNotificationToast()
+                return
             }
-            return
-        }
-        if (parentFragment is ShopFragment && !(parentFragment as ShopFragment).isLastDashOrderAvailable) {
+        if (!isLastDashOrderAvailable) {
             viewModel.getLastDashOrderDetails()
             return
         }
@@ -675,10 +682,141 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
         }
     }
 
-    override fun updateUnreadMessageCount(unreadMsgCount: Int) {
-        if (parentFragment is ShopFragment) {
-            (parentFragment as ShopFragment).updateUnreadMessageCount(unreadMsgCount)
+    private fun removeNotificationToast() {
+        // Remove view
+        if (inAppNotificationViewBinding != null && binding.fragmentDashDelivery.contains(
+                inAppNotificationViewBinding!!.root
+            )
+        )
+            binding.fragmentDashDelivery.removeView(inAppNotificationViewBinding!!.root)
+    }
+
+    private fun addInAppNotificationToast(params: LastOrderDetailsResponse) {
+        if (!isAdded || activity == null || view == null) {
+            return
         }
+
+        // Remove view if already added.
+        removeNotificationToast()
+
+        // user should be authenticated
+        if (!SessionUtilities.getInstance().isUserAuthenticated) {
+            return
+        }
+
+        // Show only when showDashOrder flag is true
+        if (!params.showDashOrder) {
+            return
+        }
+
+        val inflater = LayoutInflater.from(requireContext())
+        inAppNotificationViewBinding =
+            LayoutInappOrderNotificationBinding.inflate(inflater, binding.fragmentDashDelivery, false)
+        inAppNotificationViewBinding?.root?.id = R.id.layoutInappNotification
+        inAppNotificationViewBinding?.root?.layoutParams =
+            ConstraintLayout.LayoutParams(
+                ConstraintSet.MATCH_CONSTRAINT,
+                ConstraintSet.WRAP_CONTENT
+            )
+        // Copy LayoutParams and add view
+        val set = ConstraintSet()
+        set.clone(binding.fragmentDashDelivery)
+        // Align view to bottom
+        // pin to the bottom of the container
+        inAppNotificationViewBinding?.root?.id?.let {
+            set.clear(it)
+            set.constrainHeight(it, ConstraintSet.WRAP_CONTENT)
+            set.constrainWidth(it, ConstraintSet.MATCH_CONSTRAINT)
+            set.connect(
+                it,
+                ConstraintSet.BOTTOM,
+                ConstraintSet.PARENT_ID,
+                ConstraintSet.BOTTOM,
+                requireContext().resources.getDimension(R.dimen.sixteen_dp).toInt()
+            )
+            set.connect(
+                it,
+                ConstraintSet.START,
+                ConstraintSet.PARENT_ID,
+                ConstraintSet.START,
+                requireContext().resources.getDimension(R.dimen.sixteen_dp).toInt()
+            )
+            set.connect(
+                it,
+                ConstraintSet.END,
+                ConstraintSet.PARENT_ID,
+                ConstraintSet.END,
+                requireContext().resources.getDimension(R.dimen.sixteen_dp).toInt()
+            )
+        }
+        binding.fragmentDashDelivery.addView(inAppNotificationViewBinding!!.root)
+        // Apply the changes
+        set.applyTo(binding.fragmentDashDelivery)
+
+        inAppNotificationViewBinding?.inappOrderNotificationContainer?.setOnClickListener(this)
+        inAppNotificationViewBinding?.inappOrderNotificationContainer?.setTag(
+            R.id.inappOrderNotificationContainer,
+            params.orderId
+        )
+
+        params.orderId?.let { orderId ->
+            inAppNotificationViewBinding?.inappOrderNotificationTitle?.text = buildSpannedString {
+                val text = requireContext().getString(
+                    R.string.inapp_order_notification_title,
+                    orderId
+                )
+                append(text)
+                val index = text.indexOf(orderId)
+                val regularSpan = ResourcesCompat.getFont(requireContext(), R.font.opensans_regular)
+                setSpan(
+                    CustomTypefaceSpan("opensans", regularSpan),
+                    index,
+                    text.length,
+                    Spannable.SPAN_INCLUSIVE_INCLUSIVE
+                )
+            }
+        }
+        inAppNotificationViewBinding?.inappOrderNotificationSubitle?.text =
+            params.orderStatus ?: params.state
+        // Chat / Driver Tracking / Location
+        inAppNotificationViewBinding?.inappOrderNotificationIcon?.apply {
+            setTag(R.id.inappOrderNotificationIcon, params)
+            // Chat enabled STATUS == PACKING i.e. CONFIRMED
+            if (params.isChatEnabled) {
+                visibility = View.VISIBLE
+                setImageResource(R.drawable.ic_chat_icon)
+                setOnClickListener(this@DashDeliveryAddressFragment)
+                if (!isRetrievedUnreadMessagesOnLaunch) {
+                    isRetrievedUnreadMessagesOnLaunch = true
+                    params.orderId?.let {
+                        DashChatMessageListeningService.getUnreadMessageForOrder(
+                            requireContext(),
+                            it
+                        )
+                    }
+                }
+            }
+            // Driver tracking enabled STATUS == EN-ROUTE
+            else if (params.isDriverTrackingEnabled) {
+                visibility = View.VISIBLE
+                setImageResource(R.drawable.ic_white_location)
+                setOnClickListener(this@DashDeliveryAddressFragment)
+            } else {
+                visibility = View.GONE
+            }
+        }
+    }
+
+    override fun updateUnreadMessageCount(unreadMsgCount: Int) {
+        inAppNotificationViewBinding?.inAppOrderNotificationChatCount?.visibility = View.GONE
+        //TODO: Later requirements for chat bubble.
+        /*if (unreadMsgCount <= 0) {
+            inAppNotificationViewBinding?.inAppOrderNotificationChatCount?.visibility = GONE
+        } else {
+            inAppNotificationViewBinding?.inAppOrderNotificationChatCount?.text =
+                unreadMsgCount.toString()
+            inAppNotificationViewBinding?.inAppOrderNotificationChatCount?.visibility = VISIBLE
+        }*/
     }
 
     override fun updateLastDashOrder() {
