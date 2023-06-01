@@ -34,20 +34,20 @@
     <TextView
         android:id="@+id/tvCurrentLocation"
         style="@style/opensans_regular_12_text_style"
-        android:layout_width="@dimen/two_hundred_and_fifty_dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/twenty_dp"
         android:layout_marginTop="@dimen/two_dp"
         android:layout_marginEnd="@dimen/eight_dp"
         android:ellipsize="end"
+        android:lineSpacingExtra="@dimen/two_sp"
+        android:maxLines="1"
         android:textColor="@color/color_444444"
+        android:translationY="@dimen/_minus_zero_pt_eight_sp"
         app:layout_constraintEnd_toStartOf="@+id/swEnableLocation"
         app:layout_constraintHorizontal_bias="0.0"
-        android:maxLines="1"
         app:layout_constraintStart_toEndOf="@+id/ivLocation"
-        app:layout_constraintTop_toBottomOf="@+id/tvCurrentLocationLabel"
-        android:lineSpacingExtra="@dimen/two_sp"
-        android:translationY="@dimen/_minus_zero_pt_eight_sp" />
+        app:layout_constraintTop_toBottomOf="@+id/tvCurrentLocationLabel" />
 
     <Switch
         android:id="@+id/swEnableLocation"

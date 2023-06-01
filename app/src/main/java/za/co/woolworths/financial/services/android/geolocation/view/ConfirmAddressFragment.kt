@@ -194,22 +194,23 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
                 )
                 return@apply
             }*/
+            val isLocEnabled = Utils.isLocationEnabled(this)
 
             // If location services enabled, extract latitude and longitude
             if (binding.inCurrentLocation?.swEnableLocation?.isChecked == true ||
-                    Utils.isLocationEnabled(this)) {
-                if(Utils.isLocationEnabled(this)) {
+                    isLocEnabled) {
+                if(isLocEnabled) {
                     binding.inCurrentLocation?.swEnableLocation?.isChecked = true
                     startLocationDiscoveryProcess()
                 } else {
+                    isAddressAvailable = false
                     binding.disableCurrentLocation()
                     binding.inCurrentLocation?.swEnableLocation?.isChecked = false
                 }
-            } else {
-                if(!Utils.isLocationEnabled(this)) {
-                    binding.disableCurrentLocation()
-                    binding.inCurrentLocation?.swEnableLocation?.isChecked = false
-                }
+            } else if (!isLocEnabled) {
+                isAddressAvailable = false
+                binding.disableCurrentLocation()
+                binding.inCurrentLocation?.swEnableLocation?.isChecked = false
             }
         }
     }
