@@ -142,13 +142,6 @@ class ErrorHandlerFragment : BaseFragmentBinding<ErrorHandlerFragmentBinding>(Er
                 actionButton.text = getString(R.string.submitted_order_error_continue_shopping)
                 cancelButton.visibility = View.GONE
             }
-            ErrorHandlerActivity.ERROR_TYPE_ADD_SUBSTITUTION -> {
-                errorLogo.setImageResource(R.drawable.ic_error_icon)
-                errorTitle.text = getString(R.string.fail_add_substitution_title)
-                actionButton.text = getString(R.string.retry)
-                cancelButton.visibility = View.VISIBLE
-                cancelButton.text = "Back"
-            }
         }
     }
 
@@ -188,9 +181,6 @@ class ErrorHandlerFragment : BaseFragmentBinding<ErrorHandlerFragmentBinding>(Er
                         setResultBAck(Activity.RESULT_CANCELED)
                     }
                     ErrorHandlerActivity.ERROR_TYPE_EMPTY_CART -> {
-                        setResultBAck(ErrorHandlerActivity.RESULT_RETRY)
-                    }
-                    ErrorHandlerActivity.ERROR_TYPE_ADD_SUBSTITUTION -> {
                         setResultBAck(ErrorHandlerActivity.RESULT_RETRY)
                     }
                 }

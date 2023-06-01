@@ -131,6 +131,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
     <androidx.constraintlayout.widget.Group
         android:id="@+id/manageSubstitutionGroup"
         android:layout_width="wrap_content"
@@ -138,17 +139,4 @@
         app:constraint_referenced_ids="btnConfirm,dontWantText,
         viewSeparator,layout_manage_substitution,txtManageTitle,imgBack"/>
 
-    <include
-        android:id="@+id/requestProcressLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone"
-        layout="@layout/process_request_fragment"/>
-
-    <include
-        android:id="@+id/requestSuccessLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone"
-        layout="@layout/layout_payment_success_confirmation"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

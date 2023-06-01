@@ -2990,7 +2990,7 @@
     <string name="my_products_cant_load_product">Can\'t Load Balance</string>
     <string name="application_status">Application Status</string>
 
-    <string name="only_fashion_beauty_and_home_products_available_text" >Only Fashion, Beauty and Home products available.</string>
+    <string name="only_fashion_beauty_and_home_products_available_text">Only Fashion, Beauty and Home products available.</string>
     <string name="cnc_title_text_2">Limited shop of %1$s food items.</string>
 
     <string name="recommendations_title">Recommended</string>
@@ -3060,6 +3060,8 @@
 </string>
     <string name="empty_subst_list_title">We Can’t Recommend Any Substitutes For This Item Yet.</string>
     <string name="empty_subst_list_desc">Please use the search bar to browse our food catalogue to find a suitable alternative. </string>
-    <string name="fail_add_substitution_title">Failed to add substitute</string>
+    <string name="add_substitution_error_msg">Failed to add substitute</string>
+    <string name="add_substitution_success_msg">Substitute Added</string>
+    <string name="back">BACK</string>
 
 </resources>

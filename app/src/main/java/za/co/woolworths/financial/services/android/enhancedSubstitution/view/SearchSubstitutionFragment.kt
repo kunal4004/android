@@ -3,7 +3,9 @@ package za.co.woolworths.financial.services.android.enhancedSubstitution.view
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.view.View.GONE
 import android.view.View.OnClickListener
+import android.view.View.VISIBLE
 import android.view.inputmethod.EditorInfo
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
@@ -32,6 +34,7 @@ import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
 import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
+import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.util.KeyboardUtil
@@ -39,7 +42,6 @@ import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
-
 
 @AndroidEntryPoint
 class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionFragmentBinding>(
@@ -54,7 +56,6 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
     private var productId: String? = ""
 
     companion object {
-
         fun newInstance(
             commerceItemId: String?,
             productId: String?,
@@ -64,6 +65,7 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
         }
 
         const val SELECTED_SUBSTITUTED_PRODUCT = "SELECTED_SUBSTITUTED_PRODUCT"
+        const val SEARCH_SCREEN_BACK_NAVIGATION = "SEARCH_SCREEN_BACK_NAVIGATION"
         const val SUBSTITUTION_ITEM_KEY = "SUBSTITUTION_ITEM_KEY"
         const val SUBSTITUTION_ITEM_ADDED = "SUBSTITUTION_ITEM_ADDED"
     }
@@ -140,12 +142,12 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
             when (it.refresh) {
                 is LoadState.Loading -> {
                     showShimmerView()
-                    binding.txtSubstitutionCount.visibility = View.GONE
+                    binding.txtSubstitutionCount.visibility = GONE
                 }
 
                 is LoadState.NotLoading -> {
                     hideShimmerView()
-                    binding.txtSubstitutionCount.visibility = View.VISIBLE
+                    binding.txtSubstitutionCount.visibility = VISIBLE
                 }
 
                 is LoadState.Error -> {
@@ -179,9 +181,9 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
                 override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                     super.onScrollStateChanged(recyclerView, newState)
                     if (!recyclerView.canScrollVertically(1)) {
-                        binding.viewSeprator.visibility = View.VISIBLE
+                        binding.viewSeprator.visibility = VISIBLE
                     } else {
-                        binding.viewSeprator.visibility = View.GONE
+                        binding.viewSeprator.visibility = GONE
                     }
                 }
             })
@@ -189,7 +191,7 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
     }
 
     private fun showShimmerView() {
-        binding.shimmerLayout.visibility = View.VISIBLE
+        binding.shimmerLayout.visibility = VISIBLE
         val shimmer = Shimmer.AlphaHighlightBuilder().build()
         binding.shimmerLayout.setShimmer(shimmer)
         binding.shimmerLayout.startShimmer()
@@ -198,7 +200,7 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
     private fun hideShimmerView() {
         binding.shimmerLayout.setShimmer(null)
         binding.shimmerLayout.stopShimmer()
-        binding.shimmerLayout.visibility = View.GONE
+        binding.shimmerLayout.visibility = GONE
     }
 
     private fun showErrorView(desc: String) {
@@ -220,7 +222,8 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
 
     override fun clickOnProductSelection(productList: ProductList?) {
         binding.btnConfirm.isEnabled = true
-        binding.btnConfirm.background = ResourcesCompat.getDrawable(resources, R.drawable.black_color_drawable, null)
+        binding.btnConfirm.background =
+            ResourcesCompat.getDrawable(resources, R.drawable.black_color_drawable, null)
         this.productList = productList
     }
 
@@ -252,19 +255,22 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
     }
 
     private fun callInventoryApi() {
-        val storeId: String? = Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.storeId
 
-        if (productList?.sku == null || storeId?.isNullOrEmpty() == true) {
+        val storeId: String? = KotlinUtils.getDeliveryType()?.storeId
+
+        if (productList?.sku == null || storeId == null || storeId.isEmpty() == true) {
             return
         }
 
-        productSubstitutionViewModel.getInventoryForSubstitution(storeId, productList?.sku!!)
+        productList?.sku?.let { sku->
+            productSubstitutionViewModel.getInventoryForSubstitution(storeId, sku)
+        }
         productSubstitutionViewModel.inventorySubstitution.observe(viewLifecycleOwner) {
 
             it.getContentIfNotHandled()?.let { resource ->
                 when (resource.status) {
                     Status.LOADING -> {
-                        binding.progressBar.visibility = View.VISIBLE
+                        binding.progressBar.visibility = VISIBLE
                     }
 
                     Status.SUCCESS -> {
@@ -277,7 +283,7 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
                             val inventoryQuantity: Int? = inventoryList.getOrNull(0)?.quantity
                             if (inventoryQuantity != null && configQuantity != null) {
                                 if (inventoryList.isNullOrEmpty() || inventoryQuantity < configQuantity) {
-                                    binding.progressBar.visibility = View.GONE
+                                    binding.progressBar.visibility = GONE
                                     productOutOfStockErrorMessage()
                                     return@observe
                                 } else {
@@ -288,7 +294,7 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
                     }
 
                     Status.ERROR -> {
-                        binding.progressBar.visibility = View.GONE
+                        binding.progressBar.visibility = GONE
                         /*todo error view if inventory api is failed*/
                         showErrorView(getString(R.string.common_error_unfortunately_something_went_wrong))
                     }
@@ -298,60 +304,65 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
     }
 
     private fun navigateToPdpScreen() {
-
         if (commerceItemId?.isEmpty() == true) {
             /*navigate to pdp with selected product  object and then call add to cart api in order to add substitute there*/
-            binding.progressBar?.visibility = View.GONE
-            setResultAndNavigationToPdpWithProduct(
-                SELECTED_SUBSTITUTED_PRODUCT, bundleOf(SUBSTITUTION_ITEM_KEY to productList)
-            )
+            binding.progressBar.visibility = GONE
+            setResultAndNavigationToPdpWithProduct(bundleOf(SUBSTITUTION_ITEM_KEY to productList))
         } else {
-            /*add substitute api here since we have commerceId because product is already added in cart */
-            val addSubstitutionRequest = AddSubstitutionRequest(
-                substitutionSelection = SubstitutionChoice.USER_CHOICE.name,
-                substitutionId = productList?.sku,
-                commerceItemId = commerceItemId
-            )
-            productSubstitutionViewModel.addSubstitutionForProduct(addSubstitutionRequest)
-            productSubstitutionViewModel.addSubstitutionResponse?.observe(viewLifecycleOwner) { addSubstitutionResponse ->
-                addSubstitutionResponse.getContentIfNotHandled()?.let { resource ->
-                    when (resource.status) {
-                        Status.LOADING -> {
-                            binding.progressBar.visibility = View.VISIBLE
-                        }
-
-                        Status.SUCCESS -> {
-                            binding.progressBar.visibility = View.GONE
-                            /* if we get form exception need to show error popup*/
-                            resource.data?.data?.getOrNull(0)?.formExceptions?.getOrNull(0)?.let {
-                                if (it.message?.isNotEmpty() == true) {
-                                    showErrorView(it.message)
-                                }
-                                return@observe
-                            }
-
-                            /* navigate to pdp and call getSubs. api*/
-                            setResultAndNavigationToPdpWithProduct(
-                                SELECTED_SUBSTITUTED_PRODUCT,
-                                bundleOf(SUBSTITUTION_ITEM_ADDED to true)
-                            )
-                        }
-
-                        Status.ERROR -> {
-                            binding.progressBar.visibility = View.GONE
-                            /*todo show error view if add subs api is failed */
-                            showErrorView(getString(R.string.common_error_unfortunately_something_went_wrong))
-                        }
-                    }
-                }
-            }
+            callAddSubstitutionApi()
         }
     }
 
-    private fun setResultAndNavigationToPdpWithProduct(requestKey: String, bundle: Bundle) {
+    private fun callAddSubstitutionApi() {
+        /*add subsitute api here since we have commerceId because product is already added in cart */
+        val addSubstitutionRequest = AddSubstitutionRequest(
+            substitutionSelection = SubstitutionChoice.USER_CHOICE.name,
+            substitutionId = productList?.sku,
+            commerceItemId = commerceItemId
+        )
+        productSubstitutionViewModel.addSubstitutionForProduct(addSubstitutionRequest)
+        productSubstitutionViewModel.addSubstitutionResponse.observe(viewLifecycleOwner, {
+            it.getContentIfNotHandled()?.let { resource ->
+                when (resource.status) {
+                    Status.LOADING -> {
+                        binding.progressBar.visibility = VISIBLE
+                    }
+
+                    Status.SUCCESS -> {
+                        binding.progressBar.visibility = GONE
+                        /* if we get form exception need to show error popup*/
+                        resource.data?.data?.getOrNull(0)?.formExceptions?.getOrNull(0)?.let {
+                            if (it.message?.isNotEmpty() == true) {
+                                showErrorScreen()
+                            }
+                            return@observe
+                        }
+                        setResultAndNavigationToPdpWithProduct(
+                            bundleOf(SUBSTITUTION_ITEM_ADDED to true)
+                        )
+                    }
+
+                    Status.ERROR -> {
+                        binding.progressBar.visibility = GONE
+                        showErrorScreen()
+                    }
+                }
+            }
+        })
+    }
+
+    fun showErrorScreen() {
+        (activity as? BottomNavigationActivity)?.pushFragment(
+            SubstitutionProcessingScreen().newInstance(
+                commerceItemId,
+                productList?.sku
+            )
+        )
+    }
+
+    private fun setResultAndNavigationToPdpWithProduct(bundle: Bundle) {
         /*send product details to pdp screen*/
-        setFragmentResult(requestKey, bundle)
-        (activity as? BottomNavigationActivity)?.popFragment()
+        setFragmentResult(SEARCH_SCREEN_BACK_NAVIGATION, bundle)
         (activity as? BottomNavigationActivity)?.popFragment()
     }
 
