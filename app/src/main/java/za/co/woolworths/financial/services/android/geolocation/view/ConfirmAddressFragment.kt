@@ -3,10 +3,16 @@ package za.co.woolworths.financial.services.android.geolocation.view
 import android.Manifest
 import android.annotation.TargetApi
 import android.app.Activity
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.location.Location
+import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -121,6 +127,7 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
 
     override fun onResume() {
         super.onResume()
+        registerReceiver()
         checkForLocationPermissionAndSetLocationAddress()
         binding.updateInitialStateOnResume()
     }
@@ -208,14 +215,14 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
             val isLocEnabled = Utils.isLocationEnabled(this)
 
             // If location services enabled, extract latitude and longitude
-                if(isLocEnabled && PermissionUtils.hasPermissions(
-                                requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)) {
-                    startLocationDiscoveryProcess()
-                } else {
-                    isAddressAvailable = false
-                    binding.disableCurrentLocation()
-                    binding.inCurrentLocation?.swEnableLocation?.isChecked = false
-                }
+            if (isLocEnabled && PermissionUtils.hasPermissions(
+                            requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)) {
+                startLocationDiscoveryProcess()
+            } else {
+                isAddressAvailable = false
+                binding.disableCurrentLocation()
+                binding.inCurrentLocation?.swEnableLocation?.isChecked = false
+            }
         }
     }
 
@@ -855,5 +862,38 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
                         EnableLocationSettingsFragment.ACCESS_MY_LOCATION_REQUEST_CODE, activity)
             }
         }
+    }
+
+    private var broadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            if (intent.action == LocationManager.PROVIDERS_CHANGED_ACTION) {
+                Handler(Looper.getMainLooper()).postDelayed({
+                    checkForLocationPermissionAndSetLocationAddress()
+                }, AppConstant.DELAY_2000_MS)
+            }
+        }
+    }
+
+    private fun unregisterReceiver() {
+        try {
+            requireContext().unregisterReceiver(broadcastReceiver)
+        } catch (ex: java.lang.Exception) {
+        }
+    }
+
+    private fun registerReceiver() {
+        requireContext().registerReceiver(broadcastReceiver, IntentFilter().apply {
+            addAction(LocationManager.PROVIDERS_CHANGED_ACTION)
+        })
+    }
+
+    override fun onPause() {
+        super.onPause()
+        unregisterReceiver()
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        unregisterReceiver()
     }
 }
