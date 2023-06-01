@@ -7,20 +7,21 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.adapter.FragmentViewHolder
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card_slider.*
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.StoreCardFeatureType
-class ManageCardViewPagerAdapter(private var listOfStoreCards: MutableList<StoreCardFeatureType>? = mutableListOf(), fragment: FragmentActivity) :
-    FragmentStateAdapter(fragment) {
+class ManageCardViewPagerAdapter(private var listOfStoreCards: MutableList<StoreCardFeatureType>? = mutableListOf(), fragment: FragmentActivity)
+    : FragmentStateAdapter(fragment) {
 
-    private var pageIds = mapOfPageIds()
+    private var pageIds : List<Long>? = mapOfPageIds()
     private fun isListOfItemsNullOrEmpty() = listOfStoreCards.isNullOrEmpty()
-
-    private fun mapOfPageIds() = listOfStoreCards?.map { it.hashCode().toLong() }
+    private fun mapOfPageIds()  = listOfStoreCards?.map { it.hashCode().toLong() }
 
     fun setItem(cardList: MutableList<StoreCardFeatureType>?) = run {
         this.listOfStoreCards?.clear()
         this.listOfStoreCards = cardList ?: mutableListOf()
         this.pageIds = mapOfPageIds()
-        this.notifyItemChanged(0, itemCount)
-        this.notifyItemRangeChanged(0, itemCount)
+        if (!isListOfItemsNullOrEmpty()) {
+            this.notifyItemChanged(0, itemCount)
+            this.notifyItemRangeChanged(0, itemCount)
+        }
     }
 
     // Setting the automatically-generated ViewPager2's FrameLayout's clipChildren to false

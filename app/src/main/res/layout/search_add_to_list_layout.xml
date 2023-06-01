@@ -6,6 +6,12 @@
     android:background="@color/white"
     android:orientation="vertical">
 
+    <View
+        android:id="@+id/separator"
+        android:background="@color/color_F3F3F3"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/eight_dp" />
+
     <RelativeLayout
         android:layout_margin="@dimen/sixteen_dp"
         android:layout_width="match_parent"
@@ -27,9 +33,9 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/textProductSearch"
+            style="@style/opensans_regular_12_text_style"
             android:layout_width="match_parent"
             android:layout_height="@dimen/fourty_dp"
-            android:fontFamily="@font/opensans_regular"
             android:layout_alignParentTop="true"
             android:background="@android:color/transparent"
             android:clickable="false"
@@ -38,8 +44,7 @@
             android:maxLines="1"
             android:layout_toEndOf="@id/icSearchList"
             android:textColor="@color/searchBarHintColor"
-            android:textColorHint="@color/product_search_hint"
-            android:textSize="@dimen/twelve_sp" />
+            android:textColorHint="@color/product_search_hint" />
 
     </RelativeLayout>
 </LinearLayout>

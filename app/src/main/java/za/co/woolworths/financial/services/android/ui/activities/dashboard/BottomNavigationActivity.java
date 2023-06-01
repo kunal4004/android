@@ -127,7 +127,8 @@ import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory;
 import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
-import za.co.woolworths.financial.services.android.ui.views.shop.dash.ChangeFullfilmentCollectionStoreFragment;
+import za.co.woolworths.financial.services.android.ui.views.shop.dash.ChangeFulfillmentCollectionStoreFragment;
+import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature.fragment.UserAccountsLandingFragment;
 import za.co.woolworths.financial.services.android.util.AppConstant;
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
 import za.co.woolworths.financial.services.android.util.DeepLinkingUtils;
@@ -465,7 +466,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         getBottomNavigationById().setTypeface(tfMyriadProT);
         getBottomNavigationById().setTextSize(10);
         // set icon size
-        int iconSize = 28;
+        int iconSize = 24;
         getBottomNavigationById().setIconSize(iconSize, iconSize);
         getBottomNavigationById().enableAnimation(false);
         getBottomNavigationById().enableShiftingMode(false);
@@ -855,9 +856,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
                 case R.id.navigate_to_account:
                     clearStack();
-                    if (mNavController.getCurrentFrag() instanceof MyAccountsFragment) {
-                        MyAccountsFragment currentAccountFragment = (MyAccountsFragment) mNavController.getCurrentFrag();
-                        currentAccountFragment.scrollToTop();
+                    if (mNavController.getCurrentFrag() instanceof UserAccountsLandingFragment) {
                         Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSMENU, BottomNavigationActivity.this);
                     }
                     break;
@@ -945,7 +944,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             case INDEX_REWARD:
                 return new WRewardsFragment();
             case INDEX_ACCOUNT:
-                MyAccountsFragment myAccountsFragment = new MyAccountsFragment();
+                UserAccountsLandingFragment myAccountsFragment = new UserAccountsLandingFragment();
                 myAccountsFragment.setArguments(mBundle);
                 return myAccountsFragment;
         }
@@ -1043,12 +1042,12 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     }
 
     @Override
-    public void permissionGranted(int request_code) {
+    public void permissionGranted(int requestCode) {
         //TODO:: Parse result_code and use only onActivityResult line
-        onActivityResult(request_code, 200, null);
-        switch (request_code) {
+        onActivityResult(requestCode, 200, null);
+        switch (requestCode) {
             case 2:
-                onActivityResult(request_code, 200, null);
+                onActivityResult(requestCode, 200, null);
                 break;
 
             default:
@@ -1068,7 +1067,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             fragment.onRequestPermissionsResult(requestCode, permissions, grantResults);
         } else if (fragment instanceof ProductDetailsFragment) {
             fragment.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        } else if (fragment instanceof ChangeFullfilmentCollectionStoreFragment) {
+        } else if (fragment instanceof ChangeFulfillmentCollectionStoreFragment) {
             fragment.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
 

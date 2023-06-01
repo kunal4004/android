@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
+import android.text.Spannable
 import android.text.TextUtils
 import android.util.Log
 import android.view.MotionEvent
@@ -15,7 +16,9 @@ import android.view.WindowManager
 import android.widget.ScrollView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
+import androidx.core.text.buildSpannedString
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
@@ -54,7 +57,7 @@ import za.co.woolworths.financial.services.android.models.dto.item_limits.Produc
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.CouponClaimCode
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.VoucherDetails
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
-import za.co.woolworths.financial.services.android.models.network.OneAppService.removeCartItem
+import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.models.service.event.CartState
 import za.co.woolworths.financial.services.android.models.service.event.ProductState
@@ -82,6 +85,7 @@ import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseVie
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView.IWalkthroughActionListener
 import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ActionSheetDialogFragment
+import za.co.woolworths.financial.services.android.ui.wfs.common.getIpAddress
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_EXPECTATION_FAILED_502
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
@@ -147,6 +151,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     private var cartItemList = ArrayList<CommerceItem>()
     private var isBlackCardHolder : Boolean = false
     private var isOnItemRemoved = false
+    private var isViewCartEventFired = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -789,6 +794,19 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
 
     private fun updatePriceInformation() {
         val priceHolder = binding.includedPrice
+        //Added the BNPL flag checking logic.
+        AppConfigSingleton.bnplConfig?.apply {
+            if (isBnplRequiredInThisVersion && isBnplEnabled) {
+                if (viewModel.isFBHOnly()) {
+                    priceHolder.vouchersMain.rlpayflexInfo.visibility = View.GONE
+                } else {
+                    priceHolder.vouchersMain.rlpayflexInfo.visibility = View.VISIBLE
+                }
+            } else {
+                priceHolder.vouchersMain.rlpayflexInfo.visibility = View.GONE
+            }
+        }
+
         if (orderSummary != null) {
             setPriceInformationVisibility(true)
             orderSummary?.basketTotal?.let {
@@ -1206,13 +1224,21 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             orderSummary?.minimumBasketAmount?.let { minBasketAmount ->
                 binding.txtMinSpendErrorMsg.apply {
                     visibility = View.VISIBLE
-                    text =
-                        String.format(
-                            getString(
-                                R.string.minspend_error_msg_cart,
-                                CurrencyFormatter.formatAmountToRandNoDecimal(minBasketAmount)
-                            )
+                    text = buildSpannedString {
+                        val amount = CurrencyFormatter.formatAmountToRandNoDecimal(minBasketAmount)
+                        val error = String.format(
+                            getString(R.string.minspend_error_msg_cart, amount)
                         )
+                        append(error)
+                        val start = error.indexOf(amount) - 1
+                        val typeface = ResourcesCompat.getFont(context, R.font.opensans_semi_bold)
+                        setSpan(
+                            CustomTypefaceSpan("opensans", typeface),
+                            start,
+                            start.plus(amount.length).plus(1),
+                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                        )
+                    }
                 }
             }
             binding.btnCheckOut.isEnabled = false
@@ -1294,6 +1320,14 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                 }
                 setItemLimitsBanner()
                 instance.queryCartSummaryCount()
+                if (!isViewCartEventFired){
+                    orderSummary?.total ?.let {
+                        viewCartEvent(viewModel.getCartItemList(),
+                            it
+                        )
+                    }
+                    isViewCartEventFired = true
+                }
                 showRecommendedProducts()
             }
             HTTP_SESSION_TIMEOUT_440 -> {
@@ -1340,6 +1374,10 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         }
     }
 
+    private fun viewCartEvent(commerceItems: List<CommerceItem>, value: Double) {
+        FirebaseAnalyticsEventHelper.viewCartAnalyticsEvent(commerceItems, value)
+    }
+
     private fun showRecommendedProducts() {
         val bundle = Bundle()
         val cartLinesValue: MutableList<CartProducts> = arrayListOf()
@@ -1375,7 +1413,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     }
 
     private fun removeItem(commerceItem: CommerceItem) {
-        removeCartItem(commerceItem.commerceItemInfo.commerceId).enqueue(
+        OneAppService().removeCartItem(commerceItem.commerceItemInfo.commerceId).enqueue(
             CompletionHandler(
                 (object : IResponseListener<ShoppingCartResponse> {
                     override fun onSuccess(response: ShoppingCartResponse?) {}
@@ -1447,7 +1485,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
 
                         hideEditCart()
                         //TODO: need to refactor
-                        /* Call<SetDeliveryLocationSuburbResponse> setDeliveryLocationSuburb = OneAppService.INSTANCE.setSuburb(lastDeliveryLocation.storePickup ? lastDeliveryLocation.store.getId() : lastDeliveryLocation.suburb.id);
+                        /* Call<SetDeliveryLocationSuburbResponse> setDeliveryLocationSuburb = OneAppService().INSTANCE.setSuburb(lastDeliveryLocation.storePickup ? lastDeliveryLocation.store.getId() : lastDeliveryLocation.suburb.id);
                         setDeliveryLocationSuburb.enqueue(new CompletionHandler<>(new IResponseListener<SetDeliveryLocationSuburbResponse>() {
                             @Override
                             public void onSuccess(SetDeliveryLocationSuburbResponse setDeliveryLocationSuburbResponse) {

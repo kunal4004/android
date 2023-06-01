@@ -30,7 +30,7 @@ class PermissionUtils(var context: Context, permissionResultCallback: Permission
      */
     fun checkPermission(
         permissions: ArrayList<String>,
-        requestCode: Int,
+        requestCode: Int
     ) {
         permissionList = permissions
         this.requestCode = requestCode

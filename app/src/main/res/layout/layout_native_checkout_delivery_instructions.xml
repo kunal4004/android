@@ -31,9 +31,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/twenty_four_dp"
         android:background="@color/white"
-        android:fontFamily="@font/myriad_pro_regular"
-        android:textColor="@color/black"
-        android:textSize="@dimen/fifteen_sp"
+        style="@style/opensans_regular_13_black"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/viewHorizontalSeparator" />
 
@@ -42,7 +40,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/twenty_dp"
-        android:layout_marginRight="@dimen/twenty_four_dp"
+        android:layout_marginEnd="@dimen/twenty_four_dp"
         android:theme="@style/SwitchTheme"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/viewHorizontalSeparator" />
@@ -70,10 +68,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@color/white"
-            android:fontFamily="@font/myriad_pro_regular"
-            android:text="@string/native_checkout_delivery_special_instructions"
-            android:textColor="@color/black"
-            android:textSize="@dimen/fifteen_sp" />
+            style="@style/opensans_regular_13_black"
+            android:text="@string/native_checkout_delivery_special_instructions" />
     </com.facebook.shimmer.ShimmerFrameLayout>
 
     <com.facebook.shimmer.ShimmerFrameLayout
@@ -111,7 +107,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/bg_input_edittext"
-            android:fontFamily="@font/myriad_pro_regular"
+            android:fontFamily="@font/opensans_regular"
             android:gravity="start|top"
             android:hint="@string/native_checkout_delivery_special_instructions_hint"
             android:maxLength="240"
@@ -119,7 +115,7 @@
             android:padding="@dimen/ten_dp"
             android:textColor="@color/black"
             android:textColorHint="@color/color_cccccc"
-            android:textSize="@dimen/fifteen_sp"
+            android:textSize="@dimen/fourteen_sp"
             android:visibility="gone" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -175,10 +171,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@color/white"
-            android:fontFamily="@font/myriad_pro_regular"
-            android:text="@string/native_checkout_delivery_gift_instructions"
-            android:textColor="@color/black"
-            android:textSize="@dimen/fifteen_sp" />
+            style="@style/opensans_regular_13_black"
+            android:text="@string/native_checkout_delivery_gift_instructions" />
     </com.facebook.shimmer.ShimmerFrameLayout>
 
     <com.facebook.shimmer.ShimmerFrameLayout
@@ -217,7 +211,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/bg_input_edittext"
-            android:fontFamily="@font/myriad_pro_regular"
+            android:fontFamily="@font/opensans_regular"
             android:gravity="start|top"
             android:hint="@string/native_checkout_delivery_gift_instructions_hint"
             android:maxLength="240"
@@ -225,7 +219,7 @@
             android:padding="@dimen/ten_dp"
             android:textColor="@color/black"
             android:textColorHint="@color/color_cccccc"
-            android:textSize="@dimen/fifteen_sp"
+            android:textSize="@dimen/fourteen_sp"
             android:visibility="gone"
             app:layout_constrainedWidth="true"
             app:layout_constraintEnd_toEndOf="parent"

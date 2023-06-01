@@ -5,7 +5,43 @@
     android:layout_height="wrap_content"
     android:background="@color/white">
 
+    <RelativeLayout
+        android:id="@+id/rlpayflex_info"
+        style="@style/clickable_card_item_layout_style"
+        android:layout_height="@dimen/seventy_two_dp"
+        android:padding="0dp"
+        android:layout_marginTop="@dimen/eight_dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/right_guideline"
+        app:layout_constraintStart_toStartOf="@+id/left_guideline"
+        >
+        <ImageView
+            android:id="@+id/imgPayFlex"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/twenty_four_dp"
+            android:layout_marginBottom="@dimen/twenty_two_sp"
+            android:contentDescription="@string/payflex_is_unavailable_when_buying_food_items_and_gift_cards"
+            android:src="@drawable/ic_pay_flex"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            />
 
+        <TextView
+            android:id="@+id/tvPayFlexInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/eighteen_dp"
+            android:layout_marginBottom="@dimen/eighteen_dp"
+            android:layout_marginEnd="@dimen/eighteen_dp"
+            android:text="@string/payflex_is_unavailable_when_buying_food_items_and_gift_cards"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/imgPayFlex"
+            android:textSize="@dimen/twelve_sp"
+            android:fontFamily="@font/opensans_bold"
+            android:textColor="@color/black"/>
+    </RelativeLayout>
     <RelativeLayout
         android:id="@+id/rlAvailableCashVouchers"
         style="@style/clickable_card_item_layout_style"
@@ -13,7 +49,7 @@
         android:padding="0dp"
         app:layout_constraintEnd_toEndOf="@+id/right_guideline"
         app:layout_constraintStart_toStartOf="@+id/left_guideline"
-        app:layout_constraintTop_toBottomOf="@id/space">
+        app:layout_constraintTop_toBottomOf="@id/rlpayflex_info">
 
 
         <TextView
@@ -40,6 +76,10 @@
             android:layout_toStartOf="@+id/viewCashVouchers"
             android:letterSpacing=".15"
             android:textAllCaps="true" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/one_dp"
+            android:background="@color/color_D8D8D8" />
 
     </RelativeLayout>
 

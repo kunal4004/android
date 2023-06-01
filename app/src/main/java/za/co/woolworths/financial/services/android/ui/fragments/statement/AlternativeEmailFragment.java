@@ -254,7 +254,7 @@ public class AlternativeEmailFragment extends Fragment implements View.OnClickLi
 	public void sendStatement() {
 		onLoad();
 
-		sendUserStatement = OneAppService.INSTANCE.sendStatementRequest(mSendUserStatementRequest);
+		sendUserStatement = new OneAppService().sendStatementRequest(mSendUserStatementRequest);
 		sendUserStatement.enqueue(new CompletionHandler<>(new IResponseListener<SendUserStatementResponse>() {
 			@Override
 			public void onSuccess(SendUserStatementResponse sendUserStatementResponse) {

@@ -12,7 +12,7 @@ interface  IPaymentsPayuMethodsDataSource {
 
 class PaymentsPayuMethodsDataSource  @Inject constructor(val wfsApiService: WfsApiService) : IPaymentsPayuMethodsDataSource, CoreDataSource() {
 
-    override suspend fun requestPaymentsPayuMethods() = performSafeNetworkApiCall {
+    override suspend fun requestPaymentsPayuMethods() = executeSafeNetworkApiCall {
         wfsApiService.getPaymentsPayUMethods(getDeviceIdentityToken())
     }
 

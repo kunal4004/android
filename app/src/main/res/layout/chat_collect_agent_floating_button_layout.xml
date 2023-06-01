@@ -32,6 +32,7 @@
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/chatBubbleFloatingButton"
+        app:shapeAppearanceOverlay="@style/my_accounts_chat_bubble_style"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"

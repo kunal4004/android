@@ -39,6 +39,7 @@ import za.co.woolworths.financial.services.android.ui.views.AddedToCartBalloonFa
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SelectYourQuantityFragment
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 import java.net.ConnectException
@@ -63,6 +64,7 @@ class RecommendationFragment :
     private var mProductCategoryAdapter: ProductCategoryAdapter? = null
     private var mProductListRecommendationAdapter: ProductListRecommendationAdapter? = null
     private var recommendationLayoutManager: LinearLayoutManager? = null
+    private var isViewItemListEventTriggeredOnPageLoad = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -89,11 +91,27 @@ class RecommendationFragment :
         recommendationsLayoutBinding?.recommendationsCategoryRecyclerview?.adapter =
             mProductCategoryAdapter
 
-        actionItemList.getOrNull(0)?.products?.let { showRecProductsList(it) }
+        actionItemList.getOrNull(0)?.products?.let {
+            if(!isViewItemListEventTriggeredOnPageLoad) {
+                submitViewItemListFirebaseEvent(actionItemList, 0)
+                isViewItemListEventTriggeredOnPageLoad = true
+            }
+            showRecProductsList(it)
+        }
 
         mProductCategoryAdapter?.onItemClick = { position, products ->
             recommendationViewModel.setCurrentSelectedTab(position)
+            submitViewItemListFirebaseEvent(actionItemList, position)
             showRecProductsList(products)
+        }
+    }
+
+    private fun submitViewItemListFirebaseEvent(actionItemList: List<Action>, position: Int) {
+        if (actionItemList.isNotEmpty() && position >= 0 && position < actionItemList.size) {
+            FirebaseAnalyticsEventHelper.viewItemListRecommendations(
+                products = actionItemList[position].products,
+                category = actionItemList[position].componentName
+            )
         }
     }
 
@@ -232,7 +250,7 @@ class RecommendationFragment :
         }
 
         showProgressBar()
-        OneAppService.getInventorySkuForStore(
+        OneAppService().getInventorySkuForStore(
             storeId, addItemToCart?.catalogRefId
                 ?: "", isUserBrowsing
         ).enqueue(CompletionHandler(object : IResponseListener<SkusInventoryForStoreResponse> {

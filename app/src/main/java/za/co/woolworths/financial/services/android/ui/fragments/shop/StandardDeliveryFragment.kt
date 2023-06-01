@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentShopDepartmentBinding
@@ -33,7 +32,6 @@ import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.location.Locator
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
-import za.co.woolworths.financial.services.android.viewmodels.shop.ShopViewModel
 
 @AndroidEntryPoint
 class StandardDeliveryFragment : DepartmentExtensionFragment(R.layout.fragment_shop_department) {
@@ -47,9 +45,6 @@ class StandardDeliveryFragment : DepartmentExtensionFragment(R.layout.fragment_s
     private var isFragmentVisible: Boolean = false
     private var parentFragment: ShopFragment? = null
     private var localPlaceId: String? = null
-    private val shopViewModel: ShopViewModel by viewModels(
-        ownerProducer = { requireParentFragment() }
-    )
 
     companion object {
         var DEPARTMENT_LOGIN_REQUEST = 1717
@@ -64,7 +59,11 @@ class StandardDeliveryFragment : DepartmentExtensionFragment(R.layout.fragment_s
                 hasFocus
             )
         }
-        initView()
+        val parentFragment =
+            (activity as? BottomNavigationActivity)?.currentFragment as? ShopFragment
+        if (parentFragment?.getCurrentFragmentIndex() == ShopFragment.SelectedTabIndex.STANDARD_TAB.index) {
+            initView()
+        }
     }
 
     override fun noConnectionLayout(isVisible: Boolean) {
