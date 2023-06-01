@@ -434,6 +434,9 @@ open class FirebaseManagerAnalyticsProperties {
          const val REFUND = "refund"
          const val DASH_DRIVER_TIP = "dash_driver_tip"
          const val DASH_SELECT_CONTENT = "select_content"
+
+        //Address Checkout
+        const val FORM_START = "form_start"
     }
 
     class PropertyNames {
@@ -550,6 +553,11 @@ open class FirebaseManagerAnalyticsProperties {
             const val FULFILLMENT_FBH_STORE_KEY_04 = "other04_ffstore"
             const val FULFILLMENT_FBH_STORE_KEY_07 = "other07_ffstore"
             const val LIQUOR_DELIVERABLE = "liquor_deliverable"
+
+            //Address Checkout
+            const val FORM_TYPE = "form_type"
+            const val FORM_NAME = "form_name"
+            const val FORM_LOCATION = "form_location"
         }
     }
 
@@ -670,6 +678,15 @@ open class FirebaseManagerAnalyticsProperties {
             const val DASH_CATEGORY_NAME: String = "Food"
             const val DASH_CANCELLED_ORDER: String = "Cancelled_Order"
 
+            //Address Checkout
+            const val CHECKOUT = "checkout"
+            const val BROWSE = "browse"
+            const val TAXI = "Taxi"
+            const val MY_VEHICLE = "My Vehicle"
+
+            const val STANDARD = "Standard"
+            const val CLICK_AND_COLLECT = "Click and collect"
+            const val DASH = "Dash"
         }
     }
 
