@@ -1630,6 +1630,14 @@ var EditText.value
         this.setText(value)
     }
 
+fun Fragment.isFragmentAttached():Boolean {
+    if (isAdded && context != null) {
+        return  true
+    }
+    return false
+}
+
+
 
 
 

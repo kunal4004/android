@@ -3,10 +3,7 @@ package za.co.woolworths.financial.services.android.util.analytics
 import android.os.Bundle
 import com.google.firebase.analytics.FirebaseAnalytics
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.models.dto.CommerceItem
-import za.co.woolworths.financial.services.android.models.dto.ProductDetails
-import za.co.woolworths.financial.services.android.models.dto.ProductList
-import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
+import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.Product
 import za.co.woolworths.financial.services.android.util.analytics.dto.AnalyticProductItem
 import za.co.woolworths.financial.services.android.util.analytics.dto.toAnalyticItem
@@ -62,6 +59,25 @@ object FirebaseAnalyticsEventHelper {
 
         AnalyticsManager.logEvent(
             FirebaseManagerAnalyticsProperties.REMOVE_FROM_CART, addToCartParams
+        )
+    }
+
+    fun viewCartAnalyticsEvent(commerceItems: List<CommerceItem>, value: Double) {
+        val analyticItems = commerceItems.map { it.toAnalyticItem() }
+        val addToCartParams = Bundle()
+        addToCartParams.apply {
+            putString(
+                FirebaseAnalytics.Param.CURRENCY,
+                FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE
+            )
+            putDouble(FirebaseAnalytics.Param.VALUE, value)
+            putParcelableArray(
+                FirebaseAnalytics.Param.ITEMS, analyticItems.map { it.toBundle() }.toTypedArray()
+            )
+
+        }
+        AnalyticsManager.logEvent(
+            FirebaseManagerAnalyticsProperties.VIEW_CART, addToCartParams
         )
     }
 
@@ -158,5 +174,34 @@ object FirebaseAnalyticsEventHelper {
         AnalyticsManager.logEvent(
             FirebaseManagerAnalyticsProperties.VIEW_ITEM_LIST, analyticsParams
         )
+    }
+
+    fun viewPromotion(productDetail: ProductDetails, promotionsList: List<Promotions>) {
+        if (promotionsList.isEmpty()) {
+            return
+        }
+        val analyticItem = productDetail.toAnalyticItem()
+        val promoText = extractPromotionText(promotionsList)
+
+        val analyticsParams = Bundle()
+        analyticsParams.apply {
+            putParcelableArray(
+                FirebaseAnalytics.Param.ITEMS, arrayOf(analyticItem.toBundle())
+            )
+            putString(FirebaseAnalytics.Param.CREATIVE_NAME, promoText)
+            putString(FirebaseAnalytics.Param.PROMOTION_NAME, promoText)
+            productDetail.productType?.let { productType ->
+                putString(FirebaseManagerAnalyticsProperties.BUSINESS_UNIT, productType)
+            }
+        }
+
+        AnalyticsManager.logEvent(
+            FirebaseManagerAnalyticsProperties.VIEW_PROMOTION, analyticsParams
+        )
+    }
+
+    private fun extractPromotionText(promotionsList: List<Promotions>): String {
+        return promotionsList.map { it.promotionalText }.filterNot { it.isNullOrEmpty() }
+            .joinToString()
     }
 }
