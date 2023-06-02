@@ -430,14 +430,15 @@ class UserAccountLandingViewModel @Inject constructor(
             petAwarenessModelNotCovered = petAwarenessModelNotCovered)
 
         // Determine whether Pet insurance model is displayed in offer section
-        if(_mapOfFinalProductItems[AccountOfferKeys.PetInsurance.value] == null && !_fetchPetInsuranceState.value.hasError) {
+        if(_mapOfFinalProductItems[AccountOfferKeys.PetInsurance.value] == null
+            && !_fetchPetInsuranceState.value.hasError
+            && _fetchPetInsuranceState.value.data?.insuranceProducts?.isNotEmpty() == true) {
             val tempOfferList = _mapOfMyOffers.toMutableMap()
             _mapOfMyOffers.clear()
             _mapOfMyOffers += AccountOfferKeys.PetInsurance to OfferProductType.PetInsurance.value()
             for(temp in tempOfferList)  {
                 _mapOfMyOffers += temp.key to temp.value
             }
-
         }
     }
 }
