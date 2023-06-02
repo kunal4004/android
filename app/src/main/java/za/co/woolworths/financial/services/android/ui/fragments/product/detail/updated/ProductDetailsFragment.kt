@@ -1060,8 +1060,14 @@ class ProductDetailsFragment :
         }
 
         binding.setupBrandView()
-        setupBNPLViewForFbhProducts()
-
+        //Added the BNPL flag checking logic.
+        AppConfigSingleton.bnplConfig?.apply {
+            if (isBnplRequiredInThisVersion && isBnplEnabled) {
+                setupBNPLViewForFbhProducts()
+            } else {
+                binding.payFlexWidget.visibility = View.GONE
+            }
+        }
         if (hasSize)
             setSelectedGroupKey(defaultGroupKey)
 
