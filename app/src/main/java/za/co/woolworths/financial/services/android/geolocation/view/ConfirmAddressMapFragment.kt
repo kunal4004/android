@@ -4,9 +4,14 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
+import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.widget.AdapterView
 import androidx.appcompat.app.AppCompatActivity
@@ -32,6 +37,7 @@ import za.co.woolworths.financial.services.android.checkout.view.adapter.PlaceAu
 import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.ROUTE
 import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.STREET_NUMBER
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.geolocation.LocationProviderBroadcastReceiver
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.request.SaveAddressLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
@@ -73,6 +79,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class ConfirmAddressMapFragment :
     Fragment(R.layout.geolocation_confirm_address), DynamicMapDelegate, VtoTryAgainListener,
+    LocationProviderBroadcastReceiver.LocationProviderInterface,
     PoiBottomSheetDialog.ClickListener, UnIndexedAddressIdentifiedListener {
 
     private lateinit var binding: GeolocationConfirmAddressBinding
@@ -113,6 +120,7 @@ class ConfirmAddressMapFragment :
     private var isPoiAddress: Boolean? = false
     private var address2: String? = ""
     private lateinit var locator: Locator
+    private lateinit var locationBroadcastReceiver : LocationProviderBroadcastReceiver
     override fun onViewCreated(
         view: View, savedInstanceState: Bundle?,
     ) {
@@ -120,6 +128,8 @@ class ConfirmAddressMapFragment :
         binding = GeolocationConfirmAddressBinding.bind(view)
         binding.dynamicMapView?.initializeMap(savedInstanceState, this)
         locator = Locator(activity as AppCompatActivity)
+        locationBroadcastReceiver = LocationProviderBroadcastReceiver()
+        locationBroadcastReceiver.registerCallback(this)
     }
 
     private fun initView() {
@@ -894,6 +904,7 @@ class ConfirmAddressMapFragment :
 
     override fun onResume() {
         super.onResume()
+        registerReceiver()
         KeyboardUtils.showSoftKeyboard(binding.autoCompleteTextView, activity)
         checkForLocationPermissionAndSetLocationAddress()
     }
@@ -904,7 +915,8 @@ class ConfirmAddressMapFragment :
             //Check if user has location services enabled. If not, notify user as per current store locator functionality.
             if (!Utils.isLocationEnabled(this)) {
                 binding.apply {
-                    autoCompleteTextView.isEnabled = false
+                  //  autoCompleteTextView.isEnabled = false
+                    clearAddressText()
                     confirmAddress.isEnabled = false
                     dynamicMapView?.setAllGesturesEnabled(false)
 
@@ -956,6 +968,7 @@ class ConfirmAddressMapFragment :
     override fun onPause() {
         binding.dynamicMapView?.onPause()
         super.onPause()
+        unregisterReceiver()
     }
 
     override fun onLowMemory() {
@@ -1018,6 +1031,35 @@ class ConfirmAddressMapFragment :
     private fun handleLocationEvent(locationEvent: Event.Location?) {
         Utils.saveLastLocation(locationEvent?.locationData, context)
         navigateCurrentLocation()
+    }
+
+    private fun unregisterReceiver() {
+        try {
+            locationBroadcastReceiver.let {
+                requireContext().unregisterReceiver(locationBroadcastReceiver)
+            }
+        } catch (ex: IllegalArgumentException) {
+            FirebaseManager.logException("unregisterReceiver locationBroadcastReceiver $ex")
+        }
+    }
+
+    private fun registerReceiver() {
+        requireContext().registerReceiver(locationBroadcastReceiver, IntentFilter().apply {
+            addAction(LocationManager.PROVIDERS_CHANGED_ACTION)
+        })
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        unregisterReceiver()
+    }
+
+    override fun onLocationProviderChange(context: Context?, intent: Intent?) {
+        if (intent?.action == LocationManager.PROVIDERS_CHANGED_ACTION) {
+            Handler(Looper.getMainLooper()).postDelayed({
+                checkForLocationPermissionAndSetLocationAddress()
+            }, AppConstant.DELAY_2000_MS)
+        }
     }
 }
 

@@ -131,6 +131,7 @@ class AppConstant {
 
         // My List
         const val CONST_NO_SIZE = "NO SZ"
+        const val LOCATION_PERMISSION_REQUEST_CODE = 3
     }
 
     class Keys {
