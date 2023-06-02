@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.geolocation.view
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.app.Activity
@@ -8,6 +9,7 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -61,6 +63,9 @@ import za.co.woolworths.financial.services.android.util.LocalConstant.Companion.
 import za.co.woolworths.financial.services.android.util.LocalConstant.Companion.DEFAULT_LONGITUDE
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.location.DynamicGeocoder
+import za.co.woolworths.financial.services.android.util.location.Event
+import za.co.woolworths.financial.services.android.util.location.EventType
+import za.co.woolworths.financial.services.android.util.location.Locator
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.viewmodels.UnIndexedAddressLiveData
 import javax.inject.Inject
@@ -107,13 +112,14 @@ class ConfirmAddressMapFragment :
     private var isStreetNumberAndRouteFromSearch: Boolean? = false
     private var isPoiAddress: Boolean? = false
     private var address2: String? = ""
-
+    private lateinit var locator: Locator
     override fun onViewCreated(
         view: View, savedInstanceState: Bundle?,
     ) {
         super.onViewCreated(view, savedInstanceState)
         binding = GeolocationConfirmAddressBinding.bind(view)
         binding.dynamicMapView?.initializeMap(savedInstanceState, this)
+        locator = Locator(activity as AppCompatActivity)
     }
 
     private fun initView() {
@@ -150,9 +156,13 @@ class ConfirmAddressMapFragment :
 
     private fun onNavigationMapArrowClicked() {
         binding?.navigationMapArrow?.setOnClickListener {
-            Utils.getLastSavedLocation()?.let {
-                moveMapCamera(it.latitude, it.longitude)
-            }
+            startLocationDiscoveryProcess()
+        }
+    }
+
+    private fun navigateCurrentLocation() {
+        Utils.getLastSavedLocation()?.let {
+            moveMapCamera(it.latitude, it.longitude)
         }
     }
 
@@ -191,9 +201,12 @@ class ConfirmAddressMapFragment :
 
                 binding?.apply {
                     if (isNetworkAvailable) {
+                        autoCompleteTextView.isEnabled = true
+                        if(noLocationLayout?.noLocationRootLayout?.visibility == View.VISIBLE) {
+                            return@apply
+                        }
                         dynamicMapView?.visibility = View.VISIBLE
                         mapFrameLayout.visibility = View.VISIBLE
-                        autoCompleteTextView.isEnabled = true
                         dynamicMapView?.setAllGesturesEnabled(true)
                         if (isAddAddress!! && isAddressSearch == false) {
                             confirmAddress.isEnabled = false
@@ -544,6 +557,7 @@ class ConfirmAddressMapFragment :
                     placeId = item?.placeId.toString()
                     placeName = item?.primaryText.toString()
                     binding?.autoCompleteTextView?.setText(placeName)
+                    enableMapView()
                     binding?.tvLocationNikName?.text = placeName
                     isAddressFromSearch = true
                     isMainPlaceName = true
@@ -652,9 +666,15 @@ class ConfirmAddressMapFragment :
     private fun moveMapCamera(latitude: Double?, longitude: Double?) {
         binding.apply {
             if (latitude != null && longitude != null) {
+                if(noLocationLayout?.noLocationRootLayout?.visibility == View.VISIBLE) {
+                    return@apply
+                }
                 imgMapMarker?.visibility = View.VISIBLE
                 tvMarkerHint?.visibility = View.VISIBLE
-                navigationMapArrow?.visibility = View.VISIBLE
+                if (Utils.isLocationEnabled(requireContext()) && PermissionUtils.hasPermissions(
+                requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)) {
+                    navigationMapArrow?.visibility = View.VISIBLE
+                } else navigationMapArrow?.visibility = View.GONE
                 confirmAddress?.isEnabled = true
             }
             isAddAddress = false
@@ -897,25 +917,33 @@ class ConfirmAddressMapFragment :
                 }
                 return@apply
             } else {
-                binding.noLocationLayout?.noLocationRootLayout?.visibility = View.GONE
+                enableMapView()
+            }
+        }
+    }
 
-                binding.dynamicMapView?.onResume()
-                if (binding.dynamicMapView?.isMapInstantiated() == true) {
-                    isMoveMapCameraFirstTime = false
-                }
-                moveMapCamera(mLatitude?.toDoubleOrNull(), mLongitude?.toDoubleOrNull())
-                binding.apply {
-                    dynamicMapView?.visibility = View.VISIBLE
-                    mapFrameLayout?.visibility = View.VISIBLE
-                    confirmAddressLayout?.visibility = View.VISIBLE
-                    autoCompleteTextView?.isEnabled = true
-                    dynamicMapView?.setAllGesturesEnabled(true)
-                    if (isAddAddress != null && isAddressSearch == false) {
-                        confirmAddress?.isEnabled = false
-                        imgMapMarker?.visibility = View.GONE
-                        tvMarkerHint?.visibility = View.GONE
-                    }
-                }
+    private fun enableMapView() {
+        binding.noLocationLayout?.noLocationRootLayout?.visibility = View.GONE
+
+        binding.dynamicMapView?.onResume()
+        if (binding.dynamicMapView?.isMapInstantiated() == true) {
+            isMoveMapCameraFirstTime = false
+        }
+        moveMapCamera(mLatitude?.toDoubleOrNull(), mLongitude?.toDoubleOrNull())
+        binding.apply {
+            dynamicMapView?.visibility = View.VISIBLE
+            mapFrameLayout?.visibility = View.VISIBLE
+            confirmAddressLayout?.visibility = View.VISIBLE
+            if (Utils.isLocationEnabled(requireContext()) && PermissionUtils.hasPermissions(
+                            requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)) {
+                navigationMapArrow?.visibility = View.VISIBLE
+            } else navigationMapArrow?.visibility = View.GONE
+            autoCompleteTextView?.isEnabled = true
+            dynamicMapView?.setAllGesturesEnabled(true)
+            if (isAddAddress != null && isAddressSearch == false) {
+                confirmAddress?.isEnabled = false
+                imgMapMarker?.visibility = View.GONE
+                tvMarkerHint?.visibility = View.GONE
             }
         }
     }
@@ -971,6 +999,25 @@ class ConfirmAddressMapFragment :
         }
     }
 
+    private fun startLocationDiscoveryProcess() {
+        locator?.getCurrentLocationSilently { locationEvent ->
+            when (locationEvent) {
+                is Event.Location -> handleLocationEvent(locationEvent)
+                is Event.Permission -> handlePermissionEvent(locationEvent)
+            }
+        }
+    }
 
+    private fun handlePermissionEvent(permissionEvent: Event.Permission) {
+        if (permissionEvent.event == EventType.LOCATION_PERMISSION_NOT_GRANTED) {
+            Utils.saveLastLocation(null, activity)
+            handleLocationEvent(null)
+        }
+    }
+
+    private fun handleLocationEvent(locationEvent: Event.Location?) {
+        Utils.saveLastLocation(locationEvent?.locationData, context)
+        navigateCurrentLocation()
+    }
 }
 
