@@ -706,7 +706,7 @@
     <string name="tax_invoices">TAX INVOICES</string>
     <string name="shop_create_a_list">Create A New List</string>
     <string name="shop_create_list">Create New List</string>
-    <string name="shop_sign_out_order_title">sign in to view\nand create lists</string>
+    <string name="shop_sign_out_order_title">SIGN IN TO VIEW\nAND CREATE LISTS</string>
     <string name="shop_sign_out_order_desc">Search for products to start adding items to this list.</string>
     <string name="order_invoice_title_prefix">PDF:\u0020</string>
     <string name="delivery_suburb">Delivery Suburb:</string>
@@ -3049,5 +3049,7 @@
     <string name="un_Indexed_address_popup_title">Please share any details that will help us identify this location more clearly.</string>
     <string name="un_Indexed_address_popup_additional_info_placeholder">Add a location description, or additional instructions:</string>
     <string name="geo_loc_error_msg_with_out_pin">Please use a general location <b>near you</b> instead. Search for an address, the name of a complex, your closest landmark (e.g. a Woolies store). </string>
+    <string name="payflex_is_unavailable_when_buying_food_items_and_gift_cards">Payflex is unavailable when buying Food items and Gift Cards.</string>
+    <string name="open_until">Open until %s</string>
 
 </resources>

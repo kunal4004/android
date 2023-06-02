@@ -166,7 +166,7 @@ class AccountLandingEventLauncherImpl @Inject constructor(
         deepLinkParams: JsonObject?,
         viewModel: UserAccountLandingViewModel,
         activityLauncher: BetterActivityResult<Intent, ActivityResult>?) {
-        val productGroupCode = deepLinkParams?.get("productGroupCode")?.asString
+        val productGroupCode = deepLinkParams?.get("productGroupCode")?.asString?.uppercase()
         productGroupCode ?: return
         val productGroup = viewModel.getProductByProductGroupCode(productGroupCode)
         val deepLinkParam  : String? = Utils.objectToJson(deepLinkParams)

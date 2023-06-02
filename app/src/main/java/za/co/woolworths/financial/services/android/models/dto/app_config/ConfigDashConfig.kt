@@ -7,7 +7,6 @@ import kotlinx.android.parcel.Parcelize
 data class ConfigDashConfig(
         val appURI: String,
         val minimumSupportedAppBuildNumber: Int?,
-        var isEnabled: Boolean = false,
         val driverTip: DriverTip,
         var inAppChat: OneCartConfigInAppChat? = null,
         var inAppChatHuaweiPNData: InAppChatHuaweiPNConfig? = null
