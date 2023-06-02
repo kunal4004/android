@@ -131,6 +131,9 @@ class AppConstant {
 
         // My List
         const val CONST_NO_SIZE = "NO SZ"
+
+        //Payflex info html
+        const val PAYFLEX_POP_UP_URL = "https://widgets.payflex.co.za/how_to.html?"
     }
 
     class Keys {
@@ -150,6 +153,7 @@ class AppConstant {
              * Bundle Keys
              * const val BUNDLE_EXAMPLE_NAME = "BUNDLE_KEY_NAME"
              *****************************************************************************************/
+            const val BUNDLE_WISHLIST_EVENT_DATA = "BUNDLE_WISHLIST_EVENT_DATA"
 
             /*****************************************************************************************
              * Args Keys
@@ -157,7 +161,6 @@ class AppConstant {
              *****************************************************************************************/
             const val ARG_NOTIFICATION_PARAMETERS: String = "parameters"
             const val ARG_ORDER: String = "order"
-            const val ARG_VALIDATE_PLACE = "validatePlace"
             const val ARG_SEND_DELIVERY_DETAILS = "sendDeliveryDetails"
             const val ARG_FROM_NOTIFICATION = "fromNotification"
 

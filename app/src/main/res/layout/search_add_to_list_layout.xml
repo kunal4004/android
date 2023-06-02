@@ -33,9 +33,9 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/textProductSearch"
+            style="@style/opensans_regular_12_text_style"
             android:layout_width="match_parent"
             android:layout_height="@dimen/fourty_dp"
-            android:fontFamily="@font/opensans_regular"
             android:layout_alignParentTop="true"
             android:background="@android:color/transparent"
             android:clickable="false"
@@ -44,8 +44,7 @@
             android:maxLines="1"
             android:layout_toEndOf="@id/icSearchList"
             android:textColor="@color/searchBarHintColor"
-            android:textColorHint="@color/product_search_hint"
-            android:textSize="@dimen/twelve_sp" />
+            android:textColorHint="@color/product_search_hint" />
 
     </RelativeLayout>
 </LinearLayout>

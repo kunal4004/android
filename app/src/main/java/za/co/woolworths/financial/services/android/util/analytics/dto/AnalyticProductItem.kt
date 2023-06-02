@@ -1,13 +1,14 @@
 package za.co.woolworths.financial.services.android.util.analytics.dto
 
 import android.os.Bundle
+import android.os.Parcelable
 import com.google.firebase.analytics.FirebaseAnalytics
+import kotlinx.android.parcel.Parcelize
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.models.dto.CommerceItem
-import za.co.woolworths.financial.services.android.models.dto.ProductDetails
-import za.co.woolworths.financial.services.android.models.dto.ProductList
-import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
+import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.Product
 
+@Parcelize
 data class AnalyticProductItem(
     val itemId: String? = null,
     val itemName: String? = null,
@@ -19,7 +20,7 @@ data class AnalyticProductItem(
     val price: Double? = 0.0,
     val affiliation: String? = null,
     val index: Int = 1,
-)
+) : Parcelable
 
 fun ProductDetails.toAnalyticItem(quantity: Int = 1): AnalyticProductItem {
     return AnalyticProductItem(
@@ -30,6 +31,21 @@ fun ProductDetails.toAnalyticItem(quantity: Int = 1): AnalyticProductItem {
         itemListName = categoryName,
         itemVariant = colourSizeVariants,
         quantity = quantity,
+        price = price?.toDouble(),
+        affiliation = FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE,
+        index = FirebaseManagerAnalyticsProperties.PropertyValues.INDEX_VALUE.toInt(),
+    )
+}
+
+fun Product.toAnalyticItem(category: String?): AnalyticProductItem {
+    return AnalyticProductItem(
+        itemId = productId,
+        itemName = productName,
+        category = category,
+        itemBrand = brandText,
+        itemListName = category,
+        itemVariant = productVariants,
+        quantity = 1, // Required quantity set to 1
         price = price?.toDouble(),
         affiliation = FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE,
         index = FirebaseManagerAnalyticsProperties.PropertyValues.INDEX_VALUE.toInt(),
@@ -74,12 +90,17 @@ fun CommerceItem.toAnalyticItem(): AnalyticProductItem {
         category = null,
         itemBrand = null,
         itemListName = null,
-        itemVariant = null,
+        itemVariant = commerceItemInfo.color,
         quantity = commerceItemInfo.quantity,
-        price = priceInfo.listPrice,
+        price = priceInfo.amount,
         affiliation = FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE,
         index = FirebaseManagerAnalyticsProperties.PropertyValues.INDEX_VALUE.toInt(),
     )
+}
+
+fun List<OrderDetailsItem>.toAnalyticItemList(): List<AnalyticProductItem> {
+    return this.filter { it.type.name == OrderDetailsItem.ViewType.COMMERCE_ITEM.name && it.item is CommerceItem }
+        .map { (it.item as CommerceItem).toAnalyticItem() }
 }
 
 fun AnalyticProductItem.toBundle(): Bundle {

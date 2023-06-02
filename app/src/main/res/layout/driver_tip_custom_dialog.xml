@@ -62,13 +62,14 @@
 
     <TextView
         android:id="@+id/driverTipErrorText"
-        style="@style/myriad_pro_regular"
+        style="@style/opensans_regular_12_text_style"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/ten_dp"
         android:gravity="center"
         android:lineSpacingMultiplier="1.40"
         android:text="@string/driver_minimum_tip_amt_error"
         android:textColor="@color/input_error_color_code"
-        android:textSize="@dimen/fourteen_sp"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="@id/right_guideline"
         app:layout_constraintStart_toStartOf="@id/left_guideline"

@@ -35,6 +35,8 @@ import za.co.woolworths.financial.services.android.util.ImageManager.Companion.s
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.capitaliseFirstLetter
 import za.co.woolworths.financial.services.android.util.NetworkManager
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.analytics.dto.AddToWishListFirebaseEventData
+import za.co.woolworths.financial.services.android.util.analytics.dto.toAnalyticItem
 import java.util.*
 
 
@@ -506,7 +508,8 @@ class CartProductAdapter(
                         addToListRequests.add(listItem)
                     }
                 }
-                openShoppingList(mContext, addToListRequests, "", false)
+                val addToWishListEventData = AddToWishListFirebaseEventData(products = commerceItems?.map { it.toAnalyticItem() })
+                openShoppingList(mContext, addToListRequests, "", false, addToWishListEventData = addToWishListEventData)
             }
         }
 
@@ -518,7 +521,7 @@ class CartProductAdapter(
 
     inner class ProductHolder(view: View) : RecyclerView.ViewHolder(view) {
         val tvTitle: TextView
-        val tvColorSize: WTextView
+        val tvColorSize: TextView
         val quantity: WTextView
         val price: WTextView
         val promotionalText: WTextView

@@ -53,6 +53,11 @@ open class FirebaseManagerAnalyticsProperties {
         const val REFINE_EVENT_PROMO_OFF: String = "sortsfilters_promo_off"
         const val REFINE_EVENT_SEE_RESULT: String = "sortsfilters_seersb"
         const val REFINE_EVENT_BACK_BUTTON: String = "sortsfilters_seersb"
+
+        // Pet Insurance event
+        const val PET_INSURANCE_AWARENESS_MODEL_LEARN_MORE = "learn_more"
+        const val PET_INSURANCE_GET_INSURANCE_PRODUCT = "get_insurance_products"
+
         const val SHOP_PRODUCTDETAIL_NUTRITIONAL_INFORMATION: String = "shop_pdp_ni"
         const val SHOP_PRODUCTDETAILS_INFORMATION: String = "shop_pdp_prod_det"
         const val SHOP_PRODUCTDETAIL_INGREDIENTS_INFORMATION: String = "shop_pdp_ingr"
@@ -211,6 +216,7 @@ open class FirebaseManagerAnalyticsProperties {
         const val SHOP_PDP_NATIVE_SHARE = "shop_pdp_nat_shar"
         const val SHOP_PDP_NATIVE_SHARE_DP_LNK = "shop_pdp_nat_shar_dp_lnk"
         const val CART_CLCK_CLLCT_CNFRM_LMT = "cart_clck_cllct_cnfrm_lmt"
+        const val BUSINESS_UNIT = "business_unit"
 
         //Native Checkout
         const val CHANGE_FULFILLMENT_DELIVERY = "chckout_dlvry"
@@ -374,7 +380,7 @@ open class FirebaseManagerAnalyticsProperties {
         const val SELECT_ITEM_EVENT: String = "select_item"
         const val ADD_TO_CART_PDP: String = "add_to_cart"
         const val VIEW_CART: String = "view_cart"
-        const val ADD_TO_WISHLIST: String = "add_to_wish_list"
+        const val ADD_TO_WISHLIST: String = "add_to_wishlist"
         const val VIEW_PROMOTION: String = "view_promotion"
         const val SELECT_PROMOTION: String = "select_promotion"
         const val IN_STORE_AVAILABILITY: String ="in_store_availability"
@@ -505,13 +511,13 @@ open class FirebaseManagerAnalyticsProperties {
 
             const val CURRENCY = "currency"
             const val ITEM_LIST_NAME = "item_list_name"
-            const val SHOPPING_LIST_NAME = "Shopping_list_name"
-            const val ITEM_RATING = "Item Rating"
+            const val SHOPPING_LIST_NAME = "shopping_list_name"
             const val ITEM_BRAND = "item_brand"
             const val ORDER_TOTAL_VALUE = "order_total"
 
             const val ITEM_ID = "item_id"
             const val ITEM_NAME = "item_name"
+            const val ITEM_RATING = "item_rating"
             const val COUPON = "coupon"
             const val DISCOUNT = "DISCOUNT"
             const val INDEX = "index"

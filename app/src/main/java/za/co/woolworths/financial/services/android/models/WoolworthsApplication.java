@@ -178,6 +178,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
         getTracker();
         bus = new RxBus();
         vtoSyncServer();
+
     }
 
     private void initializeAnalytics() {

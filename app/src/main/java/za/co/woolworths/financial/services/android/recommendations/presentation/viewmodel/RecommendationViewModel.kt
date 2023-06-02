@@ -53,7 +53,9 @@ class RecommendationViewModel @Inject constructor(
             }
         val recTokens = arrayListOf<String>()
         for (i in 0 until eligibleItemCountForRecImpression) {
-            if (!recommendationResponseData.value?.get(tabPosition)?.products?.get(i)?.recToken.isNullOrEmpty()) {
+            if (i < (recommendationResponseData.value?.get(tabPosition)?.products?.size ?: 0) &&
+                !recommendationResponseData.value?.get(tabPosition)?.products?.get(i)?.recToken.isNullOrEmpty()
+            ) {
                 recTokens.add(recommendationResponseData.value?.get(tabPosition)?.products?.get(i)?.recToken!!)
             }
         }

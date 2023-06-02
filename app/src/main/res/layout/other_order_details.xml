@@ -63,14 +63,13 @@
         app:layout_constraintTop_toBottomOf="@id/separator">
 
         <TextView
-            style="@style/myriad_pro_regular"
+            style="@style/opensans_regular_13_black"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="0.5"
             android:gravity="center_vertical"
             android:text="@string/your_cart"
-            android:textColor="@color/gray"
-            android:textSize="@dimen/fifteen_sp" />
+            android:textColor="@color/color_666666" />
 
         <TextView
             android:id="@+id/yourCartTextView"
@@ -104,14 +103,13 @@
         app:layout_constraintTop_toBottomOf="@id/yourCartSeparator">
 
         <TextView
-            style="@style/myriad_pro_regular"
+            style="@style/opensans_regular_13_black"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="0.5"
             android:gravity="center_vertical"
             android:text="@string/driver_tip"
-            android:textColor="@color/gray"
-            android:textSize="@dimen/fifteen_sp" />
+            android:textColor="@color/color_666666" />
 
         <TextView
             android:id="@+id/driverTipTextView"
@@ -145,14 +143,13 @@
         app:layout_constraintTop_toBottomOf="@id/driverTipSeparator">
 
         <TextView
-            style="@style/myriad_pro_regular"
+            style="@style/opensans_regular_13_black"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="0.5"
             android:gravity="center_vertical"
             android:text="@string/discounts"
-            android:textColor="@color/gray"
-            android:textSize="@dimen/fifteen_sp" />
+            android:textColor="@color/color_666666" />
 
         <TextView
             android:id="@+id/discountsTextView"
@@ -186,14 +183,13 @@
         app:layout_constraintTop_toBottomOf="@id/discountsSeparator">
 
         <TextView
-            style="@style/myriad_pro_regular"
+            style="@style/opensans_regular_13_black"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="0.5"
             android:gravity="center_vertical"
             android:text="@string/company_discount"
-            android:textColor="@color/gray"
-            android:textSize="@dimen/fifteen_sp" />
+            android:textColor="@color/color_666666" />
 
         <TextView
             android:id="@+id/companyDiscountTextView"
@@ -227,14 +223,13 @@
         app:layout_constraintTop_toBottomOf="@id/companyDiscountSeparator">
 
         <TextView
-            style="@style/myriad_pro_regular"
+            style="@style/opensans_regular_13_black"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="0.5"
             android:gravity="center_vertical"
             android:text="@string/wrewards_voucher"
-            android:textColor="@color/gray"
-            android:textSize="@dimen/fifteen_sp" />
+            android:textColor="@color/color_666666" />
 
         <TextView
             android:id="@+id/wRewardsVouchersTextView"
@@ -269,14 +264,13 @@
         app:layout_constraintTop_toBottomOf="@id/wRewardsVouchersSeparator">
 
         <TextView
-            style="@style/myriad_pro_regular"
+            style="@style/opensans_regular_13_black"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="0.5"
             android:gravity="center_vertical"
             android:text="@string/total_discount"
-            android:textColor="@color/gray"
-            android:textSize="@dimen/fifteen_sp" />
+            android:textColor="@color/color_666666" />
 
         <TextView
             android:id="@+id/totalDiscountTextView"
@@ -311,14 +305,13 @@
 
         <TextView
             android:id="@+id/deliveryFeeLabel"
-            style="@style/myriad_pro_regular"
+            style="@style/opensans_regular_13_black"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="0.5"
             android:gravity="center_vertical"
             android:text="@string/delivery_fee"
-            android:textColor="@color/gray"
-            android:textSize="@dimen/fifteen_sp" />
+            android:textColor="@color/color_666666" />
 
         <TextView
             android:id="@+id/deliveryFeeTextView"
@@ -353,14 +346,13 @@
         app:layout_constraintTop_toBottomOf="@id/deliveryFeeLinearLayout">
 
         <TextView
-            style="@style/myriad_pro_regular"
+            style="@style/opensans_regular_13_black"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="0.5"
             android:gravity="center_vertical"
             android:text="@string/quarterly_voucher"
-            android:textColor="@color/gray"
-            android:textSize="@dimen/fifteen_sp" />
+            android:textColor="@color/color_666666" />
 
         <TextView
             android:id="@+id/quarterlyVoucherText"
@@ -397,14 +389,13 @@
         tools:visibility="visible">
 
         <TextView
-            style="@style/myriad_pro_regular"
+            style="@style/opensans_regular_13_black"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="0.6"
             android:gravity="center_vertical"
             android:text="@string/missed_wrewards_savings"
-            android:textColor="@color/gray"
-            android:textSize="@dimen/fifteen_sp" />
+            android:textColor="@color/color_666666" />
 
         <TextView
             android:id="@+id/missedRewardsTextView"
