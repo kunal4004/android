@@ -121,8 +121,8 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(R.layout.add_to_li
                     shoppingListResponse?.apply {
                         when (httpCode) {
 
-                            200 -> bindShoppingListToUI(lists)
-                            440 -> {
+                            AppConstant.HTTP_OK -> bindShoppingListToUI(lists)
+                            AppConstant.HTTP_SESSION_TIMEOUT_440 -> {
                                 SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE)
                                 ScreenManager.presentSSOSignin(it)
                             }
@@ -355,7 +355,7 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(R.layout.add_to_li
                         }
                     }
                 }
-                440 -> {
+                AppConstant.HTTP_SESSION_TIMEOUT_440 -> {
                     SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE)
                     SessionExpiredUtilities.getInstance().showSessionExpireDialog(activity as? AppCompatActivity)
                     shoppingListPostProgress(false)
@@ -374,7 +374,7 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(R.layout.add_to_li
     fun addProductResponseHandler(listId: String?, shoppingResponse: ShoppingListItemsResponse) {
         shoppingResponse.apply {
             when (httpCode) {
-                200 -> {
+                AppConstant.HTTP_OK -> {
                     mShoppingListGroup?.apply {
                         callAddToWishlistFirebaseEvent(listId)
                         // Will replace the value of an existing key and will create it if doesn't exist
@@ -396,7 +396,7 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(R.layout.add_to_li
                         }
                     }
                 }
-                440 -> {
+                AppConstant.HTTP_SESSION_TIMEOUT_440 -> {
                     SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE)
                     SessionExpiredUtilities.getInstance().showSessionExpireDialog(activity as? AppCompatActivity)
                     shoppingListPostProgress(false)
