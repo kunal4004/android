@@ -83,7 +83,7 @@
             android:gravity="center"
             android:lineSpacingExtra="1.3dp"
             android:text="@string/cli_lorem_ipsum"
-            android:textColor="@color/semi_transparent_black"
+            android:textColor="@color/color_444444"
             android:textSize="@dimen/thirteen_sp"
             android:fontFamily="@font/opensans_regular" />
 
