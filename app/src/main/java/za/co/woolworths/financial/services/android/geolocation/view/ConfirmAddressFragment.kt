@@ -185,12 +185,12 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
 
         inCurrentLocation?.swEnableLocation?.setOnClickListener {
             if (inCurrentLocation?.swEnableLocation?.isChecked == true) {
-                if(!PermissionUtils.hasPermissions(
-                                requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)) {
-                    checkLocationPermission()
-                } else if (!Utils.isLocationEnabled(requireContext())) {
+                if (!Utils.isLocationEnabled(requireContext())) {
                     KotlinUtils.openAccessMyLocationDeviceSettings(
                             EnableLocationSettingsFragment.ACCESS_MY_LOCATION_REQUEST_CODE, activity)
+                } else if(!PermissionUtils.hasPermissions(
+                                requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)) {
+                    checkLocationPermission()
                 } else {
                     inCurrentLocation?.swEnableLocation?.isChecked = true
                     startLocationDiscoveryProcess()
@@ -854,7 +854,7 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
     }
 
     private fun checkLocationPermission() {
-        permissionUtils?.checkPermission(
+        permissionUtils?.checkAndRequestPermissions(
                 permissions,
                 AppConstant.LOCATION_PERMISSION_REQUEST_CODE
         )
@@ -901,5 +901,14 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
                 checkForLocationPermissionAndSetLocationAddress()
             }, AppConstant.DELAY_2000_MS)
         }
+    }
+
+    override fun onRequestPermissionsResult(
+            requestCode: Int,
+            permissions: Array<String>,
+            grantResults: IntArray,
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        permissionUtils?.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 }
