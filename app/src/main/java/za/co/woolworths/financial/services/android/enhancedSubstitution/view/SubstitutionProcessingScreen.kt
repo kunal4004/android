@@ -13,11 +13,11 @@ import com.awfs.coordination.databinding.SubstitutionErrorScreenBinding
 import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.cart.view.SubstitutionChoice
 import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.AddSubstitutionRequest
-import za.co.woolworths.financial.services.android.enhancedSubstitution.view.SearchSubstitutionFragment.Companion.SELECTED_SUBSTITUTED_PRODUCT
 import za.co.woolworths.financial.services.android.enhancedSubstitution.viewmodel.ProductSubstitutionViewModel
 import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
+import za.co.woolworths.financial.services.android.ui.views.tick_animation.CircleProgressView
 import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 
 @AndroidEntryPoint
@@ -38,12 +38,16 @@ class SubstitutionProcessingScreen : BaseFragmentBinding<SubstitutionErrorScreen
         initErrorView()
     }
 
-    fun newInstance(
-        commerceItemId: String?,
-        skuId: String? = "",
-    ) = SubstitutionProcessingScreen().withArgs {
-        putString(ManageSubstitutionFragment.COMMERCE_ITEM_ID, commerceItemId)
-        putString(ManageSubstitutionFragment.SKU_ID, skuId)
+    companion object {
+        fun newInstance(
+            commerceItemId: String?,
+            skuId: String? = "",
+        ) = SubstitutionProcessingScreen().withArgs {
+            putString(ManageSubstitutionFragment.COMMERCE_ITEM_ID, commerceItemId)
+            putString(ManageSubstitutionFragment.SKU_ID, skuId)
+        }
+
+        const val SUBSTITUTION_ERROR_SCREEN_BACK_NAVIGATION = "SUBSTITUTION_ERROR_SCREEN_BACK_NAVIGATION"
     }
 
     private fun initErrorView() {
@@ -73,6 +77,7 @@ class SubstitutionProcessingScreen : BaseFragmentBinding<SubstitutionErrorScreen
                 when (resource.status) {
                     Status.LOADING -> {
                         binding.substitutionProcressLayout.root.visibility = VISIBLE
+                        binding.substitutionErrorLayout.root.visibility = GONE
                         binding.substitutionProcressLayout.processRequestLayout.apply {
                             processRequestTitleTextView.text =
                                 context?.getString(R.string.processing_your_request)
@@ -95,8 +100,7 @@ class SubstitutionProcessingScreen : BaseFragmentBinding<SubstitutionErrorScreen
                         binding.substitutionSuccessLayout.apply {
                             txtOrderPaymentConfirmed.text =
                                 context?.getString(R.string.add_substitution_success_msg)
-                            imgPaymentSuccess.setImageDrawable(
-                                ResourcesCompat.getDrawable(
+                            imgPaymentSuccess.setImageDrawable(ResourcesCompat.getDrawable(
                                     resources, R.drawable.success_tick, null
                                 )
                             )
@@ -104,7 +108,7 @@ class SubstitutionProcessingScreen : BaseFragmentBinding<SubstitutionErrorScreen
                             btnGotIt.setOnClickListener {
                                 // navigate to pdp and call getSubs. api
                                 setFragmentResult(
-                                    SELECTED_SUBSTITUTED_PRODUCT,
+                                    SUBSTITUTION_ERROR_SCREEN_BACK_NAVIGATION,
                                     bundleOf(SearchSubstitutionFragment.SUBSTITUTION_ITEM_ADDED to true)
                                 )
                                 (activity as? BottomNavigationActivity)?.popFragment()
@@ -122,14 +126,14 @@ class SubstitutionProcessingScreen : BaseFragmentBinding<SubstitutionErrorScreen
         })
     }
 
-    fun stopSpinning() {
+    private fun stopSpinning() {
         binding.substitutionProcressLayout.includeCircleProgressLayout.circularProgressIndicator.apply {
             stopSpinning()
             setValueAnimated(100f)
         }
     }
 
-    fun startSpinning() {
+    private fun startSpinning() {
         binding.substitutionProcressLayout.includeCircleProgressLayout.circularProgressIndicator.spin()
     }
 

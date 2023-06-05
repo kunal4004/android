@@ -82,21 +82,6 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
         }
     }
 
-    /*    private val addSubstitutionResult =
-            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
-                when (result.resultCode) {
-                    ErrorHandlerActivity.RESULT_RETRY -> {
-                        (activity as? BottomNavigationActivity)?.replaceFragmentSafely(
-                            fragment = SubstitutionProcessingScreen().newInstance(
-                                commerceItemId,
-                                skuId
-                            ),
-                            tag = SubstitutionProcessingScreen::class.java.simpleName, allowStateLoss = false, allowBackStack = false,
-                            containerViewId = R.id.container)
-                    }
-                }
-            }*/
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         addFragmentResultListner()
@@ -115,6 +100,10 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
     }
 
     private fun addFragmentResultListner() {
+        setFragmentResultListener(SEARCH_SCREEN_BACK_NAVIGATION) { _, bundle ->
+            setFragmentResult(SELECTED_SUBSTITUTED_PRODUCT, bundle)
+            (activity as? BottomNavigationActivity)?.popFragment()
+        }
         setFragmentResultListener(SEARCH_SCREEN_BACK_NAVIGATION) { _, bundle ->
             setFragmentResult(SELECTED_SUBSTITUTED_PRODUCT, bundle)
             (activity as? BottomNavigationActivity)?.popFragment()
@@ -182,7 +171,7 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
 
                     Status.ERROR -> {
                         hideShimmerView()
-                        showKiboFailureErrorDialog()
+                        showKiboFailureErrorView()
                     }
                 }
             }
@@ -190,7 +179,7 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
         return list
     }
 
-    private fun showKiboFailureErrorDialog() {
+    private fun showKiboFailureErrorView() {
         binding.layoutManageSubstitution.listSubstitute.apply {
             groupEmptySubstituteList.visibility = GONE
             recyclerView.visibility = GONE
@@ -365,12 +354,12 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
             (activity as? BottomNavigationActivity)?.popFragment()
             return
         }
-        callAddSubstitutionApi()
+        NavigateToPdpScreenWithSelectedProduct()
     }
 
-    private fun callAddSubstitutionApi() {
+    private fun NavigateToPdpScreenWithSelectedProduct() {
         if (commerceItemId.isEmpty()) {
-            /*navigate to pdp with selected product  object and call add to cart api in order to add substitute there*/
+            /*navigate to pdp with selected product object and call add to cart api in order to add substitute there*/
             val kiboProduct = ProductList()
             kiboProduct.productName = item?.title
             kiboProduct.externalImageRefV2 = item?.imageLink
@@ -384,16 +373,17 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
             (activity as? BottomNavigationActivity)?.popFragment()
         } else {
             /*call add substitute api here since we have commerceId because product is already added in cart */
-            callAddSubsAPi()
+            callAddSubstitutionAPi()
         }
     }
 
-    private fun callAddSubsAPi() {
+    private fun callAddSubstitutionAPi() {
         val addSubstitutionRequest = AddSubstitutionRequest(
             substitutionSelection = SubstitutionChoice.USER_CHOICE.name,
             substitutionId = item?.id,
             commerceItemId = commerceItemId
         )
+
         productSubstitutionViewModel.addSubstitutionForProduct(addSubstitutionRequest)
         productSubstitutionViewModel.addSubstitutionResponse.observe(viewLifecycleOwner, {
             it.getContentIfNotHandled()?.let { resource ->
@@ -404,7 +394,7 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
 
                     Status.SUCCESS -> {
                         binding.progressBar.visibility = GONE
-                        /* if we get form exception need to show error popup*/
+                        /* if we get form exception need to show error screen*/
                         resource.data?.data?.getOrNull(0)?.formExceptions?.getOrNull(0)?.let {
                             if (it.message?.isNotEmpty() == true) {
                                 showErrorScreen()
@@ -429,8 +419,9 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
     }
 
     fun showErrorScreen() {
+        productSubstitutionViewModel.addSubstitutionResponse.removeObservers(viewLifecycleOwner)
         (activity as? BottomNavigationActivity)?.pushFragment(
-            SubstitutionProcessingScreen().newInstance(
+            SubstitutionProcessingScreen.newInstance(
                 commerceItemId,
                 skuId
             )

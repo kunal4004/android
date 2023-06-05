@@ -34,7 +34,6 @@ import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
 import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
-import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.util.KeyboardUtil
@@ -353,7 +352,7 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
 
     fun showErrorScreen() {
         (activity as? BottomNavigationActivity)?.pushFragment(
-            SubstitutionProcessingScreen().newInstance(
+            SubstitutionProcessingScreen.newInstance(
                 commerceItemId,
                 productList?.sku
             )
