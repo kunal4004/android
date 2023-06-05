@@ -1215,6 +1215,7 @@ class ProductDetailsFragment :
         } else if (productDetails?.otherSkus.isNullOrEmpty()) {
             productOutOfStockErrorMessage()
         } else {
+            hideSubstitutionLayout()
             showErrorWhileLoadingProductDetails()
         }
         sendRecommendationsDetail()
@@ -1261,6 +1262,7 @@ class ProductDetailsFragment :
             )
         } else if (isAdded) {
             isOutOfStock_502 = false
+            hideSubstitutionLayout()
             showErrorWhileLoadingProductDetails()
         }
     }
