@@ -6,4 +6,5 @@ data class Item(
     val plist3620006: Double,
     val title: String,
     val imageLink: String,
+    val Visibility: String,
 )

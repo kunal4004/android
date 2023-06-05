@@ -68,6 +68,9 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
         const val DONT_WANT_SUBSTITUTE_LISTENER = "DONT_WANT_SUBSTITUTE_LISTENER"
         const val LET_MY_SHOPPER_CHOOSE = "LET_MY_SHOPPER_CHOOSE"
         const val KIBO_PRODUCT_SIZE = 5
+        const val ALL = "all"
+        const val DASH_ONLY = "Dash only"
+
 
         fun newInstance(
             substitutionSelectionChoice: String?,
@@ -164,6 +167,9 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
                             if (itemList.isNullOrEmpty()) {
                                 showEmptyErrorScreen()
                                 return@observe
+                            }
+                            itemList?.filter {
+                                it.Visibility == ALL || it.Visibility == DASH_ONLY
                             }
                             prepareStockInventoryCallRequest(itemList)
                         }
