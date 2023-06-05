@@ -1,6 +1,11 @@
 package za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature.screen
 
-import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.FastOutLinearInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
 import androidx.compose.runtime.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -22,6 +27,7 @@ import za.co.woolworths.financial.services.android.ui.wfs.component.*
 import za.co.woolworths.financial.services.android.ui.wfs.component.pull_to_refresh.WfsPullToRefreshUI
 import za.co.woolworths.financial.services.android.ui.wfs.core.NetworkStatusUI
 import za.co.woolworths.financial.services.android.ui.wfs.core.RetrofitFailureResult
+import za.co.woolworths.financial.services.android.ui.wfs.core.animationDurationMilis400
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.extensions.testAutomationTag
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_chat.ui.WfsChatView
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_general.stabletype.GeneralProductType
@@ -374,7 +380,6 @@ private fun LazyListScope.offerViewGroup(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 private fun LazyListScope.myProductsSection(
     isLoading: Boolean,
     brush: Brush,
@@ -401,6 +406,10 @@ private fun LazyListScope.myProductsSection(
 
 
             is AccountProductCardsGroup.PetInsurance -> item (key = item.key) {
+                var itemAppeared by remember { mutableStateOf(false) }
+                LaunchedEffect(!itemAppeared) {
+                    itemAppeared = true
+                }
                 if (loadingOptions.isAccountLoading) {
                     ProductShimmerView(
                         brush = shimmerOptions.brush,
@@ -408,12 +417,21 @@ private fun LazyListScope.myProductsSection(
                     )
                 }
 
-                if (!loadingOptions.isAccountLoading) {
+                AnimatedVisibility(
+                    visible = !loadingOptions.isAccountLoading && itemAppeared,
+                    enter = if (!viewModel.petInsuranceDidAnimateOnce) slideInHorizontally(
+                        animationSpec = tween(
+                            durationMillis = animationDurationMilis400,
+                            easing = FastOutLinearInEasing
+                        )
+                    ) else EnterTransition.None,
+                exit = ExitTransition.None) {
                     PetInsuranceView(
                         productGroup = productItems,
                         petInsuranceDefaultConfig = viewModel.getPetInsuranceMobileConfig()?.defaultCopyPetPending,
                         onProductClick = onProductClick
                     )
+                    viewModel.petInsuranceDidAnimateOnce = true
                 }
             }
 

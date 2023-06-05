@@ -91,7 +91,7 @@ class UserAccountLandingViewModel @Inject constructor(
     private var userAccountResponse: UserAccountResponse? = null
     var accountProductCardsGroup : AccountProductCardsGroup? = null
     var fetchAccountDidLoadOnce : Boolean = false
-    var petInsuranceDidLoadOnce : Boolean = false
+    var petInsuranceDidAnimateOnce : Boolean = false
 
     private var _mapOfFinalProductItems = mutableMapOf<String, AccountProductCardsGroup?>()
     val mapOfFinalProductItems: MutableMap<String, AccountProductCardsGroup?> = _mapOfFinalProductItems
@@ -142,7 +142,7 @@ class UserAccountLandingViewModel @Inject constructor(
         if (resultCode == SSOActivity.SSOActivityResult.SIGNED_OUT.rawValue()) {
             initProductAndOfferItem()
             fetchAccountDidLoadOnce = false
-            petInsuranceDidLoadOnce = false
+            petInsuranceDidAnimateOnce = false
             isUserAuthenticated.value = NotAuthenticated
         }
     }
