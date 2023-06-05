@@ -200,9 +200,10 @@ class EditDeliveryLocationActivity : AppCompatActivity() {
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        val fragment: Fragment = supportFragmentManager.fragments.last().childFragmentManager.fragments[0]
-
-        // redirects to utils
-        (fragment as? ConfirmAddressFragment)?.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if(supportFragmentManager.fragments.single {it is NavHostFragment }.childFragmentManager.fragments.size > 0) {
+            val fragment: Fragment = supportFragmentManager.fragments.single {it is NavHostFragment }.childFragmentManager.fragments[0]
+            // redirects to utils
+            (fragment as? ConfirmAddressFragment)?.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        }
   }
 }

@@ -691,18 +691,20 @@ class ConfirmAddressMapFragment :
             dynamicMapView?.animateCamera(latitude, longitude, zoom = 18f)
             dynamicMapView?.setOnCameraMoveListener {
                 dynamicMapView?.setOnCameraIdleListener {
-                    val latitude = dynamicMapView?.getCameraPositionTargetLatitude()
-                    val longitude = dynamicMapView?.getCameraPositionTargetLongitude()
-                    latitude?.let { lat ->
-                        longitude?.let { longitude ->
-                            getAddressFromLatLng(lat, longitude)
+                    if (imgMapMarker?.visibility == View.VISIBLE) {
+                        val latitude = dynamicMapView?.getCameraPositionTargetLatitude()
+                        val longitude = dynamicMapView?.getCameraPositionTargetLongitude()
+                        latitude?.let { lat ->
+                            longitude?.let { longitude ->
+                                getAddressFromLatLng(lat, longitude)
+                            }
                         }
+                        mLatitude = latitude?.toString()
+                        mLongitude = longitude?.toString()
+                        getPlaceId(latitude, longitude)
+
+
                     }
-                    mLatitude = latitude?.toString()
-                    mLongitude = longitude?.toString()
-                    getPlaceId(latitude, longitude)
-
-
                 }
             }
         }
