@@ -120,9 +120,9 @@ class GeneralIntentImpl @Inject constructor(private val activity: Activity?) : G
                         CookieManager.getInstance().flush()
                         setUserUnAuthenticated(SSOActivity.SSOActivityResult.SIGNED_OUT.rawValue())
                         Utils.clearPreferredDeliveryLocation()
-                        val deleteSuccessFul: BottomSheetDialogFragment = newInstance()
+                        val deleteSuccessFulFragment: BottomSheetDialogFragment = newInstance()
                         (activity as? AppCompatActivity)?.supportFragmentManager?.let { fragmentManager ->
-                            deleteSuccessFul.show(fragmentManager, GENERAL_CLASS_NAME)
+                            deleteSuccessFulFragment.show(fragmentManager, GENERAL_CLASS_NAME)
                         }
                     }
                 }
