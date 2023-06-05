@@ -62,7 +62,7 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
     private fun setNoteTextsFromConfigIfAvailable() {
         binding.apply {
             AppConfigSingleton.mPayMyAccount?.enterPaymentAmountDialogFooterNote?.let {
-                pmaProcessDelayNoteTextView.text = it
+                pmaProcessDelayNoteTextView.text = bindString(R.string.pma_payment_delay_dynamic_label, it)
             }
         }
     }
