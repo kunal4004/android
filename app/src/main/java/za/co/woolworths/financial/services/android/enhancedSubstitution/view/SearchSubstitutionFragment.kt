@@ -274,11 +274,9 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
 
                     Status.SUCCESS -> {
                         resource.data?.skuInventory?.let { inventoryList ->
-                            var configQuantity: Int? =
+                            val configQuantity: Int? =
                                 AppConfigSingleton.enhanceSubstitution?.thresholdQuantityForSubstitutionProduct
 
-                            /*todo for testing configQuantity is set @ 5  */
-                            configQuantity = 5
                             val inventoryQuantity: Int? = inventoryList.getOrNull(0)?.quantity
                             if (inventoryQuantity != null && configQuantity != null) {
                                 if (inventoryList.isNullOrEmpty() || inventoryQuantity < configQuantity) {
