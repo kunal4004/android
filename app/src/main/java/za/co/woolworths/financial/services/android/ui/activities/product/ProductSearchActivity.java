@@ -106,7 +106,7 @@ public class ProductSearchActivity extends AppCompatActivity
         User user = new User("2445455544238003591", "2445455544238003591");
         Session session = new Session("2prrq1oslhogtosiwlpgzfiae5sfg6zo");
         Device device = new Device("102:22:22:2",null);
-        Context context = new Context(device,null,null);
+        Context context = new Context(device,null);
         Properties properties = new Properties(null,null,"keyword-search-v1",searchProductBrand);
         Event events = new Event(null,null,null,null,null,null,null,null,null,null,null,null,"keywordSearchV1",properties);
         ArrayList<Event> e = new ArrayList<>();

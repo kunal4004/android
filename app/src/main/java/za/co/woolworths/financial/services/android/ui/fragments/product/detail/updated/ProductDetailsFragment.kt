@@ -50,6 +50,7 @@ import za.co.woolworths.financial.services.android.common.SingleMessageCommonToa
 import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.ILocationProvider
+import za.co.woolworths.financial.services.android.dynamicyield.data.response.getResponse.DynamicYieldChooseVariationResponse
 import za.co.woolworths.financial.services.android.dynamicyield.data.response.request.*
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
@@ -61,6 +62,7 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.ProductX
 import za.co.woolworths.financial.services.android.recommendations.presentation.viewmodel.RecommendationViewModel
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_REQUEST_CODE
@@ -70,9 +72,10 @@ import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_CART
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Device
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Session
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.User
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.*
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Options
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Page
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.response.DyHomePageViewModel
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductInformationActivity
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.featureutils.RatingAndReviewUtil
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.*
@@ -141,8 +144,6 @@ import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.io.File
 import javax.inject.Inject
 import kotlin.collections.set
-
-import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
 
 
 @AndroidEntryPoint
@@ -253,6 +254,8 @@ class ProductDetailsFragment :
     lateinit var vtoSavedPhotoToast: SingleMessageCommonToast
 
     private lateinit var dyChangeAttributeViewModel: DyChangeAttributeViewModel
+    private var productId: String? = null
+    private var dyHomePageViewModel: DyHomePageViewModel? = null
 
     companion object {
         const val INDEX_STORE_FINDER = 1
@@ -303,12 +306,57 @@ class ProductDetailsFragment :
         addFragmentListner()
         setUniqueIds()
         productDetails?.let { addViewItemEvent(it) }
+        productId = productDetails?.productId
         setUpCartCountPDP()
-       // prepareDynamicYieldRequestEvent()
-      //  dyViewModel()
+        prepareDynamicYieldPageViewRequestEvent()
+        dyPageViewModel()
         dyChangeAttributeViewModel()
     }
 
+    private fun dyPageViewModel() {
+        dyHomePageViewModel = ViewModelProvider(this).get(DyHomePageViewModel::class.java)
+        dyHomePageViewModel?.createDyHomePageLiveData?.observe(
+            viewLifecycleOwner,
+            object : Observer<DynamicYieldChooseVariationResponse?> {
+               override fun onChanged(dynamicYieldChooseVariationResponse: DynamicYieldChooseVariationResponse?) {
+                    if (dynamicYieldChooseVariationResponse == null) {
+                        Toast.makeText(
+                            activity,
+                            "Product Page DY failed",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    } else {
+                        Toast.makeText(
+                            activity,
+                            "Product Page DY Success",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                }
+            })
+    }
+
+    private fun prepareDynamicYieldPageViewRequestEvent() {
+        val user = User("6039328055471566178","6039328055471566178")
+        val session = Session("lhfevbbfh094lunq3g1acf9hzslgytrk")
+        val device = Device("54.100.200.255", "Mozilla/5.0")
+        val skuIdList: ArrayList<String>? = ArrayList()
+       productDetails?.otherSkus?.forEach { otherSkus ->
+           otherSkus.sku?.let { skuIdList?.add(it) }
+       }
+       val dataProduct = DataProduct(productId,skuIdList)
+        val dataArray: ArrayList<DataProduct>? = null
+        dataArray?.add(dataProduct)
+        val page = Page(null, "MobileLandingPageAndroid", "HOMEPAGE", dataArray)
+        val context =
+            za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Context(
+                device,
+                page
+            )
+        val options = Options(true)
+        val homePageRequestEvent = HomePageRequestEvent(user, session, context, options)
+        dyHomePageViewModel?.createDyRequest(homePageRequestEvent)
+    }
 
 
     private fun setUpCartCountPDP() {

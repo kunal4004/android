@@ -235,7 +235,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
         binding.layoutErrorBlp.blpErrorBackBtn.setOnClickListener {
             startProductRequest()
         }
-        prepareDynamicYieldRequestEvent()
+        prepareDynamicYieldPageView()
         dyViewModel()
     }
 
@@ -260,13 +260,12 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
         }
     }
 
-    private fun prepareDynamicYieldRequestEvent() {
+    private fun prepareDynamicYieldPageView() {
         val user = User("7917327198341427921","7917327198341427921")
         val session = Session("jtyey00s7r03kn02f4fskegcbatgjtmj")
-        val device = Device("54.100.200.255", "Mozilla/5.0")
-        val pageAttributes = PageAttributes("")
+        val device = Device("54.100.200.255", "Android/Realme 5 pro")
         val page = Page(breadCrumbList, "PLP Screen", "CATEGORY")
-        val context = Context(device, page, pageAttributes)
+        val context = Context(device, page)
         val options = Options(true)
         val homePageRequestEvent = HomePageRequestEvent(user, session, context, options)
         dyHomePageViewModel?.createDyRequest(homePageRequestEvent)

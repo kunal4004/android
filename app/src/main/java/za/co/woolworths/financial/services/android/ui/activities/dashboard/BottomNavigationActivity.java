@@ -112,7 +112,6 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Dynam
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.HomePageRequestEvent;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Options;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Page;
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.PageAttributes;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.response.DyHomePageViewModel;
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity;
 import za.co.woolworths.financial.services.android.ui.base.BaseActivity;
@@ -801,10 +800,9 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
     private void prepareDynamicYieldRequestEvent() {
         Device device = new Device("54.100.200.255","Mozilla/5.0");
-        PageAttributes pageAttributes = new PageAttributes("someValue");
         ArrayList list = new ArrayList<>();
-        Page page = new Page(list, "MobileLandingPageAndroid","HOMEPAGE");
-        Context context = new Context(device,page,pageAttributes);
+        Page page = new Page(list, "MobileLandingPageAndroid","HOMEPAGE", null);
+        Context context = new Context(device,page);
         Options options = new Options(true);
         HomePageRequestEvent homePageRequestEvent = new HomePageRequestEvent(null,null,context,options);
         dyHomePageViewModel.createDyRequest(homePageRequestEvent);
