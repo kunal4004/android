@@ -339,7 +339,7 @@ class ProductDetailsFragment :
     private fun prepareDynamicYieldPageViewRequestEvent() {
         val user = User("6039328055471566178","6039328055471566178")
         val session = Session("lhfevbbfh094lunq3g1acf9hzslgytrk")
-        val device = Device("54.100.200.255", "Mozilla/5.0")
+        val device = Device("54.100.200.255", "Android/Realme 5 Pro")
         val skuIdList: ArrayList<String>? = ArrayList()
        productDetails?.otherSkus?.forEach { otherSkus ->
            otherSkus.sku?.let { skuIdList?.add(it) }
