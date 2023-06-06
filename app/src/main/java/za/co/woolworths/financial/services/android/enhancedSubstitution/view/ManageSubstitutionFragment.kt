@@ -264,7 +264,7 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
                         val skuInventory = resource.data?.skuInventory
                         configQuantity?.let {
                             skuInventory?.removeAll {
-                                it.quantity <= configQuantity
+                                it.quantity < configQuantity
                             }
                         }
 
@@ -290,7 +290,7 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
 
                     Status.ERROR -> {
                         hideShimmerView()
-                        /*todo show error screen*/
+                        showKiboFailureErrorView()
                     }
                 }
             }
