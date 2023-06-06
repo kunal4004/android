@@ -36,6 +36,7 @@ import za.co.woolworths.financial.services.android.enhancedSubstitution.viewmode
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.network.Status
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.extension.onClick
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
@@ -407,7 +408,8 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
                             }
                             return@observe
                         }
-                        /* navigate to pdp and call getSubs. api*/
+                        /* navigate to pdp or cart screen
+                        * result is only for pdp not for cart */
                         setFragmentResult(
                             SELECTED_SUBSTITUTED_PRODUCT,
                             bundleOf(SearchSubstitutionFragment.SUBSTITUTION_ITEM_ADDED to true)

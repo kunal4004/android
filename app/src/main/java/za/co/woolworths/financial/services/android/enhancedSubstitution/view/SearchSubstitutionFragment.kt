@@ -203,7 +203,6 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
     }
 
     private fun showErrorView(desc: String) {
-        /*todo show new error view if search api is failed*/
         Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, desc)
     }
 
@@ -292,7 +291,6 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
 
                     Status.ERROR -> {
                         binding.progressBar.visibility = GONE
-                        /*todo error view if inventory api is failed*/
                         showErrorView(getString(R.string.common_error_unfortunately_something_went_wrong))
                     }
                 }
