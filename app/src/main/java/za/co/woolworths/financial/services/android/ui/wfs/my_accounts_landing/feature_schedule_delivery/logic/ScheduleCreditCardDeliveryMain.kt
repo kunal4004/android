@@ -52,9 +52,8 @@ class ScheduleCreditCardDeliveryMainImpl @Inject constructor(
         val statusDescription = creditCardDeliveryResponse?.statusResponse?.deliveryStatus?.statusDescription
         if (userAccountResponse != null && statusDescription?.equals(CreditCardDeliveryStatus.CARD_RECEIVED.name, ignoreCase = true) == true) {
             val accountNumberBin = getCreditCardAccount(userAccountResponse)?.accountNumberBin
-            if (accountNumberBin != null) {
-                val applyNowState = CreditCardType.getApplyNowState(accountNumberBin)
-                return applyNowState to accountNumberBin
+            accountNumberBin?.let { bin ->
+                return CreditCardType.getApplyNowState(bin) to bin
             }
         }
 

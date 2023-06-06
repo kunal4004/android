@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Paint
 import android.os.Bundle
@@ -148,6 +149,7 @@ class PMA3DSecureProcessRequestFragment : ProcessYourRequestFragment(), View.OnC
         val payUPayResultRequest = payMyAccountViewModel.getPayUPayResultRequest()
         request(payUPayResultRequest?.let { pay -> OneAppService().queryServicePaymentResult(pay) }, object : IGenericAPILoaderView<Any> {
 
+            @SuppressLint("VisibleForTests")
             override fun onSuccess(response: Any?) {
                 if (!isAdded) return
                 isAPICallSuccessFul = true
@@ -157,11 +159,26 @@ class PMA3DSecureProcessRequestFragment : ProcessYourRequestFragment(), View.OnC
                         200 -> {
                             if (paymentSuccessful) {
                                 activity?.let { payMyAccountViewModel.triggerFirebaseEventForPaymentComplete(it) }
+                                payMyAccountViewModel.queryServicePayUPaymentMethod(onSuccessResult = {
                                 stopSpinning(true)
-                                val randAmount =  Utils.removeNegativeSymbol(CurrencyFormatter.formatAmountToRandAndCent(amount))
+                                    val randAmount =  Utils.removeNegativeSymbol(CurrencyFormatter.formatAmountToRandAndCent(amount))
                                 val randAmountWithCurrency = if (randAmount.contains("R")) randAmount else "R $randAmount"
                                 processRequestNavHostFragment.includePMAProcessingSuccess.paymentValueTextView?.text = randAmountWithCurrency
                                 updateUIOnSuccess()
+                            }, onSessionExpired = { expired ->
+                                stopSpinning(false)
+                                updateUIOnFailure()
+
+                            },
+                                onFailureHandler = {
+                                    stopSpinning(false)
+                                    updateUIOnFailure()
+                                },
+                                onGeneralError = { throwable ->
+                                stopSpinning(false)
+                                updateUIOnFailure()
+                            })
+
                             } else {
                                 stopSpinning(false)
                                 updateUIOnFailure()

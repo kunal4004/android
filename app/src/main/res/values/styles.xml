@@ -1411,9 +1411,9 @@
 
 
     <style name="WRewardsIsOurWay" parent="android:Theme">
-        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
+        <item name="android:fontFamily">@font/opensans_regular</item>
         <item name="android:textColor">@color/description_color</item>
-        <item name="android:textSize">15sp</item>
+        <item name="android:textSize">@dimen/fourteen_sp</item>
         <item name="android:lineSpacingExtra">4sp</item>
         <item name="android:gravity">center</item>
     </style>
@@ -1432,7 +1432,7 @@
     <style name="reward_benefit_title" parent="android:Theme">
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:fontFamily">@font/futura_medium_ttf</item>
+        <item name="android:fontFamily">@font/opensans_regular</item>
         <item name="android:textColor">#4d000000</item>
         <item name="android:textSize">@dimen/twelve_sp</item>
         <item name="android:letterSpacing" tools:ignore="NewApi">@integer/point_fifteen</item>
@@ -1525,12 +1525,12 @@
     <style name="BenefitSubDescTextViewStyle" parent="android:Widget.TextView">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">15sp</item>
+        <item name="android:textSize">@dimen/twelve_sp</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:textColor">@color/description_color</item>
         <item name="android:lineSpacingExtra">4.5dp</item>
         <item name="android:layout_marginTop">9dp</item>
-        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
+        <item name="android:fontFamily">@font/opensans_regular</item>
         <item name="android:layout_marginStart">@dimen/thirty_two_dp</item>
         <item name="android:layout_marginEnd">@dimen/thirty_two_dp</item>
     </style>
@@ -1538,12 +1538,25 @@
     <style name="BenefitLinkTextViewStyle" parent="android:Widget.TextView">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">15sp</item>
+        <item name="android:textSize">@dimen/twelve_sp</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:textColor">@color/description_color</item>
         <item name="android:lineSpacingExtra">4.5dp</item>
         <item name="android:layout_marginTop">24dp</item>
-        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
+        <item name="android:fontFamily">@font/opensans_regular</item>
+        <item name="android:layout_marginStart">@dimen/thirty_two_dp</item>
+        <item name="android:layout_marginEnd">@dimen/thirty_two_dp</item>
+    </style>
+
+    <style name="BenefitDetailsTextViewStyle" parent="android:Widget.TextView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/eleven_sp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">@color/description_color</item>
+        <item name="android:lineSpacingExtra">4.5dp</item>
+        <item name="android:layout_marginTop">24dp</item>
+        <item name="android:fontFamily">@font/opensans_regular</item>
         <item name="android:layout_marginStart">@dimen/thirty_two_dp</item>
         <item name="android:layout_marginEnd">@dimen/thirty_two_dp</item>
     </style>
@@ -1551,13 +1564,13 @@
     <style name="WRewardsInstantSavingsStyle" parent="android:Widget.TextView">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">15sp</item>
+        <item name="android:textSize">@dimen/twelve_sp</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:textColor">@color/description_color</item>
         <item name="android:lineSpacingExtra">4.5dp</item>
         <item name="android:layout_marginTop">18.5dp</item>
         <item name="android:layout_marginBottom">17.5dp</item>
-        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
+        <item name="android:fontFamily">@font/opensans_regular</item>
         <item name="android:layout_marginStart">15dp</item>
         <item name="android:layout_marginEnd">4dp</item>
         <item name="android:layout_alignParentStart">true</item>
@@ -1568,10 +1581,10 @@
     <style name="WRewardsInstantSavingsValueStyle" parent="android:Widget.TextView">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">15sp</item>
+        <item name="android:textSize">@dimen/twelve_sp</item>
         <item name="android:layout_marginTop">18.5dp</item>
         <item name="android:layout_marginBottom">17.5dp</item>
-        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
+        <item name="android:fontFamily">@font/opensans_regular</item>
         <item name="android:layout_marginStart">15dp</item>
         <item name="android:layout_centerInParent">true</item>
         <item name="android:letterSpacing" >-0.01</item>
@@ -3235,6 +3248,14 @@
 
     <style name="open_sans_regular_black" parent="opensens_regular">
         <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="my_accounts_chat_bubble_style">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeBottomLeft">10dp</item>
+        <item name="cornerSizeBottomRight">10dp</item>
+        <item name="cornerSizeTopRight">10dp</item>
+        <item name="cornerSizeTopLeft">10dp</item>
     </style>
 
 </resources>
