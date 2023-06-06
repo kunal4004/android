@@ -14,7 +14,7 @@ data class Event(
     val categories: List<String>? = null,
     val products: List<ProductX>? = null,
     val cartLines: List<CartProducts?>? = null,
-    val orderId: String? = null,
+    val purchaseId: String? = null,
     val purchaseLines: List<CartProducts?>? = null,
     val userAgent: String? = null,
     val ipAddress: String? = null,

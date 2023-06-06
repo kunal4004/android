@@ -19,7 +19,7 @@ class RecommendationsRepositoryImplFake : RecommendationsRepository {
                 return false
             }
             val event = events[0]
-            if (event.eventType != Constants.EVENT_TYPE_PURCHASE || event.orderId.isNullOrEmpty() || event.purchaseLines.isNullOrEmpty()) {
+            if (event.eventType != Constants.EVENT_TYPE_PURCHASE || event.purchaseId.isNullOrEmpty() || event.purchaseLines.isNullOrEmpty()) {
                 return false
             }
 
