@@ -24,6 +24,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/opensans_regular"
             android:textSize="@dimen/fourteen_sp"
+            android:layout_centerVertical="true"
             android:textColor="@color/color_222222"
             android:layout_toEndOf="@+id/sortSelector"
             android:layout_marginEnd="@dimen/five_dp"
