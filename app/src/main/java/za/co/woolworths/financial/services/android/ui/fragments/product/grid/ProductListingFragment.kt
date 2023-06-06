@@ -178,7 +178,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
     }
 
     private fun callViewSearchResultEvent(isSearchByKeywordNavigation: Boolean?, searchTerm: String?) {
-        if (isSearchByKeywordNavigation == true && !searchTerm.isNullOrEmpty()) {
+        if (isSearchByKeywordNavigation == true) {
             FirebaseAnalyticsEventHelper.viewSearchResult(searchTerm)
         }
     }
