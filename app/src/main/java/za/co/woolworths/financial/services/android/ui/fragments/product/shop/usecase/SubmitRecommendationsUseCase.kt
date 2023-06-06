@@ -40,7 +40,7 @@ class SubmitRecommendationsUseCase @Inject constructor(
                         pageType = EVENT_PAGE_TYPE,
                         url = EVENT_URL_ORDERDETAILS
                     ), Event(
-                        eventType = eventType, purchaseId = orderId, purchaseLines = productLines
+                        eventType = eventType, orderId = orderId, purchaseLines = productLines
                     )
                 ).plus(CommonRecommendationEvent.commonRecommendationEvents()),
                 monetateId = monetateId

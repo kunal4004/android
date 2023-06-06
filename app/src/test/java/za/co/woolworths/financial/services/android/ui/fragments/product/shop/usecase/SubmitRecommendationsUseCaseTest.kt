@@ -150,7 +150,7 @@ class SubmitRecommendationsUseCaseTest {
 
         val event = recommendationRequest?.events?.get(0)
 
-        assertEquals(event?.purchaseId, "order-id-101")
+        assertEquals(event?.orderId, "order-id-101")
         assertEquals(event?.eventType, "monetate:context:Purchase")
         assertEquals(event?.purchaseLines?.size, 6)
         assertEquals(event?.url, null)
