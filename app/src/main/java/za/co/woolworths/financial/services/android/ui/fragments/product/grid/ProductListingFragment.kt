@@ -1839,7 +1839,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
             searchType: ProductsRequestParams.SearchType?,
             sub_category_name: String?,
             searchTerm: String?,
-            isBrowsing: Boolean = false,
+            isBrowsing: Boolean,
             sendDeliveryDetails: Boolean?,
             isNavigationFromSearchByKeyword: Boolean = false
         ) = ProductListingFragment().withArgs {
