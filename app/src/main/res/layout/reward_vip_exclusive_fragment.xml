@@ -31,9 +31,8 @@
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_marginStart="32dp"
-            android:layout_marginTop="20dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imWelcomeVoucher2"
+            app:layout_constraintTop_toTopOf="@+id/tvBirthdayVoucher2"
             app:srcCompat="@drawable/cli_step_indicator_active"
             tools:ignore="ContentDescription" />
 
@@ -55,9 +54,8 @@
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_marginStart="32dp"
-            android:layout_marginTop="39dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imWelcomeVoucher"
+            app:layout_constraintTop_toTopOf="@+id/tvBirthdayVoucher"
             app:srcCompat="@drawable/cli_step_indicator_active"
             tools:ignore="ContentDescription" />
 
@@ -117,9 +115,8 @@
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_marginStart="34dp"
-            android:layout_marginTop="29dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imVIPFlash"
+            app:layout_constraintTop_toTopOf="@+id/tvVIPFlash"
             app:srcCompat="@drawable/cli_step_indicator_active"
             tools:ignore="ContentDescription" />
 
@@ -165,7 +162,8 @@
             android:layout_marginStart="32dp"
             android:layout_marginTop="24dp"
             android:layout_marginEnd="32dp"
-            android:fontFamily="@font/myriad_pro_semi_bold_otf"
+            android:textSize="@dimen/eleven_sp"
+            android:fontFamily="@font/futura_medium_ttf"
             android:text="@string/calculation_status_level_title"
             android:textAllCaps="true"
             app:layout_constraintEnd_toEndOf="parent"
@@ -175,7 +173,7 @@
 
         <TextView
             android:id="@+id/tvCalculateStatusLevelPara1"
-            style="@style/BenefitLinkTextViewStyle"
+            style="@style/BenefitDetailsTextViewStyle"
             android:layout_marginStart="32dp"
             android:layout_marginTop="32dp"
             android:layout_marginEnd="32dp"
@@ -186,7 +184,7 @@
 
         <TextView
             android:id="@+id/tvCalculateStatusLevelPara2"
-            style="@style/BenefitLinkTextViewStyle"
+            style="@style/BenefitDetailsTextViewStyle"
             android:layout_marginStart="32dp"
             android:layout_marginTop="32dp"
             android:layout_marginEnd="32dp"
@@ -197,7 +195,7 @@
 
         <TextView
             android:id="@+id/tvCalculateStatusLevelPara3"
-            style="@style/BenefitLinkTextViewStyle"
+            style="@style/BenefitDetailsTextViewStyle"
             android:layout_marginStart="32dp"
             android:layout_marginTop="32dp"
             android:layout_marginEnd="32dp"
