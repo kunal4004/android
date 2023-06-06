@@ -50,8 +50,6 @@ import za.co.woolworths.financial.services.android.ui.activities.rating_and_revi
 import za.co.woolworths.financial.services.android.dynamicyield.data.response.request.DynamicVariantRequestEvent
 import za.co.woolworths.financial.services.android.dynamicyield.data.response.getResponse.DynamicYieldChooseVariationResponse
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.HomePageRequestEvent
-import za.co.woolworths.financial.services.android.ui.activities.product.dynamicyield.response.getresponse.DyKeywordSearchResponse
-import za.co.woolworths.financial.services.android.ui.activities.product.dynamicyield.response.request.DyKeywordSearchRequestEvent
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.PrepareChangeAttributeRequestEvent
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Response.DyChangeAttributeResponse
 import za.co.woolworths.financial.services.android.util.KotlinUtils
@@ -1307,13 +1305,13 @@ open class OneAppService(
             )
     }
 
-    fun dynamicYieldKeywordSearch(dyKeywordSearchRequestEvent: DyKeywordSearchRequestEvent): Call<DyKeywordSearchResponse> {
+   /* fun dynamicYieldKeywordSearch(dyKeywordSearchRequestEvent: DyKeywordSearchRequestEvent): Call<DyKeywordSearchResponse> {
         return mApiInterface.dynamicYieldKeywordSearch(
             getSessionToken(),
             getDeviceIdentityToken(),
             dyKeywordSearchRequestEvent
         )
-    }
+    }*/
 
     fun dynamicYieldHomePage(dyHomePageRequestEvent: HomePageRequestEvent): Call<DynamicYieldChooseVariationResponse> {
         return mApiInterface.dynamicYieldHomePage(

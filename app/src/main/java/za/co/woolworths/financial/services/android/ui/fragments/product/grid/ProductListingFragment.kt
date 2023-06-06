@@ -17,6 +17,7 @@ import android.view.Window
 import android.view.WindowManager
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
@@ -24,6 +25,8 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.GridLayoutManager
@@ -42,6 +45,7 @@ import za.co.woolworths.financial.services.android.chanel.views.adapter.BrandLan
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IProductListing
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.dynamicyield.data.response.getResponse.DynamicYieldChooseVariationResponse
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.UnSellableItemsLiveData
@@ -63,6 +67,8 @@ import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.*
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.*
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.response.DyHomePageViewModel
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity
 import za.co.woolworths.financial.services.android.ui.adapters.ProductListingAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.SortOptionsAdapter
@@ -70,6 +76,7 @@ import za.co.woolworths.financial.services.android.ui.adapters.holder.ProductLis
 import za.co.woolworths.financial.services.android.ui.adapters.holder.RecyclerViewViewHolderItems
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Response.DyChangeAttributeResponse
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants.EVENT_TYPE_CART
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants.EVENT_TYPE_PAGEVIEW
@@ -92,6 +99,7 @@ import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.net.ConnectException
 import java.net.UnknownHostException
 import java.util.*
+import kotlin.collections.ArrayList
 
 @AndroidEntryPoint
 open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBinding::inflate),
@@ -137,6 +145,9 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
     private var localDeliveryTypeForHiddenChange: String? = null
     private var mPromotionalCopy: String? = null
     private var isChanelPage = false
+    private var dyHomePageViewModel: DyHomePageViewModel? = null
+    private var breadCrumbList: ArrayList<String> = ArrayList()
+    private var breadCrumb: ArrayList<BreadCrumb> = ArrayList()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -224,6 +235,41 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
         binding.layoutErrorBlp.blpErrorBackBtn.setOnClickListener {
             startProductRequest()
         }
+        prepareDynamicYieldRequestEvent()
+        dyViewModel()
+    }
+
+    private fun dyViewModel() {
+        dyHomePageViewModel = ViewModelProvider(this).get(DyHomePageViewModel::class.java)
+        dyHomePageViewModel?.createDyHomePageLiveData?.observe(
+            viewLifecycleOwner
+        ) { dynamicYieldChooseVariationResponse ->
+            if (dynamicYieldChooseVariationResponse == null) {
+                Toast.makeText(
+                    activity,
+                    "Category Page DY failed",
+                    Toast.LENGTH_LONG
+                ).show()
+            } else {
+                Toast.makeText(
+                    activity,
+                    "Category Page DY Success",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
+    }
+
+    private fun prepareDynamicYieldRequestEvent() {
+        val user = User("7917327198341427921","7917327198341427921")
+        val session = Session("jtyey00s7r03kn02f4fskegcbatgjtmj")
+        val device = Device("54.100.200.255", "Mozilla/5.0")
+        val pageAttributes = PageAttributes("")
+        val page = Page(breadCrumbList, "PLP Screen", "CATEGORY")
+        val context = Context(device, page, pageAttributes)
+        val options = Options(true)
+        val homePageRequestEvent = HomePageRequestEvent(user, session, context, options)
+        dyHomePageViewModel?.createDyRequest(homePageRequestEvent)
     }
 
     private fun addFragmentListner() {
@@ -545,11 +591,16 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
         response.history?.apply {
             if (categoryDimensions?.isNullOrEmpty() == false) {
                 mSubCategoryName = categoryDimensions[categoryDimensions.size - 1].label
+                breadCrumb = categoryDimensions[categoryDimensions.size - 1].breadCrumbs
             } else if (searchCrumbs?.isNullOrEmpty() == false) {
                 searchCrumbs?.let {
                     mSubCategoryName = it[it.size - 1].terms
                 }
             }
+        }
+
+        breadCrumb.forEach {breadCrumb->
+            breadCrumbList.add(breadCrumb.label)
         }
 
         if (productLists?.isEmpty() == true) {

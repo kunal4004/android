@@ -50,10 +50,7 @@ import za.co.woolworths.financial.services.android.common.SingleMessageCommonToa
 import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.ILocationProvider
-import za.co.woolworths.financial.services.android.dynamicyield.data.response.getResponse.DynamicYieldChooseVariationResponse
 import za.co.woolworths.financial.services.android.dynamicyield.data.response.request.*
-import za.co.woolworths.financial.services.android.dynamicyield.data.response.request.Data
-import za.co.woolworths.financial.services.android.dynamicyield.presentation.viewmodel.DynamicYieldViewModel
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
@@ -64,7 +61,6 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.*
-import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.ProductX
 import za.co.woolworths.financial.services.android.recommendations.presentation.viewmodel.RecommendationViewModel
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_REQUEST_CODE
@@ -74,6 +70,9 @@ import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_CART
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Device
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Session
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.User
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductInformationActivity
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.featureutils.RatingAndReviewUtil
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.*
@@ -85,9 +84,6 @@ import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerA
 import za.co.woolworths.financial.services.android.ui.extension.deviceWidth
 import za.co.woolworths.financial.services.android.ui.extension.underline
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.*
-import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.Device
-import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.Session
-import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.User
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Response.DyChangeAttributeResponse
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.ViewModel.DyChangeAttributeViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener
@@ -144,10 +140,9 @@ import za.co.woolworths.financial.services.android.util.pickimagecontract.PickIm
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.io.File
 import javax.inject.Inject
-import kotlin.collections.get
 import kotlin.collections.set
 
-import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.EventDyChangeAttribute
+import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
 
 
 @AndroidEntryPoint
@@ -1741,8 +1736,29 @@ class ProductDetailsFragment :
 
     override fun onSizeSelection(selectedSku: OtherSkus) {
         setSelectedSku(selectedSku)
+        var size: String? = selectedSku.size
         binding.showSelectedSize(selectedSku)
         binding.updateUIForSelectedSKU(getSelectedSku())
+        prepareDyChangeAttributeSizeRequestEvent(size)
+    }
+
+    private fun prepareDyChangeAttributeSizeRequestEvent(size: String?): PrepareChangeAttributeRequestEvent {
+        val user = User("-4350463893986789401","-4350463893986789401")
+        val session = Session("ohyr6v42l9zd4bpinnvp7urjjx9lrssw")
+        val device = Device("54.100.200.255")
+        val context = za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Context(device)
+        val properties = Properties("Size", size,"change-attr-v1")
+        val eventsDyChangeAttribute = za.co.woolworths.financial.services.android.recommendations.data.response.request.Event(null,null,null,null,null,null,null,null,null,null,null,null,"Change Attribute",properties)
+        val e = ArrayList<Event>()
+        e.add(eventsDyChangeAttribute);
+        val prepareChangeAttributeRequestEvent = PrepareChangeAttributeRequestEvent(
+            context,
+            e,
+            session,
+            user
+        )
+        dyChangeAttributeViewModel.createDyChangeAttributeRequest(prepareChangeAttributeRequestEvent)
+        return prepareChangeAttributeRequestEvent
     }
 
     override fun onColorSelection(selectedColor: String?, isFeature: Boolean) {
@@ -1769,26 +1785,26 @@ class ProductDetailsFragment :
             binding.hideLowStockFromSelectedColor()
 
         }
-        prepareDyChangeAttributeRequestEvent("WHITE")
+        prepareDyChangeAttributeRequestEvent(selectedColor)
     }
 
-    private fun prepareDyChangeAttributeRequestEvent(selectedColor: String): PrepareChangeAttributeRequestEvent {
+    private fun prepareDyChangeAttributeRequestEvent(selectedColor: String?): PrepareChangeAttributeRequestEvent {
         val user = User("-4350463893986789401","-4350463893986789401")
         val session = Session("ohyr6v42l9zd4bpinnvp7urjjx9lrssw")
         val device = Device("54.100.200.255")
-        val contextDyChangeAttribute = ContextDyChangeAttribute(device)
-        val propertiesDyChangeAttribute = Properties("Color",selectedColor,"change-attr-v1")
-        val eventsDyChangeAttribute = EventDyChangeAttribute("ChangeAttributeAndroid", propertiesDyChangeAttribute)
-        val e = ArrayList<EventDyChangeAttribute>()
+        val context = za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Context(device)
+        val properties = Properties("Color",selectedColor,"change-attr-v1")
+        val eventsDyChangeAttribute = za.co.woolworths.financial.services.android.recommendations.data.response.request.Event(null,null,null,null,null,null,null,null,null,null,null,null,"Change Attribute",properties)
+        val e = ArrayList<Event>()
         e.add(eventsDyChangeAttribute);
         val prepareChangeAttributeRequestEvent = PrepareChangeAttributeRequestEvent(
-            contextDyChangeAttribute,
+            context,
             e,
             session,
             user
         )
-        return prepareChangeAttributeRequestEvent
         dyChangeAttributeViewModel.createDyChangeAttributeRequest(prepareChangeAttributeRequestEvent)
+        return prepareChangeAttributeRequestEvent
     }
 
     private fun dyChangeAttributeViewModel() {
@@ -2018,6 +2034,26 @@ class ProductDetailsFragment :
         }
         setSelectedQuantity(quantity)
         binding.toCartAndFindInStoreLayout.quantityText?.text = quantity.toString()
+        prepareDyChangeAttributeQuantityRequestEvent(quantity.toString())
+    }
+
+    private fun prepareDyChangeAttributeQuantityRequestEvent(quantity: String): PrepareChangeAttributeRequestEvent {
+        val user = User("-4350463893986789401","-4350463893986789401")
+        val session = Session("ohyr6v42l9zd4bpinnvp7urjjx9lrssw")
+        val device = Device("54.100.200.255")
+        val context = za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Context(device)
+        val properties = Properties("quantity",quantity,"change-attr-v1")
+        val eventsDyChangeAttribute = za.co.woolworths.financial.services.android.recommendations.data.response.request.Event(null,null,null,null,null,null,null,null,null,null,null,null,"Change Attribute",properties)
+        val e = ArrayList<Event>()
+        e.add(eventsDyChangeAttribute);
+        val prepareChangeAttributeQuantityRequestEvent = PrepareChangeAttributeRequestEvent(
+            context,
+            e,
+            session,
+            user
+        )
+        dyChangeAttributeViewModel.createDyChangeAttributeRequest(prepareChangeAttributeQuantityRequestEvent)
+        return prepareChangeAttributeQuantityRequestEvent
     }
 
     override fun setSelectedQuantity(selectedQuantity: Int?) {

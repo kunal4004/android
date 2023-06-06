@@ -1,12 +1,12 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request
 
-import com.google.gson.annotations.SerializedName
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
 
+@Parcelize
 data class Properties(
-    @SerializedName("attributeType")
-    val attributeType: String,
-    @SerializedName("attributeValue")
-    val attributeValue: String,
-    @SerializedName("dyType")
-    val dyType: String
-): java.io.Serializable
+    val attributeType: String? = null,
+    val attributeValue: String? = null,
+    val dyType: String? = null,
+    val keywords: String? = null
+): Parcelable

@@ -59,8 +59,6 @@ import za.co.woolworths.financial.services.android.ui.activities.rating_and_revi
 import za.co.woolworths.financial.services.android.dynamicyield.data.response.request.DynamicVariantRequestEvent
 import za.co.woolworths.financial.services.android.dynamicyield.data.response.getResponse.DynamicYieldChooseVariationResponse
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.HomePageRequestEvent
-import za.co.woolworths.financial.services.android.ui.activities.product.dynamicyield.response.getresponse.DyKeywordSearchResponse
-import za.co.woolworths.financial.services.android.ui.activities.product.dynamicyield.response.request.DyKeywordSearchRequestEvent
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.PrepareChangeAttributeRequestEvent
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Response.DyChangeAttributeResponse
 
@@ -1566,13 +1564,13 @@ interface ApiInterface {
         @Body dynamicVariantRequestEvent: DynamicVariantRequestEvent
     ) : Call<DynamicYieldChooseVariationResponse>
 
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+   /* @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("wfs/app/dynamicYield/reportEvent")
     fun dynamicYieldKeywordSearch(
         @Header("sessionToken") sessionToken: String,
         @Header("deviceIdentityToken") deviceIdentityToken: String,
         @Body dyKeywordSearchRequestEvent: DyKeywordSearchRequestEvent
-    ) : Call<DyKeywordSearchResponse>
+    ) : Call<DyKeywordSearchResponse>*/
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("wfs/app/dynamicYield/chooseVariation")

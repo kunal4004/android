@@ -104,6 +104,7 @@ import za.co.woolworths.financial.services.android.models.network.Parameter;
 import za.co.woolworths.financial.services.android.models.service.event.BadgeState;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
 import za.co.woolworths.financial.services.android.onecartgetstream.OCChatActivity;
+import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Context;
@@ -114,8 +115,6 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Dynam
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.PageAttributes;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.response.DyHomePageViewModel;
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity;
-import za.co.woolworths.financial.services.android.ui.activities.product.dynamicyield.response.getresponse.DyKeywordSearchResponse;
-import za.co.woolworths.financial.services.android.ui.activities.product.dynamicyield.viewmodel.DyKeywordSearchViewModel;
 import za.co.woolworths.financial.services.android.ui.base.BaseActivity;
 import za.co.woolworths.financial.services.android.ui.base.SavedInstanceFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.RefinementDrawerFragment;
@@ -801,14 +800,13 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     }
 
     private void prepareDynamicYieldRequestEvent() {
-       // User user = new User("", "");
         Device device = new Device("54.100.200.255","Mozilla/5.0");
         PageAttributes pageAttributes = new PageAttributes("someValue");
         ArrayList list = new ArrayList<>();
         Page page = new Page(list, "MobileLandingPageAndroid","HOMEPAGE");
         Context context = new Context(device,page,pageAttributes);
         Options options = new Options(true);
-        HomePageRequestEvent homePageRequestEvent = new HomePageRequestEvent(context,options);
+        HomePageRequestEvent homePageRequestEvent = new HomePageRequestEvent(null,null,context,options);
         dyHomePageViewModel.createDyRequest(homePageRequestEvent);
     }
 

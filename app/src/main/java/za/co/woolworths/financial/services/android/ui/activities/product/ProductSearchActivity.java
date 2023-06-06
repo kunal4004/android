@@ -45,17 +45,17 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.SearchHistory;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
-import za.co.woolworths.financial.services.android.ui.activities.product.dynamicyield.response.getresponse.DyKeywordSearchResponse;
-import za.co.woolworths.financial.services.android.ui.activities.product.dynamicyield.response.request.Context;
-import za.co.woolworths.financial.services.android.ui.activities.product.dynamicyield.response.request.Device;
-import za.co.woolworths.financial.services.android.ui.activities.product.dynamicyield.response.request.DyKeywordSearchRequestEvent;
-import za.co.woolworths.financial.services.android.ui.activities.product.dynamicyield.response.request.Events;
-import za.co.woolworths.financial.services.android.ui.activities.product.dynamicyield.response.request.Properties;
-import za.co.woolworths.financial.services.android.ui.activities.product.dynamicyield.response.request.Session;
-import za.co.woolworths.financial.services.android.ui.activities.product.dynamicyield.response.request.User;
-import za.co.woolworths.financial.services.android.ui.activities.product.dynamicyield.viewmodel.DyKeywordSearchViewModel;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Context;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Device;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Session;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.User;
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.PrepareChangeAttributeRequestEvent;
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.Properties;
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Response.DyChangeAttributeResponse;
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.ViewModel.DyChangeAttributeViewModel;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.ChanelMessageDialogFragment;
 import za.co.woolworths.financial.services.android.util.Utils;
+import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event;
 
 public class ProductSearchActivity extends AppCompatActivity
         implements View.OnClickListener, ChanelMessageDialogFragment.IChanelMessageDialogDismissListener {
@@ -70,7 +70,7 @@ public class ProductSearchActivity extends AppCompatActivity
     public static final String EXTRA_SEARCH_TEXT_HINT = "SEARCH_TEXT_HINT";
     public static final String EXTRA_LIST_ID = "listId";
     public static final int PRODUCT_SEARCH_ACTIVITY_RESULT_CODE = 1244;
-    private DyKeywordSearchViewModel dyKeywordSearchViewModel;
+    private DyChangeAttributeViewModel dyKeywordSearchViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,21 +105,25 @@ public class ProductSearchActivity extends AppCompatActivity
     private void prepareDyKeywordSearchRequestEvent(String searchProductBrand) {
         User user = new User("2445455544238003591", "2445455544238003591");
         Session session = new Session("2prrq1oslhogtosiwlpgzfiae5sfg6zo");
-        Device device = new Device("102:22:22:2");
-        Context context = new Context(device);
-        Properties properties = new Properties(searchProductBrand,"keyword-search-v1");
-        Events events = new Events("keywordSearchV1",properties);
-        ArrayList<Events> e = new ArrayList<>();
+        Device device = new Device("102:22:22:2",null);
+        Context context = new Context(device,null,null);
+        Properties properties = new Properties(null,null,"keyword-search-v1",searchProductBrand);
+        Event events = new Event(null,null,null,null,null,null,null,null,null,null,null,null,"keywordSearchV1",properties);
+        ArrayList<Event> e = new ArrayList<>();
         e.add(events);
-        DyKeywordSearchRequestEvent dyKeywordSearchRequestEvent = new DyKeywordSearchRequestEvent(session,context,user, e);
-        dyKeywordSearchViewModel.createKeywordSearch(dyKeywordSearchRequestEvent);
+        PrepareChangeAttributeRequestEvent dyKeywordSearchRequestEvent = new PrepareChangeAttributeRequestEvent(
+                context,
+                e,
+                session,
+                user);
+        dyKeywordSearchViewModel.createDyChangeAttributeRequest(dyKeywordSearchRequestEvent);
     }
 
     private void initViewModel() {
-        dyKeywordSearchViewModel = new ViewModelProvider(this).get(DyKeywordSearchViewModel.class);
-        dyKeywordSearchViewModel.getCreateKeywordSearchObserver().observe(this, new Observer<DyKeywordSearchResponse>() {
+        dyKeywordSearchViewModel = new ViewModelProvider(this).get(DyChangeAttributeViewModel.class);
+        dyKeywordSearchViewModel.getDyLiveData().observe(this, new Observer<DyChangeAttributeResponse>() {
             @Override
-            public void onChanged(DyKeywordSearchResponse dyKeywordSearchResponse) {
+            public void onChanged(DyChangeAttributeResponse dyKeywordSearchResponse) {
                 if (dyKeywordSearchResponse == null) {
                     Toast.makeText(ProductSearchActivity.this, "failed to DY keyword search", Toast.LENGTH_LONG).show();
                 } else {
