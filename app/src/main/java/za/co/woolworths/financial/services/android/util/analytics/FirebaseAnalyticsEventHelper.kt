@@ -239,4 +239,21 @@ object FirebaseAnalyticsEventHelper {
             FirebaseManagerAnalyticsProperties.ADD_TO_WISHLIST, analyticsParams
         )
     }
+
+    fun viewSearchResult(searchTerm: String?) {
+        if (searchTerm.isNullOrEmpty()) {
+            return
+        }
+
+        val analyticsParams = Bundle()
+        analyticsParams.apply {
+            putString(
+                FirebaseManagerAnalyticsProperties.PropertyNames.SEARCH_TERM,
+                searchTerm
+            )
+        }
+        AnalyticsManager.logEvent(
+            FirebaseAnalytics.Event.VIEW_SEARCH_RESULTS, analyticsParams
+        )
+    }
 }
