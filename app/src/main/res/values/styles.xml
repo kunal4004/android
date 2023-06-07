@@ -3258,4 +3258,11 @@
         <item name="cornerSizeTopLeft">10dp</item>
     </style>
 
+    <style name="delete_my_profile_description_text_style">
+        <item name="android:lineSpacingExtra">1.4dp</item>
+        <item name="android:textColor">@color/permanent_card_block_desc_color</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">@font/opensans_regular</item>
+    </style>
+
 </resources>
