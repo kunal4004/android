@@ -35,7 +35,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:letterSpacing="0.1"
         android:text="@string/your_report_on_this_review_has_been_submitted_we_will_review_your_concern_and_will_notify_you_once_action_has_been_taken"
         android:layout_marginTop="@dimen/fifteen_dp"
         android:paddingHorizontal="@dimen/twenty_one_dp"
