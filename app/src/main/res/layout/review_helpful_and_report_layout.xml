@@ -9,8 +9,9 @@
 
     <TextView
         android:id="@+id/tvHelpful"
-        android:fontFamily="@font/opensans_regular"
+        android:fontFamily="@font/opensans_semi_bold"
         android:textColor="@color/black"
+        android:textSize="@dimen/thirteen_sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/is_there_an_issue_with_this_review"

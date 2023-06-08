@@ -3265,4 +3265,16 @@
         <item name="android:fontFamily">@font/opensans_regular</item>
     </style>
 
+    <style name="open_sans_semi_bold_49BB77_13_text_style" >
+        <item name="android:fontFamily">@font/opensans_semi_bold</item>
+        <item name="android:textSize">@dimen/thirteen_sp</item>
+        <item name="android:textColor">@color/color_49BB77</item>
+    </style>
+
+    <style name="open_sans_semi_bold_777777_13_text_style" >
+        <item name="android:fontFamily">@font/opensans_semi_bold</item>
+        <item name="android:textSize">@dimen/thirteen_sp</item>
+        <item name="android:textColor">@color/account_card_desc_grey_color</item>
+    </style>
+
 </resources>
