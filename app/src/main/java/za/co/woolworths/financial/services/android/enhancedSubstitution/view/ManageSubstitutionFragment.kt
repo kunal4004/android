@@ -386,7 +386,7 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
 
     private fun callAddSubstitutionAPi() {
         val addSubstitutionRequest = AddSubstitutionRequest(
-            substitutionSelection = SubstitutionChoice.USER_CHOICE.name,
+            substitutionSelection = "",
             substitutionId = item?.id,
             commerceItemId = commerceItemId
         )

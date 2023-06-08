@@ -311,7 +311,7 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
     private fun callAddSubstitutionApi() {
         /*add subsitute api here since we have commerceId because product is already added in cart */
         val addSubstitutionRequest = AddSubstitutionRequest(
-            substitutionSelection = SubstitutionChoice.USER_CHOICE.name,
+            substitutionSelection = "",
             substitutionId = productList?.sku,
             commerceItemId = commerceItemId
         )
