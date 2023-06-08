@@ -13,6 +13,7 @@ import androidx.core.text.HtmlCompat
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
+import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.paging.filter
@@ -71,7 +72,15 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        addFragmentListener()
         initView()
+    }
+
+    private fun addFragmentListener() {
+        setFragmentResultListener(SubstitutionProcessingScreen.SUBSTITUTION_ERROR_SCREEN_BACK_NAVIGATION) { _, bundle ->
+            setFragmentResult(SELECTED_SUBSTITUTED_PRODUCT, bundle)
+            (activity as? BottomNavigationActivity)?.popFragment()
+        }
     }
 
     private fun initView() {
@@ -347,6 +356,7 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
     }
 
     fun showErrorScreen() {
+        productSubstitutionViewModel.addSubstitutionResponse.removeObservers(viewLifecycleOwner)
         (activity as? BottomNavigationActivity)?.pushFragment(
             SubstitutionProcessingScreen.newInstance(
                 commerceItemId,

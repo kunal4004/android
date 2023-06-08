@@ -112,6 +112,10 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
             setFragmentResult(SELECTED_SUBSTITUTED_PRODUCT, bundle)
             (activity as? BottomNavigationActivity)?.popFragment()
         }
+        setFragmentResultListener(SubstitutionProcessingScreen.SUBSTITUTION_ERROR_SCREEN_BACK_NAVIGATION) { _, bundle ->
+            setFragmentResult(SELECTED_SUBSTITUTED_PRODUCT, bundle)
+            (activity as? BottomNavigationActivity)?.popFragment()
+        }
     }
 
     fun initView() {
