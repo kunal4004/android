@@ -171,7 +171,7 @@ class KotlinUtils {
             }
 
             val typeface: Typeface? =
-                context?.let { ResourcesCompat.getFont(it, R.font.myriad_pro_semi_bold_otf) }
+                context?.let { ResourcesCompat.getFont(it, R.font.opensans_semi_bold) }
             if (textIsClickable) spannableTitle.setSpan(
                 clickableSpan,
                 start,
@@ -853,9 +853,9 @@ class KotlinUtils {
             keys?.forEach { key ->
                 val start = string.indexOf(key)
                 val end = start.plus(key.length)
-                val myriadProFont: TypefaceSpan = CustomTypefaceSpan("", getMyriadProSemiBoldFont())
+                val opensansSemiBoldFont: TypefaceSpan = CustomTypefaceSpan("", getOpenSansSemiBoldFont())
                 noteStringBuilder.setSpan(
-                    myriadProFont,
+                    opensansSemiBoldFont,
                     start,
                     end,
                     Spannable.SPAN_INCLUSIVE_INCLUSIVE
