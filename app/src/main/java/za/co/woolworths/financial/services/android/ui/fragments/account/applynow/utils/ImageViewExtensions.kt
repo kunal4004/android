@@ -23,7 +23,6 @@ fun View.setContentDescription(mainID: String, position: Int? = null, viewName: 
     val accessibilityID = mainID.lowercase().replace(" ", "_")
     val indexString = position?.let { "_$it" } ?: ""
     this.contentDescription = accessibilityID + "_" + viewName.value + indexString
-    println("magdyyy " + accessibilityID + "_" + viewName.value + indexString)
 }
 
 enum class UniqueIdentifiers(val value: String){
