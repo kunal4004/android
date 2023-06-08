@@ -52,7 +52,7 @@ public class ErrorHandlerView {
 
 	public ErrorHandlerView(Context context,
 							RelativeLayout rootNoConnectionLayout, ImageView imageIcon, WTextView
-									textTitle, WTextView textDesc) {
+									textTitle, TextView textDesc) {
 		this.mRlRootNoConnectionLayout = rootNoConnectionLayout;
 		this.mContext = context;
 		this.mImgEmptyStateIcon = imageIcon;

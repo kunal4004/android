@@ -89,12 +89,12 @@ public class PopWindowValidationMessage {
 				mView = mLayoutInflater.inflate(R.layout.open_overlay_got_it, null);
 				popupWindowSetting(mView);
 				WTextView mOverlayTitle = (WTextView) mView.findViewById(R.id.textApplicationNotProceed);
-				mOverlayDescription = (TextView) mView.findViewById(R.id.overlayDescription);
+				TextView overlayDescription = mView.findViewById(R.id.overlayDescription);
 				mOverlayBtn = (WButton) mView.findViewById(R.id.btnOverlay);
 				LinearLayout mLinEmail = (LinearLayout) mView.findViewById(R.id.linEmail);
 				mLinEmail.setVisibility(View.GONE);
 				mOverlayTitle.setVisibility(View.GONE);
-				mOverlayDescription.setText(description);
+				overlayDescription.setText(description);
 				mOverlayBtn.setText(getString(R.string.got_it));
 				setAnimation();
 				mRelPopContainer.setAnimation(mFadeInAnimation);
