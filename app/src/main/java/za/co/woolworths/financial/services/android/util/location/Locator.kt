@@ -12,7 +12,8 @@ sealed class Event {
 enum class EventType {
     LOCATION_PERMISSION_GRANTED,
     LOCATION_PERMISSION_NOT_GRANTED,
-    LOCATION_DISABLED_ON_DEVICE
+    LOCATION_DISABLED_ON_DEVICE,
+    LOCATION_SERVICE_DISCONNECTED
 }
 
 class Locator(val activity: AppCompatActivity) {

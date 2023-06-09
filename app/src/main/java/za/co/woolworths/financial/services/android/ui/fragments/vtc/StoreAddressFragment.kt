@@ -361,6 +361,9 @@ class StoreAddressFragment : BaseFragmentBinding<FragmentStoreAddressBinding>(
             EventType.LOCATION_DISABLED_ON_DEVICE -> {
                 Logger.logDebug("Permission NOT granted permanently")
             }
+            EventType.LOCATION_SERVICE_DISCONNECTED -> {
+                Logger.logDebug("Location service NOT connected")
+            }
         }
     }
 
