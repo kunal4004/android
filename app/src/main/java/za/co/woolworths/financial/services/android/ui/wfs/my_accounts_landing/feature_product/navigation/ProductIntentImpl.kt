@@ -109,10 +109,10 @@ class ProductIntentImpl @Inject constructor(private val activity: Activity?) : P
     }
 
     private fun redirectToAccountSignInActivity(
-            applyNowState: ApplyNowState,
+            applyNowState: ApplyNowState?,
             deepLinkParams: String? = null,
-            userAccountResponse: String
-    ) {
+            userAccountResponse: String) {
+        if (applyNowState == null) return
         activity?.let { context ->
             Intent(context, AccountSignedInActivity::class.java).apply {
                 putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, applyNowState)
