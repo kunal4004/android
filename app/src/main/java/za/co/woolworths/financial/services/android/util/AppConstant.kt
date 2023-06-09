@@ -162,6 +162,9 @@ class AppConstant {
             const val KEY_LIST_DETAILS = "listDetails"
             const val KEY_COUNT = "count"
             const val KEY_HAS_GIFT_PRODUCT = "KEY_HAS_GIFT_PRODUCT"
+
+            const val BUNDLE_WISHLIST_EVENT_DATA = "BUNDLE_WISHLIST_EVENT_DATA"
+
             /*****************************************************************************************
              * Args Keys
              * const val ARGS_EXAMPLE_NAME = "ARGS_NAME"
