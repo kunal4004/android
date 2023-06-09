@@ -222,8 +222,8 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         //One time biometricsWalkthrough
         if (isVisible) {
             ScreenManager.presentBiometricWalkthrough(activity)
+            loadShoppingCart()
         }
-        loadShoppingCart()
     }
 
     private fun initViews() {
@@ -1646,7 +1646,6 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         setupToolbar()
         initializeBottomTab()
         initializeLoggedInUserCartUI()
-        loadShoppingCart()
     }
 
     override fun onConnectionChanged() {
