@@ -257,8 +257,7 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
             EventType.LOCATION_SERVICE_DISCONNECTED -> {
                 Logger.logDebug("Location service NOT connected")
                 Utils.getLastSavedLocation()?.let {
-                    val locationEvent = Event.Location(it)
-                    binding.handleLocationEvent(locationEvent)
+                    binding.handleLocationEvent(Event.Location(it))
                 }
             }
         }
