@@ -13,7 +13,7 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import com.awfs.coordination.R
-import com.awfs.coordination.databinding.FragmentEmailUsBinding
+import com.awfs.coordination.databinding.ContactUsEmailUsFragmentBinding
 import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
@@ -29,8 +29,8 @@ import za.co.woolworths.financial.services.android.util.KeyboardUtils
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 
 @AndroidEntryPoint
-class EmailUsFragment : Fragment(), View.OnClickListener, TextWatcher {
-    private var _binding: FragmentEmailUsBinding? = null
+class ContactUsEmailUsFragment : Fragment(), View.OnClickListener, TextWatcher {
+    private var _binding: ContactUsEmailUsFragmentBinding? = null
     private val binding get() = _binding!!
     val viewModel: EnquiriesListViewModel by activityViewModels()
     val contactUsViewModel : ContactUsViewModel by activityViewModels()
@@ -45,7 +45,7 @@ class EmailUsFragment : Fragment(), View.OnClickListener, TextWatcher {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentEmailUsBinding.inflate(inflater, container, false)
+        _binding = ContactUsEmailUsFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }
 

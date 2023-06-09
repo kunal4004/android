@@ -3283,4 +3283,21 @@
         <item name="cornerSizeTopLeft">10dp</item>
     </style>
 
+    <style name="contact_us_email_us_label_style" parent="opensens_regular">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+
+    <style name="contact_us_email_us_input_field_style" parent="opensens_regular">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:background">@drawable/bg_input_edittext</item>
+        <item name="android:layout_height">@dimen/_35sdp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingStart">@dimen/_5sdp</item>
+        <item name="android:paddingEnd">@dimen/_5sdp</item>
+        <item name="android:layout_marginTop">@dimen/_5sdp</item>
+        <item name="android:textColorHint">@color/color_9D9D9D</item>
+    </style>
 </resources>
