@@ -68,7 +68,6 @@ import za.co.woolworths.financial.services.android.util.location.EventType
 import za.co.woolworths.financial.services.android.util.location.Locator
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.util.*
-import za.co.woolworths.financial.services.android.util.location.Logger
 
 
 class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_dialog),
@@ -244,18 +243,16 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
     private fun handlePermissionEvent(permissionEvent: Event.Permission) {
         when (permissionEvent.event) {
             EventType.LOCATION_PERMISSION_GRANTED -> {
-                Logger.logDebug("Permission granted")
+                // do nothing
             }
             EventType.LOCATION_PERMISSION_NOT_GRANTED -> {
-                Logger.logDebug("Permission NOT granted")
                 Utils.saveLastLocation(null, activity)
                 binding.handleLocationEvent(null)
             }
             EventType.LOCATION_DISABLED_ON_DEVICE -> {
-                Logger.logDebug("Permission NOT granted permanently")
+                // do nothing
             }
             EventType.LOCATION_SERVICE_DISCONNECTED -> {
-                Logger.logDebug("Location service NOT connected")
                 Utils.getLastSavedLocation()?.let {
                     binding.handleLocationEvent(Event.Location(it))
                 }
