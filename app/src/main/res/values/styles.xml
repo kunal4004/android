@@ -3260,8 +3260,8 @@
 
     <style name="delete_my_profile_description_text_style">
         <item name="android:lineSpacingExtra">1.4dp</item>
-        <item name="android:textColor">@color/permanent_card_block_desc_color</item>
-        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/color_444444</item>
+        <item name="android:textSize">@dimen/thirteen_sp</item>
         <item name="android:fontFamily">@font/opensans_regular</item>
     </style>
 
@@ -3275,6 +3275,13 @@
         <item name="android:fontFamily">@font/opensans_semi_bold</item>
         <item name="android:textSize">@dimen/thirteen_sp</item>
         <item name="android:textColor">@color/account_card_desc_grey_color</item>
+    </style>
+
+    <style name="delete_profile_page_title_text_style">
+        <item name="android:lineSpacingMultiplier">1.29</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">@dimen/twenty_sp</item>
+        <item name="android:fontFamily">@font/futura_semi_bold</item>
     </style>
 
 </resources>

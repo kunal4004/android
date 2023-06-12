@@ -27,7 +27,7 @@
 
     <TextView
         android:id="@+id/deleteTitle"
-        style="@style/absa_page_title_text_style"
+        style="@style/delete_profile_page_title_text_style"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/deleteLogo"
@@ -92,9 +92,9 @@
             android:letterSpacing="0.1"
             android:text="@string/delete_my_account"
             android:textAllCaps="true"
-            android:textColor="@color/gray"
+            android:textColor="@color/color_666666"
             android:textSize="@dimen/twelve_sp"
-            app:WTextView_font="light" />
+            android:fontFamily="@font/futura_medium" />
     </LinearLayout>
 
 </RelativeLayout>
