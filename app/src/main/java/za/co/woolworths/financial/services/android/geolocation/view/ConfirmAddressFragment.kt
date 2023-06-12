@@ -241,9 +241,22 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
     }
 
     private fun handlePermissionEvent(permissionEvent: Event.Permission) {
-        if (permissionEvent.event == EventType.LOCATION_PERMISSION_NOT_GRANTED) {
-            Utils.saveLastLocation(null, activity)
-            binding.handleLocationEvent(null)
+        when (permissionEvent.event) {
+            EventType.LOCATION_PERMISSION_GRANTED -> {
+                // do nothing
+            }
+            EventType.LOCATION_PERMISSION_NOT_GRANTED -> {
+                Utils.saveLastLocation(null, activity)
+                binding.handleLocationEvent(null)
+            }
+            EventType.LOCATION_DISABLED_ON_DEVICE -> {
+                // do nothing
+            }
+            EventType.LOCATION_SERVICE_DISCONNECTED -> {
+                Utils.getLastSavedLocation()?.let {
+                    binding.handleLocationEvent(Event.Location(it))
+                }
+            }
         }
     }
 
