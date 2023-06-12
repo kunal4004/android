@@ -14,6 +14,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.BetterActivityResult
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.Constants
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.enumtype.AccountProductCardsGroup
+import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.model.UserAccountResponse
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_view_application_status.ViewApplicationStatusImpl
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.viewmodel.UserAccountLandingViewModel
 import za.co.woolworths.financial.services.android.util.Utils
@@ -22,10 +23,10 @@ import javax.inject.Inject
 interface ProductIntent {
 
     fun createStoreCardIntent(deepLinkParams: String? = null, productGroup: AccountProductCardsGroup.StoreCard?)
-    fun createPersonalLoanIntent(deepLinkParams: String?= null,userAccountResponse: String)
-    fun createBlackCreditCardIntent(deepLinkParams: String?= null,userAccountResponse: String)
-    fun createSilverCreditCardIntent(deepLinkParams: String?= null,userAccountResponse: String)
-    fun createGoldCreditCardIntent(deepLinkParams: String?= null,userAccountResponse: String)
+    fun createPersonalLoanIntent(deepLinkParams: String?= null,userAccountResponse: String?)
+    fun createBlackCreditCardIntent(deepLinkParams: String?= null,userAccountResponse: String?)
+    fun createSilverCreditCardIntent(deepLinkParams: String?= null,userAccountResponse: String?)
+    fun createGoldCreditCardIntent(deepLinkParams: String?= null,userAccountResponse: String?)
     fun createViewApplicationStatusIntent(viewApplicationStatus: ViewApplicationStatusImpl)
     fun createLinkYourWooliesCardIntent(
         activityLauncher: BetterActivityResult<Intent, ActivityResult>?,
@@ -42,7 +43,7 @@ class ProductIntentImpl @Inject constructor(private val activity: Activity?) : P
         navigateToStoreCardActivity(deepLinkParams = deepLinkParams, account = account)
     }
 
-    override fun createPersonalLoanIntent(deepLinkParams: String?,userAccountResponse: String) {
+    override fun createPersonalLoanIntent(deepLinkParams: String?,userAccountResponse: String?) {
         redirectToAccountSignInActivity(
             deepLinkParams = deepLinkParams,
                 applyNowState = ApplyNowState.PERSONAL_LOAN,
@@ -50,7 +51,7 @@ class ProductIntentImpl @Inject constructor(private val activity: Activity?) : P
         )
     }
 
-    override fun createBlackCreditCardIntent(deepLinkParams: String?,userAccountResponse: String) {
+    override fun createBlackCreditCardIntent(deepLinkParams: String?,userAccountResponse: String?) {
         redirectToAccountSignInActivity(
                 deepLinkParams = deepLinkParams,
                 applyNowState = ApplyNowState.BLACK_CREDIT_CARD,
@@ -58,7 +59,7 @@ class ProductIntentImpl @Inject constructor(private val activity: Activity?) : P
         )
     }
 
-    override fun createSilverCreditCardIntent(deepLinkParams: String?,userAccountResponse: String) {
+    override fun createSilverCreditCardIntent(deepLinkParams: String?,userAccountResponse: String?) {
         redirectToAccountSignInActivity(
             deepLinkParams = deepLinkParams,
             applyNowState = ApplyNowState.SILVER_CREDIT_CARD,
@@ -66,7 +67,7 @@ class ProductIntentImpl @Inject constructor(private val activity: Activity?) : P
         )
     }
 
-    override fun createGoldCreditCardIntent(deepLinkParams: String?, userAccountResponse: String) {
+    override fun createGoldCreditCardIntent(deepLinkParams: String?, userAccountResponse: String?) {
         redirectToAccountSignInActivity(
             deepLinkParams = deepLinkParams,
             applyNowState = ApplyNowState.GOLD_CREDIT_CARD,
@@ -111,12 +112,12 @@ class ProductIntentImpl @Inject constructor(private val activity: Activity?) : P
     private fun redirectToAccountSignInActivity(
             applyNowState: ApplyNowState?,
             deepLinkParams: String? = null,
-            userAccountResponse: String) {
-        if (applyNowState == null) return
+            userAccountResponse: String?) {
+        if (applyNowState == null || userAccountResponse.isNullOrEmpty()) return
         activity?.let { context ->
             Intent(context, AccountSignedInActivity::class.java).apply {
                 putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, applyNowState)
-                putExtra(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE, userAccountResponse)
+                putExtra(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE, UserAccountResponse())
                 deepLinkParams?.let {
                     putExtra(AccountSignedInPresenterImpl.DEEP_LINKING_PARAMS, deepLinkParams)
                 }
