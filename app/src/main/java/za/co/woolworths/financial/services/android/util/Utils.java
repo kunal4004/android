@@ -130,7 +130,7 @@ public class Utils {
     public final static float BIG_SCALE = 2.4f;
     public final static float SMALL_SCALE = 1.9f;
     public final static float DIFF_SCALE = BIG_SCALE - SMALL_SCALE;
-    public final static int PAGE_SIZE = 60;
+    public final static int PAGE_SIZE = 24;
     public static int FIRST_PAGE = 0;
     public static int PRIMARY_CARD_POSITION = 0;
     public static int DEFAULT_SELECTED_NAVIGATION_ITEM = 0;

@@ -863,12 +863,15 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
 
     private fun loadData() {
         val visibleThreshold = 5
+        val pageSize = AppConfigSingleton.searchApiSettings?.pageSize
         if (!isLoading && totalItemCount <= lastVisibleItem + visibleThreshold) {
             if (productIsLoading()) return
-            val total = numItemsInTotal + Utils.PAGE_SIZE
-            val start = mProductList?.size ?: 0
-            val end = start + Utils.PAGE_SIZE
-            isLoading = total < end
+            if (pageSize != null) {
+                val total = numItemsInTotal + pageSize
+                val start = mProductList?.size ?: 0
+                val end = start + pageSize
+                isLoading = total < end
+            }
             if (isLoading) return
             if (!listContainFooter()) {
                 val footerItem = ProductList()
