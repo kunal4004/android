@@ -378,31 +378,24 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
                 (activity as? BottomNavigationActivity)?.popFragment()
                 return
             }
-
         }
 
         if (substitutionChoice == SubstitutionChoice.USER_CHOICE.name) {
             if (commerceItemId.isEmpty()) {
                 /*navigate to pdp with selected product object and call add to cart api in order to add substitute there*/
-                val kiboProduct = ProductList()
-                kiboProduct.productName = item?.title
-                kiboProduct.externalImageRefV2 = item?.imageLink
-                kiboProduct.productId = item?.id
-
-                setFragmentResult(
-                    SELECTED_SUBSTITUTED_PRODUCT, bundleOf(
-                        SUBSTITUTION_ITEM_KEY to kiboProduct
+                val selectedKiboProduct = getSelectedKiboProduct()
+                setFragemntResultAndNavigateToPreviousFragment(
+                    bundleOf(
+                        SUBSTITUTION_ITEM_KEY to selectedKiboProduct
                     )
                 )
-                (activity as? BottomNavigationActivity)?.popFragment()
                 return
             }
-
         }
 
 
         val addSubstitutionRequest = AddSubstitutionRequest(
-            substitutionSelection = "",
+            substitutionSelection = substitutionChoice,
             substitutionId = item?.id,
             commerceItemId = commerceItemId
         )
@@ -424,14 +417,7 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
                             }
                             return@observe
                         }
-                        /* navigate to pdp or cart screen
-                        * result is only for pdp not for cart */
-                        setFragmentResult(
-                            SELECTED_SUBSTITUTED_PRODUCT,
-                            bundleOf(SearchSubstitutionFragment.SUBSTITUTION_ITEM_ADDED to true)
-                        )
-                        removeObserver()
-                        (activity as? BottomNavigationActivity)?.popFragment()
+                        navigateToPreviousFragment(substitutionChoice)
                     }
 
                     Status.ERROR -> {
@@ -443,7 +429,42 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
         })
     }
 
-    fun showErrorScreen(substitutionChoice: String) {
+    private fun getSelectedKiboProduct(): ProductList {
+        val kiboProduct = ProductList()
+        kiboProduct.productName = item?.title
+        kiboProduct.externalImageRefV2 = item?.imageLink
+        kiboProduct.productId = item?.id
+        return kiboProduct
+    }
+
+    private fun navigateToPreviousFragment(substitutionChoice: String) {
+        if (substitutionChoice == SubstitutionChoice.USER_CHOICE.name) {
+            val selectedKiboProduct = getSelectedKiboProduct()
+            setFragemntResultAndNavigateToPreviousFragment(
+                bundleOf(
+                    SUBSTITUTION_ITEM_KEY to selectedKiboProduct
+                )
+            )
+            return
+        }
+
+        if (substitutionChoice == SubstitutionChoice.SHOPPER_CHOICE.name) {
+            setFragemntResultAndNavigateToPreviousFragment(bundleOf(LET_MY_SHOPPER_CHOOSE to true))
+            return
+        }
+
+        if (substitutionChoice == SubstitutionChoice.NO.name) {
+            setFragemntResultAndNavigateToPreviousFragment(bundleOf(DONT_WANT_SUBSTITUTE_LISTENER to true))
+            return
+        }
+    }
+
+    private fun setFragemntResultAndNavigateToPreviousFragment(bundle: Bundle) {
+        setFragmentResult(SELECTED_SUBSTITUTED_PRODUCT, bundle)
+        (activity as? BottomNavigationActivity)?.popFragment()
+    }
+
+    private fun showErrorScreen(substitutionChoice: String) {
         removeObserver()
         (activity as? BottomNavigationActivity)?.pushFragment(
             SubstitutionProcessingScreen.newInstance(
