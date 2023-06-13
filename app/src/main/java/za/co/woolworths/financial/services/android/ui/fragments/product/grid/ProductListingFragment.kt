@@ -141,6 +141,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        var isSearchByKeywordNavigation = false
         activity?.apply {
             arguments?.apply {
                 mSubCategoryName = getString(SUB_CATEGORY_NAME, "")
@@ -150,6 +151,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
                 mSearchTerm = getString(SEARCH_TERM, "")
                 mSortOption = getString(SORT_OPTION, "")
                 isChanelPage = getBoolean(IS_CHANEL_PAGE, false)
+                isSearchByKeywordNavigation = getBoolean(BUNDLE_NAVIGATION_FROM_SEARCH_BY_KEYWORD, false)
 
                 (getSerializable(BRAND_NAVIGATION_DETAILS) as? BrandNavigationDetails)?.let { brandNavigationDetails ->
                     mNavigationState = brandNavigationDetails.navigationState ?: ""
@@ -171,6 +173,13 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
             localProductBody.add(localBody)
             setProductBody()
             isBackPressed = false
+            callViewSearchResultEvent(isSearchByKeywordNavigation, mSearchTerm)
+        }
+    }
+
+    private fun callViewSearchResultEvent(isSearchByKeywordNavigation: Boolean?, searchTerm: String?) {
+        if (isSearchByKeywordNavigation == true) {
+            FirebaseAnalyticsEventHelper.viewSearchResult(searchTerm)
         }
     }
 
@@ -1820,22 +1829,26 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
         private const val SEARCH_TYPE = "SEARCH_TYPE"
         private const val SEARCH_TERM = "SEARCH_TERM"
         const val IS_BROWSING = "is_browsing"
+        const val BUNDLE_NAVIGATION_FROM_SEARCH_BY_KEYWORD = "isNavigationFromSearchByKeyword"
         private const val SORT_OPTION = "SORT_OPTION"
         private const val IS_CHANEL_PAGE = "IS_CHANEL_PAGE"
         private const val BRAND_NAVIGATION_DETAILS = "BRAND_NAVIGATION_DETAILS"
 
+        @JvmOverloads
         fun newInstance(
             searchType: ProductsRequestParams.SearchType?,
             sub_category_name: String?,
             searchTerm: String?,
             isBrowsing: Boolean,
-            sendDeliveryDetails: Boolean?
+            sendDeliveryDetails: Boolean?,
+            isNavigationFromSearchByKeyword: Boolean = false
         ) = ProductListingFragment().withArgs {
             putString(SEARCH_TYPE, searchType?.name)
             putString(SUB_CATEGORY_NAME, sub_category_name)
             putString(SEARCH_TERM, searchTerm)
             putBoolean(IS_BROWSING, isBrowsing)
             putBoolean(EXTRA_SEND_DELIVERY_DETAILS_PARAMS, sendDeliveryDetails ?: false)
+            putBoolean(BUNDLE_NAVIGATION_FROM_SEARCH_BY_KEYWORD, isNavigationFromSearchByKeyword)
         }
 
         fun newInstance(
