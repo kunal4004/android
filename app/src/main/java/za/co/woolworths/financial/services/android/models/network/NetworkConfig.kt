@@ -5,6 +5,7 @@ import android.location.Location
 import android.os.Build
 import com.awfs.coordination.BuildConfig
 import za.co.wigroup.androidutils.Util
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
@@ -51,6 +52,10 @@ open class NetworkConfig(private val appContextProvider: AppContextProviderInter
     }
 
     fun getAppVersion(): String= WoolworthsApplication.getAppVersionName()
+
+    fun getPageSize(): Int? {
+        return AppConfigSingleton.searchApiSettings?.pageSize
+    }
 
 
 }

@@ -21,6 +21,7 @@ import com.google.gson.Gson
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.*
@@ -70,6 +71,7 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
 
     private val isNetworkConnected: Boolean
         get() = NetworkManager.getInstance().isConnectedToNetwork(activity)
+    private var pageSize: Int? = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -94,6 +96,7 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         ViewCompat.setTranslationZ(view, 100f)
+        pageSize = AppConfigSingleton.searchApiSettings?.pageSize
         setUpToolbar()
         binding.incNoConnectionHandler.apply {
             mErrorHandlerView = ErrorHandlerView(activity, noConnectionLayout)
@@ -195,10 +198,11 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
         val visibleThreshold = 5
         if (!isLoading && totalItemCount <= lastVisibleItem + visibleThreshold) {
             if (productIsLoading()) return
-            val total = Utils.PAGE_SIZE.plus(numItemsInTotal)
+            val total = pageSize?.plus(numItemsInTotal)
             val start = mProductList?.size ?: 0
-            val end = start.plus(Utils.PAGE_SIZE)
-            isLoading = total < end
+            val end = pageSize?.let { start.plus(it) }
+            if (total != null && end != null)
+                isLoading = total < end
             if (isLoading) {
                 return
             }
@@ -691,7 +695,7 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
     }
 
     private fun calculatePageOffset() {
-        pageOffset += Utils.PAGE_SIZE
+        pageOffset += pageSize!!
         productRequestBody?.pageOffset = pageOffset
     }
 
