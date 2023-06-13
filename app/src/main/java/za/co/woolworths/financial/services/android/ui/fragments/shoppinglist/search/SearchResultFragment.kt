@@ -36,9 +36,13 @@ import za.co.woolworths.financial.services.android.ui.fragments.colorandsize.Col
 import za.co.woolworths.financial.services.android.ui.fragments.colorandsize.ColorAndSizeFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList.Companion.openShoppingList
+import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListDetailFragment.Companion.ARG_LIST_NAME
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_SESSION_TIMEOUT_440
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
+import za.co.woolworths.financial.services.android.util.analytics.dto.AddToWishListFirebaseEventData
+import za.co.woolworths.financial.services.android.util.analytics.dto.toAnalyticItem
 
 class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickListener,
     NetworkChangeListener, ColorAndSizeBottomSheetListener {
@@ -48,6 +52,7 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
     private var mSearchText: String? = ""
     private var isLoading = false
     private var mListId: String? = null
+    private var mListName: String? = null
     private var mGetProductDetail: Call<ProductDetailResponse>? = null
     private var selectedProduct: ProductList? = null
     private var mAddToListSize = 0
@@ -77,6 +82,7 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
         arguments?.apply {
             mSearchText = getString(MY_LIST_SEARCH_TERM, "")
             mListId = getString(MY_LIST_LIST_ID, "")
+            mListName = getString(ARG_LIST_NAME, "")
         }
         Utils.updateStatusBarBackground(activity)
         setProductBody()
@@ -353,7 +359,17 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
         binding.btnCheckOut.visibility = if (isLoading) View.GONE else View.VISIBLE
     }
 
+    private fun callAddToWishlistFirebaseEvent() {
+        val analyticProducts = productAdapter?.productList?.filter { it.itemWasChecked }?.map { it.toAnalyticItem(category = mSearchText) }
+        val addToWishListFirebaseEventData = AddToWishListFirebaseEventData(
+            shoppingListName = mListName,
+            products = analyticProducts
+        )
+        FirebaseAnalyticsEventHelper.addToWishlistEvent(addToWishListFirebaseEventData)
+    }
+
     fun onAddToListLoadComplete() {
+        callAddToWishlistFirebaseEvent()
         binding.pbLoadingIndicator.visibility = View.GONE
         binding.btnCheckOut.visibility = View.VISIBLE
         addToListLoadFail = false

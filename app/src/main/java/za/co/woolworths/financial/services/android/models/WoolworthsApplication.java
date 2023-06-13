@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.models;
 
-import static com.clarisite.mobile.StartupSettings.StartupSettingsBuilder.aSettingsBuilder;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
@@ -22,7 +21,6 @@ import androidx.lifecycle.ProcessLifecycleOwner;
 
 import com.awfs.coordination.BuildConfig;
 import com.awfs.coordination.R;
-import com.clarisite.mobile.Glassbox;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.imagepipeline.core.ImagePipelineConfig;
 import com.facebook.imagepipeline.core.ImageTranscoderType;
@@ -185,21 +183,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
         getTracker();
         bus = new RxBus();
         vtoSyncServer();
-        initializeGlassBoxSDK();
 
-    }
-
-    //GlassBox SDK for record screen session
-    private void initializeGlassBoxSDK() {
-        try {
-            Glassbox.start(aSettingsBuilder()
-                    .withApplicationCtx(this)
-                    .withAppId(AppConfigSingleton.getGlassBox().getAppId())
-                    .withReportUrl(AppConfigSingleton.getGlassBox().getReportUrl())
-                    .build());
-        } catch (Exception e) {
-            FirebaseManager.Companion.logException(e);
-        }
     }
 
     private void initializeAnalytics() {
