@@ -13,7 +13,7 @@ apply plugin: 'kotlin-parcelize'
 android {
 
     def major = "9"
-    def minor = "11"
+    def minor = "10"
     def fix = "2"
     def jobNumberProduction = 221
     def jobNumberQa = 705
