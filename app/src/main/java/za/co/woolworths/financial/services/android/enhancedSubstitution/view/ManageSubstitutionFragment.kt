@@ -30,13 +30,14 @@ import za.co.woolworths.financial.services.android.cart.view.SubstitutionChoice
 import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.*
 import za.co.woolworths.financial.services.android.enhancedSubstitution.view.SearchSubstitutionFragment.Companion.SEARCH_SCREEN_BACK_NAVIGATION
 import za.co.woolworths.financial.services.android.enhancedSubstitution.util.listener.ProductSubstitutionListListener
+import za.co.woolworths.financial.services.android.enhancedSubstitution.view.SearchSubstitutionFragment.Companion.ERROR_SEARCH_SCREEN_BACK_NAVIGATION
 import za.co.woolworths.financial.services.android.enhancedSubstitution.view.SearchSubstitutionFragment.Companion.SELECTED_SUBSTITUTED_PRODUCT
 import za.co.woolworths.financial.services.android.enhancedSubstitution.view.SearchSubstitutionFragment.Companion.SUBSTITUTION_ITEM_KEY
+import za.co.woolworths.financial.services.android.enhancedSubstitution.view.SubstitutionProcessingScreen.Companion.SUBSTITUTION_ERROR_SCREEN_BACK_NAVIGATION
 import za.co.woolworths.financial.services.android.enhancedSubstitution.viewmodel.ProductSubstitutionViewModel
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.network.Status
-import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.extension.onClick
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
@@ -62,7 +63,7 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
     private var item: Item? = null
 
     companion object {
-        private const val SELECTION_CHOICE = "SELECTION_CHOICE"
+        const val SELECTION_CHOICE = "SELECTION_CHOICE"
         const val COMMERCE_ITEM_ID = "COMMERCE_ITEM_ID"
         const val PRODUCT_ID = "PRODUCT_ID"
         const val SKU_ID = "SKU_ID"
@@ -105,17 +106,21 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
 
     private fun addFragmentResultListner() {
         setFragmentResultListener(SEARCH_SCREEN_BACK_NAVIGATION) { _, bundle ->
-            setFragmentResult(SELECTED_SUBSTITUTED_PRODUCT, bundle)
-            (activity as? BottomNavigationActivity)?.popFragment()
+            setFragmentResultForPreviousFragment(bundle)
         }
-        setFragmentResultListener(SEARCH_SCREEN_BACK_NAVIGATION) { _, bundle ->
-            setFragmentResult(SELECTED_SUBSTITUTED_PRODUCT, bundle)
-            (activity as? BottomNavigationActivity)?.popFragment()
+
+        setFragmentResultListener(SUBSTITUTION_ERROR_SCREEN_BACK_NAVIGATION) { _, bundle ->
+            setFragmentResultForPreviousFragment(bundle)
         }
-        setFragmentResultListener(SubstitutionProcessingScreen.SUBSTITUTION_ERROR_SCREEN_BACK_NAVIGATION) { _, bundle ->
-            setFragmentResult(SELECTED_SUBSTITUTED_PRODUCT, bundle)
-            (activity as? BottomNavigationActivity)?.popFragment()
+
+        setFragmentResultListener(ERROR_SEARCH_SCREEN_BACK_NAVIGATION) { _, bundle ->
+            setFragmentResultForPreviousFragment(bundle)
         }
+    }
+
+    private fun setFragmentResultForPreviousFragment(bundle: Bundle) {
+        setFragmentResult(SELECTED_SUBSTITUTED_PRODUCT, bundle)
+        (activity as? BottomNavigationActivity)?.popFragment()
     }
 
     fun initView() {
@@ -356,39 +361,46 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
     }
 
     private fun handleConfirmButton() {
-        if (binding.layoutManageSubstitution.rbShopperChoose.isChecked) {
-            setFragmentResult(
-                SELECTED_SUBSTITUTED_PRODUCT, bundleOf(
-                    LET_MY_SHOPPER_CHOOSE to true
-                )
-            )
-            (activity as? BottomNavigationActivity)?.popFragment()
-            return
-        }
-        NavigateToPdpScreenWithSelectedProduct()
+        val selectionChoice = if (binding.layoutManageSubstitution.rbOwnSubstitute.isChecked)
+            SubstitutionChoice.USER_CHOICE.name
+        else SubstitutionChoice.SHOPPER_CHOICE.name
+        callAddSubstitutionAPi(selectionChoice)
     }
 
-    private fun NavigateToPdpScreenWithSelectedProduct() {
-        if (commerceItemId.isEmpty()) {
-            /*navigate to pdp with selected product object and call add to cart api in order to add substitute there*/
-            val kiboProduct = ProductList()
-            kiboProduct.productName = item?.title
-            kiboProduct.externalImageRefV2 = item?.imageLink
-            kiboProduct.productId = item?.id
-
-            setFragmentResult(
-                SELECTED_SUBSTITUTED_PRODUCT, bundleOf(
-                    SUBSTITUTION_ITEM_KEY to kiboProduct
+    private fun callAddSubstitutionAPi(substitutionChoice: String) {
+        if (substitutionChoice == SubstitutionChoice.SHOPPER_CHOICE.name) {
+            if (commerceItemId.isEmpty()) {
+                setFragmentResult(
+                    SELECTED_SUBSTITUTED_PRODUCT, bundleOf(
+                        LET_MY_SHOPPER_CHOOSE to true
+                    )
                 )
-            )
-            (activity as? BottomNavigationActivity)?.popFragment()
-        } else {
-            /*call add substitute api here since we have commerceId because product is already added in cart */
-            callAddSubstitutionAPi()
-        }
-    }
+                (activity as? BottomNavigationActivity)?.popFragment()
+                return
+            }
 
-    private fun callAddSubstitutionAPi() {
+        }
+
+        if (substitutionChoice == SubstitutionChoice.USER_CHOICE.name) {
+            if (commerceItemId.isEmpty()) {
+                /*navigate to pdp with selected product object and call add to cart api in order to add substitute there*/
+                val kiboProduct = ProductList()
+                kiboProduct.productName = item?.title
+                kiboProduct.externalImageRefV2 = item?.imageLink
+                kiboProduct.productId = item?.id
+
+                setFragmentResult(
+                    SELECTED_SUBSTITUTED_PRODUCT, bundleOf(
+                        SUBSTITUTION_ITEM_KEY to kiboProduct
+                    )
+                )
+                (activity as? BottomNavigationActivity)?.popFragment()
+                return
+            }
+
+        }
+
+
         val addSubstitutionRequest = AddSubstitutionRequest(
             substitutionSelection = "",
             substitutionId = item?.id,
@@ -408,7 +420,7 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
                         /* if we get form exception need to show error screen*/
                         resource.data?.data?.getOrNull(0)?.formExceptions?.getOrNull(0)?.let {
                             if (it.message?.isNotEmpty() == true) {
-                                showErrorScreen()
+                                showErrorScreen(substitutionChoice)
                             }
                             return@observe
                         }
@@ -418,35 +430,45 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
                             SELECTED_SUBSTITUTED_PRODUCT,
                             bundleOf(SearchSubstitutionFragment.SUBSTITUTION_ITEM_ADDED to true)
                         )
+                        removeObserver()
                         (activity as? BottomNavigationActivity)?.popFragment()
                     }
 
                     Status.ERROR -> {
                         binding.progressBar.visibility = GONE
-                        showErrorScreen()
+                        showErrorScreen(substitutionChoice)
                     }
                 }
             }
         })
     }
 
-    fun showErrorScreen() {
-        productSubstitutionViewModel.addSubstitutionResponse.removeObservers(viewLifecycleOwner)
+    fun showErrorScreen(substitutionChoice: String) {
+        removeObserver()
         (activity as? BottomNavigationActivity)?.pushFragment(
             SubstitutionProcessingScreen.newInstance(
                 commerceItemId,
-                skuId
+                item?.id,
+                substitutionChoice
             )
         )
     }
 
+    private fun removeObserver() {
+        productSubstitutionViewModel.addSubstitutionResponse.removeObservers(viewLifecycleOwner)
+    }
+
     private fun confirmDontWantSubstitutionForProduct() {
-        setFragmentResult(
-            SELECTED_SUBSTITUTED_PRODUCT, bundleOf(
-                DONT_WANT_SUBSTITUTE_LISTENER to true
+        if (commerceItemId.isEmpty()) {
+            setFragmentResult(
+                SELECTED_SUBSTITUTED_PRODUCT, bundleOf(
+                    DONT_WANT_SUBSTITUTE_LISTENER to true
+                )
             )
-        )
-        (activity as? BottomNavigationActivity)?.popFragment()
+            (activity as? BottomNavigationActivity)?.popFragment()
+        } else {
+            callAddSubstitutionAPi(SubstitutionChoice.NO.name)
+        }
     }
 
     private fun openSubstitutionSearchScreen() {

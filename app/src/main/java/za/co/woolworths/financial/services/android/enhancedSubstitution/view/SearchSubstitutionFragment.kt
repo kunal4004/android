@@ -68,6 +68,7 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
         const val SEARCH_SCREEN_BACK_NAVIGATION = "SEARCH_SCREEN_BACK_NAVIGATION"
         const val SUBSTITUTION_ITEM_KEY = "SUBSTITUTION_ITEM_KEY"
         const val SUBSTITUTION_ITEM_ADDED = "SUBSTITUTION_ITEM_ADDED"
+        const val ERROR_SEARCH_SCREEN_BACK_NAVIGATION = "ERROR_SEARCH_SCREEN_BACK_NAVIGATION"
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -78,7 +79,7 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
 
     private fun addFragmentListener() {
         setFragmentResultListener(SubstitutionProcessingScreen.SUBSTITUTION_ERROR_SCREEN_BACK_NAVIGATION) { _, bundle ->
-            setFragmentResult(SELECTED_SUBSTITUTED_PRODUCT, bundle)
+            setFragmentResult(ERROR_SEARCH_SCREEN_BACK_NAVIGATION, bundle)
             (activity as? BottomNavigationActivity)?.popFragment()
         }
     }
@@ -337,7 +338,7 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
                         /* if we get form exception need to show error popup*/
                         resource.data?.data?.getOrNull(0)?.formExceptions?.getOrNull(0)?.let {
                             if (it.message?.isNotEmpty() == true) {
-                                showErrorScreen()
+                                showErrorScreen(SubstitutionChoice.USER_CHOICE.name)
                             }
                             return@observe
                         }
@@ -348,19 +349,20 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
 
                     Status.ERROR -> {
                         binding.progressBar.visibility = GONE
-                        showErrorScreen()
+                        showErrorScreen(SubstitutionChoice.USER_CHOICE.name)
                     }
                 }
             }
         })
     }
 
-    fun showErrorScreen() {
+    fun showErrorScreen(selectionChoice: String) {
         productSubstitutionViewModel.addSubstitutionResponse.removeObservers(viewLifecycleOwner)
         (activity as? BottomNavigationActivity)?.pushFragment(
             SubstitutionProcessingScreen.newInstance(
                 commerceItemId,
-                productList?.sku
+                productList?.sku,
+                selectionChoice
             )
         )
     }

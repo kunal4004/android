@@ -374,7 +374,7 @@ class ProductDetailsFragment :
         }
 
         setFragmentResultListener(SearchSubstitutionFragment.SELECTED_SUBSTITUTED_PRODUCT) { _, bundle ->
-            // User Selects product from search screen and came back to pdp
+            // User Selects product from search  or kibo and came back to pdp
             bundle?.apply {
                 if (bundle.containsKey(SearchSubstitutionFragment.SUBSTITUTION_ITEM_KEY)) {
                     // item is not added in cart yet i.e. commerce id is empty so need to click on add to cart in order to add substitute
@@ -1700,6 +1700,10 @@ class ProductDetailsFragment :
                     resource.data?.data?.getOrNull(0)?.substitutionInfo?.displayName
                 selectionChoice = SubstitutionChoice.USER_CHOICE.name
                 substitutionId =  resource.data?.data?.getOrNull(0)?.substitutionInfo?.id
+            } else if (resource.data?.data?.getOrNull(0)?.substitutionSelection == SubstitutionChoice.NO.name) {
+                txtSubstitutionTitle.text = getString(R.string.dont_substitute)
+                selectionChoice = SubstitutionChoice.NO.name
+                substitutionId = ""
             } else {
                 txtSubstitutionTitle.text = getString(R.string.substitute_default)
                 selectionChoice = SubstitutionChoice.SHOPPER_CHOICE.name
