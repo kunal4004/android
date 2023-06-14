@@ -172,9 +172,6 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
                                 showEmptyErrorScreen()
                                 return@observe
                             }
-                            itemList?.filter {
-                                it.Visibility == ALL || it.Visibility == DASH_ONLY
-                            }
                             prepareStockInventoryCallRequest(itemList)
                         }
                     }
