@@ -59,17 +59,15 @@
         android:layout_above="@+id/removeItems"
         android:layout_marginVertical="@dimen/eighteen_dp">
 
-        <TextView
-            style="@style/open_sans_regular_black"
+        <androidx.compose.ui.platform.ComposeView
+            android:id="@+id/saveToListTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/save_item_to_list_text"
-            android:textSize="@dimen/eleven_sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <CheckBox
+        <androidx.compose.ui.platform.ComposeView
             android:id="@+id/saveToListCheckBox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -141,8 +141,6 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
     private var oldNickName: String? = ""
 
     companion object {
-        const val SCREEN_NAME_EDIT_ADDRESS: String = "SCREEN_NAME_EDIT_ADDRESS"
-        const val SCREEN_NAME_ADD_NEW_ADDRESS: String = "SCREEN_NAME_ADD_NEW_ADDRESS"
         const val REGEX_NICK_NAME: String = "^$|^[a-zA-Z0-9\\s<!>@$&().+,-/\"']+$"
         const val ADDRESS_NICK_NAME_MAX_CHAR: Int = 40
     }
