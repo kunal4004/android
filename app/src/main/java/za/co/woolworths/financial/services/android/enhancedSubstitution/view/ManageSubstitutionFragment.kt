@@ -178,6 +178,7 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
                                 showEmptyErrorScreen()
                                 return@observe
                             }
+                            binding.errorMessage.visibility = VISIBLE
                             prepareStockInventoryCallRequest(itemList)
                         }
                     }
@@ -267,6 +268,7 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
 
                     Status.SUCCESS -> {
                         hideShimmerView()
+                        binding.errorMessage.visibility = VISIBLE
                         val skuInventory = resource.data?.skuInventory
                         configQuantity?.let {
                             skuInventory?.removeAll {
