@@ -39,7 +39,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/tvProofIncomeDocument" />
 
 
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                <TextView
                     style="@style/take_photo_document_desc_style"
                     android:text="@string/favourite_delivery_location_description"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -80,10 +80,11 @@
                         android:gravity="center_vertical"
                         android:orientation="vertical">
 
-                        <za.co.woolworths.financial.services.android.ui.views.WTextView
+                        <TextView
                             android:id="@+id/tvDeliveringTo"
                             style="@style/style_cart_delivery_to_text"
                             android:layout_width="wrap_content"
+                            android:fontFamily="@font/opensans_semi_bold"
                             android:layout_height="wrap_content"
                             android:layout_marginRight="@dimen/four_dp"
                             android:gravity="center_vertical"
@@ -177,7 +178,7 @@
 
                     <TextView
                         android:layout_width="wrap_content"
-                        style="@style/opensans_regular_13_black"
+                        style="@style/opensans_semi_bold_13_black_text_style"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:layout_marginLeft="@dimen/twenty_four_dp"
@@ -228,7 +229,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/tvProofIncomeDocument" />
 
 
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                <TextView
                     android:id="@+id/tvLinkedDevicesDesc"
                     style="@style/take_photo_document_desc_style"
                     android:text="@string/my_preferences_linked_devices_desc"
@@ -253,7 +254,7 @@
 
                     <TextView
                         android:id="@+id/linkThisDeviceTextView"
-                        style="@style/opensans_regular_13_black"
+                        style="@style/opensans_semi_bold_13_black_text_style"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
@@ -306,7 +307,7 @@
 
                     <TextView
                         android:id="@+id/tvMyPrefManageDevicesTitle"
-                        style="@style/opensans_regular_13_black"
+                        style="@style/opensans_semi_bold_13_text_style"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"

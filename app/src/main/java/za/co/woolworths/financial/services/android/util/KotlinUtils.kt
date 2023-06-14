@@ -321,11 +321,11 @@ class KotlinUtils {
         fun capitaliseFirstLetter(str: String?): CharSequence? {
             if (str.isNullOrEmpty())
                 return str
-            val value = str.toLowerCase()
+            val value = str.lowercase()
             val words = value.split(" ").toMutableList()
             var output = ""
             for (word in words) {
-                output += word.capitalize() + " "
+                output += word.uppercase() + " "
             }
             return output.trim()
         }
@@ -338,7 +338,7 @@ class KotlinUtils {
             var output = words[0].uppercase() + " "
             words.removeAt(0)
             for (word in words) {
-                output += word.capitalize() + " "
+                output += word.uppercase() + " "
             }
             return output.trim()
         }

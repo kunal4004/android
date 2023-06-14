@@ -21,7 +21,6 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.contact_us.enquiry.list.EnquiriesListViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.contact_us.enquiry.list.EnquiriesListViewModel.Companion.EMAIL_US_REQUEST
-import za.co.woolworths.financial.services.android.ui.fragments.contact_us.enquiry.list.ValidationErrors
 import za.co.woolworths.financial.services.android.ui.fragments.contact_us.enquiry.loading.EmailUsLoadingActivity
 import za.co.woolworths.financial.services.android.ui.wfs.contact_us.fragment.ContactUsSelectEmailEnquiryTypeFragment
 import za.co.woolworths.financial.services.android.ui.wfs.contact_us.viewmodel.ContactUsViewModel
@@ -76,20 +75,22 @@ class ContactUsEmailUsFragment : Fragment(), View.OnClickListener, TextWatcher {
         viewModel.validationErrors?.observe(viewLifecycleOwner) {
             binding.apply {
                 when (it) {
-                    ValidationErrors.EmailNotValid -> {
+                    EnquiriesListViewModel.ValidationErrors.EmailNotValid -> {
                         binding.etEmailUsEmail.background = ContextCompat.getDrawable(requireActivity(), R.drawable.input_error_background)
                         binding.tvEmailUsEmailValidation.apply {
                             setTextColor(Color.RED)
                         }
 
                     }
-                    ValidationErrors.EnquiryNotValid -> {
+                    EnquiriesListViewModel.ValidationErrors.EnquiryNotValid -> {
                         tvEmailUsEnquiry.setTextColor(resources.getColor(R.color.red))
 
                     }
-                    ValidationErrors.ValidationSuccess -> {
+                    EnquiriesListViewModel.ValidationErrors.ValidationSuccess -> {
                         btnEmailUs.isEnabled = true
                     }
+
+                    else -> Unit
                 }
             }
         }

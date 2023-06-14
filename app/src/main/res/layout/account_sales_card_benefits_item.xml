@@ -17,7 +17,7 @@
 
     <TextView
         android:id="@+id/salesBenefitTitleTextView"
-        style="@style/opensans_regular_13_black"
+        style="@style/opensans_semi_bold_13_black_text_style"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
