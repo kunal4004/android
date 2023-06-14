@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
@@ -80,7 +81,7 @@ class UnsellableItemsBottomSheetDialog : WBottomSheetDialogFragment(),
         }
         val checkedState = mutableStateOf(false)
         binding.saveToListCheckBox.setContent {
-            Checkbox(checked = checkedState.value, onCheckedChange = {
+            Checkbox(colors = CheckboxDefaults.colors(Color.Black) ,checked = checkedState.value, onCheckedChange = {
                 checkedState.value = it
                 onCheckBoxChanged(it)
             }
