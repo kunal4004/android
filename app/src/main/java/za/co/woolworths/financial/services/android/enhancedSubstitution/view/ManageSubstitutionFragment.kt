@@ -105,13 +105,16 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
 
     private fun addFragmentResultListner() {
         setFragmentResultListener(SEARCH_SCREEN_BACK_NAVIGATION) { _, bundle ->
-            setFragmentResult(SELECTED_SUBSTITUTED_PRODUCT, bundle)
-            (activity as? BottomNavigationActivity)?.popFragment()
+            navigateToPreviousFragment(bundle)
         }
         setFragmentResultListener(SEARCH_SCREEN_BACK_NAVIGATION) { _, bundle ->
-            setFragmentResult(SELECTED_SUBSTITUTED_PRODUCT, bundle)
-            (activity as? BottomNavigationActivity)?.popFragment()
+            navigateToPreviousFragment(bundle)
         }
+    }
+
+    private fun navigateToPreviousFragment(bundle:Bundle) {
+        setFragmentResult(SELECTED_SUBSTITUTED_PRODUCT, bundle)
+        (activity as? BottomNavigationActivity)?.popFragment()
     }
 
     fun initView() {
