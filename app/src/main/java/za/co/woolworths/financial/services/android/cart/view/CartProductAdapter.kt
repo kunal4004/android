@@ -41,6 +41,8 @@ import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.capitaliseFirstLetter
 import za.co.woolworths.financial.services.android.util.NetworkManager
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.analytics.dto.AddToWishListFirebaseEventData
+import za.co.woolworths.financial.services.android.util.analytics.dto.toAnalyticItem
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.util.*
@@ -580,7 +582,8 @@ class CartProductAdapter(
                         addToListRequests.add(listItem)
                     }
                 }
-                openShoppingList(mContext, addToListRequests, "", false)
+                val addToWishListEventData = AddToWishListFirebaseEventData(products = commerceItems?.map { it.toAnalyticItem() })
+                openShoppingList(mContext, addToListRequests, "", false, addToWishListEventData = addToWishListEventData)
             }
             substitutionLayout.setOnClickListener {
                 // show info dialog
