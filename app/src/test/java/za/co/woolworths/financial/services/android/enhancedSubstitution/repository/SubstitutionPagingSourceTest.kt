@@ -24,7 +24,7 @@ class SubstitutionPagingSourceTest {
     private lateinit var apiHelper: SubstitutionApiHelper
 
     @Mock
-    private lateinit var _pagingResponse: MutableLiveData<PagingResponse>
+    private lateinit var _pagingResponse: MutableLiveData<PagingResponse?>
 
     private lateinit var substitutionPagingSource: SubstitutionPagingSource
     private lateinit var requestParams: ProductsRequestParams

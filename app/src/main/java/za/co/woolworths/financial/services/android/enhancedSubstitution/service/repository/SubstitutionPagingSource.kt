@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import za.co.woolworths.financial.services.android.enhancedSubstitution.service.network.SubstitutionApiHelper
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.repository.ProductSubstitutionRepository.Companion.PAGE_SIZE
 import za.co.woolworths.financial.services.android.models.dto.PagingResponse
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
@@ -11,21 +12,23 @@ import za.co.woolworths.financial.services.android.models.dto.ProductsRequestPar
 class SubstitutionPagingSource(
     private var apiHelper: SubstitutionApiHelper,
     private var requestParams: ProductsRequestParams,
-    private var _pagingResponse: MutableLiveData<PagingResponse>,
+    private var _pagingResponse: MutableLiveData<PagingResponse?>,
 ) :
     PagingSource<Int, ProductList>() {
+
+
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, ProductList> {
         return try {
             val position = params.key ?: 0
             val response = apiHelper.getSearchedProducts(requestParams)
             val products: List<ProductList> = response.products
-            val pagingResponse = response?.pagingResponse
+            val pagingResponse = response.pagingResponse
             _pagingResponse.value = pagingResponse
-            val nextKey = if (products.isEmpty() || products?.size!! <= 60) {
+            val nextKey = if (products.isEmpty() || products.size <= PAGE_SIZE) {
                 null
             } else {
-                position + 60
+                position + PAGE_SIZE
             }
 
             LoadResult.Page(

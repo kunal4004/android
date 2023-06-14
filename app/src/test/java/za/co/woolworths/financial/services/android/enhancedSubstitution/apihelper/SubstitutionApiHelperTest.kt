@@ -22,6 +22,8 @@ import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhanceS
 import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhanceSubstitutionHelperTest.Companion.SUBSTITUTION_ID
 
 import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.AddSubstitutionRequest
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.GetKiboProductRequest
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.Product
 import za.co.woolworths.financial.services.android.models.network.ApiInterface
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -48,7 +50,7 @@ class SubstitutionApiHelperTest {
         mockWebServer.enqueue(mockResponse)
         val response = apiHelper.getSubstitution(SESSION_TOKEN, DEVICE_TOKEN, PRODUCT_ID)
         mockWebServer.takeRequest()
-        Assert.assertEquals(null , response.body()?.data?.isNullOrEmpty())
+        Assert.assertEquals(null , response.body()?.data)
     }
 
     @Test
@@ -85,7 +87,7 @@ class SubstitutionApiHelperTest {
             apiHelper.fetchDashInventorySKUForStore(SESSION_TOKEN, DEVICE_TOKEN, STORE_ID, SKU_ID)
         mockWebServer.takeRequest()
         Assert.assertEquals(1, response.body()?.skuInventory?.size)
-        Assert.assertNotNull(response?.body())
+        Assert.assertNotNull(response.body())
     }
 
     @Test
@@ -96,8 +98,8 @@ class SubstitutionApiHelperTest {
         val response =
             apiHelper.fetchDashInventorySKUForStore(SESSION_TOKEN, DEVICE_TOKEN, STORE_ID, SKU_ID)
         mockWebServer.takeRequest()
-        Assert.assertNotNull(response?.body())
-        Assert.assertNotEquals("473", response?.body()?.storeId)
+        Assert.assertNotNull(response.body())
+        Assert.assertNotEquals("473", response.body()?.storeId)
     }
 
     @Test
@@ -122,8 +124,8 @@ class SubstitutionApiHelperTest {
         val response =
             apiHelper.addSubstitution(SESSION_TOKEN, DEVICE_TOKEN, addSubstitutionRequest)
         mockWebServer.takeRequest()
-        Assert.assertNotNull(response?.body())
-        Assert.assertEquals(true, response?.body()?.data.isNullOrEmpty())
+        Assert.assertNotNull(response.body())
+        Assert.assertEquals(true, response.body()?.data.isNullOrEmpty())
     }
 
     @Test
@@ -167,8 +169,8 @@ class SubstitutionApiHelperTest {
             "105-plist3620006-false-true"
         )
         mockWebServer.takeRequest()
-        Assert.assertEquals(null, response?.pagingResponse)
-        Assert.assertEquals(null, response?.products)
+        Assert.assertEquals(null, response.pagingResponse)
+        Assert.assertEquals(null, response.products)
     }
 
     @Test
@@ -230,6 +232,66 @@ class SubstitutionApiHelperTest {
         )
         mockWebServer.takeRequest()
         Assert.assertEquals(1, response.products?.size)
+    }
+
+    @Test
+    fun getkiboApi_returnProductViewResponse() = runTest {
+        val mockResponse = MockResponse()
+        mockResponse.setResponseCode(200)
+        mockResponse.setBody(KIBO_RESPONSE)
+        mockWebServer.enqueue(mockResponse)
+        val product = Product("20018702","20018702")
+        val list = ArrayList<Product>()
+        list.add(product)
+        val getKiboRequest = GetKiboProductRequest(list)
+        val response = apiHelper.getKiboProductsFromResponse(
+            SESSION_TOKEN,
+            DEVICE_TOKEN,
+            getKiboRequest
+        )
+        mockWebServer.takeRequest()
+        Assert.assertEquals(false, response.body()?.data?.responses?.isEmpty())
+        Assert.assertEquals(1, response.body()?.data?.responses?.getOrNull(0)?.actions?.getOrNull(0)?.items?.size)
+    }
+
+    @Test
+    fun getkiboApi_returnWrongProductViewResponse() = runTest {
+        val mockResponse = MockResponse()
+        mockResponse.setResponseCode(200)
+        mockResponse.setBody(WRONG_KIBO_RESPONSE)
+        mockWebServer.enqueue(mockResponse)
+        val product = Product("20018702","20018702")
+        val list = ArrayList<Product>()
+        list.add(product)
+        val kiboProductRequest = GetKiboProductRequest(list)
+        val response = apiHelper.getKiboProductsFromResponse(
+            SESSION_TOKEN,
+            DEVICE_TOKEN,
+            kiboProductRequest
+        )
+        mockWebServer.takeRequest()
+        Assert.assertEquals(true,
+            response.body()?.data?.responses?.getOrNull(0)?.actions?.getOrNull(0)?.items.isNullOrEmpty())
+    }
+
+    @Test
+    fun getkiboApi_returnNullResponse() = runTest {
+        val mockResponse = MockResponse()
+        mockResponse.setResponseCode(200)
+        mockResponse.setBody("{}")
+        mockWebServer.enqueue(mockResponse)
+        val product = Product("20018702","20018702")
+        val list = ArrayList<Product>()
+        list.add(product)
+        val kiboProductRequest = GetKiboProductRequest(list)
+        val response = apiHelper.getKiboProductsFromResponse(
+            SESSION_TOKEN,
+            DEVICE_TOKEN,
+            kiboProductRequest
+        )
+        mockWebServer.takeRequest()
+        Assert.assertEquals(null,
+            response.body()?.data)
     }
 
     @After
@@ -396,6 +458,62 @@ class SubstitutionApiHelperTest {
                 "        \"numItemsOnPage\": 2,\n" +
                 "        \"numItemsInTotal\": 2,\n" +
                 "        \"numPages\": 1\n" +
+                "    },\n" +
+                "    \"response\": {\n" +
+                "        \"code\": \"-1\",\n" +
+                "        \"desc\": \"Success\"\n" +
+                "    },\n" +
+                "    \"httpCode\": 200\n" +
+                "}"
+
+        private const val KIBO_RESPONSE = "{\n" +
+                "    \"data\": {\n" +
+                "        \"responses\": [\n" +
+                "            {\n" +
+                "                \"actions\": [\n" +
+                "                    {\n" +
+                "                        \"items\": [\n" +
+                "                            {\n" +
+                "                                \"_affinity\": 58.61,\n" +
+                "                                \"slotIndex\": 1,\n" +
+                "                                \"itemGroupId\": \"20018702\",\n" +
+                "                                \"id\": \"20018702\",\n" +
+                "                                \"ratings\": 0,\n" +
+                "                                \"title\": \"White Thick Slice Bread 700 g\",\n" +
+                "                                \"imageLink\": \"https://assets.woolworthsstatic.co.za/White-Thick-Slice-Bread-700-g-20018702.jpg?V=W7DN&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDE0LTA2LTA1LzIwMDE4NzAyX2hlcm8uanBnIn0&\",\n" +
+                "                                \"priceRange\": \"FALSE\",\n" +
+                "                                \"link\": \"/prod/Food/Bread-Bakery-Desserts/Bread-Rolls-Wraps-Bagels/Bread/White-Bread/White-Thick-Slice-Bread-700-g/_/A-20018702\",\n" +
+                "                                \"plist3620006\": 21,\n" +
+                "\"plist3620009\": 16.69,\n" +
+                "                                \"plist3620008\": 16.69\n" +
+                "                            }\n" +
+                "                        ]\n" +
+                "\n" +
+                "                    }\n" +
+                "                ]\n" +
+                "            }\n" +
+                "        ]\n" +
+                "    },\n" +
+                "    \"response\": {\n" +
+                "        \"code\": \"-1\",\n" +
+                "        \"desc\": \"Success\"\n" +
+                "    },\n" +
+                "    \"httpCode\": 200\n" +
+                "}"
+
+        private const val WRONG_KIBO_RESPONSE = "{\n" +
+                "    \"data\": {\n" +
+                "        \"responses\": [\n" +
+                "            {\n" +
+                "                \"actions\": [\n" +
+                "                    {\n" +
+                "                        \"items\": [\n" +
+                "                        ]\n" +
+                "\n" +
+                "                    }\n" +
+                "                ]\n" +
+                "            }\n" +
+                "        ]\n" +
                 "    },\n" +
                 "    \"response\": {\n" +
                 "        \"code\": \"-1\",\n" +

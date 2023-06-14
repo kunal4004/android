@@ -20,9 +20,7 @@ import org.mockito.MockitoAnnotations
 import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhanceSubstitutionHelperTest
 import za.co.woolworths.financial.services.android.enhancedSubstitution.apihelper.SubstitutionApiHelperTest
 import za.co.woolworths.financial.services.android.enhancedSubstitution.getOrAwaitValue
-import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.AddSubstitutionRequest
-import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.AddSubstitutionResponse
-import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.ProductSubstitution
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.*
 import za.co.woolworths.financial.services.android.enhancedSubstitution.service.repository.ProductSubstitutionRepository
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse
 import za.co.woolworths.financial.services.android.models.network.Resource
@@ -43,6 +41,10 @@ class ProductSubstitutionViewModelTest {
 
     @Mock
     private lateinit var addSubstitutionResponse: AddSubstitutionResponse
+
+    @Mock
+    private lateinit var kiboProductResponse: KiboProductResponse
+
 
     @get:Rule
     val testInstantTaskExecutorRule: TestRule = InstantTaskExecutorRule()
@@ -118,7 +120,6 @@ class ProductSubstitutionViewModelTest {
             EnhanceSubstitutionHelperTest.SUBSTITUTION_ID,
             EnhanceSubstitutionHelperTest.COMMARCE_ITEM_ID
         )
-
         `when`(
             productSubstitutionRepository
                 .addSubstitution(addSubstitutionRequest)
@@ -139,7 +140,6 @@ class ProductSubstitutionViewModelTest {
             EnhanceSubstitutionHelperTest.SUBSTITUTION_ID,
             EnhanceSubstitutionHelperTest.COMMARCE_ITEM_ID
         )
-
         `when`(
             productSubstitutionRepository
                 .addSubstitution(addSubstitutionRequest)
@@ -149,6 +149,21 @@ class ProductSubstitutionViewModelTest {
         sut.addSubstitutionForProduct(addSubstitutionRequest)
         testDispatcher.scheduler.advanceUntilIdle()
         val result = sut.addSubstitutionResponse.getOrAwaitValue()
+        Assert.assertEquals(R.string.error_unknown, result.peekContent().message)
+    }
+
+    @Test
+    fun getKibo_withError() = runTest {
+        val getProductRequest = GetKiboProductRequest(EnhanceSubstitutionHelperTest.prepareKiboProductRequest())
+        `when`(
+            productSubstitutionRepository
+                .fetchKiboProducts(getProductRequest)
+        ).thenReturn(Resource.error(R.string.error_unknown, null))
+
+        val sut = ProductSubstitutionViewModel(repository = productSubstitutionRepository)
+        sut.getKiboProducts(getProductRequest)
+        testDispatcher.scheduler.advanceUntilIdle()
+        val result = sut.kiboProductResponse.getOrAwaitValue()
         Assert.assertEquals(R.string.error_unknown, result.peekContent().message)
     }
 

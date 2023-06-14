@@ -49,7 +49,7 @@ class ProductSubstitutionRepository @Inject constructor(private var substitution
 
     fun getAllSearchedSubstitutions(
         requestParams: ProductsRequestParams,
-        _pagingResponse: MutableLiveData<PagingResponse>,
+        _pagingResponse: MutableLiveData<PagingResponse?>,
     ) = Pager(
         config = PagingConfig(
             pageSize = PAGE_SIZE,

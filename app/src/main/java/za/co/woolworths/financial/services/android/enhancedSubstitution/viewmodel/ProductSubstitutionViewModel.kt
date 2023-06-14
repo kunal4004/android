@@ -45,8 +45,7 @@ class ProductSubstitutionViewModel @Inject constructor(
         get() = _stockInventoryResponse
 
 
-    val _pagingResponse = MutableLiveData<PagingResponse>()
-
+    val _pagingResponse = MutableLiveData<PagingResponse?>()
 
     fun getProductSubstitution(productId: String?) {
         viewModelScope.launch {
