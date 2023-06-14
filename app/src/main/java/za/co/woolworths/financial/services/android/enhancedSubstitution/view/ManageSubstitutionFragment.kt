@@ -198,7 +198,7 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
             recyclerView.visibility = GONE
         }
         disableConfirmButton()
-        binding.errorMessageLayout.visibility = VISIBLE
+        binding.errorMessage.visibility = VISIBLE
         binding.errorMessage.makeLinks(
             Pair(getString(R.string.tap_to_retry), OnClickListener {
                 getKiboList()

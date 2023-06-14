@@ -47,7 +47,6 @@
         android:id="@+id/errorMessageLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/errorMessage"
         app:layout_constraintStart_toStartOf="parent"
         tools:visibility="visible" />
