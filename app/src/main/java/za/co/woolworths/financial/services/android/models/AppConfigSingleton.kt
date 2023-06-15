@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.models
 
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.dto.RatingsAndReviews
-import za.co.woolworths.financial.services.android.models.dto.SearchApiSettings
 import za.co.woolworths.financial.services.android.models.dto.app_config.*
 import za.co.woolworths.financial.services.android.models.dto.app_config.account_options.ConfigAccountOptions
 import za.co.woolworths.financial.services.android.models.dto.app_config.balance_protection_insurance.ConfigBalanceProtectionInsurance
@@ -75,8 +74,6 @@ object AppConfigSingleton {
     @JvmStatic
     var glassBox : GlassBox? = null
     var bnplConfig : BnplConfig? = null
-    @JvmStatic
-    var searchApiSettings : SearchApiSettings? = null
 
     init {
         initialiseFromCache()
@@ -241,11 +238,6 @@ object AppConfigSingleton {
                     isBnplRequiredInThisVersion =
                         Utils.isFeatureEnabled(minimumSupportedAppBuildNumber)
                     bnplConfig = this
-                }
-            }
-            appConfig.searchApiSettings?.apply {
-                pageSize?.let {
-                    searchApiSettings = this
                 }
             }
         }

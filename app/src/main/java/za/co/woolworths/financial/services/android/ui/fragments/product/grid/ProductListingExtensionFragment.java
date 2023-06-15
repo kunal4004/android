@@ -17,7 +17,6 @@ import java.util.List;
 import kotlin.jvm.functions.Function3;
 import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.IResponseListener;
-import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
 import za.co.woolworths.financial.services.android.models.dto.PagingResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.ProductView;
@@ -40,8 +39,6 @@ public class ProductListingExtensionFragment extends BaseFragmentBinding<GridLay
     private Call<ProductView> retrieveProduct;
 
     private GridNavigator mNavigator;
-
-    private int pageSize = 0;
 
     public ProductListingExtensionFragment(@NonNull Function3<? super LayoutInflater, ? super ViewGroup, ? super Boolean, ? extends GridLayoutBinding> inflate) {
         super(inflate);
@@ -160,11 +157,7 @@ public class ProductListingExtensionFragment extends BaseFragmentBinding<GridLay
     }
 
     private void calculatePageOffset() {
-        pageSize = AppConfigSingleton.getSearchApiSettings().getPageSize();
-        if (pageSize != 0)
-            pageOffset = pageOffset + pageSize;
-        else
-            pageOffset = pageOffset + Utils.PAGE_SIZE;
+        pageOffset = pageOffset + Utils.PAGE_SIZE;
         getProductRequestBody().setPageOffset(pageOffset);
     }
 
