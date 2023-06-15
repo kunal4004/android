@@ -92,6 +92,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.shop.Foo
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.ProductNotAvailableForCollectionDialog
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.BaseProductUtils
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.ColourSizeVariants
+import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListDetailFragment.Companion.ADD_TO_CART_SUCCESS_RESULT
 import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.LockableNestedScrollViewV2
@@ -139,7 +140,6 @@ import za.co.woolworths.financial.services.android.util.pickimagecontract.PickIm
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.io.File
 import javax.inject.Inject
-import kotlin.collections.get
 import kotlin.collections.set
 
 
@@ -296,7 +296,7 @@ class ProductDetailsFragment :
         mFuseLocationAPISingleton = FuseLocationAPISingleton
         binding.initViews()
         setUpConfirmAddressViewModel()
-        addFragmentListener()
+        addFragmentListner()
         setUniqueIds()
         productDetails?.let { addViewItemEvent(it) }
         setUpCartCountPDP()
@@ -319,18 +319,11 @@ class ProductDetailsFragment :
         }
     }
 
-    private fun addFragmentListener() {
+    private fun addFragmentListner() {
         setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_CLICK_RESULT) { _, _ ->
             // As User selects to change the delivery location. So we will call confirm place API and will change the users location.
             binding.getUpdatedValidateResponse()
         }
-
-        KotlinUtils.setAddToListFragmentResultListener(
-            ADD_TO_SHOPPING_LIST_REQUEST_CODE,
-            requireActivity(),
-            viewLifecycleOwner,
-            binding.productLayout
-        ) {}
     }
 
     //firebase event view_item
@@ -2186,27 +2179,25 @@ class ProductDetailsFragment :
                 isUserBrowsing)
         } else if (getSelectedSku() != null) {
             activity?.apply {
-                val listOfItems = ArrayList<AddToListRequest>(0)
+                val item = AddToListRequest()
                 getSelectedSku()?.let {
-                    listOfItems.add(
-                        it.toAddToListRequest().apply {
-                            quantity = "1"
-                            isGWP = !productDetails?.freeGift.isNullOrEmpty()
-                        }
-                    )
+                    item.apply {
+                        quantity = "1"
+                        catalogRefId = it.sku
+                        giftListId = it.sku
+                        skuID = it.sku
+                    }
+                }
+                val listOfItems = ArrayList<AddToListRequest>()
+                item.let {
+                    listOfItems.add(it)
                 }
                 binding.scrollView?.fullScroll(View.FOCUS_UP)
                 val addToWishListEventData = AddToWishListFirebaseEventData(
                     products = listOfNotNull(productDetails?.toAnalyticItem()),
                     businessUnit = productDetails?.productType,
                     itemRating = productDetails?.averageRating)
-
-                KotlinUtils.openAddToListPopup(
-                    requireActivity(),
-                    requireActivity().supportFragmentManager,
-                    listOfItems,
-                    eventData = addToWishListEventData
-                )
+                NavigateToShoppingList.openShoppingList(activity, listOfItems, "", false, addToWishListEventData = addToWishListEventData)
             }
         } else {
             // Select size to continue

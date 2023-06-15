@@ -85,6 +85,7 @@ import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseVie
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView.IWalkthroughActionListener
 import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ActionSheetDialogFragment
+import za.co.woolworths.financial.services.android.ui.wfs.common.getIpAddress
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_EXPECTATION_FAILED_502
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
@@ -104,7 +105,6 @@ import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManag
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.logException
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.setCrashlyticsString
-import za.co.woolworths.financial.services.android.util.analytics.dto.AddToWishListFirebaseEventData
 import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.util.wenum.Delivery.Companion.getType
@@ -642,18 +642,6 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         } else {
             updatePriceInformation()
         }
-    }
-
-    override fun openAddToListPopup(
-        addToListRequests: ArrayList<AddToListRequest>,
-        addToWishListEventData: AddToWishListFirebaseEventData?
-    ) {
-        KotlinUtils.openAddToListPopup(
-            requireActivity(),
-            requireActivity().supportFragmentManager,
-            addToListRequests,
-            eventData = addToWishListEventData
-        )
     }
 
     override fun onChangeQuantity(commerceId: CommerceItem, quantity: Int) {
@@ -2428,13 +2416,6 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             enableItemDelete(false)
             viewModel.removeAllCartItem()
         }
-
-        KotlinUtils.setAddToListFragmentResultListener(
-            activity = requireActivity(),
-            lifecycleOwner = viewLifecycleOwner,
-            toastContainerView = binding.rlCheckOut,
-            onToastClick = {}
-        )
     }
 
     private fun postAnalyticsRemoveFromCart(commerceItems: List<CommerceItem>){

@@ -1,11 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems
 
 import android.text.TextUtils
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -82,9 +78,7 @@ class ShoppingListDetailViewModel @Inject constructor(
                 val storeId = Utils.retrieveStoreId(item.fulfillmentType)
                     ?.replace("\"", "") ?: ""
                 if (TextUtils.isEmpty(storeId)) {
-                    viewModelScope.launch(Dispatchers.Main) {
-                        _isListUpdated.value = true
-                    }
+                    _isListUpdated.value = true
                     return@launch
                 }
 

@@ -23,19 +23,8 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
-import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
-import za.co.woolworths.financial.services.android.models.dto.OtherSkus
-import za.co.woolworths.financial.services.android.models.dto.ProductDetailResponse
-import za.co.woolworths.financial.services.android.models.dto.ProductList
-import za.co.woolworths.financial.services.android.models.dto.ProductRequest
-import za.co.woolworths.financial.services.android.models.dto.ProductView
-import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
+import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams.SearchType
-import za.co.woolworths.financial.services.android.models.dto.Response
-import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse
-import za.co.woolworths.financial.services.android.models.dto.WGlobalState
-import za.co.woolworths.financial.services.android.models.dto.WProduct
-import za.co.woolworths.financial.services.android.models.dto.WProductDetail
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity
@@ -46,18 +35,11 @@ import za.co.woolworths.financial.services.android.ui.adapters.holder.ProductLis
 import za.co.woolworths.financial.services.android.ui.fragments.colorandsize.ColorAndSizeBottomSheetListener
 import za.co.woolworths.financial.services.android.ui.fragments.colorandsize.ColorAndSizeFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment
+import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList.Companion.openShoppingList
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListDetailFragment.Companion.ARG_LIST_NAME
-import za.co.woolworths.financial.services.android.util.AppConstant
+import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_SESSION_TIMEOUT_440
-import za.co.woolworths.financial.services.android.util.ErrorHandlerView
-import za.co.woolworths.financial.services.android.util.KotlinUtils
-import za.co.woolworths.financial.services.android.util.MultiClickPreventer
-import za.co.woolworths.financial.services.android.util.NetworkChangeListener
-import za.co.woolworths.financial.services.android.util.NetworkManager
-import za.co.woolworths.financial.services.android.util.ScreenManager
-import za.co.woolworths.financial.services.android.util.SessionUtilities
-import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 import za.co.woolworths.financial.services.android.util.analytics.dto.AddToWishListFirebaseEventData
 import za.co.woolworths.financial.services.android.util.analytics.dto.toAnalyticItem
@@ -127,16 +109,6 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
         startProductRequest()
         setUpAddToListButton()
         connectionBroadcast()
-        addFragmentResultListener()
-    }
-
-    private fun addFragmentResultListener() {
-        KotlinUtils.setAddToListFragmentResultListener(
-            AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_REQUEST_CODE,
-            requireActivity(),
-            viewLifecycleOwner,
-            binding.root
-        ) {}
     }
 
     private fun setUpToolbar() {
@@ -520,40 +492,22 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
         val activity: Activity? = activity
         if (activity != null) {
             when (globalState?.saveButtonClick) {
-                ProductDetailsFragment.INDEX_ADD_TO_SHOPPING_LIST -> openAddToListFragment()
+                ProductDetailsFragment.INDEX_ADD_TO_SHOPPING_LIST -> openAddToListFragment(activity)
                 else -> {}
             }
         }
     }
 
-    private fun openAddToListFragment() {
-        val sku: String? = globalState?.selectedSKUId.toString()
-        if(sku.isNullOrEmpty()) {
-            return
-        }
-        val item = AddToListRequest().apply {
-            catalogRefId = sku
-            skuID = sku
-            giftListId = sku
-            quantity = "1"
-        }
+    private fun openAddToListFragment(activity: Activity) {
+        val sku = globalState?.selectedSKUId.toString()
+        val item = AddToListRequest()
+        item.catalogRefId = sku
+        item.skuID = sku
+        item.giftListId = sku
+        item.quantity = "1"
         val addToListRequests = ArrayList<AddToListRequest>()
-        val analyticProducts = productAdapter?.productList?.filter {
-            it.itemWasChecked
-        }?.map {
-            it.toAnalyticItem(category = mSearchText)
-        }
-        val addToWishListFirebaseEventData = AddToWishListFirebaseEventData(
-            shoppingListName = mListName,
-            products = analyticProducts
-        )
         addToListRequests.add(item)
-        KotlinUtils.openAddToListPopup(
-            requireActivity(),
-            requireActivity().supportFragmentManager,
-            addToListRequests,
-            eventData = addToWishListFirebaseEventData
-        )
+        openShoppingList(activity, addToListRequests, "", false)
     }
 
     override fun onLoadDetailFailure(e: String) {
