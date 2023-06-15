@@ -18,7 +18,11 @@ import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.contracts.IToastInterface
-import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
+import za.co.woolworths.financial.services.android.models.dto.CommerceItem
+import za.co.woolworths.financial.services.android.models.dto.OrderDetailsItem
+import za.co.woolworths.financial.services.android.models.dto.OrderDetailsResponse
+import za.co.woolworths.financial.services.android.models.dto.ProductDetails
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.models.network.Parameter
@@ -33,7 +37,11 @@ import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.shop.helpandsupport.HelpAndSupportFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory
-import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.AppConstant
+import za.co.woolworths.financial.services.android.util.KotlinUtils
+import za.co.woolworths.financial.services.android.util.ProductTypeDetails
+import za.co.woolworths.financial.services.android.util.ScreenManager
+import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.analytics.dto.AddToWishListFirebaseEventData
 import za.co.woolworths.financial.services.android.util.analytics.dto.toAnalyticItemList
 import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
@@ -83,6 +91,16 @@ class OrderDetailsFragment : BaseFragmentBinding<OrderDetailsFragmentBinding>(Or
                 initViews()
             }
         }, 100)
+        addFragmentResultListener()
+    }
+
+    private fun addFragmentResultListener() {
+        KotlinUtils.setAddToListFragmentResultListener(
+            activity = requireActivity(),
+            lifecycleOwner = viewLifecycleOwner,
+            toastContainerView = binding.mainLayout,
+            onToastClick = {}
+        )
     }
 
 
@@ -279,12 +297,14 @@ class OrderDetailsFragment : BaseFragmentBinding<OrderDetailsFragmentBinding>(Or
 
     override fun onAddToList(commerceItemList: MutableList<AddToListRequest>) {
         val addToWishListEventData = AddToWishListFirebaseEventData(products = dataList.toAnalyticItemList())
-        NavigateToShoppingList.openShoppingList(
+        val listItems = ArrayList<AddToListRequest>(0)
+        listItems.addAll(commerceItemList)
+        KotlinUtils.openAddToListPopup(
             requireActivity(),
-            commerceItemList,
+            requireActivity().supportFragmentManager,
+            listItems,
             argOrderId,
-            false,
-            addToWishListEventData = addToWishListEventData
+            addToWishListEventData
         )
     }
 
