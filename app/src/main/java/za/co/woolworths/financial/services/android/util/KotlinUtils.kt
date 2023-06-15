@@ -37,6 +37,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.Group
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
@@ -1588,6 +1589,37 @@ class KotlinUtils {
             }
             nickNameWithAddress.append(formattedNickName)
             return nickNameWithAddress
+        }
+        fun setFirebaseEventForm(type: String?, eventName : String, isComingFromCheckout : Boolean) {
+
+            var propertyValueForFormType = when(getPreferredDeliveryType()){
+                Delivery.DASH ->  {
+                    FirebaseManagerAnalyticsProperties.PropertyValues.DASH
+                }
+                Delivery.CNC -> {
+                    FirebaseManagerAnalyticsProperties.PropertyValues.CLICK_AND_COLLECT
+                }
+                else -> {
+                    FirebaseManagerAnalyticsProperties.PropertyValues.STANDARD
+                }
+            }
+
+            val propertyValueForFormLocation = if(isComingFromCheckout){
+                FirebaseManagerAnalyticsProperties.PropertyValues.CHECKOUT
+            }else {
+                FirebaseManagerAnalyticsProperties.PropertyValues.BROWSE
+            }
+
+            //Event form type for address checkout
+            val formTypeParams = bundleOf(
+                    FirebaseManagerAnalyticsProperties.PropertyNames.FORM_TYPE to
+                            propertyValueForFormType,
+                    FirebaseManagerAnalyticsProperties.PropertyNames.FORM_NAME to
+                            type,
+                    FirebaseManagerAnalyticsProperties.PropertyNames.FORM_LOCATION to
+                            propertyValueForFormLocation
+            )
+            AnalyticsManager.logEvent(eventName, formTypeParams)
         }
     }
 }

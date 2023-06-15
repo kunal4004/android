@@ -36,7 +36,9 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.PLACE_ID
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.SAVED_ADDRESS_RESPONSE
 import za.co.woolworths.financial.services.android.util.Constant
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.util.regex.Pattern
 
 /**
@@ -115,6 +117,10 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(R.
                 FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
                         FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_COLLECTION_VEHICLE_SELECT
             ), activity)
+
+        KotlinUtils.setFirebaseEventForm(FirebaseManagerAnalyticsProperties.PropertyValues.MY_VEHICLE,
+                FirebaseManagerAnalyticsProperties.FORM_START, true)
+
         isMyVehicle = true
         binding.vehiclesDetailsLayout.taxiDescription.visibility = View.GONE
         binding.vehiclesDetailsLayout.vehicleDetailsLayout.visibility = View.VISIBLE
@@ -127,6 +133,10 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(R.
                 FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
                         FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_COLLECTION_TAXI_SELECT
             ), activity)
+
+        KotlinUtils.setFirebaseEventForm(FirebaseManagerAnalyticsProperties.PropertyValues.TAXI,
+                FirebaseManagerAnalyticsProperties.FORM_START, true)
+
         isMyVehicle = false
         binding.vehiclesDetailsLayout.taxiDescription.visibility = View.VISIBLE
         binding.vehiclesDetailsLayout.vehicleDetailsLayout.visibility = View.GONE
@@ -172,10 +182,14 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(R.
         if (isMyVehicle) {
             if (!isErrorInputFields(listOfVehicleInputFields)) {
                 onConfirmButtonClick()
+                KotlinUtils.setFirebaseEventForm(FirebaseManagerAnalyticsProperties.PropertyValues.MY_VEHICLE,
+                        FirebaseManagerAnalyticsProperties.FORM_COMPLETE, true)
             }
         } else {
             if (!isErrorInputFields(listOfTaxiInputFields)) {
                 onConfirmButtonClick()
+                KotlinUtils.setFirebaseEventForm(FirebaseManagerAnalyticsProperties.PropertyValues.TAXI,
+                        FirebaseManagerAnalyticsProperties.FORM_COMPLETE, true)
             }
         }
     }
@@ -186,6 +200,7 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(R.
                 FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
                         FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_COLLECTION_CONFIRM_DETAILS
             ), activity)
+
         val whoIsCollectingDetails = WhoIsCollectingDetails(
             binding.whoIsCollectingDetailsLayout.recipientNameEditText.text.toString(),
             binding.whoIsCollectingDetailsLayout.cellphoneNumberEditText.text.toString(),
@@ -271,6 +286,10 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(R.
                 }
             }
         }
+
+        // When first time visit this page default event is "My Vehicle"
+        KotlinUtils.setFirebaseEventForm(FirebaseManagerAnalyticsProperties.PropertyValues.MY_VEHICLE,
+                FirebaseManagerAnalyticsProperties.FORM_START, true)
 
         binding.whoIsCollectingDetailsLayout.recipientDetailsTitle?.text = bindString(R.string.who_is_collecting)
         binding.confirmDetails?.setOnClickListener(this)
@@ -432,6 +451,4 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(R.
     private fun FragmentActivity.closeFragment(view: View) {
         view.postDelayed({ onBackPressed() }, AppConstant.DELAY_500_MS)
     }
-
-
 }

@@ -680,6 +680,9 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                             R.color.white
                         )
                     )
+                    // This to call the analytics when default address type selected first time
+                    KotlinUtils.setFirebaseEventForm(titleTextView?.text.toString(),
+                      FirebaseManagerAnalyticsProperties.FORM_START, isComingFromCheckout)
                     binding.recipientAddressLayout.deliveringAddressTypesErrorMsg?.visibility = View.GONE
                     changeUnitComplexPlaceHolderOnType(selectedDeliveryAddressType)
                     if (selectedDeliveryAddressType == ADDRESS_APARTMENT) {
@@ -691,6 +694,8 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                 }
                 titleTextView?.setOnClickListener {
                     setFirebaseEvents(titleTextView?.text.toString())
+                    KotlinUtils.setFirebaseEventForm(titleTextView?.text.toString(),
+                         FirebaseManagerAnalyticsProperties.FORM_START, isComingFromCheckout)
                     resetOtherDeliveringTitle(it.tag as Int)
                     selectedDeliveryAddressType = (it as TextView).text as? String
                     selectedAddress.savedAddress.addressType = selectedDeliveryAddressType
@@ -910,6 +915,9 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                         FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_CHECKOUT_ADDRESS_SAVE_ADDRESS
             ), activity
         )
+
+        KotlinUtils.setFirebaseEventForm(selectedDeliveryAddressType,
+                FirebaseManagerAnalyticsProperties.FORM_COMPLETE, isComingFromCheckout)
         if (binding.recipientDetailsLayout.cellphoneNumberEditText?.text.toString().trim().isNotEmpty()
             && binding.recipientDetailsLayout.cellphoneNumberEditText?.text.toString().trim().length < TEN
         ) {
