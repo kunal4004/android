@@ -49,5 +49,6 @@ data class AppConfig(
     var toolTipSettings: TooltipSettings?,
     var enhanceSubstitution: EnhanceSubstitution?,
     var ratingsAndReviews: RatingsAndReviews?,
-    var glassBox: GlassBox?
+    var glassBox: GlassBox?,
+    var bnplConfig: BnplConfig?
 ) : Parcelable

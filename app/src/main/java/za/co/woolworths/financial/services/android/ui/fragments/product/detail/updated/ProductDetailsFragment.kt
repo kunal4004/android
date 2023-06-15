@@ -143,6 +143,8 @@ import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManag
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.logException
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.setCrashlyticsString
+import za.co.woolworths.financial.services.android.util.analytics.dto.AddToWishListFirebaseEventData
+import za.co.woolworths.financial.services.android.util.analytics.dto.toAnalyticItem
 import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 import za.co.woolworths.financial.services.android.util.pickimagecontract.PickImageFileContract
 import za.co.woolworths.financial.services.android.util.pickimagecontract.PickImageGalleryContract
@@ -1148,8 +1150,14 @@ class ProductDetailsFragment :
         }
 
         binding.setupBrandView()
-        setupBNPLViewForFbhProducts()
-
+        //Added the BNPL flag checking logic.
+        AppConfigSingleton.bnplConfig?.apply {
+            if (isBnplRequiredInThisVersion && isBnplEnabled) {
+                setupBNPLViewForFbhProducts()
+            } else {
+                binding.payFlexWidget.visibility = View.GONE
+            }
+        }
         if (hasSize)
             setSelectedGroupKey(defaultGroupKey)
 
@@ -1331,7 +1339,7 @@ class ProductDetailsFragment :
             }
         }
         if (hasSize)
-            binding?.showSize()
+            showSize()
         else {
             binding?.sizeColorSelectorLayout?.apply {
                 sizeSelectorLayout.visibility = View.GONE
@@ -1384,11 +1392,14 @@ class ProductDetailsFragment :
         }
     }
 
-    private fun ProductDetailsFragmentBinding.showSize() {
-        sizeColorSelectorLayout.apply {
+    private fun showSize() {
+        if(!isAdded || binding == null) {
+            return
+        }
+        binding.sizeColorSelectorLayout.apply {
             productSizeSelectorAdapter = ProductSizeSelectorAdapter(
                 requireActivity(),
-                otherSKUsByGroupKey[getSelectedGroupKey()]!!,
+                otherSKUsByGroupKey[getSelectedGroupKey()] ?: ArrayList(0),
                 productDetails?.lowStockIndicator ?: 0,
                 this@ProductDetailsFragment
             )
@@ -1467,7 +1478,7 @@ class ProductDetailsFragment :
     }
 
     override fun updateDefaultUI(isInventoryCalled: Boolean) {
-        binding.apply {
+        binding?.apply {
             loadSizeAndColor()
             loadPromotionalImages()
             updateAuxiliaryImages(getAuxiliaryImagesByGroupKey())
@@ -2401,44 +2412,15 @@ class ProductDetailsFragment :
                     listOfItems.add(it)
                 }
                 binding.scrollView?.fullScroll(View.FOCUS_UP)
-                NavigateToShoppingList.openShoppingList(activity, listOfItems, "", false)
+                val addToWishListEventData = AddToWishListFirebaseEventData(
+                    products = listOfNotNull(productDetails?.toAnalyticItem()),
+                    businessUnit = productDetails?.productType,
+                    itemRating = productDetails?.averageRating)
+                NavigateToShoppingList.openShoppingList(activity, listOfItems, "", false, addToWishListEventData = addToWishListEventData)
             }
-
-            productDetails?.let { addToWishlistItemEvent(it) }
         } else {
             // Select size to continue
         }
-    }
-
-    private fun addToWishlistItemEvent(productDetails: ProductDetails) {
-        val addToWishlistParam = Bundle()
-        addToWishlistParam.putString(FirebaseAnalytics.Param.CURRENCY,
-            FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE)
-        productDetails?.price?.let {
-            addToWishlistParam.putDouble(FirebaseAnalytics.Param.VALUE,
-                it.toDouble())
-        }
-        for (products in 0..(productDetails?.otherSkus?.size ?: 0)) {
-            val addToWishlistParams = Bundle()
-            addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_ID,
-                productDetails?.productId)
-            addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_NAME,
-                productDetails?.productName)
-            addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_CATEGORY,
-                productDetails?.categoryName)
-            addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_BRAND,
-                productDetails?.brandText)
-            addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_VARIANT,
-                productDetails?.colourSizeVariants)
-            addToWishlistParams.putString(FirebaseAnalytics.Param.PRICE,
-                productDetails?.price.toString())
-            addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_LIST_NAME,
-                productDetails?.categoryName)
-            addToWishlistParam.putParcelableArray(FirebaseAnalytics.Param.ITEMS,
-                arrayOf(addToWishlistParams))
-        }
-        AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.ADD_TO_WISHLIST,
-            addToWishlistParam)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
