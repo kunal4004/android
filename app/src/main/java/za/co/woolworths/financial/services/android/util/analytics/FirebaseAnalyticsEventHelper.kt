@@ -5,6 +5,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.Product
+import za.co.woolworths.financial.services.android.util.analytics.dto.AddToWishListFirebaseEventData
 import za.co.woolworths.financial.services.android.util.analytics.dto.AnalyticProductItem
 import za.co.woolworths.financial.services.android.util.analytics.dto.toAnalyticItem
 import za.co.woolworths.financial.services.android.util.analytics.dto.toBundle
@@ -203,5 +204,56 @@ object FirebaseAnalyticsEventHelper {
     private fun extractPromotionText(promotionsList: List<Promotions>): String {
         return promotionsList.map { it.promotionalText }.filterNot { it.isNullOrEmpty() }
             .joinToString()
+    }
+
+    fun addToWishlistEvent(addToWishListFirebaseEventData: AddToWishListFirebaseEventData?) {
+        val products = addToWishListFirebaseEventData?.products
+        if (products.isNullOrEmpty() || addToWishListFirebaseEventData.shoppingListName.isNullOrEmpty()) {
+            return
+        }
+
+        val value = products.mapNotNull { it.price?.times(it.quantity) }.sum()
+
+        val analyticsParams = Bundle()
+        analyticsParams.apply {
+            addToWishListFirebaseEventData.itemRating?.let { rating ->
+                putFloat(FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_RATING, rating)
+            }
+            addToWishListFirebaseEventData.businessUnit?.let { businessUnit ->
+                putString(FirebaseManagerAnalyticsProperties.BUSINESS_UNIT, businessUnit)
+            }
+            putDouble(FirebaseAnalytics.Param.VALUE, value)
+            putString(
+                FirebaseAnalytics.Param.CURRENCY,
+                FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE
+            )
+            putString(
+                FirebaseManagerAnalyticsProperties.PropertyNames.SHOPPING_LIST_NAME,
+                addToWishListFirebaseEventData.shoppingListName
+            )
+            putParcelableArray(
+                FirebaseAnalytics.Param.ITEMS, products.map { it.toBundle() }.toTypedArray()
+            )
+        }
+        AnalyticsManager.logEvent(
+            FirebaseManagerAnalyticsProperties.ADD_TO_WISHLIST, analyticsParams
+        )
+    }
+
+    fun viewSearchResult(searchTerm: String?) {
+        if (searchTerm.isNullOrEmpty()) {
+            return
+        }
+
+        val analyticsParams = Bundle()
+        analyticsParams.apply {
+            putString(
+                FirebaseManagerAnalyticsProperties.PropertyNames.SEARCH_TERM,
+                searchTerm
+            )
+        }
+        AnalyticsManager.logEvent(
+            FirebaseAnalytics.Event.VIEW_SEARCH_RESULTS, analyticsParams
+        )
     }
 }
