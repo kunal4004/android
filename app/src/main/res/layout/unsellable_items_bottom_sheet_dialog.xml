@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingLeft="@dimen/twenty_four_dp"
@@ -24,7 +25,9 @@
         android:layout_below="@+id/incSwipeCloseIndicator"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="@dimen/thirty_two_dp"
-        android:text="@string/remove_items_dialog_title" />
+        android:paddingStart="@dimen/_20sdp"
+        android:paddingEnd="@dimen/_20sdp"
+        android:text="@string/these_items_will_be_removed_from_your_cart" />
 
     <TextView
         android:id="@+id/unsellable_subTitle"
@@ -33,8 +36,8 @@
         android:layout_below="@+id/unsellable_title"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="@dimen/sixteen_dp"
-        android:lineSpacingMultiplier="1.2"
         android:gravity="center_horizontal"
+        android:lineSpacingMultiplier="1.2"
         android:text="@string/remove_items_dialog_desc"
         android:textColor="@color/gray" />
 
@@ -42,12 +45,38 @@
         android:id="@+id/rcvItemsList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/removeItems"
+        android:layout_above="@+id/layoutSaveListOption"
         android:layout_below="@+id/unsellable_subTitle"
         android:clipToPadding="true"
         android:paddingTop="@dimen/sixteen_dp"
         android:paddingBottom="@dimen/sixteen_dp"
         android:scrollbars="vertical" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layoutSaveListOption"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/removeItems"
+        android:layout_marginVertical="@dimen/eighteen_dp">
+
+        <androidx.compose.ui.platform.ComposeView
+            android:id="@+id/saveToListTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.compose.ui.platform.ComposeView
+            android:id="@+id/saveToListCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:button="@drawable/refine_multi_selector"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:ignore="MissingConstraints" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
         android:id="@+id/removeItems"

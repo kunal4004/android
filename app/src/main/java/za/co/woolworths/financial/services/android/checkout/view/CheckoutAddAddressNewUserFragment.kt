@@ -7,7 +7,11 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
-import android.widget.*
+import android.widget.AdapterView
+import android.widget.EditText
+import android.widget.HorizontalScrollView
+import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -33,13 +37,18 @@ import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor
-import za.co.woolworths.financial.services.android.checkout.service.network.*
-import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressNewUserFragment.ProvinceSuburbType.*
+import za.co.woolworths.financial.services.android.checkout.service.network.AddAddressRequestBody
+import za.co.woolworths.financial.services.android.checkout.service.network.AddAddressResponse
+import za.co.woolworths.financial.services.android.checkout.service.network.Address
+import za.co.woolworths.financial.services.android.checkout.service.network.CheckoutAddAddressNewUserApiHelper
+import za.co.woolworths.financial.services.android.checkout.service.network.DeleteAddressResponse
+import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressNewUserFragment.ProvinceSuburbType.BOTH
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressNewUserFragment.ProvinceSuburbType.ONLY_PROVINCE
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressNewUserFragment.ProvinceSuburbType.ONLY_SUBURB
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.ADD_NEW_ADDRESS_KEY
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.DELETE_SAVED_ADDRESS_REQUEST_KEY
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.SAVED_ADDRESS_KEY
-import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.UNSELLABLE_CHANGE_STORE_REQUEST_KEY
-import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.UPDATE_SAVED_ADDRESS_REQUEST_KEY
 import za.co.woolworths.financial.services.android.checkout.view.ErrorHandlerBottomSheetDialog.Companion.ERROR_DESCRIPTION
 import za.co.woolworths.financial.services.android.checkout.view.ErrorHandlerBottomSheetDialog.Companion.ERROR_TITLE
 import za.co.woolworths.financial.services.android.checkout.view.ErrorHandlerBottomSheetDialog.Companion.ERROR_TYPE
@@ -54,7 +63,14 @@ import za.co.woolworths.financial.services.android.checkout.view.adapter.Checkou
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutAddressConfirmationListAdapter.Companion.EDIT_SAVED_ADDRESS_RESPONSE_KEY
 import za.co.woolworths.financial.services.android.checkout.view.adapter.GooglePlacesAdapter
 import za.co.woolworths.financial.services.android.checkout.view.adapter.PlaceAutocomplete
-import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.*
+import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.ADMINISTRATIVE_AREA_LEVEL_1
+import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.LOCALITY
+import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.POSTAL_CODE
+import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.PREMISE
+import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.ROUTE
+import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.STREET_NUMBER
+import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.SUBLOCALITY_LEVEL_1
+import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.SUBLOCALITY_LEVEL_2
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
 import za.co.woolworths.financial.services.android.checkout.viewmodel.SelectedPlacesAddress
 import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelFactory
@@ -65,32 +81,30 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.Companion.ADDRESS_OFFICE
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils.Companion.getSelectedDefaultName
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
-import za.co.woolworths.financial.services.android.models.dto.Province
-import za.co.woolworths.financial.services.android.models.dto.Suburb
-import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
-import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment.Companion.KEY_ARGS_BUNDLE
-import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment.Companion.KEY_ARGS_PROVINCE
-import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment.Companion.KEY_ARGS_SCREEN_NAME
-import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment.Companion.KEY_ARGS_SUBURB
-import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment.Companion.KEY_ARGS_UNSELLABLE_COMMERCE_ITEMS
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorDialogFragment
-import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_100_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_500_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.FIFTY
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK_201
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.TEN
+import za.co.woolworths.financial.services.android.util.AuthenticateUtils
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DELIVERY_TYPE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_CHECKOUT
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_SLOT_SELECTION
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_PLACE_ID
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.SAVED_ADDRESS_RESPONSE
+import za.co.woolworths.financial.services.android.util.Constant
+import za.co.woolworths.financial.services.android.util.DeliveryType
 import za.co.woolworths.financial.services.android.util.KeyboardUtils.Companion.hideKeyboardIfVisible
+import za.co.woolworths.financial.services.android.util.KotlinUtils
+import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.location.DynamicGeocoder
 import java.net.HttpURLConnection.HTTP_OK
@@ -127,8 +141,6 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
     private var oldNickName: String? = ""
 
     companion object {
-        const val SCREEN_NAME_EDIT_ADDRESS: String = "SCREEN_NAME_EDIT_ADDRESS"
-        const val SCREEN_NAME_ADD_NEW_ADDRESS: String = "SCREEN_NAME_ADD_NEW_ADDRESS"
         const val REGEX_NICK_NAME: String = "^$|^[a-zA-Z0-9\\s<!>@$&().+,-/\"']+$"
         const val ADDRESS_NICK_NAME_MAX_CHAR: Int = 40
     }
@@ -445,54 +457,9 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             }
 
         }
-
-        setFragmentResultListener(UNSELLABLE_CHANGE_STORE_REQUEST_KEY) { _, bundle ->
-            var screenName: String
-            bundle.apply {
-                screenName = getString(KEY_ARGS_SCREEN_NAME, "")
-            }
-
-            when (screenName) {
-                SCREEN_NAME_ADD_NEW_ADDRESS -> {
-                    Utils.triggerFireBaseEvents(
-                        FirebaseManagerAnalyticsProperties.CHECKOUT_REMOVE_UNSELLABLE_ITEMS,
-                        hashMapOf(
-                            FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
-                                    FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_REMOVE_ITEMS
-                        ),
-                        activity
-                    )
-                    savedAddressResponse?.defaultAddressNickname =
-                        selectedAddress.savedAddress.nickname
-                    view?.findNavController()?.navigate(
-                        R.id.action_CheckoutAddAddressNewUserFragment_to_CheckoutAddAddressReturningUserFragment,
-                        bundleOf(
-                            SAVED_ADDRESS_KEY to savedAddressResponse
-                        )
-                    )
-                }
-                SCREEN_NAME_EDIT_ADDRESS -> {
-                    Utils.triggerFireBaseEvents(
-                        FirebaseManagerAnalyticsProperties.CHECKOUT_REMOVE_UNSELLABLE_ITEMS,
-                        hashMapOf(
-                            FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
-                                    FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_REMOVE_ITEMS
-                        ),
-                        activity
-                    )
-                    setFragmentResult(
-                        UPDATE_SAVED_ADDRESS_REQUEST_KEY, bundleOf(
-                            SAVED_ADDRESS_KEY to savedAddressResponse
-                        )
-                    )
-                    navController?.navigateUp()
-                    selectedAddressId = ""
-                }
-            }
-        }
     }
 
-    fun resetSuburbSelection() {
+    private fun resetSuburbSelection() {
         selectedAddress.savedAddress.apply {
             suburb = ""
             suburbId = ""
@@ -1073,48 +1040,6 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         )
     }
 
-    /**
-     * This function is to navigate to Unsellable Items screen.
-     * @param [unSellableCommerceItems] list of items that are not deliverable in the selected location
-     * @param [deliverable] boolean flag to determine if provided list of items are deliverable
-     *
-     * @see [Suburb]
-     * @see [Province]
-     * @see [UnSellableCommerceItem]
-     */
-    private fun navigateToUnsellableItemsFragment(
-        unSellableCommerceItems: MutableList<UnSellableCommerceItem>,
-        deliverable: Boolean,
-        screenName: String,
-    ) {
-        val suburb = Suburb()
-        val province = Province()
-        suburb.apply {
-            id = selectedAddress.savedAddress.suburbId
-            name = selectedAddress.savedAddress.suburb
-            postalCode = selectedAddress.savedAddress.postalCode
-            suburbDeliverable = deliverable
-        }
-        province.apply {
-            name = selectedAddress.provinceName
-            id = selectedAddress.savedAddress.region
-        }
-
-        navController?.navigate(
-            R.id.action_checkoutAddAddressNewUserFragment_to_geoUnsellableItemsFragment,
-            bundleOf(
-                KEY_ARGS_BUNDLE to bundleOf(
-                    SAVED_ADDRESS_KEY to savedAddressResponse,
-                    DELIVERY_TYPE to DeliveryType.DELIVERY.name,
-                    KEY_ARGS_SUBURB to Utils.toJson(suburb),
-                    KEY_ARGS_PROVINCE to Utils.toJson(province),
-                    KEY_ARGS_UNSELLABLE_COMMERCE_ITEMS to Utils.toJson(unSellableCommerceItems),
-                    KEY_ARGS_SCREEN_NAME to screenName
-                )
-            )
-        )
-    }
-
     private fun getAddAddressRequestBody(): AddAddressRequestBody {
         return AddAddressRequestBody(
             binding.recipientAddressLayout.addressNicknameEditText?.text.toString().trim(),
@@ -1198,71 +1123,6 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                     }
                 }
             }
-    }
-
-    private fun callChangeAddressApi(nickName: String) {
-        binding.loadingProgressBar.visibility = View.VISIBLE
-        checkoutAddAddressNewUserViewModel.changeAddress(
-            nickName
-        ).observe(viewLifecycleOwner) { response ->
-            binding.loadingProgressBar.visibility = View.GONE
-            when (response) {
-                is ChangeAddressResponse -> {
-                    when (response.httpCode) {
-                        HTTP_OK, HTTP_OK_201 -> {
-
-                            if (response.deliverable == null) {
-                                showErrorScreen(
-                                    ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON,
-                                    getString(R.string.common_error_message_without_contact_info)
-                                )
-                                return@observe
-                            }
-
-                            // If deliverable false then show cant deliver popup
-                            // Don't allow user to navigate to Checkout page when deliverable : [false].
-                            if (response.deliverable == false) {
-                                showSuburbNotDeliverableBottomSheetDialog(
-                                    ERROR_CODE_SUBURB_NOT_DELIVERABLE
-                                )
-                                return@observe
-                            }
-
-                            // Check if any unSellableCommerceItems[ ] > 0 display the items in modal as per the design
-                            if (!response.unSellableCommerceItems.isNullOrEmpty()) {
-                                navigateToUnsellableItemsFragment(
-                                    response.unSellableCommerceItems,
-                                    response.deliverable ?: false,
-                                    SCREEN_NAME_EDIT_ADDRESS
-                                )
-                                return@observe
-                            }
-
-                            // else functionality complete.
-                            setFragmentResult(
-                                UPDATE_SAVED_ADDRESS_REQUEST_KEY, bundleOf(
-                                    SAVED_ADDRESS_KEY to savedAddressResponse
-                                )
-                            )
-                            navController?.navigateUp()
-                            selectedAddressId = ""
-                        }
-                        else -> {
-                            showErrorScreen(
-                                ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON,
-                                getString(R.string.common_error_message_without_contact_info)
-                            )
-                        }
-                    }
-                }
-                is Throwable -> {
-                    showErrorScreen(
-                        ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON,
-                        getString(R.string.common_error_message_without_contact_info)
-                    )
-                }
-            }
-        }
     }
 
     private fun isNickNameExist(): Boolean {
