@@ -1,25 +1,22 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.shop
 
 import android.content.Intent
-import android.graphics.Typeface.BOLD
+import android.graphics.Typeface
 import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableString
-import android.text.style.StyleSpan
+import android.text.style.AbsoluteSizeSpan
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.content.res.ResourcesCompat
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import android.graphics.Typeface
-import android.text.style.AbsoluteSizeSpan
-import android.text.style.RelativeSizeSpan
-import androidx.core.content.res.ResourcesCompat
-import androidx.fragment.app.viewModels
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentOrderConfirmationBinding
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -32,14 +29,15 @@ import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
 import za.co.woolworths.financial.services.android.models.dto.cart.OrderItem
 import za.co.woolworths.financial.services.android.models.dto.cart.OrderItems
 import za.co.woolworths.financial.services.android.models.dto.cart.SubmittedOrderResponse
+import za.co.woolworths.financial.services.android.models.dto.cart.toAddToListRequest
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
-import za.co.woolworths.financial.services.android.ui.fragments.product.shop.viewmodel.OrderConfirmationViewModel
+import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.adapters.ItemsOrderListAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.communicator.WrewardsBottomSheetFragment
-import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.viewmodel.OrderConfirmationViewModel
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 import za.co.woolworths.financial.services.android.util.CustomTypefaceSpan
@@ -66,6 +64,16 @@ class OrderConfirmationFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         getOrderDetails()
+        addFragmentResultListener()
+    }
+
+    private fun addFragmentResultListener() {
+        KotlinUtils.setAddToListFragmentResultListener(
+            AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_REQUEST_CODE,
+            requireActivity(),
+            viewLifecycleOwner,
+            binding.root
+        ) {}
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -539,19 +547,16 @@ class OrderConfirmationFragment :
             return
         }
         val listOfItems = ArrayList<AddToListRequest>()
-        itemsOrder!!.forEach {
-            val item = AddToListRequest()
-            item.apply {
-                quantity = it.quantity.toString()
-                catalogRefId = it.catalogRefId
-                giftListId = ""
-                skuID = ""
-            }
-            listOfItems.add(item)
-        }
+        listOfItems.addAll(
+            itemsOrder?.map { it.toAddToListRequest() } ?: emptyList()
+        )
 
         binding.dashOrderDetailsLayout.addShoppingListButton.setOnClickListener {
-            NavigateToShoppingList.openShoppingList(activity, listOfItems, "", false)
+            KotlinUtils.openAddToListPopup(
+                requireActivity(),
+                requireActivity().supportFragmentManager,
+                listOfItems
+            )
         }
     }
 
@@ -714,19 +719,15 @@ class OrderConfirmationFragment :
             return
         }
         val listOfItems = ArrayList<AddToListRequest>()
-        cncFoodItemsOrder!!.forEach {
-            val item = AddToListRequest()
-            item.apply {
-                quantity = it.quantity.toString()
-                catalogRefId = it.catalogRefId
-                giftListId = ""
-                skuID = ""
-            }
-            listOfItems.add(item)
-        }
+
+        listOfItems.addAll(cncFoodItemsOrder!!.map { it.toAddToListRequest() })
 
         binding.dashOrderDetailsLayout.addShoppingListButton.setOnClickListener {
-            NavigateToShoppingList.openShoppingList(activity, listOfItems, "", false)
+            KotlinUtils.openAddToListPopup(
+                requireActivity(),
+                requireActivity().supportFragmentManager,
+                listOfItems
+            )
         }
     }
 
@@ -735,19 +736,14 @@ class OrderConfirmationFragment :
             return
         }
         val listOfItems = ArrayList<AddToListRequest>()
-        cncOtherItemsOrder!!.forEach {
-            val item = AddToListRequest()
-            item.apply {
-                quantity = it.quantity.toString()
-                catalogRefId = it.catalogRefId
-                giftListId = ""
-                skuID = ""
-            }
-            listOfItems.add(item)
-        }
+        listOfItems.addAll(cncOtherItemsOrder!!.map { it.toAddToListRequest() })
 
         binding.cncOrderDetailsLayout.addShoppingListButton.setOnClickListener {
-            NavigateToShoppingList.openShoppingList(activity, listOfItems, "", false)
+            KotlinUtils.openAddToListPopup(
+                requireActivity(),
+                requireActivity().supportFragmentManager,
+                listOfItems
+            )
         }
     }
 }
