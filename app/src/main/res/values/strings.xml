@@ -648,13 +648,13 @@
     <string name="tips_create_shopping_list">create a shopping list</string>
     <string name="app_tips_tricks">App Tips &amp; Tricks</string>
     <string name="tips_tricks_view_cart">view cart</string>
-    <string name="tips_tricks_get_shopping">GET SHOPPING</string>
-    <string name="tips_tricks_your_vouchers">your vouchers</string>
+    <string name="tips_tricks_get_shopping">Get Shopping</string>
+    <string name="tips_tricks_your_vouchers">Your Vouchers</string>
     <string name="tips_tricks_view_these_now">VIEW THESE NOW</string>
     <string name="tips_tricks_go_to_accounts">GO TO YOUR ACCOUNTS</string>
-    <string name="tips_tricks_view_your_accounts">VIEW YOUR ACCOUNTS</string>
+    <string name="tips_tricks_view_your_accounts">View Your Accounts</string>
     <string name="tips_tricks_take_me_there">TAKE ME THERE</string>
-    <string name="tips_tricks_access_your_statements">ACCESS YOUR STATEMENTS</string>
+    <string name="tips_tricks_access_your_statements">Access Your Statements</string>
     <string name="your_delivery_location">Your Delivery Location</string>
     <string name="walkthrough_delivery_location_desc">Set your Delivery Location to see exact prices and the items available to you.</string>
     <string name="walkthrough_vouchers_desc">View your latest vouchers and redeem them in-store before they expire.</string>
@@ -2863,6 +2863,10 @@
         <item quantity="one">%1$s %2$s Item</item>
         <item quantity="other">%1$s %2$s Items</item>
     </plurals>
+    <plurals name="added_to_list">
+        <item quantity="one">%1$d Item Added To %2$s </item>
+        <item quantity="other">%1$d Items Added To %2$s Items</item>
+    </plurals>
     <string name="select_your_marital_status">Select your marital status</string>
 
     <string name="my_products">My Products</string>
@@ -3041,4 +3045,11 @@
     <string name="payflex_is_unavailable_when_buying_food_items_and_gift_cards">Payflex is unavailable when buying Food items and Gift Cards.</string>
     <string name="open_until">Open until %s</string>
 
+    <string name="oops_something_went_wrong">Oops. Something Went Wrong</string>
+
+    <string name="add_to_list_progress_title">Adding Your Items\n to %s</string>
+    <string name="added_to_list_desc">THIS EXCLUDES FREE GIFT ITEMS</string>
+    <string name="multiple_lists">Multiple Lists</string>
+    <string name="add_to_list_failure">Failed to add to list. Please try again later.</string>
+    <string name="hint_list_name">List Name</string>
 </resources>
