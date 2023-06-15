@@ -884,8 +884,10 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
 
     private fun unregisterReceiver() {
         try {
-            locationBroadcastReceiver.let {
-                requireContext().unregisterReceiver(locationBroadcastReceiver)
+            if(::locationBroadcastReceiver.isInitialized) {
+                locationBroadcastReceiver.let {
+                    requireContext().unregisterReceiver(locationBroadcastReceiver)
+                }
             }
         } catch (ex: IllegalArgumentException) {
             FirebaseManager.logException("unregisterReceiver locationBroadcastReceiver $ex")
