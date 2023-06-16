@@ -29,7 +29,6 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="@dimen/one_dp"
-            android:layout_marginTop="@dimen/five_dp"
             android:background="@color/color_E5E5E5"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -49,11 +48,11 @@
                 android:layout_width="@dimen/fourty_dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginVertical="@dimen/twenty_four_dp"
+                android:layout_marginVertical="@dimen/ten_dp"
                 android:layout_marginEnd="@dimen/eighteen_dp"
                 android:background="@color/color_F3F3F3"
                 android:contentDescription="@string/placeholder"
-                android:minHeight="@dimen/fourty_dp"
+                android:minHeight="@dimen/fifty_six_dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -77,10 +76,11 @@
                     android:layout_marginEnd="@dimen/eight_dp"
                     app:layout_constrainedWidth="true"
                     app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/tvPrice"
+                    app:layout_constraintHorizontal_bias="0"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.0"
-                    tools:text="Slim Fit Pique Golfer" />
+                    tools:text="3 X Slim Fit Pique Golfer T-Shirt" />
 
                 <TextView
                     android:id="@+id/tvPrice"
