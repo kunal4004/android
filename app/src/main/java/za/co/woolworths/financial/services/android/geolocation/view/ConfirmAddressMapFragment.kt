@@ -262,6 +262,7 @@ class ConfirmAddressMapFragment :
     private fun clearAddressText() {
         binding.autoCompleteTextView.setText("")
         binding.tvLocationNikName.text = ""
+        binding?.confirmAddress?.isEnabled = false
     }
 
     private fun clearMapDetails() {
@@ -915,10 +916,12 @@ class ConfirmAddressMapFragment :
     private fun checkForLocationPermissionAndSetLocationAddress() {
         activity?.apply {
             //Check if user has location services enabled. If not, notify user as per current store locator functionality.
-            if (!Utils.isLocationEnabled(this)) {
+            if (!Utils.isLocationEnabled(this) || !PermissionUtils.hasPermissions(
+                            requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)) {
                 binding.apply {
                   //  autoCompleteTextView.isEnabled = false
-                    clearAddressText()
+                   // clearAddressText()
+                    showSelectedLocationError(false)
                     confirmAddress.isEnabled = false
                     dynamicMapView?.setAllGesturesEnabled(false)
 
