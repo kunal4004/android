@@ -648,13 +648,13 @@
     <string name="tips_create_shopping_list">create a shopping list</string>
     <string name="app_tips_tricks">App Tips &amp; Tricks</string>
     <string name="tips_tricks_view_cart">view cart</string>
-    <string name="tips_tricks_get_shopping">GET SHOPPING</string>
-    <string name="tips_tricks_your_vouchers">your vouchers</string>
+    <string name="tips_tricks_get_shopping">Get Shopping</string>
+    <string name="tips_tricks_your_vouchers">Your Vouchers</string>
     <string name="tips_tricks_view_these_now">VIEW THESE NOW</string>
     <string name="tips_tricks_go_to_accounts">GO TO YOUR ACCOUNTS</string>
-    <string name="tips_tricks_view_your_accounts">VIEW YOUR ACCOUNTS</string>
+    <string name="tips_tricks_view_your_accounts">View Your Accounts</string>
     <string name="tips_tricks_take_me_there">TAKE ME THERE</string>
-    <string name="tips_tricks_access_your_statements">ACCESS YOUR STATEMENTS</string>
+    <string name="tips_tricks_access_your_statements">Access Your Statements</string>
     <string name="your_delivery_location">Your Delivery Location</string>
     <string name="walkthrough_delivery_location_desc">Set your Delivery Location to see exact prices and the items available to you.</string>
     <string name="walkthrough_vouchers_desc">View your latest vouchers and redeem them in-store before they expire.</string>

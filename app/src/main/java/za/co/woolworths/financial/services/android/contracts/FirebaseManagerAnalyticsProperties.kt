@@ -380,7 +380,7 @@ open class FirebaseManagerAnalyticsProperties {
         const val SELECT_ITEM_EVENT: String = "select_item"
         const val ADD_TO_CART_PDP: String = "add_to_cart"
         const val VIEW_CART: String = "view_cart"
-        const val ADD_TO_WISHLIST: String = "add_to_wish_list"
+        const val ADD_TO_WISHLIST: String = "add_to_wishlist"
         const val VIEW_PROMOTION: String = "view_promotion"
         const val SELECT_PROMOTION: String = "select_promotion"
         const val IN_STORE_AVAILABILITY: String ="in_store_availability"
@@ -515,7 +515,7 @@ open class FirebaseManagerAnalyticsProperties {
 
             const val CURRENCY = "currency"
             const val ITEM_LIST_NAME = "item_list_name"
-            const val SHOPPING_LIST_NAME = "Shopping_list_name"
+            const val SHOPPING_LIST_NAME = "shopping_list_name"
             const val ITEM_BRAND = "item_brand"
             const val ORDER_TOTAL_VALUE = "order_total"
 

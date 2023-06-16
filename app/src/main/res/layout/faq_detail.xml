@@ -26,7 +26,7 @@
             android:paddingEnd="@dimen/default_margin"
             tools:ignore="RtlSymmetry">
 
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -37,11 +37,11 @@
                 android:gravity="start"
                 android:text="@string/placeholder"
                 android:textColor="@color/black"
-                android:textSize="15sp"
-                app:WTextView_font="myriadpro_semibold"
+                android:fontFamily="@font/opensans_semi_bold"
+                android:textSize="@dimen/thirteen_sp"
                 tools:ignore="ObsoleteLayoutParam" />
 
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -50,8 +50,8 @@
                 android:lineSpacingExtra="2.2dp"
                 android:text="@string/placeholder"
                 android:textColor="@color/black_desc_opacity"
-                android:textSize="15sp"
-                app:WTextView_font="myriadpro_regular" />
+                android:textSize="@dimen/thirteen_sp"
+               android:fontFamily="@font/opensans_regular" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

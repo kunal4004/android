@@ -264,7 +264,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                             "",
                             searchProduct,
                             true,
-                            ((LoadState) object).isSendDeliveryDetails()));
+                            ((LoadState) object).isSendDeliveryDetails(), true));
                 }
             } else if (object instanceof CartSummaryResponse) {
                 // product item successfully added to cart
