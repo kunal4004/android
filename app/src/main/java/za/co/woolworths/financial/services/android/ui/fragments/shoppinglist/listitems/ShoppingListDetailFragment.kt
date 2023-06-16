@@ -105,7 +105,8 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                     result.data?.let { data ->
                         val bundle = bundleOf(
                             MY_LIST_SEARCH_TERM to data.getStringExtra(MY_LIST_LIST_NAME),
-                            MY_LIST_LIST_ID to data.getStringExtra(MY_LIST_LIST_ID)
+                            MY_LIST_LIST_ID to data.getStringExtra(MY_LIST_LIST_ID),
+                            ARG_LIST_NAME to listName
                         )
                         searchResultFragment.arguments = bundle
                     }
@@ -1066,7 +1067,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         private const val DELIVERY_LOCATION_REQUEST_CODE_FROM_SELECT_ALL = 1222
         private const val DELIVERY_LOCATION_REQUEST = 2
         private const val TOOLBAR_SELECT_ALL: String = "SELECT ALL"
-        private const val ARG_LIST_NAME: String = "listName"
+        const val ARG_LIST_NAME: String = "listName"
         private const val ARG_OPEN_FROM_MY_LIST: String = "openFromMyList"
         private const val EXTRA_LIST_ITEMS: String = "listItems"
 

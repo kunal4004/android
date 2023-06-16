@@ -154,6 +154,7 @@ class AppConstant {
              * Bundle Keys
              * const val BUNDLE_EXAMPLE_NAME = "BUNDLE_KEY_NAME"
              *****************************************************************************************/
+            const val BUNDLE_WISHLIST_EVENT_DATA = "BUNDLE_WISHLIST_EVENT_DATA"
 
             /*****************************************************************************************
              * Args Keys
