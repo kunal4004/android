@@ -64,7 +64,7 @@
                 <ImageView
                     style="@style/upload_document_image"/>
 
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                <TextView
                     style="@style/upload_document_title"
                     android:lineSpacingExtra="4dp"
                     android:text="@string/uploading_clear_scan_photo"/>
@@ -78,7 +78,7 @@
                 <ImageView
                     style="@style/upload_document_image"/>
 
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                <TextView
                     style="@style/upload_document_title"
                     android:lineSpacingExtra="4dp"
                     android:text="@string/uploading_name_address"/>
@@ -92,7 +92,7 @@
                 <ImageView
                     style="@style/upload_document_image"/>
 
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                <TextView
                     style="@style/upload_document_title"
                     android:lineSpacingExtra="4dp"
                     android:text="@string/uploading_statement_period"/>
@@ -106,7 +106,7 @@
                 <ImageView
                     style="@style/upload_document_image"/>
 
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                <TextView
                     style="@style/upload_document_title"
                     android:lineSpacingExtra="4dp"
                     android:text="@string/uploading_older_month"/>
