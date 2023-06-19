@@ -101,6 +101,13 @@ class AccountSixMonthArrearsFragment : Fragment(R.layout.account_six_month_arrea
 
     private fun AccountSixMonthArrearsFragmentBinding.setTitleAndCardTypeAndButton() {
         mApplyNowAccountKeyPair?.first?.let { resourceId ->
+            with(includeAccountDetailHeaderView.cardDetailImageShimmerFrameLayout){
+               if (isVisible){
+                   stopShimmer()
+                   setShimmer(null)
+               }
+            }
+
             includeAccountDetailHeaderView.cardDetailImageView?.setImageResource(
                 resourceId
             )

@@ -34,7 +34,11 @@ class PermissionUtils(var context: Context, permissionResultCallback: Permission
     ) {
         permissionList = permissions
         this.requestCode = requestCode
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkAndRequestPermissions(permissions, requestCode)) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkAndRequestPermissions(
+                permissions,
+                requestCode
+            )
+        ) {
             permissionResultCallback.permissionGranted(requestCode)
         } else {
             permissionResultCallback.permissionGranted(requestCode)
@@ -78,10 +82,10 @@ class PermissionUtils(var context: Context, permissionResultCallback: Permission
     fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String>,
-        grantResults: IntArray
+        grantResults: IntArray,
     ) {
         when (requestCode) {
-            1, 2 -> if (grantResults.isNotEmpty()) {
+            1, 2, 3 -> if (grantResults.isNotEmpty()) {
                 val perms: MutableMap<String, Int> = HashMap()
                 run {
                     var i = 0
@@ -102,11 +106,13 @@ class PermissionUtils(var context: Context, permissionResultCallback: Permission
                             listPermissionsNeeded[i]
                         ) else {
                             permissionResultCallback.neverAskAgain(this.requestCode)
-                            Toast.makeText(
-                                currentActivity,
-                                "Go to settings and enable permissions",
-                                Toast.LENGTH_LONG
-                            ).show()
+                            if (requestCode != 3) {
+                                Toast.makeText(
+                                    currentActivity,
+                                    "Go to settings and enable permissions",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
                             return
                         }
                     }
