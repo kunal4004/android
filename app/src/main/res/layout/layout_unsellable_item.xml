@@ -36,7 +36,6 @@
             android:id="@+id/clCartItems"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/twenty_four_dp"
             android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -69,22 +68,33 @@
                 app:layout_constraintTop_toTopOf="@id/cartProductImage">
 
                 <TextView
+                    android:id="@+id/quantityTextView"
+                    style="@style/opensans_semi_bold_13_black_text_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="3 " />
+
+                <TextView
                     android:id="@+id/tvTitle"
                     style="@style/style_cart_item_title_opensens_regular_14"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/eight_dp"
+                    android:textSize="@dimen/thirteen_sp"
                     app:layout_constrainedWidth="true"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/tvPrice"
                     app:layout_constraintHorizontal_bias="0"
-                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/quantityTextView"
                     app:layout_constraintTop_toTopOf="parent"
-                    tools:text="3 X Slim Fit Pique Golfer T-Shirt" />
+                    tools:text="x Slim Fit Pique Golfer T-Shirt" />
 
                 <TextView
                     android:id="@+id/tvPrice"
-                    style="@style/style_cart_item_price"
+                    style="@style/opensans_semi_bold_13_black_text_style"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/twenty_four_dp"

@@ -10,6 +10,7 @@ import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -66,27 +67,32 @@ class UnsellableItemsBottomSheetDialog : WBottomSheetDialogFragment(),
     }
 
     private fun initView() {
-
-
         binding.saveToListTextView.setContent {
             Text(
-                text = requireContext().resources.getQuantityString(
-                    R.plurals.save_item_to_list_text,
-                    commerceItems?.size ?: 0
+                text = pluralStringResource(
+                    id = R.plurals.save_item_to_list_text,
+                    count = commerceItems?.size ?: 0
                 ),
                 style = TextStyle(
                     fontFamily = OpenSansFontFamily,
-                    fontWeight = FontWeight.Normal,
+                    fontWeight = FontWeight.SemiBold,
                     fontSize = 11.sp,
                     color = Color.Black,
                     textAlign = TextAlign.Center
                 )
             )
         }
-        val checkedState = mutableStateOf(false)
+        val checkedState = mutableStateOf(true)
         binding.saveToListCheckBox.setContent {
             Checkbox(
-                colors = CheckboxDefaults.colors(Color.Black),
+                colors = CheckboxDefaults.colors(
+                    uncheckedColor = Color(
+                        android.graphics.Color.parseColor(
+                            "#D8D8D8"
+                        )
+                    ),
+                    checkedColor = Color.Black
+                ),
                 checked = checkedState.value,
                 onCheckedChange = {
                     checkedState.value = it

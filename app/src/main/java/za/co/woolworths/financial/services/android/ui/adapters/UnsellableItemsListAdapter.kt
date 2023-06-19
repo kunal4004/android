@@ -34,7 +34,8 @@ class UnsellableItemsListAdapter(var commerceItems: ArrayList<UnSellableCommerce
         fun bind(commerceItem: UnSellableCommerceItem) {
             itemBinding.apply {
                 swipe.isSwipeEnabled = false
-                tvTitle.text = (commerceItem.quantity.toString() + " X " + commerceItem.productDisplayName) ?: ""
+                quantityTextView.text = commerceItem.quantity.toString()
+                tvTitle.text = " x " + commerceItem.productDisplayName
                 Utils.truncateMaxLine(tvTitle)
                 tvPrice.text = commerceItem.price.amount.let {
                     CurrencyFormatter.formatAmountToRandAndCentWithSpace(it)

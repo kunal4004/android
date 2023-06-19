@@ -2584,18 +2584,18 @@
     <string name="continue_with_dash_delivery">CONTINUE WITH DASH DELIVERY</string>
 
     <plurals name="remove_items_dash_dialog_desc">
-        <item quantity="one">This item cannot be delivered using <b><font color='#000000'>Dash Delivery.</font></b>. The following will be removed from your cart:</item>
-        <item quantity="other">These items cannot be delivered using <b><font color='#000000'>Dash Delivery.</font></b>. The following will be removed from your cart:</item>
+        <item quantity="one">This item cannot be delivered using <b><font color='#000000'>Dash Delivery.</font></b> The following will be removed from your cart.</item>
+        <item quantity="other">These items cannot be delivered using <b><font color='#000000'>Dash Delivery.</font></b> The following will be removed from your cart.</item>
     </plurals>
 
     <plurals name="remove_items_standard_dialog_desc">
-        <item quantity="one">This item cannot be delivered using <b><font color='#000000'>Standard Delivery.</font></b>. The following will be removed from your cart:</item>
-        <item quantity="other">These items cannot be delivered using <b><font color='#000000'>Standard Delivery.</font></b>. The following will be removed from your cart:</item>
+        <item quantity="one">This item cannot be delivered using <b><font color='#000000'>Standard Delivery.</font></b> The following will be removed from your cart.</item>
+        <item quantity="other">These items cannot be delivered using <b><font color='#000000'>Standard Delivery.</font></b> The following will be removed from your cart.</item>
     </plurals>
 
     <plurals name="remove_items_cnc_dialog_desc">
-        <item quantity="one">This item cannot be delivered using <b><font color="black">Click &amp; Collect.</font></b>. The following will be removed from your cart:</item>
-        <item quantity="other">These items cannot be delivered using <b><font color="black">Click &amp; Collect.</font></b>. The following will be removed from your cart:</item>
+        <item quantity="one">This item cannot be delivered using <b><font color="black">Click &amp; Collect.</font></b> The following will be removed from your cart.</item>
+        <item quantity="other">These items cannot be delivered using <b><font color="black">Click &amp; Collect.</font></b> The following will be removed from your cart.</item>
     </plurals>
 
     <plurals name="unsellable_title">
