@@ -1525,7 +1525,7 @@
     <string name="recipient_name">Recipient Name</string>
     <string name="id_number">ID Number</string>
     <string name="cellphone_number">Cellphone Number</string>
-    <string name="hint_id_number_of_recipient">Your ID Number</string>
+    <string name="hint_id_number_of_recipient">ID Number Of Recipient</string>
     <string name="alternate_contact_numberr">Alternate Contact Number</string>
     <string name="delivery_details">Delivery Details</string>
     <string name="delivery_details_desc">Please complete your delivery details below:</string>
