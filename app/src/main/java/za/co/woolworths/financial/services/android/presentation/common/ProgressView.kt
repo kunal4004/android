@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.presentation.addtolist
+package za.co.woolworths.financial.services.android.presentation.common
 
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloat
@@ -36,6 +36,9 @@ import za.co.woolworths.financial.services.android.ui.wfs.theme.FuturaFontFamily
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OpenSansFontFamily
 
+/**
+ * Circular indicator with optional title and description
+ */
 @Composable
 fun ProgressView(
     modifier: Modifier = Modifier,
@@ -146,7 +149,5 @@ private fun ProgressViewPreview() {
                 Color(0xFF5851D8)
             )
         )
-
-
     }
 }

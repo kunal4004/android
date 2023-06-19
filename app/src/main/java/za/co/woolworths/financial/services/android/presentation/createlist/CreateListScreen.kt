@@ -44,10 +44,10 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import com.awfs.coordination.R
-import za.co.woolworths.financial.services.android.presentation.addtolist.ProgressView
 import za.co.woolworths.financial.services.android.presentation.addtolist.components.CreateNewListState
 import za.co.woolworths.financial.services.android.presentation.common.HeaderView
 import za.co.woolworths.financial.services.android.presentation.common.HeaderViewState
+import za.co.woolworths.financial.services.android.presentation.common.ProgressView
 import za.co.woolworths.financial.services.android.presentation.createlist.components.CreateListScreenEvent
 import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
 import za.co.woolworths.financial.services.android.ui.wfs.theme.Color666666

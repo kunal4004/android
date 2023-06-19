@@ -30,6 +30,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.presentation.addtolist.components.AddToListScreenEvents
+import za.co.woolworths.financial.services.android.presentation.common.ProgressView
 import za.co.woolworths.financial.services.android.presentation.createlist.CreateListScreen
 import za.co.woolworths.financial.services.android.presentation.createlist.components.CreateListScreenEvent
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_REQUEST_CODE

@@ -15,8 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
@@ -24,13 +22,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -38,9 +34,10 @@ import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList
 import za.co.woolworths.financial.services.android.presentation.addtolist.components.AddToListScreenEvents
 import za.co.woolworths.financial.services.android.presentation.addtolist.components.AddToListUiState
+import za.co.woolworths.financial.services.android.presentation.common.BlackButton
 import za.co.woolworths.financial.services.android.presentation.common.HeaderView
 import za.co.woolworths.financial.services.android.presentation.common.HeaderViewState
-import za.co.woolworths.financial.services.android.ui.wfs.theme.Color666666
+import za.co.woolworths.financial.services.android.presentation.common.UnderlineButton
 import za.co.woolworths.financial.services.android.ui.wfs.theme.ColorEEEEEE
 import za.co.woolworths.financial.services.android.ui.wfs.theme.FuturaFontFamily
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
@@ -73,7 +70,7 @@ fun AddToListScreen(
                 headerViewState = HeaderViewState.HeaderStateType2(
                     title = stringResource(id = R.string.add_to_list)
                 )
-            ){
+            ) {
                 onEvent(AddToListScreenEvents.CreateListClick)
             }
 
@@ -100,51 +97,26 @@ fun AddToListScreen(
                     onEvent(AddToListScreenEvents.OnItemClick(it))
                 }
 
-                Button(
+                BlackButton(
                     modifier = Modifier
-                        .fillMaxWidth()
                         .padding(horizontal = 24.dp)
-                        .padding(top = 24.dp)
-                        .height(50.dp),
-                    onClick = { onEvent(AddToListScreenEvents.ConfirmClick) },
-                    colors = ButtonDefaults.buttonColors(Color.Black),
-                    shape = RectangleShape,
+                        .padding(top = 24.dp),
+                    text = stringResource(id = R.string.confirm).uppercase(),
                     enabled = listUiState.selectedListItem.isNotEmpty()
                 ) {
-                    Text(
-                        text = stringResource(id = R.string.confirm).uppercase(),
-                        style = TextStyle(
-                            fontFamily = FuturaFontFamily,
-                            fontWeight = FontWeight.W600,
-                            fontSize = 12.sp,
-                            color = Color.White
-                        ),
-                        letterSpacing = 1.5.sp
-                    )
+                    onEvent(AddToListScreenEvents.ConfirmClick)
                 }
 
-                Button(
+                UnderlineButton(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 24.dp)
                         .padding(bottom = 8.dp)
                         .height(50.dp),
-                    onClick = { onEvent(AddToListScreenEvents.CancelClick) },
-                    colors = ButtonDefaults.buttonColors(Color.Transparent),
-                    shape = RectangleShape
+                    text = stringResource(id = R.string.cancel)
+                        .uppercase()
                 ) {
-                    Text(
-                        text = stringResource(id = R.string.cancel)
-                            .uppercase(),
-                        style = TextStyle(
-                            fontFamily = FuturaFontFamily,
-                            fontWeight = FontWeight.Normal,
-                            fontSize = 12.sp,
-                            color = Color666666,
-                            textDecoration = TextDecoration.Underline
-                        ),
-                        letterSpacing = 1.5.sp
-                    )
+                    onEvent(AddToListScreenEvents.CancelClick)
                 }
             }
         }
