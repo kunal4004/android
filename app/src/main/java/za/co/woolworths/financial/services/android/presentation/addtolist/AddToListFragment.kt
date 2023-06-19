@@ -9,6 +9,7 @@ import android.view.WindowManager
 import android.widget.FrameLayout
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.runtime.DisposableEffect
@@ -154,7 +155,9 @@ class AddToListFragment : WBottomSheetDialogFragment() {
 
                 listState.isAddToListInProgress -> {
                     ProgressView(
-                        modifier = Modifier.heightIn(min = 290.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(min = 290.dp),
                         title = stringResource(
                             id = R.string.add_to_list_progress_title,
                             listName
