@@ -320,17 +320,17 @@ class ProductDetailsFragment :
             object : Observer<DynamicYieldChooseVariationResponse?> {
                override fun onChanged(dynamicYieldChooseVariationResponse: DynamicYieldChooseVariationResponse?) {
                     if (dynamicYieldChooseVariationResponse == null) {
-                        Toast.makeText(
+                       /* Toast.makeText(
                             activity,
                             "Product Page DY failed",
                             Toast.LENGTH_LONG
-                        ).show()
+                        ).show()*/
                     } else {
-                        Toast.makeText(
+                       /* Toast.makeText(
                             activity,
                             "Product Page DY Success",
                             Toast.LENGTH_LONG
-                        ).show()
+                        ).show()*/
                     }
                 }
             })
@@ -339,7 +339,7 @@ class ProductDetailsFragment :
     private fun prepareDynamicYieldPageViewRequestEvent() {
         val user = User("6039328055471566178","6039328055471566178")
         val session = Session("lhfevbbfh094lunq3g1acf9hzslgytrk")
-        val device = Device("54.100.200.255", "Android/Realme 5 Pro")
+        val device = Device("54.100.200.255", "Android")
         val skuIdList: ArrayList<String>? = ArrayList()
        productDetails?.otherSkus?.forEach { otherSkus ->
            otherSkus.sku?.let { skuIdList?.add(it) }
@@ -1859,9 +1859,9 @@ class ProductDetailsFragment :
         dyChangeAttributeViewModel = ViewModelProvider(this).get(DyChangeAttributeViewModel::class.java)
         dyChangeAttributeViewModel.getDyLiveData().observe(viewLifecycleOwner, Observer<DyChangeAttributeResponse?> {
             if (it == null){
-                Toast.makeText(activity, "failed to hit Change Attribute Dynamic yield", Toast.LENGTH_LONG).show()
+               // Toast.makeText(activity, "failed to hit Change Attribute Dynamic yield", Toast.LENGTH_LONG).show()
             } else {
-                Toast.makeText(activity,"Success to hit Change Attribute Dynamic Yield", Toast.LENGTH_LONG).show()
+              //  Toast.makeText(activity,"Success to hit Change Attribute Dynamic Yield", Toast.LENGTH_LONG).show()
             }
         })
     }

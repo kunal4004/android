@@ -789,9 +789,9 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
            @Override
            public void onChanged(DynamicYieldChooseVariationResponse dynamicYieldChooseVariationResponse) {
                if (dynamicYieldChooseVariationResponse == null) {
-                   Toast.makeText(BottomNavigationActivity.this, "Home Page DY failed", Toast.LENGTH_LONG).show();
+                  // Toast.makeText(BottomNavigationActivity.this, "Home Page DY failed", Toast.LENGTH_LONG).show();
                } else {
-                   Toast.makeText(BottomNavigationActivity.this, "Home Page DY Success", Toast.LENGTH_LONG).show();
+                  // Toast.makeText(BottomNavigationActivity.this, "Home Page DY Success", Toast.LENGTH_LONG).show();
 
                }
            }

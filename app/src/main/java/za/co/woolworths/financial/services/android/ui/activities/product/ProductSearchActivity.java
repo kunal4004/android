@@ -125,9 +125,9 @@ public class ProductSearchActivity extends AppCompatActivity
             @Override
             public void onChanged(DyChangeAttributeResponse dyKeywordSearchResponse) {
                 if (dyKeywordSearchResponse == null) {
-                    Toast.makeText(ProductSearchActivity.this, "failed to DY keyword search", Toast.LENGTH_LONG).show();
+                  //  Toast.makeText(ProductSearchActivity.this, "failed to DY keyword search", Toast.LENGTH_LONG).show();
                 } else {
-                    Toast.makeText(ProductSearchActivity.this, "Success to DY keyword search", Toast.LENGTH_LONG).show();
+                  //  Toast.makeText(ProductSearchActivity.this, "Success to DY keyword search", Toast.LENGTH_LONG).show();
                 }
             }
         });

@@ -245,17 +245,17 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
             viewLifecycleOwner
         ) { dynamicYieldChooseVariationResponse ->
             if (dynamicYieldChooseVariationResponse == null) {
-                Toast.makeText(
+              /*  Toast.makeText(
                     activity,
                     "Category Page DY failed",
                     Toast.LENGTH_LONG
-                ).show()
+                ).show()*/
             } else {
-                Toast.makeText(
+               /* Toast.makeText(
                     activity,
                     "Category Page DY Success",
                     Toast.LENGTH_LONG
-                ).show()
+                ).show()*/
             }
         }
     }
@@ -263,7 +263,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
     private fun prepareDynamicYieldPageView() {
         val user = User("7917327198341427921","7917327198341427921")
         val session = Session("jtyey00s7r03kn02f4fskegcbatgjtmj")
-        val device = Device("54.100.200.255", "Android/Realme 5 pro")
+        val device = Device("54.100.200.255", "Android")
         val page = Page(breadCrumbList, "PLP Screen", "CATEGORY")
         val context = Context(device, page)
         val options = Options(true)
