@@ -1,13 +1,11 @@
 package za.co.woolworths.financial.services.android.presentation.addtolist
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.FrameLayout
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -96,11 +94,6 @@ class AddToListFragment : WBottomSheetDialogFragment() {
     ) = contentView(
         ViewCompositionStrategy.DisposeOnDetachedFromWindow
     ) {
-
-        BackHandler(enabled = true) {
-            // execute your custome logic here
-            Log.e("nikesh", "Back button pressed")
-        }
 
         OneAppTheme {
 
