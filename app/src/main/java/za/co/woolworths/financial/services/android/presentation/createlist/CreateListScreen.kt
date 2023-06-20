@@ -20,8 +20,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -32,12 +30,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -45,15 +41,15 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.presentation.addtolist.components.CreateNewListState
+import za.co.woolworths.financial.services.android.presentation.common.BlackButton
 import za.co.woolworths.financial.services.android.presentation.common.HeaderView
 import za.co.woolworths.financial.services.android.presentation.common.HeaderViewState
 import za.co.woolworths.financial.services.android.presentation.common.ProgressView
+import za.co.woolworths.financial.services.android.presentation.common.UnderlineButton
 import za.co.woolworths.financial.services.android.presentation.createlist.components.CreateListScreenEvent
 import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
-import za.co.woolworths.financial.services.android.ui.wfs.theme.Color666666
 import za.co.woolworths.financial.services.android.ui.wfs.theme.ColorD8D8D8
 import za.co.woolworths.financial.services.android.ui.wfs.theme.ErrorLabel
-import za.co.woolworths.financial.services.android.ui.wfs.theme.FuturaFontFamily
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OpenSansFontFamily
 
@@ -151,52 +147,28 @@ fun CreateListScreen(
                 }
             }
 
-            Button(
+            BlackButton(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 24.dp)
                     .padding(top = 24.dp)
                     .height(50.dp),
-                onClick = { onEvent(CreateListScreenEvent.CreateList(listName)) },
-                colors = ButtonDefaults.buttonColors(Color.Black),
-                shape = RectangleShape,
+                text = stringResource(id = R.string.create_list).uppercase(),
                 enabled = listName.isNotEmpty()
             ) {
-                Text(
-                    text = stringResource(id = R.string.create_list).uppercase(),
-                    style = TextStyle(
-                        fontFamily = FuturaFontFamily,
-                        fontWeight = FontWeight.W600,
-                        fontSize = 12.sp,
-                        color = Color.White
-                    ),
-                    letterSpacing = 1.5.sp
-                )
+                onEvent(CreateListScreenEvent.CreateList(listName))
             }
 
             if (state.cancelText.isNotEmpty()) {
-                Button(
+                UnderlineButton(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 24.dp)
                         .padding(bottom = 8.dp)
                         .height(50.dp),
-                    onClick = { onEvent(CreateListScreenEvent.CancelClick) },
-                    colors = ButtonDefaults.buttonColors(Color.Transparent),
-                    shape = RectangleShape
+                    text = state.cancelText.uppercase()
                 ) {
-                    Text(
-                        text = state.cancelText
-                            .uppercase(),
-                        style = TextStyle(
-                            fontFamily = FuturaFontFamily,
-                            fontWeight = FontWeight.Normal,
-                            fontSize = 12.sp,
-                            color = Color666666,
-                            textDecoration = TextDecoration.Underline
-                        ),
-                        letterSpacing = 1.5.sp
-                    )
+                    onEvent(CreateListScreenEvent.CancelClick)
                 }
             } else {
                 Spacer(modifier = Modifier.height(20.dp))

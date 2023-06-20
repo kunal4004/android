@@ -78,8 +78,8 @@ import za.co.woolworths.financial.services.android.models.dto.app_config.chat.Co
 import za.co.woolworths.financial.services.android.models.dto.cart.FulfillmentDetails
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.presentation.addtolist.AddToListFragment
+import za.co.woolworths.financial.services.android.presentation.addtolist.AddToListFragment.Companion.ADD_TO_SHOPPING_LIST_REQUEST_CODE
 import za.co.woolworths.financial.services.android.presentation.addtolist.AddToListViewModel
-import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.account.LinkDeviceConfirmationActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
@@ -1617,8 +1617,7 @@ class KotlinUtils {
                 it.arguments = Bundle().apply {
                     putString(AddToListViewModel.ARG_ORDER_ID, orderId)
                     putInt(
-                        AppConstant.RESULT_CODE, AddToShoppingListActivity
-                            .ADD_TO_SHOPPING_LIST_REQUEST_CODE
+                        AppConstant.RESULT_CODE, ADD_TO_SHOPPING_LIST_REQUEST_CODE
                     )
                     putParcelableArrayList(AddToListViewModel.ARG_ITEMS_TO_BE_ADDED, listOfItems)
                     putParcelable(BUNDLE_WISHLIST_EVENT_DATA, eventData)
@@ -1634,7 +1633,7 @@ class KotlinUtils {
         }
 
         fun setAddToListFragmentResultListener(
-            requestCode: Int = AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_REQUEST_CODE,
+            requestCode: Int = ADD_TO_SHOPPING_LIST_REQUEST_CODE,
             activity: FragmentActivity,
             lifecycleOwner: LifecycleOwner,
             toastContainerView: View,
@@ -1646,7 +1645,7 @@ class KotlinUtils {
             ) { _, bundle ->
 
                 when (bundle.getInt(AppConstant.RESULT_CODE, -1)) {
-                    AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_REQUEST_CODE -> {
+                    ADD_TO_SHOPPING_LIST_REQUEST_CODE -> {
                         val selectedLists: ArrayList<ShoppingList>? =
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                                 bundle.getParcelableArrayList(

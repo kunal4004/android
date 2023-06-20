@@ -99,8 +99,10 @@ fun AddToListScreen(
 
                 BlackButton(
                     modifier = Modifier
+                        .fillMaxWidth()
                         .padding(horizontal = 24.dp)
-                        .padding(top = 24.dp),
+                        .padding(top = 24.dp)
+                        .height(50.dp),
                     text = stringResource(id = R.string.confirm).uppercase(),
                     enabled = listUiState.selectedListItem.isNotEmpty()
                 ) {

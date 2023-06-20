@@ -34,7 +34,6 @@ import za.co.woolworths.financial.services.android.presentation.addtolist.compon
 import za.co.woolworths.financial.services.android.presentation.common.ProgressView
 import za.co.woolworths.financial.services.android.presentation.createlist.CreateListScreen
 import za.co.woolworths.financial.services.android.presentation.createlist.components.CreateListScreenEvent
-import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.compose.contentView
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
@@ -47,6 +46,10 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Keys.Compani
 @OptIn(ExperimentalComposeUiApi::class)
 @AndroidEntryPoint
 class AddToListFragment : WBottomSheetDialogFragment() {
+
+    companion object {
+        const val ADD_TO_SHOPPING_LIST_REQUEST_CODE = 1209
+    }
 
     private val viewModel: AddToListViewModel by viewModels()
 

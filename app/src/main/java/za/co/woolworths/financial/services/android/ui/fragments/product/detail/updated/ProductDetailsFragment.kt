@@ -63,10 +63,10 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.presentation.addtolist.AddToListFragment.Companion.ADD_TO_SHOPPING_LIST_REQUEST_CODE
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.ProductX
 import za.co.woolworths.financial.services.android.recommendations.presentation.viewmodel.RecommendationViewModel
-import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.MultipleImageActivity
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
@@ -2221,15 +2221,6 @@ class ProductDetailsFragment :
                     REQUEST_SUBURB_CHANGE -> {
                         updateStockAvailabilityLocation()
                         addItemToCart()
-                    }
-                    ADD_TO_SHOPPING_LIST_REQUEST_CODE -> {
-                        /*int listSize = data.getIntExtra("sizeOfList", 0);
-                        boolean isSessionExpired = data.getBooleanExtra("sessionExpired", false);
-                        if (isSessionExpired) {
-                            onSessionTokenExpired();
-                            return;
-                        }
-                        showToastMessage(getActivity(), listSize);*/
                     }
                     SET_DELIVERY_LOCATION_REQUEST_CODE -> {
                         activity?.apply {

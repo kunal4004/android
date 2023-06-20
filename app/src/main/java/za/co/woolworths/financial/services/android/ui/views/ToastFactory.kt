@@ -42,7 +42,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.hel
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.SendMessageResponse
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView.Companion.LIVE_CHAT_TOAST
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView.Companion.LIVE_CHAT_UNREAD_MESSAGE_COUNT_PACKAGE
-import za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToShoppingListFragment
 import za.co.woolworths.financial.services.android.util.CustomTypefaceSpan
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.ReceiverManager
@@ -66,8 +65,8 @@ class ToastFactory {
         ): PopupWindow? {
             val context = WoolworthsApplication.getAppContext()
 
-            val shoppingList =
-                data?.getStringExtra(AddToShoppingListFragment.POST_ADD_TO_SHOPPING_LIST)
+            val shoppingList = ""
+//                data?.getStringExtra(AddToShoppingListFragment.POST_ADD_TO_SHOPPING_LIST)
             var shoppingListObject: JsonObject? = null
             var shoppingListArray: JsonArray? = null
 
