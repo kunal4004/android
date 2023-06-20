@@ -18,6 +18,7 @@
             <enum name="light" value="0"/>
             <enum name="medium" value="1"/>
             <enum name="medium_bold" value="2"/>
+            <enum name="semi_bold" value="2"/>
             <enum name="bold" value="3"/>
             <enum name="myriadpro_regular" value="4"/>
             <enum name="myriadpro_semibold" value="5"/>

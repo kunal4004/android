@@ -218,7 +218,6 @@
                     android:layout_marginTop="@dimen/sixteen_dp"
                     android:layout_marginBottom="@dimen/fourteen_dp"
                     android:text="@string/my_preferences_linked_devices_title"
-                    android:textAllCaps="true"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -399,6 +398,7 @@
                             android:id="@+id/tvDeleteAccount"
                             style="@style/style_cart_delivery_to_text"
                             android:layout_width="wrap_content"
+                            android:fontFamily="@font/opensans_semi_bold"
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="@dimen/four_dp"
                             android:gravity="center_vertical"

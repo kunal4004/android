@@ -111,7 +111,7 @@
                 android:layout_marginBottom="@dimen/twenty_four_dp"
                 android:contentDescription="@string/labelCreditLimitIncreaseStatusDescription"
                 android:text="@string/increase_limit_desc"
-                android:textColor="@color/offer_active_desc"
+                android:textColor="@color/non_editable_edit_text_text_color"
                 android:visibility="gone" />
 
             <LinearLayout
