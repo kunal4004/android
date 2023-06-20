@@ -1624,7 +1624,7 @@ interface ApiInterface {
     suspend fun getKiboProductsFromResponse(
         @Header("sessionToken") sessionToken: String,
         @Header("deviceIdentityToken") deviceIdentityToken: String,
-        @Body addSubstitutionRequest: GetKiboProductRequest
+        @Body addSubstitutionRequest: KiboProductRequest
     ): retrofit2.Response<KiboProductResponse>
 }
 

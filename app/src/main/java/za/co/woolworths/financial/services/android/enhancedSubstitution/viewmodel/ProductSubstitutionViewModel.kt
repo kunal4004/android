@@ -77,7 +77,7 @@ class ProductSubstitutionViewModel @Inject constructor(
         }
     }
 
-    fun getKiboProducts(kiboProductRequest: GetKiboProductRequest) {
+    fun getKiboProducts(kiboProductRequest: KiboProductRequest) {
         viewModelScope.launch {
             _kiboProductResponse.postValue(Event(Resource.loading(null)))
             val result = repository.fetchKiboProducts(kiboProductRequest)

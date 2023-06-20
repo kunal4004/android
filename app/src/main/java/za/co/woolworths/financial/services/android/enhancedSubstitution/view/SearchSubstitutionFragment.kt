@@ -16,6 +16,7 @@ import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
+import androidx.paging.filter
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
@@ -137,6 +138,9 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
                         }
 
                         /*todo remove same product id*/
+                       it.filter {
+                           it.productId == productId
+                       }
 
                         searchProductSubstitutionAdapter?.submitData(it)
                     }

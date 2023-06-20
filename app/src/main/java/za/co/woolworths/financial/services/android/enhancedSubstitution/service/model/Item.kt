@@ -3,7 +3,7 @@ package za.co.woolworths.financial.services.android.enhancedSubstitution.service
 data class Item(
     val PROMOTION: String,
     val id: String,
-    val plist3620006: Double,
+    val price: Double,
     val title: String,
     val imageLink: String,
 )

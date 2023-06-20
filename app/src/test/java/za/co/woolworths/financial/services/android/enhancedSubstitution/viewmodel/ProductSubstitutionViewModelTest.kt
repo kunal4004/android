@@ -154,7 +154,7 @@ class ProductSubstitutionViewModelTest {
 
     @Test
     fun getKibo_withError() = runTest {
-        val getProductRequest = GetKiboProductRequest(EnhanceSubstitutionHelperTest.prepareKiboProductRequest())
+        val getProductRequest = EnhanceSubstitutionHelperTest.prepareKiboProductRequest()
         `when`(
             productSubstitutionRepository
                 .fetchKiboProducts(getProductRequest)

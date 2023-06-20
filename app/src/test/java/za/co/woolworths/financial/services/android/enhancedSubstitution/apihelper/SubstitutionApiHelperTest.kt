@@ -22,7 +22,7 @@ import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhanceS
 import za.co.woolworths.financial.services.android.enhancedSubstitution.EnhanceSubstitutionHelperTest.Companion.SUBSTITUTION_ID
 
 import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.AddSubstitutionRequest
-import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.GetKiboProductRequest
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.KiboProductRequest
 import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.Product
 import za.co.woolworths.financial.services.android.models.network.ApiInterface
 import za.co.woolworths.financial.services.android.util.Utils
@@ -243,7 +243,7 @@ class SubstitutionApiHelperTest {
         val product = Product("20018702","20018702")
         val list = ArrayList<Product>()
         list.add(product)
-        val getKiboRequest = GetKiboProductRequest(list)
+        val getKiboRequest = KiboProductRequest("plist3620006", list)
         val response = apiHelper.getKiboProductsFromResponse(
             SESSION_TOKEN,
             DEVICE_TOKEN,
@@ -263,7 +263,7 @@ class SubstitutionApiHelperTest {
         val product = Product("20018702","20018702")
         val list = ArrayList<Product>()
         list.add(product)
-        val kiboProductRequest = GetKiboProductRequest(list)
+        val kiboProductRequest = KiboProductRequest("plist3620006", list)
         val response = apiHelper.getKiboProductsFromResponse(
             SESSION_TOKEN,
             DEVICE_TOKEN,
@@ -283,7 +283,7 @@ class SubstitutionApiHelperTest {
         val product = Product("20018702","20018702")
         val list = ArrayList<Product>()
         list.add(product)
-        val kiboProductRequest = GetKiboProductRequest(list)
+        val kiboProductRequest = KiboProductRequest("plist3620006", list)
         val response = apiHelper.getKiboProductsFromResponse(
             SESSION_TOKEN,
             DEVICE_TOKEN,

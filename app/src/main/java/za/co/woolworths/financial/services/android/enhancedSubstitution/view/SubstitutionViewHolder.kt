@@ -30,7 +30,7 @@ sealed class SubstitutionViewHolder(binding: ViewBinding) : RecyclerView.ViewHol
 
                 tvTitle.text = item?.title
                 tvPrice.minHeight = context.resources.getDimension(R.dimen.two_dp).toInt()
-                tvPrice.text = formatAmountToRandAndCentWithSpace(item?.plist3620006)
+                tvPrice.text = formatAmountToRandAndCentWithSpace(item?.price)
                 binding.tvPromotionText.text = item?.PROMOTION
                 cartProductImage.setImageURI(item?.imageLink)
             }

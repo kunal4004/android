@@ -6,7 +6,7 @@ import androidx.paging.PagingConfig
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.AddSubstitutionRequest
 import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.AddSubstitutionResponse
-import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.GetKiboProductRequest
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.KiboProductRequest
 import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.KiboProductResponse
 import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.ProductSubstitution
 import za.co.woolworths.financial.services.android.enhancedSubstitution.service.network.SubstitutionApiHelper
@@ -115,7 +115,7 @@ class ProductSubstitutionRepository @Inject constructor(private var substitution
         }
     }
 
-    suspend fun fetchKiboProducts(kiboProductRequest: GetKiboProductRequest): Resource<KiboProductResponse> {
+    suspend fun fetchKiboProducts(kiboProductRequest: KiboProductRequest): Resource<KiboProductResponse> {
         return try {
             val response = substitutionApiHelper.fetchKiboProducts(kiboProductRequest)
             if (response.isSuccessful) {
@@ -151,7 +151,6 @@ class ProductSubstitutionRepository @Inject constructor(private var substitution
                     return when (it.httpCode) {
                         AppConstant.HTTP_OK, AppConstant.HTTP_OK_201 ->
                             Resource.success(it)
-
                         else ->
                             Resource.error(R.string.error_unknown, it)
                     }
