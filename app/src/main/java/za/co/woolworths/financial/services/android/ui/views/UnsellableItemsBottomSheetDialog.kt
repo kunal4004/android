@@ -10,7 +10,7 @@ import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -62,29 +62,42 @@ class UnsellableItemsBottomSheetDialog : WBottomSheetDialogFragment(),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initView()
         binding.init()
+        initView()
     }
 
     private fun initView() {
         binding.saveToListTextView.setContent {
             Text(
-                text = stringResource(id = R.string.save_item_to_list_text),
+                text = pluralStringResource(
+                    id = R.plurals.save_item_to_list_text,
+                    count = commerceItems?.size ?: 0
+                ),
                 style = TextStyle(
                     fontFamily = OpenSansFontFamily,
-                    fontWeight = FontWeight.Normal,
+                    fontWeight = FontWeight.SemiBold,
                     fontSize = 11.sp,
                     color = Color.Black,
                     textAlign = TextAlign.Center
                 )
             )
         }
-        val checkedState = mutableStateOf(false)
+        val checkedState = mutableStateOf(true)
         binding.saveToListCheckBox.setContent {
-            Checkbox(colors = CheckboxDefaults.colors(Color.Black) ,checked = checkedState.value, onCheckedChange = {
-                checkedState.value = it
-                onCheckBoxChanged(it)
-            }
+            Checkbox(
+                colors = CheckboxDefaults.colors(
+                    uncheckedColor = Color(
+                        android.graphics.Color.parseColor(
+                            "#D8D8D8"
+                        )
+                    ),
+                    checkedColor = Color.Black
+                ),
+                checked = checkedState.value,
+                onCheckedChange = {
+                    checkedState.value = it
+                    onCheckBoxChanged(it)
+                }
             )
         }
     }
@@ -105,33 +118,21 @@ class UnsellableItemsBottomSheetDialog : WBottomSheetDialogFragment(),
         val itemCount = commerceItems?.size ?: 0
         unsellableTitle?.text =
             resources.getQuantityString(R.plurals.unsellable_title, itemCount, itemCount)
-        when (deliveryType) {
+        unsellableSubTitle?.text = when (deliveryType) {
             Delivery.STANDARD.name -> {
-                val standardDeliveryText = resources.getQuantityText(
-                    R.plurals.remove_items_standard_dialog_desc,
-                    itemCount
-                )
-                unsellableSubTitle?.text = standardDeliveryText
+                resources.getQuantityText(R.plurals.remove_items_standard_dialog_desc, itemCount)
             }
 
             Delivery.CNC.name -> {
-                val clickAndCollectText =
-                    resources.getQuantityText(R.plurals.remove_items_cnc_dialog_desc, itemCount)
-                unsellableSubTitle?.text = clickAndCollectText
+                resources.getQuantityText(R.plurals.remove_items_cnc_dialog_desc, itemCount)
             }
 
             Delivery.DASH.name -> {
-                val dashText =
-                    resources.getQuantityText(R.plurals.remove_items_dash_dialog_desc, itemCount)
-                unsellableSubTitle?.text = dashText
+                resources.getQuantityText(R.plurals.remove_items_dash_dialog_desc, itemCount)
             }
 
             else -> {
-                val standardDeliveryText = resources.getQuantityText(
-                    R.plurals.remove_items_standard_dialog_desc,
-                    itemCount
-                )
-                unsellableSubTitle?.text = standardDeliveryText
+                resources.getQuantityText(R.plurals.remove_items_standard_dialog_desc, itemCount)
             }
         }
         cancelBtn?.apply {
