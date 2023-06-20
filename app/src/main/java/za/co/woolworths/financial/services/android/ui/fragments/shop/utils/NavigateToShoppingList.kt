@@ -48,23 +48,5 @@ class NavigateToShoppingList {
             }
         }
 
-//        fun openShoppingList(
-//            activity: Activity?,
-//            addToListRequest: Any?,
-//            orderId: String?,
-//            navigateToCreateList: Boolean,
-//            addToWishListEventData: AddToWishListFirebaseEventData? = null
-//        ) {
-//            activity?.apply {
-//                val intentAddToList = Intent(this, AddToShoppingListActivity::class.java)
-//                intentAddToList.putExtra("addToListRequest", Gson().toJson(addToListRequest))
-//                intentAddToList.putExtra("shouldDisplayCreateList", navigateToCreateList)
-//                intentAddToList.putExtra(AppConstant.ORDER_ID, orderId ?: "")
-//                intentAddToList.putExtra(BUNDLE_WISHLIST_EVENT_DATA, addToWishListEventData)
-//                startActivityForResult(intentAddToList,
-//                    AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_REQUEST_CODE)
-//                overridePendingTransition(0, 0)
-//            }
-//        }
     }
 }

@@ -527,13 +527,14 @@ class CartProductAdapter(
                 val addToListRequests = ArrayList<AddToListRequest>()
 
                 commerceItems?.forEach { commerceItem ->
-                    val listItem = AddToListRequest()
                     val commerceItemInfo = commerceItem.commerceItemInfo
-                    listItem.catalogRefId = commerceItemInfo.catalogRefId
-                    listItem.skuID = commerceItemInfo.catalogRefId
-                    listItem.giftListId = commerceItemInfo.catalogRefId
-                    listItem.quantity = "1"
-                    listItem.isGWP = commerceItemInfo.isGWP || hasGiftProduct
+                    val listItem = AddToListRequest().apply {
+                        catalogRefId = commerceItemInfo.catalogRefId
+                        skuID = commerceItemInfo.catalogRefId
+                        giftListId = commerceItemInfo.catalogRefId
+                        quantity = "1"
+                        isGWP = commerceItemInfo.isGWP || hasGiftProduct
+                    }
                     addToListRequests.add(listItem)
                 }
                 val addToWishListEventData = AddToWishListFirebaseEventData(products = commerceItems?.map { it.toAnalyticItem() })

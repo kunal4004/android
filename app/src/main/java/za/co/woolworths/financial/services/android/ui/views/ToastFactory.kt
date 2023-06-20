@@ -359,8 +359,7 @@ class ToastFactory {
             popupWindow.isFocusable = false
 
             // dismiss the popup window after 3sec
-            //TODO remove hardcoded delay from toast
-            Handler().postDelayed({ popupWindow.dismiss() }, 50000)//POPUP_DELAY_MILLIS.toLong())
+            Handler().postDelayed({ popupWindow.dismiss() }, POPUP_DELAY_MILLIS.toLong())
             popupWindow.showAtLocation(
                 viewLocation,
                 Gravity.BOTTOM,
