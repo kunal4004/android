@@ -16,4 +16,6 @@ object Constants {
     const val QUANTITY_FOR_SHIPPING = 1
     const val EVENT_TYPE_PAGEVIEW = "monetate:context:PageView"
     const val EVENT_TYPE_CART = "monetate:context:Cart"
+    const val EVENT_URL_ORDERDETAILS = "/orderDetails"
+    const val EVENT_PAGE_TYPE = "purchase"
 }
