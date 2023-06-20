@@ -839,6 +839,17 @@
         <item name="android:fontFamily">@font/opensans_regular</item>
     </style>
 
+    <style name="tipsAndTricks">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">@dimen/thirteen_sp</item>
+        <item name="android:drawablePadding">@dimen/sixteen_dp</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:fontFamily">@font/opensans_semi_bold</item>
+    </style>
+
     <!-- Base application theme. -->
 
     <style name="style_cart_header_title">

@@ -40,6 +40,14 @@
                 tools:ignore="ObsoleteLayoutParam" />
 
             <TextView
+                android:textColor="@color/black"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/opensans_semi_bold"
+                android:textSize="@dimen/thirteen_sp"
+                tools:ignore="ObsoleteLayoutParam" />
+
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/description"
                 style="@style/opensans_regular_13_black"
                 android:layout_width="match_parent"
