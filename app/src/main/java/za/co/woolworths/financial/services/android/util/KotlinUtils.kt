@@ -31,6 +31,7 @@ import android.view.animation.RotateAnimation
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.RawRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -38,7 +39,9 @@ import androidx.constraintlayout.widget.Group
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
@@ -74,10 +77,14 @@ import za.co.woolworths.financial.services.android.models.dto.account.Transactio
 import za.co.woolworths.financial.services.android.models.dto.app_config.chat.ConfigTradingHours
 import za.co.woolworths.financial.services.android.models.dto.cart.FulfillmentDetails
 import za.co.woolworths.financial.services.android.models.network.OneAppService
+import za.co.woolworths.financial.services.android.presentation.addtolist.AddToListFragment
+import za.co.woolworths.financial.services.android.presentation.addtolist.AddToListViewModel
+import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.account.LinkDeviceConfirmationActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.webview.activities.WInternalWebPageActivity
 import za.co.woolworths.financial.services.android.ui.extension.*
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
@@ -86,20 +93,26 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.petinsur
 import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.AbsaApiFailureHandler
 import za.co.woolworths.financial.services.android.ui.fragments.onboarding.OnBoardingFragment.Companion.ON_BOARDING_SCREEN_TYPE
 import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
+import za.co.woolworths.financial.services.android.ui.views.ToastFactory
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.GeneralInfoDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.CLIErrorMessageButtonDialog
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ErrorMessageDialog
+import za.co.woolworths.financial.services.android.util.AppConstant.Keys.Companion.BUNDLE_WISHLIST_EVENT_DATA
+import za.co.woolworths.financial.services.android.util.AppConstant.Keys.Companion.KEY_HAS_GIFT_PRODUCT
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DEFAULT_ADDRESS
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DELIVERY_TYPE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_CHECKOUT
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_CNC_SELETION
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_SLOT_SELECTION
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_FBH_ONLY
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_FROM_DASH_TAB
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_MIXED_BASKET
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.PLACE_ID
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.SAVED_ADDRESS_RESPONSE
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
+import za.co.woolworths.financial.services.android.util.analytics.dto.AddToWishListFirebaseEventData
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.util.wenum.OnBoardingScreenType
 import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
@@ -115,8 +128,6 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.CoroutineContext
 import kotlin.math.roundToInt
-import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_MIXED_BASKET
-import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_FBH_ONLY
 
 
 class KotlinUtils {
@@ -1588,6 +1599,110 @@ class KotlinUtils {
             }
             nickNameWithAddress.append(formattedNickName)
             return nickNameWithAddress
+        }
+
+        /**
+         * This function requires to implement setFragmentResultListener with requestkey
+         * ADD_TO_SHOPPING_LIST_REQUEST_CODE since it returns a result.
+         */
+        fun openAddToListPopup(
+            activity: Activity?,
+            fragmentManager: FragmentManager,
+            listOfItems: ArrayList<AddToListRequest>,
+            orderId: String? = null,
+            eventData: AddToWishListFirebaseEventData? = null
+        ) {
+
+            val fragment = AddToListFragment().also {
+                it.arguments = Bundle().apply {
+                    putString(AddToListViewModel.ARG_ORDER_ID, orderId)
+                    putInt(
+                        AppConstant.RESULT_CODE, AddToShoppingListActivity
+                            .ADD_TO_SHOPPING_LIST_REQUEST_CODE
+                    )
+                    putParcelableArrayList(AddToListViewModel.ARG_ITEMS_TO_BE_ADDED, listOfItems)
+                    putParcelable(BUNDLE_WISHLIST_EVENT_DATA, eventData)
+                }
+            }
+            fragment.show(fragmentManager, AddToListFragment::class.simpleName)
+            (activity as? BottomNavigationActivity)?.apply {
+                Utils.triggerFireBaseEvents(
+                    FirebaseManagerAnalyticsProperties.SHOPADDTOLIST,
+                    this
+                )
+            }
+        }
+
+        fun setAddToListFragmentResultListener(
+            requestCode: Int = AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_REQUEST_CODE,
+            activity: FragmentActivity,
+            lifecycleOwner: LifecycleOwner,
+            toastContainerView: View,
+            onToastClick: () -> Unit
+        ) {
+            activity.supportFragmentManager.setFragmentResultListener(
+                requestCode.toString(),
+                lifecycleOwner
+            ) { _, bundle ->
+
+                when (bundle.getInt(AppConstant.RESULT_CODE, -1)) {
+                    AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_REQUEST_CODE -> {
+                        val selectedLists: ArrayList<ShoppingList>? =
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                bundle.getParcelableArrayList(
+                                    AppConstant.Keys.KEY_LIST_DETAILS,
+                                    ShoppingList::class.java
+                                )
+                            } else {
+                                bundle.get(AppConstant.Keys.KEY_LIST_DETAILS) as?
+                                        ArrayList<ShoppingList>
+                            }
+
+                        val listName =
+                            if (selectedLists?.size == 1) {
+                                selectedLists.getOrNull(0)?.listName
+                            } else {
+                                activity.getString(R.string.multiple_lists)
+                            }
+                        val hasGiftProduct = bundle.getBoolean(KEY_HAS_GIFT_PRODUCT)
+
+                        ToastFactory.buildItemsAddedToList(
+                            activity = activity,
+                            viewLocation = toastContainerView,
+                            listName = listName ?: return@setFragmentResultListener,
+                            hasGiftProduct = hasGiftProduct,
+                            count = bundle.getInt(AppConstant.Keys.KEY_COUNT, 0),
+                            onButtonClick = {
+                                (activity as? BottomNavigationActivity)?.apply {
+                                    navigateToTabIndex(BottomNavigationActivity.INDEX_ACCOUNT, null)
+                                }
+
+                                if (selectedLists?.size == 1) {
+                                    selectedLists.getOrNull(0)?.let {
+                                        ScreenManager.presentShoppingListDetailActivity(
+                                            activity,
+                                            it.listId,
+                                            it.listName,
+                                            false
+                                        )
+                                    }
+                                } else {
+                                    ScreenManager.presentMyListScreen(activity)
+                                }
+                                onToastClick()
+                            }
+                        )
+                    }
+
+                    AppConstant.RESULT_FAILED -> {
+                        Toast.makeText(
+                            activity,
+                            R.string.add_to_list_failure,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            }
         }
     }
 }

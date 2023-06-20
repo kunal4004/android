@@ -2864,8 +2864,8 @@
         <item quantity="other">%1$s %2$s Items</item>
     </plurals>
     <plurals name="added_to_list">
-        <item quantity="one">%1$d Item Added To %2$s </item>
-        <item quantity="other">%1$d Items Added To %2$s Items</item>
+        <item quantity="one">%1$d Item Added To %2$s</item>
+        <item quantity="other">%1$d Items Added To %2$s</item>
     </plurals>
     <string name="select_your_marital_status">Select your marital status</string>
 

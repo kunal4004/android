@@ -7,8 +7,8 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.ui.graphics.Color
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.setFragmentResultListener
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
@@ -19,19 +19,29 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.contracts.IShoppingList
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
-import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
+import za.co.woolworths.financial.services.android.presentation.createlist.CreateListFragment
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator
 import za.co.woolworths.financial.services.android.ui.adapters.ViewShoppingListAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.shop.list.DepartmentExtensionFragment
-import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
-import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.AppConstant
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.REQUEST_CODE_CREATE_LIST
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.RESULT_CODE
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView
+import za.co.woolworths.financial.services.android.util.GetCartSummary
+import za.co.woolworths.financial.services.android.util.KotlinUtils
+import za.co.woolworths.financial.services.android.util.NetworkManager
+import za.co.woolworths.financial.services.android.util.QueryBadgeCounter
+import za.co.woolworths.financial.services.android.util.ScreenManager
+import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities
+import za.co.woolworths.financial.services.android.util.SessionUtilities
+import za.co.woolworths.financial.services.android.util.Utils
 
 @AndroidEntryPoint
 class MyListsFragment : DepartmentExtensionFragment(R.layout.shopping_list_fragment), View.OnClickListener, IShoppingList {
@@ -50,7 +60,6 @@ class MyListsFragment : DepartmentExtensionFragment(R.layout.shopping_list_fragm
         private const val MY_LIST_SIGN_IN_REQUEST_CODE = 7878
     }
 
-
     override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is BottomNavigationActivity)
@@ -64,6 +73,21 @@ class MyListsFragment : DepartmentExtensionFragment(R.layout.shopping_list_fragm
         initUI()
         authenticateUser(true)
         setListener()
+        addFragmentResultListener()
+    }
+
+    private fun addFragmentResultListener() {
+        setFragmentResultListener(
+            REQUEST_CODE_CREATE_LIST.toString()
+        ) { _, bundle ->
+
+            when(bundle.getInt(RESULT_CODE)) {
+                REQUEST_CODE_CREATE_LIST -> {
+                    getShoppingList(true)
+                }
+                else ->{}
+            }
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -112,11 +136,11 @@ class MyListsFragment : DepartmentExtensionFragment(R.layout.shopping_list_fragm
 
     private fun setListener() {
         binding.apply {
-            locationSelectedLayout?.setOnClickListener(this@MyListsFragment)
-            binding.includeSignOutTemplate.btnGoToProduct?.setOnClickListener(this@MyListsFragment)
-            rlCreateAList?.setOnClickListener(this@MyListsFragment)
-            binding.incConnectionLayout.btnRetry?.setOnClickListener(this@MyListsFragment)
-            swipeToRefresh?.setOnRefreshListener { getShoppingList(true) }
+            locationSelectedLayout.setOnClickListener(this@MyListsFragment)
+            binding.includeSignOutTemplate.btnGoToProduct.setOnClickListener(this@MyListsFragment)
+            rlCreateAList.setOnClickListener(this@MyListsFragment)
+            binding.incConnectionLayout.btnRetry.setOnClickListener(this@MyListsFragment)
+            swipeToRefresh.setOnRefreshListener { getShoppingList(true) }
         }
     }
 
@@ -247,7 +271,7 @@ class MyListsFragment : DepartmentExtensionFragment(R.layout.shopping_list_fragm
             R.id.btnGoToProduct -> {
                 when (binding.includeSignOutTemplate.btnGoToProduct.tag) {
                     0 -> activity?.let { ScreenManager.presentSSOSignin(it, MY_LIST_SIGN_IN_REQUEST_CODE) }
-                    1 -> navigateToCreateListFragment(mutableListOf())
+                    1 -> navigateToCreateListFragment()
                 }
             }
 
@@ -257,18 +281,19 @@ class MyListsFragment : DepartmentExtensionFragment(R.layout.shopping_list_fragm
                 }
             }
 
-            R.id.rlCreateAList -> {
-                activity?.apply {
-                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_MY_LIST_NEW_LIST,
-                        this)
-                }
-                navigateToCreateListFragment(mutableListOf())
-            }
+            R.id.rlCreateAList -> navigateToCreateListFragment()
         }
     }
 
-    private fun navigateToCreateListFragment(commerceItemList: MutableList<AddToListRequest>) {
-        NavigateToShoppingList.openShoppingList(activity, commerceItemList, "", true)
+    private fun navigateToCreateListFragment() {
+        activity?.apply {
+            Utils.triggerFireBaseEvents(
+                FirebaseManagerAnalyticsProperties.SHOP_MY_LIST_NEW_LIST,
+                this)
+        }
+        (requireActivity() as? BottomNavigationActivity)?.apply {
+            pushFragmentSlideUp(CreateListFragment())
+        }
     }
 
     private fun locationSelectionClicked() {
