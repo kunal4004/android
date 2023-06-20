@@ -109,6 +109,7 @@ fun UserAccountLandingViewModel.PetInsuranceCollector(
                                                       onClick: (OnAccountItemClickListener) -> Unit) {
     if (!petInsuranceState.isLoading) {
         petInsuranceState.data?.let { petModel ->
+            petInsuranceResponse = petModel
             this.handlePetInsuranceResult(petModel) { insuranceProduct ->
                 onClick(
                     AccountLandingInstantLauncher.PetInsuranceNotCoveredAwarenessModel(
@@ -405,35 +406,14 @@ private fun LazyListScope.myProductsSection(
             }
 
 
-            is AccountProductCardsGroup.PetInsurance -> item (key = item.key) {
-                var itemAppeared by remember { mutableStateOf(false) }
-                LaunchedEffect(!itemAppeared) {
-                    itemAppeared = true
-                }
-                if (loadingOptions.isAccountLoading) {
-                    ProductShimmerView(
-                        brush = shimmerOptions.brush,
-                        key = productItems.properties.automationLocatorKey
-                    )
-                }
-
-                AnimatedVisibility(
-                    visible = !loadingOptions.isAccountLoading && itemAppeared,
-                    enter = if (!viewModel.petInsuranceDidAnimateOnce) slideInHorizontally(
-                        animationSpec = tween(
-                            durationMillis = animationDurationMilis400,
-                            easing = FastOutLinearInEasing
-                        )
-                    ) else EnterTransition.None,
-                exit = ExitTransition.None) {
-                    PetInsuranceView(
-                        productGroup = productItems,
-                        petInsuranceDefaultConfig = viewModel.getPetInsuranceMobileConfig()?.defaultCopyPetPending,
-                        onProductClick = onProductClick
-                    )
-                    viewModel.petInsuranceDidAnimateOnce = true
-                }
-            }
+            is AccountProductCardsGroup.PetInsurance -> displayPetInsuranceProduct(
+                item,
+                loadingOptions,
+                shimmerOptions,
+                productItems,
+                viewModel,
+                onProductClick
+            )
 
             else -> item {
                 productItems?.let { item ->
@@ -452,13 +432,17 @@ private fun LazyListScope.myProductsSection(
     }
 
     if (myProductList.isEmpty()) {
-        item {
-            NoC2IdNorProductView(
-                isLoadingInProgress = isLoading,
-                brush = brush,
-                isBottomSpacerShown = viewModel.isC2User(),
-                onClick = onProductClick
-            )
+        if (viewModel.petInsuranceResponse != null){
+            viewModel.cachedPetInsuranceModel()
+        }else {
+            item {
+                NoC2IdNorProductView(
+                    isLoadingInProgress = isLoading,
+                    brush = brush,
+                    isBottomSpacerShown = viewModel.isC2User(),
+                    onClick = onProductClick
+                )
+            }
         }
     }
 
@@ -468,6 +452,48 @@ private fun LazyListScope.myProductsSection(
         }
     }
 
+}
+
+private fun LazyListScope.displayPetInsuranceProduct(
+    item: MutableMap.MutableEntry<String, AccountProductCardsGroup?>,
+    loadingOptions: LoadingOptions,
+    shimmerOptions: ShimmerOptions,
+    productItems: AccountProductCardsGroup.PetInsurance,
+    viewModel: UserAccountLandingViewModel,
+    onProductClick: (AccountProductCardsGroup) -> Unit
+) {
+    item(key = item.key) {
+        var itemAppeared by remember { mutableStateOf(false) }
+        LaunchedEffect(!itemAppeared) {
+            itemAppeared = true
+        }
+        if (loadingOptions.isAccountLoading) {
+            ProductShimmerView(
+                brush = shimmerOptions.brush,
+                key = productItems.properties.automationLocatorKey
+            )
+        }
+
+        AnimatedVisibility(
+            visible = !loadingOptions.isAccountLoading && itemAppeared,
+            enter = if (viewModel.petInsuranceDidAnimateOnce)
+                EnterTransition.None
+            else slideInHorizontally(
+                animationSpec = tween(
+                    durationMillis = animationDurationMilis400,
+                    easing = FastOutLinearInEasing
+                )
+            ),
+            exit = ExitTransition.None
+        ) {
+            PetInsuranceView(
+                productGroup = productItems,
+                petInsuranceDefaultConfig = viewModel.getPetInsuranceMobileConfig()?.defaultCopyPetPending,
+                onProductClick = onProductClick
+            )
+            viewModel.petInsuranceDidAnimateOnce = true
+        }
+    }
 }
 
 private fun LazyListScope.productHeaderView(

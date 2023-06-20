@@ -88,6 +88,8 @@ class UserAccountLandingViewModel @Inject constructor(
 
     private var _mapOfMyOffers = mutableMapOf<AccountOfferKeys, CommonItem.OfferItem?>()
 
+    var petInsuranceResponse : PetInsuranceModel? = null
+
     private var userAccountResponse: UserAccountResponse? = null
     var accountProductCardsGroup : AccountProductCardsGroup? = null
     var fetchAccountDidLoadOnce : Boolean = false
@@ -143,6 +145,7 @@ class UserAccountLandingViewModel @Inject constructor(
             initProductAndOfferItem()
             fetchAccountDidLoadOnce = false
             petInsuranceDidAnimateOnce = false
+            petInsuranceResponse = null
             isUserAuthenticated.value = NotAuthenticated
         }
     }
@@ -156,7 +159,7 @@ class UserAccountLandingViewModel @Inject constructor(
             }
     }
 
-    private fun showShimmer(isVisible: Boolean) {
+    fun showShimmer(isVisible: Boolean) {
         _getAllUserAccounts.update {
             it.copy(
                 data = null,
@@ -440,5 +443,10 @@ class UserAccountLandingViewModel @Inject constructor(
                 _mapOfMyOffers += temp.key to temp.value
             }
         }
+    }
+
+    fun cachedPetInsuranceModel() {
+        petInsuranceResponse?.let { handlePetInsuranceResult(petModel = it) {}
+    }
     }
 }
