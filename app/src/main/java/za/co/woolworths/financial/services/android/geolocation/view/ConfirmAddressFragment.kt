@@ -1,11 +1,17 @@
 package za.co.woolworths.financial.services.android.geolocation.view
 
+import android.Manifest
 import android.annotation.TargetApi
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.location.Location
+import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -27,6 +33,7 @@ import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddress
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutAddressConfirmationListAdapter
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils
+import za.co.woolworths.financial.services.android.geolocation.LocationProviderBroadcastReceiver
 import za.co.woolworths.financial.services.android.geolocation.model.MapData
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
@@ -53,8 +60,8 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_LATITUDE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_LONGITUDE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_PLACE_ID
-import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getDeliveryType
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.location.DynamicGeocoder
 import za.co.woolworths.financial.services.android.util.location.Event
 import za.co.woolworths.financial.services.android.util.location.EventType
@@ -62,8 +69,11 @@ import za.co.woolworths.financial.services.android.util.location.Locator
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.util.*
 
+
 class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_dialog),
     SavedAddressAdapter.OnAddressSelected,
+    PermissionResultCallback,
+    LocationProviderBroadcastReceiver.LocationProviderInterface,
     View.OnClickListener {
 
     private lateinit var binding: ConfirmAddressBottomSheetDialogBinding
@@ -77,6 +87,14 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
     private var isComingFromSlotSelection: Boolean = false
     private var isFromDashTab: Boolean = false
     private var deliveryType: String? = null
+    private var isAddressAvailable: Boolean = false
+    private var permissionUtils: PermissionUtils? = null
+    var permissions: ArrayList<String> = arrayListOf()
+    private lateinit var locationBroadcastReceiver : LocationProviderBroadcastReceiver
+
+    companion object {
+        fun newInstance() = ConfirmAddressFragment()
+    }
 
     private val confirmAddressViewModel: ConfirmAddressViewModel by activityViewModels()
 
@@ -102,12 +120,19 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
         super.onViewCreated(view, savedInstanceState)
         binding = ConfirmAddressBottomSheetDialogBinding.bind(view)
         locator = Locator(activity as AppCompatActivity)
+        locationBroadcastReceiver = LocationProviderBroadcastReceiver()
+        locationBroadcastReceiver.registerCallback(this)
+        activity?.apply {
+            permissionUtils = PermissionUtils(this, this@ConfirmAddressFragment)
+            permissions.add(Manifest.permission.ACCESS_FINE_LOCATION)
+        }
         binding.initViews()
         addFragmentListener()
     }
 
     override fun onResume() {
         super.onResume()
+        registerReceiver()
         checkForLocationPermissionAndSetLocationAddress()
         binding.updateInitialStateOnResume()
     }
@@ -115,6 +140,7 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
     private fun ConfirmAddressBottomSheetDialogBinding.updateInitialStateOnResume() {
         if (SessionUtilities.getInstance().isUserAuthenticated) {
             inSavedAddress?.root?.visibility = View.GONE
+            tvSignIn?.visibility = View.GONE
             tvConfirmAddress?.visibility = View.VISIBLE
             if (confirmAddressViewModel.isConnectedToInternet(requireActivity()))
                 fetchAddress()
@@ -124,9 +150,10 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
             }
             rvSavedAddressList?.visibility = View.VISIBLE
         } else {
-            inSavedAddress?.root?.visibility = View.VISIBLE
+            inSavedAddress?.root?.visibility = View.GONE
             tvConfirmAddress?.visibility = View.GONE
             rvSavedAddressList?.visibility = View.GONE
+            tvSignIn?.visibility = View.VISIBLE
         }
     }
 
@@ -136,6 +163,7 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
         inSavedAddress?.root?.setOnClickListener(this@ConfirmAddressFragment)
         backButton?.setOnClickListener(this@ConfirmAddressFragment)
         enterNewAddress?.setOnClickListener(this@ConfirmAddressFragment)
+        tvSignIn?.setOnClickListener(this@ConfirmAddressFragment)
 
         if (SessionUtilities.getInstance().isUserAuthenticated) {
             inSavedAddress?.root?.visibility = View.GONE
@@ -147,12 +175,27 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
                 noAddressConnectionLayout?.noConnectionLayout?.visibility = View.VISIBLE
             }
         } else {
-            inSavedAddress?.root?.visibility = View.VISIBLE
+            inSavedAddress?.root?.visibility = View.GONE
             tvConfirmAddress?.visibility = View.GONE
         }
         binding.setButtonUI(false)
         noAddressConnectionLayout?.btnRetry?.setOnClickListener {
             binding.initViews()
+        }
+
+        inCurrentLocation?.swEnableLocation?.setOnClickListener {
+            if (inCurrentLocation?.swEnableLocation?.isChecked == true) {
+                if (!Utils.isLocationEnabled(requireContext())) {
+                    KotlinUtils.openAccessMyLocationDeviceSettings(
+                            EnableLocationSettingsFragment.ACCESS_MY_LOCATION_REQUEST_CODE, activity)
+                } else if(!PermissionUtils.hasPermissions(
+                                requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)) {
+                    checkLocationPermission()
+                } else {
+                    inCurrentLocation?.swEnableLocation?.isChecked = true
+                    startLocationDiscoveryProcess()
+                }
+            }
         }
     }
 
@@ -166,17 +209,25 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
     private fun checkForLocationPermissionAndSetLocationAddress() {
         activity?.apply {
             //Check if user has location services enabled. If not, notify user as per current store locator functionality.
-            if (!Utils.isLocationEnabled(this)) {
+           /* if (!Utils.isLocationEnabled(this)) {
                 val enableLocationSettingsFragment = EnableLocationSettingsFragment()
                 enableLocationSettingsFragment?.show(
                     supportFragmentManager,
                     EnableLocationSettingsFragment::class.java.simpleName
                 )
                 return@apply
-            }
+            }*/
+            val isLocEnabled = Utils.isLocationEnabled(this)
 
             // If location services enabled, extract latitude and longitude
-            startLocationDiscoveryProcess()
+            if (isLocEnabled && PermissionUtils.hasPermissions(
+                            requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)) {
+                startLocationDiscoveryProcess()
+            } else {
+                isAddressAvailable = false
+                binding.disableCurrentLocation()
+                binding.inCurrentLocation?.swEnableLocation?.isChecked = false
+            }
         }
     }
 
@@ -190,9 +241,22 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
     }
 
     private fun handlePermissionEvent(permissionEvent: Event.Permission) {
-        if (permissionEvent.event == EventType.LOCATION_PERMISSION_NOT_GRANTED) {
-            Utils.saveLastLocation(null, activity)
-            binding.handleLocationEvent(null)
+        when (permissionEvent.event) {
+            EventType.LOCATION_PERMISSION_GRANTED -> {
+                // do nothing
+            }
+            EventType.LOCATION_PERMISSION_NOT_GRANTED -> {
+                Utils.saveLastLocation(null, activity)
+                binding.handleLocationEvent(null)
+            }
+            EventType.LOCATION_DISABLED_ON_DEVICE -> {
+                // do nothing
+            }
+            EventType.LOCATION_SERVICE_DISCONNECTED -> {
+                Utils.getLastSavedLocation()?.let {
+                    binding.handleLocationEvent(Event.Location(it))
+                }
+            }
         }
     }
 
@@ -201,14 +265,19 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
         mLastLocation = locationEvent?.locationData
         mLastLocation?.let {
             DynamicGeocoder.getAddressFromLocation(activity, it.latitude, it.longitude) { address ->
-                address?.let { childAddress ->
-                    inCurrentLocation?.root?.visibility = View.VISIBLE
-                    currentLocDiv?.visibility = View.VISIBLE
-                    inCurrentLocation?.tvCurrentLocation?.text = childAddress.addressLine
-                } ?: kotlin.run { binding.hideCurrentLocation() }
+                address?.let { address ->
+                    isAddressAvailable = true
+                    inCurrentLocation?.tvCurrentLocation?.text = address.addressLine
+                    inCurrentLocation?.ivArrow?.visibility = View.VISIBLE
+                    inCurrentLocation?.swEnableLocation?.visibility = View.GONE
+                } ?: kotlin.run {
+                    binding.disableCurrentLocation()
+                    isAddressAvailable = false
+                }
             }
         } ?: kotlin.run {
-            binding.hideCurrentLocation()
+            binding.disableCurrentLocation()
+            isAddressAvailable = false
         }
     }
 
@@ -280,9 +349,11 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
 
     }
 
-    private fun ConfirmAddressBottomSheetDialogBinding.hideCurrentLocation() {
-        inCurrentLocation?.root?.visibility = View.GONE
-        currentLocDiv?.visibility = View.GONE
+    private fun ConfirmAddressBottomSheetDialogBinding.disableCurrentLocation() {
+        inCurrentLocation?.ivArrow?.visibility = View.GONE
+        inCurrentLocation?.swEnableLocation?.visibility = View.VISIBLE
+        inCurrentLocation?.swEnableLocation?.isChecked = false
+        inCurrentLocation?.tvCurrentLocation?.text = getString(R.string.enable_location_services)
     }
 
     override fun onAddressSelected(address: Address, position: Int) {
@@ -339,8 +410,10 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
                 }
                 if (binding.progressBar.visibility == View.GONE
                     && selectedAddress != null
-                    && binding.tvConfirmAddress?.text == getString(R.string.confirm) || binding.tvConfirmAddress?.text?.take(4)
-                        ==(getString(R.string.use))
+                    && binding.tvConfirmAddress?.text == getString(R.string.confirm) || binding.tvConfirmAddress?.text?.take(
+                        4
+                    )
+                    == (getString(R.string.use))
                 ) {
                     selectedAddress.let {
                         if (it.placesId != null) {
@@ -351,7 +424,7 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
                 }
             }
             R.id.inCurrentLocation -> {
-
+                if(isAddressAvailable) {
                 if (isComingFromCheckout && deliveryType == Delivery.STANDARD.name) {
                     navigateToAddAddress(savedAddressResponse)
                 } else if (isComingFromCheckout && deliveryType == Delivery.CNC.name) {
@@ -400,6 +473,8 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
                     }
                 }
             }
+
+        }
             R.id.inSavedAddress -> {
                 Utils.triggerFireBaseEvents(
                     FirebaseManagerAnalyticsProperties.SHOP_SAVED_PLACES,
@@ -464,6 +539,9 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
                         findNavController().navigate(directions)
                     }
                 }
+            }
+            R.id.tvSignIn -> {
+                ScreenManager.presentSSOSignin(activity, DEPARTMENT_LOGIN_REQUEST)
             }
         }
     }
@@ -531,7 +609,7 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
                                     activity?.finish()
                                 } else {
                                     if (getDeliveryType() == null) {
-                                        // User don't have any location (sign in or sign out both) then move user to change fulfillment screen.
+                                        // User don't have any location (signin or signout both) then move user to change fulfillment screen.
                                         navigateToLastScreen(address)
                                         return@let
                                     }
@@ -786,5 +864,66 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
         if (requestCode == EnableLocationSettingsFragment.ACCESS_MY_LOCATION_REQUEST_CODE) {
             startLocationDiscoveryProcess()
         }
+    }
+
+    private fun checkLocationPermission() {
+        permissionUtils?.checkAndRequestPermissions(
+                permissions,
+                AppConstant.LOCATION_PERMISSION_REQUEST_CODE
+        )
+    }
+
+    override fun permissionGranted(requestCode: Int) {
+        if (requestCode == AppConstant.LOCATION_PERMISSION_REQUEST_CODE) {
+            if (!Utils.isLocationEnabled(requireContext())) {
+                KotlinUtils.openAccessMyLocationDeviceSettings(
+                        EnableLocationSettingsFragment.ACCESS_MY_LOCATION_REQUEST_CODE, activity)
+            }
+        }
+    }
+
+    private fun unregisterReceiver() {
+        try {
+            if(::locationBroadcastReceiver.isInitialized) {
+                locationBroadcastReceiver.let {
+                    requireContext().unregisterReceiver(locationBroadcastReceiver)
+                }
+            }
+        } catch (ex: IllegalArgumentException) {
+            FirebaseManager.logException("unregisterReceiver locationBroadcastReceiver $ex")
+        }
+    }
+
+    private fun registerReceiver() {
+        requireContext().registerReceiver(locationBroadcastReceiver, IntentFilter().apply {
+            addAction(LocationManager.PROVIDERS_CHANGED_ACTION)
+        })
+    }
+
+    override fun onPause() {
+        super.onPause()
+        unregisterReceiver()
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        unregisterReceiver()
+    }
+
+    override fun onLocationProviderChange(context: Context?, intent: Intent?) {
+        if (intent?.action == LocationManager.PROVIDERS_CHANGED_ACTION) {
+            Handler(Looper.getMainLooper()).postDelayed({
+                checkForLocationPermissionAndSetLocationAddress()
+            }, AppConstant.DELAY_2000_MS)
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+            requestCode: Int,
+            permissions: Array<String>,
+            grantResults: IntArray,
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        permissionUtils?.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 }
