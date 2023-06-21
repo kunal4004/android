@@ -139,7 +139,7 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
 
                         /*todo remove same product id*/
                        it.filter {
-                           it.productId == productId
+                           it.productId != productId
                        }
 
                         searchProductSubstitutionAdapter?.submitData(it)
