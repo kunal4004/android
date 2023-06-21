@@ -9,7 +9,9 @@
 
     <TextView
         android:id="@+id/tvHelpful"
-        style="@style/myriad_pro_regular_black"
+        android:fontFamily="@font/opensans_semi_bold"
+        android:textColor="@color/black"
+        android:textSize="@dimen/thirteen_sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/is_there_an_issue_with_this_review"
@@ -31,7 +33,8 @@
 
     <TextView
         android:id="@+id/tvLikes"
-        style="@style/myriad_pro_regular_black"
+        android:fontFamily="@font/opensans_regular"
+        android:textColor="@color/black"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="invisible"
