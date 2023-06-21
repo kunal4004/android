@@ -78,7 +78,7 @@
         android:layout_marginTop="13dp"
         android:lineSpacingExtra="8sp"
         android:text="@string/pay_by_debit_order_desc"
-        android:textColor="@color/white_desc"
+        android:textColor="@color/checkout_delivering_title_background"
         app:layout_constraintEnd_toStartOf="@+id/endMargin"
         app:layout_constraintStart_toStartOf="@+id/startMargin"
         app:layout_constraintTop_toBottomOf="@+id/debitOrCreditCardTextView" />
