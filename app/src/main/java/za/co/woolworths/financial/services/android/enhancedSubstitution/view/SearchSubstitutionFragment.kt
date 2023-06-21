@@ -13,6 +13,7 @@ import androidx.core.text.HtmlCompat
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
+import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.paging.filter
@@ -67,11 +68,20 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
         const val SEARCH_SCREEN_BACK_NAVIGATION = "SEARCH_SCREEN_BACK_NAVIGATION"
         const val SUBSTITUTION_ITEM_KEY = "SUBSTITUTION_ITEM_KEY"
         const val SUBSTITUTION_ITEM_ADDED = "SUBSTITUTION_ITEM_ADDED"
+        const val ERROR_SEARCH_SCREEN_BACK_NAVIGATION = "ERROR_SEARCH_SCREEN_BACK_NAVIGATION"
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        addFragmentListener()
         initView()
+    }
+
+    private fun addFragmentListener() {
+        setFragmentResultListener(SubstitutionProcessingScreen.SUBSTITUTION_ERROR_SCREEN_BACK_NAVIGATION) { _, bundle ->
+            setFragmentResult(ERROR_SEARCH_SCREEN_BACK_NAVIGATION, bundle)
+            (activity as? BottomNavigationActivity)?.popFragment()
+        }
     }
 
     private fun initView() {
@@ -328,29 +338,31 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
                         /* if we get form exception need to show error popup*/
                         resource.data?.data?.getOrNull(0)?.formExceptions?.getOrNull(0)?.let {
                             if (it.message?.isNotEmpty() == true) {
-                                showErrorScreen()
+                                showErrorScreen(SubstitutionChoice.USER_CHOICE.name)
                             }
                             return@observe
                         }
                         setResultAndNavigationToPdpWithProduct(
-                            bundleOf(SUBSTITUTION_ITEM_ADDED to true)
+                            bundleOf(SUBSTITUTION_ITEM_KEY to productList)
                         )
                     }
 
                     Status.ERROR -> {
                         binding.progressBar.visibility = GONE
-                        showErrorScreen()
+                        showErrorScreen(SubstitutionChoice.USER_CHOICE.name)
                     }
                 }
             }
         })
     }
 
-    fun showErrorScreen() {
+    fun showErrorScreen(selectionChoice: String) {
+        productSubstitutionViewModel.addSubstitutionResponse.removeObservers(viewLifecycleOwner)
         (activity as? BottomNavigationActivity)?.pushFragment(
             SubstitutionProcessingScreen.newInstance(
                 commerceItemId,
-                productList?.sku
+                productList?.sku,
+                selectionChoice
             )
         )
     }

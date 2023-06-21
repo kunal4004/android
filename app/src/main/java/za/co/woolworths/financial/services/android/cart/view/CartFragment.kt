@@ -2428,11 +2428,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
 
         setFragmentResultListener(SearchSubstitutionFragment.SELECTED_SUBSTITUTED_PRODUCT) { _, bundle ->
             // User Substitute product from search screen and came back to cart
-            bundle.apply {
-                if (bundle.containsKey(SearchSubstitutionFragment.SUBSTITUTION_ITEM_ADDED)) {
-                    loadShoppingCart()
-                }
-            }
+            loadShoppingCart()
         }
     }
 

@@ -376,19 +376,13 @@ class ProductDetailsFragment :
         }
 
         setFragmentResultListener(SearchSubstitutionFragment.SELECTED_SUBSTITUTED_PRODUCT) { _, bundle ->
-            // User Selects product from search screen and came back to pdp
+            // User Selects product from search  or kibo and came back to pdp
             bundle?.apply {
                 if (bundle.containsKey(SearchSubstitutionFragment.SUBSTITUTION_ITEM_KEY)) {
-                    // item is not added in cart yet i.e. commerce id is empty so need to click on add to cart in order to add substitute
+                    // item is added in cart yet i.e. commerce id is not empty so call getSubstitution api to refresh substitution cell
                     substitutionProductItem =
                         getSerializable(SearchSubstitutionFragment.SUBSTITUTION_ITEM_KEY) as? ProductList
                     showSubstituteItemCell(true, substitutionProductItem)
-                }
-                if (bundle.containsKey(SearchSubstitutionFragment.SUBSTITUTION_ITEM_ADDED)) {
-                    // item is added in cart yet i.e. commerce id is not empty so call getSubstitution api to refresh substitution cell
-                    isSubstiuteItemAdded =
-                        getBoolean(SearchSubstitutionFragment.SUBSTITUTION_ITEM_ADDED, false)
-                    callGetSubstitutionApi(true)
                 }
                 if (bundle.containsKey(ManageSubstitutionFragment.DONT_WANT_SUBSTITUTE_LISTENER)) {
                     binding.productDetailOptionsAndInformation.substitutionLayout.apply {
@@ -1711,6 +1705,10 @@ class ProductDetailsFragment :
                     resource.data?.data?.getOrNull(0)?.substitutionInfo?.displayName
                 selectionChoice = SubstitutionChoice.USER_CHOICE.name
                 substitutionId =  resource.data?.data?.getOrNull(0)?.substitutionInfo?.id
+            } else if (resource.data?.data?.getOrNull(0)?.substitutionSelection == SubstitutionChoice.NO.name) {
+                txtSubstitutionTitle.text = getString(R.string.dont_substitute)
+                selectionChoice = SubstitutionChoice.NO.name
+                substitutionId = ""
             } else {
                 txtSubstitutionTitle.text = getString(R.string.substitute_default)
                 selectionChoice = SubstitutionChoice.SHOPPER_CHOICE.name

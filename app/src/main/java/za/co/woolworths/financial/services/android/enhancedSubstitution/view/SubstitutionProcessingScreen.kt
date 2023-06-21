@@ -17,7 +17,6 @@ import za.co.woolworths.financial.services.android.enhancedSubstitution.viewmode
 import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
-import za.co.woolworths.financial.services.android.ui.views.tick_animation.CircleProgressView
 import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 
 @AndroidEntryPoint
@@ -27,6 +26,7 @@ class SubstitutionProcessingScreen : BaseFragmentBinding<SubstitutionErrorScreen
 
     private var commerceItemId = ""
     private var skuId = ""
+    private var selectionChoice = ""
     private val productSubstitutionViewModel: ProductSubstitutionViewModel by activityViewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -34,6 +34,7 @@ class SubstitutionProcessingScreen : BaseFragmentBinding<SubstitutionErrorScreen
         arguments?.apply {
             commerceItemId = getString(ManageSubstitutionFragment.COMMERCE_ITEM_ID, "")
             skuId = getString(ManageSubstitutionFragment.SKU_ID, "")
+            selectionChoice = getString(ManageSubstitutionFragment.SELECTION_CHOICE, "")
         }
         initErrorView()
     }
@@ -42,9 +43,11 @@ class SubstitutionProcessingScreen : BaseFragmentBinding<SubstitutionErrorScreen
         fun newInstance(
             commerceItemId: String?,
             skuId: String? = "",
+            selectionChoice: String
         ) = SubstitutionProcessingScreen().withArgs {
             putString(ManageSubstitutionFragment.COMMERCE_ITEM_ID, commerceItemId)
             putString(ManageSubstitutionFragment.SKU_ID, skuId)
+            putString(ManageSubstitutionFragment.SELECTION_CHOICE, selectionChoice)
         }
 
         const val SUBSTITUTION_ERROR_SCREEN_BACK_NAVIGATION = "SUBSTITUTION_ERROR_SCREEN_BACK_NAVIGATION"
@@ -67,7 +70,7 @@ class SubstitutionProcessingScreen : BaseFragmentBinding<SubstitutionErrorScreen
 
     private fun addSubstitutionApiCall() {
         val addSubstitutionRequest = AddSubstitutionRequest(
-            substitutionSelection = SubstitutionChoice.USER_CHOICE.name,
+            substitutionSelection = selectionChoice,
             substitutionId = skuId,
             commerceItemId = commerceItemId
         )

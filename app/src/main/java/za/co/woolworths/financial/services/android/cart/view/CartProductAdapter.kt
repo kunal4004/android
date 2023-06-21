@@ -711,15 +711,14 @@ class CartProductAdapter(
                 return
             }
             with(substitutionInfo) {
-
-                if (!isSubstitutionInStock) {
-                    return
-                }
-
                 when (substitutionSelection) {
                     SubstitutionChoice.USER_CHOICE.toString() -> {
                         substitutionIcon.setImageResource(R.drawable.ic_edit_black)
-                        tvSubstituteItem.text = displayName
+                        if (isSubstitutionInStock) {
+                            tvSubstituteItem.text = displayName
+                        } else {
+                            tvSubstituteItem.text =  mContext?.getString(R.string.substitute_default)
+                        }
                     }
                     SubstitutionChoice.NO.toString() -> {
                         tvSubstituteItem.text =
