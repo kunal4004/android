@@ -137,6 +137,7 @@ class AppConstant {
 
         // My List
         const val CONST_NO_SIZE = "NO SZ"
+        const val LOCATION_PERMISSION_REQUEST_CODE = 1
 
         //Payflex info html
         const val PAYFLEX_POP_UP_URL = "https://widgets.payflex.co.za/how_to.html?"

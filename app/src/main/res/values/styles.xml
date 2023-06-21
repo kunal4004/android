@@ -1688,7 +1688,7 @@
     </style>
 
     <style name="card_item_semi_bold_text_style" parent="card_item_regular_text_style">
-        <item name="android:fontFamily">@font/myriad_pro_semi_bold</item>
+        <item name="android:fontFamily">@font/opensans_semi_bold</item>
     </style>
 
     <style name="card_item_start_icon_style">
@@ -2185,11 +2185,10 @@
     <style name="checkout_edittext_style">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">@dimen/fourty_eight_dp</item>
-        <item name="android:layout_marginTop">@dimen/six_dp</item>
         <item name="android:background">@drawable/recipient_details_input_edittext_bg</item>
         <item name="android:fontFamily">@font/opensans_regular</item>
         <item name="android:gravity">center_vertical</item>
-        <item name="android:paddingStart">@dimen/sixteen_dp</item>
+        <item name="android:paddingStart">@dimen/ten_dp</item>
         <item name="android:paddingEnd">@dimen/sixteen_dp</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:singleLine">true</item>
@@ -2198,17 +2197,19 @@
     </style>
 
     <style name="map_search_address">
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_height">@dimen/fourty_eight_dp</item>
-        <item name="android:background">@color/white</item>
-        <item name="android:fontFamily">@font/myriad_pro_regular</item>
+        <item name="android:layout_width">@dimen/zero_dp</item>
+        <item name="android:layout_height">@dimen/fourty_dp</item>
+        <item name="android:background">@color/color_F3F3F3</item>
+        <item name="android:fontFamily">@font/opensans_medium</item>
         <item name="android:gravity">center_vertical</item>
-        <item name="android:paddingStart">@dimen/sixteen_dp</item>
-        <item name="android:paddingEnd">@dimen/sixteen_dp</item>
-        <item name="android:textColor">@color/black</item>
+        <item name="android:paddingStart">@dimen/ten_dp</item>
+        <item name="android:paddingEnd">@dimen/ten_dp</item>
+        <item name="android:textColor">@color/color_222222</item>
+        <item name="android:textCursorDrawable">@color/black</item>
+        <item name="android:lineSpacingExtra">@dimen/two_sp</item>
         <item name="android:singleLine">true</item>
         <item name="android:imeOptions">actionNext</item>
-        <item name="android:textSize">@dimen/sixteen_sp</item>
+        <item name="android:textSize">@dimen/twelve_sp</item>
     </style>
 
     <style name="shimmer_view_edittext_style">
@@ -2216,7 +2217,7 @@
         <item name="android:layout_height">@dimen/fourty_eight_dp</item>
         <item name="android:layout_marginTop">@dimen/six_dp</item>
         <item name="android:background">@drawable/recipient_details_input_edittext_bg</item>
-        <item name="android:fontFamily">@font/myriad_pro_regular</item>
+        <item name="android:fontFamily">@font/opensans_regular</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:singleLine">true</item>
@@ -3056,9 +3057,9 @@
     <style name="pdp_no_of_review_text_style" parent="android:Theme">
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:textColor">#80000000</item>
+        <item name="android:textColor">#777777</item>
         <item name="android:singleLine">true</item>
-        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
+        <item name="android:fontFamily">@font/futura_medium</item>
         <item name="android:textSize">16sp</item>
         <item name="android:layout_marginStart">16dp</item>
         <item name="android:paddingEnd">0dp</item>
@@ -3091,14 +3092,14 @@
     </style>
 
 
-    <style name="myriad_pro_semi_bold_49BB77_15_text_style" >
-        <item name="android:fontFamily">@font/myriad_pro_semi_bold</item>
+    <style name="open_sans_semi_bold_49BB77_15_text_style" >
+        <item name="android:fontFamily">@font/opensans_semi_bold</item>
         <item name="android:textSize">@dimen/fifteen_sp</item>
         <item name="android:textColor">@color/color_49BB77</item>
     </style>
 
-    <style name="myriad_pro_semi_bold_777777_15_text_style" >
-        <item name="android:fontFamily">@font/myriad_pro_semi_bold</item>
+    <style name="open_sans_semi_bold_777777_15_text_style" >
+        <item name="android:fontFamily">@font/opensans_semi_bold</item>
         <item name="android:textSize">@dimen/fifteen_sp</item>
         <item name="android:textColor">@color/account_card_desc_grey_color</item>
     </style>
@@ -3267,6 +3268,44 @@
         <item name="cornerSizeBottomRight">10dp</item>
         <item name="cornerSizeTopRight">10dp</item>
         <item name="cornerSizeTopLeft">10dp</item>
+    </style>
+
+    <style name="delete_my_profile_description_text_style">
+        <item name="android:lineSpacingExtra">1.4dp</item>
+        <item name="android:textColor">@color/color_444444</item>
+        <item name="android:textSize">@dimen/thirteen_sp</item>
+        <item name="android:fontFamily">@font/opensans_regular</item>
+    </style>
+
+    <style name="open_sans_semi_bold_49BB77_13_text_style" >
+        <item name="android:fontFamily">@font/opensans_semi_bold</item>
+        <item name="android:textSize">@dimen/thirteen_sp</item>
+        <item name="android:textColor">@color/color_49BB77</item>
+    </style>
+
+    <style name="open_sans_semi_bold_777777_13_text_style" >
+        <item name="android:fontFamily">@font/opensans_semi_bold</item>
+        <item name="android:textSize">@dimen/thirteen_sp</item>
+        <item name="android:textColor">@color/account_card_desc_grey_color</item>
+    </style>
+
+    <style name="delete_profile_page_title_text_style">
+        <item name="android:lineSpacingMultiplier">1.29</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">@dimen/twenty_sp</item>
+        <item name="android:fontFamily">@font/futura_semi_bold</item>
+    </style>
+
+    <style name="checkout_edittext_multi_style">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">@dimen/hundred_dp</item>
+        <item name="android:background">@drawable/recipient_details_input_edittext_bg</item>
+        <item name="android:fontFamily">@font/opensans_regular</item>
+        <item name="android:padding">@dimen/fourteen_dp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:imeOptions">actionNext</item>
+        <item name="android:textSize">@dimen/fourteen_sp</item>
+        <item name="android:gravity">top</item>
     </style>
 
 </resources>
