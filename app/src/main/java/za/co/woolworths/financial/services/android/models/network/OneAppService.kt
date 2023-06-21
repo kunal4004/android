@@ -299,6 +299,14 @@ open class OneAppService(
         )
     }
 
+    suspend fun addProductsToList(
+        addToListRequest: List<AddToListRequest>,
+        listId: String
+    ): retrofit2.Response<ShoppingListItemsResponse> = mApiInterface.addProductsToList(
+            getSessionToken(), getDeviceIdentityToken(), listId,
+            addToListRequest
+        )
+
     fun getPromotions(): Call<PromotionsResponse> {
         return mApiInterface.getPromotions(
             "", "", getSessionToken(),
@@ -645,11 +653,18 @@ open class OneAppService(
     fun getShoppingLists(): Call<ShoppingListsResponse> {
         return mApiInterface.getShoppingLists(getSessionToken(), getDeviceIdentityToken())
     }
+    suspend fun getShoppingList(): retrofit2.Response<ShoppingListsResponse> =
+        mApiInterface.getShoppingList(getSessionToken(), getDeviceIdentityToken())
+
 
     fun createList(listName: CreateList): Call<ShoppingListsResponse> {
         return mApiInterface.createList(getSessionToken(), getDeviceIdentityToken(), listName)
     }
 
+    suspend fun createNewList(listName: CreateList): retrofit2.Response<ShoppingListsResponse> =
+        withContext(Dispatchers.IO){
+            mApiInterface.createNewList(getSessionToken(), getDeviceIdentityToken(), listName)
+        }
 
     suspend fun getShoppingListItems(listId: String): retrofit2.Response<ShoppingListItemsResponse> {
         return withContext(Dispatchers.IO) {

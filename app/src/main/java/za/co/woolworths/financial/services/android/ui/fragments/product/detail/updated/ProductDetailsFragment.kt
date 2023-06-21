@@ -54,6 +54,7 @@ import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.ILocationProvider
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
+import za.co.woolworths.financial.services.android.geolocation.viewmodel.AddToCartLiveData
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.UnSellableItemsLiveData
@@ -127,7 +128,6 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_COLOR_NOT_MATCH
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_FACE_NOT_DETECT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_FAIL_IMAGE_LOAD
-import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.saveAnonymousUserLocationDetails
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.logException
@@ -140,6 +140,24 @@ import za.co.woolworths.financial.services.android.util.pickimagecontract.PickIm
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.io.File
 import javax.inject.Inject
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
+import kotlin.collections.List
+import kotlin.collections.Map
+import kotlin.collections.MutableList
+import kotlin.collections.any
+import kotlin.collections.arrayListOf
+import kotlin.collections.containsKey
+import kotlin.collections.forEach
+import kotlin.collections.forEachIndexed
+import kotlin.collections.get
+import kotlin.collections.hashMapOf
+import kotlin.collections.isEmpty
+import kotlin.collections.isNotEmpty
+import kotlin.collections.isNullOrEmpty
+import kotlin.collections.joinToString
+import kotlin.collections.listOf
+import kotlin.collections.listOfNotNull
 import kotlin.collections.set
 
 
@@ -842,7 +860,12 @@ class ProductDetailsFragment :
                                         KotlinUtils.browsingDeliveryType?.name)
                                 }
                             } else
-                                callConfirmPlace()
+                                LocationUtils.callConfirmPlace(
+                                    (this@ProductDetailsFragment),
+                                    null,
+                                    progressBar,
+                                    confirmAddressViewModel
+                                )
                         }
                     }
                 }
@@ -850,49 +873,6 @@ class ProductDetailsFragment :
                 logException(e)
                 progressBar?.visibility = View.GONE
             } catch (e: JsonSyntaxException) {
-                logException(e)
-                progressBar?.visibility = View.GONE
-            }
-        }
-    }
-
-    private fun ProductDetailsFragmentBinding.callConfirmPlace() {
-        // Confirm the location
-        lifecycleScope.launch {
-            progressBar?.visibility = View.VISIBLE
-            try {
-                val confirmLocationRequest =
-                    KotlinUtils.getConfirmLocationRequest(KotlinUtils.browsingDeliveryType)
-                val confirmLocationResponse =
-                    confirmAddressViewModel.postConfirmAddress(confirmLocationRequest)
-                progressBar?.visibility = View.GONE
-                if (confirmLocationResponse != null) {
-                    when (confirmLocationResponse.httpCode) {
-                        HTTP_OK -> {
-                            if (SessionUtilities.getInstance().isUserAuthenticated) {
-                                Utils.savePreferredDeliveryLocation(ShoppingDeliveryLocation(
-                                    confirmLocationResponse.orderSummary?.fulfillmentDetails))
-                                if (KotlinUtils.getAnonymousUserLocationDetails() != null)
-                                    KotlinUtils.clearAnonymousUserLocationDetails()
-                            } else {
-                                saveAnonymousUserLocationDetails(ShoppingDeliveryLocation(
-                                    confirmLocationResponse.orderSummary?.fulfillmentDetails))
-                            }
-                            val savedPlaceId = KotlinUtils.getDeliveryType()?.address?.placeId
-                            KotlinUtils.apply {
-                                this.placeId = confirmLocationRequest.address.placeId
-                                isLocationPlaceIdSame =
-                                    confirmLocationRequest.address.placeId?.equals(
-                                        savedPlaceId)
-                            }
-
-                            setBrowsingData()
-                            updateStockAvailabilityLocation() // update pdp location.
-                            addItemToCart()
-                        }
-                    }
-                }
-            } catch (e: Exception) {
                 logException(e)
                 progressBar?.visibility = View.GONE
             }
@@ -919,8 +899,16 @@ class ProductDetailsFragment :
         UnSellableItemsLiveData.observe(viewLifecycleOwner) {
             isUnSellableItemsRemoved = it
             if (isUnSellableItemsRemoved == true && (activity as? BottomNavigationActivity)?.mNavController?.currentFrag is ProductDetailsFragment) {
-                binding.callConfirmPlace()
+                setBrowsingData()
+                updateStockAvailabilityLocation() // update pdp location.
                 UnSellableItemsLiveData.value = false
+            }
+        }
+
+        AddToCartLiveData.observe(viewLifecycleOwner) {
+            if (it) {
+                AddToCartLiveData.value = false
+                addItemToCart() // This will again call addToCart
             }
         }
     }
@@ -930,7 +918,7 @@ class ProductDetailsFragment :
     ) {
         deliveryType?.let {
             val unsellableItemsBottomSheetDialog =
-                UnsellableItemsBottomSheetDialog.newInstance(unSellableCommerceItems, it)
+                UnsellableItemsBottomSheetDialog.newInstance(unSellableCommerceItems, it, binding.progressBar, confirmAddressViewModel)
             unsellableItemsBottomSheetDialog.show(requireFragmentManager(),
                 UnsellableItemsBottomSheetDialog::class.java.simpleName)
         }

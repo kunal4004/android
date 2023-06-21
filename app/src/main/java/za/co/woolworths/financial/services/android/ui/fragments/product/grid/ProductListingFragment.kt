@@ -43,6 +43,7 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.IProductListing
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils
+import za.co.woolworths.financial.services.android.geolocation.viewmodel.AddToCartLiveData
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.UnSellableItemsLiveData
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
@@ -289,7 +290,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
                                     )
                                 }
                             } else
-                                callConfirmPlace()
+                                LocationUtils.callConfirmPlace(this@ProductListingFragment, null, binding.incCenteredProgress.progressCreditLimit, confirmAddressViewModel)
                         }
                     }
                 }
@@ -307,8 +308,15 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
         UnSellableItemsLiveData.observe(viewLifecycleOwner) {
             isUnSellableItemsRemoved = it
             if (isUnSellableItemsRemoved == true && (activity as? BottomNavigationActivity)?.mNavController?.currentFrag is ProductListingFragment) {
-                callConfirmPlace()
                 UnSellableItemsLiveData.value = false
+                setBrowsingData()
+                updateToolbarTitle() // update plp location.
+            }
+        }
+        AddToCartLiveData.observe(viewLifecycleOwner) {
+            if (it) {
+                AddToCartLiveData.value = false
+                onConfirmLocation() // This will again call addToCart
             }
         }
     }
@@ -318,60 +326,11 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
     ) {
         deliveryType?.let {
             val unsellableItemsBottomSheetDialog =
-                UnsellableItemsBottomSheetDialog.newInstance(unSellableCommerceItems, it)
+                UnsellableItemsBottomSheetDialog.newInstance(unSellableCommerceItems, it, binding.incCenteredProgress.progressCreditLimit, confirmAddressViewModel)
             unsellableItemsBottomSheetDialog.show(
                 requireFragmentManager(),
                 UnsellableItemsBottomSheetDialog::class.java.simpleName
             )
-        }
-    }
-
-    private fun callConfirmPlace() {
-        // Confirm the location
-        lifecycleScope.launch {
-            showProgressBar()
-            try {
-                val confirmLocationRequest =
-                    KotlinUtils.getConfirmLocationRequest(KotlinUtils.browsingDeliveryType)
-                val confirmLocationResponse =
-                    confirmAddressViewModel.postConfirmAddress(confirmLocationRequest)
-                dismissProgressBar()
-                if (confirmLocationResponse != null) {
-                    when (confirmLocationResponse.httpCode) {
-                        HTTP_OK -> {
-                            if (SessionUtilities.getInstance().isUserAuthenticated) {
-                                Utils.savePreferredDeliveryLocation(
-                                    ShoppingDeliveryLocation(
-                                        confirmLocationResponse.orderSummary?.fulfillmentDetails
-                                    )
-                                )
-                                if (KotlinUtils.getAnonymousUserLocationDetails() != null)
-                                    KotlinUtils.clearAnonymousUserLocationDetails()
-                            } else {
-                                saveAnonymousUserLocationDetails(
-                                    ShoppingDeliveryLocation(
-                                        confirmLocationResponse.orderSummary?.fulfillmentDetails
-                                    )
-                                )
-                            }
-
-                            val savedPlaceId = KotlinUtils.getDeliveryType()?.address?.placeId
-                            KotlinUtils.apply {
-                                this.placeId = confirmLocationRequest.address.placeId
-                                isLocationPlaceIdSame =
-                                    confirmLocationRequest.address.placeId?.equals(savedPlaceId)
-                            }
-
-                            setBrowsingData()
-                            updateToolbarTitle() // update plp location.
-                            onConfirmLocation() // This will again call addToCart
-                        }
-                    }
-                }
-            } catch (e: Exception) {
-                FirebaseManager.logException(e)
-                dismissProgressBar()
-            }
         }
     }
 
@@ -1219,7 +1178,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
             }
             BundleKeysConstants.REQUEST_CODE -> {
                 updateToolbarTitle()
-                callConfirmPlace()
+                LocationUtils.callConfirmPlace(this@ProductListingFragment, null, binding.incCenteredProgress.progressCreditLimit, confirmAddressViewModel)
             }
             else -> return
         }
