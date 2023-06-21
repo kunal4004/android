@@ -742,11 +742,6 @@ open class OneAppService(
     suspend fun getShoppingList(): retrofit2.Response<ShoppingListsResponse> =
         mApiInterface.getShoppingList(getSessionToken(), getDeviceIdentityToken())
 
-
-    fun createList(listName: CreateList): Call<ShoppingListsResponse> {
-        return mApiInterface.createList(getSessionToken(), getDeviceIdentityToken(), listName)
-    }
-
     suspend fun createNewList(listName: CreateList): retrofit2.Response<ShoppingListsResponse> =
         withContext(Dispatchers.IO){
             mApiInterface.createNewList(getSessionToken(), getDeviceIdentityToken(), listName)
@@ -871,16 +866,6 @@ open class OneAppService(
 
     fun getOrderDetails(orderId: String): Call<OrderDetailsResponse> {
         return mApiInterface.getOrderDetails(getSessionToken(), getDeviceIdentityToken(), orderId)
-    }
-
-    fun addOrderToList(
-        orderId: String,
-        orderToShoppingListRequestBody: OrderToShoppingListRequestBody
-    ): Call<OrderToListReponse> {
-        return mApiInterface.addOrderToList(
-            getSessionToken(), getDeviceIdentityToken(), orderId,
-            orderToShoppingListRequestBody
-        )
     }
 
     suspend fun addToListByOrderId(

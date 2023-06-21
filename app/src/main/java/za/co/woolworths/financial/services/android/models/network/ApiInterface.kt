@@ -783,14 +783,6 @@ interface ApiInterface {
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("wfs/app/v4/list")
-    fun createList(
-
-            @Header("sessionToken") sessionToken: String,
-            @Header("deviceIdentityToken") deviceIdentityToken: String,
-            @Body name: CreateList): Call<ShoppingListsResponse>
-
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @POST("wfs/app/v4/list")
     suspend fun createNewList(
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String,
