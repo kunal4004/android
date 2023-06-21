@@ -8,7 +8,7 @@ import com.google.gson.JsonSyntaxException
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.AddToCartLiveData
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
-import za.co.woolworths.financial.services.android.geolocation.viewmodel.UnSellableItemsLiveData
+import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmLocationResponseLiveData
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList
 import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
@@ -61,7 +61,7 @@ class LocationUtils {
                                         )
                                 }
                                 // This will update the previous fragment data like location details.
-                                UnSellableItemsLiveData.value = true
+                                ConfirmLocationResponseLiveData.value = true
                                 if (commerceItemList != null) {
                                     // If unsellable items are removed from popup with addToList checkBox selected then call getList and createList/AddToList API.
                                     callGetListAPI(progressBar, fragment, confirmAddressViewModel)

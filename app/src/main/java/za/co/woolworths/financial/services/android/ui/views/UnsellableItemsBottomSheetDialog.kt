@@ -20,7 +20,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.UnsellableItemsBottomSheetDialogBinding
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
-import za.co.woolworths.financial.services.android.geolocation.viewmodel.UnSellableItemsLiveData
+import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmLocationResponseLiveData
 import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
 import za.co.woolworths.financial.services.android.ui.adapters.UnsellableItemsListAdapter
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
@@ -169,7 +169,7 @@ class UnsellableItemsBottomSheetDialog(
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.cancel_btn -> {
-                UnSellableItemsLiveData.value = false
+                ConfirmLocationResponseLiveData.value = false
                 confirmRemoveItems()
             }
 
