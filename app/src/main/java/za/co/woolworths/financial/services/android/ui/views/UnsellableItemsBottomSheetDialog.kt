@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.sp
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.UnsellableItemsBottomSheetDialogBinding
+import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationParams
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmLocationResponseLiveData
 import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
@@ -34,8 +35,8 @@ import za.co.woolworths.financial.services.android.util.wenum.Delivery
  * Created by Kunal Uttarwar on 11/05/22.
  */
 class UnsellableItemsBottomSheetDialog(
-    val progressBar: ProgressBar?,
-    val confirmAddressViewModel: ConfirmAddressViewModel?,
+    val progressBar: ProgressBar,
+    val confirmAddressViewModel: ConfirmAddressViewModel,
 ) : WBottomSheetDialogFragment(),
     View.OnClickListener {
 
@@ -48,15 +49,6 @@ class UnsellableItemsBottomSheetDialog(
     companion object {
         const val KEY_ARGS_UNSELLABLE_COMMERCE_ITEMS = "UnSellableCommerceItems"
         const val KEY_ARGS_DELIVERY_TYPE = "deliveryType"
-
-        fun newInstance(
-            unsellableItemsList: ArrayList<UnSellableCommerceItem>,
-            deliveryType: String,
-        ) =
-            UnsellableItemsBottomSheetDialog(null, null).withArgs {
-                putSerializable(KEY_ARGS_UNSELLABLE_COMMERCE_ITEMS, unsellableItemsList)
-                putString(KEY_ARGS_DELIVERY_TYPE, deliveryType)
-            }
 
         fun newInstance(
             unsellableItemsList: ArrayList<UnSellableCommerceItem>,
@@ -180,9 +172,9 @@ class UnsellableItemsBottomSheetDialog(
                 val parentFragmentList = this.parentFragmentManager.fragments
                 LocationUtils.callConfirmPlace(
                     parentFragmentList[parentFragmentList.size - 2],
-                    if (isCheckBoxSelected) commerceItems else null,
-                    progressBar!!,
-                    confirmAddressViewModel!!
+                    if (isCheckBoxSelected) ConfirmLocationParams(commerceItems, null) else null,
+                    progressBar,
+                    confirmAddressViewModel
                 )
                 confirmRemoveItems()
             }

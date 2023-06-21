@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.google.gson.JsonSyntaxException
 import kotlinx.coroutines.launch
+import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationParams
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.AddToCartLiveData
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmLocationResponseLiveData
@@ -21,7 +22,7 @@ class LocationUtils {
     companion object {
         fun callConfirmPlace(
             fragment: Fragment,
-            commerceItemList: ArrayList<UnSellableCommerceItem>?,
+            confirmLocationParams: ConfirmLocationParams?,
             progressBar: ProgressBar,
             confirmAddressViewModel: ConfirmAddressViewModel,
         ) {
@@ -29,8 +30,8 @@ class LocationUtils {
             fragment.viewLifecycleOwner.lifecycleScope.launch {
                 progressBar?.visibility = View.VISIBLE
                 try {
-                    val confirmLocationRequest =
-                        KotlinUtils.getConfirmLocationRequest(KotlinUtils.browsingDeliveryType)
+                    val confirmLocationRequest = confirmLocationParams?.confirmLocationRequest
+                        ?: KotlinUtils.getConfirmLocationRequest(KotlinUtils.browsingDeliveryType)
                     val confirmLocationResponse =
                         confirmAddressViewModel.postConfirmAddress(confirmLocationRequest)
                     progressBar?.visibility = View.GONE
@@ -62,11 +63,11 @@ class LocationUtils {
                                 }
                                 // This will update the previous fragment data like location details.
                                 ConfirmLocationResponseLiveData.value = true
-                                if (commerceItemList != null) {
+                                if (confirmLocationParams?.commerceItemList != null) {
                                     // If unsellable items are removed from popup with addToList checkBox selected then call getList and createList/AddToList API.
                                     callGetListAPI(progressBar, fragment, confirmAddressViewModel)
                                 } else {
-                                    //This is not a unsellable flow or we don't have unsellable items so this will give callBack to AddToCart function.
+                                    //This is not a unsellable flow or we don't have unsellable items so this will give callBack to AddToCart function or Checkout Summary Flow.
                                     AddToCartLiveData.value = true
                                 }
                             }
