@@ -33,5 +33,7 @@ data class OrderItem(
 fun OrderItem.toAddToListRequest() = AddToListRequest(
     quantity = this.quantity.toString(),
     catalogRefId = this.catalogRefId,
+    giftListId = "",
+    skuID = "",
     isGWP = this.isGWP
 )
