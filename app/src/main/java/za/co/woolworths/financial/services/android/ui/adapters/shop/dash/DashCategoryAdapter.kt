@@ -37,6 +37,8 @@ class DashCategoryAdapter(
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var type: String? = null
+    private var bannerType: String? = null
+
     private val diffCallback = object : DiffUtil.ItemCallback<Any>() {
 
         override fun areItemsTheSame(oldItem: Any, newItem: Any) =
@@ -105,6 +107,7 @@ class DashCategoryAdapter(
                     context,
                     position,
                     list[position] as Banner,
+                    bannerType ?: "",
                     dashLandingNavigationListener
                 )
             }
@@ -113,6 +116,7 @@ class DashCategoryAdapter(
                     context,
                     position,
                     list[position] as Banner,
+                    bannerType ?: "",
                     dashLandingNavigationListener
                 )
             }
@@ -121,6 +125,7 @@ class DashCategoryAdapter(
                     context,
                     position,
                     list[position] as Banner,
+                    bannerType ?: "",
                     dashLandingNavigationListener
                 )
             }
@@ -129,6 +134,7 @@ class DashCategoryAdapter(
                     context,
                     position,
                     list[position] as Banner,
+                    bannerType ?: "",
                     dashLandingNavigationListener
                 )
             }
@@ -169,6 +175,7 @@ class DashCategoryAdapter(
 
     fun setData(productCatalogue: ProductCatalogue) {
         type = productCatalogue.name
+        bannerType = productCatalogue.headerText
         productCatalogue.banners?.let { list = it }
         productCatalogue.products?.let { list = it }
     }
@@ -180,11 +187,15 @@ class BannerCarouselItemViewHolder(val itemBinding: ItemBannerCarouselBinding) :
         context: Context,
         position: Int,
         banner: Banner,
+        bannerType: String,
         dashLandingNavigationListener: OnDashLandingNavigationListener?
     ) {
 
         itemBinding.dashBannerCarouselContainer?.setOnClickListener {
-            dashLandingNavigationListener?.onDashLandingNavigationClicked(view = it, banner)
+            dashLandingNavigationListener?.onDashLandingNavigationClicked(
+                view = it,
+                banner,
+                position,bannerType)
         }
         Glide.with(context)
             .load(banner.externalImageRefV2)
@@ -204,10 +215,14 @@ class BannerGridItemViewHolder(val itemBinding: ItemBannerGridBinding) : Recycle
         context: Context,
         position: Int,
         banner: Banner,
+        bannerType:String,
         dashLandingNavigationListener: OnDashLandingNavigationListener?
     ) {
         itemBinding.root.setOnClickListener {
-            dashLandingNavigationListener?.onDashLandingNavigationClicked(view = it, banner)
+            dashLandingNavigationListener?.onDashLandingNavigationClicked(
+                view = it,
+                banner,
+                position,bannerType)
         }
         Glide.with(context)
             .load(banner.externalImageRefV2)
@@ -227,10 +242,15 @@ class LongBannerCarouselItemViewHolder(val itemBinding: ItemLongBannerCarouselBi
         context: Context,
         position: Int,
         banner: Banner,
+        bannerType: String,
         dashLandingNavigationListener: OnDashLandingNavigationListener?
     ) {
         itemBinding.includeItemLongBannerList.longBannerListContainer?.setOnClickListener {
-            dashLandingNavigationListener?.onDashLandingNavigationClicked(it, banner)
+            dashLandingNavigationListener?.onDashLandingNavigationClicked(
+                it,
+                banner,
+                position,
+                bannerType)
         }
         itemBinding.includeItemLongBannerList.tvLongBannerTitle?.text = banner.displayName
         itemBinding.includeItemLongBannerList.tvLongBannerSubtitle?.text = banner.subTitle
@@ -253,10 +273,13 @@ class LongBannerListItemViewHolder(val itemBinding: ItemLongBannerListBinding) :
         context: Context,
         position: Int,
         banner: Banner,
+        bannerType:String,
         dashLandingNavigationListener: OnDashLandingNavigationListener?
     ) {
         itemBinding.longBannerListContainer?.setOnClickListener {
-            dashLandingNavigationListener?.onDashLandingNavigationClicked(it, banner)
+            dashLandingNavigationListener?.onDashLandingNavigationClicked(
+                it, banner, position, bannerType
+            )
         }
         itemBinding.tvLongBannerTitle?.text = banner.displayName
         itemBinding.tvLongBannerSubtitle?.text = banner.subTitle

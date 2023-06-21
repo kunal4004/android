@@ -970,7 +970,14 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
         )
     }
 
-    override fun onDashLandingNavigationClicked(view: View?, item: Banner) {
+    override fun onDashLandingNavigationClicked(
+        view: View?, item: Banner,
+        position: Int,
+        bannerType: String,
+    ) {
+
+        addBannerEngagementEvent(item,position,bannerType)
+
         (requireActivity() as? BottomNavigationActivity)?.apply {
             pushFragment(
                 ProductListingFragment.newInstance(
@@ -1009,5 +1016,33 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                 }
             }
         }
+    }
+
+    private fun addBannerEngagementEvent(
+        banner: Banner,
+        position: Int,
+        bannerType: String,
+    ) {
+
+        val categoryBanner = Bundle()
+        categoryBanner?.apply {
+            putString(
+                FirebaseManagerAnalyticsProperties.PropertyNames.CONTENT_NAME,
+                banner.displayName
+            )
+            putInt(
+                FirebaseManagerAnalyticsProperties.PropertyNames.BANNER_POSITION,
+                position
+            )
+            putString(
+                FirebaseManagerAnalyticsProperties.PropertyNames.BANNER_LIST_NAME,
+                bannerType
+            )
+
+        }
+        AnalyticsManager.logEvent(
+            FirebaseManagerAnalyticsProperties.PropertyNames.BANNER_ENGAGEMENT,
+            categoryBanner
+        )
     }
 }
