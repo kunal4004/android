@@ -357,9 +357,11 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
     }
 
     private fun handleConfirmButton() {
-        val selectionChoice = if (binding.layoutManageSubstitution.rbOwnSubstitute.isChecked)
+        val selectionChoice = if (binding.layoutManageSubstitution.rbOwnSubstitute.isChecked) {
             SubstitutionChoice.USER_CHOICE.name
-        else SubstitutionChoice.SHOPPER_CHOICE.name
+        } else {
+            SubstitutionChoice.SHOPPER_CHOICE.name
+        }
         callAddSubstitutionAPi(selectionChoice)
     }
 
@@ -427,9 +429,11 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
 
     private fun getSelectedKiboProduct(): ProductList {
         val kiboProduct = ProductList()
-        kiboProduct.productName = item?.title
-        kiboProduct.externalImageRefV2 = item?.imageLink
-        kiboProduct.productId = item?.id
+        kiboProduct.apply {
+            productName = item?.title
+            externalImageRefV2 = item?.imageLink
+            productId = item?.id
+        }
         return kiboProduct
     }
 
