@@ -115,7 +115,6 @@ class ConfirmAddressMapFragment :
     lateinit var connectivityLiveData: ConnectivityLiveData
 
     private var placeName: String? = null
-    private var isMainPlaceName: Boolean? = false
     private var isStreetNumberAndRouteFromSearch: Boolean? = false
     private var isPoiAddress: Boolean? = false
     private var address2: String? = ""
@@ -572,7 +571,6 @@ class ConfirmAddressMapFragment :
                     enableMapView()
                     binding?.tvLocationNikName?.text = placeName
                     isAddressFromSearch = true
-                    isMainPlaceName = true
                     isStreetNumberAndRouteFromSearch = true
                     val placeFields: MutableList<Place.Field> = mutableListOf(
                         Place.Field.ID,
@@ -841,13 +839,13 @@ class ConfirmAddressMapFragment :
                         if (!it.equals(
                                 "$streetNumber $routeName",
                                 true
-                            ) && isMainPlaceName == true
+                            )
                         ) {
                             sendAddressData(it, "$streetNumber $routeName", type)
-                            isMainPlaceName = false
+
                         } else {
                             sendAddressData("$streetNumber $routeName", "", type)
-                            isMainPlaceName = false
+
                         }
                     } ?: sendAddressData("$streetNumber $routeName", "", type)
 
