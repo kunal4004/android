@@ -331,11 +331,11 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
                     Status.SUCCESS -> {
                         binding.progressBar.visibility = GONE
                         /* if we get form exception need to show error popup*/
-                        resource.data?.data?.getOrNull(0)?.formExceptions?.getOrNull(0)?.let {
+                        resource.data?.data?.getOrNull(0)?.formexceptions?.getOrNull(0)?.let {
                             if (it.message?.isNotEmpty() == true) {
                                 showErrorScreen(SubstitutionChoice.USER_CHOICE.name)
+                                return@observe
                             }
-                            return@observe
                         }
                         setResultAndNavigationToPdpWithProduct(
                             bundleOf(SUBSTITUTION_ITEM_KEY to productList)
