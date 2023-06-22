@@ -2503,7 +2503,7 @@
     <string name="geoloc_ClickNCollectValue">28 Eastlake Isla...</string>
     <string name="collection_store_title">There Are No Collection Stores Available Near You</string>
     <string name="change_location">CHANGE LOCATION</string>
-    <string name="enter_your_street_number_and_name">Enter your Location</string>
+    <string name="enter_your_street_number_and_name">Enter Your Location</string>
     <string name="enter_address_for_google_map_hint">Use an address, the name of a complex, or your closest landmark.</string>
     <string name="no_location_title">We Can’t Deliver \n To This Location Yet.</string>
     <string name="no_location_desc">However, we’re growing quickly, \n so please check back soon</string>

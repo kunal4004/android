@@ -15,6 +15,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
@@ -85,7 +86,6 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.KeyboardUtils.Companion.hideKeyboardIfVisible
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.location.DynamicGeocoder
-import za.co.woolworths.financial.services.android.viewmodels.UnIndexedAddressLiveData
 import java.net.HttpURLConnection.HTTP_OK
 import java.util.regex.Pattern
 import kotlin.coroutines.CoroutineContext
@@ -118,7 +118,8 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
     private var isPoiAddress: Boolean? = false
     private var address2: String? = ""
     private var oldNickName: String? = ""
-    private var unIndexedAddressIdentified:Boolean?=false
+    private var unIndexedAddressIdentified: Boolean = false
+    private val unIndexedLiveData = MutableLiveData<Boolean>()
 
 
     companion object {
@@ -591,7 +592,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             latitude = place.latLng?.latitude
             longitude = place.latLng?.longitude
             placesId = placeId
-            UnIndexedAddressLiveData.value = true
+            unIndexedLiveData.value = true
 
         }
 
@@ -1397,8 +1398,8 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
 
 
     private fun addUnIndexedIdentifiedListener() {
-        UnIndexedAddressLiveData.value=false
-        UnIndexedAddressLiveData.observe(viewLifecycleOwner) {
+        unIndexedLiveData.value=false
+        unIndexedLiveData.observe(viewLifecycleOwner) {
             if (it == true && unIndexedAddressIdentified == true && isPoiAddress == false) {
 
                 isValidAddress = true

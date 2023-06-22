@@ -20,6 +20,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.awfs.coordination.R
@@ -73,7 +74,6 @@ import za.co.woolworths.financial.services.android.util.location.Event
 import za.co.woolworths.financial.services.android.util.location.EventType
 import za.co.woolworths.financial.services.android.util.location.Locator
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
-import za.co.woolworths.financial.services.android.viewmodels.UnIndexedAddressLiveData
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -121,6 +121,7 @@ class ConfirmAddressMapFragment :
     private var address2: String? = ""
     private lateinit var locator: Locator
     private lateinit var locationBroadcastReceiver : LocationProviderBroadcastReceiver
+    private val unIndexedLiveData = MutableLiveData<Boolean>()
     override fun onViewCreated(
         view: View, savedInstanceState: Bundle?,
     ) {
@@ -262,6 +263,7 @@ class ConfirmAddressMapFragment :
     private fun clearAddressText() {
         binding.autoCompleteTextView.setText("")
         binding.tvLocationNikName.text = ""
+        binding?.confirmAddress?.isEnabled = false
     }
 
     private fun clearMapDetails() {
@@ -856,7 +858,7 @@ class ConfirmAddressMapFragment :
                                 if (streetNumber.isNullOrEmpty() && routeName.isNullOrEmpty()) {
                                     showSelectedLocationError(true)
                                 } else {
-                                    UnIndexedAddressLiveData.value = true
+                                    unIndexedLiveData.value = true
                                     showSelectedLocationError(false)
                                 }
                             }
@@ -915,10 +917,12 @@ class ConfirmAddressMapFragment :
     private fun checkForLocationPermissionAndSetLocationAddress() {
         activity?.apply {
             //Check if user has location services enabled. If not, notify user as per current store locator functionality.
-            if (!Utils.isLocationEnabled(this)) {
+            if (!Utils.isLocationEnabled(this) || !PermissionUtils.hasPermissions(
+                            requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)) {
                 binding.apply {
                   //  autoCompleteTextView.isEnabled = false
-                    clearAddressText()
+                   // clearAddressText()
+                    showSelectedLocationError(false)
                     confirmAddress.isEnabled = false
                     dynamicMapView?.setAllGesturesEnabled(false)
 
@@ -995,8 +999,8 @@ class ConfirmAddressMapFragment :
     }
 
     private fun addUnIndexedIdentifiedListener() {
-        UnIndexedAddressLiveData.value = false
-        UnIndexedAddressLiveData.observe(viewLifecycleOwner) {
+        unIndexedLiveData.value = false
+        unIndexedLiveData.observe(viewLifecycleOwner) {
             if (it == true && unIndexedAddressIdentified == true) {
 
                 if (unIndexedBottomSheetDialog == null) {
