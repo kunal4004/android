@@ -1624,6 +1624,11 @@ fun RecyclerView.runWhenReady(action: () -> Unit) {
     viewTreeObserver.addOnGlobalLayoutListener(globalLayoutListener)
 }
 
+var EditText.value
+    get() = this.text.toString()
+    set(value) {
+        this.setText(value)
+    }
 
 fun Fragment.isFragmentAttached():Boolean {
     if (isAdded && context != null) {
