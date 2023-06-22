@@ -216,7 +216,7 @@ class StandardDeliveryFragment : DepartmentExtensionFragment(R.layout.fragment_s
 
     fun scrollToTop() {
         if (::binding.isInitialized) {
-            binding.rclDepartment?.scrollToPosition(0)
+            binding.rclDepartment?.smoothScrollToPosition(0)
         }
     }
 
