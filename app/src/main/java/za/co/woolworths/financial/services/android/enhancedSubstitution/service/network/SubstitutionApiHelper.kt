@@ -79,14 +79,6 @@ class SubstitutionApiHelper @Inject constructor() : RetrofitConfig(AppContextPro
         }
     }
 
-    suspend fun fetchInventoryForSubstitution(storeId: String, multipleSku: String) =
-        mApiInterface.fetchDashInventorySKUForStore(
-            getSessionToken(),
-            getDeviceIdentityToken(),
-            storeId,
-            multipleSku
-        )
-
     suspend fun addSubstitution(addSubstitutionRequest: AddSubstitutionRequest) =
         mApiInterface.addSubstitution(
             getSessionToken(),
@@ -101,11 +93,12 @@ class SubstitutionApiHelper @Inject constructor() : RetrofitConfig(AppContextPro
             kiboProductRequest
         )
 
-    suspend fun getInventoryForSku(storeId: String, multipleSku: String) =
-        mApiInterface.fetchDashInventorySKUForStore(
+    suspend fun fetchInventoryForKiboProducts(storeId: String, multipleSku: String) =
+        mApiInterface.fetchKiboInventorySKUForStore(
             getSessionToken(),
             getDeviceIdentityToken(),
             store_id = storeId,
-            multipleSku = multipleSku
+            multipleSku = multipleSku,
+            substitution = true
         )
 }

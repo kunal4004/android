@@ -199,7 +199,9 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
             emptySubstitutionLayout.root.visibility = GONE
             recyclerView.visibility = GONE
         }
-        disableConfirmButton()
+        if (selectionChoice == SubstitutionChoice.USER_CHOICE.name) {
+            disableConfirmButton()
+        }
         binding.errorMessage.visibility = VISIBLE
         binding.errorMessage.makeLinks(
             Pair(getString(R.string.tap_to_retry), OnClickListener {
@@ -258,7 +260,7 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
     private fun getInventoryStock(storeId: String, multiSku: String, itemList: ArrayList<Item>?) {
         val configQuantity: Int? =
             AppConfigSingleton.enhanceSubstitution?.thresholdQuantityForSubstitutionProduct
-        productSubstitutionViewModel.getInventoryForStock(storeId, multiSku)
+        productSubstitutionViewModel.getInventoryForKiboProducts(storeId, multiSku)
         productSubstitutionViewModel.stockInventoryResponse.observe(viewLifecycleOwner) { skuInventoryForStoreResponse ->
 
             skuInventoryForStoreResponse.getContentIfNotHandled()?.let { resource ->
@@ -501,6 +503,7 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
     }
 
     private fun openSubstitutionSearchScreen() {
+        productSubstitutionViewModel.stockInventoryResponse.removeObservers(viewLifecycleOwner)
         (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
             SearchSubstitutionFragment.newInstance(commerceItemId, productId)
         )
