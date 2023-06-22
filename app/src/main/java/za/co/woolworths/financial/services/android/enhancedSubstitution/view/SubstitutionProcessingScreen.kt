@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.enhancedSubstitution.view
 
+import android.graphics.Paint
 import android.os.Bundle
 import android.view.View
 import android.view.View.GONE
@@ -57,11 +58,12 @@ class SubstitutionProcessingScreen : BaseFragmentBinding<SubstitutionErrorScreen
         binding.substitutionErrorLayout.apply {
             root.visibility = VISIBLE
             errorDescription.visibility = GONE
-            errorLogo.setImageResource(R.drawable.ic_error_icon)
+            errorLogo.setImageResource(R.drawable.ic_vto_error)
             errorTitle.text =
                 getString(R.string.add_substitution_error_msg)
             actionButton.text = getString(R.string.retry)
             cancelButton.visibility = VISIBLE
+            cancelButton.paintFlags = Paint.UNDERLINE_TEXT_FLAG
             cancelButton.text = context?.getString(R.string.back)
             actionButton.setOnClickListener(this@SubstitutionProcessingScreen)
             cancelButton.setOnClickListener(this@SubstitutionProcessingScreen)
@@ -93,7 +95,7 @@ class SubstitutionProcessingScreen : BaseFragmentBinding<SubstitutionErrorScreen
                     Status.SUCCESS -> {
                         binding.substitutionProcressLayout.root.visibility = GONE
                         stopSpinning()/* if we get form exception need to show error popup*/
-                        resource.data?.data?.getOrNull(0)?.formExceptions?.getOrNull(0)?.let {
+                        resource.data?.data?.getOrNull(0)?.formexceptions?.getOrNull(0)?.let {
                             if (it.message?.isNotEmpty() == true) {
                                binding.substitutionErrorLayout.root.visibility = VISIBLE
                             }
