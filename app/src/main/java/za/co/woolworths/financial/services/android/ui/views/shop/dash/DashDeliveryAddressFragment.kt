@@ -665,7 +665,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                 confirmAddressViewModel
             )
         unsellableItemsBottomSheetDialog.show(
-            requireActivity().supportFragmentManager,
+            parentFragmentManager,
             UnsellableItemsBottomSheetDialog::class.java.simpleName
         )
     }
