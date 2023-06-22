@@ -30,24 +30,24 @@ class ApplyNowExpandableAdapter(parentItemList: List<ParentListItem?>?, var sect
 
     override fun onBindParentViewHolder(holder: ApplyNowBenefitsParentViewHolder?, position: Int, parentListItem: ParentListItem?) {
         val benefitListItem = parentListItem as? ChildrenItems
-        benefitListItem?.let { headerItem -> holder?.bind(headerItem, holder,position) }
+        benefitListItem?.let { headerItem -> holder?.bind(headerItem, holder) }
     }
 
     override fun onBindChildViewHolder(childHolder: MoreBenefitChildViewHolder?, position: Int, childListItem: Any?) {
         val childItem = childListItem as? String
-        childHolder?.bind(childItem,sectionTitle,position)
+        childHolder?.bind(childItem,sectionTitle,childHolder.absoluteAdapterPosition)
     }
 
     inner class ApplyNowBenefitsParentViewHolder(val binding: MoreBenefitParentItemBinding) : ParentViewHolder(binding.root) {
 
-        fun bind(subCategoryModel: ChildrenItems, holder: ApplyNowBenefitsParentViewHolder,position: Int) {
+        fun bind(subCategoryModel: ChildrenItems, holder: ApplyNowBenefitsParentViewHolder) {
             with(MoreBenefitParentItemBinding.bind(itemView)){
                 moreBenefitsTitleTextView.text = subCategoryModel.title
                 moreBenefitsIconImageView.loadSvg(subCategoryModel.imageUrl)
                 holder.itemView.setOnClickListener {
                     if (holder.isRowExpanded) holder.collapseView() else holder.expandView()
                 }
-                addUniqueLocators(position)
+                addUniqueLocators(holder.absoluteAdapterPosition)
             }
         }
         private fun MoreBenefitParentItemBinding.addUniqueLocators(position: Int){
