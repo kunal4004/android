@@ -380,7 +380,7 @@ open class FirebaseManagerAnalyticsProperties {
         const val SELECT_ITEM_EVENT: String = "select_item"
         const val ADD_TO_CART_PDP: String = "add_to_cart"
         const val VIEW_CART: String = "view_cart"
-        const val ADD_TO_WISHLIST: String = "add_to_wish_list"
+        const val ADD_TO_WISHLIST: String = "add_to_wishlist"
         const val VIEW_PROMOTION: String = "view_promotion"
         const val SELECT_PROMOTION: String = "select_promotion"
         const val IN_STORE_AVAILABILITY: String ="in_store_availability"
@@ -392,6 +392,7 @@ open class FirebaseManagerAnalyticsProperties {
         const val SCREEN_VIEW_PLP: String = "screen_view"
         const val ADD_PAYMENT_INFO: String = "add_payment_info"
         const val PURCHASE: String = "purchase"
+        const val DASH_PREFIX = "dash_"
 
 
         //Geolocation
@@ -514,7 +515,7 @@ open class FirebaseManagerAnalyticsProperties {
 
             const val CURRENCY = "currency"
             const val ITEM_LIST_NAME = "item_list_name"
-            const val SHOPPING_LIST_NAME = "Shopping_list_name"
+            const val SHOPPING_LIST_NAME = "shopping_list_name"
             const val ITEM_BRAND = "item_brand"
             const val ORDER_TOTAL_VALUE = "order_total"
 
@@ -708,7 +709,7 @@ open class FirebaseManagerAnalyticsProperties {
             const val SHOP_MAIN_CATEGORIES: String = "Shop Main Categories"
             const val SHOP_SUB_CATEGORIES: String = "Shop Sub Categories"
             const val PRODUCT_SEARCH: String = "Product Search"
-            const val PRODUCT_SEARCH_RESULTS: String = "Product Search Result"
+            const val PRODUCT_LISTING_PAGE: String = "Product Listing Page"
             const val PRODUCT_SEARCH_REFINEMENT: String = "Product Search Refinement"
             const val PRODUCT_SEARCH_REFINEMENT_CATEGORY: String = "Product Search Refinement Category"
             const val PRODUCT_DETAIL: String = "Product Detail"

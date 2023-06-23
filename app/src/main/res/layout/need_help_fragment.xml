@@ -15,8 +15,8 @@
         style="@style/listStyle"
         android:background="@drawable/stores_details_background">
 
-        <TextView
-            style="@style/accountsItem"
+        <androidx.appcompat.widget.AppCompatTextView
+            style="@style/tipsAndTricks"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/app_tips_tricks" />
@@ -35,7 +35,7 @@
         android:background="@drawable/stores_details_background">
 
         <TextView
-            style="@style/accountsItem"
+            style="@style/tipsAndTricks"
             android:text="@string/drawer_faq" />
 
         <ImageView

@@ -1,13 +1,12 @@
 package za.co.woolworths.financial.services.android.util.analytics
 
+import android.app.Activity
 import android.os.Bundle
 import com.google.firebase.analytics.FirebaseAnalytics
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.Product
-import za.co.woolworths.financial.services.android.util.analytics.dto.AnalyticProductItem
-import za.co.woolworths.financial.services.android.util.analytics.dto.toAnalyticItem
-import za.co.woolworths.financial.services.android.util.analytics.dto.toBundle
+import za.co.woolworths.financial.services.android.util.analytics.dto.*
 
 object FirebaseAnalyticsEventHelper {
 
@@ -203,5 +202,129 @@ object FirebaseAnalyticsEventHelper {
     private fun extractPromotionText(promotionsList: List<Promotions>): String {
         return promotionsList.map { it.promotionalText }.filterNot { it.isNullOrEmpty() }
             .joinToString()
+    }
+
+    fun addToWishlistEvent(addToWishListFirebaseEventData: AddToWishListFirebaseEventData?) {
+        val products = addToWishListFirebaseEventData?.products
+        if (products.isNullOrEmpty() || addToWishListFirebaseEventData.shoppingListName.isNullOrEmpty()) {
+            return
+        }
+
+        val value = products.mapNotNull { it.price?.times(it.quantity) }.sum()
+
+        val analyticsParams = Bundle()
+        analyticsParams.apply {
+            addToWishListFirebaseEventData.itemRating?.let { rating ->
+                putFloat(FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_RATING, rating)
+            }
+            addToWishListFirebaseEventData.businessUnit?.let { businessUnit ->
+                putString(FirebaseManagerAnalyticsProperties.BUSINESS_UNIT, businessUnit)
+            }
+            putDouble(FirebaseAnalytics.Param.VALUE, value)
+            putString(
+                FirebaseAnalytics.Param.CURRENCY,
+                FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE
+            )
+            putString(
+                FirebaseManagerAnalyticsProperties.PropertyNames.SHOPPING_LIST_NAME,
+                addToWishListFirebaseEventData.shoppingListName
+            )
+            putParcelableArray(
+                FirebaseAnalytics.Param.ITEMS, products.map { it.toBundle() }.toTypedArray()
+            )
+        }
+        AnalyticsManager.logEvent(
+            FirebaseManagerAnalyticsProperties.ADD_TO_WISHLIST, analyticsParams
+        )
+    }
+
+    fun viewSearchResult(searchTerm: String?) {
+        if (searchTerm.isNullOrEmpty()) {
+            return
+        }
+
+        val analyticsParams = Bundle()
+        analyticsParams.apply {
+            putString(
+                FirebaseManagerAnalyticsProperties.PropertyNames.SEARCH_TERM,
+                searchTerm
+            )
+        }
+        AnalyticsManager.logEvent(
+            FirebaseAnalytics.Event.VIEW_SEARCH_RESULTS, analyticsParams
+        )
+    }
+
+    fun viewScreenEventForPLP(activity: Activity?, screenViewEventData: ScreenViewEventData?) {
+        val eventName = screenViewEventData?.department
+        if (eventName.isNullOrEmpty()) {
+            activity?.let {
+                za.co.woolworths.financial.services.android.util.Utils.setScreenName(
+                    it,
+                    FirebaseManagerAnalyticsProperties.ScreenNames.PRODUCT_LISTING_PAGE
+                )
+            }
+            return
+        }
+        val analyticsParams = Bundle()
+        analyticsParams.apply {
+            putString(
+                FirebaseAnalytics.Param.SCREEN_NAME, FirebaseManagerAnalyticsProperties.ScreenNames.PRODUCT_LISTING_PAGE
+            )
+            putString(
+                FirebaseManagerAnalyticsProperties.PropertyNames.CATEGORY_NAME,
+                screenViewEventData.category
+            )
+            putString(
+                FirebaseManagerAnalyticsProperties.PropertyNames.SUB_CATEGORY_NAME,
+                screenViewEventData.subCategory
+            )
+            putString(
+                FirebaseManagerAnalyticsProperties.PropertyNames.SUB_SUB_CATEGORY_NAME,
+                screenViewEventData.subSubCategory
+            )
+        }
+        AnalyticsManager.logEvent(eventName, analyticsParams)
+    }
+
+    object Utils {
+        private fun stringToFirebaseEventName(string: String?): String? {
+            return string?.filter { it.isLetterOrDigit() }?.lowercase()
+        }
+
+        fun getPLPScreenViewEventDataForDash(
+            headerText: String?,
+            bannerDisplayName: String?,
+            bannerNavigationState: String?
+        ): ScreenViewEventData? {
+            val eventName = stringToFirebaseEventName(headerText)
+            if (eventName.isNullOrEmpty()) {
+                return null
+            }
+
+            val subCategory =
+                if (bannerDisplayName.isNullOrEmpty()) bannerNavigationState else bannerDisplayName
+            return ScreenViewEventData(
+                department = FirebaseManagerAnalyticsProperties.DASH_PREFIX.plus(eventName),
+                category = headerText,
+                subCategory = subCategory
+            )
+        }
+
+        fun getPLPScreenViewEventDataForStandardAndCnc(
+            category: String?,
+            subCategory: String?,
+            subSubCategory: String?
+        ): ScreenViewEventData {
+            val department = stringToFirebaseEventName(category)
+            val subCat = if(category == subCategory) subSubCategory else subCategory
+            val subSubCat = if(subCat == subSubCategory) null else subSubCategory
+            return ScreenViewEventData(
+                department = department,
+                category = category,
+                subCategory = subCat,
+                subSubCategory = subSubCat
+            )
+        }
     }
 }

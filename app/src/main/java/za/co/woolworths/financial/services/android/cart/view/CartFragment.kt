@@ -222,8 +222,8 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         //One time biometricsWalkthrough
         if (isVisible) {
             ScreenManager.presentBiometricWalkthrough(activity)
+            loadShoppingCart()
         }
-        loadShoppingCart()
     }
 
     private fun initViews() {
@@ -639,6 +639,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         //refresh the pricing view
         if(cartProductAdapter?.cartItems?.isNullOrEmpty() == true){
             setPriceInformationVisibility(false)
+            setRecommendationDividerVisibility(visibility = false)
         } else {
             updatePriceInformation()
         }
@@ -794,11 +795,19 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
 
     private fun updatePriceInformation() {
         val priceHolder = binding.includedPrice
-        if(viewModel.isFBHOnly()){
-            priceHolder.vouchersMain.rlpayflexInfo.visibility = View.GONE
-        }else{
-            priceHolder.vouchersMain.rlpayflexInfo.visibility = View.VISIBLE
+        //Added the BNPL flag checking logic.
+        AppConfigSingleton.bnplConfig?.apply {
+            if (isBnplRequiredInThisVersion && isBnplEnabled) {
+                if (viewModel.isFBHOnly()) {
+                    priceHolder.vouchersMain.rlpayflexInfo.visibility = View.GONE
+                } else {
+                    priceHolder.vouchersMain.rlpayflexInfo.visibility = View.VISIBLE
+                }
+            } else {
+                priceHolder.vouchersMain.rlpayflexInfo.visibility = View.GONE
+            }
         }
+
         if (orderSummary != null) {
             setPriceInformationVisibility(true)
             orderSummary?.basketTotal?.let {
@@ -1313,7 +1322,11 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                 setItemLimitsBanner()
                 instance.queryCartSummaryCount()
                 if (!isViewCartEventFired){
-                    viewCartEvent(viewModel.getCartItemList(), orderSummary!!.total )
+                    orderSummary?.total ?.let {
+                        viewCartEvent(viewModel.getCartItemList(),
+                            it
+                        )
+                    }
                     isViewCartEventFired = true
                 }
                 showRecommendedProducts()
@@ -1367,6 +1380,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     }
 
     private fun showRecommendedProducts() {
+        setRecommendationDividerVisibility(visibility = false)
         val bundle = Bundle()
         val cartLinesValue: MutableList<CartProducts> = arrayListOf()
 
@@ -1634,7 +1648,9 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         setupToolbar()
         initializeBottomTab()
         initializeLoggedInUserCartUI()
-        loadShoppingCart()
+        if (!isVisible) {
+            loadShoppingCart()
+        }
     }
 
     override fun onConnectionChanged() {
@@ -2420,6 +2436,16 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             loadShoppingCart()
             binding.nestedScrollView.fullScroll(ScrollView.FOCUS_UP)
         }
+    }
+
+    override fun onRecommendationsLoadedSuccessfully() {
+        if(isAdded) {
+            setRecommendationDividerVisibility(visibility = !cartProductAdapter?.cartItems.isNullOrEmpty())
+        }
+    }
+
+    private fun setRecommendationDividerVisibility(visibility: Boolean) {
+        binding.viewRecommendationDivider.visibility = if(visibility) View.VISIBLE else View.GONE
     }
 
     private fun addScrollListeners() {

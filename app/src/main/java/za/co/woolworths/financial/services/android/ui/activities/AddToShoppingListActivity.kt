@@ -17,9 +17,11 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToShoppingListFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.list.CreateShoppingListFragment
+import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.ORDER_ID
 import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.analytics.dto.AddToWishListFirebaseEventData
 
 @AndroidEntryPoint
 class AddToShoppingListActivity : AppCompatActivity(), IDialogListener {
@@ -44,6 +46,7 @@ class AddToShoppingListActivity : AppCompatActivity(), IDialogListener {
             val shouldDisplayCreateList: Boolean? =
                 intent?.getBooleanExtra("shouldDisplayCreateList", false)
             val orderId = intent?.getStringExtra(ORDER_ID)
+            val addToWishListEventData = intent?.getParcelableExtra<AddToWishListFirebaseEventData>(AppConstant.Keys.BUNDLE_WISHLIST_EVENT_DATA)
 
             if (shouldDisplayCreateList!!) {
                 addFragment(
@@ -62,7 +65,8 @@ class AddToShoppingListActivity : AppCompatActivity(), IDialogListener {
                 addFragment(
                     fragment = AddToShoppingListFragment.newInstance(
                         addToListRequestBundle,
-                        orderId
+                        orderId,
+                        addToWishListEventData = addToWishListEventData
                     ),
                     tag = AddToShoppingListFragment::class.java.simpleName,
                     allowStateLoss = false,

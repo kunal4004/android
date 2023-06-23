@@ -105,7 +105,6 @@ import za.co.woolworths.financial.services.android.ui.base.BaseActivity;
 import za.co.woolworths.financial.services.android.ui.base.SavedInstanceFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.RefinementDrawerFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.account.AccountMasterCache;
-import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatAWSAmplify;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.AmplifyInit;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment;
@@ -264,7 +263,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                             "",
                             searchProduct,
                             true,
-                            ((LoadState) object).isSendDeliveryDetails()));
+                            ((LoadState) object).isSendDeliveryDetails(), true));
                 }
             } else if (object instanceof CartSummaryResponse) {
                 // product item successfully added to cart
@@ -1120,10 +1119,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 }
 
             case REQUEST_PAYMENT_STATUS:
-                if(getCurrentFragment() instanceof ShopFragment) {
-                    ShopFragment fragment = (ShopFragment) getCurrentFragment();
-                    fragment.makeLastDashOrderDetailsCall();
-                }
                 if (resultCode == REQUEST_CHECKOUT_ON_CONTINUE_SHOPPING) {
                     navigateToTabIndex(BottomNavigationActivity.INDEX_PRODUCT, null);
                     QueryBadgeCounter.getInstance().queryCartSummaryCount();
