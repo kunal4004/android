@@ -24,6 +24,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.awfs.coordination.R;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -183,7 +184,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
                 mRelRootContainer = findViewById(R.id.relContainerRootMessage);
                 mRelPopContainer = findViewById(R.id.relPopContainer);
                 WTextView mOverlayTitle = findViewById(R.id.textApplicationNotProceed);
-                WTextView mOverlayDescription = findViewById(R.id.overlayDescription);
+                TextView mOverlayDescription = findViewById(R.id.overlayDescription);
                 WButton mOverlayBtn = findViewById(R.id.btnOverlay);
                 LinearLayout mLinEmail = findViewById(R.id.linEmail);
                 mLinEmail.setVisibility(View.GONE);

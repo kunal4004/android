@@ -74,7 +74,7 @@
             android:textSize="16sp"
             app:WTextView_font="medium_bold" />
 
-        <za.co.woolworths.financial.services.android.ui.views.WTextView
+        <TextView
             android:id="@+id/overlayDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -83,9 +83,9 @@
             android:gravity="center"
             android:lineSpacingExtra="1.3dp"
             android:text="@string/cli_lorem_ipsum"
-            android:textColor="@color/semi_transparent_black"
-            android:textSize="15sp"
-            app:WTextView_font="myriadpro_regular" />
+            android:textColor="@color/color_444444"
+            android:textSize="@dimen/thirteen_sp"
+            android:fontFamily="@font/opensans_regular" />
 
         <View
             android:layout_width="match_parent"
