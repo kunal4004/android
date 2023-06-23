@@ -170,7 +170,10 @@ class RecommendationFragment :
                 recommendationsLayoutBinding.recommendationsMainLayout.visibility = View.VISIBLE
                 recommendationsLayoutBinding.recommendationsText.text =
                     getString(R.string.recommendations_title)
-
+                val eventHandler = parentFragment?.parentFragment
+                if(eventHandler is RecommendationEventHandler) {
+                    eventHandler.onRecommendationsLoadedSuccessfully()
+                }
                 showProductCategory(actionItems)
             }
         }

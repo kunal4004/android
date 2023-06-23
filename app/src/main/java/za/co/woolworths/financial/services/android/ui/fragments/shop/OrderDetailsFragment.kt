@@ -34,6 +34,8 @@ import za.co.woolworths.financial.services.android.ui.fragments.shop.helpandsupp
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.analytics.dto.AddToWishListFirebaseEventData
+import za.co.woolworths.financial.services.android.util.analytics.dto.toAnalyticItemList
 import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 import za.co.woolworths.financial.services.android.util.voc.VoiceOfCustomerManager
 
@@ -276,11 +278,13 @@ class OrderDetailsFragment : BaseFragmentBinding<OrderDetailsFragmentBinding>(Or
     }
 
     override fun onAddToList(commerceItemList: MutableList<AddToListRequest>) {
+        val addToWishListEventData = AddToWishListFirebaseEventData(products = dataList.toAnalyticItemList())
         NavigateToShoppingList.openShoppingList(
             requireActivity(),
             commerceItemList,
             argOrderId,
-            false
+            false,
+            addToWishListEventData = addToWishListEventData
         )
     }
 
