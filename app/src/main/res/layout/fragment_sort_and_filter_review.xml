@@ -58,7 +58,9 @@
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             android:id="@+id/seeResultCount"
-            style="@style/toolbar_menu_text_style"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/futura_bold"
             android:layout_centerInParent="true"
             android:ellipsize="end"
             android:letterSpacing="0.1"
