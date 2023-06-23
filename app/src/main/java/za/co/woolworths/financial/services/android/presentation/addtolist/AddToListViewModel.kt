@@ -169,6 +169,9 @@ class AddToListViewModel @Inject constructor(
                     return@launch
                 }
                 val listId = it.listId
+                // If giftListId is empty pass listId as giftListId
+                items.map { item -> if(item.giftListId.isNullOrEmpty()) { item.giftListId = listId } }
+
                 async {
                     addProductsToList(listId, items.toList()).collect {
                         viewModelScope.launch(Dispatchers.Main) {
