@@ -301,12 +301,16 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             }
             if (isChecked)
                 Utils.triggerFireBaseEvents(
-                    FirebaseManagerAnalyticsProperties.CHECKOUT_SPECIAL_COLLECTION_INSTRUCTION,
-                    hashMapOf(
-                        FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
-                                FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_SPECIAL_INSTRUCTION
-                    ),
-                    activity
+                        FirebaseManagerAnalyticsProperties.CHECKOUT,
+                        hashMapOf(
+                                FirebaseManagerAnalyticsProperties.PropertyNames.STEP to
+                                        FirebaseManagerAnalyticsProperties.PropertyValues.DELIVERY_PAGE,
+                                FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_TYPE to
+                                        KotlinUtils.getPreferredDeliveryType().toString(),
+                                FirebaseManagerAnalyticsProperties.PropertyNames.TOGGLE_SELECTED to
+                                        FirebaseManagerAnalyticsProperties.PropertyValues.SPECIAL_DELIVERY_INSTRUCTION
+                        ),
+                        activity
                 )
             binding.layoutDeliveryInstructions.edtTxtInputLayoutSpecialDeliveryInstruction?.visibility =
                 if (isChecked) VISIBLE else GONE
@@ -321,12 +325,16 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             }
             if (isChecked)
                 Utils.triggerFireBaseEvents(
-                    FirebaseManagerAnalyticsProperties.CHECKOUT_IS_THIS_GIFT,
-                    hashMapOf(
-                        FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
-                                FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_IS_THIS_GIFT
-                    ),
-                    activity
+                        FirebaseManagerAnalyticsProperties.CHECKOUT,
+                        hashMapOf(
+                                FirebaseManagerAnalyticsProperties.PropertyNames.STEP to
+                                        FirebaseManagerAnalyticsProperties.PropertyValues.DELIVERY_PAGE,
+                                FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_TYPE to
+                                        KotlinUtils.getPreferredDeliveryType().toString(),
+                                FirebaseManagerAnalyticsProperties.PropertyNames.TOGGLE_SELECTED to
+                                        FirebaseManagerAnalyticsProperties.PropertyValues.IS_THIS_GIFT
+                        ),
+                        activity
                 )
             binding.layoutDeliveryInstructions.edtTxtInputLayoutGiftInstructions?.visibility =
                 if (isChecked) VISIBLE else GONE
@@ -345,12 +353,16 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             binding.layoutDeliveryInstructions.switchNeedBags?.setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) {
                     Utils.triggerFireBaseEvents(
-                        FirebaseManagerAnalyticsProperties.CHECKOUT_SHOPPING_BAGS_INFO,
-                        hashMapOf(
-                            FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
-                                    FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_BAGS_INFO
-                        ),
-                        activity
+                            FirebaseManagerAnalyticsProperties.CHECKOUT,
+                            hashMapOf(
+                                    FirebaseManagerAnalyticsProperties.PropertyNames.STEP to
+                                            FirebaseManagerAnalyticsProperties.PropertyValues.DELIVERY_PAGE,
+                                    FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_TYPE to
+                                            KotlinUtils.getPreferredDeliveryType().toString(),
+                                    FirebaseManagerAnalyticsProperties.PropertyNames.TOGGLE_SELECTED to
+                                            FirebaseManagerAnalyticsProperties.PropertyValues.NEED_SHOPPING_BAG
+                            ),
+                            activity
                     )
                 }
             }
@@ -460,27 +472,53 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             when (checkedId) {
                 R.id.radioBtnPhoneConfirmation -> {
                     Utils.triggerFireBaseEvents(
-                        FirebaseManagerAnalyticsProperties.CHECKOUT_FOOD_SUBSTITUTE_PHONE_ME,
-                        hashMapOf(
-                            FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
-                                    FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_SUBSTITUTION_PHONE
-                        ),
-                        activity
+                            FirebaseManagerAnalyticsProperties.CHECKOUT,
+                            hashMapOf(
+                                    FirebaseManagerAnalyticsProperties.PropertyNames.STEP to
+                                            FirebaseManagerAnalyticsProperties.PropertyValues.DELIVERY_PAGE,
+                                    FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                                            FirebaseManagerAnalyticsProperties.PropertyValues.FOOD_SUBSTITUTION,
+                                    FirebaseManagerAnalyticsProperties.PropertyNames.OPTION to
+                                            FirebaseManagerAnalyticsProperties.PropertyValues.PHONE_ME,
+                                    FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_TYPE to
+                                            KotlinUtils.getPreferredDeliveryType().toString()
+                            ),
+                            activity
                     )
 
                     selectedFoodSubstitution = FoodSubstitution.PHONE_CONFIRM
                 }
                 R.id.radioBtnSimilarSubst -> {
                     selectedFoodSubstitution = FoodSubstitution.SIMILAR_SUBSTITUTION
+                    Utils.triggerFireBaseEvents(
+                            FirebaseManagerAnalyticsProperties.CHECKOUT,
+                            hashMapOf(
+                                    FirebaseManagerAnalyticsProperties.PropertyNames.STEP to
+                                            FirebaseManagerAnalyticsProperties.PropertyValues.DELIVERY_PAGE,
+                                    FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                                            FirebaseManagerAnalyticsProperties.PropertyValues.FOOD_SUBSTITUTION,
+                                    FirebaseManagerAnalyticsProperties.PropertyNames.OPTION to
+                                            FirebaseManagerAnalyticsProperties.PropertyValues.SUBSTITUTE,
+                                    FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_TYPE to
+                                            KotlinUtils.getPreferredDeliveryType().toString()
+                            ),
+                            activity
+                    )
                 }
                 R.id.radioBtnNoThanks -> {
                     Utils.triggerFireBaseEvents(
-                        FirebaseManagerAnalyticsProperties.CHECKOUT_FOOD_SUBSTITUTE_NO_THANKS,
-                        hashMapOf(
-                            FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
-                                    FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_SUBSTITUTION_NO_THANKS
-                        ),
-                        activity
+                            FirebaseManagerAnalyticsProperties.CHECKOUT,
+                            hashMapOf(
+                                    FirebaseManagerAnalyticsProperties.PropertyNames.STEP to
+                                            FirebaseManagerAnalyticsProperties.PropertyValues.DELIVERY_PAGE,
+                                    FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                                            FirebaseManagerAnalyticsProperties.PropertyValues.FOOD_SUBSTITUTION,
+                                    FirebaseManagerAnalyticsProperties.PropertyNames.OPTION to
+                                            FirebaseManagerAnalyticsProperties.PropertyValues.NO_THANKS,
+                                    FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_TYPE to
+                                            KotlinUtils.getPreferredDeliveryType().toString()
+                            ),
+                            activity
                     )
                     selectedFoodSubstitution = FoodSubstitution.NO_THANKS
                 }
@@ -902,6 +940,20 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             selectedOtherSlot = selectedSlot
             binding.checkoutHowWouldYouDeliveredLayout.txtSelectDeliveryTimeSlotOtherError.visibility = GONE
         }
+        Utils.triggerFireBaseEvents(
+                FirebaseManagerAnalyticsProperties.CHECKOUT,
+                hashMapOf(
+                        FirebaseManagerAnalyticsProperties.PropertyNames.STEP to
+                                FirebaseManagerAnalyticsProperties.PropertyValues.DELIVERY_PAGE,
+                        FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                                FirebaseManagerAnalyticsProperties.PropertyValues.SELECT_TIMESLOT,
+                        FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_TYPE to
+                                KotlinUtils.getPreferredDeliveryType().toString(),
+                        FirebaseManagerAnalyticsProperties.PropertyNames.TIME_SELECTED to
+                                selectedSlot.stringShipOnDate + " " + selectedSlot.hourFrom
+                ),
+                activity
+        )
     }
 
 

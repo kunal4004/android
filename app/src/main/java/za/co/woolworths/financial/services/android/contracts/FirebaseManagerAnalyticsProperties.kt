@@ -224,6 +224,7 @@ open class FirebaseManagerAnalyticsProperties {
         const val CHECKOUT_COLECTION_CHANGE_BTN = "chckout_cllct_chnge"
         const val CHECKOUT_CONFIRM_NEW_STORE = "chckout_cllct_cnfrm_str"
         const val CHANGE_FULFILLMENT_ADD_NEW_ADDRESS = "chckout_dlvry_ad_adrs"
+        const val CHECKOUT = "Checkout"
         const val CHANGE_FULFILLMENT_EDIT_ADDRESS = "chckout_dlvry_edt_adrs"
         const val CHANGE_FULFILLMENT_DELETE_ADDRESS = "chckout_dlvry_dlte_adrs"
         const val CHANGE_FULFILLMENT_DELIVERY_CONFIRM_BTN = "chckout_dlvry_cnfrm_adrs"
@@ -458,6 +459,11 @@ open class FirebaseManagerAnalyticsProperties {
             const val CANCEL_FAILURE_RETRY = "Cancel Failure Retry"
             const val ACTION = "ACTION"
             const val ACTION_LOWER_CASE = "action"
+            const val OPTION = "option"
+            const val TOGGLE_SELECTED = "toggle_selected"
+            const val DELIVERY_TYPE = "delivery_type"
+            const val TIME_SELECTED = "time_selected"
+            const val STEP = "step"
             const val NUTRITIONAL_INFORMATION_PRODUCT_ID = "NUTRITIONAL_PRODUCT_ID"
             const val PRODUCT_DETAILS_INFORMATION_PRODUCT_ID = "PRODUCT_DETAILS_PRODUCT_ID"
             const val INGREDIENTS_INFORMATION_PRODUCT_ID = "INGREDIENTS_PRODUCT_ID"
@@ -590,6 +596,16 @@ open class FirebaseManagerAnalyticsProperties {
             const val ACTION_VALUE_NATIVE_CHECKOUT_CONFIRM_STORE: String = "Customer selects to their store selected"
             const val ACTION_VALUE_NATIVE_CHECKOUT_ADD_NEW_ADDRESS: String =
                 "Customer selects to add an address for their delivery option"
+            const val DELIVERY_PAGE = "delivery page"
+            const val SELECT_TIMESLOT = "select timeslot"
+            const val FOOD_SUBSTITUTION = "food substitutions"
+            const val CHAT_WITH_SHOPPER = "Chat with shopper"
+            const val PHONE_ME = "Phone me"
+            const val SUBSTITUTE = "substitute"
+            const val NO_THANKS = "no thanks"
+            const val NEED_SHOPPING_BAG = "need shopping bag"
+            const val IS_THIS_GIFT = "is this a gift?"
+            const val SPECIAL_DELIVERY_INSTRUCTION = "special delivery instructions"
             const val ACTION_VALUE_NATIVE_CHECKOUT_EDIT_ADDRESS: String =
                 "Customer selects to edit an already added address for their delivery option"
             const val ACTION_VALUE_NATIVE_CHECKOUT_DELETE_ADDRESS: String =
@@ -602,17 +618,7 @@ open class FirebaseManagerAnalyticsProperties {
                 "Customer changed Delivery address / Collection"
             const val ACTION_VALUE_NATIVE_CHECKOUT_CANCEL_REMOVE_ITEMS: String =
                 "Customer changed Delivery address / Collection and does not want items removed."
-            const val ACTION_VALUE_NATIVE_CHECKOUT_SUBSTITUTION_PHONE: String =
-                "Customer selects to be phoned rather than the default Substitute for similar items if one is available"
-            const val ACTION_VALUE_NATIVE_CHECKOUT_SUBSTITUTION_NO_THANKS: String =
-                "Customer selects No Thanks rather than the default Substitute for similar items if one is available"
             const val ACTION_VALUE_NATIVE_CHECKOUT_BAGS_INFO: String = "Customer selects to view additional information on shopping bags"
-            const val ACTION_VALUE_NATIVE_CHECKOUT_SPECIAL_INSTRUCTION: String =
-                "Customer selects Special Collection Instructions toggle to add information"
-            const val ACTION_VALUE_NATIVE_CHECKOUT_IS_THIS_GIFT: String =
-                "Customer selects ‘Is this a gift’ toggle to add information"
-            const val ACTION_VALUE_NATIVE_CHECKOUT_CONTINUE_TO_PAYMENT: String =
-                "Customer has entered all the relevant info and confirms by selecting 'Continue to Payment'"
             const val ACTION_VALUE_NATIVE_CHECKOUT_WREWARDS_SAVING: String =
                 "Customer selects the 'Missed WRewards Savings' information button"
             const val ACTION_VALUE_NATIVE_CHECKOUT_WREWARDS_SIGN_UP: String =
