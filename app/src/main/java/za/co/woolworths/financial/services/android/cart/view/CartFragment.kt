@@ -85,7 +85,6 @@ import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseVie
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView.IWalkthroughActionListener
 import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ActionSheetDialogFragment
-import za.co.woolworths.financial.services.android.ui.wfs.common.getIpAddress
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_EXPECTATION_FAILED_502
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
@@ -870,10 +869,12 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         priceHolder.vouchersMain.rlAvailableWRewardsVouchers.setOnClickListener {
             onViewVouchers()
             triggerFirebaseEventForCart(appliedVouchersCount)
+            triggerFirebaseEventVouchersOrPromoCode(FirebaseEventAction.VIEW_WREWARDS_VOUCHERS.value,FirebaseEventOption.VOUCHERS.value)
         }
         priceHolder.vouchersMain.rlAvailableCashVouchers?.setOnClickListener {
             onViewCashBackVouchers()
             triggerFirebaseEventForCart(appliedVouchersCount)
+            triggerFirebaseEventVouchersOrPromoCode(FirebaseEventAction.VIEW_VOUCHER.value,FirebaseEventOption.VOUCHERS.value)
         }
 
         if (voucherDetails == null) {
@@ -2069,11 +2070,40 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     }
 
     override fun onEnterPromoCode() {
-        Utils.triggerFireBaseEvents(
-            FirebaseManagerAnalyticsProperties.Cart_promo_enter,
-            requireActivity()
-        )
+        triggerFirebaseEventVouchersOrPromoCode(FirebaseEventAction.ADD_PROMO_CODE.value,FirebaseEventOption.ADD_PROMO.value)
         navigateToApplyPromoCodePage()
+    }
+
+    enum class FirebaseEventAction(val value: Int) { VIEW_VOUCHER(0), VIEW_WREWARDS_VOUCHERS(1),ADD_PROMO_CODE(2) }
+
+    enum class FirebaseEventOption(val value: Int) { VOUCHERS(0), ADD_PROMO(1) }
+    private fun triggerFirebaseEventVouchersOrPromoCode(actionEnum: Int, optionEnum: Int) {
+        val action = when (actionEnum){
+            FirebaseEventAction.VIEW_VOUCHER.value -> FirebaseManagerAnalyticsProperties.PropertyValues.VIEW_VOUCHER
+            FirebaseEventAction.VIEW_WREWARDS_VOUCHERS.value -> FirebaseManagerAnalyticsProperties.PropertyValues.VIEW_WREWARDS_VOUCHERS
+            FirebaseEventAction.ADD_PROMO_CODE.value -> FirebaseManagerAnalyticsProperties.PropertyValues.ADD_PROMO_CODE
+            else -> throw IllegalStateException()
+        }
+
+        val option = when (optionEnum){
+            FirebaseEventOption.VOUCHERS.value -> FirebaseManagerAnalyticsProperties.PropertyValues.VOUCHERS
+            FirebaseEventOption.ADD_PROMO.value -> FirebaseManagerAnalyticsProperties.PropertyValues.ADD_PROMO
+            else -> throw IllegalStateException()
+        }
+
+        val deliveryType = when(getType(Utils.getPreferredDeliveryLocation().fulfillmentDetails.deliveryType)){
+            Delivery.STANDARD -> FirebaseManagerAnalyticsProperties.PropertyValues.STANDARD
+            Delivery.CNC -> FirebaseManagerAnalyticsProperties.PropertyValues.CLICK_AND_COLLECT
+            Delivery.DASH -> FirebaseManagerAnalyticsProperties.PropertyValues.DASH
+            else ->  throw IllegalStateException()
+        }
+        val arguments = HashMap<String, String>()
+        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.STEP] = FirebaseManagerAnalyticsProperties.PropertyValues.BASKET
+        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE] = action
+        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.OPTION] = option
+        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_TYPE] = deliveryType
+        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHECKOUT, arguments,requireActivity())
+
     }
 
     override fun onRemovePromoCode(promoCode: String) {
