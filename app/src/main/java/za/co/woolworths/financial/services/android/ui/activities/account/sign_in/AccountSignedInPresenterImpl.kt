@@ -58,8 +58,7 @@ class AccountSignedInPresenterImpl(
     }
 
     override fun getAccountBundle(bundle: Bundle?): Pair<ApplyNowState?, AccountsResponse?> {
-        mApplyNowState =
-            bundle?.getSerializable(APPLY_NOW_STATE) as? ApplyNowState ?: ApplyNowState.STORE_CARD
+        mApplyNowState = bundle?.getSerializable(APPLY_NOW_STATE) as? ApplyNowState ?: ApplyNowState.STORE_CARD
         val accountResponseString = bundle?.getString(MY_ACCOUNT_RESPONSE, "")
         mDeepLinkingData = bundle?.getString(DEEP_LINKING_PARAMS, "")
         mAccountResponse = Gson().fromJson(accountResponseString, AccountsResponse::class.java)
@@ -381,15 +380,18 @@ class AccountSignedInPresenterImpl(
         val accountInfo = getMyAccountCardInfo()
         bundle.putString(MY_ACCOUNT_RESPONSE, Gson().toJson(accountInfo))
         val graph = navDetailController?.graph
-        graph?.startDestination = when (accountInfo?.first) {
+        val graphId = when (accountInfo?.first) {
             ApplyNowState.STORE_CARD -> R.id.storeCardDetail
             ApplyNowState.SILVER_CREDIT_CARD -> R.id.silverCreditCardDetail
             ApplyNowState.PERSONAL_LOAN -> R.id.personalLoanDetail
             ApplyNowState.BLACK_CREDIT_CARD -> R.id.blackCreditCardDetail
             ApplyNowState.GOLD_CREDIT_CARD -> R.id.goldCreditCardDetail
-            else -> throw (java.lang.RuntimeException(" setAccountCardDetailInfo() :: Invalid account State found $accountInfo"))
+            else -> null
         }
-        navDetailController?.setGraph(navDetailController.graph, bundle)
+        graphId?.let { destination ->
+            graph?.startDestination = destination
+            navDetailController?.setGraph(navDetailController.graph, bundle)
+        }
     }
 
     override fun setAccountSixMonthInArrears(navDetailController: NavController?) {
