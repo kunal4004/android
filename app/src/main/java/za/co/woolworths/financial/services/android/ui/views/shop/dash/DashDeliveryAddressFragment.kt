@@ -1194,8 +1194,13 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
         )
     }
 
-    override fun onDashLandingNavigationClicked(view: View?, item: Banner) {
+    override fun onDashLandingNavigationClicked(view: View?, item: Banner, headerText: String?) {
         (requireActivity() as? BottomNavigationActivity)?.apply {
+            val screenViewEventData = FirebaseAnalyticsEventHelper.Utils.getPLPScreenViewEventDataForDash(
+                headerText = headerText,
+                bannerDisplayName = item.displayName,
+                bannerNavigationState = item.navigationState
+            )
             pushFragment(
                 ProductListingFragment.newInstance(
                     searchType = ProductsRequestParams.SearchType.NAVIGATE,
@@ -1203,7 +1208,8 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                     searchTerm = item.navigationState,
                     isBrowsing = true,
                     sendDeliveryDetails = arguments?.getBoolean(AppConstant.Keys.ARG_SEND_DELIVERY_DETAILS,
-                        false) == true
+                        false) == true,
+                    screenViewEventData = screenViewEventData
                 )
             )
         }
