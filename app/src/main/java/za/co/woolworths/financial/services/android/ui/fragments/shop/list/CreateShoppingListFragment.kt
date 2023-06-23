@@ -39,6 +39,9 @@ import za.co.woolworths.financial.services.android.ui.views.actionsheet.SingleBu
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_SESSION_TIMEOUT_440
+import za.co.woolworths.financial.services.android.util.AppConstant.Keys.Companion.BUNDLE_WISHLIST_EVENT_DATA
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
+import za.co.woolworths.financial.services.android.util.analytics.dto.AddToWishListFirebaseEventData
 
 @AndroidEntryPoint
 class CreateShoppingListFragment : Fragment(), View.OnClickListener {
@@ -57,6 +60,7 @@ class CreateShoppingListFragment : Fragment(), View.OnClickListener {
     private var mAutoConnect: AutoConnect? = null
     private var mDisplayCloseIcon: Boolean = false
     private var mKeyListener: KeyListener? = null
+    private var mAddToWishListEventData: AddToWishListFirebaseEventData? = null
 
     enum class AutoConnect {
         CREATE_LIST,
@@ -82,12 +86,13 @@ class CreateShoppingListFragment : Fragment(), View.OnClickListener {
             }
         }
 
-        fun newInstance(listOfIds: HashMap<String, ShoppingList>?, selectedListGroup: String?, shouldDisplayCreateList: Boolean, orderId: String?) = CreateShoppingListFragment().apply {
+        fun newInstance(listOfIds: HashMap<String, ShoppingList>?, selectedListGroup: String?, shouldDisplayCreateList: Boolean, orderId: String?, addToWishListEventData: AddToWishListFirebaseEventData? = null) = CreateShoppingListFragment().apply {
             arguments = Bundle(4).apply {
                 putSerializable(SHOPPING_LIST_SELECTED_LIST_ID, listOfIds)
                 putString(SHOPPING_LIST_SELECTED_GROUP, selectedListGroup)
                 putBoolean(DISPLAY_CREATE_LIST_ONLY, shouldDisplayCreateList)
                 putString(AppConstant.ORDER_ID, orderId)
+                putParcelable(BUNDLE_WISHLIST_EVENT_DATA, addToWishListEventData)
             }
         }
     }
@@ -191,6 +196,8 @@ class CreateShoppingListFragment : Fragment(), View.OnClickListener {
             if (this.containsKey(AppConstant.ORDER_ID)) {
                 mOrderId = this.getString(AppConstant.ORDER_ID)
             }
+
+            mAddToWishListEventData = getParcelable(BUNDLE_WISHLIST_EVENT_DATA)
         }
     }
 
@@ -488,6 +495,7 @@ class CreateShoppingListFragment : Fragment(), View.OnClickListener {
 
     private fun addToListWasSendSuccessfully(listId: String?) {
         mShoppingListGroup?.apply {
+            callAddToWishlistFirebaseEvent(listId)
             // Will replace the value of an existing key and will create it if doesn't exist
             val shopList = get(listId)
             shopList!!.wasSentToServer = true
@@ -504,6 +512,21 @@ class CreateShoppingListFragment : Fragment(), View.OnClickListener {
             if (allRequestPostToServer) {
                 shoppingListPostProgress(false)
                 showShoppingListSuccessToast()
+            }
+        }
+    }
+
+    private fun callAddToWishlistFirebaseEvent(shoppingListId: String?) {
+        if (shoppingListId.isNullOrEmpty()){
+            return
+        }
+        mAddToWishListEventData?.let { eventData ->
+            mShoppingListGroup?.let { shoppingListGroup ->
+                val shoppingListName = shoppingListGroup[shoppingListId]?.listName
+                if (!shoppingListName.isNullOrEmpty()){
+                    eventData.shoppingListName = shoppingListName
+                    FirebaseAnalyticsEventHelper.addToWishlistEvent(eventData)
+                }
             }
         }
     }

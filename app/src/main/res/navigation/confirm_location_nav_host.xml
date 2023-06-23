@@ -205,7 +205,7 @@
 
     <dialog
         android:id="@+id/poiMapBottomSheetDialog"
-        android:name="za.co.woolworths.financial.services.android.ui.fragments.poi.MapsPoiBottomSheetDialog"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.poi.PoiBottomSheetDialog"
         android:label="MapsPoiBottomSheetDialog"/>
     <dialog
         android:id="@+id/pargoStoreInfoBottomSheetDialog"
