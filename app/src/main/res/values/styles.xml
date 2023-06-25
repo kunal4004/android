@@ -1829,25 +1829,8 @@
         <item name="android:textColor">@color/black</item>
     </style>
 
-    <style name="myriad_pro_regular_amber" parent="myriad_pro_semi_bold">
-        <item name="android:textColor">@color/color_F0AC4E</item>
-    </style>
-
     <style name="myriad_pro_regular_black_15_text_style" parent="myriad_pro_regular_black">
         <item name="android:textSize">@dimen/fifteen_sp</item>
-    </style>
-
-    <style name="myriad_pro_semi_bold_amber_14_text_style" parent="myriad_pro_regular_amber">
-        <item name="android:textSize">@dimen/fourteen_sp</item>
-        <item name="android:fontFamily">@font/myriad_pro_semi_bold</item>
-    </style>
-
-    <style name="myriad_pro_regular_black_13_text_style" parent="myriad_pro_regular_black">
-        <item name="android:textSize">@dimen/thirteen_sp</item>
-    </style>
-
-    <style name="myriad_pro_regular_black_14_text_style" parent="myriad_pro_regular_black">
-        <item name="android:textSize">@dimen/fourteen_sp</item>
     </style>
 
     <style name="futura_medium_black_12_text_style" parent="futura_medium_black">
