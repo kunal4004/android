@@ -1833,11 +1833,6 @@
         <item name="android:textColor">@color/color_F0AC4E</item>
     </style>
 
-    <style name="myriad_pro_regular_black_with_rounded_corner" parent="myriad_pro_regular">
-        <item name="android:textColor">@color/black</item>
-        <item name="android:background">@drawable/checkout_delivering_title_round_button</item>
-    </style>
-
     <style name="myriad_pro_regular_black_15_text_style" parent="myriad_pro_regular_black">
         <item name="android:textSize">@dimen/fifteen_sp</item>
     </style>
