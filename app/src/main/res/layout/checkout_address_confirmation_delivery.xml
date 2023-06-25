@@ -65,7 +65,7 @@
 
     <TextView
         android:id="@+id/addNewAddressErrorMsg"
-        style="@style/myriad_pro_regular"
+        style="@style/opensens_regular"
         android:layout_marginTop="@dimen/ten_dp"
         android:lineSpacingMultiplier="1.40"
         android:text="@string/add_new_address_error_msg"
