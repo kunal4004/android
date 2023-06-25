@@ -116,7 +116,8 @@
 
                 <TextView
                     android:id="@+id/earliestDateTitle"
-                    style="@style/myriad_pro_regular_black"
+                    style="@style/opensens_regular"
+                    android:textColor="@color/black"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
@@ -141,7 +142,8 @@
 
                 <TextView
                     android:id="@+id/foodItemsLabel"
-                    style="@style/myriad_pro_regular_black"
+                    style="@style/opensens_regular"
+                    android:textColor="@color/black"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
@@ -166,7 +168,8 @@
 
                 <TextView
                     android:id="@+id/otherItemsLabel"
-                    style="@style/myriad_pro_regular_black"
+                    style="@style/opensens_regular"
+                    android:textColor="@color/black"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
