@@ -3064,7 +3064,7 @@
         <item name="android:textSize">@dimen/twelve_sp</item>
         <item name="android:textColor">@color/color_222222</item>
         <item name="textAllCaps">false</item>
-        <item name="android:fontFamily">@font/myriad_pro_regular</item>
+        <item name="android:fontFamily">@font/opensans_regular</item>
     </style>
 
     <style name="shop_tab_style" parent="Widget.Design.TabLayout">
