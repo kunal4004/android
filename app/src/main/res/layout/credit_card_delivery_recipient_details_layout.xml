@@ -66,6 +66,8 @@
                 android:id="@+id/recipientName"
                 style="@style/credi_card_delivery_edittext_style"
                 android:contentDescription="@string/cd_ccd_txtrecipientname"
+                android:textColor="#50333333"
+                android:hint="@string/hint_name_of_recipient"
                 app:layout_constraintEnd_toEndOf="@id/right_guideline"
                 app:layout_constraintStart_toStartOf="@id/left_guideline"
                 app:layout_constraintTop_toBottomOf="@id/recipientNamePlaceHolder" />
@@ -98,6 +100,7 @@
                 android:id="@+id/idNumber"
                 style="@style/credi_card_delivery_edittext_style"
                 android:contentDescription="@string/cd_ccd_txtidnumber"
+                android:hint="@string/hint_id_number_of_recipient"
                 android:maxLength="13"
                 app:layout_constraintEnd_toEndOf="@id/right_guideline"
                 app:layout_constraintStart_toStartOf="@id/left_guideline"
