@@ -6,7 +6,6 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.observe
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
@@ -90,7 +89,14 @@ class CreditAndDebitCardPaymentsFragment :
             account?.apply { chatToCollectionAgent(first, mutableListOf(second)) }
         }
     }
-
+    private fun setNoteTextsFromConfigIfAvailable() {
+        binding.apply {
+            AppConfigSingleton.mPayMyAccount?.payByCardFooterNote?.let {
+                incDebitCardButton.debitOrCreditCardNoteTextView.text = it
+                incCreditCardButton.creditCardNoteTextView.text = it
+            }
+        }
+    }
     private fun onRetry() {
         payMyAccountViewModel.getNavigationResult().observe(viewLifecycleOwner) { event ->
             event.getContentIfNotHandled()?.let { result ->
@@ -336,6 +342,7 @@ class CreditAndDebitCardPaymentsFragment :
     override fun onResume() {
         super.onResume()
         queryServicePaymentMethod()
+        setNoteTextsFromConfigIfAvailable()
     }
 
     private fun chatToCollectionAgent(

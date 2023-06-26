@@ -44,6 +44,7 @@
 
         <TextView
             android:id="@+id/tvStoreContactInfo"
+            style="@style/opensans_semi_bold_14_black"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="top"
@@ -51,7 +52,6 @@
             android:clickable="true"
             android:focusable="true"
             android:focusableInTouchMode="true"
-            android:fontFamily="@font/myriad_pro_regular_otf"
             android:gravity="center"
             android:paddingStart="@dimen/twenty_five_dp"
             android:paddingTop="@dimen/eight_dp"
@@ -60,7 +60,7 @@
             android:text="@string/npc_participating_store_outside_geofence"
             android:textColor="@color/white"
             android:textColorLink="@color/white"
-            android:textSize="@dimen/sixteen_sp" />
+             />
 
     </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
