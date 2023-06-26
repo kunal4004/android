@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.CheckBox
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.databinding.ReviewRefineSelectionLayoutBinding
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.Refinements
@@ -34,7 +35,7 @@ class ReviewRefineOptionsAdapter (
 
     inner class ReviewRefineOptionViewHolder(val itemBinding: ReviewRefineSelectionLayoutBinding) : RecyclerView.ViewHolder(itemBinding.root) {
 
-        val tvRefineOption: WTextView = itemBinding.tvRefineOption
+        val tvRefineOption: TextView = itemBinding.tvRefineOption
         val view = itemView
         val cbRefineSelector: CheckBox = itemBinding.cbRefineSelector
     }

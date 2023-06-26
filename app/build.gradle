@@ -13,10 +13,10 @@ apply plugin: 'kotlin-parcelize'
 android {
 
     def major = "9"
-    def minor = "10"
+    def minor = "11"
     def fix = "0"
-    def jobNumberProduction = 219
-    def jobNumberQa = 703
+    def jobNumberProduction = 221
+    def jobNumberQa = 708
 
     buildFeatures {
         dataBinding true
