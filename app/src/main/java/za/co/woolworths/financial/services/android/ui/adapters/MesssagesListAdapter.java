@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.awfs.coordination.R;
 import com.daimajia.swipe.SwipeLayout;
@@ -43,8 +44,8 @@ public class MesssagesListAdapter extends RecyclerSwipeAdapter<MesssagesListAdap
 		private final RelativeLayout relContainer;
 		SwipeLayout swipeLayout;
 		WTextView txtTitle;
-		WTextView txtDate;
-		WTextView txtBody;
+		TextView txtDate;
+		 TextView txtBody;
 		ImageView imgdelete;
 		LinearLayout cardlayout;
 		View tranparentView;
@@ -53,8 +54,8 @@ public class MesssagesListAdapter extends RecyclerSwipeAdapter<MesssagesListAdap
 			super(itemView);
 			swipeLayout = (SwipeLayout) itemView.findViewById(R.id.swipe);
 			txtTitle = (WTextView) itemView.findViewById(R.id.msgTitle);
-			txtDate = (WTextView) itemView.findViewById(R.id.date);
-			txtBody = (WTextView) itemView.findViewById(R.id.bodyMessage);
+			txtDate = (TextView) itemView.findViewById(R.id.date);
+			txtBody = (TextView) itemView.findViewById(R.id.bodyMessage);
 			imgdelete = (ImageView) itemView.findViewById(R.id.msgDelete);
 			cardlayout = (LinearLayout) itemView.findViewById(R.id.cardLayout);
 			tranparentView = (View) itemView.findViewById(R.id.transparentview);

@@ -41,8 +41,9 @@
                         android:layout_centerHorizontal="true"
                         android:layout_centerVertical="true" />
 
-                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    <TextView
                         android:id="@+id/flStockFinderMapHeader"
+                        style="@style/opensans_regular_13_black"
                         android:layout_width="match_parent"
                         android:layout_height="67dp"
                         android:background="@color/stock_finder_map_header_bg"
@@ -51,9 +52,8 @@
                         android:paddingStart="@dimen/default_margin"
                         android:text="@string/find_in_store_info"
                         android:textColor="@color/white"
-                        android:textSize="15sp"
                         android:visibility="gone"
-                        app:WTextView_font="myriadpro_regular"/>
+                      />
 
                 </RelativeLayout>
 

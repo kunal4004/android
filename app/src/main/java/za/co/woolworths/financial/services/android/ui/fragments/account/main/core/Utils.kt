@@ -22,6 +22,7 @@ suspend fun <T : Any> mapNetworkCallToViewStateFlow(ioOperation: suspend () -> F
                 is IOTaskResult.OnFailed -> ViewState.RenderFailure(task.throwable)
                 is IOTaskResult.Empty -> ViewState.RenderEmpty
                 is IOTaskResult.NoConnectionState -> ViewState.RenderNoConnection
+                is IOTaskResult.OnSessionTimeOut ->ViewState.RenderErrorFromResponse(task.data)
             }
         }.collect { viewState ->
             emit(viewState)
