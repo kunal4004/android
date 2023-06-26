@@ -62,7 +62,9 @@
 
     <TextView
         android:id="@+id/colourUnavailableError"
-        style="@style/myriad_pro_regular"
+        style="@style/opensens_regular"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:text="@string/vto_color_selected_error"
         android:textColor="@color/promo_text_color"
         android:textSize="@dimen/fourteen_sp"
