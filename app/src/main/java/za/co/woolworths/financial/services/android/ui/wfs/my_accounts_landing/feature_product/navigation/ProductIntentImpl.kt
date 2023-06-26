@@ -14,7 +14,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.BetterActivityResult
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.Constants
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.enumtype.AccountProductCardsGroup
-import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.model.UserAccountResponse
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_view_application_status.ViewApplicationStatusImpl
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.viewmodel.UserAccountLandingViewModel
 import za.co.woolworths.financial.services.android.util.Utils
@@ -117,7 +116,7 @@ class ProductIntentImpl @Inject constructor(private val activity: Activity?) : P
         activity?.let { context ->
             Intent(context, AccountSignedInActivity::class.java).apply {
                 putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, applyNowState)
-                putExtra(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE, UserAccountResponse())
+                putExtra(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE, userAccountResponse)
                 deepLinkParams?.let {
                     putExtra(AccountSignedInPresenterImpl.DEEP_LINKING_PARAMS, deepLinkParams)
                 }
