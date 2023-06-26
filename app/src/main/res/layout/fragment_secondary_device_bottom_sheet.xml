@@ -64,9 +64,9 @@
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
+            <TextView
                 android:id="@+id/changePrimaryDeviceTextView"
-                style="@style/style_cart_delivery_to_text"
+                style="@style/opensans_semi_bold_13_black_text_style"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/four_dp"
@@ -123,9 +123,9 @@
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
+            <TextView
                 android:id="@+id/deleteDeviceTextView"
-                style="@style/style_cart_delivery_to_text"
+                style="@style/opensans_semi_bold_13_black_text_style"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/four_dp"
