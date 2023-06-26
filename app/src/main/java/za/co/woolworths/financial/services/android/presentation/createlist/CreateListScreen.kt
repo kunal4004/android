@@ -1,7 +1,3 @@
-@file:OptIn(
-    ExperimentalComposeUiApi::class
-)
-
 package za.co.woolworths.financial.services.android.presentation.createlist
 
 import android.content.Context
@@ -135,7 +131,7 @@ fun CreateListScreen(
                 if(state.isError) {
                     Text(
                         modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp),
-                        text = state.errorMessage,
+                        text = state.errorMessage.ifEmpty { stringResource(id = state.errorMessageId) },
                         style = TextStyle(
                             fontFamily = OpenSansFontFamily,
                             fontWeight = FontWeight.Normal,
@@ -201,8 +197,7 @@ private fun CreateListScreenPreview() {
                 isLoading = false,
                 title = stringResource(id = R.string.shop_create_list),
                 isError = true,
-                errorMessage = "Unfortunately, this list name already exists. " +
-                        "\u2028Please try another option."
+                errorMessageId = R.string.create_list_name_error
             )
         ) {}
     }
