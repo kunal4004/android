@@ -39,16 +39,16 @@
                 android:textSize="16sp"
                 app:WTextView_font="medium_bold"/>
 
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
+            <TextView
                 android:id="@+id/tvDescription"
+                style="@style/opensans_regular_13_black"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="left"
                 android:lineSpacingExtra="4dp"
                 android:text="@string/uploading_your_documents_desc"
                 android:textColor="@color/black_50"
-                android:textSize="15sp"
-                app:WTextView_font="myriadpro_regular"/>
+              />
 
             <View
                 android:layout_width="match_parent"
@@ -64,7 +64,7 @@
                 <ImageView
                     style="@style/upload_document_image"/>
 
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                <TextView
                     style="@style/upload_document_title"
                     android:lineSpacingExtra="4dp"
                     android:text="@string/uploading_clear_scan_photo"/>
@@ -78,7 +78,7 @@
                 <ImageView
                     style="@style/upload_document_image"/>
 
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                <TextView
                     style="@style/upload_document_title"
                     android:lineSpacingExtra="4dp"
                     android:text="@string/uploading_name_address"/>
@@ -92,7 +92,7 @@
                 <ImageView
                     style="@style/upload_document_image"/>
 
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                <TextView
                     style="@style/upload_document_title"
                     android:lineSpacingExtra="4dp"
                     android:text="@string/uploading_statement_period"/>
@@ -106,7 +106,7 @@
                 <ImageView
                     style="@style/upload_document_image"/>
 
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                <TextView
                     style="@style/upload_document_title"
                     android:lineSpacingExtra="4dp"
                     android:text="@string/uploading_older_month"/>

@@ -89,8 +89,7 @@
         android:id="@+id/tempFreezeTextViewShimmerFrameLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/endGuide"
         app:layout_constraintTop_toTopOf="@+id/topGuide">
 
         <TextView
@@ -114,13 +113,13 @@
             android:id="@+id/myCardDetailTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:clickable="true"
+            android:enabled="true"
+            android:focusable="true"
             android:fontFamily="@font/futura_medium_ttf"
             android:letterSpacing="0.15"
             android:text="@string/label_card_details"
             android:textAllCaps="true"
-            android:clickable="true"
-            android:focusable="true"
-            android:enabled="true"
             android:textColor="@color/black"
             android:textSize="@dimen/twelve_sp"
             tools:ignore="UnusedAttribute" />
@@ -167,17 +166,16 @@
 
     <TextView
         android:id="@+id/userNameTextView"
+        style="@style/opensans_regular_11_black"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginBottom="16dp"
-        android:fontFamily="@font/myriad_pro_regular_otf"
         android:shadowColor="@color/black"
         android:shadowRadius="1"
         tools:text="Thuli Sandile"
         android:textAllCaps="false"
         android:textColor="@color/white"
-        android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="@+id/cardDetailImageShimmerFrameLayout"
         app:layout_constraintStart_toStartOf="@+id/imageGuideLine" />
 
