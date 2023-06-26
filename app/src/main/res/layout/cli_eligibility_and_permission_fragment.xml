@@ -40,7 +40,6 @@
                     android:id="@+id/eligibilityQuestionDesc"
                     style="@style/cli_permission_description_text"
                     android:contentDescription="eligibilityQuestion1Description"
-                    android:fontFamily="@font/myriad_pro_regular_otf"
                     tools:text="@string/cli_eligibility_check_description" />
 
                 <LinearLayout
@@ -102,7 +101,6 @@
                     android:id="@+id/permissionsDesc"
                     style="@style/cli_permission_description_text"
                     android:contentDescription="@string/permissionToProceedDesc"
-                    android:fontFamily="@font/myriad_pro_regular_otf"
                     tools:text="@string/cli_permission_check_description" />
 
                 <LinearLayout
