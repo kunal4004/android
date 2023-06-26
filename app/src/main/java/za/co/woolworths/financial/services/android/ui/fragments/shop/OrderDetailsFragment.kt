@@ -27,7 +27,6 @@ import za.co.woolworths.financial.services.android.models.network.CompletionHand
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.models.network.Parameter
 import za.co.woolworths.financial.services.android.onecartgetstream.OCChatActivity
-import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity
 import za.co.woolworths.financial.services.android.ui.activities.CancelOrderProgressActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_PRODUCT
@@ -36,7 +35,6 @@ import za.co.woolworths.financial.services.android.ui.adapters.OrderDetailsAdapt
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.shop.helpandsupport.HelpAndSupportFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
-import za.co.woolworths.financial.services.android.ui.views.ToastFactory
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.ProductTypeDetails
@@ -413,27 +411,6 @@ class OrderDetailsFragment : BaseFragmentBinding<OrderDetailsFragmentBinding>(Or
             return
         }
 
-        if (requestCode == AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_REQUEST_CODE
-            && resultCode == AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE
-        ) {
-            ToastFactory.buildShoppingListToast(
-                requireActivity(),
-                binding.orderDetails, true, data, this
-            )
-            return
-        }
-
-        if (requestCode == BottomNavigationActivity.PDP_REQUEST_CODE && resultCode == AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE) {
-            requireActivity().apply {
-                setResult(
-                    AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE,
-                    data
-                )
-                onBackPressed()
-                overridePendingTransition(0, 0)
-            }
-            return
-        }
         val fragment =
             requireActivity().supportFragmentManager.findFragmentById(R.id.fragmentContainer)
         fragment?.onActivityResult(requestCode, resultCode, data)

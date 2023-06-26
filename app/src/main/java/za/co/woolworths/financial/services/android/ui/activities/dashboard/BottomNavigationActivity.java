@@ -15,7 +15,6 @@ import static za.co.woolworths.financial.services.android.ui.fragments.product.d
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.STR_PRODUCT_LIST;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.REQUEST_CHECKOUT_ON_CONTINUE_SHOPPING;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.RESULT_RELOAD_CART;
-import static za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToShoppingListFragment.POST_ADD_TO_SHOPPING_LIST;
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListDetailFragment.ADD_TO_CART_SUCCESS_RESULT;
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.PRODUCT_DETAILS_FROM_MY_LIST_SEARCH;
 import static za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsVouchersFragment.LOCK_REQUEST_CODE_WREWARDS;
@@ -65,7 +64,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -96,7 +94,6 @@ import za.co.woolworths.financial.services.android.models.network.Parameter;
 import za.co.woolworths.financial.services.android.models.service.event.BadgeState;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
 import za.co.woolworths.financial.services.android.onecartgetstream.OCChatActivity;
-import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity;
 import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
@@ -1112,12 +1109,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
         // Navigate from shopping list detail activity
         switch (requestCode) {
-            case AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_REQUEST_CODE:
-                if (resultCode == AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE) {
-                    ToastFactory.Companion.buildShoppingListToast(this, getBottomNavigationById(), true, data, this);
-                    break;
-                }
-
             case REQUEST_PAYMENT_STATUS:
                 if (resultCode == REQUEST_CHECKOUT_ON_CONTINUE_SHOPPING) {
                     navigateToTabIndex(BottomNavigationActivity.INDEX_PRODUCT, null);
@@ -1138,14 +1129,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 navigateToMyList(requestCode, resultCode, data);
 
                 switch (resultCode) {
-                    case AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_REQUEST_CODE:
-                        Fragment fragment = mNavController.getCurrentFrag();
-                        if (fragment instanceof MyListsFragment) {
-                            MyListsFragment myListsFragment = (MyListsFragment) fragment;
-                            myListsFragment.getShoppingList(false);
-                        }
-                        break;
-
                     case RESULT_OK:
                         // Open Shopping List Detail Fragment From MyList and Add item to cart
                         String itemAddToCartMessage = data.getStringExtra("addedToCartMessage");
@@ -1358,15 +1341,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     }
 
     private void navigateToMyList(int requestCode, int resultCode, Intent data) {
-        if (resultCode == AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE) {
-            clearStack();
-            String obj = data.getStringExtra(POST_ADD_TO_SHOPPING_LIST);
-            JsonElement element = new JsonParser().parse(obj);
-            Fragment fragmentById = getCurrentFragment();
-            if (fragmentById instanceof ShopFragment)
-                fragmentById.onActivityResult(requestCode, resultCode, null);
-            switchToShoppingListTab(element);
-        } else if (resultCode == NavigateToShoppingList.DISPLAY_TOAST_RESULT_CODE) {
+        if (resultCode == NavigateToShoppingList.DISPLAY_TOAST_RESULT_CODE) {
             clearStack();
             ToastFactory toastFactory = new ToastFactory();
             toastFactory.Companion.buildShoppingListToast(this, getBottomNavigationById(), true, data, this);
