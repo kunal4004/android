@@ -34,15 +34,14 @@
 
     <TextView
         android:id="@+id/linkDeviceResultSubitle"
+        style="@style/opensans_regular_14_black"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/sixteen_dp"
-        android:fontFamily="@font/myriad_pro_regular"
         android:gravity="center"
         android:paddingHorizontal="@dimen/thirty_two_dp"
         android:text="@string/link_device_result_skip_desc"
         android:textColor="@color/color_7f7f7f"
-        android:textSize="@dimen/sixteen_sp"
         android:lineSpacingExtra="@dimen/six_dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

@@ -485,7 +485,7 @@ private fun LazyListScope.productHeaderView(
         TextFuturaFamilyHeader1(
             text = title,
             locator = locator,
-            color = Color.Black,
+            textColor = Color.Black,
             modifier = Modifier
                 .padding(start = Margin.start, top = Margin.end)
                 .testAutomationTag(locator),
@@ -570,6 +570,7 @@ fun HeaderItem(
         locator = locator,
         textAlign = textAlign,
         fontSize = fontSize,
+        textColor = Color.Black,
         modifier = Modifier.padding(start = Margin.start, top = Margin.top),
         isLoading = isLoading,
         brush = brush
