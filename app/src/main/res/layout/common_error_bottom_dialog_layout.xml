@@ -64,13 +64,12 @@
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tvErrorDesc"
+        style="@style/opensans_regular_13_black"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_7sdp"
         android:gravity="center"
-        android:fontFamily="@font/myriad_pro_regular"
         android:textColor="@color/color_444444"
-        android:textSize="@dimen/_13ssp"
         android:lineSpacingExtra="@dimen/_4ssp"
         tool:text="We can’t seem to reach your shopper.\n Give them a few moments, and try again."
         app:layout_constraintTop_toBottomOf="@+id/tvErrorTitle"
