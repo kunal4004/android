@@ -7,6 +7,7 @@ import androidx.viewpager.widget.PagerAdapter;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.awfs.coordination.R;
 
@@ -47,7 +48,7 @@ public class CLIIncreaseLimitInfoPagerAdapter extends PagerAdapter {
 	public Object instantiateItem(ViewGroup container, final int position) {
 		View cView = mContext.getLayoutInflater().inflate(R.layout.cli_increase_limit_pager_item, container, false);
 		final WTextView title = (WTextView) cView.findViewById(R.id.cli_info_title);
-		WTextView description = (WTextView) cView.findViewById(R.id.cli_info_desc);
+		TextView description = (TextView) cView.findViewById(R.id.cli_info_desc);
 		WTextView videoText = (WTextView) cView.findViewById(R.id.cli_ifo_video);
 		ImageView image=(ImageView)cView.findViewById(R.id.cli_info_image);
 		image.setImageResource(images.getResourceId(position,-1));

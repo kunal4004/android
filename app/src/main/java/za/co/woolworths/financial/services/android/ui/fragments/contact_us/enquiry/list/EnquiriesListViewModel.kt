@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigOptions
 import za.co.woolworths.financial.services.android.ui.fragments.contact_us.enquiry.EmailUsRequest
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import java.util.regex.Pattern
 import javax.inject.Inject
@@ -60,12 +61,13 @@ class EnquiriesListViewModel @Inject constructor() : ViewModel() {
 
     fun userName(): String? {
         val userDetail = SessionUtilities.getInstance().jwt
-        return if (userDetail.name != null) ( userDetail.name[0] + " " +userDetail.family_name[0]) else ""
-    }
+        val username = if (userDetail.name != null) userDetail.name[0] + " " +userDetail.family_name[0]else ""
+        return KotlinUtils.capitaliseFirstWordAndLetters(username)?.toString()
 }
 
 sealed class ValidationErrors {
     object EmailNotValid : ValidationErrors()
     object EnquiryNotValid : ValidationErrors()
     object ValidationSuccess : ValidationErrors()
+}
 }

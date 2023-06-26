@@ -1,6 +1,8 @@
 package za.co.woolworths.financial.services.android.ui.wfs.component
 
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -92,6 +94,7 @@ fun TextOpenSansFamilyBoldH1(
 fun TextOpenSansSemiBoldH3(
     modifier: Modifier = Modifier,
     text: String?,
+    fontSize: TextUnit = FontDimensions.sp12,
     isUpperCased: Boolean = false,
     color: Color? = null,
     letterSpacing: TextUnit? = TextUnit.Unspecified,
@@ -100,13 +103,13 @@ fun TextOpenSansSemiBoldH3(
     val value = if (isUpperCased) text?.uppercase() ?: "" else text ?: ""
     Text(
         text = value,
-        fontSize = Dimens.twelve_sp,
+        fontSize = fontSize,
         color = color ?: Obsidian,
         fontWeight = FontWeight.SemiBold,
-        style = futuraFamilyHeader1(),
+        style = MaterialTheme.typography.titleMedium,
         textAlign = textAlign,
         letterSpacing = letterSpacing ?: Dimens.point_five_sp,
-        modifier = modifier
+        modifier = modifier.testAutomationTag(text ?: "")
     )
 }
 
@@ -161,8 +164,8 @@ fun TextFuturaFamilyHeader1(
     text: String,
     locator : String = "",
     isUpperCased: Boolean = false,
-    color: Color = Black,
-    fontSize: TextUnit = FontDimensions.sp20,
+    textColor: Color? = Color.Black,
+    fontSize: TextUnit? = FontDimensions.sp20,
     fontStyle: FontStyle? = null,
     fontWeight: FontWeight? = FontWeight.W600,
     fontFamily: FontFamily? = FuturaFontFamily,
@@ -186,8 +189,60 @@ fun TextFuturaFamilyHeader1(
     if (!isLoading) {
         Text(
             text = if (isUpperCased) text.uppercase() else text,
+            modifier = modifier.fillMaxWidth().then(Modifier.testAutomationTag(locator = locator)),
+            color =  textColor ?: Color.Black,
+            fontSize = fontSize ?: FontDimensions.sp18,
+            fontStyle = fontStyle,
+            fontWeight = fontWeight,
+            fontFamily = fontFamily,
+            letterSpacing = letterSpacing,
+            textDecoration = textDecoration,
+            textAlign = textAlign,
+            lineHeight = lineHeight,
+            overflow = overflow,
+            softWrap = softWrap,
+            maxLines = maxLines,
+            onTextLayout = onTextLayout,
+            style = style
+        )
+    }
+
+}
+
+
+@Composable
+fun TextFuturaFamilySemiBoldHeader1(
+    modifier: Modifier = Modifier,
+    text: String,
+    locator : String = "",
+    isUpperCased: Boolean = false,
+    textColor: Color? = Black,
+    fontSize: TextUnit = FontDimensions.sp18,
+    fontStyle: FontStyle? = null,
+    fontWeight: FontWeight? = FontWeight.SemiBold,
+    fontFamily: FontFamily? = FuturaFontFamily,
+    letterSpacing: TextUnit = Dimens.letterspacing_029_sp,
+    textDecoration: TextDecoration? = null,
+    textAlign: TextAlign? = TextAlign.Start,
+    lineHeight: TextUnit = TextUnit.Unspecified,
+    isLoading: Boolean = false,
+    brush: Brush? = null,
+    overflow: TextOverflow = TextOverflow.Clip,
+    softWrap: Boolean = true,
+    maxLines: Int = Int.MAX_VALUE,
+    onTextLayout: (TextLayoutResult) -> Unit = {},
+    style: TextStyle = futuraFamilyHeader1()
+) {
+
+    if (isLoading){
+        HeaderItemShimmer(brush, locator)
+    }
+
+    if (!isLoading) {
+        Text(
+            text = if (isUpperCased) text.uppercase() else text,
             modifier = modifier.then(Modifier.testAutomationTag(locator = locator)),
-            color = Color.Black,
+            color = textColor ?: Color.Black,
             fontSize = fontSize,
             fontStyle = fontStyle,
             fontWeight = fontWeight,
