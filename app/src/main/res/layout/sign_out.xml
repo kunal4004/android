@@ -48,8 +48,9 @@
                 android:background="@color/white"
                 android:orientation="vertical">
 
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                <TextView
                     android:id="@+id/overlayDescription"
+                    style="@style/opensans_regular_13_black"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="30dp"
@@ -59,8 +60,6 @@
                     android:lineSpacingExtra="1.3dp"
                     android:text="@string/sign_out_desc"
                     android:textColor="@color/black_desc_opacity"
-                    android:textSize="15sp"
-                    app:WTextView_font="myriadpro_regular"
                     />
 
             </LinearLayout>
@@ -78,7 +77,7 @@
                 <za.co.woolworths.financial.services.android.ui.views.WButton
                     android:id="@+id/cancelSignOutButton"
                     style="@style/whiteButtonStyle"
-                    android:layout_marginRight="4dp"
+                    android:layout_marginEnd="4dp"
                     android:layout_weight="0.5"
                     android:text="@string/cancel"
                     android:textAllCaps="true"
@@ -88,7 +87,7 @@
                 <za.co.woolworths.financial.services.android.ui.views.WButton
                     android:id="@+id/btnSignOut"
                     style="@style/whiteButtonStyle"
-                    android:layout_marginLeft="4dp"
+                    android:layout_marginStart="4dp"
                     android:layout_weight="0.5"
                     android:text="@string/ok"
                     android:textAllCaps="true"

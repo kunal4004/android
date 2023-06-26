@@ -23,16 +23,15 @@
 
     <TextView
         android:id="@+id/processRequestDescriptionTextView"
+        style="@style/opensans_regular_13_black"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginTop="@dimen/twelve_dp"
         android:layout_marginEnd="32dp"
-        android:fontFamily="@font/myriad_pro_regular_otf"
         android:gravity="center"
         android:text="@string/processing_your_request_desc"
         android:textColor="@color/charcoal_grey"
-        android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/processRequestTitleTextView" />

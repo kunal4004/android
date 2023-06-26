@@ -36,15 +36,14 @@
 
     <TextView
         android:id="@+id/payMyAccountDescTextView"
+        style="@style/opensans_regular_13_black"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="6dp"
-        android:fontFamily="@font/myriad_pro_regular_otf"
         android:gravity="center"
         android:lineSpacingExtra="8sp"
         android:text="@string/store_card_payment_option_desc"
         android:textColor="@color/black_overlay"
-        android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/payMyAccountTitleTextView" />

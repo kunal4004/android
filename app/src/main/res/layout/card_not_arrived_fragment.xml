@@ -90,16 +90,15 @@
 
     <TextView
         android:id="@+id/descriptionTextView"
+        style="@style/opensans_regular_14_black"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_12sdp"
         android:contentDescription="@string/copy_text_thanks_for_letting_us_know"
-        android:fontFamily="@font/myriad_pro_regular_otf"
         android:gravity="center"
         android:lineSpacingExtra="@dimen/_4sdp"
         android:text="@string/vtsc_card_not_arrived_notified_desc"
         android:textColor="@color/description_color"
-        android:textSize="@dimen/sixteen_sp"
         app:layout_constraintEnd_toStartOf="@+id/end_guideline"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/start_guideline"
