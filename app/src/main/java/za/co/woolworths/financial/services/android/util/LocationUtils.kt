@@ -2,8 +2,17 @@ package za.co.woolworths.financial.services.android.util
 
 import android.view.View
 import android.widget.ProgressBar
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import com.awfs.coordination.R
 import com.google.gson.JsonSyntaxException
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationParams
@@ -15,6 +24,7 @@ import za.co.woolworths.financial.services.android.models.dto.CreateList
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList
 import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
+import za.co.woolworths.financial.services.android.presentation.common.ProgressView
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 
 /**
@@ -113,13 +123,12 @@ class LocationUtils {
                                 }
                                 if (shoppingList != null) {
                                     // This means Auto Shopping List name already exist and we need to call add to list API
-                                    callAddToListAPI(progressBar, fragment, confirmAddressViewModel)
+                                    callAddToListAPI(fragment, confirmAddressViewModel)
 
                                 } else {
                                     // Name *Auto Shopping List* don't exist so call create List API to create this name.
                                     callCreateListAPI(
                                         fragment,
-                                        progressBar,
                                         confirmAddressViewModel
                                     )
                                 }
@@ -143,7 +152,6 @@ class LocationUtils {
 
         private fun callCreateListAPI(
             fragment: Fragment,
-            progressBar: ProgressBar,
             confirmAddressViewModel: ConfirmAddressViewModel,
         ) {
             if (commerceItemList != null) {
@@ -162,12 +170,12 @@ class LocationUtils {
                     items.plus(addToListRequest)
                 }
                 val createList = CreateList(Constant.AUTO_SHOPPING_LIST_NAME, items)
-                progressBar?.visibility = View.VISIBLE
+                showLoadingProgress(fragment)
                 fragment.viewLifecycleOwner.lifecycleScope.launch {
                     try {
                         val createListResponse =
                             confirmAddressViewModel.createNewList(createList)
-                        progressBar?.visibility = View.GONE
+                        hideLoadingProgress(fragment)
                         val createNewListResponse = createListResponse?.body()
                         if (createNewListResponse != null) {
                             when (createNewListResponse.httpCode) {
@@ -178,24 +186,23 @@ class LocationUtils {
                         }
                     } catch (e: Exception) {
                         FirebaseManager.logException(e)
-                        progressBar?.visibility = View.GONE
+                        hideLoadingProgress(fragment)
                     }
                 }
             }
         }
 
         private fun callAddToListAPI(
-            progressBar: ProgressBar,
             fragment: Fragment,
             confirmAddressViewModel: ConfirmAddressViewModel,
         ) {
             if (commerceItemList != null) {
-                progressBar?.visibility = View.VISIBLE
+                showLoadingProgress(fragment)
                 fragment.viewLifecycleOwner.lifecycleScope.launch {
                     try {
                         val addProductToListResponse =
-                            confirmAddressViewModel.addProductsToList(commerceItemList)
-                        progressBar?.visibility = View.GONE
+                            confirmAddressViewModel.addProductsToList("", listOf())
+                        hideLoadingProgress(fragment)
                         val addToListResponse = addProductToListResponse?.body()
                         if (addToListResponse != null) {
                             when (addToListResponse.httpCode) {
@@ -206,10 +213,30 @@ class LocationUtils {
                         }
                     } catch (e: Exception) {
                         FirebaseManager.logException(e)
-                        progressBar?.visibility = View.GONE
+                        hideLoadingProgress(fragment)
                     }
                 }
             }
+        }
+
+        private fun showLoadingProgress(fragment: Fragment) {
+            fragment.requireActivity().setContent {
+                ProgressView(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 290.dp)
+                        .wrapContentHeight(Alignment.CenterVertically),
+                    title = stringResource(
+                        id = R.string.add_to_list_progress_title,
+                        "a List"
+                    ),
+                    desc = stringResource(id = R.string.processing_your_request_desc)
+                )
+            }
+        }
+
+        private fun hideLoadingProgress(fragment: Fragment) {
+
         }
     }
 }

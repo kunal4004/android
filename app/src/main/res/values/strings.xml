@@ -3060,4 +3060,6 @@
         <item quantity="other">Save these items to a list to shop later.</item>
     </plurals>
 
+    <string name="add_to_list_progress_title">Adding Your Items\n to %s</string>
+
 </resources>
