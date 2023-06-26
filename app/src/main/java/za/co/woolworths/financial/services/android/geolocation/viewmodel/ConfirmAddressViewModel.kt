@@ -7,6 +7,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.request.SaveAddressLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
+import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
+import za.co.woolworths.financial.services.android.models.dto.CreateList
+import za.co.woolworths.financial.services.android.models.network.RetrofitConfig
 import javax.inject.Inject
 
 @HiltViewModel
@@ -29,4 +32,11 @@ class ConfirmAddressViewModel @Inject constructor(private val geoLocationApiHelp
 
     suspend fun getShoppingList() = geoLocationApiHelper.getShoppingList()
 
+    suspend fun createNewList(createList: CreateList) =
+        geoLocationApiHelper.createNewList(createList)
+
+    suspend fun addProductsToList(productId: String, addToListRequest: List<AddToListRequest>) =
+        geoLocationApiHelper.addProductsToList(
+            productId, addToListRequest
+        )
 }
