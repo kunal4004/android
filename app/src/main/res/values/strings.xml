@@ -507,7 +507,7 @@
     <string name="product_unavailable">product unavailable</string>
     <string name="acc_my_preferences">My Preferences</string>
     <string name="authenticate_with_touch_id">Authenticate using Biometrics</string>
-    <string name="biometrics_authentication">BIOMETRICS/PIN</string>
+    <string name="biometrics_authentication">Biometrics/Pin</string>
     <string name="biometrics_description">This allows you to easily access secure features in the app by using the biometric reader on your device.</string>
     <string name="favourite_delivery_location_description">In order to improve your shopping experience you can set your favourite delivery location. We will use this as your default delivery location.</string>
     <string name="product_unavailable_desc">Sorry, this product is unavailable in your delivery location</string>
@@ -2730,7 +2730,7 @@
     <string name="status_collected">Collected</string>
     <string name="empty" />
     <string name="dash_item_limit_message">Dash orders allow %d items max</string>
-    <string name="delete_your_profile">DELETE YOUR PROFILE</string>
+    <string name="delete_your_profile">Delete Your Profile</string>
     <string name="start_the_process">Start The Process</string>
     <string name="delete_account_description">If you delete your profile, you won\'t be able to log into your account, view any account information, view history, or access any of our related apps.</string>
     <string name="delete_online_profile">Delete Online Profile</string>
@@ -3054,5 +3054,5 @@
     <string name="geo_loc_error_msg_with_out_pin">Please use a general location <b>near you</b> instead. Search for an address, the name of a complex, your closest landmark (e.g. a Woolies store). </string>
     <string name="payflex_is_unavailable_when_buying_food_items_and_gift_cards">Payflex is unavailable when buying Food items and Gift Cards.</string>
     <string name="open_until">Open until %s</string>
-
+    <string name="contact_us_email_message_placeholder">Please provide details about your query.</string>
 </resources>

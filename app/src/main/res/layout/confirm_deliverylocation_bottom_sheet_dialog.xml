@@ -47,9 +47,13 @@
 
     <TextView
         android:id="@+id/tvLocation"
-        style="@style/myriad_pro_semi_bold_black_15_text_style"
+        style="@style/opensens_semi_bold"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/five_dp"
+        android:textSize="@dimen/thirteen_sp"
         android:gravity="center_horizontal"
+        android:textColor="@color/black"
         app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
         app:layout_constraintRight_toRightOf="@+id/right_guideline"
         app:layout_constraintTop_toBottomOf="@id/description" />

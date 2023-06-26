@@ -23,8 +23,9 @@
         android:text="Ok"
         android:textAllCaps="true" />
 
-    <za.co.woolworths.financial.services.android.ui.views.WTextView
+    <TextView
         android:id="@+id/description"
+        style="@style/opensans_regular_12_text_style"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/btnOk"
@@ -34,9 +35,8 @@
         android:gravity="center"
         android:lineSpacingExtra="4sp"
         android:textColor="@android:color/white"
-        android:textSize="14sp"
         android:visibility="gone"
-        app:WTextView_font="myriadpro_regular" />
+        />
 
     <ImageView
         android:id="@+id/imgSmiley"

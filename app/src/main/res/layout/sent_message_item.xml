@@ -12,7 +12,6 @@
         android:id="@+id/sent_message_text"
         style="@style/chat_text_style"
         android:background="@drawable/sent_message_bubble_bg"
-        android:fontFamily="@font/myriad_pro_regular_otf"
         android:paddingStart="@dimen/twelve_dp"
         android:paddingTop="@dimen/ten_dp"
         android:paddingEnd="@dimen/twelve_dp"
