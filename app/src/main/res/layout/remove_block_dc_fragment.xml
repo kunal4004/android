@@ -43,64 +43,59 @@
 
     <TextView
         android:id="@+id/accountInArrearsDescTextview"
+        style="@style/opensans_regular_13_black"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/ten_dp"
-        android:fontFamily="@font/myriad_pro_regular_otf"
         android:gravity="center"
         android:lineSpacingExtra="10sp"
         android:text="@string/your_account_in_arrears_desc"
         android:textColor="@color/white_desc"
-        android:textSize="@dimen/fifteen_sp"
         app:layout_constraintEnd_toStartOf="@+id/endGuide"
         app:layout_constraintStart_toStartOf="@+id/startGuide"
         app:layout_constraintTop_toBottomOf="@+id/accountInArrearsTextview" />
 
     <TextView
         android:id="@+id/currentBalanceTextView"
+        style="@style/opensans_regular_13_black"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/fourty_dp"
-        android:fontFamily="@font/myriad_pro_regular"
         android:includeFontPadding="true"
         android:text="@string/info_current_balance_title"
         android:textColor="@color/white_desc"
-        android:textSize="@dimen/email_text_size_15sp"
         app:layout_constraintStart_toStartOf="@+id/startGuide"
         app:layout_constraintTop_toBottomOf="@+id/accountInArrearsDescTextview" />
 
     <TextView
         android:id="@+id/currentBalanceAmountTextview"
+        style="@style/opensans_semi_bold_13_black_text_style"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/myriad_pro_semi_bold_otf"
         android:text="R 15,000.00"
         android:textColor="@color/white"
-        android:textSize="@dimen/email_text_size_15sp"
         app:layout_constraintBottom_toBottomOf="@+id/currentBalanceTextView"
         app:layout_constraintEnd_toStartOf="@+id/endGuide"
         app:layout_constraintTop_toTopOf="@+id/currentBalanceTextView" />
 
     <TextView
         android:id="@+id/totalAmountDueLabelTextview"
+        style="@style/opensans_regular_13_black"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/twenty_five_dp"
-        android:fontFamily="@font/myriad_pro_regular"
         android:text="@string/info_total_amount_due_title"
         android:textColor="@color/white_desc"
-        android:textSize="@dimen/email_text_size_15sp"
         app:layout_constraintStart_toStartOf="@+id/startGuide"
         app:layout_constraintTop_toBottomOf="@+id/currentBalanceTextView" />
 
     <TextView
         android:id="@+id/totalAmountDueAmountTextview"
+        style="@style/opensans_semi_bold_13_black_text_style"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/myriad_pro_semi_bold_otf"
         android:text="R 15,000.00"
         android:textColor="@color/white"
-        android:textSize="@dimen/email_text_size_15sp"
         app:layout_constraintBottom_toBottomOf="@+id/totalAmountDueLabelTextview"
         app:layout_constraintEnd_toStartOf="@+id/endGuide"
         app:layout_constraintTop_toTopOf="@+id/totalAmountDueLabelTextview" />

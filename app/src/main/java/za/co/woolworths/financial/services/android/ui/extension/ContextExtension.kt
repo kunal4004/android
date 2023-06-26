@@ -24,7 +24,7 @@ fun Any.getFuturaMediumFont(): Typeface = Typeface.createFromAsset(WoolworthsApp
 
 fun Any.getFuturaSemiBoldFont(): Typeface = Typeface.createFromAsset(WoolworthsApplication.getAppContext().assets, "fonts/WFutura-SemiBold.ttf")
 
-fun Any.getMyriadProSemiBoldFont(): Typeface? = Typeface.createFromAsset(WoolworthsApplication.getAppContext().assets, "fonts/MyriadPro-Semibold.otf")
+fun Any.getOpenSansSemiBoldFont(): Typeface? = Typeface.createFromAsset(WoolworthsApplication.getAppContext().assets, "fonts/OpenSans-SemiBold.ttf")
 
 fun Any.deviceHeight() = WoolworthsApplication.getAppContext()?.resources?.displayMetrics?.heightPixels ?: 0
 
