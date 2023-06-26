@@ -46,18 +46,17 @@
                 android:background="@color/white"
                 android:orientation="vertical">
 
-        <za.co.woolworths.financial.services.android.ui.views.WTextView
+        <TextView
             android:layout_width="match_parent"
+            style="@style/opensans_regular_13_black"
             android:layout_height="wrap_content"
             android:id="@+id/overlayDescription"
             android:gravity="center|top"
             android:lineSpacingExtra="1.3dp"
             android:background="@color/white"
-            android:textSize="15sp"
             android:letterSpacing="0.04"
             android:layout_marginBottom="@dimen/default_margin"
             android:text="@string/cli_pop_insolvency_desc"
-            app:WTextView_font="myriadpro_regular"
             android:textColor="@color/black_desc_opacity"
             />
 

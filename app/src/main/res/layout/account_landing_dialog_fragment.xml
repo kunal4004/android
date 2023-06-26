@@ -48,17 +48,16 @@
 
     <TextView
         android:id="@+id/accountInArrearsDescriptionTextView"
+        style="@style/opensans_regular_13_black"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_start"
         android:layout_marginTop="@dimen/_12sdp"
         android:layout_marginEnd="@dimen/margin_end"
-        android:fontFamily="@font/myriad_pro_regular_otf"
         android:gravity="center"
         android:lineSpacingExtra="@dimen/line_spacing_8sp"
         android:text="@string/payment_overdue_error_desc"
         android:textColor="@color/permanent_card_block_desc_color"
-        android:textSize="@dimen/heading5"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/accountInArrearsTitleTextView" />
