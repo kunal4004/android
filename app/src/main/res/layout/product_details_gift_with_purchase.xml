@@ -31,17 +31,22 @@
 
     <TextView
         android:id="@+id/freeGiftText"
-        style="@style/myriad_pro_regular_black"
+        style="@style/opensens_regular"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:textSize="@dimen/fifteen_sp"
         android:lineSpacingMultiplier="1.40"
         app:layout_constraintTop_toBottomOf="@id/freeGiftTitle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="@dimen/twelve_dp"
+        android:textColor="@color/black"
          />
 
     <TextView
-        style="@style/myriad_pro_regular_black"
+        style="@style/opensens_regular"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:textSize="@dimen/twelve_sp"
         android:text="@string/free_gift_with_purchase_availabilty"
         app:layout_constraintTop_toBottomOf="@id/freeGiftText"

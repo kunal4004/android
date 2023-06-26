@@ -139,12 +139,13 @@
 
             <TextView
                 android:id="@+id/deliveryDateTimeBottomSheetTextView"
-                style="@style/myriad_pro_regular_black"
+                style="@style/opensens_regular"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="0.7"
                 android:gravity="end"
                 android:textSize="@dimen/twelve_sp"
+                android:textColor="@color/black"
                 android:textStyle="bold" />
         </LinearLayout>
 
