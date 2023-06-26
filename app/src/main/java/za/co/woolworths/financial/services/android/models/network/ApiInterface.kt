@@ -956,12 +956,12 @@ interface ApiInterface {
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("wfs/app/v4/order/{id}")
-    fun addOrderToList(
+    suspend fun addToListByOrderId(
 
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Path("id") id: String,
-            @Body requestBody: OrderToShoppingListRequestBody): Call<OrderToListReponse>
+            @Body requestBody: OrderToShoppingListRequestBody): retrofit2.Response<OrderToListReponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("wfs/app/v4/order/{id}")
