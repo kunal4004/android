@@ -1799,20 +1799,6 @@
         <item name="android:layout_height">wrap_content</item>
     </style>
 
-    <style name="myriad_pro_semi_bold">
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:fontFamily">@font/myriad_pro_semi_bold</item>
-    </style>
-
-    <style name="myriad_pro_regular_black" parent="myriad_pro_regular">
-        <item name="android:textColor">@color/black</item>
-    </style>
-
-    <style name="myriad_pro_regular_black_15_text_style" parent="myriad_pro_regular_black">
-        <item name="android:textSize">@dimen/fifteen_sp</item>
-    </style>
-
     <style name="futura_medium_black_12_text_style" parent="futura_medium_black">
         <item name="android:textSize">@dimen/twelve_sp</item>
     </style>
@@ -1861,14 +1847,6 @@
         <item name="android:letterSpacing">@integer/point_two</item>
         <item name="android:padding">@dimen/five_dp</item>
         <item name="android:textSize">@dimen/twelve_sp</item>
-    </style>
-
-    <style name="myriad_pro_semi_bold_black_15_text_style" parent="myriad_pro_regular_black_15_text_style">
-        <item name="android:fontFamily">@font/myriad_pro_semi_bold</item>
-    </style>
-
-    <style name="myriad_pro_semi_bold_black" parent="myriad_pro_regular_black">
-        <item name="android:fontFamily">@font/myriad_pro_semi_bold</item>
     </style>
 
     <style name="enter_otp_edit_text_style">
