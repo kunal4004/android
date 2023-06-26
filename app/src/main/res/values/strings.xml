@@ -1520,11 +1520,13 @@
     <string name="set_up_delivery_nowt">set up delivery now</string>
     <string name="already_have_card_activate_it_now"><u>Already have card? Activate it now</u></string>
     <string name="recipient_details">Recipient Details</string>
-    <string name="recipient_details_desc">Please enter the details of the person we will be delivering to below:</string>
+    <string name="recipient_details_desc">please confirm who will be receiving this card and enter their details below.</string>
     <string name="documet_requied_at_delivery">You will need to give the courier a copy of your SA Identity Document (ID), when taking delivery of your new credit card.</string>
     <string name="recipient_name">Recipient Name</string>
     <string name="id_number">ID Number</string>
     <string name="cellphone_number">Cellphone Number</string>
+    <string name="hint_id_number_of_recipient">ID Number Of Recipient</string>
+    <string name="hint_name_of_recipient">Name of Recipient</string>
     <string name="alternate_contact_numberr">Alternate Contact Number</string>
     <string name="delivery_details">Delivery Details</string>
     <string name="delivery_details_desc">Please complete your delivery details below:</string>
@@ -1553,7 +1555,7 @@
     <string name="cellphone_number_error_msg">Please enter a Cellphone Number</string>
     <string name="alternate_number_error_msg">Please enter Alternate Contact Number</string>
     <string name="phone_number_invalid_error_msg">Please provide a valid phone number</string>
-    <string name="recipient_name_error_msg">Please enter a Recipient name</string>
+    <string name="recipient_name_error_msg">Please provide a valid name</string>
     <string name="build_or_complex_error_msg">Please enter a Complex/Building name</string>
     <string name="business_name_error_msg">Please enter a Business name</string>
     <string name="street_address_error_msg">Please enter a Street address</string>
@@ -1749,6 +1751,7 @@
     <string name="payment_successful_title">Payment Successful</string>
     <string name="ccv_number_label">Enter your CVV Number:</string>
     <string name="pma_payment_delay_label">* Payments may take up to 5 business days to reflect.</string>
+    <string name="pma_payment_delay_dynamic_label">* %1$s</string>
     <string name="confirm_payment">CONFIRM PAYMENT</string>
     <string name="change_label">Change</string>
     <string name="atm_payment_steps_desc"> Follow the steps below when making a payment at an ATM.</string>
