@@ -10,4 +10,5 @@ interface OnDashLandingNavigationListener {
         position: Int,
         bannerType: String
     )
+    fun onDashLandingNavigationClicked(view: View?, item: Banner, headerText: String?)
 }

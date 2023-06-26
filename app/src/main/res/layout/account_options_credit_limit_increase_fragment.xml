@@ -77,12 +77,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/_24sdp"
-                android:fontFamily="@font/myriad_pro_regular_otf"
+                android:fontFamily="@font/opensans_regular"
                 android:lineSpacingExtra="@dimen/_2sdp"
                 android:lineSpacingMultiplier="1.1"
                 android:text="@string/increase_limit_desc"
                 android:textColor="@color/offer_active_desc"
-                android:textSize="@dimen/_13sdp"
+                android:textSize="@dimen/_12sdp"
                 android:visibility="gone" />
 
             <LinearLayout
