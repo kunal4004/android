@@ -860,7 +860,7 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
                             nickName = address?.nickname
                             val addressName = SpannableString(address.address1)
                             val typeface1 =
-                                ResourcesCompat.getFont(context, R.font.myriad_pro_regular)
+                                ResourcesCompat.getFont(context, R.font.opensans_regular)
                             addressName.setSpan(
                                 StyleSpan(typeface1!!.style),
                                 0, addressName.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE

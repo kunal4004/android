@@ -33,7 +33,7 @@
             android:id="@+id/messageTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/myriad_pro_regular"
+            android:fontFamily="@font/opensans_regular"
             android:text="@string/placeholder"
             android:layout_marginTop="@dimen/_6sdp"
             android:lineSpacingExtra="@dimen/_2ssp"
