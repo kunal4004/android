@@ -197,11 +197,6 @@ class BannerCarouselItemViewHolder(val itemBinding: ItemBannerCarouselBinding) :
                 position,
                 view = it,
                 banner,
-                headerText = headerText)
-            dashLandingNavigationListener?.onDashLandingNavigationClicked(
-                position,
-                view = it,
-                banner,
                 headerText
                 )
         }
