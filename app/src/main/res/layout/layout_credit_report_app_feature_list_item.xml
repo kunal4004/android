@@ -4,8 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <za.co.woolworths.financial.services.android.ui.views.WTextView
+    <TextView
         android:id="@+id/app_feature_list_title_text"
+        style="@style/opensans_semi_bold_13_black_text_style"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:drawablePadding="@dimen/fifteen_dp"
@@ -13,9 +14,6 @@
         android:layout_marginStart="@dimen/fifteen_dp"
         android:paddingHorizontal="@dimen/fifteen_dp"
         android:paddingVertical="@dimen/twenty_five_dp"
-        android:textColor="@color/black"
-        android:textSize="@dimen/fifteen_sp"
-        app:WTextView_font="myriadpro_semibold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

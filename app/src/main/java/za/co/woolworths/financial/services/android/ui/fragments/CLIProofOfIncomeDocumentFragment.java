@@ -84,8 +84,8 @@ public class CLIProofOfIncomeDocumentFragment extends Fragment {
 		Activity activity = getActivity();
 		if (activity != null) {
 			AssetManager assetManager = activity.getAssets();
-			Typeface myriadProRegular = Typeface.createFromAsset(assetManager, "fonts/MyriadPro-Regular.otf");
-			Typeface myriadProSemiBold = Typeface.createFromAsset(assetManager, "fonts/MyriadPro-Semibold.otf");
+			Typeface myriadProRegular = Typeface.createFromAsset(assetManager, "fonts/OpenSans-Regular.ttf");
+			Typeface myriadProSemiBold = Typeface.createFromAsset(assetManager, "fonts/OpenSans-SemiBold.ttf");
 
 			TypefaceSpan myriadProRegularSpan = new CustomTypefaceSpan("", myriadProRegular);
 			TypefaceSpan myriadProSemiBoldSpan = new CustomTypefaceSpan("", myriadProSemiBold);

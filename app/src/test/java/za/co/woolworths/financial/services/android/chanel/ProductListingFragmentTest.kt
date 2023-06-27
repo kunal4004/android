@@ -32,6 +32,7 @@ class ProductListingFragmentTest : Fragment() {
             Mockito.mock(ProductListingFragment::class.java, CALLS_REAL_METHODS)
     }
 
+    // TODO UNIT TEST: The following code is not aligned with recent implementation, and needs to be updated.
     @Ignore
     @Test
     fun checkIfChanelMethodGetsCalled() {
@@ -46,6 +47,7 @@ class ProductListingFragmentTest : Fragment() {
         Assert.assertEquals(mockProductView.pageHeading, productListingFragment.toolbarTitleText)
     }
 
+    // TODO UNIT TEST: The following code is not aligned with recent implementation, and needs to be updated.
     @Ignore
     @Test
     fun openProductDetailsViewTest() {

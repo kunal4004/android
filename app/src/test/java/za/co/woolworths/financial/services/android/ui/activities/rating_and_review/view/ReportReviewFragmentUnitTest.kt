@@ -26,6 +26,7 @@ class ReportReviewFragmentUnitTest : Fragment() {
         reportReviewFragment = mock(ReportReviewFragment::class.java, CALLS_REAL_METHODS)
     }
 
+    // TODO UNIT TEST: The following code is not aligned with recent implementation, and needs to be updated.
     @Ignore
     @Test
     fun test_initContainsKeyForReviewList() {
@@ -38,6 +39,7 @@ class ReportReviewFragmentUnitTest : Fragment() {
         assertNotNull(reportList)
     }
 
+    // TODO UNIT TEST: The following code is not aligned with recent implementation, and needs to be updated.
     @Ignore
     @Test
     fun test_initNotContainsKeyForReviewList() {
