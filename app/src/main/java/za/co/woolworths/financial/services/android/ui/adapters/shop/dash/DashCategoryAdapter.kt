@@ -38,7 +38,7 @@ class DashCategoryAdapter(
 
     private var headerText: String? = null
     private var type: String? = null
-    private var bannerType: String? = null
+
 
     private val diffCallback = object : DiffUtil.ItemCallback<Any>() {
 
@@ -108,8 +108,7 @@ class DashCategoryAdapter(
                     context,
                     position,
                     list[position] as Banner,
-                    bannerType ?: "",
-                    headerText = headerText,
+                    headerText = headerText ?: "",
                     dashLandingNavigationListener
                 )
             }
@@ -118,8 +117,7 @@ class DashCategoryAdapter(
                     context,
                     position,
                     list[position] as Banner,
-                    headerText = headerText,
-                    bannerType ?: "",
+                    headerText = headerText ?: "",
                     dashLandingNavigationListener
                 )
             }
@@ -128,8 +126,7 @@ class DashCategoryAdapter(
                     context,
                     position,
                     list[position] as Banner,
-                    bannerType ?: "",
-                    headerText = headerText,
+                    headerText = headerText ?: "",
                     dashLandingNavigationListener
                 )
             }
@@ -138,8 +135,7 @@ class DashCategoryAdapter(
                     context,
                     position,
                     list[position] as Banner,
-                    headerText = headerText,
-                    bannerType ?: "",
+                    headerText = headerText ?: "",
                     dashLandingNavigationListener
                 )
             }
@@ -181,7 +177,6 @@ class DashCategoryAdapter(
     fun setData(productCatalogue: ProductCatalogue) {
         headerText = productCatalogue.headerText
         type = productCatalogue.name
-        bannerType = productCatalogue.headerText
         productCatalogue.banners?.let { list = it }
         productCatalogue.products?.let { list = it }
     }
@@ -194,16 +189,21 @@ class BannerCarouselItemViewHolder(val itemBinding: ItemBannerCarouselBinding) :
         position: Int,
         banner: Banner,
         headerText: String?,
-        bannerType: String,
         dashLandingNavigationListener: OnDashLandingNavigationListener?
     ) {
 
         itemBinding.dashBannerCarouselContainer?.setOnClickListener {
-            dashLandingNavigationListener?.onDashLandingNavigationClicked(view = it, banner, headerText = headerText)
             dashLandingNavigationListener?.onDashLandingNavigationClicked(
+                position,
                 view = it,
                 banner,
-                position,bannerType)
+                headerText = headerText)
+            dashLandingNavigationListener?.onDashLandingNavigationClicked(
+                position,
+                view = it,
+                banner,
+                headerText
+                )
         }
         Glide.with(context)
             .load(banner.externalImageRefV2)
@@ -223,16 +223,15 @@ class BannerGridItemViewHolder(val itemBinding: ItemBannerGridBinding) : Recycle
         context: Context,
         position: Int,
         banner: Banner,
-        bannerType:String,
         headerText: String?,
         dashLandingNavigationListener: OnDashLandingNavigationListener?
     ) {
         itemBinding.root.setOnClickListener {
-            dashLandingNavigationListener?.onDashLandingNavigationClicked(view = it, banner, headerText = headerText)
             dashLandingNavigationListener?.onDashLandingNavigationClicked(
+                position,
                 view = it,
                 banner,
-                position,bannerType)
+                headerText = headerText)
         }
         Glide.with(context)
             .load(banner.externalImageRefV2)
@@ -253,16 +252,14 @@ class LongBannerCarouselItemViewHolder(val itemBinding: ItemLongBannerCarouselBi
         position: Int,
         banner: Banner,
         headerText: String?,
-        bannerType: String,
         dashLandingNavigationListener: OnDashLandingNavigationListener?
     ) {
         itemBinding.includeItemLongBannerList.longBannerListContainer?.setOnClickListener {
             dashLandingNavigationListener?.onDashLandingNavigationClicked(
+                position,
                 it,
                 banner,
-                position,
-                bannerType)
-            dashLandingNavigationListener?.onDashLandingNavigationClicked(it, banner, headerText = headerText)
+                headerText = headerText)
         }
         itemBinding.includeItemLongBannerList.tvLongBannerTitle?.text = banner.displayName
         itemBinding.includeItemLongBannerList.tvLongBannerSubtitle?.text = banner.subTitle
@@ -286,14 +283,15 @@ class LongBannerListItemViewHolder(val itemBinding: ItemLongBannerListBinding) :
         position: Int,
         banner: Banner,
         headerText: String?,
-        bannerType:String,
         dashLandingNavigationListener: OnDashLandingNavigationListener?
     ) {
         itemBinding.longBannerListContainer?.setOnClickListener {
-            dashLandingNavigationListener?.onDashLandingNavigationClicked(it, banner, headerText = headerText)
             dashLandingNavigationListener?.onDashLandingNavigationClicked(
-                it, banner, position, bannerType
-            )
+                position,
+                it,
+                banner,
+                headerText = headerText)
+
         }
         itemBinding.tvLongBannerTitle?.text = banner.displayName
         itemBinding.tvLongBannerSubtitle?.text = banner.subTitle

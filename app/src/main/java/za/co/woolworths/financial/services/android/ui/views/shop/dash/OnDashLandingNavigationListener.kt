@@ -5,10 +5,9 @@ import za.co.woolworths.financial.services.android.models.dto.shop.Banner
 
 interface OnDashLandingNavigationListener {
     fun onDashLandingNavigationClicked(
+        position: Int,
         view: View?,
         item: Banner,
-        position: Int,
-        bannerType: String
+        headerText: String?
     )
-    fun onDashLandingNavigationClicked(view: View?, item: Banner, headerText: String?)
 }
