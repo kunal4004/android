@@ -42,7 +42,6 @@
 
     <TextView
         android:id="@+id/currentDeliveryLocation"
-        style="@style/myriad_pro_semi_bold_black_15_text_style"
         android:maxLines="1"
         android:ellipsize="end"
         style="@style/opensens_semi_bold"
