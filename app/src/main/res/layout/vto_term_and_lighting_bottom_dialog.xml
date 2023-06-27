@@ -78,7 +78,7 @@
         android:lineSpacingExtra="1.dp"
         android:lineSpacingMultiplier="1.10"
         android:text="@string/vto_term_and_condition_desc"
-        android:fontFamily="@font/myriad_pro_regular_otf"
+        android:fontFamily="@font/opensans_regular_ttf"
         android:textColor="@color/vto_description_text_color"
         android:textSize="@dimen/text_size_15sp"
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"

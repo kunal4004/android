@@ -56,7 +56,7 @@
         android:gravity="center_horizontal"
         android:textColor="@color/black"
         android:textSize="@dimen/twenty_one_sp"
-        android:fontFamily="@font/myriad_pro_semi_bold"
+        android:fontFamily="@font/opensans_semi_bold"
         app:layout_constraintBottom_toTopOf="@+id/txt_desc"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

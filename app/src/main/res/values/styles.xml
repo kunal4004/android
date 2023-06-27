@@ -487,7 +487,7 @@
         <item name="android:gravity">start|top</item>
         <item name="android:textColor">#50000000</item>
         <item name="android:textSize">14sp</item>
-        <item name="WTextView_font">myriadpro_regular</item>
+        <item name="WTextView_font">opensans_regular</item>
         <item name="android:lineSpacingExtra">4dp</item>
     </style>
 
@@ -986,7 +986,7 @@
         <item name="android:layout_centerVertical">true</item>
         <item name="android:textColor">@color/offer_title</item>
         <item name="android:textSize">17sp</item>
-        <item name="WTextView_font">myriadpro_regular</item>
+        <item name="WTextView_font">opensans_regular</item>
         <item name="android:layout_alignParentLeft">true</item>
     </style>
 
@@ -1786,12 +1786,6 @@
 
     <style name="futura_medium_666666" parent="futura_medium">
         <item name="android:textColor">@color/color_666666</item>
-    </style>
-
-    <style name="myriad_pro_regular">
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:fontFamily">@font/myriad_pro_regular</item>
     </style>
 
     <style name="ccd_opensans_regular" parent="opensans_regular_13_black">

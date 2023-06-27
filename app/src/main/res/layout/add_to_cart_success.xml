@@ -32,7 +32,7 @@
             android:textColor="@color/white"
             android:textSize="@dimen/twelve_sp"
             android:visibility="visible"
-            app:WTextView_font="myriadpro_regular"/>
+            app:WTextView_font="opensans_regular"/>
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             android:id="@+id/tvCart"

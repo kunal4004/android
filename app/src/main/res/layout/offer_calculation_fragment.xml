@@ -50,7 +50,7 @@
                     android:text="@string/amount_of_time_info"
                     android:textColor="@color/black_50"
                     android:textSize="13sp"
-                    app:WTextView_font="myriadpro_regular" />
+                    app:WTextView_font="opensans_regular" />
 
                 <LinearLayout
                     android:id="@+id/llSlideToEditContainer"
