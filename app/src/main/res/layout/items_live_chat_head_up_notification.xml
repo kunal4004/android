@@ -49,17 +49,15 @@
 
         <TextView
             android:id="@+id/notificationDescTextView"
-            style="@style/myriad_pro_regular"
+            style="@style/opensans_regular_11_black"
             android:layout_width="@dimen/zero_dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/three_dp"
             android:layout_marginBottom="8dp"
             android:ellipsize="end"
-            android:fontFamily="@font/myriad_pro_regular_otf"
             android:letterSpacing="0.1"
             android:singleLine="true"
             android:textColor="@color/white"
-            android:textSize="@dimen/twelve_sp"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

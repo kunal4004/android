@@ -1871,15 +1871,15 @@ class ProductDetailsFragment :
             if (Build.VERSION.SDK_INT < 23) {
                 tvAdditionalFieldLabel.setTextAppearance(
                     getApplicationContext(),
-                    R.style.myriad_pro_regular_black_15_text_style
+                    R.style.opensans_regular_13_black
                 );
                 tvAdditionalFieldValue.setTextAppearance(
                     getApplicationContext(),
-                    R.style.myriad_pro_semi_bold_black_15_text_style
+                    R.style.opensans_regular_13_black
                 );
             } else {
-                tvAdditionalFieldLabel.setTextAppearance(R.style.myriad_pro_regular_black_15_text_style);
-                tvAdditionalFieldValue.setTextAppearance(R.style.myriad_pro_semi_bold_black_15_text_style);
+                tvAdditionalFieldLabel.setTextAppearance(R.style.opensans_regular_13_black);
+                tvAdditionalFieldValue.setTextAppearance(R.style.opensans_semi_bold_13_text_style);
             }
             tvAdditionalFieldLabel.text = additionalField.label
             ivCircle.setImageResource(R.drawable.ic_circle)

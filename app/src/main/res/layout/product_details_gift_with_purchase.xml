@@ -31,24 +31,29 @@
 
     <TextView
         android:id="@+id/freeGiftText"
-        style="@style/myriad_pro_regular_black"
-        android:textSize="@dimen/fifteen_sp"
-        android:lineSpacingMultiplier="1.40"
-        app:layout_constraintTop_toBottomOf="@id/freeGiftTitle"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        style="@style/opensens_regular"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/twelve_dp"
+        android:lineSpacingMultiplier="1.40"
+        android:textColor="@color/black"
+        android:textSize="@dimen/fifteen_sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/freeGiftTitle"
          />
 
     <TextView
-        style="@style/myriad_pro_regular_black"
-        android:textSize="@dimen/twelve_sp"
-        android:text="@string/free_gift_with_purchase_availabilty"
-        app:layout_constraintTop_toBottomOf="@id/freeGiftText"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:textColor="@color/gray"
+        style="@style/opensens_regular"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/eight_dp"
+        android:text="@string/free_gift_with_purchase_availabilty"
+        android:textColor="@color/gray"
+        android:textSize="@dimen/twelve_sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/freeGiftText"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

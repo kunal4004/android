@@ -8,6 +8,7 @@ import android.telephony.TelephonyManager
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Assert
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito.*
@@ -41,7 +42,9 @@ class StartUpRepositoryTest {
         mock(Build::class.java)
     }
 
-   /* @Test
+    // TODO UNIT TEST: The following code is not aligned with recent implementation, and needs to be updated.
+    @Ignore
+    @Test
     fun check_if_methods_gets_called() = runBlockingTest {
         WoolworthsApplication.testSetInstance(mock())
         `when`(WoolworthsApplication.getInstance().getPackageName()).thenReturn(packageName)
@@ -64,5 +67,5 @@ class StartUpRepositoryTest {
         verify(startupApiHelper, times(1)).getConfig()
         //verify(sessionDaoSave(SessionDao.KEY.SPLASH_VIDEO, "1"))
         //verify(clearSharedPreferences(instrumentationContext))
-    }*/
+    }
 }
