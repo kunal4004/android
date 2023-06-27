@@ -3,10 +3,12 @@ package za.co.woolworths.financial.services.android.enhancedSubstitution.service
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
+import androidx.paging.filter
 import com.awfs.coordination.R
+import kotlinx.coroutines.flow.map
 import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.AddSubstitutionRequest
 import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.AddSubstitutionResponse
-import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.GetKiboProductRequest
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.KiboProductRequest
 import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.KiboProductResponse
 import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.ProductSubstitution
 import za.co.woolworths.financial.services.android.enhancedSubstitution.service.network.SubstitutionApiHelper
@@ -50,6 +52,7 @@ class ProductSubstitutionRepository @Inject constructor(private var substitution
     fun getAllSearchedSubstitutions(
         requestParams: ProductsRequestParams,
         _pagingResponse: MutableLiveData<PagingResponse?>,
+        productId: String?
     ) = Pager(
         config = PagingConfig(
             pageSize = PAGE_SIZE,
@@ -58,34 +61,9 @@ class ProductSubstitutionRepository @Inject constructor(private var substitution
         pagingSourceFactory = {
             SubstitutionPagingSource(substitutionApiHelper, requestParams, _pagingResponse)
         }
-    )
-
-
-    suspend fun getInventoryForSubstitution(
-        storeId: String,
-        multiSku: String,
-    ): Resource<SkusInventoryForStoreResponse> {
-        return try {
-            val response = substitutionApiHelper.fetchInventoryForSubstitution(storeId, multiSku)
-            if (response.isSuccessful) {
-                response.body()?.let {
-                    return when (it.httpCode) {
-                        AppConstant.HTTP_OK, AppConstant.HTTP_OK_201 ->
-                            Resource.success(it)
-
-                        else ->
-                            Resource.error(R.string.error_unknown, it)
-                    }
-                } ?: Resource.error(R.string.error_unknown, null)
-            } else {
-                Resource.error(R.string.error_unknown, null)
-            }
-        } catch (e: IOException) {
-            FirebaseManager.logException(e)
-            Resource.error(R.string.error_internet_connection, null)
-        } catch (e: Exception) {
-            FirebaseManager.logException(e)
-            Resource.error(R.string.error_unknown, null)
+    ).flow.map { pagingData ->
+        pagingData.filter { productList->
+             productList.productId != productId
         }
     }
 
@@ -115,7 +93,7 @@ class ProductSubstitutionRepository @Inject constructor(private var substitution
         }
     }
 
-    suspend fun fetchKiboProducts(kiboProductRequest: GetKiboProductRequest): Resource<KiboProductResponse> {
+    suspend fun fetchKiboProducts(kiboProductRequest: KiboProductRequest): Resource<KiboProductResponse> {
         return try {
             val response = substitutionApiHelper.fetchKiboProducts(kiboProductRequest)
             if (response.isSuccessful) {
@@ -140,18 +118,17 @@ class ProductSubstitutionRepository @Inject constructor(private var substitution
         }
     }
 
-    suspend fun getInventorySKU(
+    suspend fun fetchInventoryForKiboProducts(
         storeId: String,
         multiSku: String,
     ): Resource<SkusInventoryForStoreResponse> {
         return try {
-            val response = substitutionApiHelper.getInventoryForSku(storeId, multiSku)
+            val response = substitutionApiHelper.fetchInventoryForKiboProducts(storeId, multiSku)
             if (response.isSuccessful) {
                 response.body()?.let {
                     return when (it.httpCode) {
                         AppConstant.HTTP_OK, AppConstant.HTTP_OK_201 ->
                             Resource.success(it)
-
                         else ->
                             Resource.error(R.string.error_unknown, it)
                     }

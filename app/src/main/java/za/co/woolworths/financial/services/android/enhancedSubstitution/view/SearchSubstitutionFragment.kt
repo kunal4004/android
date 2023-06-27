@@ -16,7 +16,6 @@ import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
-import androidx.paging.filter
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
@@ -95,7 +94,7 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
                     searchText = v?.text?.toString()
                     val productsRequestParams = searchText?.let { getRequestParamsBody(it) }
                     if (searchText?.length != 0) {
-                        productsRequestParams?.let { getSubstituteProductList(it) }
+                        productsRequestParams?.let { getSubstituteProductList(it, productId) }
                     }
                     false
                 } else {
@@ -116,13 +115,13 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
         closeKeyBoard()
     }
 
-    private fun getSubstituteProductList(requestParams: ProductsRequestParams) {
+    private fun getSubstituteProductList(requestParams: ProductsRequestParams, productId: String?) {
         initializeRecyclerView() // when we change the already searched text we need to show shimmer view again.
         binding.apply {
             lifecycleScope.launch {
                 try {
                     productSubstitutionViewModel.getAllSearchedSubstitutions(
-                        requestParams
+                        requestParams, productId
                     ).collectLatest {
                         productSubstitutionViewModel._pagingResponse.observe(
                             viewLifecycleOwner
@@ -135,9 +134,6 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
                                 totalItemCount, HtmlCompat.FROM_HTML_MODE_COMPACT
                             )
                             txtSubstitutionCount.text = formattedItemCount
-                        }
-                        it.filter {
-                            it.productId != productId
                         }
                         searchProductSubstitutionAdapter?.submitData(it)
                     }
@@ -271,11 +267,10 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
         }
 
         productList?.sku?.let { sku->
-            productSubstitutionViewModel.getInventoryForSubstitution(storeId, sku)
+            productSubstitutionViewModel.getInventoryForKiboProducts(storeId, sku)
         }
-        productSubstitutionViewModel.inventorySubstitution.observe(viewLifecycleOwner) {
-
-            it.getContentIfNotHandled()?.let { resource ->
+        productSubstitutionViewModel.stockInventoryResponse.observe(viewLifecycleOwner) { skuInventoryResponse->
+            skuInventoryResponse.getContentIfNotHandled()?.let { resource ->
                 when (resource.status) {
                     Status.LOADING -> {
                         binding.progressBar.visibility = VISIBLE

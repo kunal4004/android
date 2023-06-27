@@ -959,7 +959,7 @@ class ProductDetailsFragment :
                                     confirmLocationRequest.address.placeId?.equals(
                                         savedPlaceId)
                             }
-
+                            showSubstituteItemCell(true, substitutionProductItem)
                             setBrowsingData()
                             updateStockAvailabilityLocation() // update pdp location.
                             addItemToCart()
@@ -1097,13 +1097,24 @@ class ProductDetailsFragment :
 
     private fun addToCartForSelectedSKU() {
         val item = getSelectedQuantity()?.let {
-            AddItemToCart(
-                productDetails?.productId,
-                getSelectedSku()?.sku,
-                if (it > getSelectedSku()?.quantity!!) getSelectedSku()?.quantity!! else it,
+
+            if (KotlinUtils.getDeliveryType()?.deliveryType != Delivery.DASH.type) {
+                /* for standard and cnc no need to send substitution choice*/
+                AddItemToCart(
+                    productDetails?.productId,
+                    getSelectedSku()?.sku,
+                    if (it > getSelectedSku()?.quantity!!) getSelectedSku()?.quantity!! else it
+                )
+            } else {
+                /* for dash need to send substitution choice*/
+                AddItemToCart(
+                    productDetails?.productId,
+                    getSelectedSku()?.sku,
+                    if (it > getSelectedSku()?.quantity!!) getSelectedSku()?.quantity!! else it,
                     selectionChoice,
                     substitutionId
-            )
+                )
+            }
         }
         val listOfItems = ArrayList<AddItemToCart>()
         item?.let { listOfItems.add(it) }
@@ -2457,6 +2468,7 @@ class ProductDetailsFragment :
                     REQUEST_SUBURB_CHANGE_FOR_STOCK -> {
 
                         updateStockAvailabilityLocation()
+                        showSubstituteItemCell(true, substitutionProductItem)
 
                         Utils.getPreferredDeliveryLocation()?.let {
                             if (!this.productDetails?.productType.equals(

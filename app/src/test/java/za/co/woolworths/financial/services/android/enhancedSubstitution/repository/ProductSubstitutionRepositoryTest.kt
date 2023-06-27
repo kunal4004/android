@@ -240,10 +240,10 @@ class ProductSubstitutionRepositoryTest {
 
     @Test
     fun kiboProducts_returnEmptyResponse() = runTest {
-        val getKiboProductRequest = GetKiboProductRequest(EnhanceSubstitutionHelperTest.prepareKiboProductRequest())
+        val getKiboProductRequest = EnhanceSubstitutionHelperTest.prepareKiboProductRequest()
 
         `when`(substitutionApiHelper.fetchKiboProducts(getKiboProductRequest))
-            .thenReturn(Response.success(EnhanceSubstitutionHelperTest.prepareKiboRequestWithEmptyList()))
+            .thenReturn(Response.success(EnhanceSubstitutionHelperTest.prepareKiboResponseWithEmptyList()))
         val sut = ProductSubstitutionRepository(substitutionApiHelper)
         val result = sut.fetchKiboProducts(getKiboProductRequest)
         Assert.assertEquals(0, result.data?.data?.responses?.getOrNull(0)?.actions?.getOrNull(0)?.items?.size)
@@ -251,7 +251,7 @@ class ProductSubstitutionRepositoryTest {
 
     @Test
     fun  kiboProducts_withError() = runTest {
-        val kiboProductRequest = GetKiboProductRequest(EnhanceSubstitutionHelperTest.prepareKiboProductRequest())
+        val kiboProductRequest = EnhanceSubstitutionHelperTest.prepareKiboProductRequest()
         `when`(substitutionApiHelper.fetchKiboProducts(kiboProductRequest))
             .thenReturn(Response.error(504, "".toResponseBody()))
         val productSubstitutionRepository = ProductSubstitutionRepository(substitutionApiHelper)
@@ -263,7 +263,7 @@ class ProductSubstitutionRepositoryTest {
     @Test
     fun getKiboRequest_returnCorrrectResponse() = runTest {
 
-        val getKiboProductRequest = GetKiboProductRequest(EnhanceSubstitutionHelperTest.prepareKiboProductRequest())
+        val getKiboProductRequest = EnhanceSubstitutionHelperTest.prepareKiboProductRequest()
         val kiboProductResponse = prepareKiboResponse()
         `when`(substitutionApiHelper.fetchKiboProducts(getKiboProductRequest))
             .thenReturn(Response.success(kiboProductResponse))
@@ -275,7 +275,7 @@ class ProductSubstitutionRepositoryTest {
     }
 
     fun prepareKiboResponse(): KiboProductResponse {
-        val item = Item("", "1", title = "White Thick Slice Bread 700 g" , imageLink = "", plist3620006 = 32.6 )
+        val item = Item("", "1", title = "White Thick Slice Bread 700 g" , imageLink = "", price = 32.6 )
         val items = ArrayList<Item>()
         items.add(item)
         val action = Action(items)

@@ -1589,6 +1589,12 @@ class KotlinUtils {
             nickNameWithAddress.append(formattedNickName)
             return nickNameWithAddress
         }
+
+        fun extractPlistFromDeliveryDetails(): String? {
+            val deliveryDetails: String? = getDeliveryDetails(false)
+            val deliveryDetailsArray = deliveryDetails?.split("-")
+            return deliveryDetailsArray?.getOrNull(1)
+        }
     }
 }
 

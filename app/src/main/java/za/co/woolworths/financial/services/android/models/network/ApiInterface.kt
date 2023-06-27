@@ -1624,7 +1624,17 @@ interface ApiInterface {
     suspend fun getKiboProductsFromResponse(
         @Header("sessionToken") sessionToken: String,
         @Header("deviceIdentityToken") deviceIdentityToken: String,
-        @Body addSubstitutionRequest: GetKiboProductRequest
+        @Body addSubstitutionRequest: KiboProductRequest
     ): retrofit2.Response<KiboProductResponse>
+
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @GET("wfs/app/v4/isninventory/multi/{store_id}/{multipleSku}")
+    suspend fun fetchKiboInventorySKUForStore(
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Path("store_id") store_id: String,
+        @Path("multipleSku") multipleSku: String,
+        @Query("substitution") substitution: Boolean): retrofit2.Response<SkusInventoryForStoreResponse>
 }
 

@@ -25,10 +25,6 @@ class ProductSubstitutionViewModel @Inject constructor(
     val productSubstitution: LiveData<Event<Resource<ProductSubstitution>>>
         get() = _productSubstitution
 
-    private val _inventorySubstitution =
-        MutableLiveData<Event<Resource<SkusInventoryForStoreResponse>>>()
-    val inventorySubstitution: LiveData<Event<Resource<SkusInventoryForStoreResponse>>>
-        get() = _inventorySubstitution
 
     private val _addSubstitutionResponse =
         MutableLiveData<Event<Resource<AddSubstitutionResponse>>>()
@@ -55,19 +51,10 @@ class ProductSubstitutionViewModel @Inject constructor(
         }
     }
 
-    fun getInventoryForSubstitution(storeId: String, multisku: String) {
-        viewModelScope.launch {
-            _inventorySubstitution.postValue(Event(Resource.loading(null)))
-            val result = repository.getInventoryForSubstitution(storeId, multisku)
-            _inventorySubstitution.value = Event(result)
-        }
-    }
-
-    fun getAllSearchedSubstitutions(requestParams: ProductsRequestParams) =
-        repository.getAllSearchedSubstitutions(requestParams, _pagingResponse).flow.cachedIn(
+    fun getAllSearchedSubstitutions(requestParams: ProductsRequestParams, productId: String?) =
+        repository.getAllSearchedSubstitutions(requestParams, _pagingResponse, productId).cachedIn(
             viewModelScope
         )
-
 
     fun addSubstitutionForProduct(addSubstitutionRequest: AddSubstitutionRequest) {
         viewModelScope.launch {
@@ -77,7 +64,7 @@ class ProductSubstitutionViewModel @Inject constructor(
         }
     }
 
-    fun getKiboProducts(kiboProductRequest: GetKiboProductRequest) {
+    fun getKiboProducts(kiboProductRequest: KiboProductRequest) {
         viewModelScope.launch {
             _kiboProductResponse.postValue(Event(Resource.loading(null)))
             val result = repository.fetchKiboProducts(kiboProductRequest)
@@ -85,10 +72,10 @@ class ProductSubstitutionViewModel @Inject constructor(
         }
     }
 
-    fun getInventoryForStock(storeId: String, multiSku: String) {
+    fun getInventoryForKiboProducts(storeId: String, multiSku: String) {
         viewModelScope.launch {
             _stockInventoryResponse.postValue(Event(Resource.loading(null)))
-            val result = repository.getInventorySKU(storeId, multiSku)
+            val result = repository.fetchInventoryForKiboProducts(storeId, multiSku)
             _stockInventoryResponse.value = Event(result)
         }
     }
