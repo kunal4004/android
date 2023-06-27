@@ -30,7 +30,11 @@
 
     <TextView
         android:id="@+id/defaultLocationPlaceholder"
-        style="@style/myriad_pro_regular_black_15_text_style"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        style="@style/opensens_regular"
+        android:textSize="@dimen/thirteen_sp"
+        android:textColor="@color/black"
         android:text="@string/set_to_default"
         app:layout_constraintBottom_toBottomOf="@id/currentDeliveryLocation"
         app:layout_constraintStart_toStartOf="parent"
@@ -38,7 +42,11 @@
 
     <TextView
         android:id="@+id/currentDeliveryLocation"
-        style="@style/myriad_pro_semi_bold_black_15_text_style"
+        style="@style/opensens_semi_bold"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/thirteen_sp"
+        android:textColor="@color/black"
         android:layout_marginTop="@dimen/twenty_dp"
         android:layout_marginRight="@dimen/ten_dp"
         app:layout_constraintEnd_toStartOf="@id/editDeliveryLocation"
