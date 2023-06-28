@@ -71,6 +71,8 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
             mHeaderItems =
                 ManageCardLandingHeaderItems(viewModel, this, this@AccountOptionsManageCardFragment)
             mItemList = ManageStoreCardLandingList(
+                viewModel = viewModel,
+                router  = router,
                 cardFreezeViewModel,
                 includeListOptions,
                 this@AccountOptionsManageCardFragment

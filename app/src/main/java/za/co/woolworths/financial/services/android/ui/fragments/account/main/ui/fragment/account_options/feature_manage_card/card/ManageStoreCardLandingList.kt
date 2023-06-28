@@ -1,7 +1,12 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card
 
+import android.view.LayoutInflater
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import android.widget.ImageView
+import android.widget.RelativeLayout
+import android.widget.TextView
+import androidx.annotation.DrawableRes
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.awfs.coordination.R
@@ -9,6 +14,8 @@ import com.awfs.coordination.databinding.AccountOptionsManageCardListFragmentBin
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.ActionButton
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCard
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardItemActions
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.MyAccountsRemoteApiViewModel
@@ -17,13 +24,16 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.StoreCardFeatureType
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.StoreCardUpShellMessage
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.setupGraph
-
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.ProductLandingRouterImpl
+import za.co.woolworths.financial.services.android.util.Utils
 
 sealed class ListCallback {
     data class CardNotReceived(val isCardNotReceivedFlowNeeded: Boolean) : ListCallback()
 }
 
 class ManageStoreCardLandingList(
+    val viewModel: MyAccountsRemoteApiViewModel,
+    private val router: ProductLandingRouterImpl,
     private val cardFreezeViewModel: TemporaryFreezeCardViewModel,
     private val includeListOptions: AccountOptionsManageCardListFragmentBinding,
     private val fragment: Fragment?
@@ -43,6 +53,7 @@ class ManageStoreCardLandingList(
             blockCardDivider.visibility = GONE
             blockCardRelativeLayout.visibility = GONE
             payWithCardFragmentContainerView.visibility = GONE
+            parentLinearLayout.removeAllViewsInLayout()
         }
     }
 
@@ -60,23 +71,23 @@ class ManageStoreCardLandingList(
                 }
 
                 is StoreCardFeatureType.ActivateVirtualTempCard -> {
-                    if (actionForStoreCardUsage1Item(featureType.storeCard)) return@launch
+                    if (actionForStoreCardUsage1Item(featureType.storeCard, callback)) return@launch
                     showActivateVirtualTempCardRow(featureType.isTemporaryCardEnabled)
                 }
 
                 is StoreCardFeatureType.StoreCardIsInstantReplacementCardAndInactive -> {
-                    if (actionForStoreCardUsage1Item(featureType.storeCard)) return@launch
+                    if (actionForStoreCardUsage1Item(featureType.storeCard, callback)) return@launch
                     showInstantReplacementCardAndInactive()
                 }
 
                 is StoreCardFeatureType.StoreCardIsTemporaryFreeze -> {
-                    if (actionForStoreCardUsage1Item(featureType.storeCard)) return@launch
+                    if (actionForStoreCardUsage1Item(featureType.storeCard, callback)) return@launch
                     showStoreCardIsTemporaryFreeze(featureType)
                 }
 
                 is StoreCardFeatureType.TemporaryCardEnabled -> {
-                    if (actionForStoreCardUsage1Item(featureType.storeCard)) return@launch
-                    showTemporaryCardEnabled(featureType, callback)
+                    if (actionForStoreCardUsage1Item(featureType.storeCard, callback)) return@launch
+                    showTemporaryCardEnabled(featureType.storeCard, callback)
                 }
 
                 StoreCardFeatureType.ManageMyCard ->
@@ -94,18 +105,14 @@ class ManageStoreCardLandingList(
     }
 
     private fun showTemporaryCardEnabled(
-        featureType: StoreCardFeatureType.TemporaryCardEnabled,
+        storeCard: StoreCard?,
         callback: (ListCallback) -> Unit
     ) {
         CoroutineScope(Dispatchers.Main).launch {
             includeListOptions.payWithCardFragmentContainerView.visibility = VISIBLE
         }
         callback(
-            ListCallback.CardNotReceived(
-                isCardNotReceivedFlowNeeded = cardFreezeViewModel.isCardNotReceivedFlowNeeded(
-                    featureType.storeCard
-                )
-            )
+            ListCallback.CardNotReceived(isCardNotReceivedFlowNeeded = cardFreezeViewModel.isCardNotReceivedFlowNeeded(storeCard))
         )
     }
 
@@ -163,14 +170,20 @@ class ManageStoreCardLandingList(
         displayCardNotReceivedPopup()
     }
 
-    private fun actionForStoreCardUsage1Item(storeCard: StoreCard?): Boolean {
+    private fun actionForStoreCardUsage1Item(
+        storeCard: StoreCard?,
+        callback: (ListCallback) -> Unit
+    ): Boolean {
         return storeCard?.actions?.let { action ->
-            action.forEach {  actionButton ->
-                when(actionButton.action){
-                    StoreCardItemActions.LINK_STORE_CARD -> showLinkNewCardItem(true)
-                    StoreCardItemActions.ACTIVATE_VIRTUAL_CARD -> showActivateVirtualCardItem(true)
-                    null -> Unit
-                }
+            action.forEachIndexed { index, actionButton ->
+                    when (actionButton.action) {
+                        StoreCardItemActions.LINK_STORE_CARD -> addViewToViewGroup(actionButton, R.drawable.link_icon)
+                        StoreCardItemActions.ACTIVATE_VIRTUAL_CARD -> addViewToViewGroup(actionButton, R.drawable.icon_activate_virtual_temp_card, isAlphaEnabled = true)
+                        StoreCardItemActions.CARD_REPLACEMENT -> addViewToViewGroup(actionButton, R.drawable.icon_card ,isAlphaEnabled = true)
+                        StoreCardItemActions.PAY_WITH_CARD -> showTemporaryCardEnabled(storeCard, callback)
+                        StoreCardItemActions.HOW_IT_WORKS -> addViewToViewGroup(actionButton, R.drawable.ic_how_to_pay ,isAlphaEnabled = true)
+                        else -> Unit
+                    }
             }
             true
         } ?: run { false }
@@ -207,5 +220,42 @@ class ManageStoreCardLandingList(
             }
         }
     }
+
+    private fun addViewToViewGroup(actionButton: ActionButton, @DrawableRes drawableId : Int, isAlphaEnabled : Boolean = false) {
+        includeListOptions.parentLinearLayout.apply {
+            val layoutInflater = LayoutInflater.from(this.context)
+            val inflater = layoutInflater.inflate(R.layout.store_card_list_item, null)
+            val label = actionButton.label
+            val action = actionButton.action
+            val titleTextView = inflater.findViewById<TextView>(R.id.titleTextView)
+            val rootLayout = inflater.findViewById<RelativeLayout>(R.id.linkNewCardRelativeLayout)
+            val logoImageView = inflater.findViewById<ImageView>(R.id.logoImageView)
+            rootLayout.setOnClickListener {
+                when(action) {
+                    StoreCardItemActions.LINK_STORE_CARD -> includeListOptions.linkNewCardRelativeLayout.performClick()
+                    StoreCardItemActions.ACTIVATE_VIRTUAL_CARD -> includeListOptions.activateVirtualTempCardRelativeLayout.performClick()
+                    StoreCardItemActions.CARD_REPLACEMENT -> includeListOptions.replacementCardRelativeLayout.performClick()
+                    StoreCardItemActions.HOW_IT_WORKS -> {
+                        Utils.triggerFireBaseEvents(
+                            FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_VTC_HOW_TO,
+                            fragment?.requireActivity()
+                        )
+                        router.routeToHowItWorks(
+                            fragment?.requireActivity(),
+                            viewModel.dataSource.isStaffMemberAndHasTemporaryCard(),
+                            viewModel.dataSource.getVirtualCardStaffMemberMessage()
+                        )
+                    }
+                    else -> Unit
+                }
+            }
+            logoImageView.setImageResource(drawableId)
+            if (isAlphaEnabled)
+                logoImageView.alpha = 0.3f
+            titleTextView.text = label
+            addView(inflater)
+        }
+    }
+
 
 }
