@@ -290,7 +290,9 @@ private fun UserAccountLandingViewModel.CollectFetchAccount(
                 }
 
                 is RetrofitFailureResult.ServerResponse<*> -> {
-                    errorResponse.value = result.data as? ServerErrorResponse
+                    onErrorRemoveProducts()
+                    errorResponse.value = (result.data as? UserAccountResponse)?.response
+                    stateFetchAllAccounts.hasError = false
                 }
 
                 is RetrofitFailureResult.SessionTimeout<*> -> {
