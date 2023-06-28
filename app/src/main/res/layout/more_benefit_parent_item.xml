@@ -32,14 +32,13 @@
 
     <TextView
         android:id="@+id/moreBenefitsTitleTextView"
+        style="@style/opensans_semi_bold_12_text_style"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
-        android:fontFamily="@font/myriad_pro_semi_bold_otf"
         android:text="@string/placeholder"
         android:textColor="@color/black"
-        android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="@+id/moreBenefitsIconImageView"
         app:layout_constraintEnd_toStartOf="@+id/moreBenefitsArrowImageView"
         app:layout_constraintStart_toEndOf="@+id/moreBenefitsIconImageView"

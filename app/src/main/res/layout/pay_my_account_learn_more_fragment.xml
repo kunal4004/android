@@ -13,16 +13,15 @@
 
         <TextView
             android:id="@+id/atmPaymentTitle"
+            style="@style/opensans_semi_bold_13_black_text_style"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
             android:layout_marginTop="17dp"
             android:layout_marginEnd="23dp"
-            android:fontFamily="@font/myriad_pro_semi_bold_otf"
             android:lineSpacingExtra="6dp"
             android:text="@string/atm_payment_steps_desc"
-            android:textColor="@color/black"
-            android:textSize="15sp" />
+             />
 
         <LinearLayout
             android:id="@+id/atmPaymentItemLinearLayout"

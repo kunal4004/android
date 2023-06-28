@@ -50,7 +50,7 @@
     <RelativeLayout
         style="@style/card_item_style">
 
-        <za.co.woolworths.financial.services.android.ui.views.WTextView
+        <TextView
             android:id="@+id/tvDebitOrderDescription"
             style="@style/style_debit_order_description"
             android:text="@string/debit_order_description" />
@@ -60,12 +60,12 @@
         style="@style/card_item_style"
         android:layout_marginTop="16dp" >
 
-        <za.co.woolworths.financial.services.android.ui.views.WTextView
+        <TextView
             style="@style/style_debit_order_labels"
             android:layout_alignParentStart="true"
             android:text="@string/deduction_day" />
 
-        <za.co.woolworths.financial.services.android.ui.views.WTextView
+        <TextView
             android:id="@+id/tvDeductionDay"
             style="@style/style_debit_order_labels"
             android:layout_alignParentEnd="true"/>
@@ -76,12 +76,12 @@
     <RelativeLayout
         style="@style/card_item_style">
 
-        <za.co.woolworths.financial.services.android.ui.views.WTextView
+        <TextView
             style="@style/style_debit_order_labels"
             android:layout_alignParentStart="true"
             android:text="@string/amount_to_be_debited" />
 
-        <za.co.woolworths.financial.services.android.ui.views.WTextView
+        <TextView
             android:id="@+id/tvAmountToBeDebited"
             style="@style/style_debit_order_labels"
             android:layout_alignParentEnd="true" />

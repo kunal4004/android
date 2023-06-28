@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.ui.wfs.component.*
-import za.co.woolworths.financial.services.android.ui.wfs.contact_us.cell.LabelTitle
+import za.co.woolworths.financial.services.android.ui.wfs.theme.HeaderGrey
 import za.co.woolworths.financial.services.android.ui.wfs.theme.White
 
 sealed class ButtonEvent {
@@ -45,12 +45,11 @@ fun FailureScenario(item: Pair<AnnotatedString, String?>, onTap: (ButtonEvent) -
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                LabelTitle(
-                    LabelProperties(
-                        stringId = R.string.unfortunately_something_went_wrong,
-                        fontSize = 20.sp,
-                        textAlign = TextAlign.Center
-                    )
+                TextFuturaFamilySemiBoldHeader1(
+                    text = stringResource(id = R.string.unfortunately_something_went_wrong),
+                    fontSize = 18.sp,
+                    textAlign = TextAlign.Center,
+                    textColor = HeaderGrey
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -58,7 +57,8 @@ fun FailureScenario(item: Pair<AnnotatedString, String?>, onTap: (ButtonEvent) -
                 LabelPhoneNumber(
                     LabelProperties(
                         annotatedString = item.first,
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier
+                            .fillMaxWidth()
                             .padding(start = 24.dp, end = 24.dp),
                         annotatedPhoneNumber = item.second,
                         fontSize = 16.sp,

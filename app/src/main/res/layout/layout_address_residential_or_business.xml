@@ -6,15 +6,14 @@
 
     <TextView
         android:id="@+id/storeAddressDeliveryDetailsTextView"
+        style="@style/opensans_regular_14_black"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/twenty_four_dp"
-        android:fontFamily="@font/myriad_pro_regular"
         android:lineSpacingExtra="@dimen/five_dp"
         android:paddingHorizontal="@dimen/ten_dp"
         android:text="@string/store_address_delivery_details"
         android:textColor="@color/color_7b7b7b"
-        android:textSize="@dimen/sixteen_sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -53,13 +52,12 @@
 
     <TextView
         android:id="@+id/tvComplexOrBuildingName"
+        style="@style/opensans_regular_12_black"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/twenty_four_dp"
-        android:fontFamily="@font/myriad_pro_regular"
         android:text="@string/complex_building"
         android:textColor="@color/black"
-        android:textSize="@dimen/fourteen_sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/residentialTextView" />
 
@@ -75,13 +73,12 @@
 
     <TextView
         android:id="@+id/tvBusinessName"
+        style="@style/opensans_regular_12_black"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/twenty_four_dp"
-        android:fontFamily="@font/myriad_pro_regular"
         android:text="@string/business_name"
         android:textColor="@color/black"
-        android:textSize="@dimen/fourteen_sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/complexOrBuildingNameEdtTV" />
 
@@ -97,13 +94,12 @@
 
     <TextView
         android:id="@+id/tvStreetAddress"
+        style="@style/opensans_regular_12_black"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/twenty_four_dp"
-        android:fontFamily="@font/myriad_pro_regular"
         android:text="@string/street_address"
         android:textColor="@color/black"
-        android:textSize="@dimen/fourteen_sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/businessNameEdtTV" />
 
@@ -119,13 +115,12 @@
 
     <TextView
         android:id="@+id/tvSuburb"
+        style="@style/opensans_regular_12_black"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/twenty_four_dp"
-        android:fontFamily="@font/myriad_pro_regular"
         android:text="@string/suburb"
         android:textColor="@color/black"
-        android:textSize="@dimen/fourteen_sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/streetAddressEdtTV" />
 
@@ -141,13 +136,12 @@
 
     <TextView
         android:id="@+id/tvCityTown"
+        style="@style/opensans_regular_12_black"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/twenty_four_dp"
-        android:fontFamily="@font/myriad_pro_regular"
         android:text="@string/city_town"
         android:textColor="@color/black"
-        android:textSize="@dimen/fourteen_sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/suburbEdtTV" />
 
@@ -166,10 +160,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/twenty_four_dp"
-        android:fontFamily="@font/myriad_pro_regular"
+        style="@style/opensans_regular_12_black"
         android:text="@string/province"
-        android:textColor="@color/black"
-        android:textSize="@dimen/fourteen_sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/cityTownEdtTV" />
 
@@ -188,10 +180,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/twenty_four_dp"
-        android:fontFamily="@font/myriad_pro_regular"
+        style="@style/opensans_regular_12_black"
         android:text="@string/postal_code"
-        android:textColor="@color/black"
-        android:textSize="@dimen/fourteen_sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/provinceEdtTV" />
 

@@ -70,26 +70,26 @@
         android:padding="16dp"
         app:layout_constraintTop_toBottomOf="@+id/llRepaymentPeriod">
 
-        <za.co.woolworths.financial.services.android.ui.views.WTextView
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            style="@style/opensans_regular_13_black"
             android:layout_alignParentStart="true"
             android:contentDescription="repaymentPeriod"
             android:text="Repayment Period"
             android:textColor="@color/white"
-            android:textSize="15sp"
-            app:WTextView_font="myriadpro_regular" />
+ />
 
-        <za.co.woolworths.financial.services.android.ui.views.WTextView
+        <TextView
             android:id="@+id/tvRepaymentPeriod"
+            style="@style/opensans_regular_13_black"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:contentDescription="repaymentPeriodMonth"
             android:text="36 Months"
             android:textColor="#4dffffff"
-            android:textSize="15sp"
-            app:WTextView_font="myriadpro_regular" />
+           />
     </RelativeLayout>
 
     <View
@@ -110,26 +110,26 @@
         android:padding="16dp"
         app:layout_constraintTop_toBottomOf="@+id/llAdditionalMonthlyRepayment">
 
-        <za.co.woolworths.financial.services.android.ui.views.WTextView
+        <TextView
+            style="@style/opensans_regular_13_black"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:contentDescription="additionalMonthlyRepayment "
             android:text="Additional Monthly Repayment"
             android:textColor="@color/white"
-            android:textSize="15sp"
-            app:WTextView_font="myriadpro_regular" />
+          />
 
-        <za.co.woolworths.financial.services.android.ui.views.WTextView
+        <TextView
             android:id="@+id/tvAdditionalMonthlyRepayment"
+            style="@style/opensans_regular_13_black"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:contentDescription="additionalMonthlyRepaymentValue "
             android:text="R105.00"
             android:textColor="#4dffffff"
-            android:textSize="15sp"
-            app:WTextView_font="myriadpro_regular" />
+           />
     </RelativeLayout>
 
     <View

@@ -32,7 +32,8 @@
 
     <TextView
         android:id="@+id/tv_address_desc"
-        style="@style/myriad_pro_regular_black_15_text_style"
+        style="@style/opensens_regular"
+        android:textSize="@dimen/thirteen_sp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/twenty_four_dp"
