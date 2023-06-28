@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.enhancedSubstitution.view
 
 import android.os.Build
 import android.os.Bundle
+import android.text.Spanned
 import android.view.View
 import android.view.View.GONE
 import android.view.View.OnClickListener
@@ -47,6 +48,7 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
     LayoutSearchSubstitutionFragmentBinding::inflate
 ), ProductListSelectionListener, OnClickListener {
 
+    private var totalItemCount: Int? = -1
     private var searchProductSubstitutionAdapter: SearchProductSubstitutionAdapter? = null
     private val productSubstitutionViewModel: ProductSubstitutionViewModel by activityViewModels()
     private var productList: ProductList? = null
@@ -126,14 +128,7 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
                         productSubstitutionViewModel._pagingResponse.observe(
                             viewLifecycleOwner
                         ) { pagingResponse ->
-                            val totalItemCount: String =
-                                "<b>" + pagingResponse?.numItemsInTotal?.toString() + "</b>".plus(
-                                    getString(R.string.item_found)
-                                )
-                            val formattedItemCount = HtmlCompat.fromHtml(
-                                totalItemCount, HtmlCompat.FROM_HTML_MODE_COMPACT
-                            )
-                            txtSubstitutionCount.text = formattedItemCount
+                            totalItemCount = pagingResponse?.numItemsInTotal
                         }
                         searchProductSubstitutionAdapter?.submitData(it)
                     }
@@ -153,6 +148,13 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
                 is LoadState.NotLoading -> {
                     hideShimmerView()
                     binding.txtSubstitutionCount.visibility = VISIBLE
+                    if (searchProductSubstitutionAdapter?.itemCount == 0) {
+                        binding.txtSubstitutionCount.text = formattedProductCount(0)
+                    } else {
+                        binding.txtSubstitutionCount.text = totalItemCount?.let {
+                            formattedProductCount(it)
+                        }
+                    }
                 }
 
                 is LoadState.Error -> {
@@ -174,6 +176,17 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
                 }
             }
         }
+    }
+
+    private fun formattedProductCount(count:Int): Spanned {
+        val totalItemCount: String =
+            "<b>" + count + "</b>".plus(
+                getString(R.string.item_found)
+            )
+        val formattedItemCount = HtmlCompat.fromHtml(
+            totalItemCount, HtmlCompat.FROM_HTML_MODE_COMPACT
+        )
+        return formattedItemCount
     }
 
     private fun initializeRecyclerView() {

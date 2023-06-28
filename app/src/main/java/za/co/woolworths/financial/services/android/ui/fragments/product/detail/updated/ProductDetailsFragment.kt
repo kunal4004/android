@@ -57,8 +57,7 @@ import za.co.woolworths.financial.services.android.contracts.ILocationProvider
 import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.Item
 import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.ProductSubstitution
 import za.co.woolworths.financial.services.android.enhancedSubstitution.util.listener.EnhancedSubstitutionBottomSheetDialog
-import za.co.woolworths.financial.services.android.enhancedSubstitution.service.network.SubstitutionApiHelper
-import za.co.woolworths.financial.services.android.enhancedSubstitution.service.repository.ProductSubstitutionRepository
+import za.co.woolworths.financial.services.android.enhancedSubstitution.util.isEnhanceSubstitutionFeatureEnable
 import za.co.woolworths.financial.services.android.enhancedSubstitution.util.listener.EnhancedSubstitutionListener
 import za.co.woolworths.financial.services.android.enhancedSubstitution.view.ManageSubstitutionFragment
 import za.co.woolworths.financial.services.android.enhancedSubstitution.view.SearchSubstitutionFragment
@@ -341,6 +340,7 @@ class ProductDetailsFragment :
         if (SessionUtilities.getInstance().isUserAuthenticated
             && Utils.isEnhanceSubstitutionFeatureShown() == false
             && KotlinUtils.getDeliveryType()?.deliveryType == Delivery.DASH.type
+            && isEnhanceSubstitutionFeatureEnable() == true
         ) {
             enhancedSubstitutionBottomSheetDialog.showEnhancedSubstitionBottomSheetDialog(
                 this@ProductDetailsFragment,
@@ -385,20 +385,16 @@ class ProductDetailsFragment :
                     showSubstituteItemCell(true, substitutionProductItem)
                 }
                 if (bundle.containsKey(ManageSubstitutionFragment.DONT_WANT_SUBSTITUTE_LISTENER)) {
-                    binding.productDetailOptionsAndInformation.substitutionLayout.apply {
-                        txtSubstitutionTitle.text = context?.getString(R.string.dont_substitute)
-                        txtSubstitutionEdit.text = context?.getString(R.string.change)
-                        selectionChoice = SubstitutionChoice.NO.name
-                        substitutionId = ""
-                    }
+                    updateItemCellForEnhanceSubstitution(
+                        getString(R.string.dont_substitute),
+                        SubstitutionChoice.NO.name
+                    )
                 }
                 if (bundle.containsKey(ManageSubstitutionFragment.LET_MY_SHOPPER_CHOOSE)) {
-                    binding.productDetailOptionsAndInformation.substitutionLayout.apply {
-                        txtSubstitutionTitle.text = context?.getString(R.string.substitute_default)
-                        txtSubstitutionEdit.text = context?.getString(R.string.change)
-                        selectionChoice = SubstitutionChoice.SHOPPER_CHOICE.name
-                        substitutionId = ""
-                    }
+                    updateItemCellForEnhanceSubstitution(
+                        getString(R.string.substitute_default),
+                        SubstitutionChoice.SHOPPER_CHOICE.name
+                    )
                 }
             }
         }
@@ -1097,23 +1093,23 @@ class ProductDetailsFragment :
 
     private fun addToCartForSelectedSKU() {
         val item = getSelectedQuantity()?.let {
-
-            if (KotlinUtils.getDeliveryType()?.deliveryType != Delivery.DASH.type) {
-                /* for standard and cnc no need to send substitution choice*/
-                AddItemToCart(
-                    productDetails?.productId,
-                    getSelectedSku()?.sku,
-                    if (it > getSelectedSku()?.quantity!!) getSelectedSku()?.quantity!! else it
-                )
-            } else {
-                /* for dash need to send substitution choice*/
-                AddItemToCart(
-                    productDetails?.productId,
-                    getSelectedSku()?.sku,
-                    if (it > getSelectedSku()?.quantity!!) getSelectedSku()?.quantity!! else it,
-                    selectionChoice,
-                    substitutionId
-                )
+            getSelectedSku()?.quantity?.let { selectedQuantity->
+                if (KotlinUtils.getDeliveryType()?.deliveryType == Delivery.DASH.type && isEnhanceSubstitutionFeatureEnable() == true) {
+                    /* for dash delivery type need to send substitution details */
+                    AddItemToCart(
+                        productDetails?.productId,
+                        getSelectedSku()?.sku,
+                        if (it > selectedQuantity) selectedQuantity else it,
+                        selectionChoice,
+                        substitutionId
+                    )
+                } else {
+                    AddItemToCart(
+                        productDetails?.productId,
+                        getSelectedSku()?.sku,
+                        if (it > selectedQuantity) selectedQuantity else it
+                    )
+                }
             }
         }
         val listOfItems = ArrayList<AddItemToCart>()
@@ -1614,7 +1610,7 @@ class ProductDetailsFragment :
 
     private fun callGetSubstitutionApi(isInventoryCalled: Boolean) {
 
-        if (!SessionUtilities.getInstance().isUserAuthenticated || (isAllProductsOutOfStock() && isInventoryCalled)) {
+        if (!SessionUtilities.getInstance().isUserAuthenticated || (isAllProductsOutOfStock() && isInventoryCalled) || isEnhanceSubstitutionFeatureEnable() == false) {
             return
         }
 
@@ -1643,7 +1639,7 @@ class ProductDetailsFragment :
         isInventoryCalled: Boolean,
         substitutionProductItem: ProductList? = null
     ) {
-        if (KotlinUtils.getDeliveryType()?.deliveryType != Delivery.DASH.type) {
+        if (KotlinUtils.getDeliveryType()?.deliveryType != Delivery.DASH.type || isEnhanceSubstitutionFeatureEnable() == false) {
             binding.productDetailOptionsAndInformation.substitutionLayout.root?.visibility = View.GONE
             return
         }
@@ -1668,25 +1664,14 @@ class ProductDetailsFragment :
         }
     }
 
-    fun showItemCellForUnauthenticatedUser() {
-        if (KotlinUtils.getDeliveryType()?.deliveryType != Delivery.DASH.type) {
-            binding?.productDetailOptionsAndInformation?.substitutionLayout?.root?.visibility =
-                View.GONE
-            return
-        }
-
-        if (!SessionUtilities.getInstance().isUserAuthenticated) {
-            binding.productDetailOptionsAndInformation?.substitutionLayout?.apply {
-                txtSubstitutionTitle.text = context?.getString(R.string.sign_in_label)
-                txtSubstitutionEdit.text = context?.getString(R.string.sign_in)
-            }
+    fun updateItemCellForEnhanceSubstitution(title: String?,  substitutionChoice:String) {
+        binding.productDetailOptionsAndInformation.substitutionLayout.apply {
+            txtSubstitutionTitle.text = title
+            txtSubstitutionEdit.text = context?.getString(R.string.change)
+            selectionChoice = substitutionChoice
+            substitutionId = ""
         }
     }
-
-
-
-
-
 
     private fun showSubstitutionLayout(
         isInventoryCalled: Boolean,

@@ -224,6 +224,13 @@ object AppConfigSingleton {
             this.tooltipSettings = appConfig.toolTipSettings
             this.enhanceSubstitution = appConfig.enhanceSubstitution
 
+            appConfig.enhanceSubstitution?.apply {
+                minimumSupportedAppBuildNumber?.let {
+                    isEnhancedSubstitutionEnable = Utils.isFeatureEnabled(it)
+                    enhanceSubstitution = this
+                }
+            }
+
             appConfig.ratingsAndReviews?.apply {
                 minimumSupportedAppBuildNumber.let { isEnabled = Utils.isFeatureEnabled(it) }
                 ratingsAndReviews= this
