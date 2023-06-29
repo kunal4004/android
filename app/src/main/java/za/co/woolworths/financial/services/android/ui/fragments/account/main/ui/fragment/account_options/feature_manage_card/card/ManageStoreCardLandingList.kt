@@ -90,8 +90,10 @@ class ManageStoreCardLandingList(
                     showTemporaryCardEnabled(featureType.storeCard, callback)
                 }
 
-                StoreCardFeatureType.ManageMyCard ->
+                is StoreCardFeatureType.ManageMyCard -> {
+                    if (actionForStoreCardUsage1Item(featureType.storeCard, callback)) return@launch
                     showManageMyCardRow()
+                }
 
                 else -> Unit
 
@@ -223,6 +225,7 @@ class ManageStoreCardLandingList(
 
     private fun addViewToViewGroup(actionButton: ActionButton, @DrawableRes drawableId : Int, isAlphaEnabled : Boolean = false) {
         includeListOptions.parentLinearLayout.apply {
+            visibility = VISIBLE
             val layoutInflater = LayoutInflater.from(this.context)
             val inflater = layoutInflater.inflate(R.layout.store_card_list_item, null)
             val label = actionButton.label
