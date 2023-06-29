@@ -457,7 +457,8 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
                                     return@observe
                                 }
 
-                                if (response.orderSummary?.totalItemsCount ?: 0 <= 0) {
+                                if (response.orderSummary != null && (response.orderSummary?.totalItemsCount
+                                                ?: 0) <= 0) {
                                     showEmptyCart()
                                     return@observe
                                 }
