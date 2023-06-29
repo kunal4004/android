@@ -8,6 +8,7 @@ import retrofit2.Response
 import za.co.woolworths.financial.services.android.dynamicyield.data.response.getResponse.DynamicYieldChooseVariationResponse
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.HomePageRequestEvent
+import za.co.woolworths.financial.services.android.util.Utils
 
 class DyHomePageViewModel: ViewModel() {
     lateinit var createDyHomePageLiveData: MutableLiveData<DynamicYieldChooseVariationResponse?>
@@ -20,7 +21,6 @@ class DyHomePageViewModel: ViewModel() {
     }
 
     fun createDyRequest(dynamicYieldRequestEvent: HomePageRequestEvent) {
-        // val retroService = ApiInterface::class
         val call = OneAppService().dynamicYieldHomePage(dynamicYieldRequestEvent)
         call.enqueue(object: Callback<DynamicYieldChooseVariationResponse> {
             override fun onResponse(
@@ -29,6 +29,13 @@ class DyHomePageViewModel: ViewModel() {
             ) {
                 if (response.isSuccessful) {
                     createDyHomePageLiveData.postValue(response.body())
+                    for (myData in response.body()!!.cookies) {
+                        if (myData.name.equals("_dyid_server")) {
+                            Utils.saveDyServerId(myData.value)
+                        }else if (myData.name.equals("_dyjsession")) {
+                            Utils.saveDySessionId(myData.value)
+                        }
+                    }
                 } else {
                     createDyHomePageLiveData.postValue(null)
                 }

@@ -6,6 +6,7 @@ import static android.graphics.Color.WHITE;
 import za.co.woolworths.financial.services.android.models.dao.ApiRequestDao;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
+import za.co.woolworths.financial.services.android.ui.wfs.common.NetworkUtilsKt;
 import za.co.woolworths.financial.services.android.util.RequestInAppReviewKt;
 import za.co.woolworths.financial.services.android.ui.activities.webview.usercase.WebViewHandler;
 
@@ -166,6 +167,18 @@ public class Utils {
             "image/jpeg",
             "image/tiff"
     };
+
+    //Dynamic Yield constant value
+    public static final String MOBILE_LANDING_PAGE = "MobileLandingPageAndroid";
+    public static final String HOME_PAGE = "HOMEPAGE";
+    public static final String IPAddress = NetworkUtilsKt.getIpAddress(WoolworthsApplication.getInstance(),WoolworthsApplication.getInstance());
+    public static final String PRODUCT_PAGE = "PRODUCT";
+    public static final String PRODUCT_DETAILS_PAGE = "ProductDetailsPageAndroid";
+    public static final String COLOR_ATTRIBUTE = "Color";
+    public static final String SIZE_ATTRIBUTE = "Size";
+    public static final String QUANTITY_ATTRIBUTE = "quantity";
+    public static final String CHANGE_ATTRIBUTE_DY_TYPE = "change-attr-v1";
+    public static final String CATEGORY_DY_TYPE = "CATEGORY";
 
     public static void saveLastLocation(Location loc, Context mContext) {
         try {
@@ -1695,6 +1708,28 @@ public class Utils {
     public static String getMonetateId() {
         AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
         return currentUserObject.mId;
+    }
+
+    public static void saveDyServerId(String dyServerId) {
+        AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
+        currentUserObject.serverDyId = dyServerId;
+        currentUserObject.save();
+    }
+
+    public static String getDyServerId() {
+        AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
+        return currentUserObject.serverDyId;
+    }
+
+    public static void saveDySessionId(String dySessionId) {
+        AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
+        currentUserObject.sessionDyId = dySessionId;
+        currentUserObject.save();
+    }
+
+    public static String getDySessionId() {
+        AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
+        return currentUserObject.sessionDyId;
     }
 
 }

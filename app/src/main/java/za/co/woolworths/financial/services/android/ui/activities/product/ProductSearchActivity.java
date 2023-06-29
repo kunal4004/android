@@ -8,6 +8,7 @@ import static za.co.woolworths.financial.services.android.ui.fragments.shoppingl
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.PRODUCT_DETAILS_FROM_MY_LIST_SEARCH;
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.SHOPPING_LIST_SEARCH_RESULT_REQUEST_CODE;
 import static za.co.woolworths.financial.services.android.util.AppConstant.Keys.EXTRA_SEND_DELIVERY_DETAILS_PARAMS;
+import static za.co.woolworths.financial.services.android.util.Utils.IPAddress;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -44,6 +45,8 @@ import java.util.List;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.SearchHistory;
+import za.co.woolworths.financial.services.android.models.network.AppContextProviderImpl;
+import za.co.woolworths.financial.services.android.models.network.NetworkConfig;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Context;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Device;
@@ -71,6 +74,11 @@ public class ProductSearchActivity extends AppCompatActivity
     public static final String EXTRA_LIST_ID = "listId";
     public static final int PRODUCT_SEARCH_ACTIVITY_RESULT_CODE = 1244;
     private DyChangeAttributeViewModel dyKeywordSearchViewModel;
+    private String dyServerId = null;
+    private String dySessionId = null;
+    private NetworkConfig config = null;
+    public static final String KEYWORD_SEARCH_V1 = "keyword-search-v1";
+    public static final String KEYWORD_SEARCH_EVENT_NAME = "keywordSearchV1";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,33 +107,38 @@ public class ProductSearchActivity extends AppCompatActivity
                 mEditSearchProduct.setHint(mSearchTextHint);
             }
         }
-        initViewModel();
+        config = new NetworkConfig(new AppContextProviderImpl());
+        if (Utils.getDyServerId() != null)
+            dyServerId = Utils.getDyServerId();
+        if (Utils.getDySessionId() != null)
+            dySessionId = Utils.getDySessionId();
+        initKeywordSearchViewModel();
     }
 
     private void prepareDyKeywordSearchRequestEvent(String searchProductBrand) {
-        User user = new User("2445455544238003591", "2445455544238003591");
-        Session session = new Session("2prrq1oslhogtosiwlpgzfiae5sfg6zo");
-        Device device = new Device("102:22:22:2",null);
+        User user = new User(dyServerId, dyServerId);
+        Session session = new Session(dySessionId);
+        Device device = new Device(IPAddress,config.getDeviceModel());
         Context context = new Context(device,null);
-        Properties properties = new Properties(null,null,"keyword-search-v1",searchProductBrand);
-        Event events = new Event(null,null,null,null,null,null,null,null,null,null,null,null,"keywordSearchV1",properties);
-        ArrayList<Event> e = new ArrayList<>();
-        e.add(events);
+        Properties properties = new Properties(null,null,KEYWORD_SEARCH_V1,searchProductBrand);
+        Event events = new Event(null,null,null,null,null,null,null,null,null,null,null,null,KEYWORD_SEARCH_EVENT_NAME,properties);
+        ArrayList<Event> event = new ArrayList<>();
+        event.add(events);
         PrepareChangeAttributeRequestEvent dyKeywordSearchRequestEvent = new PrepareChangeAttributeRequestEvent(
                 context,
-                e,
+                event,
                 session,
                 user);
         dyKeywordSearchViewModel.createDyChangeAttributeRequest(dyKeywordSearchRequestEvent);
     }
 
-    private void initViewModel() {
+    private void initKeywordSearchViewModel() {
         dyKeywordSearchViewModel = new ViewModelProvider(this).get(DyChangeAttributeViewModel.class);
         dyKeywordSearchViewModel.getDyLiveData().observe(this, new Observer<DyChangeAttributeResponse>() {
             @Override
             public void onChanged(DyChangeAttributeResponse dyKeywordSearchResponse) {
                 if (dyKeywordSearchResponse == null) {
-                  //  Toast.makeText(ProductSearchActivity.this, "failed to DY keyword search", Toast.LENGTH_LONG).show();
+                   // Toast.makeText(ProductSearchActivity.this, "failed to DY keyword search", Toast.LENGTH_LONG).show();
                 } else {
                   //  Toast.makeText(ProductSearchActivity.this, "Success to DY keyword search", Toast.LENGTH_LONG).show();
                 }

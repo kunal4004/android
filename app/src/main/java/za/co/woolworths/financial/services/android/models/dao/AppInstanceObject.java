@@ -90,6 +90,8 @@ public class AppInstanceObject {
         public boolean isLinkConfirmationScreenShown;
         public Long linkedDeviceIdentityId;
         public String mId;
+        public String serverDyId;
+        public String sessionDyId;
 
         public User() {
             id = AppInstanceObject.getCurrentUsersID();

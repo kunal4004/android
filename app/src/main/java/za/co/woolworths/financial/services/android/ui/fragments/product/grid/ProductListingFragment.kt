@@ -57,7 +57,9 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.brandlandingpage.DynamicBanner
 import za.co.woolworths.financial.services.android.models.dto.brandlandingpage.Navigation
+import za.co.woolworths.financial.services.android.models.network.AppContextProviderImpl
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
+import za.co.woolworths.financial.services.android.models.network.NetworkConfig
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.CartProducts
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
@@ -90,6 +92,8 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_SESSION_TIMEOUT_440
 import za.co.woolworths.financial.services.android.util.AppConstant.Keys.Companion.EXTRA_SEND_DELIVERY_DETAILS_PARAMS
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.saveAnonymousUserLocationDetails
+import za.co.woolworths.financial.services.android.util.Utils.CATEGORY_DY_TYPE
+import za.co.woolworths.financial.services.android.util.Utils.IPAddress
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
@@ -148,6 +152,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
     private var dyHomePageViewModel: DyHomePageViewModel? = null
     private var breadCrumbList: ArrayList<String> = ArrayList()
     private var breadCrumb: ArrayList<BreadCrumb> = ArrayList()
+    private var dyServerId: String? = null
+    private var dySessionId: String? = null
+    private var config: NetworkConfig? = null
+    private var PLP_SCREEN_LOCATION: String? = "PLP Screen"
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -186,6 +194,11 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
             isBackPressed = false
             callViewSearchResultEvent(isSearchByKeywordNavigation, mSearchTerm)
         }
+        config = NetworkConfig(AppContextProviderImpl())
+        if (Utils.getDyServerId() != null)
+            dyServerId = Utils.getDyServerId()
+        if (Utils.getDySessionId() != null)
+            dySessionId = Utils.getDySessionId()
     }
 
     private fun callViewSearchResultEvent(isSearchByKeywordNavigation: Boolean?, searchTerm: String?) {
@@ -244,17 +257,16 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
         binding.layoutErrorBlp.blpErrorBackBtn.setOnClickListener {
             startProductRequest()
         }
-        prepareDynamicYieldPageView()
-        dyViewModel()
+        dyCategoryChooseVariationViewModel()
     }
 
-    private fun dyViewModel() {
+    private fun dyCategoryChooseVariationViewModel() {
         dyHomePageViewModel = ViewModelProvider(this).get(DyHomePageViewModel::class.java)
         dyHomePageViewModel?.createDyHomePageLiveData?.observe(
             viewLifecycleOwner
         ) { dynamicYieldChooseVariationResponse ->
             if (dynamicYieldChooseVariationResponse == null) {
-              /*  Toast.makeText(
+               /* Toast.makeText(
                     activity,
                     "Category Page DY failed",
                     Toast.LENGTH_LONG
@@ -269,11 +281,11 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
         }
     }
 
-    private fun prepareDynamicYieldPageView() {
-        val user = User("7917327198341427921","7917327198341427921")
-        val session = Session("jtyey00s7r03kn02f4fskegcbatgjtmj")
-        val device = Device("54.100.200.255", "Android")
-        val page = Page(breadCrumbList, "PLP Screen", "CATEGORY")
+    private fun prepareCategoryDynamicYieldPageView() {
+        val user = User(dyServerId,dyServerId)
+        val session = Session(dySessionId)
+        val device = Device(IPAddress, config?.getDeviceModel())
+        val page = Page(breadCrumbList, PLP_SCREEN_LOCATION, CATEGORY_DY_TYPE)
         val context = Context(device, page)
         val options = Options(true)
         val homePageRequestEvent = HomePageRequestEvent(user, session, context, options)
@@ -662,6 +674,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
             }
         }
         mProductAdapter?.notifyDataSetChanged()
+        prepareCategoryDynamicYieldPageView()
     }
 
     private fun viewItemListAnalytics(products: List<ProductList>, category: String?) {

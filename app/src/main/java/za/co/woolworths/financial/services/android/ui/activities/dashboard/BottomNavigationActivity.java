@@ -86,6 +86,7 @@ import za.co.woolworths.financial.services.android.contracts.IToastInterface;
 import za.co.woolworths.financial.services.android.dynamicyield.data.response.getResponse.DynamicYieldChooseVariationResponse;
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
 import za.co.woolworths.financial.services.android.models.BrandNavigationDetails;
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.CartSummary;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetails;
@@ -95,6 +96,8 @@ import za.co.woolworths.financial.services.android.models.dto.ProductView;
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams;
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionStateType;
 import za.co.woolworths.financial.services.android.models.dto.item_limits.ProductCountMap;
+import za.co.woolworths.financial.services.android.models.network.AppContextProviderImpl;
+import za.co.woolworths.financial.services.android.models.network.NetworkConfig;
 import za.co.woolworths.financial.services.android.models.network.Parameter;
 import za.co.woolworths.financial.services.android.models.service.event.BadgeState;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
@@ -139,6 +142,7 @@ import za.co.woolworths.financial.services.android.ui.views.ToastFactory;
 import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.ui.views.shop.dash.ChangeFulfillmentCollectionStoreFragment;
+import za.co.woolworths.financial.services.android.ui.wfs.common.NetworkUtilsKt;
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature.fragment.UserAccountsLandingFragment;
 import za.co.woolworths.financial.services.android.util.AppConstant;
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
@@ -156,7 +160,6 @@ import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager;
 import za.co.woolworths.financial.services.android.util.nav.FragNavController;
 import za.co.woolworths.financial.services.android.util.nav.FragNavTransactionOptions;
-import za.co.woolworths.financial.services.android.dynamicyield.presentation.viewmodel.DynamicYieldViewModel;
 
 @AndroidEntryPoint
 public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigationBinding, BottomNavigationViewModel>
@@ -206,6 +209,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     private int currentTabIndex = INDEX_TODAY;
     private int previousTabIndex = INDEX_TODAY;
     private DyHomePageViewModel dyHomePageViewModel;
+    private NetworkConfig config;
+    private ArrayList dyData;
 
     @Override
     public int getLayoutId() {
@@ -250,6 +255,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(SavedInstanceFragment.getInstance(getFragmentManager()).popData());
         mBundle = getIntent().getExtras();
+        dyData = new ArrayList<>();
+        config = new NetworkConfig(new AppContextProviderImpl());
         parseDeepLinkData();
         new AmplifyInit();
         mNavController = FragNavController.newBuilder(savedInstanceState,
@@ -302,7 +309,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
         queryBadgeCountOnStart();
         addDrawerFragment();
-        dyViewModel();
+        dyHomePageViewModel();
     }
 
     private void parseDeepLinkData() {
@@ -780,13 +787,13 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         }
     };
 
-    private void dyViewModel() {
+    private void dyHomePageViewModel() {
         dyHomePageViewModel = new ViewModelProvider(this).get(DyHomePageViewModel.class);
        dyHomePageViewModel.createDyHomePageLiveData.observe(this, new androidx.lifecycle.Observer<DynamicYieldChooseVariationResponse>() {
            @Override
            public void onChanged(DynamicYieldChooseVariationResponse dynamicYieldChooseVariationResponse) {
                if (dynamicYieldChooseVariationResponse == null) {
-                  // Toast.makeText(BottomNavigationActivity.this, "Home Page DY failed", Toast.LENGTH_LONG).show();
+                 //  Toast.makeText(BottomNavigationActivity.this, "Home Page DY failed", Toast.LENGTH_LONG).show();
                } else {
                   // Toast.makeText(BottomNavigationActivity.this, "Home Page DY Success", Toast.LENGTH_LONG).show();
 
@@ -796,9 +803,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     }
 
     private void prepareDynamicYieldRequestEvent() {
-        Device device = new Device("54.100.200.255","Mozilla/5.0");
-        ArrayList list = new ArrayList<>();
-        Page page = new Page(list, "MobileLandingPageAndroid","HOMEPAGE", null);
+        Device device = new Device(Utils.IPAddress, config.getDeviceModel());
+        Page page = new Page(dyData, Utils.MOBILE_LANDING_PAGE,Utils.HOME_PAGE, null);
         Context context = new Context(device,page);
         Options options = new Options(true);
         HomePageRequestEvent homePageRequestEvent = new HomePageRequestEvent(null,null,context,options);

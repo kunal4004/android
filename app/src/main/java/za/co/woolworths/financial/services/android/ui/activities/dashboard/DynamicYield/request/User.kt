@@ -2,6 +2,6 @@ package za.co.woolworths.financial.services.android.ui.activities.dashboard.Dyna
 
 
 data class User(
-    val dyid: String,
-    val dyid_server: String
+    val dyid: String? = null,
+    val dyid_server: String? = null
     )
