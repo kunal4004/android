@@ -70,7 +70,7 @@ open class CoreDataSource @Inject constructor() : NetworkConfig(AppContextProvid
                         AppConstant.HTTP_OK -> emit(IOTaskResult.Success(responseBody))
                         AppConstant.HTTP_SESSION_TIMEOUT_440,
                         AppConstant.HTTP_SESSION_TIMEOUT_400-> emit(IOTaskResult.OnSessionTimeOut(responseBody))
-                        else ->  emit(IOTaskResult.OnFailure(responseBody))
+                        else -> emit(IOTaskResult.OnFailure(responseBody))
                     }
                 }else {
                    emit(IOTaskResult.Empty)
@@ -79,7 +79,11 @@ open class CoreDataSource @Inject constructor() : NetworkConfig(AppContextProvid
                 try {
                     val errorBodyString = response.errorBody()?.string() ?: "Network error"
                     val parsedErrorBody = parseJson(errorBodyString) as T
-                    emit(IOTaskResult.OnFailure(parsedErrorBody))
+                    when(response.code()){
+                        AppConstant.HTTP_SESSION_TIMEOUT_440,
+                        AppConstant.HTTP_SESSION_TIMEOUT_400-> emit(IOTaskResult.OnSessionTimeOut(parsedErrorBody))
+                        else -> emit(IOTaskResult.OnFailure(parsedErrorBody))
+                    }
                 } catch (e: Exception) {
                     val error = IOException("API call failed with error - ${response.errorBody()?.string() ?: "Network error"}")
                     emit(IOTaskResult.OnFailed(error))

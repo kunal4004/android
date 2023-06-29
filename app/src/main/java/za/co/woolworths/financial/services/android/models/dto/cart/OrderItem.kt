@@ -34,6 +34,6 @@ fun OrderItem.toAddToListRequest() = AddToListRequest(
     quantity = this.quantity.toString(),
     catalogRefId = this.catalogRefId,
     giftListId = "",
-    skuID = "",
+    skuID = this.catalogRefId,
     isGWP = this.isGWP
 )
