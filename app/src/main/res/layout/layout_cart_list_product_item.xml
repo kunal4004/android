@@ -165,7 +165,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="@dimen/twelve_dp"
                 android:background="@drawable/delivery_round_btn_black"
-                android:fontFamily="@font/myriad_pro_semi_bold"
+                android:fontFamily="@font/opensans_semi_bold"
                 android:letterSpacing="0.08"
                 android:paddingHorizontal="@dimen/twelve_dp"
                 android:paddingVertical="@dimen/two_dp"

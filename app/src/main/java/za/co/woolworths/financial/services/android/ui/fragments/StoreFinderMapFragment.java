@@ -416,7 +416,7 @@ public class StoreFinderMapFragment extends Fragment implements DynamicMapDelega
 				textView = (TextView) v.findViewById(R.id.openingHoursTextView);
 				textView.setText(storeDetail.times.get(i).day + " " + storeDetail.times.get(i).hours);
 				if (i == 0)
-					textView.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/MyriadPro-Semibold.otf"));
+					textView.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/OpenSans-SemiBold.ttf"));
 				timeingsLayout.addView(textView);
 			}
 
