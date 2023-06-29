@@ -964,15 +964,6 @@ interface ApiInterface {
             @Body requestBody: OrderToShoppingListRequestBody): retrofit2.Response<OrderToListReponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @POST("wfs/app/v4/order/{id}")
-    suspend fun addToListByOrderId(
-
-            @Header("sessionToken") sessionToken: String,
-            @Header("deviceIdentityToken") deviceIdentityToken: String,
-            @Path("id") id: String,
-            @Body requestBody: OrderToShoppingListRequestBody): retrofit2.Response<OrderToListReponse>
-
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("wfs/app/v4/order/taxInvoice/{taxNoteNumber}")
     fun getTaxInvoice(
 
