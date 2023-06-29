@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.enhancedSubstitution.service
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
+import java.io.Serializable
 
 @Parcelize
 data class SubstitutionInfo(
@@ -13,4 +14,4 @@ data class SubstitutionInfo(
     @SerializedName("id")
     val id: String = "",
     val substitutionId: String? = null
-): Parcelable
+): Parcelable, Serializable
