@@ -14,6 +14,7 @@ import android.view.View
 import android.view.View.OnTouchListener
 import android.view.WindowManager
 import android.widget.ScrollView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
@@ -22,6 +23,7 @@ import androidx.core.text.buildSpannedString
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
@@ -56,9 +58,7 @@ import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.item_limits.ProductCountMap
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.CouponClaimCode
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.VoucherDetails
-import za.co.woolworths.financial.services.android.models.network.CompletionHandler
-import za.co.woolworths.financial.services.android.models.network.OneAppService
-import za.co.woolworths.financial.services.android.models.network.Status
+import za.co.woolworths.financial.services.android.models.network.*
 import za.co.woolworths.financial.services.android.models.service.event.CartState
 import za.co.woolworths.financial.services.android.models.service.event.ProductState
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.CartProducts
@@ -71,6 +71,8 @@ import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerAct
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.*
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.response.DyHomePageViewModel
 import za.co.woolworths.financial.services.android.ui.activities.online_voucher_redemption.AvailableVouchersToRedeemInCart
 import za.co.woolworths.financial.services.android.ui.fragments.cart.GiftWithPurchaseDialogDetailFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment
@@ -152,6 +154,12 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     private var isBlackCardHolder : Boolean = false
     private var isOnItemRemoved = false
     private var isViewCartEventFired = false
+    private var dyServerId: String? = null
+    private var dySessionId: String? = null
+    private var config: NetworkConfig? = null
+    private var dyHomePageViewModel: DyHomePageViewModel? = null
+    private var DY_LOCATION: String? = "Cart page in Mobile App"
+    private var DY_CART_TYPE: String? = "CART"
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -212,6 +220,33 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         initializeLoggedInUserCartUI()
         setPriceInformationVisibility(false)
         addScrollListeners()
+        config = NetworkConfig(AppContextProviderImpl())
+        if (Utils.getDyServerId() != null)
+            dyServerId = Utils.getDyServerId()
+        if (Utils.getDySessionId() != null)
+            dySessionId = Utils.getDySessionId()
+        dyCategoryChooseVariationViewModel()
+    }
+
+    private fun dyCategoryChooseVariationViewModel() {
+        dyHomePageViewModel = ViewModelProvider(this).get(DyHomePageViewModel::class.java)
+        dyHomePageViewModel?.createDyHomePageLiveData?.observe(
+            viewLifecycleOwner
+        ) { dynamicYieldChooseVariationResponse ->
+            if (dynamicYieldChooseVariationResponse == null) {
+                /* Toast.makeText(
+                     activity,
+                     "Cart Page DY failed",
+                     Toast.LENGTH_LONG
+                 ).show()*/
+            } else {
+                /* Toast.makeText(
+                     activity,
+                     "Cart Page DY Success",
+                     Toast.LENGTH_LONG
+                 ).show()*/
+            }
+        }
     }
 
     private fun initializeLoggedInUserCartUI() {
@@ -1330,6 +1365,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                     isViewCartEventFired = true
                 }
                 showRecommendedProducts()
+                prepareDynamicYieldCartViewRequestEvent()
             }
             HTTP_SESSION_TIMEOUT_440 -> {
                 //TODO:: improve error handling
@@ -1373,6 +1409,24 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
 
             }
         }
+    }
+
+    private fun prepareDynamicYieldCartViewRequestEvent() {
+        val user = User(dyServerId,dyServerId)
+        val session = Session(dySessionId)
+        val device = Device(Utils.IPAddress, config?.getDeviceModel())
+        val productList: ArrayList<String>? = ArrayList()
+        for (otherProductId in viewModel.getCartItemList()) {
+            if (otherProductId.commerceItemInfo.commerceId != null) {
+                var productID = otherProductId.commerceItemInfo.commerceId
+                productList?.add(productID!!)
+            }
+        }
+        val page = Page(productList, DY_LOCATION, DY_CART_TYPE, null)
+        val context = Context(device, page)
+        val options = Options(true)
+        val homePageRequestEvent = HomePageRequestEvent(user, session, context, options)
+        dyHomePageViewModel?.createDyRequest(homePageRequestEvent)
     }
 
     private fun viewCartEvent(commerceItems: List<CommerceItem>, value: Double) {
