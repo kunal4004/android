@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.views.actionsheet;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -29,7 +30,7 @@ public class SessionExpiredDialogFragment extends ActionSheetDialogFragment impl
 	private WButton btnSECancel;
 	private WButton btnSESignIn;
 	private WTextView tvSessionExpiredTitle;
-	private WTextView tvSessionExpiredDesc;
+	private TextView tvSessionExpiredDesc;
 
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {

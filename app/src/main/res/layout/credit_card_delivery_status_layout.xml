@@ -68,8 +68,9 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                <TextView
                     android:id="@+id/manageDeliveryText"
+                    style="@style/opensans_semi_bold_13_black_text_style"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginHorizontal="@dimen/ten_dp"
@@ -79,8 +80,6 @@
                     android:paddingHorizontal="@dimen/fifteen_dp"
                     android:text="@string/manage_delivery"
                     android:textColor="@color/black"
-                    android:textSize="@dimen/fifteen_sp"
-                    app:WTextView_font="myriadpro_semibold"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/layoutDivider" />
@@ -108,8 +107,9 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                <TextView
                     android:id="@+id/trackDeliveryText"
+                    style="@style/opensans_semi_bold_13_black_text_style"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginHorizontal="@dimen/ten_dp"
@@ -118,9 +118,6 @@
                     android:gravity="center|start"
                     android:paddingHorizontal="@dimen/fifteen_dp"
                     android:text="@string/track_my_delivery"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/fifteen_sp"
-                    app:WTextView_font="myriadpro_semibold"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/TrackDeliveryDivider" />
@@ -174,13 +171,12 @@
 
             <TextView
                 android:id="@+id/deliveryStatusDescription"
-                style="@style/myriad_pro_regular"
+                style="@style/ccd_opensans_regular"
                 android:layout_marginTop="@dimen/thirty_two_dp"
                 android:contentDescription="@string/cd_ccd_labelconfirmeddeliverydescription"
                 android:lineSpacingMultiplier="1.33"
                 android:text="@string/documet_requied_at_delivery"
                 android:textColor="#50333333"
-                android:textSize="@dimen/fifteen_sp"
                 app:layout_constraintEnd_toEndOf="@id/right_guideline"
                 app:layout_constraintStart_toStartOf="@id/left_guideline"
                 app:layout_constraintTop_toBottomOf="@id/deliveryDayAndTime" />

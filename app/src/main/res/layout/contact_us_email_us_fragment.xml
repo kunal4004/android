@@ -6,7 +6,7 @@
     android:background="@color/light_gray_background"
     android:fillViewport="true"
     android:paddingTop="?attr/actionBarSize"
-    tools:context="za.co.woolworths.financial.services.android.ui.fragments.contact_us.enquiry.emailus.EmailUsFragment">
+    tools:context="za.co.woolworths.financial.services.android.ui.fragments.contact_us.enquiry.emailus.ContactUsEmailUsFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -28,25 +28,17 @@
 
             <TextView
                 android:id="@+id/tv_email_us_name"
+                style="@style/contact_us_email_us_label_style"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/myriad_pro_regular"
                 android:letterSpacing="0"
-                android:text="@string/email_us_name"
-                android:textColor="@color/color_222222"
-                android:textSize="@dimen/_11ssp" />
+                android:text="@string/email_us_name" />
 
             <androidx.appcompat.widget.AppCompatEditText
                 android:id="@+id/et_email_us_name"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/_35sdp"
-                android:layout_marginTop="@dimen/_5sdp"
-                android:background="@drawable/bg_input_edittext"
-                android:gravity="center_vertical"
-                android:inputType="textPersonName"
-                android:paddingStart="@dimen/_5sdp"
-                android:paddingEnd="@dimen/_5sdp"
-                android:textSize="@dimen/_11ssp" />
+                style="@style/contact_us_email_us_input_field_style"
+                android:inputType="textPersonName" />
+
         </LinearLayout>
 
         <LinearLayout
@@ -61,35 +53,27 @@
 
             <TextView
                 android:id="@+id/tv_email_us_email"
+                style="@style/contact_us_email_us_label_style"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:letterSpacing="0"
                 android:lineSpacingExtra="8sp"
-                android:text="@string/email_us_email"
-                android:textColor="@color/color_222222"
-                android:textSize="@dimen/_11ssp" />
+                android:text="@string/email_us_email" />
 
             <androidx.appcompat.widget.AppCompatEditText
                 android:id="@+id/et_email_us_email"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/_35sdp"
-                android:layout_marginTop="@dimen/_5sdp"
-                android:background="@drawable/bg_input_edittext"
-                android:gravity="center_vertical"
-                android:inputType="textEmailAddress"
-                android:paddingStart="@dimen/_5sdp"
-                android:paddingEnd="@dimen/_5sdp"
-                android:textSize="@dimen/_11ssp" />
+                style="@style/contact_us_email_us_input_field_style"
+                android:inputType="textEmailAddress" />
 
             <TextView
                 android:id="@+id/tv_email_us_email_validation"
+                style="@style/contact_us_email_us_label_style"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_5sdp"
                 android:letterSpacing="0"
-                android:fontFamily="@font/myriad_pro_regular"
                 android:text="@string/email_us_email_validation"
-                android:textSize="@dimen/_9ssp" />
+                android:textColor="@color/color_666666" />
         </LinearLayout>
 
         <LinearLayout
@@ -104,27 +88,22 @@
 
             <TextView
                 android:id="@+id/tv_email_us_enquiry"
+                style="@style/contact_us_email_us_label_style"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:letterSpacing="0"
                 android:lineSpacingExtra="8sp"
-                android:text="@string/email_us_enquiry"
-                android:textColor="@color/color_222222"
-                android:textSize="@dimen/_11ssp" />
+                android:text="@string/email_us_enquiry" />
 
             <androidx.appcompat.widget.AppCompatEditText
                 android:id="@+id/et_email_us_enquiry"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/_35sdp"
-                android:layout_marginTop="@dimen/_5sdp"
-                android:background="@drawable/bg_input_edittext"
+                style="@style/contact_us_email_us_input_field_style"
                 android:cursorVisible="false"
                 android:drawableEnd="@drawable/ic_dropdown"
                 android:focusable="false"
-                android:gravity="center_vertical"
-                android:paddingStart="@dimen/_5sdp"
+                android:paddingStart="@dimen/five_dp"
                 android:paddingEnd="@dimen/_10sdp"
-                android:textSize="@dimen/_11ssp" />
+                android:textSize="@dimen/fourteen_sp" />
 
         </LinearLayout>
 
@@ -140,26 +119,25 @@
 
             <TextView
                 android:id="@+id/tv_email_us_message"
+                style="@style/contact_us_email_us_label_style"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:letterSpacing="0"
                 android:lineSpacingExtra="8sp"
-                android:text="@string/email_us_message"
-                android:textColor="@color/color_222222"
-                android:textSize="@dimen/_11ssp" />
+                android:text="@string/email_us_message" />
 
             <androidx.appcompat.widget.AppCompatEditText
                 android:id="@+id/et_email_us_message"
-                android:layout_width="match_parent"
+                style="@style/contact_us_email_us_input_field_style"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_5sdp"
-                android:background="@drawable/bg_input_edittext"
                 android:gravity="start"
+                android:hint="@string/contact_us_email_message_placeholder"
                 android:minHeight="@dimen/_150sdp"
-                android:paddingStart="@dimen/_5sdp"
-                android:paddingTop="@dimen/_5sdp"
-                android:paddingEnd="@dimen/_5sdp"
-                android:textSize="@dimen/_11ssp" />
+                android:paddingStart="@dimen/ten_dp"
+                android:paddingTop="@dimen/twelve_dp"
+                android:paddingEnd="@dimen/ten_dp"
+                android:paddingBottom="@dimen/twelve_dp"
+                android:textSize="@dimen/fourteen_sp" />
 
         </LinearLayout>
 

@@ -67,7 +67,7 @@
                     android:background="@drawable/circle_green"
                     />
 
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                <TextView
                     style="@style/rag_rating_text"
                     android:text="@string/status_green_desc"
                     />
@@ -81,7 +81,7 @@
                     android:background="@drawable/circle_amber"
                     />
 
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                <TextView
                     style="@style/rag_rating_text"
                     android:text="@string/status_amber_desc"
                     />
@@ -98,7 +98,7 @@
                     android:background="@drawable/circle_red"
                     />
 
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                <TextView
                     style="@style/rag_rating_text"
                     android:text="@string/status_red_desc"
                     />

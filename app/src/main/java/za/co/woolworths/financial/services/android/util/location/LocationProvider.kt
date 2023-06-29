@@ -139,6 +139,7 @@ class LocationProvider(
                 } else {
                     // fallback to active location discovery
                     Logger.logDebug("LocationProvider (Google): Last known location is null")
+                    eventCallback(Event.Permission(EventType.LOCATION_SERVICE_DISCONNECTED))
                     googleLocationSearchDelegate.startSearchForCurrentLocation()
                 }
             }
@@ -164,6 +165,7 @@ class LocationProvider(
                 } else {
                     // fallback to active location discovery
                     Logger.logDebug("LocationProvider (Huawei): Last known location is null")
+                    eventCallback(Event.Permission(EventType.LOCATION_SERVICE_DISCONNECTED))
                     huaweiLocationSearchDelegate.startSearchForCurrentLocation()
                 }
             }

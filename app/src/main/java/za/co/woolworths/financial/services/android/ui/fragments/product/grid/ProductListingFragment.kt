@@ -6,6 +6,7 @@ import android.app.Activity.RESULT_OK
 import android.app.Dialog
 import android.content.Intent
 import android.location.Location
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Parcelable
@@ -99,6 +100,7 @@ import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyt
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.logException
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.setCrashlyticsString
+import za.co.woolworths.financial.services.android.util.analytics.dto.ScreenViewEventData
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.net.ConnectException
 import java.net.UnknownHostException
@@ -460,15 +462,17 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
         }
     }
 
+    private fun getScreenViewEventData(): ScreenViewEventData? {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            arguments?.getParcelable(BUNDLE_SCREEN_VIEW_EVENT_DATA, ScreenViewEventData::class.java)
+        } else {
+            arguments?.getParcelable(BUNDLE_SCREEN_VIEW_EVENT_DATA)
+        }
+    }
+
     override fun onResume() {
         super.onResume()
-        activity?.let { activity ->
-            Utils.setScreenName(
-                activity,
-                FirebaseManagerAnalyticsProperties.ScreenNames.PRODUCT_SEARCH_RESULTS
-            )
-        }
-
+        FirebaseAnalyticsEventHelper.viewScreenEventForPLP(activity = activity, screenViewEventData = getScreenViewEventData())
         requestInAppReview(FirebaseManagerAnalyticsProperties.VIEW_ITEM_LIST, activity)
 
         if (activity is BottomNavigationActivity
@@ -1893,6 +1897,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
         private const val SEARCH_TERM = "SEARCH_TERM"
         const val IS_BROWSING = "is_browsing"
         const val BUNDLE_NAVIGATION_FROM_SEARCH_BY_KEYWORD = "isNavigationFromSearchByKeyword"
+        const val BUNDLE_SCREEN_VIEW_EVENT_DATA = "BUNDLE_SCREEN_VIEW_EVENT_DATA"
         private const val SORT_OPTION = "SORT_OPTION"
         private const val IS_CHANEL_PAGE = "IS_CHANEL_PAGE"
         private const val BRAND_NAVIGATION_DETAILS = "BRAND_NAVIGATION_DETAILS"
@@ -1904,7 +1909,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
             searchTerm: String?,
             isBrowsing: Boolean,
             sendDeliveryDetails: Boolean?,
-            isNavigationFromSearchByKeyword: Boolean = false
+            isNavigationFromSearchByKeyword: Boolean = false,
+            screenViewEventData: ScreenViewEventData? = null
         ) = ProductListingFragment().withArgs {
             putString(SEARCH_TYPE, searchType?.name)
             putString(SUB_CATEGORY_NAME, sub_category_name)
@@ -1912,6 +1918,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
             putBoolean(IS_BROWSING, isBrowsing)
             putBoolean(EXTRA_SEND_DELIVERY_DETAILS_PARAMS, sendDeliveryDetails ?: false)
             putBoolean(BUNDLE_NAVIGATION_FROM_SEARCH_BY_KEYWORD, isNavigationFromSearchByKeyword)
+            putParcelable(BUNDLE_SCREEN_VIEW_EVENT_DATA, screenViewEventData)
         }
 
         fun newInstance(
@@ -1921,7 +1928,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
             brandNavigationDetails: BrandNavigationDetails?,
             isBrowsing: Boolean,
             sendDeliveryDetails: Boolean?,
-            isChanelPage: Boolean
+            isChanelPage: Boolean,
+            screenViewEventData: ScreenViewEventData? = null
         ) = ProductListingFragment().withArgs {
             putString(SEARCH_TYPE, searchType?.name)
             putString(SEARCH_TERM, searchTerm)
@@ -1930,6 +1938,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
             putBoolean(IS_BROWSING, isBrowsing)
             putBoolean(EXTRA_SEND_DELIVERY_DETAILS_PARAMS, sendDeliveryDetails ?: false)
             putBoolean(IS_CHANEL_PAGE, isChanelPage)
+            putParcelable(BUNDLE_SCREEN_VIEW_EVENT_DATA, screenViewEventData)
         }
 
         fun newInstance(

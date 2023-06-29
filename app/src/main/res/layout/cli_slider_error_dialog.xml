@@ -39,14 +39,14 @@
 
         <TextView
             android:id="@+id/tvDescription"
+            style="@style/opensans_regular_13_black"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/myriad_pro_regular_otf"
             android:gravity="center"
             android:lineSpacingExtra="4dp"
             android:text="@string/loan_request_high_desc"
             android:textColor="@color/description_color"
-            android:textSize="15sp" />
+            />
 
         <View
             android:layout_width="match_parent"

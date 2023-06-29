@@ -16,17 +16,16 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <za.co.woolworths.financial.services.android.ui.views.WTextView
+        <TextView
             android:layout_width="wrap_content"
+            style="@style/opensans_regular_14_black"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:drawableStart="@drawable/ic_time_white"
+            app:drawableStartCompat="@drawable/ic_time_white"
             android:drawablePadding="@dimen/five_dp"
             android:gravity="center_vertical"
             android:text="@string/check_back_during_working_hours"
-            android:textColor="@color/white"
-            android:textSize="@dimen/sixteen_sp"
-            app:WTextView_font="myriadpro_regular" />
+            android:textColor="@color/white" />
     </RelativeLayout>
 
     <androidx.recyclerview.widget.RecyclerView
@@ -74,8 +73,8 @@
             android:textColor="@color/black"
             android:textColorHint="@color/chat_hint"
             android:textCursorDrawable="@drawable/cursor_custom_color"
-            android:textSize="@dimen/fifteen_sp"
-            app:WEditTextView_font="myriadpro_regular" />
+            android:textSize="@dimen/thirteen_sp"
+            app:WEditTextView_font="opensans_regular" />
 
         <Button
             android:id="@+id/sendMessageButton"

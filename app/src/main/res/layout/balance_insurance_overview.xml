@@ -18,7 +18,7 @@
             android:text="@string/features_and_benefit"
             />
 
-        <za.co.woolworths.financial.services.android.ui.views.WTextView
+        <TextView
             style="@style/balance_insurance_overview_desc"
             android:text="@string/features_and_benefit_desc"
             />
@@ -71,7 +71,7 @@
             android:text="@string/additional_death_cover"
             />
 
-        <za.co.woolworths.financial.services.android.ui.views.WTextView
+        <TextView
             style="@style/balance_insurance_overview_desc"
             android:text="@string/additional_death_cover_desc"
             />
@@ -81,7 +81,7 @@
             android:text="@string/partner_spouse"
             />
 
-        <za.co.woolworths.financial.services.android.ui.views.WTextView
+        <TextView
             style="@style/balance_insurance_overview_desc"
             android:text="@string/partner_spouse_desc"
             />
