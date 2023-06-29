@@ -29,7 +29,7 @@
         app:layout_constraintTop_toBottomOf="@id/imgPaymentSuccess" />
 
     <!--this is added only for enhance substitution feature-->
-    <!--this button will be visible only for enahnce substitution feature-->
+    <!--this button will be visible only for enhance substitution feature-->
 
     <Button
         android:id="@+id/btnGotIt"
