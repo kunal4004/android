@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.FrameLayout
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.runtime.DisposableEffect
@@ -28,9 +29,9 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.presentation.addtolist.components.AddToListScreenEvents
+import za.co.woolworths.financial.services.android.presentation.common.ProgressView
 import za.co.woolworths.financial.services.android.presentation.createlist.CreateListScreen
 import za.co.woolworths.financial.services.android.presentation.createlist.components.CreateListScreenEvent
-import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.compose.contentView
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
@@ -43,6 +44,10 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Keys.Compani
 @OptIn(ExperimentalComposeUiApi::class)
 @AndroidEntryPoint
 class AddToListFragment : WBottomSheetDialogFragment() {
+
+    companion object {
+        const val ADD_TO_SHOPPING_LIST_REQUEST_CODE = 1209
+    }
 
     private val viewModel: AddToListViewModel by viewModels()
 
@@ -146,7 +151,9 @@ class AddToListFragment : WBottomSheetDialogFragment() {
 
                 listState.isAddToListInProgress -> {
                     ProgressView(
-                        modifier = Modifier.heightIn(min = 290.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(min = 290.dp),
                         title = stringResource(
                             id = R.string.add_to_list_progress_title,
                             listName

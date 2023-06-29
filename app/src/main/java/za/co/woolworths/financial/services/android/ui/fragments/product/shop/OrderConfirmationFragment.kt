@@ -32,7 +32,7 @@ import za.co.woolworths.financial.services.android.models.dto.cart.SubmittedOrde
 import za.co.woolworths.financial.services.android.models.dto.cart.toAddToListRequest
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
-import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity
+import za.co.woolworths.financial.services.android.presentation.addtolist.AddToListFragment.Companion.ADD_TO_SHOPPING_LIST_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.adapters.ItemsOrderListAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
@@ -69,7 +69,7 @@ class OrderConfirmationFragment :
 
     private fun addFragmentResultListener() {
         KotlinUtils.setAddToListFragmentResultListener(
-            AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_REQUEST_CODE,
+            ADD_TO_SHOPPING_LIST_REQUEST_CODE,
             requireActivity(),
             viewLifecycleOwner,
             binding.root

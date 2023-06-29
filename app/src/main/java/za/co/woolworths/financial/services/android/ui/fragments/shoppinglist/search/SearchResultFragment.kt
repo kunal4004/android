@@ -3,7 +3,6 @@ package za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.se
 import android.app.Activity
 import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
 import android.os.Handler
@@ -38,7 +37,7 @@ import za.co.woolworths.financial.services.android.models.dto.WProduct
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
-import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity
+import za.co.woolworths.financial.services.android.presentation.addtolist.AddToListFragment.Companion.ADD_TO_SHOPPING_LIST_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.adapters.SearchResultShopAdapter
@@ -132,7 +131,7 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
 
     private fun addFragmentResultListener() {
         KotlinUtils.setAddToListFragmentResultListener(
-            AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_REQUEST_CODE,
+            ADD_TO_SHOPPING_LIST_REQUEST_CODE,
             requireActivity(),
             viewLifecycleOwner,
             binding.root
@@ -811,19 +810,6 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
         }
         toggleAddToListBtn(true)
         mProductList?.let { minOneItemSelected(it) }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == BottomNavigationActivity.PDP_REQUEST_CODE && resultCode == AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE) {
-            activity?.apply {
-                setResult(
-                    AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE,
-                    data
-                )
-                onBackPressed()
-            }
-        }
     }
 
     companion object {

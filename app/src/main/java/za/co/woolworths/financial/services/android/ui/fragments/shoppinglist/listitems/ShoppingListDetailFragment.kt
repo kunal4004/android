@@ -45,11 +45,9 @@ import za.co.woolworths.financial.services.android.models.dto.Response
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItem
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse
-import za.co.woolworths.financial.services.android.models.dto.item_limits.ProductCountMap
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.models.network.Status
-import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity
@@ -106,16 +104,6 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                         requireActivity(), bindingListDetails.rlCheckOut, listName ?: "", count
                     )
                     viewModel.getShoppingListDetails()
-                }
-                // add to list from search result -> PDP
-                AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE -> {
-                    with(requireActivity()) {
-                        setResult(
-                            AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE,
-                            result.data
-                        )
-                        onBackPressed()
-                    }
                 }
                 // searched details result
                 PRODUCT_SEARCH_ACTIVITY_RESULT_CODE -> {
@@ -905,21 +893,9 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (requestCode == BottomNavigationActivity.PDP_REQUEST_CODE && resultCode == AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE
-        ) {
-            activity?.setResult(
-                AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE,
-                data
-            )
-            activity?.onBackPressed()
-            return
-            // response from search product from shopping list
-        }
-
         when (requestCode) {
             DELIVERY_LOCATION_REQUEST_CODE_FROM_SELECT_ALL,
-            DELIVERY_LOCATION_REQUEST,
-            -> {
+            DELIVERY_LOCATION_REQUEST -> {
                 if (resultCode == RESULT_OK) {
                     setDeliveryLocation()
                     if (viewModel.isShoppingListContainsUnavailableItems())
@@ -928,29 +904,6 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                         hideBlackToolTip()
                     viewModel.getShoppingListDetails()
                 }
-            }
-        }
-
-        if (requestCode == BottomNavigationActivity.PDP_REQUEST_CODE && resultCode == RESULT_OK) {
-            val activity = activity ?: return
-            val productCountMap = Utils.jsonStringToObject(
-                data?.getStringExtra("ProductCountMap"), ProductCountMap::class.java
-            ) as? ProductCountMap
-            val itemsCount = data?.getIntExtra("ItemsCount", 0)
-            when {
-                ((getPreferredDeliveryType() == Delivery.DASH || getPreferredDeliveryType() == Delivery.CNC)
-                        && productCountMap?.quantityLimit?.foodLayoutColour != null) -> {
-                    showItemsLimitToastOnAddToCart(
-                        bindingListDetails.rlCheckOut,
-                        productCountMap,
-                        activity,
-                        itemsCount ?: 0,
-                        true
-                    )
-                }
-                else -> buildAddToCartSuccessToast(
-                    bindingListDetails.rlCheckOut, true, activity, this
-                )
             }
         }
     }
