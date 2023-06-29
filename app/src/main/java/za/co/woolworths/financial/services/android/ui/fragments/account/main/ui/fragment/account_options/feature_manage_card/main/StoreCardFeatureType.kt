@@ -91,5 +91,6 @@ sealed class StoreCardFeatureType : Parcelable {
     ) : StoreCardFeatureType()
 
     @Parcelize
-    object ManageMyCard : StoreCardFeatureType()
+    data class ManageMyCard(var storeCard: StoreCard?,
+                            var cardHolderName: String? = KotlinUtils.getCardHolderNameSurname()) : StoreCardFeatureType()
 }
