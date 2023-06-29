@@ -22,15 +22,14 @@
 
     <TextView
         android:layout_width="match_parent"
+        style="@style/opensans_regular_14_black"
         android:layout_height="wrap_content"
         android:layout_below="@+id/tvEnterYourPin"
         android:alpha="0.5"
-        android:fontFamily="@font/myriad_pro_regular"
         android:lineSpacingExtra="0.14sp"
         android:lineSpacingMultiplier="1.40"
         android:text="@string/absa_enter_five_digit_code_desc"
-        android:textColor="@color/offer_title"
-        android:textSize="@dimen/sixteen_sp" />
+        android:textColor="@color/offer_title" />
 
 
     <LinearLayout

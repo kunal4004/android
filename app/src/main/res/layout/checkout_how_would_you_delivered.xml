@@ -9,8 +9,10 @@
 
     <com.facebook.shimmer.ShimmerFrameLayout
         android:id="@+id/howWouldYouDeliveredShimmerFrameLayout"
-        style="@style/myriad_pro_regular_black"
+        style="@style/opensens_regular"
+        android:textColor="@color/black"
         android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/two_dp"
         android:layout_marginBottom="@dimen/two_dp"
         android:background="@color/shimmer_view_background"
@@ -29,7 +31,8 @@
 
     <com.facebook.shimmer.ShimmerFrameLayout
         android:id="@+id/selectDeliveryTimeSlotSubTitleShimmerFrameLayout"
-        style="@style/myriad_pro_regular_black"
+        style="@style/opensens_regular"
+        android:textColor="@color/black"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/twenty_six_dp"

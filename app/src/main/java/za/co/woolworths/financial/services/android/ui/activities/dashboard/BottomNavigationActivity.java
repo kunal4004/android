@@ -178,7 +178,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     private ToastUtils mToastUtils;
     public static final int LOCK_REQUEST_CODE_ACCOUNTS = 444;
     private QueryBadgeCounter mQueryBadgeCounter;
-    public static final int PDP_REQUEST_CODE = 18;
     public WMaterialShowcaseView walkThroughPromtView = null;
     public RefinementDrawerFragment drawerFragment;
     public JsonObject appLinkData;
@@ -1110,10 +1109,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         // Navigate from shopping list detail activity
         switch (requestCode) {
             case REQUEST_PAYMENT_STATUS:
-                if(getCurrentFragment() instanceof ShopFragment) {
-                    ShopFragment fragment = (ShopFragment) getCurrentFragment();
-                    fragment.makeLastDashOrderDetailsCall();
-                }
                 if (resultCode == REQUEST_CHECKOUT_ON_CONTINUE_SHOPPING) {
                     navigateToTabIndex(BottomNavigationActivity.INDEX_PRODUCT, null);
                     QueryBadgeCounter.getInstance().queryCartSummaryCount();
@@ -1130,7 +1125,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                     break;
             case REQUEST_CODE_ORDER_DETAILS_PAGE:// Call back when Toast clicked after adding item to shopping list
             case SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE:
-                navigateToMyList(requestCode, resultCode, data);
 
                 switch (resultCode) {
                     case RESULT_OK:
@@ -1215,22 +1209,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             }
         }
 
-        if (requestCode == PDP_REQUEST_CODE) {
-            navigateToMyList(requestCode, resultCode, data);
-            if (resultCode == RESULT_OK) {
-                String itemAddToCartMessage = data.getStringExtra("addedToCartMessage");
-                ProductCountMap productCountMap = (ProductCountMap) Utils.jsonStringToObject(data.getStringExtra("ProductCountMap"), ProductCountMap.class);
-                int itemsCount = data.getIntExtra("ItemsCount", 0);
-                if (itemAddToCartMessage != null) {
-                    setToast(itemAddToCartMessage, "", productCountMap, itemsCount);
-                }
-                return;
-            }
-        }
-
         // navigate to product section
         if (requestCode == OPEN_CART_REQUEST) {
-            navigateToMyList(requestCode, resultCode, data);
             //Handling error 500 from cart
             if (resultCode == CustomPopUpWindow.CART_DEFAULT_ERROR_TAPPED) {
                 Fragment fragmentById = getCurrentFragment();
@@ -1342,17 +1322,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             }
         }
 
-    }
-
-    private void navigateToMyList(int requestCode, int resultCode, Intent data) {
-        if (resultCode == NavigateToShoppingList.DISPLAY_TOAST_RESULT_CODE) {
-            clearStack();
-            ToastFactory toastFactory = new ToastFactory();
-            toastFactory.Companion.buildShoppingListToast(this, getBottomNavigationById(), true, data, this);
-            Fragment fragmentById = getCurrentFragment();
-            if (fragmentById != null)
-                fragmentById.onActivityResult(requestCode, resultCode, null);
-        }
     }
 
     private Fragment getBottomFragmentById() {

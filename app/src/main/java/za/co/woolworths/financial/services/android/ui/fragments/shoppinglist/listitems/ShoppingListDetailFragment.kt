@@ -45,7 +45,6 @@ import za.co.woolworths.financial.services.android.models.dto.Response
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItem
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse
-import za.co.woolworths.financial.services.android.models.dto.item_limits.ProductCountMap
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.models.network.Status
@@ -905,29 +904,6 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                         hideBlackToolTip()
                     viewModel.getShoppingListDetails()
                 }
-            }
-        }
-
-        if (requestCode == BottomNavigationActivity.PDP_REQUEST_CODE && resultCode == RESULT_OK) {
-            val activity = activity ?: return
-            val productCountMap = Utils.jsonStringToObject(
-                data?.getStringExtra("ProductCountMap"), ProductCountMap::class.java
-            ) as? ProductCountMap
-            val itemsCount = data?.getIntExtra("ItemsCount", 0)
-            when {
-                ((getPreferredDeliveryType() == Delivery.DASH || getPreferredDeliveryType() == Delivery.CNC)
-                        && productCountMap?.quantityLimit?.foodLayoutColour != null) -> {
-                    showItemsLimitToastOnAddToCart(
-                        bindingListDetails.rlCheckOut,
-                        productCountMap,
-                        activity,
-                        itemsCount ?: 0,
-                        true
-                    )
-                }
-                else -> buildAddToCartSuccessToast(
-                    bindingListDetails.rlCheckOut, true, activity, this
-                )
             }
         }
     }

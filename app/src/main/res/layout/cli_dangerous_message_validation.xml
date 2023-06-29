@@ -48,9 +48,10 @@
                 android:background="@color/white"
                 android:orientation="vertical">
 
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                <TextView
                     android:id="@+id/tvDeclineOfferDesc"
                     android:layout_width="match_parent"
+                    style="@style/opensans_regular_13_black"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="30dp"
                     android:background="@color/white"
@@ -59,8 +60,6 @@
                     android:lineSpacingExtra="1.3dp"
                     android:text="@string/sign_out_desc"
                     android:textColor="@color/black_desc_opacity"
-                    android:textSize="15sp"
-                    app:WTextView_font="myriadpro_regular"
                     />
 
             </LinearLayout>

@@ -6,7 +6,6 @@ import za.co.woolworths.financial.services.android.util.ScreenManager
 
 class NavigateToShoppingList {
     companion object {
-        const val DISPLAY_TOAST_RESULT_CODE = 120
 
         fun navigateToShoppingListOnToastClicked(activity: Activity?, jsonElement: JsonElement) {
             jsonElement.asJsonObject?.apply {

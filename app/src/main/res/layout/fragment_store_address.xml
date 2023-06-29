@@ -83,14 +83,12 @@
 
             <TextView
                 android:id="@+id/tabTome"
+                style="@style/opensans_regular_14_black"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/myriad_pro_regular"
                 android:gravity="center"
                 android:minHeight="@dimen/fifty_dp"
                 android:text="@string/store_address_left_tab"
-                android:textColor="@color/black"
-                android:textSize="@dimen/sixteen_sp"
                 app:layout_constrainedWidth="true"
                 app:layout_constraintBottom_toBottomOf="@id/viewFlipperTab1"
                 app:layout_constraintEnd_toStartOf="@id/viewFlipperTabSeparator"
@@ -99,14 +97,12 @@
 
             <TextView
                 android:id="@+id/tabToWooliesStore"
+                style="@style/opensans_regular_14_black"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/myriad_pro_regular"
                 android:gravity="center"
                 android:minHeight="@dimen/fifty_dp"
                 android:text="@string/store_address_right_tab"
-                android:textColor="@color/black"
-                android:textSize="@dimen/sixteen_sp"
                 app:layout_constrainedWidth="true"
                 app:layout_constraintBottom_toBottomOf="@id/viewFlipperTab2"
                 app:layout_constraintEnd_toEndOf="@id/endGuideLine"
