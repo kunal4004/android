@@ -8,5 +8,11 @@ data class Properties(
     val attributeType: String? = null,
     val attributeValue: String? = null,
     val dyType: String? = null,
-    val keywords: String? = null
+    val keywords: String? = null,
+    val value: String? = null,
+    val currency: String? = null,
+    val quantity: Int? = null,
+    val productId: String? = null,
+    val color: String? = null,
+    val sku_id: String? = null
 ): Parcelable

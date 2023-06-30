@@ -2050,6 +2050,24 @@ class ProductDetailsFragment :
 
     }
 
+    private fun prepareDyAddToCartRequestEvent() {
+        val user = User(dyServerId,dyServerId)
+        val session = Session(dySessionId)
+        val device = Device(IPAddress)
+        val context = za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Context(device)
+        val properties = Properties(null,null,"add-to-cart-v1",null,getSelectedSku()?.price,"ZAR",selectedQuantity,productId,getSelectedSku()?.colour,getSelectedSku()?.sku)
+        val eventsDyChangeAttribute = za.co.woolworths.financial.services.android.recommendations.data.response.request.Event(null,null,null,null,null,null,null,null,null,null,null,null,"Add to Cart",properties)
+        val events = ArrayList<Event>()
+        events.add(eventsDyChangeAttribute);
+        val prepareDyAddToCartRequestEvent = PrepareChangeAttributeRequestEvent(
+            context,
+            events,
+            session,
+            user
+        )
+        dyChangeAttributeViewModel.createDyChangeAttributeRequest(prepareDyAddToCartRequestEvent)
+    }
+
     private fun ProductDetailsFragmentBinding.showFindInStore() {
         productDetails?.isnAvailable?.toBoolean()?.apply {
             if (!this) {
@@ -2284,6 +2302,7 @@ class ProductDetailsFragment :
                 addToCartEvent(productDetails)
             }
         }
+        prepareDyAddToCartRequestEvent()
     }
 
     override fun onAddToCartError(addItemToCartResponse: AddItemToCartResponse) {
