@@ -816,7 +816,7 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
     private fun GeoLocationDeliveryAddressBinding.selectATab(selectedTab: AppCompatTextView?) {
         selectedTab?.setBackgroundResource(R.drawable.bg_geo_selected_tab)
         val myRiadSemiBoldFont =
-            Typeface.createFromAsset(activity?.assets, "fonts/MyriadPro-Semibold.otf")
+            Typeface.createFromAsset(activity?.assets, "fonts/OpenSans-SemiBold.ttf")
         selectedTab?.typeface = myRiadSemiBoldFont
         selectedTab?.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
         when (selectedTab) {
@@ -838,7 +838,7 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
     private fun unSelectATab(unSelectedTab: AppCompatTextView?) {
         unSelectedTab?.apply {
             val myriadProRegularFont =
-                Typeface.createFromAsset(activity?.assets, "fonts/MyriadPro-Regular.otf")
+                Typeface.createFromAsset(activity?.assets, "fonts/OpenSans-Regular.ttf")
             typeface = myriadProRegularFont
             setBackgroundResource(R.drawable.bg_geo_unselected_tab)
             setTextColor(ContextCompat.getColor(requireContext(), R.color.color_444444))

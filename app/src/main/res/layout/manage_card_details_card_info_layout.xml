@@ -24,7 +24,7 @@
         android:layout_marginTop="@dimen/_10sdp"
         android:layout_marginEnd="@dimen/_14sdp"
         android:layout_marginBottom="@dimen/_41sdp"
-        android:fontFamily="@font/myriad_pro_regular"
+        android:fontFamily="@font/opensans_regular"
         android:lineSpacingExtra="@dimen/_1sdp"
         android:text="Your card has been blocked and can\nno longer be used."
         android:textAlignment="center"
