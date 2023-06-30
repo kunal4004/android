@@ -31,7 +31,8 @@ class ManageCardViewPagerAdapter(private var listOfStoreCards: MutableList<Store
         position: Int,
         payloads: MutableList<Any>
     ) {
-        (holder.itemView as ViewGroup).clipChildren = false
+       // (holder.itemView as ViewGroup).clipChildren = true
+        holder.itemView.requestLayout()
         super.onBindViewHolder(holder, position, payloads)
     }
     fun getListOfStoreCards(): MutableList<StoreCardFeatureType>? = this.listOfStoreCards
@@ -74,4 +75,5 @@ class ManageCardViewPagerAdapter(private var listOfStoreCards: MutableList<Store
 
     override fun containsItem(itemId: Long): Boolean =
         if (isListOfItemsNullOrEmpty()) false else pageIds?.contains(itemId) ?: false
+
 }

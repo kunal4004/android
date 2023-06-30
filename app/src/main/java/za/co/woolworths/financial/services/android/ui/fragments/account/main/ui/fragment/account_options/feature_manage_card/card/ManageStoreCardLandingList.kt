@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -22,7 +23,6 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.StoreCardInfo
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_account_options_list.card_freeze.TemporaryFreezeCardViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.StoreCardFeatureType
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.StoreCardUpShellMessage
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.setupGraph
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.ProductLandingRouterImpl
 import za.co.woolworths.financial.services.android.util.Utils
@@ -53,7 +53,8 @@ class ManageStoreCardLandingList(
             blockCardDivider.visibility = GONE
             blockCardRelativeLayout.visibility = GONE
             payWithCardFragmentContainerView.visibility = GONE
-            parentLinearLayout.removeAllViewsInLayout()
+            parentLinearLayout.visibility = GONE
+            storeCardRowContainer.visibility = GONE
         }
     }
 
@@ -68,6 +69,7 @@ class ManageStoreCardLandingList(
                 is StoreCardFeatureType.StoreCardFreezeCardUpShellMessage,
                 is StoreCardFeatureType.StoreCardActivateVirtualTempCardUpShellMessage -> {
                     hideAllRows()
+                    includeListOptions.parentLinearLayout.removeAllViewsInLayout()
                 }
 
                 is StoreCardFeatureType.ActivateVirtualTempCard -> {
@@ -81,8 +83,8 @@ class ManageStoreCardLandingList(
                 }
 
                 is StoreCardFeatureType.StoreCardIsTemporaryFreeze -> {
-                    if (actionForStoreCardUsage1Item(featureType.storeCard, callback)) return@launch
                     showStoreCardIsTemporaryFreeze(featureType)
+                    if (actionForStoreCardUsage1Item(featureType.storeCard, callback)) return@launch
                 }
 
                 is StoreCardFeatureType.TemporaryCardEnabled -> {
@@ -145,11 +147,6 @@ class ManageStoreCardLandingList(
                     blockCardRelativeLayout.visibility = VISIBLE
                 }
             }
-
-            when (featureType.upShellMessage) {
-                is StoreCardUpShellMessage.ActivateVirtualTempCard -> showActivateVirtualCardItem(true)
-                else -> showActivateVirtualCardItem(false)
-            }
         }
     }
 
@@ -167,7 +164,7 @@ class ManageStoreCardLandingList(
            showLinkNewCardItem(!isTemporaryCardEnabled)
     }
 
-    fun showCardNotReceivedDialog(fragment: Fragment?, viewModel: MyAccountsRemoteApiViewModel,displayCardNotReceivedPopup : () -> Unit) {
+    fun showCardNotReceivedDialog(viewModel: MyAccountsRemoteApiViewModel,displayCardNotReceivedPopup : () -> Unit) {
         if (viewModel.isStoreCardNotReceivedDialogFragmentVisible) return
         displayCardNotReceivedPopup()
     }
@@ -176,8 +173,10 @@ class ManageStoreCardLandingList(
         storeCard: StoreCard?,
         callback: (ListCallback) -> Unit
     ): Boolean {
+        includeListOptions.storeCardRowContainer.visibility = VISIBLE
+        includeListOptions.parentLinearLayout.visibility = VISIBLE
         return storeCard?.actions?.let { action ->
-            action.forEachIndexed { index, actionButton ->
+            action.forEach { actionButton ->
                     when (actionButton.action) {
                         StoreCardItemActions.LINK_STORE_CARD -> addViewToViewGroup(actionButton, R.drawable.link_icon)
                         StoreCardItemActions.ACTIVATE_VIRTUAL_CARD -> addViewToViewGroup(actionButton, R.drawable.icon_activate_virtual_temp_card, isAlphaEnabled = true)
@@ -223,9 +222,9 @@ class ManageStoreCardLandingList(
         }
     }
 
+    @SuppressLint("InflateParams")
     private fun addViewToViewGroup(actionButton: ActionButton, @DrawableRes drawableId : Int, isAlphaEnabled : Boolean = false) {
         includeListOptions.parentLinearLayout.apply {
-            visibility = VISIBLE
             val layoutInflater = LayoutInflater.from(this.context)
             val inflater = layoutInflater.inflate(R.layout.store_card_list_item, null)
             val label = actionButton.label
@@ -254,7 +253,7 @@ class ManageStoreCardLandingList(
                 }
             }
             if (isAlphaEnabled)
-                logoImageView.alpha = 0.3f
+                logoImageView.alpha = 0.7f
             titleTextView.text = label
             addView(inflater)
         }
