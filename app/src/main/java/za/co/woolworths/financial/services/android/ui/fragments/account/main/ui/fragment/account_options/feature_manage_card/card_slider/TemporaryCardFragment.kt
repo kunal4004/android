@@ -21,6 +21,7 @@ import za.co.woolworths.financial.services.android.util.KotlinUtils
 
 class TemporaryCardFragment : Fragment(R.layout.instant_store_card_replacement_card_fragment) {
 
+    private var binding: InstantStoreCardReplacementCardFragmentBinding? = null
     val viewModel: TemporaryFreezeCardViewModel by activityViewModels()
     val accountViewModel: MyAccountsRemoteApiViewModel by activityViewModels()
 
@@ -35,15 +36,23 @@ class TemporaryCardFragment : Fragment(R.layout.instant_store_card_replacement_c
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val card = arguments?.getParcelable<StoreCardFeatureType?>(STORE_CARD_FEATURE_TYPE) as? StoreCardFeatureType.TemporaryCardEnabled
-        val binding = InstantStoreCardReplacementCardFragmentBinding.bind(view)
+        binding = InstantStoreCardReplacementCardFragmentBinding.bind(view)
         val isBlockTypeNewCard = card?.storeCard?.blockType?.equals(StoreCardEnhancementConstant.NewCard, ignoreCase = true) == true
-        if (isBlockTypeNewCard) {
-            binding.accountHolderNameTextView.visibility = View.INVISIBLE
-            binding.storeCardImageView.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.store_card_new_card_image))
-            binding.storeCardImageView.contentDescription = context?.getString(R.string.active_store_card_image_on_overlay_new_card)
-        }else {
-            setupView(binding)
-            setListener(binding, card)
+        binding?.apply {
+            if (isBlockTypeNewCard) {
+                accountHolderNameTextView.visibility = View.INVISIBLE
+                storeCardImageView.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        requireContext(),
+                        R.drawable.store_card_new_card_image
+                    )
+                )
+                storeCardImageView.contentDescription =
+                    context?.getString(R.string.active_store_card_image_on_overlay_new_card)
+            } else {
+                setupView(this)
+                setListener(this, card)
+            }
         }
     }
 
@@ -65,5 +74,10 @@ class TemporaryCardFragment : Fragment(R.layout.instant_store_card_replacement_c
         binding.accountHolderNameTextView.setTextColor(Color.BLACK)
         binding.tempCardLabel.visibility = GONE
         binding.cardLabel.visibility = GONE
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding?.root?.requestLayout()
     }
 }

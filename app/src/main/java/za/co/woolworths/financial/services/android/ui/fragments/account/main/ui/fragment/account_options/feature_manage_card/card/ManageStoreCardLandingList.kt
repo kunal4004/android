@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View.GONE
+import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.widget.ImageView
 import android.widget.RelativeLayout
@@ -22,6 +23,7 @@ import za.co.woolworths.financial.services.android.models.dto.temporary_store_ca
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.MyAccountsRemoteApiViewModel
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.StoreCardInfo
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_account_options_list.card_freeze.TemporaryFreezeCardViewModel
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.StoreCardEnhancementConstant
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.StoreCardFeatureType
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.setupGraph
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.ProductLandingRouterImpl
@@ -53,8 +55,9 @@ class ManageStoreCardLandingList(
             blockCardDivider.visibility = GONE
             blockCardRelativeLayout.visibility = GONE
             payWithCardFragmentContainerView.visibility = GONE
-            parentLinearLayout.visibility = GONE
             storeCardRowContainer.visibility = GONE
+            includeListOptions.parentLinearLayout.removeAllViews()
+            parentLinearLayout.visibility = GONE
         }
     }
 
@@ -62,42 +65,62 @@ class ManageStoreCardLandingList(
         storeCardFeatureType: StoreCardInfo,
         callback: (ListCallback) -> Unit
     ) {
-        fragment?.viewLifecycleOwner?.lifecycleScope?.launch {
+        fragment?.viewLifecycleOwner?.lifecycleScope?.launch(Dispatchers.Main) {
             hideAllRows()
             when (val featureType = storeCardFeatureType.feature) {
 
-                is StoreCardFeatureType.StoreCardFreezeCardUpShellMessage,
-                is StoreCardFeatureType.StoreCardActivateVirtualTempCardUpShellMessage -> {
-                    hideAllRows()
-                    includeListOptions.parentLinearLayout.removeAllViewsInLayout()
-                }
+                    is StoreCardFeatureType.StoreCardFreezeCardUpShellMessage,
+                    is StoreCardFeatureType.StoreCardActivateVirtualTempCardUpShellMessage -> {
+                        hideAllRows()
+                        includeListOptions.parentLinearLayout.removeAllViewsInLayout()
+                    }
 
-                is StoreCardFeatureType.ActivateVirtualTempCard -> {
-                    if (actionForStoreCardUsage1Item(featureType.storeCard, callback)) return@launch
-                    showActivateVirtualTempCardRow(featureType.isTemporaryCardEnabled)
-                }
+                    is StoreCardFeatureType.ActivateVirtualTempCard -> {
+                        if (actionForStoreCardUsage1Item(
+                                featureType.storeCard,
+                                callback
+                            )
+                        ) return@launch
+                        showActivateVirtualTempCardRow(featureType.isTemporaryCardEnabled)
+                    }
 
-                is StoreCardFeatureType.StoreCardIsInstantReplacementCardAndInactive -> {
-                    if (actionForStoreCardUsage1Item(featureType.storeCard, callback)) return@launch
-                    showInstantReplacementCardAndInactive()
-                }
+                    is StoreCardFeatureType.StoreCardIsInstantReplacementCardAndInactive -> {
+                        if (actionForStoreCardUsage1Item(
+                                featureType.storeCard,
+                                callback
+                            )
+                        ) return@launch
+                        showInstantReplacementCardAndInactive()
+                    }
 
-                is StoreCardFeatureType.StoreCardIsTemporaryFreeze -> {
-                    showStoreCardIsTemporaryFreeze(featureType)
-                    if (actionForStoreCardUsage1Item(featureType.storeCard, callback)) return@launch
-                }
+                    is StoreCardFeatureType.StoreCardIsTemporaryFreeze -> {
+                        showStoreCardIsTemporaryFreeze(featureType)
+                        if (actionForStoreCardUsage1Item(
+                                featureType.storeCard,
+                                callback
+                            )
+                        ) return@launch
+                    }
 
-                is StoreCardFeatureType.TemporaryCardEnabled -> {
-                    if (actionForStoreCardUsage1Item(featureType.storeCard, callback)) return@launch
-                    showTemporaryCardEnabled(featureType.storeCard, callback)
-                }
+                    is StoreCardFeatureType.TemporaryCardEnabled -> {
+                        if (actionForStoreCardUsage1Item(
+                                featureType.storeCard,
+                                callback
+                            )
+                        ) return@launch
+                        showTemporaryCardEnabled(featureType.storeCard, callback)
+                    }
 
-                is StoreCardFeatureType.ManageMyCard -> {
-                    if (actionForStoreCardUsage1Item(featureType.storeCard, callback)) return@launch
-                    showManageMyCardRow()
-                }
+                    is StoreCardFeatureType.ManageMyCard -> {
+                        if (actionForStoreCardUsage1Item(
+                                featureType.storeCard,
+                                callback
+                            )
+                        ) return@launch
+                        showManageMyCardRow()
+                    }
 
-                else -> Unit
+                    else -> Unit
 
             }
         }
@@ -137,14 +160,20 @@ class ManageStoreCardLandingList(
     }
 
     private fun showStoreCardIsTemporaryFreeze(featureType: StoreCardFeatureType.StoreCardIsTemporaryFreeze) {
-        with(includeListOptions) {
-            temporaryFreezeCardFragmentContainerView.visibility = VISIBLE
-            when (featureType.isStoreCardFrozen) {
-                true -> cardFreezeViewModel.isSwitcherEnabled.value = true
-                else -> {
-                    cardFreezeViewModel.isSwitcherEnabled.value = false
-                    blockCardDivider.visibility = VISIBLE
-                    blockCardRelativeLayout.visibility = VISIBLE
+        if (!featureType.storeCard?.blockType.equals(
+                StoreCardEnhancementConstant.NewCard,
+                ignoreCase = true
+            )
+        ) {
+            with(includeListOptions) {
+                temporaryFreezeCardFragmentContainerView.visibility = VISIBLE
+                when (featureType.isStoreCardFrozen) {
+                    true -> cardFreezeViewModel.isSwitcherEnabled.value = true
+                    else -> {
+                        cardFreezeViewModel.isSwitcherEnabled.value = false
+                        blockCardDivider.visibility = VISIBLE
+                        blockCardRelativeLayout.visibility = VISIBLE
+                    }
                 }
             }
         }
@@ -173,21 +202,45 @@ class ManageStoreCardLandingList(
         storeCard: StoreCard?,
         callback: (ListCallback) -> Unit
     ): Boolean {
-        includeListOptions.storeCardRowContainer.visibility = VISIBLE
-        includeListOptions.parentLinearLayout.visibility = VISIBLE
-        return storeCard?.actions?.let { action ->
-            action.forEach { actionButton ->
+            includeListOptions.storeCardRowContainer.visibility = VISIBLE
+            includeListOptions.parentLinearLayout.visibility = VISIBLE
+            return storeCard?.actions?.let { action ->
+                action.forEach { actionButton ->
                     when (actionButton.action) {
-                        StoreCardItemActions.LINK_STORE_CARD -> addViewToViewGroup(actionButton, R.drawable.link_icon)
-                        StoreCardItemActions.ACTIVATE_VIRTUAL_CARD -> addViewToViewGroup(actionButton, R.drawable.icon_activate_virtual_temp_card, isAlphaEnabled = true)
-                        StoreCardItemActions.CARD_REPLACEMENT -> addViewToViewGroup(actionButton, R.drawable.icon_card ,isAlphaEnabled = true)
-                        StoreCardItemActions.PAY_WITH_CARD -> showTemporaryCardEnabled(storeCard, callback)
-                        StoreCardItemActions.HOW_IT_WORKS -> addViewToViewGroup(actionButton, R.drawable.ic_how_to_pay ,isAlphaEnabled = true)
+                        StoreCardItemActions.LINK_STORE_CARD -> addViewToViewGroup(
+                            actionButton,
+                            R.drawable.link_icon
+                        )
+
+                        StoreCardItemActions.ACTIVATE_VIRTUAL_CARD -> addViewToViewGroup(
+                            actionButton,
+                            R.drawable.icon_activate_virtual_temp_card,
+                            isAlphaEnabled = true
+                        )
+
+                        StoreCardItemActions.CARD_REPLACEMENT -> addViewToViewGroup(
+                            actionButton,
+                            R.drawable.icon_card,
+                            isAlphaEnabled = true
+                        )
+
+                        StoreCardItemActions.PAY_WITH_CARD -> showTemporaryCardEnabled(
+                            storeCard,
+                            callback
+                        )
+
+                        StoreCardItemActions.HOW_IT_WORKS -> addViewToViewGroup(
+                            actionButton,
+                            R.drawable.ic_how_to_pay,
+                            isAlphaEnabled = true
+                        )
+
                         else -> Unit
                     }
-            }
-            true
-        } ?: run { false }
+                }
+                true
+            } ?: run { false }
+
     }
 
     private fun showLinkNewCardItem(isVisible: Boolean, label: String? = null) {

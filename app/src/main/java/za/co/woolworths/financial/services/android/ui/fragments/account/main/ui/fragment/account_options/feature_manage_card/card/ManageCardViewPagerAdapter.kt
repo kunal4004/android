@@ -31,7 +31,7 @@ class ManageCardViewPagerAdapter(private var listOfStoreCards: MutableList<Store
         position: Int,
         payloads: MutableList<Any>
     ) {
-       // (holder.itemView as ViewGroup).clipChildren = true
+        //(holder.itemView as ViewGroup).clipChildren = true
         holder.itemView.requestLayout()
         super.onBindViewHolder(holder, position, payloads)
     }

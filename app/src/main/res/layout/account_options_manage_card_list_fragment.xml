@@ -4,6 +4,7 @@
     android:id="@+id/storeCardRowContainer"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/white"
     android:orientation="vertical"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
@@ -29,8 +30,9 @@
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/parentLinearLayout"
         android:layout_width="match_parent"
-        android:orientation="vertical"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:orientation="vertical" />
+
     <View
         android:id="@+id/manageCardDivider"
         style="@style/menuLandingDividerStyle" />
