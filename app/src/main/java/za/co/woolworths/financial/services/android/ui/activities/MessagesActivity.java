@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.awfs.coordination.R;
 import com.daimajia.swipe.util.Attributes;
@@ -92,8 +93,8 @@ public class MessagesActivity extends AppCompatActivity implements MesssagesList
 		mErrorHandlerView = new ErrorHandlerView(this, woolWorthsApplication,
 				(RelativeLayout) findViewById(R.id.relEmptyStateHandler),
 				(ImageView) findViewById(R.id.imgEmpyStateIcon),
-				(WTextView) findViewById(R.id.txtEmptyStateTitle),
-				(WTextView) findViewById(R.id.txtEmptyStateDesc),
+				(TextView) findViewById(R.id.txtEmptyStateTitle),
+				(TextView) findViewById(R.id.txtEmptyStateDesc),
 				(RelativeLayout) findViewById(R.id.no_connection_layout));
 		messsageListview.setHasFixedSize(true);
 		messsageListview.setLayoutManager(mLayoutManager);
