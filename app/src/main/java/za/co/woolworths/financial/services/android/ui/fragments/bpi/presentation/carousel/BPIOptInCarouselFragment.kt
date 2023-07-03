@@ -46,13 +46,20 @@ class BPIOptInCarouselFragment : BaseFragmentBinding<BpiOptInCarouselFragmentBin
         val carouselList = bpiViewModel?.insuranceLeadGenCarouselList()
         val carouselSize = carouselList?.size ?: 0
         val insuranceLeadGenCarouselAdapter =
-            object : FragmentStateAdapter(this@BPIOptInCarouselFragment) {
+            object : FragmentStateAdapter(childFragmentManager, lifecycle) {
                 override fun createFragment(position: Int): Fragment =
                     InsuranceLeadGenCarouselItemFragment.newInstance(
-                        Pair(InsuranceLeadGenCarouselItemFragment::class.java.simpleName,carouselList?.get(position) ?:
-                        InsuranceLeadCarousel.SLIDE_1 ))
+                        Pair(
+                            InsuranceLeadGenCarouselItemFragment::class.java.simpleName,
+                            carouselList?.get(position) ?: InsuranceLeadCarousel.SLIDE_1
+                        )
+                    )
 
                 override fun getItemCount(): Int = carouselSize
+
+                override fun containsItem(itemId: Long): Boolean {
+                    return carouselList?.let { itemId < it.size } ?: false
+                }
             }
 
         binding.findOutCarouselViewPager?.apply {
