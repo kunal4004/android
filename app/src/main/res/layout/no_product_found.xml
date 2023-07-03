@@ -41,7 +41,7 @@
         android:text="@string/stock_available_product"
         android:textColor="@color/black"
         android:textSize="15sp"
-        app:WTextView_font="myriadpro_regular"
+        app:WTextView_font="opensans_regular"
 
         />
 
