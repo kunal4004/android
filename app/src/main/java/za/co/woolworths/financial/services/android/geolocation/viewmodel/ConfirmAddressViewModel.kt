@@ -27,4 +27,6 @@ class ConfirmAddressViewModel @Inject constructor(private val geoLocationApiHelp
 
     fun isConnectedToInternet(context: Context) = geoLocationApiHelper.isConnectedToInternet(context)
 
+    suspend fun getShoppingList() = geoLocationApiHelper.getShoppingList()
+
 }

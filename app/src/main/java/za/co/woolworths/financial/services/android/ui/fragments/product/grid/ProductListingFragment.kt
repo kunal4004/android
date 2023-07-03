@@ -44,8 +44,9 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.IProductListing
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils
+import za.co.woolworths.financial.services.android.geolocation.viewmodel.AddToCartLiveData
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
-import za.co.woolworths.financial.services.android.geolocation.viewmodel.UnSellableItemsLiveData
+import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmLocationResponseLiveData
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.BrandNavigationDetails
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
@@ -83,7 +84,6 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_SESSION_TIMEOUT_440
 import za.co.woolworths.financial.services.android.util.AppConstant.Keys.Companion.EXTRA_SEND_DELIVERY_DETAILS_PARAMS
-import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.saveAnonymousUserLocationDetails
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
@@ -291,7 +291,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
                                     )
                                 }
                             } else
-                                callConfirmPlace()
+                                LocationUtils.callConfirmPlace(this@ProductListingFragment, null, binding.incCenteredProgress.progressCreditLimit, confirmAddressViewModel)
                         }
                     }
                 }
@@ -306,11 +306,18 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
     }
 
     private fun isUnSellableItemsRemoved() {
-        UnSellableItemsLiveData.observe(viewLifecycleOwner) {
+        ConfirmLocationResponseLiveData.observe(viewLifecycleOwner) {
             isUnSellableItemsRemoved = it
             if (isUnSellableItemsRemoved == true && (activity as? BottomNavigationActivity)?.mNavController?.currentFrag is ProductListingFragment) {
-                callConfirmPlace()
-                UnSellableItemsLiveData.value = false
+                ConfirmLocationResponseLiveData.value = false
+                setBrowsingData()
+                updateToolbarTitle() // update plp location.
+            }
+        }
+        AddToCartLiveData.observe(viewLifecycleOwner) {
+            if (it) {
+                AddToCartLiveData.value = false
+                onConfirmLocation() // This will again call addToCart
             }
         }
     }
@@ -320,60 +327,11 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
     ) {
         deliveryType?.let {
             val unsellableItemsBottomSheetDialog =
-                UnsellableItemsBottomSheetDialog.newInstance(unSellableCommerceItems, it)
+                UnsellableItemsBottomSheetDialog.newInstance(unSellableCommerceItems, it, binding.incCenteredProgress.progressCreditLimit, confirmAddressViewModel)
             unsellableItemsBottomSheetDialog.show(
                 requireFragmentManager(),
                 UnsellableItemsBottomSheetDialog::class.java.simpleName
             )
-        }
-    }
-
-    private fun callConfirmPlace() {
-        // Confirm the location
-        lifecycleScope.launch {
-            showProgressBar()
-            try {
-                val confirmLocationRequest =
-                    KotlinUtils.getConfirmLocationRequest(KotlinUtils.browsingDeliveryType)
-                val confirmLocationResponse =
-                    confirmAddressViewModel.postConfirmAddress(confirmLocationRequest)
-                dismissProgressBar()
-                if (confirmLocationResponse != null) {
-                    when (confirmLocationResponse.httpCode) {
-                        HTTP_OK -> {
-                            if (SessionUtilities.getInstance().isUserAuthenticated) {
-                                Utils.savePreferredDeliveryLocation(
-                                    ShoppingDeliveryLocation(
-                                        confirmLocationResponse.orderSummary?.fulfillmentDetails
-                                    )
-                                )
-                                if (KotlinUtils.getAnonymousUserLocationDetails() != null)
-                                    KotlinUtils.clearAnonymousUserLocationDetails()
-                            } else {
-                                saveAnonymousUserLocationDetails(
-                                    ShoppingDeliveryLocation(
-                                        confirmLocationResponse.orderSummary?.fulfillmentDetails
-                                    )
-                                )
-                            }
-
-                            val savedPlaceId = KotlinUtils.getDeliveryType()?.address?.placeId
-                            KotlinUtils.apply {
-                                this.placeId = confirmLocationRequest.address.placeId
-                                isLocationPlaceIdSame =
-                                    confirmLocationRequest.address.placeId?.equals(savedPlaceId)
-                            }
-
-                            setBrowsingData()
-                            updateToolbarTitle() // update plp location.
-                            onConfirmLocation() // This will again call addToCart
-                        }
-                    }
-                }
-            } catch (e: Exception) {
-                FirebaseManager.logException(e)
-                dismissProgressBar()
-            }
         }
     }
 
@@ -1223,7 +1181,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
             }
             BundleKeysConstants.REQUEST_CODE -> {
                 updateToolbarTitle()
-                callConfirmPlace()
+                LocationUtils.callConfirmPlace(this@ProductListingFragment, null, binding.incCenteredProgress.progressCreditLimit, confirmAddressViewModel)
             }
             else -> return
         }

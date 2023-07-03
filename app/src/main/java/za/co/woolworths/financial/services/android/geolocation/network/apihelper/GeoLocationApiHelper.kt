@@ -56,4 +56,6 @@ class GeoLocationApiHelper @Inject constructor() : RetrofitConfig(AppContextProv
 
     fun isConnectedToInternet(context: Context) =
         NetworkManager.getInstance().isConnectedToNetwork(context)
+
+    suspend fun getShoppingList() = mApiInterface.getShoppingList(getSessionToken(), getDeviceIdentityToken())
 }

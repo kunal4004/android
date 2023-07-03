@@ -39,12 +39,14 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyNames.Companion.DELIVERY_MODE
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils
+import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationParams
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
 import za.co.woolworths.financial.services.android.geolocation.network.model.Store
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
+import za.co.woolworths.financial.services.android.geolocation.viewmodel.AddToCartLiveData
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
-import za.co.woolworths.financial.services.android.geolocation.viewmodel.UnSellableItemsLiveData
+import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmLocationResponseLiveData
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
@@ -87,6 +89,7 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.Constant
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.saveAnonymousUserLocationDetails
+import za.co.woolworths.financial.services.android.util.LocationUtils
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
@@ -433,190 +436,181 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
             }
 
         } else {
-            if (placeId == null) {
-                return
+            callConfirmLocation()
+        }
+    }
+
+    private fun GeoLocationDeliveryAddressBinding.callConfirmLocation() {
+        if (placeId == null) {
+            return
+        }
+        val confirmLocationAddress = ConfirmLocationAddress(placeId,null,address2)
+        val confirmLocationRequest = when (deliveryType) {
+            Delivery.STANDARD.name -> {
+                mStoreId = ""
+                ConfirmLocationRequest(STANDARD, confirmLocationAddress, mStoreId)
             }
-            val confirmLocationAddress = ConfirmLocationAddress(placeId,null,address2)
-            val confirmLocationRequest = when (deliveryType) {
-                Delivery.STANDARD.name -> {
-                    mStoreId = ""
-                    ConfirmLocationRequest(STANDARD, confirmLocationAddress, mStoreId)
-                }
-                Delivery.CNC.name -> {
-                    ConfirmLocationRequest(CNC, confirmLocationAddress, mStoreId)
-                }
-                Delivery.DASH.name -> {
-                    mStoreId = validateLocationResponse?.validatePlace?.onDemand?.storeId
-                    ConfirmLocationRequest(DASH, confirmLocationAddress, mStoreId)
-                }
-                else -> {
-                    ConfirmLocationRequest(STANDARD, confirmLocationAddress, "")
+            Delivery.CNC.name -> {
+                ConfirmLocationRequest(CNC, confirmLocationAddress, mStoreId)
+            }
+            Delivery.DASH.name -> {
+                mStoreId = validateLocationResponse?.validatePlace?.onDemand?.storeId
+                ConfirmLocationRequest(DASH, confirmLocationAddress, mStoreId)
+            }
+            else -> {
+                ConfirmLocationRequest(STANDARD, confirmLocationAddress, "")
+            }
+        }
+        setEventsForSwitchingDeliveryType(deliveryType ?: Delivery.STANDARD.name)
+
+        LocationUtils.callConfirmPlace(this@DeliveryAddressConfirmationFragment,
+            ConfirmLocationParams(null, confirmLocationRequest),
+            progressBar, confirmAddressViewModel
+        )
+    }
+
+    private fun onConfirmLocation() {
+        if(!isAdded || !isVisible) return
+
+        // save details in cache
+        if (SessionUtilities.getInstance().isUserAuthenticated) {
+            val savedPlaceId =
+                Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
+            KotlinUtils.let {
+                it.placeId = placeId
+                it.isLocationPlaceIdSame = placeId?.equals(savedPlaceId)
+
+                if (it.isLocationPlaceIdSame == false) {
+                    KotlinUtils.isDeliveryLocationTabCrossClicked = false
+                    KotlinUtils.isCncTabCrossClicked = false
+                    KotlinUtils.isDashTabCrossClicked = false
+                    KotlinUtils.isStoreSelectedForBrowsing = false
                 }
             }
-            setEventsForSwitchingDeliveryType(deliveryType ?: Delivery.STANDARD.name)
+        } else {
+            val anonymousUserPlaceId =
+                KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.address?.placeId
+            KotlinUtils.let {
+                it.placeId = placeId
+                it.isLocationPlaceIdSame = placeId?.equals(anonymousUserPlaceId)
+                if (it.isLocationPlaceIdSame == false) {
+                    KotlinUtils.isDeliveryLocationTabCrossClicked = false
+                    KotlinUtils.isCncTabCrossClicked = false
+                    KotlinUtils.isDashTabCrossClicked = false
+                    KotlinUtils.isStoreSelectedForBrowsing = false
+                }
+            }
+        }
 
-            viewLifecycleOwner.lifecycleScope.launch {
-                progressBar.visibility = View.VISIBLE
-                try {
-                    val confirmLocationResponse =
-                        confirmAddressViewModel.postConfirmAddress(confirmLocationRequest)
-                    progressBar.visibility = View.GONE
-                    if(!isAdded || !isVisible) return@launch
-                    if (confirmLocationResponse != null) {
-                        when (confirmLocationResponse.httpCode) {
-                            HTTP_OK -> {
-                                // save details in cache
-                                if (SessionUtilities.getInstance().isUserAuthenticated) {
-                                    val savedPlaceId =
-                                        Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
-                                    KotlinUtils.let {
-                                        it.placeId = placeId
-                                        it.isLocationPlaceIdSame = placeId?.equals(savedPlaceId)
+        /*reset browsing data for cnc and dash both once fulfillment location is confirmed*/
+        WoolworthsApplication.setCncBrowsingValidatePlaceDetails(
+            validateLocationResponse?.validatePlace)
+        WoolworthsApplication.setDashBrowsingValidatePlaceDetails(
+            validateLocationResponse?.validatePlace)
 
-                                        if (it.isLocationPlaceIdSame == false) {
-                                            KotlinUtils.isDeliveryLocationTabCrossClicked = false
-                                            KotlinUtils.isCncTabCrossClicked = false
-                                            KotlinUtils.isDashTabCrossClicked = false
-                                            KotlinUtils.isStoreSelectedForBrowsing = false
-                                        }
-                                    }
-                                    Utils.savePreferredDeliveryLocation(
-                                        ShoppingDeliveryLocation(
-                                            confirmLocationResponse.orderSummary?.fulfillmentDetails
-                                        )
-                                    )
-                                    if (KotlinUtils.getAnonymousUserLocationDetails() != null)
-                                        KotlinUtils.clearAnonymousUserLocationDetails()
-                                } else {
-                                    val anonymousUserPlaceId =
-                                        KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.address?.placeId
-                                    KotlinUtils.let {
-                                        it.placeId = placeId
-                                        it.isLocationPlaceIdSame = placeId?.equals(anonymousUserPlaceId)
-                                        if (it.isLocationPlaceIdSame == false) {
-                                            KotlinUtils.isDeliveryLocationTabCrossClicked = false
-                                            KotlinUtils.isCncTabCrossClicked = false
-                                            KotlinUtils.isDashTabCrossClicked = false
-                                            KotlinUtils.isStoreSelectedForBrowsing = false
-                                        }
-                                        saveAnonymousUserLocationDetails(ShoppingDeliveryLocation(
-                                            confirmLocationResponse.orderSummary?.fulfillmentDetails))
-                                    }
-                                }
+        if (KotlinUtils.isLocationPlaceIdSame == false && deliveryType != Delivery.CNC.name) {
+            KotlinUtils.browsingCncStore = null
+        }
 
-                                /*reset browsing data for cnc and dash both once fulfillment location is confirmed*/
-                                WoolworthsApplication.setCncBrowsingValidatePlaceDetails(
-                                    validateLocationResponse?.validatePlace)
-                                WoolworthsApplication.setDashBrowsingValidatePlaceDetails(
-                                    validateLocationResponse?.validatePlace)
+        if (deliveryType == Delivery.CNC.name) {
+            KotlinUtils.browsingCncStore =
+                GeoUtils.getStoreDetails(mStoreId,
+                    validateLocationResponse?.validatePlace?.stores)
+            KotlinUtils.isStoreSelectedForBrowsing = false
+        }
 
-                                if (KotlinUtils.isLocationPlaceIdSame == false && deliveryType != Delivery.CNC.name) {
-                                    KotlinUtils.browsingCncStore = null
-                                }
+        WoolworthsApplication.setValidatedSuburbProducts(
+            validateLocationResponse?.validatePlace)
 
-                                if (deliveryType == Delivery.CNC.name) {
-                                    KotlinUtils.browsingCncStore =
-                                        GeoUtils.getStoreDetails(mStoreId,
-                                            validateLocationResponse?.validatePlace?.stores)
-                                    KotlinUtils.isStoreSelectedForBrowsing = false
-                                }
+        savedAddressResponse?.defaultAddressNickname =
+            defaultAddress?.nickname
 
-                                WoolworthsApplication.setValidatedSuburbProducts(
-                                    validateLocationResponse?.validatePlace)
+        if (deliveryType == Delivery.STANDARD.name) {
+            Utils.triggerFireBaseEvents(
+                FirebaseManagerAnalyticsProperties.SHOP_STANDARD_CONFIRM,
+                hashMapOf(
+                    FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                            FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_SHOP_STANDARD_CONFIRM),
 
-                                savedAddressResponse?.defaultAddressNickname =
-                                    defaultAddress?.nickname
+                activity)
+        }
+    }
 
-                                if (deliveryType == Delivery.STANDARD.name) {
-                                    Utils.triggerFireBaseEvents(
-                                        FirebaseManagerAnalyticsProperties.SHOP_STANDARD_CONFIRM,
-                                        hashMapOf(
-                                            FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
-                                                    FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_SHOP_STANDARD_CONFIRM),
-
-                                        activity)
-                                }
-
-                                if (isComingFromCheckout) {
-                                    if (deliveryType == Delivery.STANDARD.name || deliveryType == Delivery.DASH.name) {
-                                        if (isComingFromSlotSelection) {
-                                            /*Navigate to slot selection page with updated saved address*/
-                                            val checkoutActivityIntent =
-                                                Intent(activity,
-                                                    CheckoutActivity::class.java
-                                                )
-                                            checkoutActivityIntent.putExtra(
-                                                CheckoutAddressConfirmationFragment.SAVED_ADDRESS_KEY,
-                                                savedAddressResponse
-                                            )
-                                            val result = when (deliveryType) {
-                                                Delivery.STANDARD.name -> CheckoutAddressManagementBaseFragment.GEO_SLOT_SELECTION
-                                                else -> CheckoutAddressManagementBaseFragment.DASH_SLOT_SELECTION
-                                            }
-                                            checkoutActivityIntent.putExtra(result, true)
-                                            checkoutActivityIntent.putExtra(Constant.LIQUOR_ORDER, getLiquorOrder())
-                                            checkoutActivityIntent.putExtra(Constant.NO_LIQUOR_IMAGE_URL, getLiquorImageUrl())
-                                            activity?.apply {
-                                                startActivityForResult(
-                                                    checkoutActivityIntent,
-                                                    FULLFILLMENT_REQUEST_CODE
-                                                )
-
-                                                overridePendingTransition(
-                                                    R.anim.slide_from_right,
-                                                    R.anim.slide_out_to_left
-                                                )
-
-                                            }
-                                            activity?.finish()
-                                        }
-                                    } else if (isComingFromSlotSelection) {
-                                        if (whoIsCollecting != null) {
-                                            StorePickupInfoBody().apply {
-                                                firstName = whoIsCollecting?.recipientName
-                                                primaryContactNo = whoIsCollecting?.phoneNumber
-                                                storeId = mStoreId
-                                                vehicleModel = whoIsCollecting?.vehicleModel ?: ""
-                                                vehicleColour = whoIsCollecting?.vehicleColor ?: ""
-                                                vehicleRegistration =
-                                                    whoIsCollecting?.vehicleRegistration ?: ""
-                                                taxiOpted = whoIsCollecting?.isMyVehicle != true
-                                                lastDeliveryType = deliveryType
-                                                deliveryType = Delivery.CNC.name
-                                                address =
-                                                    ConfirmLocationAddress(validateLocationResponse?.validatePlace?.placeDetails?.placeId)
-                                            }
-                                            startCheckoutActivity(Utils.toJson(whoIsCollecting))
-                                        } else {
-                                            // Navigate to who is collecting
-                                            bundle?.putBoolean(
-                                                IS_COMING_FROM_CNC_SELETION, true)
-                                            findNavController().navigate(
-                                                R.id.action_deliveryAddressConfirmationFragment_to_geoCheckoutCollectingFragment,
-                                                bundleOf(BUNDLE to bundle))
-                                        }
-                                    }
-
-                                } else {
-                                    // Showing Sign in pop up when api fails and session dialog
-                                    // is shown
-                                    if (!SessionUtilities.getInstance().isUserAuthenticated) {
-                                        return@launch
-                                    }
-                                    // navigate to shop/list/cart tab
-                                    activity?.setResult(Activity.RESULT_OK)
-                                    activity?.finish()
-                                }
+    private fun onConfirmLocationNavigation(){
+        if (isComingFromCheckout) {
+            loadShoppingCart()
+            if (deliveryType == Delivery.STANDARD.name || deliveryType == Delivery.DASH.name) {
+                if (isComingFromSlotSelection) {
+                    /*Navigate to slot selection page with updated saved address*/
+                    val checkoutActivityIntent =
+                        Intent(activity,
+                            CheckoutActivity::class.java
+                        ).apply {
+                            putExtra(
+                                CheckoutAddressConfirmationFragment.SAVED_ADDRESS_KEY,
+                                savedAddressResponse
+                            )
+                            val result = when (deliveryType) {
+                                Delivery.STANDARD.name -> CheckoutAddressManagementBaseFragment.GEO_SLOT_SELECTION
+                                else -> CheckoutAddressManagementBaseFragment.DASH_SLOT_SELECTION
                             }
+                            putExtra(result, true)
+                            putExtra(Constant.LIQUOR_ORDER, getLiquorOrder())
+                            putExtra(
+                                Constant.NO_LIQUOR_IMAGE_URL,
+                                getLiquorImageUrl()
+                            )
                         }
+                    activity?.apply {
+                        startActivityForResult(
+                            checkoutActivityIntent,
+                            FULLFILLMENT_REQUEST_CODE
+                        )
+
+                        overridePendingTransition(
+                            R.anim.slide_from_right,
+                            R.anim.slide_out_to_left
+                        )
+
                     }
-                } catch (e: Exception) {
-                    progressBar.visibility = View.GONE
-                    // navigate to shop tab with error scenario
-                    activity?.setResult(REQUEST_CODE)
                     activity?.finish()
                 }
+            } else if (isComingFromSlotSelection) {
+                if (whoIsCollecting != null) {
+                    StorePickupInfoBody().apply {
+                        firstName = whoIsCollecting?.recipientName
+                        primaryContactNo = whoIsCollecting?.phoneNumber
+                        storeId = mStoreId
+                        vehicleModel = whoIsCollecting?.vehicleModel ?: ""
+                        vehicleColour = whoIsCollecting?.vehicleColor ?: ""
+                        vehicleRegistration =
+                            whoIsCollecting?.vehicleRegistration ?: ""
+                        taxiOpted = whoIsCollecting?.isMyVehicle != true
+                        lastDeliveryType = deliveryType
+                        deliveryType = Delivery.CNC.name
+                        address =
+                            ConfirmLocationAddress(validateLocationResponse?.validatePlace?.placeDetails?.placeId)
+                    }
+                    startCheckoutActivity(Utils.toJson(whoIsCollecting))
+                } else {
+                    // Navigate to who is collecting
+                    bundle?.putBoolean(
+                        IS_COMING_FROM_CNC_SELETION, true)
+                    findNavController().navigate(
+                        R.id.action_deliveryAddressConfirmationFragment_to_geoCheckoutCollectingFragment,
+                        bundleOf(BUNDLE to bundle))
+                }
             }
+
+        } else {
+            // Showing Sign in pop up when api fails and session dialog
+            // is shown
+            if (!SessionUtilities.getInstance().isUserAuthenticated) {
+                return
+            }
+            // navigate to shop/list/cart tab
+            activity?.setResult(Activity.RESULT_OK)
+            activity?.finish()
         }
     }
 
@@ -1046,19 +1040,26 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
     ) {
         deliveryType?.let {
             val unsellableItemsBottomSheetDialog =
-                UnsellableItemsBottomSheetDialog.newInstance(unSellableCommerceItems, it)
+                UnsellableItemsBottomSheetDialog.newInstance(unSellableCommerceItems, it, binding.progressBar, confirmAddressViewModel)
             unsellableItemsBottomSheetDialog.show(requireFragmentManager(),
                 UnsellableItemsBottomSheetDialog::class.java.simpleName)
         }
     }
 
     private fun isUnSellableItemsRemoved() {
-        UnSellableItemsLiveData.observe(viewLifecycleOwner) {
+        ConfirmLocationResponseLiveData.observe(viewLifecycleOwner) {
             isUnSellableItemsRemoved = it
             if (isUnSellableItemsRemoved == true) {
-                binding.sendConfirmLocation()
-                loadShoppingCart()
-                UnSellableItemsLiveData.value = false
+                ConfirmLocationResponseLiveData.value = false
+                onConfirmLocation() // This will process the data after location confirmation.
+            }
+        }
+        AddToCartLiveData.observe(viewLifecycleOwner) {
+            if (it) {
+                AddToCartLiveData.value = false
+                // This will get called once if any addToList functionality is done on unsellable popup
+                // Or we don't have unsellable and only did confirm Location.
+                onConfirmLocationNavigation()
             }
         }
     }
