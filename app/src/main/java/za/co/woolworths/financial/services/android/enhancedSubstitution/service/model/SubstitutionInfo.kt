@@ -14,4 +14,4 @@ data class SubstitutionInfo(
     @SerializedName("id")
     val id: String = "",
     val substitutionId: String? = null
-): Parcelable,Serializable
+): Parcelable, Serializable

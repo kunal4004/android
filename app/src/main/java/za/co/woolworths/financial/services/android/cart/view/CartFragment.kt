@@ -639,7 +639,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         productId: String?,
         catalogRefId: String?
     ) {
-        (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
+        (activity as? BottomNavigationActivity)?.pushFragment(
             ManageSubstitutionFragment.newInstance(substitutionSelection, commerceId, productId, catalogRefId)
         )
     }
