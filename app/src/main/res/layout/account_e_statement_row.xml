@@ -11,7 +11,7 @@
         android:id="@+id/tvViewStatement"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:fontFamily="@font/futura_medium_ttf"
+        android:fontFamily="@font/futura_semi_bold_ttf"
         android:gravity="center"
         android:letterSpacing="0.2"
         android:lineSpacingMultiplier="1.08"
