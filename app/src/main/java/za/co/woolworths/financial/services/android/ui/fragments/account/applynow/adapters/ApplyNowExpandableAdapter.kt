@@ -6,13 +6,15 @@ import com.awfs.coordination.databinding.MoreBenefitChildItemBinding
 import com.awfs.coordination.databinding.MoreBenefitParentItemBinding
 import za.co.woolworths.financial.services.android.models.dto.account.applynow.ChildrenItems
 import za.co.woolworths.financial.services.android.ui.adapters.holder.MoreBenefitChildViewHolder
+import za.co.woolworths.financial.services.android.ui.fragments.account.applynow.utils.UniqueIdentifiers
 import za.co.woolworths.financial.services.android.ui.fragments.account.applynow.utils.loadSvg
+import za.co.woolworths.financial.services.android.ui.fragments.account.applynow.utils.setContentDescription
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 import za.co.woolworths.financial.services.android.util.expand.ExpandableAdapter
 import za.co.woolworths.financial.services.android.util.expand.ParentListItem
 import za.co.woolworths.financial.services.android.util.expand.ParentViewHolder
 
-class ApplyNowExpandableAdapter(parentItemList: List<ParentListItem?>?) : ExpandableAdapter<ApplyNowExpandableAdapter.ApplyNowBenefitsParentViewHolder?, MoreBenefitChildViewHolder?>(parentItemList) {
+class ApplyNowExpandableAdapter(parentItemList: List<ParentListItem?>?, var sectionTitle: String) : ExpandableAdapter<ApplyNowExpandableAdapter.ApplyNowBenefitsParentViewHolder?, MoreBenefitChildViewHolder?>(parentItemList) {
 
     override fun onCreateParentViewHolder(parentViewGroup: ViewGroup, viewType: Int): ApplyNowBenefitsParentViewHolder {
         return ApplyNowBenefitsParentViewHolder(
@@ -33,7 +35,7 @@ class ApplyNowExpandableAdapter(parentItemList: List<ParentListItem?>?) : Expand
 
     override fun onBindChildViewHolder(childHolder: MoreBenefitChildViewHolder?, position: Int, childListItem: Any?) {
         val childItem = childListItem as? String
-        childHolder?.bind(childItem)
+        childHolder?.bind(childItem,sectionTitle,childHolder.absoluteAdapterPosition)
     }
 
     inner class ApplyNowBenefitsParentViewHolder(val binding: MoreBenefitParentItemBinding) : ParentViewHolder(binding.root) {
@@ -45,12 +47,18 @@ class ApplyNowExpandableAdapter(parentItemList: List<ParentListItem?>?) : Expand
                 holder.itemView.setOnClickListener {
                     if (holder.isRowExpanded) holder.collapseView() else holder.expandView()
                 }
+                addUniqueLocators(holder.absoluteAdapterPosition)
             }
+        }
+        private fun MoreBenefitParentItemBinding.addUniqueLocators(position: Int){
+            moreBenefitsTitleTextView.setContentDescription(sectionTitle, position = position, viewName = UniqueIdentifiers.Title)
+            moreBenefitsIconImageView.setContentDescription(sectionTitle, position = position,  viewName = UniqueIdentifiers.Image)
+            moreBenefitsArrowImageView.setContentDescription(sectionTitle, position = position,  viewName = UniqueIdentifiers.ArrowImage)
         }
 
         override fun setExpanded(expanded: Boolean) {
             super.isRowExpanded = expanded
-            binding.moreBenefitsArrowImageView?.rotation = if (expanded) AnimationUtilExtension.ROTATED_POSITION else AnimationUtilExtension.INITIAL_POSITION
+            binding.moreBenefitsArrowImageView.rotation = if (expanded) AnimationUtilExtension.ROTATED_POSITION else AnimationUtilExtension.INITIAL_POSITION
         }
 
         override fun onExpansionToggled(expanded: Boolean) {

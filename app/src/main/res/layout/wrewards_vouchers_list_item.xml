@@ -91,7 +91,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:layout_marginStart="5dp"
-                        android:fontFamily="@font/myriad_pro_regular_otf"
+                        android:fontFamily="@font/opensans_regular_ttf"
                         android:textColor="#80000000"
                         android:textSize="12sp" />
                 </LinearLayout>

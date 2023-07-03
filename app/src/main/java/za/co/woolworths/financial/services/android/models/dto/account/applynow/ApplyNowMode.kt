@@ -16,6 +16,7 @@ data class ApplyNowModel (
 data class Children (
     var order : Int,
     var title : String,
+    var description : String?,
     var type : String,
     var sectionType: ApplyNowSectionType = ApplyNowSectionType.valueOf(type),
     var children : List<ChildrenItems>
