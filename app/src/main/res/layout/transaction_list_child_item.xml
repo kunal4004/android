@@ -7,29 +7,27 @@
 
     <TextView
         android:id="@+id/transactionDate"
+        style="@style/futura_medium_black_12_text_style"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/eight_dp"
         android:layout_marginTop="@dimen/sixteen_dp"
-        android:fontFamily="@font/myriad_pro_regular_otf"
         android:letterSpacing="0.1"
         android:text="@string/transaction_date_value"
         android:textColor="@color/transaction_date_color"
-        android:textSize="@dimen/fourteen_dp"
         app:layout_constraintEnd_toStartOf="@+id/transactionAmount"
         app:layout_constraintStart_toStartOf="@+id/beginGuideline"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/transactionDescription"
+        style="@style/futura_medium_black_12_text_style"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/myriad_pro_regular_otf"
         android:text="Purchase - Foods"
         android:layout_marginEnd="@dimen/_8sdp"
         android:textAllCaps="true"
         android:textColor="@color/black"
-        android:textSize="@dimen/fifteen_sp"
         app:layout_constraintEnd_toStartOf="@+id/transactionAmount"
         app:layout_constraintStart_toStartOf="@+id/beginGuideline"
         app:layout_constraintTop_toBottomOf="@+id/transactionDate"/>

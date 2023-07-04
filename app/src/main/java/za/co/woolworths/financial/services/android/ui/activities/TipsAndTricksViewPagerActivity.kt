@@ -16,7 +16,6 @@ import za.co.woolworths.financial.services.android.models.dto.AccountsResponse
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity
-import za.co.woolworths.financial.services.android.ui.activities.account.apply_now.AccountSalesActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.ui.adapters.TipsAndTricksViewPagerAdapter

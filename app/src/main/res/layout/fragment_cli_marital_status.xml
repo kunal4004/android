@@ -103,11 +103,11 @@
 
         <TextView
             android:id="@+id/confirmAgreementTextview"
+            style="@style/opensans_regular_13_black"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@color/white"
             android:contentDescription="@string/confirmLabelDescription"
-            android:fontFamily="@font/myriad_pro_regular"
             android:gravity="start|top"
             android:lineSpacingMultiplier="@integer/one_point_five"
             android:paddingVertical="@dimen/fifteen_dp"
@@ -115,7 +115,7 @@
             android:text="@string/cli_married_in_community_agreement"
             android:textAlignment="viewStart"
             android:textColor="@color/color_7b7b7b"
-            android:textSize="@dimen/fifteen_sp" />
+           />
     </LinearLayout>
 
     <TextView

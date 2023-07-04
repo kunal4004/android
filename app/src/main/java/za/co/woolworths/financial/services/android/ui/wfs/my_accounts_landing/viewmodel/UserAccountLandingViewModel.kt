@@ -88,15 +88,16 @@ class UserAccountLandingViewModel @Inject constructor(
 
     private var _mapOfMyOffers = mutableMapOf<AccountOfferKeys, CommonItem.OfferItem?>()
 
-    var petInsuranceResponse : PetInsuranceModel? = null
+    var petInsuranceResponse: PetInsuranceModel? = null
 
     private var userAccountResponse: UserAccountResponse? = null
-    var accountProductCardsGroup : AccountProductCardsGroup? = null
-    var fetchAccountDidLoadOnce : Boolean = false
-    var petInsuranceDidAnimateOnce : Boolean = false
+    var accountProductCardsGroup: AccountProductCardsGroup? = null
+    var fetchAccountDidLoadOnce: Boolean = false
+    var petInsuranceDidAnimateOnce: Boolean = false
 
     private var _mapOfFinalProductItems = mutableMapOf<String, AccountProductCardsGroup?>()
-    val mapOfFinalProductItems: MutableMap<String, AccountProductCardsGroup?> = _mapOfFinalProductItems
+    val mapOfFinalProductItems: MutableMap<String, AccountProductCardsGroup?> =
+        _mapOfFinalProductItems
 
     private val _fetchPetInsuranceState = MutableStateFlow(NetworkStatusUI<PetInsuranceModel>())
     val fetchPetInsuranceState = _fetchPetInsuranceState.asStateFlow()
@@ -106,7 +107,8 @@ class UserAccountLandingViewModel @Inject constructor(
     private val _messageState = MutableStateFlow(NetworkStatusUI<MessageResponse>())
     val messageState = _messageState.asStateFlow()
 
-    private val _scheduleDeliveryNetworkState = MutableStateFlow(NetworkStatusUI<CreditCardDeliveryStatusResponse>())
+    private val _scheduleDeliveryNetworkState =
+        MutableStateFlow(NetworkStatusUI<CreditCardDeliveryStatusResponse>())
     val scheduleDeliveryNetworkState = _scheduleDeliveryNetworkState.asStateFlow()
 
     private val _isDeeplinkParamsAvailable = MutableStateFlow(false)
@@ -120,7 +122,8 @@ class UserAccountLandingViewModel @Inject constructor(
     private val _getAllUserAccounts = MutableStateFlow(NetworkStatusUI<UserAccountResponse>())
     val getAllUserAccounts = _getAllUserAccounts.asStateFlow()
 
-    private val _getUserAccountsByProductOfferingId = MutableStateFlow(NetworkStatusUI<UserAccountResponse>())
+    private val _getUserAccountsByProductOfferingId =
+        MutableStateFlow(NetworkStatusUI<UserAccountResponse>())
     val getUserAccountsByProductOfferingId = _getUserAccountsByProductOfferingId.asStateFlow()
 
     val mapOfMyOffers: MutableMap<AccountOfferKeys, CommonItem.OfferItem?> = _mapOfMyOffers
@@ -151,12 +154,12 @@ class UserAccountLandingViewModel @Inject constructor(
     }
 
     fun setUserAuthenticated(resultCode: Int?) {
-            if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
-                showShimmer(isC2User())
-                queryAccountLandingService(true)
-                isUserAuthenticated.value = Authenticated
-                isBiometricPopupEnabled = isBiometricScreenNeeded()
-            }
+        if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
+            showShimmer(isC2User())
+            queryAccountLandingService(true)
+            isUserAuthenticated.value = Authenticated
+            isBiometricPopupEnabled = isBiometricScreenNeeded()
+        }
     }
 
     fun showShimmer(isVisible: Boolean) {
@@ -184,10 +187,11 @@ class UserAccountLandingViewModel @Inject constructor(
         }
     }
 
-    fun getApplyNowState(accountNumberBin : String?) = product.getApplyNowState(accountNumberBin)
+    fun getApplyNowState(accountNumberBin: String?) = product.getApplyNowState(accountNumberBin)
 
     private fun constructMapOfMyOffers() {
-        val listOfOffers = offerUseCase.constructMapOfMyOffers(_mapOfFinalProductItems, _fetchPetInsuranceState)
+        val listOfOffers =
+            offerUseCase.constructMapOfMyOffers(_mapOfFinalProductItems, _fetchPetInsuranceState)
         _mapOfMyOffers.apply {
             clear()
             putAll(listOfOffers)
@@ -217,24 +221,33 @@ class UserAccountLandingViewModel @Inject constructor(
         val productDetailList = userAccountResponse?.accountList
 
         for (validItem in validProductList) {
-            val productDetails = productDetailList?.firstOrNull { it.productGroupCode == validItem.productGroupCode }
-            val product = transformSingleProductResult(validItem.productGroupCode, productDetails ?: validItem)
+            val productDetails =
+                productDetailList?.firstOrNull { it.productGroupCode == validItem.productGroupCode }
+            val product = transformSingleProductResult(
+                validItem.productGroupCode,
+                productDetails ?: validItem
+            )
             if (productDetails == null) {
-             when(product) {
+                when (product) {
                     is AccountProductCardsGroup.BlackCreditCard ->
-                        product.retryOptions = product.retryOptions.copy(isRetryButtonEnabled = true)
+                        product.retryOptions =
+                            product.retryOptions.copy(isRetryButtonEnabled = true)
 
                     is AccountProductCardsGroup.GoldCreditCard ->
-                        product.retryOptions = product.retryOptions.copy(isRetryButtonEnabled = true)
+                        product.retryOptions =
+                            product.retryOptions.copy(isRetryButtonEnabled = true)
 
                     is AccountProductCardsGroup.PersonalLoan ->
-                        product.retryOptions = product.retryOptions.copy(isRetryButtonEnabled = true)
+                        product.retryOptions =
+                            product.retryOptions.copy(isRetryButtonEnabled = true)
 
                     is AccountProductCardsGroup.SilverCreditCard ->
-                        product.retryOptions = product.retryOptions.copy(isRetryButtonEnabled = true)
+                        product.retryOptions =
+                            product.retryOptions.copy(isRetryButtonEnabled = true)
 
                     is AccountProductCardsGroup.StoreCard ->
-                        product.retryOptions = product.retryOptions.copy(isRetryButtonEnabled = true)
+                        product.retryOptions =
+                            product.retryOptions.copy(isRetryButtonEnabled = true)
 
                     else -> Unit
                 }
@@ -272,7 +285,7 @@ class UserAccountLandingViewModel @Inject constructor(
         this.accountProductCardsGroup = accountProductCardsGroup
         val productDetails = accountProductCardsGroup.productDetails
         viewModelScope.launch {
-            productDetails?.productOfferingId?.let {productOfferingId ->
+            productDetails?.productOfferingId?.let { productOfferingId ->
                 product.queryUserAccountByProductOfferingId(
                     productOfferingId = productOfferingId,
                     _getUserAccountsByProductOfferingId
@@ -310,7 +323,10 @@ class UserAccountLandingViewModel @Inject constructor(
     fun queryServiceScheduleYourDelivery() {
         this.userAccountResponse ?: return
         viewModelScope.launch {
-            queryServiceScheduleCreditCardDelivery(userAccountResponse, _scheduleDeliveryNetworkState)
+            queryServiceScheduleCreditCardDelivery(
+                userAccountResponse,
+                _scheduleDeliveryNetworkState
+            )
         }
     }
 
@@ -389,20 +405,23 @@ class UserAccountLandingViewModel @Inject constructor(
     }
 
     fun convertProductToAccountModel(products: MutableList<ProductDetails>?): List<Account> {
-        products?: return listOf()
+        products ?: return listOf()
         val gson = Gson()
         val jsonString = gson.toJson(products)
         val accountListType = object : TypeToken<List<Account>>() {}.type
         return gson.fromJson(jsonString, accountListType)
     }
 
-    fun onScheduleCreditCardDeliveryResponse(creditCardDeliveryResponse : CreditCardDeliveryStatusResponse?)
-     =  onGetCreditCardDeliveryStatusSuccess(userAccountResponse = userAccountResponse, creditCardDeliveryResponse)
+    fun onScheduleCreditCardDeliveryResponse(creditCardDeliveryResponse: CreditCardDeliveryStatusResponse?) =
+        onGetCreditCardDeliveryStatusSuccess(
+            userAccountResponse = userAccountResponse,
+            creditCardDeliveryResponse
+        )
 
 
     override fun onCleared() {
         super.onCleared()
-         saveToLocalDatabase(SessionDao.KEY.SCHEDULE_CREDIT_CARD_DELIVERY_ON_ACCOUNT_LANDING, null)
+        saveToLocalDatabase(SessionDao.KEY.SCHEDULE_CREDIT_CARD_DELIVERY_ON_ACCOUNT_LANDING, null)
     }
 
     fun getPetInsuranceMobileConfig() = product.getPetInsuranceFromMobileConfig()
@@ -411,11 +430,11 @@ class UserAccountLandingViewModel @Inject constructor(
         isAccountFragmentVisible = isVisible
     }
 
-    fun setUserAuthentication(){
+    fun setUserAuthentication() {
         isUserAuthenticated.value = isAuthenticated()
     }
 
-    fun getProductByProductGroupCode(productGroupCode : String?): AccountProductCardsGroup? {
+    fun getProductByProductGroupCode(productGroupCode: String?): AccountProductCardsGroup? {
         return mapOfFinalProductItems[productGroupCode]
     }
 
@@ -423,30 +442,51 @@ class UserAccountLandingViewModel @Inject constructor(
         _isDeeplinkParamsAvailable.value = false
     }
 
-    fun handlePetInsuranceResult(petModel: PetInsuranceModel,
-                                 petAwarenessModelNotCovered : (InsuranceProducts) ->  Unit) {
+    fun handlePetInsuranceResult(
+        petModel: PetInsuranceModel,
+        petAwarenessModelNotCovered: (InsuranceProducts) -> Unit
+    ) {
         // Determine whether Pet insurance model is displayed in product section
         product.setPetInsuranceResult(
             userAccountResponse = userAccountResponse,
             mapOfMyProducts = _mapOfFinalProductItems,
-            model= petModel,
-            petAwarenessModelNotCovered = petAwarenessModelNotCovered)
+            model = petModel,
+            petAwarenessModelNotCovered = petAwarenessModelNotCovered
+        )
 
         // Determine whether Pet insurance model is displayed in offer section
-        if(_mapOfFinalProductItems[AccountOfferKeys.PetInsurance.value] == null
+        if (_mapOfFinalProductItems[AccountOfferKeys.PetInsurance.value] == null
             && !_fetchPetInsuranceState.value.hasError
-            && _fetchPetInsuranceState.value.data?.insuranceProducts?.isNotEmpty() == true) {
+            && _fetchPetInsuranceState.value.data?.insuranceProducts?.isNotEmpty() == true
+        ) {
             val tempOfferList = _mapOfMyOffers.toMutableMap()
             _mapOfMyOffers.clear()
             _mapOfMyOffers += AccountOfferKeys.PetInsurance to OfferProductType.PetInsurance.value()
-            for(temp in tempOfferList)  {
+            for (temp in tempOfferList) {
                 _mapOfMyOffers += temp.key to temp.value
             }
         }
     }
 
     fun cachedPetInsuranceModel() {
-        petInsuranceResponse?.let { handlePetInsuranceResult(petModel = it) {}
+        petInsuranceResponse?.let {
+            handlePetInsuranceResult(petModel = it) {}
+        }
     }
+
+        fun onErrorRemoveProducts() {
+            listOf(
+                AccountProductKeys.BlackCreditCard.value,
+                AccountProductKeys.StoreCard.value,
+                AccountProductKeys.PersonalLoan.value
+            ).forEach { key ->
+                val productDetails = mapOfFinalProductItems[key]?.productDetails
+                if (productDetails == null || (productDetails?.availableFunds == null
+                            && productDetails.currentBalance == null
+                            && productDetails.productGroupCode == null)
+                ) {
+                    mapOfFinalProductItems.remove(key)
+                }
+            }
+        }
     }
-}

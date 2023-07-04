@@ -20,7 +20,7 @@
             android:layout_gravity="top"
             android:alpha="0.4"/>
 
-        <za.co.woolworths.financial.services.android.ui.views.WTextView
+        <TextView
             android:id="@+id/txtEmptyStateTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -36,7 +36,7 @@
             android:textColor="@color/black"
             android:textSize="16sp"
             android:textStyle="bold"
-            app:WTextView_font="medium_bold"/>
+            android:fontFamily="@font/futura_semi_bold_ttf"/>
 
         <TextView
             android:id="@+id/txtEmptyStateDesc"
@@ -50,6 +50,7 @@
             android:textSize="@dimen/thirteen_sp"
             android:textColor="@color/semi_transparent_black"
             android:fontFamily="@font/opensans_regular"/>
+
 
 
         <za.co.woolworths.financial.services.android.ui.views.WButton

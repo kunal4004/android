@@ -58,14 +58,14 @@
 
         <EditText
             android:id="@+id/storeInputValue"
-            style="@style/myriad_pro_regular"
+            style="@style/opensens_regular"
             android:layout_width="match_parent"
             android:layout_height="@dimen/fifty_dp"
             android:layout_marginTop="@dimen/one_dp"
             android:background="@color/white"
             android:drawableStart="@drawable/ic_search"
             android:drawablePadding="@dimen/ten_dp"
-            android:fontFamily="@font/myriad_pro_regular"
+            android:fontFamily="@font/opensans_regular"
             android:gravity="center_vertical"
             android:hint="@string/hint_search_for_your_store"
             android:paddingStart="@dimen/twenty_four_dp"

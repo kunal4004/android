@@ -26,8 +26,9 @@
             android:paddingLeft="@dimen/bank_spacing_width"
             android:paddingRight="@dimen/bank_spacing_width">
 
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
+            <TextView
                 android:id="@+id/tvStatementSendTo"
+                style="@style/opensans_regular_13_black"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/eight_dp"
@@ -35,9 +36,7 @@
                 android:gravity="center"
                 android:lineSpacingMultiplier="1.27"
                 android:text="@string/statement_sent_to_title"
-                android:textColor="@color/statement_title"
-                android:textSize="@dimen/fifteen_sp"
-                app:WTextView_font="myriadpro_regular"/>
+                android:textColor="@color/statement_title" />
 
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
@@ -49,8 +48,8 @@
                 android:lineSpacingMultiplier="1.13"
                 android:text="****@emailaddress.com"
                 android:textColor="@color/black"
-                android:textSize="@dimen/sixteen_sp"
-                app:WTextView_font="medium"/>
+                android:textSize="@dimen/twenty_sp"
+                app:WTextView_font="semi_bold"/>
 
             <RelativeLayout
                 android:id="@+id/relNextButton"

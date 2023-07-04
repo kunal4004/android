@@ -11,33 +11,39 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import org.json.JSONException
+import org.json.JSONObject
+import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.account.PetInsuranceModel
 import za.co.woolworths.financial.services.android.models.dto.account.ServerErrorResponse
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.CreditCardDeliveryStatusResponse
+import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.wfs.component.*
 import za.co.woolworths.financial.services.android.ui.wfs.component.pull_to_refresh.WfsPullToRefreshUI
 import za.co.woolworths.financial.services.android.ui.wfs.core.NetworkStatusUI
 import za.co.woolworths.financial.services.android.ui.wfs.core.RetrofitFailureResult
 import za.co.woolworths.financial.services.android.ui.wfs.core.animationDurationMilis400
+import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.extensions.findActivity
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.extensions.testAutomationTag
+import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature.enumtype.MyAccountSectionHeaderType
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_chat.ui.WfsChatView
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_general.stabletype.GeneralProductType
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_general.ui.GeneralItem
-import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature.enumtype.MyAccountSectionHeaderType
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_offer.ui.OfferCarousel
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_pet_insurance.ui.PetInsuranceView
+import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.enumtype.AccountProductCardsGroup
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.enumtype.LoadingOptions
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.enumtype.ShimmerOptions
-import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.enumtype.AccountProductCardsGroup
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.model.UserAccountResponse
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.schema.AccountLandingInstantLauncher
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.schema.CommonItem
@@ -56,6 +62,8 @@ import za.co.woolworths.financial.services.android.ui.wfs.theme.FontDimensions
 import za.co.woolworths.financial.services.android.ui.wfs.theme.Margin
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppBackground
 import za.co.woolworths.financial.services.android.ui.wfs.theme.White
+import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities
+import za.co.woolworths.financial.services.android.util.SessionUtilities
 
 @Composable
 fun SignedInScreen(
@@ -283,7 +291,7 @@ private fun UserAccountLandingViewModel.CollectFetchAccount(
     stateFetchAllAccounts: NetworkStatusUI<UserAccountResponse>) {
 
     if (!stateFetchAllAccounts.isLoading) {
-        if (stateFetchAllAccounts.hasError) {
+        if (stateFetchAllAccounts.hasError ) {
             when (val result = stateFetchAllAccounts.errorMessage) {
 
                 RetrofitFailureResult.NoConnectionState -> {
@@ -292,7 +300,31 @@ private fun UserAccountLandingViewModel.CollectFetchAccount(
                 }
 
                 is RetrofitFailureResult.ServerResponse<*> -> {
-                    errorResponse.value = result.data as? ServerErrorResponse
+                    onErrorRemoveProducts()
+                    errorResponse.value = (result.data as? UserAccountResponse)?.response
+                    stateFetchAllAccounts.hasError = false
+                }
+
+                is RetrofitFailureResult.SessionTimeout<*> -> {
+                    val context = LocalContext.current
+                    val activity = context.findActivity()
+                    val serverResponse = (result.data as? UserAccountResponse)?.response
+                    var stsParams = serverResponse?.stsParams
+                    val message = serverResponse?.message ?: ""
+                    if (stsParams?.isEmpty() == true && message.isNotEmpty()){
+                        stsParams = try {
+                            val messageObj = JSONObject(message)
+                            messageObj.getString("sts_params")
+                        }catch (ex : JSONException){
+                            null
+                        }
+                    }
+                    setUserUnAuthenticated(SSOActivity.SSOActivityResult.SIGNED_OUT.rawValue())
+                    LaunchedEffect(Unit) {
+                        SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, stsParams)
+                        SessionExpiredUtilities.getInstance().showSessionExpireDialog(activity)
+
+                    }
                 }
 
                 else -> Unit
@@ -507,7 +539,7 @@ private fun LazyListScope.productHeaderView(
         TextFuturaFamilyHeader1(
             text = title,
             locator = locator,
-            color = Color.Black,
+            textColor = Color.Black,
             modifier = Modifier
                 .padding(start = Margin.start, top = Margin.end)
                 .testAutomationTag(locator),
@@ -592,6 +624,7 @@ fun HeaderItem(
         locator = locator,
         textAlign = textAlign,
         fontSize = fontSize,
+        textColor = Color.Black,
         modifier = Modifier.padding(start = Margin.start, top = Margin.top),
         isLoading = isLoading,
         brush = brush
