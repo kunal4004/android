@@ -606,7 +606,7 @@ class KotlinUtils {
                         val formmmatedNickName = getFormattedNickName(address?.nickname,
                             fullAddress, context)
 
-                        if (timeSlot?.isNullOrEmpty() == true) {
+                        if (timeSlot.isNullOrEmpty()) {
                             tvDeliveryLocation?.text =
                                 context?.getString(R.string.no_timeslots_available_title)
                                     ?.plus("\t\u2022\t")?.plus(
