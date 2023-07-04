@@ -28,7 +28,7 @@
         app:srcCompat="@drawable/emptylists" />
 
 
-    <za.co.woolworths.financial.services.android.ui.views.WTextView
+    <TextView
         android:id="@+id/txtEmptyStateTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -42,7 +42,7 @@
         android:textAllCaps="false"
         android:textColor="@color/black"
         android:textSize="@dimen/twenty_sp"
-        app:WTextView_font="medium_bold"
+        android:fontFamily="@font/futura_semi_bold_ttf"
         app:layout_constraintBottom_toTopOf="@+id/txtEmptyStateDesc"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

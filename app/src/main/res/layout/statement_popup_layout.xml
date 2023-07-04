@@ -48,8 +48,8 @@
                 android:lineSpacingMultiplier="1.13"
                 android:text="****@emailaddress.com"
                 android:textColor="@color/black"
-                android:textSize="@dimen/sixteen_sp"
-                app:WTextView_font="medium"/>
+                android:textSize="@dimen/twenty_sp"
+                app:WTextView_font="semi_bold"/>
 
             <RelativeLayout
                 android:id="@+id/relNextButton"

@@ -39,7 +39,7 @@
                     android:contentDescription="@string/errorMessageText"
                     android:lineSpacingExtra="1.4dp"
                     android:text="@string/cli_lorem_ipsum"
-                    android:textColor="@color/semi_transparent_black"
+                    android:textColor="@color/checkout_delivering_title"
                  />
 
             </LinearLayout>
