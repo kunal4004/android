@@ -5,6 +5,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class EnhanceSubstitution(
-        val minimumSupportedAppBuildNumber:Int?,
-        val thresholdQuantityForSubstitutionProduct:Int
+    val minimumSupportedAppBuildNumber:Int?,
+    val thresholdQuantityForSubstitutionProduct:Int,
+    var isEnhancedSubstitutionEnable: Boolean
 ):Parcelable

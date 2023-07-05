@@ -121,7 +121,6 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
     }
 
     fun initView() {
-        getKiboList()
         binding.layoutManageSubstitution.apply {
             listSubstitute.tvSearchProduct.onClick {
                 openSubstitutionSearchScreen()
@@ -137,6 +136,7 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
         binding.layoutManageSubstitution.nestedScrollView.viewTreeObserver.addOnScrollChangedListener(
             this
         )
+        getKiboList()
     }
 
     private fun showShimmerView() {
@@ -156,8 +156,10 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
         }
     }
 
-    private fun getKiboList(): ArrayList<SubstitutionProducts> {
-        val list = ArrayList<SubstitutionProducts>()
+    private fun getKiboList() {
+        binding.layoutManageSubstitution.listSubstitute.apply {
+            recyclerView.visibility = VISIBLE
+        }
         productSubstitutionViewModel.getKiboProducts(prepareProductRequest())
         productSubstitutionViewModel.kiboProductResponse.observe(viewLifecycleOwner) { kiboProductResponse ->
 
@@ -191,7 +193,6 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
                 }
             }
         }
-        return list
     }
 
     private fun showKiboFailureErrorView() {
@@ -286,8 +287,7 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
                         }
 
                         if (itemList?.isEmpty() == false) {
-                            binding.layoutManageSubstitution.listSubstitute.recyclerView.visibility =
-                                VISIBLE
+                            binding.layoutManageSubstitution.listSubstitute.recyclerView.visibility = VISIBLE
                             if (itemList.size > KIBO_PRODUCT_SIZE) {
                                 setRecyclerViewForKiboProducts(itemList.take(KIBO_PRODUCT_SIZE) as? ArrayList<Item>?)
                             } else {
@@ -327,7 +327,10 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
                 false
             )
         } else {
-            Utils.fadeInFadeOutAnimation(binding.layoutManageSubstitution.listSubstitute.root, true)
+            Utils.fadeInFadeOutAnimation(
+                binding.layoutManageSubstitution.listSubstitute.root,
+                true
+            )
         }
     }
 

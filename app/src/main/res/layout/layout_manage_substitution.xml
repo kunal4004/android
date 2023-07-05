@@ -10,13 +10,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <RadioButton
+        <CheckBox
             android:id="@+id/rbShopperChoose"
             android:layout_width="@dimen/twenty_four_dp"
             android:layout_height="@dimen/twenty_four_dp"
-            android:layout_marginStart="@dimen/twenty_four_dp"
-            android:background="@android:color/transparent"
+            android:layout_centerVertical="true"
+            android:layout_marginHorizontal="@dimen/eighteen_dp"
+            android:padding="@dimen/seven_dp"
             android:button="@drawable/address_selector_background"
+            android:checked="false"
+            android:gravity="center"
+            android:saveEnabled="false"
             app:layout_constraintEnd_toStartOf="@+id/txtShopperChoose"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -25,7 +29,6 @@
             android:id="@+id/txtShopperChoose"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/ten_dp"
             android:ellipsize="end"
             android:fontFamily="@font/opensans_regular"
             android:lineSpacingExtra="@dimen/_2sdp"
@@ -38,13 +41,19 @@
             app:layout_constraintStart_toEndOf="@+id/rbShopperChoose"
             app:layout_constraintTop_toTopOf="@+id/rbShopperChoose" />
 
-        <RadioButton
+
+        <CheckBox
             android:id="@+id/rbOwnSubstitute"
             android:layout_width="@dimen/twenty_four_dp"
             android:layout_height="@dimen/twenty_four_dp"
-            android:layout_marginStart="@dimen/twenty_four_dp"
-            android:layout_marginTop="@dimen/eighteen_dp"
+            android:layout_centerVertical="true"
+            android:layout_marginHorizontal="@dimen/eighteen_dp"
             android:button="@drawable/address_selector_background"
+            android:checked="false"
+            android:gravity="center"
+            android:saveEnabled="false"
+            android:padding="@dimen/seven_dp"
+            android:layout_marginTop="@dimen/eighteen_dp"
             app:layout_constraintEnd_toStartOf="@+id/tvShopperChoose"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/rbShopperChoose" />
@@ -53,7 +62,6 @@
             android:id="@+id/tvShopperChoose"
             android:layout_width="@dimen/zero_dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/ten_dp"
             android:fontFamily="@font/opensans_regular"
             android:text="@string/choose_substitute"
             android:textColor="@color/black"
