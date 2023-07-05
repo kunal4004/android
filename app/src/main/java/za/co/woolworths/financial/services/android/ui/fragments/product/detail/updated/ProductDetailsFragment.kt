@@ -4258,7 +4258,8 @@ class ProductDetailsFragment :
         }
     }
     override fun openManageSubstituion() {
-        (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(openManageSubstitutionFragment(selectionChoice))
+        (activity as? BottomNavigationActivity)?.pushFragment(
+            ManageSubstitutionFragment.newInstance(selectionChoice, commarceItemId, prodId, getSelectedSku()?.sku))
     }
 
     private fun substitutionEditButtonClick() {
@@ -4266,7 +4267,8 @@ class ProductDetailsFragment :
             if (isAllProductsOutOfStock()) {
                 productOutOfStockErrorMessage(true)
             } else {
-                (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(openManageSubstitutionFragment(selectionChoice))
+                (activity as? BottomNavigationActivity)?.pushFragment(
+                    ManageSubstitutionFragment.newInstance(selectionChoice, commarceItemId, prodId, getSelectedSku()?.sku))
             }
         } else {
             ScreenManager.presentSSOSignin(activity, SSO_REQUEST_FOR_ENHANCE_SUBSTITUTION)
