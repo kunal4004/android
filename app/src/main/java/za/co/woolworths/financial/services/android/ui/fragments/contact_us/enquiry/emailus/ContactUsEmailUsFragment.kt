@@ -13,7 +13,7 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import com.awfs.coordination.R
-import com.awfs.coordination.databinding.FragmentEmailUsBinding
+import com.awfs.coordination.databinding.ContactUsEmailUsFragmentBinding
 import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
@@ -21,7 +21,6 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.contact_us.enquiry.list.EnquiriesListViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.contact_us.enquiry.list.EnquiriesListViewModel.Companion.EMAIL_US_REQUEST
-import za.co.woolworths.financial.services.android.ui.fragments.contact_us.enquiry.list.ValidationErrors
 import za.co.woolworths.financial.services.android.ui.fragments.contact_us.enquiry.loading.EmailUsLoadingActivity
 import za.co.woolworths.financial.services.android.ui.wfs.contact_us.fragment.ContactUsSelectEmailEnquiryTypeFragment
 import za.co.woolworths.financial.services.android.ui.wfs.contact_us.viewmodel.ContactUsViewModel
@@ -29,8 +28,8 @@ import za.co.woolworths.financial.services.android.util.KeyboardUtils
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 
 @AndroidEntryPoint
-class EmailUsFragment : Fragment(), View.OnClickListener, TextWatcher {
-    private var _binding: FragmentEmailUsBinding? = null
+class ContactUsEmailUsFragment : Fragment(), View.OnClickListener, TextWatcher {
+    private var _binding: ContactUsEmailUsFragmentBinding? = null
     private val binding get() = _binding!!
     val viewModel: EnquiriesListViewModel by activityViewModels()
     val contactUsViewModel : ContactUsViewModel by activityViewModels()
@@ -45,7 +44,7 @@ class EmailUsFragment : Fragment(), View.OnClickListener, TextWatcher {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentEmailUsBinding.inflate(inflater, container, false)
+        _binding = ContactUsEmailUsFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -76,20 +75,22 @@ class EmailUsFragment : Fragment(), View.OnClickListener, TextWatcher {
         viewModel.validationErrors?.observe(viewLifecycleOwner) {
             binding.apply {
                 when (it) {
-                    ValidationErrors.EmailNotValid -> {
+                    EnquiriesListViewModel.ValidationErrors.EmailNotValid -> {
                         binding.etEmailUsEmail.background = ContextCompat.getDrawable(requireActivity(), R.drawable.input_error_background)
                         binding.tvEmailUsEmailValidation.apply {
                             setTextColor(Color.RED)
                         }
 
                     }
-                    ValidationErrors.EnquiryNotValid -> {
+                    EnquiriesListViewModel.ValidationErrors.EnquiryNotValid -> {
                         tvEmailUsEnquiry.setTextColor(resources.getColor(R.color.red))
 
                     }
-                    ValidationErrors.ValidationSuccess -> {
+                    EnquiriesListViewModel.ValidationErrors.ValidationSuccess -> {
                         btnEmailUs.isEnabled = true
                     }
+
+                    else -> Unit
                 }
             }
         }

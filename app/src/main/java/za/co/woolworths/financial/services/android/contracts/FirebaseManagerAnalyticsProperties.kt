@@ -392,6 +392,7 @@ open class FirebaseManagerAnalyticsProperties {
         const val SCREEN_VIEW_PLP: String = "screen_view"
         const val ADD_PAYMENT_INFO: String = "add_payment_info"
         const val PURCHASE: String = "purchase"
+        const val DASH_PREFIX = "dash_"
 
 
         //Geolocation
@@ -709,7 +710,7 @@ open class FirebaseManagerAnalyticsProperties {
             const val SHOP_MAIN_CATEGORIES: String = "Shop Main Categories"
             const val SHOP_SUB_CATEGORIES: String = "Shop Sub Categories"
             const val PRODUCT_SEARCH: String = "Product Search"
-            const val PRODUCT_SEARCH_RESULTS: String = "Product Search Result"
+            const val PRODUCT_LISTING_PAGE: String = "Product Listing Page"
             const val PRODUCT_SEARCH_REFINEMENT: String = "Product Search Refinement"
             const val PRODUCT_SEARCH_REFINEMENT_CATEGORY: String = "Product Search Refinement Category"
             const val PRODUCT_DETAIL: String = "Product Detail"

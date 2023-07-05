@@ -125,14 +125,13 @@
 
     <TextView
         android:id="@+id/pageDesc"
-        style="@style/myriad_pro_regular"
+        style="@style/ccd_opensans_regular"
         android:layout_marginTop="@dimen/eight_dp"
         android:contentDescription="@string/cd_ccd_labeltimeslotdescription"
         android:lineSpacingMultiplier="1.40"
         android:text="@string/time_slots_page_desc"
         android:textColor="@color/currency_color"
         android:alpha="@integer/point_five"
-        android:textSize="@dimen/fifteen_sp"
         app:layout_constraintEnd_toEndOf="@id/right_guideline"
         app:layout_constraintStart_toStartOf="@id/left_guideline"
         app:layout_constraintTop_toBottomOf="@id/pageTitle" />

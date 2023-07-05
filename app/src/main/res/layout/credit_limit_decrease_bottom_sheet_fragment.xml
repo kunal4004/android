@@ -38,18 +38,17 @@
 
     <TextView
         android:id="@+id/tvDescriptionPart1"
+        style="@style/opensans_regular_13_black"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="16dp"
-        android:fontFamily="@font/myriad_pro_regular_otf"
         android:gravity="center"
         android:lineSpacingExtra="1.dp"
         android:lineSpacingMultiplier="1.40"
         android:text="@string/credit_limit_decrease_desc_part_1"
         android:textColor="@color/permanent_card_block_desc_color"
-        android:textSize="15sp"
         app:layout_constraintBottom_toTopOf="@+id/tvDescriptionPart2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -57,18 +56,17 @@
 
     <TextView
         android:id="@+id/tvDescriptionPart2"
+        style="@style/opensans_regular_13_black"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="48dp"
-        android:fontFamily="@font/myriad_pro_regular_otf"
         android:gravity="center"
         android:lineSpacingExtra="1.dp"
         android:lineSpacingMultiplier="1.40"
         android:text="@string/credit_limit_decrease_desc_part_2"
         android:textColor="@color/permanent_card_block_desc_color"
-        android:textSize="15sp"
         app:layout_constraintBottom_toTopOf="@+id/btnProceedWithMaximum"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

@@ -31,7 +31,7 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.adapters.PMACardsAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindColor
 import za.co.woolworths.financial.services.android.ui.extension.bindString
-import za.co.woolworths.financial.services.android.ui.extension.getMyriadProSemiBoldFont
+import za.co.woolworths.financial.services.android.ui.extension.getOpenSansSemiBoldFont
 import za.co.woolworths.financial.services.android.ui.views.card_swipe.RecyclerViewSwipeDecorator
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
@@ -297,9 +297,9 @@ class PMAManageCardFragment : PMAFragment(), View.OnClickListener {
 
             RecyclerViewSwipeDecorator.Builder(canvas, binding.pmaManageCardRecyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
                     .addSwipeLeftLabel(bindString(R.string.delete))
-                    .setSwipeLeftLabelTextSize(TypedValue.COMPLEX_UNIT_SP, 12.0f)
+                    .setSwipeLeftLabelTextSize(TypedValue.COMPLEX_UNIT_SP, 11.0f)
                     .addBackgroundColor(bindColor(R.color.delete_red_bg))
-                    .setSwipeLeftLabelTypeface(getMyriadProSemiBoldFont() ?: Typeface.DEFAULT)
+                    .setSwipeLeftLabelTypeface(getOpenSansSemiBoldFont() ?: Typeface.DEFAULT)
                     .setSwipeLeftTextColor(Color.WHITE)
                     .create()
                     .decorate()
