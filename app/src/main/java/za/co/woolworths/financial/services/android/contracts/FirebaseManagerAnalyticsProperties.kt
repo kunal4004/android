@@ -709,6 +709,7 @@ open class FirebaseManagerAnalyticsProperties {
 
             //checkout promo step
             const val BASKET = "basket"
+
         }
     }
 

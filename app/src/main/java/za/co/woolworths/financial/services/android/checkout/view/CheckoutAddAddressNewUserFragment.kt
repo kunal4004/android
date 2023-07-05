@@ -781,39 +781,6 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             activity
         )
     }
-
-    private fun setFirebaseEventFormStart(addressType: String, deliveryType : Delivery?) {
-
-        var propertyValueForFormType = when(deliveryType){
-            Delivery.DASH ->  {
-                FirebaseManagerAnalyticsProperties.PropertyValues.DASH
-            }
-            Delivery.CNC -> {
-                FirebaseManagerAnalyticsProperties.PropertyValues.CLICK_AND_COLLECT
-            }
-            else -> {
-                FirebaseManagerAnalyticsProperties.PropertyValues.STANDARD
-            }
-        }
-
-        val propertyValueForFormLocation = if(isComingFromCheckout){
-            FirebaseManagerAnalyticsProperties.PropertyValues.CHECKOUT
-        }else {
-            FirebaseManagerAnalyticsProperties.PropertyValues.BROWSE
-        }
-
-        //Event form type for address checkout
-        val formTypeParams = bundleOf(
-            FirebaseManagerAnalyticsProperties.PropertyNames.FORM_TYPE to
-                    propertyValueForFormType,
-            FirebaseManagerAnalyticsProperties.PropertyNames.FORM_NAME to
-                    addressType,
-            FirebaseManagerAnalyticsProperties.PropertyNames.FORM_LOCATION to
-                    propertyValueForFormLocation
-        )
-        AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.FORM_START, formTypeParams)
-    }
-
     private fun resetOtherDeliveringTitle(selectedTag: Int) {
         //change background of unselected textview
         for ((index) in deliveringOptionsList!!.withIndex()) {

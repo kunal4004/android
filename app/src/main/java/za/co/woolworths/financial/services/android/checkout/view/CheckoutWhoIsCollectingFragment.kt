@@ -200,7 +200,6 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(R.
                 FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
                         FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_COLLECTION_CONFIRM_DETAILS
             ), activity)
-
         val whoIsCollectingDetails = WhoIsCollectingDetails(
             binding.whoIsCollectingDetailsLayout.recipientNameEditText.text.toString(),
             binding.whoIsCollectingDetailsLayout.cellphoneNumberEditText.text.toString(),
