@@ -41,7 +41,7 @@
 
     <TextView
         android:id="@+id/address"
-        style="@style/myriad_pro_regular"
+        style="@style/opensens_regular"
         android:gravity="center_horizontal"
         android:textSize="@dimen/sixteen_sp"
         android:layout_marginTop="@dimen/fifteen_sp"

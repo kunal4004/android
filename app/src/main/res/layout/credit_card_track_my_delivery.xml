@@ -73,19 +73,18 @@
         app:layout_constraintStart_toStartOf="@+id/left_guideline"
         app:layout_constraintTop_toBottomOf="@+id/TrackDeliveryDivider" />
 
-    <za.co.woolworths.financial.services.android.ui.views.WTextView
+    <TextView
         android:id="@+id/referenceNumberText"
+        style="@style/opensans_regular_14_black"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/thirteen_dp"
         android:alpha="0.5"
-        android:drawableLeft="@drawable/icon_copy_link"
+        app:drawableStartCompat="@drawable/icon_copy_link"
         android:drawablePadding="@dimen/five_dp"
         android:gravity="center"
         android:text="@string/copy_reference_number"
         android:textColor="@color/black"
-        android:textSize="@dimen/sixteen_sp"
-        app:WTextView_font="myriadpro_regular"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/referenceNumber" />
@@ -109,8 +108,9 @@
         app:layout_constraintStart_toStartOf="@+id/left_guideline"
         app:layout_constraintTop_toBottomOf="@+id/referenceNumberText" />
 
-    <za.co.woolworths.financial.services.android.ui.views.WTextView
+    <TextView
         android:id="@+id/cancelText"
+        style="@style/opensans_regular_14_black"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/thirteen_dp"
@@ -118,8 +118,6 @@
         android:gravity="center"
         android:text="@string/cancel_underline"
         android:textColor="@color/black"
-        android:textSize="@dimen/sixteen_sp"
-        app:WTextView_font="myriadpro_regular"
         app:layout_constraintBottom_toTopOf="@+id/bottom_guideline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
