@@ -442,7 +442,7 @@ class UserAccountLandingViewModel @Inject constructor(
         _isDeeplinkParamsAvailable.value = false
     }
 
-    fun handlePetInsuranceResult(
+    fun handlePetInsurancePendingCoveredNotCoveredUI(
         petModel: PetInsuranceModel,
         petAwarenessModelNotCovered: (InsuranceProducts) -> Unit
     ) {
@@ -470,7 +470,7 @@ class UserAccountLandingViewModel @Inject constructor(
 
     fun cachedPetInsuranceModel() {
         petInsuranceResponse?.let {
-            handlePetInsuranceResult(petModel = it) {}
+            handlePetInsurancePendingCoveredNotCoveredUI(petModel = it) {}
         }
     }
 

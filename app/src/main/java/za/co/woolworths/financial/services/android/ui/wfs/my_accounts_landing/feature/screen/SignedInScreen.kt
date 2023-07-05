@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -25,7 +24,6 @@ import org.json.JSONException
 import org.json.JSONObject
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.account.PetInsuranceModel
-import za.co.woolworths.financial.services.android.models.dto.account.ServerErrorResponse
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.CreditCardDeliveryStatusResponse
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.wfs.component.*
@@ -118,7 +116,7 @@ fun UserAccountLandingViewModel.PetInsuranceCollector(
     if (!petInsuranceState.isLoading) {
         petInsuranceState.data?.let { petModel ->
             petInsuranceResponse = petModel
-            this.handlePetInsuranceResult(petModel) { insuranceProduct ->
+            this.handlePetInsurancePendingCoveredNotCoveredUI(petModel) { insuranceProduct ->
                 onClick(
                     AccountLandingInstantLauncher.PetInsuranceNotCoveredAwarenessModel(
                         insuranceProduct
