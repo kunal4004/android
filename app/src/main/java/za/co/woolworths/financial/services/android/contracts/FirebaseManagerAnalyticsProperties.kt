@@ -437,6 +437,9 @@ open class FirebaseManagerAnalyticsProperties {
          const val DASH_DRIVER_TIP = "dash_driver_tip"
          const val DASH_SELECT_CONTENT = "select_content"
 
+        //checkout voucher or promocode
+        const val CHECKOUT = "Checkout"
+
         //Address Checkout
         const val FORM_START = "form_start"
         const val FORM_COMPLETE = "form_complete"
@@ -566,6 +569,11 @@ open class FirebaseManagerAnalyticsProperties {
             const val FORM_TYPE = "form_type"
             const val FORM_NAME = "form_name"
             const val FORM_LOCATION = "form_location"
+
+            //checkout vouchers or promo code
+            const val STEP = "step"
+            const val OPTION = "option"
+            const val DELIVERY_TYPE = "delivery_type"
         }
     }
 
@@ -695,6 +703,19 @@ open class FirebaseManagerAnalyticsProperties {
             const val STANDARD = "Standard"
             const val CLICK_AND_COLLECT = "Click and collect"
             const val DASH = "Dash"
+
+            //checkout promo or voucher action
+            const val VIEW_VOUCHER = "view voucher"
+            const val VIEW_WREWARDS_VOUCHERS = "view wrewards vouchers"
+            const val ADD_PROMO_CODE = "add promo code"
+
+            //checkout promo or voucher option
+            const val VOUCHERS = "vouchers"
+            const val ADD_PROMO = "add promo"
+
+            //checkout promo step
+            const val BASKET = "basket"
+
         }
     }
 
