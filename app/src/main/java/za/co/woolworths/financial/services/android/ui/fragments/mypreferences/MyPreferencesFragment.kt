@@ -510,7 +510,7 @@ class MyPreferencesFragment : BaseFragmentBinding<FragmentMyPreferencesBinding>(
 
     fun setDeliveryLocation(shoppingDeliveryLocation: ShoppingDeliveryLocation?) {
         binding.apply {
-            iconCaretRight.visibility = View.GONE
+            iconCaretEnd.visibility = View.GONE
             editLocation.visibility = View.VISIBLE
             deliverLocationIcon.setBackgroundResource(R.drawable.tick_cli_active)
             shoppingDeliveryLocation?.let {

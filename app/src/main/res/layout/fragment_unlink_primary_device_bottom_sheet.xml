@@ -67,17 +67,16 @@
 
     <TextView
         android:id="@+id/pmaExpiredDescriptionTextView"
+        style="@style/opensans_regular_13_black"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/fourty_dp"
-        android:fontFamily="@font/myriad_pro_regular"
         android:gravity="center"
         android:lineSpacingExtra="@dimen/eight_dp"
         android:paddingStart="@dimen/twenty_dp"
         android:paddingEnd="@dimen/twenty_dp"
         android:text="@string/unlink_device_desc"
         android:textColor="@color/color_7f7f7f"
-        android:textSize="@dimen/fifteen_sp"
         app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toTopOf="@+id/choosePrimaryDeviceContinue"
         app:layout_constraintEnd_toEndOf="@id/end_guideline"

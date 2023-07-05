@@ -44,7 +44,7 @@
             android:layout_width="180dp"
             android:layout_height="@dimen/thirty_two_dp"
             android:background="@color/white"
-            android:fontFamily="@font/myriad_pro_regular"
+            android:fontFamily="@font/opensans_regular"
             android:gravity="center"
             android:hint="@string/enter_promo_code_hint"
             android:inputType="textCapCharacters"
@@ -73,7 +73,7 @@
 
         <TextView
             android:id="@+id/errorMessage"
-            style="@style/myriad_pro_regular"
+            style="@style/opensens_regular"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/sixteen_dp"

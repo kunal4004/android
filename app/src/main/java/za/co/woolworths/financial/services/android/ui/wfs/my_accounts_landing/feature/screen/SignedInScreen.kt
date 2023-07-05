@@ -14,6 +14,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import org.json.JSONException
 import org.json.JSONObject
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.account.PetInsuranceModel
@@ -290,7 +291,9 @@ private fun UserAccountLandingViewModel.CollectFetchAccount(
                 }
 
                 is RetrofitFailureResult.ServerResponse<*> -> {
-                    errorResponse.value = result.data as? ServerErrorResponse
+                    onErrorRemoveProducts()
+                    errorResponse.value = (result.data as? UserAccountResponse)?.response
+                    stateFetchAllAccounts.hasError = false
                 }
 
                 is RetrofitFailureResult.SessionTimeout<*> -> {
@@ -300,8 +303,12 @@ private fun UserAccountLandingViewModel.CollectFetchAccount(
                     var stsParams = serverResponse?.stsParams
                     val message = serverResponse?.message ?: ""
                     if (stsParams?.isEmpty() == true && message.isNotEmpty()){
-                        val messageObj = JSONObject(message)
-                        stsParams = messageObj.getString("sts_params")
+                        stsParams = try {
+                            val messageObj = JSONObject(message)
+                            messageObj.getString("sts_params")
+                        }catch (ex : JSONException){
+                            null
+                        }
                     }
                     setUserUnAuthenticated(SSOActivity.SSOActivityResult.SIGNED_OUT.rawValue())
                     LaunchedEffect(Unit) {
@@ -485,7 +492,7 @@ private fun LazyListScope.productHeaderView(
         TextFuturaFamilyHeader1(
             text = title,
             locator = locator,
-            color = Color.Black,
+            textColor = Color.Black,
             modifier = Modifier
                 .padding(start = Margin.start, top = Margin.end)
                 .testAutomationTag(locator),
@@ -570,6 +577,7 @@ fun HeaderItem(
         locator = locator,
         textAlign = textAlign,
         fontSize = fontSize,
+        textColor = Color.Black,
         modifier = Modifier.padding(start = Margin.start, top = Margin.top),
         isLoading = isLoading,
         brush = brush
