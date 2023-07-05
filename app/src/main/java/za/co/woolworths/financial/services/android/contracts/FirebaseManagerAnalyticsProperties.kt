@@ -224,7 +224,6 @@ open class FirebaseManagerAnalyticsProperties {
         const val CHECKOUT_COLECTION_CHANGE_BTN = "chckout_cllct_chnge"
         const val CHECKOUT_CONFIRM_NEW_STORE = "chckout_cllct_cnfrm_str"
         const val CHANGE_FULFILLMENT_ADD_NEW_ADDRESS = "chckout_dlvry_ad_adrs"
-        const val CHECKOUT = "Checkout"
         const val CHANGE_FULFILLMENT_EDIT_ADDRESS = "chckout_dlvry_edt_adrs"
         const val CHANGE_FULFILLMENT_DELETE_ADDRESS = "chckout_dlvry_dlte_adrs"
         const val CHANGE_FULFILLMENT_DELIVERY_CONFIRM_BTN = "chckout_dlvry_cnfrm_adrs"
@@ -463,11 +462,8 @@ open class FirebaseManagerAnalyticsProperties {
             const val CANCEL_FAILURE_RETRY = "Cancel Failure Retry"
             const val ACTION = "ACTION"
             const val ACTION_LOWER_CASE = "action"
-            const val OPTION = "option"
             const val TOGGLE_SELECTED = "toggle_selected"
-            const val DELIVERY_TYPE = "delivery_type"
             const val TIME_SELECTED = "time_selected"
-            const val STEP = "step"
             const val NUTRITIONAL_INFORMATION_PRODUCT_ID = "NUTRITIONAL_PRODUCT_ID"
             const val PRODUCT_DETAILS_INFORMATION_PRODUCT_ID = "PRODUCT_DETAILS_PRODUCT_ID"
             const val INGREDIENTS_INFORMATION_PRODUCT_ID = "INGREDIENTS_PRODUCT_ID"
@@ -695,7 +691,6 @@ open class FirebaseManagerAnalyticsProperties {
             const val DASH_CANCELLED_ORDER: String = "Cancelled_Order"
 
             //Address Checkout
-            const val CHECKOUT = "checkout"
             const val BROWSE = "browse"
             const val TAXI = "Taxi"
             const val MY_VEHICLE = "My Vehicle"

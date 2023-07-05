@@ -305,7 +305,7 @@ object FirebaseAnalyticsEventHelper {
         }
 
         val propertyValueForFormLocation = if (isComingFromCheckout) {
-            FirebaseManagerAnalyticsProperties.PropertyValues.CHECKOUT
+            FirebaseManagerAnalyticsProperties.CHECKOUT
         } else {
             FirebaseManagerAnalyticsProperties.PropertyValues.BROWSE
         }
