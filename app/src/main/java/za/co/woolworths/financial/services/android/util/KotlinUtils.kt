@@ -80,7 +80,7 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.activities.webview.activities.WInternalWebPageActivity
 import za.co.woolworths.financial.services.android.ui.extension.*
-import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
+import za.co.woolworths.financial.services.android.ui.fragments.account.device_security.verifyAppInstanceId
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.Constants.IS_PET_INSURANCE
 import za.co.woolworths.financial.services.android.ui.fragments.account.petinsurance.PetInsurancePendingFragment
 import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.AbsaApiFailureHandler
@@ -89,6 +89,7 @@ import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDia
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.GeneralInfoDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.CLIErrorMessageButtonDialog
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ErrorMessageDialog
+import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature.fragment.UserAccountsLandingFragment.Companion.PET_INSURANCE_REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DEFAULT_ADDRESS
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DELIVERY_TYPE
@@ -1236,7 +1237,7 @@ class KotlinUtils {
             doJob: () -> Unit,
             elseJob: () -> Unit,
         ) {
-            if (MyAccountsFragment.verifyAppInstanceId() &&
+            if (verifyAppInstanceId() &&
                 (Utils.isGooglePlayOrHuaweiMobileServicesAvailable())
             ) {
                 doJob()
@@ -1569,7 +1570,7 @@ class KotlinUtils {
                     openInternalWebView.putExtra(COLLECTIONS_EXIT_URL, collectionsExitUrl)
                     startActivityForResult(
                         openInternalWebView,
-                        MyAccountsFragment.PET_INSURANCE_REQUEST_CODE
+                        PET_INSURANCE_REQUEST_CODE
                     )
                 } else {
                     openUrlInPhoneBrowser(url, activity)
