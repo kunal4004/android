@@ -487,7 +487,7 @@
         <item name="android:gravity">start|top</item>
         <item name="android:textColor">#50000000</item>
         <item name="android:textSize">14sp</item>
-        <item name="WTextView_font">myriadpro_regular</item>
+        <item name="WTextView_font">opensans_regular</item>
         <item name="android:lineSpacingExtra">4dp</item>
     </style>
 
@@ -986,7 +986,7 @@
         <item name="android:layout_centerVertical">true</item>
         <item name="android:textColor">@color/offer_title</item>
         <item name="android:textSize">17sp</item>
-        <item name="WTextView_font">myriadpro_regular</item>
+        <item name="WTextView_font">opensans_regular</item>
         <item name="android:layout_alignParentLeft">true</item>
     </style>
 
@@ -1057,8 +1057,8 @@
         <item name="android:layout_centerVertical">true</item>
         <item name="android:text">@string/bpi_balance_protection_title</item>
         <item name="android:textColor">@color/black</item>
-        <item name="WTextView_font">opensansans_semibold</item>
-        <item name="android:textSize">@dimen/thirteen_sp</item>
+        <item name="android:fontFamily">@font/futura_semi_bold_ttf</item>
+        <item name="android:textSize">@dimen/twelve_sp</item>
     </style>
 
     <style name="styleBPIOVerViewCoverText">
@@ -1070,8 +1070,8 @@
         <item name="android:letterSpacing">@integer/point_zero_eighty_three</item>
         <item name="android:text">@string/bpi_covered</item>
         <item name="android:textColor">@color/white</item>
-        <item name="WTextView_font">medium_bold</item>
-        <item name="android:textSize">@dimen/ten_sp</item>
+        <item name="WTextView_font">semi_bold</item>
+        <item name="android:textSize">@dimen/twelve_sp</item>
         <item name="android:textAllCaps">true</item>
         <item name="android:background">@drawable/round_orange_bg</item>
     </style>
@@ -1092,6 +1092,7 @@
         <item name="android:paddingBottom">@dimen/seventeen_dp</item>
         <item name="android:text">@string/bpi_balance_protection_desc</item>
         <item name="android:fontFamily">opensans_regular</item>
+        <item name="android:textSize">@dimen/thirteen_sp</item>
         <item name="android:alpha">0.7</item>
         <item name="android:textColor">@color/black</item>
 
@@ -1786,12 +1787,6 @@
 
     <style name="futura_medium_666666" parent="futura_medium">
         <item name="android:textColor">@color/color_666666</item>
-    </style>
-
-    <style name="myriad_pro_regular">
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:fontFamily">@font/myriad_pro_regular</item>
     </style>
 
     <style name="ccd_opensans_regular" parent="opensans_regular_13_black">

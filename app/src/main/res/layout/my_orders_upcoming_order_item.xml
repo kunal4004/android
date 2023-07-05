@@ -63,7 +63,7 @@
                     android:layout_alignParentRight="true"
                     android:textColor="@color/black"
                     android:textSize="@dimen/fourteen_sp"
-                    app:WTextView_font="myriadpro_semibold" />
+                    app:WTextView_font="opensansans_semibold" />
             </RelativeLayout>
 
             <View
@@ -102,7 +102,7 @@
                         android:gravity="right"
                         android:contentDescription="@string/delivery_date_value"
                         android:layout_marginLeft="@dimen/sixteen_dp"
-                        app:WTextView_font="myriadpro_semibold" />
+                        app:WTextView_font="opensansans_semibold" />
                 </RelativeLayout>
 
                 <LinearLayout
@@ -130,7 +130,7 @@
                     android:text="@string/total"
                     android:textColor="@color/black"
                     android:textSize="15sp"
-                    app:WTextView_font="myriadpro_semibold" />
+                    app:WTextView_font="opensansans_semibold" />
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                     android:id="@+id/total"
