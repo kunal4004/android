@@ -802,7 +802,8 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                     is ConfirmDeliveryAddressResponse -> {
                         confirmDeliveryAddressResponse = response
 
-                        if (response.orderSummary?.totalItemsCount ?: 0 <= 0) {
+                        if (response.orderSummary != null && (response.orderSummary?.totalItemsCount
+                                        ?: 0) <= 0) {
                             showEmptyCart()
                             return@observe
                         }
