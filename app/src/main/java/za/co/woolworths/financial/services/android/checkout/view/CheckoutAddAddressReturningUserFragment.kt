@@ -1302,6 +1302,8 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             if (isEnhanceSubstitutionFeatureEnable() == false) {
                 substituesAllowed =
                     if (binding.nativeCheckoutFoodSubstitutionLayout.root.visibility == VISIBLE) selectedFoodSubstitution.rgb else null
+            } else {
+                substituesAllowed = FoodSubstitution.NO_THANKS.rgb
             }
             plasticBags = binding.layoutDeliveryInstructions.switchNeedBags?.isChecked ?: false
             shoppingBagType = selectedShoppingBagType

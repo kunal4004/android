@@ -1307,6 +1307,8 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
         if (isEnhanceSubstitutionFeatureEnable() == false) {
             /*if feature flag disabled then only send substituesAllowed parameter*/
           substituesAllowed = selectedFoodSubstitution.rgb
+        } else {
+            substituesAllowed = FoodSubstitution.NO_THANKS.rgb
         }
         plasticBags = binding.layoutDeliveryInstructions.switchNeedBags?.isChecked ?: false
         shoppingBagType = selectedShoppingBagType

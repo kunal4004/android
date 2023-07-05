@@ -1244,6 +1244,8 @@ class CheckoutReturningUserCollectionFragment :
         otherDeliveryStartHour = 0
         if (isEnhanceSubstitutionFeatureEnable() == false) {
             substituesAllowed = selectedFoodSubstitution.rgb
+        } else {
+            substituesAllowed = FoodSubstitution.NO_THANKS.rgb
         }
         plasticBags = binding.layoutCollectionInstructions.switchNeedBags?.isChecked ?: false
         shoppingBagType = selectedShoppingBagType
