@@ -38,6 +38,7 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.Constant
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.util.regex.Pattern
 
@@ -118,7 +119,7 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(R.
                         FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_COLLECTION_VEHICLE_SELECT
             ), activity)
 
-        KotlinUtils.setFirebaseEventForm(FirebaseManagerAnalyticsProperties.PropertyValues.MY_VEHICLE,
+        FirebaseAnalyticsEventHelper.setFirebaseEventForm(FirebaseManagerAnalyticsProperties.PropertyValues.MY_VEHICLE,
                 FirebaseManagerAnalyticsProperties.FORM_START, true)
 
         isMyVehicle = true
@@ -134,7 +135,7 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(R.
                         FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_COLLECTION_TAXI_SELECT
             ), activity)
 
-        KotlinUtils.setFirebaseEventForm(FirebaseManagerAnalyticsProperties.PropertyValues.TAXI,
+        FirebaseAnalyticsEventHelper.setFirebaseEventForm(FirebaseManagerAnalyticsProperties.PropertyValues.TAXI,
                 FirebaseManagerAnalyticsProperties.FORM_START, true)
 
         isMyVehicle = false
@@ -182,13 +183,13 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(R.
         if (isMyVehicle) {
             if (!isErrorInputFields(listOfVehicleInputFields)) {
                 onConfirmButtonClick()
-                KotlinUtils.setFirebaseEventForm(FirebaseManagerAnalyticsProperties.PropertyValues.MY_VEHICLE,
+                FirebaseAnalyticsEventHelper.setFirebaseEventForm(FirebaseManagerAnalyticsProperties.PropertyValues.MY_VEHICLE,
                         FirebaseManagerAnalyticsProperties.FORM_COMPLETE, true)
             }
         } else {
             if (!isErrorInputFields(listOfTaxiInputFields)) {
                 onConfirmButtonClick()
-                KotlinUtils.setFirebaseEventForm(FirebaseManagerAnalyticsProperties.PropertyValues.TAXI,
+                FirebaseAnalyticsEventHelper.setFirebaseEventForm(FirebaseManagerAnalyticsProperties.PropertyValues.TAXI,
                         FirebaseManagerAnalyticsProperties.FORM_COMPLETE, true)
             }
         }
@@ -287,7 +288,7 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(R.
         }
 
         // When first time visit this page default event is "My Vehicle"
-        KotlinUtils.setFirebaseEventForm(FirebaseManagerAnalyticsProperties.PropertyValues.MY_VEHICLE,
+        FirebaseAnalyticsEventHelper.setFirebaseEventForm(FirebaseManagerAnalyticsProperties.PropertyValues.MY_VEHICLE,
                 FirebaseManagerAnalyticsProperties.FORM_START, true)
 
         binding.whoIsCollectingDetailsLayout.recipientDetailsTitle?.text = bindString(R.string.who_is_collecting)

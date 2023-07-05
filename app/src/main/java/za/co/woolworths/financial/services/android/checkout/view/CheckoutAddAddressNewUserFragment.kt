@@ -85,6 +85,7 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.SAVED_ADDRESS_RESPONSE
 import za.co.woolworths.financial.services.android.util.KeyboardUtils.Companion.hideKeyboardIfVisible
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.location.DynamicGeocoder
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
@@ -684,7 +685,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                         )
                     )
                     // This to call the analytics when default address type selected first time
-                    KotlinUtils.setFirebaseEventForm(titleTextView?.text.toString(),
+                    FirebaseAnalyticsEventHelper.setFirebaseEventForm(titleTextView?.text.toString(),
                       FirebaseManagerAnalyticsProperties.FORM_START, isComingFromCheckout)
                     binding.recipientAddressLayout.deliveringAddressTypesErrorMsg?.visibility = View.GONE
                     changeUnitComplexPlaceHolderOnType(selectedDeliveryAddressType)
@@ -697,7 +698,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                 }
                 titleTextView?.setOnClickListener {
                     setFirebaseEvents(titleTextView?.text.toString())
-                    KotlinUtils.setFirebaseEventForm(titleTextView?.text.toString(),
+                    FirebaseAnalyticsEventHelper.setFirebaseEventForm(titleTextView?.text.toString(),
                          FirebaseManagerAnalyticsProperties.FORM_START, isComingFromCheckout)
                     resetOtherDeliveringTitle(it.tag as Int)
                     selectedDeliveryAddressType = (it as TextView).text as? String
@@ -918,7 +919,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             ), activity
         )
 
-        KotlinUtils.setFirebaseEventForm(selectedDeliveryAddressType,
+        FirebaseAnalyticsEventHelper.setFirebaseEventForm(selectedDeliveryAddressType,
                 FirebaseManagerAnalyticsProperties.FORM_COMPLETE, isComingFromCheckout)
         if (binding.recipientDetailsLayout.cellphoneNumberEditText?.text.toString().trim().isNotEmpty()
             && binding.recipientDetailsLayout.cellphoneNumberEditText?.text.toString().trim().length < TEN
