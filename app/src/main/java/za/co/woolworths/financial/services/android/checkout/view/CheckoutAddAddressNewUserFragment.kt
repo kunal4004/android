@@ -84,8 +84,10 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_PLACE_ID
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.SAVED_ADDRESS_RESPONSE
 import za.co.woolworths.financial.services.android.util.KeyboardUtils.Companion.hideKeyboardIfVisible
+import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.location.DynamicGeocoder
+import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.net.HttpURLConnection.HTTP_OK
 import java.util.regex.Pattern
 import kotlin.coroutines.CoroutineContext
@@ -778,6 +780,38 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             ),
             activity
         )
+    }
+
+    private fun setFirebaseEventFormStart(addressType: String, deliveryType : Delivery?) {
+
+        var propertyValueForFormType = when(deliveryType){
+            Delivery.DASH ->  {
+                FirebaseManagerAnalyticsProperties.PropertyValues.DASH
+            }
+            Delivery.CNC -> {
+                FirebaseManagerAnalyticsProperties.PropertyValues.CLICK_AND_COLLECT
+            }
+            else -> {
+                FirebaseManagerAnalyticsProperties.PropertyValues.STANDARD
+            }
+        }
+
+        val propertyValueForFormLocation = if(isComingFromCheckout){
+            FirebaseManagerAnalyticsProperties.PropertyValues.CHECKOUT
+        }else {
+            FirebaseManagerAnalyticsProperties.PropertyValues.BROWSE
+        }
+
+        //Event form type for address checkout
+        val formTypeParams = bundleOf(
+            FirebaseManagerAnalyticsProperties.PropertyNames.FORM_TYPE to
+                    propertyValueForFormType,
+            FirebaseManagerAnalyticsProperties.PropertyNames.FORM_NAME to
+                    addressType,
+            FirebaseManagerAnalyticsProperties.PropertyNames.FORM_LOCATION to
+                    propertyValueForFormLocation
+        )
+        AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.FORM_START, formTypeParams)
     }
 
     private fun resetOtherDeliveringTitle(selectedTag: Int) {
