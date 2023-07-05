@@ -117,6 +117,7 @@ import kotlin.coroutines.CoroutineContext
 import kotlin.math.roundToInt
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_MIXED_BASKET
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_FBH_ONLY
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.logEvent
 
 
 class KotlinUtils {
@@ -1588,6 +1589,19 @@ class KotlinUtils {
             }
             nickNameWithAddress.append(formattedNickName)
             return nickNameWithAddress
+        }
+
+        fun triggerFireBaseEvents(
+            eventName: String,
+            arguments: Map<String, String>,
+            activity: Activity?
+        ) {
+            val params = Bundle()
+            arguments.forEach { entry ->
+                params.putString(entry.key , entry.value)
+            }
+            logEvent(eventName, params)
+            requestInAppReview(eventName, activity)
         }
     }
 }

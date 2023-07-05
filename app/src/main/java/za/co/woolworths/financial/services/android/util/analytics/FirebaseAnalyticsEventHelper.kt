@@ -290,6 +290,37 @@ object FirebaseAnalyticsEventHelper {
         AnalyticsManager.logEvent(eventName, analyticsParams)
     }
 
+    enum class FirebaseEventAction(val value: Int) { VIEW_VOUCHER(0), VIEW_WREWARDS_VOUCHERS(1),ADD_PROMO_CODE(2) }
+
+    enum class FirebaseEventOption(val value: Int) { VOUCHERS(0), ADD_PROMO(1) }
+    fun triggerFirebaseEventVouchersOrPromoCode(actionEnum: Int, optionEnum: Int,activity: Activity) {
+        val action = when (actionEnum){
+            FirebaseEventAction.VIEW_VOUCHER.value -> FirebaseManagerAnalyticsProperties.PropertyValues.VIEW_VOUCHER
+            FirebaseEventAction.VIEW_WREWARDS_VOUCHERS.value -> FirebaseManagerAnalyticsProperties.PropertyValues.VIEW_WREWARDS_VOUCHERS
+            FirebaseEventAction.ADD_PROMO_CODE.value -> FirebaseManagerAnalyticsProperties.PropertyValues.ADD_PROMO_CODE
+            else -> throw IllegalStateException()
+        }
+
+        val option = when (optionEnum){
+            FirebaseEventOption.VOUCHERS.value -> FirebaseManagerAnalyticsProperties.PropertyValues.VOUCHERS
+            FirebaseEventOption.ADD_PROMO.value -> FirebaseManagerAnalyticsProperties.PropertyValues.ADD_PROMO
+            else -> throw IllegalStateException()
+        }
+
+        val deliveryType = when(KotlinUtils.getPreferredDeliveryType()){
+            Delivery.STANDARD -> FirebaseManagerAnalyticsProperties.PropertyValues.STANDARD
+            Delivery.CNC -> FirebaseManagerAnalyticsProperties.PropertyValues.CLICK_AND_COLLECT
+            Delivery.DASH -> FirebaseManagerAnalyticsProperties.PropertyValues.DASH
+            else ->  throw IllegalStateException()
+        }
+        val arguments = HashMap<String, String>()
+        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.STEP] = FirebaseManagerAnalyticsProperties.PropertyValues.BASKET
+        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE] = action
+        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.OPTION] = option
+        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_TYPE] = deliveryType
+        KotlinUtils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHECKOUT, arguments,activity)
+
+    }
     fun setFirebaseEventForm(type: String?, eventName: String, isComingFromCheckout: Boolean) {
 
         var propertyValueForFormType = when (KotlinUtils.getPreferredDeliveryType()) {
