@@ -94,10 +94,10 @@
                     android:layout_marginEnd="10dp"
                     android:layout_toStartOf="@+id/imgcaret1"
                     android:layout_toEndOf="@+id/imgDirection"
-                    android:fontFamily="@font/myriad_pro_regular_otf"
+                    android:fontFamily="@font/opensans_regular"
                     android:lineSpacingExtra="4sp"
                     android:textColor="@color/black"
-                    android:textSize="15sp" />
+                    android:textSize="@dimen/eleven_sp" />
 
                 <ImageView
                     android:id="@+id/imgcaret1"
@@ -132,9 +132,9 @@
                     android:layout_marginEnd="16dp"
                     android:layout_toStartOf="@+id/imgcaret2"
                     android:layout_toEndOf="@+id/imgCall"
-                    android:fontFamily="@font/myriad_pro_regular_otf"
+                    android:fontFamily="@font/opensans_regular"
                     android:textColor="@color/black"
-                    android:textSize="15sp" />
+                    android:textSize="@dimen/eleven_sp" />
 
                 <ImageView
                     android:id="@+id/imgcaret2"
@@ -199,25 +199,22 @@
 
                     <TextView
                         android:layout_width="wrap_content"
+                        style="@style/opensans_semi_bold_13_black_text_style"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/myriad_pro_semi_bold_otf"
                         android:paddingStart="@dimen/default_width"
-                        android:textColor="@color/black"
-                        android:textSize="15sp" />
+                        />
                 </LinearLayout>
 
                 <TextView
                     android:id="@+id/BrandsLabel"
+                    style="@style/opensans_semi_bold_13_black_text_style"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentTop="true"
                     android:layout_toEndOf="@+id/imgW"
-                    android:fontFamily="@font/myriad_pro_semi_bold_otf"
                     android:paddingStart="@dimen/default_width"
                     android:paddingTop="3dp"
                     android:text="@string/brands"
-                    android:textColor="@color/black"
-                    android:textSize="15sp"
                     tools:ignore="RtlSymmetry" />
             </RelativeLayout>
         </LinearLayout>

@@ -16,9 +16,7 @@
 
 <resources>
 
-    <style name="TableLeft">
-        <item name="android:textSize">15sp</item>
-        <item name="android:textColor">@color/black</item>
+    <style name="TableLeft" parent ="opensans_regular_13_black">
         <item name="android:lineSpacingExtra">9sp</item>
     </style>
 

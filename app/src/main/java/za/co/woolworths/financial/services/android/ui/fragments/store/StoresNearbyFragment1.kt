@@ -127,7 +127,9 @@ class StoresNearbyFragment1 : Fragment(R.layout.fragment_stores_nearby1), Dynami
             setupToolbar()
             setupBackButtonUI()
             selectUnSelectMarkerDrawable()
-
+            cardPager.clipToPadding = false
+            cardPager.pageMargin = 20
+            cardPager.offscreenPageLimit = 3
             cardPager?.addOnPageChangeListener(this@StoresNearbyFragment1)
             cardPager?.setOnItemClickListener { position ->
                 currentStorePosition = position
@@ -385,7 +387,7 @@ class StoresNearbyFragment1 : Fragment(R.layout.fragment_stores_nearby1), Dynami
                 } else drawMarker(storeDetailsList[i].latitude, storeDetailsList[i].longitude, unSelectedIcon, i)
             }
         }
-        binding.cardPager?.adapter = CardsOnMapAdapter(activity, storeDetailsList)
+        binding.cardPager?.adapter = CardsOnMapAdapter(requireActivity(), storeDetailsList)
     }
 
     @SuppressLint("InflateParams", "SetTextI18n")
@@ -433,7 +435,7 @@ class StoresNearbyFragment1 : Fragment(R.layout.fragment_stores_nearby1), Dynami
                 storeTimingView?.visibility = View.VISIBLE
                 var textView: TextView
                 val typeface: Typeface? =
-                    ResourcesCompat.getFont(activity, R.font.myriad_pro_semi_bold_otf)
+                    ResourcesCompat.getFont(activity, R.font.opensans_bold_ttf)
                 for (i in storeDetail.times.indices) {
                     val v = activity.layoutInflater.inflate(R.layout.opening_hours_textview, null)
                     textView = v?.findViewById<View>(R.id.openingHoursTextView) as TextView

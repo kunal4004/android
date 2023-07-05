@@ -404,7 +404,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                             R.string.bullet
                         ) + "  "
                     )
-                val typeface = ResourcesCompat.getFont(context, R.font.myriad_pro_semi_bold)
+                val typeface = ResourcesCompat.getFont(context, R.font.opensans_semi_bold)
                 defaultAddressNickname.setSpan(
                     StyleSpan(typeface!!.style),
                     0, defaultAddressNickname.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
@@ -429,7 +429,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                             nickName = address?.nickname
                             val addressName = SpannableString(address.address1)
                             val typeface1 =
-                                ResourcesCompat.getFont(context, R.font.myriad_pro_regular)
+                                ResourcesCompat.getFont(context, R.font.opensans_regular)
                             addressName.setSpan(
                                 StyleSpan(typeface1!!.style),
                                 0, addressName.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
@@ -764,7 +764,8 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                     is ConfirmDeliveryAddressResponse -> {
                         confirmDeliveryAddressResponse = response
 
-                        if (response.orderSummary?.totalItemsCount ?: 0 <= 0) {
+                        if (response.orderSummary != null && (response.orderSummary?.totalItemsCount
+                                        ?: 0) <= 0) {
                             showEmptyCart()
                             return@observe
                         }

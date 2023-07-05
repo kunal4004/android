@@ -14,7 +14,7 @@ import za.co.woolworths.financial.services.android.models.dto.temporary_store_ca
 import za.co.woolworths.financial.services.android.ui.fragments.account.device_security.DeviceSecurityFlagState
 import za.co.woolworths.financial.services.android.ui.fragments.account.device_security.StoreCardUpsellMessageFlagState
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.ViewState
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.getViewStateFlowForNetworkCall
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.mapNetworkCallToViewStateFlow
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.storecard.BlockStoreCardType
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.storecard.IStoreCardDataSource
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.storecard.StoreCardDataSource
@@ -71,7 +71,7 @@ class TemporaryFreezeCardViewModel @Inject constructor(private val storeCardData
     }
 
     private suspend fun queryServiceBlockStoreCard(storeCardType: StoreCardType) =
-        getViewStateFlowForNetworkCall {
+        mapNetworkCallToViewStateFlow {
             queryServiceBlockStoreCard(
                 position = currentPagePosition.value ?: -1,
                 storeCardType = storeCardType
@@ -79,7 +79,7 @@ class TemporaryFreezeCardViewModel @Inject constructor(private val storeCardData
         }
 
     suspend fun queryServiceUnBlockStoreCard(storeCardType: StoreCardType) =
-        getViewStateFlowForNetworkCall {
+        mapNetworkCallToViewStateFlow {
             queryServiceUnBlockStoreCard(
                 position = currentPagePosition.value ?: -1,
                 storeCardType = storeCardType

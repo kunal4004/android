@@ -5,7 +5,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -13,7 +12,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import com.awfs.coordination.R
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import za.co.woolworths.financial.services.android.models.dto.account.ServerErrorResponse
@@ -22,7 +20,7 @@ import za.co.woolworths.financial.services.android.ui.wfs.common.ConnectionState
 import za.co.woolworths.financial.services.android.ui.wfs.common.FailureScenario
 import za.co.woolworths.financial.services.android.ui.wfs.common.connectivityState
 import za.co.woolworths.financial.services.android.ui.wfs.component.*
-import za.co.woolworths.financial.services.android.ui.wfs.contact_us.cell.LabelTitle
+import za.co.woolworths.financial.services.android.ui.wfs.contact_us.cell.TextContactUsFuturaSemiBoldSectionHeader
 import za.co.woolworths.financial.services.android.ui.wfs.contact_us.cell.TitleDescriptionAndNextArrowItem
 import za.co.woolworths.financial.services.android.ui.wfs.contact_us.model.ChildrenItem
 import za.co.woolworths.financial.services.android.ui.wfs.contact_us.model.ContactUsRemoteModel
@@ -79,7 +77,6 @@ fun ContactUsCategoryScreen(
     }
 }
 
-
 @SuppressLint("RememberReturnType")
 @Composable
 fun CategoryList(
@@ -88,20 +85,10 @@ fun CategoryList(
 ) {
     BoxBackground {
         ListColumn(list = contentList) { item ->
-            Column {
-                LabelTitle(
-                    LabelProperties(
-                        label = item.title,
-                        modifier = Modifier.padding(
-                            start = 24.dp,
-                            end = 24.dp,
-                            top = 22.dp,
-                            bottom = 20.dp
-                        )
-                    )
-                )
-                DividerThicknessOne()
-            }
+
+            TextContactUsFuturaSemiBoldSectionHeader(title = item.title ?: "")
+            DividerThicknessOne()
+
             val size = item.children.size.minus(1)
             item.children.forEachIndexed { index, child ->
                 // Only "Financial Services > General Enquiries" will have
@@ -122,7 +109,7 @@ fun CategoryList(
                         indication = rememberRipple(
                             bounded = true,
                             color = TitleSmall
-                        ), // You can also change the color and radius of the ripple
+                        ),
                         onClick = {
                             onSelected(
                                 ContactUsEvent.CategoryItemClicked(
@@ -133,9 +120,7 @@ fun CategoryList(
                                 )
                             )
                         }
-                    )) {
-                        TitleDescriptionAndNextArrowItem(child)
-                    }
+                    )) { TitleDescriptionAndNextArrowItem(child) }
                     if (index == size) DividerThicknessEight() else DividerThicknessOne()
                 }
             }

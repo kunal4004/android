@@ -6,6 +6,8 @@ import za.co.woolworths.financial.services.android.recommendations.data.reposito
 import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.RecommendationResponse
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.RecommendationRequest
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants.EVENT_TYPE_USER_AGENT
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants.Event_TYPE_IP_ADDRESS
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants.PRODUCT_ID_FOR_DISCOUNT
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants.PRODUCT_ID_FOR_SHIPPING
 
@@ -15,11 +17,26 @@ class RecommendationsRepositoryImplFake : RecommendationsRepository {
         fun verifyValidRequest(request: RecommendationRequest?): Boolean {
             val mId = request?.monetateId
             val events = request?.events
-            if (mId.isNullOrEmpty() || events.isNullOrEmpty() || events.size != 1) {
+            if (mId.isNullOrEmpty() || events.isNullOrEmpty() || events.size != 4) {
                 return false
             }
-            val event = events[0]
+            val pageViewEvent = events[0]
+            if (pageViewEvent.eventType != Constants.EVENT_TYPE_PAGEVIEW || pageViewEvent.pageType != Constants.EVENT_PAGE_TYPE || pageViewEvent.url != Constants.EVENT_URL_ORDERDETAILS) {
+                return false
+            }
+
+            val event = events[1]
             if (event.eventType != Constants.EVENT_TYPE_PURCHASE || event.orderId.isNullOrEmpty() || event.purchaseLines.isNullOrEmpty()) {
+                return false
+            }
+
+            val userAgent = events[2]
+            if (userAgent.eventType != EVENT_TYPE_USER_AGENT){
+                return false
+            }
+
+            val ipAddress = events[3]
+            if (ipAddress.eventType != Event_TYPE_IP_ADDRESS){
                 return false
             }
 

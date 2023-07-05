@@ -48,10 +48,8 @@
                 android:id="@+id/tvCollectionDetailsText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/myriad_pro_regular"
-                android:text="@string/collection_details_text"
-                android:textColor="@color/black"
-                android:textSize="@dimen/fifteen_sp" />
+                style="@style/opensans_regular_13_black"
+                android:text="@string/collection_details_text" />
 
             </com.facebook.shimmer.ShimmerFrameLayout>
 

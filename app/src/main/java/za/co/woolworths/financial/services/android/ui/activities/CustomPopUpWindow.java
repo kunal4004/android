@@ -24,6 +24,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.awfs.coordination.R;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -90,7 +91,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
     private BroadcastReceiver mConnectionBroadcast;
     private LoadState loadState;
     private SendUserStatementRequest mSendUserStatementRequest;
-    protected WTextView mTvStatementSendTo;
+    protected TextView mTvStatementSendTo;
     private WButton mNegativeActionButton;
     private WButton mPositiveActionButton;
     private boolean mCloseView;
@@ -183,7 +184,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
                 mRelRootContainer = findViewById(R.id.relContainerRootMessage);
                 mRelPopContainer = findViewById(R.id.relPopContainer);
                 WTextView mOverlayTitle = findViewById(R.id.textApplicationNotProceed);
-                WTextView mOverlayDescription = findViewById(R.id.overlayDescription);
+                TextView mOverlayDescription = findViewById(R.id.overlayDescription);
                 WButton mOverlayBtn = findViewById(R.id.btnOverlay);
                 LinearLayout mLinEmail = findViewById(R.id.linEmail);
                 mLinEmail.setVisibility(View.GONE);
@@ -202,7 +203,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
                 if (buttonTitle != null && !buttonTitle.isEmpty()) {
                     mBtnOverlay.setText(buttonTitle);
                 }
-                WTextView mDescriptionOverlay = findViewById(R.id.overlayDescription);
+                TextView mDescriptionOverlay = findViewById(R.id.overlayDescription);
                 if (description != null)
                     mDescriptionOverlay.setText(description);
                 mBtnOverlay.setOnClickListener(this);
@@ -214,7 +215,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
                 mRelRootContainer = findViewById(R.id.relContainerRootMessage);
                 mRelPopContainer = findViewById(R.id.relPopContainer);
                 WButton btnOverlay = findViewById(R.id.btnOverlay);
-                WTextView descriptionOverlay = findViewById(R.id.overlayDescription);
+                TextView descriptionOverlay = findViewById(R.id.overlayDescription);
                 if (description != null)
                     descriptionOverlay.setText(description);
                 btnOverlay.setOnClickListener(new View.OnClickListener() {
@@ -230,7 +231,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
                 mRelRootContainer = findViewById(R.id.relContainerRootMessage);
                 mRelPopContainer = findViewById(R.id.relPopContainer);
                 WButton btnStatement = findViewById(R.id.btnCloseStatement);
-                WTextView statementOverlay = findViewById(R.id.overlayDescription);
+                TextView statementOverlay = findViewById(R.id.overlayDescription);
                 if (description != null)
                     statementOverlay.setText(description);
                 btnStatement.setOnClickListener(new View.OnClickListener() {
@@ -416,7 +417,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
                                     LinearLayout.LayoutParams.WRAP_CONTENT);
                     view.setLayoutParams(layoutParams);
                     WTextView tvTitle = view.findViewById(R.id.title);
-                    WTextView tvDescription = view.findViewById(R.id.description);
+                    TextView tvDescription = view.findViewById(R.id.description);
                     tvTitle.setText(String.valueOf(entry.getKey()));
                     tvDescription.setText(String.valueOf(entry.getValue()));
                     llSupplyDetailContainer.addView(view);
@@ -431,7 +432,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
                 mRelRootContainer = findViewById(R.id.relContainerRootMessage);
                 mRelPopContainer = findViewById(R.id.relPopContainer);
                 WTextView tvDeclineOffer = findViewById(R.id.tvDeclineOffer);
-                WTextView tvDeclineOfferDesc = findViewById(R.id.tvDeclineOfferDesc);
+                TextView tvDeclineOfferDesc = findViewById(R.id.tvDeclineOfferDesc);
                 WButton btnCancelDecline = findViewById(R.id.btnCancelDecline);
                 WButton btnConfirmDecline = findViewById(R.id.btnConfirmDecline);
                 btnConfirmDecline.setText(getString(R.string.cli_yes));
@@ -562,7 +563,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
                 mNegativeActionButton = findViewById(R.id.cancelSignOutButton);
                 mPositiveActionButton = findViewById(R.id.btnSignOut);
                 WTextView tvTitle = findViewById(R.id.textSignOut);
-                WTextView tvDescription = findViewById(R.id.overlayDescription);
+                TextView tvDescription = findViewById(R.id.overlayDescription);
                 mPositiveActionButton.setText(getString(R.string.cli_yes));
                 mNegativeActionButton.setText(getString(R.string.cli_no));
                 tvTitle.setText(getString(R.string.set_up_device_biometrics_title));
@@ -579,7 +580,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
     }
 
 
-    private void statementSendToTitle(WTextView tvStatementSendTo, USDocuments documents) {
+    private void statementSendToTitle(TextView tvStatementSendTo, USDocuments documents) {
         if (documents.document.size() > 1) {
             tvStatementSendTo.setText(getString(R.string.statement_sent_to_title).replace("Statement", "Statements"));
         } else {

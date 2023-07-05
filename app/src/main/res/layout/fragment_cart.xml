@@ -123,11 +123,11 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/ten_dp"
-                        android:fontFamily="@font/myriad_pro_regular"
+                        android:fontFamily="@font/opensans_regular"
                         android:gravity="top"
                         android:text="@string/standard_delivery"
                         android:textColor="@color/black"
-                        android:textSize="@dimen/twelve_sp"
+                        android:textSize="@dimen/eleven_sp"
                         app:layout_constraintBottom_toTopOf="@+id/tvDeliverySubtitle"
                         app:layout_constraintStart_toEndOf="@id/imgCartDelivery"
                         app:layout_constraintTop_toTopOf="parent"
@@ -140,13 +140,13 @@
                         android:layout_marginStart="@dimen/ten_dp"
                         android:layout_marginTop="@dimen/two_dp"
                         android:layout_marginEnd="@dimen/sixteen_dp"
-                        android:fontFamily="@font/myriad_pro_semi_bold"
+                        android:fontFamily="@font/opensans_semi_bold"
                         android:lineHeight="@dimen/sixteen_dp"
                         android:ellipsize="end"
                         android:maxLines="1"
                         android:text="@string/cart_default_location"
                         android:textColor="@color/black"
-                        android:textSize="@dimen/fourteen_sp"
+                        android:textSize="@dimen/thirteen_sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/iconLocationRight"
                         app:layout_constraintStart_toEndOf="@id/imgCartDelivery"
@@ -197,6 +197,13 @@
                     android:id="@+id/liquorComplianceMain"
                     layout="@layout/liquor_compliance_banner"/>
 
+                <View
+                    android:id="@+id/viewRecommendationDivider"
+                    android:layout_width="match_parent"
+                    android:visibility="gone"
+                    android:layout_height="@dimen/eight_dp"
+                    android:background="@color/color_F5F5F5"/>
+
                 <include
                         android:id="@+id/layoutRecommendationContainer"
                         layout="@layout/recommendation_fragment_container_view"
@@ -239,14 +246,13 @@
             </RelativeLayout>
 
             <TextView
-                android:id="@+id/txt_min_spend_error_msg"
+                android:id="@+id/txtMinSpendErrorMsg"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/sixteen_dp"
-                android:fontFamily="@font/myriad_pro_semi_bold"
                 android:lineHeight="@dimen/fourteen_sp"
+                style="@style/opensans_regular_12_text_style"
                 android:textColor="@color/red"
-                android:textSize="@dimen/_12sdp"
                 android:visibility="gone"
                 tools:text="A minimum spend of R150 is required to checkout." />
         </LinearLayout>

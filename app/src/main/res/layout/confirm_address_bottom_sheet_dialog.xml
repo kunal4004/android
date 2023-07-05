@@ -32,7 +32,8 @@
 
     <TextView
         android:id="@+id/tv_address_desc"
-        style="@style/myriad_pro_regular_black_15_text_style"
+        style="@style/opensens_regular"
+        android:textSize="@dimen/thirteen_sp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/twenty_four_dp"
@@ -156,5 +157,20 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+    <TextView
+        android:id="@+id/tvSignIn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/fourty_dp"
+        android:fontFamily="@font/futura_medium"
+        android:gravity="center"
+        android:text="@string/sign_in_to_see_saved_addresses"
+        android:textColor="@color/black"
+        android:textSize="@dimen/twelve_sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

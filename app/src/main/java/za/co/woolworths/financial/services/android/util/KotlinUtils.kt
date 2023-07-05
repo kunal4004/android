@@ -171,7 +171,7 @@ class KotlinUtils {
             }
 
             val typeface: Typeface? =
-                context?.let { ResourcesCompat.getFont(it, R.font.myriad_pro_semi_bold_otf) }
+                context?.let { ResourcesCompat.getFont(it, R.font.opensans_semi_bold) }
             if (textIsClickable) spannableTitle.setSpan(
                 clickableSpan,
                 start,
@@ -321,11 +321,11 @@ class KotlinUtils {
         fun capitaliseFirstLetter(str: String?): CharSequence? {
             if (str.isNullOrEmpty())
                 return str
-            val value = str.toLowerCase()
+            val value = str.lowercase()
             val words = value.split(" ").toMutableList()
             var output = ""
             for (word in words) {
-                output += word.capitalize() + " "
+                output += word.uppercase() + " "
             }
             return output.trim()
         }
@@ -338,7 +338,7 @@ class KotlinUtils {
             var output = words[0].uppercase() + " "
             words.removeAt(0)
             for (word in words) {
-                output += word.capitalize() + " "
+                output += word.uppercase() + " "
             }
             return output.trim()
         }
@@ -853,9 +853,9 @@ class KotlinUtils {
             keys?.forEach { key ->
                 val start = string.indexOf(key)
                 val end = start.plus(key.length)
-                val myriadProFont: TypefaceSpan = CustomTypefaceSpan("", getMyriadProSemiBoldFont())
+                val opensansSemiBoldFont: TypefaceSpan = CustomTypefaceSpan("", getOpenSansSemiBoldFont())
                 noteStringBuilder.setSpan(
-                    myriadProFont,
+                    opensansSemiBoldFont,
                     start,
                     end,
                     Spannable.SPAN_INCLUSIVE_INCLUSIVE
@@ -1622,6 +1622,19 @@ fun RecyclerView.runWhenReady(action: () -> Unit) {
         }
     }
     viewTreeObserver.addOnGlobalLayoutListener(globalLayoutListener)
+}
+
+var EditText.value
+    get() = this.text.toString()
+    set(value) {
+        this.setText(value)
+    }
+
+fun Fragment.isFragmentAttached():Boolean {
+    if (isAdded && context != null) {
+        return  true
+    }
+    return false
 }
 
 

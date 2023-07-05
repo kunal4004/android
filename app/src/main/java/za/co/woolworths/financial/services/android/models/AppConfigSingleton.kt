@@ -16,7 +16,6 @@ import za.co.woolworths.financial.services.android.models.dto.app_config.native_
 import za.co.woolworths.financial.services.android.models.dto.app_config.whatsapp.ConfigWhatsApp
 import za.co.woolworths.financial.services.android.models.repository.AppConfigRepository
 import za.co.woolworths.financial.services.android.util.Utils
-import java.util.*
 
 
 object AppConfigSingleton {
@@ -74,8 +73,13 @@ object AppConfigSingleton {
     var ratingsAndReviews : RatingsAndReviews? = null
     @JvmStatic
     var glassBox : GlassBox? = null
+    var bnplConfig : BnplConfig? = null
 
     init {
+        initialiseFromCache()
+    }
+
+    fun initialiseFromCache() {
         AppConfigRepository().getAppConfigData()?.let { appConfig ->
             appConfig.enviroment?.let { env ->
                 storeCardBlockReasons = env.storeCardBlockReasons
@@ -103,7 +107,6 @@ object AppConfigSingleton {
             }
 
             appConfig.dashConfig?.apply {
-                minimumSupportedAppBuildNumber.let { isEnabled = Utils.isFeatureEnabled(it) }
                 dashConfig = this
             }
 
@@ -230,8 +233,13 @@ object AppConfigSingleton {
                     glassBox = this
                 }
             }
-
-
+            appConfig.bnplConfig?.apply {
+                minimumSupportedAppBuildNumber.let {
+                    isBnplRequiredInThisVersion =
+                        Utils.isFeatureEnabled(minimumSupportedAppBuildNumber)
+                    bnplConfig = this
+                }
+            }
         }
     }
 }

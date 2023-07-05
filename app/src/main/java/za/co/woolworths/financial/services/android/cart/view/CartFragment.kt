@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
+import android.text.Spannable
 import android.text.TextUtils
 import android.util.Log
 import android.view.MotionEvent
@@ -15,7 +16,9 @@ import android.view.WindowManager
 import android.widget.ScrollView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
+import androidx.core.text.buildSpannedString
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
@@ -148,6 +151,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     private var cartItemList = ArrayList<CommerceItem>()
     private var isBlackCardHolder : Boolean = false
     private var isOnItemRemoved = false
+    private var isViewCartEventFired = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -218,8 +222,8 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         //One time biometricsWalkthrough
         if (isVisible) {
             ScreenManager.presentBiometricWalkthrough(activity)
+            loadShoppingCart()
         }
-        loadShoppingCart()
     }
 
     private fun initViews() {
@@ -635,6 +639,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         //refresh the pricing view
         if(cartProductAdapter?.cartItems?.isNullOrEmpty() == true){
             setPriceInformationVisibility(false)
+            setRecommendationDividerVisibility(visibility = false)
         } else {
             updatePriceInformation()
         }
@@ -790,6 +795,19 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
 
     private fun updatePriceInformation() {
         val priceHolder = binding.includedPrice
+        //Added the BNPL flag checking logic.
+        AppConfigSingleton.bnplConfig?.apply {
+            if (isBnplRequiredInThisVersion && isBnplEnabled) {
+                if (viewModel.isFBHOnly()) {
+                    priceHolder.vouchersMain.rlpayflexInfo.visibility = View.GONE
+                } else {
+                    priceHolder.vouchersMain.rlpayflexInfo.visibility = View.VISIBLE
+                }
+            } else {
+                priceHolder.vouchersMain.rlpayflexInfo.visibility = View.GONE
+            }
+        }
+
         if (orderSummary != null) {
             setPriceInformationVisibility(true)
             orderSummary?.basketTotal?.let {
@@ -1207,13 +1225,21 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             orderSummary?.minimumBasketAmount?.let { minBasketAmount ->
                 binding.txtMinSpendErrorMsg.apply {
                     visibility = View.VISIBLE
-                    text =
-                        String.format(
-                            getString(
-                                R.string.minspend_error_msg_cart,
-                                CurrencyFormatter.formatAmountToRandNoDecimal(minBasketAmount)
-                            )
+                    text = buildSpannedString {
+                        val amount = CurrencyFormatter.formatAmountToRandNoDecimal(minBasketAmount)
+                        val error = String.format(
+                            getString(R.string.minspend_error_msg_cart, amount)
                         )
+                        append(error)
+                        val start = error.indexOf(amount) - 1
+                        val typeface = ResourcesCompat.getFont(context, R.font.opensans_semi_bold)
+                        setSpan(
+                            CustomTypefaceSpan("opensans", typeface),
+                            start,
+                            start.plus(amount.length).plus(1),
+                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                        )
+                    }
                 }
             }
             binding.btnCheckOut.isEnabled = false
@@ -1295,6 +1321,14 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                 }
                 setItemLimitsBanner()
                 instance.queryCartSummaryCount()
+                if (!isViewCartEventFired){
+                    orderSummary?.total ?.let {
+                        viewCartEvent(viewModel.getCartItemList(),
+                            it
+                        )
+                    }
+                    isViewCartEventFired = true
+                }
                 showRecommendedProducts()
             }
             HTTP_SESSION_TIMEOUT_440 -> {
@@ -1341,7 +1375,12 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         }
     }
 
+    private fun viewCartEvent(commerceItems: List<CommerceItem>, value: Double) {
+        FirebaseAnalyticsEventHelper.viewCartAnalyticsEvent(commerceItems, value)
+    }
+
     private fun showRecommendedProducts() {
+        setRecommendationDividerVisibility(visibility = false)
         val bundle = Bundle()
         val cartLinesValue: MutableList<CartProducts> = arrayListOf()
 
@@ -1609,7 +1648,9 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         setupToolbar()
         initializeBottomTab()
         initializeLoggedInUserCartUI()
-        loadShoppingCart()
+        if (!isVisible) {
+            loadShoppingCart()
+        }
     }
 
     override fun onConnectionChanged() {
@@ -2395,6 +2436,16 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             loadShoppingCart()
             binding.nestedScrollView.fullScroll(ScrollView.FOCUS_UP)
         }
+    }
+
+    override fun onRecommendationsLoadedSuccessfully() {
+        if(isAdded) {
+            setRecommendationDividerVisibility(visibility = !cartProductAdapter?.cartItems.isNullOrEmpty())
+        }
+    }
+
+    private fun setRecommendationDividerVisibility(visibility: Boolean) {
+        binding.viewRecommendationDivider.visibility = if(visibility) View.VISIBLE else View.GONE
     }
 
     private fun addScrollListeners() {
