@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.util.analytics
 
 import android.app.Activity
 import android.os.Bundle
+import androidx.core.os.bundleOf
 import com.google.firebase.analytics.FirebaseAnalytics
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.*
@@ -320,6 +321,38 @@ object FirebaseAnalyticsEventHelper {
         KotlinUtils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHECKOUT, arguments,activity)
 
     }
+    fun setFirebaseEventForm(type: String?, eventName: String, isComingFromCheckout: Boolean) {
+
+        var propertyValueForFormType = when (KotlinUtils.getPreferredDeliveryType()) {
+            Delivery.DASH -> {
+                FirebaseManagerAnalyticsProperties.PropertyValues.DASH
+            }
+            Delivery.CNC -> {
+                FirebaseManagerAnalyticsProperties.PropertyValues.CLICK_AND_COLLECT
+            }
+            else -> {
+                FirebaseManagerAnalyticsProperties.PropertyValues.STANDARD
+            }
+        }
+
+        val propertyValueForFormLocation = if (isComingFromCheckout) {
+            FirebaseManagerAnalyticsProperties.PropertyValues.CHECKOUT
+        } else {
+            FirebaseManagerAnalyticsProperties.PropertyValues.BROWSE
+        }
+
+        //Event form type for address checkout
+        val formTypeParams = bundleOf(
+                FirebaseManagerAnalyticsProperties.PropertyNames.FORM_TYPE to
+                        propertyValueForFormType,
+                FirebaseManagerAnalyticsProperties.PropertyNames.FORM_NAME to
+                        type,
+                FirebaseManagerAnalyticsProperties.PropertyNames.FORM_LOCATION to
+                        propertyValueForFormLocation
+        )
+        AnalyticsManager.logEvent(eventName, formTypeParams)
+    }
+
     object Utils {
         private fun stringToFirebaseEventName(string: String?): String? {
             return string?.filter { it.isLetterOrDigit() }?.lowercase()

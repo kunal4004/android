@@ -38,6 +38,7 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.Constant
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.util.regex.Pattern
 
@@ -118,7 +119,8 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(R.
                         FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_COLLECTION_VEHICLE_SELECT
             ), activity)
 
-        setFirebaseEventFormStart(FirebaseManagerAnalyticsProperties.PropertyValues.MY_VEHICLE)
+        FirebaseAnalyticsEventHelper.setFirebaseEventForm(FirebaseManagerAnalyticsProperties.PropertyValues.MY_VEHICLE,
+                FirebaseManagerAnalyticsProperties.FORM_START, true)
 
         isMyVehicle = true
         binding.vehiclesDetailsLayout.taxiDescription.visibility = View.GONE
@@ -133,7 +135,8 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(R.
                         FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_COLLECTION_TAXI_SELECT
             ), activity)
 
-        setFirebaseEventFormStart(FirebaseManagerAnalyticsProperties.PropertyValues.TAXI)
+        FirebaseAnalyticsEventHelper.setFirebaseEventForm(FirebaseManagerAnalyticsProperties.PropertyValues.TAXI,
+                FirebaseManagerAnalyticsProperties.FORM_START, true)
 
         isMyVehicle = false
         binding.vehiclesDetailsLayout.taxiDescription.visibility = View.VISIBLE
@@ -180,10 +183,14 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(R.
         if (isMyVehicle) {
             if (!isErrorInputFields(listOfVehicleInputFields)) {
                 onConfirmButtonClick()
+                FirebaseAnalyticsEventHelper.setFirebaseEventForm(FirebaseManagerAnalyticsProperties.PropertyValues.MY_VEHICLE,
+                        FirebaseManagerAnalyticsProperties.FORM_COMPLETE, true)
             }
         } else {
             if (!isErrorInputFields(listOfTaxiInputFields)) {
                 onConfirmButtonClick()
+                FirebaseAnalyticsEventHelper.setFirebaseEventForm(FirebaseManagerAnalyticsProperties.PropertyValues.TAXI,
+                        FirebaseManagerAnalyticsProperties.FORM_COMPLETE, true)
             }
         }
     }
@@ -281,7 +288,8 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(R.
         }
 
         // When first time visit this page default event is "My Vehicle"
-        setFirebaseEventFormStart(FirebaseManagerAnalyticsProperties.PropertyValues.MY_VEHICLE)
+        FirebaseAnalyticsEventHelper.setFirebaseEventForm(FirebaseManagerAnalyticsProperties.PropertyValues.MY_VEHICLE,
+                FirebaseManagerAnalyticsProperties.FORM_START, true)
 
         binding.whoIsCollectingDetailsLayout.recipientDetailsTitle?.text = bindString(R.string.who_is_collecting)
         binding.confirmDetails?.setOnClickListener(this)
@@ -443,30 +451,4 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(R.
     private fun FragmentActivity.closeFragment(view: View) {
         view.postDelayed({ onBackPressed() }, AppConstant.DELAY_500_MS)
     }
-
-    private fun setFirebaseEventFormStart(vehicleType : String) {
-        var propertyValueForFormType = when(KotlinUtils.getPreferredDeliveryType()){
-            Delivery.DASH ->  {
-                FirebaseManagerAnalyticsProperties.PropertyValues.DASH
-            }
-            Delivery.CNC -> {
-                FirebaseManagerAnalyticsProperties.PropertyValues.CLICK_AND_COLLECT
-            }
-            else -> {
-                FirebaseManagerAnalyticsProperties.PropertyValues.STANDARD
-            }
-        }
-        //Event form type for address checkout
-        val formTypeParams = hashMapOf(
-            FirebaseManagerAnalyticsProperties.PropertyNames.FORM_TYPE to
-                    propertyValueForFormType,
-            FirebaseManagerAnalyticsProperties.PropertyNames.FORM_NAME to
-                    vehicleType,
-            FirebaseManagerAnalyticsProperties.PropertyNames.FORM_LOCATION to
-                    FirebaseManagerAnalyticsProperties.PropertyValues.CHECKOUT
-        )
-        Utils.triggerFireBaseEvents(
-            FirebaseManagerAnalyticsProperties.FORM_START, formTypeParams, activity)
-    }
-
 }

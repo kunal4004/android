@@ -436,11 +436,12 @@ open class FirebaseManagerAnalyticsProperties {
          const val DASH_DRIVER_TIP = "dash_driver_tip"
          const val DASH_SELECT_CONTENT = "select_content"
 
-        //Address Checkout
-        const val FORM_START = "form_start"
-
         //checkout voucher or promocode
         const val CHECKOUT = "Checkout"
+
+        //Address Checkout
+        const val FORM_START = "form_start"
+        const val FORM_COMPLETE = "form_complete"
     }
 
     class PropertyNames {
