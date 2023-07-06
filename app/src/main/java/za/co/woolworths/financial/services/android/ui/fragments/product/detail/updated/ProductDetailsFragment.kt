@@ -342,6 +342,9 @@ class ProductDetailsFragment :
             // As User selects to change the delivery location. So we will call confirm place API and will change the users location.
             binding.getUpdatedValidateResponse()
         }
+        setFragmentResultListener(LocationUtils.ADD_TO_LIST_SUCCESS_RESULT_CODE) { _, _ ->
+            // todo Proceed with add to cart as we have moved unsellable items to List.
+        }
     }
 
     //firebase event view_item
@@ -918,7 +921,7 @@ class ProductDetailsFragment :
     ) {
         deliveryType?.let {
             val unsellableItemsBottomSheetDialog =
-                UnsellableItemsBottomSheetDialog.newInstance(unSellableCommerceItems, it, binding.progressBar, confirmAddressViewModel)
+                UnsellableItemsBottomSheetDialog.newInstance(unSellableCommerceItems, it, binding.progressBar, confirmAddressViewModel, this)
             unsellableItemsBottomSheetDialog.show(requireFragmentManager(),
                 UnsellableItemsBottomSheetDialog::class.java.simpleName)
         }

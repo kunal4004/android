@@ -2,14 +2,6 @@ package za.co.woolworths.financial.services.android.util
 
 import android.view.View
 import android.widget.ProgressBar
-import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.awfs.coordination.R
@@ -24,7 +16,7 @@ import za.co.woolworths.financial.services.android.models.dto.CreateList
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList
 import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
-import za.co.woolworths.financial.services.android.presentation.common.ProgressView
+import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 
 /**
@@ -34,6 +26,9 @@ class LocationUtils {
     companion object {
 
         private var commerceItemList: ArrayList<UnSellableCommerceItem>? = null
+        private var customProgressDialog: CustomProgressBar? = null
+        private var customBottomSheetDialogFragment: CustomBottomSheetDialogFragment? = null
+        internal const val ADD_TO_LIST_SUCCESS_RESULT_CODE = "64924"
         fun callConfirmPlace(
             fragment: Fragment,
             confirmLocationParams: ConfirmLocationParams?,
@@ -175,18 +170,18 @@ class LocationUtils {
                     try {
                         val createListResponse =
                             confirmAddressViewModel.createNewList(createList)
-                        hideLoadingProgress(fragment)
+                        hideLoadingProgress()
                         val createNewListResponse = createListResponse?.body()
                         if (createNewListResponse != null) {
                             when (createNewListResponse.httpCode) {
                                 AppConstant.HTTP_OK -> {
-                                    // Todo Pass CallBack to Parent Fragment to Show success popup.
+                                    showAddToListSuccessPopup(fragment)
                                 }
                             }
                         }
                     } catch (e: Exception) {
                         FirebaseManager.logException(e)
-                        hideLoadingProgress(fragment)
+                        hideLoadingProgress()
                     }
                 }
             }
@@ -202,41 +197,51 @@ class LocationUtils {
                     try {
                         val addProductToListResponse =
                             confirmAddressViewModel.addProductsToList("", listOf())
-                        hideLoadingProgress(fragment)
+                        hideLoadingProgress()
                         val addToListResponse = addProductToListResponse?.body()
                         if (addToListResponse != null) {
                             when (addToListResponse.httpCode) {
                                 AppConstant.HTTP_OK -> {
-                                    // Todo Pass CallBack to Parent Fragment to Show success popup.
+                                    showAddToListSuccessPopup(fragment)
                                 }
                             }
                         }
                     } catch (e: Exception) {
                         FirebaseManager.logException(e)
-                        hideLoadingProgress(fragment)
+                        hideLoadingProgress()
                     }
                 }
             }
         }
 
         private fun showLoadingProgress(fragment: Fragment) {
-            fragment.requireActivity().setContent {
-                ProgressView(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .heightIn(min = 290.dp)
-                        .wrapContentHeight(Alignment.CenterVertically),
-                    title = stringResource(
-                        id = R.string.add_to_list_progress_title,
-                        "a List"
-                    ),
-                    desc = stringResource(id = R.string.processing_your_request_desc)
-                )
-            }
+            customProgressDialog = CustomProgressBar.newInstance(
+                fragment.getString(R.string.add_to_list_progress_bar_title),
+                fragment.getString(R.string.processing_your_request_desc)
+            )
+            customProgressDialog?.show(
+                fragment.requireActivity().supportFragmentManager,
+                CustomProgressBar::class.java.simpleName
+            )
         }
 
-        private fun hideLoadingProgress(fragment: Fragment) {
+        private fun hideLoadingProgress() {
+            customProgressDialog?.dismiss()
+        }
 
+        private fun showAddToListSuccessPopup(fragment: Fragment) {
+            customBottomSheetDialogFragment =
+                CustomBottomSheetDialogFragment.newInstance(
+                    fragment.getString(R.string.add_to_list_bottom_sheet_success_title),
+                    fragment.getString(R.string.add_to_list_bottom_sheet_success_sub_title),
+                    fragment.getString(R.string.got_it),
+                    null,
+                    ADD_TO_LIST_SUCCESS_RESULT_CODE
+                )
+            customBottomSheetDialogFragment?.show(
+                fragment.requireActivity().supportFragmentManager,
+                CustomBottomSheetDialogFragment::class.java.simpleName
+            )
         }
     }
 }
