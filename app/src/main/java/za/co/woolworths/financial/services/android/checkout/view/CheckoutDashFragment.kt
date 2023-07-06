@@ -23,6 +23,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.NavController
@@ -37,7 +38,6 @@ import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.gson.JsonElement
 import dagger.hilt.android.AndroidEntryPoint
-import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor
 import za.co.woolworths.financial.services.android.checkout.service.network.*
 import za.co.woolworths.financial.services.android.checkout.utils.AddShippingInfoEventsAnalytics
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.Companion.REGEX_DELIVERY_INSTRUCTIONS
@@ -52,7 +52,6 @@ import za.co.woolworths.financial.services.android.checkout.view.ErrorHandlerBot
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CollectionTimeSlotsAdapter
 import za.co.woolworths.financial.services.android.checkout.view.adapter.ShoppingBagsRadioGroupAdapter
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
-import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelFactory
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyValues.Companion.SHIPPING_TIER_VALUE_DASH
 import za.co.woolworths.financial.services.android.contracts.IToastInterface
@@ -64,6 +63,7 @@ import za.co.woolworths.financial.services.android.models.dto.LiquorCompliance
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
 import za.co.woolworths.financial.services.android.models.dto.app_config.native_checkout.ConfigShoppingBagsOptions
+import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
@@ -77,7 +77,6 @@ import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManag
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.pushnotification.NotificationUtils
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
-import za.co.woolworths.financial.services.android.viewmodels.ShoppingCartLiveData
 import java.util.regex.Pattern
 import javax.inject.Inject
 
@@ -104,7 +103,7 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
     private var selectedShoppingBagType: Double? = null
     private lateinit var dashTimeSlotsAdapter: CollectionTimeSlotsAdapter
     private var confirmDeliveryAddressResponse: ConfirmDeliveryAddressResponse? = null
-    private lateinit var checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel
+    private val checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel by activityViewModels()
     private var selectedFoodSubstitution = FoodSubstitution.SIMILAR_SUBSTITUTION
     private var shimmerComponentArray: List<Pair<ShimmerFrameLayout, View>> = ArrayList()
     private var navController: NavController? = null
@@ -155,10 +154,9 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
         (activity as? CheckoutActivity)?.apply {
             showBackArrowWithTitle(bindString(R.string.checkout))
         }
-        setupViewModel()
         initializeDashingToView()
         initializeDashTimeSlots()
-        isUnSellableLiquorItemRemoved()
+        loadShoppingCart()
         getLiquorComplianceDetails()
         hideGiftOption()
         hideInstructionLayout()
@@ -168,16 +166,7 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
         binding.checkoutCollectingFromLayout?.root?.setOnClickListener(this)
     }
 
-    private fun isUnSellableLiquorItemRemoved() {
-        ShoppingCartLiveData.observe(viewLifecycleOwner) { isLiquorOrder ->
-            if (isLiquorOrder == false) {
-                binding.ageConfirmationLayout?.root?.visibility = View.GONE
-                binding.ageConfirmationLayout.liquorComplianceBannerLayout?.root?.visibility =
-                    View.GONE
-                ShoppingCartLiveData.value = true
-            }
-        }
-    }
+
 
     private fun hideInstructionLayout() {
         binding.layoutDeliveryInstructions.txtNeedBags?.visibility = GONE
@@ -223,10 +212,8 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
                     if (!binding.ageConfirmationLayout.radioBtnAgeConfirmation.isChecked) {
                         Utils.fadeInFadeOutAnimation(binding.txtContinueToPayment, true)
                         binding.ageConfirmationLayout.radioBtnAgeConfirmation?.isChecked = false
-                        binding.txtContinueToPayment?.isClickable = false
                     } else {
                         Utils.fadeInFadeOutAnimation(binding.txtContinueToPayment, false)
-                        binding.txtContinueToPayment?.isClickable = true
                         binding.ageConfirmationLayout.radioBtnAgeConfirmation?.isChecked = true
                     }
                 }
@@ -413,16 +400,7 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
         initializeDriverTipView()
     }
 
-    private fun setupViewModel() {
-        checkoutAddAddressNewUserViewModel = ViewModelProviders.of(
-            this,
-            ViewModelFactory(
-                CheckoutAddAddressNewUserInteractor(
-                    CheckoutAddAddressNewUserApiHelper()
-                )
-            )
-        ).get(CheckoutAddAddressNewUserViewModel::class.java)
-    }
+
 
     private fun callConfirmLocationAPI() {
         initShimmerView()
@@ -1394,7 +1372,9 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
             binding.ageConfirmationLayout.radioBtnAgeConfirmation,
             binding.ageConfirmationLayout.radioBtnAgeConfirmation
         )
-        return liquorOrder == true && !binding.ageConfirmationLayout.radioBtnAgeConfirmation.isChecked
+        return liquorOrder == true &&
+                !binding.ageConfirmationLayout.radioBtnAgeConfirmation.isChecked &&
+                binding.ageConfirmationLayout?.root?.visibility == View.VISIBLE
     }
 
     private fun isRequiredFieldsMissing(): Boolean {
@@ -1540,5 +1520,38 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
     override fun onToastButtonClicked(jsonElement: JsonElement?) {
         // Open settings screen for turning on push notification.
         openAppNotificationSettings(requireActivity())
+    }
+
+    private fun loadShoppingCart() {
+        checkoutAddAddressNewUserViewModel.shoppingCartData.observe(viewLifecycleOwner) {
+            it.getContentIfNotHandled()?.let { resource ->
+                when (resource.status) {
+                    Status.SUCCESS -> {
+                        val isNoLiquorOrder = resource.data?.data?.getOrNull(0)?.liquorOrder
+                        if(isNoLiquorOrder == false) {
+                            updateAgeConfirmationUI(isNoLiquorOrder)
+                        }
+                    }
+                    Status.ERROR -> {
+                        //Do Nothing
+                    }
+                    else -> {
+                        //Do Nothing
+                    }
+                }
+            }
+        }
+    }
+
+    private fun updateAgeConfirmationUI(isNoLiquorOrder: Boolean?) {
+        binding.ageConfirmationLayout?.root?.visibility = View.GONE
+        binding.ageConfirmationLayout.liquorComplianceBannerLayout?.root?.visibility =
+                View.GONE
+        Utils.fadeInFadeOutAnimation(binding.txtContinueToPayment, false)
+        liquorOrder = isNoLiquorOrder
+        CheckoutAddressManagementBaseFragment.baseFragBundle?.apply {
+            remove(Constant.LIQUOR_ORDER)
+            remove(Constant.NO_LIQUOR_IMAGE_URL)
+        }
     }
 }
