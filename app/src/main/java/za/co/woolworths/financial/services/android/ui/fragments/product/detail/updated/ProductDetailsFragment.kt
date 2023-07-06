@@ -854,12 +854,14 @@ class ProductDetailsFragment :
                                         KotlinUtils.browsingDeliveryType?.name)
                                 }
                             } else
-                                LocationUtils.callConfirmPlace(
-                                    (this@ProductDetailsFragment),
-                                    null,
-                                    progressBar,
-                                    confirmAddressViewModel
-                                )
+                                confirmAddressViewModel?.let {
+                                    LocationUtils.callConfirmPlace(
+                                        (this@ProductDetailsFragment),
+                                        null,
+                                        progressBar,
+                                        it
+                                    )
+                                }
                         }
                     }
                 }
@@ -912,8 +914,11 @@ class ProductDetailsFragment :
     ) {
         deliveryType?.let {
             val unsellableItemsBottomSheetDialog =
-                UnsellableItemsBottomSheetDialog.newInstance(unSellableCommerceItems, it, binding.progressBar, confirmAddressViewModel, this)
-            unsellableItemsBottomSheetDialog.show(requireFragmentManager(),
+                confirmAddressViewModel?.let { it1 ->
+                    UnsellableItemsBottomSheetDialog.newInstance(unSellableCommerceItems, it, binding.progressBar,
+                        it1, this)
+                }
+            unsellableItemsBottomSheetDialog?.show(requireFragmentManager(),
                 UnsellableItemsBottomSheetDialog::class.java.simpleName)
         }
     }

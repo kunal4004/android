@@ -540,7 +540,6 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
 
     private fun onConfirmLocationNavigation(){
         if (isComingFromCheckout) {
-            loadShoppingCart()
             if (deliveryType == Delivery.STANDARD.name || deliveryType == Delivery.DASH.name) {
                 if (isComingFromSlotSelection) {
                     /*Navigate to slot selection page with updated saved address*/
