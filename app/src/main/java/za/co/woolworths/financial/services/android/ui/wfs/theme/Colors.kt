@@ -27,5 +27,4 @@ val BlackOpacity10 = Color(0xFF000000).copy(alpha = 0.1f)
 val FunctionalGreys = Color(0xFFF5F5F5)
 val BrightGray = Color(0xB3EEEEEE)
 val TextLightSilver = Color(0x4D000000)
-val Color444444 = Color(0xFF444444)
 
