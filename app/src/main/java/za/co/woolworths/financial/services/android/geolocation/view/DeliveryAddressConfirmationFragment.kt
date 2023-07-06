@@ -96,7 +96,6 @@ import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
-import za.co.woolworths.financial.services.android.viewmodels.ShoppingCartLiveData
 import javax.inject.Inject
 
 /**
@@ -1067,50 +1066,7 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
         }
     }
 
-    private fun loadShoppingCart() {
-        val shoppingCartResponseCall = OneAppService().getShoppingCart()
-        shoppingCartResponseCall.enqueue(
-                CompletionHandler(
-                        (object : IResponseListener<ShoppingCartResponse> {
-                            override fun onSuccess(response: ShoppingCartResponse?) {
-                                try {
-                                    when (response?.httpCode) {
-                                        HTTP_OK -> {
-                                            val isNoLiquorOrder = response?.data?.getOrNull(0)?.liquorOrder
-                                            if(isNoLiquorOrder == false)
-                                                ShoppingCartLiveData.value = isNoLiquorOrder
-                                        }
-                                        HTTP_SESSION_TIMEOUT_440 -> {
-                                            SessionUtilities.getInstance()
-                                                    .setSessionState(SessionDao.SESSION_STATE.INACTIVE)
-                                            SessionExpiredUtilities.getInstance().showSessionExpireDialog(
-                                                    requireActivity() as AppCompatActivity?,
-                                                    this@DeliveryAddressConfirmationFragment
-                                            )
-                                        }
-                                        else -> {
-                                            response?.response?.let {
-                                                Utils.displayValidationMessage(
-                                                        requireActivity(),
-                                                        CustomPopUpWindow.MODAL_LAYOUT.ERROR,
-                                                        it.desc,
-                                                        true
-                                                )
-                                            }
-                                        }
-                                    }
-                                } catch (ex: Exception) {
-                                    FirebaseManager.logException(ex)
-                                }
-                            }
 
-                            override fun onFailure(error: Throwable?) {
-
-                            }
-                        }), ShoppingCartResponse::class.java
-                )
-        )
-    }
 
     private fun GeoLocationDeliveryAddressBinding.showErrorDialog() {
         if(!isAdded && !isVisible) return
