@@ -1208,7 +1208,16 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
         )
     }
 
-    override fun onDashLandingNavigationClicked(view: View?, item: Banner, headerText: String?) {
+
+    override fun onDashLandingNavigationClicked(
+        position: Int,
+        view: View?,
+        item: Banner,
+        headerText: String?
+    ) {
+
+        addBannerEngagementEvent(item,position,headerText)
+
         (requireActivity() as? BottomNavigationActivity)?.apply {
             val screenViewEventData = FirebaseAnalyticsEventHelper.Utils.getPLPScreenViewEventDataForDash(
                 headerText = headerText,
@@ -1253,5 +1262,33 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                 }
             }
         }
+    }
+
+    private fun addBannerEngagementEvent(
+        banner: Banner,
+        position: Int,
+        bannerType: String?,
+    ) {
+
+        val categoryBanner = Bundle()
+        categoryBanner?.apply {
+            putString(
+                FirebaseManagerAnalyticsProperties.PropertyNames.CONTENT_NAME,
+                banner.displayName
+            )
+            putInt(
+                FirebaseManagerAnalyticsProperties.PropertyNames.BANNER_POSITION,
+                position
+            )
+            putString(
+                FirebaseManagerAnalyticsProperties.PropertyNames.BANNER_LIST_NAME,
+                bannerType
+            )
+
+        }
+        AnalyticsManager.logEvent(
+            FirebaseManagerAnalyticsProperties.PropertyNames.BANNER_ENGAGEMENT,
+            categoryBanner
+        )
     }
 }
