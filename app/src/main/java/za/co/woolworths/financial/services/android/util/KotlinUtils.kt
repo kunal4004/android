@@ -117,6 +117,7 @@ import kotlin.coroutines.CoroutineContext
 import kotlin.math.roundToInt
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_MIXED_BASKET
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_FBH_ONLY
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.logEvent
 
 
 class KotlinUtils {
@@ -606,7 +607,7 @@ class KotlinUtils {
                         val formmmatedNickName = getFormattedNickName(address?.nickname,
                             fullAddress, context)
 
-                        if (timeSlot?.isNullOrEmpty() == true) {
+                        if (timeSlot.isNullOrEmpty()) {
                             tvDeliveryLocation?.text =
                                 context?.getString(R.string.no_timeslots_available_title)
                                     ?.plus("\t\u2022\t")?.plus(
@@ -1588,6 +1589,19 @@ class KotlinUtils {
             }
             nickNameWithAddress.append(formattedNickName)
             return nickNameWithAddress
+        }
+
+        fun triggerFireBaseEvents(
+            eventName: String,
+            arguments: Map<String, String>,
+            activity: Activity?
+        ) {
+            val params = Bundle()
+            arguments.forEach { entry ->
+                params.putString(entry.key , entry.value)
+            }
+            logEvent(eventName, params)
+            requestInAppReview(eventName, activity)
         }
     }
 }
