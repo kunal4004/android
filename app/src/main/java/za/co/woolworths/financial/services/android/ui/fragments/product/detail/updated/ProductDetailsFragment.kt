@@ -53,7 +53,6 @@ import za.co.woolworths.financial.services.android.common.SingleMessageCommonToa
 import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.ILocationProvider
-import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.AddToCartLiveData
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmLocationResponseLiveData
@@ -139,24 +138,7 @@ import za.co.woolworths.financial.services.android.util.pickimagecontract.PickIm
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.io.File
 import javax.inject.Inject
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
-import kotlin.collections.List
-import kotlin.collections.Map
-import kotlin.collections.MutableList
-import kotlin.collections.any
-import kotlin.collections.arrayListOf
-import kotlin.collections.containsKey
-import kotlin.collections.forEach
-import kotlin.collections.forEachIndexed
 import kotlin.collections.get
-import kotlin.collections.hashMapOf
-import kotlin.collections.isEmpty
-import kotlin.collections.isNotEmpty
-import kotlin.collections.isNullOrEmpty
-import kotlin.collections.joinToString
-import kotlin.collections.listOf
-import kotlin.collections.listOfNotNull
 import kotlin.collections.set
 
 
@@ -226,7 +208,7 @@ class ProductDetailsFragment :
     private val vtoApplyEffectOnImageViewModel: VtoApplyEffectOnImageViewModel? by activityViewModels()
     private val liveCameraViewModel: LiveCameraViewModel? by activityViewModels()
     private val dataPrefViewModel: DataPrefViewModel? by activityViewModels()
-    private val confirmAddressViewModel: ConfirmAddressViewModel? by activityViewModels()
+    private val confirmAddressViewModel: ConfirmAddressViewModel by activityViewModels()
     private var makeupCamera: MakeupCam? = null
     private var isObserveImageData: Boolean = false
     private var isRefreshImageEffectLiveCamera: Boolean = false

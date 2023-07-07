@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
@@ -37,7 +36,6 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.Companion.DASH_SWITCH_DELIVERY_MODE
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyNames.Companion.BROWSE_MODE
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyNames.Companion.DELIVERY_MODE
-import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationParams
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
@@ -49,16 +47,10 @@ import za.co.woolworths.financial.services.android.geolocation.viewmodel.Confirm
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmLocationResponseLiveData
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
-import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.Province
-import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse
-import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
 import za.co.woolworths.financial.services.android.models.dto.Suburb
 import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
-import za.co.woolworths.financial.services.android.models.network.CompletionHandler
-import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.models.network.StorePickupInfoBody
-import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.UnsellableItemsBottomSheetDialog
@@ -66,7 +58,6 @@ import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.VtoErro
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.listener.VtoTryAgainListener
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
-import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_SESSION_TIMEOUT_440
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.CNC
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DASH
@@ -81,16 +72,13 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_LATITUDE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_LONGITUDE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_PLACE_ID
-import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.SAVED_ADDRESS_RESPONSE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.STANDARD
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.STANDARD_DELIVERY
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.VALIDATE_RESPONSE
 import za.co.woolworths.financial.services.android.util.Constant
 import za.co.woolworths.financial.services.android.util.KotlinUtils
-import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.saveAnonymousUserLocationDetails
 import za.co.woolworths.financial.services.android.util.LocationUtils
-import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
@@ -537,7 +525,6 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
 
     private fun onConfirmLocationNavigation(){
         if (isComingFromCheckout) {
-            loadShoppingCart()
             if (deliveryType == Delivery.STANDARD.name || deliveryType == Delivery.DASH.name) {
                 if (isComingFromSlotSelection) {
                     /*Navigate to slot selection page with updated saved address*/

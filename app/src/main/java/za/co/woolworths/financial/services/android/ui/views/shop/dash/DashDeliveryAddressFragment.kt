@@ -19,6 +19,7 @@ import androidx.core.os.bundleOf
 import androidx.core.text.buildSpannedString
 import androidx.core.view.contains
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.ViewModelProvider
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -37,7 +38,6 @@ import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.AddToCartLiveData
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
-import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmLocationResponseLiveData
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
@@ -91,7 +91,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
     DashOrderReceiverListener {
 
     private lateinit var viewModel: ShopViewModel
-    private lateinit var confirmAddressViewModel: ConfirmAddressViewModel
+    private val confirmAddressViewModel: ConfirmAddressViewModel by activityViewModels()
     private lateinit var binding: FragmentDashDeliveryBinding
     private lateinit var dashDeliveryAdapter: DashDeliveryAdapter
     private var isQuickShopClicked = false
@@ -117,10 +117,6 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this).get(ShopViewModel::class.java)
-        confirmAddressViewModel = ViewModelProvider(
-            this,
-            GeoLocationViewModelFactory(GeoLocationApiHelper())
-        ).get(ConfirmAddressViewModel::class.java)
         binding = FragmentDashDeliveryBinding.bind(view)
         val parentFragment = (activity as? BottomNavigationActivity)?.currentFragment as? ShopFragment
         if (!isVisible || parentFragment?.getCurrentFragmentIndex() != ShopFragment.SelectedTabIndex.DASH_TAB.index || !isAdded) {
