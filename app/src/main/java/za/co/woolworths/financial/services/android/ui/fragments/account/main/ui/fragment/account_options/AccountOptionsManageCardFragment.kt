@@ -16,20 +16,29 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.LoaderType
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.MyAccountsRemoteApiViewModel
 import za.co.woolworths.financial.services.android.ui.extension.onClick
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.*
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.ViewState
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderFailure
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderHttpFailureFromServer
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderLoading
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderNoConnection
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity.Companion.SHOW_ACTIVATE_VIRTUAL_CARD_SCREEN
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity.Companion.SHOW_BLOCK_CARD_SCREEN
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity.Companion.SHOW_GET_REPLACEMENT_CARD_SCREEN
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_account_options_list.card_freeze.TemporaryFreezeCardViewModel
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card.*
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card.ListCallback
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card.ManageCardItemListener
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card.ManageCardLandingHeaderItems
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card.ManageMyCardDetailsFragment
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card.ManageStoreCardLandingList
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.StoreCardActivityResultCallback
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.setupGraph
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.CallBack
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.ProductLandingRouterImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.BetterActivityResult
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.loadingState
-import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.ConnectivityLiveData
+import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.location.Event
 import za.co.woolworths.financial.services.android.util.location.EventType
 import za.co.woolworths.financial.services.android.util.location.Locator
@@ -60,11 +69,6 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
     private val landingController by lazy { (requireActivity() as? StoreCardActivity)?.landingNavController() }
     private lateinit var locator: Locator
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        viewModel.requestGetStoreCardCards()
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         with(AccountOptionsManageCardFragmentBinding.bind(view)) {
@@ -80,6 +84,7 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
             setOnClickListener()
             setupView()
         }
+        viewModel.requestGetStoreCardCards()
     }
 
     private fun AccountOptionsManageCardFragmentBinding.startLocationDiscoveryProcess() {

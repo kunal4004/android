@@ -35,7 +35,7 @@ class ManageCardViewPagerFragment : Fragment(R.layout.manage_card_viewpager_frag
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val binding = ManageCardViewpagerFragmentBinding.bind(view)
-        manageCardAdapter = ManageCardViewPagerAdapter(fragment = requireActivity())
+        manageCardAdapter = ManageCardViewPagerAdapter(fragmentManager = childFragmentManager, lifecycle = lifecycle)
         with(binding) {
             initCardViewPager()
             subscribeObservers()
