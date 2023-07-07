@@ -7,7 +7,7 @@
 
     <TextView
         android:id="@+id/transactionDate"
-        style="@style/opensans_regular_12_text_style"
+        style="@style/futura_medium_black_12_text_style"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/eight_dp"
@@ -21,7 +21,7 @@
 
     <TextView
         android:id="@+id/transactionDescription"
-        style="@style/opensans_regular_13_black"
+        style="@style/futura_medium_black_12_text_style"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="Purchase - Foods"
