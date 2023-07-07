@@ -16,6 +16,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.UnsellableItemsBottomSheetDialogBinding
@@ -37,6 +38,7 @@ import za.co.woolworths.financial.services.android.util.wenum.Delivery
 class UnsellableItemsBottomSheetDialog(
     val progressBar: ProgressBar,
     val confirmAddressViewModel: ConfirmAddressViewModel,
+    val currentFragment: Fragment
 ) : WBottomSheetDialogFragment(),
     View.OnClickListener {
 
@@ -55,8 +57,9 @@ class UnsellableItemsBottomSheetDialog(
             deliveryType: String,
             progressBar: ProgressBar,
             viewModel: ConfirmAddressViewModel,
+            fragment: Fragment
         ) =
-            UnsellableItemsBottomSheetDialog(progressBar, viewModel).withArgs {
+            UnsellableItemsBottomSheetDialog(progressBar, viewModel, fragment).withArgs {
                 putSerializable(KEY_ARGS_UNSELLABLE_COMMERCE_ITEMS, unsellableItemsList)
                 putString(KEY_ARGS_DELIVERY_TYPE, deliveryType)
             }
@@ -169,9 +172,8 @@ class UnsellableItemsBottomSheetDialog(
                 commerceItems?.let { unsellableItems ->
                     FirebaseAnalyticsEventHelper.removeFromCartUnsellable(unsellableItems)
                 }
-                val parentFragmentList = this.parentFragmentManager.fragments
                 LocationUtils.callConfirmPlace(
-                    parentFragmentList[parentFragmentList.size - 2],
+                    currentFragment,
                     if (isCheckBoxSelected) ConfirmLocationParams(commerceItems, null) else null,
                     progressBar,
                     confirmAddressViewModel

@@ -348,6 +348,9 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
                 }
             }
         }
+        setFragmentResultListener(LocationUtils.ADD_TO_LIST_SUCCESS_RESULT_CODE) { _, _ ->
+            // todo Proceed with add to cart as we have moved unsellable items to List.
+        }
 
         setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_CLICK_RESULT) { _, _ ->
             // change location button clicked as address is not deliverable.
@@ -1026,7 +1029,7 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
     ) {
         deliveryType?.let {
             val unsellableItemsBottomSheetDialog =
-                UnsellableItemsBottomSheetDialog.newInstance(unSellableCommerceItems, it, binding.progressBar, confirmAddressViewModel)
+                UnsellableItemsBottomSheetDialog.newInstance(unSellableCommerceItems, it, binding.progressBar, confirmAddressViewModel, this)
             unsellableItemsBottomSheetDialog.show(requireFragmentManager(),
                 UnsellableItemsBottomSheetDialog::class.java.simpleName)
         }

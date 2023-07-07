@@ -322,6 +322,9 @@ class ProductDetailsFragment :
             // As User selects to change the delivery location. So we will call confirm place API and will change the users location.
             binding.getUpdatedValidateResponse()
         }
+        setFragmentResultListener(LocationUtils.ADD_TO_LIST_SUCCESS_RESULT_CODE) { _, _ ->
+            // todo Proceed with add to cart as we have moved unsellable items to List.
+        }
     }
 
     //firebase event view_item
@@ -833,12 +836,14 @@ class ProductDetailsFragment :
                                         KotlinUtils.browsingDeliveryType?.name)
                                 }
                             } else
-                                LocationUtils.callConfirmPlace(
-                                    (this@ProductDetailsFragment),
-                                    null,
-                                    progressBar,
-                                    confirmAddressViewModel
-                                )
+                                confirmAddressViewModel?.let {
+                                    LocationUtils.callConfirmPlace(
+                                        (this@ProductDetailsFragment),
+                                        null,
+                                        progressBar,
+                                        it
+                                    )
+                                }
                         }
                     }
                 }
@@ -891,8 +896,11 @@ class ProductDetailsFragment :
     ) {
         deliveryType?.let {
             val unsellableItemsBottomSheetDialog =
-                UnsellableItemsBottomSheetDialog.newInstance(unSellableCommerceItems, it, binding.progressBar, confirmAddressViewModel)
-            unsellableItemsBottomSheetDialog.show(requireFragmentManager(),
+                confirmAddressViewModel?.let { it1 ->
+                    UnsellableItemsBottomSheetDialog.newInstance(unSellableCommerceItems, it, binding.progressBar,
+                        it1, this)
+                }
+            unsellableItemsBottomSheetDialog?.show(requireFragmentManager(),
                 UnsellableItemsBottomSheetDialog::class.java.simpleName)
         }
     }

@@ -4,15 +4,19 @@ import android.view.View
 import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import com.awfs.coordination.R
 import com.google.gson.JsonSyntaxException
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationParams
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.AddToCartLiveData
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmLocationResponseLiveData
+import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
+import za.co.woolworths.financial.services.android.models.dto.CreateList
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList
 import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
+import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 
 /**
@@ -20,12 +24,18 @@ import za.co.woolworths.financial.services.android.util.analytics.FirebaseManage
  */
 class LocationUtils {
     companion object {
+
+        private var commerceItemList: ArrayList<UnSellableCommerceItem>? = null
+        private var customProgressDialog: CustomProgressBar? = null
+        private var customBottomSheetDialogFragment: CustomBottomSheetDialogFragment? = null
+        internal const val ADD_TO_LIST_SUCCESS_RESULT_CODE = "64924"
         fun callConfirmPlace(
             fragment: Fragment,
             confirmLocationParams: ConfirmLocationParams?,
             progressBar: ProgressBar,
             confirmAddressViewModel: ConfirmAddressViewModel,
         ) {
+            commerceItemList = confirmLocationParams?.commerceItemList
             // Call Confirm location API.
             fragment.viewLifecycleOwner.lifecycleScope.launch {
                 progressBar?.visibility = View.VISIBLE
@@ -108,10 +118,14 @@ class LocationUtils {
                                 }
                                 if (shoppingList != null) {
                                     // This means Auto Shopping List name already exist and we need to call add to list API
+                                    callAddToListAPI(fragment, confirmAddressViewModel)
 
                                 } else {
                                     // Name *Auto Shopping List* don't exist so call create List API to create this name.
-
+                                    callCreateListAPI(
+                                        fragment,
+                                        confirmAddressViewModel
+                                    )
                                 }
                             }
 
@@ -129,6 +143,105 @@ class LocationUtils {
                     progressBar?.visibility = View.GONE
                 }
             }
+        }
+
+        private fun callCreateListAPI(
+            fragment: Fragment,
+            confirmAddressViewModel: ConfirmAddressViewModel,
+        ) {
+            if (commerceItemList != null) {
+                var items: List<AddToListRequest> = mutableListOf()
+                for (listItem in commerceItemList!!) {
+                    var addToListRequest = AddToListRequest()
+                    addToListRequest.apply {
+                        skuID = listItem.productId
+                        giftListId = ""
+                        catalogRefId = ""
+                        quantity = listItem.quantity.toString()
+                        listId = ""
+
+                    }
+
+                    items.plus(addToListRequest)
+                }
+                val createList = CreateList(Constant.AUTO_SHOPPING_LIST_NAME, items)
+                showLoadingProgress(fragment)
+                fragment.viewLifecycleOwner.lifecycleScope.launch {
+                    try {
+                        val createListResponse =
+                            confirmAddressViewModel.createNewList(createList)
+                        hideLoadingProgress()
+                        val createNewListResponse = createListResponse?.body()
+                        if (createNewListResponse != null) {
+                            when (createNewListResponse.httpCode) {
+                                AppConstant.HTTP_OK -> {
+                                    showAddToListSuccessPopup(fragment)
+                                }
+                            }
+                        }
+                    } catch (e: Exception) {
+                        FirebaseManager.logException(e)
+                        hideLoadingProgress()
+                    }
+                }
+            }
+        }
+
+        private fun callAddToListAPI(
+            fragment: Fragment,
+            confirmAddressViewModel: ConfirmAddressViewModel,
+        ) {
+            if (commerceItemList != null) {
+                showLoadingProgress(fragment)
+                fragment.viewLifecycleOwner.lifecycleScope.launch {
+                    try {
+                        val addProductToListResponse =
+                            confirmAddressViewModel.addProductsToList("", listOf())
+                        hideLoadingProgress()
+                        val addToListResponse = addProductToListResponse?.body()
+                        if (addToListResponse != null) {
+                            when (addToListResponse.httpCode) {
+                                AppConstant.HTTP_OK -> {
+                                    showAddToListSuccessPopup(fragment)
+                                }
+                            }
+                        }
+                    } catch (e: Exception) {
+                        FirebaseManager.logException(e)
+                        hideLoadingProgress()
+                    }
+                }
+            }
+        }
+
+        private fun showLoadingProgress(fragment: Fragment) {
+            customProgressDialog = CustomProgressBar.newInstance(
+                fragment.getString(R.string.add_to_list_progress_bar_title),
+                fragment.getString(R.string.processing_your_request_desc)
+            )
+            customProgressDialog?.show(
+                fragment.requireActivity().supportFragmentManager,
+                CustomProgressBar::class.java.simpleName
+            )
+        }
+
+        private fun hideLoadingProgress() {
+            customProgressDialog?.dismiss()
+        }
+
+        private fun showAddToListSuccessPopup(fragment: Fragment) {
+            customBottomSheetDialogFragment =
+                CustomBottomSheetDialogFragment.newInstance(
+                    fragment.getString(R.string.add_to_list_bottom_sheet_success_title),
+                    fragment.getString(R.string.add_to_list_bottom_sheet_success_sub_title),
+                    fragment.getString(R.string.got_it),
+                    null,
+                    ADD_TO_LIST_SUCCESS_RESULT_CODE
+                )
+            customBottomSheetDialogFragment?.show(
+                fragment.requireActivity().supportFragmentManager,
+                CustomBottomSheetDialogFragment::class.java.simpleName
+            )
         }
     }
 }
