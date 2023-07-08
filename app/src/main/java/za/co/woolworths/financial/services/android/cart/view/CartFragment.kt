@@ -104,6 +104,10 @@ import za.co.woolworths.financial.services.android.util.QueryBadgeCounter.Compan
 import za.co.woolworths.financial.services.android.util.ToastUtils.ToastInterface
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper.FirebaseEventAction.*
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper.FirebaseEventOption.ADD_PROMO
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper.FirebaseEventOption.VOUCHERS
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper.triggerFirebaseEventVouchersOrPromoCode
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.logException
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.setCrashlyticsString
 import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
@@ -880,10 +884,15 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         priceHolder.vouchersMain.rlAvailableWRewardsVouchers.setOnClickListener {
             onViewVouchers()
             triggerFirebaseEventForCart(appliedVouchersCount)
+            triggerFirebaseEventVouchersOrPromoCode(
+                VIEW_WREWARDS_VOUCHERS.value,
+                VOUCHERS.value,requireActivity())
         }
         priceHolder.vouchersMain.rlAvailableCashVouchers?.setOnClickListener {
             onViewCashBackVouchers()
             triggerFirebaseEventForCart(appliedVouchersCount)
+            triggerFirebaseEventVouchersOrPromoCode(VIEW_VOUCHER.value,
+                VOUCHERS.value,requireActivity())
         }
 
         if (voucherDetails == null) {
@@ -2082,12 +2091,12 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     }
 
     override fun onEnterPromoCode() {
-        Utils.triggerFireBaseEvents(
-            FirebaseManagerAnalyticsProperties.Cart_promo_enter,
-            requireActivity()
-        )
+        triggerFirebaseEventVouchersOrPromoCode(
+            ADD_PROMO_CODE.value,
+            ADD_PROMO.value,requireActivity())
         navigateToApplyPromoCodePage()
     }
+
 
     override fun onRemovePromoCode(promoCode: String) {
         viewModel.onRemovePromoCode(CouponClaimCode(promoCode))
