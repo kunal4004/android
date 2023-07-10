@@ -1605,7 +1605,7 @@ class KotlinUtils {
         }
 
         fun extractPlistFromDeliveryDetails(): String? {
-            val deliveryDetails: String? = getDeliveryDetails(false)
+            val deliveryDetails: String? = Utils.getDeliveryDetails()
             val deliveryDetailsArray = deliveryDetails?.split("-")
             return deliveryDetailsArray?.getOrNull(1)
         }

@@ -21,6 +21,7 @@ class GetCartSummary {
                     HTTP_OK, HTTP_OK_201 -> {
                         cartSummaryResponse.apply {
                             cacheSuburbFromCartSummary(this)
+                            cacheDeliveryDetails(this)
                             response.onSuccess(this)
                         }
                     }
@@ -36,6 +37,13 @@ class GetCartSummary {
         }, CartSummaryResponse::class.java))
         return cartSummaryRequest
     }
+
+    private fun cacheDeliveryDetails(cartSummaryResponse: CartSummaryResponse) {
+        cartSummaryResponse?.data?.getOrNull(0)?.deliveryDetails?.apply {
+                Utils.saveDeliveryDetails(this)
+            }
+        }
+
 
     private fun cacheSuburbFromCartSummary(cartSummaryResponse: CartSummaryResponse?) {
         cartSummaryResponse?.data?.get(0)?.fulfillmentDetails?.apply {

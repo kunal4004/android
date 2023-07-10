@@ -1709,4 +1709,16 @@ public class Utils {
         }
         return currentUserObject.enhanceSubstitutionFeatureShown;
     }
+
+    public static void saveDeliveryDetails(String deliveryDetails) {
+        AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
+        currentUserObject.deliveryDetails = deliveryDetails;
+        currentUserObject.save();
+    }
+
+    public static String getDeliveryDetails() {
+        AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
+        return currentUserObject.deliveryDetails;
+    }
+
 }
