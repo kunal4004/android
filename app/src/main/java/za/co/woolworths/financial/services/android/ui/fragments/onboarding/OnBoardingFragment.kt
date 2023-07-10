@@ -40,7 +40,7 @@ class OnBoardingFragment : BaseFragmentBinding<OnBoardingFragmentBinding>(OnBoar
             with(binding.onBoardingViewPager) {
                 val onBoardingItemSize = onBoardingItems.size
 
-                adapter = object : FragmentStateAdapter(this@OnBoardingFragment) {
+                adapter = object : FragmentStateAdapter(childFragmentManager, lifecycle) {
                     override fun createFragment(position: Int): Fragment = OnBoardingContentFragment.newInstance(Pair(mOnBoardingViewModelImpl?.getOnBoardingScreenType() ?: OnBoardingScreenType.START_UP, onBoardingItems[position]))
                     override fun getItemCount(): Int = onBoardingItems.size
                 }
