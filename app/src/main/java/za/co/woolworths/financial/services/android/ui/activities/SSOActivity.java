@@ -172,10 +172,11 @@ public class SSOActivity extends WebViewActivity {
 		dyLoginEventViewModel.getDyLiveData().observe(this, new Observer<DyChangeAttributeResponse>() {
 			@Override
 			public void onChanged(DyChangeAttributeResponse dyChangeAttributeResponse) {
-				if (dyChangeAttributeResponse == null)
-					Toast.makeText(SSOActivity.this, "Login DY Event failed", Toast.LENGTH_LONG).show();
-				else
-					Toast.makeText(SSOActivity.this, "Login DY Event Successed", Toast.LENGTH_LONG).show();
+				if (dyChangeAttributeResponse == null) {
+					//Toast.makeText(SSOActivity.this, "Login DY Event failed", Toast.LENGTH_LONG).show();
+				} else {
+					//Toast.makeText(SSOActivity.this, "Login DY Event Successed", Toast.LENGTH_LONG).show();
+				}
 			}
 		});
 	}
