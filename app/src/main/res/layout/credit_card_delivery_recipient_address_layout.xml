@@ -18,6 +18,8 @@
     <za.co.woolworths.financial.services.android.ui.views.WTextView
         android:id="@+id/clearDetails"
         style="@style/opensans_regular_14_black"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/thirty_two_dp"
         android:layout_marginBottom="@dimen/fourty_seven_dp"
         android:text="@string/clear_details"
@@ -106,6 +108,8 @@
             <TextView
                 android:id="@+id/complexOrBuildingNameErrorMsg"
                 style="@style/opensans_regular_12_text_style"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/eight_dp"
                 android:lineSpacingMultiplier="1.40"
                 android:text="@string/build_or_complex_error_msg"
@@ -118,6 +122,8 @@
             <TextView
                 android:id="@+id/businessNameErrorMsg"
                 style="@style/opensans_regular_12_text_style"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/eight_dp"
                 android:lineSpacingMultiplier="1.40"
                 android:text="@string/business_name_error_msg"
@@ -130,6 +136,8 @@
             <TextView
                 android:id="@+id/streetAddressErrorMsg"
                 style="@style/opensans_regular_12_text_style"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/eight_dp"
                 android:lineSpacingMultiplier="1.40"
                 android:text="@string/street_address_error_msg"
@@ -142,6 +150,8 @@
             <TextView
                 android:id="@+id/suburbErrorMsg"
                 style="@style/opensans_regular_12_text_style"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/eight_dp"
                 android:lineSpacingMultiplier="1.40"
                 android:text="@string/suburb_error_msg"
@@ -154,6 +164,8 @@
             <TextView
                 android:id="@+id/cityOrTownErrorMsg"
                 style="@style/opensans_regular_12_text_style"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/eight_dp"
                 android:lineSpacingMultiplier="1.40"
                 android:text="@string/city_or_town_error_msg"
@@ -166,6 +178,8 @@
             <TextView
                 android:id="@+id/provinceErrorMsg"
                 style="@style/opensans_regular_12_text_style"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/eight_dp"
                 android:lineSpacingMultiplier="1.40"
                 android:text="@string/province_error_msg"
@@ -178,6 +192,8 @@
             <TextView
                 android:id="@+id/postalCodeErrorMsg"
                 style="@style/opensans_regular_12_text_style"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/eight_dp"
                 android:lineSpacingMultiplier="1.40"
                 android:text="@string/postalcode_error_msg"
@@ -190,6 +206,8 @@
             <TextView
                 android:id="@+id/deliveryDetailsDesc"
                 style="@style/opensans_regular_13_black"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/eight_dp"
                 android:contentDescription="@string/cd_ccd_labledeliverydetailsdescription"
                 android:lineSpacingMultiplier="1.40"
@@ -202,6 +220,8 @@
             <TextView
                 android:id="@+id/complexPlaceHolder"
                 style="@style/opensans_regular_12_black"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/thirty_two_dp"
                 android:contentDescription="@string/cd_ccd_labelcomplexname"
                 android:text="@string/complex_building"
@@ -223,6 +243,8 @@
             <TextView
                 android:id="@+id/businessNamePlaceHolder"
                 style="@style/opensans_regular_12_black"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/twenty_four_dp"
                 android:text="@string/business_name_optional"
                 app:layout_constraintEnd_toEndOf="@id/right_guideline"
@@ -232,6 +254,8 @@
             <TextView
                 android:id="@+id/streetAddressPlaceHolder"
                 style="@style/opensans_regular_12_black"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/twenty_four_dp"
                 android:contentDescription="@string/cd_ccd_labelstreetaddress"
                 android:text="@string/street_address"
@@ -242,6 +266,8 @@
             <TextView
                 android:id="@+id/suburbPlaceHolder"
                 style="@style/opensans_regular_12_black"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/twenty_four_dp"
                 android:contentDescription="@string/cd_ccd_labelsuburb"
                 android:text="@string/suburb"
@@ -252,6 +278,8 @@
             <TextView
                 android:id="@+id/cityPlaceHolder"
                 style="@style/opensans_regular_12_black"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/twenty_four_dp"
                 android:contentDescription="@string/cd_ccd_labelcity"
                 android:text="@string/city_town"
@@ -262,6 +290,8 @@
             <TextView
                 android:id="@+id/provincePlaceHolder"
                 style="@style/opensans_regular_12_black"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/twenty_four_dp"
                 android:contentDescription="@string/cd_ccd_labelprovince"
                 android:text="@string/province"
@@ -272,6 +302,8 @@
             <TextView
                 android:id="@+id/postalCodePlaceHolder"
                 style="@style/opensans_regular_12_black"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/twenty_four_dp"
                 android:contentDescription="@string/cd_ccd_labelpostalcode"
                 android:text="@string/postal_code"

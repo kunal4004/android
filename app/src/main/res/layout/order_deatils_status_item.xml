@@ -32,7 +32,7 @@
                 android:layout_alignParentRight="true"
                 android:textColor="@color/black"
                 android:textSize="@dimen/thirteen_sp"
-                app:WTextView_font="myriadpro_semibold" />
+                app:WTextView_font="opensansans_semibold" />
 
         </RelativeLayout>
 
@@ -53,7 +53,7 @@
                 android:layout_alignParentRight="true"
                 android:textColor="@color/black"
                 android:textSize="@dimen/thirteen_sp"
-                app:WTextView_font="myriadpro_semibold" />
+                app:WTextView_font="opensansans_semibold" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -73,7 +73,7 @@
                 android:layout_alignParentRight="true"
                 android:textColor="@color/black"
                 android:textSize="@dimen/thirteen_sp"
-                app:WTextView_font="myriadpro_semibold" />
+                app:WTextView_font="opensansans_semibold" />
         </RelativeLayout>
 
         <LinearLayout
@@ -106,7 +106,7 @@
                     android:gravity="right"
                     android:layout_marginLeft="@dimen/sixteen_dp"
                     android:contentDescription="@string/delivery_date_value"
-                    app:WTextView_font="myriadpro_semibold" />
+                    app:WTextView_font="opensansans_semibold" />
             </RelativeLayout>
 
             <LinearLayout
@@ -136,7 +136,7 @@
                 android:layout_alignParentRight="true"
                 android:textColor="@color/black"
                 android:textSize="@dimen/thirteen_sp"
-                app:WTextView_font="myriadpro_semibold" />
+                app:WTextView_font="opensansans_semibold" />
         </RelativeLayout>
 
         <View
@@ -156,7 +156,7 @@
                 android:text="@string/total"
                 android:textColor="@color/black"
                 android:textSize="15sp"
-                app:WTextView_font="myriadpro_semibold" />
+                app:WTextView_font="opensansans_semibold" />
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:id="@+id/total"
