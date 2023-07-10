@@ -8,11 +8,12 @@ import za.co.woolworths.financial.services.android.geolocation.model.request.Con
 import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
 import za.co.woolworths.financial.services.android.models.dto.SuburbsResponse
 import za.co.woolworths.financial.services.android.models.network.*
+import javax.inject.Inject
 
 /**
  * Created by Kunal Uttarwar on 04/06/21.
  */
-class CheckoutAddAddressNewUserApiHelper : RetrofitConfig(AppContextProviderImpl(), RetrofitApiProviderImpl()) {
+class CheckoutAddAddressNewUserApiHelper @Inject constructor() : RetrofitConfig(AppContextProviderImpl(), RetrofitApiProviderImpl()) {
 
     fun getSuburbs(provinceId: String): Response<SuburbsResponse> =
         OneAppService().getSuburbs(provinceId).execute()
