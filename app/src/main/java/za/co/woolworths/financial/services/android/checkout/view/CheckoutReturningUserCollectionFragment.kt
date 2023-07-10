@@ -18,7 +18,6 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
-import androidx.fragment.app.viewModels
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
@@ -41,7 +40,6 @@ import za.co.woolworths.financial.services.android.checkout.service.network.Slot
 import za.co.woolworths.financial.services.android.checkout.service.network.SortedFoodDeliverySlot
 import za.co.woolworths.financial.services.android.checkout.service.network.SortedJoinDeliverySlot
 import za.co.woolworths.financial.services.android.checkout.service.network.Week
-import za.co.woolworths.financial.services.android.checkout.service.network.*
 import za.co.woolworths.financial.services.android.checkout.utils.AddShippingInfoEventsAnalytics
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.Companion.REGEX_DELIVERY_INSTRUCTIONS
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.FoodSubstitution

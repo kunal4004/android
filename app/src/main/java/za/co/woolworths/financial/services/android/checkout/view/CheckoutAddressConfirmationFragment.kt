@@ -11,8 +11,6 @@ import androidx.core.os.bundleOf
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
-import androidx.fragment.app.viewModels
-import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.findNavController
@@ -26,7 +24,6 @@ import za.co.woolworths.financial.services.android.checkout.service.network.Conf
 import za.co.woolworths.financial.services.android.checkout.service.network.ConfirmSelectionRequestBody
 import za.co.woolworths.financial.services.android.checkout.service.network.ConfirmSelectionResponse
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
-import za.co.woolworths.financial.services.android.checkout.service.network.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.FulfillmentsType.FOOD
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.FulfillmentsType.OTHER
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutReturningUserCollectionFragment.Companion.KEY_IS_WHO_IS_COLLECTING
