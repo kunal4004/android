@@ -26,9 +26,11 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.lifecycle.Observer;
 
 import com.awfs.coordination.R;
 import com.google.firebase.FirebaseApp;
@@ -55,8 +57,18 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.onecartgetstream.common.constant.OCConstant;
+import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Context;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Device;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Session;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.User;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService;
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.PrepareChangeAttributeRequestEvent;
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.Properties;
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Response.DyChangeAttributeResponse;
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.ViewModel.DyChangeAttributeViewModel;
+import za.co.woolworths.financial.services.android.ui.wfs.common.NetworkUtilsKt;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.KotlinUtils;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
@@ -128,6 +140,11 @@ public class SSOActivity extends WebViewActivity {
 	private final String nonce;
 	private String stsParams;
 	private String forgotPassword;
+	private String dyServerId = null;
+	private String dySessionId = null;
+	public static String IPAddress = NetworkUtilsKt.getIpAddress(WoolworthsApplication.getInstance(),WoolworthsApplication.getInstance());
+	private String jwt = null;
+	private DyChangeAttributeViewModel dyLoginEventViewModel;
 
 	public SSOActivity() {
 		this.state = UUID.randomUUID().toString();
@@ -147,6 +164,20 @@ public class SSOActivity extends WebViewActivity {
 		}
 		handleUIForKMSIEntry((Utils.getUserKMSIState() && SSOActivity.this.path == Path.SIGNIN));
 		showProfileProgressBar();
+		dyLoginEventViewModel();
+	}
+
+	private void dyLoginEventViewModel() {
+		dyLoginEventViewModel = new DyChangeAttributeViewModel();
+		dyLoginEventViewModel.getDyLiveData().observe(this, new Observer<DyChangeAttributeResponse>() {
+			@Override
+			public void onChanged(DyChangeAttributeResponse dyChangeAttributeResponse) {
+				if (dyChangeAttributeResponse == null)
+					Toast.makeText(SSOActivity.this, "Login DY Event failed", Toast.LENGTH_LONG).show();
+				else
+					Toast.makeText(SSOActivity.this, "Login DY Event Successed", Toast.LENGTH_LONG).show();
+			}
+		});
 	}
 
 	// Display progress bar as soon as user land on profile
@@ -617,14 +648,24 @@ public class SSOActivity extends WebViewActivity {
 			runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
-					extractFormDataAndCloseSSOIfNeeded();
+					extractFormDataAndCloseSSOIfNeeded(String.valueOf(SSOActivity.this.path));
 				}
 			});
 
 		}
 	}
 
-	private void extractFormDataAndCloseSSOIfNeeded(){
+	private void extractFormDataAndCloseSSOIfNeeded(String ssoActivityEvent){
+		if (Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID) != null) {
+			dyServerId = Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID);
+		} else {
+			dyServerId = "";
+		}
+		if (Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID) != null) {
+			dySessionId = Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID);
+		} else {
+			dySessionId = "";
+		}
 		SSOActivity.this.webView.evaluateJavascript("(function(){return {'content': [document.forms[0].state.value.toString(), document.forms[0].id_token.value.toString()]}})();", new ValueCallback<String>() {
 			@Override
 			public void onReceiveValue(String value) {
@@ -645,7 +686,7 @@ public class SSOActivity extends WebViewActivity {
 				Intent intent = new Intent();
 
 				if (state.equals(webviewState)) {
-					String jwt = list.get(1);
+					jwt = list.get(1);
 					intent.putExtra(SSOActivity.TAG_JWT, jwt);
 					//Save JWT
 					SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.USER_TOKEN);
@@ -688,8 +729,69 @@ public class SSOActivity extends WebViewActivity {
 					setResult(SSOActivityResult.STATE_MISMATCH.rawValue(), intent);
 					setStSParameters();
 				}
+				if (ssoActivityEvent == "SIGNIN")
+					prepareDySigninRequestEvent();
+				else if (ssoActivityEvent == "REGISTER") {
+					prepareDyRegisterRequestEvent();
+					prepareDyIdentifyUserRequestEvent();
+				}
 			}
 		});
+	}
+
+	private void prepareDySigninRequestEvent() {
+		User user = new User(dyServerId,dyServerId);
+		Session session = new Session(dySessionId);
+		Device device = new Device(IPAddress,null);
+		Context context = new Context(device,null);
+		Properties properties = new Properties(null,null,"login-v1",null,null,null,null,null,null,null,jwt);
+		Event event = new Event(null,null,null,null,null,null,null,null,null,null,null,null,"Login",properties);
+		ArrayList<Event> eventArrayList = new ArrayList<>();
+		eventArrayList.add(event);
+		PrepareChangeAttributeRequestEvent prepareLoginDYRequestEvent = new PrepareChangeAttributeRequestEvent(
+				context,
+				eventArrayList,
+				session,
+				user
+		);
+		dyLoginEventViewModel.createDyChangeAttributeRequest(prepareLoginDYRequestEvent);
+
+	}
+
+	private void prepareDyIdentifyUserRequestEvent() {
+		User user = new User(dyServerId,dyServerId);
+		Session session = new Session(dySessionId);
+		Device device = new Device(IPAddress,null);
+		Context context = new Context(device,null);
+		Properties properties = new Properties(null,null,"identify-v1",null,null,null,null,null,null,null,jwt);
+		Event event = new Event(null,null,null,null,null,null,null,null,null,null,null,null,"Identify-User",properties);
+		ArrayList<Event> eventArrayList = new ArrayList<>();
+		eventArrayList.add(event);
+		PrepareChangeAttributeRequestEvent prepareLoginDYRequestEvent = new PrepareChangeAttributeRequestEvent(
+				context,
+				eventArrayList,
+				session,
+				user
+		);
+		dyLoginEventViewModel.createDyChangeAttributeRequest(prepareLoginDYRequestEvent);
+	}
+
+	private void prepareDyRegisterRequestEvent() {
+		User user = new User(dyServerId,dyServerId);
+		Session session = new Session(dySessionId);
+		Device device = new Device(IPAddress,null);
+		Context context = new Context(device,null);
+		Properties properties = new Properties(null,null,"signup-v1",null,null,null,null,null,null,null,jwt);
+		Event event = new Event(null,null,null,null,null,null,null,null,null,null,null,null,"Signup",properties);
+		ArrayList<Event> eventArrayList = new ArrayList<>();
+		eventArrayList.add(event);
+		PrepareChangeAttributeRequestEvent prepareLoginDYRequestEvent = new PrepareChangeAttributeRequestEvent(
+				context,
+				eventArrayList,
+				session,
+				user
+		);
+		dyLoginEventViewModel.createDyChangeAttributeRequest(prepareLoginDYRequestEvent);
 	}
 
 	private void setStSParameters() {

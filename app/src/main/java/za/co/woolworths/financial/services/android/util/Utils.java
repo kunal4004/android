@@ -1731,5 +1731,33 @@ public class Utils {
         AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
         return currentUserObject.sessionDyId;
     }
+    public static void sessionDaoSaveDyServerId(SessionDao.KEY key, String value) {
+        SessionDao sessionDao = SessionDao.getByKey(key);
+        sessionDao.value = value;
+        try {
+            sessionDao.save();
+        } catch (Exception e) {
+            Log.e("TAG", e.getMessage());
+        }
+    }
+
+    public static String getSessionDaoDyServerId(SessionDao.KEY key) {
+        SessionDao sessionDao = SessionDao.getByKey(key);
+        return sessionDao.value;
+    }
+    public static void sessionDaoSaveDySessionId(SessionDao.KEY key, String value) {
+        SessionDao sessionDao = SessionDao.getByKey(key);
+        sessionDao.value = value;
+        try {
+            sessionDao.save();
+        } catch (Exception e) {
+            Log.e("TAG", e.getMessage());
+        }
+    }
+
+    public static String getSessionDaoDySessionId(SessionDao.KEY key) {
+        SessionDao sessionDao = SessionDao.getByKey(key);
+        return sessionDao.value;
+    }
 
 }
