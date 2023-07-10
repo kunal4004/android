@@ -55,7 +55,6 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.ILocationProvider
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
-import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.UnSellableItemsLiveData
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.BrandNavigationDetails
@@ -209,7 +208,7 @@ class ProductDetailsFragment :
     private val vtoApplyEffectOnImageViewModel: VtoApplyEffectOnImageViewModel? by activityViewModels()
     private val liveCameraViewModel: LiveCameraViewModel? by activityViewModels()
     private val dataPrefViewModel: DataPrefViewModel? by activityViewModels()
-    private lateinit var confirmAddressViewModel: ConfirmAddressViewModel
+    private val confirmAddressViewModel: ConfirmAddressViewModel? by activityViewModels()
     private var makeupCamera: MakeupCam? = null
     private var isObserveImageData: Boolean = false
     private var isRefreshImageEffectLiveCamera: Boolean = false
@@ -295,7 +294,6 @@ class ProductDetailsFragment :
         super.onViewCreated(view, savedInstanceState)
         mFuseLocationAPISingleton = FuseLocationAPISingleton
         binding.initViews()
-        setUpConfirmAddressViewModel()
         addFragmentListner()
         setUniqueIds()
         productDetails?.let { addViewItemEvent(it) }
@@ -352,13 +350,6 @@ class ProductDetailsFragment :
     override fun onAttach(context: Context) {
         super.onAttach(context)
         setUpToolBar()
-    }
-
-    private fun setUpConfirmAddressViewModel() {
-        confirmAddressViewModel = ViewModelProvider(
-            this,
-            GeoLocationViewModelFactory(GeoLocationApiHelper())
-        ).get(ConfirmAddressViewModel::class.java)
     }
 
     private fun ProductDetailsFragmentBinding.initViews() {
@@ -827,7 +818,7 @@ class ProductDetailsFragment :
         lifecycleScope.launch {
             try {
                 val validateLocationResponse =
-                    placeId?.let { confirmAddressViewModel.getValidateLocation(it) }
+                    placeId?.let { confirmAddressViewModel?.getValidateLocation(it) }
                 progressBar?.visibility = View.GONE
                 if (validateLocationResponse != null) {
                     when (validateLocationResponse?.httpCode) {
@@ -864,7 +855,7 @@ class ProductDetailsFragment :
                 val confirmLocationRequest =
                     KotlinUtils.getConfirmLocationRequest(KotlinUtils.browsingDeliveryType)
                 val confirmLocationResponse =
-                    confirmAddressViewModel.postConfirmAddress(confirmLocationRequest)
+                    confirmAddressViewModel?.postConfirmAddress(confirmLocationRequest)
                 progressBar?.visibility = View.GONE
                 if (confirmLocationResponse != null) {
                     when (confirmLocationResponse.httpCode) {
@@ -1660,15 +1651,15 @@ class ProductDetailsFragment :
             if (Build.VERSION.SDK_INT < 23) {
                 tvAdditionalFieldLabel.setTextAppearance(
                     getApplicationContext(),
-                    R.style.myriad_pro_regular_black_15_text_style
+                    R.style.opensans_regular_13_black
                 );
                 tvAdditionalFieldValue.setTextAppearance(
                     getApplicationContext(),
-                    R.style.myriad_pro_semi_bold_black_15_text_style
+                    R.style.opensans_regular_13_black
                 );
             } else {
-                tvAdditionalFieldLabel.setTextAppearance(R.style.myriad_pro_regular_black_15_text_style);
-                tvAdditionalFieldValue.setTextAppearance(R.style.myriad_pro_semi_bold_black_15_text_style);
+                tvAdditionalFieldLabel.setTextAppearance(R.style.opensans_regular_13_black);
+                tvAdditionalFieldValue.setTextAppearance(R.style.opensans_semi_bold_13_text_style);
             }
             tvAdditionalFieldLabel.text = additionalField.label
             ivCircle.setImageResource(R.drawable.ic_circle)

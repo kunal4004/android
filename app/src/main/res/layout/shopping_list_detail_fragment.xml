@@ -304,7 +304,7 @@
                     android:textStyle="bold"
                     app:WTextView_font="medium_bold" />
 
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                <TextView
                     android:id="@+id/txtEmptyStateDesc"
                     style="@style/TableLeft"
                     android:layout_width="wrap_content"
@@ -313,8 +313,7 @@
                     android:layout_centerHorizontal="true"
                     android:layout_marginBottom="@dimen/sixteen_dp"
                     android:gravity="center"
-                    android:textColor="@color/semi_transparent_black"
-                    app:WTextView_font="myriadpro_regular" />
+                    android:textColor="@color/semi_transparent_black" />
 
 
                 <za.co.woolworths.financial.services.android.ui.views.WButton
@@ -405,7 +404,7 @@
                 android:visibility="gone"
                 app:WTextView_font="medium_bold" />
 
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
+            <TextView
                 android:id="@+id/txtWWDescription"
                 style="@style/TableLeft"
                 android:layout_width="wrap_content"
@@ -416,7 +415,7 @@
                 android:gravity="center"
                 android:text="@string/no_connection_desc_1"
                 android:textColor="@color/semi_transparent_black"
-                app:WTextView_font="myriadpro_regular" />
+               />
 
             <za.co.woolworths.financial.services.android.ui.views.WButton
                 android:id="@+id/btnRetry"

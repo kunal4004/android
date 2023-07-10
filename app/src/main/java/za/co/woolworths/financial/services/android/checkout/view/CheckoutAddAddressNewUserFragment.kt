@@ -17,6 +17,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
@@ -37,14 +38,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import za.co.woolworths.financial.services.android.checkout.service.network.AddAddressRequestBody
-import za.co.woolworths.financial.services.android.checkout.service.network.AddAddressResponse
-import za.co.woolworths.financial.services.android.checkout.service.network.Address
-import za.co.woolworths.financial.services.android.checkout.service.network.DeleteAddressResponse
-import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
-import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressNewUserFragment.ProvinceSuburbType.BOTH
-import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressNewUserFragment.ProvinceSuburbType.ONLY_PROVINCE
-import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressNewUserFragment.ProvinceSuburbType.ONLY_SUBURB
+import za.co.woolworths.financial.services.android.checkout.service.network.*
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressNewUserFragment.ProvinceSuburbType.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.ADD_NEW_ADDRESS_KEY
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.DELETE_SAVED_ADDRESS_REQUEST_KEY
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.SAVED_ADDRESS_KEY
@@ -107,6 +102,7 @@ import za.co.woolworths.financial.services.android.util.KeyboardUtils.Companion.
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.UnIndexedAddressIdentifiedListener
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.location.DynamicGeocoder
 import za.co.woolworths.financial.services.android.util.value
@@ -132,6 +128,7 @@ class CheckoutAddAddressNewUserFragment :
     private var selectedDeliveryAddressType: String? = null
     var selectedAddress = SelectedPlacesAddress()
     private var savedAddressResponse: SavedAddressResponse? = null
+    private val checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel by activityViewModels()
     private var selectedAddressId = ""
     private var isAddNewAddress = false
     private var provinceSuburbEnableType: ProvinceSuburbType? = null
@@ -148,8 +145,6 @@ class CheckoutAddAddressNewUserFragment :
     private var unIndexedAddressIdentified: Boolean = false
     private val unIndexedLiveData = MutableLiveData<Boolean>()
 
-
-    private val checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel by viewModels()
 
     companion object {
         const val SCREEN_NAME_EDIT_ADDRESS: String = "SCREEN_NAME_EDIT_ADDRESS"
@@ -386,6 +381,7 @@ class CheckoutAddAddressNewUserFragment :
             }
         }
     }
+
 
     private fun init() {
         deliveringOptionsList = AppConfigSingleton.nativeCheckout?.addressTypes
@@ -711,6 +707,9 @@ class CheckoutAddAddressNewUserFragment :
                             R.color.white
                         )
                     )
+                    // This to call the analytics when default address type selected first time
+                    FirebaseAnalyticsEventHelper.setFirebaseEventForm(titleTextView?.text.toString(),
+                      FirebaseManagerAnalyticsProperties.FORM_START, isComingFromCheckout)
                     binding.recipientAddressLayout.deliveringAddressTypesErrorMsg?.visibility =
                         View.GONE
                     changeUnitComplexPlaceHolderOnType(selectedDeliveryAddressType)
@@ -727,6 +726,8 @@ class CheckoutAddAddressNewUserFragment :
                 }
                 titleTextView?.setOnClickListener {
                     setFirebaseEvents(titleTextView?.text.toString())
+                    FirebaseAnalyticsEventHelper.setFirebaseEventForm(titleTextView?.text.toString(),
+                         FirebaseManagerAnalyticsProperties.FORM_START, isComingFromCheckout)
                     resetOtherDeliveringTitle(it.tag as Int)
                     selectedDeliveryAddressType = (it as TextView).text as? String
                     selectedAddress.savedAddress.addressType = selectedDeliveryAddressType
@@ -812,7 +813,6 @@ class CheckoutAddAddressNewUserFragment :
             activity
         )
     }
-
     private fun resetOtherDeliveringTitle(selectedTag: Int) {
         //change background of unselected textview
         for ((index) in deliveringOptionsList!!.withIndex()) {
@@ -956,6 +956,9 @@ class CheckoutAddAddressNewUserFragment :
                         FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_CHECKOUT_ADDRESS_SAVE_ADDRESS
             ), activity
         )
+
+        FirebaseAnalyticsEventHelper.setFirebaseEventForm(selectedDeliveryAddressType,
+                FirebaseManagerAnalyticsProperties.FORM_COMPLETE, isComingFromCheckout)
         if (binding.recipientDetailsLayout.cellphoneNumberEditText?.text.toString().trim()
                 .isNotEmpty()
             && binding.recipientDetailsLayout.cellphoneNumberEditText?.text.toString()

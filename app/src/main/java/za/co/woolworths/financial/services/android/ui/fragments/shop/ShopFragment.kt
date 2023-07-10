@@ -100,7 +100,7 @@ import za.co.woolworths.financial.services.android.viewmodels.shop.ShopViewModel
 class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBinding::inflate),
     PermissionResultCallback,
     OnChildFragmentEvents,
-    WMaterialShowcaseView.IWalkthroughActionListener, View.OnClickListener{
+    WMaterialShowcaseView.IWalkthroughActionListener, View.OnClickListener {
 
     private val confirmAddressViewModel: ConfirmAddressViewModel by activityViewModels()
 
@@ -175,7 +175,10 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                     }
                     // TODO StandardTooltip, CNCTooltip
                     is ShopTooltipUiState.StandardTooltip,
-                    is ShopTooltipUiState.CNCTooltip-> {}
+                    is ShopTooltipUiState.CNCTooltip,
+                    -> {
+                    }
+
                     else -> binding.blackToolTipLayout.root.visibility = View.GONE
                 }
             }.launchIn(lifecycleScope)
@@ -403,18 +406,20 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
 
     override fun onResume() {
         super.onResume()
-        if (((KotlinUtils.isLocationPlaceIdSame == false || KotlinUtils.isNickNameChanged == true) && KotlinUtils.placeId != null) || WoolworthsApplication.getValidatePlaceDetails() == null) {
-            executeValidateSuburb()
-        } else if (Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.deliveryType.isNullOrEmpty() && KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.deliveryType.isNullOrEmpty()) {
-            return
-        } else if (KotlinUtils.isLocationPlaceIdSame == true && KotlinUtils.placeId != null) {
-            setDeliveryView()
-            (KotlinUtils.browsingDeliveryType
-                ?: Delivery.getType(getDeliveryType()?.deliveryType))?.let {
-                showBlackToolTip(it)
+        if (isVisible) {
+            if (((KotlinUtils.isLocationPlaceIdSame == false || KotlinUtils.isNickNameChanged == true) && KotlinUtils.placeId != null) || WoolworthsApplication.getValidatePlaceDetails() == null) {
+                executeValidateSuburb()
+            } else if (Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.deliveryType.isNullOrEmpty() && KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.deliveryType.isNullOrEmpty()) {
+                return
+            } else if (KotlinUtils.isLocationPlaceIdSame == true && KotlinUtils.placeId != null) {
+                setDeliveryView()
+                (KotlinUtils.browsingDeliveryType
+                    ?: Delivery.getType(getDeliveryType()?.deliveryType))?.let {
+                    showBlackToolTip(it)
+                }
+            } else {
+                setDeliveryView()
             }
-        } else {
-            setDeliveryView()
         }
     }
 
@@ -507,13 +512,15 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
     }
 
     private fun updateTabIconUI(selectedTab: Int) {
-        when(selectedTab) {
+        when (selectedTab) {
             STANDARD_TAB.index -> {
                 showSearchAndBarcodeUi()
             }
+
             CLICK_AND_COLLECT_TAB.index -> {
                 if (KotlinUtils.browsingCncStore == null
-                    && getDeliveryType()?.deliveryType != Delivery.CNC.type) {
+                    && getDeliveryType()?.deliveryType != Delivery.CNC.type
+                ) {
                     hideSearchAndBarcodeUi()
                 }
             }
@@ -732,7 +739,10 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                         binding.viewpagerMain.currentItem
                     ) as? DashDeliveryAddressFragment
                 dashDeliveryAddressFragment?.initViews()
-                shopViewModel?.onTabClick(validateLocationResponse, DASH_TAB.index) // externally showing dash tooltip as delivery type is not same.
+                shopViewModel?.onTabClick(
+                    validateLocationResponse,
+                    DASH_TAB.index
+                ) // externally showing dash tooltip as delivery type is not same.
             }
         }
         if (requestCode == CNC_SET_ADDRESS_REQUEST_CODE) {

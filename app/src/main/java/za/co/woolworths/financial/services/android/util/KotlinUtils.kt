@@ -117,6 +117,7 @@ import kotlin.coroutines.CoroutineContext
 import kotlin.math.roundToInt
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_MIXED_BASKET
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_FBH_ONLY
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.logEvent
 
 
 class KotlinUtils {
@@ -171,7 +172,7 @@ class KotlinUtils {
             }
 
             val typeface: Typeface? =
-                context?.let { ResourcesCompat.getFont(it, R.font.myriad_pro_semi_bold_otf) }
+                context?.let { ResourcesCompat.getFont(it, R.font.opensans_semi_bold) }
             if (textIsClickable) spannableTitle.setSpan(
                 clickableSpan,
                 start,
@@ -321,11 +322,11 @@ class KotlinUtils {
         fun capitaliseFirstLetter(str: String?): CharSequence? {
             if (str.isNullOrEmpty())
                 return str
-            val value = str.toLowerCase()
+            val value = str.lowercase()
             val words = value.split(" ").toMutableList()
             var output = ""
             for (word in words) {
-                output += word.capitalize() + " "
+                output += word.uppercase() + " "
             }
             return output.trim()
         }
@@ -338,7 +339,7 @@ class KotlinUtils {
             var output = words[0].uppercase() + " "
             words.removeAt(0)
             for (word in words) {
-                output += word.capitalize() + " "
+                output += word.uppercase() + " "
             }
             return output.trim()
         }
@@ -606,7 +607,7 @@ class KotlinUtils {
                         val formmmatedNickName = getFormattedNickName(address?.nickname,
                             fullAddress, context)
 
-                        if (timeSlot?.isNullOrEmpty() == true) {
+                        if (timeSlot.isNullOrEmpty()) {
                             tvDeliveryLocation?.text =
                                 context?.getString(R.string.no_timeslots_available_title)
                                     ?.plus("\t\u2022\t")?.plus(
@@ -853,9 +854,9 @@ class KotlinUtils {
             keys?.forEach { key ->
                 val start = string.indexOf(key)
                 val end = start.plus(key.length)
-                val myriadProFont: TypefaceSpan = CustomTypefaceSpan("", getMyriadProSemiBoldFont())
+                val opensansSemiBoldFont: TypefaceSpan = CustomTypefaceSpan("", getOpenSansSemiBoldFont())
                 noteStringBuilder.setSpan(
-                    myriadProFont,
+                    opensansSemiBoldFont,
                     start,
                     end,
                     Spannable.SPAN_INCLUSIVE_INCLUSIVE
@@ -1588,6 +1589,19 @@ class KotlinUtils {
             }
             nickNameWithAddress.append(formattedNickName)
             return nickNameWithAddress
+        }
+
+        fun triggerFireBaseEvents(
+            eventName: String,
+            arguments: Map<String, String>,
+            activity: Activity?
+        ) {
+            val params = Bundle()
+            arguments.forEach { entry ->
+                params.putString(entry.key , entry.value)
+            }
+            logEvent(eventName, params)
+            requestInAppReview(eventName, activity)
         }
     }
 }

@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -40,6 +41,7 @@ import za.co.woolworths.financial.services.android.checkout.service.network.Slot
 import za.co.woolworths.financial.services.android.checkout.service.network.SortedFoodDeliverySlot
 import za.co.woolworths.financial.services.android.checkout.service.network.SortedJoinDeliverySlot
 import za.co.woolworths.financial.services.android.checkout.service.network.Week
+import za.co.woolworths.financial.services.android.checkout.service.network.*
 import za.co.woolworths.financial.services.android.checkout.utils.AddShippingInfoEventsAnalytics
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.Companion.REGEX_DELIVERY_INSTRUCTIONS
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.FoodSubstitution
@@ -63,6 +65,7 @@ import za.co.woolworths.financial.services.android.models.dto.LiquorCompliance
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
 import za.co.woolworths.financial.services.android.models.dto.app_config.native_checkout.ConfigShoppingBagsOptions
+import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.models.network.StorePickupInfoBody
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
@@ -80,7 +83,6 @@ import za.co.woolworths.financial.services.android.util.WFormatter.DATE_FORMAT_E
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.pushnotification.NotificationUtils
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
-import za.co.woolworths.financial.services.android.viewmodels.ShoppingCartLiveData
 import java.util.regex.Pattern
 import javax.inject.Inject
 
@@ -97,6 +99,7 @@ class CheckoutReturningUserCollectionFragment :
     private var selectedShoppingBagType: Double? = null
     private lateinit var collectionTimeSlotsAdapter: CollectionTimeSlotsAdapter
     private var storePickupInfoResponse: ConfirmDeliveryAddressResponse? = null
+    private val checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel by activityViewModels()
     private var selectedFoodSubstitution = FoodSubstitution.SIMILAR_SUBSTITUTION
     private var whoIsCollectingDetails: WhoIsCollectingDetails? = null
     private var savedAddressResponse = SavedAddressResponse()
@@ -106,8 +109,6 @@ class CheckoutReturningUserCollectionFragment :
     private var liquorOrder: Boolean? = false
     private var cartItemList: ArrayList<CommerceItem>? = null
     private var orderTotalValue: Double = -1.0
-
-    private val checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel by viewModels()
 
     @Inject
     lateinit var addShippingInfoEventsAnalytics: AddShippingInfoEventsAnalytics
@@ -156,7 +157,7 @@ class CheckoutReturningUserCollectionFragment :
         initializeCollectingFromView()
         initializeCollectingDetailsView()
         initializeCollectionTimeSlots()
-        isUnSellableLiquorItemRemoved()
+        loadShoppingCart()
         getLiquorComplianceDetails()
         initShimmerView()
         callStorePickupInfoAPI()
@@ -167,16 +168,6 @@ class CheckoutReturningUserCollectionFragment :
         setFragmentResults()
     }
 
-    private fun isUnSellableLiquorItemRemoved() {
-        ShoppingCartLiveData.observe(viewLifecycleOwner) { isLiquorOrder ->
-            if (isLiquorOrder == false) {
-                binding.ageConfirmationLayoutCollection.root?.visibility = View.GONE
-                binding.ageConfirmationLayoutCollection.liquorComplianceBannerLayout.root?.visibility =
-                    View.GONE
-                ShoppingCartLiveData.value = true
-            }
-        }
-    }
 
     private fun setFragmentResults() {
 
@@ -393,6 +384,7 @@ class CheckoutReturningUserCollectionFragment :
         initializeDeliveryInstructions()
     }
 
+
     private fun callStorePickupInfoAPI() {
         startShimmerView()
         isItemLimitExceeded = false
@@ -417,7 +409,8 @@ class CheckoutReturningUserCollectionFragment :
                                     return@observe
                                 }
 
-                                if ((response.orderSummary?.totalItemsCount ?: 0) <= 0) {
+                                if (response.orderSummary != null && (response.orderSummary?.totalItemsCount
+                                                ?: 0) <= 0) {
                                     showEmptyCart()
                                     return@observe
                                 }
@@ -860,8 +853,16 @@ class CheckoutReturningUserCollectionFragment :
                 switchNeedBags?.setOnCheckedChangeListener { _, isChecked ->
                     if (isChecked) {
                         Utils.triggerFireBaseEvents(
-                            FirebaseManagerAnalyticsProperties.CHECKOUT_SHOPPING_BAGS_INFO,
-                            activity
+                                FirebaseManagerAnalyticsProperties.CHECKOUT,
+                                hashMapOf(
+                                        FirebaseManagerAnalyticsProperties.PropertyNames.STEP to
+                                                FirebaseManagerAnalyticsProperties.PropertyValues.DELIVERY_PAGE,
+                                        FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_TYPE to
+                                                KotlinUtils.getPreferredDeliveryType().toString(),
+                                        FirebaseManagerAnalyticsProperties.PropertyNames.TOGGLE_SELECTED to
+                                                FirebaseManagerAnalyticsProperties.PropertyValues.NEED_SHOPPING_BAG
+                                ),
+                                activity
                         )
                     }
                 }
@@ -878,8 +879,16 @@ class CheckoutReturningUserCollectionFragment :
     private fun deliveryInstructionClickListener(isChecked: Boolean) {
         if (isChecked)
             Utils.triggerFireBaseEvents(
-                FirebaseManagerAnalyticsProperties.CHECKOUT_SPECIAL_COLLECTION_INSTRUCTION,
-                activity
+                    FirebaseManagerAnalyticsProperties.CHECKOUT,
+                    hashMapOf(
+                            FirebaseManagerAnalyticsProperties.PropertyNames.STEP to
+                                    FirebaseManagerAnalyticsProperties.PropertyValues.DELIVERY_PAGE,
+                            FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_TYPE to
+                                    KotlinUtils.getPreferredDeliveryType().toString(),
+                            FirebaseManagerAnalyticsProperties.PropertyNames.TOGGLE_SELECTED to
+                                    FirebaseManagerAnalyticsProperties.PropertyValues.SPECIAL_DELIVERY_INSTRUCTION
+                    ),
+                    activity
             )
         with(binding.layoutCollectionInstructions) {
             edtTxtInputLayoutSpecialDeliveryInstruction?.visibility =
@@ -893,8 +902,16 @@ class CheckoutReturningUserCollectionFragment :
     private fun giftClickListener(isChecked: Boolean) {
         if (isChecked)
             Utils.triggerFireBaseEvents(
-                FirebaseManagerAnalyticsProperties.CHECKOUT_IS_THIS_GIFT,
-                activity
+                    FirebaseManagerAnalyticsProperties.CHECKOUT,
+                    hashMapOf(
+                            FirebaseManagerAnalyticsProperties.PropertyNames.STEP to
+                                    FirebaseManagerAnalyticsProperties.PropertyValues.DELIVERY_PAGE,
+                            FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_TYPE to
+                                    KotlinUtils.getPreferredDeliveryType().toString(),
+                            FirebaseManagerAnalyticsProperties.PropertyNames.TOGGLE_SELECTED to
+                                    FirebaseManagerAnalyticsProperties.PropertyValues.IS_THIS_GIFT
+                    ),
+                    activity
             )
         with(binding.layoutCollectionInstructions) {
             edtTxtInputLayoutGiftInstructions?.visibility =
@@ -933,20 +950,54 @@ class CheckoutReturningUserCollectionFragment :
             when (checkedId) {
                 R.id.radioBtnPhoneConfirmation -> {
                     Utils.triggerFireBaseEvents(
-                        FirebaseManagerAnalyticsProperties.CHECKOUT_FOOD_SUBSTITUTE_PHONE_ME,
-                        activity
+                            FirebaseManagerAnalyticsProperties.CHECKOUT,
+                            hashMapOf(
+                                    FirebaseManagerAnalyticsProperties.PropertyNames.STEP to
+                                            FirebaseManagerAnalyticsProperties.PropertyValues.DELIVERY_PAGE,
+                                    FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                                            FirebaseManagerAnalyticsProperties.PropertyValues.FOOD_SUBSTITUTION,
+                                    FirebaseManagerAnalyticsProperties.PropertyNames.OPTION to
+                                            FirebaseManagerAnalyticsProperties.PropertyValues.PHONE_ME,
+                                    FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_TYPE to
+                                            KotlinUtils.getPreferredDeliveryType().toString()
+                            ),
+                            activity
                     )
                     selectedFoodSubstitution = FoodSubstitution.PHONE_CONFIRM
                 }
 
                 R.id.radioBtnSimilarSubst -> {
                     selectedFoodSubstitution = FoodSubstitution.SIMILAR_SUBSTITUTION
+                    Utils.triggerFireBaseEvents(
+                            FirebaseManagerAnalyticsProperties.CHECKOUT,
+                            hashMapOf(
+                                    FirebaseManagerAnalyticsProperties.PropertyNames.STEP to
+                                            FirebaseManagerAnalyticsProperties.PropertyValues.DELIVERY_PAGE,
+                                    FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                                            FirebaseManagerAnalyticsProperties.PropertyValues.FOOD_SUBSTITUTION,
+                                    FirebaseManagerAnalyticsProperties.PropertyNames.OPTION to
+                                            FirebaseManagerAnalyticsProperties.PropertyValues.SUBSTITUTE,
+                                    FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_TYPE to
+                                            KotlinUtils.getPreferredDeliveryType().toString()
+                            ),
+                            activity
+                    )
                 }
 
                 R.id.radioBtnNoThanks -> {
                     Utils.triggerFireBaseEvents(
-                        FirebaseManagerAnalyticsProperties.CHECKOUT_FOOD_SUBSTITUTE_NO_THANKS,
-                        activity
+                            FirebaseManagerAnalyticsProperties.CHECKOUT,
+                            hashMapOf(
+                                    FirebaseManagerAnalyticsProperties.PropertyNames.STEP to
+                                            FirebaseManagerAnalyticsProperties.PropertyValues.DELIVERY_PAGE,
+                                    FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                                            FirebaseManagerAnalyticsProperties.PropertyValues.FOOD_SUBSTITUTION,
+                                    FirebaseManagerAnalyticsProperties.PropertyNames.OPTION to
+                                            FirebaseManagerAnalyticsProperties.PropertyValues.NO_THANKS,
+                                    FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_TYPE to
+                                            KotlinUtils.getPreferredDeliveryType().toString()
+                            ),
+                            activity
                     )
                     selectedFoodSubstitution = FoodSubstitution.NO_THANKS
                 }
@@ -1131,6 +1182,20 @@ class CheckoutReturningUserCollectionFragment :
     override fun setSelectedTimeSlot(slot: Slot?) {
         selectedTimeSlot = slot
         isRequiredFieldsMissing()
+        Utils.triggerFireBaseEvents(
+                FirebaseManagerAnalyticsProperties.CHECKOUT,
+                hashMapOf(
+                        FirebaseManagerAnalyticsProperties.PropertyNames.STEP to
+                                FirebaseManagerAnalyticsProperties.PropertyValues.DELIVERY_PAGE,
+                        FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                                FirebaseManagerAnalyticsProperties.PropertyValues.SELECT_TIMESLOT,
+                        FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_TYPE to
+                                KotlinUtils.getPreferredDeliveryType().toString(),
+                        FirebaseManagerAnalyticsProperties.PropertyNames.TIME_SELECTED to
+                                selectedTimeSlot?.stringShipOnDate + " " + selectedTimeSlot?.hourSlot
+                ),
+                activity
+        )
     }
 
     private fun isAgeConfirmationLiquorCompliance(): Boolean {
@@ -1138,7 +1203,9 @@ class CheckoutReturningUserCollectionFragment :
             binding.layoutCollectionInstructions.root,
             binding.layoutCollectionInstructions.root
         )
-        return liquorOrder == true && !binding.ageConfirmationLayoutCollection.radioBtnAgeConfirmation.isChecked
+        return liquorOrder == true &&
+                !binding.ageConfirmationLayoutCollection.radioBtnAgeConfirmation.isChecked &&
+                 binding.ageConfirmationLayoutCollection?.root?.visibility == View.VISIBLE
     }
 
     private fun onCheckoutPaymentClick() {
@@ -1334,6 +1401,8 @@ class CheckoutReturningUserCollectionFragment :
         shimmerComponentArray = mockedArray
     }
 
+
+
     @VisibleForTesting
     fun testSetStorePickupInfoResponse(mockStorePickupInfoResponse: ConfirmDeliveryAddressResponse) {
         storePickupInfoResponse = mockStorePickupInfoResponse
@@ -1357,5 +1426,38 @@ class CheckoutReturningUserCollectionFragment :
             }
         }
         return null
+    }
+
+    private fun loadShoppingCart() {
+        checkoutAddAddressNewUserViewModel.shoppingCartData.observe(viewLifecycleOwner) {
+            it.getContentIfNotHandled()?.let { resource ->
+                when (resource.status) {
+                    Status.SUCCESS -> {
+                        val isNoLiquorOrder = resource.data?.data?.getOrNull(0)?.liquorOrder
+                        if(isNoLiquorOrder == false) {
+                            updateAgeConfirmationUI(isNoLiquorOrder)
+                        }
+                    }
+                    Status.ERROR -> {
+                        //Do Nothing
+                    }
+                    else -> {
+                        //Do Nothing
+                    }
+                }
+            }
+        }
+    }
+
+    private fun updateAgeConfirmationUI(isNoLiquorOrder: Boolean?) {
+        binding.ageConfirmationLayoutCollection?.root?.visibility = View.GONE
+        binding.ageConfirmationLayoutCollection.liquorComplianceBannerLayout?.root?.visibility =
+                View.GONE
+        Utils.fadeInFadeOutAnimation(binding.txtContinueToPaymentCollection, false)
+        liquorOrder = isNoLiquorOrder
+        baseFragBundle?.apply {
+            remove(Constant.LIQUOR_ORDER)
+            remove(Constant.NO_LIQUOR_IMAGE_URL)
+        }
     }
 }
