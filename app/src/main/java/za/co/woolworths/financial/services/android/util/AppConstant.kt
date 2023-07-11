@@ -57,6 +57,10 @@ class AppConstant {
          * Request/Result Codes
          *****************************************************************************************/
         const val REQUEST_CODE = "REQUEST_CODE"
+        const val RESULT_CODE = "RESULT_CODE"
+
+        const val RESULT_FAILED = 9000
+
         //Dash
         const val REQUEST_CODE_QUERY_INVENTORY_FOR_STORE = 3343
         const val SET_DELIVERY_LOCATION_REQUEST_CODE = 3346
@@ -65,6 +69,8 @@ class AppConstant {
         const val REQUEST_CODE_ORDER_DETAILS_PAGE = 1989
         //Barcode scanning
         const val REQUEST_CODE_BARCODE_ACTIVITY = 1947
+
+        const val REQUEST_CODE_CREATE_LIST = 9001
 
         const val BALANCE_PROTECTION_INSURANCE_REQUEST_CODE: Int = 291621
         const val BALANCE_PROTECTION_INSURANCE_OPT_IN_SUCCESS_RESULT_CODE: Int = 20
@@ -154,6 +160,10 @@ class AppConstant {
              * Bundle Keys
              * const val BUNDLE_EXAMPLE_NAME = "BUNDLE_KEY_NAME"
              *****************************************************************************************/
+            const val KEY_LIST_DETAILS = "listDetails"
+            const val KEY_COUNT = "count"
+            const val KEY_HAS_GIFT_PRODUCT = "KEY_HAS_GIFT_PRODUCT"
+
             const val BUNDLE_WISHLIST_EVENT_DATA = "BUNDLE_WISHLIST_EVENT_DATA"
 
             /*****************************************************************************************
