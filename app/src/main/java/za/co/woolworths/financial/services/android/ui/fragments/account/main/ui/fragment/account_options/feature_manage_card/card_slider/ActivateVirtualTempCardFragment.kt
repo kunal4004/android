@@ -11,6 +11,7 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.extension.onClick
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.StoreCardEnhancementConstant
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.StoreCardFeatureType
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 
@@ -32,10 +33,17 @@ class ActivateVirtualTempCardFragment :
         val binding = InstantStoreCardReplacementCardFragmentBinding.bind(view)
         val card = arguments?.getParcelable<StoreCardFeatureType?>(STORE_CARD_FEATURE_TYPE) as? StoreCardFeatureType.ActivateVirtualTempCard
        with(binding) {
-           setupView(binding, card)
-           storeCardImageView.onClick {
-               (requireActivity() as? StoreCardActivity)?.apply {
-                   accountViewModel.emitEventOnCardTap(card)
+           val isBlockTypeNewCard = card?.storeCard?.blockType?.equals(StoreCardEnhancementConstant.NewCard, ignoreCase = true) == true
+           if (isBlockTypeNewCard) {
+               binding.accountHolderNameTextView.visibility = View.INVISIBLE
+               binding.storeCardImageView.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.store_card_new_card_image))
+               binding.storeCardImageView.contentDescription = context?.getString(R.string.active_store_card_image_on_overlay_new_card)
+           }else {
+               setupView(binding, card)
+               storeCardImageView.onClick {
+                   (requireActivity() as? StoreCardActivity)?.apply {
+                       accountViewModel.emitEventOnCardTap(card)
+                   }
                }
            }
        }
@@ -46,24 +54,47 @@ class ActivateVirtualTempCardFragment :
         binding: InstantStoreCardReplacementCardFragmentBinding,
         activateVTC: StoreCardFeatureType.ActivateVirtualTempCard?
     ) {
-        if (activateVTC?.isTemporaryCardEnabled == true) {
-            binding.storeCardImageView.setImageResource(R.drawable.store_card_virtual_temp)
-            binding.storeCardImageView.contentDescription = context?.getString(R.string.active_vtsc_card_image_on_overlay)
-            binding.tempCardLabel.visibility = View.GONE
-            binding.cardLabel.visibility = View.GONE
-            binding.accountHolderNameTextView.text = KotlinUtils.getCardHolderNameSurname()
-            binding.accountHolderNameTextView.visibility = View.VISIBLE
-            binding.accountHolderNameTextView.contentDescription = context?.getString(R.string.active_vtsc_card_image_embossed_name_label_text_on_overlay)
-        } else {
-            binding.storeCardImageView.setImageResource(R.drawable.ic_sc_inactive)
-            binding.storeCardImageView.contentDescription = context?.getString(R.string.inactive_store_card_image_on_overlay)
-            binding.tempCardLabel.visibility = View.VISIBLE
-            binding.cardLabel.visibility = View.VISIBLE
-            binding.storeCardImageView.contentDescription = context?.getString(R.string.active_vtsc_card_image_on_overlay)
-            binding.tempCardLabel.setTextColor(ContextCompat.getColor(requireContext(), R.color.inactive_label_color))
-            binding.cardLabel.setTextColor(ContextCompat.getColor(requireContext(), R.color.inactive_label_color))
-            binding.tempCardLabel.text = getString(R.string.inactive)
-            binding.accountHolderNameTextView.visibility = View.GONE
+        val isBlockTypeNewCard = activateVTC?.storeCard?.blockType?.equals(
+            StoreCardEnhancementConstant.NewCard, ignoreCase = true) == true
+        if(isBlockTypeNewCard){
+            binding.accountHolderNameTextView.visibility = View.INVISIBLE
+            binding.storeCardImageView.setImageDrawable( ContextCompat.getDrawable(requireContext(), R.drawable.store_card_new_card_image))
+            binding.storeCardImageView.contentDescription = context?.getString(R.string.active_store_card_image_on_overlay_new_card)
+
+        }else {
+            if (activateVTC?.isTemporaryCardEnabled == true) {
+                binding.storeCardImageView.setImageResource(R.drawable.store_card_virtual_temp)
+                binding.storeCardImageView.contentDescription =
+                    context?.getString(R.string.active_vtsc_card_image_on_overlay)
+                binding.tempCardLabel.visibility = View.GONE
+                binding.cardLabel.visibility = View.GONE
+                binding.accountHolderNameTextView.text = KotlinUtils.getCardHolderNameSurname()
+                binding.accountHolderNameTextView.visibility = View.VISIBLE
+                binding.accountHolderNameTextView.contentDescription =
+                    context?.getString(R.string.active_vtsc_card_image_embossed_name_label_text_on_overlay)
+            } else {
+                binding.storeCardImageView.setImageResource(R.drawable.ic_sc_inactive)
+                binding.storeCardImageView.contentDescription =
+                    context?.getString(R.string.inactive_store_card_image_on_overlay)
+                binding.tempCardLabel.visibility = View.VISIBLE
+                binding.cardLabel.visibility = View.VISIBLE
+                binding.storeCardImageView.contentDescription =
+                    context?.getString(R.string.active_vtsc_card_image_on_overlay)
+                binding.tempCardLabel.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.inactive_label_color
+                    )
+                )
+                binding.cardLabel.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.inactive_label_color
+                    )
+                )
+                binding.tempCardLabel.text = getString(R.string.inactive)
+                binding.accountHolderNameTextView.visibility = View.GONE
+            }
         }
     }
 

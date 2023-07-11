@@ -52,7 +52,7 @@ class ManageStoreCardMoreDetail(
                 setSubTitleLabel()
             }
 
-            StoreCardFeatureType.ManageMyCard -> {
+            is StoreCardFeatureType.ManageMyCard -> {
                 setPrimaryCardLabel()
                 setSubTitleLabel()
             }
