@@ -404,10 +404,10 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
     override fun onResume() {
         super.onResume()
         if (isVisible) {
-            if (Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.deliveryType.isNullOrEmpty() && KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.deliveryType.isNullOrEmpty()) {
-                return
-            } else if (((KotlinUtils.isLocationPlaceIdSame == false || KotlinUtils.isNickNameChanged == true) && KotlinUtils.placeId != null) || WoolworthsApplication.getValidatePlaceDetails() == null) {
+            if (((KotlinUtils.isLocationPlaceIdSame == false || KotlinUtils.isNickNameChanged == true) && KotlinUtils.placeId != null) || WoolworthsApplication.getValidatePlaceDetails() == null) {
                 executeValidateSuburb()
+            } else if (Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.deliveryType.isNullOrEmpty() && KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.deliveryType.isNullOrEmpty()) {
+                return
             } else if (KotlinUtils.isLocationPlaceIdSame == true && KotlinUtils.placeId != null) {
                 setDeliveryView()
                 (KotlinUtils.browsingDeliveryType
@@ -417,38 +417,6 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
             } else {
                 setDeliveryView()
             }
-        }
-    }
-
-    override fun onHiddenChanged(hidden: Boolean) {
-        super.onHiddenChanged(hidden)
-        if (!hidden) {
-            //do when hidden
-            timer?.start()
-            (activity as? BottomNavigationActivity)?.apply {
-                fadeOutToolbar(R.color.recent_search_bg)
-                showBackNavigationIcon(false)
-                showBottomNavigationMenu()
-                if (isResumed && isVisible)
-                    refreshViewPagerFragment()
-                Handler().postDelayed({
-                    hideToolbar()
-                }, AppConstant.DELAY_1000_MS)
-            }
-            if (((KotlinUtils.isLocationPlaceIdSame == false || KotlinUtils.isNickNameChanged == true) && KotlinUtils.placeId != null) || WoolworthsApplication.getValidatePlaceDetails() == null) {
-                executeValidateSuburb()
-            }
-        } else {
-            if (binding.blackToolTipLayout.root.isVisible) {
-                timer?.cancel()
-            }
-        }
-
-        if (getDeliveryType() == null) {
-            setupToolbar(STANDARD_TAB.index)
-            binding.viewpagerMain.currentItem = STANDARD_TAB.index
-        } else {
-            setDeliveryView()
         }
     }
 
@@ -627,6 +595,35 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         }
     }
 
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (!hidden) {
+            //do when hidden
+            timer?.start()
+            (activity as? BottomNavigationActivity)?.apply {
+                fadeOutToolbar(R.color.recent_search_bg)
+                showBackNavigationIcon(false)
+                showBottomNavigationMenu()
+                if (isResumed && isVisible)
+                    refreshViewPagerFragment()
+                Handler().postDelayed({
+                    hideToolbar()
+                }, AppConstant.DELAY_1000_MS)
+            }
+        } else {
+            if (binding.blackToolTipLayout.root.isVisible) {
+                timer?.cancel()
+            }
+        }
+
+        if (getDeliveryType() == null) {
+            setupToolbar(STANDARD_TAB.index)
+            binding.viewpagerMain.currentItem = STANDARD_TAB.index
+        } else {
+            setDeliveryView()
+        }
+    }
+
     override fun permissionGranted(requestCode: Int) {
         if (requestCode == 1) navigateToBarcode()
     }
@@ -669,7 +666,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                 binding.viewpagerMain,
                 binding.viewpagerMain.currentItem
             )
-            if (fragment is DashDeliveryAddressFragment) {
+            if (fragment is DashDeliveryAddressFragment){
                 fragment.onActivityResult(requestCode, resultCode, data)
             }
         }

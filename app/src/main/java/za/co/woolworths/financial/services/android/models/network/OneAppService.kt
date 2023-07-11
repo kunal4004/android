@@ -532,21 +532,6 @@ open class OneAppService(
         )
     }
 
-    fun getSuburbs(locationId: String): Call<SuburbsResponse> {
-        return mApiInterface.getSuburbs(
-            "", "", getSessionToken(),
-            getDeviceIdentityToken(), locationId
-        )
-    }
-
-    fun setSuburb(suburbId: String): Call<SetDeliveryLocationSuburbResponse> {
-        val request = SetDeliveryLocationSuburbRequest(suburbId)
-        return mApiInterface.setDeliveryLocationSuburb(
-            getSessionToken(), getDeviceIdentityToken(),
-            request
-        )
-    }
-
 
     fun getProducts(requestParams: ProductsRequestParams): Call<ProductView> {
         val (suburbId: String?, storeId: String?) = getSuburbOrStoreId()
