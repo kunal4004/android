@@ -26,9 +26,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.awfs.coordination.R
-import za.co.woolworths.financial.services.android.ui.compose.FuturaFontFamily
 import za.co.woolworths.financial.services.android.ui.wfs.theme.Color444444
 import za.co.woolworths.financial.services.android.ui.wfs.theme.ColorEEEEEE
+import za.co.woolworths.financial.services.android.ui.wfs.theme.FuturaFontFamily
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OpenSansFontFamily
 

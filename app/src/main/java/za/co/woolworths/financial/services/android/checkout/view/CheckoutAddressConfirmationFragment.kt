@@ -9,7 +9,9 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.core.os.bundleOf
 import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
@@ -18,7 +20,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.CheckoutAddressConfirmationBinding
-import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor
 import za.co.woolworths.financial.services.android.checkout.service.network.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.FulfillmentsType.FOOD
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.FulfillmentsType.OTHER
@@ -26,7 +27,6 @@ import za.co.woolworths.financial.services.android.checkout.view.CheckoutReturni
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutAddressConfirmationListAdapter
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutStoreSelectionAdapter
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
-import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelFactory
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
@@ -56,7 +56,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
     private var checkoutAddressConfirmationListAdapter: CheckoutAddressConfirmationListAdapter? =
         null
     private var storeListAdapter: CheckoutStoreSelectionAdapter? = null
-    private lateinit var checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel
+    private val checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel by activityViewModels()
     private var navController: NavController? = null
     private var localSuburbId: String = DEFAULT_STORE_ID
     private var validatedSuburbProductResponse: ValidatedSuburbProducts? = null
@@ -88,7 +88,6 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
 
         if (activity is CheckoutActivity)
             (activity as? CheckoutActivity)?.showBackArrowWithoutTitle()
-        setupViewModel()
         initView()
         addFragmentResultListener()
     }
@@ -720,16 +719,6 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
         }
     }
 
-    private fun setupViewModel() {
-        checkoutAddAddressNewUserViewModel = ViewModelProviders.of(
-            this,
-            ViewModelFactory(
-                CheckoutAddAddressNewUserInteractor(
-                    CheckoutAddAddressNewUserApiHelper()
-                )
-            )
-        ).get(CheckoutAddAddressNewUserViewModel::class.java)
-    }
 
     private fun navigateToUnsellableItemsFragment(
         unSellableCommerceItems: List<UnSellableCommerceItem>,

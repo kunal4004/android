@@ -44,6 +44,8 @@ import za.co.woolworths.financial.services.android.util.CustomTypefaceSpan
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
+import za.co.woolworths.financial.services.android.util.analytics.dto.AddToWishListFirebaseEventData
+import za.co.woolworths.financial.services.android.util.analytics.dto.toAnalyticItem
 import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 import za.co.woolworths.financial.services.android.util.voc.VoiceOfCustomerManager
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
@@ -552,11 +554,7 @@ class OrderConfirmationFragment :
         )
 
         binding.dashOrderDetailsLayout.addShoppingListButton.setOnClickListener {
-            KotlinUtils.openAddToListPopup(
-                requireActivity(),
-                requireActivity().supportFragmentManager,
-                listOfItems
-            )
+            openShoppingList(listOfItems, itemsOrder)
         }
     }
 
@@ -723,11 +721,7 @@ class OrderConfirmationFragment :
         listOfItems.addAll(cncFoodItemsOrder!!.map { it.toAddToListRequest() })
 
         binding.dashOrderDetailsLayout.addShoppingListButton.setOnClickListener {
-            KotlinUtils.openAddToListPopup(
-                requireActivity(),
-                requireActivity().supportFragmentManager,
-                listOfItems
-            )
+            openShoppingList(listOfItems, cncFoodItemsOrder)
         }
     }
 
@@ -739,11 +733,17 @@ class OrderConfirmationFragment :
         listOfItems.addAll(cncOtherItemsOrder!!.map { it.toAddToListRequest() })
 
         binding.cncOrderDetailsLayout.addShoppingListButton.setOnClickListener {
-            KotlinUtils.openAddToListPopup(
-                requireActivity(),
-                requireActivity().supportFragmentManager,
-                listOfItems
-            )
+            openShoppingList(listOfItems, cncOtherItemsOrder)
         }
+    }
+
+    private fun openShoppingList(listOfItems: ArrayList<AddToListRequest>, orderedItems: List<OrderItem>?) {
+        val addToWishListEventData = AddToWishListFirebaseEventData(products = orderedItems?.map { it.toAnalyticItem() })
+        KotlinUtils.openAddToListPopup(
+            requireActivity(),
+            requireActivity().supportFragmentManager,
+            listOfItems,
+            eventData = addToWishListEventData
+        )
     }
 }

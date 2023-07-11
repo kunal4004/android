@@ -18,7 +18,7 @@
     <za.co.woolworths.financial.services.android.ui.views.WTextView
         android:id="@+id/clearDetails"
         style="@style/opensans_regular_14_black"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/thirty_two_dp"
         android:layout_marginBottom="@dimen/fourty_seven_dp"
