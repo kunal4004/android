@@ -75,6 +75,8 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
             mHeaderItems =
                 ManageCardLandingHeaderItems(viewModel, this, this@AccountOptionsManageCardFragment)
             mItemList = ManageStoreCardLandingList(
+                viewModel = viewModel,
+                router  = router,
                 cardFreezeViewModel,
                 includeListOptions,
                 this@AccountOptionsManageCardFragment
@@ -222,6 +224,7 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.onViewPagerPageChangeListener.collectLatest { feature ->
+                mItemList.hideAllRows()
                 setCardLabel()
                 mHeaderItems.showHeaderItem(feature)
                 mItemList.showListItem(feature) { result ->
@@ -232,7 +235,6 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
                                 && feature.isPopupVisibleInCardDetailLanding
                                 && viewModel.hasDaysPassed(dateTime, 35,SessionDao.KEY.CARD_NOT_RECEIVED_DIALOG_WAS_SHOWN))
                                 mItemList.showCardNotReceivedDialog(
-                                this@AccountOptionsManageCardFragment,
                                 viewModel
                             ){ router.routeToCardNotReceivedView(landingController) }
                         }

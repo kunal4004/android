@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.awfs.coordination.R
@@ -12,6 +13,7 @@ import za.co.woolworths.financial.services.android.ui.extension.onClick
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_account_options_list.card_freeze.TemporaryFreezeCardViewModel
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.StoreCardEnhancementConstant
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.StoreCardFeatureType
 
 class StoreCardFreezeCardUpshellMessage : Fragment(R.layout.store_card_upshell_message_fragment) {
@@ -30,12 +32,30 @@ class StoreCardFreezeCardUpshellMessage : Fragment(R.layout.store_card_upshell_m
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val binding = StoreCardUpshellMessageFragmentBinding.bind(view)
-        binding.storeCardImageView.setImageResource(R.drawable.virtual_temp_freeze)
-        val card = arguments?.getParcelable<StoreCardFeatureType?>(STORE_CARD_FEATURE_TYPE) as? StoreCardFeatureType.StoreCardIsTemporaryFreeze
-        binding.storeCardImageView.onClick {
-            viewModel.mStoreCardUpsellMessageFlagState.activateFreezeStoreCardFlag()
-            (requireActivity() as? StoreCardActivity)?.apply {
-                accountViewModel.emitEventOnCardTap(card)
+        val card =
+            arguments?.getParcelable<StoreCardFeatureType?>(STORE_CARD_FEATURE_TYPE) as? StoreCardFeatureType.StoreCardIsTemporaryFreeze
+        val isBlockTypeNewCard = card?.storeCard?.blockType?.equals(
+            StoreCardEnhancementConstant.NewCard,
+            ignoreCase = true
+        ) == true
+        if (isBlockTypeNewCard) {
+            binding.accountHolderNameTextView.visibility = View.INVISIBLE
+            binding.storeCardImageView.setImageDrawable(
+                ContextCompat.getDrawable(
+                    requireContext(),
+                    R.drawable.store_card_new_card_image
+                )
+            )
+            binding.storeCardImageView.contentDescription =
+                context?.getString(R.string.active_store_card_image_on_overlay_new_card)
+
+        } else {
+            binding.storeCardImageView.setImageResource(R.drawable.virtual_temp_freeze)
+            binding.storeCardImageView.onClick {
+                viewModel.mStoreCardUpsellMessageFlagState.activateFreezeStoreCardFlag()
+                (requireActivity() as? StoreCardActivity)?.apply {
+                    accountViewModel.emitEventOnCardTap(card)
+                }
             }
         }
     }

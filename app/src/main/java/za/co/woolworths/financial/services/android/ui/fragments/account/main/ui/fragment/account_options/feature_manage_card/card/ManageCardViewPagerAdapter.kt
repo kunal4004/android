@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card
 
-import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
@@ -38,7 +37,8 @@ class ManageCardViewPagerAdapter(private var listOfStoreCards: MutableList<Store
         position: Int,
         payloads: MutableList<Any>
     ) {
-        (holder.itemView as ViewGroup).clipChildren = false
+        //(holder.itemView as ViewGroup).clipChildren = true
+        holder.itemView.requestLayout()
         super.onBindViewHolder(holder, position, payloads)
     }
 
