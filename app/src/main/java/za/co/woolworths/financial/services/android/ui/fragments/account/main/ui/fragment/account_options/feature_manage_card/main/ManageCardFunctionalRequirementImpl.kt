@@ -318,7 +318,7 @@ class ManageCardFunctionalRequirementImpl @Inject constructor(private val accoun
             )
 
             // Manage your card
-            else -> StoreCardFeatureType.ManageMyCard
+            else -> StoreCardFeatureType.ManageMyCard(storeCard)
         }
     }
 }
