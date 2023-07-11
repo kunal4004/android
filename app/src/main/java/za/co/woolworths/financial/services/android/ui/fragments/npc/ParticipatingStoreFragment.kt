@@ -172,7 +172,7 @@ class ParticipatingStoreFragment : BaseFragmentBinding<ParticipatingStoreFragmen
     fun getLocation(): MutableList<StoreDetails>? = mLocations
 
     private fun initViewPagerWithTabLayout() {
-        binding.vpStoreLocator?.adapter = object : FragmentStateAdapter(this) {
+        binding.vpStoreLocator?.adapter = object : FragmentStateAdapter(childFragmentManager, lifecycle) {
             override fun createFragment(position: Int): Fragment {
                 return when (position) {
                     0 -> StoreLocatorFragment.newInstance(getLocation(), arguments?.getString(STORE_CARD), arguments?.getBoolean(SHOW_BACK_BUTTON, false) == true)
