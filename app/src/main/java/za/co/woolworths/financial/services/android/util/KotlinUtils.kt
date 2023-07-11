@@ -1335,9 +1335,9 @@ class KotlinUtils {
             }
         }
 
-        fun retrieveFulfillmentStoreId(fulFillmentTypeId: String): String {
+        fun retrieveFulfillmentStoreId(fulFillmentTypeId: String?): String {
             var fulFillmentStoreId: String = ""
-            fulFillmentTypeId.let {
+            fulFillmentTypeId?.let {
                 var typeId = fulFillmentTypeId
                 if (typeId.length == 1)
                     typeId = "0$typeId"
