@@ -349,7 +349,7 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
         if (plist.isNullOrEmpty()) {
             return  KiboProductRequest(products = list)
         }
-        return KiboProductRequest(plist, list)
+        return KiboProductRequest(priceListId = plist, products = list)
     }
 
     override fun onClick(v: View?) {

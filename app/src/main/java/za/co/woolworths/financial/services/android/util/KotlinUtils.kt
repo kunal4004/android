@@ -1606,8 +1606,12 @@ class KotlinUtils {
 
         fun extractPlistFromDeliveryDetails(): String? {
             val deliveryDetails: String? = Utils.getDeliveryDetails()
-            val deliveryDetailsArray = deliveryDetails?.split("-")
-            return deliveryDetailsArray?.getOrNull(1)
+            if (deliveryDetails.isNullOrEmpty()) {
+                return ""
+            } else {
+                val deliveryDetailsArray = deliveryDetails?.split("-")
+                return deliveryDetailsArray?.getOrNull(1)
+            }
         }
     }
 }
