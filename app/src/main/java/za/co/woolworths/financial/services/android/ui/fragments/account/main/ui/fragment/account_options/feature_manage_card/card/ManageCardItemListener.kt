@@ -32,11 +32,11 @@ class ManageCardItemListener(
 
     override fun invoke(view: View?) {
         onClickIntentObserver.value =  when (view?.id) {
-            R.id.manageCardRelativeLayout ->{  router.routeToManageMyCard(activity) }
-            R.id.linkNewCardRelativeLayout -> {  router.routeToLinkNewCard(activity) }
-            R.id.activateVirtualTempCardRelativeLayout ->{  router.routeToActivateVirtualTempCard(activity, isDeviceLinked) }
-            R.id.replacementCardRelativeLayout ->{  router.routeToGetReplacementCard(activity) }
-            R.id.blockCardRelativeLayout ->{  router.routeToBlockCard(activity, isDeviceLinked = isDeviceLinked) }
+            R.id.manageCardRelativeLayout -> { router.routeToManageMyCard(activity) }
+            R.id.linkNewCardRelativeLayout -> { router.routeToLinkNewCard(activity) }
+            R.id.activateVirtualTempCardRelativeLayout -> { router.routeToActivateVirtualTempCard(activity, isDeviceLinked) }
+            R.id.replacementCardRelativeLayout -> { router.routeToGetReplacementCard(activity) }
+            R.id.blockCardRelativeLayout ->{ router.routeToBlockCard(activity, isDeviceLinked = isDeviceLinked) }
             else -> null
         }
     }

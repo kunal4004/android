@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <View
+        android:id="@+id/divider"
+        style="@style/menuLandingDividerStyle" />
+
+    <RelativeLayout
+        android:id="@+id/linkNewCardRelativeLayout"
+        style="@style/accountOptionItemsStyle">
+
+        <ImageView
+            android:id="@+id/logoImageView"
+            style="@style/accountOptionsImageviewStyle"
+            android:contentDescription="@string/link_new_card_action_button_link_icon_image_on_overlay"
+            android:src="@drawable/link_icon" />
+
+        <TextView
+            android:id="@+id/titleTextView"
+            style="@style/accountOptionsLabelStyle"
+            android:layout_width="match_parent"
+            android:layout_alignTop="@+id/arrowImageView"
+            android:layout_alignBottom="@+id/arrowImageView"
+            android:layout_marginTop="0dp"
+            android:layout_toStartOf="@+id/arrowImageView"
+            android:layout_toEndOf="@+id/logoImageView"
+            android:contentDescription="@string/link_new_card_action_button_text_label_on_overlay"
+            android:text="@string/link_new_card" />
+
+        <ImageView
+            android:id="@+id/arrowImageView"
+            style="@style/accountOptionsNextImageViewStyle"
+            android:contentDescription="@string/link_new_card_action_button_directional_arrow_on_overlay"
+            android:src="@drawable/ic_caret_black" />
+    </RelativeLayout>
+</androidx.appcompat.widget.LinearLayoutCompat>
