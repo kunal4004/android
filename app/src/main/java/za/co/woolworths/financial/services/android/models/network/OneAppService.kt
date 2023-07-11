@@ -18,6 +18,7 @@ import za.co.woolworths.financial.services.android.checkout.service.network.Ship
 import za.co.woolworths.financial.services.android.checkout.service.network.ShippingDetailsResponse
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse
@@ -561,6 +562,8 @@ open class OneAppService(
                 )
         }
 
+        val pageSize = AppConfigSingleton.searchApiSettings?.let { it.pageSize } ?: Utils.PAGE_SIZE
+
         return if (Utils.isLocationEnabled(appContextProvider.appContext())) {
             mApiInterface.getProducts(
                 "",
@@ -573,7 +576,7 @@ open class OneAppService(
                 requestParams.searchType.value,
                 requestParams.responseType.value,
                 requestParams.pageOffset,
-                Utils.PAGE_SIZE,
+                pageSize,
                 requestParams.sortOption,
                 requestParams.refinement,
                 suburbId = suburbId,
@@ -592,7 +595,7 @@ open class OneAppService(
                 requestParams.searchType.value,
                 requestParams.responseType.value,
                 requestParams.pageOffset,
-                Utils.PAGE_SIZE,
+                pageSize,
                 requestParams.sortOption,
                 requestParams.refinement,
                 suburbId = suburbId,
