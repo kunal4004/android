@@ -3075,4 +3075,20 @@
     <string name="add_to_list_failure">Failed to add to list. Please try again later.</string>
     <string name="hint_list_name">List Name</string>
     <string name="create_list_name_error">Unfortunately, this list name already exists.\nPlease try another option.</string>
+
+    <!-- Unique Ids for contact us-->
+    <string name="name_text">name_text</string>
+    <string name="name_input_field">name_input_field</string>
+    <string name="email_address_text">email_address_text</string>
+    <string name="email_address_input_field">email_address_input_field</string>
+    <string name="email_address_description">email_address_description</string>
+    <string name="enquiry_type_text">enquiry_type_text</string>
+    <string name="enquiry_type_dropdown">enquiry_type_dropdown</string>
+    <string name="message_text">message_text</string>
+    <string name="message_input_field">message_input_field</string>
+    <string name="enquiry_successfully_sent_image_icon">enquiry_successfully_sent_image_icon</string>
+    <string name="send_button">send_button</string>
+    <string name="enquiry_successfully_sent_title_text">enquiry_successfully_sent_title_text</string>
+    <string name="enquiry_successfully_sent_description">enquiry_successfully_sent_description</string>
+    <string name="got_it_button">got_it_button</string>
 </resources>
