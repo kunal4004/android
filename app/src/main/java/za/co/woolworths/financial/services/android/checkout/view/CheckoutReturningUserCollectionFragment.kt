@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.text.*
 import android.text.style.StyleSpan
 import android.view.View
-import android.view.View.GONE
 import android.widget.CompoundButton
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatActivity
@@ -45,7 +44,6 @@ import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAd
 import za.co.woolworths.financial.services.android.checkout.viewmodel.WhoIsCollectingDetails
 import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.enhancedSubstitution.util.isEnhanceSubstitutionFeatureEnable
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
@@ -719,7 +717,6 @@ class CheckoutReturningUserCollectionFragment :
                         && storePickupInfoResponse?.fulfillmentTypes?.food == StoreUtils.Companion.FulfillmentType.FOOD_ITEMS?.type
                         && storePickupInfoResponse?.fulfillmentTypes?.join == StoreUtils.Companion.FulfillmentType.CLOTHING_ITEMS?.type)) {
             collectionMessageForFBHItem()
-            hideFoodSubstitutionLayout()
             binding?.apply {
                 checkoutCollectingTimeDetailsLayout.tvCollectionTimeDetailsTitle?.text = bindString(R.string.mixed_cart_food_item_title)
                 with(layoutCollectionInstructions) {
@@ -755,7 +752,6 @@ class CheckoutReturningUserCollectionFragment :
                 && storePickupInfoResponse?.fulfillmentTypes?.other != StoreUtils.Companion.FulfillmentType.CLOTHING_ITEMS?.type
                 && storePickupInfoResponse?.fulfillmentTypes?.join == StoreUtils.Companion.FulfillmentType.FOOD_ITEMS?.type) {
 
-            hideFoodSubstitutionLayout()
             binding.apply {
                 with(layoutCollectionInstructions) {
                     txtNeedBags?.visibility = View.VISIBLE
@@ -784,15 +780,6 @@ class CheckoutReturningUserCollectionFragment :
             }
         }
     }
-
-    fun hideFoodSubstitutionLayout() {
-        if (isEnhanceSubstitutionFeatureEnable() == true) {
-            binding.nativeCheckoutFoodSubstitutionLayout.root.visibility = View.GONE
-        } else {
-            binding.nativeCheckoutFoodSubstitutionLayout.root.visibility = View.VISIBLE
-        }
-    }
-
     fun initializeDeliveryInstructions() {
         with(binding.layoutCollectionInstructions) {
             edtTxtSpecialDeliveryInstruction?.addTextChangedListener(deliveryInstructionsTextWatcher)
@@ -1293,11 +1280,7 @@ class CheckoutReturningUserCollectionFragment :
         oddDeliverySlotId = if(storePickupInfoResponse?.openDayDeliverySlots?.size!! > 0 && storePickupInfoResponse?.openDayDeliverySlots?.get(0)?.deliverySlotId != null) storePickupInfoResponse?.openDayDeliverySlots?.get(0)?.deliverySlotId else ""
         foodDeliveryStartHour = selectedTimeSlot?.intHourFrom?.toLong() ?: 0
         otherDeliveryStartHour = 0
-        if (isEnhanceSubstitutionFeatureEnable() == false) {
-            substituesAllowed = selectedFoodSubstitution.rgb
-        } else {
-            substituesAllowed = FoodSubstitution.NO_THANKS.rgb
-        }
+        substituesAllowed = selectedFoodSubstitution.rgb
         plasticBags = binding.layoutCollectionInstructions.switchNeedBags?.isChecked ?: false
         shoppingBagType = selectedShoppingBagType
         giftNoteSelected =

@@ -42,7 +42,6 @@ import za.co.woolworths.financial.services.android.checkout.view.adapter.Checkou
 import za.co.woolworths.financial.services.android.checkout.view.adapter.ShoppingBagsRadioGroupAdapter
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.enhancedSubstitution.util.isEnhanceSubstitutionFeatureEnable
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
@@ -453,7 +452,6 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
      * @see [FoodSubstitution]
      */
     private fun initializeFoodSubstitution() {
-        showOrHideFoodSubstitutionLayout()
         selectedFoodSubstitution = FoodSubstitution.SIMILAR_SUBSTITUTION
         binding.nativeCheckoutFoodSubstitutionLayout.radioGroupFoodSubstitution?.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {
@@ -834,7 +832,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     }
 
     private fun showDeliverySlotSelectionView() {
-        showOrHideFoodSubstitutionLayout()
+        binding.nativeCheckoutFoodSubstitutionLayout.root.visibility = VISIBLE // by default it is visible.
         if (FOOD.type == selectedSlotResponseFood?.fulfillmentTypes?.join) {
             //Only for Food
             foodType = ONLY_FOOD
@@ -882,14 +880,6 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             binding.layoutDeliveryInstructions.newShoppingBagsLayout.root.visibility = GONE
         }
 
-    }
-
-    fun showOrHideFoodSubstitutionLayout() {
-        if (isEnhanceSubstitutionFeatureEnable() == true) {
-            binding.nativeCheckoutFoodSubstitutionLayout.root.visibility = GONE
-        } else {
-            binding.nativeCheckoutFoodSubstitutionLayout.root.visibility = VISIBLE
-        }
     }
 
     private fun showDeliverySubTypeShimmerView() {
@@ -1328,12 +1318,8 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         body.apply {
             requestFrom = "express"
             shipToAddressName = savedAddress?.defaultAddressNickname
-            if (isEnhanceSubstitutionFeatureEnable() == false) {
-                substituesAllowed =
-                    if (binding.nativeCheckoutFoodSubstitutionLayout.root.visibility == VISIBLE) selectedFoodSubstitution.rgb else null
-            } else {
-                substituesAllowed = FoodSubstitution.NO_THANKS.rgb
-            }
+            substituesAllowed =
+                if (binding.nativeCheckoutFoodSubstitutionLayout.root.visibility == VISIBLE) selectedFoodSubstitution.rgb else null
             plasticBags = binding.layoutDeliveryInstructions.switchNeedBags?.isChecked ?: false
             shoppingBagType = selectedShoppingBagType
             giftNoteSelected = binding.layoutDeliveryInstructions.switchGiftInstructions?.isChecked ?: false
