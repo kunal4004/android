@@ -10,6 +10,7 @@ import android.text.TextPaint
 import android.text.TextUtils
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.View.*
@@ -172,7 +173,13 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
                     Status.SUCCESS -> {
                         resource.data?.data?.let {
                             hideShimmerView()
-                            itemList = it.responses.getOrNull(0)?.actions?.getOrNull(0)?.items
+                            itemList?.clear()
+                            it.responses.getOrNull(0)?.actions?.forEach {
+                                   it.items.forEach {
+                                       itemList?.add(it)
+                                   }
+                            }
+                            Log.e("itemList_count:", "" + itemList?.size)
                             if (itemList.isNullOrEmpty()) {
                                 showEmptyErrorScreen()
                                 return@observe

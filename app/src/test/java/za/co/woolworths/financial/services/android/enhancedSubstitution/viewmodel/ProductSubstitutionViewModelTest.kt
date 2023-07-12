@@ -87,13 +87,13 @@ class ProductSubstitutionViewModelTest {
     fun getInventory_withEmptyResponse() = runTest {
         `when`(
             productSubstitutionRepository
-                .getInventoryForSubstitution("473", "6001009025692")
+                .fetchInventoryForKiboProducts("473", "6001009025692")
         ).thenReturn(Resource.success(skusInventoryForStoreResponse))
 
         val sut = ProductSubstitutionViewModel(repository = productSubstitutionRepository)
-        sut.getInventoryForSubstitution("473", "6001009025692")
+        sut.getInventoryForKiboProducts("473", "6001009025692")
         testDispatcher.scheduler.advanceUntilIdle()
-        val result = sut.inventorySubstitution.getOrAwaitValue()
+        val result = sut.stockInventoryResponse.getOrAwaitValue()
         Assert.assertEquals(skusInventoryForStoreResponse, result.peekContent().data)
         Assert.assertEquals(null, result.peekContent().data?.storeId)
     }
@@ -102,13 +102,13 @@ class ProductSubstitutionViewModelTest {
     fun getInventory_withError() = runTest {
         `when`(
             productSubstitutionRepository
-                .getInventoryForSubstitution("473", "6001009025692")
+                .fetchInventoryForKiboProducts("473", "6001009025692")
         ).thenReturn(Resource.error(R.string.error_unknown, null))
 
         val sut = ProductSubstitutionViewModel(repository = productSubstitutionRepository)
-        sut.getInventoryForSubstitution("473", "6001009025692")
+        sut.getInventoryForKiboProducts("473", "6001009025692")
         testDispatcher.scheduler.advanceUntilIdle()
-        val result = sut.inventorySubstitution.getOrAwaitValue()
+        val result = sut.stockInventoryResponse.getOrAwaitValue()
         Assert.assertEquals(R.string.error_unknown, result.peekContent().message)
     }
 
