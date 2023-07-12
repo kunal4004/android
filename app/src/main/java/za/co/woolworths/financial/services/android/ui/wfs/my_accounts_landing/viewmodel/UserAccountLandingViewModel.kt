@@ -441,4 +441,18 @@ class UserAccountLandingViewModel @Inject constructor(
             }
         }
     }
+
+    fun onErrorRemoveProducts(){
+        listOf(
+            AccountProductKeys.BlackCreditCard.value,
+            AccountProductKeys.StoreCard.value,
+            AccountProductKeys.PersonalLoan.value).forEach { key ->
+            val productDetails = mapOfFinalProductItems[key]?.productDetails
+            if (productDetails == null || (productDetails?.availableFunds == null
+                        && productDetails.currentBalance == null
+                        && productDetails.productGroupCode == null)){
+                mapOfFinalProductItems.remove(key)
+            }
+        }
+    }
 }
