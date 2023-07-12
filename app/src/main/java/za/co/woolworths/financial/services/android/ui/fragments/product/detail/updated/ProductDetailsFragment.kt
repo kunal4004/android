@@ -322,8 +322,9 @@ class ProductDetailsFragment :
             // As User selects to change the delivery location. So we will call confirm place API and will change the users location.
             binding.getUpdatedValidateResponse()
         }
-        setFragmentResultListener(LocationUtils.ADD_TO_LIST_SUCCESS_RESULT_CODE) { _, _ ->
-            // todo Proceed with add to cart as we have moved unsellable items to List.
+        setFragmentResultListener(UnsellableUtils.ADD_TO_LIST_SUCCESS_RESULT_CODE) { _, _ ->
+            // Proceed with add to cart as we have moved unsellable items to List.
+            onConfirmLocation()
         }
     }
 
@@ -837,7 +838,7 @@ class ProductDetailsFragment :
                                 }
                             } else
                                 confirmAddressViewModel?.let {
-                                    LocationUtils.callConfirmPlace(
+                                    UnsellableUtils.callConfirmPlace(
                                         (this@ProductDetailsFragment),
                                         null,
                                         progressBar,

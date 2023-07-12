@@ -78,7 +78,7 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.VALIDATE_RESPONSE
 import za.co.woolworths.financial.services.android.util.Constant
 import za.co.woolworths.financial.services.android.util.KotlinUtils
-import za.co.woolworths.financial.services.android.util.LocationUtils
+import za.co.woolworths.financial.services.android.util.UnsellableUtils
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
@@ -348,8 +348,9 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
                 }
             }
         }
-        setFragmentResultListener(LocationUtils.ADD_TO_LIST_SUCCESS_RESULT_CODE) { _, _ ->
-            // todo Proceed with add to cart as we have moved unsellable items to List.
+        setFragmentResultListener(UnsellableUtils.ADD_TO_LIST_SUCCESS_RESULT_CODE) { _, _ ->
+            // Proceed with fragment navigation as we have moved unsellable items to List.
+            onConfirmLocationNavigation()
         }
 
         setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_CLICK_RESULT) { _, _ ->
@@ -453,7 +454,7 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
         }
         setEventsForSwitchingDeliveryType(deliveryType ?: Delivery.STANDARD.name)
 
-        LocationUtils.callConfirmPlace(this@DeliveryAddressConfirmationFragment,
+        UnsellableUtils.callConfirmPlace(this@DeliveryAddressConfirmationFragment,
             ConfirmLocationParams(null, confirmLocationRequest),
             progressBar, confirmAddressViewModel
         )

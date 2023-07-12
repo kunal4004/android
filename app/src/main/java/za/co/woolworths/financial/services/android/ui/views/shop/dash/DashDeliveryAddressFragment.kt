@@ -82,7 +82,7 @@ import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.GetCartSummary
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getDeliveryType
-import za.co.woolworths.financial.services.android.util.LocationUtils
+import za.co.woolworths.financial.services.android.util.UnsellableUtils
 import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
@@ -218,8 +218,9 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
             else WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.placeId
             callValidatePlace(placeId)
         }
-        setFragmentResultListener(LocationUtils.ADD_TO_LIST_SUCCESS_RESULT_CODE) { _, _ ->
+        setFragmentResultListener(UnsellableUtils.ADD_TO_LIST_SUCCESS_RESULT_CODE) { _, _ ->
             // Proceed with add to cart as we have moved unsellable items to List.
+            addToCart(viewModel.addItemToCart.value) // This will again call addToCart
         }
     }
 
@@ -825,7 +826,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                                     // show unsellable items
                                     navigateToUnsellableItemsFragment(unsellableList as ArrayList<UnSellableCommerceItem>)
                                 } else
-                                    LocationUtils.callConfirmPlace(
+                                    UnsellableUtils.callConfirmPlace(
                                         (this@DashDeliveryAddressFragment),
                                         null,
                                         binding.progressBar,

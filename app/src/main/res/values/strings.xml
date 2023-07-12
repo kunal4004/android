@@ -2299,6 +2299,7 @@
 
     <!-- Native Checkout : Suburb not deliverable  -->
     <string name="dismiss">Dismiss</string>
+    <string name="dismiss_underline" tools:ignore="ButtonCase"><u>DISMISS</u></string>
     <string name="suburb_not_deliverable_msg">We Can’t Deliver To This Suburb Yet</string>
     <string name="suburb_not_deliverable_description">However, we’re growing quickly, so please check back soon.</string>
 
@@ -3065,5 +3066,7 @@
     <string name="add_to_list_progress_bar_title">Adding Your Items\n to a List</string>
     <string name="add_to_list_bottom_sheet_success_title">We\’ve added your items to the ‘Auto shopping’ List</string>
     <string name="add_to_list_bottom_sheet_success_sub_title">You will be able to add them to your cart from there.</string>
+
+    <string name="add_to_list_error_description">The items were unable to be added to a list.</string>
 
 </resources>
