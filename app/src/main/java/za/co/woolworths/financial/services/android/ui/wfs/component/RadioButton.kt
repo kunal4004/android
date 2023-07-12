@@ -8,7 +8,7 @@ import androidx.compose.ui.res.painterResource
 import com.awfs.coordination.R
 
 @Composable
-fun CheckedUncheckedRadioButton(isChecked : Boolean  = false,
+fun CheckedUncheckedRadioButton(isChecked : Boolean  = false, locator: String,
                                 onClick: () -> Unit){
     IconToggleButton( checked = isChecked,
         onCheckedChange = { onClick() })

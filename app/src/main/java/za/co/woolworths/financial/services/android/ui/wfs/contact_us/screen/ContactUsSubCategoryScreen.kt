@@ -7,6 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.getAccessibilityIdWithAppendedString
 import za.co.woolworths.financial.services.android.ui.wfs.component.*
 import za.co.woolworths.financial.services.android.ui.wfs.contact_us.cell.TextContactUsFuturaSemiBoldSectionHeader
 import za.co.woolworths.financial.services.android.ui.wfs.contact_us.cell.LeftIconTitleDescriptionAndNextArrowItem
@@ -25,16 +26,17 @@ fun ContactUsSubCategoryScreen(viewModel: ContactUsViewModel, onSelected: (Child
 fun SubCategoryList(listOfChildren: MutableList<ChildrenItem>, onSelected: (Children) -> Unit) {
     BoxBackground {
         ListColumn(list = listOfChildren) { item ->
-
-            TextContactUsFuturaSemiBoldSectionHeader(title = item.title ?: "")
-
-                Column(Modifier.padding(start = Margin.start, end = Margin.dp15)) {
+            val titleString = item.title ?: ""
+            val titleAccessibilityId = titleString.getAccessibilityIdWithAppendedString(titleString, "title")
+            TextContactUsFuturaSemiBoldSectionHeader(title = titleString, locator = titleAccessibilityId)
+             Column(Modifier.padding(start = Margin.start, end = Margin.dp15)) {
                     item.description?.let { desc ->
+                        val descriptionAccessibilityId = titleString.getAccessibilityIdWithAppendedString(titleString, "subtitle")
                         TextOpenSansFontFamily(
                             text =desc,
                             textAlign = TextAlign.Start,
                             color = Color.Black,
-                            locator = desc,
+                            locator = descriptionAccessibilityId,
                             fontSize = FontDimensions.sp12
                         )
                         Spacer(modifier = Modifier.height(24.dp))
