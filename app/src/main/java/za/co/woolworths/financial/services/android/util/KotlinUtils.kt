@@ -1427,17 +1427,19 @@ class KotlinUtils {
             }
         }
 
-        fun retrieveFulfillmentStoreId(fulFillmentTypeId: String): String {
+        fun retrieveFulfillmentStoreId(fulFillmentTypeId: String?): String {
             var fulFillmentStoreId: String = ""
-            var typeId = fulFillmentTypeId
-            if (typeId.length == 1)
-                typeId = "0$typeId"
-            Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.fulfillmentStores?.let {
-                val details = Gson().fromJson<Map<String, String>>(
-                    it,
-                    object : com.google.gson.reflect.TypeToken<Map<String, String>>() {}.type
-                )
-                fulFillmentStoreId = details?.get(typeId) ?: ""
+            fulFillmentTypeId?.let {
+                var typeId = fulFillmentTypeId
+                if (typeId.length == 1)
+                    typeId = "0$typeId"
+                Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.fulfillmentStores?.let {
+                    val details = Gson().fromJson<Map<String, String>>(
+                        it,
+                        object : com.google.gson.reflect.TypeToken<Map<String, String>>() {}.type
+                    )
+                    fulFillmentStoreId = details?.get(typeId) ?: ""
+                }
             }
             return fulFillmentStoreId
         }
