@@ -3011,6 +3011,7 @@
 
     <string name="substitutions">Substitutions</string>
     <string name="item_outofstock_error">You can’t set this product as a substitute because it is out of stock. Please find another item to use instead.</string>
+    <string name="food_substitution_message">If an item is out of stock, our shoppers might contact you in the app about an alternative. Keep your phone close to chat with them.</string>
 
     <string name="timeslot_title">All Dash Timeslots Are Fully Booked.</string>
     <string name="timeslot_desc">Check back later to see if any new delivery slots become available.</string>

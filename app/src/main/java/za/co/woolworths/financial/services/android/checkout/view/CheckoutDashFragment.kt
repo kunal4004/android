@@ -14,6 +14,7 @@ import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
 import android.view.View
 import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.widget.CompoundButton
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -958,9 +959,15 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
     private fun initializeFoodSubstitution() {
         /* if feature flag is disabled then only show food substitution layout */
         if (isEnhanceSubstitutionFeatureEnable() == true) {
-            binding.nativeCheckoutFoodSubstitutionLayout.root.visibility = GONE
+            binding.nativeCheckoutFoodSubstitutionLayout.apply {
+                this.radioGroupFoodSubstitution.visibility = GONE
+                this.txtFoodSubstitutionDesc.text = getString(R.string.food_substitution_message)
+            }
         } else {
-            binding.nativeCheckoutFoodSubstitutionLayout.root.visibility = View.VISIBLE
+            binding.nativeCheckoutFoodSubstitutionLayout.apply {
+                this.radioGroupFoodSubstitution.visibility = VISIBLE
+                this.txtFoodSubstitutionDesc.text = getString(R.string.native_checkout_delivery_food_substitution_desc)
+            }
         }
         binding.nativeCheckoutFoodSubstitutionLayout.radioBtnPhoneConfirmation?.text =
             requireContext().getString(R.string.native_checkout_delivery_food_substitution_chat)
@@ -1339,7 +1346,6 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
         foodDeliveryStartHour = selectedTimeSlot?.intHourFrom?.toLong() ?: 0
         otherDeliveryStartHour = 0
         if (isEnhanceSubstitutionFeatureEnable() == false) {
-            /*if feature flag disabled then only send substituesAllowed parameter*/
           substituesAllowed = selectedFoodSubstitution.rgb
         } else {
             substituesAllowed = FoodSubstitution.NO_THANKS.rgb
