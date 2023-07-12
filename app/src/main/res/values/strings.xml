@@ -2867,6 +2867,10 @@
         <item quantity="one">%1$s %2$s Item</item>
         <item quantity="other">%1$s %2$s Items</item>
     </plurals>
+    <plurals name="added_to_list">
+        <item quantity="one">%1$d Item Added To %2$s</item>
+        <item quantity="other">%1$d Items Added To %2$s</item>
+    </plurals>
     <string name="select_your_marital_status">Select your marital status</string>
 
     <string name="my_products">My Products</string>
@@ -3069,4 +3073,11 @@
 
     <string name="add_to_list_error_description">The items were unable to be added to a list.</string>
 
+
+    <string name="oops_something_went_wrong">Oops. Something Went Wrong</string>
+    <string name="added_to_list_desc">THIS EXCLUDES FREE GIFT ITEMS</string>
+    <string name="multiple_lists">Multiple Lists</string>
+    <string name="add_to_list_failure">Failed to add to list. Please try again later.</string>
+    <string name="hint_list_name">List Name</string>
+    <string name="create_list_name_error">Unfortunately, this list name already exists.\nPlease try another option.</string>
 </resources>

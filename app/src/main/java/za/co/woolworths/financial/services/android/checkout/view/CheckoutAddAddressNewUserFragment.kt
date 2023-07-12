@@ -32,6 +32,7 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.FetchPlaceRequest
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
@@ -114,6 +115,7 @@ import kotlin.coroutines.CoroutineContext
 /**
  * Created by Kunal Uttarwar on 29/05/21.
  */
+@AndroidEntryPoint
 class CheckoutAddAddressNewUserFragment :
     CheckoutAddressManagementBaseFragment(R.layout.checkout_add_address_new_user),
     View.OnClickListener, CoroutineScope, ErrorHandlerBottomSheetDialog.ClickListener,

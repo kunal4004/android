@@ -1158,7 +1158,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
                     addFoodProductTypeToCart(mAddItemsToCart?.get(0))
                 }
             }
-            PDP_REQUEST_CODE, OPEN_CART_REQUEST -> {
+            OPEN_CART_REQUEST -> {
                 if (resultCode == Activity.RESULT_CANCELED || resultCode == DISMISS_POP_WINDOW_CLICKED) {
                     val currentPlaceId = KotlinUtils.getPreferredPlaceId()
                     if (currentPlaceId == null) {

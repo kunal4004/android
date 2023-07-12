@@ -264,7 +264,9 @@ class ChangeFulfillmentCollectionStoreFragment :
     }
 
     fun scrollToTop() {
-        binding.layoutEdgeCaseScreen?.root?.scrollTo(0, 0)
+        if (::binding.isInitialized) {
+            binding.layoutEdgeCaseScreen?.root?.scrollTo(0, 0)
+        }
     }
 
     override fun onStoreSelected(store: Store?) {

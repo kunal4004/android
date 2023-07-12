@@ -9,7 +9,12 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.text.*
+import android.text.Editable
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.SpannableStringBuilder
+import android.text.TextUtils
+import android.text.TextWatcher
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
 import android.view.View
@@ -25,7 +30,6 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
-import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.findNavController
@@ -38,7 +42,14 @@ import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.gson.JsonElement
 import dagger.hilt.android.AndroidEntryPoint
-import za.co.woolworths.financial.services.android.checkout.service.network.*
+import za.co.woolworths.financial.services.android.checkout.service.network.Address
+import za.co.woolworths.financial.services.android.checkout.service.network.ConfirmDeliveryAddressResponse
+import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
+import za.co.woolworths.financial.services.android.checkout.service.network.ShippingDetailsBody
+import za.co.woolworths.financial.services.android.checkout.service.network.ShippingDetailsResponse
+import za.co.woolworths.financial.services.android.checkout.service.network.Slot
+import za.co.woolworths.financial.services.android.checkout.service.network.SortedJoinDeliverySlot
+import za.co.woolworths.financial.services.android.checkout.service.network.Week
 import za.co.woolworths.financial.services.android.checkout.utils.AddShippingInfoEventsAnalytics
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.Companion.REGEX_DELIVERY_INSTRUCTIONS
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.FoodSubstitution
@@ -69,9 +80,15 @@ import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory.Companion.buildPushNotificationAlertToast
-import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
+import za.co.woolworths.financial.services.android.util.Constant
+import za.co.woolworths.financial.services.android.util.CurrencyFormatter
+import za.co.woolworths.financial.services.android.util.ImageManager
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.removeRandFromAmount
+import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.WFormatter
 import za.co.woolworths.financial.services.android.util.WFormatter.DATE_FORMAT_EEEE_COMMA_dd_MMMM
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
@@ -114,8 +131,9 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
     private var liquorImageUrl: String? = ""
     private var liquorOrder: Boolean? = false
     private var cartItemList: ArrayList<CommerceItem>? = null
+
     @Inject
-    lateinit var addShippingInfoEventsAnalytics :AddShippingInfoEventsAnalytics
+    lateinit var addShippingInfoEventsAnalytics: AddShippingInfoEventsAnalytics
 
     private val deliveryInstructionsTextWatcher: TextWatcher = object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -160,6 +178,8 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
         getLiquorComplianceDetails()
         hideGiftOption()
         hideInstructionLayout()
+        initShimmerView()
+        initializeDriverTipList()
         callConfirmLocationAPI()
         setFragmentResults()
         binding.txtContinueToPayment?.setOnClickListener(this)
@@ -180,6 +200,7 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
                 ERROR_TYPE_CONFIRM_COLLECTION_ADDRESS -> {
                     callConfirmLocationAPI()
                 }
+
                 ERROR_TYPE_SHIPPING_DETAILS_COLLECTION -> {
                     onCheckoutPaymentClick()
                 }
@@ -217,9 +238,9 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
                         binding.ageConfirmationLayout.radioBtnAgeConfirmation?.isChecked = true
                     }
                 }
-            } else if (containsKey(CheckoutAddressManagementBaseFragment.CART_ITEM_LIST)) {
+            } else if (containsKey(CART_ITEM_LIST)) {
                 cartItemList =
-                    getSerializable(CheckoutAddressManagementBaseFragment.CART_ITEM_LIST) as ArrayList<CommerceItem>?
+                    getSerializable(CART_ITEM_LIST) as ArrayList<CommerceItem>?
             } else {
                 binding.ageConfirmationLayout?.root?.visibility = GONE
                 binding.ageConfirmationLayout.liquorComplianceBannerLayout?.root?.visibility = GONE
@@ -368,7 +389,6 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
                 binding.layoutDriverTip.tipOptionScrollView
             )
         )
-        startShimmerView()
     }
 
     private fun startShimmerView() {
@@ -389,21 +409,19 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
 
     private fun stopShimmerView() {
         shimmerComponentArray.forEach {
-                it.first.stopShimmer()
-                it.first.setShimmer(null)
-                it.second.visibility = View.VISIBLE
+            it.first.stopShimmer()
+            it.first.setShimmer(null)
+            it.second.visibility = View.VISIBLE
         }
 
         binding.layoutDeliveryInstructions.txtNeedBags?.visibility = View.VISIBLE
         binding.layoutDeliveryInstructions.switchNeedBags?.visibility = View.VISIBLE
         initializeDeliveryInstructions()
-        initializeDriverTipView()
+        showDriverTipView()
     }
 
-
-
     private fun callConfirmLocationAPI() {
-        initShimmerView()
+        startShimmerView()
         val confirmLocationAddress =
             ConfirmLocationAddress(defaultAddress?.placesId, defaultAddress?.nickname)
         val body = ConfirmLocationRequest(
@@ -417,7 +435,7 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
                 stopShimmerView()
                 when (response) {
                     is ConfirmDeliveryAddressResponse -> {
-                        when (response.httpCode ?: 400) {
+                        when (response.httpCode ?: AppConstant.HTTP_SESSION_TIMEOUT_400) {
                             AppConstant.HTTP_OK -> {
                                 confirmDeliveryAddressResponse = response
                                 if (!isAdded) {
@@ -438,9 +456,7 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
                                     showEmptyCart()
                                     return@observe
                                 }
-                                var maxItemLimit: Int = -1
                                 response.orderSummary?.fulfillmentDetails?.let {
-                                    maxItemLimit = it.foodMaximumQuantity ?: -1
                                     if (!it.deliveryType.isNullOrEmpty()) {
                                         Utils.savePreferredDeliveryLocation(
                                             ShoppingDeliveryLocation(
@@ -452,7 +468,7 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
 
                                 isItemLimitExceeded =
                                     response.orderSummary?.fulfillmentDetails?.allowsCheckout == false
-                                if(isItemLimitExceeded) {
+                                if (isItemLimitExceeded) {
                                     showMaxItemView()
                                 }
 
@@ -480,6 +496,7 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
                                     dashTimeSlotsAdapter.setSelectedItem(selectedSlotIndex)
                                 }
                             }
+
                             else -> {
                                 presentErrorDialog(
                                     getString(R.string.common_error_unfortunately_something_went_wrong),
@@ -489,6 +506,7 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
                             }
                         }
                     }
+
                     is Throwable -> {
                         presentErrorDialog(
                             getString(R.string.common_error_unfortunately_something_went_wrong),
@@ -503,7 +521,7 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
     private fun initializeDatesAndTimeSlots(selectedWeekSlot: Week?) {
 
         if (selectedWeekSlot == null) {
-            binding.checkoutCollectingTimeDetailsLayout?.root?.visibility = View.GONE
+            binding.checkoutCollectingTimeDetailsLayout?.root?.visibility = GONE
             showNoTimeSlotsView()
             return
         }
@@ -613,15 +631,13 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
         }
     }
 
-    private fun initializeDriverTipView() {
+    private fun initializeDriverTipList() {
         //Todo This value will come from Config once it is available.
         driverTipOptionsList = ArrayList()
         driverTipOptionsList!!.add("R10")
         driverTipOptionsList!!.add("R20")
         driverTipOptionsList!!.add("R30")
         driverTipOptionsList!!.add("Own Amount")
-
-        showDriverTipView()
     }
 
     private fun showDriverTipView() {
@@ -979,6 +995,7 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
 
                     selectedFoodSubstitution = FoodSubstitution.CHAT
                 }
+
                 R.id.radioBtnSimilarSubst -> {
                     selectedFoodSubstitution = FoodSubstitution.SIMILAR_SUBSTITUTION
                     Utils.triggerFireBaseEvents(
@@ -996,6 +1013,7 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
                             activity
                     )
                 }
+
                 R.id.radioBtnNoThanks -> {
                     Utils.triggerFireBaseEvents(
                             FirebaseManagerAnalyticsProperties.CHECKOUT,
@@ -1021,7 +1039,7 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
      * Initializes Order Summary data from confirmDeliveryAddress or storePickUp API .
      */
     private fun initializeOrderSummary(orderSummary: OrderSummary?) {
-        orderSummary?.let { it ->
+        orderSummary?.let {
             binding.layoutCheckoutDeliveryOrderSummary.txtOrderSummaryYourCartValue?.text =
                 CurrencyFormatter.formatAmountToRandAndCentWithSpace(it.basketTotal)
             it.discountDetails?.let { discountDetails ->
@@ -1064,7 +1082,6 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.checkoutCollectingFromLayout -> {
-
                 Utils.triggerFireBaseEvents(
                     FirebaseManagerAnalyticsProperties.CHECKOUT_COLLECTION_USER_EDIT,
                     hashMapOf(
@@ -1079,15 +1096,15 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
                     CheckoutAddAddressReturningUserFragment.SLOT_SELECTION_REQUEST_CODE,
                     KotlinUtils.getPreferredDeliveryType(),
                     placesId,
-                    false,
-                    true,
-                    false,
-                    false,
-                    true,
-                    savedAddress,
-                    defaultAddress,
-                    "",
-                    liquorOrder?.let { liquorOrder ->
+                    isFromDashTab = false,
+                    isComingFromCheckout = true,
+                    isMixedBasket = false,
+                    isFBHOnly = false,
+                    isComingFromSlotSelection = true,
+                    savedAddressResponse = savedAddress,
+                    defaultAddress = defaultAddress,
+                    whoISCollecting = "",
+                    liquorCompliance = liquorOrder?.let { liquorOrder ->
                         liquorImageUrl?.let { liquorImageUrl ->
                             LiquorCompliance(liquorOrder, liquorImageUrl)
                         }
@@ -1095,21 +1112,24 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
                 )
                 activity?.finish()
             }
+
             R.id.chooseDateLayout -> {
                 onChooseDateClicked()
             }
+
             R.id.txtContinueToPayment -> {
                 onCheckoutPaymentClick()
                 cartItemList?.let {
-                    addShippingInfoEventsAnalytics.sendEventData(it,
-                        SHIPPING_TIER_VALUE_DASH,orderTotalValue)
+                    addShippingInfoEventsAnalytics.sendEventData(
+                        it,
+                        SHIPPING_TIER_VALUE_DASH, orderTotalValue
+                    )
                 }
-
             }
         }
     }
 
-    fun onChooseDateClicked() {
+    private fun onChooseDateClicked() {
         confirmDeliveryAddressResponse?.sortedJoinDeliverySlots?.apply {
             // No available dates to select
             if (this.isNullOrEmpty()) {
@@ -1178,7 +1198,6 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
     }
 
     private fun onCheckoutPaymentClick() {
-
         if (isItemLimitExceeded) {
             showMaxItemView()
             return
@@ -1192,13 +1211,13 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
         if (isRequiredFieldsMissing() || isAgeConfirmationLiquorCompliance()) {
             return
         }
-        setEventForDriverTip()
         val body = getShipmentDetailsBody()
         if (TextUtils.isEmpty(body.oddDeliverySlotId) && TextUtils.isEmpty(body.foodDeliverySlotId)
             && TextUtils.isEmpty(body.otherDeliverySlotId)
         ) {
             return
         }
+        setEventForDriverTip()
         binding.loadingBar?.visibility = View.VISIBLE
         setScreenClickEvents(false)
         checkoutAddAddressNewUserViewModel.getShippingDetails(body)
@@ -1217,6 +1236,7 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
                         }
                         navigateToPaymentWebpage(response)
                     }
+
                     is Throwable -> {
                         presentErrorDialog(
                             getString(R.string.common_error_unfortunately_something_went_wrong),
@@ -1272,7 +1292,6 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
         }
 
         val driverTipItemParams = Bundle()
-
         driverTipItemParams.putString(
             FirebaseAnalytics.Param.CURRENCY,
             FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE
@@ -1293,18 +1312,11 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
 
     private fun presentErrorDialog(title: String, subTitle: String, errorType: Int) {
         val bundle = Bundle()
-        bundle.putString(
-            ErrorHandlerBottomSheetDialog.ERROR_TITLE,
-            title
-        )
-        bundle.putString(
-            ErrorHandlerBottomSheetDialog.ERROR_DESCRIPTION,
-            subTitle
-        )
-        bundle.putInt(
-            ErrorHandlerBottomSheetDialog.ERROR_TYPE,
-            errorType
-        )
+        bundle.apply {
+            putString(ErrorHandlerBottomSheetDialog.ERROR_TITLE, title)
+            putString(ErrorHandlerBottomSheetDialog.ERROR_DESCRIPTION, subTitle)
+            putInt(ErrorHandlerBottomSheetDialog.ERROR_TYPE, errorType)
+        }
         view?.findNavController()?.navigate(
             R.id.action_checkoutDashFragment_to_errorHandlerBottomSheetDialog,
             bundle
@@ -1338,9 +1350,7 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
             if (binding.layoutDeliveryInstructions.switchSpecialDeliveryInstruction?.isChecked == true) binding.layoutDeliveryInstructions.edtTxtSpecialDeliveryInstruction?.text.toString() else ""
         giftMessage = ""
         suburbId = ""
-        storeId = Utils.getPreferredDeliveryLocation()?.let {
-            it.fulfillmentDetails.storeId
-        }
+        storeId = Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.storeId
         deliveryType = Delivery.DASH.type
         address =
             ConfirmLocationAddress(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId)
@@ -1397,7 +1407,8 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
         view?.findNavController()?.navigate(
             R.id.action_checkoutDashFragment_to_checkoutPaymentWebFragment,
 
-            bundleOf(CheckoutPaymentWebFragment.KEY_ARGS_WEB_TOKEN to webTokens,
+            bundleOf(
+                CheckoutPaymentWebFragment.KEY_ARGS_WEB_TOKEN to webTokens,
                 CART_ITEM_LIST to cartItemList
             )
         )
@@ -1424,18 +1435,20 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
         }
     }
 
-    fun openAppNotificationSettings(context: Context) {
+    private fun openAppNotificationSettings(context: Context) {
         val intent = Intent().apply {
             when {
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.O -> {
                     action = Settings.ACTION_APP_NOTIFICATION_SETTINGS
                     putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
                 }
+
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP -> {
-                    action = "android.settings.APP_NOTIFICATION_SETTINGS"
+                    action = Settings.ACTION_APP_NOTIFICATION_SETTINGS
                     putExtra("app_package", context.packageName)
                     putExtra("app_uid", context.applicationInfo.uid)
                 }
+
                 else -> {
                     action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
                     addCategory(Intent.CATEGORY_DEFAULT)
