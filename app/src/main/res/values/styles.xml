@@ -1912,8 +1912,8 @@
     </style>
 
     <style name="accountPaymentOptionIconImageViewStyle">
-        <item name="android:layout_width">@dimen/_24sdp</item>
-        <item name="android:layout_height">@dimen/_24sdp</item>
+        <item name="android:layout_width">24dp</item>
+        <item name="android:layout_height">24dp</item>
         <item name="android:contentDescription">@string/label_view_statements</item>
     </style>
 
@@ -1936,7 +1936,7 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:gravity">center</item>
         <item name="android:fontFamily">@font/opensans_semi_bold</item>
-        <item name="android:textSize">@dimen/heading6</item>
+        <item name="android:textSize">12sp</item>
         <item name="android:paddingTop">@dimen/_1sdp</item>
         <item name="android:paddingBottom">@dimen/_1sdp</item>
         <item name="android:alpha">0.7</item>
