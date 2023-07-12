@@ -73,7 +73,6 @@ fun SignedInScreen(
     val userAccountsByProductOfferingId by viewModel.getUserAccountsByProductOfferingId.collectAsStateWithLifecycle()
     val petInsuranceState by viewModel.fetchPetInsuranceState.collectAsStateWithLifecycle()
     val scheduleDeliveryNetworkState by viewModel.scheduleDeliveryNetworkState.collectAsStateWithLifecycle()
-    val isAccountLoading = userAccounts.isLoading
 
     with(viewModel) {
         RequestMessageCount()
@@ -94,7 +93,7 @@ fun SignedInScreen(
 
         FicaModelCollector(onClick = onClick)
 
-        SignInContainer(isAccountLoading = isAccountLoading, onClick = onClick, onProductClick = onProductClick,  allUserAccounts = userAccounts)
+        SignInContainer(isAccountLoading = userAccounts.isLoading, onClick = onClick, onProductClick = onProductClick,  allUserAccounts = userAccounts)
     }
 
 }
@@ -110,18 +109,13 @@ fun UserAccountLandingViewModel.BiometricsCollector(onClick: (OnAccountItemClick
 }
 
 @Composable
-fun UserAccountLandingViewModel.PetInsuranceCollector(
-                                                      petInsuranceState: NetworkStatusUI<PetInsuranceModel>,
+fun UserAccountLandingViewModel.PetInsuranceCollector(petInsuranceState: NetworkStatusUI<PetInsuranceModel>,
                                                       onClick: (OnAccountItemClickListener) -> Unit) {
     if (!petInsuranceState.isLoading) {
         petInsuranceState.data?.let { petModel ->
             petInsuranceResponse = petModel
             this.handlePetInsurancePendingCoveredNotCoveredUI(petModel) { insuranceProduct ->
-                onClick(
-                    AccountLandingInstantLauncher.PetInsuranceNotCoveredAwarenessModel(
-                        insuranceProduct
-                    )
-                )
+                onClick(AccountLandingInstantLauncher.PetInsuranceNotCoveredAwarenessModel(insuranceProduct))
             }
         }
     }
@@ -298,7 +292,7 @@ private fun UserAccountLandingViewModel.CollectFetchAccount(
                 }
 
                 is RetrofitFailureResult.ServerResponse<*> -> {
-                    onErrorRemoveProducts()
+                    removeProductFromProductsMap()
                     errorResponse.value = (result.data as? UserAccountResponse)?.response
                     stateFetchAllAccounts.hasError = false
                 }
@@ -329,7 +323,7 @@ private fun UserAccountLandingViewModel.CollectFetchAccount(
 
             }
         }
-        stopLoading()
+        onStopLoadingGetAccountCall()
         stateFetchAllAccounts.data?.let { accountResponse ->
             handleUserAccountResponse(
                 accountResponse
@@ -423,7 +417,7 @@ private fun LazyListScope.myProductsSection(
 
     productHeaderView(isLoading, brush)
 
-    for (item in myProductList) {
+    for (item in viewModel.mapOfFinalProductItems) {
         when (val productItems = item.value) {
             is AccountProductCardsGroup.ApplicationStatus -> item {
                 ProductViewApplicationStatusView(
@@ -485,14 +479,13 @@ private fun LazyListScope.myProductsSection(
 }
 
 private fun LazyListScope.displayPetInsuranceProduct(
-    item: MutableMap.MutableEntry<String, AccountProductCardsGroup?>,
+    accountProductCardsGroupMap: MutableMap.MutableEntry<String, AccountProductCardsGroup?>,
     loadingOptions: LoadingOptions,
     shimmerOptions: ShimmerOptions,
     productItems: AccountProductCardsGroup.PetInsurance,
     viewModel: UserAccountLandingViewModel,
-    onProductClick: (AccountProductCardsGroup) -> Unit
-) {
-    item(key = item.key) {
+    onProductClick: (AccountProductCardsGroup) -> Unit) {
+    item(key = accountProductCardsGroupMap.key) {
         var itemAppeared by remember { mutableStateOf(false) }
         LaunchedEffect(!itemAppeared) {
             itemAppeared = true

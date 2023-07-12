@@ -37,14 +37,14 @@ import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.fe
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_offer.OfferSectionUseCase
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_offer.schema.OfferProductType
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.enumtype.AccountOfferKeys
+import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.enumtype.AccountProductCardsGroup
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.enumtype.AccountProductKeys
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.enumtype.Authenticated
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.enumtype.NotAuthenticated
-import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.enumtype.AccountProductCardsGroup
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.model.ProductDetails
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.model.UserAccountResponse
-import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.logic.AccountRemoteRepository
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.schema.CommonItem
+import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.logic.AccountRemoteRepository
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.logic.IMyAccountProductModel
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.logic.MyAccountProductModel
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.logic.MyProductsHandler
@@ -94,21 +94,26 @@ class UserAccountLandingViewModel @Inject constructor(
     var accountProductCardsGroup: AccountProductCardsGroup? = null
     var fetchAccountDidLoadOnce: Boolean = false
     var petInsuranceDidAnimateOnce: Boolean = false
+    var isRefreshButtonRotating by mutableStateOf(false)
+    var isAccountRefreshingTriggered by mutableStateOf(false)
+    var isAccountFragmentVisible by mutableStateOf(false)
+    var isBiometricPopupEnabled by mutableStateOf(false)
+    var isAutoReconnectActivated: Boolean = false
 
     private var _mapOfFinalProductItems = mutableMapOf<String, AccountProductCardsGroup?>()
-    val mapOfFinalProductItems: MutableMap<String, AccountProductCardsGroup?> =
-        _mapOfFinalProductItems
+    val mapOfFinalProductItems: MutableMap<String, AccountProductCardsGroup?> = _mapOfFinalProductItems
 
     private val _fetchPetInsuranceState = MutableStateFlow(NetworkStatusUI<PetInsuranceModel>())
     val fetchPetInsuranceState = _fetchPetInsuranceState.asStateFlow()
 
-    var onActivityForResultClicked = MutableLiveData<AccountProductCardsGroup?>()
+    val onActivityForResultClicked by lazy { MutableLiveData<AccountProductCardsGroup?>() }
+    val errorResponse by lazy { MutableLiveData<ServerErrorResponse?>()}
+    val mapOfMyOffers: MutableMap<AccountOfferKeys, CommonItem.OfferItem?> = _mapOfMyOffers
 
     private val _messageState = MutableStateFlow(NetworkStatusUI<MessageResponse>())
     val messageState = _messageState.asStateFlow()
 
-    private val _scheduleDeliveryNetworkState =
-        MutableStateFlow(NetworkStatusUI<CreditCardDeliveryStatusResponse>())
+    private val _scheduleDeliveryNetworkState = MutableStateFlow(NetworkStatusUI<CreditCardDeliveryStatusResponse>())
     val scheduleDeliveryNetworkState = _scheduleDeliveryNetworkState.asStateFlow()
 
     private val _isDeeplinkParamsAvailable = MutableStateFlow(false)
@@ -122,17 +127,9 @@ class UserAccountLandingViewModel @Inject constructor(
     private val _getAllUserAccounts = MutableStateFlow(NetworkStatusUI<UserAccountResponse>())
     val getAllUserAccounts = _getAllUserAccounts.asStateFlow()
 
-    private val _getUserAccountsByProductOfferingId =
-        MutableStateFlow(NetworkStatusUI<UserAccountResponse>())
+    private val _getUserAccountsByProductOfferingId = MutableStateFlow(NetworkStatusUI<UserAccountResponse>())
     val getUserAccountsByProductOfferingId = _getUserAccountsByProductOfferingId.asStateFlow()
 
-    val mapOfMyOffers: MutableMap<AccountOfferKeys, CommonItem.OfferItem?> = _mapOfMyOffers
-    var isRefreshButtonRotating by mutableStateOf(false)
-    var isAccountRefreshingTriggered by mutableStateOf(false)
-    var isAccountFragmentVisible by mutableStateOf(false)
-    var isBiometricPopupEnabled by mutableStateOf(false)
-    var isAutoReconnectActivated: Boolean = false
-    val errorResponse = MutableLiveData<ServerErrorResponse?>()
 
     init {
         initProductAndOfferItem()
@@ -162,7 +159,7 @@ class UserAccountLandingViewModel @Inject constructor(
         }
     }
 
-    fun showShimmer(isVisible: Boolean) {
+    private fun showShimmer(isVisible: Boolean) {
         _getAllUserAccounts.update {
             it.copy(
                 data = null,
@@ -174,33 +171,28 @@ class UserAccountLandingViewModel @Inject constructor(
     }
 
     private fun populateMapOfMyProducts() {
-        _mapOfFinalProductItems.apply {
-            clear()
-            putAll(listOfDefaultProductItems())
-        }
+        clearProductMap()
+        _mapOfFinalProductItems.putAll(listOfDefaultProductItems())
     }
 
     private fun populateMapOfMyOffers() {
-        _mapOfMyOffers.apply {
-            clear()
-            putAll(offerUseCase.buildInitialOfferList())
-        }
+        clearMyOffersMap()
+        _mapOfMyOffers.putAll(offerUseCase.buildInitialOfferList())
     }
 
     fun getApplyNowState(accountNumberBin: String?) = product.getApplyNowState(accountNumberBin)
 
     private fun constructMapOfMyOffers() {
-        val listOfOffers =
-            offerUseCase.constructMapOfMyOffers(_mapOfFinalProductItems, _fetchPetInsuranceState)
-        _mapOfMyOffers.apply {
-            clear()
-            putAll(listOfOffers)
-        }
+        val listOfOffers
+        = offerUseCase.constructMapOfMyOffers(_mapOfFinalProductItems, _fetchPetInsuranceState)
+        clearMyOffersMap()
+        mapOfMyOffers.putAll(listOfOffers)
     }
 
     private fun queryUserAccountService(isRefreshing: Boolean? = false) {
         if (!isC2User()) {
-            _mapOfFinalProductItems.clear()
+            clearProductMap()
+            cachedPetInsuranceModel()
             userAccountResponse = null
             constructMapOfMyOffers()
             showShimmer(false)
@@ -212,6 +204,7 @@ class UserAccountLandingViewModel @Inject constructor(
     }
 
     fun handleUserAccountResponse(userAccountResponse: UserAccountResponse?) {
+        clearProductMap()
         this.userAccountResponse = userAccountResponse
         this.fetchAccountDidLoadOnce = true
         handleUserPropertiesOnGetAccountResponseSuccess(userAccountResponse)
@@ -223,31 +216,25 @@ class UserAccountLandingViewModel @Inject constructor(
         for (validItem in validProductList) {
             val productDetails =
                 productDetailList?.firstOrNull { it.productGroupCode == validItem.productGroupCode }
-            val product = transformSingleProductResult(
+            val product = convertProductToAccountProductCardsGroup(
                 validItem.productGroupCode,
                 productDetails ?: validItem
             )
             if (productDetails == null) {
                 when (product) {
                     is AccountProductCardsGroup.BlackCreditCard ->
-                        product.retryOptions =
-                            product.retryOptions.copy(isRetryButtonEnabled = true)
+                        product.retryOptions = product.retryOptions.copy(isRetryButtonEnabled = true)
 
                     is AccountProductCardsGroup.GoldCreditCard ->
-                        product.retryOptions =
-                            product.retryOptions.copy(isRetryButtonEnabled = true)
+                        product.retryOptions = product.retryOptions.copy(isRetryButtonEnabled = true)
 
                     is AccountProductCardsGroup.PersonalLoan ->
-                        product.retryOptions =
-                            product.retryOptions.copy(isRetryButtonEnabled = true)
-
+                        product.retryOptions = product.retryOptions.copy(isRetryButtonEnabled = true)
                     is AccountProductCardsGroup.SilverCreditCard ->
-                        product.retryOptions =
-                            product.retryOptions.copy(isRetryButtonEnabled = true)
+                        product.retryOptions = product.retryOptions.copy(isRetryButtonEnabled = true)
 
                     is AccountProductCardsGroup.StoreCard ->
-                        product.retryOptions =
-                            product.retryOptions.copy(isRetryButtonEnabled = true)
+                        product.retryOptions = product.retryOptions.copy(isRetryButtonEnabled = true)
 
                     else -> Unit
                 }
@@ -263,18 +250,24 @@ class UserAccountLandingViewModel @Inject constructor(
             mapOfMyProducts.clear()
         }
 
-        _mapOfFinalProductItems.clear()
         _mapOfFinalProductItems.putAll(mapOfMyProducts)
-
+        cachedPetInsuranceModel()
         if (isAccountFragmentVisible)
             _isDeeplinkParamsAvailable.update { true }
 
         constructMapOfMyOffers()
 
-        stopLoading()
+        onStopLoadingGetAccountCall()
     }
 
-    fun stopLoading() {
+    private fun clearProductMap() {
+      _mapOfFinalProductItems.clear()
+    }
+
+    private fun clearMyOffersMap(){
+        _mapOfMyOffers.clear()
+    }
+    fun onStopLoadingGetAccountCall() {
         isAccountRefreshingTriggered = false
         isAutoReconnectActivated = false
         isRefreshButtonRotating = false
@@ -315,7 +308,7 @@ class UserAccountLandingViewModel @Inject constructor(
         }
 
         val productGroupCode = productDetails.productGroupCode
-        val productGroup = transformSingleProductResult(productGroupCode, account)
+        val productGroup = convertProductToAccountProductCardsGroup(productGroupCode, account)
         _mapOfFinalProductItems[productGroupCode] = productGroup
 
     }
@@ -444,8 +437,7 @@ class UserAccountLandingViewModel @Inject constructor(
 
     fun handlePetInsurancePendingCoveredNotCoveredUI(
         petModel: PetInsuranceModel,
-        petAwarenessModelNotCovered: (InsuranceProducts) -> Unit
-    ) {
+        petAwarenessModelNotCovered: (InsuranceProducts) -> Unit) {
         // Determine whether Pet insurance model is displayed in product section
         product.setPetInsuranceResult(
             userAccountResponse = userAccountResponse,
@@ -460,7 +452,7 @@ class UserAccountLandingViewModel @Inject constructor(
             && _fetchPetInsuranceState.value.data?.insuranceProducts?.isNotEmpty() == true
         ) {
             val tempOfferList = _mapOfMyOffers.toMutableMap()
-            _mapOfMyOffers.clear()
+            clearMyOffersMap()
             _mapOfMyOffers += AccountOfferKeys.PetInsurance to OfferProductType.PetInsurance.value()
             for (temp in tempOfferList) {
                 _mapOfMyOffers += temp.key to temp.value
@@ -469,23 +461,22 @@ class UserAccountLandingViewModel @Inject constructor(
     }
 
     fun cachedPetInsuranceModel() {
-        petInsuranceResponse?.let {
-            handlePetInsurancePendingCoveredNotCoveredUI(petModel = it) {}
-        }
+        petInsuranceResponse?.let { handlePetInsurancePendingCoveredNotCoveredUI(petModel = it) {} }
     }
 
-        fun onErrorRemoveProducts() {
+        fun removeProductFromProductsMap() {
             listOf(
                 AccountProductKeys.BlackCreditCard.value,
+                AccountProductKeys.GoldCreditCard.value,
+                AccountProductKeys.SilverCreditCard.value,
                 AccountProductKeys.StoreCard.value,
                 AccountProductKeys.PersonalLoan.value
             ).forEach { key ->
                 val productDetails = mapOfFinalProductItems[key]?.productDetails
-                if (productDetails == null || (productDetails?.availableFunds == null
-                            && productDetails.currentBalance == null
-                            && productDetails.productGroupCode == null)
-                ) {
-                    mapOfFinalProductItems.remove(key)
+                if (productDetails?.availableFunds == null
+                            && productDetails?.currentBalance == null
+                            && productDetails?.productGroupCode == null) {
+                    _mapOfFinalProductItems.remove(key)
                 }
             }
         }
