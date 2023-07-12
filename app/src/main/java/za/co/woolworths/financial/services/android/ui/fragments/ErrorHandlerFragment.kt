@@ -168,6 +168,7 @@ class ErrorHandlerFragment : BaseFragmentBinding<ErrorHandlerFragmentBinding>(Er
                     ErrorHandlerActivity.PASSCODE_LOCKED -> {
                         setResultBAck(ErrorHandlerActivity.RESULT_RESET_PASSCODE)
                     }
+                    ErrorHandlerActivity.ERROR_TYPE_SUBMITTED_ORDER,
                     ErrorHandlerActivity.COMMON, ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON -> {
                         setResultBAck(ErrorHandlerActivity.RESULT_RETRY)
                     }
