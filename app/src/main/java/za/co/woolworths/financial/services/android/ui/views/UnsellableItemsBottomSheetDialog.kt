@@ -28,7 +28,7 @@ import za.co.woolworths.financial.services.android.ui.adapters.UnsellableItemsLi
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OpenSansFontFamily
-import za.co.woolworths.financial.services.android.util.LocationUtils
+import za.co.woolworths.financial.services.android.util.UnsellableUtils
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
@@ -172,7 +172,7 @@ class UnsellableItemsBottomSheetDialog(
                 commerceItems?.let { unsellableItems ->
                     FirebaseAnalyticsEventHelper.removeFromCartUnsellable(unsellableItems)
                 }
-                LocationUtils.callConfirmPlace(
+                UnsellableUtils.callConfirmPlace(
                     currentFragment,
                     if (isCheckBoxSelected) ConfirmLocationParams(commerceItems, null) else null,
                     progressBar,

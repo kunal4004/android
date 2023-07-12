@@ -242,8 +242,9 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
             // As User selects to change the delivery location. So we will call confirm place API and will change the users location.
             getUpdatedValidateResponse()
         }
-        setFragmentResultListener(LocationUtils.ADD_TO_LIST_SUCCESS_RESULT_CODE) { _, _ ->
-            // todo Proceed with add to cart as we have moved unsellable items to List.
+        setFragmentResultListener(UnsellableUtils.ADD_TO_LIST_SUCCESS_RESULT_CODE) { _, _ ->
+            // Proceed with add to cart as we have moved unsellable items to List.
+            onConfirmLocation()
         }
     }
 
@@ -294,15 +295,15 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
                                     )
                                 }
                             } else
-                                LocationUtils.callConfirmPlace(this@ProductListingFragment, null, binding.incCenteredProgress.progressCreditLimit, confirmAddressViewModel)
+                                UnsellableUtils.callConfirmPlace(this@ProductListingFragment, null, binding.incCenteredProgress.progressCreditLimit, confirmAddressViewModel)
                         }
                     }
                 }
             } catch (e: Exception) {
-                FirebaseManager.logException(e)
+                logException(e)
                 dismissProgressBar()
             } catch (e: JsonSyntaxException) {
-                FirebaseManager.logException(e)
+                logException(e)
                 dismissProgressBar()
             }
         }
@@ -689,7 +690,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
                 it.commitAllowingStateLoss()
             }
         } catch (ex: IllegalStateException) {
-            FirebaseManager.logException(ex)
+            logException(ex)
         }
     }
 
@@ -1184,7 +1185,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
             }
             BundleKeysConstants.REQUEST_CODE -> {
                 updateToolbarTitle()
-                LocationUtils.callConfirmPlace(this@ProductListingFragment, null, binding.incCenteredProgress.progressCreditLimit, confirmAddressViewModel)
+                UnsellableUtils.callConfirmPlace(this@ProductListingFragment, null, binding.incCenteredProgress.progressCreditLimit, confirmAddressViewModel)
             }
             else -> return
         }
@@ -1465,7 +1466,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
                                         SelectYourQuantityFragment::class.java.simpleName
                                     )
                                 } catch (ex: IllegalStateException) {
-                                    FirebaseManager.logException(ex)
+                                    logException(ex)
                                 }
                             }
                         }
@@ -1658,7 +1659,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
                 )
             }
         } catch (ex: IllegalStateException) {
-            FirebaseManager.logException(ex)
+            logException(ex)
         }
     }
 
