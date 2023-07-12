@@ -286,6 +286,8 @@ class ManageStoreCardLandingList(
             val rootLayout = inflater.findViewById<RelativeLayout>(R.id.linkNewCardRelativeLayout)
             val logoImageView = inflater.findViewById<ImageView>(R.id.logoImageView)
             logoImageView.setImageResource(drawableId)
+            if (isAlphaEnabled)
+                logoImageView.alpha = 0.3f
             rootLayout.setOnClickListener {
                 when(action) {
                     StoreCardItemActions.LINK_STORE_CARD -> includeListOptions.linkNewCardRelativeLayout.performClick()
@@ -305,8 +307,6 @@ class ManageStoreCardLandingList(
                     else -> Unit
                 }
             }
-            if (isAlphaEnabled)
-                logoImageView.alpha = 0.7f
             titleTextView.text = label
             addView(inflater)
         }
