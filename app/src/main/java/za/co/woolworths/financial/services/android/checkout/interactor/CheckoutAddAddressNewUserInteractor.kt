@@ -15,8 +15,6 @@ import javax.inject.Inject
 class CheckoutAddAddressNewUserInteractor @Inject constructor(
     private val checkoutAddAddressNewUserApiHelper: CheckoutAddAddressNewUserApiHelper
 ) {
-
-    fun getSuburbs(provinceId: String) = checkoutAddAddressNewUserApiHelper.getSuburbs(provinceId)
     fun validateSelectedSuburb(suburbId: String, isStore: Boolean) =
         checkoutAddAddressNewUserApiHelper.validateSelectedSuburb(suburbId, isStore)
 

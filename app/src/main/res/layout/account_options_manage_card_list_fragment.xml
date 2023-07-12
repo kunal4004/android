@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/storeCardRowContainer"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/white"
     android:orientation="vertical"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
@@ -24,6 +26,12 @@
         android:background="@color/white"
         android:tag="freezeUnFreezeTag"
         app:navGraph="@navigation/freeze_unfreeze_card_item_nav" />
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/parentLinearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" />
 
     <View
         android:id="@+id/manageCardDivider"
@@ -192,6 +200,5 @@
             android:contentDescription="@string/block_card_action_button_directional_arrow_on_overlay"
             android:src="@drawable/ic_caret_black" />
     </RelativeLayout>
-
 
 </androidx.appcompat.widget.LinearLayoutCompat>
