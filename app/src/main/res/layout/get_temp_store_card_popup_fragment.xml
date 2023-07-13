@@ -38,15 +38,14 @@
 
         <TextView
             android:id="@+id/description"
+            style="@style/opensans_regular_13_black"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/twelve_dp"
-            android:fontFamily="@font/myriad_pro_regular"
             android:gravity="start"
             android:lineSpacingMultiplier="@integer/one_point_five"
             android:text="@string/get_temp_sc_description"
             android:textColor="@color/color_7f7f7f"
-            android:textSize="@dimen/sixteen_sp"
             app:layout_constrainedWidth="true"
             app:layout_constraintEnd_toEndOf="@+id/right_guideline"
             app:layout_constraintStart_toStartOf="@+id/left_guideline"
@@ -56,10 +55,9 @@
             android:id="@+id/description1TextView"
             style="@style/body_text_style"
             android:layout_marginTop="@dimen/fifteen_dp"
-            android:fontFamily="@font/myriad_pro_semi_bold"
+            android:fontFamily="@font/opensans_semi_bold"
             android:gravity="start"
             android:text="@string/get_temp_sc_description1"
-            android:textSize="@dimen/sixteen_sp"
             app:layout_constraintEnd_toEndOf="@+id/right_guideline"
             app:layout_constraintStart_toStartOf="@+id/left_guideline"
             app:layout_constraintTop_toBottomOf="@+id/description" />

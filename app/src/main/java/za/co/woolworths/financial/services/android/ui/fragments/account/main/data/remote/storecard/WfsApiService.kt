@@ -4,10 +4,16 @@ import retrofit2.Response
 import retrofit2.http.*
 import za.co.woolworths.financial.services.android.models.dto.CreditCardTokenResponse
 import za.co.woolworths.financial.services.android.models.dto.EligibilityPlanResponse
+import za.co.woolworths.financial.services.android.models.dto.MessageResponse
 import za.co.woolworths.financial.services.android.models.dto.OfferActive
 import za.co.woolworths.financial.services.android.models.dto.account.AppGUIDModel
 import za.co.woolworths.financial.services.android.models.dto.account.AppGUIDRequestModel
+import za.co.woolworths.financial.services.android.models.dto.account.FeatureEnablementModel
+import za.co.woolworths.financial.services.android.models.dto.account.FicaModel
+import za.co.woolworths.financial.services.android.models.dto.account.PetInsuranceModel
 import za.co.woolworths.financial.services.android.models.dto.account.applynow.ApplyNowModel
+import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.CreditCardDeliveryStatusResponse
+import za.co.woolworths.financial.services.android.models.dto.linkdevice.ViewAllLinkedDeviceResponse
 import za.co.woolworths.financial.services.android.models.dto.npc.BlockCardRequestBody
 import za.co.woolworths.financial.services.android.models.dto.npc.BlockMyCardResponse
 import za.co.woolworths.financial.services.android.models.dto.npc.UnblockStoreCardRequestBody
@@ -17,8 +23,21 @@ import za.co.woolworths.financial.services.android.models.dto.temporary_store_ca
 import za.co.woolworths.financial.services.android.models.network.GenericResponse
 import za.co.woolworths.financial.services.android.ui.fragments.contact_us.enquiry.EmailUsRequest
 import za.co.woolworths.financial.services.android.ui.wfs.contact_us.model.ContactUsRemoteModel
+import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_appguid.model.AppGUIDResponse
+import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.model.UserAccountResponse
 
 interface WfsApiService {
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json","cacheTime:7200")
+    @GET("wfs/app/v4/user/accounts")
+    suspend fun getAccounts(
+        @Header("deviceIdentityToken") deviceIdentityToken: String): Response<UserAccountResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @GET("wfs/app/v4/user/accounts")
+    suspend fun getUserAccountByProductOfferingId(
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Query("productOfferingId") productOfferingId: String): Response<UserAccountResponse>
+
     @Headers(
         "Content-Type: application/json",
         "Accept: application/json",
@@ -53,7 +72,7 @@ interface WfsApiService {
 
     @Headers(
         "Content-Type: application/json",
-        "Accept: application/vnd.appserver.api.v2+json",
+        "Accept: application/vnd.appserver.api.v3+json",
         "Media-Type: application/json"
     )
     @POST("wfs/app/v4/accounts/storecard/cards")
@@ -144,10 +163,69 @@ interface WfsApiService {
         @Body emailUsRequest: EmailUsRequest?
     ):  Response<GenericResponse>
 
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:14400")
+    @GET("wfs/app/v4/user/device")
+    suspend fun getAllLinkedDevices(
+        @Header("deviceIdentityToken") deviceIdentityToken: String): Response<ViewAllLinkedDeviceResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @DELETE("wfs/app/v4/user/device/{deviceIdentityId}")
+    suspend fun deleteDevice(
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Path("deviceIdentityId") deviceIdentityId: String,
+        @Query("newPrimaryDeviceIdentityId") newPrimaryDeviceIdentityId: String?,
+        @Query("otp") otp: String?,
+        @Query("otpMethod") otpMethod: String?
+    ): Response<ViewAllLinkedDeviceResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @GET("wfs/app/v4/accounts/cardDelivery/status")
+    suspend fun getAccountsCardDeliveryStatus(
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Query("envelopeReference") envelopeReference: String,
+        @Query("productOfferingId") productOfferingId: String): Response<CreditCardDeliveryStatusResponse>
+
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("/wfs/app/v4/user/appGuid")
     suspend fun getAppGUID(
         @Header("deviceIdentityToken") deviceIdentityToken: String,
-        @Body appGUIDRequestModel : AppGUIDRequestModel
+        @Body appGUIDRequestModel: AppGUIDRequestModel
     ): Response<AppGUIDModel>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @POST("/wfs/app/v4/user/appGuid")
+    suspend fun fetchAppGUID(
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Body appGUIDRequestModel: za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_appguid.model.AppGUIDRequestModel
+    ): Response<AppGUIDResponse>
+
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @GET("wfs/app/v4/user/messages")
+    suspend fun getMessages(
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Query("pageSize") pageSize: Int,
+        @Query("pageNumber") pageNumber: Int
+    ): Response<MessageResponse>
+
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @GET("wfs/app/v4/user/insurance/products")
+    suspend fun getPetInsurance(
+        @Header("deviceIdentityToken") deviceIdentityToken: String
+    ):  Response<PetInsuranceModel>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @GET("wfs/app/v4/user/featureEnablement/PET")
+    suspend fun getFeatureEnablement(
+        @Header("deviceIdentityToken") deviceIdentityToken: String
+    ): Response<FeatureEnablementModel>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @GET("wfs/app/v4/user/fica/refreshStatus")
+    suspend fun getFica(
+        @Header("deviceIdentityToken") deviceIdentityToken: String
+    ): Response<FicaModel>
+
 }

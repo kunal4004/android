@@ -8,16 +8,17 @@
     android:paddingEnd="@dimen/twenty_four_dp">
 
     <androidx.appcompat.widget.AppCompatTextView
-        style="@style/my_orders_textview_style_2"
-        android:drawableLeft="@drawable/ic_add_item_group"
+        style="@style/opensans_regular_text_style_14sp_black"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:textSize="@dimen/thirteen_sp"
+        android:drawableStart="@drawable/ic_add_item_group"
         android:drawablePadding="@dimen/sixteen_dp"
         android:gravity="center_vertical"
-        android:textColor="@color/black"
         android:text="@string/add_items_to_shopping_list"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
 
     <androidx.appcompat.widget.AppCompatImageView
         android:layout_width="wrap_content"

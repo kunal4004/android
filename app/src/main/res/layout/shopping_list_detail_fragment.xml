@@ -130,10 +130,9 @@
 
             <ImageView
                 android:id="@+id/imgDelivery"
-                android:layout_width="@dimen/thirty_two_dp"
-                android:layout_height="@dimen/thirty_two_dp"
-                android:layout_margin="@dimen/five_dp"
-                android:layout_marginStart="@dimen/twenty_six_dp"
+                android:layout_width="@dimen/twenty_six_dp"
+                android:layout_height="@dimen/twenty_six_dp"
+                android:layout_marginStart="@dimen/twenty_four_dp"
                 android:layout_marginTop="@dimen/eighteen_dp"
                 android:layout_marginBottom="@dimen/eighteen_dp"
                 android:src="@drawable/ic_delivery_circle"
@@ -162,13 +161,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/ten_dp"
                 android:layout_marginTop="@dimen/two_dp"
-                android:fontFamily="@font/myriad_pro_semi_bold"
+                android:fontFamily="@font/opensans_semi_bold"
                 android:gravity="center"
                 android:lineHeight="@dimen/sixteen_dp"
                 android:text="@string/cart_default_location"
                 android:textAlignment="center"
                 android:textColor="@color/black"
-                android:textSize="@dimen/fourteen_sp"
+                android:textSize="@dimen/thirteen_sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@id/imgDelivery"
                 app:layout_constraintTop_toBottomOf="@+id/tvDeliveryTitle" />
@@ -305,7 +304,7 @@
                     android:textStyle="bold"
                     app:WTextView_font="medium_bold" />
 
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                <TextView
                     android:id="@+id/txtEmptyStateDesc"
                     style="@style/TableLeft"
                     android:layout_width="wrap_content"
@@ -314,8 +313,7 @@
                     android:layout_centerHorizontal="true"
                     android:layout_marginBottom="@dimen/sixteen_dp"
                     android:gravity="center"
-                    android:textColor="@color/semi_transparent_black"
-                    app:WTextView_font="myriadpro_regular" />
+                    android:textColor="@color/semi_transparent_black" />
 
 
                 <za.co.woolworths.financial.services.android.ui.views.WButton
@@ -406,7 +404,7 @@
                 android:visibility="gone"
                 app:WTextView_font="medium_bold" />
 
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
+            <TextView
                 android:id="@+id/txtWWDescription"
                 style="@style/TableLeft"
                 android:layout_width="wrap_content"
@@ -417,7 +415,7 @@
                 android:gravity="center"
                 android:text="@string/no_connection_desc_1"
                 android:textColor="@color/semi_transparent_black"
-                app:WTextView_font="myriadpro_regular" />
+               />
 
             <za.co.woolworths.financial.services.android.ui.views.WButton
                 android:id="@+id/btnRetry"

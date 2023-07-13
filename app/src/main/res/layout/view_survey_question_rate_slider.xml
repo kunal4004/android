@@ -30,15 +30,15 @@
 
         <TextView
             android:id="@+id/tvDescRateSlider"
+            style="@style/opensans_regular_14_black"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:fontFamily="@font/myriad_pro_regular"
             android:gravity="left"
             android:lineSpacingExtra="@dimen/line_spacing_8sp"
             android:text="@string/voc_question_slider_desc"
             android:textColor="@color/text_description_color"
-            android:textSize="@dimen/sixteen_sp" />
+          />
 
         <RelativeLayout
             android:layout_width="match_parent"

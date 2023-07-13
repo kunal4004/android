@@ -31,11 +31,11 @@
 
     <TextView
         android:id="@+id/subTitle"
-        style="@style/my_orders_textview_style_2"
+        style="@style/opensans_regular_text_style_14sp_black"
         android:layout_marginTop="@dimen/eight_dp"
         android:contentDescription="@string/cancel_order_popup_confirmation_message"
         android:text="@string/please_select_a_reason_for_cancellation"
-        android:textColor="@color/color_444444"
+        android:textSize="@dimen/twelve_sp"
         app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
         app:layout_constraintTop_toBottomOf="@+id/title" />
 
@@ -56,11 +56,11 @@
             android:button="@drawable/shopping_list_item_selector"
             android:checked="false"
             android:contentDescription="@string/cd_ccd_radiobtnmyself"
-            android:fontFamily="@font/myriad_pro_regular"
+            android:fontFamily="@font/opensans_regular"
             android:paddingStart="@dimen/sixteen_dp"
             android:text="@string/i_don_t_need_the_item_s_anymore"
             android:textColor="@color/color_666666"
-            android:textSize="@dimen/fifteen_sp" />
+            android:textSize="@dimen/twelve_sp" />
 
         <RadioButton
             android:id="@+id/radioBtnForgotSomething"
@@ -69,11 +69,11 @@
             android:layout_marginVertical="@dimen/twelve_dp"
             android:button="@drawable/shopping_list_item_selector"
             android:contentDescription="@string/cd_ccd_radiobtnanotherperson"
-            android:fontFamily="@font/myriad_pro_regular"
+            android:fontFamily="@font/opensans_regular"
             android:paddingStart="@dimen/sixteen_dp"
             android:text="@string/i_forgot_to_add_something_to_my_order"
             android:textColor="@color/color_666666"
-            android:textSize="@dimen/fifteen_sp" />
+            android:textSize="@dimen/twelve_sp" />
 
         <RadioButton
             android:id="@+id/radioBtnNeedPlace"
@@ -82,11 +82,11 @@
             android:layout_marginVertical="@dimen/twelve_dp"
             android:button="@drawable/shopping_list_item_selector"
             android:contentDescription="@string/cd_ccd_radiobtnanotherperson"
-            android:fontFamily="@font/myriad_pro_regular"
+            android:fontFamily="@font/opensans_regular"
             android:paddingStart="@dimen/sixteen_dp"
             android:text="@string/i_need_to_place_this_order_for_a_different_time"
             android:textColor="@color/color_666666"
-            android:textSize="@dimen/fifteen_sp" />
+            android:textSize="@dimen/twelve_sp" />
 
         <RadioButton
             android:id="@+id/radioBtnOther"
@@ -95,11 +95,11 @@
             android:layout_marginVertical="@dimen/twelve_dp"
             android:button="@drawable/shopping_list_item_selector"
             android:contentDescription="@string/cd_ccd_radiobtnanotherperson"
-            android:fontFamily="@font/myriad_pro_regular"
+            android:fontFamily="@font/opensans_regular"
             android:paddingStart="@dimen/sixteen_dp"
             android:text="@string/other"
             android:textColor="@color/color_666666"
-            android:textSize="@dimen/fifteen_sp" />
+            android:textSize="@dimen/twelve_sp" />
     </RadioGroup>
 
 

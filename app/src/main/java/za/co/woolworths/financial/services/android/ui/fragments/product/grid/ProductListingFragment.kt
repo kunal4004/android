@@ -6,6 +6,7 @@ import android.app.Activity.RESULT_OK
 import android.app.Dialog
 import android.content.Intent
 import android.location.Location
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Parcelable
@@ -34,6 +35,7 @@ import com.awfs.coordination.databinding.GridLayoutBinding
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.gson.JsonSyntaxException
 import com.skydoves.balloon.balloon
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.chanel.utils.ChanelUtils
 import za.co.woolworths.financial.services.android.chanel.views.ChanelNavigationClickListener
@@ -87,12 +89,13 @@ import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyt
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.logException
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.setCrashlyticsString
+import za.co.woolworths.financial.services.android.util.analytics.dto.ScreenViewEventData
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.net.ConnectException
 import java.net.UnknownHostException
 import java.util.*
 
-
+@AndroidEntryPoint
 open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBinding::inflate),
     GridNavigator,
     IProductListing, View.OnClickListener, SortOptionsAdapter.OnSortOptionSelected,
@@ -140,6 +143,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        var isSearchByKeywordNavigation = false
         activity?.apply {
             arguments?.apply {
                 mSubCategoryName = getString(SUB_CATEGORY_NAME, "")
@@ -149,6 +153,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
                 mSearchTerm = getString(SEARCH_TERM, "")
                 mSortOption = getString(SORT_OPTION, "")
                 isChanelPage = getBoolean(IS_CHANEL_PAGE, false)
+                isSearchByKeywordNavigation = getBoolean(BUNDLE_NAVIGATION_FROM_SEARCH_BY_KEYWORD, false)
 
                 (getSerializable(BRAND_NAVIGATION_DETAILS) as? BrandNavigationDetails)?.let { brandNavigationDetails ->
                     mNavigationState = brandNavigationDetails.navigationState ?: ""
@@ -170,6 +175,13 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
             localProductBody.add(localBody)
             setProductBody()
             isBackPressed = false
+            callViewSearchResultEvent(isSearchByKeywordNavigation, mSearchTerm)
+        }
+    }
+
+    private fun callViewSearchResultEvent(isSearchByKeywordNavigation: Boolean?, searchTerm: String?) {
+        if (isSearchByKeywordNavigation == true) {
+            FirebaseAnalyticsEventHelper.viewSearchResult(searchTerm)
         }
     }
 
@@ -393,15 +405,17 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
         }
     }
 
+    private fun getScreenViewEventData(): ScreenViewEventData? {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            arguments?.getParcelable(BUNDLE_SCREEN_VIEW_EVENT_DATA, ScreenViewEventData::class.java)
+        } else {
+            arguments?.getParcelable(BUNDLE_SCREEN_VIEW_EVENT_DATA)
+        }
+    }
+
     override fun onResume() {
         super.onResume()
-        activity?.let { activity ->
-            Utils.setScreenName(
-                activity,
-                FirebaseManagerAnalyticsProperties.ScreenNames.PRODUCT_SEARCH_RESULTS
-            )
-        }
-
+        FirebaseAnalyticsEventHelper.viewScreenEventForPLP(activity = activity, screenViewEventData = getScreenViewEventData())
         requestInAppReview(FirebaseManagerAnalyticsProperties.VIEW_ITEM_LIST, activity)
 
         if (activity is BottomNavigationActivity
@@ -1182,7 +1196,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
                     addFoodProductTypeToCart(mAddItemsToCart?.get(0))
                 }
             }
-            PDP_REQUEST_CODE, OPEN_CART_REQUEST -> {
+            OPEN_CART_REQUEST -> {
                 if (resultCode == Activity.RESULT_CANCELED || resultCode == DISMISS_POP_WINDOW_CLICKED) {
                     val currentPlaceId = KotlinUtils.getPreferredPlaceId()
                     if (currentPlaceId == null) {
@@ -1819,22 +1833,29 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
         private const val SEARCH_TYPE = "SEARCH_TYPE"
         private const val SEARCH_TERM = "SEARCH_TERM"
         const val IS_BROWSING = "is_browsing"
+        const val BUNDLE_NAVIGATION_FROM_SEARCH_BY_KEYWORD = "isNavigationFromSearchByKeyword"
+        const val BUNDLE_SCREEN_VIEW_EVENT_DATA = "BUNDLE_SCREEN_VIEW_EVENT_DATA"
         private const val SORT_OPTION = "SORT_OPTION"
         private const val IS_CHANEL_PAGE = "IS_CHANEL_PAGE"
         private const val BRAND_NAVIGATION_DETAILS = "BRAND_NAVIGATION_DETAILS"
 
+        @JvmOverloads
         fun newInstance(
             searchType: ProductsRequestParams.SearchType?,
             sub_category_name: String?,
             searchTerm: String?,
             isBrowsing: Boolean,
-            sendDeliveryDetails: Boolean?
+            sendDeliveryDetails: Boolean?,
+            isNavigationFromSearchByKeyword: Boolean = false,
+            screenViewEventData: ScreenViewEventData? = null
         ) = ProductListingFragment().withArgs {
             putString(SEARCH_TYPE, searchType?.name)
             putString(SUB_CATEGORY_NAME, sub_category_name)
             putString(SEARCH_TERM, searchTerm)
             putBoolean(IS_BROWSING, isBrowsing)
             putBoolean(EXTRA_SEND_DELIVERY_DETAILS_PARAMS, sendDeliveryDetails ?: false)
+            putBoolean(BUNDLE_NAVIGATION_FROM_SEARCH_BY_KEYWORD, isNavigationFromSearchByKeyword)
+            putParcelable(BUNDLE_SCREEN_VIEW_EVENT_DATA, screenViewEventData)
         }
 
         fun newInstance(
@@ -1844,7 +1865,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
             brandNavigationDetails: BrandNavigationDetails?,
             isBrowsing: Boolean,
             sendDeliveryDetails: Boolean?,
-            isChanelPage: Boolean
+            isChanelPage: Boolean,
+            screenViewEventData: ScreenViewEventData? = null
         ) = ProductListingFragment().withArgs {
             putString(SEARCH_TYPE, searchType?.name)
             putString(SEARCH_TERM, searchTerm)
@@ -1853,6 +1875,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
             putBoolean(IS_BROWSING, isBrowsing)
             putBoolean(EXTRA_SEND_DELIVERY_DETAILS_PARAMS, sendDeliveryDetails ?: false)
             putBoolean(IS_CHANEL_PAGE, isChanelPage)
+            putParcelable(BUNDLE_SCREEN_VIEW_EVENT_DATA, screenViewEventData)
         }
 
         fun newInstance(

@@ -1,13 +1,11 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shop
 
-import android.app.Activity
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.location.Location
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
@@ -16,28 +14,22 @@ import dagger.hilt.android.AndroidEntryPoint
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
-import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
 import za.co.woolworths.financial.services.android.models.dto.RootCategories
 import za.co.woolworths.financial.services.android.models.dto.RootCategory
-import za.co.woolworths.financial.services.android.ui.activities.DashDetailsActivity
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.adapters.DepartmentAdapter
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.list.DepartmentExtensionFragment
-import za.co.woolworths.financial.services.android.ui.views.actionsheet.EnableLocationSettingsFragment
 import za.co.woolworths.financial.services.android.util.AppConstant
-import za.co.woolworths.financial.services.android.util.BundleKeysConstants
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.GetCartSummary
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
-import za.co.woolworths.financial.services.android.util.location.Event
-import za.co.woolworths.financial.services.android.util.location.EventType
 import za.co.woolworths.financial.services.android.util.location.Locator
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
@@ -52,19 +44,10 @@ class StandardDeliveryFragment : DepartmentExtensionFragment(R.layout.fragment_s
     private var mDepartmentAdapter: DepartmentAdapter? = null
     private var isFragmentVisible: Boolean = false
     private var parentFragment: ShopFragment? = null
-    private var isDashEnabled = false
     private var localPlaceId: String? = null
 
     companion object {
         var DEPARTMENT_LOGIN_REQUEST = 1717
-    }
-
-    init {
-        isDashEnabled =
-            Utils.isFeatureEnabled(
-                AppConfigSingleton.dashConfig?.minimumSupportedAppBuildNumber ?: 0
-            )
-                ?: false
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -90,40 +73,14 @@ class StandardDeliveryFragment : DepartmentExtensionFragment(R.layout.fragment_s
     fun initView() {
         locator = (activity as? AppCompatActivity)?.let { Locator(it) }
 
-        isDashEnabled = AppConfigSingleton.dashConfig?.isEnabled ?: false
-
         parentFragment = (activity as? BottomNavigationActivity)?.currentFragment as? ShopFragment
         setUpRecyclerView(mutableListOf())
         setListener()
         localPlaceId = KotlinUtils.getPreferredPlaceId()
 
         if (isFragmentVisible) {
-            if (isDashEnabled) {
-                startLocationDiscoveryProcess()
-            }
             initializeRootCategoryList()
         }
-    }
-
-    private fun startLocationDiscoveryProcess() {
-        locator?.getCurrentLocation { locationEvent ->
-            when (locationEvent) {
-                is Event.Location -> handleLocationEvent(locationEvent)
-                is Event.Permission -> handlePermissionEvent(locationEvent)
-            }
-        }
-    }
-
-    private fun handlePermissionEvent(permissionEvent: Event.Permission) {
-        if (permissionEvent.event == EventType.LOCATION_PERMISSION_NOT_GRANTED) {
-            Utils.saveLastLocation(null, activity)
-            handleLocationEvent(null)
-        }
-    }
-
-    private fun handleLocationEvent(locationEvent: Event.Location?) {
-        Utils.saveLastLocation(locationEvent?.locationData, context)
-        location = locationEvent?.locationData
     }
 
     private fun initializeRootCategoryList() {
@@ -134,15 +91,12 @@ class StandardDeliveryFragment : DepartmentExtensionFragment(R.layout.fragment_s
     }
 
     private fun onWindowFocusChanged(hasFocus: Boolean) {
-
         if (!hasFocus) {
             return
         }
 
         if (context != null && !Utils.isLocationEnabled(context)) {
             onProviderDisabled()
-        } else {
-            startLocationDiscoveryProcess()
         }
     }
 
@@ -152,22 +106,6 @@ class StandardDeliveryFragment : DepartmentExtensionFragment(R.layout.fragment_s
                 executeDepartmentRequest(mDepartmentAdapter, parentFragment, location)
             }
         }
-    }
-
-
-    private fun getDeliveryType(): String {
-        if (SessionUtilities.getInstance().isUserAuthenticated) {
-            Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.let { fulfillmentDetails ->
-                return Delivery.getType(fulfillmentDetails.deliveryType)?.name
-                    ?: BundleKeysConstants.STANDARD
-            }
-        } else {
-            KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.let { fulfillmentDetails ->
-                return Delivery.getType(fulfillmentDetails.deliveryType)?.name
-                    ?: BundleKeysConstants.STANDARD
-            }
-        }
-        return BundleKeysConstants.STANDARD
     }
 
     private fun bindDepartment() {
@@ -225,20 +163,6 @@ class StandardDeliveryFragment : DepartmentExtensionFragment(R.layout.fragment_s
         )
     }
 
-
-    private fun presentDashDetailsActivity(activity: Activity, link: String?) {
-        activity.apply {
-            val mIntent = Intent(this, DashDetailsActivity::class.java)
-            mIntent.putExtra(
-                "bundle", bundleOf(
-                    AppConstant.KEY_DASH_WOOLIES_DOWNLOAD_LINK to link
-                )
-            )
-            startActivity(mIntent)
-            overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
-        }
-    }
-
     private fun openNextFragment(rootCategory: RootCategory): Fragment {
         val drillDownCategoryFragment = SubCategoryFragment()
         val bundle = Bundle()
@@ -290,19 +214,10 @@ class StandardDeliveryFragment : DepartmentExtensionFragment(R.layout.fragment_s
         isFragmentVisible = isVisibleToUser
     }
 
-    override fun onHiddenChanged(hidden: Boolean) {
-        super.onHiddenChanged(hidden)
-
-        if (!hidden) {
-            activity?.apply {
-                //When moved from My Cart to department
-                startLocationDiscoveryProcess()
-            }
-        }
-    }
-
     fun scrollToTop() {
-        binding.rclDepartment?.scrollToPosition(0)
+        if (::binding.isInitialized) {
+            binding.rclDepartment?.smoothScrollToPosition(0)
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -322,8 +237,6 @@ class StandardDeliveryFragment : DepartmentExtensionFragment(R.layout.fragment_s
             }
         } else if (resultCode == RESULT_OK || resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
             mDepartmentAdapter?.notifyDataSetChanged()
-        } else if (requestCode == EnableLocationSettingsFragment.ACCESS_MY_LOCATION_REQUEST_CODE) {
-            startLocationDiscoveryProcess()
         }
     }
 

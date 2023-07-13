@@ -32,7 +32,9 @@
 
         <TextView
             android:id="@+id/productCodeTitle"
-            style="@style/myriad_pro_semi_bold_black_15_text_style"
+            style="@style/opensans_semi_bold_13_black_text_style"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/twenty_four_dp"
             android:text="Product code:"
             android:textColor="@color/gray"
@@ -42,7 +44,9 @@
 
         <TextView
             android:id="@+id/productCodeText"
-            style="@style/myriad_pro_regular_black_15_text_style"
+            style="@style/opensans_regular_13_black"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:textColor="@color/gray"
             android:layout_marginTop="@dimen/five_dp"
             app:layout_constraintEnd_toEndOf="@id/right_guideline"

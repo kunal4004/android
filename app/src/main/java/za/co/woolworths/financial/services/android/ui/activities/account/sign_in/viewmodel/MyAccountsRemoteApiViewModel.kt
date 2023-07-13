@@ -18,6 +18,8 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.dat
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.storecard.StoreCardType
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.StoreCardFeatureType
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.RetryNetworkRequest
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.CallBack
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.SingleLiveEvent
 import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.ApiResult
 import za.co.woolworths.financial.services.android.util.DateHelper
 import za.co.woolworths.financial.services.android.util.KotlinUtils
@@ -124,7 +126,7 @@ class MyAccountsRemoteApiViewModel @Inject constructor(
     }
 
     fun requestGetStoreCardCards() = viewModelScope.launch {
-        getViewStateFlowForNetworkCall { dataSource.queryServiceGetStoreCards() }.collect{
+        mapNetworkCallToViewStateFlow { dataSource.queryServiceGetStoreCards() }.collect{
             _storeCardResponseResult.value = it
         }
     }
@@ -137,7 +139,7 @@ class MyAccountsRemoteApiViewModel @Inject constructor(
     }
 
     fun queryServiceCardNotYetReceived() = viewModelScope.launch {
-        getViewStateFlowForNetworkCall {  cardNotReceived.queryServiceNotifyCardNotYetReceived()}.collect{
+        mapNetworkCallToViewStateFlow {  cardNotReceived.queryServiceNotifyCardNotYetReceived()}.collect{
             _notifyCardNotReceived.emit(it)
         }
     }
@@ -155,14 +157,14 @@ class MyAccountsRemoteApiViewModel @Inject constructor(
 
     fun queryServiceBlockPayWithCardStoreCard() = viewModelScope.launch {
         mStoreCardType = StoreCardType.VirtualTempCard(block = BlockStoreCardType.BLOCK)
-        getViewStateFlowForNetworkCall {
+        mapNetworkCallToViewStateFlow {
             queryServiceBlockStoreCard(storeCardType = mStoreCardType)
         }.collect {
         }
     }
 
     fun queryServiceUnBlockPayWithCardStoreCard() = viewModelScope.launch {
-        getViewStateFlowForNetworkCall {
+        mapNetworkCallToViewStateFlow {
             mStoreCardType = StoreCardType.VirtualTempCard(block = BlockStoreCardType.UNBLOCK)
             queryServiceUnBlockStoreCard(storeCardType = mStoreCardType)
         }.collect {

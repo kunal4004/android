@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.awfs.coordination.R;
 import com.github.barteksc.pdfviewer.PDFView;
@@ -22,7 +23,7 @@ import za.co.woolworths.financial.services.android.util.Utils;
 
 public class PreviewStatement extends Fragment {
 
-    private WTextView tvTitle;
+    private TextView tvTitle;
 
     @Nullable
     @Override

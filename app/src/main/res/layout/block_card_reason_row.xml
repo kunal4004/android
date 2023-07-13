@@ -18,17 +18,16 @@
 
     <TextView
         android:id="@+id/tvBlockReasonTitle"
+        style="@style/opensans_regular_15_black"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="28dp"
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="31dp"
-        android:fontFamily="@font/myriad_pro_regular_otf"
         android:lineSpacingExtra="1.18sp"
         android:text="TextView"
         android:textColor="@color/offer_title"
-        android:textSize="17sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/imRadioButton"

@@ -12,7 +12,7 @@ interface IApplyNowRepo{
 class ApplyNowRepo @Inject constructor(private val service : ApplyNowRemoteDataSource) :
     CoreDataSource(), IApplyNowRepo {
 
-    override suspend fun queryServiceApplyNow(contentId:String) : Flow<IOTaskResult<ApplyNowModel>> = performSafeNetworkApiCall { service.queryServiceApplyNow(contentId) }
+    override suspend fun queryServiceApplyNow(contentId:String) : Flow<IOTaskResult<ApplyNowModel>> = executeSafeNetworkApiCall { service.queryServiceApplyNow(contentId) }
 }
 
 
