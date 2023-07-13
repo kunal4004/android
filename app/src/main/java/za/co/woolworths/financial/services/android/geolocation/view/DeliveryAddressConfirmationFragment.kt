@@ -597,11 +597,7 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
                                     }
 
                                 } else {
-                                    // Showing Sign in pop up when api fails and session dialog
-                                    // is shown
-                                    if (!SessionUtilities.getInstance().isUserAuthenticated) {
-                                        return@launch
-                                    }
+
                                     // navigate to shop/list/cart tab
                                     activity?.setResult(Activity.RESULT_OK)
                                     activity?.finish()
