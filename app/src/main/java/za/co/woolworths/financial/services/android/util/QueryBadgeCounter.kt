@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.util
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.models.dto.CartSummary
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse
 import za.co.woolworths.financial.services.android.models.dto.VoucherCount
@@ -10,7 +11,7 @@ import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
 import za.co.woolworths.financial.services.android.ui.extension.request
-import java.util.*
+import java.util.Observable
 
 class QueryBadgeCounter : Observable() {
     var cartCount = 0
@@ -75,6 +76,12 @@ class QueryBadgeCounter : Observable() {
         mGetCartCount = loadShoppingCartCount()
     }
 
+    fun updateCartSummaryCount() {
+        if (!isUserAuthenticated) return
+        this.updateAtPosition = BottomNavigationActivity.INDEX_CART
+        notifyUpdate()
+    }
+
     private fun loadVoucherCount(): Call<VoucherCount>? {
         return request(OneAppService().getVouchersCount(), object : IGenericAPILoaderView<Any> {
             override fun onSuccess(response: Any?) {
@@ -96,7 +103,7 @@ class QueryBadgeCounter : Observable() {
                     200 -> {
                         response.data.get(0)?.apply {
                             if (totalItemsCount != null)
-                            setCartCount(totalItemsCount)
+                                setCartCount(totalItemsCount)
                         }
                     }
                 }
@@ -138,6 +145,10 @@ class QueryBadgeCounter : Observable() {
     private fun notifyUpdate() {
         setChanged()
         notifyObservers()
+    }
+
+    fun setCartSummaryResponse(cartSummary: CartSummary?) {
+        cartCount = cartSummary?.totalItemsCount ?: 0
     }
 
     companion object {
