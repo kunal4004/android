@@ -23,6 +23,8 @@ import com.awfs.coordination.BuildConfig;
 import com.awfs.coordination.R;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.imagepipeline.core.ImagePipelineConfig;
+import com.facebook.imagepipeline.core.ImageTranscoderType;
+import com.facebook.imagepipeline.core.MemoryChunkType;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 import com.google.firebase.FirebaseApp;
@@ -158,8 +160,11 @@ public class WoolworthsApplication extends Application implements Application.Ac
         TimeZone.setDefault(TimeZone.getTimeZone("Africa/Johannesburg"));
 
         ImagePipelineConfig config = ImagePipelineConfig.newBuilder(this)
-                .setDownsampleEnabled(true)
-                .build();
+                        .setDownsampleEnabled(true)
+                        .setMemoryChunkType(MemoryChunkType.BUFFER_MEMORY)
+                        .setImageTranscoderType(ImageTranscoderType.JAVA_TRANSCODER)
+                        .experiment().setNativeCodeDisabled(true)
+                        .build();
         Fresco.initialize(this, config);
 
         // Initialise Firebase and Huawei Analytics (if this is a Huawei variant)
