@@ -258,13 +258,13 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             if (dynamicYieldChooseVariationResponse == null) {
                 /* Toast.makeText(
                      activity,
-                     "Cart Page DY failed",
+                     "Checkout Page DY failed",
                      Toast.LENGTH_LONG
                  ).show()*/
             } else {
                 /* Toast.makeText(
                      activity,
-                     "Cart Page DY Success",
+                     "Checkout Page DY Success",
                      Toast.LENGTH_LONG
                  ).show()*/
             }
@@ -472,6 +472,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                         viewModel.getSavedAddress()
                     }
                 }
+                prepareDynamicYieldCheckoutRequest()
             }
             else -> {}
         }
@@ -586,6 +587,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                 cartItemList = viewModel.getCartItemList()
             )
         }
+        prepareDynamicYieldCheckoutRequest()
     }
 
     private fun cartBeginEventAnalytics() {
@@ -2469,6 +2471,18 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                 }
             }
         }
+    }
+
+    private fun prepareDynamicYieldCheckoutRequest() {
+        val user = User(dyServerId,dyServerId)
+        val session = Session(dySessionId)
+        val device = Device(Utils.IPAddress, config?.getDeviceModel())
+        val productList: ArrayList<String>? = ArrayList()
+        val page = Page(productList, DY_LOCATION, DY_CART_TYPE, null)
+        val context = Context(device, page)
+        val options = Options(true)
+        val homePageRequestEvent = HomePageRequestEvent(user, session, context, options)
+        dyHomePageViewModel?.createDyRequest(homePageRequestEvent)
     }
 
     private fun prepareDyRemoveFromCartRequestEvent(mCommerceItem: CommerceItem?) {
