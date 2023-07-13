@@ -658,6 +658,14 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         }
     }
 
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        setFragmentResultListener(SearchSubstitutionFragment.SELECTED_SUBSTITUTED_PRODUCT) { _, bundle ->
+            // User Substitute product from search screen and came back to cart
+            loadShoppingCart()
+        }
+    }
+
     override fun onChangeQuantity(commerceId: CommerceItem, quantity: Int) {
         mCommerceItem = commerceId
         mChangeQuantity?.commerceId = commerceId.commerceItemInfo.getCommerceId()
