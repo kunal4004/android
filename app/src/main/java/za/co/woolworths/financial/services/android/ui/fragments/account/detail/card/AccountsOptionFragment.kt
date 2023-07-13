@@ -42,10 +42,10 @@ import za.co.woolworths.financial.services.android.ui.activities.loan.LoanWithdr
 import za.co.woolworths.financial.services.android.ui.extension.asEnumOrDefault
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
-import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.personal_loan.PersonalLoanFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.MyAccountsScreenNavigator
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
+import za.co.woolworths.financial.services.android.ui.fragments.account.device_security.verifyAppInstanceId
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity
 import za.co.woolworths.financial.services.android.ui.fragments.credit_card_activation.CreditCardActivationAvailabilityDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanDialogFragment
@@ -283,7 +283,7 @@ open class AccountsOptionFragment : BaseFragmentBinding<AccountCardDetailFragmen
                     val applyNowState = mApplyNowAccountKeyPair?.first
 
                     if (applyNowState != null) {
-                        if (!MyAccountsFragment.verifyAppInstanceId()) {
+                        if (!verifyAppInstanceId()) {
                             activity?.apply { onStartCreditLimitIncreaseFirebaseEvent(this) }
                             creditLimitIncrease()?.nextStep(requireActivity(),getOfferActive(), getProductOfferingId()?.toString(),  applyNowState)
                         }
@@ -318,7 +318,7 @@ open class AccountsOptionFragment : BaseFragmentBinding<AccountCardDetailFragmen
                 }
                 R.id.scheduleOrManageCreditCardDelivery -> {
                     handleScheduleDeliveryCreditCard {
-                        if (!MyAccountsFragment.verifyAppInstanceId())
+                        if (!verifyAppInstanceId())
                             navigateToScheduleOrManage()
                     }
                 }
