@@ -326,6 +326,15 @@ class ProductDetailsFragment :
             onConfirmLocation()
         }
 
+        setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_DISMISS_RESULT) { requestKey, bundle ->
+            val resultCode =
+                bundle.getString(CustomBottomSheetDialogFragment.DIALOG_BUTTON_CLICK_RESULT)
+            if (resultCode == UnsellableUtils.ADD_TO_LIST_SUCCESS_RESULT_CODE) {
+                // Proceed with add to cart as we have moved unsellable items to List.
+                onConfirmLocation()
+            }
+        }
+
         KotlinUtils.setAddToListFragmentResultListener(
             ADD_TO_SHOPPING_LIST_REQUEST_CODE,
             requireActivity(),

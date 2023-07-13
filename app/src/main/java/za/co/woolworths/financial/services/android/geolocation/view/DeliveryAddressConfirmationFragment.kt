@@ -376,9 +376,17 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
             }
             placeId?.let { getDeliveryDetailsFromValidateLocation(it, true) }
         }
-        setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_DISMISS_RESULT) { _, _ ->
-            // change location dismiss button clicked so land back on last delivery location tab.
-            moveToTab(lastDeliveryType)
+        setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_DISMISS_RESULT) { requestKey, bundle ->
+            val resultCode =
+                bundle.getString(CustomBottomSheetDialogFragment.DIALOG_BUTTON_CLICK_RESULT)
+            if (resultCode == UnsellableUtils.ADD_TO_LIST_SUCCESS_RESULT_CODE) {
+                // Proceed with fragment navigation as we have moved unsellable items to List.
+                onConfirmLocationNavigation()
+            }
+            else{
+                // change location dismiss button clicked so land back on last delivery location tab.
+                moveToTab(lastDeliveryType)
+            }
         }
     }
 

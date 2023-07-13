@@ -81,21 +81,36 @@ class UnsellableUtils {
                                 ConfirmLocationResponseLiveData.value = true
                                 if (confirmLocationParams?.commerceItemList != null) {
                                     // If unsellable items are removed from popup with addToList checkBox selected then call getList and createList/AddToList API.
-                                    callGetListAPI(progressBar, fragment, confirmAddressViewModel)
+                                    callGetListAPI(
+                                        progressBar,
+                                        fragment,
+                                        confirmAddressViewModel
+                                    )
                                 } else {
                                     //This is not a unsellable flow or we don't have unsellable items so this will give callBack to AddToCart function or Checkout Summary Flow.
                                     AddToCartLiveData.value = true
                                 }
                             }
+
                             else -> {
-                                showConfirmLocationErrorDialog(fragment, confirmLocationParams, progressBar, confirmAddressViewModel)
+                                showConfirmLocationErrorDialog(
+                                    fragment,
+                                    confirmLocationParams,
+                                    progressBar,
+                                    confirmAddressViewModel
+                                )
                             }
                         }
                     }
                 } catch (e: Exception) {
                     FirebaseManager.logException(e)
                     progressBar?.visibility = View.GONE
-                    showConfirmLocationErrorDialog(fragment, confirmLocationParams, progressBar, confirmAddressViewModel)
+                    showConfirmLocationErrorDialog(
+                        fragment,
+                        confirmLocationParams,
+                        progressBar,
+                        confirmAddressViewModel
+                    )
                 }
             }
         }
@@ -128,7 +143,12 @@ class UnsellableUtils {
                                 }
                                 if (shoppingList != null) {
                                     // This means Auto Shopping List name already exist and we need to call add to list API
-                                    callAddToListAPI(fragment, progressBar, confirmAddressViewModel)
+                                    callAddToListAPI(
+                                        fragment,
+                                        progressBar,
+                                        confirmAddressViewModel,
+                                        shoppingList.listId
+                                    )
 
                                 } else {
                                     // Name *Auto Shopping List* don't exist so call create List API to create this name.
@@ -164,22 +184,9 @@ class UnsellableUtils {
             progressBar: ProgressBar,
             confirmAddressViewModel: ConfirmAddressViewModel,
         ) {
-            if (commerceItemList != null) {
-                var items: List<AddToListRequest> = mutableListOf()
-                for (listItem in commerceItemList!!) {
-                    var addToListRequest = AddToListRequest()
-                    addToListRequest.apply {
-                        skuID = listItem.productId
-                        giftListId = ""
-                        catalogRefId = ""
-                        quantity = listItem.quantity.toString()
-                        listId = ""
-
-                    }
-
-                    items.plus(addToListRequest)
-                }
-                val createList = CreateList(Constant.AUTO_SHOPPING_LIST_NAME, items)
+            if (this.commerceItemList != null) {
+                val createList =
+                    CreateList(Constant.AUTO_SHOPPING_LIST_NAME, getAddToListRequestParams(null))
                 showLoadingProgress(fragment)
                 fragment.viewLifecycleOwner.lifecycleScope.launch {
                     try {
@@ -190,10 +197,30 @@ class UnsellableUtils {
                         if (createNewListResponse != null) {
                             when (createNewListResponse.httpCode) {
                                 AppConstant.HTTP_OK, HTTP_OK_201 -> {
-                                    showAddToListSuccessPopup(fragment)
+                                    createNewListResponse.lists.listIterator().forEach {
+                                        if (it.listName.equals(
+                                                Constant.AUTO_SHOPPING_LIST_NAME,
+                                                true
+                                            )
+                                        ) {
+                                            // Once new list name is created then call AddToList
+                                            callAddToListAPI(
+                                                fragment,
+                                                progressBar,
+                                                confirmAddressViewModel,
+                                                it.listId
+                                            )
+                                            return@forEach
+                                        }
+                                    }
                                 }
+
                                 else -> {
-                                    showListErrorDialog(fragment, progressBar, confirmAddressViewModel)
+                                    showListErrorDialog(
+                                        fragment,
+                                        progressBar,
+                                        confirmAddressViewModel
+                                    )
                                 }
                             }
                         }
@@ -210,32 +237,64 @@ class UnsellableUtils {
             fragment: Fragment,
             progressBar: ProgressBar,
             confirmAddressViewModel: ConfirmAddressViewModel,
+            requestedListId: String,
         ) {
-            if (commerceItemList != null) {
-                showLoadingProgress(fragment)
-                fragment.viewLifecycleOwner.lifecycleScope.launch {
-                    try {
-                        val addProductToListResponse =
-                            confirmAddressViewModel.addProductsToList("", listOf())
-                        hideLoadingProgress()
-                        val addToListResponse = addProductToListResponse?.body()
-                        if (addToListResponse != null) {
-                            when (addToListResponse.httpCode) {
-                                AppConstant.HTTP_OK, HTTP_OK_201 -> {
-                                    showAddToListSuccessPopup(fragment)
-                                }
-                                else -> {
-                                    showListErrorDialog(fragment, progressBar, confirmAddressViewModel)
-                                }
+            showLoadingProgress(fragment)
+            fragment.viewLifecycleOwner.lifecycleScope.launch {
+                try {
+                    val listItems = getAddToListRequestParams(requestedListId)
+                    listItems.map { item ->
+                        if (item.giftListId.isNullOrEmpty()) {
+                            item.giftListId = requestedListId
+                        }
+                    }
+                    val addProductToListResponse =
+                        confirmAddressViewModel.addProductsToList(
+                            requestedListId,
+                            listItems.toList()
+                        )
+                    hideLoadingProgress()
+                    val addToListResponse = addProductToListResponse?.body()
+                    if (addToListResponse != null) {
+                        when (addToListResponse.httpCode) {
+                            AppConstant.HTTP_OK, HTTP_OK_201 -> {
+                                showAddToListSuccessPopup(fragment)
+                            }
+
+                            else -> {
+                                showListErrorDialog(
+                                    fragment,
+                                    progressBar,
+                                    confirmAddressViewModel
+                                )
                             }
                         }
-                    } catch (e: Exception) {
-                        FirebaseManager.logException(e)
-                        hideLoadingProgress()
-                        showListErrorDialog(fragment, progressBar, confirmAddressViewModel)
                     }
+                } catch (e: Exception) {
+                    FirebaseManager.logException(e)
+                    hideLoadingProgress()
+                    showListErrorDialog(fragment, progressBar, confirmAddressViewModel)
                 }
             }
+        }
+
+        private fun getAddToListRequestParams(requestedListId: String?): MutableList<AddToListRequest> {
+            val items: MutableList<AddToListRequest> = mutableListOf()
+            if (this.commerceItemList != null) {
+                for (listItem in this.commerceItemList!!) {
+                    val addToListRequest = AddToListRequest()
+                    addToListRequest.apply {
+                        skuID = listItem.productId
+                        giftListId = listItem.catalogRefId
+                        catalogRefId = listItem.catalogRefId
+                        quantity = listItem.quantity.toString()
+                        listId = requestedListId ?: listItem.catalogRefId
+                    }
+
+                    items.plus(addToListRequest)
+                }
+            }
+            return items
         }
 
         private fun showLoadingProgress(fragment: Fragment) {
@@ -267,15 +326,20 @@ class UnsellableUtils {
                 CustomBottomSheetDialogFragment::class.java.simpleName
             )
         }
+
         private fun showListErrorDialog(
             fragment: Fragment,
             progressBar: ProgressBar,
-            confirmAddressViewModel: ConfirmAddressViewModel
+            confirmAddressViewModel: ConfirmAddressViewModel,
         ) {
             errorBottomSheetDialog.showCommonErrorBottomDialog(
                 object : ClickOnDialogButton {
                     override fun onClick() {
-                        callGetListAPI(progressBar,fragment, confirmAddressViewModel)
+                        callGetListAPI(
+                            progressBar,
+                            fragment,
+                            confirmAddressViewModel
+                        )
                     }
 
                     override fun onDismiss() {
@@ -290,16 +354,22 @@ class UnsellableUtils {
                 true
             )
         }
+
         private fun showConfirmLocationErrorDialog(
             fragment: Fragment,
             confirmLocationParams: ConfirmLocationParams?,
             progressBar: ProgressBar,
-            confirmAddressViewModel: ConfirmAddressViewModel
+            confirmAddressViewModel: ConfirmAddressViewModel,
         ) {
             errorBottomSheetDialog.showCommonErrorBottomDialog(
                 object : ClickOnDialogButton {
                     override fun onClick() {
-                        callConfirmPlace(fragment, confirmLocationParams, progressBar, confirmAddressViewModel)
+                        callConfirmPlace(
+                            fragment,
+                            confirmLocationParams,
+                            progressBar,
+                            confirmAddressViewModel
+                        )
                     }
 
                     override fun onDismiss() {

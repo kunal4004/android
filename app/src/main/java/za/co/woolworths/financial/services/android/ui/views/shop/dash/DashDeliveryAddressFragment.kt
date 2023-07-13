@@ -222,6 +222,14 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
             // Proceed with add to cart as we have moved unsellable items to List.
             addToCart(viewModel.addItemToCart.value) // This will again call addToCart
         }
+        setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_DISMISS_RESULT) { requestKey, bundle ->
+            val resultCode =
+                bundle.getString(CustomBottomSheetDialogFragment.DIALOG_BUTTON_CLICK_RESULT)
+            if (resultCode == UnsellableUtils.ADD_TO_LIST_SUCCESS_RESULT_CODE) {
+                // Proceed with add to cart as we have moved unsellable items to List.
+                addToCart(viewModel.addItemToCart.value) // This will again call addToCart
+            }
+        }
     }
 
     private fun callValidatePlace(placeId: String?) {
