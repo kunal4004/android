@@ -298,8 +298,6 @@ class ManageStoreCardLandingList(
                     else -> Unit
                 }
             }
-            if (isAlphaEnabled)
-                logoImageView.alpha = 0.7f
             titleTextView.text = label
             addView(inflater)
         }
