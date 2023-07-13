@@ -1552,17 +1552,17 @@
     <string name="delivery_setup_complete">Delivery Setup Complete</string>
     <string name="delivery_setup_update">Your Delivery Information Has Been Updated</string>
     <string name="delivery_success_desc">Keep an eye on the app for updates.</string>
-    <string name="cellphone_number_error_msg">Please enter a Cellphone Number</string>
-    <string name="alternate_number_error_msg">Please enter Alternate Contact Number</string>
+    <string name="cellphone_number_error_msg">Please provide a valid cellphone number</string>
+    <string name="alternate_number_error_msg">Please provide a valid alternate contact number</string>
     <string name="phone_number_invalid_error_msg">Please provide a valid phone number</string>
     <string name="recipient_name_error_msg">Please provide a valid name</string>
-    <string name="build_or_complex_error_msg">Please enter a Complex/Building name</string>
+    <string name="build_or_complex_error_msg">Please provide the building name</string>
     <string name="business_name_error_msg">Please enter a Business name</string>
-    <string name="street_address_error_msg">Please enter a Street address</string>
-    <string name="suburb_error_msg">Please enter a Suburb</string>
-    <string name="city_or_town_error_msg">Please enter a City/Town</string>
-    <string name="province_error_msg">Please enter a Province</string>
-    <string name="postalcode_error_msg">Please enter a Postal code</string>
+    <string name="street_address_error_msg">Please provide the street address</string>
+    <string name="suburb_error_msg">Please provide the suburb</string>
+    <string name="city_or_town_error_msg">Please provide the city</string>
+    <string name="province_error_msg">Please provide the province</string>
+    <string name="postalcode_error_msg">Please provide the postal code</string>
     <string name="please_confirm_your_address">Please Confirm Your Address</string>
     <string name="credit_card_payment_options_desc">You can pay your Woolies Credit Card using any of the following payment options:</string>
     <string name="account_in_arrears_toolbar">Account In Arrears Toolbar</string>
@@ -1631,7 +1631,7 @@
     <string name="temp_card_how_to_use10">Your temp store card cannot be used at Engen service stations.</string>
     <string name="temp_card_how_to_use11">If you receive any staff discounts, please make sure that your virtual card number is loaded correctly in other systems, like Peoplesoft.</string>
     <string name="temp_card_how_to_use12">If you have issues using you temporary card please contact Woolworths Financial Services at <u>0861 50 20 20</u> or by email at <u>queries@wfs.co.za</u>.</string>
-    <string name="id_number_error_msg">Please enter a ID Number</string>
+    <string name="id_number_error_msg">Please provide a valid ID number</string>
     <string name="myself">Myself\u0020</string>
     <string name="another_person">Another Person</string>
     <string name="business_name_optional">Business Name (Optional)</string>
@@ -2866,6 +2866,10 @@
         <item quantity="one">%1$s %2$s Item</item>
         <item quantity="other">%1$s %2$s Items</item>
     </plurals>
+    <plurals name="added_to_list">
+        <item quantity="one">%1$d Item Added To %2$s</item>
+        <item quantity="other">%1$d Items Added To %2$s</item>
+    </plurals>
     <string name="select_your_marital_status">Select your marital status</string>
 
     <string name="my_products">My Products</string>
@@ -2958,7 +2962,7 @@
     <string name="food_fashion_beauty_and_home_products_available">%1$s\nFood, Fashion, Beauty and Home products available.</string>
     <string name="food_fashion_beauty_and_home_products_available_tool_tip">Food, Fashion, Beauty and Home products available.</string>
 
-    <string name="my_offer_wpet_care_classic_plan_label">Pet insurance</string>
+    <string name="my_offer_wpet_care_classic_plan_label">WPETInsure</string>
     <string name="my_offer_wpet_care_classic_plan_desc">Give your furry friend the cover they deserve</string>
     <string name="my_offer_wpet_care_classic_plan_button_label">get cover</string>
 
@@ -3055,4 +3059,13 @@
     <string name="payflex_is_unavailable_when_buying_food_items_and_gift_cards">Payflex is unavailable when buying Food items and Gift Cards.</string>
     <string name="open_until">Open until %s</string>
     <string name="contact_us_email_message_placeholder">Please provide details about your query.</string>
+
+    <string name="oops_something_went_wrong">Oops. Something Went Wrong</string>
+
+    <string name="add_to_list_progress_title">Adding Your Items\n to %s</string>
+    <string name="added_to_list_desc">THIS EXCLUDES FREE GIFT ITEMS</string>
+    <string name="multiple_lists">Multiple Lists</string>
+    <string name="add_to_list_failure">Failed to add to list. Please try again later.</string>
+    <string name="hint_list_name">List Name</string>
+    <string name="create_list_name_error">Unfortunately, this list name already exists.\nPlease try another option.</string>
 </resources>

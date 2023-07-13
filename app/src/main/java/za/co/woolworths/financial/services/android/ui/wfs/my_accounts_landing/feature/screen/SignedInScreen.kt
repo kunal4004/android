@@ -477,7 +477,6 @@ private fun LazyListScope.myProductsSection(
             LinkYourWooliesCardUI(isLoading, brush, onProductClick)
         }
     }
-
 }
 
 private fun LazyListScope.productHeaderView(
