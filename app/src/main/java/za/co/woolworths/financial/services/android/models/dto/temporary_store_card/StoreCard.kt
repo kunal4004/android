@@ -21,7 +21,7 @@ data class StoreCard(
     var blockType: String? = "",
     @SerializedName("cardNotReceived")
     var isCardNotReceivedFlowNeeded: Boolean = false,
-    var actions: MutableList<ActionButton>?
+    var actions: List<ActionButton>?
 ):Parcelable
 
 

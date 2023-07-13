@@ -939,9 +939,9 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             case INDEX_REWARD:
                 return new WRewardsFragment();
             case INDEX_ACCOUNT:
-                UserAccountsLandingFragment myAccountsFragment = new UserAccountsLandingFragment();
-                myAccountsFragment.setArguments(mBundle);
-                return myAccountsFragment;
+                UserAccountsLandingFragment userAccountsLandingFragment = new UserAccountsLandingFragment();
+                userAccountsLandingFragment.setArguments(mBundle);
+                return userAccountsLandingFragment;
         }
         throw new IllegalStateException("Need to send an index that we know");
     }
