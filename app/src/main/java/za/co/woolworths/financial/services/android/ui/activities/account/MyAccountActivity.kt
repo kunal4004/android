@@ -11,10 +11,10 @@ import com.awfs.coordination.databinding.MyAccountActivityBinding
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragmentSafely
 import za.co.woolworths.financial.services.android.ui.fragments.account.AccountMasterCache
-import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment
 import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout
+import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature.fragment.UserAccountsLandingFragment
 import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -38,8 +38,8 @@ class MyAccountActivity : AppCompatActivity() {
         actionBar()
         if (savedInstanceState == null) {
             addFragment(
-                    fragment = MyAccountsFragment(),
-                    tag = MyAccountsFragment::class.java.simpleName,
+                    fragment = UserAccountsLandingFragment(),
+                    tag = UserAccountsLandingFragment::class.java.simpleName,
                     containerViewId = R.id.accountContainerFrameLayout)
         }
     }
@@ -70,7 +70,7 @@ class MyAccountActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        val fragment = supportFragmentManager.findFragmentByTag(MyAccountsFragment::class.java.simpleName)
+        val fragment = supportFragmentManager.findFragmentByTag(UserAccountsLandingFragment::class.java.simpleName)
         when(requestCode){
             REQUEST_CODE_OPEN_STATEMENT -> {
                 finish()
