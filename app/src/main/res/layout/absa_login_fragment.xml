@@ -104,16 +104,14 @@
         android:layout_marginTop="@dimen/thirty_two_dp"
         app:numberkeyboard_keyboardType="integer" />
 
-    <za.co.woolworths.financial.services.android.ui.views.WTextView
+    <TextView
         android:id="@+id/tvForgotPasscode"
+        style="@style/opensans_regular_13_black"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
-        android:textSize="@dimen/fifteen_sp"
         android:text="Forgot Passcode"
-        app:WTextView_font="myriadpro_regular"
         android:layout_marginTop="@dimen/fourty_dp"
-        android:layout_marginBottom="@dimen/twenty_eight_dp"
-        android:textColor="@color/black" />
+        android:layout_marginBottom="@dimen/twenty_eight_dp" />
 </RelativeLayout>

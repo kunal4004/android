@@ -1,14 +1,15 @@
 package za.co.woolworths.financial.services.android.util.analytics
 
+import android.app.Activity
 import android.os.Bundle
+import androidx.core.os.bundleOf
 import com.google.firebase.analytics.FirebaseAnalytics
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.Product
-import za.co.woolworths.financial.services.android.util.analytics.dto.AddToWishListFirebaseEventData
-import za.co.woolworths.financial.services.android.util.analytics.dto.AnalyticProductItem
-import za.co.woolworths.financial.services.android.util.analytics.dto.toAnalyticItem
-import za.co.woolworths.financial.services.android.util.analytics.dto.toBundle
+import za.co.woolworths.financial.services.android.util.KotlinUtils
+import za.co.woolworths.financial.services.android.util.analytics.dto.*
+import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
 object FirebaseAnalyticsEventHelper {
 
@@ -255,5 +256,141 @@ object FirebaseAnalyticsEventHelper {
         AnalyticsManager.logEvent(
             FirebaseAnalytics.Event.VIEW_SEARCH_RESULTS, analyticsParams
         )
+    }
+
+    fun viewScreenEventForPLP(activity: Activity?, screenViewEventData: ScreenViewEventData?) {
+        val eventName = screenViewEventData?.department
+        if (eventName.isNullOrEmpty()) {
+            activity?.let {
+                za.co.woolworths.financial.services.android.util.Utils.setScreenName(
+                    it,
+                    FirebaseManagerAnalyticsProperties.ScreenNames.PRODUCT_LISTING_PAGE
+                )
+            }
+            return
+        }
+        val analyticsParams = Bundle()
+        analyticsParams.apply {
+            putString(
+                FirebaseAnalytics.Param.SCREEN_NAME, FirebaseManagerAnalyticsProperties.ScreenNames.PRODUCT_LISTING_PAGE
+            )
+            putString(
+                FirebaseManagerAnalyticsProperties.PropertyNames.CATEGORY_NAME,
+                screenViewEventData.category
+            )
+            putString(
+                FirebaseManagerAnalyticsProperties.PropertyNames.SUB_CATEGORY_NAME,
+                screenViewEventData.subCategory
+            )
+            putString(
+                FirebaseManagerAnalyticsProperties.PropertyNames.SUB_SUB_CATEGORY_NAME,
+                screenViewEventData.subSubCategory
+            )
+        }
+        AnalyticsManager.logEvent(eventName, analyticsParams)
+    }
+
+    enum class FirebaseEventAction(val value: Int) { VIEW_VOUCHER(0), VIEW_WREWARDS_VOUCHERS(1),ADD_PROMO_CODE(2) }
+
+    enum class FirebaseEventOption(val value: Int) { VOUCHERS(0), ADD_PROMO(1) }
+    fun triggerFirebaseEventVouchersOrPromoCode(actionEnum: Int, optionEnum: Int,activity: Activity) {
+        val action = when (actionEnum){
+            FirebaseEventAction.VIEW_VOUCHER.value -> FirebaseManagerAnalyticsProperties.PropertyValues.VIEW_VOUCHER
+            FirebaseEventAction.VIEW_WREWARDS_VOUCHERS.value -> FirebaseManagerAnalyticsProperties.PropertyValues.VIEW_WREWARDS_VOUCHERS
+            FirebaseEventAction.ADD_PROMO_CODE.value -> FirebaseManagerAnalyticsProperties.PropertyValues.ADD_PROMO_CODE
+            else -> throw IllegalStateException()
+        }
+
+        val option = when (optionEnum){
+            FirebaseEventOption.VOUCHERS.value -> FirebaseManagerAnalyticsProperties.PropertyValues.VOUCHERS
+            FirebaseEventOption.ADD_PROMO.value -> FirebaseManagerAnalyticsProperties.PropertyValues.ADD_PROMO
+            else -> throw IllegalStateException()
+        }
+
+        val deliveryType = when(KotlinUtils.getPreferredDeliveryType()){
+            Delivery.STANDARD -> FirebaseManagerAnalyticsProperties.PropertyValues.STANDARD
+            Delivery.CNC -> FirebaseManagerAnalyticsProperties.PropertyValues.CLICK_AND_COLLECT
+            Delivery.DASH -> FirebaseManagerAnalyticsProperties.PropertyValues.DASH
+            else ->  throw IllegalStateException()
+        }
+        val arguments = HashMap<String, String>()
+        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.STEP] = FirebaseManagerAnalyticsProperties.PropertyValues.BASKET
+        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE] = action
+        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.OPTION] = option
+        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_TYPE] = deliveryType
+        KotlinUtils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHECKOUT, arguments,activity)
+
+    }
+    fun setFirebaseEventForm(type: String?, eventName: String, isComingFromCheckout: Boolean) {
+
+        var propertyValueForFormType = when (KotlinUtils.getPreferredDeliveryType()) {
+            Delivery.DASH -> {
+                FirebaseManagerAnalyticsProperties.PropertyValues.DASH
+            }
+            Delivery.CNC -> {
+                FirebaseManagerAnalyticsProperties.PropertyValues.CLICK_AND_COLLECT
+            }
+            else -> {
+                FirebaseManagerAnalyticsProperties.PropertyValues.STANDARD
+            }
+        }
+
+        val propertyValueForFormLocation = if (isComingFromCheckout) {
+            FirebaseManagerAnalyticsProperties.CHECKOUT
+        } else {
+            FirebaseManagerAnalyticsProperties.PropertyValues.BROWSE
+        }
+
+        //Event form type for address checkout
+        val formTypeParams = bundleOf(
+                FirebaseManagerAnalyticsProperties.PropertyNames.FORM_TYPE to
+                        propertyValueForFormType,
+                FirebaseManagerAnalyticsProperties.PropertyNames.FORM_NAME to
+                        type,
+                FirebaseManagerAnalyticsProperties.PropertyNames.FORM_LOCATION to
+                        propertyValueForFormLocation
+        )
+        AnalyticsManager.logEvent(eventName, formTypeParams)
+    }
+
+    object Utils {
+        private fun stringToFirebaseEventName(string: String?): String? {
+            return string?.filter { it.isLetterOrDigit() }?.lowercase()
+        }
+
+        fun getPLPScreenViewEventDataForDash(
+            headerText: String?,
+            bannerDisplayName: String?,
+            bannerNavigationState: String?
+        ): ScreenViewEventData? {
+            val eventName = stringToFirebaseEventName(headerText)
+            if (eventName.isNullOrEmpty()) {
+                return null
+            }
+
+            val subCategory =
+                if (bannerDisplayName.isNullOrEmpty()) bannerNavigationState else bannerDisplayName
+            return ScreenViewEventData(
+                department = FirebaseManagerAnalyticsProperties.DASH_PREFIX.plus(eventName),
+                category = headerText,
+                subCategory = subCategory
+            )
+        }
+
+        fun getPLPScreenViewEventDataForStandardAndCnc(
+            category: String?,
+            subCategory: String?,
+            subSubCategory: String?
+        ): ScreenViewEventData {
+            val department = stringToFirebaseEventName(category)
+            val subCat = if(category == subCategory) subSubCategory else subCategory
+            val subSubCat = if(subCat == subSubCategory) null else subSubCategory
+            return ScreenViewEventData(
+                department = department,
+                category = category,
+                subCategory = subCat,
+                subSubCategory = subSubCat
+            )
+        }
     }
 }

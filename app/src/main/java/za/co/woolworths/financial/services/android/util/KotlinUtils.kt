@@ -31,6 +31,7 @@ import android.view.animation.RotateAnimation
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.RawRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -38,7 +39,9 @@ import androidx.constraintlayout.widget.Group
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
@@ -74,32 +77,44 @@ import za.co.woolworths.financial.services.android.models.dto.account.Transactio
 import za.co.woolworths.financial.services.android.models.dto.app_config.chat.ConfigTradingHours
 import za.co.woolworths.financial.services.android.models.dto.cart.FulfillmentDetails
 import za.co.woolworths.financial.services.android.models.network.OneAppService
+import za.co.woolworths.financial.services.android.presentation.addtolist.AddToListFragment
+import za.co.woolworths.financial.services.android.presentation.addtolist.AddToListFragment.Companion.ADD_TO_SHOPPING_LIST_REQUEST_CODE
+import za.co.woolworths.financial.services.android.presentation.addtolist.AddToListViewModel
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.account.LinkDeviceConfirmationActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.webview.activities.WInternalWebPageActivity
 import za.co.woolworths.financial.services.android.ui.extension.*
-import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
+import za.co.woolworths.financial.services.android.ui.fragments.account.device_security.verifyAppInstanceId
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.Constants.IS_PET_INSURANCE
 import za.co.woolworths.financial.services.android.ui.fragments.account.petinsurance.PetInsurancePendingFragment
 import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.AbsaApiFailureHandler
 import za.co.woolworths.financial.services.android.ui.fragments.onboarding.OnBoardingFragment.Companion.ON_BOARDING_SCREEN_TYPE
 import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
+import za.co.woolworths.financial.services.android.ui.views.ToastFactory
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.GeneralInfoDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.CLIErrorMessageButtonDialog
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ErrorMessageDialog
+import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature.fragment.UserAccountsLandingFragment.Companion.PET_INSURANCE_REQUEST_CODE
+import za.co.woolworths.financial.services.android.util.AppConstant.Keys.Companion.BUNDLE_WISHLIST_EVENT_DATA
+import za.co.woolworths.financial.services.android.util.AppConstant.Keys.Companion.KEY_HAS_GIFT_PRODUCT
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DEFAULT_ADDRESS
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DELIVERY_TYPE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_CHECKOUT
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_CNC_SELETION
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_SLOT_SELECTION
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_FBH_ONLY
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_FROM_DASH_TAB
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_MIXED_BASKET
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.PLACE_ID
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.SAVED_ADDRESS_RESPONSE
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.logEvent
+import za.co.woolworths.financial.services.android.util.analytics.dto.AddToWishListFirebaseEventData
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.util.wenum.OnBoardingScreenType
 import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
@@ -115,8 +130,6 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.CoroutineContext
 import kotlin.math.roundToInt
-import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_MIXED_BASKET
-import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_FBH_ONLY
 
 
 class KotlinUtils {
@@ -132,6 +145,7 @@ class KotlinUtils {
         var isComingFromCncTab: Boolean? = false
         var fullfillmentTypeClicked: String? = ""
         var browsingDeliveryType: Delivery? = getPreferredDeliveryType()
+
         @JvmStatic
         var browsingCncStore: Store? = null
         const val collectionsIdUrl = "woolworths.wfs.co.za/CustomerCollections/IdVerification"
@@ -171,7 +185,7 @@ class KotlinUtils {
             }
 
             val typeface: Typeface? =
-                context?.let { ResourcesCompat.getFont(it, R.font.myriad_pro_semi_bold_otf) }
+                context?.let { ResourcesCompat.getFont(it, R.font.opensans_semi_bold) }
             if (textIsClickable) spannableTitle.setSpan(
                 clickableSpan,
                 start,
@@ -321,11 +335,11 @@ class KotlinUtils {
         fun capitaliseFirstLetter(str: String?): CharSequence? {
             if (str.isNullOrEmpty())
                 return str
-            val value = str.toLowerCase()
+            val value = str.lowercase()
             val words = value.split(" ").toMutableList()
             var output = ""
             for (word in words) {
-                output += word.capitalize() + " "
+                output += word.uppercase() + " "
             }
             return output.trim()
         }
@@ -338,7 +352,7 @@ class KotlinUtils {
             var output = words[0].uppercase() + " "
             words.removeAt(0)
             for (word in words) {
-                output += word.capitalize() + " "
+                output += word.uppercase() + " "
             }
             return output.trim()
         }
@@ -456,7 +470,7 @@ class KotlinUtils {
                 val mIntent = Intent(this, EditDeliveryLocationActivity::class.java)
                 val mBundle = Bundle()
                 // todo Change this logic to add everything in bundle as this is exceeding 1mb limit of bundle.
-                if (liquorCompliance != null && liquorCompliance.isLiquorOrder && liquor!=null && liquor!!.noLiquorImgUrl != null && !liquor!!.noLiquorImgUrl.isEmpty()) {
+                if (liquorCompliance != null && liquorCompliance.isLiquorOrder && liquor != null && liquor!!.noLiquorImgUrl != null && !liquor!!.noLiquorImgUrl.isEmpty()) {
                     mBundle.putBoolean(Constant.LIQUOR_ORDER, liquorCompliance.isLiquorOrder)
                     mBundle.putString(Constant.NO_LIQUOR_IMAGE_URL, liquor!!.noLiquorImgUrl)
                 }
@@ -471,7 +485,10 @@ class KotlinUtils {
                 mBundle.putSerializable(SAVED_ADDRESS_RESPONSE, savedAddressResponse)
                 mBundle.putSerializable(DEFAULT_ADDRESS, defaultAddress)
                 mBundle.putString(KEY_COLLECTING_DETAILS, whoISCollecting)
-                mBundle.putSerializable(CheckoutAddressManagementBaseFragment.CART_ITEM_LIST, cartItemList)
+                mBundle.putSerializable(
+                    CheckoutAddressManagementBaseFragment.CART_ITEM_LIST,
+                    cartItemList
+                )
                 mIntent.putExtra(BUNDLE, mBundle)
                 GEO_REQUEST_CODE = requestCode
                 startActivityForResult(mIntent, requestCode)
@@ -485,7 +502,7 @@ class KotlinUtils {
             tvDeliveringTo: TextView,
             tvDeliveryLocation: TextView,
             deliverLocationIcon: ImageView?,
-            isComingFromMyPreferences:Boolean = false
+            isComingFromMyPreferences: Boolean = false
         ) {
             with(fulfillmentDetails) {
                 when (Delivery?.getType(deliveryType)) {
@@ -498,16 +515,20 @@ class KotlinUtils {
                         tvDeliveryLocation?.visibility = View.VISIBLE
                         deliverLocationIcon?.setImageResource(R.drawable.ic_collection_circle)
                     }
+
                     Delivery.STANDARD -> {
                         tvDeliveringTo.text =
                             context?.resources?.getString(R.string.standard_delivery)
                         if (isComingFromMyPreferences) {
-                            tvDeliveryLocation?.text =  capitaliseFirstLetter(address?.address1 ?: "")
+                            tvDeliveryLocation?.text =
+                                capitaliseFirstLetter(address?.address1 ?: "")
                         } else {
                             val fullAddress = capitaliseFirstLetter(address?.address1 ?: "")
 
-                            val formmmatedNickName = getFormattedNickName(address?.nickname,
-                                fullAddress, context)
+                            val formmmatedNickName = getFormattedNickName(
+                                address?.nickname,
+                                fullAddress, context
+                            )
 
                             formmmatedNickName.append(fullAddress)
 
@@ -517,12 +538,15 @@ class KotlinUtils {
                         tvDeliveryLocation?.visibility = View.VISIBLE
                         deliverLocationIcon?.setImageResource(R.drawable.ic_delivery_circle)
                     }
+
                     Delivery.DASH -> {
                         val timeSlot: String? =
                             WoolworthsApplication.getValidatePlaceDetails()?.onDemand?.firstAvailableFoodDeliveryTime
                         if (timeSlot?.isNullOrEmpty() == true || WoolworthsApplication.getValidatePlaceDetails()?.onDemand?.deliveryTimeSlots?.isNullOrEmpty() == true) {
                             tvDeliveringTo?.text =
-                                context?.resources?.getString(R.string.dash_delivery_bold) +  "\t" + context?.resources?.getString(R.string.no_timeslots_available_title)
+                                context?.resources?.getString(R.string.dash_delivery_bold) + "\t" + context?.resources?.getString(
+                                    R.string.no_timeslots_available_title
+                                )
                         } else {
                             tvDeliveringTo?.text =
                                 context?.resources?.getString(R.string.dash_delivery_bold)
@@ -532,14 +556,18 @@ class KotlinUtils {
                         if (isComingFromMyPreferences) {
                             tvDeliveryLocation?.text = capitaliseFirstLetter(
                                 WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.address1
-                                    ?: address?.address1 ?: "")
+                                    ?: address?.address1 ?: ""
+                            )
                         } else {
                             val fullAddress = capitaliseFirstLetter(
                                 WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.address1
-                                    ?: address?.address1 ?: "")
+                                    ?: address?.address1 ?: ""
+                            )
 
-                            val formmmatedNickName = getFormattedNickName(address?.nickname,
-                                fullAddress, context)
+                            val formmmatedNickName = getFormattedNickName(
+                                address?.nickname,
+                                fullAddress, context
+                            )
 
                             formmmatedNickName.append(fullAddress)
 
@@ -549,6 +577,7 @@ class KotlinUtils {
                         tvDeliveryLocation?.visibility = View.VISIBLE
                         deliverLocationIcon?.setImageResource(R.drawable.ic_dash_delivery_circle)
                     }
+
                     else -> {
                         tvDeliveringTo.text =
                             context?.resources?.getString(R.string.standard_delivery)
@@ -579,13 +608,16 @@ class KotlinUtils {
                         tvDeliveryLocation?.visibility = View.VISIBLE
                         deliverLocationIcon?.setImageResource(R.drawable.ic_collection_circle)
                     }
+
                     Delivery.STANDARD -> {
                         tvDeliveringTo.text =
                             context?.resources?.getString(R.string.standard_delivery)
                         val fullAddress = capitaliseFirstLetter(address?.address1 ?: "")
 
-                        val formmmatedNickName = getFormattedNickName(address?.nickname,
-                            fullAddress, context)
+                        val formmmatedNickName = getFormattedNickName(
+                            address?.nickname,
+                            fullAddress, context
+                        )
 
                         formmmatedNickName.append(fullAddress)
 
@@ -594,6 +626,7 @@ class KotlinUtils {
                         tvDeliveryLocation?.visibility = View.VISIBLE
                         deliverLocationIcon?.setImageResource(R.drawable.ic_delivery_circle)
                     }
+
                     Delivery.DASH -> {
                         val timeSlot: String? =
                             WoolworthsApplication.getValidatePlaceDetails()?.onDemand?.firstAvailableFoodDeliveryTime
@@ -603,10 +636,12 @@ class KotlinUtils {
 
                         val fullAddress = capitaliseFirstLetter(address?.address1 ?: "")
 
-                        val formmmatedNickName = getFormattedNickName(address?.nickname,
-                            fullAddress, context)
+                        val formmmatedNickName = getFormattedNickName(
+                            address?.nickname,
+                            fullAddress, context
+                        )
 
-                        if (timeSlot?.isNullOrEmpty() == true) {
+                        if (timeSlot.isNullOrEmpty()) {
                             tvDeliveryLocation?.text =
                                 context?.getString(R.string.no_timeslots_available_title)
                                     ?.plus("\t\u2022\t")?.plus(
@@ -629,6 +664,7 @@ class KotlinUtils {
                         tvDeliveryLocation?.visibility = View.VISIBLE
                         deliverLocationIcon?.setImageResource(R.drawable.ic_dash_delivery_circle)
                     }
+
                     else -> {
                         tvDeliveringTo.text =
                             context?.resources?.getString(R.string.standard_delivery)
@@ -642,7 +678,11 @@ class KotlinUtils {
             }
         }
 
-        fun showChangeDeliveryTypeDialog(context: Context, requireFragmentManager: FragmentManager, deliveryType: Delivery?) {
+        fun showChangeDeliveryTypeDialog(
+            context: Context,
+            requireFragmentManager: FragmentManager,
+            deliveryType: Delivery?
+        ) {
             var dialogTitle = ""
             var dialogSubTitle: CharSequence = ""
             var dialogBtnText = ""
@@ -656,6 +696,7 @@ class KotlinUtils {
                         dialogTitleImg = R.drawable.img_delivery_truck
                     }
                 }
+
                 Delivery.CNC -> {
                     context.apply {
                         dialogTitle = getString(R.string.change_your_delivery_method_title)
@@ -664,6 +705,7 @@ class KotlinUtils {
                         dialogTitleImg = R.drawable.img_collection_bag
                     }
                 }
+
                 Delivery.DASH -> {
                     context.apply {
                         dialogTitle = getString(R.string.change_your_delivery_method_title)
@@ -672,6 +714,7 @@ class KotlinUtils {
                         dialogTitleImg = R.drawable.img_dash_delivery
                     }
                 }
+
                 else -> {}
             }
             val customBottomSheetDialogFragment =
@@ -680,27 +723,39 @@ class KotlinUtils {
                     dialogSubTitle,
                     dialogBtnText,
                     dialogTitleImg,
-                    null)
-            customBottomSheetDialogFragment.show(requireFragmentManager,
-                CustomBottomSheetDialogFragment::class.java.simpleName)
+                    null
+                )
+            customBottomSheetDialogFragment.show(
+                requireFragmentManager,
+                CustomBottomSheetDialogFragment::class.java.simpleName
+            )
         }
 
-        fun getUnsellableList(validatePlace: ValidatePlace?, deliveryType: Delivery?): MutableList<UnSellableCommerceItem>? {
+        fun getUnsellableList(
+            validatePlace: ValidatePlace?,
+            deliveryType: Delivery?
+        ): MutableList<UnSellableCommerceItem>? {
             return when (deliveryType) {
                 Delivery.STANDARD -> {
                     validatePlace?.unSellableCommerceItems
                 }
+
                 Delivery.CNC -> {
                     browsingCncStore?.storeId?.let { checkStoreHasUnsellable(validatePlace, it) }
                 }
+
                 Delivery.DASH -> {
                     validatePlace?.onDemand?.unSellableCommerceItems
                 }
+
                 else -> validatePlace?.unSellableCommerceItems
             }
         }
 
-        private fun checkStoreHasUnsellable(validatePlace: ValidatePlace?, mStoreId: String): MutableList<UnSellableCommerceItem>? {
+        private fun checkStoreHasUnsellable(
+            validatePlace: ValidatePlace?,
+            mStoreId: String
+        ): MutableList<UnSellableCommerceItem>? {
             validatePlace?.stores?.forEach {
                 if (it.storeId.equals(mStoreId)) {
                     return it.unSellableCommerceItems
@@ -712,31 +767,48 @@ class KotlinUtils {
         fun getConfirmLocationRequest(deliveryType: Delivery?): ConfirmLocationRequest {
             return when (deliveryType) {
                 Delivery.STANDARD -> {
-                    ConfirmLocationRequest(BundleKeysConstants.STANDARD,
-                        ConfirmLocationAddress(WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.placeId ?: getPreferredPlaceId()),
-                        "")
+                    ConfirmLocationRequest(
+                        BundleKeysConstants.STANDARD,
+                        ConfirmLocationAddress(
+                            WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.placeId
+                                ?: getPreferredPlaceId()
+                        ),
+                        ""
+                    )
                 }
+
                 Delivery.CNC -> {
-                    ConfirmLocationRequest(BundleKeysConstants.CNC,
-                        ConfirmLocationAddress(if (WoolworthsApplication.getCncBrowsingValidatePlaceDetails() != null)
-                            WoolworthsApplication.getCncBrowsingValidatePlaceDetails()?.placeDetails?.placeId
-                        else WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.placeId),
-                        browsingCncStore?.storeId)
+                    ConfirmLocationRequest(
+                        BundleKeysConstants.CNC,
+                        ConfirmLocationAddress(
+                            if (WoolworthsApplication.getCncBrowsingValidatePlaceDetails() != null)
+                                WoolworthsApplication.getCncBrowsingValidatePlaceDetails()?.placeDetails?.placeId
+                            else WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.placeId
+                        ),
+                        browsingCncStore?.storeId
+                    )
                 }
+
                 Delivery.DASH -> {
-                    ConfirmLocationRequest(BundleKeysConstants.DASH,
-                        ConfirmLocationAddress(if (WoolworthsApplication.getDashBrowsingValidatePlaceDetails() != null)
-                            WoolworthsApplication.getDashBrowsingValidatePlaceDetails()?.placeDetails?.placeId
-                        else WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.placeId),
+                    ConfirmLocationRequest(
+                        BundleKeysConstants.DASH,
+                        ConfirmLocationAddress(
+                            if (WoolworthsApplication.getDashBrowsingValidatePlaceDetails() != null)
+                                WoolworthsApplication.getDashBrowsingValidatePlaceDetails()?.placeDetails?.placeId
+                            else WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.placeId
+                        ),
                         if (WoolworthsApplication.getDashBrowsingValidatePlaceDetails() != null)
                             WoolworthsApplication.getDashBrowsingValidatePlaceDetails()?.onDemand?.storeId
                         else WoolworthsApplication.getValidatePlaceDetails()?.onDemand?.storeId
                     )
                 }
+
                 else -> {
-                    ConfirmLocationRequest(BundleKeysConstants.STANDARD,
+                    ConfirmLocationRequest(
+                        BundleKeysConstants.STANDARD,
                         ConfirmLocationAddress(WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.placeId),
-                        "")
+                        ""
+                    )
                 }
             }
         }
@@ -853,9 +925,10 @@ class KotlinUtils {
             keys?.forEach { key ->
                 val start = string.indexOf(key)
                 val end = start.plus(key.length)
-                val myriadProFont: TypefaceSpan = CustomTypefaceSpan("", getMyriadProSemiBoldFont())
+                val opensansSemiBoldFont: TypefaceSpan =
+                    CustomTypefaceSpan("", getOpenSansSemiBoldFont())
                 noteStringBuilder.setSpan(
-                    myriadProFont,
+                    opensansSemiBoldFont,
                     start,
                     end,
                     Spannable.SPAN_INCLUSIVE_INCLUSIVE
@@ -960,7 +1033,9 @@ class KotlinUtils {
             }
         }
 
-        fun String.capitaliseFirstLetterInEveryWord(): String = split(" ").map { it.lowercase().replaceFirstChar { it -> it.titlecase() } }.joinToString(" ")
+        fun String.capitaliseFirstLetterInEveryWord(): String =
+            split(" ").map { it.lowercase().replaceFirstChar { it -> it.titlecase() } }
+                .joinToString(" ")
 
         fun showGeneralInfoDialog(
             fragmentManager: FragmentManager,
@@ -971,7 +1046,13 @@ class KotlinUtils {
             isFromCheckoutScreen: Boolean = false
         ) {
             val dialog =
-                GeneralInfoDialogFragment.newInstance(description, title, actionText, infoIcon, isFromCheckoutScreen)
+                GeneralInfoDialogFragment.newInstance(
+                    description,
+                    title,
+                    actionText,
+                    infoIcon,
+                    isFromCheckoutScreen
+                )
             dialog.isCancelable = !isFromCheckoutScreen
             fragmentManager.let { fragmentTransaction ->
                 dialog.show(
@@ -1236,7 +1317,7 @@ class KotlinUtils {
             doJob: () -> Unit,
             elseJob: () -> Unit,
         ) {
-            if (MyAccountsFragment.verifyAppInstanceId() &&
+            if (verifyAppInstanceId() &&
                 (Utils.isGooglePlayOrHuaweiMobileServicesAvailable())
             ) {
                 doJob()
@@ -1251,9 +1332,9 @@ class KotlinUtils {
             }
         }
 
-         fun getUpdatedUtils(rating:Float) :Float{
-             val completeValue: Int =  rating.toInt() %10
-             val decimalValue:Int = ((rating %1)*10).toInt()
+        fun getUpdatedUtils(rating: Float): Float {
+            val completeValue: Int = rating.toInt() % 10
+            val decimalValue: Int = ((rating % 1) * 10).toInt()
 
             if (decimalValue >= 0 && decimalValue <= 2) {
                 return completeValue.toFloat()
@@ -1262,9 +1343,11 @@ class KotlinUtils {
             }
             return rating.roundToInt().toFloat()
         }
-          fun getPreferredDeliveryType(): Delivery? {
+
+        fun getPreferredDeliveryType(): Delivery? {
             return Delivery.getType(
-                Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.deliveryType ?: Delivery.STANDARD.type
+                Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.deliveryType
+                    ?: Delivery.STANDARD.type
             )
         }
 
@@ -1276,28 +1359,39 @@ class KotlinUtils {
             }
         }
 
-         fun getDeliveryDetails(isUserBrowsing : Boolean): String? {
+        fun getDeliveryDetails(isUserBrowsing: Boolean): String? {
             return if (isUserBrowsing) {
                 when (browsingDeliveryType) {
                     Delivery.CNC -> {
-                        browsingCncStore?.deliveryDetails ?: getPreferredCnCStore()?.deliveryDetails ?: ""
+                        browsingCncStore?.deliveryDetails ?: getPreferredCnCStore()?.deliveryDetails
+                        ?: ""
                     }
+
                     Delivery.DASH -> {
-                         WoolworthsApplication.getDashBrowsingValidatePlaceDetails()?.onDemand?.deliveryDetails
-                             ?: WoolworthsApplication.getValidatePlaceDetails()?.onDemand?.deliveryDetails ?: ""
+                        WoolworthsApplication.getDashBrowsingValidatePlaceDetails()?.onDemand?.deliveryDetails
+                            ?: WoolworthsApplication.getValidatePlaceDetails()?.onDemand?.deliveryDetails
+                            ?: ""
                     }
-                    Delivery.STANDARD -> WoolworthsApplication.getValidatePlaceDetails()?.deliveryDetails ?: ""
+
+                    Delivery.STANDARD -> WoolworthsApplication.getValidatePlaceDetails()?.deliveryDetails
+                        ?: ""
+
                     else -> WoolworthsApplication.getValidatePlaceDetails()?.deliveryDetails ?: ""
                 }
             } else {
                 when (getPreferredDeliveryType()) {
                     Delivery.CNC -> {
-                         getPreferredCnCStore()?.deliveryDetails ?: ""
+                        getPreferredCnCStore()?.deliveryDetails ?: ""
                     }
+
                     Delivery.DASH -> {
-                        WoolworthsApplication.getValidatePlaceDetails()?.onDemand?.deliveryDetails ?: ""
+                        WoolworthsApplication.getValidatePlaceDetails()?.onDemand?.deliveryDetails
+                            ?: ""
                     }
-                    Delivery.STANDARD -> WoolworthsApplication.getValidatePlaceDetails()?.deliveryDetails ?: ""
+
+                    Delivery.STANDARD -> WoolworthsApplication.getValidatePlaceDetails()?.deliveryDetails
+                        ?: ""
+
                     else -> WoolworthsApplication.getValidatePlaceDetails()?.deliveryDetails ?: ""
                 }
             }
@@ -1334,17 +1428,19 @@ class KotlinUtils {
             }
         }
 
-        fun retrieveFulfillmentStoreId(fulFillmentTypeId: String): String {
+        fun retrieveFulfillmentStoreId(fulFillmentTypeId: String?): String {
             var fulFillmentStoreId: String = ""
-            var typeId = fulFillmentTypeId
-            if (typeId.length == 1)
-                typeId = "0$typeId"
-            Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.fulfillmentStores?.let {
-                val details = Gson().fromJson<Map<String, String>>(
-                    it,
-                    object : com.google.gson.reflect.TypeToken<Map<String, String>>() {}.type
-                )
-                fulFillmentStoreId = details?.get(typeId) ?: ""
+            fulFillmentTypeId?.let {
+                var typeId = fulFillmentTypeId
+                if (typeId.length == 1)
+                    typeId = "0$typeId"
+                Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.fulfillmentStores?.let {
+                    val details = Gson().fromJson<Map<String, String>>(
+                        it,
+                        object : com.google.gson.reflect.TypeToken<Map<String, String>>() {}.type
+                    )
+                    fulFillmentStoreId = details?.get(typeId) ?: ""
+                }
             }
             return fulFillmentStoreId
         }
@@ -1373,6 +1469,7 @@ class KotlinUtils {
 
                     }
                 }
+
                 false -> result(deviceID)
             }
         }
@@ -1402,7 +1499,8 @@ class KotlinUtils {
                 LocalDateTime.parse(
                     dateString,
                     DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS")
-                ) }catch (e :Exception) {
+                )
+            } catch (e: Exception) {
                 LocalDateTime.parse(
                     dateString,
                     DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS")
@@ -1436,9 +1534,11 @@ class KotlinUtils {
                 }
             }
         }
+
         fun isFicaEnabled(): Boolean {
             return Utils.isFeatureEnabled(accountOptions?.ficaRefresh?.minimumSupportedAppBuildNumber)
         }
+
         fun isPetInsuranceEnabled(): Boolean {
             return Utils.isFeatureEnabled(accountOptions?.insuranceProducts?.minimumSupportedAppBuildNumber)
         }
@@ -1479,12 +1579,14 @@ class KotlinUtils {
                             throwable.code()
                         )
                     )
+
                     is Exception -> errorHandler(
                         AbsaApiFailureHandler.Exception(
                             throwable.message,
                             throwable.hashCode()
                         )
                     )
+
                     else -> errorHandler(AbsaApiFailureHandler.NoInternetApiFailure)
                 }
             })
@@ -1500,31 +1602,39 @@ class KotlinUtils {
                 )
             }
         }
+
         fun vocShoppingHandling(deliveryType: String?): VocTriggerEvent? {
-            var event:VocTriggerEvent? = null
-            when(Delivery.getType(deliveryType)){
-                Delivery.CNC->{
+            var event: VocTriggerEvent? = null
+            when (Delivery.getType(deliveryType)) {
+                Delivery.CNC -> {
                     event = VocTriggerEvent.SHOP_CLICK_COLLECT_CONFIRM
                 }
-                Delivery.STANDARD->{
+
+                Delivery.STANDARD -> {
                     event = VocTriggerEvent.CHCKOUT_CNT_TO_PMNT
                 }
+
                 else -> {}
             }
             return event
         }
 
-         fun showMinCartValueError(activity: AppCompatActivity, minimumBasketAmount: Double?) {
-             activity?.supportFragmentManager?.let {
-                 showGeneralInfoDialog(
-                     it,
-                     activity.getString(R.string.minspend_error_msg_desc),
-                     String.format(activity.getString(R.string.minspend_error_msg_title, minimumBasketAmount)),
-                     activity.getString(R.string.got_it),
-                     R.drawable.ic_cart,
-                     true
-                 )
-             }
+        fun showMinCartValueError(activity: AppCompatActivity, minimumBasketAmount: Double?) {
+            activity?.supportFragmentManager?.let {
+                showGeneralInfoDialog(
+                    it,
+                    activity.getString(R.string.minspend_error_msg_desc),
+                    String.format(
+                        activity.getString(
+                            R.string.minspend_error_msg_title,
+                            minimumBasketAmount
+                        )
+                    ),
+                    activity.getString(R.string.got_it),
+                    R.drawable.ic_cart,
+                    true
+                )
+            }
         }
 
         @JvmStatic
@@ -1569,7 +1679,7 @@ class KotlinUtils {
                     openInternalWebView.putExtra(COLLECTIONS_EXIT_URL, collectionsExitUrl)
                     startActivityForResult(
                         openInternalWebView,
-                        MyAccountsFragment.PET_INSURANCE_REQUEST_CODE
+                        PET_INSURANCE_REQUEST_CODE
                     )
                 } else {
                     openUrlInPhoneBrowser(url, activity)
@@ -1578,16 +1688,139 @@ class KotlinUtils {
             }
         }
 
-        fun getFormattedNickName(nickname: String?, address: CharSequence?, context: Context?): SpannableStringBuilder {
+        fun getFormattedNickName(
+            nickname: String?,
+            address: CharSequence?,
+            context: Context?
+        ): SpannableStringBuilder {
             val nickNameWithAddress = SpannableStringBuilder()
             var formattedNickName =
-                SpannableString(nickname.plus(" ").plus(context?.resources?.getString(R.string.bullet)).plus(" "))
+                SpannableString(
+                    nickname.plus(" ").plus(context?.resources?.getString(R.string.bullet))
+                        .plus(" ")
+                )
 
             if (nickname.isNullOrEmpty() == true || nickname?.equals(address) == true) {
                 formattedNickName = SpannableString(context?.resources?.getString(R.string.empty))
             }
             nickNameWithAddress.append(formattedNickName)
             return nickNameWithAddress
+        }
+
+        /**
+         * This function requires to implement setFragmentResultListener with requestkey
+         * ADD_TO_SHOPPING_LIST_REQUEST_CODE since it returns a result.
+         */
+        fun openAddToListPopup(
+            activity: Activity?,
+            fragmentManager: FragmentManager,
+            listOfItems: ArrayList<AddToListRequest>,
+            orderId: String? = null,
+            eventData: AddToWishListFirebaseEventData? = null
+        ) {
+
+            val fragment = AddToListFragment().also {
+                it.arguments = Bundle().apply {
+                    putString(AddToListViewModel.ARG_ORDER_ID, orderId)
+                    putInt(
+                        AppConstant.RESULT_CODE, ADD_TO_SHOPPING_LIST_REQUEST_CODE
+                    )
+                    putParcelableArrayList(AddToListViewModel.ARG_ITEMS_TO_BE_ADDED, listOfItems)
+                    putParcelable(BUNDLE_WISHLIST_EVENT_DATA, eventData)
+                }
+            }
+            fragment.show(fragmentManager, AddToListFragment::class.simpleName)
+            (activity as? BottomNavigationActivity)?.apply {
+                Utils.triggerFireBaseEvents(
+                    FirebaseManagerAnalyticsProperties.SHOPADDTOLIST,
+                    this
+                )
+            }
+        }
+
+        fun setAddToListFragmentResultListener(
+            requestCode: Int = ADD_TO_SHOPPING_LIST_REQUEST_CODE,
+            activity: FragmentActivity,
+            lifecycleOwner: LifecycleOwner,
+            toastContainerView: View,
+            onToastClick: () -> Unit
+        ) {
+            activity.supportFragmentManager.setFragmentResultListener(
+                requestCode.toString(),
+                lifecycleOwner
+            ) { _, bundle ->
+
+                when (bundle.getInt(AppConstant.RESULT_CODE, -1)) {
+                    ADD_TO_SHOPPING_LIST_REQUEST_CODE -> {
+                        val selectedLists: ArrayList<ShoppingList>? =
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                bundle.getParcelableArrayList(
+                                    AppConstant.Keys.KEY_LIST_DETAILS,
+                                    ShoppingList::class.java
+                                )
+                            } else {
+                                bundle.get(AppConstant.Keys.KEY_LIST_DETAILS) as?
+                                        ArrayList<ShoppingList>
+                            }
+
+                        val listName =
+                            if (selectedLists?.size == 1) {
+                                selectedLists.getOrNull(0)?.listName
+                            } else {
+                                activity.getString(R.string.multiple_lists)
+                            }
+                        val hasGiftProduct = bundle.getBoolean(KEY_HAS_GIFT_PRODUCT)
+
+                        ToastFactory.buildItemsAddedToList(
+                            activity = activity,
+                            viewLocation = toastContainerView,
+                            listName = listName ?: return@setFragmentResultListener,
+                            hasGiftProduct = hasGiftProduct,
+                            count = bundle.getInt(AppConstant.Keys.KEY_COUNT, 0),
+                            onButtonClick = {
+                                (activity as? BottomNavigationActivity)?.apply {
+                                    navigateToTabIndex(BottomNavigationActivity.INDEX_ACCOUNT, null)
+                                }
+
+                                if (selectedLists?.size == 1) {
+                                    selectedLists.getOrNull(0)?.let {
+                                        ScreenManager.presentShoppingListDetailActivity(
+                                            activity,
+                                            it.listId,
+                                            it.listName,
+                                            false
+                                        )
+                                    }
+                                } else {
+                                    ScreenManager.presentMyListScreen(activity)
+                                }
+                                onToastClick()
+                            }
+                        )
+                    }
+
+                    AppConstant.RESULT_FAILED -> {
+                        Toast.makeText(
+                            activity,
+                            R.string.add_to_list_failure,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            }
+        }
+
+        fun triggerFireBaseEvents(
+            eventName: String,
+            arguments: Map<String, String>,
+            activity: Activity?
+        ) {
+            val params = Bundle()
+            arguments.forEach { entry ->
+                params.putString(entry.key, entry.value)
+            }
+            logEvent(eventName, params)
+            requestInAppReview(eventName, activity)
         }
     }
 }
@@ -1614,8 +1847,9 @@ fun Fragment.setDialogPadding(dialog: Dialog?) {
         )
     }
 }
+
 fun RecyclerView.runWhenReady(action: () -> Unit) {
-    val globalLayoutListener = object: ViewTreeObserver.OnGlobalLayoutListener {
+    val globalLayoutListener = object : ViewTreeObserver.OnGlobalLayoutListener {
         override fun onGlobalLayout() {
             action()
             viewTreeObserver.removeOnGlobalLayoutListener(this)
@@ -1624,10 +1858,15 @@ fun RecyclerView.runWhenReady(action: () -> Unit) {
     viewTreeObserver.addOnGlobalLayoutListener(globalLayoutListener)
 }
 
+var EditText.value
+    get() = this.text.toString()
+    set(value) {
+        this.setText(value)
+    }
 
-fun Fragment.isFragmentAttached():Boolean {
+fun Fragment.isFragmentAttached(): Boolean {
     if (isAdded && context != null) {
-        return  true
+        return true
     }
     return false
 }

@@ -392,6 +392,7 @@ open class FirebaseManagerAnalyticsProperties {
         const val SCREEN_VIEW_PLP: String = "screen_view"
         const val ADD_PAYMENT_INFO: String = "add_payment_info"
         const val PURCHASE: String = "purchase"
+        const val DASH_PREFIX = "dash_"
 
 
         //Geolocation
@@ -434,6 +435,13 @@ open class FirebaseManagerAnalyticsProperties {
          const val REFUND = "refund"
          const val DASH_DRIVER_TIP = "dash_driver_tip"
          const val DASH_SELECT_CONTENT = "select_content"
+
+        //checkout voucher or promocode
+        const val CHECKOUT = "Checkout"
+
+        //Address Checkout
+        const val FORM_START = "form_start"
+        const val FORM_COMPLETE = "form_complete"
     }
 
     class PropertyNames {
@@ -454,6 +462,8 @@ open class FirebaseManagerAnalyticsProperties {
             const val CANCEL_FAILURE_RETRY = "Cancel Failure Retry"
             const val ACTION = "ACTION"
             const val ACTION_LOWER_CASE = "action"
+            const val TOGGLE_SELECTED = "toggle_selected"
+            const val TIME_SELECTED = "time_selected"
             const val NUTRITIONAL_INFORMATION_PRODUCT_ID = "NUTRITIONAL_PRODUCT_ID"
             const val PRODUCT_DETAILS_INFORMATION_PRODUCT_ID = "PRODUCT_DETAILS_PRODUCT_ID"
             const val INGREDIENTS_INFORMATION_PRODUCT_ID = "INGREDIENTS_PRODUCT_ID"
@@ -544,12 +554,24 @@ open class FirebaseManagerAnalyticsProperties {
             const val REFUND_TYPE = "refund_type"
             const val CONTENT_NAME = "content_name"
             const val CONTENT_SLOT = "content_slot"
-
+            const val BANNER_ENGAGEMENT = "banner_engagement"
+            const val BANNER_POSITION = "banner_position"
+            const val BANNER_LIST_NAME = "banner_list_name"
             const val FULFILLMENT_FOOD_STORE_KEY_01 = "food_ffstore"
             const val FULFILLMENT_FBH_STORE_KEY_02 = "other02_ffstore"
             const val FULFILLMENT_FBH_STORE_KEY_04 = "other04_ffstore"
             const val FULFILLMENT_FBH_STORE_KEY_07 = "other07_ffstore"
             const val LIQUOR_DELIVERABLE = "liquor_deliverable"
+
+            //Address Checkout
+            const val FORM_TYPE = "form_type"
+            const val FORM_NAME = "form_name"
+            const val FORM_LOCATION = "form_location"
+
+            //checkout vouchers or promo code
+            const val STEP = "step"
+            const val OPTION = "option"
+            const val DELIVERY_TYPE = "delivery_type"
         }
     }
 
@@ -581,6 +603,16 @@ open class FirebaseManagerAnalyticsProperties {
             const val ACTION_VALUE_NATIVE_CHECKOUT_CONFIRM_STORE: String = "Customer selects to their store selected"
             const val ACTION_VALUE_NATIVE_CHECKOUT_ADD_NEW_ADDRESS: String =
                 "Customer selects to add an address for their delivery option"
+            const val DELIVERY_PAGE = "delivery page"
+            const val SELECT_TIMESLOT = "select timeslot"
+            const val FOOD_SUBSTITUTION = "food substitutions"
+            const val CHAT_WITH_SHOPPER = "Chat with shopper"
+            const val PHONE_ME = "Phone me"
+            const val SUBSTITUTE = "substitute"
+            const val NO_THANKS = "no thanks"
+            const val NEED_SHOPPING_BAG = "need shopping bag"
+            const val IS_THIS_GIFT = "is this a gift?"
+            const val SPECIAL_DELIVERY_INSTRUCTION = "special delivery instructions"
             const val ACTION_VALUE_NATIVE_CHECKOUT_EDIT_ADDRESS: String =
                 "Customer selects to edit an already added address for their delivery option"
             const val ACTION_VALUE_NATIVE_CHECKOUT_DELETE_ADDRESS: String =
@@ -593,17 +625,7 @@ open class FirebaseManagerAnalyticsProperties {
                 "Customer changed Delivery address / Collection"
             const val ACTION_VALUE_NATIVE_CHECKOUT_CANCEL_REMOVE_ITEMS: String =
                 "Customer changed Delivery address / Collection and does not want items removed."
-            const val ACTION_VALUE_NATIVE_CHECKOUT_SUBSTITUTION_PHONE: String =
-                "Customer selects to be phoned rather than the default Substitute for similar items if one is available"
-            const val ACTION_VALUE_NATIVE_CHECKOUT_SUBSTITUTION_NO_THANKS: String =
-                "Customer selects No Thanks rather than the default Substitute for similar items if one is available"
             const val ACTION_VALUE_NATIVE_CHECKOUT_BAGS_INFO: String = "Customer selects to view additional information on shopping bags"
-            const val ACTION_VALUE_NATIVE_CHECKOUT_SPECIAL_INSTRUCTION: String =
-                "Customer selects Special Collection Instructions toggle to add information"
-            const val ACTION_VALUE_NATIVE_CHECKOUT_IS_THIS_GIFT: String =
-                "Customer selects ‘Is this a gift’ toggle to add information"
-            const val ACTION_VALUE_NATIVE_CHECKOUT_CONTINUE_TO_PAYMENT: String =
-                "Customer has entered all the relevant info and confirms by selecting 'Continue to Payment'"
             const val ACTION_VALUE_NATIVE_CHECKOUT_WREWARDS_SAVING: String =
                 "Customer selects the 'Missed WRewards Savings' information button"
             const val ACTION_VALUE_NATIVE_CHECKOUT_WREWARDS_SIGN_UP: String =
@@ -670,6 +692,27 @@ open class FirebaseManagerAnalyticsProperties {
             const val DASH_CATEGORY_NAME: String = "Food"
             const val DASH_CANCELLED_ORDER: String = "Cancelled_Order"
 
+            //Address Checkout
+            const val BROWSE = "browse"
+            const val TAXI = "Taxi"
+            const val MY_VEHICLE = "My Vehicle"
+
+            const val STANDARD = "Standard"
+            const val CLICK_AND_COLLECT = "Click and collect"
+            const val DASH = "Dash"
+
+            //checkout promo or voucher action
+            const val VIEW_VOUCHER = "view voucher"
+            const val VIEW_WREWARDS_VOUCHERS = "view wrewards vouchers"
+            const val ADD_PROMO_CODE = "add promo code"
+
+            //checkout promo or voucher option
+            const val VOUCHERS = "vouchers"
+            const val ADD_PROMO = "add promo"
+
+            //checkout promo step
+            const val BASKET = "basket"
+
         }
     }
 
@@ -691,7 +734,7 @@ open class FirebaseManagerAnalyticsProperties {
             const val SHOP_MAIN_CATEGORIES: String = "Shop Main Categories"
             const val SHOP_SUB_CATEGORIES: String = "Shop Sub Categories"
             const val PRODUCT_SEARCH: String = "Product Search"
-            const val PRODUCT_SEARCH_RESULTS: String = "Product Search Result"
+            const val PRODUCT_LISTING_PAGE: String = "Product Listing Page"
             const val PRODUCT_SEARCH_REFINEMENT: String = "Product Search Refinement"
             const val PRODUCT_SEARCH_REFINEMENT_CATEGORY: String = "Product Search Refinement Category"
             const val PRODUCT_DETAIL: String = "Product Detail"

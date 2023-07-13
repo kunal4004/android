@@ -79,13 +79,10 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.shop.Rem
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants
 import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.LockableNestedScrollViewV2
-import za.co.woolworths.financial.services.android.ui.views.ToastFactory.Companion.buildAddToCartSuccessToast
-import za.co.woolworths.financial.services.android.ui.views.ToastFactory.Companion.showItemsLimitToastOnAddToCart
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView.IWalkthroughActionListener
 import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ActionSheetDialogFragment
-import za.co.woolworths.financial.services.android.ui.wfs.common.getIpAddress
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_EXPECTATION_FAILED_502
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
@@ -93,8 +90,6 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_SESSION_TIMEOUT_440
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getPreferredDeliveryType
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getPreferredPlaceId
-import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.isDeliveryOptionClickAndCollect
-import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.isDeliveryOptionDash
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.presentEditDeliveryGeoLocationActivity
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.setDeliveryAddressView
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.showGeneralInfoDialog
@@ -103,8 +98,13 @@ import za.co.woolworths.financial.services.android.util.QueryBadgeCounter.Compan
 import za.co.woolworths.financial.services.android.util.ToastUtils.ToastInterface
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper.FirebaseEventAction.*
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper.FirebaseEventOption.ADD_PROMO
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper.FirebaseEventOption.VOUCHERS
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper.triggerFirebaseEventVouchersOrPromoCode
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.logException
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.setCrashlyticsString
+import za.co.woolworths.financial.services.android.util.analytics.dto.AddToWishListFirebaseEventData
 import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.util.wenum.Delivery.Companion.getType
@@ -222,8 +222,8 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         //One time biometricsWalkthrough
         if (isVisible) {
             ScreenManager.presentBiometricWalkthrough(activity)
+            loadShoppingCart()
         }
-        loadShoppingCart()
     }
 
     private fun initViews() {
@@ -639,9 +639,22 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         //refresh the pricing view
         if(cartProductAdapter?.cartItems?.isNullOrEmpty() == true){
             setPriceInformationVisibility(false)
+            setRecommendationDividerVisibility(visibility = false)
         } else {
             updatePriceInformation()
         }
+    }
+
+    override fun openAddToListPopup(
+        addToListRequests: ArrayList<AddToListRequest>,
+        addToWishListEventData: AddToWishListFirebaseEventData?
+    ) {
+        KotlinUtils.openAddToListPopup(
+            requireActivity(),
+            requireActivity().supportFragmentManager,
+            addToListRequests,
+            eventData = addToWishListEventData
+        )
     }
 
     override fun onChangeQuantity(commerceId: CommerceItem, quantity: Int) {
@@ -870,10 +883,15 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         priceHolder.vouchersMain.rlAvailableWRewardsVouchers.setOnClickListener {
             onViewVouchers()
             triggerFirebaseEventForCart(appliedVouchersCount)
+            triggerFirebaseEventVouchersOrPromoCode(
+                VIEW_WREWARDS_VOUCHERS.value,
+                VOUCHERS.value,requireActivity())
         }
         priceHolder.vouchersMain.rlAvailableCashVouchers?.setOnClickListener {
             onViewCashBackVouchers()
             triggerFirebaseEventForCart(appliedVouchersCount)
+            triggerFirebaseEventVouchersOrPromoCode(VIEW_VOUCHER.value,
+                VOUCHERS.value,requireActivity())
         }
 
         if (voucherDetails == null) {
@@ -1379,6 +1397,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     }
 
     private fun showRecommendedProducts() {
+        setRecommendationDividerVisibility(visibility = false)
         val bundle = Bundle()
         val cartLinesValue: MutableList<CartProducts> = arrayListOf()
 
@@ -1532,28 +1551,6 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         }
         if (resultCode == Activity.RESULT_OK) {
             when (requestCode) {
-                BottomNavigationActivity.PDP_REQUEST_CODE -> {
-                    val activity: FragmentActivity = activity ?: return
-                    loadShoppingCart()
-                    loadShoppingCartAndSetDeliveryLocation()
-                    val productCountMap = Utils.jsonStringToObject(
-                        data?.getStringExtra("ProductCountMap"), ProductCountMap::class.java
-                    ) as ProductCountMap
-                    val itemsCount = data?.getIntExtra("ItemsCount", 0)
-                    if ((isDeliveryOptionClickAndCollect() || isDeliveryOptionDash())
-                        && productCountMap.quantityLimit?.foodLayoutColour != null
-                    ) {
-                        showItemsLimitToastOnAddToCart(
-                            binding.rlCheckOut,
-                            productCountMap,
-                            activity,
-                            count = itemsCount ?: 0,
-                            viewButtonVisible = false
-                        )
-                    } else {
-                        buildAddToCartSuccessToast(binding.rlCheckOut, false, activity, null)
-                    }
-                }
                 REDEEM_VOUCHERS_REQUEST_CODE, APPLY_PROMO_CODE_REQUEST_CODE -> {
                     val shoppingCartResponse = Utils.strToJson(
                         data?.getStringExtra("ShoppingCartResponse"),
@@ -1646,7 +1643,9 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         setupToolbar()
         initializeBottomTab()
         initializeLoggedInUserCartUI()
-        loadShoppingCart()
+        if (!isVisible) {
+            loadShoppingCart()
+        }
     }
 
     override fun onConnectionChanged() {
@@ -2069,12 +2068,12 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     }
 
     override fun onEnterPromoCode() {
-        Utils.triggerFireBaseEvents(
-            FirebaseManagerAnalyticsProperties.Cart_promo_enter,
-            requireActivity()
-        )
+        triggerFirebaseEventVouchersOrPromoCode(
+            ADD_PROMO_CODE.value,
+            ADD_PROMO.value,requireActivity())
         navigateToApplyPromoCodePage()
     }
+
 
     override fun onRemovePromoCode(promoCode: String) {
         viewModel.onRemovePromoCode(CouponClaimCode(promoCode))
@@ -2416,6 +2415,13 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             enableItemDelete(false)
             viewModel.removeAllCartItem()
         }
+
+        KotlinUtils.setAddToListFragmentResultListener(
+            activity = requireActivity(),
+            lifecycleOwner = viewLifecycleOwner,
+            toastContainerView = binding.rlCheckOut,
+            onToastClick = {}
+        )
     }
 
     private fun postAnalyticsRemoveFromCart(commerceItems: List<CommerceItem>){
@@ -2432,6 +2438,16 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             loadShoppingCart()
             binding.nestedScrollView.fullScroll(ScrollView.FOCUS_UP)
         }
+    }
+
+    override fun onRecommendationsLoadedSuccessfully() {
+        if(isAdded) {
+            setRecommendationDividerVisibility(visibility = !cartProductAdapter?.cartItems.isNullOrEmpty())
+        }
+    }
+
+    private fun setRecommendationDividerVisibility(visibility: Boolean) {
+        binding.viewRecommendationDivider.visibility = if(visibility) View.VISIBLE else View.GONE
     }
 
     private fun addScrollListeners() {

@@ -80,6 +80,7 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
                 baseFragBundle?.putBoolean(LIQUOR_ORDER, getBoolean(LIQUOR_ORDER))
                 baseFragBundle?.putString(NO_LIQUOR_IMAGE_URL, getString(NO_LIQUOR_IMAGE_URL))
             }
+            baseFragBundle?.putBoolean(BundleKeysConstants.IS_COMING_FROM_CHECKOUT, true)
            baseFragBundle?.putSerializable(CheckoutAddressManagementBaseFragment.CART_ITEM_LIST, cartItemList)
 
         }
@@ -143,20 +144,6 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
         navHostFrag = supportFragmentManager.findFragmentById(R.id.navHostFragment) as NavHostFragment
         val graph =
             navHostFrag.navController.navInflater.inflate(R.navigation.nav_graph_checkout)
-
-        if (checkIfAddressHasNoUnitComplexNo() && (whoIsCollectingString.isNullOrEmpty() || isComingFromCnc == false) && isEditAddressScreenNeeded) {
-            // Show edit address screen to add Unit complex no to address.
-            baseFragBundle?.putString(
-                CheckoutAddressConfirmationListAdapter.EDIT_SAVED_ADDRESS_RESPONSE_KEY,
-                Utils.toJson(savedAddressResponse))
-
-            baseFragBundle?.putInt(CheckoutAddressConfirmationListAdapter.EDIT_ADDRESS_POSITION_KEY,
-                mSavedAddressPosition)
-            graph.startDestination = R.id.CheckoutAddAddressNewUserFragment
-            findNavController(R.id.navHostFragment).setGraph(graph,
-                bundleOf(BundleKeysConstants.BUNDLE to baseFragBundle))
-            return
-        }
 
         graph.startDestination = getStartDestinationGraph()
         findNavController(R.id.navHostFragment).setGraph(graph, baseFragBundle)

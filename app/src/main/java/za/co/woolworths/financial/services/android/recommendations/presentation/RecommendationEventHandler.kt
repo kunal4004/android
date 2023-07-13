@@ -5,4 +5,5 @@ package za.co.woolworths.financial.services.android.recommendations.presentation
  */
 interface RecommendationEventHandler {
     fun onItemAddedToCart()
+    fun onRecommendationsLoadedSuccessfully()
 }

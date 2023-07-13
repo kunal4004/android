@@ -43,15 +43,14 @@
 
     <TextView
         android:id="@+id/tv_email_us_loading_desc"
+        style="@style/opensans_regular_11_black"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/myriad_pro_regular"
         android:gravity="center"
         android:layout_marginStart="@dimen/_32sdp"
         android:layout_marginEnd="@dimen/_32sdp"
         android:text="@string/processing_your_request_desc"
         android:textColor="@color/color_7f7f7f"
-        android:textSize="@dimen/_12ssp"
         android:lineSpacingExtra="@dimen/_6sdp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
