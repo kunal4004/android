@@ -156,10 +156,10 @@ class ProductSubstitutionRepositoryTest {
         skuInventory.quantity = 15
         skuInventoryList.add(0, skuInventory)
         skusInventoryForStoreResponse.skuInventory = skuInventoryList
-        `when`(substitutionApiHelper.fetchInventoryForSubstitution(STORE_ID, SKU_ID))
+        `when`(substitutionApiHelper.fetchInventoryForKiboProducts(STORE_ID, SKU_ID))
             .thenReturn(Response.success(skusInventoryForStoreResponse))
         val productSubstitutionRepository = ProductSubstitutionRepository(substitutionApiHelper)
-        val result = productSubstitutionRepository.getInventoryForSubstitution(STORE_ID, SKU_ID)
+        val result = productSubstitutionRepository.fetchInventoryForKiboProducts(STORE_ID, SKU_ID)
         Assert.assertNotNull(skusInventoryForStoreResponse)
         Assert.assertEquals(1, result.data?.skuInventory?.size)
         Assert.assertEquals(STORE_ID, result.data?.storeId)
@@ -168,20 +168,20 @@ class ProductSubstitutionRepositoryTest {
 
     @Test
     fun fetchInventory_returnEmptyResponse() = runTest {
-        `when`(substitutionApiHelper.fetchInventoryForSubstitution(STORE_ID, SKU_ID))
+        `when`(substitutionApiHelper.fetchInventoryForKiboProducts(STORE_ID, SKU_ID))
             .thenReturn(Response.success(skusInventoryForStoreResponse))
         val sut = ProductSubstitutionRepository(substitutionApiHelper)
-        val result = sut.getInventoryForSubstitution(STORE_ID, SKU_ID)
+        val result = sut.fetchInventoryForKiboProducts(STORE_ID, SKU_ID)
 
         Assert.assertEquals(null, result.data?.skuInventory)
     }
 
     @Test
     fun fetchInventory_withError() = runTest {
-        `when`(substitutionApiHelper.fetchInventoryForSubstitution(STORE_ID, SKU_ID))
+        `when`(substitutionApiHelper.fetchInventoryForKiboProducts(STORE_ID, SKU_ID))
             .thenReturn(Response.error(504, "".toResponseBody()))
         val productSubstitutionRepository = ProductSubstitutionRepository(substitutionApiHelper)
-        val result = productSubstitutionRepository.getInventoryForSubstitution(STORE_ID, SKU_ID)
+        val result = productSubstitutionRepository.fetchInventoryForKiboProducts(STORE_ID, SKU_ID)
         Assert.assertEquals(Status.ERROR, result.status)
     }
 
@@ -275,7 +275,7 @@ class ProductSubstitutionRepositoryTest {
     }
 
     fun prepareKiboResponse(): KiboProductResponse {
-        val item = Item("", "1", title = "White Thick Slice Bread 700 g" , imageLink = "", price = 32.6 )
+        val item = Item("", "1", title = "White Thick Slice Bread 700 g" , imageLink = "", price = 32.6, defaultPrice =32.6 )
         val items = ArrayList<Item>()
         items.add(item)
         val action = Action(items)

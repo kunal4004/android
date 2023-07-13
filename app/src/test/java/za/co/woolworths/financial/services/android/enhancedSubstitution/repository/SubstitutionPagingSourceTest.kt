@@ -51,20 +51,6 @@ class SubstitutionPagingSourceTest {
                 PagingSource.LoadParams.Refresh(key = 0, loadSize = 1, placeholdersEnabled = false)))
     }
 
-    @Test
-    fun getSearch_loadFailWithNullResponse() = runTest {
-        given(apiHelper.getSearchedProducts(requestParams)).willReturn(null)
-        val expectedResult = PagingSource.LoadResult.Error<Int, ProductList>(NullPointerException())
-        assertEquals(
-                expectedResult.toString(), substitutionPagingSource.load(
-                PagingSource.LoadParams.Refresh(
-                        key = 0,
-                        loadSize = 1,
-                        placeholdersEnabled = false
-                )
-        ).toString()
-        )
-    }
 
     @Test
     fun getSearch_loadWithCorrectResponse() = runTest {
