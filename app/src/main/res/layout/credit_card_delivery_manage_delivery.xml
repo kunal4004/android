@@ -42,6 +42,8 @@
             <TextView
                 android:id="@+id/deliveryDate"
                 style="@style/opensans_regular_13_black"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/twenty_dp"
                 android:contentDescription="@string/cd_ccd_txtdayanddate"
                 android:lineSpacingMultiplier="1.33"
@@ -54,6 +56,8 @@
                 android:id="@+id/deliveryTime"
                 style="@style/opensans_regular_13_black"
                 android:contentDescription="@string/cd_ccd_txttimeslot"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:lineSpacingMultiplier="1.33"
                 android:textColor="@color/offer_title"
                 app:layout_constraintRight_toRightOf="@id/right_guideline"
@@ -62,6 +66,8 @@
             <TextView
                 android:id="@+id/deliveryAddress"
                 style="@style/opensans_regular_13_black"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/twenty_dp"
                 android:contentDescription="@string/cd_ccd_txtdeliveryaddress"
                 android:lineSpacingMultiplier="1.33"
@@ -112,6 +118,8 @@
             <TextView
                 android:id="@+id/name"
                 style="@style/opensans_regular_13_black"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:contentDescription="@string/cd_ccd_txtvalue"
                 android:textColor="@color/offer_title"
                 app:layout_constraintRight_toRightOf="@id/right_guideline"
@@ -134,6 +142,8 @@
             <TextView
                 android:id="@+id/bookingReference"
                 style="@style/opensans_regular_13_black"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/thirty_two_dp"
                 android:contentDescription="@string/cd_ccd_txtbookingref"
                 android:lineSpacingMultiplier="1.33"
@@ -160,6 +170,8 @@
             <TextView
                 android:id="@+id/createdDate"
                 style="@style/opensans_regular_13_black"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/thirty_two_dp"
                 android:contentDescription="@string/cd_ccd_txtcreatedvalue"
                 android:lineSpacingMultiplier="1.33"

@@ -165,7 +165,7 @@ class UnsellableUtils {
             confirmAddressViewModel: ConfirmAddressViewModel,
         ) {
             if (commerceItemList != null) {
-                var items: List<AddToListRequest> = mutableListOf()
+                var items: MutableList<AddToListRequest> = mutableListOf()
                 for (listItem in commerceItemList!!) {
                     var addToListRequest = AddToListRequest()
                     addToListRequest.apply {
