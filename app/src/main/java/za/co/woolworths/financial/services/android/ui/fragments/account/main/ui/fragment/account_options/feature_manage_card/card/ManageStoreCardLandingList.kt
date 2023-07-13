@@ -279,6 +279,7 @@ class ManageStoreCardLandingList(
             val rootLayout = inflater.findViewById<RelativeLayout>(R.id.linkNewCardRelativeLayout)
             val logoImageView = inflater.findViewById<ImageView>(R.id.logoImageView)
             logoImageView.setImageResource(drawableId)
+            logoImageView.alpha = 0.3f
             rootLayout.setOnClickListener {
                 when(action) {
                     StoreCardItemActions.LINK_STORE_CARD -> includeListOptions.linkNewCardRelativeLayout.performClick()
