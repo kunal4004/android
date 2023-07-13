@@ -9,10 +9,10 @@ import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountSection
-import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.BetterActivityResult
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.Constants
+import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature.fragment.UserAccountsLandingFragment.Companion.ACCOUNT_CARD_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.enumtype.AccountProductCardsGroup
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_view_application_status.ViewApplicationStatusImpl
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.viewmodel.UserAccountLandingViewModel
@@ -103,7 +103,7 @@ class ProductIntentImpl @Inject constructor(private val activity: Activity?) : P
             deepLinkParams?.let {
                 intent.putExtra(AccountSignedInPresenterImpl.DEEP_LINKING_PARAMS, it)
             }
-            context.startActivityForResult(intent, MyAccountsFragment.ACCOUNT_CARD_REQUEST_CODE)
+            context.startActivityForResult(intent, ACCOUNT_CARD_REQUEST_CODE)
             context.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay)
         }
     }
@@ -120,7 +120,7 @@ class ProductIntentImpl @Inject constructor(private val activity: Activity?) : P
                 deepLinkParams?.let {
                     putExtra(AccountSignedInPresenterImpl.DEEP_LINKING_PARAMS, deepLinkParams)
                 }
-                context.startActivityForResult(this, MyAccountsFragment.ACCOUNT_CARD_REQUEST_CODE)
+                context.startActivityForResult(this, ACCOUNT_CARD_REQUEST_CODE)
                 context.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay)
             }
         }
