@@ -901,7 +901,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                 Delivery.DASH.name,
                 binding.progressBar,
                 confirmAddressViewModel,
-                this
+                this@DashDeliveryAddressFragment
             )
         unsellableItemsBottomSheetDialog.show(
             parentFragmentManager,

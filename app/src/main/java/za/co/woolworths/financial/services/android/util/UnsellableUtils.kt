@@ -322,7 +322,7 @@ class UnsellableUtils {
                     ADD_TO_LIST_SUCCESS_RESULT_CODE
                 )
             customBottomSheetDialogFragment?.show(
-                fragment.requireActivity().supportFragmentManager,
+                fragment.parentFragmentManager,
                 CustomBottomSheetDialogFragment::class.java.simpleName
             )
         }
