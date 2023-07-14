@@ -59,9 +59,9 @@ class FAQDetailFragment : BaseFragmentBinding<FaqDetailBinding>(FaqDetailBinding
 
 
     private fun FaqDetailBinding.populateTextView() {
-        title?.setText(mQuestion)
-        description?.text = Html.fromHtml(mAnswer)
-        description?.setOnClickListener {
+        title.text = mQuestion
+        description.text = Html.fromHtml(mAnswer)
+        description.setOnClickListener {
             val spans = description.urls
             if (spans.isNotEmpty()) {
                 val url = spans[0].url
