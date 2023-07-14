@@ -17,6 +17,8 @@ import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.OfferActive
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.LinkedDeviceResponse
+import za.co.woolworths.financial.services.android.ui.base.doOnLayoutReady
+import za.co.woolworths.financial.services.android.ui.base.isOverlappingWith
 import za.co.woolworths.financial.services.android.ui.base.onClick
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderFailure
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderLoading
@@ -153,6 +155,25 @@ class AccountOptionsCreditLimitIncreaseFragment : Fragment(R.layout.account_opti
                     nextStepColour ?: AppConstant.DEFAULT_TAG_HEX_COLOR
                 )
                 text = messageSummary
+            }
+            with(badgeLabelBottomTextView) {
+                KotlinUtils.roundCornerDrawable(
+                    badgeLabelBottomTextView,
+                    nextStepColour ?: AppConstant.DEFAULT_TAG_HEX_COLOR
+                )
+                text = messageSummary
+            }
+            // If the title overlaps with the badge on the right,
+            // then hide the badge and show the bottom one instead
+            badgeContainerBottom.visibility = GONE
+            titleTextView.doOnLayoutReady {
+                if (titleTextView.isOverlappingWith(badgeContainerRight)) {
+                    badgeContainerRight.visibility = GONE
+                    badgeContainerBottom.visibility = VISIBLE
+                } else {
+                    badgeContainerRight.visibility = VISIBLE
+                    badgeContainerBottom.visibility = GONE
+                }
             }
         }
     }
