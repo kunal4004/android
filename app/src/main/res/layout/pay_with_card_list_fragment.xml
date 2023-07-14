@@ -23,7 +23,7 @@
             style="@style/accountOptionsImageviewStyle"
             android:alpha="0.3"
             android:contentDescription="@string/pay_with_card_vtsc_action_button_card_icon_image_on_overlay"
-            android:src="@drawable/icon_card" />
+            android:src="@drawable/ic_replacement_card_icon" />
 
         <TextView
             android:id="@+id/payWithCardCaptionTextView"

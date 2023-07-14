@@ -43,9 +43,9 @@
 
         <ImageView
             android:id="@+id/manageCardIconImageView"
-            style="@style/accountOptionsImageviewStyle"
             android:alpha="0.3"
-            android:src="@drawable/icon_card" />
+            style="@style/accountOptionsImageviewStyle"
+            android:src="@drawable/ic_replacement_card_icon" />
 
         <TextView
             android:id="@+id/manageCardCaptionTextView"
@@ -76,7 +76,7 @@
             style="@style/accountOptionsImageviewStyle"
             android:alpha="0.3"
             android:contentDescription="@string/get_replacement_card_action_button_card_icon_image_on_overlay"
-            android:src="@drawable/icon_card" />
+            android:src="@drawable/ic_replacement_card_icon" />
 
         <TextView
             android:id="@+id/replacementCardCaptionTextView"
@@ -143,6 +143,7 @@
         <ImageView
             android:id="@+id/linkNewCardImageView"
             style="@style/accountOptionsImageviewStyle"
+            android:alpha="0.3"
             android:contentDescription="@string/link_new_card_action_button_link_icon_image_on_overlay"
             android:src="@drawable/link_icon" />
 
@@ -180,7 +181,7 @@
             style="@style/accountOptionsImageviewStyle"
             android:alpha="0.3"
             android:contentDescription="@string/block_card_action_button_card_icon_image_on_overlay"
-            android:src="@drawable/icon_card" />
+            android:src="@drawable/ic_replacement_card_icon" />
 
         <TextView
             android:id="@+id/blockCardTextView"
