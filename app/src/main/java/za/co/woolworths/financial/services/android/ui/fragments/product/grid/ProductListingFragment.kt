@@ -18,7 +18,6 @@ import android.view.Window
 import android.view.WindowManager
 import android.widget.Button
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
@@ -26,7 +25,6 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
@@ -46,7 +44,6 @@ import za.co.woolworths.financial.services.android.chanel.views.adapter.BrandLan
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IProductListing
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
-import za.co.woolworths.financial.services.android.dynamicyield.data.response.getResponse.DynamicYieldChooseVariationResponse
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.UnSellableItemsLiveData
@@ -79,7 +76,6 @@ import za.co.woolworths.financial.services.android.ui.adapters.holder.ProductLis
 import za.co.woolworths.financial.services.android.ui.adapters.holder.RecyclerViewViewHolderItems
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
-import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Response.DyChangeAttributeResponse
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants.EVENT_TYPE_CART
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants.EVENT_TYPE_PAGEVIEW
@@ -151,7 +147,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
     private var localDeliveryTypeForHiddenChange: String? = null
     private var mPromotionalCopy: String? = null
     private var isChanelPage = false
-    private var dyHomePageViewModel: DyHomePageViewModel? = null
+    private var dyChoosevariationViewModel: DyHomePageViewModel? = null
     private var breadCrumbList: ArrayList<String> = ArrayList()
     private var breadCrumb: ArrayList<BreadCrumb> = ArrayList()
     private var dyServerId: String? = null
@@ -197,10 +193,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
             callViewSearchResultEvent(isSearchByKeywordNavigation, mSearchTerm)
         }
         config = NetworkConfig(AppContextProviderImpl())
-        if (Utils.getDyServerId() != null)
-            dyServerId = Utils.getDyServerId()
-        if (Utils.getDySessionId() != null)
-            dySessionId = Utils.getDySessionId()
+        if (Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID) != null)
+            dyServerId = Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID)
+        if (Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID) != null)
+            dySessionId = Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID)
     }
 
     private fun callViewSearchResultEvent(isSearchByKeywordNavigation: Boolean?, searchTerm: String?) {
@@ -263,8 +259,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
     }
 
     private fun dyCategoryChooseVariationViewModel() {
-        dyHomePageViewModel = ViewModelProvider(this).get(DyHomePageViewModel::class.java)
-        dyHomePageViewModel?.createDyHomePageLiveData?.observe(
+        dyChoosevariationViewModel = ViewModelProvider(this).get(DyHomePageViewModel::class.java)
+        dyChoosevariationViewModel?.createDyHomePageLiveData?.observe(
             viewLifecycleOwner
         ) { dynamicYieldChooseVariationResponse ->
             if (dynamicYieldChooseVariationResponse == null) {
@@ -291,7 +287,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
         val context = Context(device, page)
         val options = Options(true)
         val homePageRequestEvent = HomePageRequestEvent(user, session, context, options)
-        dyHomePageViewModel?.createDyRequest(homePageRequestEvent)
+        dyChoosevariationViewModel?.createDyRequest(homePageRequestEvent)
     }
 
     private fun addFragmentListner() {

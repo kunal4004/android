@@ -26,16 +26,12 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.lifecycle.Observer;
 
 import com.awfs.coordination.R;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.FirebaseOptions;
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -56,6 +52,8 @@ import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
+import za.co.woolworths.financial.services.android.models.network.AppContextProviderImpl;
+import za.co.woolworths.financial.services.android.models.network.NetworkConfig;
 import za.co.woolworths.financial.services.android.onecartgetstream.common.constant.OCConstant;
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
@@ -144,7 +142,8 @@ public class SSOActivity extends WebViewActivity {
 	private String dySessionId = null;
 	public static String IPAddress = NetworkUtilsKt.getIpAddress(WoolworthsApplication.getInstance(),WoolworthsApplication.getInstance());
 	private String jwt = null;
-	private DyChangeAttributeViewModel dyLoginEventViewModel;
+	private DyChangeAttributeViewModel dyReportEventViewModel;
+	private NetworkConfig config;
 
 	public SSOActivity() {
 		this.state = UUID.randomUUID().toString();
@@ -164,12 +163,13 @@ public class SSOActivity extends WebViewActivity {
 		}
 		handleUIForKMSIEntry((Utils.getUserKMSIState() && SSOActivity.this.path == Path.SIGNIN));
 		showProfileProgressBar();
-		dyLoginEventViewModel();
+		config = new NetworkConfig(new AppContextProviderImpl());
+		dyReportEventViewModel();
 	}
 
-	private void dyLoginEventViewModel() {
-		dyLoginEventViewModel = new DyChangeAttributeViewModel();
-		dyLoginEventViewModel.getDyLiveData().observe(this, new Observer<DyChangeAttributeResponse>() {
+	private void dyReportEventViewModel() {
+		dyReportEventViewModel = new DyChangeAttributeViewModel();
+		dyReportEventViewModel.getDyLiveData().observe(this, new Observer<DyChangeAttributeResponse>() {
 			@Override
 			public void onChanged(DyChangeAttributeResponse dyChangeAttributeResponse) {
 				if (dyChangeAttributeResponse == null) {
@@ -743,7 +743,7 @@ public class SSOActivity extends WebViewActivity {
 	private void prepareDySigninRequestEvent() {
 		User user = new User(dyServerId,dyServerId);
 		Session session = new Session(dySessionId);
-		Device device = new Device(IPAddress,null);
+		Device device = new Device(IPAddress,config.getDeviceModel());
 		Context context = new Context(device,null);
 		Properties properties = new Properties(null,null,"login-v1",null,null,null,null,null,null,null,jwt);
 		Event event = new Event(null,null,null,null,null,null,null,null,null,null,null,null,"Login",properties);
@@ -755,14 +755,14 @@ public class SSOActivity extends WebViewActivity {
 				session,
 				user
 		);
-		dyLoginEventViewModel.createDyChangeAttributeRequest(prepareLoginDYRequestEvent);
+		dyReportEventViewModel.createDyChangeAttributeRequest(prepareLoginDYRequestEvent);
 
 	}
 
 	private void prepareDyIdentifyUserRequestEvent() {
 		User user = new User(dyServerId,dyServerId);
 		Session session = new Session(dySessionId);
-		Device device = new Device(IPAddress,null);
+		Device device = new Device(IPAddress, config.getDeviceModel());
 		Context context = new Context(device,null);
 		Properties properties = new Properties(null,null,"identify-v1",null,null,null,null,null,null,null,jwt);
 		Event event = new Event(null,null,null,null,null,null,null,null,null,null,null,null,"Identify-User",properties);
@@ -774,13 +774,13 @@ public class SSOActivity extends WebViewActivity {
 				session,
 				user
 		);
-		dyLoginEventViewModel.createDyChangeAttributeRequest(prepareLoginDYRequestEvent);
+		dyReportEventViewModel.createDyChangeAttributeRequest(prepareLoginDYRequestEvent);
 	}
 
 	private void prepareDyRegisterRequestEvent() {
 		User user = new User(dyServerId,dyServerId);
 		Session session = new Session(dySessionId);
-		Device device = new Device(IPAddress,null);
+		Device device = new Device(IPAddress, config.getDeviceModel());
 		Context context = new Context(device,null);
 		Properties properties = new Properties(null,null,"signup-v1",null,null,null,null,null,null,null,jwt);
 		Event event = new Event(null,null,null,null,null,null,null,null,null,null,null,null,"Signup",properties);
@@ -792,7 +792,7 @@ public class SSOActivity extends WebViewActivity {
 				session,
 				user
 		);
-		dyLoginEventViewModel.createDyChangeAttributeRequest(prepareLoginDYRequestEvent);
+		dyReportEventViewModel.createDyChangeAttributeRequest(prepareLoginDYRequestEvent);
 	}
 
 	private void setStSParameters() {

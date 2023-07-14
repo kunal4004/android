@@ -52,7 +52,6 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.ILocationProvider
 import za.co.woolworths.financial.services.android.dynamicyield.data.response.getResponse.DynamicYieldChooseVariationResponse
 import za.co.woolworths.financial.services.android.dynamicyield.data.response.request.*
-import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.UnSellableItemsLiveData
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
@@ -148,7 +147,6 @@ import za.co.woolworths.financial.services.android.util.pickimagecontract.PickIm
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.io.File
 import javax.inject.Inject
-import kotlin.collections.get
 import kotlin.collections.set
 
 
@@ -260,9 +258,9 @@ class ProductDetailsFragment :
     @Inject
     lateinit var vtoSavedPhotoToast: SingleMessageCommonToast
 
-    private lateinit var dyChangeAttributeViewModel: DyChangeAttributeViewModel
+    private lateinit var dyReportEventViewModel: DyChangeAttributeViewModel
     private var productId: String? = null
-    private var dyHomePageViewModel: DyHomePageViewModel? = null
+    private var dyChooseVariationViewModel: DyHomePageViewModel? = null
     private var dyServerId: String? = null
     private var dySessionId: String? = null
     private var config: NetworkConfig? = null
@@ -308,10 +306,10 @@ class ProductDetailsFragment :
         productDetailsPresenter = ProductDetailsPresenterImpl(this, ProductDetailsInteractorImpl())
         productId = productDetails?.productId
         config = NetworkConfig(AppContextProviderImpl())
-        if (Utils.getDyServerId() != null)
-            dyServerId = Utils.getDyServerId()
-        if (Utils.getDySessionId() != null)
-            dySessionId = Utils.getDySessionId()
+        if (Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID) != null)
+            dyServerId = Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID)
+        if (Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID) != null)
+            dySessionId = Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -322,13 +320,13 @@ class ProductDetailsFragment :
         setUniqueIds()
         productDetails?.let { addViewItemEvent(it) }
         setUpCartCountPDP()
-        dyProductPageViewModel()
-        dyChangeAttributeViewModel()
+        dyChooseVariationViewModel()
+        dyReportEventViewModel()
     }
 
-    private fun dyProductPageViewModel() {
-        dyHomePageViewModel = ViewModelProvider(this).get(DyHomePageViewModel::class.java)
-        dyHomePageViewModel?.createDyHomePageLiveData?.observe(
+    private fun dyChooseVariationViewModel() {
+        dyChooseVariationViewModel = ViewModelProvider(this).get(DyHomePageViewModel::class.java)
+        dyChooseVariationViewModel?.createDyHomePageLiveData?.observe(
             viewLifecycleOwner,
             object : Observer<DynamicYieldChooseVariationResponse?> {
                override fun onChanged(dynamicYieldChooseVariationResponse: DynamicYieldChooseVariationResponse?) {
@@ -371,7 +369,7 @@ class ProductDetailsFragment :
             )
         val options = Options(true)
         val homePageRequestEvent = HomePageRequestEvent(user, session, context, options)
-        dyHomePageViewModel?.createDyRequest(homePageRequestEvent)
+        dyChooseVariationViewModel?.createDyRequest(homePageRequestEvent)
     }
 
 
@@ -1823,7 +1821,7 @@ class ProductDetailsFragment :
     private fun prepareDyChangeAttributeSizeRequestEvent(size: String?): PrepareChangeAttributeRequestEvent {
         val user = User(dyServerId,dyServerId)
         val session = Session(dySessionId)
-        val device = Device(IPAddress)
+        val device = Device(IPAddress,config?.getDeviceModel())
         val context = za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Context(device)
         val properties = Properties(SIZE_ATTRIBUTE, size,CHANGE_ATTRIBUTE_DY_TYPE)
         val eventsDyChangeAttribute = za.co.woolworths.financial.services.android.recommendations.data.response.request.Event(null,null,null,null,null,null,null,null,null,null,null,null,"Change Attribute",properties)
@@ -1835,7 +1833,7 @@ class ProductDetailsFragment :
             session,
             user
         )
-        dyChangeAttributeViewModel.createDyChangeAttributeRequest(prepareChangeAttributeRequestEvent)
+        dyReportEventViewModel.createDyChangeAttributeRequest(prepareChangeAttributeRequestEvent)
         return prepareChangeAttributeRequestEvent
     }
 
@@ -1869,7 +1867,7 @@ class ProductDetailsFragment :
     private fun prepareDyChangeAttributeRequestEvent(selectedColor: String?): PrepareChangeAttributeRequestEvent {
         val user = User(dyServerId,dyServerId)
         val session = Session(dySessionId)
-        val device = Device(IPAddress)
+        val device = Device(IPAddress,config?.getDeviceModel())
         val context = za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Context(device)
         val properties = Properties(COLOR_ATTRIBUTE,selectedColor,CHANGE_ATTRIBUTE_DY_TYPE)
         val eventsDyChangeAttribute = za.co.woolworths.financial.services.android.recommendations.data.response.request.Event(null,null,null,null,null,null,null,null,null,null,null,null,"Change Attribute",properties)
@@ -1881,13 +1879,13 @@ class ProductDetailsFragment :
             session,
             user
         )
-        dyChangeAttributeViewModel.createDyChangeAttributeRequest(prepareChangeAttributeRequestEvent)
+        dyReportEventViewModel.createDyChangeAttributeRequest(prepareChangeAttributeRequestEvent)
         return prepareChangeAttributeRequestEvent
     }
 
-    private fun dyChangeAttributeViewModel() {
-        dyChangeAttributeViewModel = ViewModelProvider(this).get(DyChangeAttributeViewModel::class.java)
-        dyChangeAttributeViewModel.getDyLiveData().observe(viewLifecycleOwner, Observer<DyChangeAttributeResponse?> {
+    private fun dyReportEventViewModel() {
+        dyReportEventViewModel = ViewModelProvider(this).get(DyChangeAttributeViewModel::class.java)
+        dyReportEventViewModel.getDyLiveData().observe(viewLifecycleOwner, Observer<DyChangeAttributeResponse?> {
             if (it == null){
                // Toast.makeText(activity, "failed to hit Change Attribute Dynamic yield", Toast.LENGTH_LONG).show()
             } else {
@@ -2044,7 +2042,7 @@ class ProductDetailsFragment :
     private fun prepareDyAddToCartRequestEvent() {
         val user = User(dyServerId,dyServerId)
         val session = Session(dySessionId)
-        val device = Device(IPAddress)
+        val device = Device(IPAddress,config?.getDeviceModel())
         val context = za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Context(device)
         val properties = Properties(null,null,"add-to-cart-v1",null,getSelectedSku()?.price,"ZAR",selectedQuantity,productId,getSelectedSku()?.colour,getSelectedSku()?.sku)
         val eventsDyChangeAttribute = za.co.woolworths.financial.services.android.recommendations.data.response.request.Event(null,null,null,null,null,null,null,null,null,null,null,null,"Add to Cart",properties)
@@ -2056,7 +2054,7 @@ class ProductDetailsFragment :
             session,
             user
         )
-        dyChangeAttributeViewModel.createDyChangeAttributeRequest(prepareDyAddToCartRequestEvent)
+        dyReportEventViewModel.createDyChangeAttributeRequest(prepareDyAddToCartRequestEvent)
     }
 
     private fun ProductDetailsFragmentBinding.showFindInStore() {
@@ -2136,7 +2134,7 @@ class ProductDetailsFragment :
     private fun prepareDyChangeAttributeQuantityRequestEvent(quantity: String): PrepareChangeAttributeRequestEvent {
         val user = User(dyServerId,dyServerId)
         val session = Session(dySessionId)
-        val device = Device(IPAddress)
+        val device = Device(IPAddress,config?.getDeviceModel())
         val context = za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Context(device)
         val properties = Properties(QUANTITY_ATTRIBUTE,quantity,CHANGE_ATTRIBUTE_DY_TYPE)
         val eventsDyChangeAttribute = za.co.woolworths.financial.services.android.recommendations.data.response.request.Event(null,null,null,null,null,null,null,null,null,null,null,null,"Change Attribute",properties)
@@ -2148,7 +2146,7 @@ class ProductDetailsFragment :
             session,
             user
         )
-        dyChangeAttributeViewModel.createDyChangeAttributeRequest(prepareChangeAttributeQuantityRequestEvent)
+        dyReportEventViewModel.createDyChangeAttributeRequest(prepareChangeAttributeQuantityRequestEvent)
         return prepareChangeAttributeQuantityRequestEvent
     }
 

@@ -108,10 +108,10 @@ public class ProductSearchActivity extends AppCompatActivity
             }
         }
         config = new NetworkConfig(new AppContextProviderImpl());
-        if (Utils.getDyServerId() != null)
-            dyServerId = Utils.getDyServerId();
-        if (Utils.getDySessionId() != null)
-            dySessionId = Utils.getDySessionId();
+        if (Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID) != null)
+            dyServerId = Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID);
+        if (Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID) != null)
+            dySessionId = Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID);
         initKeywordSearchViewModel();
     }
 

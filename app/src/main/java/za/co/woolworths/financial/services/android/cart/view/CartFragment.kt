@@ -14,7 +14,6 @@ import android.view.View
 import android.view.View.OnTouchListener
 import android.view.WindowManager
 import android.widget.ScrollView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
@@ -169,6 +168,8 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     private var dyHomePageViewModel: DyHomePageViewModel? = null
     private var DY_LOCATION: String? = "Cart page in Mobile App"
     private var DY_CART_TYPE: String? = "CART"
+    private var DY_CHECKOUT: String? = "Checkout page in Mobile App"
+    private var DY_CART_CHECKOUT_TYPE: String? = "CHECKOUT"
     private lateinit var dyChangeAttributeViewModel: DyChangeAttributeViewModel
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -231,15 +232,15 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         setPriceInformationVisibility(false)
         addScrollListeners()
         config = NetworkConfig(AppContextProviderImpl())
-        if (Utils.getDyServerId() != null)
-            dyServerId = Utils.getDyServerId()
-        if (Utils.getDySessionId() != null)
-            dySessionId = Utils.getDySessionId()
+        if (Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID) != null)
+            dyServerId = Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID)
+        if (Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID) != null)
+            dySessionId = Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID)
         dyCategoryChooseVariationViewModel()
-        dyChangeAttributeViewModel()
+        dyReportEventViewModel()
     }
 
-    private fun dyChangeAttributeViewModel() {
+    private fun dyReportEventViewModel() {
         dyChangeAttributeViewModel = ViewModelProvider(this).get(DyChangeAttributeViewModel::class.java)
         dyChangeAttributeViewModel.getDyLiveData().observe(viewLifecycleOwner, Observer<DyChangeAttributeResponse?> {
             if (it == null){
@@ -587,7 +588,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                 cartItemList = viewModel.getCartItemList()
             )
         }
-        prepareDynamicYieldCheckoutRequest()
+      //  prepareDynamicYieldCheckoutRequest()
     }
 
     private fun cartBeginEventAnalytics() {
@@ -2478,7 +2479,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         val session = Session(dySessionId)
         val device = Device(Utils.IPAddress, config?.getDeviceModel())
         val productList: ArrayList<String>? = ArrayList()
-        val page = Page(productList, DY_LOCATION, DY_CART_TYPE, null)
+        val page = Page(productList, DY_CHECKOUT, DY_CART_CHECKOUT_TYPE, null)
         val context = Context(device, page)
         val options = Options(true)
         val homePageRequestEvent = HomePageRequestEvent(user, session, context, options)
@@ -2488,7 +2489,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     private fun prepareDyRemoveFromCartRequestEvent(mCommerceItem: CommerceItem?) {
         val user = User(dyServerId,dyServerId)
         val session = Session(dySessionId)
-        val device = Device(IPAddress)
+        val device = Device(IPAddress, config?.getDeviceModel())
         val context = za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Context(device)
         val properties = Properties(null,null,"remove-from-cart-v1",null,mCommerceItem?.priceInfo?.amount.toString(),"ZAR",mCommerceItem?.commerceItemInfo?.quantity,mCommerceItem?.commerceItemInfo?.productId,null,null)
         val eventsDyChangeAttribute = za.co.woolworths.financial.services.android.recommendations.data.response.request.Event(null,null,null,null,null,null,null,null,null,null,null,null,"Remove from Cart",properties)
