@@ -81,11 +81,12 @@ class MyProductsProducerImpl @Inject constructor(
                             mapOfMyProducts -= AccountProductKeys.ViewApplicationStatus.value
                         }
                     mapOfMyProducts += AccountProductKeys.PetInsurance.value to transformSingleProductResult(AccountProductKeys.PetInsurance.value, petInsuranceProduct)
-                        if (status.isVisible(userAccountResponse?.products?.size)) {
-                            mapOfMyProducts += AccountProductKeys.ViewApplicationStatus.value to  viewApplicationStatus
-                        }
-
-                }
+                    if (status.isVisible(userAccountResponse?.products?.size) ||
+                        (mapOfMyProducts.size == 1 && mapOfMyProducts[AccountProductKeys.PetInsurance.value] != null)) {
+                        mapOfMyProducts += AccountProductKeys.ViewApplicationStatus.value to (viewApplicationStatus
+                            ?: AccountProductCardsGroup.ApplicationStatus())
+                    }
+                    }
                 null -> Unit
             }
         }

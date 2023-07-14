@@ -222,7 +222,7 @@ class ProductDetailsFragment :
     private val vtoApplyEffectOnImageViewModel: VtoApplyEffectOnImageViewModel? by activityViewModels()
     private val liveCameraViewModel: LiveCameraViewModel? by activityViewModels()
     private val dataPrefViewModel: DataPrefViewModel? by activityViewModels()
-    private val confirmAddressViewModel: ConfirmAddressViewModel by activityViewModels()
+    private val confirmAddressViewModel: ConfirmAddressViewModel? by activityViewModels()
     private var makeupCamera: MakeupCam? = null
     private var isObserveImageData: Boolean = false
     private var isRefreshImageEffectLiveCamera: Boolean = false
@@ -897,7 +897,7 @@ class ProductDetailsFragment :
         lifecycleScope.launch {
             try {
                 val validateLocationResponse =
-                    placeId?.let { confirmAddressViewModel.getValidateLocation(it) }
+                    placeId?.let { confirmAddressViewModel?.getValidateLocation(it) }
                 progressBar?.visibility = View.GONE
                 if (validateLocationResponse != null) {
                     when (validateLocationResponse?.httpCode) {
@@ -934,7 +934,7 @@ class ProductDetailsFragment :
                 val confirmLocationRequest =
                     KotlinUtils.getConfirmLocationRequest(KotlinUtils.browsingDeliveryType)
                 val confirmLocationResponse =
-                    confirmAddressViewModel.postConfirmAddress(confirmLocationRequest)
+                    confirmAddressViewModel?.postConfirmAddress(confirmLocationRequest)
                 progressBar?.visibility = View.GONE
                 if (confirmLocationResponse != null) {
                     when (confirmLocationResponse.httpCode) {
