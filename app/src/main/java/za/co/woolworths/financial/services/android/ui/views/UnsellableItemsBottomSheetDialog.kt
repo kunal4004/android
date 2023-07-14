@@ -38,7 +38,7 @@ import za.co.woolworths.financial.services.android.util.wenum.Delivery
 class UnsellableItemsBottomSheetDialog(
     val progressBar: ProgressBar,
     val confirmAddressViewModel: ConfirmAddressViewModel,
-    val currentFragment: Fragment
+    val currentFragment: Fragment,
 ) : WBottomSheetDialogFragment(),
     View.OnClickListener {
 
@@ -57,7 +57,7 @@ class UnsellableItemsBottomSheetDialog(
             deliveryType: String,
             progressBar: ProgressBar,
             viewModel: ConfirmAddressViewModel,
-            fragment: Fragment
+            fragment: Fragment,
         ) =
             UnsellableItemsBottomSheetDialog(progressBar, viewModel, fragment).withArgs {
                 putSerializable(KEY_ARGS_UNSELLABLE_COMMERCE_ITEMS, unsellableItemsList)
@@ -117,6 +117,8 @@ class UnsellableItemsBottomSheetDialog(
 
     private fun onCheckBoxChanged(checked: Boolean) {
         isCheckBoxSelected = checked
+        binding.removeItems.text =
+            if (checked) getString(R.string.continueLabel) else getString(R.string.remove_and_continue)
     }
 
     private fun UnsellableItemsBottomSheetDialogBinding.init() {
@@ -129,23 +131,22 @@ class UnsellableItemsBottomSheetDialog(
         }
 
         val itemCount = commerceItems?.size ?: 0
-        unsellableTitle?.text =
-            resources.getQuantityString(R.plurals.unsellable_title, itemCount, itemCount)
-        unsellableSubTitle?.text = when (deliveryType) {
+        unsellableSubTitle?.text = getString(R.string.unsellable_subtitle)
+        unsellableTitle?.text = when (deliveryType) {
             Delivery.STANDARD.name -> {
-                resources.getQuantityText(R.plurals.remove_items_standard_dialog_desc, itemCount)
+                resources.getQuantityText(R.plurals.remove_items_standard_dialog_title, itemCount)
             }
 
             Delivery.CNC.name -> {
-                resources.getQuantityText(R.plurals.remove_items_cnc_dialog_desc, itemCount)
+                resources.getQuantityText(R.plurals.remove_items_cnc_dialog_title, itemCount)
             }
 
             Delivery.DASH.name -> {
-                resources.getQuantityText(R.plurals.remove_items_dash_dialog_desc, itemCount)
+                resources.getQuantityText(R.plurals.remove_items_dash_dialog_title, itemCount)
             }
 
             else -> {
-                resources.getQuantityText(R.plurals.remove_items_standard_dialog_desc, itemCount)
+                resources.getQuantityText(R.plurals.remove_items_standard_dialog_title, itemCount)
             }
         }
         cancelBtn?.apply {
