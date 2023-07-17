@@ -1,10 +1,8 @@
 package za.co.woolworths.financial.services.android.ui.wfs.theme
 
 import android.app.Activity
-import android.content.Context
 import android.os.Build
 import android.view.View
-import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.LocalOverscrollConfiguration
 import androidx.compose.material.ripple.LocalRippleTheme
@@ -71,10 +69,6 @@ val LocalAppDimensions = staticCompositionLocalOf { AppDimensions() }
 
 @Composable
 private fun dimensionSet(screenWidthDp: Int): AppDimensions {
-    val context: Context = LocalContext.current
-    LaunchedEffect(true){
-        Toast.makeText(context,"width dpi : $screenWidthDp", Toast.LENGTH_LONG ).show()
-    }
     return AppDimensions().copy(
         dimens = DensityDpiDimension.getDimension(screenWidthDp = screenWidthDp),
         floats = DensityDpiDimension.getFloatDimension(screenWidthDp = screenWidthDp),

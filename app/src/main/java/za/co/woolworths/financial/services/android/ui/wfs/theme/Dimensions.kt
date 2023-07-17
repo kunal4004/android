@@ -141,7 +141,7 @@ val sw360Dimensions = Dimensions(
     hundredSeventyDp = 170.dp,
     pull_to_refresh_trigger_distance_dp = 100.dp,
     pull_to_refresh_offset_dp = 60.dp,
-    account_landing_my_offers_image_height_dp = 158.dp,
+    account_landing_my_offers_image_height_dp = 172.dp,
     button_height_twenty_six_dp = 26.dp,
     fourteen_dp = 14.dp
 )
