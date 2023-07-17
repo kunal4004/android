@@ -18,6 +18,7 @@ import android.os.Environment
 import android.os.Handler
 import android.text.Html
 import android.text.TextUtils
+import android.util.Log
 import android.view.*
 import android.webkit.MimeTypeMap
 import android.widget.*
@@ -241,7 +242,6 @@ class ProductDetailsFragment :
     private lateinit var moreReviewViewModel: RatingAndReviewViewModel
     private val dialogInstance = FoodProductNotAvailableForCollectionDialog.newInstance()
     private val recommendationViewModel: RecommendationViewModel by viewModels()
-    //private lateinit var dYviewModel: DynamicYieldViewModel
     private var bottomSheetWebView: PayFlexBottomSheetDialog? =null
 
     @OpenTermAndLighting
@@ -1887,9 +1887,9 @@ class ProductDetailsFragment :
         dyReportEventViewModel = ViewModelProvider(this).get(DyChangeAttributeViewModel::class.java)
         dyReportEventViewModel.getDyLiveData().observe(viewLifecycleOwner, Observer<DyChangeAttributeResponse?> {
             if (it == null){
-               // Toast.makeText(activity, "failed to hit Change Attribute Dynamic yield", Toast.LENGTH_LONG).show()
+                Log.d(TAG, "dyReportEventViewModel: failed ")
             } else {
-               // Toast.makeText(activity,"Success to hit Change Attribute Dynamic Yield", Toast.LENGTH_LONG).show()
+                Log.d(TAG, "dyReportEventViewModel: Successed ")
             }
         })
     }
@@ -2358,6 +2358,25 @@ class ProductDetailsFragment :
         } else {
             // Select size to continue
         }
+        prepareDyAddToWishListRequestEvent()
+    }
+
+    private fun prepareDyAddToWishListRequestEvent() {
+        val user = User(dyServerId,dyServerId)
+        val session = Session(dySessionId)
+        val device = Device(IPAddress,config?.getDeviceModel())
+        val context = za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Context(device)
+        val properties = Properties(null,null,ADD_TO_WISH_LIST_DY_TYPE,null,null,null,null,getSelectedSku()?.sku,null,null,null,getSelectedSku()?.size)
+        val eventsDyChangeAttribute = za.co.woolworths.financial.services.android.recommendations.data.response.request.Event(null,null,null,null,null,null,null,null,null,null,null,null,ADD_TO_WISH_LIST_EVENT_NAME,properties)
+        val events = ArrayList<Event>()
+        events.add(eventsDyChangeAttribute);
+        val prepareAddToWishListRequestEvent = PrepareChangeAttributeRequestEvent(
+            context,
+            events,
+            session,
+            user
+        )
+        dyReportEventViewModel.createDyChangeAttributeRequest(prepareAddToWishListRequestEvent)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

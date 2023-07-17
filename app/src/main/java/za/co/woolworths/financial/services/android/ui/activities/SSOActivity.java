@@ -745,7 +745,7 @@ public class SSOActivity extends WebViewActivity {
 		Session session = new Session(dySessionId);
 		Device device = new Device(IPAddress,config.getDeviceModel());
 		Context context = new Context(device,null);
-		Properties properties = new Properties(null,null,"login-v1",null,null,null,null,null,null,null,jwt);
+		Properties properties = new Properties(null,null,"login-v1",null,null,null,null,null,null,null,jwt,null,null,null);
 		Event event = new Event(null,null,null,null,null,null,null,null,null,null,null,null,"Login",properties);
 		ArrayList<Event> eventArrayList = new ArrayList<>();
 		eventArrayList.add(event);
@@ -764,7 +764,7 @@ public class SSOActivity extends WebViewActivity {
 		Session session = new Session(dySessionId);
 		Device device = new Device(IPAddress, config.getDeviceModel());
 		Context context = new Context(device,null);
-		Properties properties = new Properties(null,null,"identify-v1",null,null,null,null,null,null,null,jwt);
+		Properties properties = new Properties(null,null,"identify-v1",null,null,null,null,null,null,null,jwt,null,null,null);
 		Event event = new Event(null,null,null,null,null,null,null,null,null,null,null,null,"Identify-User",properties);
 		ArrayList<Event> eventArrayList = new ArrayList<>();
 		eventArrayList.add(event);
@@ -782,7 +782,7 @@ public class SSOActivity extends WebViewActivity {
 		Session session = new Session(dySessionId);
 		Device device = new Device(IPAddress, config.getDeviceModel());
 		Context context = new Context(device,null);
-		Properties properties = new Properties(null,null,"signup-v1",null,null,null,null,null,null,null,jwt);
+		Properties properties = new Properties(null,null,"signup-v1",null,null,null,null,null,null,null,jwt,null,null,null);
 		Event event = new Event(null,null,null,null,null,null,null,null,null,null,null,null,"Signup",properties);
 		ArrayList<Event> eventArrayList = new ArrayList<>();
 		eventArrayList.add(event);

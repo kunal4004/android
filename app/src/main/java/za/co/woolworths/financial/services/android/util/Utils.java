@@ -179,6 +179,10 @@ public class Utils {
     public static final String QUANTITY_ATTRIBUTE = "quantity";
     public static final String CHANGE_ATTRIBUTE_DY_TYPE = "change-attr-v1";
     public static final String CATEGORY_DY_TYPE = "CATEGORY";
+    public static final String ADD_TO_WISH_LIST_DY_TYPE = "add-to-wishlist-v1";
+    public static final String ADD_TO_WISH_LIST_EVENT_NAME = "Add to Wishlist";
+    public static final String SORT_BY_DY_TYPE = "sort-items-v1";
+    public static final String SORT_ITEMS_EVENT_NAME = "Sort Items";
 
     public static void saveLastLocation(Location loc, Context mContext) {
         try {

@@ -15,5 +15,8 @@ data class Properties(
     val productId: String? = null,
     val color: String? = null,
     val sku_id: String? = null,
-    val hashedEmail: String? = null
+    val hashedEmail: String? = null,
+    val size: String? = null,
+    val sortBy: String? = null,
+    val sortOrder: String? = null
 ): Parcelable

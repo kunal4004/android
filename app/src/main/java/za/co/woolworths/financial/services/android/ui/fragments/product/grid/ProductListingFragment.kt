@@ -10,6 +10,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Parcelable
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.View.GONE
@@ -76,7 +77,12 @@ import za.co.woolworths.financial.services.android.ui.adapters.holder.ProductLis
 import za.co.woolworths.financial.services.android.ui.adapters.holder.RecyclerViewViewHolderItems
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.PrepareChangeAttributeRequestEvent
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.Properties
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Response.DyChangeAttributeResponse
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.ViewModel.DyChangeAttributeViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants.EVENT_TYPE_CART
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants.EVENT_TYPE_PAGEVIEW
 import za.co.woolworths.financial.services.android.ui.views.*
@@ -89,8 +95,7 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_SESSION_TIMEOUT_440
 import za.co.woolworths.financial.services.android.util.AppConstant.Keys.Companion.EXTRA_SEND_DELIVERY_DETAILS_PARAMS
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.saveAnonymousUserLocationDetails
-import za.co.woolworths.financial.services.android.util.Utils.CATEGORY_DY_TYPE
-import za.co.woolworths.financial.services.android.util.Utils.IPAddress
+import za.co.woolworths.financial.services.android.util.Utils.*
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
@@ -154,6 +159,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
     private var dySessionId: String? = null
     private var config: NetworkConfig? = null
     private var PLP_SCREEN_LOCATION: String? = "PLP Screen"
+    private var dyReportEventViewModel: DyChangeAttributeViewModel? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -256,6 +262,18 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
             startProductRequest()
         }
         dyCategoryChooseVariationViewModel()
+        dyReportEventViewModel()
+    }
+
+    private fun dyReportEventViewModel() {
+        dyReportEventViewModel = ViewModelProvider(this).get(DyChangeAttributeViewModel::class.java)
+        dyReportEventViewModel!!.getDyLiveData().observe(viewLifecycleOwner, androidx.lifecycle.Observer<DyChangeAttributeResponse?> {
+            if (it == null) {
+                Log.d(ProductDetailsFragment.TAG, "dyReportEventViewModel: failed to sortby")
+            }else {
+                Log.d(ProductDetailsFragment.TAG, "dyReportEventViewModel: successed to sortby")
+            }
+        })
     }
 
     private fun dyCategoryChooseVariationViewModel() {
@@ -1192,7 +1210,27 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
             }
             updateProductRequestBodyForSort(sortOption.sortOption)
             reloadProductsWithSortAndFilter()
+            val sortBy: String? = sortOption.sortOption
+            prepareSortByRequestEvent(sortBy)
         }
+    }
+
+    private fun prepareSortByRequestEvent(sortBy: String?) {
+        val user = User(dyServerId,dyServerId)
+        val session = Session(dySessionId)
+        val device = Device(IPAddress, config?.getDeviceModel())
+        val context = za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Context(device)
+        val properties = Properties(null,null,SORT_BY_DY_TYPE,null,null,null,null,null,null,null,null,null,sortBy,"")
+        val eventsDyChangeAttribute = za.co.woolworths.financial.services.android.recommendations.data.response.request.Event(null,null,null,null,null,null,null,null,null,null,null,null,SORT_ITEMS_EVENT_NAME,properties)
+        val events = ArrayList<Event>()
+        events.add(eventsDyChangeAttribute);
+        val prepareDySortByRequestEvent = PrepareChangeAttributeRequestEvent(
+            context,
+            events,
+            session,
+            user
+        )
+        dyReportEventViewModel?.createDyChangeAttributeRequest(prepareDySortByRequestEvent)
     }
 
     @SuppressLint("InflateParams")
