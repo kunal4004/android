@@ -93,13 +93,20 @@ public class PersistenceLayer extends SQLiteOpenHelper {
 
     public void executeVoidQuery(String query, String[] arguments) throws Exception {
         SQLiteDatabase db = openDatabase();
-        Cursor cursor = db.rawQuery(query, arguments);
+        Cursor cursor = null;
 
-        if(cursor.getCount() == 0){//consider this as a failure as no rows were updated
+        try {
+            cursor = db.rawQuery(query, arguments);
+
+            if (cursor.getCount() == 0) {
+                throw new SQLiteException("Updated row count was 0. This is considered as a failed 'SQL UPDATE' transaction.");
+            }
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
             db.close();
-            throw new SQLiteException("Updated row count was 0. This is considered as a failed 'SQL UPDATE' transaction.");
         }
-        db.close();
     }
 
     public void executeSQLStatements(final List<String> queries){
@@ -118,28 +125,36 @@ public class PersistenceLayer extends SQLiteOpenHelper {
         db.close();
     }
 
-    public Map<String, String> executeReturnableQuery(String query, String[] arguments){
-        HashMap<String, String> result = new HashMap<String, String>();
+    public Map<String, String> executeReturnableQuery(String query, String[] arguments) {
+        HashMap<String, String> result = new HashMap<>();
 
         SQLiteDatabase db = openDatabase();
+        Cursor cursor = null;
 
-        Cursor cursor = db.rawQuery(query, arguments);
-        cursor.moveToFirst();
+        try {
+            cursor = db.rawQuery(query, arguments);
 
-        if(cursor.getCount() == 0){//consider this as a failure as no rows were updated
+            if (cursor.moveToFirst()) {
+                String[] columnNames = cursor.getColumnNames();
+                do {
+                    for (String columnName : columnNames) {
+                        int columnIndex = cursor.getColumnIndex(columnName);
+                        String value = cursor.getString(columnIndex);
+                        result.put(columnName, value);
+                    }
+                } while (cursor.moveToNext());
+            }
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
             db.close();
-            return result;
         }
 
-        for(String columnName : cursor.getColumnNames()){
-            int index = cursor.getColumnIndex(columnName);
-            String value = cursor.getString(index);
-
-            result.put(columnName, value);
-        }
-        db.close();
         return result;
     }
+
+
 
     public long executeInsertQuery(String tableName, Map<String, String> arguments) {
         SQLiteDatabase db = openDatabase();
