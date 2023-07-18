@@ -23,6 +23,8 @@ class QueryBadgeCounter : Observable() {
     var updateAtPosition = 0
         private set
 
+    private var isCartSummaryFailed = true
+
     private var mGetMessage: Call<MessageResponse>? = null
     private var mGetVoucher: Call<VoucherCount>? = null
     private var mGetCartCount: Call<CartSummaryResponse>? = null
@@ -78,6 +80,10 @@ class QueryBadgeCounter : Observable() {
 
     fun updateCartSummaryCount() {
         if (!isUserAuthenticated) return
+        if(isCartSummaryFailed){
+            queryCartSummaryCount()
+            return
+        }
         this.updateAtPosition = BottomNavigationActivity.INDEX_CART
         notifyUpdate()
     }
@@ -147,8 +153,9 @@ class QueryBadgeCounter : Observable() {
         notifyObservers()
     }
 
-    fun setCartSummaryResponse(cartSummary: CartSummary?) {
+    fun setCartSummaryResponse(cartSummary: CartSummary?, isFailedCartSummary: Boolean = false) {
         cartCount = cartSummary?.totalItemsCount ?: 0
+        isCartSummaryFailed = isFailedCartSummary
     }
 
     companion object {
