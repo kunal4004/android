@@ -456,9 +456,9 @@ private fun LazyListScope.myProductsSection(
     }
 
     if (myProductList.isEmpty()) {
-        if (viewModel.petInsuranceResponse != null){
+        if (viewModel.petInsuranceResponse != null && !viewModel.isPetInsuranceNotCovered()) {
             viewModel.cachedPetInsuranceModel()
-        }else {
+        } else {
             item {
                 NoC2IdNorProductView(
                     isLoadingInProgress = isLoading,
