@@ -346,10 +346,10 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
         val list = ArrayList<Product>()
         list.add(product)
         val plist = KotlinUtils.extractPlistFromDeliveryDetails()
-        plist?.let {
-            return KiboProductRequest(plist, list)
+        if (plist.isNullOrEmpty()) {
+            return  KiboProductRequest(products = list)
         }
-        return  KiboProductRequest("", list)
+        return KiboProductRequest(priceListId = plist, products = list)
     }
 
     override fun onClick(v: View?) {
