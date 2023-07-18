@@ -107,7 +107,7 @@ class QueryBadgeCounter : Observable() {
             override fun onSuccess(response: CartSummaryResponse?) {
                 when (response?.httpCode) {
                     200 -> {
-                        response.data.get(0)?.apply {
+                        response.data.getOrNull(0)?.apply {
                             if (totalItemsCount != null)
                                 setCartCount(totalItemsCount)
                         }

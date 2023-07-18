@@ -120,7 +120,7 @@ class MyProductsHandlerImpl @Inject constructor(private val status: ViewApplicat
                 getProductKeyByCode(code, productDetail)
             }
         }
-        return transformProductDetailToProductGroup(key = transformedProductGroupKey, productDetails = productDetails as? ProductDetails)
+        return transformProductDetailToProductGroup(key = transformedProductGroupKey, productDetails = productDetails)
     }
 
     private fun getProductKeyByCode(code: String, productDetails: ProductDetails?): AccountProductKeys? {
