@@ -433,7 +433,7 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
                             }
                             return@observe
                         }
-                        triggerFirebaseEventForSubstitution(selectionChoice = selectionChoice)
+                        triggerFirebaseEventForSubstitution(selectionChoice = substitutionChoice)
                         if (selectionChoice == SubstitutionChoice.USER_CHOICE.name) {
                             item?.price?.let { price -> triggerFirebaseEventForAddSubstitution(itemId = item?.id, itemName = item?.title, itemPrice = price) }
                         }
