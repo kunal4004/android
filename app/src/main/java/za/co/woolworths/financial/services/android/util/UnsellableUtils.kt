@@ -284,14 +284,14 @@ class UnsellableUtils {
                 for (listItem in this.commerceItemList!!) {
                     val addToListRequest = AddToListRequest()
                     addToListRequest.apply {
-                        skuID = listItem.productId
+                        skuID = listItem.catalogRefId
                         giftListId = listItem.catalogRefId
                         catalogRefId = listItem.catalogRefId
                         quantity = listItem.quantity.toString()
                         listId = requestedListId ?: listItem.catalogRefId
                     }
 
-                    items.plus(addToListRequest)
+                    items.add(addToListRequest)
                 }
             }
             return items
