@@ -59,6 +59,8 @@ import za.co.woolworths.financial.services.android.enhancedSubstitution.service.
 import za.co.woolworths.financial.services.android.enhancedSubstitution.util.listener.EnhancedSubstitutionBottomSheetDialog
 import za.co.woolworths.financial.services.android.enhancedSubstitution.util.isEnhanceSubstitutionFeatureEnable
 import za.co.woolworths.financial.services.android.enhancedSubstitution.util.listener.EnhancedSubstitutionListener
+import za.co.woolworths.financial.services.android.enhancedSubstitution.util.triggerFirebaseEventForAddSubstitution
+import za.co.woolworths.financial.services.android.enhancedSubstitution.util.triggerFirebaseEventForSubstitution
 import za.co.woolworths.financial.services.android.enhancedSubstitution.view.ManageSubstitutionFragment
 import za.co.woolworths.financial.services.android.enhancedSubstitution.view.SearchSubstitutionFragment
 import za.co.woolworths.financial.services.android.enhancedSubstitution.viewmodel.ProductSubstitutionViewModel
@@ -2338,6 +2340,16 @@ class ProductDetailsFragment :
                             ADD_TO_CART_SUCCESS_RESULT,
                             intent
                         )
+                    }
+
+                    if (isEnhanceSubstitutionFeatureEnable() == true && KotlinUtils.getDeliveryType()?.deliveryType == Delivery.DASH.type) {
+                        triggerFirebaseEventForSubstitution(selectionChoice = selectionChoice)
+                        if (selectionChoice  == SubstitutionChoice.USER_CHOICE.name) {
+                            substitutionProductItem?.price?.let {
+                                    price ->
+                                triggerFirebaseEventForAddSubstitution(itemName = substitutionProductItem?.productName, itemId = substitutionProductItem?.productId, itemPrice = price)
+                            }
+                        }
                     }
 
                     /* assign  updated commarceItem id here */

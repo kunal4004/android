@@ -216,6 +216,15 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         addScrollListeners()
     }
 
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+
+        setFragmentResultListener(SearchSubstitutionFragment.SELECTED_SUBSTITUTED_PRODUCT) { _, bundle ->
+            // User Substitute product from search screen and came back to cart
+            loadShoppingCart()
+        }
+    }
+
     private fun initializeLoggedInUserCartUI() {
         if (!SessionUtilities.getInstance().isUserAuthenticated) {
             return

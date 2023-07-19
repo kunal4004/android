@@ -23,12 +23,16 @@ import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.LayoutSearchSubstitutionFragmentBinding
 import com.facebook.shimmer.Shimmer
+import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.cart.view.SubstitutionChoice
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.AddSubstitutionRequest
 import za.co.woolworths.financial.services.android.enhancedSubstitution.util.listener.ProductListSelectionListener
+import za.co.woolworths.financial.services.android.enhancedSubstitution.util.triggerFirebaseEventForAddSubstitution
+import za.co.woolworths.financial.services.android.enhancedSubstitution.util.triggerFirebaseEventForSubstitution
 import za.co.woolworths.financial.services.android.enhancedSubstitution.viewmodel.ProductSubstitutionViewModel
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dto.ProductList
@@ -40,6 +44,7 @@ import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.util.KeyboardUtil
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 
@@ -129,8 +134,10 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
                             viewLifecycleOwner
                         ) { pagingResponse ->
                             totalItemCount = pagingResponse?.numItemsInTotal
+                            triggerFirebaseEventsForSearchEvent(requestParams.searchTerm, requestParams.searchType.toString(), pagingResponse?.numItemsInTotal)
                         }
                         searchProductSubstitutionAdapter?.submitData(it)
+
                     }
                 } catch (exception: Exception) {
                     FirebaseManager.logException(exception)
@@ -153,6 +160,10 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
                     } else {
                         binding.txtSubstitutionCount.text = totalItemCount?.let {
                             formattedProductCount(it)
+                        }
+                        if (totalItemCount!=0) {
+                            triggerFirebaseEventForSearchResultEvent(requestParams.searchTerm)
+                            triggerFirebaseEventForViewItemList(searchProductSubstitutionAdapter?.snapshot()?.items)
                         }
                     }
                 }
@@ -178,15 +189,83 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
         }
     }
 
-    private fun formattedProductCount(count:Int): Spanned {
+    private fun triggerFirebaseEventForSearchResultEvent(searchTerm: String) {
+        val viewSearchBundle = Bundle()
+        viewSearchBundle.putString(FirebaseManagerAnalyticsProperties.PropertyNames.SEARCH_TERM, searchTerm)
+        AnalyticsManager.logEvent(FirebaseAnalytics.Event.VIEW_SEARCH_RESULTS, viewSearchBundle)
+    }
+
+    fun triggerFirebaseEventsForSearchEvent(searchTerm:String, searchType:String, totalItemCount:Int?) {
+        val searchBundle = Bundle()
+        if (totalItemCount != null) {
+            searchBundle.putInt(FirebaseManagerAnalyticsProperties.PropertyNames.SEARCH_RESULT_COUNT, totalItemCount)
+        }
+        searchBundle.putString(FirebaseManagerAnalyticsProperties.PropertyNames.SEARCH_TERM, searchTerm)
+        searchBundle.putString(FirebaseManagerAnalyticsProperties.PropertyNames.SEARCH_TYPE, searchType)
+        AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.SEARCH, searchBundle)
+    }
+
+    fun triggerFirebaseEventForViewItemList(productList: List<ProductList>?) {
+        val productListParams = Bundle()
+        productListParams.apply {
+
+            productList?.let {
+                val itemArrayEvent = arrayListOf<Bundle>()
+                for (product in it) {
+                    val productListItem = Bundle()
+                    productListItem.apply {
+                        putString(
+                            FirebaseAnalytics.Param.ITEM_ID, product.productId
+                        )
+
+                        putString(
+                            FirebaseAnalytics.Param.ITEM_NAME, product.productName
+                        )
+
+                        product.price?.let { it1 ->
+                            putFloat(
+                                FirebaseAnalytics.Param.PRICE, it1
+                            )
+                        }
+
+                        putString(
+                            FirebaseAnalytics.Param.ITEM_BRAND, product.brandText
+                        )
+
+                        putString(
+                            FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_RATING,
+                            product.averageRating
+                        )
+
+                        putString(
+                            FirebaseManagerAnalyticsProperties.PropertyNames.LOCATION_ID,
+                            KotlinUtils.getPreferredPlaceId()
+                        )
+
+                        itemArrayEvent.add(this)
+                    }
+                }
+                putParcelableArray(
+                    FirebaseAnalytics.Param.ITEMS,
+                    itemArrayEvent.toTypedArray()
+                )
+            }
+
+            AnalyticsManager.logEvent(
+                FirebaseManagerAnalyticsProperties.VIEW_ITEM_LIST,
+                this
+            )
+        }
+    }
+
+    private fun formattedProductCount(count: Int): Spanned {
         val totalItemCount: String =
             "<b>" + count + "</b>".plus(
                 getString(R.string.item_found)
             )
-        val formattedItemCount = HtmlCompat.fromHtml(
+        return HtmlCompat.fromHtml(
             totalItemCount, HtmlCompat.FROM_HTML_MODE_COMPACT
         )
-        return formattedItemCount
     }
 
     private fun initializeRecyclerView() {
@@ -275,7 +354,7 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
 
         val storeId: String? = KotlinUtils.getDeliveryType()?.storeId
 
-        if (productList?.sku == null || storeId == null || storeId.isEmpty() == true) {
+        if (productList?.sku == null || storeId.isNullOrEmpty()) {
             return
         }
 
@@ -327,7 +406,7 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
     }
 
     private fun callAddSubstitutionApi() {
-        /*add subsitute api here since we have commerceId because product is already added in cart */
+        /*add substitute api here since we have commarceId because product is already added in cart */
         val addSubstitutionRequest = AddSubstitutionRequest(
             substitutionSelection = SubstitutionChoice.USER_CHOICE.name,
             substitutionId = productList?.sku,
@@ -349,6 +428,11 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
                                 showErrorScreen(SubstitutionChoice.USER_CHOICE.name)
                                 return@observe
                             }
+                        }
+                        triggerFirebaseEventForSubstitution(selectionChoice = SubstitutionChoice.USER_CHOICE.name)
+                        productList?.price?.let {
+                                price ->
+                            triggerFirebaseEventForAddSubstitution(itemId = productList?.productId,itemName= productList?.productName, itemPrice = price)
                         }
                         setResultAndNavigationToPdpWithProduct(
                             bundleOf(SUBSTITUTION_ITEM_KEY to productList)

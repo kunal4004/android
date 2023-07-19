@@ -442,6 +442,10 @@ open class FirebaseManagerAnalyticsProperties {
         //Address Checkout
         const val FORM_START = "form_start"
         const val FORM_COMPLETE = "form_complete"
+
+        /*enhance substitution*/
+        const val SUBSTITUTION: String = "substitution"
+        const val ADD_SUBSTITUTION: String = "add_substitute"
     }
 
     class PropertyNames {
@@ -572,6 +576,10 @@ open class FirebaseManagerAnalyticsProperties {
             const val STEP = "step"
             const val OPTION = "option"
             const val DELIVERY_TYPE = "delivery_type"
+
+            const val SEARCH_RESULT_COUNT: String = "search_result_count"
+            const val LOCATION_ID: String = "location_id"
+            const val PRODUCT_NAME: String = "product_name"
         }
     }
 
@@ -713,6 +721,9 @@ open class FirebaseManagerAnalyticsProperties {
             //checkout promo step
             const val BASKET = "basket"
 
+            const val BACK = "back"
+
+
         }
     }
 
@@ -808,6 +819,7 @@ open class FirebaseManagerAnalyticsProperties {
             const val WREWARDS_TERMS_CONDITIONS: String = "WRewards Terms and Conditions"
             const val MAINTENANCE_MESSAGE: String = "Maintenance Message"
             const val SSO_FORGOT_PASSWORD: String = "SSO Forgot Password"
+
         }
     }
 
