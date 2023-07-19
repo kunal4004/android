@@ -30,6 +30,8 @@ import za.co.woolworths.financial.services.android.cart.view.SubstitutionChoice
 import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.*
 import za.co.woolworths.financial.services.android.enhancedSubstitution.view.SearchSubstitutionFragment.Companion.SEARCH_SCREEN_BACK_NAVIGATION
 import za.co.woolworths.financial.services.android.enhancedSubstitution.util.listener.ProductSubstitutionListListener
+import za.co.woolworths.financial.services.android.enhancedSubstitution.util.triggerFirebaseEventForAddSubstitution
+import za.co.woolworths.financial.services.android.enhancedSubstitution.util.triggerFirebaseEventForSubstitution
 import za.co.woolworths.financial.services.android.enhancedSubstitution.view.SearchSubstitutionFragment.Companion.ERROR_SEARCH_SCREEN_BACK_NAVIGATION
 import za.co.woolworths.financial.services.android.enhancedSubstitution.view.SearchSubstitutionFragment.Companion.SELECTED_SUBSTITUTED_PRODUCT
 import za.co.woolworths.financial.services.android.enhancedSubstitution.view.SearchSubstitutionFragment.Companion.SUBSTITUTION_ITEM_KEY
@@ -361,7 +363,10 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
         when (v?.id) {
             R.id.btnConfirm -> handleConfirmButton()
             R.id.dontWantText -> confirmDontWantSubstitutionForProduct()
-            R.id.imgBack -> (activity as? BottomNavigationActivity)?.popFragment()
+            R.id.imgBack -> {
+                triggerFirebaseEventForSubstitution(isbackButtonEvent = true)
+                (activity as? BottomNavigationActivity)?.popFragment()
+            }
             R.id.rbShopperChoose -> {
                 Utils.fadeInFadeOutAnimation(
                     binding.layoutManageSubstitution.listSubstitute.root,
@@ -432,6 +437,10 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
                                 showErrorScreen(substitutionChoice)
                             }
                             return@observe
+                        }
+                        triggerFirebaseEventForSubstitution(selectionChoice = substitutionChoice)
+                        if (selectionChoice == SubstitutionChoice.USER_CHOICE.name) {
+                            item?.price?.let { price -> triggerFirebaseEventForAddSubstitution(itemId = item?.id, itemName = item?.title, itemPrice = price) }
                         }
                         navigateToPreviousFragment(substitutionChoice)
                     }
