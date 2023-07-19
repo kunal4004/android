@@ -275,7 +275,7 @@ class ProductSubstitutionRepositoryTest {
     }
 
     fun prepareKiboResponse(): KiboProductResponse {
-        val item = Item("", "1", title = "White Thick Slice Bread 700 g" , imageLink = "", price = 32.6, defaultPrice =32.6 )
+        val item = Item("", "1", title = "White Thick Slice Bread 700 g" , imageLink = "", price = 32.6f, defaultPrice =32.6, ratings = 5.0 )
         val items = ArrayList<Item>()
         items.add(item)
         val action = Action(items)
