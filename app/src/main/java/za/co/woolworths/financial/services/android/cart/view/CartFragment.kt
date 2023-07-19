@@ -81,8 +81,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.shop.Rem
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants
 import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.LockableNestedScrollViewV2
-import za.co.woolworths.financial.services.android.ui.views.ToastFactory.Companion.buildAddToCartSuccessToast
-import za.co.woolworths.financial.services.android.ui.views.ToastFactory.Companion.showItemsLimitToastOnAddToCart
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView.IWalkthroughActionListener
 import za.co.woolworths.financial.services.android.ui.views.WTextView
@@ -94,8 +92,6 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_SESSION_TIMEOUT_440
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getPreferredDeliveryType
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getPreferredPlaceId
-import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.isDeliveryOptionClickAndCollect
-import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.isDeliveryOptionDash
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.presentEditDeliveryGeoLocationActivity
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.setDeliveryAddressView
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.showGeneralInfoDialog
@@ -110,6 +106,7 @@ import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyt
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper.triggerFirebaseEventVouchersOrPromoCode
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.logException
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.setCrashlyticsString
+import za.co.woolworths.financial.services.android.util.analytics.dto.AddToWishListFirebaseEventData
 import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.util.wenum.Delivery.Companion.getType
@@ -123,7 +120,9 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     View.OnClickListener, NetworkChangeListener, ToastInterface, IWalkthroughActionListener,
     IRemoveProductsFromCartDialog, RecommendationEventHandler {
 
-    private val viewModel: CartViewModel by viewModels()
+    private val viewModel: CartViewModel by viewModels(
+        ownerProducer = { this }
+    )
     private val recommendationViewModel: RecommendationViewModel by viewModels()
 
     private var mNumberOfListSelected = 0
@@ -650,7 +649,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
 
     override fun onCartRefresh() {
         //refresh the pricing view
-        if (cartProductAdapter?.cartItems?.isNullOrEmpty() == true) {
+        if(cartProductAdapter?.cartItems?.isNullOrEmpty() == true){
             setPriceInformationVisibility(false)
             setRecommendationDividerVisibility(visibility = false)
         } else {
@@ -664,6 +663,18 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             // User Substitute product from search screen and came back to cart
             loadShoppingCart()
         }
+    }
+
+    override fun openAddToListPopup(
+        addToListRequests: ArrayList<AddToListRequest>,
+        addToWishListEventData: AddToWishListFirebaseEventData?
+    ) {
+        KotlinUtils.openAddToListPopup(
+            requireActivity(),
+            requireActivity().supportFragmentManager,
+            addToListRequests,
+            eventData = addToWishListEventData
+        )
     }
 
     override fun onChangeQuantity(commerceId: CommerceItem, quantity: Int) {
@@ -1560,28 +1571,6 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         }
         if (resultCode == Activity.RESULT_OK) {
             when (requestCode) {
-                BottomNavigationActivity.PDP_REQUEST_CODE -> {
-                    val activity: FragmentActivity = activity ?: return
-                    loadShoppingCart()
-                    loadShoppingCartAndSetDeliveryLocation()
-                    val productCountMap = Utils.jsonStringToObject(
-                        data?.getStringExtra("ProductCountMap"), ProductCountMap::class.java
-                    ) as ProductCountMap
-                    val itemsCount = data?.getIntExtra("ItemsCount", 0)
-                    if ((isDeliveryOptionClickAndCollect() || isDeliveryOptionDash())
-                        && productCountMap.quantityLimit?.foodLayoutColour != null
-                    ) {
-                        showItemsLimitToastOnAddToCart(
-                            binding.rlCheckOut,
-                            productCountMap,
-                            activity,
-                            count = itemsCount ?: 0,
-                            viewButtonVisible = false
-                        )
-                    } else {
-                        buildAddToCartSuccessToast(binding.rlCheckOut, false, activity, null)
-                    }
-                }
                 REDEEM_VOUCHERS_REQUEST_CODE, APPLY_PROMO_CODE_REQUEST_CODE -> {
                     val shoppingCartResponse = Utils.strToJson(
                         data?.getStringExtra("ShoppingCartResponse"),
@@ -2446,6 +2435,13 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             enableItemDelete(false)
             viewModel.removeAllCartItem()
         }
+
+        KotlinUtils.setAddToListFragmentResultListener(
+            activity = requireActivity(),
+            lifecycleOwner = viewLifecycleOwner,
+            toastContainerView = binding.rlCheckOut,
+            onToastClick = {}
+        )
 
         setFragmentResultListener(SearchSubstitutionFragment.SELECTED_SUBSTITUTED_PRODUCT) { _, bundle ->
             // User Substitute product from search screen and came back to cart

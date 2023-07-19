@@ -15,7 +15,6 @@ import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesAc
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
-import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.BetterActivityResult
 import za.co.woolworths.financial.services.android.ui.fragments.help.HelpSectionFragment
@@ -24,6 +23,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.mypreferences.My
 import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SignOutFragment
 import za.co.woolworths.financial.services.android.ui.wfs.contact_us.fragment.ContactUsFragment
+import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.model.UserAccountResponse
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.viewmodel.UserAccountLandingViewModel
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.RESULT_CODE_DELETE_ACCOUNT
 import za.co.woolworths.financial.services.android.util.ScreenManager
@@ -35,7 +35,7 @@ import javax.inject.Inject
 
 interface GeneralIntent {
     fun createStoreLocatorIntent()
-    fun createNeedHelpIntent()
+    fun createNeedHelpIntent(userAccountResponse: UserAccountResponse?)
     fun createContactUsIntent()
     fun createUpdatePasswordIntent()
     fun UserAccountLandingViewModel.createMyPreferenceIntent(
@@ -61,12 +61,12 @@ class GeneralIntentImpl @Inject constructor(private val activity: Activity?) : G
         }
     }
 
-    override fun createNeedHelpIntent() {
+    override fun createNeedHelpIntent(userAccountResponse: UserAccountResponse?) {
         activity?.apply {
             val helpSectionFragment = HelpSectionFragment()
-            if (MyAccountsFragment.mAccountResponse != null) {
+            userAccountResponse?.let {
                 val bundle = Bundle()
-                bundle.putString("accounts", Utils.objectToJson(MyAccountsFragment.mAccountResponse))
+                bundle.putString("accounts", Utils.objectToJson(it))
                 helpSectionFragment.arguments = bundle
             }
             if (this is BottomNavigationActivity) {

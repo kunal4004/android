@@ -26,6 +26,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.availabl
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity
 import za.co.woolworths.financial.services.android.ui.fragments.statement.StatementFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.EnableLocationSettingsFragment
+import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_device_security.navigation.DeviceSecurityActivityResult.Companion.RESULT_CODE_LINK_DEVICE
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 import za.co.woolworths.financial.services.android.util.location.Event
@@ -153,7 +154,7 @@ class LinkDeviceConfirmationFragment : BaseFragmentBinding<FragmentLinkDeviceFro
                         if (StoreCardActivity.FREEZE_CARD_DETAIL) {
                             activity?.setResult(Activity.RESULT_CANCELED, intent)
                         } else {
-                            activity?.setResult(MyAccountsFragment.RESULT_CODE_LINK_DEVICE, intent)
+                            activity?.setResult(RESULT_CODE_LINK_DEVICE, intent)
                         }
                         clearAllFlags()
                         activity?.finish()

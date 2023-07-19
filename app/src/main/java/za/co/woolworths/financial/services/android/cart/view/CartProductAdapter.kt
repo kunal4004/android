@@ -8,12 +8,19 @@ import android.graphics.PorterDuff
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.*
+import android.view.View.GONE
+import android.view.View.INVISIBLE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.view.animation.DecelerateInterpolator
-import android.widget.*
+import android.widget.CheckBox
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.ProgressBar
+import android.widget.RelativeLayout
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
@@ -32,8 +39,6 @@ import za.co.woolworths.financial.services.android.models.dto.CommerceItem
 import za.co.woolworths.financial.services.android.models.dto.CommerceItemInfo
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary
 import za.co.woolworths.financial.services.android.models.service.event.ProductState
-import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList.Companion.openShoppingList
-import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
@@ -41,12 +46,13 @@ import za.co.woolworths.financial.services.android.util.ImageManager.Companion.s
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.capitaliseFirstLetter
 import za.co.woolworths.financial.services.android.util.NetworkManager
+import za.co.woolworths.financial.services.android.util.ProductType
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.analytics.dto.AddToWishListFirebaseEventData
 import za.co.woolworths.financial.services.android.util.analytics.dto.toAnalyticItem
+import java.util.Locale
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
-import java.util.*
 
 
 class CartProductAdapter(
@@ -58,6 +64,12 @@ class CartProductAdapter(
     private val DISABLE_VIEW_VALUE = 0.5f
     private val GIFT_ITEM = "GIFT"
     private val FOOD_ITEM = "FOOD"
+    private var hasGiftProduct: Boolean = false
+
+    init {
+        hasGiftProduct = containsGiftProduct()
+    }
+
     override fun getSwipeLayoutResourceId(position: Int): Int {
         return R.id.swipe
     }
@@ -87,6 +99,10 @@ class CartProductAdapter(
             catalogRefId: String?
         )
         fun onCartRefresh()
+        fun openAddToListPopup(
+            addToListRequests: ArrayList<AddToListRequest>,
+            addToWishListEventData: AddToWishListFirebaseEventData?
+        )
     }
 
     private var editMode = false
@@ -97,27 +113,19 @@ class CartProductAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
             CartRowType.HEADER.value -> {
-                CartHeaderViewHolder(
-                    LayoutInflater.from(mContext)
-                        .inflate(R.layout.cart_product_header_item, parent, false)
-                )
+                CartHeaderViewHolder(LayoutInflater.from(mContext)
+                    .inflate(R.layout.cart_product_header_item, parent, false))
             }
             CartRowType.PRODUCT.value -> {
-                ProductHolder(
-                    LayoutInflater.from(mContext)
-                        .inflate(R.layout.layout_cart_list_product_item, parent, false)
-                )
+                ProductHolder(LayoutInflater.from(mContext)
+                    .inflate(R.layout.layout_cart_list_product_item, parent, false))
             }
             CartRowType.GIFT.value -> {
-                GiftProductHolder(
-                    LayoutInflater.from(mContext)
-                        .inflate(R.layout.cart_gift_item, parent, false)
-                )
+                GiftProductHolder(LayoutInflater.from(mContext)
+                    .inflate(R.layout.cart_gift_item, parent, false))
             }
             else -> {
-                throw IllegalArgumentException(
-                    "Invalid view type"
-                )
+                throw IllegalArgumentException("Invalid view type")
             }
         }
     }
@@ -128,15 +136,18 @@ class CartProductAdapter(
             CartRowType.HEADER -> {
                 val headerHolder = holder as CartHeaderViewHolder
                 val commerceItems = itemRow.commerceItems
-                headerHolder.tvHeaderTitle.setText(
-                    mContext?.resources?.getQuantityString(
-                        R.plurals.category_item,
-                        commerceItems?.size ?: 0,
-                        commerceItems?.size ?: 0,
-                        capitaliseFirstLetter(itemRow.category)
-                    )
-                )
-                headerHolder.addToListListener(commerceItems)
+                headerHolder.tvHeaderTitle.setText(mContext?.resources?.getQuantityString(
+                    R.plurals.category_item,
+                    commerceItems?.size ?: 0,
+                    commerceItems?.size ?: 0,
+                    capitaliseFirstLetter(itemRow.category)))
+                // Boolean flag to show GWP label on toast when added to list
+                // Cart contains Gift product + Its not Food Commerce item
+                val containsGWP = hasGiftProduct &&
+                        !itemRow.category?.uppercase().equals(
+                            ProductType.FOOD_COMMERCE_ITEM.shortHeader, ignoreCase = true
+                        )
+                headerHolder.addToListListener(commerceItems, containsGWP)
                 if (itemRow.category?.uppercase(Locale.getDefault())
                         .equals(GIFT_ITEM, ignoreCase = true)
                 ) {
@@ -161,10 +172,8 @@ class CartProductAdapter(
                 val commerceItem = itemRow.commerceItem ?: return
                 productHolder.swipeLayout.apply {
                     isRightSwipeEnabled = !editMode
-                    addDrag(
-                        SwipeLayout.DragEdge.Right,
-                        productHolder.swipeRight
-                    )
+                    addDrag(SwipeLayout.DragEdge.Right,
+                        productHolder.swipeRight)
                     if (!editMode) close(true, true)
                 }
                 val param = productHolder.clCartItems.layoutParams as ViewGroup.MarginLayoutParams
@@ -175,24 +184,11 @@ class CartProductAdapter(
                 productHolder.clCartItems.layoutParams = param
                 val commerceItemInfo: CommerceItemInfo? = commerceItem.commerceItemInfo
                 //setListCheckBoxVisibility(editMode, productHolder)
-                productHolder.tvTitle.text =
-                    (if (commerceItemInfo == null) "" else commerceItemInfo.getProductDisplayName())
+                productHolder.tvTitle.text = (if (commerceItemInfo == null) "" else commerceItemInfo.getProductDisplayName())
                 Utils.truncateMaxLine(productHolder.tvTitle)
                 productHolder.quantity.setText(commerceItemInfo?.getQuantity()?.toString() ?: "")
-                productHolder.price.setText(
-                    formatAmountToRandAndCentWithSpace(
-                        commerceItem.priceInfo
-                            .getAmount()
-                    )
-                )
-
-                productHolder.bindSubstitutionInfo(
-                    commerceItem.substitutionInfo,
-                    commerceItemInfo?.commerceId,
-                    commerceItemInfo?.productId,
-                    commerceItemInfo?.catalogRefId
-                )
-
+                productHolder.price.setText(formatAmountToRandAndCentWithSpace(commerceItem.getPriceInfo()
+                    .getAmount()))
                 val productImageUrl =
                     if (commerceItemInfo == null) "" else commerceItemInfo.externalImageRefV2
                 setPicture(productHolder.productImage, productImageUrl)
@@ -201,10 +197,8 @@ class CartProductAdapter(
                 val quantityIsLoading = commerceItem.quantityUploading
 
                 // prevent triggering animation on first load
-                if (firstLoadWasCompleted()) animateOnDeleteButtonVisibility(
-                    productHolder.clCartItems,
-                    editMode
-                )
+                if (firstLoadWasCompleted()) animateOnDeleteButtonVisibility(productHolder.clCartItems,
+                    editMode)
 
                 productHolder.pbQuantity.visibility =
                     if (quantityIsLoading) VISIBLE else GONE
@@ -212,50 +206,37 @@ class CartProductAdapter(
                     if (quantityIsLoading) GONE else VISIBLE
 
                 //Set Promotion Text START
-                if (commerceItem.priceInfo.discountedAmount > 0) {
-                    productHolder.promotionalText.setText(
-                        " " + formatAmountToRandAndCentWithSpace(
-                            commerceItem.priceInfo.discountedAmount
-                        )
-                    )
+                if (commerceItem.getPriceInfo().discountedAmount > 0) {
+                    productHolder.promotionalText.setText(" " + formatAmountToRandAndCentWithSpace(
+                        commerceItem.getPriceInfo().discountedAmount))
                     productHolder.llPromotionalText.visibility = VISIBLE
                     mContext?.let {
                         productHolder.promotionalText.setTextColor(
                             ContextCompat.getColor(it, R.color.promotional_text_red)
                         )
-                        productHolder.price.setTextColor(
-                            ContextCompat.getColor(
-                                it,
-                                R.color.black
-                            )
-                        )
+                        productHolder.price.setTextColor(ContextCompat.getColor(it,
+                            R.color.black))
                     }
                 } else {
                     productHolder.llPromotionalText.visibility = GONE
                     mContext?.let {
-                        productHolder.price.setTextColor(
-                            ContextCompat.getColor(
-                                it,
-                                R.color.black
-                            )
-                        )
+                        productHolder.price.setTextColor(ContextCompat.getColor(it,
+                            R.color.black))
                     }
                 }
                 //Set Promotion Text END
 
                 // Set Color and Size START
                 if (itemRow.category.equals("FOOD", ignoreCase = true)) {
-                    productHolder.tvColorSize.visibility = GONE
+                    productHolder.tvColorSize.visibility = INVISIBLE
                 } else {
                     val sizeColor = getSizeColor(commerceItemInfo)
                     productHolder.tvColorSize.setText(sizeColor)
                     productHolder.tvColorSize.visibility = VISIBLE
                 }
                 // Set Color and Size END
-                productHolder.pbQuantity.indeterminateDrawable.setColorFilter(
-                    Color.BLACK,
-                    PorterDuff.Mode.MULTIPLY
-                )
+                productHolder.pbQuantity.indeterminateDrawable.setColorFilter(Color.BLACK,
+                    PorterDuff.Mode.MULTIPLY)
                 productHolder.llQuantity.alpha =
                     if (commerceItem.isStockChecked) 1.0f else DISABLE_VIEW_VALUE
                 if (commerceItem.isStockChecked) {
@@ -263,11 +244,9 @@ class CartProductAdapter(
                         if (commerceItem.quantityInStock == 0) 0.0f else 1.0f
                     productHolder.tvProductAvailability.visibility =
                         if (commerceItem.quantityInStock == 0) VISIBLE else GONE
-                    Utils.setBackgroundColor(
-                        productHolder.tvProductAvailability,
+                    Utils.setBackgroundColor(productHolder.tvProductAvailability,
                         R.drawable.round_amber_corner,
-                        R.string.out_of_stock
-                    )
+                        R.string.out_of_stock)
                     when (commerceItem.quantityInStock) {
                         0 -> {
                             productHolder.llPromotionalText.visibility = GONE
@@ -423,13 +402,11 @@ class CartProductAdapter(
         if (commerceItemInfo != null) {
             if (sizeColor.isEmpty() && commerceItemInfo.size.isNotEmpty() && !commerceItemInfo.size.equals(
                     "NO SZ",
-                    ignoreCase = true
-                )
+                    ignoreCase = true)
             ) sizeColor =
                 commerceItemInfo.size else if (sizeColor.isNotEmpty() && commerceItemInfo.size.isNotEmpty() && !commerceItemInfo.size.equals(
                     "NO SZ",
-                    ignoreCase = true
-                )
+                    ignoreCase = true)
             ) sizeColor = sizeColor + ", " + commerceItemInfo.size
         }
         return sizeColor
@@ -503,6 +480,10 @@ class CartProductAdapter(
         return getItemTypeAtPosition(position)?.rowType?.value ?: 0
     }
 
+    private fun containsGiftProduct() = cartItems?.any {
+        it.type.equals(GIFT_ITEM, ignoreCase = true)
+    } ?: false
+
     private fun getItemTypeAtPosition(position: Int): CartCommerceItemRow? {
         var currentPosition = 0
         if (!cartItems.isNullOrEmpty()) {
@@ -512,8 +493,7 @@ class CartProductAdapter(
                         CartRowType.HEADER,
                         entry.type,
                         null,
-                        entry.getCommerceItems()
-                    )
+                        entry.getCommerceItems())
                 }
 
                 // increment position for header
@@ -526,13 +506,11 @@ class CartProductAdapter(
                         CartRowType.GIFT,
                         entry.type,
                         productCollection[position - currentPosition],
-                        null
-                    ) else CartCommerceItemRow(
+                        null) else CartCommerceItemRow(
                         CartRowType.PRODUCT,
                         entry.type,
                         productCollection[position - currentPosition],
-                        null
-                    )
+                        null)
                 }
             }
         }
@@ -563,30 +541,29 @@ class CartProductAdapter(
         val tvAddToList: WTextView
         val substitutionLayout: ConstraintLayout
         val topDivider: View
-        fun addToListListener(commerceItems: ArrayList<CommerceItem>?) {
+        fun addToListListener(commerceItems: ArrayList<CommerceItem>?, hasGiftProduct: Boolean) {
             tvAddToList.setOnClickListener {
                 val woolworthsApplication = WoolworthsApplication.getInstance()
                 if (woolworthsApplication != null) {
                     woolworthsApplication.wGlobalState.selectedSKUId = null
                 }
-                Utils.triggerFireBaseEvents(
-                    FirebaseManagerAnalyticsProperties.MYCARTADDTOLIST,
-                    mContext
-                )
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYCARTADDTOLIST,
+                    mContext)
                 val addToListRequests = ArrayList<AddToListRequest>()
-                if (!commerceItems.isNullOrEmpty()) {
-                    for (commerceItem in commerceItems!!) {
-                        val listItem = AddToListRequest()
-                        val commerceItemInfo = commerceItem.commerceItemInfo
-                        listItem.catalogRefId = commerceItemInfo.catalogRefId
-                        listItem.skuID = commerceItemInfo.catalogRefId
-                        listItem.giftListId = commerceItemInfo.catalogRefId
-                        listItem.quantity = "1"
-                        addToListRequests.add(listItem)
+
+                commerceItems?.forEach { commerceItem ->
+                    val commerceItemInfo = commerceItem.commerceItemInfo
+                    val listItem = AddToListRequest().apply {
+                        catalogRefId = commerceItemInfo.catalogRefId
+                        skuID = commerceItemInfo.catalogRefId
+                        giftListId = commerceItemInfo.catalogRefId
+                        quantity = "1"
+                        isGWP = commerceItemInfo.isGWP || hasGiftProduct
                     }
+                    addToListRequests.add(listItem)
                 }
                 val addToWishListEventData = AddToWishListFirebaseEventData(products = commerceItems?.map { it.toAnalyticItem() })
-                openShoppingList(mContext, addToListRequests, "", false, addToWishListEventData = addToWishListEventData)
+                onItemClick.openAddToListPopup(addToListRequests, addToWishListEventData)
             }
             substitutionLayout.setOnClickListener {
                 // show info dialog
@@ -759,7 +736,7 @@ class CartProductAdapter(
         val liquorBannerRootConstraintLayout: ConstraintLayout
         val imgLiBanner: ImageView
         val deliveryFee: TextView
-        val txtPriceEstimatedDelivery: TextView
+        val txtPriceEstimatedDelivery:TextView
 
         val availableCashVouchersCount: TextView
         val viewCashVouchers: TextView
@@ -893,12 +870,10 @@ class CartProductAdapter(
     private fun animateOnDeleteButtonVisibility(view: View, animate: Boolean) {
         if (mContext != null) {
             val width = getWidthAndHeight(mContext)
-            val animator: ObjectAnimator = ObjectAnimator.ofFloat(
-                view,
+            val animator: ObjectAnimator = ObjectAnimator.ofFloat(view,
                 "translationX",
                 if (animate) -width.toFloat() else width.toFloat(),
-                1f
-            )
+                1f)
             animator.interpolator = DecelerateInterpolator()
             animator.duration = 300
             animator.start()
