@@ -5,13 +5,17 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
 
-fun triggerFirebaseEventForAddSubstitution(itemName:String? , itemId: String? , itemPrice: Float) {
+fun triggerFirebaseEventForAddSubstitution(itemName: String?, itemId: String?, itemPrice: Float) {
     val viewItem = Bundle()
-    viewItem.putString(FirebaseManagerAnalyticsProperties.PropertyNames.PRODUCT_ID, itemId)
-    viewItem.putString(FirebaseManagerAnalyticsProperties.PropertyNames.PRODUCT_NAME, itemName)
-    viewItem.putFloat(FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_PRICE, itemPrice)
-    AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.ADD_SUBSTITUTION,
-        viewItem)
+    viewItem.apply {
+        putString(FirebaseManagerAnalyticsProperties.PropertyNames.PRODUCT_ID, itemId)
+        putString(FirebaseManagerAnalyticsProperties.PropertyNames.PRODUCT_NAME, itemName)
+        putFloat(FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_PRICE, itemPrice)
+    }
+    AnalyticsManager.logEvent(
+        FirebaseManagerAnalyticsProperties.ADD_SUBSTITUTION,
+        viewItem
+    )
 }
 
  fun triggerFirebaseEventForSubstitution(isbackButtonEvent:Boolean = false, selectionChoice: String= "") {
