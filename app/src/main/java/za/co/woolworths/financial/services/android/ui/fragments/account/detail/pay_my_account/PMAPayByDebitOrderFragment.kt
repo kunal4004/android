@@ -26,7 +26,11 @@ class PMAPayByDebitOrderFragment : Fragment() {
             false,
         )
         binding.payByDebitOrderModel =
+<<<<<<< HEAD
             AppConfigSingleton.mPayMyAccount?.debitOrder?.let { PMAPayByDebitOrderEntity(it) }
+=======
+            AppConfigSingleton.mPayMyAccount?.debitOrder?.let { ConfigPMAPayByDebitOrderEntity(it) }
+>>>>>>> d85a8729d3 (ticket OWT-1440 "move hardcoded text in pay by debit order to config" completed)
                 ?.toDomain()
         binding.executePendingBindings()
         return binding.root
