@@ -292,7 +292,9 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
                                 unsellableList?.let {
                                     navigateToUnsellableItemsFragment(
                                         it as ArrayList<UnSellableCommerceItem>,
-                                        KotlinUtils.browsingDeliveryType?.name
+                                        KotlinUtils.browsingDeliveryType
+                                            ?: KotlinUtils.getPreferredDeliveryType()
+                                            ?: Delivery.STANDARD
                                     )
                                 }
                                 val placeId = validateLocationResponse?.validatePlace?.placeDetails?.placeId
@@ -303,7 +305,15 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
                                     )
                                 }
                             } else
-                                UnsellableUtils.callConfirmPlace(this@ProductListingFragment, null, binding.incCenteredProgress.progressCreditLimit, confirmAddressViewModel)
+                                UnsellableUtils.callConfirmPlace(
+                                    this@ProductListingFragment,
+                                    null,
+                                    binding.incCenteredProgress.progressCreditLimit,
+                                    confirmAddressViewModel,
+                                    KotlinUtils.browsingDeliveryType
+                                        ?: KotlinUtils.getPreferredDeliveryType()
+                                        ?: Delivery.STANDARD
+                                )
                         }
                     }
                 }
@@ -335,16 +345,14 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
     }
 
     private fun navigateToUnsellableItemsFragment(
-        unSellableCommerceItems: ArrayList<UnSellableCommerceItem>, deliveryType: String?,
+        unSellableCommerceItems: ArrayList<UnSellableCommerceItem>, deliveryType: Delivery,
     ) {
-        deliveryType?.let {
             val unsellableItemsBottomSheetDialog =
-                UnsellableItemsBottomSheetDialog.newInstance(unSellableCommerceItems, it, binding.incCenteredProgress.progressCreditLimit, confirmAddressViewModel, this)
+                UnsellableItemsBottomSheetDialog.newInstance(unSellableCommerceItems, deliveryType, binding.incCenteredProgress.progressCreditLimit, confirmAddressViewModel, this)
             unsellableItemsBottomSheetDialog.show(
                 requireFragmentManager(),
                 UnsellableItemsBottomSheetDialog::class.java.simpleName
             )
-        }
     }
 
     private fun setBrowsingData() {
@@ -1193,7 +1201,11 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
             }
             BundleKeysConstants.REQUEST_CODE -> {
                 updateToolbarTitle()
-                UnsellableUtils.callConfirmPlace(this@ProductListingFragment, null, binding.incCenteredProgress.progressCreditLimit, confirmAddressViewModel)
+                KotlinUtils.getPreferredDeliveryType()?.let {
+                    UnsellableUtils.callConfirmPlace(this@ProductListingFragment, null, binding.incCenteredProgress.progressCreditLimit, confirmAddressViewModel,
+                        it
+                    )
+                }
             }
             else -> return
         }

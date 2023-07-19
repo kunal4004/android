@@ -23,6 +23,7 @@ import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerce
 import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK_201
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
+import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
 /**
  * Created by Kunal Uttarwar on 20/06/23.
@@ -40,6 +41,7 @@ class UnsellableUtils {
             confirmLocationParams: ConfirmLocationParams?,
             progressBar: ProgressBar,
             confirmAddressViewModel: ConfirmAddressViewModel,
+            deliveryType: Delivery
         ) {
             commerceItemList = confirmLocationParams?.commerceItemList
             // Call Confirm location API.
@@ -47,7 +49,7 @@ class UnsellableUtils {
                 progressBar?.visibility = View.VISIBLE
                 try {
                     val confirmLocationRequest = confirmLocationParams?.confirmLocationRequest
-                        ?: KotlinUtils.getConfirmLocationRequest(KotlinUtils.browsingDeliveryType)
+                        ?: KotlinUtils.getConfirmLocationRequest(deliveryType)
                     val confirmLocationResponse =
                         confirmAddressViewModel.postConfirmAddress(confirmLocationRequest)
                     progressBar?.visibility = View.GONE
@@ -84,7 +86,7 @@ class UnsellableUtils {
                                     callGetListAPI(
                                         progressBar,
                                         fragment,
-                                        confirmAddressViewModel
+                                        confirmAddressViewModel,
                                     )
                                 } else {
                                     //This is not a unsellable flow or we don't have unsellable items so this will give callBack to AddToCart function or Checkout Summary Flow.
@@ -97,7 +99,8 @@ class UnsellableUtils {
                                     fragment,
                                     confirmLocationParams,
                                     progressBar,
-                                    confirmAddressViewModel
+                                    confirmAddressViewModel,
+                                    deliveryType
                                 )
                             }
                         }
@@ -109,7 +112,8 @@ class UnsellableUtils {
                         fragment,
                         confirmLocationParams,
                         progressBar,
-                        confirmAddressViewModel
+                        confirmAddressViewModel,
+                        deliveryType
                     )
                 }
             }
@@ -192,7 +196,6 @@ class UnsellableUtils {
                     try {
                         val createListResponse =
                             confirmAddressViewModel.createNewList(createList)
-                        hideLoadingProgress()
                         val createNewListResponse = createListResponse?.body()
                         if (createNewListResponse != null) {
                             when (createNewListResponse.httpCode) {
@@ -216,6 +219,7 @@ class UnsellableUtils {
                                 }
 
                                 else -> {
+                                    hideLoadingProgress()
                                     showListErrorDialog(
                                         fragment,
                                         progressBar,
@@ -223,6 +227,8 @@ class UnsellableUtils {
                                     )
                                 }
                             }
+                        } else {
+                            hideLoadingProgress()
                         }
                     } catch (e: Exception) {
                         FirebaseManager.logException(e)
@@ -298,6 +304,8 @@ class UnsellableUtils {
         }
 
         private fun showLoadingProgress(fragment: Fragment) {
+            if (customProgressDialog != null && customProgressDialog!!.isVisible)
+                return
             customProgressDialog = CustomProgressBar.newInstance(
                 fragment.getString(R.string.add_to_list_progress_bar_title),
                 fragment.getString(R.string.processing_your_request_desc)
@@ -360,6 +368,7 @@ class UnsellableUtils {
             confirmLocationParams: ConfirmLocationParams?,
             progressBar: ProgressBar,
             confirmAddressViewModel: ConfirmAddressViewModel,
+            deliveryType: Delivery
         ) {
             errorBottomSheetDialog.showCommonErrorBottomDialog(
                 object : ClickOnDialogButton {
@@ -368,7 +377,8 @@ class UnsellableUtils {
                             fragment,
                             confirmLocationParams,
                             progressBar,
-                            confirmAddressViewModel
+                            confirmAddressViewModel,
+                            deliveryType
                         )
                     }
 

@@ -838,7 +838,8 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                                         (this@DashDeliveryAddressFragment),
                                         null,
                                         binding.progressBar,
-                                        confirmAddressViewModel
+                                        confirmAddressViewModel,
+                                        KotlinUtils.browsingDeliveryType ?: Delivery.DASH
                                     )
                             } else {
                                 initViews()
@@ -885,7 +886,8 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
             }
         }
         AddToCartLiveData.observe(viewLifecycleOwner) {
-            if (it) {
+            if (it && isVisible) {
+                // isVisible condition is necessary while searching product from dash landing to PLP.
                 AddToCartLiveData.value = false
                 addToCart(viewModel.addItemToCart.value) // This will again call addToCart
             }
@@ -898,7 +900,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
         val unsellableItemsBottomSheetDialog =
             UnsellableItemsBottomSheetDialog.newInstance(
                 unSellableCommerceItems,
-                Delivery.DASH.name,
+                Delivery.DASH,
                 binding.progressBar,
                 confirmAddressViewModel,
                 this@DashDeliveryAddressFragment
