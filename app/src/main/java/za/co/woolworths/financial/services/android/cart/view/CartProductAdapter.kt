@@ -190,6 +190,12 @@ class CartProductAdapter(
                 productHolder.quantity.setText(commerceItemInfo?.getQuantity()?.toString() ?: "")
                 productHolder.price.setText(formatAmountToRandAndCentWithSpace(commerceItem.getPriceInfo()
                     .getAmount()))
+                productHolder.bindSubstitutionInfo(
+                    commerceItem.substitutionInfo,
+                    commerceItemInfo?.commerceId,
+                    commerceItemInfo?.productId,
+                    commerceItemInfo?.catalogRefId
+                )
                 val productImageUrl =
                     if (commerceItemInfo == null) "" else commerceItemInfo.externalImageRefV2
                 setPicture(productHolder.productImage, productImageUrl)
