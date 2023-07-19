@@ -1,0 +1,43 @@
+{
+  "debitOrder": [
+    {
+      "title": "Pay By Debit Order",
+      "content": [
+        {
+          "text": "Debit order is the most convenient way to pay your Woolies account."
+        },
+        {
+          "text": "To set up a debit order, call us on 0861 50 20 20 or e-mail queries@wfs.co.za with the subject line: Debit order",
+          "phone": "0861 50 20 20",
+          "email": "queries@wfs.co.za"
+        }
+      ]
+    },
+    {
+      "subtitle": "Please also send us the following: ",
+      "content": [
+        {
+          "text": "Bank name: "
+        },
+        {
+          "text": "Branch name and code: "
+        },
+        {
+          "text": "Bank account number: "
+        },
+        {
+          "text": "Account type: "
+        },
+        {
+          "text": "Debit order amount: (this can be either full payment, minimum payment, fixed amount or fixed percentage)"
+        },
+        {
+          "text": "Debit order deduction date: "
+        }
+      ],
+      "footer": {
+        "text": "Note: If you are setting up a debit order for a Woolies Personal Loan, remember to also attach a clear copy of your valid SA Identity Document (if its an ID card include both sides)."
+      }
+    }
+  ]
+}
