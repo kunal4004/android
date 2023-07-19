@@ -67,13 +67,13 @@ class DeviceSecurityActivityResult @Inject constructor(private val activity : Ac
         resultCode: Int
     ) {
         viewModel ?: return
-        CoroutineScope(Dispatchers.Main).launch {
+        CoroutineScope(Dispatchers.IO).launch {
             when (resultCode) {
                 RESULT_CODE_LINK_DEVICE -> viewModel.remote.getAllLinkedDevices(true)
                 RESULT_CODE_DEVICE_LINKED -> viewModel.remote.getAllLinkedDevices(false)
             }
-            viewModel.performClick()
         }
+        viewModel.performClick()
     }
 
     companion object {
