@@ -10,6 +10,7 @@ import com.awfs.coordination.databinding.ShoppingListCommerceItemBinding
 import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.Item
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace
+import za.co.woolworths.financial.services.android.util.Utils
 
 sealed class SubstitutionViewHolder(binding: ViewBinding) : RecyclerView.ViewHolder(binding.root) {
 
@@ -30,7 +31,11 @@ sealed class SubstitutionViewHolder(binding: ViewBinding) : RecyclerView.ViewHol
 
                 tvTitle.text = item?.title
                 tvPrice.minHeight = context.resources.getDimension(R.dimen.two_dp).toInt()
-                tvPrice.text = formatAmountToRandAndCentWithSpace(item?.price)
+                if (Utils.getDeliveryDetails().isNullOrEmpty()) {
+                    tvPrice.text = formatAmountToRandAndCentWithSpace(item?.defaultPrice)
+                } else {
+                    tvPrice.text = formatAmountToRandAndCentWithSpace(item?.price)
+                }
                 binding.tvPromotionText.text = item?.PROMOTION
                 cartProductImage.setImageURI(item?.imageLink)
             }

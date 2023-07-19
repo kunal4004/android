@@ -91,6 +91,7 @@ public class AppInstanceObject {
         public Long linkedDeviceIdentityId;
         public String mId;
         public boolean enhanceSubstitutionFeatureShown;
+        public String deliveryDetails;
 
         public User() {
             id = AppInstanceObject.getCurrentUsersID();

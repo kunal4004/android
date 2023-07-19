@@ -174,7 +174,12 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
                     Status.SUCCESS -> {
                         resource.data?.data?.let {
                             hideShimmerView()
-                            itemList = it.responses.getOrNull(0)?.actions?.getOrNull(0)?.items
+                            itemList?.clear()
+                            it.responses.getOrNull(0)?.actions?.forEach {
+                                   it.items.forEach {
+                                       itemList?.add(it)
+                                   }
+                            }
                             if (itemList.isNullOrEmpty()) {
                                 showEmptyErrorScreen()
                                 return@observe
@@ -348,10 +353,10 @@ class ManageSubstitutionFragment : BaseFragmentBinding<ManageSubstitutionDetails
         val list = ArrayList<Product>()
         list.add(product)
         val plist = KotlinUtils.extractPlistFromDeliveryDetails()
-        plist?.let {
-            return KiboProductRequest(plist, list)
+        if (plist.isNullOrEmpty()) {
+            return  KiboProductRequest(products = list)
         }
-        return  KiboProductRequest("", list)
+        return KiboProductRequest(priceListId = plist, products = list)
     }
 
     override fun onClick(v: View?) {
