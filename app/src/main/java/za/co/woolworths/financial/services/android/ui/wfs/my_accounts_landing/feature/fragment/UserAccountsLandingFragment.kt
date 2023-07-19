@@ -17,11 +17,11 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.BetterActivityResult
 import za.co.woolworths.financial.services.android.ui.fragments.credit_card_delivery.SetUpDeliveryNowDialog
 import za.co.woolworths.financial.services.android.ui.wfs.common.contentView
+import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature.navigation.AccountLandingEventLauncherImpl
+import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature.navigation.FragmentResultType
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature.screen.UserAccountsLandingScene
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.enumtype.Authenticated
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.schema.ManageLoginRegister
-import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature.navigation.AccountLandingEventLauncherImpl
-import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature.navigation.FragmentResultType
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.viewmodel.UserAccountLandingViewModel
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
 import javax.inject.Inject
@@ -29,7 +29,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class UserAccountsLandingFragment : Fragment() {
 
-    private val viewModel: UserAccountLandingViewModel by activityViewModels()
+    val viewModel: UserAccountLandingViewModel by activityViewModels()
     private var deepLinkParams: JsonObject? = null
 
     private val mRegisterActivityForResult = BetterActivityResult.registerActivityForResult(this)
@@ -138,6 +138,9 @@ class UserAccountsLandingFragment : Fragment() {
 
     companion object {
         val userAccountsLandingFragment: String = UserAccountsLandingFragment::class.java.simpleName
+        const val ACCOUNT_CARD_REQUEST_CODE = 2043
+        const val RELOAD_ACCOUNT_RESULT_CODE = 55555
+        const val PET_INSURANCE_REQUEST_CODE = 1212
     }
 
 }

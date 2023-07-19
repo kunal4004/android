@@ -51,13 +51,11 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingListsRespo
 import za.co.woolworths.financial.services.android.models.dto.dash.LastOrderDetailsResponse
 import za.co.woolworths.financial.services.android.models.network.Parameter
 import za.co.woolworths.financial.services.android.onecartgetstream.OCChatActivity
-import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.activities.BarcodeScanActivity
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_ACCOUNT
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_PRODUCT
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity
 import za.co.woolworths.financial.services.android.ui.adapters.ShopPagerAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
@@ -68,7 +66,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragmen
 import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment.SelectedTabIndex.STANDARD_TAB
 import za.co.woolworths.financial.services.android.ui.fragments.shop.StandardDeliveryFragment.Companion.DEPARTMENT_LOGIN_REQUEST
 import za.co.woolworths.financial.services.android.ui.fragments.shop.component.ShopTooltipUiState
-import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList.Companion.DISPLAY_TOAST_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.OnChildFragmentEvents
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView
 import za.co.woolworths.financial.services.android.ui.views.shop.dash.ChangeFulfillmentCollectionStoreFragment
@@ -407,10 +404,10 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
     override fun onResume() {
         super.onResume()
         if (isVisible) {
-            if (Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.deliveryType.isNullOrEmpty() && KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.deliveryType.isNullOrEmpty()) {
-                return
-            } else if (((KotlinUtils.isLocationPlaceIdSame == false || KotlinUtils.isNickNameChanged == true) && KotlinUtils.placeId != null) || WoolworthsApplication.getValidatePlaceDetails() == null) {
+            if (((KotlinUtils.isLocationPlaceIdSame == false || KotlinUtils.isNickNameChanged == true) && KotlinUtils.placeId != null) || WoolworthsApplication.getValidatePlaceDetails() == null) {
                 executeValidateSuburb()
+            } else if (Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.deliveryType.isNullOrEmpty() && KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.deliveryType.isNullOrEmpty()) {
+                return
             } else if (KotlinUtils.isLocationPlaceIdSame == true && KotlinUtils.placeId != null) {
                 setDeliveryView()
                 (KotlinUtils.browsingDeliveryType
@@ -420,38 +417,6 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
             } else {
                 setDeliveryView()
             }
-        }
-    }
-
-    override fun onHiddenChanged(hidden: Boolean) {
-        super.onHiddenChanged(hidden)
-        if (!hidden) {
-            //do when hidden
-            timer?.start()
-            (activity as? BottomNavigationActivity)?.apply {
-                fadeOutToolbar(R.color.recent_search_bg)
-                showBackNavigationIcon(false)
-                showBottomNavigationMenu()
-                if (isResumed && isVisible)
-                    refreshViewPagerFragment()
-                Handler().postDelayed({
-                    hideToolbar()
-                }, AppConstant.DELAY_1000_MS)
-            }
-            if (((KotlinUtils.isLocationPlaceIdSame == false || KotlinUtils.isNickNameChanged == true) && KotlinUtils.placeId != null) || WoolworthsApplication.getValidatePlaceDetails() == null) {
-                executeValidateSuburb()
-            }
-        } else {
-            if (binding.blackToolTipLayout.root.isVisible) {
-                timer?.cancel()
-            }
-        }
-
-        if (getDeliveryType() == null) {
-            setupToolbar(STANDARD_TAB.index)
-            binding.viewpagerMain.currentItem = STANDARD_TAB.index
-        } else {
-            setDeliveryView()
         }
     }
 
@@ -630,6 +595,35 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         }
     }
 
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (!hidden) {
+            //do when hidden
+            timer?.start()
+            (activity as? BottomNavigationActivity)?.apply {
+                fadeOutToolbar(R.color.recent_search_bg)
+                showBackNavigationIcon(false)
+                showBottomNavigationMenu()
+                if (isResumed && isVisible)
+                    refreshViewPagerFragment()
+                Handler().postDelayed({
+                    hideToolbar()
+                }, AppConstant.DELAY_1000_MS)
+            }
+        } else {
+            if (binding.blackToolTipLayout.root.isVisible) {
+                timer?.cancel()
+            }
+        }
+
+        if (getDeliveryType() == null) {
+            setupToolbar(STANDARD_TAB.index)
+            binding.viewpagerMain.currentItem = STANDARD_TAB.index
+        } else {
+            setDeliveryView()
+        }
+    }
+
     override fun permissionGranted(requestCode: Int) {
         if (requestCode == 1) navigateToBarcode()
     }
@@ -654,15 +648,6 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_CODE_ORDER_DETAILS_PAGE) {
             when (resultCode) {
-                DISPLAY_TOAST_RESULT_CODE -> {
-                    navigateToMyListFragment()
-                    refreshViewPagerFragment()
-                }
-
-                ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE -> {
-                    refreshViewPagerFragment()
-                }
-
                 CancelOrderProgressFragment.RESULT_CODE_CANCEL_ORDER_SUCCESS -> {
                     refreshViewPagerFragment()
                 }
@@ -681,14 +666,9 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                 binding.viewpagerMain,
                 binding.viewpagerMain.currentItem
             )
-            if (fragment is DashDeliveryAddressFragment) {
+            if (fragment is DashDeliveryAddressFragment){
                 fragment.onActivityResult(requestCode, resultCode, data)
             }
-        }
-
-        if (requestCode == PDP_REQUEST_CODE && resultCode == ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE) {
-            navigateToMyListFragment()
-            refreshViewPagerFragment()
         }
 
         if (requestCode == SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE) {

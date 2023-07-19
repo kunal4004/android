@@ -1,7 +1,10 @@
 package za.co.woolworths.financial.services.android.checkout.viewmodel
 
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.liveData
 import dagger.hilt.android.lifecycle.HiltViewModel
+import androidx.lifecycle.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor
@@ -22,9 +25,11 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class CheckoutAddAddressNewUserViewModel @Inject constructor
-(private val checkoutAddAddressNewUserInteractor: CheckoutAddAddressNewUserInteractor,
- private val checkoutLiquorRepository: CheckoutLiquorRepository) :
-        ViewModel() {
+    (
+    private val checkoutAddAddressNewUserInteractor: CheckoutAddAddressNewUserInteractor,
+    private val checkoutLiquorRepository: CheckoutLiquorRepository,
+) :
+    ViewModel() {
 
     private val _shoppingCartData = MutableLiveData<Event<Resource<ShoppingCartResponse>>>()
     val shoppingCartData: LiveData<Event<Resource<ShoppingCartResponse>>> = _shoppingCartData
@@ -32,25 +37,11 @@ class CheckoutAddAddressNewUserViewModel @Inject constructor
     init {
         getShoppingCartData()
     }
-    fun getShoppingCartData () {
+
+    fun getShoppingCartData() {
         viewModelScope.launch {
             val shoppingCartResponse = checkoutLiquorRepository.getShoppingCartData()
             _shoppingCartData.value = Event(shoppingCartResponse)
-        }
-    }
-
-    fun initGetSuburbs(provinceId: String) = liveData(Dispatchers.IO) {
-        emit(NativeCheckoutResource.loading(data = null))
-        try {
-            emit(
-                NativeCheckoutResource.success(
-                    data = checkoutAddAddressNewUserInteractor.getSuburbs(
-                        provinceId
-                    ).body()
-                )
-            )
-        } catch (exception: Exception) {
-            emit(NativeCheckoutResource.error(data = null, msg = exception.toString()))
         }
     }
 
@@ -76,7 +67,7 @@ class CheckoutAddAddressNewUserViewModel @Inject constructor
 
     fun editAddress(
         addAddressRequestBody: AddAddressRequestBody,
-        addressId: String
+        addressId: String,
     ): LiveData<Any> {
         return checkoutAddAddressNewUserInteractor.editAddress(addAddressRequestBody, addressId)
     }
@@ -93,7 +84,7 @@ class CheckoutAddAddressNewUserViewModel @Inject constructor
         return checkoutAddAddressNewUserInteractor.getShippingDetails(body)
     }
 
-    fun setConfirmSelection(confirmSelectionRequestBody: ConfirmSelectionRequestBody): LiveData<Any>{
+    fun setConfirmSelection(confirmSelectionRequestBody: ConfirmSelectionRequestBody): LiveData<Any> {
         return checkoutAddAddressNewUserInteractor.setConfirmSelection(confirmSelectionRequestBody)
     }
 
