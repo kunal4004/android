@@ -6,7 +6,8 @@
 
     <TextView
         android:id="@+id/maxItemsInfoMessage"
-        style="@style/myriad_pro_regular_black"
+        style="@style/opensens_regular"
+        android:textColor="@color/black"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:paddingLeft="@dimen/twelve_dp"

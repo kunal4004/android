@@ -17,12 +17,20 @@
         android:paddingRight="24dp"
         android:paddingTop="24dp">
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/close"
-            android:layout_gravity="end"
-            android:background="@drawable/close_24" />
+        <FrameLayout
+            android:id="@+id/closeWindow"
+            android:layout_width="@dimen/twenty_four_dp"
+            android:layout_height="@dimen/twenty_four_dp"
+            android:layout_gravity="end">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/close_24"
+                android:contentDescription="@string/close_icon_tapped" />
+        </FrameLayout>
+
+
 
         <ImageView
             android:layout_width="wrap_content"
@@ -57,7 +65,8 @@
             android:textSize="14sp"
             app:WTextView_font="bold" />
 
-        <za.co.woolworths.financial.services.android.ui.views.WTextView
+        <TextView
+            style="@style/opensans_regular_13_black"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
@@ -65,8 +74,7 @@
             android:gravity="center"
             android:text="@string/walkthrough_biometrics_desc"
             android:textColor="@color/black_50"
-            android:textSize="15sp"
-            app:WTextView_font="myriadpro_regular" />
+            />
 
         <View
             android:id="@+id/vBottomLineDescription"
@@ -81,7 +89,8 @@
             android:layout_height="70dp"
             android:visibility="visible">
 
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
+            <TextView
+                style="@style/opensans_regular_13_black"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
@@ -90,9 +99,7 @@
                 android:gravity="center_vertical"
                 android:lineSpacingExtra="0.4sp"
                 android:text="Enable Biometrics"
-                android:textColor="@color/black"
-                android:textSize="15sp"
-                app:WTextView_font="myriadpro_regular" />
+                android:textColor="@color/black" />
 
             <Switch
                 android:id="@+id/auSwitch"

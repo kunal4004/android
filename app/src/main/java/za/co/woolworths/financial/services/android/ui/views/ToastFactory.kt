@@ -9,21 +9,24 @@ import android.graphics.Point
 import android.graphics.drawable.GradientDrawable
 import android.os.Handler
 import android.os.Looper
+import android.text.Spannable
 import android.util.DisplayMetrics
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.*
+import android.view.View.GONE
+import android.view.View.INVISIBLE
+import android.view.View.VISIBLE
 import android.widget.LinearLayout
 import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.text.buildSpannedString
 import com.awfs.coordination.R
-import com.google.gson.JsonArray
-import com.google.gson.JsonElement
+import com.awfs.coordination.databinding.LayoutSnackbarAddToListBinding
 import com.google.gson.JsonObject
-import com.google.gson.JsonParser
 import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.contracts.IToastInterface
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
@@ -36,7 +39,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.hel
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.SendMessageResponse
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView.Companion.LIVE_CHAT_TOAST
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView.Companion.LIVE_CHAT_UNREAD_MESSAGE_COUNT_PACKAGE
-import za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToShoppingListFragment
+import za.co.woolworths.financial.services.android.util.CustomTypefaceSpan
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.ReceiverManager
 import za.co.woolworths.financial.services.android.util.ScreenManager
@@ -49,80 +52,6 @@ class ToastFactory {
         private const val POPUP_DELAY_MILLIS_15000 = 15000
         private const val POPUP_3000_DELAY_MILLIS: Long = 3000
         private const val POPUP_MARGIN_BOTTOM = 25
-
-        fun buildShoppingListToast(
-            activity: Activity,
-            viewLocation: View,
-            buttonIsVisible: Boolean,
-            data: Intent?,
-            toastInterface: IToastInterface
-        ): PopupWindow? {
-            val context = WoolworthsApplication.getAppContext()
-
-            val shoppingList =
-                data?.getStringExtra(AddToShoppingListFragment.POST_ADD_TO_SHOPPING_LIST)
-            var shoppingListObject: JsonObject? = null
-            var shoppingListArray: JsonArray? = null
-
-            shoppingList?.let {
-                val element = JsonParser().parse(it)
-                element?.let { item ->
-                    when (element) {
-                        is JsonObject -> shoppingListObject = item as? JsonObject
-                        is JsonArray -> shoppingListArray = item as? JsonArray
-                    }
-                }
-            }
-
-            // inflate your xml layout
-            val inflater =
-                context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as? LayoutInflater
-            val layout = inflater?.inflate(R.layout.add_to_cart_success, null)
-            // set the custom display
-            val tvButtonClick = layout?.findViewById<WTextView>(R.id.tvView)
-            val tvBoldTitle = layout?.findViewById<WTextView>(R.id.tvCart)
-            val tvAddedTo = layout?.findViewById<WTextView>(R.id.tvAddToCart)
-            // initialize your popupWindow and use your custom layout as the view
-            val popupWindow = PopupWindow(
-                layout,
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT, true
-            )
-
-            tvButtonClick?.visibility = if (buttonIsVisible) VISIBLE else GONE
-            tvBoldTitle?.visibility = VISIBLE
-            tvAddedTo?.isAllCaps = true
-
-            shoppingListObject?.let {
-                when (it.size()) {
-                    1 -> {
-                        var shoppingList: JsonElement? = null
-                        it.entrySet()?.forEach { item -> shoppingList = item.value }
-                        tvBoldTitle?.setText(shoppingList?.asJsonObject?.get("name")?.asString)
-                    }
-                    else -> tvBoldTitle?.setText(
-                        context.getString(R.string.shopping_list).plus("s")
-                    )
-                }
-            }
-
-            // handle popupWindow click event
-            tvButtonClick?.setOnClickListener {
-                toastInterface.onToastButtonClicked(shoppingListObject ?: shoppingListArray)
-                popupWindow.dismiss() // dismiss the window
-            }
-
-            // dismiss the popup window after 3sec
-            popupWindow.isFocusable = false
-            Handler().postDelayed({ popupWindow.dismiss() }, POPUP_DELAY_MILLIS.toLong())
-            popupWindow.showAtLocation(
-                viewLocation,
-                Gravity.BOTTOM,
-                0,
-                convertDpToPixel(getDeviceHeight(activity), context)
-            )
-            return popupWindow
-        }
 
         fun buildPushNotificationAlertToast(
             activity: Activity,
@@ -276,6 +205,78 @@ class ToastFactory {
             tvAddedTo?.isAllCaps = true
             tvAddedTo?.setText("$count ITEM".plus(if (count > 1) "S" else "").plus(" ADDED TO"))
             tvBoldTitle?.setText(listName)
+
+            popupWindow.isFocusable = false
+
+            // dismiss the popup window after 3sec
+            Handler().postDelayed({ popupWindow.dismiss() }, POPUP_DELAY_MILLIS.toLong())
+            popupWindow.showAtLocation(
+                viewLocation,
+                Gravity.BOTTOM,
+                0,
+                convertDpToPixel(getDeviceHeight(activity), context)
+            )
+            return popupWindow
+        }
+
+        fun buildItemsAddedToList(
+            activity: Activity,
+            viewLocation: View,
+            listName: String,
+            hasGiftProduct: Boolean,
+            count: Int,
+            onButtonClick: () -> Unit
+        ): PopupWindow? {
+            val context = WoolworthsApplication.getAppContext()
+            context ?: return null
+            val binding = LayoutSnackbarAddToListBinding.inflate(LayoutInflater.from(context))
+
+            binding.apply {
+                val title = context.resources.getQuantityString(
+                    R.plurals.added_to_list,
+                    count, count, listName
+                )
+                if(hasGiftProduct) {
+                    snackbarDesc.visibility = VISIBLE
+                    snackbarDesc.text =
+                        context.getString(R.string.added_to_list_desc)
+                } else {
+                    snackbarDesc.visibility = GONE
+                }
+
+                snackbarTitle.text = buildSpannedString {
+                    append(title.uppercase())
+                    val typeface = ResourcesCompat.getFont(context, R.font.futura_semi_bold)
+                    if(count > 0) {
+                        setSpan(
+                            CustomTypefaceSpan("futura", typeface),
+                            0,
+                            count.toString().length,
+                            Spannable.SPAN_INCLUSIVE_INCLUSIVE
+                        )
+                    }
+
+                    if (listName.isNotEmpty()) {
+                        setSpan(
+                            CustomTypefaceSpan("futura", typeface),
+                            title.indexOf(listName),
+                            title.length,
+                            Spannable.SPAN_INCLUSIVE_INCLUSIVE
+                        )
+                    }
+                }
+            }
+
+            // initialize your popupWindow and use your custom layout as the view
+            val popupWindow = PopupWindow(
+                binding.root,
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT, true
+            )
+            binding.snackbarAction.setOnClickListener {
+                onButtonClick()
+                popupWindow.dismiss()
+            }
 
             popupWindow.isFocusable = false
 

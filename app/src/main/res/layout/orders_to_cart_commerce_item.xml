@@ -113,7 +113,7 @@
                                 android:textColor="@color/white"
                                 android:textSize="@dimen/twelve_sp"
                                 android:visibility="gone"
-                                app:WTextView_font="myriadpro_semibold" />
+                                app:WTextView_font="opensansans_semibold" />
 
                             <RelativeLayout
                                 android:id="@+id/llQuantity"

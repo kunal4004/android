@@ -38,7 +38,6 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity.Companion.PAY_MY_ACCOUNT_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.treatmentplan.ProductOfferingStatus
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.MyAccountsRemoteApiViewModel
-import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleVisibility
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView
@@ -50,6 +49,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.detail.p
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ShowTreatmentPlanDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanDialogFragment
+import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature.fragment.UserAccountsLandingFragment.Companion.RELOAD_ACCOUNT_RESULT_CODE
 import za.co.woolworths.financial.services.android.util.ActivityIntentNavigationManager
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.BALANCE_PROTECTION_INSURANCE_OPT_IN_SUCCESS_RESULT_CODE
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.BALANCE_PROTECTION_INSURANCE_REQUEST_CODE
@@ -156,7 +156,7 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
         }
 
         if (isReloadCacheAccountDataEnabled)
-            setResult(MyAccountsFragment.RELOAD_ACCOUNT_RESULT_CODE)
+            setResult(RELOAD_ACCOUNT_RESULT_CODE)
 
         mAccountSignedInPresenter?.onBackPressed(this@AccountSignedInActivity)
     }

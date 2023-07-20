@@ -47,7 +47,7 @@
                 android:text="@string/sf_instore_availability_desc_top"
                 android:textColor="@color/black_50"
                 android:textSize="15sp"
-                app:WTextView_font="myriadpro_regular"/>
+                app:WTextView_font="opensans_regular"/>
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:layout_width="match_parent"
@@ -58,7 +58,7 @@
                 android:text="@string/sf_instore_availability_desc_bottom"
                 android:textColor="@color/black_50"
                 android:textSize="15sp"
-                app:WTextView_font="myriadpro_regular"/>
+                app:WTextView_font="opensans_regular"/>
 
             <LinearLayout style="@style/rag_lin">
 
@@ -67,7 +67,7 @@
                     android:background="@drawable/circle_green"
                     />
 
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                <TextView
                     style="@style/rag_rating_text"
                     android:text="@string/status_green_desc"
                     />
@@ -81,7 +81,7 @@
                     android:background="@drawable/circle_amber"
                     />
 
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                <TextView
                     style="@style/rag_rating_text"
                     android:text="@string/status_amber_desc"
                     />
@@ -98,7 +98,7 @@
                     android:background="@drawable/circle_red"
                     />
 
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                <TextView
                     style="@style/rag_rating_text"
                     android:text="@string/status_red_desc"
                     />

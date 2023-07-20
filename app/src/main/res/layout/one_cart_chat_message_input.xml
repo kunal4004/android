@@ -45,7 +45,7 @@
         android:id="@+id/messageInputEditText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/myriad_pro_regular"
+        android:fontFamily="@font/opensans_regular"
         android:hint="@string/type_a_message"
         android:textColorHint="@color/color_666666"
         android:textSize="@dimen/_14sdp"
