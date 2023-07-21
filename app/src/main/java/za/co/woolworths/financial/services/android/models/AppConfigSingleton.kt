@@ -2,27 +2,7 @@ package za.co.woolworths.financial.services.android.models
 
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.dto.RatingsAndReviews
-import za.co.woolworths.financial.services.android.models.dto.app_config.BnplConfig
-import za.co.woolworths.financial.services.android.models.dto.app_config.BrandLandingPage
-import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigAbsaBankingOpenApiServices
-import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigApplyNowLinks
-import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigClickAndCollect
-import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigCreditCardActivation
-import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigCreditCardDelivery
-import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigCreditView
-import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigCustomerFeedback
-import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigDashConfig
-import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigInAppReview
-import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigLiquor
-import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigLowStock
-import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigPayMyAccount
-import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigProductDetailsPage
-import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigQuickShopDefaultValues
-import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigSts
-import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigVirtualTempCard
-import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigVirtualTryOn
-import za.co.woolworths.financial.services.android.models.dto.app_config.GlassBox
-import za.co.woolworths.financial.services.android.models.dto.app_config.TooltipSettings
+import za.co.woolworths.financial.services.android.models.dto.app_config.*
 import za.co.woolworths.financial.services.android.models.dto.app_config.account_options.ConfigAccountOptions
 import za.co.woolworths.financial.services.android.models.dto.app_config.balance_protection_insurance.ConfigBalanceProtectionInsurance
 import za.co.woolworths.financial.services.android.models.dto.app_config.chat.ConfigCollections
@@ -36,7 +16,6 @@ import za.co.woolworths.financial.services.android.models.dto.app_config.native_
 import za.co.woolworths.financial.services.android.models.dto.app_config.whatsapp.ConfigWhatsApp
 import za.co.woolworths.financial.services.android.models.repository.AppConfigRepository
 import za.co.woolworths.financial.services.android.util.Utils
-
 
 object AppConfigSingleton {
     var storeCardBlockReasons: List<Map<String, String>>? = null
@@ -90,11 +69,12 @@ object AppConfigSingleton {
     var authenticVersionStamp: String? = ""
     var lowStock: ConfigLowStock? = null
     var tooltipSettings: TooltipSettings? = null
-    var ratingsAndReviews : RatingsAndReviews? = null
+    var ratingsAndReviews: RatingsAndReviews? = null
+
     @JvmStatic
-    var glassBox : GlassBox? = null
-    var bnplConfig : BnplConfig? = null
-    var searchApiSettings : SearchApiSettings? = null
+    var searchApiSettings: SearchApiSettings? = null
+    var glassBox: GlassBox? = null
+    var bnplConfig: BnplConfig? = null
 
     init {
         initialiseFromCache()
@@ -111,8 +91,10 @@ object AppConfigSingleton {
                 wwTodayURI = env.wwTodayURI
                 authenticVersionStamp = env.authenticVersionStamp ?: ""
 
-                WoolworthsApplication.getInstance().wGlobalState.startRadius = env.storeStockLocatorConfigStartRadius ?: 0
-                WoolworthsApplication.getInstance().wGlobalState.endRadius = env.storeStockLocatorConfigEndRadius ?: 0
+                WoolworthsApplication.getInstance().wGlobalState.startRadius =
+                    env.storeStockLocatorConfigStartRadius ?: 0
+                WoolworthsApplication.getInstance().wGlobalState.endRadius =
+                    env.storeStockLocatorConfigEndRadius ?: 0
             }
 
             appConfig.defaults?.let { defaults ->
@@ -124,7 +106,8 @@ object AppConfigSingleton {
                 howToSaveLink = defaults.howtosaveLink
                 wrewardsTCLink = defaults.wrewardsTCLink
                 cartCheckoutLink = defaults.cartCheckoutLink
-                firebaseUserPropertiesForDelinquentProductGroupCodes = defaults.firebaseUserPropertiesForDelinquentProductGroupCodes
+                firebaseUserPropertiesForDelinquentProductGroupCodes =
+                    defaults.firebaseUserPropertiesForDelinquentProductGroupCodes
             }
 
             appConfig.dashConfig?.apply {
@@ -150,10 +133,11 @@ object AppConfigSingleton {
                     "",
                     "",
                     "",
-                    0
+                    0,
                 )
             } else {
-                absaBankingOpenApiServices?.isEnabled = Utils.isFeatureEnabled(absaBankingOpenApiServices?.minimumSupportedAppBuildNumber)
+                absaBankingOpenApiServices?.isEnabled =
+                    Utils.isFeatureEnabled(absaBankingOpenApiServices?.minimumSupportedAppBuildNumber)
             }
 
             inAppChat = appConfig.inAppChat
@@ -169,7 +153,7 @@ object AppConfigSingleton {
                         "",
                         "",
                         "",
-                        mutableListOf()
+                        mutableListOf(),
                     ),
                     ConfigCustomerService(
                         "",
@@ -177,25 +161,30 @@ object AppConfigSingleton {
                         "",
                         "",
                         "",
-                        mutableListOf()
+                        mutableListOf(),
                     ),
                     null,
-                    mutableListOf()
+                    mutableListOf(),
                 )
             } else {
-                inAppChat?.isEnabled = Utils.isFeatureEnabled(inAppChat?.minimumSupportedAppBuildNumber)
+                inAppChat?.isEnabled =
+                    Utils.isFeatureEnabled(inAppChat?.minimumSupportedAppBuildNumber)
             }
 
             virtualTempCard = appConfig.virtualTempCard
             if (virtualTempCard != null) {
-                virtualTempCard?.isEnabled = Utils.isFeatureEnabled(virtualTempCard?.minimumSupportedAppBuildNumber)
+                virtualTempCard?.isEnabled =
+                    Utils.isFeatureEnabled(virtualTempCard?.minimumSupportedAppBuildNumber)
             }
 
             absaBankingOpenApiServices = appConfig.absaBankingOpenApiServices
 
             instantCardReplacement = appConfig.instantCardReplacement
-            instantCardReplacement?.isEnabled = instantCardReplacement?.minimumSupportedAppBuildNumber?.let { Utils.isFeatureEnabled(it) }
-                ?: false
+            instantCardReplacement?.isEnabled =
+                instantCardReplacement?.minimumSupportedAppBuildNumber?.let {
+                    Utils.isFeatureEnabled(it)
+                }
+                    ?: false
 
             appConfig.creditCardActivation?.apply {
                 isEnabled = Utils.isFeatureEnabled(minimumSupportedAppBuildNumber)
@@ -245,7 +234,7 @@ object AppConfigSingleton {
 
             appConfig.ratingsAndReviews?.apply {
                 minimumSupportedAppBuildNumber.let { isEnabled = Utils.isFeatureEnabled(it) }
-                ratingsAndReviews= this
+                ratingsAndReviews = this
             }
 
             appConfig.glassBox?.apply {

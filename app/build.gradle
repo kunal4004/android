@@ -412,6 +412,9 @@ dependencies {
     // glassbox SDK for record screen session
     implementation 'com.clarisite.mobile.android:glassbox:6.660'
 
+    // Kotlin reflexion
+    implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_reflect"
+
 }
 
 apply plugin: 'com.google.gms.google-services'

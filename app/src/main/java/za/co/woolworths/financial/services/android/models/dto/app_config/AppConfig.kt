@@ -50,5 +50,5 @@ data class AppConfig(
     var ratingsAndReviews: RatingsAndReviews?,
     var glassBox: GlassBox?,
     var bnplConfig: BnplConfig?,
-    var searchApiSettings: SearchApiSettings?
+    var searchApiSettings: SearchApiSettings?,
 ) : Parcelable
