@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse
+import za.co.woolworths.financial.services.android.models.dto.account.CoveredStatus
 import za.co.woolworths.financial.services.android.models.dto.account.FicaModel
 import za.co.woolworths.financial.services.android.models.dto.account.InsuranceProducts
 import za.co.woolworths.financial.services.android.models.dto.account.PetInsuranceModel
@@ -464,20 +465,23 @@ class UserAccountLandingViewModel @Inject constructor(
         petInsuranceResponse?.let { handlePetInsurancePendingCoveredNotCoveredUI(petModel = it) {} }
     }
 
-        fun removeProductFromProductsMap() {
-            listOf(
-                AccountProductKeys.BlackCreditCard.value,
-                AccountProductKeys.GoldCreditCard.value,
-                AccountProductKeys.SilverCreditCard.value,
-                AccountProductKeys.StoreCard.value,
-                AccountProductKeys.PersonalLoan.value
-            ).forEach { key ->
-                val productDetails = mapOfFinalProductItems[key]?.productDetails
-                if (productDetails?.availableFunds == null
-                            && productDetails?.currentBalance == null
-                            && productDetails?.productGroupCode == null) {
-                    _mapOfFinalProductItems.remove(key)
-                }
+    fun isPetInsuranceNotCovered() = product.getInsuranceProduct(petInsuranceResponse)?.statusType() == CoveredStatus.NOT_COVERED
+
+    fun removeProductFromProductsMap() {
+        listOf(
+            AccountProductKeys.BlackCreditCard.value,
+            AccountProductKeys.GoldCreditCard.value,
+            AccountProductKeys.SilverCreditCard.value,
+            AccountProductKeys.StoreCard.value,
+            AccountProductKeys.PersonalLoan.value
+        ).forEach { key ->
+            val productDetails = mapOfFinalProductItems[key]?.productDetails
+            if (productDetails?.availableFunds == null
+                && productDetails?.currentBalance == null
+                && productDetails?.productGroupCode == null
+            ) {
+                _mapOfFinalProductItems.remove(key)
             }
         }
     }
+}
