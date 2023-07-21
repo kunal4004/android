@@ -1317,7 +1317,6 @@
     <string name="payment_options_desc">A payment of %1$s is required to bring your account up to date.</string>
     <string name="payment_options_title">Your Account Is In Arrears</string>
 
-    <string name="account_arrears_description">Your account is in arrears for more than 6 months and has been handed to a collections agency.</string>
     <string name="call_the_call_centre">call the call centre</string>
     <string name="view_treatment_plan_description">Your account is in arrears. Have you already agreed to a repayment plan? View your plan or make a payment now.</string>
     <string name="treatment_plan_eligible_charged_off_description_pl">Your account is being managed by our collection partners</string>

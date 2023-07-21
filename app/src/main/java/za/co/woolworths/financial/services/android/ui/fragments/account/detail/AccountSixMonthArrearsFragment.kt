@@ -145,14 +145,14 @@ class AccountSixMonthArrearsFragment : Fragment(R.layout.account_six_month_arrea
 
     private fun AccountSixMonthArrearsFragmentBinding.showCallUsButton() {
         arrearsDescTextView?.text =
-            activity?.resources?.getString(R.string.account_arrears_description)
+            activity?.resources?.getString(R.string.account_arrears_cc_description)
         callTheCallCenterButton?.visibility = VISIBLE
         viewTreatmentPlansButton?.visibility = GONE
         callTheCallCenterUnderlinedButton?.visibility = GONE
     }
 
     private fun AccountSixMonthArrearsFragmentBinding.setElitePlanViews(eligibilityPlan: EligibilityPlan?) {
-        arrearsDescTextView?.text = bindString(R.string.account_arrears_description)
+        arrearsDescTextView?.text = bindString(R.string.account_arrears_cc_description)
         callTheCallCenterButton?.visibility = GONE
         viewTreatmentPlansButton.visibility = VISIBLE
         callTheCallCenterUnderlinedButton?.apply {
