@@ -17,6 +17,7 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.core.text.buildSpannedString
@@ -763,11 +764,16 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                     count
                 )
             bindingListDetails.selectDeselectAllTextView.visibility = VISIBLE
-            Utils.setRecyclerViewMargin(bindingListDetails.rcvShoppingListItems, Utils.dp2px(60f))
+            setScrollViewBottomMargin(Utils.dp2px(60f))
         } else {
             bindingListDetails.rlCheckOut.visibility = GONE
-            Utils.setRecyclerViewMargin(bindingListDetails.rcvShoppingListItems, 0)
+            setScrollViewBottomMargin(0)
         }
+    }
+
+    private fun setScrollViewBottomMargin(margin: Int) {
+        val layoutParams : ConstraintLayout.LayoutParams? = bindingListDetails.nestedScrollView.layoutParams as? ConstraintLayout.LayoutParams
+        layoutParams?.bottomMargin = margin
     }
 
     private fun executeAddToCart(items: ArrayList<ShoppingListItem>?) {
