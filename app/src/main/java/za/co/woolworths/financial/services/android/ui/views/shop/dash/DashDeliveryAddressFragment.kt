@@ -222,6 +222,14 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
             // Proceed with add to cart as we have moved unsellable items to List.
             addToCart(viewModel.addItemToCart.value) // This will again call addToCart
         }
+        setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_DISMISS_RESULT) { requestKey, bundle ->
+            val resultCode =
+                bundle.getString(CustomBottomSheetDialogFragment.DIALOG_BUTTON_CLICK_RESULT)
+            if (resultCode == UnsellableUtils.ADD_TO_LIST_SUCCESS_RESULT_CODE) {
+                // Proceed with add to cart as we have moved unsellable items to List.
+                addToCart(viewModel.addItemToCart.value) // This will again call addToCart
+            }
+        }
     }
 
     private fun callValidatePlace(placeId: String?) {
@@ -830,7 +838,8 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                                         (this@DashDeliveryAddressFragment),
                                         null,
                                         binding.progressBar,
-                                        confirmAddressViewModel
+                                        confirmAddressViewModel,
+                                        KotlinUtils.browsingDeliveryType ?: Delivery.DASH
                                     )
                             } else {
                                 initViews()
@@ -877,7 +886,8 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
             }
         }
         AddToCartLiveData.observe(viewLifecycleOwner) {
-            if (it) {
+            if (it && isVisible) {
+                // isVisible condition is necessary while searching product from dash landing to PLP.
                 AddToCartLiveData.value = false
                 addToCart(viewModel.addItemToCart.value) // This will again call addToCart
             }
@@ -890,10 +900,10 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
         val unsellableItemsBottomSheetDialog =
             UnsellableItemsBottomSheetDialog.newInstance(
                 unSellableCommerceItems,
-                Delivery.DASH.name,
+                Delivery.DASH,
                 binding.progressBar,
                 confirmAddressViewModel,
-                this
+                this@DashDeliveryAddressFragment
             )
         unsellableItemsBottomSheetDialog.show(
             parentFragmentManager,

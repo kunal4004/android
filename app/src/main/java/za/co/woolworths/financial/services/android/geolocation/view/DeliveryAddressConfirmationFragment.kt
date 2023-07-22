@@ -376,9 +376,17 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
             }
             placeId?.let { getDeliveryDetailsFromValidateLocation(it, true) }
         }
-        setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_DISMISS_RESULT) { _, _ ->
-            // change location dismiss button clicked so land back on last delivery location tab.
-            moveToTab(lastDeliveryType)
+        setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_DISMISS_RESULT) { requestKey, bundle ->
+            val resultCode =
+                bundle.getString(CustomBottomSheetDialogFragment.DIALOG_BUTTON_CLICK_RESULT)
+            if (resultCode == UnsellableUtils.ADD_TO_LIST_SUCCESS_RESULT_CODE) {
+                // Proceed with fragment navigation as we have moved unsellable items to List.
+                onConfirmLocationNavigation()
+            }
+            else{
+                // change location dismiss button clicked so land back on last delivery location tab.
+                moveToTab(lastDeliveryType)
+            }
         }
     }
 
@@ -402,10 +410,12 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
         }
 
         var unSellableCommerceItems: MutableList<UnSellableCommerceItem>? = ArrayList()
+        var currentDeliveryType = Delivery.STANDARD
         when (deliveryType) {
             Delivery.STANDARD.name -> {
                 unSellableCommerceItems =
                     validateLocationResponse?.validatePlace?.unSellableCommerceItems
+                currentDeliveryType = Delivery.STANDARD
             }
             Delivery.CNC.name -> {
                 validateLocationResponse?.validatePlace?.stores?.forEach {
@@ -413,17 +423,19 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
                         unSellableCommerceItems = it.unSellableCommerceItems
                     }
                 }
+                currentDeliveryType = Delivery.CNC
             }
             Delivery.DASH.name -> {
                 unSellableCommerceItems =
                     validateLocationResponse?.validatePlace?.onDemand?.unSellableCommerceItems
+                currentDeliveryType = Delivery.DASH
             }
         }
 
         if (unSellableCommerceItems?.isNullOrEmpty() == false && isUnSellableItemsRemoved == false) {
             // show unsellable items
             unSellableCommerceItems?.let {
-                navigateToUnsellableItemsFragment(it as ArrayList<UnSellableCommerceItem>)
+                navigateToUnsellableItemsFragment(it as ArrayList<UnSellableCommerceItem>, currentDeliveryType)
             }
 
         } else {
@@ -436,15 +448,19 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
             return
         }
         val confirmLocationAddress = ConfirmLocationAddress(placeId,null,address2)
+        var currentDeliveryType = Delivery.STANDARD
         val confirmLocationRequest = when (deliveryType) {
             Delivery.STANDARD.name -> {
                 mStoreId = ""
+                currentDeliveryType = Delivery.STANDARD
                 ConfirmLocationRequest(STANDARD, confirmLocationAddress, mStoreId)
             }
             Delivery.CNC.name -> {
+                currentDeliveryType = Delivery.CNC
                 ConfirmLocationRequest(CNC, confirmLocationAddress, mStoreId)
             }
             Delivery.DASH.name -> {
+                currentDeliveryType = Delivery.DASH
                 mStoreId = validateLocationResponse?.validatePlace?.onDemand?.storeId
                 ConfirmLocationRequest(DASH, confirmLocationAddress, mStoreId)
             }
@@ -456,7 +472,8 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
 
         UnsellableUtils.callConfirmPlace(this@DeliveryAddressConfirmationFragment,
             ConfirmLocationParams(null, confirmLocationRequest),
-            progressBar, confirmAddressViewModel
+            progressBar, confirmAddressViewModel,
+            currentDeliveryType
         )
     }
 
@@ -1022,13 +1039,20 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
      */
     private fun navigateToUnsellableItemsFragment(
         unSellableCommerceItems: ArrayList<UnSellableCommerceItem>,
+        currentDeliveryType: Delivery,
     ) {
-        deliveryType?.let {
-            val unsellableItemsBottomSheetDialog =
-                UnsellableItemsBottomSheetDialog.newInstance(unSellableCommerceItems, it, binding.progressBar, confirmAddressViewModel, this)
-            unsellableItemsBottomSheetDialog.show(requireFragmentManager(),
-                UnsellableItemsBottomSheetDialog::class.java.simpleName)
-        }
+        val unsellableItemsBottomSheetDialog =
+            UnsellableItemsBottomSheetDialog.newInstance(
+                unSellableCommerceItems,
+                currentDeliveryType,
+                binding.progressBar,
+                confirmAddressViewModel,
+                this
+            )
+        unsellableItemsBottomSheetDialog.show(
+            requireFragmentManager(),
+            UnsellableItemsBottomSheetDialog::class.java.simpleName
+        )
     }
 
     private fun isUnSellableItemsRemoved() {

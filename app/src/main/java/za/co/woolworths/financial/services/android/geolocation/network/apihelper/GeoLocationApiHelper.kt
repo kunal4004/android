@@ -6,6 +6,7 @@ import za.co.woolworths.financial.services.android.geolocation.model.request.Con
 import za.co.woolworths.financial.services.android.geolocation.model.request.SaveAddressLocationRequest
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
 import za.co.woolworths.financial.services.android.models.dto.CreateList
+import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse
 import za.co.woolworths.financial.services.android.models.network.AppContextProviderImpl
 import za.co.woolworths.financial.services.android.models.network.RetrofitApiProviderImpl
 import za.co.woolworths.financial.services.android.models.network.RetrofitConfig
@@ -65,7 +66,10 @@ class GeoLocationApiHelper @Inject constructor() : RetrofitConfig(AppContextProv
     suspend fun createNewList(createList: CreateList) =
         mApiInterface.createNewList(getSessionToken(), getDeviceIdentityToken(), createList)
 
-    suspend fun addProductsToList(productId: String, addToListRequest: List<AddToListRequest>) =
+    suspend fun addProductsToList(
+        productId: String,
+        addToListRequest: List<AddToListRequest>,
+    ): retrofit2.Response<ShoppingListItemsResponse> =
         mApiInterface.addProductsToList(
             getSessionToken(),
             getDeviceIdentityToken(),

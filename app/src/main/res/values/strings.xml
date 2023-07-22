@@ -2587,25 +2587,22 @@
     <string name="continue_with_cnc_delivery">CONTINUE WITH Click &amp; Collect</string>
     <string name="continue_with_dash_delivery">CONTINUE WITH DASH DELIVERY</string>
 
-    <plurals name="remove_items_dash_dialog_desc">
-        <item quantity="one">This item cannot be delivered using <b><font color='#000000'>Dash Delivery.</font></b> The following will be removed from your cart.</item>
-        <item quantity="other">These items cannot be delivered using <b><font color='#000000'>Dash Delivery.</font></b> The following will be removed from your cart.</item>
+    <plurals name="remove_items_dash_dialog_title">
+        <item quantity="one">This item isn’t available using Dash Delivery. Save it to a shopping list instead.</item>
+        <item quantity="other">These items aren’t available using Dash Delivery. Save it to a shopping list instead.</item>
     </plurals>
 
-    <plurals name="remove_items_standard_dialog_desc">
-        <item quantity="one">This item cannot be delivered using <b><font color='#000000'>Standard Delivery.</font></b> The following will be removed from your cart.</item>
-        <item quantity="other">These items cannot be delivered using <b><font color='#000000'>Standard Delivery.</font></b> The following will be removed from your cart.</item>
+    <plurals name="remove_items_standard_dialog_title">
+        <item quantity="one">This item isn’t available using Standard Delivery. Save it to a shopping list instead.</item>
+        <item quantity="other">These items aren’t available using Standard Delivery. Save it to a shopping list instead.</item>
     </plurals>
 
-    <plurals name="remove_items_cnc_dialog_desc">
-        <item quantity="one">This item cannot be delivered using <b><font color="black">Click &amp; Collect.</font></b> The following will be removed from your cart.</item>
-        <item quantity="other">These items cannot be delivered using <b><font color="black">Click &amp; Collect.</font></b> The following will be removed from your cart.</item>
+    <plurals name="remove_items_cnc_dialog_title">
+        <item quantity="one">This item isn’t available using Click &amp; Collect. Save it to a shopping list instead.</item>
+        <item quantity="other">These items aren’t available using Click &amp; Collect. Save it to a shopping list instead.</item>
     </plurals>
 
-    <plurals name="unsellable_title">
-        <item quantity="one">This Item Will Be Removed From Your Cart.</item>
-        <item quantity="other">@string/these_items_will_be_removed_from_your_cart</item>
-    </plurals>
+    <string name="unsellable_subtitle">The following will be removed from your cart.</string>
     <string name="minspend_error_msg_cart">A minimum spend of R%s is required to checkout.</string>
     <string name="minspend_error_msg_title">A minimum spend of R%.1f is required to checkout.</string>
     <string name="minspend_error_msg_desc">To complete your purchase, increase your order value, or change your delivery method.</string>
@@ -3068,7 +3065,7 @@
 
     <string name="add_to_list_progress_title">Adding Your Items\n to %s</string>
     <string name="add_to_list_progress_bar_title">Adding Your Items\n to a List</string>
-    <string name="add_to_list_bottom_sheet_success_title">We\’ve added your items to the ‘Auto shopping’ List</string>
+    <string name="add_to_list_bottom_sheet_success_title">We\’ve added your items to the ‘Saved Shopping’ List</string>
     <string name="add_to_list_bottom_sheet_success_sub_title">You will be able to add them to your cart from there.</string>
 
     <string name="add_to_list_error_description">The items were unable to be added to a list.</string>

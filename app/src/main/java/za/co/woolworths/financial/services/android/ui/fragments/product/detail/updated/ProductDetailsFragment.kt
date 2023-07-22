@@ -38,6 +38,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.ProductDetailsFragmentBinding
 import com.awfs.coordination.databinding.PromotionalImageBinding
+import com.bumptech.glide.util.Util
 import com.facebook.FacebookSdk.getApplicationContext
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.gson.Gson
@@ -324,6 +325,15 @@ class ProductDetailsFragment :
         setFragmentResultListener(UnsellableUtils.ADD_TO_LIST_SUCCESS_RESULT_CODE) { _, _ ->
             // Proceed with add to cart as we have moved unsellable items to List.
             onConfirmLocation()
+        }
+
+        setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_DISMISS_RESULT) { requestKey, bundle ->
+            val resultCode =
+                bundle.getString(CustomBottomSheetDialogFragment.DIALOG_BUTTON_CLICK_RESULT)
+            if (resultCode == UnsellableUtils.ADD_TO_LIST_SUCCESS_RESULT_CODE) {
+                // Proceed with add to cart as we have moved unsellable items to List.
+                onConfirmLocation()
+            }
         }
 
         KotlinUtils.setAddToListFragmentResultListener(
@@ -840,7 +850,10 @@ class ProductDetailsFragment :
                                 // show unsellable items
                                 unsellableList?.let {
                                     navigateToUnsellableItemsFragment(it as java.util.ArrayList<UnSellableCommerceItem>,
-                                        KotlinUtils.browsingDeliveryType?.name)
+                                        KotlinUtils.browsingDeliveryType
+                                            ?: KotlinUtils.getPreferredDeliveryType()
+                                            ?: Delivery.STANDARD
+                                    )
                                 }
                             } else
                                 confirmAddressViewModel?.let {
@@ -848,7 +861,10 @@ class ProductDetailsFragment :
                                         (this@ProductDetailsFragment),
                                         null,
                                         progressBar,
-                                        it
+                                        it,
+                                        KotlinUtils.browsingDeliveryType
+                                            ?: KotlinUtils.getPreferredDeliveryType()
+                                            ?: Delivery.STANDARD
                                     )
                                 }
                         }
@@ -899,17 +915,16 @@ class ProductDetailsFragment :
     }
 
     private fun navigateToUnsellableItemsFragment(
-        unSellableCommerceItems: ArrayList<UnSellableCommerceItem>, deliveryType: String?,
+        unSellableCommerceItems: ArrayList<UnSellableCommerceItem>,
+        deliveryType: Delivery
     ) {
-        deliveryType?.let {
             val unsellableItemsBottomSheetDialog =
                 confirmAddressViewModel?.let { it1 ->
-                    UnsellableItemsBottomSheetDialog.newInstance(unSellableCommerceItems, it, binding.progressBar,
+                    UnsellableItemsBottomSheetDialog.newInstance(unSellableCommerceItems, deliveryType, binding.progressBar,
                         it1, this)
                 }
             unsellableItemsBottomSheetDialog?.show(requireFragmentManager(),
                 UnsellableItemsBottomSheetDialog::class.java.simpleName)
-        }
     }
 
     fun addItemToCart() {

@@ -36,32 +36,30 @@ import za.co.woolworths.financial.services.android.util.wenum.Delivery
  * Created by Kunal Uttarwar on 11/05/22.
  */
 class UnsellableItemsBottomSheetDialog(
+    val deliveryType: Delivery,
     val progressBar: ProgressBar,
     val confirmAddressViewModel: ConfirmAddressViewModel,
-    val currentFragment: Fragment
+    val currentFragment: Fragment,
 ) : WBottomSheetDialogFragment(),
     View.OnClickListener {
 
     private lateinit var binding: UnsellableItemsBottomSheetDialogBinding
     var bundle: Bundle? = null
     private var commerceItems: ArrayList<UnSellableCommerceItem>? = null
-    private var deliveryType: String? = null
     private var isCheckBoxSelected = true
 
     companion object {
         const val KEY_ARGS_UNSELLABLE_COMMERCE_ITEMS = "UnSellableCommerceItems"
-        const val KEY_ARGS_DELIVERY_TYPE = "deliveryType"
 
         fun newInstance(
             unsellableItemsList: ArrayList<UnSellableCommerceItem>,
-            deliveryType: String,
+            deliveryType: Delivery,
             progressBar: ProgressBar,
             viewModel: ConfirmAddressViewModel,
-            fragment: Fragment
+            fragment: Fragment,
         ) =
-            UnsellableItemsBottomSheetDialog(progressBar, viewModel, fragment).withArgs {
+            UnsellableItemsBottomSheetDialog(deliveryType, progressBar, viewModel, fragment).withArgs {
                 putSerializable(KEY_ARGS_UNSELLABLE_COMMERCE_ITEMS, unsellableItemsList)
-                putString(KEY_ARGS_DELIVERY_TYPE, deliveryType)
             }
     }
 
@@ -117,35 +115,35 @@ class UnsellableItemsBottomSheetDialog(
 
     private fun onCheckBoxChanged(checked: Boolean) {
         isCheckBoxSelected = checked
+        binding.removeItems.text =
+            if (checked) getString(R.string.continueLabel) else getString(R.string.remove_and_continue)
     }
 
     private fun UnsellableItemsBottomSheetDialogBinding.init() {
         incSwipeCloseIndicator?.root?.visibility = View.VISIBLE
         removeItems?.setOnClickListener(this@UnsellableItemsBottomSheetDialog)
         arguments?.apply {
-            deliveryType = getString(KEY_ARGS_DELIVERY_TYPE, Delivery.STANDARD.type)
             commerceItems =
                 getSerializable(KEY_ARGS_UNSELLABLE_COMMERCE_ITEMS) as? ArrayList<UnSellableCommerceItem>
         }
 
         val itemCount = commerceItems?.size ?: 0
-        unsellableTitle?.text =
-            resources.getQuantityString(R.plurals.unsellable_title, itemCount, itemCount)
-        unsellableSubTitle?.text = when (deliveryType) {
+        unsellableSubTitle?.text = getString(R.string.unsellable_subtitle)
+        unsellableTitle?.text = when (deliveryType.name) {
             Delivery.STANDARD.name -> {
-                resources.getQuantityText(R.plurals.remove_items_standard_dialog_desc, itemCount)
+                resources.getQuantityText(R.plurals.remove_items_standard_dialog_title, itemCount)
             }
 
             Delivery.CNC.name -> {
-                resources.getQuantityText(R.plurals.remove_items_cnc_dialog_desc, itemCount)
+                resources.getQuantityText(R.plurals.remove_items_cnc_dialog_title, itemCount)
             }
 
             Delivery.DASH.name -> {
-                resources.getQuantityText(R.plurals.remove_items_dash_dialog_desc, itemCount)
+                resources.getQuantityText(R.plurals.remove_items_dash_dialog_title, itemCount)
             }
 
             else -> {
-                resources.getQuantityText(R.plurals.remove_items_standard_dialog_desc, itemCount)
+                resources.getQuantityText(R.plurals.remove_items_standard_dialog_title, itemCount)
             }
         }
         cancelBtn?.apply {
@@ -176,7 +174,8 @@ class UnsellableItemsBottomSheetDialog(
                     currentFragment,
                     if (isCheckBoxSelected) ConfirmLocationParams(commerceItems, null) else null,
                     progressBar,
-                    confirmAddressViewModel
+                    confirmAddressViewModel,
+                    deliveryType
                 )
                 confirmRemoveItems()
             }
