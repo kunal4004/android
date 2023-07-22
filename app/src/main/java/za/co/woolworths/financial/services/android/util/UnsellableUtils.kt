@@ -22,7 +22,10 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingList
 import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
 import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK_201
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
+import za.co.woolworths.financial.services.android.util.analytics.dto.AddToWishListFirebaseEventData
+import za.co.woolworths.financial.services.android.util.analytics.dto.toAnalyticItem
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
 /**
@@ -245,6 +248,7 @@ class UnsellableUtils {
             confirmAddressViewModel: ConfirmAddressViewModel,
             requestedListId: String,
         ) {
+            callAddToWishlistFirebaseEvent()
             showLoadingProgress(fragment)
             fragment.viewLifecycleOwner.lifecycleScope.launch {
                 try {
@@ -392,6 +396,15 @@ class UnsellableUtils {
                 fragment.getString(R.string.retry),
                 true
             )
+        }
+
+        private fun callAddToWishlistFirebaseEvent() {
+            val analyticProducts = commerceItemList?.map { it.toAnalyticItem() }
+            val addToWishListFirebaseEventData = AddToWishListFirebaseEventData(
+                shoppingListName = Constant.AUTO_SHOPPING_LIST_NAME,
+                products = analyticProducts
+            )
+            FirebaseAnalyticsEventHelper.addToWishlistEvent(addToWishListFirebaseEventData)
         }
     }
 }

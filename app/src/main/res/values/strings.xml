@@ -3065,7 +3065,7 @@
 
     <string name="add_to_list_progress_title">Adding Your Items\n to %s</string>
     <string name="add_to_list_progress_bar_title">Adding Your Items\n to a List</string>
-    <string name="add_to_list_bottom_sheet_success_title">We\’ve added your items to the ‘Auto shopping’ List</string>
+    <string name="add_to_list_bottom_sheet_success_title">We\’ve added your items to the ‘Saved Shopping’ List</string>
     <string name="add_to_list_bottom_sheet_success_sub_title">You will be able to add them to your cart from there.</string>
 
     <string name="add_to_list_error_description">The items were unable to be added to a list.</string>
