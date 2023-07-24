@@ -93,7 +93,6 @@ import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
-import za.co.woolworths.financial.services.android.viewmodels.ShoppingCartLiveData
 import javax.inject.Inject
 
 /**
@@ -598,11 +597,7 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
                                     }
 
                                 } else {
-                                    // Showing Sign in pop up when api fails and session dialog
-                                    // is shown
-                                    if (!SessionUtilities.getInstance().isUserAuthenticated) {
-                                        return@launch
-                                    }
+
                                     // navigate to shop/list/cart tab
                                     activity?.setResult(Activity.RESULT_OK)
                                     activity?.finish()
@@ -817,7 +812,7 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
     private fun GeoLocationDeliveryAddressBinding.selectATab(selectedTab: AppCompatTextView?) {
         selectedTab?.setBackgroundResource(R.drawable.bg_geo_selected_tab)
         val myRiadSemiBoldFont =
-            Typeface.createFromAsset(activity?.assets, "fonts/MyriadPro-Semibold.otf")
+            Typeface.createFromAsset(activity?.assets, "fonts/OpenSans-SemiBold.ttf")
         selectedTab?.typeface = myRiadSemiBoldFont
         selectedTab?.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
         when (selectedTab) {
@@ -839,7 +834,7 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
     private fun unSelectATab(unSelectedTab: AppCompatTextView?) {
         unSelectedTab?.apply {
             val myriadProRegularFont =
-                Typeface.createFromAsset(activity?.assets, "fonts/MyriadPro-Regular.otf")
+                Typeface.createFromAsset(activity?.assets, "fonts/OpenSans-Regular.ttf")
             typeface = myriadProRegularFont
             setBackgroundResource(R.drawable.bg_geo_unselected_tab)
             setTextColor(ContextCompat.getColor(requireContext(), R.color.color_444444))
@@ -1057,56 +1052,12 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
             isUnSellableItemsRemoved = it
             if (isUnSellableItemsRemoved == true) {
                 binding.sendConfirmLocation()
-                loadShoppingCart()
                 UnSellableItemsLiveData.value = false
             }
         }
     }
 
-    private fun loadShoppingCart() {
-        val shoppingCartResponseCall = OneAppService().getShoppingCart()
-        shoppingCartResponseCall.enqueue(
-                CompletionHandler(
-                        (object : IResponseListener<ShoppingCartResponse> {
-                            override fun onSuccess(response: ShoppingCartResponse?) {
-                                try {
-                                    when (response?.httpCode) {
-                                        HTTP_OK -> {
-                                            val isNoLiquorOrder = response?.data?.getOrNull(0)?.liquorOrder
-                                            if(isNoLiquorOrder == false)
-                                                ShoppingCartLiveData.value = isNoLiquorOrder
-                                        }
-                                        HTTP_SESSION_TIMEOUT_440 -> {
-                                            SessionUtilities.getInstance()
-                                                    .setSessionState(SessionDao.SESSION_STATE.INACTIVE)
-                                            SessionExpiredUtilities.getInstance().showSessionExpireDialog(
-                                                    requireActivity() as AppCompatActivity?,
-                                                    this@DeliveryAddressConfirmationFragment
-                                            )
-                                        }
-                                        else -> {
-                                            response?.response?.let {
-                                                Utils.displayValidationMessage(
-                                                        requireActivity(),
-                                                        CustomPopUpWindow.MODAL_LAYOUT.ERROR,
-                                                        it.desc,
-                                                        true
-                                                )
-                                            }
-                                        }
-                                    }
-                                } catch (ex: Exception) {
-                                    FirebaseManager.logException(ex)
-                                }
-                            }
 
-                            override fun onFailure(error: Throwable?) {
-
-                            }
-                        }), ShoppingCartResponse::class.java
-                )
-        )
-    }
 
     private fun GeoLocationDeliveryAddressBinding.showErrorDialog() {
         if(!isAdded && !isVisible) return

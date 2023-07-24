@@ -47,7 +47,7 @@ class BPIViewModel : ViewModel() {
             get() = _insuranceLeadGenOptIn
 
     companion object {
-        const val externalURL = "http://www.woolworths.co.za/store/fragments/corporate/corporate-index.jsp?content=corporate-content&contentId=cmp208540"
+        const val externalURL = "https://www.woolworths.co.za/store/fragments/corporate/corporate-index.jsp?content=corporate-content&contentId=cmp208540"
     }
 
     fun overviewPresenter(argument: Bundle?): BPIOverviewPresenter? {

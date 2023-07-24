@@ -11,6 +11,7 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.extension.onClick
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.StoreCardEnhancementConstant
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.StoreCardFeatureType
 
 class InstantStoreCardReplacementCardFragment : Fragment(R.layout.instant_store_card_replacement_card_fragment) {
@@ -29,13 +30,22 @@ class InstantStoreCardReplacementCardFragment : Fragment(R.layout.instant_store_
         super.onViewCreated(view, savedInstanceState)
         val binding = InstantStoreCardReplacementCardFragmentBinding.bind(view)
         val card = arguments?.getParcelable<StoreCardFeatureType?>(STORE_CARD_FEATURE_TYPE) as? StoreCardFeatureType.StoreCardIsInstantReplacementCardAndInactive
-        binding.accountHolderNameTextView.visibility = View.GONE
-        binding.storeCardImageView.setImageResource(R.drawable.store_card_inactive)
-        binding.storeCardImageView.contentDescription = context?.getString(R.string.inactive_store_card_image_on_overlay)
-        setLabel(binding)
-        binding.storeCardImageView.onClick {
-            (requireActivity() as? StoreCardActivity)?.apply {
-                accountViewModel.emitEventOnCardTap(card)
+        val isBlockTypeNewCard = card?.storeCard?.blockType?.equals(StoreCardEnhancementConstant.NewCard, ignoreCase = true) == true
+        if(isBlockTypeNewCard){
+            binding.accountHolderNameTextView.visibility = View.INVISIBLE
+            binding.storeCardImageView.setImageDrawable( ContextCompat.getDrawable(requireContext(), R.drawable.store_card_new_card_image))
+            binding.storeCardImageView.contentDescription = context?.getString(R.string.active_store_card_image_on_overlay_new_card)
+
+        }else {
+            binding.accountHolderNameTextView.visibility = View.GONE
+            binding.storeCardImageView.setImageResource(R.drawable.store_card_inactive)
+            binding.storeCardImageView.contentDescription =
+                context?.getString(R.string.inactive_store_card_image_on_overlay)
+            setLabel(binding)
+            binding.storeCardImageView.onClick {
+                (requireActivity() as? StoreCardActivity)?.apply {
+                    accountViewModel.emitEventOnCardTap(card)
+                }
             }
         }
     }

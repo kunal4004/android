@@ -1,10 +1,16 @@
 package za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature.screen
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.FastOutLinearInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.runtime.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -14,16 +20,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import org.json.JSONException
 import org.json.JSONObject
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.account.PetInsuranceModel
-import za.co.woolworths.financial.services.android.models.dto.account.ServerErrorResponse
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.CreditCardDeliveryStatusResponse
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.wfs.component.*
 import za.co.woolworths.financial.services.android.ui.wfs.component.pull_to_refresh.WfsPullToRefreshUI
 import za.co.woolworths.financial.services.android.ui.wfs.core.NetworkStatusUI
 import za.co.woolworths.financial.services.android.ui.wfs.core.RetrofitFailureResult
+import za.co.woolworths.financial.services.android.ui.wfs.core.animationDurationMilis400
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.extensions.findActivity
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.extensions.testAutomationTag
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature.enumtype.MyAccountSectionHeaderType
@@ -66,7 +73,6 @@ fun SignedInScreen(
     val userAccountsByProductOfferingId by viewModel.getUserAccountsByProductOfferingId.collectAsStateWithLifecycle()
     val petInsuranceState by viewModel.fetchPetInsuranceState.collectAsStateWithLifecycle()
     val scheduleDeliveryNetworkState by viewModel.scheduleDeliveryNetworkState.collectAsStateWithLifecycle()
-    val isAccountLoading = userAccounts.isLoading
 
     with(viewModel) {
         RequestMessageCount()
@@ -87,7 +93,7 @@ fun SignedInScreen(
 
         FicaModelCollector(onClick = onClick)
 
-        SignInContainer(isAccountLoading = isAccountLoading, onClick = onClick, onProductClick = onProductClick,  allUserAccounts = userAccounts)
+        SignInContainer(isAccountLoading = userAccounts.isLoading, onClick = onClick, onProductClick = onProductClick,  allUserAccounts = userAccounts)
     }
 
 }
@@ -103,17 +109,13 @@ fun UserAccountLandingViewModel.BiometricsCollector(onClick: (OnAccountItemClick
 }
 
 @Composable
-fun UserAccountLandingViewModel.PetInsuranceCollector(
-                                                      petInsuranceState: NetworkStatusUI<PetInsuranceModel>,
+fun UserAccountLandingViewModel.PetInsuranceCollector(petInsuranceState: NetworkStatusUI<PetInsuranceModel>,
                                                       onClick: (OnAccountItemClickListener) -> Unit) {
     if (!petInsuranceState.isLoading) {
         petInsuranceState.data?.let { petModel ->
-            this.handlePetInsuranceResult(petModel) { insuranceProduct ->
-                onClick(
-                    AccountLandingInstantLauncher.PetInsuranceNotCoveredAwarenessModel(
-                        insuranceProduct
-                    )
-                )
+            petInsuranceResponse = petModel
+            this.handlePetInsurancePendingCoveredNotCoveredUI(petModel) { insuranceProduct ->
+                onClick(AccountLandingInstantLauncher.PetInsuranceNotCoveredAwarenessModel(insuranceProduct))
             }
         }
     }
@@ -290,7 +292,7 @@ private fun UserAccountLandingViewModel.CollectFetchAccount(
                 }
 
                 is RetrofitFailureResult.ServerResponse<*> -> {
-                    onErrorRemoveProducts()
+                    removeProductFromProductsMap()
                     errorResponse.value = (result.data as? UserAccountResponse)?.response
                     stateFetchAllAccounts.hasError = false
                 }
@@ -302,8 +304,12 @@ private fun UserAccountLandingViewModel.CollectFetchAccount(
                     var stsParams = serverResponse?.stsParams
                     val message = serverResponse?.message ?: ""
                     if (stsParams?.isEmpty() == true && message.isNotEmpty()){
-                        val messageObj = JSONObject(message)
-                        stsParams = messageObj.getString("sts_params")
+                        stsParams = try {
+                            val messageObj = JSONObject(message)
+                            messageObj.getString("sts_params")
+                        }catch (ex : JSONException){
+                            null
+                        }
                     }
                     setUserUnAuthenticated(SSOActivity.SSOActivityResult.SIGNED_OUT.rawValue())
                     LaunchedEffect(Unit) {
@@ -317,7 +323,7 @@ private fun UserAccountLandingViewModel.CollectFetchAccount(
 
             }
         }
-        stopLoading()
+        onStopLoadingGetAccountCall()
         stateFetchAllAccounts.data?.let { accountResponse ->
             handleUserAccountResponse(
                 accountResponse
@@ -411,7 +417,7 @@ private fun LazyListScope.myProductsSection(
 
     productHeaderView(isLoading, brush)
 
-    for (item in myProductList) {
+    for (item in viewModel.mapOfFinalProductItems) {
         when (val productItems = item.value) {
             is AccountProductCardsGroup.ApplicationStatus -> item {
                 ProductViewApplicationStatusView(
@@ -424,22 +430,14 @@ private fun LazyListScope.myProductsSection(
             }
 
 
-            is AccountProductCardsGroup.PetInsurance -> item (key = item.key) {
-                if (loadingOptions.isAccountLoading) {
-                    ProductShimmerView(
-                        brush = shimmerOptions.brush,
-                        key = productItems.properties.automationLocatorKey
-                    )
-                }
-
-                if (!loadingOptions.isAccountLoading) {
-                    PetInsuranceView(
-                        productGroup = productItems,
-                        petInsuranceDefaultConfig = viewModel.getPetInsuranceMobileConfig()?.defaultCopyPetPending,
-                        onProductClick = onProductClick
-                    )
-                }
-            }
+            is AccountProductCardsGroup.PetInsurance -> displayPetInsuranceProduct(
+                item,
+                loadingOptions,
+                shimmerOptions,
+                productItems,
+                viewModel,
+                onProductClick
+            )
 
             else -> item {
                 productItems?.let { item ->
@@ -458,13 +456,17 @@ private fun LazyListScope.myProductsSection(
     }
 
     if (myProductList.isEmpty()) {
-        item {
-            NoC2IdNorProductView(
-                isLoadingInProgress = isLoading,
-                brush = brush,
-                isBottomSpacerShown = viewModel.isC2User(),
-                onClick = onProductClick
-            )
+        if (viewModel.petInsuranceResponse != null && !viewModel.isPetInsuranceNotCovered()) {
+            viewModel.cachedPetInsuranceModel()
+        } else {
+            item {
+                NoC2IdNorProductView(
+                    isLoadingInProgress = isLoading,
+                    brush = brush,
+                    isBottomSpacerShown = viewModel.isC2User(),
+                    onClick = onProductClick
+                )
+            }
         }
     }
 
@@ -473,7 +475,47 @@ private fun LazyListScope.myProductsSection(
             LinkYourWooliesCardUI(isLoading, brush, onProductClick)
         }
     }
+}
 
+private fun LazyListScope.displayPetInsuranceProduct(
+    accountProductCardsGroupMap: MutableMap.MutableEntry<String, AccountProductCardsGroup?>,
+    loadingOptions: LoadingOptions,
+    shimmerOptions: ShimmerOptions,
+    productItems: AccountProductCardsGroup.PetInsurance,
+    viewModel: UserAccountLandingViewModel,
+    onProductClick: (AccountProductCardsGroup) -> Unit) {
+    item(key = accountProductCardsGroupMap.key) {
+        var itemAppeared by remember { mutableStateOf(false) }
+        LaunchedEffect(!itemAppeared) {
+            itemAppeared = true
+        }
+        if (loadingOptions.isAccountLoading) {
+            ProductShimmerView(
+                brush = shimmerOptions.brush,
+                key = productItems.properties.automationLocatorKey
+            )
+        }
+
+        AnimatedVisibility(
+            visible = !loadingOptions.isAccountLoading && itemAppeared,
+            enter = if (viewModel.petInsuranceDidAnimateOnce)
+                EnterTransition.None
+            else slideInHorizontally(
+                animationSpec = tween(
+                    durationMillis = animationDurationMilis400,
+                    easing = FastOutLinearInEasing
+                )
+            ),
+            exit = ExitTransition.None
+        ) {
+            PetInsuranceView(
+                productGroup = productItems,
+                petInsuranceDefaultConfig = viewModel.getPetInsuranceMobileConfig()?.defaultCopyPetPending,
+                onProductClick = onProductClick
+            )
+            viewModel.petInsuranceDidAnimateOnce = true
+        }
+    }
 }
 
 private fun LazyListScope.productHeaderView(
@@ -487,7 +529,7 @@ private fun LazyListScope.productHeaderView(
         TextFuturaFamilyHeader1(
             text = title,
             locator = locator,
-            color = Color.Black,
+            textColor = Color.Black,
             modifier = Modifier
                 .padding(start = Margin.start, top = Margin.end)
                 .testAutomationTag(locator),
@@ -572,6 +614,7 @@ fun HeaderItem(
         locator = locator,
         textAlign = textAlign,
         fontSize = fontSize,
+        textColor = Color.Black,
         modifier = Modifier.padding(start = Margin.start, top = Margin.top),
         isLoading = isLoading,
         brush = brush

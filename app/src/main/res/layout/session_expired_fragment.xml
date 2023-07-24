@@ -28,8 +28,9 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
-    <za.co.woolworths.financial.services.android.ui.views.WTextView
+    <TextView
         android:id="@+id/tvSessionExpiredDesc"
+        style="@style/opensans_regular_13_black"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginEnd="32dp"
@@ -42,8 +43,6 @@
         android:paddingTop="10dp"
         android:text="@string/session_expired_desc"
         android:textColor="@color/black_desc_opacity"
-        android:textSize="15sp"
-        app:WTextView_font="myriadpro_regular"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvSessionExpiredTitle"/>

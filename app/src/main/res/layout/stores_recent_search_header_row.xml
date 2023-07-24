@@ -8,7 +8,7 @@
     android:text="@string/recent_search"
     android:textSize="12sp"
     android:paddingLeft="16dp"
-    android:paddingTop="34dp"
+    android:paddingTop="@dimen/recent_search_margin"
     android:letterSpacing="0.2"
     app:WTextView_font="medium"
     android:gravity="center_vertical"

@@ -21,7 +21,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"
-        android:fontFamily="@font/myriad_pro_regular_otf"
+        android:fontFamily="@font/opensans_regular_ttf"
         android:gravity="center"
         android:maxLines="1"
         android:textColor="@color/white"

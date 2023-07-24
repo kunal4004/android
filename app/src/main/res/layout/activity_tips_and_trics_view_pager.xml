@@ -91,16 +91,16 @@
                 android:textColor="@color/black"
                 android:textSize="@dimen/twenty_dp"/>
 
-            <androidx.appcompat.widget.AppCompatTextView
+            <TextView
                 android:id="@+id/featureDescription"
+                style="@style/opensans_regular_13_black"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="@dimen/twelve_dp"
                 android:gravity="center"
                 android:textColor="@color/color_444444"
-                android:textSize="@dimen/thirteen_sp"
-                android:fontFamily="@font/opensans_regular" />
+               />
 
         </LinearLayout>
 

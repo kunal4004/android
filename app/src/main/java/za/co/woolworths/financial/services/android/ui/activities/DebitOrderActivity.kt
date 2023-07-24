@@ -43,9 +43,9 @@ class DebitOrderActivity : AppCompatActivity() {
 
         with(binding) {
             tvDebitOrderTitle.setText(title)
-            tvDebitOrderDescription.setText(description)
-            tvDeductionDay.setText(debitOrder?.debitOrderDeductionDay)
-            tvAmountToBeDebited.setText(amountToBeDebited)
+            tvDebitOrderDescription.text = description
+            tvDeductionDay.text = debitOrder?.debitOrderDeductionDay
+            tvAmountToBeDebited.text = amountToBeDebited
         }
     }
 
