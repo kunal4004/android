@@ -85,6 +85,7 @@ import za.co.woolworths.financial.services.android.util.PermissionResultCallback
 import za.co.woolworths.financial.services.android.util.PermissionUtils
 import za.co.woolworths.financial.services.android.util.ScreenManager.SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.SessionUtilities
+import za.co.woolworths.financial.services.android.util.StoreUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
@@ -264,6 +265,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                                 showBlackToolTip(Delivery.STANDARD)
                                 setEventsForSwitchingBrowsingType(Delivery.STANDARD.name)
                                 KotlinUtils.browsingDeliveryType = Delivery.STANDARD
+                                setSearchText(STANDARD_TAB)
                             }
 
                             CLICK_AND_COLLECT_TAB.index -> {
@@ -271,10 +273,12 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                                 showBlackToolTip(Delivery.CNC)
                                 setEventsForSwitchingBrowsingType(Delivery.CNC.name)
                                 KotlinUtils.browsingDeliveryType = Delivery.CNC
+                                setSearchText(CLICK_AND_COLLECT_TAB)
                             }
 
                             DASH_TAB.index -> {
                                 shopViewModel.onTabClick(validateLocationResponse, position)
+                                setSearchText(DASH_TAB)
                             }
                         }
                         setupToolbar(position)
@@ -288,10 +292,42 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         }
     }
 
-    fun showSearchAndBarcodeUi() {
-        binding?.apply {
+    private fun setSearchText(selectedTab: SelectedTabIndex) {
+        when (selectedTab) {
+            STANDARD_TAB -> {
+                binding.tvSearchProduct.text = getString(R.string.shop_landing_product_all_search)
+            }
+            CLICK_AND_COLLECT_TAB -> {
+                binding.tvSearchProduct.text = getCncSearchText()
+            }
+            DASH_TAB -> {
+                binding.tvSearchProduct.text = getString(R.string.shop_landing_product_food_search)
+            }
+        }
+    }
+
+    private fun getCncSearchText(): String {
+        val storeDeliveryType = KotlinUtils.browsingCncStore?.storeDeliveryType
+        return when (storeDeliveryType?.lowercase()) {
+            StoreUtils.Companion.StoreDeliveryType.OTHER.type.lowercase() -> {
+                getString(R.string.shop_landing_product_other_search)
+            }
+            StoreUtils.Companion.StoreDeliveryType.FOOD.type.lowercase() -> {
+                getString(R.string.shop_landing_product_food_search)
+            }
+            else -> {
+                getString(R.string.shop_landing_product_all_search)
+            }
+        }
+    }
+
+    fun showSearchAndBarcodeUi(isFromCnc: Boolean = false) {
+        binding.apply {
             tvSearchProduct.visibility = View.VISIBLE
             imBarcodeScanner.visibility = View.VISIBLE
+            if (isFromCnc) {
+                setSearchText(CLICK_AND_COLLECT_TAB)
+            }
         }
     }
 

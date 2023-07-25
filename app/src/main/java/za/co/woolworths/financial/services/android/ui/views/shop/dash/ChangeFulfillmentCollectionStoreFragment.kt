@@ -431,7 +431,7 @@ class ChangeFulfillmentCollectionStoreFragment :
 
     private fun showCategoryList() {
         binding.apply {
-            parentFragment?.showSearchAndBarcodeUi()
+            parentFragment?.showSearchAndBarcodeUi(isFromCnc = true)
             layoutClickAndCollectStore?.root?.visibility = View.GONE
             layoutEdgeCaseScreen?.root?.visibility = View.GONE
             binding.rvCategoryLayout?.root?.visibility = View.VISIBLE
