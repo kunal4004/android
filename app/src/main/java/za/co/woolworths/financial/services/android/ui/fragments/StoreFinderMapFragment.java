@@ -157,7 +157,7 @@ public class StoreFinderMapFragment extends Fragment implements DynamicMapDelega
 		pager = (WCustomViewPager) v.findViewById(R.id.cardPager);
 		detailsLayout = (LinearLayout) v.findViewById(R.id.detailsView);
 		mLayout = (SlidingUpPanelLayout) v.findViewById(R.id.sliding_layout);
-		TextView tvFlStockFinderMapHeader = (WTextView) v.findViewById(R.id.flStockFinderMapHeader);
+		TextView tvFlStockFinderMapHeader = (TextView) v.findViewById(R.id.flStockFinderMapHeader);
 		tvFlStockFinderMapHeader.setVisibility(View.VISIBLE);
 		wGlobalState = ((WoolworthsApplication) getActivity().getApplication()).getWGlobalState();
 		close = (ImageView) v.findViewById(R.id.close);
