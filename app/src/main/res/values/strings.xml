@@ -3091,4 +3091,18 @@
     <string name="enquiry_successfully_sent_title_text">enquiry_successfully_sent_title_text</string>
     <string name="enquiry_successfully_sent_description">enquiry_successfully_sent_description</string>
     <string name="got_it_button">got_it_button</string>
+    <string name="toolbar_text">toolbar_text</string>
+    <string name= "chat_to_us_on_whatsapp_image">chat_to_us_on_whatsapp_image</string>
+    <string name= "chat_to_us_on_title_text">chat_to_us_on_title_text</string>
+    <string name= "chat_to_us_on_whatsapp_description">chat_to_us_on_whatsapp_description</string>
+    <string name= "how_to_pay_your_woolies_account_image_icon">how_to_pay_your_woolies_account_image_icon</string>
+    <string name= "how_to_pay_your_woolies_account_image_desc">how_to_pay_your_woolies_account_image_desc</string>
+    <string name= "unable_to_pay_woolies_account_image_icon">unable_to_pay_woolies_account_image_icon</string>
+    <string name= "unable_to_pay_woolies_account_image_desc">unable_to_pay_woolies_account_image_desc</string>
+    <string name= "payment_not_reflecting_image_icon">payment_not_reflecting_image_icon</string>
+    <string name= "payment_not_reflecting_desc">payment_not_reflecting_desc</string>
+    <string name= "chat_to_us_now_button">chat_to_us_now_button</string>
+    <string name= "whatsapp_number_image_icon">whatsapp_number_image_icon</string>
+    <string name= "whatsapp_number_text">whatsapp_number_text</string>
+    <string name= "whatsapp_number_number">whatsapp_number_number</string>
 </resources>

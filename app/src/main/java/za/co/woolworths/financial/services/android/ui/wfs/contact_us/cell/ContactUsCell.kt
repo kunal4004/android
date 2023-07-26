@@ -56,7 +56,7 @@ fun TitleDescriptionAndNextArrowItemPreview() {
         Column (modifier = Modifier.background(Color.White)){
             TextContactUsFuturaSemiBoldSectionHeader(stringResource(id = R.string.contact_us_financial_services), locator ="")
             SpacerHeight6dp()
-            TitleDescriptionAndNextArrowItem(children)
+            TitleDescriptionAndNextArrowItem(children, false)
             SpacerHeight6dp()
             LeftIconTitleDescriptionAndNextArrowItem(childItem)
             SpacerHeight6dp()
@@ -66,7 +66,7 @@ fun TitleDescriptionAndNextArrowItemPreview() {
 }
 
 @Composable
-fun TitleDescriptionAndNextArrowItem(children: Children) {
+fun TitleDescriptionAndNextArrowItem(children: Children, isAppendString: Boolean) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -83,7 +83,8 @@ fun TitleDescriptionAndNextArrowItem(children: Children) {
             modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.Center
         ) {
-            val titleAccessibilityId = titleString.getAccessibilityIdWithAppendedString(titleString, "title")
+            var titleAccessibilityId = titleString.getAccessibilityIdWithAppendedString(titleString, "title")
+            if (isAppendString) { titleAccessibilityId = titleAccessibilityId.plus("_1") }
 
             TextOpenSansSemiBoldH3(
                 text =  children.title ?: "" ,
@@ -91,7 +92,8 @@ fun TitleDescriptionAndNextArrowItem(children: Children) {
                 fontSize = FontDimensions.sp13,
                 locator = titleAccessibilityId
             )
-            val descriptionAccessibilityId = titleString.getAccessibilityIdWithAppendedString(titleString, "subtitle")
+            var descriptionAccessibilityId = titleString.getAccessibilityIdWithAppendedString(titleString, "subtitle")
+            if (isAppendString) { descriptionAccessibilityId = descriptionAccessibilityId.plus("_1") }
 
             children.description?.let { description ->
                 SpacerHeight12dp(height = Dimens.two_dp)
@@ -182,7 +184,7 @@ fun TextWithRadioButtonOption(
                         end = Margin.dp2
                     )
             ) {
-                val descriptionAccessibilityId = titleString.getAccessibilityIdWithAppendedString(titleString, "text")
+                val descriptionAccessibilityId = titleString.getAccessibilityIdWithAppendedString(titleString, "title")
 
                 TextOpenSansFontFamily(
                         text = titleString,
