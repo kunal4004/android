@@ -166,9 +166,6 @@ public class Utils {
             "image/tiff"
     };
 
-    // threshold level is 24 to hide the blue banner as per the requirement and it 0 to show it
-    public static final int THRESHOLD_FOR_CART_LIMIT_BANNER = 24;
-
     public static void saveLastLocation(Location loc, Context mContext) {
         try {
             JSONObject locationJson = new JSONObject();

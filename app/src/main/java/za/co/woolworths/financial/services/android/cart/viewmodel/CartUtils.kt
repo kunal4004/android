@@ -13,6 +13,9 @@ import za.co.woolworths.financial.services.android.util.Utils
 class CartUtils {
     companion object {
 
+        //Threshold level is 24 to hide the blue banner as per the requirement and it 0 to show it
+        private const val THRESHOLD_FOR_CART_LIMIT_BANNER = 24
+
         fun filterCommerceItemFromCartResponse(cartResponse: CartResponse, commerceId: String): CommerceItem? {
             var commerceItem: CommerceItem? = null
             cartResponse.cartItems?.forEach { group ->
@@ -30,7 +33,7 @@ class CartUtils {
         fun updateItemLimitsBanner(productCountMap: ProductCountMap?, banner: ConstraintLayout?, message: TextView?, counter: TextView?, showBanner: Boolean) {
             banner?.visibility = View.GONE
             productCountMap?.let {
-                if (it.quantityLimit?.foodLayoutColour != null && showBanner && it.totalProductCount ?: 0 > Utils.THRESHOLD_FOR_CART_LIMIT_BANNER) {
+                if (it.quantityLimit?.foodLayoutColour != null && showBanner && it.totalProductCount ?: 0 > THRESHOLD_FOR_CART_LIMIT_BANNER) {
                     message?.text = it.quantityLimit.foodLayoutMessage ?: ""
                     if(it.quantityLimit.other!=null && it.totalProductCount !=null && it.totalProductCount>it.quantityLimit.other) {
                         counter?.text = ((it.totalProductCount - it.quantityLimit.other).toString() + "/" + it.quantityLimit.foodMaximumQuantity) ?: ""
