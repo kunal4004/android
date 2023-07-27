@@ -27,11 +27,11 @@ fun SubCategoryList(listOfChildren: MutableList<ChildrenItem>, onSelected: (Chil
     BoxBackground {
         ListColumn(list = listOfChildren) { item ->
             val titleString = item.title ?: ""
-            val titleAccessibilityId = titleString.getAccessibilityIdWithAppendedString(titleString, "title")
+            val titleAccessibilityId = titleString.getAccessibilityIdWithAppendedString(titleString, "")
             TextContactUsFuturaSemiBoldSectionHeader(title = titleString, locator = titleAccessibilityId)
              Column(Modifier.padding(start = Margin.start, end = Margin.dp15)) {
                     item.description?.let { desc ->
-                        val descriptionAccessibilityId = titleString.getAccessibilityIdWithAppendedString(titleString, "subtitle")
+                        val descriptionAccessibilityId = titleString.getAccessibilityIdWithAppendedString(titleString, "description")
                         TextOpenSansFontFamily(
                             text =desc,
                             textAlign = TextAlign.Start,

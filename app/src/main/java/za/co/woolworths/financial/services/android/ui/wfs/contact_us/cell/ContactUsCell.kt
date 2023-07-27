@@ -129,7 +129,7 @@ fun LeftIconTitleDescriptionAndNextArrowItem(item: Children) {
         MyIcon(id = item.type?.iconId(), modifier = Modifier, locator = imageIconAccessibilityId)
         SpacerWidth16dp()
         Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.Center) {
-            val titleAccessibilityId = titleString.getAccessibilityIdWithAppendedString(titleString, "title_text")
+            val titleAccessibilityId = titleString.getAccessibilityIdWithAppendedString(titleString, "title")
 
             TextOpenSansSemiBoldH3(
                 text =  item.title ?: "" ,

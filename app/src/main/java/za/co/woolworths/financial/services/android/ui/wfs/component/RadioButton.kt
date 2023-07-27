@@ -16,7 +16,7 @@ fun CheckedUncheckedRadioButton(isChecked : Boolean  = false, locator: String,
         Icon(
             painter = painterResource(if (isChecked) R.drawable.checked_item
             else R.drawable.ic_unchecked_radio),
-            contentDescription = "Radio button icon",
+            contentDescription = locator,
             tint= Color.Unspecified
         )
     }
