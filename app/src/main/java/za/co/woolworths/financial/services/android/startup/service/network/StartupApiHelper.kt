@@ -14,7 +14,6 @@ import za.co.woolworths.financial.services.android.util.NetworkManager
  */
 class StartupApiHelper : RetrofitConfig(AppContextProviderImpl(), RetrofitApiProviderImpl()) {
     suspend fun getConfig(): ConfigResponse {
-        Log.d("TAG_DATA_APP", "ConfigResponse_ConfigResponse_ConfigResponse_ConfigResponse_ConfigResponse_ConfigResponse")
         return mApiInterface.getConfig(
             getSessionToken(),
             getDeviceIdentityToken(),

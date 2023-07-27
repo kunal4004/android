@@ -19,22 +19,18 @@ data class ConfigResource(val responseStatus: ResponseStatus, val data: ConfigRe
     companion object {
 
         fun success(data: ConfigResponse): ConfigResource {
-            Log.d("TAG_DATA_APP", "SUCCESS_SUCCESS_SUCCESS_SUCCESS_SUCCESS_SUCCESS_SUCCESS_SUCCESS_SUCCESS")
             return ConfigResource(ResponseStatus.SUCCESS, data, null)
         }
 
         fun  error(msg: String, data: ConfigResponse?): ConfigResource {
-            Log.d("TAG_DATA_APP", "ERROR_ERROR_ERROR_ERROR_ERROR_ERROR_ERROR_ERROR_ERROR_ERROR_ERROR_ERROR_")
             return ConfigResource(ResponseStatus.ERROR, data, msg)
         }
 
         fun loading(data: ConfigResponse?): ConfigResource {
-            Log.d("TAG_DATA_APP", "LOADING_LOADING_LOADING_LOADING_LOADING_LOADING_LOADING_LOADING_LOADING_LOADING_LOADING")
             return ConfigResource(ResponseStatus.LOADING, data, null)
         }
 
         fun persistGlobalConfig(response: ConfigResponse?, startupViewModel: StartupViewModel) {
-            Log.d("TAG_DATA_APP", "PERSISTED PERSISTED PERSISTED PERSISTED")
             response?.configs?.apply {
                 AppConfigRepository().saveAppConfigData(this)
                 // Reset the singleton object in case it was already initialized before the cache was saved/updated

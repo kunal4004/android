@@ -84,7 +84,6 @@ object AppConfigSingleton {
 
     fun initialiseFromCache() {
         AppConfigRepository().getAppConfigData()?.let { appConfig ->
-            Log.d("CONFIG_OBJECT", Gson().toJson(appConfig))
             appConfig.enviroment?.let { env ->
                 storeCardBlockReasons = env.storeCardBlockReasons
                 ssoRedirectURI = env.ssoRedirectURI
