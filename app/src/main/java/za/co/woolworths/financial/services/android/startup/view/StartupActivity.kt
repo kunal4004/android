@@ -581,7 +581,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
     }
 
     private fun forgotPasswordDeeplink() {
-        var uri = intent.data
+        var uri = intent?.data
         if (null != uri) {
             var params = uri.pathSegments
             var forgotPassword = params[params.size - 1]
