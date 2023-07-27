@@ -135,7 +135,11 @@ class AddToListFragment : WBottomSheetDialogFragment() {
                     ) {
                         when (it) {
                             CreateListScreenEvent.BackPressed -> {
-                                viewModel.onEvent(AddToListScreenEvents.CreateListBackPressed)
+                                if (viewModel.getListState().list.isNotEmpty()) {
+                                    viewModel.onEvent(AddToListScreenEvents.CreateListBackPressed)
+                                } else {
+                                    dismiss()
+                                }
                             }
 
                             CreateListScreenEvent.CancelClick -> {
@@ -201,7 +205,7 @@ class AddToListFragment : WBottomSheetDialogFragment() {
                         if (isCreateListShown) {
                             viewModel.onEvent(AddToListScreenEvents.CreateListBackPressed)
                         }
-                        isCreateListShown
+                        isCreateListShown && viewModel.getListState().list.isNotEmpty()
                     }
 
                     else -> false
