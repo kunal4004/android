@@ -307,7 +307,11 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
     }
 
     private fun getCncSearchText(): String {
-        val storeDeliveryType = KotlinUtils.browsingCncStore?.storeDeliveryType
+        var storeDeliveryType = KotlinUtils.browsingCncStore?.storeDeliveryType
+        if (storeDeliveryType.isNullOrEmpty()) {
+            storeDeliveryType = KotlinUtils.getStoreDeliveryType(getDeliveryType())
+        }
+
         return when (storeDeliveryType?.lowercase()) {
             StoreUtils.Companion.StoreDeliveryType.OTHER.type.lowercase() -> {
                 getString(R.string.shop_landing_product_other_search)

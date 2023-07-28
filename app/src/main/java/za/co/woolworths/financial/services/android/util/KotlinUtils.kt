@@ -48,6 +48,7 @@ import com.awfs.coordination.R
 import com.google.common.reflect.TypeToken
 import com.google.firebase.installations.FirebaseInstallations
 import com.google.gson.Gson
+import com.google.gson.JsonSyntaxException
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -1454,6 +1455,35 @@ class KotlinUtils {
                 )
             }
             return fulfillmentDetails
+        }
+
+        fun getStoreDeliveryType(fulfillmentDetails: FulfillmentDetails?): String? {
+            val storesJsonElement = fulfillmentDetails?.fulfillmentStores
+            if (storesJsonElement != null) {
+                try {
+                    val storeMap = Gson().fromJson<Map<String, String>>(
+                        storesJsonElement,
+                        object : com.google.gson.reflect.TypeToken<Map<String, String>>() {}.type
+                    )
+                    val fulfilmentTypes = storeMap.keys
+                    if (fulfilmentTypes.contains(StoreUtils.Companion.FulfillmentType.FOOD_ITEMS.type) && fulfilmentTypes.size == 1) {
+                        //Type FOOD
+                        return StoreUtils.Companion.StoreDeliveryType.FOOD.type
+                    } else if (!fulfilmentTypes.contains(StoreUtils.Companion.FulfillmentType.FOOD_ITEMS.type) &&
+                        (fulfilmentTypes.contains(StoreUtils.Companion.FulfillmentType.CLOTHING_ITEMS.type) || fulfilmentTypes.contains(StoreUtils.Companion.FulfillmentType.CRG_ITEMS.type))) {
+                        //Type FBH
+                        return StoreUtils.Companion.StoreDeliveryType.OTHER.type
+                    } else if (fulfilmentTypes.contains(StoreUtils.Companion.FulfillmentType.FOOD_ITEMS.type)
+                        && (fulfilmentTypes.contains(StoreUtils.Companion.FulfillmentType.CLOTHING_ITEMS.type) || fulfilmentTypes.contains(StoreUtils.Companion.FulfillmentType.CRG_ITEMS.type))) {
+                        //Type All items
+                        return StoreUtils.Companion.StoreDeliveryType.FOOD_AND_OTHER.type
+                    }
+                } catch (exception: JsonSyntaxException) {
+                    FirebaseManager.logException(exception)
+                    return null
+                }
+            }
+            return null
         }
 
         fun getUniqueDeviceID(result: (String?) -> Unit) {
