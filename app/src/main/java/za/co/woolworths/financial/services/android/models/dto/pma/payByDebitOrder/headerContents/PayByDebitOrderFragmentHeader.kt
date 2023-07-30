@@ -5,6 +5,6 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class PayByDebitOrderFragmentHeader(
-    val headerContent: List<PBDFragmentHeaderContent>,
+    val headerContent: List<PBDFragmentHeaderContent>?,
     val title: String,
 ) : Parcelable

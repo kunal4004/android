@@ -7,5 +7,5 @@ import kotlinx.android.parcel.Parcelize
 data class PBDFragmentHeaderContent(
     val email: String?,
     val phone: String?,
-    val text: String,
+    val text: String?,
 ) : Parcelable

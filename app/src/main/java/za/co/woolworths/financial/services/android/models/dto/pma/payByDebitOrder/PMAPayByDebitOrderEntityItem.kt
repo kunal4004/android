@@ -6,7 +6,7 @@ import za.co.woolworths.financial.services.android.models.dto.pma.payByDebitOrde
 
 @Parcelize
 data class PMAPayByDebitOrderEntityItem(
-    val content: List<PBDFragmentHeaderContent>,
+    val content: List<PBDFragmentHeaderContent>?,
     val footer: Footer?,
     val subtitle: String?,
     val title: String?,

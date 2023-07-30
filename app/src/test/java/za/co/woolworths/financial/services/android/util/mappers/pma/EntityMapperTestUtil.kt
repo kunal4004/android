@@ -74,7 +74,7 @@ object EntityMapperTestUtil {
             title = "Pay By Debit Order",
         )
         val body = PayByDebitOrderFragmentBody(
-            content = bodyContent.map { PBDFragmentBodyContent(it.text) },
+            content = bodyContent.map { PBDFragmentBodyContent(it.text!!) },
             footer = PBDFragmentFooter(footer.text),
             subtitle = "Please also send us the following: ",
         )
