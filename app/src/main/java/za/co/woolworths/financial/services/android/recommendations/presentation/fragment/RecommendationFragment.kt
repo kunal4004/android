@@ -24,9 +24,10 @@ import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.Action
 import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.Product
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.CommonRecommendationEvent
-import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
+import za.co.woolworths.financial.services.android.recommendations.data.response.request.RecommendationEvent
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.RecommendationRequest
 import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationEventHandler
+import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationLoadingNotifier
 import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationsProductListingListener
 import za.co.woolworths.financial.services.android.recommendations.presentation.adapter.ProductCategoryAdapter
 import za.co.woolworths.financial.services.android.recommendations.presentation.adapter.ProductListRecommendationAdapter
@@ -144,9 +145,10 @@ class RecommendationFragment :
         recommendationViewModel.clearSubmittedRecImpressions()
         val bundle = arguments?.getBundle(BundleKeysConstants.BUNDLE)
         val reccommendationsDataEventTypeFirst =
-            bundle?.getParcelable<Event>(BundleKeysConstants.RECOMMENDATIONS_EVENT_DATA) as Event
+            bundle?.getParcelable<RecommendationEvent>(BundleKeysConstants.RECOMMENDATIONS_EVENT_DATA) as RecommendationEvent
         val reccommendationsDataEventTypeSecond =
-            bundle?.getParcelable<Event>(BundleKeysConstants.RECOMMENDATIONS_EVENT_DATA_TYPE) as Event
+            bundle?.getParcelable<RecommendationEvent>(BundleKeysConstants.RECOMMENDATIONS_EVENT_DATA_TYPE) as RecommendationEvent
+        val dynamicTitleRequired = bundle.getBoolean(BundleKeysConstants.RECOMMENDATIONS_DYNAMIC_TITLE_REQUIRED, false)
 
         var recMonetateId: String? = null
         if (Utils.getMonetateId() != null) {
@@ -168,10 +170,9 @@ class RecommendationFragment :
                 recommendationsLayoutBinding.recommendationsMainLayout.visibility = View.GONE
             } else {
                 recommendationsLayoutBinding.recommendationsMainLayout.visibility = View.VISIBLE
-                recommendationsLayoutBinding.recommendationsText.text =
-                    getString(R.string.recommendations_title)
+                recommendationsLayoutBinding.recommendationsText.text = getDynamicTitle(dynamicTitleRequired)
                 val eventHandler = parentFragment?.parentFragment
-                if(eventHandler is RecommendationEventHandler) {
+                if(eventHandler is RecommendationLoadingNotifier) {
                     eventHandler.onRecommendationsLoadedSuccessfully()
                 }
                 showProductCategory(actionItems)
@@ -187,7 +188,15 @@ class RecommendationFragment :
                 }
             }
         }
+    }
 
+    private fun getDynamicTitle(dynamicTitleRequired: Boolean): String {
+        val title = recommendationViewModel.recommendationTitle()
+        return if(dynamicTitleRequired && !title.isNullOrEmpty()) {
+            title
+        } else {
+            getString(R.string.recommendations_title)
+        }
     }
 
     override fun onDestroyView() {

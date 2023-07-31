@@ -49,6 +49,7 @@ class BundleKeysConstants {
 
         const val RECOMMENDATIONS_EVENT_DATA = "recommendations_event_data"
         const val RECOMMENDATIONS_EVENT_DATA_TYPE = "recommendations_event_data_type"
+        const val RECOMMENDATIONS_DYNAMIC_TITLE_REQUIRED = "recommendations_dynamic_title_required"
     }
 
 }
