@@ -162,7 +162,7 @@ class ProductDetailsFragment :
     private var auxiliaryImages: MutableList<String> = ArrayList()
     private var productDetailsPresenter: ProductDetailsContract.ProductDetailsPresenter? = null
     private var storeIdForInventory: String? = ""
-    private var otherSKUsByGroupKey: HashMap<String, ArrayList<OtherSkus>> = hashMapOf()
+    private var otherSKUsByGroupKey: LinkedHashMap<String, ArrayList<OtherSkus>> = linkedMapOf()
     private var hasColor: Boolean = false
     private var hasSize: Boolean = false
     private var defaultSku: OtherSkus? = null
@@ -1329,7 +1329,7 @@ class ProductDetailsFragment :
         }
     }
 
-    private fun groupOtherSKUsByColor(otherSKUsList: ArrayList<OtherSkus>?): HashMap<String, ArrayList<OtherSkus>> {
+    private fun groupOtherSKUsByColor(otherSKUsList: ArrayList<OtherSkus>?): LinkedHashMap<String, ArrayList<OtherSkus>> {
 
         val variant = ColourSizeVariants.find(productDetails?.colourSizeVariants ?: "")
         when (variant) {
