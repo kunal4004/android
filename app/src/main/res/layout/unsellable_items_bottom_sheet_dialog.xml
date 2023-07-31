@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingLeft="@dimen/twenty_four_dp"
+    android:layout_height="wrap_content"
+    android:paddingHorizontal="@dimen/twenty_four_dp"
     android:paddingTop="@dimen/sixteen_dp"
-    android:paddingRight="@dimen/twenty_four_dp"
     android:paddingBottom="@dimen/twenty_four_dp">
 
     <include
@@ -13,7 +13,6 @@
         layout="@layout/popup_close_header_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="@dimen/sixteen_dp" />
 
@@ -22,61 +21,107 @@
         style="@style/dialog_title_text_style"
         android:layout_width="wrap_content"
         android:layout_below="@+id/incSwipeCloseIndicator"
-        android:layout_centerHorizontal="true"
         android:layout_marginTop="@dimen/thirty_two_dp"
-        android:text="@string/remove_items_dialog_title" />
+        android:paddingHorizontal="@dimen/_20sdp"
+        android:text="@string/these_items_will_be_removed_from_your_cart"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/incSwipeCloseIndicator" />
 
     <TextView
         android:id="@+id/unsellable_subTitle"
         style="@style/opensans_regular_13_black"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:layout_below="@+id/unsellable_title"
-        android:layout_centerHorizontal="true"
         android:layout_marginTop="@dimen/sixteen_dp"
+        android:layout_marginBottom="@dimen/five_dp"
+        android:gravity="center"
         android:lineSpacingMultiplier="1.2"
-        android:gravity="center_horizontal"
+        android:paddingHorizontal="@dimen/twenty_four_dp"
         android:text="@string/remove_items_dialog_desc"
-        android:textColor="@color/gray" />
+        android:textColor="@color/color_444444"
+        android:textSize="@dimen/thirteen_sp"
+        app:layout_constraintTop_toBottomOf="@+id/unsellable_title" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rcvItemsList"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/itemListLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/removeItems"
-        android:layout_below="@+id/unsellable_subTitle"
-        android:clipToPadding="true"
-        android:paddingTop="@dimen/sixteen_dp"
-        android:paddingBottom="@dimen/sixteen_dp"
-        android:scrollbars="vertical" />
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/layoutSaveListOption"
+        app:layout_constraintHeight_max="@dimen/three_twenty_dp"
+        app:layout_constraintTop_toBottomOf="@+id/unsellable_subTitle">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rcvItemsList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipToPadding="true"
+            android:paddingVertical="@dimen/sixteen_dp"
+            android:scrollbars="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layoutSaveListOption"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/eight_dp"
+        app:layout_constraintTop_toBottomOf="@+id/itemListLayout">
+
+        <androidx.compose.ui.platform.ComposeView
+            android:id="@+id/saveToListTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.compose.ui.platform.ComposeView
+            android:id="@+id/saveToListCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:button="@drawable/refine_multi_selector"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:ignore="MissingConstraints" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
         android:id="@+id/removeItems"
         style="@style/call_to_action_text_style"
         android:layout_width="match_parent"
         android:layout_height="@dimen/fifty_dp"
-        android:layout_above="@+id/cancel_btn"
-        android:layout_marginBottom="@dimen/twenty_four_dp"
         android:background="@drawable/order_add_to_cart_button_bg"
-        android:text="@string/remove_and_continue" />
+        android:text="@string/continueLabel"
+        app:layout_constraintBottom_toTopOf="@+id/cancel_btn"
+        app:layout_constraintTop_toBottomOf="@+id/layoutSaveListOption" />
 
     <TextView
         android:id="@+id/cancel_btn"
         style="@style/dialog_action_text_style_gray_medium"
         android:layout_width="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/twenty_four_dp"
         android:text="@string/cancel"
-        android:textAllCaps="true" />
+        android:textAllCaps="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/removeItems" />
 
     <ProgressBar
         android:id="@+id/progressRemoveItems"
         style="?android:attr/progressBarStyleLarge"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:layout_centerInParent="true"
-        android:layout_centerVertical="true"
         android:elevation="@dimen/two_dp"
         android:indeterminateTint="@color/black"
-        android:visibility="invisible" />
-</RelativeLayout>
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

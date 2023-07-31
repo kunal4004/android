@@ -91,8 +91,24 @@
         android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="@id/endGuideline"
         app:layout_constraintStart_toStartOf="@id/startGuideline"
-        app:layout_constraintBottom_toTopOf="@id/bottomGuideline"
+        app:layout_constraintBottom_toTopOf="@id/cancelButton"
         app:layout_constraintTop_toBottomOf="@+id/tvErrorDesc" />
+
+    <TextView
+        android:id="@+id/cancelButton"
+        style="@style/link_text_style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/fifteen_dp"
+        android:letterSpacing="0.1"
+        android:padding="@dimen/two_dp"
+        android:text="@string/dismiss_underline"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/bottomGuideline"
+        app:layout_constraintEnd_toEndOf="@id/endGuideline"
+        app:layout_constraintStart_toStartOf="@id/startGuideline"
+        app:layout_constraintTop_toBottomOf="@+id/gotItButton" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
