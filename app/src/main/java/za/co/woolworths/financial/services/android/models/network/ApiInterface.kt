@@ -2066,6 +2066,7 @@ interface ApiInterface {
         "Accept: application/json",
         "Media-Type: application/json",
     )
+
     @POST("wfs/app/v4/locationItems/saveLocation")
     fun saveLocation(
         @Header("userAgent") userAgent: String,
