@@ -105,7 +105,8 @@ fun TitleDescriptionAndNextArrowItem(children: Children, isAppendString: Boolean
                 )
             }
         }
-        val nextArrowAccessibilityId = titleString.getAccessibilityIdWithAppendedString(titleString, "next_arrow")
+        var nextArrowAccessibilityId = titleString.getAccessibilityIdWithAppendedString(titleString, "next_arrow")
+        if (isAppendString) { nextArrowAccessibilityId = nextArrowAccessibilityId.plus("_1") }
         MyIcon(id = R.drawable.ic_caret_black, contentDescriptionId = R.string.next_arrow, locator = nextArrowAccessibilityId)
     }
 }

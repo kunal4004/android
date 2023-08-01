@@ -3105,4 +3105,5 @@
     <string name= "whatsapp_number_image_icon">whatsapp_number_image_icon</string>
     <string name= "whatsapp_number_text">whatsapp_number_text</string>
     <string name= "whatsapp_number_number">whatsapp_number_number</string>
+    <string name= "back_button">"back_button"</string>
 </resources>
