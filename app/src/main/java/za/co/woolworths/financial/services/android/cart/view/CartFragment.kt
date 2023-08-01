@@ -34,6 +34,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import za.co.woolworths.financial.services.android.cart.service.network.CartItemGroup
 import za.co.woolworths.financial.services.android.cart.service.network.CartResponse
+import za.co.woolworths.financial.services.android.cart.viewmodel.CartUtils
 import za.co.woolworths.financial.services.android.cart.viewmodel.CartUtils.Companion.filterCommerceItemFromCartResponse
 import za.co.woolworths.financial.services.android.cart.viewmodel.CartUtils.Companion.getAppliedVouchersCount
 import za.co.woolworths.financial.services.android.cart.viewmodel.CartUtils.Companion.updateItemLimitsBanner
@@ -152,6 +153,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     private var isBlackCardHolder : Boolean = false
     private var isOnItemRemoved = false
     private var isViewCartEventFired = false
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -2117,7 +2119,8 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                     itemLimitsBanner,
                     itemLimitsMessage,
                     itemLimitsCounter,
-                    showBanner = (getPreferredDeliveryType() === Delivery.CNC || getPreferredDeliveryType() === Delivery.DASH)
+                    showBanner = (KotlinUtils.isDeliveryOptionClickAndCollect() ||
+                            (KotlinUtils.isDeliveryOptionDash() && productCountMap?.totalProductCount?: 0 > CartUtils.THRESHOLD_FOR_DASH_CART_LIMIT_BANNER))
                 )
             }
         }
