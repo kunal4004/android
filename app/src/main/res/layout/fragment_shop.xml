@@ -14,80 +14,92 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/toolbarLayout"
+        <LinearLayout
+            android:id="@+id/tempLayout"
+            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-
-            <ImageView
-                android:id="@+id/imgToolbarStart"
-                android:layout_width="@dimen/thirty_two_dp"
-                android:layout_height="@dimen/thirty_two_dp"
-                android:layout_margin="@dimen/five_dp"
-                android:src="@drawable/ic_delivery_circle"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tvToolbarTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/eight_dp"
-                android:fontFamily="@font/futura_semi_bold"
-                android:gravity="top"
-                android:lineHeight="@dimen/twenty_sp"
-                android:text="@string/standard_delivery"
-                android:textColor="@color/black"
-                android:textSize="@dimen/twenty_sp"
-                app:layout_constraintBottom_toTopOf="@+id/tvToolbarSubtitle"
-                app:layout_constraintStart_toEndOf="@id/imgToolbarStart"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_chainStyle="packed" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tvToolbarSubtitle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/opensans_semi_bold"
-                android:maxLines="1"
-                android:ellipsize="end"
-                android:text="@string/default_location"
-                android:layout_marginStart="@dimen/eight_dp"
-                android:layout_marginEnd="@dimen/sixteen_dp"
-                android:textColor="@color/black"
-                android:textSize="@dimen/eleven_sp"
-                android:lineHeight="@dimen/sixteen_sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/imageView4"
-                app:layout_constraintStart_toEndOf="@+id/imgToolbarStart"
-                app:layout_constraintTop_toBottomOf="@+id/tvToolbarTitle" />
-
-            <ImageView
-                android:id="@+id/imageView4"
-                android:layout_width="@dimen/sixteen_dp"
-                android:layout_height="@dimen/sixteen_dp"
-                android:layout_marginEnd="@dimen/twenty_six_dp"
-                android:src="@drawable/ic_right"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <View
-                android:id="@+id/view_divider_one"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/toolbarLayout"
+                android:visibility="visible"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/one_dp"
-                android:layout_marginStart="@dimen/sixteen_dp"
-                android:layout_marginTop="@dimen/ten_dp"
-                android:layout_marginEnd="@dimen/sixteen_dp"
-                android:layout_marginBottom="@dimen/sixteen_dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                android:background="@color/color_D8D8D8"
-                app:layout_constraintTop_toBottomOf="@+id/tvToolbarSubtitle" />
+                android:layout_height="wrap_content">
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                <ImageView
+                    android:id="@+id/imgToolbarStart"
+                    android:layout_width="@dimen/thirty_two_dp"
+                    android:layout_height="@dimen/thirty_two_dp"
+                    android:layout_margin="@dimen/five_dp"
+                    android:src="@drawable/ic_delivery_circle"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvToolbarTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/eight_dp"
+                    android:fontFamily="@font/futura_semi_bold"
+                    android:gravity="top"
+                    android:lineHeight="@dimen/twenty_sp"
+                    android:text="@string/standard_delivery"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/twenty_sp"
+                    app:layout_constraintBottom_toTopOf="@+id/tvToolbarSubtitle"
+                    app:layout_constraintStart_toEndOf="@id/imgToolbarStart"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_chainStyle="packed" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvToolbarSubtitle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/opensans_semi_bold"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:text="@string/default_location"
+                    android:layout_marginStart="@dimen/eight_dp"
+                    android:layout_marginEnd="@dimen/sixteen_dp"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/eleven_sp"
+                    android:lineHeight="@dimen/sixteen_sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/imageView4"
+                    app:layout_constraintStart_toEndOf="@+id/imgToolbarStart"
+                    app:layout_constraintTop_toBottomOf="@+id/tvToolbarTitle" />
+
+                <ImageView
+                    android:id="@+id/imageView4"
+                    android:layout_width="@dimen/sixteen_dp"
+                    android:layout_height="@dimen/sixteen_dp"
+                    android:layout_marginEnd="@dimen/twenty_six_dp"
+                    android:src="@drawable/ic_right"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <View
+                    android:id="@+id/view_divider_one"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/one_dp"
+                    android:layout_marginStart="@dimen/sixteen_dp"
+                    android:layout_marginTop="@dimen/ten_dp"
+                    android:layout_marginEnd="@dimen/sixteen_dp"
+                    android:layout_marginBottom="@dimen/sixteen_dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:background="@color/color_D8D8D8"
+                    app:layout_constraintTop_toBottomOf="@+id/tvToolbarSubtitle" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            <include
+                android:id="@+id/fulfilmentAndLocationLayout"
+                layout="@layout/layout_fulfilment_and_location"
+                android:layout_width="match_parent"
+                android:layout_marginEnd="@dimen/sixteen_dp"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
     </androidx.appcompat.widget.Toolbar>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -101,6 +113,7 @@
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabs_main"
+            android:visibility="visible"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/eight_dp"

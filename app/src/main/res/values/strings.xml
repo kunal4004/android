@@ -2541,6 +2541,8 @@
     <string name="dash_title_text_2">Limited shop of %1$s Items.</string>
     <string name="dash_delivery">Dash Delivery</string>
     <string name="dash_delivery_bold"><b>Dash Delivery</b></string>
+    <string name="shop_landing_fulfilment_title_cnc_and_standard">Food, Fashion, Beauty and Home</string>
+    <string name="shop_landing_fulfilment_title_dash">Food Only</string>
     <string name="shop_landing_product_all_search">Search Food, Fashion, Beauty and Home</string>
     <string name="shop_landing_product_other_search">Search Fashion, Beauty and Home</string>
     <string name="shop_landing_product_food_search">Search Food</string>
@@ -3079,4 +3081,5 @@
     <string name="add_to_list_failure">Failed to add to list. Please try again later.</string>
     <string name="hint_list_name">List Name</string>
     <string name="create_list_name_error">Unfortunately, this list name already exists.\nPlease try another option.</string>
+    <string name="label_switch">Switch</string>
 </resources>

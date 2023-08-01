@@ -48,6 +48,7 @@ import za.co.woolworths.financial.services.android.models.dto.OrdersResponse
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams.SearchType
 import za.co.woolworths.financial.services.android.models.dto.RootCategories
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse
+import za.co.woolworths.financial.services.android.models.dto.cart.FulfillmentDetails
 import za.co.woolworths.financial.services.android.models.dto.dash.LastOrderDetailsResponse
 import za.co.woolworths.financial.services.android.models.network.Parameter
 import za.co.woolworths.financial.services.android.onecartgetstream.OCChatActivity
@@ -292,16 +293,25 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         }
     }
 
-    private fun setSearchText(selectedTab: SelectedTabIndex) {
+    private fun setSearchText(selectedTab: SelectedTabIndex, location: CharSequence? = null) {
         when (selectedTab) {
             STANDARD_TAB -> {
                 binding.tvSearchProduct.text = getString(R.string.shop_landing_product_all_search)
+                binding.fulfilmentAndLocationLayout.layoutFulfilment.tvTitle.text = getString(R.string.standard_delivery)
+                binding.fulfilmentAndLocationLayout.layoutFulfilment.tvSubTitle.text = getString(R.string.shop_landing_fulfilment_title_cnc_and_standard)
+                binding.fulfilmentAndLocationLayout.layoutLocation.tvTitle.text = location ?: getString(R.string.default_location)
             }
             CLICK_AND_COLLECT_TAB -> {
                 binding.tvSearchProduct.text = getCncSearchText()
+                binding.fulfilmentAndLocationLayout.layoutFulfilment.tvTitle.text = getString(R.string.click_and_collect)
+                binding.fulfilmentAndLocationLayout.layoutFulfilment.tvSubTitle.text = getString(R.string.shop_landing_fulfilment_title_cnc_and_standard)
+                binding.fulfilmentAndLocationLayout.layoutLocation.tvTitle.text = location ?: getString(R.string.select_your_preferred_store)
             }
             DASH_TAB -> {
                 binding.tvSearchProduct.text = getString(R.string.shop_landing_product_food_search)
+                binding.fulfilmentAndLocationLayout.layoutFulfilment.tvTitle.text = getString(R.string.dash_delivery)
+                binding.fulfilmentAndLocationLayout.layoutFulfilment.tvSubTitle.text = getString(R.string.shop_landing_fulfilment_title_dash)
+                binding.fulfilmentAndLocationLayout.layoutLocation.tvTitle.text = location ?: getString(R.string.set_location_title)
             }
         }
     }
@@ -329,9 +339,9 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         binding.apply {
             tvSearchProduct.visibility = View.VISIBLE
             imBarcodeScanner.visibility = View.VISIBLE
-            if (isFromCnc) {
+            /*if (isFromCnc) {
                 setSearchText(CLICK_AND_COLLECT_TAB)
-            }
+            }*/
         }
     }
 
@@ -620,6 +630,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
     }
 
     fun setDeliveryView() {
+        setNewDeliveryAndFulfilmentText()
         binding.apply {
             activity?.let {
                 getDeliveryType()?.let { fulfillmentDetails ->
@@ -630,6 +641,76 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                         tvToolbarSubtitle,
                         imgToolbarStart
                     )
+                }
+            }
+        }
+    }
+
+    private fun setNewDeliveryAndFulfilmentText() {
+        if (!isAdded) {
+            return
+        }
+        binding.apply {
+            val fulfillmentDetails: FulfillmentDetails? = getDeliveryType()
+            fulfillmentDetails?.apply {
+                when (Delivery.getType(deliveryType)) {
+                    Delivery.CNC -> {
+//                        fulfilmentAndLocationLayout.layoutFulfilment.tvTitle.text = getString(R.string.click_collect)
+//                        fulfilmentAndLocationLayout.layoutLocation.tvTitle.text = KotlinUtils.capitaliseFirstLetter(storeName)
+                        setSearchText(CLICK_AND_COLLECT_TAB, location = KotlinUtils.capitaliseFirstLetter(storeName))
+                    }
+
+                    Delivery.STANDARD -> {
+                        //fulfilmentAndLocationLayout.layoutFulfilment.tvTitle.text = getString(R.string.standard_delivery)
+                        val fullAddress = KotlinUtils.capitaliseFirstLetter(address?.address1 ?: "")
+
+                        val formattedNickName = KotlinUtils.getFormattedNickName(
+                            address?.nickname,
+                            fullAddress, context
+                        )
+                        formattedNickName.append(fullAddress)
+                        //fulfilmentAndLocationLayout.layoutLocation.tvTitle.text = formattedNickName
+                        setSearchText(STANDARD_TAB, location = formattedNickName)
+                    }
+
+                    Delivery.DASH -> {
+                        val timeSlot: String? =
+                            WoolworthsApplication.getValidatePlaceDetails()?.onDemand?.firstAvailableFoodDeliveryTime
+
+                        //binding.fulfilmentAndLocationLayout.layoutFulfilment.tvTitle.text = getString(R.string.dash_delivery_bold)
+
+                        val fullAddress = KotlinUtils.capitaliseFirstLetter(address?.address1 ?: "")
+
+                        val formattedNickName = KotlinUtils.getFormattedNickName(
+                            address?.nickname,
+                            fullAddress, context
+                        )
+
+                        val location = if (timeSlot.isNullOrEmpty()) {
+                            getString(R.string.no_timeslots_available_title).plus("\t\u2022\t").plus(
+                                        formattedNickName.append(
+                                            KotlinUtils.capitaliseFirstLetter(
+                                                WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.address1
+                                                    ?: address?.address1 ?: ""
+                                            )
+                                        )
+                                    )
+                        } else {
+                            timeSlot.plus("\t\u2022\t").plus(formattedNickName).plus(
+                                    KotlinUtils.capitaliseFirstLetter(
+                                        WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.address1
+                                            ?: address?.address1 ?: ""
+                                    )
+                                )
+                        }
+                        setSearchText(DASH_TAB, location = location)
+                    }
+
+                    else -> {
+//                        binding.fulfilmentAndLocationLayout.layoutFulfilment.tvTitle.text = getString(R.string.standard_delivery)
+//                        fulfilmentAndLocationLayout.layoutLocation.tvTitle.text = getString(R.string.default_location)
+                        setSearchText(STANDARD_TAB)
+                    }
                 }
             }
         }
@@ -658,6 +739,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
 
         if (getDeliveryType() == null) {
             setupToolbar(STANDARD_TAB.index)
+            setSearchText(STANDARD_TAB)
             binding.viewpagerMain.currentItem = STANDARD_TAB.index
         } else {
             setDeliveryView()

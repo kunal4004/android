@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/round_corner_shape_switch"
+    android:minWidth="@dimen/thirty_two_dp"
+    android:paddingStart="@dimen/four_dp"
+    android:paddingEnd="@dimen/four_dp">
+
+    <ImageView
+        android:id="@+id/ibIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_switch"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/tvSwitchText"
+        app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="@string/label_switch" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tvSwitchText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:includeFontPadding="false"
+        android:paddingStart="@dimen/four_dp"
+        android:paddingTop="2dp"
+        android:paddingEnd="@dimen/four_dp"
+        android:paddingBottom="0dp"
+        android:text="@string/label_switch"
+        android:textAllCaps="true"
+        android:fontFamily="@font/futura_medium_ttf"
+        android:textColor="@color/white"
+        android:textSize="@dimen/twelve_sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/ibIcon"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

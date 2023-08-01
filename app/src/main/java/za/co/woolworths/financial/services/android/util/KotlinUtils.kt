@@ -592,6 +592,7 @@ class KotlinUtils {
             }
         }
 
+        @Deprecated("This does not require as per the new UI changes")
         fun setDeliveryAddressViewFoShop(
             context: Activity?,
             fulfillmentDetails: FulfillmentDetails,
