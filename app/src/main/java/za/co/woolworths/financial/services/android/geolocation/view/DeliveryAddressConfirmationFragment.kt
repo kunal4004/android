@@ -432,7 +432,8 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
             }
         }
 
-        if (unSellableCommerceItems?.isNullOrEmpty() == false && isUnSellableItemsRemoved == false dhfgdfhdfh) {
+        if (unSellableCommerceItems?.isNullOrEmpty() == false && isUnSellableItemsRemoved == false
+                && SessionUtilities.getInstance().isUserAuthenticated) {
             // show unsellable items
             unSellableCommerceItems?.let {
                 navigateToUnsellableItemsFragment(it as ArrayList<UnSellableCommerceItem>, currentDeliveryType)
