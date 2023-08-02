@@ -16,5 +16,9 @@ class StartupApiHelper : RetrofitConfig(AppContextProviderImpl(), RetrofitApiPro
             getDeviceIdentityToken(),
             WoolworthsApplication.getAppVersionName())
 
+    suspend fun getCartSummary() = mApiInterface.getCartsSummary(
+            getSessionToken(),
+            getDeviceIdentityToken())
+
     fun isConnectedToInternet(context: Context) = NetworkManager.getInstance().isConnectedToNetwork(context)
 }
