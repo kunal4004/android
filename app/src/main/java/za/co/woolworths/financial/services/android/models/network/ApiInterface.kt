@@ -1352,15 +1352,6 @@ interface ApiInterface {
     ): Call<ConfirmDeliveryAddressResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @POST("wfs/app/v4/cartV2/confirmLocation")
-    suspend fun confirmPlaceLocation(
-        @Header("userAgent") userAgent: String,
-        @Header("userAgentVersion") userAgentVersion: String,
-        @Header("sessionToken") sessionToken: String,
-        @Header("deviceIdentityToken") deviceIdentityToken: String,
-        @Body confirmLocationRequest: ConfirmLocationRequest) : retrofit2.Response<ConfirmDeliveryAddressResponse>
-
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("wfs/app/v4/locationItems/saveLocation")
     fun saveLocation(
         @Header("userAgent") userAgent: String,

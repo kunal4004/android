@@ -38,6 +38,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.ProductDetailsFragmentBinding
 import com.awfs.coordination.databinding.PromotionalImageBinding
+import com.bumptech.glide.util.Util
 import com.facebook.FacebookSdk.getApplicationContext
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.gson.Gson
@@ -53,9 +54,9 @@ import za.co.woolworths.financial.services.android.common.SingleMessageCommonToa
 import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.ILocationProvider
-import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
+import za.co.woolworths.financial.services.android.geolocation.viewmodel.AddToCartLiveData
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
-import za.co.woolworths.financial.services.android.geolocation.viewmodel.UnSellableItemsLiveData
+import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmLocationResponseLiveData
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.BrandNavigationDetails
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
@@ -125,7 +126,6 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_COLOR_NOT_MATCH
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_FACE_NOT_DETECT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_FAIL_IMAGE_LOAD
-import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.saveAnonymousUserLocationDetails
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.logException
@@ -162,7 +162,7 @@ class ProductDetailsFragment :
     private var auxiliaryImages: MutableList<String> = ArrayList()
     private var productDetailsPresenter: ProductDetailsContract.ProductDetailsPresenter? = null
     private var storeIdForInventory: String? = ""
-    private var otherSKUsByGroupKey: HashMap<String, ArrayList<OtherSkus>> = hashMapOf()
+    private var otherSKUsByGroupKey: LinkedHashMap<String, ArrayList<OtherSkus>> = linkedMapOf()
     private var hasColor: Boolean = false
     private var hasSize: Boolean = false
     private var defaultSku: OtherSkus? = null
@@ -208,7 +208,7 @@ class ProductDetailsFragment :
     private val vtoApplyEffectOnImageViewModel: VtoApplyEffectOnImageViewModel? by activityViewModels()
     private val liveCameraViewModel: LiveCameraViewModel? by activityViewModels()
     private val dataPrefViewModel: DataPrefViewModel? by activityViewModels()
-    private val confirmAddressViewModel: ConfirmAddressViewModel? by activityViewModels()
+    private val confirmAddressViewModel: ConfirmAddressViewModel by activityViewModels()
     private var makeupCamera: MakeupCam? = null
     private var isObserveImageData: Boolean = false
     private var isRefreshImageEffectLiveCamera: Boolean = false
@@ -321,6 +321,19 @@ class ProductDetailsFragment :
         setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_CLICK_RESULT) { _, _ ->
             // As User selects to change the delivery location. So we will call confirm place API and will change the users location.
             binding.getUpdatedValidateResponse()
+        }
+        setFragmentResultListener(UnsellableUtils.ADD_TO_LIST_SUCCESS_RESULT_CODE) { _, _ ->
+            // Proceed with add to cart as we have moved unsellable items to List.
+            onConfirmLocation()
+        }
+
+        setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_DISMISS_RESULT) { requestKey, bundle ->
+            val resultCode =
+                bundle.getString(CustomBottomSheetDialogFragment.DIALOG_BUTTON_CLICK_RESULT)
+            if (resultCode == UnsellableUtils.ADD_TO_LIST_SUCCESS_RESULT_CODE) {
+                // Proceed with add to cart as we have moved unsellable items to List.
+                onConfirmLocation()
+            }
         }
 
         KotlinUtils.setAddToListFragmentResultListener(
@@ -837,10 +850,23 @@ class ProductDetailsFragment :
                                 // show unsellable items
                                 unsellableList?.let {
                                     navigateToUnsellableItemsFragment(it as java.util.ArrayList<UnSellableCommerceItem>,
-                                        KotlinUtils.browsingDeliveryType?.name)
+                                        KotlinUtils.browsingDeliveryType
+                                            ?: KotlinUtils.getPreferredDeliveryType()
+                                            ?: Delivery.STANDARD
+                                    )
                                 }
                             } else
-                                callConfirmPlace()
+                                confirmAddressViewModel?.let {
+                                    UnsellableUtils.callConfirmPlace(
+                                        (this@ProductDetailsFragment),
+                                        null,
+                                        progressBar,
+                                        it,
+                                        KotlinUtils.browsingDeliveryType
+                                            ?: KotlinUtils.getPreferredDeliveryType()
+                                            ?: Delivery.STANDARD
+                                    )
+                                }
                         }
                     }
                 }
@@ -848,49 +874,6 @@ class ProductDetailsFragment :
                 logException(e)
                 progressBar?.visibility = View.GONE
             } catch (e: JsonSyntaxException) {
-                logException(e)
-                progressBar?.visibility = View.GONE
-            }
-        }
-    }
-
-    private fun ProductDetailsFragmentBinding.callConfirmPlace() {
-        // Confirm the location
-        lifecycleScope.launch {
-            progressBar?.visibility = View.VISIBLE
-            try {
-                val confirmLocationRequest =
-                    KotlinUtils.getConfirmLocationRequest(KotlinUtils.browsingDeliveryType)
-                val confirmLocationResponse =
-                    confirmAddressViewModel?.postConfirmAddress(confirmLocationRequest)
-                progressBar?.visibility = View.GONE
-                if (confirmLocationResponse != null) {
-                    when (confirmLocationResponse.httpCode) {
-                        HTTP_OK -> {
-                            if (SessionUtilities.getInstance().isUserAuthenticated) {
-                                Utils.savePreferredDeliveryLocation(ShoppingDeliveryLocation(
-                                    confirmLocationResponse.orderSummary?.fulfillmentDetails))
-                                if (KotlinUtils.getAnonymousUserLocationDetails() != null)
-                                    KotlinUtils.clearAnonymousUserLocationDetails()
-                            } else {
-                                saveAnonymousUserLocationDetails(ShoppingDeliveryLocation(
-                                    confirmLocationResponse.orderSummary?.fulfillmentDetails))
-                            }
-                            val savedPlaceId = KotlinUtils.getDeliveryType()?.address?.placeId
-                            KotlinUtils.apply {
-                                this.placeId = confirmLocationRequest.address.placeId
-                                isLocationPlaceIdSame =
-                                    confirmLocationRequest.address.placeId?.equals(
-                                        savedPlaceId)
-                            }
-
-                            setBrowsingData()
-                            updateStockAvailabilityLocation() // update pdp location.
-                            addItemToCart()
-                        }
-                    }
-                }
-            } catch (e: Exception) {
                 logException(e)
                 progressBar?.visibility = View.GONE
             }
@@ -914,24 +897,34 @@ class ProductDetailsFragment :
     }
 
     private fun isUnSellableItemsRemoved() {
-        UnSellableItemsLiveData.observe(viewLifecycleOwner) {
+        ConfirmLocationResponseLiveData.observe(viewLifecycleOwner) {
             isUnSellableItemsRemoved = it
             if (isUnSellableItemsRemoved == true && (activity as? BottomNavigationActivity)?.mNavController?.currentFrag is ProductDetailsFragment) {
-                binding.callConfirmPlace()
-                UnSellableItemsLiveData.value = false
+                setBrowsingData()
+                updateStockAvailabilityLocation() // update pdp location.
+                ConfirmLocationResponseLiveData.value = false
+            }
+        }
+
+        AddToCartLiveData.observe(viewLifecycleOwner) {
+            if (it) {
+                AddToCartLiveData.value = false
+                addItemToCart() // This will again call addToCart
             }
         }
     }
 
     private fun navigateToUnsellableItemsFragment(
-        unSellableCommerceItems: ArrayList<UnSellableCommerceItem>, deliveryType: String?,
+        unSellableCommerceItems: ArrayList<UnSellableCommerceItem>,
+        deliveryType: Delivery
     ) {
-        deliveryType?.let {
             val unsellableItemsBottomSheetDialog =
-                UnsellableItemsBottomSheetDialog.newInstance(unSellableCommerceItems, it)
-            unsellableItemsBottomSheetDialog.show(requireFragmentManager(),
+                confirmAddressViewModel?.let { it1 ->
+                    UnsellableItemsBottomSheetDialog.newInstance(unSellableCommerceItems, deliveryType, binding.progressBar,
+                        it1, this)
+                }
+            unsellableItemsBottomSheetDialog?.show(requireFragmentManager(),
                 UnsellableItemsBottomSheetDialog::class.java.simpleName)
-        }
     }
 
     fun addItemToCart() {
@@ -1336,7 +1329,7 @@ class ProductDetailsFragment :
         }
     }
 
-    private fun groupOtherSKUsByColor(otherSKUsList: ArrayList<OtherSkus>?): HashMap<String, ArrayList<OtherSkus>> {
+    private fun groupOtherSKUsByColor(otherSKUsList: ArrayList<OtherSkus>?): LinkedHashMap<String, ArrayList<OtherSkus>> {
 
         val variant = ColourSizeVariants.find(productDetails?.colourSizeVariants ?: "")
         when (variant) {
