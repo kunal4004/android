@@ -20,6 +20,7 @@
         android:id="@+id/btnLocationEdit"
         android:layout_width="@dimen/thirty_two_dp"
         android:layout_height="@dimen/twenty_four_dp"
+        android:clickable="false"
         android:background="@drawable/round_corner_shape_switch"
         android:src="@drawable/ic_edit_location"
         android:paddingTop="@dimen/four_dp"

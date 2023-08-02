@@ -19,9 +19,10 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+            <!--TODO - code cleanup required here, remove this old toolbar ui-->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/toolbarLayout"
-                android:visibility="visible"
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -110,10 +111,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/shopToolbar">
-
+        <!--TODO - code cleanup required here, remove this tabs-->
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabs_main"
-            android:visibility="visible"
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/eight_dp"
@@ -138,7 +139,7 @@
             layout="@layout/black_tool_tip_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="gone"
+            android:visibility="visible"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tabs_main" />
 
