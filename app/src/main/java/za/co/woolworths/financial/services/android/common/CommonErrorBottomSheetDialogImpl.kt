@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.common
 
 import android.content.Context
+import android.view.View
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.CommonErrorBottomDialogLayoutBinding
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -13,7 +14,8 @@ class CommonErrorBottomSheetDialogImpl @Inject constructor(): CommonErrorBottomS
         context: Context,
         title: String,
         desc: String,
-        buttonText: String
+        buttonText: String,
+        isDismissButtonNeeded: Boolean
     ) {
         val dialog = BottomSheetDialog(context, R.style.BottomSheetDialogTheme)
         val binding = CommonErrorBottomDialogLayoutBinding.inflate(dialog.layoutInflater, null, false)
@@ -21,6 +23,16 @@ class CommonErrorBottomSheetDialogImpl @Inject constructor(): CommonErrorBottomS
         binding.tvErrorTitle.text = title
         binding.tvErrorDesc.text = desc
         binding.gotItButton.text = buttonText
+        if (isDismissButtonNeeded){
+            binding.cancelButton.apply {
+                visibility = View.VISIBLE
+                setOnClickListener {
+                    onClickListener.onDismiss()
+                    dialog.dismiss()
+                }
+            }
+
+        }
         binding.gotItButton.setOnClickListener {
             onClickListener.onClick()
             dialog.dismiss()
@@ -32,4 +44,5 @@ class CommonErrorBottomSheetDialogImpl @Inject constructor(): CommonErrorBottomS
 
 interface ClickOnDialogButton {
     fun onClick()
+    fun onDismiss()
 }
