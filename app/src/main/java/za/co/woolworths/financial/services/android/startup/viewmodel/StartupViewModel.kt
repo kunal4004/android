@@ -4,26 +4,33 @@ import android.content.Context
 import android.content.pm.PackageManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
+import androidx.lifecycle.viewModelScope
 import com.awfs.coordination.BuildConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.firebase.FirebaseConfigUtils
 import za.co.woolworths.financial.services.android.firebase.model.ConfigData
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
+import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse
+import za.co.woolworths.financial.services.android.models.network.Resource
 import za.co.woolworths.financial.services.android.startup.service.network.StartupApiHelper
 import za.co.woolworths.financial.services.android.startup.service.repository.StartUpRepository
 import za.co.woolworths.financial.services.android.startup.utils.ConfigResource
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
-import java.util.*
+import java.util.Locale
 
 /**
  * Created by Kunal Uttarwar on 23/2/21.
  */
 class StartupViewModel(private val startUpRepository: StartUpRepository, private val startupApiHelper: StartupApiHelper) : ViewModel() {
+    var isGetConfigSuccess: Boolean = false
     var isServerMessageShown: Boolean = false
     var isAppMinimized: Boolean = false
     var isVideoPlaying: Boolean = false
@@ -36,6 +43,9 @@ class StartupViewModel(private val startUpRepository: StartUpRepository, private
 
     private lateinit var firebaseRemoteConfig: FirebaseRemoteConfig
 
+    private val _cartSummary: MutableStateFlow<Resource<CartSummaryResponse>> =
+        MutableStateFlow(Resource.loading(null))
+    val cartSummary = _cartSummary.asStateFlow()
 
     companion object {
         const val APP_SERVER_ENVIRONMENT_KEY = "app_server_environment"
@@ -46,9 +56,18 @@ class StartupViewModel(private val startUpRepository: StartUpRepository, private
     fun queryServiceGetConfig() = liveData(Dispatchers.IO) {
         emit(ConfigResource.loading(data = null))
         try {
+            this@StartupViewModel.isGetConfigSuccess = true
             emit(ConfigResource.success(data = startUpRepository.queryServiceGetConfig()))
+
         } catch (exception: Exception) {
+            this@StartupViewModel.isGetConfigSuccess = false
             emit(ConfigResource.error(data = null, msg = exception.toString()))
+        }
+    }
+
+    fun queryCartSummary() = viewModelScope.launch(Dispatchers.IO) {
+        startUpRepository.queryCartSummary().collect {
+            _cartSummary.value = it
         }
     }
 

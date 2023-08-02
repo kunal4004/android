@@ -19,6 +19,7 @@ import androidx.core.os.bundleOf
 import androidx.core.text.buildSpannedString
 import androidx.core.view.contains
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.ViewModelProvider
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -34,15 +35,24 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.IProductListing
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils
-import za.co.woolworths.financial.services.android.geolocation.viewmodel.UnSellableItemsLiveData
+import za.co.woolworths.financial.services.android.geolocation.viewmodel.AddToCartLiveData
+import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
+import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmLocationResponseLiveData
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
-import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.models.dto.AddItemToCart
+import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse
+import za.co.woolworths.financial.services.android.models.dto.ProductList
+import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
+import za.co.woolworths.financial.services.android.models.dto.RootCategory
+import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
 import za.co.woolworths.financial.services.android.models.dto.dash.LastOrderDetailsResponse
 import za.co.woolworths.financial.services.android.models.dto.shop.Banner
 import za.co.woolworths.financial.services.android.models.dto.shop.ProductCatalogue
+import za.co.woolworths.financial.services.android.models.network.Parameter
 import za.co.woolworths.financial.services.android.models.network.Status
+import za.co.woolworths.financial.services.android.onecartgetstream.OCChatActivity
 import za.co.woolworths.financial.services.android.onecartgetstream.service.DashChatMessageListeningService
 import za.co.woolworths.financial.services.android.receivers.DashOrderReceiver
 import za.co.woolworths.financial.services.android.receivers.DashOrderReceiverListener
@@ -56,6 +66,8 @@ import za.co.woolworths.financial.services.android.ui.adapters.shop.dash.DashDel
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.Companion.newInstance
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment
+import za.co.woolworths.financial.services.android.ui.fragments.shop.OrderDetailsFragment
+import za.co.woolworths.financial.services.android.ui.fragments.shop.OrderTrackingWebViewActivity
 import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment
 import za.co.woolworths.financial.services.android.ui.views.AddedToCartBalloonFactory
 import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
@@ -63,23 +75,30 @@ import za.co.woolworths.financial.services.android.ui.views.ToastFactory
 import za.co.woolworths.financial.services.android.ui.views.UnsellableItemsBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ProductListingFindInStoreNoQuantityFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SelectYourQuantityFragment
-import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_EXPECTATION_FAILED_502
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.REQUEST_CODE_QUERY_INVENTORY_FOR_STORE
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.REQUEST_CODE_QUERY_STORE_FINDER
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.SET_DELIVERY_LOCATION_REQUEST_CODE
-import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getAnonymousUserLocationDetails
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants
+import za.co.woolworths.financial.services.android.util.CustomTypefaceSpan
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView
+import za.co.woolworths.financial.services.android.util.GetCartSummary
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getDeliveryType
-import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.saveAnonymousUserLocationDetails
+import za.co.woolworths.financial.services.android.util.ScreenManager
+import za.co.woolworths.financial.services.android.util.SessionUtilities
+import za.co.woolworths.financial.services.android.util.UnsellableUtils
+import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
+import za.co.woolworths.financial.services.android.util.isFragmentAttached
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.viewmodels.shop.ShopViewModel
 import java.net.ConnectException
 import java.net.UnknownHostException
-import java.util.*
-import kotlin.collections.ArrayList
+import java.util.Locale
 
 @AndroidEntryPoint
 class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), IProductListing,
@@ -87,6 +106,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
     DashOrderReceiverListener {
 
     private lateinit var viewModel: ShopViewModel
+    private val confirmAddressViewModel: ConfirmAddressViewModel by activityViewModels()
     private lateinit var binding: FragmentDashDeliveryBinding
     private lateinit var dashDeliveryAdapter: DashDeliveryAdapter
     private var isQuickShopClicked = false
@@ -202,6 +222,18 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
             else WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.placeId
             callValidatePlace(placeId)
         }
+        setFragmentResultListener(UnsellableUtils.ADD_TO_LIST_SUCCESS_RESULT_CODE) { _, _ ->
+            // Proceed with add to cart as we have moved unsellable items to List.
+            addToCart(viewModel.addItemToCart.value) // This will again call addToCart
+        }
+        setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_DISMISS_RESULT) { requestKey, bundle ->
+            val resultCode =
+                bundle.getString(CustomBottomSheetDialogFragment.DIALOG_BUTTON_CLICK_RESULT)
+            if (resultCode == UnsellableUtils.ADD_TO_LIST_SUCCESS_RESULT_CODE) {
+                // Proceed with add to cart as we have moved unsellable items to List.
+                addToCart(viewModel.addItemToCart.value) // This will again call addToCart
+            }
+        }
     }
 
     private fun callValidatePlace(placeId: String?) {
@@ -209,10 +241,6 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
             return
         callValidatePlaceApi()
         viewModel.getValidateLocationResponse(placeId)
-    }
-
-    private fun callConfirmPlace() {
-        viewModel.callConfirmPlace(KotlinUtils.getConfirmLocationRequest(Delivery.DASH))
     }
 
     private fun showSearchBar() {
@@ -414,48 +442,6 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                             return@observe
                         }
                         onFailureHandler(Throwable(ConnectException()))
-                    }
-                }
-            }
-        }
-
-        // confirm place API.
-        viewModel.confirmPlaceDetails.observe(viewLifecycleOwner) {
-            it.getContentIfNotHandled()?.let { resource ->
-                val response = resource.data
-                when (response?.httpCode) {
-                    AppConstant.HTTP_OK -> {
-                        if (SessionUtilities.getInstance().isUserAuthenticated) {
-                            Utils.savePreferredDeliveryLocation(ShoppingDeliveryLocation(response.orderSummary?.fulfillmentDetails))
-                            if (getAnonymousUserLocationDetails() != null)
-                                KotlinUtils.clearAnonymousUserLocationDetails()
-                        } else {
-                            saveAnonymousUserLocationDetails(ShoppingDeliveryLocation(response.orderSummary?.fulfillmentDetails))
-                        }
-                        val savedPlaceId =
-                            getDeliveryType()?.address?.placeId
-                        KotlinUtils.apply {
-                            response.orderSummary?.fulfillmentDetails?.address?.placeId.let { responsePlaceId ->
-                                this.placeId = responsePlaceId
-                                isLocationPlaceIdSame = responsePlaceId.equals(savedPlaceId)
-                                isDeliveryLocationTabCrossClicked =
-                                    responsePlaceId.equals(savedPlaceId)
-                                isCncTabCrossClicked = responsePlaceId.equals(savedPlaceId)
-                                isDashTabCrossClicked = responsePlaceId.equals(savedPlaceId)
-                            }
-                        }
-
-                        val browsingPlaceDetails =
-                            WoolworthsApplication.getDashBrowsingValidatePlaceDetails()
-                        WoolworthsApplication.setValidatedSuburbProducts(browsingPlaceDetails)
-                        // set latest response to browsing data.
-                        WoolworthsApplication.setCncBrowsingValidatePlaceDetails(
-                            browsingPlaceDetails
-                        )
-                        if (this.parentFragment is ShopFragment) {
-                            (this.parentFragment as ShopFragment).setDeliveryView() // update main location UI.
-                        }
-                        addToCart(viewModel.addItemToCart.value) // This will again call addToCart
                     }
                 }
             }
@@ -852,7 +838,13 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                                     // show unsellable items
                                     navigateToUnsellableItemsFragment(unsellableList as ArrayList<UnSellableCommerceItem>)
                                 } else
-                                    callConfirmPlace()
+                                    UnsellableUtils.callConfirmPlace(
+                                        (this@DashDeliveryAddressFragment),
+                                        null,
+                                        binding.progressBar,
+                                        confirmAddressViewModel,
+                                        KotlinUtils.browsingDeliveryType ?: Delivery.DASH
+                                    )
                             } else {
                                 initViews()
                             }
@@ -868,11 +860,40 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
     }
 
     private fun isUnSellableItemsRemoved() {
-        UnSellableItemsLiveData.observe(viewLifecycleOwner) {
+        ConfirmLocationResponseLiveData.observe(viewLifecycleOwner) {
             isUnSellableItemsRemoved = it
             if (isUnSellableItemsRemoved == true && ((activity as? BottomNavigationActivity)?.mNavController?.currentFrag as? ShopFragment)?.getCurrentFragmentIndex() == ShopFragment.SelectedTabIndex.DASH_TAB.index) {
-                callConfirmPlace()
-                UnSellableItemsLiveData.value = false
+                ConfirmLocationResponseLiveData.value = false
+                if (this.parentFragment is ShopFragment) {
+                    (this.parentFragment as ShopFragment).setDeliveryView() // update main location UI.
+                }
+                val savedPlaceId =
+                    getDeliveryType()?.address?.placeId
+                KotlinUtils.apply {
+                    Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId.let { responsePlaceId ->
+                        this.placeId = responsePlaceId
+                        isLocationPlaceIdSame = responsePlaceId.equals(savedPlaceId)
+                        isDeliveryLocationTabCrossClicked =
+                            responsePlaceId.equals(savedPlaceId)
+                        isCncTabCrossClicked = responsePlaceId.equals(savedPlaceId)
+                        isDashTabCrossClicked = responsePlaceId.equals(savedPlaceId)
+                    }
+                }
+
+                val browsingPlaceDetails =
+                    WoolworthsApplication.getDashBrowsingValidatePlaceDetails()
+                WoolworthsApplication.setValidatedSuburbProducts(browsingPlaceDetails)
+                // set latest response to browsing data.
+                WoolworthsApplication.setCncBrowsingValidatePlaceDetails(
+                    browsingPlaceDetails
+                )
+            }
+        }
+        AddToCartLiveData.observe(viewLifecycleOwner) {
+            if (it && isVisible) {
+                // isVisible condition is necessary while searching product from dash landing to PLP.
+                AddToCartLiveData.value = false
+                addToCart(viewModel.addItemToCart.value) // This will again call addToCart
             }
         }
     }
@@ -883,10 +904,13 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
         val unsellableItemsBottomSheetDialog =
             UnsellableItemsBottomSheetDialog.newInstance(
                 unSellableCommerceItems,
-                Delivery.DASH.name
+                Delivery.DASH,
+                binding.progressBar,
+                confirmAddressViewModel,
+                this@DashDeliveryAddressFragment
             )
         unsellableItemsBottomSheetDialog.show(
-            requireActivity().supportFragmentManager,
+            parentFragmentManager,
             UnsellableItemsBottomSheetDialog::class.java.simpleName
         )
     }
@@ -1229,6 +1253,46 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
             R.id.btn_dash_set_address -> {
                 navigateToConfirmAddressScreen()
             }
+            // In App notification click, Navigate to Order Details
+            R.id.inappOrderNotificationContainer -> {
+                (requireActivity() as? BottomNavigationActivity)?.apply {
+                    val orderId: String? = v.getTag(R.id.inappOrderNotificationContainer) as? String
+                    orderId?.let {
+                        pushFragment(OrderDetailsFragment.getInstance(Parameter(it)))
+                    }
+                }
+            }
+            // In App notification Chat click, Navigate to Chat
+            // Chat / Driver Tracking / Location
+            R.id.inappOrderNotificationIcon -> {
+                val params = v.getTag(R.id.inappOrderNotificationIcon) as? LastOrderDetailsResponse
+                params?.apply {
+                    // Chat
+                    if (params.isChatEnabled) {
+                        navigateToChat(orderId)
+                    }
+                    // Driver tracking
+                    else if (params.isDriverTrackingEnabled) {
+                        driverTrackingUrl?.let { navigateToOrderTrackingScreen(it) }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun navigateToChat(orderId: String?) {
+        orderId?.let {
+            startActivity(OCChatActivity.newIntent(requireActivity(), it))
+        }
+    }
+
+    private fun navigateToOrderTrackingScreen(url: String) {
+        requireActivity().apply {
+            startActivity(OrderTrackingWebViewActivity.newIntent(this, url))
+            overridePendingTransition(
+                R.anim.slide_from_right,
+                R.anim.slide_out_to_left
+            )
         }
     }
 

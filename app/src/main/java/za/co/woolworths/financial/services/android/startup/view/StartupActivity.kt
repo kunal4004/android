@@ -16,14 +16,16 @@ import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.os.bundleOf
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.ActivitySplashScreenBinding
 import com.awfs.coordination.databinding.ActivityStartupBinding
 import com.awfs.coordination.databinding.ActivityStartupResourcenotfoundBinding
 import com.clarisite.mobile.Glassbox
 import com.clarisite.mobile.StartupSettings.StartupSettingsBuilder.aSettingsBuilder
-import com.clarisite.mobile.exceptions.GlassboxRecordingException
 import com.google.android.gms.tasks.Task
 import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseOptions
@@ -34,6 +36,7 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import za.co.wigroup.androidutils.Util
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.firebase.FirebaseConfigUtils
@@ -41,6 +44,7 @@ import za.co.woolworths.financial.services.android.firebase.model.ConfigData
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton.glassBox
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
+import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.onecartgetstream.common.constant.OCConstant
 import za.co.woolworths.financial.services.android.onecartgetstream.common.constant.OCConstant.Companion.startOCChatService
 import za.co.woolworths.financial.services.android.onecartgetstream.service.DashChatMessageListeningService
@@ -52,7 +56,14 @@ import za.co.woolworths.financial.services.android.startup.viewmodel.StartupView
 import za.co.woolworths.financial.services.android.startup.viewmodel.ViewModelFactory
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.RootedDeviceInfoFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.RootedDeviceInfoFragment.Companion.newInstance
-import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.AppConstant
+import za.co.woolworths.financial.services.android.util.AuthenticateUtils
+import za.co.woolworths.financial.services.android.util.ImageManager
+import za.co.woolworths.financial.services.android.util.NotificationUtils
+import za.co.woolworths.financial.services.android.util.QueryBadgeCounter
+import za.co.woolworths.financial.services.android.util.ScreenManager
+import za.co.woolworths.financial.services.android.util.SessionUtilities
+import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.pushnotification.PushNotificationManager
 import javax.inject.Inject
@@ -79,6 +90,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
         super.onCreate(savedInstanceState)
         setupViewModel()
         setUpFirebaseconfig()
+        setupDataListener()
 
         try {
             // Try to get a drawable, to make sure the app has not
@@ -105,6 +117,39 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
             bindingResourceNotFound = ActivityStartupResourcenotfoundBinding.inflate(layoutInflater)
             setContentView(bindingResourceNotFound.root)
             isAppSideLoaded = true
+        }
+    }
+
+    private fun setupDataListener() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                startupViewModel.cartSummary.collect {
+                    when (it.status) {
+                        Status.LOADING -> {
+                            setupLoadingScreen()
+                        }
+                        // In Cart summary success or failure proceed as before
+                        else -> {
+                            // Setting up Cart count on bottom tabs
+                            it.data?.data?.getOrNull(0)?.apply {
+                                if (totalItemsCount != null)
+                                    QueryBadgeCounter.instance.setCartSummaryResponse(this)
+                            }
+
+                            when {
+                                // When get config fails
+                                !startupViewModel.isGetConfigSuccess ->{
+                                    if (startupViewModel.isConnectedToInternet(this@StartupActivity)) {
+                                        configureDashChatServices()
+                                    }
+                                    onConfigFailure()
+                                }
+                                else -> onConfigSuccess()
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -282,9 +327,6 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
         } else {
             bindingStartup.showNonVideoViewWithErrorLayout()
         }
-        if (startupViewModel.isConnectedToInternet(this@StartupActivity)) {
-            configureDashChatServices()
-        }
         //Remove old usage of SharedPreferences data.
         //   startupViewModel.clearSharedPreference(this@StartupActivity)
         AuthenticateUtils.getInstance(this@StartupActivity).enableBiometricForCurrentSession(true)
@@ -392,31 +434,47 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
     fun getConfig() {
         startupViewModel.queryServiceGetConfig().observe(this) {
             when (it.responseStatus) {
+
+                ResponseStatus.LOADING -> setupLoadingScreen()
+                ResponseStatus.ERROR -> onConfigFailure()
                 ResponseStatus.SUCCESS -> {
+
                     ConfigResource.persistGlobalConfig(it.data, startupViewModel)
                     startupViewModel.videoPlayerShouldPlay = false
                     if (TextUtils.isEmpty(it.data?.configs?.enviroment?.stsURI)) {
                         bindingStartup.showNonVideoViewWithErrorLayout()
                         return@observe
                     }
+                    // Fixing https://woolworths.atlassian.net/browse/APP1-1923
+                    // Makes cart summary API call to hit ATG and creates a single JSessionId
+                    when {
+                        SessionUtilities.getInstance().isUserAuthenticated ->
+                            startupViewModel.queryCartSummary()
 
-                    if (!startupViewModel.isVideoPlaying) {
-                        if (startupViewModel.isConnectedToInternet(this)) {
-                            fetchFirebaseConfigData(true)
-                        } else {
-                            bindingStartup.showNonVideoViewWithErrorLayout()
-                        }
+                        else -> onConfigSuccess()
                     }
+
                     initializeGlassBoxSDK()
-                }
-                ResponseStatus.LOADING -> {
-                    setupLoadingScreen()
-                }
-                ResponseStatus.ERROR -> {
-                    fetchFirebaseConfigData(false)
                 }
             }
         }
+    }
+
+    private fun onConfigSuccess() {
+        if (startupViewModel.isConnectedToInternet(this@StartupActivity)) {
+            configureDashChatServices()
+        }
+        if (!startupViewModel.isVideoPlaying) {
+            if (startupViewModel.isConnectedToInternet(this@StartupActivity)) {
+                fetchFirebaseConfigData(true)
+            } else {
+                bindingStartup.showNonVideoViewWithErrorLayout()
+            }
+        }
+    }
+
+    private fun onConfigFailure() {
+        fetchFirebaseConfigData(false)
     }
 
     //video player on completion
@@ -581,7 +639,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
     }
 
     private fun forgotPasswordDeeplink() {
-        var uri = intent.data
+        var uri = intent?.data
         if (null != uri) {
             var params = uri.pathSegments
             var forgotPassword = params[params.size - 1]
