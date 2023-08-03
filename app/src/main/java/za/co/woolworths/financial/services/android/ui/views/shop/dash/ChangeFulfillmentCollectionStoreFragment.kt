@@ -178,10 +178,10 @@ class ChangeFulfillmentCollectionStoreFragment :
                     }
                 }
             } catch (e: Exception) {
-                e.printStackTrace()
+                FirebaseManager.logException(e)
                 binding.cncProgressBar.visibility = View.GONE
             } catch (e: JsonSyntaxException) {
-                e.printStackTrace()
+                FirebaseManager.logException(e)
                 binding.cncProgressBar.visibility = View.GONE
             }
         }
