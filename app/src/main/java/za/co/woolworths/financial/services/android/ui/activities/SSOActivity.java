@@ -1,5 +1,9 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
+import static za.co.woolworths.financial.services.android.util.Utils.DY_CHANNEL;
+import static za.co.woolworths.financial.services.android.util.Utils.HOME_PAGE;
+import static za.co.woolworths.financial.services.android.util.Utils.MOBILE_LANDING_PAGE;
+
 import android.annotation.TargetApi;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -30,6 +34,7 @@ import android.widget.RelativeLayout;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.awfs.coordination.R;
 import com.google.gson.Gson;
@@ -47,6 +52,7 @@ import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
+import za.co.woolworths.financial.services.android.dynamicyield.data.response.getResponse.DynamicYieldChooseVariationResponse;
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
@@ -59,8 +65,12 @@ import za.co.woolworths.financial.services.android.recommendations.data.response
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Context;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Device;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.HomePageRequestEvent;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Options;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Page;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Session;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.User;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.response.DyHomePageViewModel;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.PrepareChangeAttributeRequestEvent;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.Properties;
@@ -144,6 +154,7 @@ public class SSOActivity extends WebViewActivity {
 	private String jwt = null;
 	private DyChangeAttributeViewModel dyReportEventViewModel;
 	private NetworkConfig config;
+	private DyHomePageViewModel dyHomePageViewModel;
 
 	public SSOActivity() {
 		this.state = UUID.randomUUID().toString();
@@ -164,7 +175,33 @@ public class SSOActivity extends WebViewActivity {
 		handleUIForKMSIEntry((Utils.getUserKMSIState() && SSOActivity.this.path == Path.SIGNIN));
 		showProfileProgressBar();
 		config = new NetworkConfig(new AppContextProviderImpl());
+		dyHomePageViewModel();
 		dyReportEventViewModel();
+	}
+
+	private void dyHomePageViewModel() {
+		dyHomePageViewModel = new ViewModelProvider(this).get(DyHomePageViewModel.class);
+		dyHomePageViewModel.createDyHomePageLiveData.observe(this, new androidx.lifecycle.Observer<DynamicYieldChooseVariationResponse>() {
+			@Override
+			public void onChanged(DynamicYieldChooseVariationResponse dynamicYieldChooseVariationResponse) {
+				if (dynamicYieldChooseVariationResponse == null) {
+					//  Toast.makeText(BottomNavigationActivity.this, "Home Page DY failed", Toast.LENGTH_LONG).show();
+				} else {
+					// Toast.makeText(BottomNavigationActivity.this, "Home Page DY Success", Toast.LENGTH_LONG).show();
+
+				}
+			}
+		});
+	}
+
+	private void prepareDynamicYieldRequestEvent() {
+		ArrayList dyData = new ArrayList<>();
+		Device device = new Device(Utils.IPAddress, config.getDeviceModel());
+		Page page = new Page(dyData, MOBILE_LANDING_PAGE, HOME_PAGE, null,null);
+		Context context = new Context(device,page, DY_CHANNEL);
+		Options options = new Options(true);
+		HomePageRequestEvent homePageRequestEvent = new HomePageRequestEvent(null,null,context,options);
+		dyHomePageViewModel.createDyRequest(homePageRequestEvent);
 	}
 
 	private void dyReportEventViewModel() {
@@ -657,6 +694,7 @@ public class SSOActivity extends WebViewActivity {
 	}
 
 	private void extractFormDataAndCloseSSOIfNeeded(String ssoActivityEvent){
+		//prepareDynamicYieldRequestEvent();
 		if (Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID) != null) {
 			dyServerId = Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID);
 		} else {
@@ -719,8 +757,7 @@ public class SSOActivity extends WebViewActivity {
 						} catch (NullPointerException ex) {
 							closeActivity();
 						}
-					}
-					else {
+					} else {
 						setResult(SSOActivityResult.SUCCESS.rawValue(), intent);
 						startOCDashChatServices();
 						setStSParameters();
@@ -730,11 +767,17 @@ public class SSOActivity extends WebViewActivity {
 					setResult(SSOActivityResult.STATE_MISMATCH.rawValue(), intent);
 					setStSParameters();
 				}
-				if (ssoActivityEvent == "SIGNIN")
-					prepareDySigninRequestEvent();
-				else if (ssoActivityEvent == "REGISTER") {
-					prepareDyRegisterRequestEvent();
-					prepareDyIdentifyUserRequestEvent();
+				if (ssoActivityEvent == "SIGNIN") {
+					if (Boolean.TRUE.equals(AppConfigSingleton.getDynamicYieldConfig().isDynamicYieldEnabled())) {
+						prepareDySigninRequestEvent();
+						prepareDyIdentifyUserRequestEvent();
+					}
+
+				}else if (ssoActivityEvent == "REGISTER") {
+					if (Boolean.TRUE.equals(AppConfigSingleton.getDynamicYieldConfig().isDynamicYieldEnabled())) {
+						prepareDyRegisterRequestEvent();
+						prepareDyIdentifyUserRequestEvent();
+					}
 				}
 			}
 		});
@@ -744,8 +787,8 @@ public class SSOActivity extends WebViewActivity {
 		User user = new User(dyServerId,dyServerId);
 		Session session = new Session(dySessionId);
 		Device device = new Device(IPAddress,config.getDeviceModel());
-		Context context = new Context(device,null);
-		Properties properties = new Properties(null,null,"login-v1",null,null,null,null,null,null,null,jwt,null,null,null);
+		Context context = new Context(device,null, DY_CHANNEL);
+		Properties properties = new Properties(null,null,"login-v1",null,null,null,null,null,null,null,jwt,null,null,null,null,null,null,null);
 		Event event = new Event(null,null,null,null,null,null,null,null,null,null,null,null,"Login",properties);
 		ArrayList<Event> eventArrayList = new ArrayList<>();
 		eventArrayList.add(event);
@@ -763,8 +806,8 @@ public class SSOActivity extends WebViewActivity {
 		User user = new User(dyServerId,dyServerId);
 		Session session = new Session(dySessionId);
 		Device device = new Device(IPAddress, config.getDeviceModel());
-		Context context = new Context(device,null);
-		Properties properties = new Properties(null,null,"identify-v1",null,null,null,null,null,null,null,jwt,null,null,null);
+		Context context = new Context(device,null, DY_CHANNEL);
+		Properties properties = new Properties(null,null,"identify-v1",null,null,null,null,null,null,null,jwt,null,null,null,null,null,null,null);
 		Event event = new Event(null,null,null,null,null,null,null,null,null,null,null,null,"Identify-User",properties);
 		ArrayList<Event> eventArrayList = new ArrayList<>();
 		eventArrayList.add(event);
@@ -781,8 +824,8 @@ public class SSOActivity extends WebViewActivity {
 		User user = new User(dyServerId,dyServerId);
 		Session session = new Session(dySessionId);
 		Device device = new Device(IPAddress, config.getDeviceModel());
-		Context context = new Context(device,null);
-		Properties properties = new Properties(null,null,"signup-v1",null,null,null,null,null,null,null,jwt,null,null,null);
+		Context context = new Context(device,null, DY_CHANNEL);
+		Properties properties = new Properties(null,null,"signup-v1",null,null,null,null,null,null,null,jwt,null,null,null,null,null,null,null);
 		Event event = new Event(null,null,null,null,null,null,null,null,null,null,null,null,"Signup",properties);
 		ArrayList<Event> eventArrayList = new ArrayList<>();
 		eventArrayList.add(event);

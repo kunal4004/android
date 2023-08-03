@@ -7,7 +7,6 @@ import za.co.woolworths.financial.services.android.models.dao.ApiRequestDao;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.wfs.common.NetworkUtilsKt;
-import za.co.woolworths.financial.services.android.util.RequestInAppReviewKt;
 import za.co.woolworths.financial.services.android.ui.activities.webview.usercase.WebViewHandler;
 
 import android.app.Activity;
@@ -183,6 +182,11 @@ public class Utils {
     public static final String ADD_TO_WISH_LIST_EVENT_NAME = "Add to Wishlist";
     public static final String SORT_BY_DY_TYPE = "sort-items-v1";
     public static final String SORT_ITEMS_EVENT_NAME = "Sort Items";
+    public static final String FILTER_ITEMS_DY_TYPE = "filter-items-v1";
+    public static final String FILTER_ITEMS_EVENT_NAME = "Filter Items";
+    public static final String ORDER_CONFIRMATION_DY_TYPE = "order_confirmation_v1";
+    public static final String ORDER_CONFIRMATION_PAGE = "ORDER_CONFIRMATION";
+    public static final String DY_CHANNEL = "APP";
 
     public static void saveLastLocation(Location loc, Context mContext) {
         try {

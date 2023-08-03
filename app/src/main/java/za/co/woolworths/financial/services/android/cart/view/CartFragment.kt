@@ -34,6 +34,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import org.checkerframework.checker.units.qual.A
 import za.co.woolworths.financial.services.android.cart.service.network.CartItemGroup
 import za.co.woolworths.financial.services.android.cart.service.network.CartResponse
 import za.co.woolworths.financial.services.android.cart.viewmodel.CartUtils.Companion.filterCommerceItemFromCartResponse
@@ -75,6 +76,7 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Dynam
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.response.DyHomePageViewModel
 import za.co.woolworths.financial.services.android.ui.activities.online_voucher_redemption.AvailableVouchersToRedeemInCart
 import za.co.woolworths.financial.services.android.ui.fragments.cart.GiftWithPurchaseDialogDetailFragment
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.Cart
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.PrepareChangeAttributeRequestEvent
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.Properties
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Response.DyChangeAttributeResponse
@@ -106,6 +108,7 @@ import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.sh
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.updateCheckOutLink
 import za.co.woolworths.financial.services.android.util.QueryBadgeCounter.Companion.instance
 import za.co.woolworths.financial.services.android.util.ToastUtils.ToastInterface
+import za.co.woolworths.financial.services.android.util.Utils.DY_CHANNEL
 import za.co.woolworths.financial.services.android.util.Utils.IPAddress
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
@@ -473,7 +476,10 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                         viewModel.getSavedAddress()
                     }
                 }
-                prepareDynamicYieldCheckoutRequest()
+                AppConfigSingleton.dynamicYieldConfig?.apply {
+                    if (isDynamicYieldEnabled == true)
+                        prepareDynamicYieldCheckoutRequest()
+                }
             }
             else -> {}
         }
@@ -1395,7 +1401,12 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                     isViewCartEventFired = true
                 }
                 showRecommendedProducts()
-                prepareDynamicYieldCartViewRequestEvent()
+                AppConfigSingleton.dynamicYieldConfig?.apply {
+                    if (isDynamicYieldEnabled == true) {
+                        prepareDynamicYieldCartViewRequestEvent()
+                        prepareSyncCartRequestEvent()
+                    }
+                }
             }
             HTTP_SESSION_TIMEOUT_440 -> {
                 //TODO:: improve error handling
@@ -1453,7 +1464,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             }
         }
         val page = Page(productList, DY_LOCATION, DY_CART_TYPE, null)
-        val context = Context(device, page)
+        val context = Context(device, page, DY_CHANNEL)
         val options = Options(true)
         val homePageRequestEvent = HomePageRequestEvent(user, session, context, options)
         dyHomePageViewModel?.createDyRequest(homePageRequestEvent)
@@ -2305,7 +2316,12 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                     } catch (ex: Exception) {
                         logException(ex)
                     }
-                    prepareDyRemoveFromCartRequestEvent(mCommerceItem)
+                    AppConfigSingleton.dynamicYieldConfig?.apply {
+                        if (isDynamicYieldEnabled == true) {
+                            prepareDyRemoveFromCartRequestEvent(mCommerceItem)
+                        }
+                    }
+                   // prepareSyncCartRequestEvent()
                 }
                 Status.ERROR -> {
                     requireActivity().runOnUiThread {
@@ -2405,6 +2421,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                         onChangeQuantityComplete()
                     }
                     mChangeQuantityList?.removeFirstOrNull()
+                    prepareSyncCartRequestEvent()
                 }
                 Status.ERROR -> {
                     requireActivity().runOnUiThread {
@@ -2480,7 +2497,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         val device = Device(Utils.IPAddress, config?.getDeviceModel())
         val productList: ArrayList<String>? = ArrayList()
         val page = Page(productList, DY_CHECKOUT, DY_CART_CHECKOUT_TYPE, null)
-        val context = Context(device, page)
+        val context = Context(device, page, DY_CHANNEL)
         val options = Options(true)
         val homePageRequestEvent = HomePageRequestEvent(user, session, context, options)
         dyHomePageViewModel?.createDyRequest(homePageRequestEvent)
@@ -2490,8 +2507,18 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         val user = User(dyServerId,dyServerId)
         val session = Session(dySessionId)
         val device = Device(IPAddress, config?.getDeviceModel())
-        val context = za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Context(device)
-        val properties = Properties(null,null,"remove-from-cart-v1",null,mCommerceItem?.priceInfo?.amount.toString(),"ZAR",mCommerceItem?.commerceItemInfo?.quantity,mCommerceItem?.commerceItemInfo?.productId,null,null)
+        val context = za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Context(device, null, DY_CHANNEL)
+        val cartLinesValue: MutableList<Cart> = arrayListOf()
+        cartItems?.let { cartItems ->
+            for (cartItemGroup: CartItemGroup in cartItems) {
+                val commerceItemList = cartItemGroup.commerceItems
+                for (cm: CommerceItem in commerceItemList) {
+                    val cart = Cart(cm.commerceItemInfo.productId, cm.commerceItemInfo.quantity.toString(),cm.priceInfo.amount)
+                    cartLinesValue.add(cart)
+                }
+            }
+        }
+        val properties = Properties(null,null,"remove-from-cart-v1",null,mCommerceItem?.priceInfo?.amount.toString(),Constants.CURRENCY_VALUE,mCommerceItem?.commerceItemInfo?.quantity,mCommerceItem?.commerceItemInfo?.productId,null,null,null,mCommerceItem?.commerceItemInfo?.size,null,null,null,null,null,cartLinesValue)
         val eventsDyChangeAttribute = za.co.woolworths.financial.services.android.recommendations.data.response.request.Event(null,null,null,null,null,null,null,null,null,null,null,null,"Remove from Cart",properties)
         val events = ArrayList<Event>()
         events.add(eventsDyChangeAttribute);
@@ -2502,6 +2529,34 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             user
         )
         dyChangeAttributeViewModel.createDyChangeAttributeRequest(prepareDyAddToCartRequestEvent)
+    }
+
+    private fun  prepareSyncCartRequestEvent() {
+        val user = User(dyServerId,dyServerId)
+        val session = Session(dySessionId)
+        val device = Device(IPAddress, config?.getDeviceModel())
+        val context = za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Context(device, null, DY_CHANNEL)
+        val cartLinesValue: MutableList<Cart> = arrayListOf()
+        cartItems?.let { cartItems ->
+          for (cartItemGroup: CartItemGroup in cartItems) {
+              val commerceItemList = cartItemGroup.commerceItems
+              for (cm: CommerceItem in commerceItemList) {
+                  val cart = Cart(cm.commerceItemInfo.productId, cm.commerceItemInfo.quantity.toString(),cm.priceInfo.amount)
+                  cartLinesValue.add(cart)
+              }
+          }
+        }
+        val properties = Properties(null,null,"sync-cart-v1",null,null,Constants.CURRENCY_VALUE,null,null,null,null,null,null,null,null,null,null,null,cartLinesValue)
+        val eventsDyChangeAttribute = za.co.woolworths.financial.services.android.recommendations.data.response.request.Event(null,null,null,null,null,null,null,null,null,null,null,null,"sync car",properties)
+        val events = ArrayList<Event>()
+        events.add(eventsDyChangeAttribute);
+        val prepareDySyncCartRequestEvent = PrepareChangeAttributeRequestEvent(
+            context,
+            events,
+            session,
+            user
+        )
+        dyChangeAttributeViewModel.createDyChangeAttributeRequest(prepareDySyncCartRequestEvent)
     }
 
     private fun addFragmentListener() {

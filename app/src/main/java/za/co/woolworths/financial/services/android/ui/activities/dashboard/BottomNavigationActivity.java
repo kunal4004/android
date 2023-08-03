@@ -25,6 +25,9 @@ import static za.co.woolworths.financial.services.android.util.AppConstant.REQUE
 import static za.co.woolworths.financial.services.android.util.FuseLocationAPISingleton.REQUEST_CHECK_SETTINGS;
 import static za.co.woolworths.financial.services.android.util.ScreenManager.CART_LAUNCH_VALUE;
 import static za.co.woolworths.financial.services.android.util.ScreenManager.SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE;
+import static za.co.woolworths.financial.services.android.util.Utils.DY_CHANNEL;
+import static za.co.woolworths.financial.services.android.util.Utils.HOME_PAGE;
+import static za.co.woolworths.financial.services.android.util.Utils.MOBILE_LANDING_PAGE;
 import static za.co.woolworths.financial.services.android.util.nav.tabhistory.FragNavTabHistoryController.UNLIMITED_TAB_HISTORY;
 
 import android.animation.Animator;
@@ -739,7 +742,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
                 case R.id.navigate_to_shop:
                     onShopTabSelected(item);
-                    prepareDynamicYieldRequestEvent();
+                   if (Boolean.TRUE.equals(AppConfigSingleton.getDynamicYieldConfig().isDynamicYieldEnabled()))
+                        prepareDynamicYieldRequestEvent();
                     return true;
 
                 case R.id.navigate_to_cart:
@@ -803,8 +807,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
     private void prepareDynamicYieldRequestEvent() {
         Device device = new Device(Utils.IPAddress, config.getDeviceModel());
-        Page page = new Page(dyData, Utils.MOBILE_LANDING_PAGE,Utils.HOME_PAGE, null);
-        Context context = new Context(device,page);
+        Page page = new Page(dyData, MOBILE_LANDING_PAGE, HOME_PAGE, null,null);
+        Context context = new Context(device,page, DY_CHANNEL);
         Options options = new Options(true);
         HomePageRequestEvent homePageRequestEvent = new HomePageRequestEvent(null,null,context,options);
         dyHomePageViewModel.createDyRequest(homePageRequestEvent);

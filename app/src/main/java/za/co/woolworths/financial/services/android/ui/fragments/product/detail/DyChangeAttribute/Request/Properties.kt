@@ -18,5 +18,9 @@ data class Properties(
     val hashedEmail: String? = null,
     val size: String? = null,
     val sortBy: String? = null,
-    val sortOrder: String? = null
+    val sortOrder: String? = null,
+    val filterType: String? = null,
+    val filterStringValue: String? = null,
+    val uniqueTransactionId: String? = null,
+    val cart: List<Cart>? = null
 ): Parcelable

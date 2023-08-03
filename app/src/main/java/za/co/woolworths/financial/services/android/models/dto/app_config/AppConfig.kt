@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.models.dto.app_config
 
+import DynamicYieldConfig
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
 import za.co.woolworths.financial.services.android.models.dto.RatingsAndReviews
@@ -49,5 +50,6 @@ data class AppConfig(
     var toolTipSettings: TooltipSettings?,
     var ratingsAndReviews: RatingsAndReviews?,
     var glassBox: GlassBox?,
-    var bnplConfig: BnplConfig?
+    var bnplConfig: BnplConfig?,
+    var dynamicYieldConfig: DynamicYieldConfig?
 ) : Parcelable

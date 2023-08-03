@@ -8,6 +8,7 @@ import static za.co.woolworths.financial.services.android.ui.fragments.shoppingl
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.PRODUCT_DETAILS_FROM_MY_LIST_SEARCH;
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.SHOPPING_LIST_SEARCH_RESULT_REQUEST_CODE;
 import static za.co.woolworths.financial.services.android.util.AppConstant.Keys.EXTRA_SEND_DELIVERY_DETAILS_PARAMS;
+import static za.co.woolworths.financial.services.android.util.Utils.DY_CHANNEL;
 import static za.co.woolworths.financial.services.android.util.Utils.IPAddress;
 
 import android.annotation.SuppressLint;
@@ -43,6 +44,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.SearchHistory;
 import za.co.woolworths.financial.services.android.models.network.AppContextProviderImpl;
@@ -119,8 +121,8 @@ public class ProductSearchActivity extends AppCompatActivity
         User user = new User(dyServerId, dyServerId);
         Session session = new Session(dySessionId);
         Device device = new Device(IPAddress,config.getDeviceModel());
-        Context context = new Context(device,null);
-        Properties properties = new Properties(null,null,KEYWORD_SEARCH_V1,searchProductBrand,null,null,null,null,null,null,null,null,null,null);
+        Context context = new Context(device,null,DY_CHANNEL);
+        Properties properties = new Properties(null,null,KEYWORD_SEARCH_V1,searchProductBrand,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
         Event events = new Event(null,null,null,null,null,null,null,null,null,null,null,null,KEYWORD_SEARCH_EVENT_NAME,properties);
         ArrayList<Event> event = new ArrayList<>();
         event.add(events);
@@ -210,7 +212,8 @@ public class ProductSearchActivity extends AppCompatActivity
                     intent.putExtra(EXTRA_SEND_DELIVERY_DETAILS_PARAMS, isUserBrowsingDash);
                     setActivityResult(intent, PRODUCT_SEARCH_ACTIVITY_RESULT_CODE);
 				}
-            prepareDyKeywordSearchRequestEvent(searchProductBrand);
+            if (Boolean.TRUE.equals(AppConfigSingleton.getDynamicYieldConfig().isDynamicYieldEnabled()))
+                prepareDyKeywordSearchRequestEvent(searchProductBrand);
 		}
 	}
 

@@ -3,4 +3,5 @@ package za.co.woolworths.financial.services.android.ui.activities.dashboard.Dyna
 data class Context(
     val device: Device? = null,
     val page: Page? = null,
+    val channel: String? = null
 )

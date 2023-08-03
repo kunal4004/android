@@ -5,6 +5,7 @@ import android.app.Activity
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.*
@@ -505,6 +506,7 @@ class CartProductAdapter(
                         listItem.skuID = commerceItemInfo.catalogRefId
                         listItem.giftListId = commerceItemInfo.catalogRefId
                         listItem.quantity = "1"
+                        listItem.size = commerceItemInfo.size
                         addToListRequests.add(listItem)
                     }
                 }

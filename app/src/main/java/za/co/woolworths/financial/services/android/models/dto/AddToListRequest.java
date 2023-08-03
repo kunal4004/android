@@ -7,6 +7,15 @@ public class AddToListRequest {
     private String catalogRefId;
     private String quantity;
     private String listId;
+    private String size;
+
+    public String getSize() {
+        return size;
+    }
+
+    public void setSize(String size) {
+        this.size = size;
+    }
 
     public void setSkuID(String skuID) {
         this.skuID = skuID;
