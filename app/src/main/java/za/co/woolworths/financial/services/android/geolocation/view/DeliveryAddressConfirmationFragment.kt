@@ -740,7 +740,7 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
                 R.string.no_location_desc,
                 R.string.change_location,
                 R.drawable.location_disabled,
-                null)
+                resources.getString(R.string.cancel_underline_html))
         } else {
             if (customBottomSheetDialogFragment != null && customBottomSheetDialogFragment!!.isVisible) {
                 customBottomSheetDialogFragment!!.dismiss()
@@ -767,7 +767,7 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
                     R.string.no_location_desc,
                     R.string.change_location,
                     R.drawable.ic_cnc_set_location,
-                    null)
+                    resources.getString(R.string.cancel_underline_html))
             } else {
                 if (customBottomSheetDialogFragment != null && customBottomSheetDialogFragment!!.isVisible) {
                     customBottomSheetDialogFragment?.dismiss()
@@ -801,7 +801,7 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
                 R.string.no_location_desc,
                 R.string.change_location,
                 R.drawable.location_disabled,
-                null)
+                resources.getString(R.string.cancel_underline_html))
         } else {
             if (customBottomSheetDialogFragment != null && customBottomSheetDialogFragment!!.isVisible) {
                 customBottomSheetDialogFragment?.dismiss()

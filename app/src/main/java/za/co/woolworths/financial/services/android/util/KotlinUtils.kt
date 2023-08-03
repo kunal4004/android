@@ -723,7 +723,7 @@ class KotlinUtils {
                     dialogSubTitle,
                     dialogBtnText,
                     dialogTitleImg,
-                    null
+                    context.resources.getString(R.string.cancel_underline_html)
                 )
             customBottomSheetDialogFragment.show(
                 requireFragmentManager,

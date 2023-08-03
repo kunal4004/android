@@ -17,6 +17,7 @@
     <string name="next">NEXT</string>
     <string name="cancel" tools:ignore="ButtonCase">CANCEL</string>
     <string name="cancel_underline" tools:ignore="ButtonCase"><u>CANCEL</u></string>
+    <string name="cancel_underline_html"><![CDATA[<u>CANCEL</u>]]> </string>
     <string name="submit">SUBMIT</string>
     <string name="valid_from">VALID FROM</string>
     <string name="valid_until">VALID UNTIL</string>
@@ -487,7 +488,6 @@
     <string name="new_list">new list</string>
     <string name="shopping_search_hint">Add Items To Your List</string>
     <string name="total_item">Total*</string>
-    <string name="rlOtherDiscounts"><![CDATA[WRewards Savings & Other Discounts]]></string>
     <string name="out_of_stock">out of stock</string>
     <string name="promotional_text">You Saved </string>
     <string name="labelPromotionOne">labelPromotionOne</string>
@@ -512,7 +512,6 @@
     <string name="favourite_delivery_location_description">In order to improve your shopping experience you can set your favourite delivery location. We will use this as your default delivery location.</string>
     <string name="product_unavailable_desc">Sorry, this product is unavailable in your delivery location</string>
     <string name="delivering_to">Delivering to</string>
-    <string name="delivering_to_geo"> <![CDATA[Delivering to <font color=\'#000000\'><b>%s</b></font>]]></string>
     <string name="delivering_location_popup_message">Your Delivery Location must match your Delivery Address in Checkout. Changing your Delivery Location can affect the product availability of items in your cart.</string>
     <string name="confirm_size_range_desc">size range</string>
     <string name="set_up_device_biometrics_title">BIOMETRICS&#47;PIN</string>
@@ -2140,7 +2139,6 @@
     <string name="woolies_chat_active">Chat is currently active</string>
 
     <string name="shop_liquor_in_our_app">Shop Liquor</string>
-    <string name="delivery_liquor_description"><![CDATA[Liquor is not available for Click & Collect.]]></string>
 
     <string name="balance_protection_insurance_claim_form">Balance Protection Insurance Claim Form</string>
 
