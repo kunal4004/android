@@ -29,6 +29,7 @@
         android:paddingEnd="@dimen/four_dp"
         android:paddingBottom="0dp"
         android:text="@string/label_switch"
+        android:letterSpacing="0.1"
         android:textAllCaps="true"
         android:fontFamily="@font/futura_medium_ttf"
         android:textColor="@color/white"

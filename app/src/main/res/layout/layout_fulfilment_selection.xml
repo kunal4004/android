@@ -37,7 +37,7 @@
         android:id="@+id/tvSubTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/eight_dp"
+        android:layout_marginTop="@dimen/four_dp"
         android:ellipsize="end"
         android:fontFamily="@font/opensans_medium_ttf"
         android:maxLines="2"
