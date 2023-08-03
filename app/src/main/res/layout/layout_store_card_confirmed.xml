@@ -32,16 +32,15 @@
 
     <TextView
         android:id="@+id/descTextView"
+        style="@style/opensans_regular_13_black"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/thirty_two_dp"
         android:layout_marginTop="@dimen/twelve_dp"
         android:layout_marginEnd="@dimen/thirty_two_dp"
-        android:fontFamily="@font/myriad_pro_regular"
         android:gravity="center"
         android:text="@string/replacement_card_success_desc"
         android:textColor="@color/color_7f7f7f"
-        android:textSize="@dimen/fifteen_sp"
         app:layout_constraintTop_toBottomOf="@id/titleTextView" />
 
     <TextView

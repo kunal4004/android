@@ -54,7 +54,7 @@ class ManageMyCardDetailsFragment : Fragment(R.layout.manage_card_details_fragme
         setToolbar()
         with(ManageCardDetailsFragmentBinding.bind(view)) {
             mStoreCardMoreDetail = ManageStoreCardMoreDetail(requireContext(),incManageCardDetailsInfoLayout)
-            mListOfStoreCardOptions = ManageStoreCardLandingList(cardFreezeViewModel, includeListOptions, this@ManageMyCardDetailsFragment)
+            mListOfStoreCardOptions = ManageStoreCardLandingList(viewModel = viewModel, router = router, cardFreezeViewModel, includeListOptions, this@ManageMyCardDetailsFragment)
             setupView()
             setCardViewPagerNavigationGraph()
             setOnClickListener()

@@ -18,6 +18,7 @@ import javax.inject.Inject
 class StoreCardActivateVTCUpshellMessageFragment :
     Fragment(R.layout.store_card_upshell_message_fragment) {
 
+    private var binding: StoreCardUpshellMessageFragmentBinding? = null
     val viewModel: TemporaryFreezeCardViewModel by activityViewModels()
 
     @Inject
@@ -33,12 +34,17 @@ class StoreCardActivateVTCUpshellMessageFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val binding = StoreCardUpshellMessageFragmentBinding.bind(view)
-        binding.storeCardImageView.setImageResource(R.drawable.virtual_temp_activate)
-        binding.storeCardImageView.contentDescription = context?.getString(R.string.activate_vtsc_upsell_card_image_on_overlay)
-        binding.storeCardImageView.onClick {
+        binding = StoreCardUpshellMessageFragmentBinding.bind(view)
+        binding?.storeCardImageView?.setImageResource(R.drawable.virtual_temp_activate)
+        binding?.storeCardImageView?.contentDescription = context?.getString(R.string.activate_vtsc_upsell_card_image_on_overlay)
+        binding?.storeCardImageView?.onClick {
             viewModel.mStoreCardUpsellMessageFlagState.activateVirtualCardFlag()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding?.root?.requestLayout()
     }
 
 }

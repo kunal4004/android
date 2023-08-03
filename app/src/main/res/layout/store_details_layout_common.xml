@@ -199,25 +199,22 @@
 
                     <TextView
                         android:layout_width="wrap_content"
+                        style="@style/opensans_semi_bold_13_black_text_style"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/myriad_pro_semi_bold_otf"
                         android:paddingStart="@dimen/default_width"
-                        android:textColor="@color/black"
-                        android:textSize="15sp" />
+                        />
                 </LinearLayout>
 
                 <TextView
                     android:id="@+id/BrandsLabel"
+                    style="@style/opensans_semi_bold_13_black_text_style"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentTop="true"
                     android:layout_toEndOf="@+id/imgW"
-                    android:fontFamily="@font/myriad_pro_semi_bold_otf"
                     android:paddingStart="@dimen/default_width"
                     android:paddingTop="3dp"
                     android:text="@string/brands"
-                    android:textColor="@color/black"
-                    android:textSize="15sp"
                     tools:ignore="RtlSymmetry" />
             </RelativeLayout>
         </LinearLayout>

@@ -18,9 +18,14 @@
             android:button="@drawable/shopping_list_item_selector"
             android:clickable="false" />
 
-        <za.co.woolworths.financial.services.android.ui.views.WTextView
+        <TextView
             android:id="@+id/sortOptionType"
-            style="@style/refinements_textview_style_with_margin_left"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/opensans_regular"
+            android:textSize="@dimen/fourteen_sp"
+            android:layout_centerVertical="true"
+            android:textColor="@color/color_222222"
             android:layout_toEndOf="@+id/sortSelector"
             android:layout_marginEnd="@dimen/five_dp"
             android:layout_marginStart="@dimen/sixteen_dp"

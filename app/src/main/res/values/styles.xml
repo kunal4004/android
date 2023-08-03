@@ -262,13 +262,11 @@
         <item name="android:backgroundDimEnabled">false</item>
     </style>
 
-    <style name="contact_us_item_header_textview" parent="android:Theme">
+    <style name="contact_us_item_header_textview" parent="opensans_regular_13_black">
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:singleLine">true</item>
-        <item name="android:textSize">15sp</item>
-        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
         <item name="android:paddingStart">16dp</item>
         <item name="android:paddingEnd">0dp</item>
     </style>
@@ -278,8 +276,8 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:textColor">#4d000000</item>
         <item name="android:singleLine">true</item>
-        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
-        <item name="android:textSize">13sp</item>
+        <item name="android:fontFamily">@font/opensans_regular</item>
+        <item name="android:textSize">11sp</item>
         <item name="android:paddingStart">16dp</item>
         <item name="android:paddingEnd">0dp</item>
     </style>
@@ -295,18 +293,6 @@
         <item name="android:paddingRight">16dp</item>
         <item name="android:paddingTop">10dp</item>
         <item name="android:paddingBottom">16dp</item>
-    </style>
-
-    <style name="contact_us_operating_hours_textview">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:textColor">@color/black</item>
-        <item name="WTextView_font">myriadpro_regular</item>
-        <item name="android:textSize">15sp</item>
-        <item name="android:layout_marginTop">5dp</item>
-        <item name="android:layout_marginLeft">16dp</item>
-        <item name="android:lineSpacingExtra">-2dp</item>
-        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
     </style>
 
     <!--Alerter-->
@@ -365,55 +351,54 @@
     <style name="style_debit_order_description">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">15sp</item>
+        <item name="android:textSize">13sp</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:alpha">0.5</item>
-        <item name="WTextView_font">myriadpro_regular</item>
+        <item name="android:fontFamily">opensans_regular</item>
         <item name="android:lineSpacingMultiplier">1.60</item>
     </style>
 
     <style name="style_debit_order_labels">
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:textSize">15sp</item>
+        <item name="android:textSize">13sp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">@color/account_label_color</item>
         <item name="android:lineSpacingExtra">0.1sp</item>
         <item name="android:gravity">center|start</item>
-        <item name="WTextView_font">myriadpro_regular</item>
+        <item name="android:fontFamily">@font/opensans_regular</item>
     </style>
 
     <style name="style_loan_title">
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:textSize">14sp</item>
+        <item name="android:textSize">13sp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:layout_marginStart">@dimen/default_margin</item>
         <item name="android:lineSpacingExtra">0.1sp</item>
         <item name="android:gravity">center|start</item>
-        <item name="android:fontFamily">@font/myriad_pro_semi_bold_otf</item>
+        <item name="android:fontFamily">@font/opensans_semi_bold</item>
     </style>
 
     <style name="style_loan_item">
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:textSize">15sp</item>
+        <item name="android:textSize">13sp</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:lineSpacingExtra">0.1sp</item>
         <item name="android:gravity">center|start</item>
-        <item name="WTextView_font">myriadpro_regular</item>
+        <item name="android:fontFamily">opensans_regular</item>
     </style>
 
     <style name="insurance_claim_detail_style">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:textSize">14sp</item>
+        <item name="android:textSize">11sp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:gravity">center|start</item>
-        <item name="WTextView_font">myriadpro_regular</item>
+        <item name="android:fontFamily">opensans_regular</item>
         <item name="android:layout_marginStart">@dimen/default_margin</item>
         <item name="android:layout_marginEnd">@dimen/default_margin</item>
         <item name="android:lineSpacingMultiplier">1.2</item>
-        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
     </style>
 
 
@@ -424,7 +409,6 @@
         <item name="android:textColor">@color/black</item>
         <item name="android:gravity">center|start</item>
         <item name="android:lineSpacingExtra">0.12sp</item>
-        <item name="WTextView_font">myriadpro_semibold</item>
         <item name="android:textAllCaps">true</item>
         <item name="android:letterSpacing">0.12</item>
         <item name="android:layout_marginTop">16dp</item>
@@ -441,12 +425,12 @@
     <style name="style_loan_desc">
         <item name="android:layout_alignParentEnd">true</item>
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:textSize">13sp</item>
+        <item name="android:textSize">11sp</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:textColor">@color/black_50</item>
         <item name="android:lineSpacingExtra">0.1sp</item>
         <item name="android:gravity">center|start</item>
-        <item name="WTextView_font">myriadpro_regular</item>
+        <item name="android:fontFamily">opensans_regular</item>
     </style>
 
     <style name="style_loan_img">
@@ -486,12 +470,12 @@
 
     <style name="balance_insurance_overview_desc">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:textSize">14sp</item>
+        <item name="android:textSize">12sp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">#50000000</item>
         <item name="android:gravity">center|start</item>
         <item name="android:lineSpacingExtra">0.6sp</item>
-        <item name="WTextView_font">myriadpro_regular</item>
+        <item name="android:fontFamily">@font/opensans_regular</item>
         <item name="android:layout_marginBottom">@dimen/default_margin</item>
         <item name="android:lineSpacingMultiplier">1.5</item>
     </style>
@@ -503,7 +487,7 @@
         <item name="android:gravity">start|top</item>
         <item name="android:textColor">#50000000</item>
         <item name="android:textSize">14sp</item>
-        <item name="WTextView_font">myriadpro_regular</item>
+        <item name="WTextView_font">opensans_regular</item>
         <item name="android:lineSpacingExtra">4dp</item>
     </style>
 
@@ -536,14 +520,14 @@
         <item name="android:paddingLeft">24dp</item>
         <item name="android:background">@color/white</item>
         <item name="android:gravity">center_vertical</item>
-        <item name="android:textAllCaps">true</item>
-        <item name="android:textSize">@dimen/twelve_sp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">@dimen/eighteen_sp</item>
         <item name="android:textColor">#222222</item>
-        <item name="android:letterSpacing">@integer/point_one</item>
-        <item name="WTextView_font">medium_bold</item>
+        <item name="android:letterSpacing">0.05</item>
+        <item name="WTextView_font">semi_bold</item>
     </style>
 
-    <style name="cli_permission_description_text">
+    <style name="cli_permission_description_text" parent="opensans_regular_13_black">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginStart">@dimen/thirty_one_dp</item>
@@ -551,8 +535,6 @@
         <item name="android:layout_marginTop">22dp</item>
         <item name="android:lineSpacingExtra">5sp</item>
         <item name="android:textColor">@color/black_50</item>
-        <item name="android:textSize">15sp</item>
-        <item name="WTextView_font">myriadpro_regular</item>
     </style>
 
     <style name="cli_yes_no_button">
@@ -664,9 +646,9 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:lineSpacingExtra">0.8sp</item>
         <item name="android:gravity">start|center</item>
-        <item name="android:textSize">15sp</item>
+        <item name="android:textSize">13sp</item>
         <item name="android:textColor">@color/black_50</item>
-        <item name="WTextView_font">myriadpro_regular</item>
+        <item name="android:fontFamily">opensans_regular</item>
         <item name="android:layout_alignParentStart">true</item>
         <item name="android:layout_centerVertical">true</item>
     </style>
@@ -709,9 +691,9 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:gravity">center|start</item>
         <item name="android:lineSpacingExtra">0.2dp</item>
-        <item name="android:textSize">15sp</item>
+        <item name="android:textSize">11sp</item>
         <item name="android:textColor">@color/black_50</item>
-        <item name="WTextView_font">myriadpro_regular</item>
+        <item name="android:fontFamily">opensans_regular</item>
     </style>
 
     <style name="rag_lin" parent="android:Theme">
@@ -770,8 +752,8 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:gravity">left</item>
         <item name="android:textColor">@color/black_50</item>
-        <item name="android:textSize">@dimen/fifteen_sp</item>
-        <item name="WTextView_font">myriadpro_regular</item>
+        <item name="android:textSize">@dimen/thirteen_sp</item>
+        <item name="android:fontFamily">opensans_regular</item>
     </style>
 
     <style name="style_text_description">
@@ -783,8 +765,8 @@
         <item name="android:gravity">center_horizontal</item>
         <item name="android:lineSpacingExtra">5sp</item>
         <item name="android:textColor">@color/black_50</item>
-        <item name="android:textSize">@dimen/cli_fifteen_sp</item>
-        <item name="WTextView_font">myriadpro_regular</item>
+        <item name="android:textSize">@dimen/thirteen_sp</item>
+        <item name="android:fontFamily">opensans_regular</item>
     </style>
 
     <style name="proof_of_income_requirement_style" parent="upload_document_title">
@@ -793,7 +775,7 @@
         <item name="android:lineSpacingExtra">4dp</item>
     </style>
 
-    <style name="take_photo_document_desc_style">
+    <style name="take_photo_document_desc_style" parent="opensans_regular_13_black">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginTop">17dp</item>
@@ -802,8 +784,6 @@
         <item name="android:paddingEnd">24dp</item>
         <item name="android:lineSpacingExtra">4dp</item>
         <item name="android:textColor">@color/black_50</item>
-        <item name="android:textSize">15sp</item>
-        <item name="WTextView_font">myriadpro_regular</item>
     </style>
 
     <style name="clear_photo_scan_style">
@@ -853,10 +833,21 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_centerVertical">true</item>
         <item name="android:textColor">@color/black</item>
-        <item name="android:textSize">15sp</item>
+        <item name="android:textSize">13sp</item>
         <item name="android:drawablePadding">16dp</item>
         <item name="android:gravity">center_vertical</item>
-        <item name="WTextView_font">myriadpro_regular</item>
+        <item name="android:fontFamily">@font/opensans_regular</item>
+    </style>
+
+    <style name="tipsAndTricks">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">@dimen/thirteen_sp</item>
+        <item name="android:drawablePadding">@dimen/sixteen_dp</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:fontFamily">@font/opensans_semi_bold</item>
     </style>
 
     <!-- Base application theme. -->
@@ -877,11 +868,11 @@
     </style>
 
     <style name="style_cart_item_title">
-        <item name="android:textSize">15sp</item>
+        <item name="android:textSize">13sp</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:lineSpacingExtra">0.1sp</item>
         <item name="android:gravity">start</item>
-        <item name="WTextView_font">myriadpro_regular</item>
+        <item name="WTextView_font">opensans_regular</item>
         <item name="android:singleLine">true</item>
         <item name="android:ellipsize">end</item>
     </style>
@@ -897,11 +888,11 @@
     </style>
 
     <style name="style_cart_item_details">
-        <item name="android:textSize">15sp</item>
+        <item name="android:textSize">13sp</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:lineSpacingExtra">0.1sp</item>
         <item name="android:gravity">start</item>
-        <item name="WTextView_font">myriadpro_regular</item>
+        <item name="WTextView_font">opensans_regular</item>
         <item name="android:alpha">0.4</item>
     </style>
 
@@ -928,44 +919,30 @@
         <item name="android:alpha">0.5</item>
     </style>
 
-    <style name="style_cart_delivery_selected">
-        <item name="android:textSize">15sp</item>
-        <item name="android:textColor">@color/black</item>
+    <style name="style_cart_delivery_selected" parent="opensans_semi_bold_13_black_text_style">
         <item name="android:lineSpacingExtra">0.1sp</item>
         <item name="android:gravity">start</item>
-        <item name="WTextView_font">myriadpro_semibold</item>
     </style>
 
     <style name="style_cart_delivery_to_text">
-        <item name="android:textSize">15sp</item>
+        <item name="android:textSize">13sp</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:lineSpacingExtra">0.1sp</item>
         <item name="android:gravity">start</item>
-        <item name="WTextView_font">myriadpro_regular</item>
+        <item name="android:fontFamily">@font/opensans_regular</item>
     </style>
 
     <style name="style_province_item_title">
-        <item name="android:textSize">15sp</item>
+        <item name="android:textSize">13sp</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:lineSpacingExtra">0.1sp</item>
         <item name="android:gravity">start</item>
-        <item name="WTextView_font">myriadpro_regular</item>
+        <item name="WTextView_font">opensans_regular</item>
         <item name="android:alpha">0.5</item>
     </style>
 
     <style name="SwitchTheme" parent="Theme.AppCompat.Light">
         <item name="android:colorControlActivated">#000000</item>
-    </style>
-
-    <style name="cli_only_cents_banner">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">@dimen/email_height_50</item>
-        <item name="android:gravity">center</item>
-        <item name="android:background">@color/dark_gray</item>
-        <item name="android:textColor">@color/white</item>
-        <item name="android:textSize">@dimen/email_text_size_15sp</item>
-        <item name="WTextView_font">myriadpro_regular</item>
-        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
     </style>
 
     <style name="top_view_style_income_expenses" parent="android:Theme">
@@ -1009,7 +986,7 @@
         <item name="android:layout_centerVertical">true</item>
         <item name="android:textColor">@color/offer_title</item>
         <item name="android:textSize">17sp</item>
-        <item name="WTextView_font">myriadpro_regular</item>
+        <item name="WTextView_font">opensans_regular</item>
         <item name="android:layout_alignParentLeft">true</item>
     </style>
 
@@ -1080,8 +1057,8 @@
         <item name="android:layout_centerVertical">true</item>
         <item name="android:text">@string/bpi_balance_protection_title</item>
         <item name="android:textColor">@color/black</item>
-        <item name="WTextView_font">myriadpro_semibold</item>
-        <item name="android:textSize">@dimen/fifteen_sp</item>
+        <item name="android:fontFamily">@font/futura_semi_bold_ttf</item>
+        <item name="android:textSize">@dimen/twelve_sp</item>
     </style>
 
     <style name="styleBPIOVerViewCoverText">
@@ -1093,8 +1070,8 @@
         <item name="android:letterSpacing">@integer/point_zero_eighty_three</item>
         <item name="android:text">@string/bpi_covered</item>
         <item name="android:textColor">@color/white</item>
-        <item name="WTextView_font">medium_bold</item>
-        <item name="android:textSize">@dimen/ten_sp</item>
+        <item name="WTextView_font">semi_bold</item>
+        <item name="android:textSize">@dimen/twelve_sp</item>
         <item name="android:textAllCaps">true</item>
         <item name="android:background">@drawable/round_orange_bg</item>
     </style>
@@ -1114,7 +1091,8 @@
         <item name="android:layout_marginStart">@dimen/twenty_four_dp</item>
         <item name="android:paddingBottom">@dimen/seventeen_dp</item>
         <item name="android:text">@string/bpi_balance_protection_desc</item>
-        <item name="WTextView_font">myriadpro_regular</item>
+        <item name="android:fontFamily">opensans_regular</item>
+        <item name="android:textSize">@dimen/thirteen_sp</item>
         <item name="android:alpha">0.7</item>
         <item name="android:textColor">@color/black</item>
 
@@ -1321,7 +1299,7 @@
     </style>
 
     <style name="absa_page_desc_style" parent="absa_page_description_text_style">
-        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
+        <item name="android:fontFamily">@font/opensans_regular</item>
         <item name="android:layout_centerHorizontal">true</item>
         <item name="android:background">@color/white</item>
         <item name="android:gravity">center</item>
@@ -1333,11 +1311,12 @@
     </style>
 
 
+
     <style name="absa_page_description_text_style">
         <item name="android:lineSpacingExtra">1.4dp</item>
         <item name="android:textColor">@color/permanent_card_block_desc_color</item>
-        <item name="android:textSize">16sp</item>
-        <item name="WTextView_font">myriadpro_regular</item>
+        <item name="android:textSize">14sp</item>
+        <item name="WTextView_font">opensans_regular</item>
     </style>
 
     <style name="ErrorHandlerActivityStyle" parent="Theme.AppCompat.Light.NoActionBar">
@@ -1411,9 +1390,9 @@
 
 
     <style name="WRewardsIsOurWay" parent="android:Theme">
-        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
+        <item name="android:fontFamily">@font/opensans_regular</item>
         <item name="android:textColor">@color/description_color</item>
-        <item name="android:textSize">15sp</item>
+        <item name="android:textSize">@dimen/fourteen_sp</item>
         <item name="android:lineSpacingExtra">4sp</item>
         <item name="android:gravity">center</item>
     </style>
@@ -1432,7 +1411,7 @@
     <style name="reward_benefit_title" parent="android:Theme">
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:fontFamily">@font/futura_medium_ttf</item>
+        <item name="android:fontFamily">@font/opensans_regular</item>
         <item name="android:textColor">#4d000000</item>
         <item name="android:textSize">@dimen/twelve_sp</item>
         <item name="android:letterSpacing" tools:ignore="NewApi">@integer/point_fifteen</item>
@@ -1490,7 +1469,7 @@
         <item name="android:statusBarColor" tools:ignore="NewApi">@android:color/transparent</item>
     </style>
 
-    <style name="chat_text_style">
+    <style name="chat_text_style" parent="opensans_regular_14_black">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:gravity">center_vertical</item>
@@ -1498,8 +1477,6 @@
         <item name="android:maxWidth">240dp</item>
         <item name="android:minHeight">@dimen/fourty_five_dp</item>
         <item name="android:padding">8dp</item>
-        <item name="android:textSize">@dimen/chat_bubble_text_size</item>
-        <item name="WTextView_font">myriadpro_regular</item>
     </style>
 
     <style name="TabLayoutDefaultStyle" parent="TextAppearance.Design.Tab">
@@ -1525,12 +1502,12 @@
     <style name="BenefitSubDescTextViewStyle" parent="android:Widget.TextView">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">15sp</item>
+        <item name="android:textSize">@dimen/twelve_sp</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:textColor">@color/description_color</item>
         <item name="android:lineSpacingExtra">4.5dp</item>
         <item name="android:layout_marginTop">9dp</item>
-        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
+        <item name="android:fontFamily">@font/opensans_regular</item>
         <item name="android:layout_marginStart">@dimen/thirty_two_dp</item>
         <item name="android:layout_marginEnd">@dimen/thirty_two_dp</item>
     </style>
@@ -1538,12 +1515,25 @@
     <style name="BenefitLinkTextViewStyle" parent="android:Widget.TextView">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">15sp</item>
+        <item name="android:textSize">@dimen/twelve_sp</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:textColor">@color/description_color</item>
         <item name="android:lineSpacingExtra">4.5dp</item>
         <item name="android:layout_marginTop">24dp</item>
-        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
+        <item name="android:fontFamily">@font/opensans_regular</item>
+        <item name="android:layout_marginStart">@dimen/thirty_two_dp</item>
+        <item name="android:layout_marginEnd">@dimen/thirty_two_dp</item>
+    </style>
+
+    <style name="BenefitDetailsTextViewStyle" parent="android:Widget.TextView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/eleven_sp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">@color/description_color</item>
+        <item name="android:lineSpacingExtra">4.5dp</item>
+        <item name="android:layout_marginTop">24dp</item>
+        <item name="android:fontFamily">@font/opensans_regular</item>
         <item name="android:layout_marginStart">@dimen/thirty_two_dp</item>
         <item name="android:layout_marginEnd">@dimen/thirty_two_dp</item>
     </style>
@@ -1551,13 +1541,13 @@
     <style name="WRewardsInstantSavingsStyle" parent="android:Widget.TextView">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">15sp</item>
+        <item name="android:textSize">@dimen/twelve_sp</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:textColor">@color/description_color</item>
         <item name="android:lineSpacingExtra">4.5dp</item>
         <item name="android:layout_marginTop">18.5dp</item>
         <item name="android:layout_marginBottom">17.5dp</item>
-        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
+        <item name="android:fontFamily">@font/opensans_regular</item>
         <item name="android:layout_marginStart">15dp</item>
         <item name="android:layout_marginEnd">4dp</item>
         <item name="android:layout_alignParentStart">true</item>
@@ -1568,10 +1558,10 @@
     <style name="WRewardsInstantSavingsValueStyle" parent="android:Widget.TextView">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">15sp</item>
+        <item name="android:textSize">@dimen/twelve_sp</item>
         <item name="android:layout_marginTop">18.5dp</item>
         <item name="android:layout_marginBottom">17.5dp</item>
-        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
+        <item name="android:fontFamily">@font/opensans_regular</item>
         <item name="android:layout_marginStart">15dp</item>
         <item name="android:layout_centerInParent">true</item>
         <item name="android:letterSpacing" >-0.01</item>
@@ -1600,9 +1590,9 @@
         <item name="android:singleLine">true</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:textColorHint">@color/unavailable</item>
-        <item name="android:textSize">16sp</item>
+        <item name="android:textSize">14sp</item>
         <item name="android:inputType">number|textNoSuggestions</item>
-        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
+        <item name="android:fontFamily">@font/opensans_regular</item>
 
     </style>
 
@@ -1635,12 +1625,12 @@
 
     <style name="card_item_regular_text_style">
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:textSize">@dimen/fifteen_sp</item>
+        <item name="android:textSize">15sp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:layout_centerVertical">true</item>
         <item name="android:gravity">center_vertical</item>
-        <item name="android:fontFamily">@font/myriad_pro_regular</item>
+        <item name="android:fontFamily">@font/opensans_regular</item>
     </style>
 
     <style name="opensans_regular_text_style_14sp_black">
@@ -1664,7 +1654,8 @@
     </style>
 
     <style name="card_item_semi_bold_text_style" parent="card_item_regular_text_style">
-        <item name="android:fontFamily">@font/myriad_pro_semi_bold</item>
+        <item name="android:fontFamily">@font/opensans_semi_bold</item>
+        <item name="android:textSize">@dimen/thirteen_sp</item>
     </style>
 
     <style name="card_item_start_icon_style">
@@ -1745,8 +1736,8 @@
     <style name="upSellMessageStyle" parent="android:Widget.TextView">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">16sp</item>
-        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontFamily">@font/opensans_regular</item>
         <item name="android:gravity">center</item>
         <item name="android:paddingTop">16dp</item>
         <item name="android:paddingBottom">16dp</item>
@@ -1798,46 +1789,9 @@
         <item name="android:textColor">@color/color_666666</item>
     </style>
 
-    <style name="myriad_pro_regular">
+    <style name="ccd_opensans_regular" parent="opensans_regular_13_black">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:fontFamily">@font/myriad_pro_regular</item>
-    </style>
-
-    <style name="myriad_pro_semi_bold">
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:fontFamily">@font/myriad_pro_semi_bold</item>
-    </style>
-
-    <style name="myriad_pro_regular_black" parent="myriad_pro_regular">
-        <item name="android:textColor">@color/black</item>
-    </style>
-
-    <style name="myriad_pro_regular_amber" parent="myriad_pro_semi_bold">
-        <item name="android:textColor">@color/color_F0AC4E</item>
-    </style>
-
-    <style name="myriad_pro_regular_black_with_rounded_corner" parent="myriad_pro_regular">
-        <item name="android:textColor">@color/black</item>
-        <item name="android:background">@drawable/checkout_delivering_title_round_button</item>
-    </style>
-
-    <style name="myriad_pro_regular_black_15_text_style" parent="myriad_pro_regular_black">
-        <item name="android:textSize">@dimen/fifteen_sp</item>
-    </style>
-
-    <style name="myriad_pro_semi_bold_amber_14_text_style" parent="myriad_pro_regular_amber">
-        <item name="android:textSize">@dimen/fourteen_sp</item>
-        <item name="android:fontFamily">@font/myriad_pro_semi_bold</item>
-    </style>
-
-    <style name="myriad_pro_regular_black_13_text_style" parent="myriad_pro_regular_black">
-        <item name="android:textSize">@dimen/thirteen_sp</item>
-    </style>
-
-    <style name="myriad_pro_regular_black_14_text_style" parent="myriad_pro_regular_black">
-        <item name="android:textSize">@dimen/fourteen_sp</item>
     </style>
 
     <style name="futura_medium_black_12_text_style" parent="futura_medium_black">
@@ -1852,8 +1806,8 @@
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:lineSpacingMultiplier">1.31</item>
-        <item name="android:fontFamily">@font/myriad_pro_regular</item>
-        <item name="android:textSize">@dimen/sixteen_sp</item>
+        <item name="android:fontFamily">@font/opensans_regular</item>
+        <item name="android:textSize">@dimen/fourteen_sp</item>
         <item name="android:textColor">@color/gray</item>
     </style>
 
@@ -1890,14 +1844,6 @@
         <item name="android:textSize">@dimen/twelve_sp</item>
     </style>
 
-    <style name="myriad_pro_semi_bold_black_15_text_style" parent="myriad_pro_regular_black_15_text_style">
-        <item name="android:fontFamily">@font/myriad_pro_semi_bold</item>
-    </style>
-
-    <style name="myriad_pro_semi_bold_black" parent="myriad_pro_regular_black">
-        <item name="android:fontFamily">@font/myriad_pro_semi_bold</item>
-    </style>
-
     <style name="enter_otp_edit_text_style">
         <item name="android:digits">0123456789abcdefghijklmnopqrstuvwxyz</item>
         <item name="android:textColor">#222222</item>
@@ -1918,7 +1864,7 @@
         <item name="android:layout_marginEnd">32dp</item>
         <item name="android:lineSpacingExtra">19sp</item>
         <item name="android:lineSpacingMultiplier">@integer/point_two</item>
-        <item name="android:fontFamily">@font/myriad_pro_semi_bold_otf</item>
+        <item name="android:fontFamily">@font/opensans_semi_bold</item>
         <item name="android:textColor">@color/permanent_card_block_desc_color</item>
 
     </style>
@@ -1929,7 +1875,7 @@
         <item name="android:background">@color/bpi_background</item>
     </style>
 
-    <style name="sales_benefits_description_style">
+    <style name="sales_benefits_description_style" parent="opensans_regular_12_black">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginStart">24dp</item>
@@ -1937,7 +1883,6 @@
         <item name="android:lineSpacingExtra">21sp</item>
         <item name="android:lineSpacingMultiplier">@integer/point_two</item>
         <item name="android:textColor">@color/account_card_desc_grey_color</item>
-        <item name="android:textSize">15sp</item>
     </style>
 
     <style name="rounded_bullets_style">
@@ -1953,9 +1898,9 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginStart">20dp</item>
         <item name="android:layout_marginEnd">32dp</item>
-        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
+        <item name="android:fontFamily">@font/opensans_regular</item>
         <item name="android:textColor">@color/permanent_card_block_desc_color</item>
-        <item name="android:textSize">14sp</item>
+        <item name="android:textSize">12sp</item>
         <item name="android:lineSpacingExtra">21sp</item>
         <item name="android:lineSpacingMultiplier">0.05</item>
     </style>
@@ -1967,8 +1912,8 @@
     </style>
 
     <style name="accountPaymentOptionIconImageViewStyle">
-        <item name="android:layout_width">@dimen/_24sdp</item>
-        <item name="android:layout_height">@dimen/_24sdp</item>
+        <item name="android:layout_width">24dp</item>
+        <item name="android:layout_height">24dp</item>
         <item name="android:contentDescription">@string/label_view_statements</item>
     </style>
 
@@ -1977,8 +1922,8 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:gravity">center</item>
-        <item name="android:fontFamily">@font/myriad_pro_semi_bold_otf</item>
-        <item name="android:textSize">@dimen/_12ssp</item>
+        <item name="android:fontFamily">@font/opensans_bold</item>
+        <item name="android:textSize">11sp</item>
         <item name="android:paddingTop">@dimen/_1sdp</item>
         <item name="android:paddingBottom">@dimen/_1sdp</item>
         <item name="android:alpha">0.7</item>
@@ -1990,8 +1935,8 @@
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:gravity">center</item>
-        <item name="android:fontFamily">@font/myriad_pro_semi_bold_otf</item>
-        <item name="android:textSize">@dimen/heading6</item>
+        <item name="android:fontFamily">@font/opensans_semi_bold</item>
+        <item name="android:textSize">12sp</item>
         <item name="android:paddingTop">@dimen/_1sdp</item>
         <item name="android:paddingBottom">@dimen/_1sdp</item>
         <item name="android:alpha">0.7</item>
@@ -2003,8 +1948,8 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginBottom">@dimen/store_card_enter_otp_title_top_margin_32dp</item>
-        <item name="android:fontFamily">@font/myriad_pro_semi_bold_otf</item>
-        <item name="android:textSize">@dimen/available_fund_16sp_amount</item>
+        <item name="android:fontFamily">@font/opensans_semi_bold</item>
+        <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:text">R 1000</item>
     </style>
@@ -2012,8 +1957,8 @@
     <style name="currencyAmountStyle">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:fontFamily">@font/myriad_pro_semi_bold_otf</item>
-        <item name="android:textSize">@dimen/_15ssp</item>
+        <item name="android:fontFamily">@font/opensans_semi_bold</item>
+        <item name="android:textSize">@dimen/_13ssp</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:text">R 1000</item>
     </style>
@@ -2023,8 +1968,8 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:alpha">0.7</item>
         <item name="android:textColor">@color/white</item>
-        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
-        <item name="android:textSize">@dimen/_15ssp</item>
+        <item name="android:fontFamily">@font/opensans_regular</item>
+        <item name="android:textSize">13sp</item>
     </style>
 
     <style name="accountSalesTextViewStyle">
@@ -2033,8 +1978,8 @@
         <item name="android:layout_marginBottom">@dimen/store_card_enter_otp_title_top_margin_32dp</item>
         <item name="android:alpha">0.7</item>
         <item name="android:textColor">@color/white</item>
-        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
-        <item name="android:textSize">@dimen/available_fund_16sp_amount</item>
+        <item name="android:fontFamily">@font/opensans_regular</item>
+        <item name="android:textSize">14sp</item>
     </style>
 
     <style name="accountAvailableFundTextViewStyle">
@@ -2043,7 +1988,8 @@
         <item name="android:layout_marginBottom">15dp</item>
         <item name="android:alpha">0.7</item>
         <item name="android:textColor">@color/white</item>
-        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontFamily">@font/opensans_regular</item>
         <item name="android:gravity">center</item>
         <item name="android:letterSpacing" tools:ignore="NewApi">@integer/point_zero_twenty_one
         </item>
@@ -2055,7 +2001,7 @@
         <item name="android:layout_marginBottom">@dimen/_15sdp</item>
         <item name="android:alpha">0.7</item>
         <item name="android:textColor">@color/white</item>
-        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
+        <item name="android:fontFamily">@font/opensans_regular</item>
         <item name="android:gravity">center</item>
         <item name="android:letterSpacing" tools:ignore="NewApi">@integer/point_zero_twenty_one
         </item>
@@ -2161,11 +2107,10 @@
     <style name="checkout_edittext_style">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">@dimen/fourty_eight_dp</item>
-        <item name="android:layout_marginTop">@dimen/six_dp</item>
         <item name="android:background">@drawable/recipient_details_input_edittext_bg</item>
         <item name="android:fontFamily">@font/opensans_regular</item>
         <item name="android:gravity">center_vertical</item>
-        <item name="android:paddingStart">@dimen/sixteen_dp</item>
+        <item name="android:paddingStart">@dimen/ten_dp</item>
         <item name="android:paddingEnd">@dimen/sixteen_dp</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:singleLine">true</item>
@@ -2174,17 +2119,19 @@
     </style>
 
     <style name="map_search_address">
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_height">@dimen/fourty_eight_dp</item>
-        <item name="android:background">@color/white</item>
-        <item name="android:fontFamily">@font/myriad_pro_regular</item>
+        <item name="android:layout_width">@dimen/zero_dp</item>
+        <item name="android:layout_height">@dimen/fourty_dp</item>
+        <item name="android:background">@color/color_F3F3F3</item>
+        <item name="android:fontFamily">@font/opensans_medium</item>
         <item name="android:gravity">center_vertical</item>
-        <item name="android:paddingStart">@dimen/sixteen_dp</item>
-        <item name="android:paddingEnd">@dimen/sixteen_dp</item>
-        <item name="android:textColor">@color/black</item>
+        <item name="android:paddingStart">@dimen/ten_dp</item>
+        <item name="android:paddingEnd">@dimen/ten_dp</item>
+        <item name="android:textColor">@color/color_222222</item>
+        <item name="android:textCursorDrawable">@color/black</item>
+        <item name="android:lineSpacingExtra">@dimen/two_sp</item>
         <item name="android:singleLine">true</item>
         <item name="android:imeOptions">actionNext</item>
-        <item name="android:textSize">@dimen/sixteen_sp</item>
+        <item name="android:textSize">@dimen/twelve_sp</item>
     </style>
 
     <style name="shimmer_view_edittext_style">
@@ -2192,12 +2139,12 @@
         <item name="android:layout_height">@dimen/fourty_eight_dp</item>
         <item name="android:layout_marginTop">@dimen/six_dp</item>
         <item name="android:background">@drawable/recipient_details_input_edittext_bg</item>
-        <item name="android:fontFamily">@font/myriad_pro_regular</item>
+        <item name="android:fontFamily">@font/opensans_regular</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:singleLine">true</item>
         <item name="android:imeOptions">actionNext</item>
-        <item name="android:textSize">@dimen/sixteen_sp</item>
+        <item name="android:textSize">@dimen/fourteen_sp</item>
     </style>
 
     <style name="onBoardingButtonStyle">
@@ -2263,10 +2210,8 @@
         <item name="android:fontFamily">@font/futura_medium_ttf</item>
     </style>
 
-    <style name="chatToUsOnWhatsAppStyle">
-        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
+    <style name="chatToUsOnWhatsAppStyle" parent="opensans_regular_13_black">
         <item name="android:textColor">@color/black</item>
-        <item name="android:textSize">15sp</item>
         <item name="android:layout_marginStart">17dp</item>
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
@@ -2277,9 +2222,9 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginEnd">8dp</item>
-        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
+        <item name="android:fontFamily">@font/opensans_regular</item>
         <item name="android:textColor">@color/permanent_card_block_desc_color</item>
-        <item name="android:textSize">16sp</item>
+        <item name="android:textSize">14sp</item>
     </style>
 
     <style name="whatsapp_how_to_pay_info_text_style">
@@ -2311,13 +2256,13 @@
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginTop">11dp</item>
-        <item name="android:textSize">16sp</item>
+        <item name="android:textSize">14sp</item>
         <item name="android:textColor">#7F7F7F</item>
         <item name="autoSizeTextType">uniform</item>
         <item name="autoSizeMinTextSize">14sp</item>
         <item name="autoSizeStepGranularity">1sp</item>
         <item name="autoSizeMaxTextSize">16sp</item>
-        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
+        <item name="android:fontFamily">@font/opensans_regular</item>
         <item name="android:lineSpacingMultiplier">1.28</item>
     </style>
 
@@ -2455,9 +2400,9 @@
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginTop">13dp</item>
-        <item name="android:fontFamily">@font/myriad_pro_regular</item>
-        <item name="android:textColor">@color/semi_transparent_black</item>
-        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">@font/opensans_regular</item>
+        <item name="android:textColor">@color/checkout_delivering_title</item>
+        <item name="android:textSize">14sp</item>
     </style>
 
     <style name="pmaViewBankingButton">
@@ -2476,9 +2421,9 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginTop">24dp</item>
-        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
+        <item name="android:fontFamily">@font/opensans_regular</item>
         <item name="android:textColor">@color/description_color</item>
-        <item name="android:textSize">15sp</item>
+        <item name="android:textSize">13sp</item>
     </style>
 
     <style name="pmaOutstandingValueStyle">
@@ -2533,16 +2478,16 @@
         <item name="android:fontFamily">@font/futura_semi_bold_ttf</item>
         <item name="android:gravity">start</item>
         <item name="android:lineSpacingExtra">8sp</item>
-        <item name="android:textSize">20sp</item>
+        <item name="android:textSize">18sp</item>
     </style>
 
     <style name="pmaCardDetailStyle">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginTop">45dp</item>
-        <item name="android:fontFamily">@font/myriad_pro_regular</item>
+        <item name="android:fontFamily">@font/opensans_regular</item>
         <item name="android:textColor">@color/permanent_card_block_desc_color</item>
-        <item name="android:textSize">15sp</item>
+        <item name="android:textSize">13sp</item>
     </style>
 
     <style name="dividerStyle" parent="horizontal_divider_how_to_pay">
@@ -2556,11 +2501,11 @@
     <style name="pmaSaveCardDetailStyle">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
+        <item name="android:fontFamily">@font/opensans_regular</item>
         <item name="android:gravity">end</item>
         <item name="android:maxLines">1</item>
         <item name="android:textColor">@color/black</item>
-        <item name="android:textSize">15sp</item>
+        <item name="android:textSize">13sp</item>
     </style>
 
     <style name="add_card_button_style" parent="@style/Widget.AppCompat.Button.Borderless">
@@ -2595,17 +2540,21 @@
         <item name="android:gravity">center</item>
         <item name="android:lineSpacingExtra">10sp</item>
         <item name="android:textColor">@color/black</item>
-        <item name="android:textSize">20sp</item>
+        <item name="android:textSize">18sp</item>
     </style>
 
     <style name="debitCreditStyle">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginTop">13dp</item>
-        <item name="android:fontFamily">@font/myriad_pro_regular</item>
+        <item name="android:fontFamily">@font/opensans_regular</item>
         <item name="android:lineSpacingExtra">8sp</item>
-        <item name="android:textColor">@color/npc_description</item>
-        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/checkout_delivering_title</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="payByDebitOrderDescStyle" parent="debitCreditStyle">
+        <item name="android:textSize">13sp</item>
     </style>
 
     <style name="descriptionPMAStyle">
@@ -2613,8 +2562,8 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginTop">12dp</item>
         <item name="android:textColor">@color/account_card_desc_grey_color</item>
-        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
-        <item name="android:textSize">15sp</item>
+        <item name="android:fontFamily">@font/opensans_regular</item>
+        <item name="android:textSize">13sp</item>
     </style>
 
     <style name="chatTimeDisplayStyle">
@@ -2645,8 +2594,8 @@
         <item name="android:textColor">@color/gray</item>
         <item name="android:lineSpacingExtra">1.2dp</item>
         <item name="android:lineSpacingMultiplier">1.2</item>
-        <item name="android:textSize">15sp</item>
-        <item name="fontFamily">@font/myriad_pro_regular_otf</item>
+        <item name="android:textSize">13sp</item>
+        <item name="fontFamily">@font/opensans_regular</item>
     </style>
 
     <style name="chatToUsNowButtonStyle">
@@ -2683,11 +2632,11 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">0dp</item>
         <item name="android:layout_marginStart">4dp</item>
-        <item name="android:fontFamily">@font/myriad_pro_semi_bold_otf</item>
+        <item name="android:fontFamily">@font/opensans_semi_bold</item>
         <item name="android:gravity">start|center</item>
         <item name="android:textColor">@color/black</item>
-        <item name="android:textSize">17sp</item>
-        <item name="autoSizeMaxTextSize">17sp</item>
+        <item name="android:textSize">15sp</item>
+        <item name="autoSizeMaxTextSize">15sp</item>
         <item name="autoSizeMinTextSize">12sp</item>
         <item name="autoSizeStepGranularity">1sp</item>
         <item name="autoSizeTextType">uniform</item>
@@ -2729,11 +2678,11 @@
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginTop">8dp</item>
-        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
+        <item name="android:fontFamily">@font/opensans_regular</item>
         <item name="android:gravity">center|top</item>
         <item name="android:lineSpacingExtra">4sp</item>
         <item name="android:textColor">@color/red_color</item>
-        <item name="android:textSize">14sp</item>
+        <item name="android:textSize">12sp</item>
         <item name="android:visibility">gone</item>
     </style>
 
@@ -2768,7 +2717,7 @@
         <item name="android:layout_width">@dimen/zero_dp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginTop">@dimen/twenty_four_dp</item>
-        <item name="android:fontFamily">@font/myriad_pro_semi_bold</item>
+        <item name="android:fontFamily">@font/opensans_semi_bold</item>
         <item name="android:textColor">@color/black_white_color_selector</item>
     </style>
 
@@ -2788,7 +2737,8 @@
         <item name="android:layout_marginTop">@dimen/twenty_four_dp</item>
         <item name="android:background">@drawable/amount_textview_bg</item>
         <item name="android:textColor">@color/black_white_color_selector</item>
-        <item name="android:fontFamily">@font/myriad_pro_semi_bold</item>
+        <item name="android:fontFamily">@font/opensans_semi_bold</item>
+        <item name="android:textSize">12sp</item>
         <item name="android:state_selected">false</item>
 
     </style>
@@ -2892,8 +2842,8 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:lineSpacingExtra">1.5dp</item>
         <item name="android:lineSpacingMultiplier">1.5</item>
-        <item name="fontFamily">@font/myriad_pro_regular_otf</item>
-        <item name="android:textSize">15sp</item>
+        <item name="fontFamily">@font/opensans_regular</item>
+        <item name="android:textSize">13sp</item>
     </style>
 
     <style name="style_image">
@@ -3032,9 +2982,9 @@
     <style name="pdp_no_of_review_text_style" parent="android:Theme">
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:textColor">#80000000</item>
+        <item name="android:textColor">#777777</item>
         <item name="android:singleLine">true</item>
-        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
+        <item name="android:fontFamily">@font/futura_medium</item>
         <item name="android:textSize">16sp</item>
         <item name="android:layout_marginStart">16dp</item>
         <item name="android:paddingEnd">0dp</item>
@@ -3067,14 +3017,14 @@
     </style>
 
 
-    <style name="myriad_pro_semi_bold_49BB77_15_text_style" >
-        <item name="android:fontFamily">@font/myriad_pro_semi_bold</item>
+    <style name="open_sans_semi_bold_49BB77_15_text_style" >
+        <item name="android:fontFamily">@font/opensans_semi_bold</item>
         <item name="android:textSize">@dimen/fifteen_sp</item>
         <item name="android:textColor">@color/color_49BB77</item>
     </style>
 
-    <style name="myriad_pro_semi_bold_777777_15_text_style" >
-        <item name="android:fontFamily">@font/myriad_pro_semi_bold</item>
+    <style name="open_sans_semi_bold_777777_15_text_style" >
+        <item name="android:fontFamily">@font/opensans_semi_bold</item>
         <item name="android:textSize">@dimen/fifteen_sp</item>
         <item name="android:textColor">@color/account_card_desc_grey_color</item>
     </style>
@@ -3087,7 +3037,7 @@
         <item name="android:textSize">@dimen/twelve_sp</item>
         <item name="android:textColor">@color/color_222222</item>
         <item name="textAllCaps">false</item>
-        <item name="android:fontFamily">@font/myriad_pro_regular</item>
+        <item name="android:fontFamily">@font/opensans_regular</item>
     </style>
 
     <style name="shop_tab_style" parent="Widget.Design.TabLayout">
@@ -3173,14 +3123,41 @@
     <style name="opensans_regular_12_text_style" parent="opensens_regular">
         <item name="android:textSize">@dimen/twelve_sp</item>
     </style>
+    <style name="opensans_regular_11_black" parent="opensens_regular">
+        <item name="android:textSize">@dimen/eleven_sp</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+    <style name="opensans_regular_12_black" parent="opensens_regular">
+        <item name="android:textSize">@dimen/twelve_sp</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
 
     <style name="opensans_regular_13_black" parent="opensens_regular">
         <item name="android:textSize">@dimen/thirteen_sp</item>
         <item name="android:textColor">@color/black</item>
     </style>
+    <style name="opensans_regular_10_black" parent="opensens_regular">
+        <item name="android:textSize">@dimen/ten_sp</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="opensans_regular_15_black" parent="opensens_regular">
+        <item name="android:textSize">@dimen/fifteen_sp</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="opensans_regular_14_black" parent="opensens_regular">
+        <item name="android:textSize">@dimen/fourteen_sp</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
 
     <style name="opensans_semi_bold_13_text_style" parent="opensens_semi_bold">
         <item name="android:textSize">@dimen/thirteen_sp</item>
+    </style>
+
+    <style name="opensans_semi_bold_14_black" parent="opensens_semi_bold">
+        <item name="android:textSize">@dimen/fourteen_sp</item>
+        <item name="android:textColor">@color/black</item>
     </style>
 
     <style name="opensans_semi_bold_12_text_style" parent="opensens_semi_bold">
@@ -3245,4 +3222,59 @@
         <item name="cornerSizeTopLeft">10dp</item>
     </style>
 
+    <style name="delete_my_profile_description_text_style">
+        <item name="android:lineSpacingExtra">1.4dp</item>
+        <item name="android:textColor">@color/color_444444</item>
+        <item name="android:textSize">@dimen/thirteen_sp</item>
+        <item name="android:fontFamily">@font/opensans_regular</item>
+    </style>
+
+    <style name="open_sans_semi_bold_49BB77_13_text_style" >
+        <item name="android:fontFamily">@font/opensans_semi_bold</item>
+        <item name="android:textSize">@dimen/thirteen_sp</item>
+        <item name="android:textColor">@color/color_49BB77</item>
+    </style>
+
+    <style name="open_sans_semi_bold_777777_13_text_style" >
+        <item name="android:fontFamily">@font/opensans_semi_bold</item>
+        <item name="android:textSize">@dimen/thirteen_sp</item>
+        <item name="android:textColor">@color/account_card_desc_grey_color</item>
+    </style>
+
+    <style name="delete_profile_page_title_text_style">
+        <item name="android:lineSpacingMultiplier">1.29</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">@dimen/twenty_sp</item>
+        <item name="android:fontFamily">@font/futura_semi_bold</item>
+    </style>
+
+    <style name="checkout_edittext_multi_style">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">@dimen/hundred_dp</item>
+        <item name="android:background">@drawable/recipient_details_input_edittext_bg</item>
+        <item name="android:fontFamily">@font/opensans_regular</item>
+        <item name="android:padding">@dimen/fourteen_dp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:imeOptions">actionNext</item>
+        <item name="android:textSize">@dimen/fourteen_sp</item>
+        <item name="android:gravity">top</item>
+    </style>
+
+    <style name="contact_us_email_us_label_style" parent="opensens_regular">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+
+    <style name="contact_us_email_us_input_field_style" parent="opensens_regular">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:background">@drawable/bg_input_edittext</item>
+        <item name="android:layout_height">@dimen/_35sdp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingStart">@dimen/_5sdp</item>
+        <item name="android:paddingEnd">@dimen/_5sdp</item>
+        <item name="android:layout_marginTop">@dimen/_5sdp</item>
+        <item name="android:textColorHint">@color/color_9D9D9D</item>
+    </style>
 </resources>

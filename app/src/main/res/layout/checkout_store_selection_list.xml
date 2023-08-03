@@ -21,9 +21,10 @@
         app:layout_constraintTop_toBottomOf="@+id/top_guideline"
         tools:ignore="MissingConstraints" />
 
+
     <TextView
         android:id="@+id/title"
-        style="@style/myriad_pro_semi_bold_black_15_text_style"
+        style="@style/opensens_semi_bold"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/twelve_dp"
@@ -31,6 +32,7 @@
         android:maxLines="1"
         android:singleLine="true"
         android:textColor="@color/black"
+        android:textSize="@dimen/thirteen_sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/selector"
@@ -38,7 +40,7 @@
 
     <TextView
         android:id="@+id/subTitle"
-        style="@style/myriad_pro_regular"
+        style="@style/opensens_regular"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/twelve_dp"

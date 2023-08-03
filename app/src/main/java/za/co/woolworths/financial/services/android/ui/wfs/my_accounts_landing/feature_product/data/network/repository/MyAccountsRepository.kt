@@ -2,8 +2,10 @@ package za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.f
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
+import za.co.woolworths.financial.services.android.models.dto.account.ServerErrorResponse
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.wfs.core.NetworkStatusUI
+import za.co.woolworths.financial.services.android.ui.wfs.core.RetrofitFailureResult
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.model.UserAccountResponse
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.network.datasource.IUserAccountRemote
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.network.datasource.UserAccountRemoteDataSource

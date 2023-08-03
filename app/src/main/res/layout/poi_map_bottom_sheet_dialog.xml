@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<androidx.core.widget.NestedScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -9,82 +8,87 @@
     android:fitsSystemWindows="true"
     android:orientation="vertical"
     tools:ignore="MissingDefaultResource">
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
 
-    <include
-        android:id="@+id/incSwipeCloseIndicator"
-        layout="@layout/popup_close_header_bar"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/twenty_four_dp"
-        android:layout_marginEnd="@dimen/twenty_four_dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:orientation="vertical">
+
+        <include
+            android:id="@+id/incSwipeCloseIndicator"
+            layout="@layout/popup_close_header_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/twenty_four_dp"
+            android:layout_marginEnd="@dimen/twenty_four_dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
 
-    <za.co.woolworths.financial.services.android.ui.views.WTextView
-        android:id="@+id/we_need_more_tv"
-        style="@style/absa_page_title_text_style"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/twenty_four_dp"
-        android:layout_marginTop="@dimen/twenty_dp"
-        android:layout_marginEnd="@dimen/twenty_four_dp"
-        android:gravity="center"
-        android:text="@string/we_need_more_info" />
+        <TextView
+            android:id="@+id/we_need_more_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/twenty_four_dp"
+            android:layout_marginTop="@dimen/twenty_four_dp"
+            android:layout_marginEnd="@dimen/fourty_dp"
+            android:textSize="@dimen/twenty_two_sp"
+            android:text="@string/we_need_more_info"
+            android:textColor="@color/black"
+            android:fontFamily="@font/futura_semi_bold" />
 
 
-    <TextView
-        android:id="@+id/enter_street_number"
-        style="@style/myriad_pro_regular_black"
-        android:layout_width="wrap_content"
-        android:layout_marginStart="@dimen/twenty_four_dp"
-        android:layout_marginTop="@dimen/sixteen_dp"
-        android:background="@color/white"
-        android:text="@string/enter_street_name"
-        android:textSize="@dimen/fourteen_sp" />
+        <TextView
+            android:id="@+id/enter_street_number"
+            style="@style/opensens_regular"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/twenty_four_dp"
+            android:layout_marginEnd="@dimen/twenty_four_dp"
+            android:layout_marginTop="@dimen/sixteen_dp"
+            android:layout_marginBottom="@dimen/four_dp"
+            android:text="@string/enter_street_name"
+            android:textColor="@color/black"
+            android:textSize="@dimen/thirteen_sp" />
 
-    <EditText
-        android:id="@+id/streetNameEditText"
-        style="@style/checkout_edittext_style"
-        android:layout_width="match_parent"
-        android:layout_marginStart="@dimen/twenty_four_dp"
-        android:layout_marginEnd="@dimen/twenty_four_dp"
-        android:layout_marginTop="@dimen/_3sdp"
-        android:inputType="textNoSuggestions"
-        android:maxLength="@integer/fifty"
-        android:autofillHints="name"
-        />
+        <EditText
+            android:id="@+id/streetNameEditText"
+            style="@style/checkout_edittext_multi_style"
+            android:layout_width="match_parent"
+            android:layout_marginStart="@dimen/twenty_four_dp"
+            android:layout_marginTop="@dimen/_3sdp"
+            android:layout_marginEnd="@dimen/twenty_four_dp"
+            android:autofillHints="name"
+            android:inputType="textNoSuggestions|textMultiLine"
+            android:maxLength="@integer/fifty"
+            android:maxLines="10"
+            android:minLines="4" />
 
 
-    <za.co.woolworths.financial.services.android.ui.views.WButton
-        android:id="@+id/confirmButton"
-        style="@style/blackButtonStyle"
-        android:enabled="false"
-        android:layout_marginLeft="@dimen/twenty_four_dp"
-        android:layout_marginTop="@dimen/thirty_two_dp"
-        android:layout_marginRight="@dimen/twenty_four_dp"
-        android:layout_marginBottom="@dimen/twenty_four_dp"
-        android:text="@string/confirm_address"
-        android:background="@color/button_disable"
-        />
+        <za.co.woolworths.financial.services.android.ui.views.WButton
+            android:id="@+id/confirmButton"
+            style="@style/blackButtonStyle"
+            android:layout_marginLeft="@dimen/twenty_four_dp"
+            android:layout_marginTop="@dimen/thirty_two_dp"
+            android:layout_marginRight="@dimen/twenty_four_dp"
+            android:layout_marginBottom="@dimen/twenty_four_dp"
+            android:background="@color/button_disable"
+            android:enabled="false"
+            android:text="@string/confirm" />
 
-    <za.co.woolworths.financial.services.android.ui.views.WTextView
-        android:id="@+id/dismissButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="@dimen/twenty_four_dp"
-        android:letterSpacing="0.1"
-        android:text="@string/dismiss"
-        android:textAllCaps="true"
-        android:textColor="@color/gray"
-        android:textSize="@dimen/twelve_sp"
-        app:WTextView_font="light" />
-</LinearLayout>
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/dismissButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="@dimen/twenty_four_dp"
+            android:letterSpacing="0.1"
+            android:text="@string/dismiss"
+            android:textAllCaps="true"
+            android:textColor="@color/gray"
+            android:textSize="@dimen/twelve_sp"
+            app:WTextView_font="light" />
+    </LinearLayout>
 
 </androidx.core.widget.NestedScrollView>

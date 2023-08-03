@@ -7,15 +7,14 @@ import za.co.woolworths.financial.services.android.checkout.service.network.Conf
 import za.co.woolworths.financial.services.android.checkout.service.network.ShippingDetailsBody
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.models.network.StorePickupInfoBody
+import javax.inject.Inject
 
 /**
  * Created by Kunal Uttarwar on 04/06/21.
  */
-class CheckoutAddAddressNewUserInteractor(
+class CheckoutAddAddressNewUserInteractor @Inject constructor(
     private val checkoutAddAddressNewUserApiHelper: CheckoutAddAddressNewUserApiHelper
 ) {
-
-    fun getSuburbs(provinceId: String) = checkoutAddAddressNewUserApiHelper.getSuburbs(provinceId)
     fun validateSelectedSuburb(suburbId: String, isStore: Boolean) =
         checkoutAddAddressNewUserApiHelper.validateSelectedSuburb(suburbId, isStore)
 

@@ -19,6 +19,7 @@ import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
+import android.graphics.Color
 
 class CreditCardDeliveryRecipientDetailsFragment : CreditCardDeliveryBaseFragment(R.layout.credit_card_delivery_recipient_details_layout), View.OnClickListener, RadioGroup.OnCheckedChangeListener {
 
@@ -100,6 +101,7 @@ class CreditCardDeliveryRecipientDetailsFragment : CreditCardDeliveryBaseFragmen
 
         recipientName?.apply {
             isEnabled = statusResponse?.deliveryStatus?.isCardNew != true
+            updatedRecipientTextField()
             setText(statusResponse?.recipientDetails?.deliverTo
                     ?: SessionUtilities.getInstance().jwt?.name?.get(0))
         }
@@ -231,8 +233,23 @@ class CreditCardDeliveryRecipientDetailsFragment : CreditCardDeliveryBaseFragmen
         binding.apply {
             isRecipientIsThirdPerson = checkedId == R.id.anotherPerson
             idNumberLayout.visibility = if (isRecipientIsThirdPerson) View.VISIBLE else View.GONE
+            updatedRecipientTextField()
             if (checkedId == R.id.mySelf && idNumberErrorMsg.visibility == View.VISIBLE) {
                 clearErrorInputField(idNumber)
+            }
+        }
+    }
+
+    fun updatedRecipientTextField() {
+        binding.apply {
+            recipientName.apply {
+                if (mySelf.isChecked) {
+                    isEnabled = false
+                    recipientName.setTextColor(Color.parseColor("#50333333"))
+                } else {
+                    isEnabled = true
+                    recipientName.setTextColor(Color.parseColor("#000000"))
+                }
             }
         }
     }

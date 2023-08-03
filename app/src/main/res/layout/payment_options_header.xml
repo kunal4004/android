@@ -90,16 +90,15 @@
 
     <TextView
         android:id="@+id/fourWaysToMakeYourLifeEasierTextView"
+        style="@style/opensans_regular_13_black"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="6dp"
-        android:fontFamily="@font/myriad_pro_regular_otf"
         android:gravity="center"
         android:lineSpacingExtra="1.1dp"
         android:lineSpacingMultiplier="1.2"
         android:text="@string/payment_option_make_your_life_easier"
         android:textColor="@color/black"
-        android:textSize="15sp"
         app:layout_constraintEnd_toStartOf="@+id/endGuideline"
         app:layout_constraintStart_toStartOf="@+id/startGuideline"
         app:layout_constraintTop_toBottomOf="@+id/creditCardPaymentOptionTextView" />
@@ -121,19 +120,18 @@
 
     <TextView
         android:id="@+id/payWooliesCardTextView"
+        style="@style/opensans_regular_13_black"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="22dp"
         android:layout_marginBottom="22dp"
         android:alpha="0.5"
         android:paddingBottom="20dp"
-        android:fontFamily="@font/myriad_pro_regular_otf"
         android:gravity="center"
         android:lineSpacingExtra="1.1dp"
         android:lineSpacingMultiplier="1.2"
         android:text="@string/payment_option_pay_woolies_card_label"
         android:textColor="@color/black"
-        android:textSize="15sp"
         app:layout_constraintEnd_toStartOf="@+id/endGuideline"
         app:layout_constraintStart_toStartOf="@+id/startGuideline"
         app:layout_constraintTop_toBottomOf="@+id/fourWaysToMakeYourLifeEasierTextView" />

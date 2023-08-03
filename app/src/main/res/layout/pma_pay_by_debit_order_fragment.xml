@@ -44,7 +44,7 @@
 
             <TextView
                 android:id="@+id/debitOrderTextView"
-                style="@style/debitCreditStyle"
+                style="@style/payByDebitOrderDescStyle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="19dp"
@@ -56,7 +56,7 @@
 
             <TextView
                 android:id="@+id/setUpDebitOrderTextView"
-                style="@style/debitCreditStyle"
+                style="@style/payByDebitOrderDescStyle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="14dp"
@@ -79,20 +79,19 @@
 
             <TextView
                 android:id="@+id/payDebitOrderTitleTextView"
+                style="@style/opensans_semi_bold_13_black_text_style"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="18dp"
-                android:fontFamily="@font/myriad_pro_semi_bold_otf"
                 android:text="@string/send_us_the_following_title"
                 android:textColor="@color/black"
-                android:textSize="15sp"
                 app:layout_constraintEnd_toStartOf="@+id/endGuideLine"
                 app:layout_constraintStart_toStartOf="@+id/startGuideLine"
                 app:layout_constraintTop_toBottomOf="@+id/payMyOrderView" />
 
             <TextView
                 android:id="@+id/bankNameTextView"
-                style="@style/descriptionPMAStyle"
+                style="@style/payByDebitOrderDescStyle"
                 android:text="@string/bank_name_label"
                 app:layout_constraintEnd_toStartOf="@+id/endGuideLine"
                 app:layout_constraintStart_toStartOf="@+id/startGuideLine"
@@ -100,7 +99,7 @@
 
             <TextView
                 android:id="@+id/brandNameAndCodeTextView"
-                style="@style/descriptionPMAStyle"
+                style="@style/payByDebitOrderDescStyle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -111,7 +110,7 @@
 
             <TextView
                 android:id="@+id/bankNameTextView1"
-                style="@style/descriptionPMAStyle"
+                style="@style/payByDebitOrderDescStyle"
                 android:layout_marginTop="8dp"
                 android:text="@string/bank_name_label"
                 app:layout_constraintEnd_toStartOf="@+id/endGuideLine"
@@ -120,7 +119,7 @@
 
             <TextView
                 android:id="@+id/bankAccountNumberTextView"
-                style="@style/descriptionPMAStyle"
+                style="@style/payByDebitOrderDescStyle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -131,7 +130,7 @@
 
             <TextView
                 android:id="@+id/accountTypeTextView"
-                style="@style/descriptionPMAStyle"
+                style="@style/payByDebitOrderDescStyle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -142,7 +141,7 @@
 
             <TextView
                 android:id="@+id/debitOrderAmountTextView"
-                style="@style/descriptionPMAStyle"
+                style="@style/payByDebitOrderDescStyle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -154,7 +153,7 @@
 
             <TextView
                 android:id="@+id/debitOrderDeductionDateTextView"
-                style="@style/descriptionPMAStyle"
+                style="@style/payByDebitOrderDescStyle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -165,7 +164,7 @@
 
             <TextView
                 android:id="@+id/debitOrderDeductionDescTextView"
-                style="@style/descriptionPMAStyle"
+                style="@style/payByDebitOrderDescStyle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="21dp"

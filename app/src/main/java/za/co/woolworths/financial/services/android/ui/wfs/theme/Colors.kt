@@ -2,7 +2,7 @@ package za.co.woolworths.financial.services.android.ui.wfs.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Black = Color(0x00000000)
+val Black = Color(0xFF000000)
 val White = Color(0xFFFFFFFF)
 val DarkGrey = Color(0x22efefef)
 val LightGrey = Color(0xFFEFEFEF)
@@ -27,4 +27,9 @@ val BlackOpacity10 = Color(0xFF000000).copy(alpha = 0.1f)
 val FunctionalGreys = Color(0xFFF5F5F5)
 val BrightGray = Color(0xB3EEEEEE)
 val TextLightSilver = Color(0x4D000000)
+val ColorEEEEEE = Color(0xFFEEEEEE)
+val Color444444 = Color(0xFF444444)
+val Color666666 = Color(0xFF666666)
+val ColorD8D8D8 = Color(0xFFD8D8D8)
+val ErrorLabel = Color(0xFFD0021B)
 

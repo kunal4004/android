@@ -95,13 +95,12 @@
 
     <TextView
         android:id="@+id/tvForgotPin"
+        style="@style/opensans_regular_13_black"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/myriad_pro_regular_otf"
         android:gravity="start"
         android:text="@string/absa_biometric_forgot_atm_pin_code"
         android:textColor="@color/black"
-        android:textSize="@dimen/fifteen_sp"
         app:layout_constraintBottom_toBottomOf="@+id/ivNavigateToDigitFragment"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/ivNavigateToDigitFragment" />

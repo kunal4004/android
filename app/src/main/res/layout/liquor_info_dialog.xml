@@ -31,12 +31,12 @@
             android:layout_below="@+id/title"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="@dimen/fifteen_dp"
-            android:fontFamily="@font/myriad_pro_regular"
+            android:fontFamily="@font/opensans_regular"
             android:text="@string/liquor_dialog_description_text"
             android:textAlignment="center"
             android:lineSpacingMultiplier="1.4"
             android:textColor="@color/black"
-            android:textSize="@dimen/fifteen_sp"
+            android:textSize="@dimen/thirteen_sp"
             app:layout_constraintTop_toBottomOf="@id/title" />
 
         <TextView

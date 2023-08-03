@@ -31,23 +31,22 @@
 
             <TextView
                 android:id="@+id/localCallerTextView"
+                style="@style/opensans_semi_bold_13_black_text_style"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/myriad_pro_semi_bold"
                 android:text="@string/txt_local_caller"
-                android:textColor="@color/black"
-                android:textSize="15sp" />
+             />
 
             <TextView
                 android:id="@+id/localCallerPhoneNumberTextView"
+                style="@style/opensans_regular_13_black"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_5sdp"
-                android:fontFamily="@font/myriad_pro_regular_otf"
                 android:gravity="center_vertical"
                 android:text="@string/fs_local_caller_number"
                 android:textColor="@color/color_444444"
-                android:textSize="15sp" />
+                />
         </LinearLayout>
 
         <ImageView

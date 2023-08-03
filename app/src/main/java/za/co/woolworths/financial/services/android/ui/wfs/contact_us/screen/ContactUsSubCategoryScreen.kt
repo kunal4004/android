@@ -4,14 +4,17 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import za.co.woolworths.financial.services.android.ui.wfs.component.*
+import za.co.woolworths.financial.services.android.ui.wfs.contact_us.cell.TextContactUsFuturaSemiBoldSectionHeader
 import za.co.woolworths.financial.services.android.ui.wfs.contact_us.cell.LeftIconTitleDescriptionAndNextArrowItem
-import za.co.woolworths.financial.services.android.ui.wfs.contact_us.cell.LabelTitle
 import za.co.woolworths.financial.services.android.ui.wfs.contact_us.viewmodel.ContactUsViewModel
 import za.co.woolworths.financial.services.android.ui.wfs.contact_us.model.Children
 import za.co.woolworths.financial.services.android.ui.wfs.contact_us.model.ChildrenItem
+import za.co.woolworths.financial.services.android.ui.wfs.theme.FontDimensions
+import za.co.woolworths.financial.services.android.ui.wfs.theme.Margin
 
 @Composable
 fun ContactUsSubCategoryScreen(viewModel: ContactUsViewModel, onSelected: (Children) -> Unit) {
@@ -22,16 +25,18 @@ fun ContactUsSubCategoryScreen(viewModel: ContactUsViewModel, onSelected: (Child
 fun SubCategoryList(listOfChildren: MutableList<ChildrenItem>, onSelected: (Children) -> Unit) {
     BoxBackground {
         ListColumn(list = listOfChildren) { item ->
-                LabelTitle(LabelProperties(label = item.title,
-                    modifier = Modifier.padding(
-                    start = 24.dp,
-                    end = 24.dp,
-                    top = 22.dp,
-                    bottom = 20.dp
-                )))
-                Column(Modifier.padding(start = 24.dp, end = 15.dp)) {
+
+            TextContactUsFuturaSemiBoldSectionHeader(title = item.title ?: "")
+
+                Column(Modifier.padding(start = Margin.start, end = Margin.dp15)) {
                     item.description?.let { desc ->
-                        LabelSmall(LabelProperties(label = desc))
+                        TextOpenSansFontFamily(
+                            text =desc,
+                            textAlign = TextAlign.Start,
+                            color = Color.Black,
+                            locator = desc,
+                            fontSize = FontDimensions.sp12
+                        )
                         Spacer(modifier = Modifier.height(24.dp))
                     }
                 }

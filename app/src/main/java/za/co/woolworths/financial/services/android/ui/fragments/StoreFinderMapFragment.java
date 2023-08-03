@@ -157,7 +157,7 @@ public class StoreFinderMapFragment extends Fragment implements DynamicMapDelega
 		pager = (WCustomViewPager) v.findViewById(R.id.cardPager);
 		detailsLayout = (LinearLayout) v.findViewById(R.id.detailsView);
 		mLayout = (SlidingUpPanelLayout) v.findViewById(R.id.sliding_layout);
-		WTextView tvFlStockFinderMapHeader = (WTextView) v.findViewById(R.id.flStockFinderMapHeader);
+		TextView tvFlStockFinderMapHeader = (TextView) v.findViewById(R.id.flStockFinderMapHeader);
 		tvFlStockFinderMapHeader.setVisibility(View.VISIBLE);
 		wGlobalState = ((WoolworthsApplication) getActivity().getApplication()).getWGlobalState();
 		close = (ImageView) v.findViewById(R.id.close);
@@ -416,7 +416,7 @@ public class StoreFinderMapFragment extends Fragment implements DynamicMapDelega
 				textView = (TextView) v.findViewById(R.id.openingHoursTextView);
 				textView.setText(storeDetail.times.get(i).day + " " + storeDetail.times.get(i).hours);
 				if (i == 0)
-					textView.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/MyriadPro-Semibold.otf"));
+					textView.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/OpenSans-SemiBold.ttf"));
 				timeingsLayout.addView(textView);
 			}
 

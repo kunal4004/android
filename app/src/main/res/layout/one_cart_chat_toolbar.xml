@@ -94,7 +94,7 @@
         android:id="@+id/activeStateTextView"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:fontFamily="@font/myriad_pro_regular"
+        android:fontFamily="@font/opensans_regular"
         android:textColor="@color/color_666666"
         android:textSize="@dimen/_10ssp"
         android:ellipsize="end"

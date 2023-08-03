@@ -507,7 +507,7 @@
     <string name="product_unavailable">product unavailable</string>
     <string name="acc_my_preferences">My Preferences</string>
     <string name="authenticate_with_touch_id">Authenticate using Biometrics</string>
-    <string name="biometrics_authentication">BIOMETRICS/PIN</string>
+    <string name="biometrics_authentication">Biometrics/Pin</string>
     <string name="biometrics_description">This allows you to easily access secure features in the app by using the biometric reader on your device.</string>
     <string name="favourite_delivery_location_description">In order to improve your shopping experience you can set your favourite delivery location. We will use this as your default delivery location.</string>
     <string name="product_unavailable_desc">Sorry, this product is unavailable in your delivery location</string>
@@ -648,13 +648,13 @@
     <string name="tips_create_shopping_list">create a shopping list</string>
     <string name="app_tips_tricks">App Tips &amp; Tricks</string>
     <string name="tips_tricks_view_cart">view cart</string>
-    <string name="tips_tricks_get_shopping">GET SHOPPING</string>
-    <string name="tips_tricks_your_vouchers">your vouchers</string>
+    <string name="tips_tricks_get_shopping">Get Shopping</string>
+    <string name="tips_tricks_your_vouchers">Your Vouchers</string>
     <string name="tips_tricks_view_these_now">VIEW THESE NOW</string>
     <string name="tips_tricks_go_to_accounts">GO TO YOUR ACCOUNTS</string>
-    <string name="tips_tricks_view_your_accounts">VIEW YOUR ACCOUNTS</string>
+    <string name="tips_tricks_view_your_accounts">View Your Accounts</string>
     <string name="tips_tricks_take_me_there">TAKE ME THERE</string>
-    <string name="tips_tricks_access_your_statements">ACCESS YOUR STATEMENTS</string>
+    <string name="tips_tricks_access_your_statements">Access Your Statements</string>
     <string name="your_delivery_location">Your Delivery Location</string>
     <string name="walkthrough_delivery_location_desc">Set your Delivery Location to see exact prices and the items available to you.</string>
     <string name="walkthrough_vouchers_desc">View your latest vouchers and redeem them in-store before they expire.</string>
@@ -1317,7 +1317,6 @@
     <string name="payment_options_desc">A payment of %1$s is required to bring your account up to date.</string>
     <string name="payment_options_title">Your Account Is In Arrears</string>
 
-    <string name="account_arrears_description">Your account is in arrears for more than 6 months and has been handed to a collections agency.</string>
     <string name="call_the_call_centre">call the call centre</string>
     <string name="view_treatment_plan_description">Your account is in arrears. Have you already agreed to a repayment plan? View your plan or make a payment now.</string>
     <string name="treatment_plan_eligible_charged_off_description_pl">Your account is being managed by our collection partners</string>
@@ -1520,11 +1519,13 @@
     <string name="set_up_delivery_nowt">set up delivery now</string>
     <string name="already_have_card_activate_it_now"><u>Already have card? Activate it now</u></string>
     <string name="recipient_details">Recipient Details</string>
-    <string name="recipient_details_desc">Please enter the details of the person we will be delivering to below:</string>
+    <string name="recipient_details_desc">please confirm who will be receiving this card and enter their details below.</string>
     <string name="documet_requied_at_delivery">You will need to give the courier a copy of your SA Identity Document (ID), when taking delivery of your new credit card.</string>
     <string name="recipient_name">Recipient Name</string>
     <string name="id_number">ID Number</string>
     <string name="cellphone_number">Cellphone Number</string>
+    <string name="hint_id_number_of_recipient">ID Number Of Recipient</string>
+    <string name="hint_name_of_recipient">Name of Recipient</string>
     <string name="alternate_contact_numberr">Alternate Contact Number</string>
     <string name="delivery_details">Delivery Details</string>
     <string name="delivery_details_desc">Please complete your delivery details below:</string>
@@ -1550,17 +1551,17 @@
     <string name="delivery_setup_complete">Delivery Setup Complete</string>
     <string name="delivery_setup_update">Your Delivery Information Has Been Updated</string>
     <string name="delivery_success_desc">Keep an eye on the app for updates.</string>
-    <string name="cellphone_number_error_msg">Please enter a Cellphone Number</string>
-    <string name="alternate_number_error_msg">Please enter Alternate Contact Number</string>
+    <string name="cellphone_number_error_msg">Please provide a valid cellphone number</string>
+    <string name="alternate_number_error_msg">Please provide a valid alternate contact number</string>
     <string name="phone_number_invalid_error_msg">Please provide a valid phone number</string>
-    <string name="recipient_name_error_msg">Please enter a Recipient name</string>
-    <string name="build_or_complex_error_msg">Please enter a Complex/Building name</string>
+    <string name="recipient_name_error_msg">Please provide a valid name</string>
+    <string name="build_or_complex_error_msg">Please provide the building name</string>
     <string name="business_name_error_msg">Please enter a Business name</string>
-    <string name="street_address_error_msg">Please enter a Street address</string>
-    <string name="suburb_error_msg">Please enter a Suburb</string>
-    <string name="city_or_town_error_msg">Please enter a City/Town</string>
-    <string name="province_error_msg">Please enter a Province</string>
-    <string name="postalcode_error_msg">Please enter a Postal code</string>
+    <string name="street_address_error_msg">Please provide the street address</string>
+    <string name="suburb_error_msg">Please provide the suburb</string>
+    <string name="city_or_town_error_msg">Please provide the city</string>
+    <string name="province_error_msg">Please provide the province</string>
+    <string name="postalcode_error_msg">Please provide the postal code</string>
     <string name="please_confirm_your_address">Please Confirm Your Address</string>
     <string name="credit_card_payment_options_desc">You can pay your Woolies Credit Card using any of the following payment options:</string>
     <string name="account_in_arrears_toolbar">Account In Arrears Toolbar</string>
@@ -1629,7 +1630,7 @@
     <string name="temp_card_how_to_use10">Your temp store card cannot be used at Engen service stations.</string>
     <string name="temp_card_how_to_use11">If you receive any staff discounts, please make sure that your virtual card number is loaded correctly in other systems, like Peoplesoft.</string>
     <string name="temp_card_how_to_use12">If you have issues using you temporary card please contact Woolworths Financial Services at <u>0861 50 20 20</u> or by email at <u>queries@wfs.co.za</u>.</string>
-    <string name="id_number_error_msg">Please enter a ID Number</string>
+    <string name="id_number_error_msg">Please provide a valid ID number</string>
     <string name="myself">Myself\u0020</string>
     <string name="another_person">Another Person</string>
     <string name="business_name_optional">Business Name (Optional)</string>
@@ -1749,6 +1750,7 @@
     <string name="payment_successful_title">Payment Successful</string>
     <string name="ccv_number_label">Enter your CVV Number:</string>
     <string name="pma_payment_delay_label">* Payments may take up to 5 business days to reflect.</string>
+    <string name="pma_payment_delay_dynamic_label">* %1$s</string>
     <string name="confirm_payment">CONFIRM PAYMENT</string>
     <string name="change_label">Change</string>
     <string name="atm_payment_steps_desc"> Follow the steps below when making a payment at an ATM.</string>
@@ -2296,6 +2298,7 @@
 
     <!-- Native Checkout : Suburb not deliverable  -->
     <string name="dismiss">Dismiss</string>
+    <string name="dismiss_underline" tools:ignore="ButtonCase"><u>DISMISS</u></string>
     <string name="suburb_not_deliverable_msg">We Can’t Deliver To This Suburb Yet</string>
     <string name="suburb_not_deliverable_description">However, we’re growing quickly, so please check back soon.</string>
 
@@ -2503,7 +2506,7 @@
     <string name="geoloc_ClickNCollectValue">28 Eastlake Isla...</string>
     <string name="collection_store_title">There Are No Collection Stores Available Near You</string>
     <string name="change_location">CHANGE LOCATION</string>
-    <string name="enter_your_street_number_and_name">Enter your Location</string>
+    <string name="enter_your_street_number_and_name">Enter Your Location</string>
     <string name="enter_address_for_google_map_hint">Use an address, the name of a complex, or your closest landmark.</string>
     <string name="no_location_title">We Can’t Deliver \n To This Location Yet.</string>
     <string name="no_location_desc">However, we’re growing quickly, \n so please check back soon</string>
@@ -2583,25 +2586,22 @@
     <string name="continue_with_cnc_delivery">CONTINUE WITH Click &amp; Collect</string>
     <string name="continue_with_dash_delivery">CONTINUE WITH DASH DELIVERY</string>
 
-    <plurals name="remove_items_dash_dialog_desc">
-        <item quantity="one">This item cannot be delivered using <b><font color='#000000'>Dash Delivery.</font></b>. The following will be removed from your cart:</item>
-        <item quantity="other">These items cannot be delivered using <b><font color='#000000'>Dash Delivery.</font></b>. The following will be removed from your cart:</item>
+    <plurals name="remove_items_dash_dialog_title">
+        <item quantity="one">This item isn’t available using Dash Delivery. Save it to a shopping list instead.</item>
+        <item quantity="other">These items aren’t available using Dash Delivery. Save it to a shopping list instead.</item>
     </plurals>
 
-    <plurals name="remove_items_standard_dialog_desc">
-        <item quantity="one">This item cannot be delivered using <b><font color='#000000'>Standard Delivery.</font></b>. The following will be removed from your cart:</item>
-        <item quantity="other">These items cannot be delivered using <b><font color='#000000'>Standard Delivery.</font></b>. The following will be removed from your cart:</item>
+    <plurals name="remove_items_standard_dialog_title">
+        <item quantity="one">This item isn’t available using Standard Delivery. Save it to a shopping list instead.</item>
+        <item quantity="other">These items aren’t available using Standard Delivery. Save it to a shopping list instead.</item>
     </plurals>
 
-    <plurals name="remove_items_cnc_dialog_desc">
-        <item quantity="one">This item cannot be delivered using <b><font color="black">Click &amp; Collect.</font></b>. The following will be removed from your cart:</item>
-        <item quantity="other">These items cannot be delivered using <b><font color="black">Click &amp; Collect.</font></b>. The following will be removed from your cart:</item>
+    <plurals name="remove_items_cnc_dialog_title">
+        <item quantity="one">This item isn’t available using Click &amp; Collect. Save it to a shopping list instead.</item>
+        <item quantity="other">These items aren’t available using Click &amp; Collect. Save it to a shopping list instead.</item>
     </plurals>
 
-    <plurals name="unsellable_title">
-        <item quantity="one">This Item Will Be Removed From Your Cart.</item>
-        <item quantity="other">@string/these_items_will_be_removed_from_your_cart</item>
-    </plurals>
+    <string name="unsellable_subtitle">The following will be removed from your cart.</string>
     <string name="minspend_error_msg_cart">A minimum spend of R%s is required to checkout.</string>
     <string name="minspend_error_msg_title">A minimum spend of R%.1f is required to checkout.</string>
     <string name="minspend_error_msg_desc">To complete your purchase, increase your order value, or change your delivery method.</string>
@@ -2727,7 +2727,7 @@
     <string name="status_collected">Collected</string>
     <string name="empty" />
     <string name="dash_item_limit_message">Dash orders allow %d items max</string>
-    <string name="delete_your_profile">DELETE YOUR PROFILE</string>
+    <string name="delete_your_profile">Delete Your Profile</string>
     <string name="start_the_process">Start The Process</string>
     <string name="delete_account_description">If you delete your profile, you won\'t be able to log into your account, view any account information, view history, or access any of our related apps.</string>
     <string name="delete_online_profile">Delete Online Profile</string>
@@ -2863,6 +2863,10 @@
         <item quantity="one">%1$s %2$s Item</item>
         <item quantity="other">%1$s %2$s Items</item>
     </plurals>
+    <plurals name="added_to_list">
+        <item quantity="one">%1$d Item Added To %2$s</item>
+        <item quantity="other">%1$d Items Added To %2$s</item>
+    </plurals>
     <string name="select_your_marital_status">Select your marital status</string>
 
     <string name="my_products">My Products</string>
@@ -2955,7 +2959,7 @@
     <string name="food_fashion_beauty_and_home_products_available">%1$s\nFood, Fashion, Beauty and Home products available.</string>
     <string name="food_fashion_beauty_and_home_products_available_tool_tip">Food, Fashion, Beauty and Home products available.</string>
 
-    <string name="my_offer_wpet_care_classic_plan_label">Pet insurance</string>
+    <string name="my_offer_wpet_care_classic_plan_label">WPETInsure</string>
     <string name="my_offer_wpet_care_classic_plan_desc">Give your furry friend the cover they deserve</string>
     <string name="my_offer_wpet_care_classic_plan_button_label">get cover</string>
 
@@ -3024,21 +3028,52 @@
     <string name="pet_insurance_care">PET</string>
     <string name="error_message_400">We are unable to process your request, Please \ncontact our call centre on \n0861 50 20 10</string>
     <string name="paws.pet.loading">Loading…</string>
+    <string name="label_collection">\u0020Collection.</string>
+    <string name="label_dash">\u0020Dash.</string>
+    <string name="shop_by_category">Shop By Category</string>
+    <string name="pet_insurance_my_cover">My Cover</string>
+    <string name="pet_care_title">WPet Care</string>
+    <!--Geo location Enhancements -->
     <string name="geo_loc_error_msg_title">We can’t seem to find you here.</string>
     <string name="street_address_lbl">Street Address:*</string>
     <string name="recipient_name_placeholder">Recipient Name: *</string>
-    <string name="additional_details">Additional Details:</string>
+    <string name="additional_details">Additional Location Details: *</string>
     <string name="office_details">Office Details:*</string>
     <string name="complex_estate">Complex/Estate:*</string>
     <string name="unit_number_floor">Unit Number/Floor:*</string>
     <string name="change_address_btn_text">CHANGE</string>
     <string name="use">USE\u0020</string>
-    <string name="pet_insurance_my_cover">My Cover</string>
-    <string name="pet_care_title">WPet Care</string>
-    <string name="label_collection">\u0020Collection.</string>
-    <string name="label_dash">\u0020Dash.</string>
-    <string name="shop_by_category">Shop By Category</string>
+    <string name="no_location_settings_msg">Search for an address, the name of a complex, or your closest landmark (e.g. a Woolies store).</string>
+    <string name="location_settings_mesg"><u>Turn Location Settings On</u></string>
+    <string name="adjust_to_exact_location">Adjust to exact location</string>
+    <string name="use_location">USE LOCATION</string>
+    <string name="sign_in_to_see_saved_addresses"><u>SIGN IN</u> TO SEE SAVED ADDRESSES</string>
+    <string name="enable_location_services">Enable Location Services</string>
+    <string name="house_details">House Details:</string>
+    <string name="un_Indexed_address_popup_title">Please share any details that will help us identify this location more clearly.</string>
+    <string name="un_Indexed_address_popup_additional_info_placeholder">Add a location description, or additional instructions:</string>
+    <string name="geo_loc_error_msg_with_out_pin">Please use a general location <b>near you</b> instead. Search for an address, the name of a complex, your closest landmark (e.g. a Woolies store). </string>
     <string name="payflex_is_unavailable_when_buying_food_items_and_gift_cards">Payflex is unavailable when buying Food items and Gift Cards.</string>
     <string name="open_until">Open until %s</string>
+    <string name="contact_us_email_message_placeholder">Please provide details about your query.</string>
+    <string name="save_item_to_list_text"></string>
+    <plurals name="save_item_to_list_text">
+        <item quantity="one">Save this item to a list to shop later.</item>
+        <item quantity="other">Save these items to a list to shop later.</item>
+    </plurals>
 
+    <string name="add_to_list_progress_title">Adding Your Items\n to %s</string>
+    <string name="add_to_list_progress_bar_title">Adding Your Items\n to a List</string>
+    <string name="add_to_list_bottom_sheet_success_title">We\’ve added your items to the ‘Saved Shopping’ List</string>
+    <string name="add_to_list_bottom_sheet_success_sub_title">You will be able to add them to your cart from there.</string>
+
+    <string name="add_to_list_error_description">The items were unable to be added to a list.</string>
+
+
+    <string name="oops_something_went_wrong">Oops. Something Went Wrong</string>
+    <string name="added_to_list_desc">THIS EXCLUDES FREE GIFT ITEMS</string>
+    <string name="multiple_lists">Multiple Lists</string>
+    <string name="add_to_list_failure">Failed to add to list. Please try again later.</string>
+    <string name="hint_list_name">List Name</string>
+    <string name="create_list_name_error">Unfortunately, this list name already exists.\nPlease try another option.</string>
 </resources>

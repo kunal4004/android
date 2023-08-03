@@ -54,7 +54,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvDocumentTitle"/>
 
-    <za.co.woolworths.financial.services.android.ui.views.WTextView
+    <TextView
         android:id="@+id/tvDescription"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -65,8 +65,7 @@
         android:lineSpacingExtra="6sp"
         android:text="@string/follow_instruction"
         android:textColor="@color/black_50"
-        android:textSize="14sp"
-        app:WTextView_font="myriadpro_regular"
+        style="@style/opensans_regular_12_text_style"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:contentDescription="@string/information_layout"

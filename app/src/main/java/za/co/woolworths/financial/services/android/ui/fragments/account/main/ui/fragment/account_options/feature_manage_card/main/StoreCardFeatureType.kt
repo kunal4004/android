@@ -5,6 +5,12 @@ import kotlinx.android.parcel.Parcelize
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCard
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 
+class  StoreCardEnhancementConstant() {
+    companion object {
+        const val NewCard = "NewCard"
+    }
+}
+
 sealed class StoreCardFeatureType : Parcelable {
 
     @Parcelize
@@ -85,5 +91,6 @@ sealed class StoreCardFeatureType : Parcelable {
     ) : StoreCardFeatureType()
 
     @Parcelize
-    object ManageMyCard : StoreCardFeatureType()
+    data class ManageMyCard(var storeCard: StoreCard?,
+                            var cardHolderName: String? = KotlinUtils.getCardHolderNameSurname()) : StoreCardFeatureType()
 }

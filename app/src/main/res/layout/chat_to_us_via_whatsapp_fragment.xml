@@ -174,13 +174,13 @@
 
     <TextView
         android:id="@+id/whatsappNumberLabelTextView"
+        style="@style/opensans_regular_13_black"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_marginStart="11dp"
-        android:fontFamily="@font/myriad_pro_regular_otf"
         android:gravity="center|start"
         android:text="@string/whatsapp_number_label"
-        android:textSize="17sp"
+        android:textSize="15sp"
         app:autoSizeMaxTextSize="17sp"
         app:autoSizeMinTextSize="12sp"
         app:autoSizeStepGranularity="1sp"

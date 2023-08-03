@@ -131,7 +131,7 @@ fun OnBoardingItem(item: WalkThrough) {
         TextFuturaFamilyHeader1(
             text = stringResource(id = item.stringId),
             locator = textLocator,
-            color = Black,
+            textColor = Black,
             textAlign = TextAlign.Center,
             fontSize = FontDimensions.sp16,
             brush = null,

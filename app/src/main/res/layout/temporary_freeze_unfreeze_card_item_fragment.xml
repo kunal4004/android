@@ -17,18 +17,21 @@
         <ImageView
             android:id="@+id/storeCardItem3ImageView"
             style="@style/accountOptionsImageviewStyle"
+            android:alpha="0.3"
             android:contentDescription="@string/temporary_card_freeze_switch_button_snowflake_icon_image_on_overlay"
-            android:src="@drawable/icon_freeze_grey" />
+            android:src="@drawable/ic_temporary_freeze_card_row" />
 
         <TextView
             android:id="@+id/storeCardItem3TextView"
             style="@style/accountOptionsLabelStyle"
             android:layout_width="wrap_content"
-            android:layout_alignTop="@+id/switchTemporaryFreezeCard"
-            android:layout_alignBottom="@+id/switchTemporaryFreezeCard"
+            android:layout_centerVertical="true"
             android:layout_marginStart="21dp"
             android:layout_marginTop="2dp"
+            android:layout_toStartOf="@+id/switchTemporaryFreezeCard"
             android:layout_toEndOf="@+id/storeCardItem3ImageView"
+            android:minLines="1"
+            android:maxLines="2"
             android:contentDescription="@string/temporary_card_freeze_switch_button_text_label_on_overlay"
             android:text="@string/temporary_card_freeze_title" />
 

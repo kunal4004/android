@@ -80,7 +80,7 @@
             android:text="@string/no_connection_desc_1"
             android:textColor="@color/semi_transparent_black"
             android:background="@color/transparent"
-            app:WTextView_font="myriadpro_regular"/>
+            app:WTextView_font="opensans_regular"/>
 
         <za.co.woolworths.financial.services.android.ui.views.WButton
             android:id="@+id/btnRetry"

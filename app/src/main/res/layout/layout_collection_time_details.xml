@@ -83,7 +83,7 @@
 
             <TextView
                 android:id="@+id/txtSelectCollectionTimeSlotFoodError"
-                style="@style/myriad_pro_regular"
+                style="@style/opensans_regular_13_black"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/ten_dp"
@@ -92,7 +92,6 @@
                 android:padding="@dimen/two_dp"
                 android:text="@string/select_your_preferred_collection_time_error"
                 android:textColor="@color/color_D0021B"
-                android:textSize="@dimen/fifteen_sp"
                 android:visibility="gone"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/recyclerViewCollectionTimeSlots" />

@@ -5,8 +5,8 @@
         <item>fonts/WFutura-Medium.ttf</item>
         <item>fonts/WFutura-SemiBold.ttf</item>
         <item>fonts/WFutura-Bold.ttf</item>
-        <item>fonts/MyriadPro-Regular.otf</item>
-        <item>fonts/MyriadPro-Semibold.otf</item>
+        <item>fonts/OpenSans-Regular.ttf</item>
+        <item>fonts/OpenSans-SemiBold.ttf</item>
     </string-array>
     <!-- navigation drawer item labels  -->
 

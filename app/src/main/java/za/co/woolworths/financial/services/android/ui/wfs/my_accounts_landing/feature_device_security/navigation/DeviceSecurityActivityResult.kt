@@ -54,7 +54,7 @@ class DeviceSecurityActivityResult @Inject constructor(private val activity : Ac
         activityLauncher: BetterActivityResult<Intent, ActivityResult>?
     ) {
         val deviceSecurityIntent =
-            createDeviceSecurityIntent(deepLinkParams = deepLinkParams, applyNowState)
+            createDeviceSecurityIntent(deepLinkParams = deepLinkParams, applyNowState = applyNowState)
         deviceSecurityIntent ?: return
         activityLauncher?.launch(deviceSecurityIntent, onActivityResult = { result ->
             setDeviceSecurityResultCode(applyNowState = applyNowState,viewModel = viewModel, resultCode = result.resultCode)

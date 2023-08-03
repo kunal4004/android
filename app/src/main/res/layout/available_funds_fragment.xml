@@ -100,7 +100,6 @@
         android:layout_marginBottom="0dp"
         android:letterSpacing="0.021"
         android:text="@string/available_funds"
-        android:textSize="@dimen/fifteen_sp"
         app:layout_constraintBottom_toTopOf="@+id/availableFundsValueEndGuideLine"
         app:layout_constraintEnd_toStartOf="@+id/endGuide"
         app:layout_constraintHorizontal_bias="0.536"

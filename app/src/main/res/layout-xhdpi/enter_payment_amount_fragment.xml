@@ -75,7 +75,7 @@
         style="@style/enterPaymentAmountOverdueValueStyle"
         android:layout_marginTop="15dp"
         android:text="@string/currency_placeholder"
-        android:textSize="@dimen/fourteen_sp"
+        android:textSize="@dimen/twelve_sp"
         app:layout_constraintEnd_toStartOf="@+id/endGuideline"
         app:layout_constraintTop_toBottomOf="@+id/amountDividerView" />
 

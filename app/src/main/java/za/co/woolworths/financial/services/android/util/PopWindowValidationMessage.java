@@ -22,6 +22,8 @@ import android.view.animation.TranslateAnimation;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
+
 import com.awfs.coordination.R;
 import java.util.List;
 
@@ -46,7 +48,7 @@ public class PopWindowValidationMessage {
 
 	public enum OVERLAY_TYPE {
 		CONFIDENTIAL, INSOLVENCY, INFO, EMAIL, ERROR, MANDATORY_FIELD,
-		HIGH_LOAN_AMOUNT, LOW_LOAN_AMOUNT, STORE_LOCATOR_DIRECTION, SIGN_OUT, BARCODE_ERROR,
+		HIGH_LOAN_AMOUNT, LOW_LOAN_AMOUNT, STORE_LOCATOR_DIRECTION, BARCODE_ERROR,
 		SHOPPING_LIST_INFO
 	}
 
@@ -68,7 +70,7 @@ public class PopWindowValidationMessage {
 				mView = mLayoutInflater.inflate(R.layout.error_popup, null);
 				popupWindowSetting(mView);
 				WButton mOverlayBtn = (WButton) mView.findViewById(R.id.btnOverlay);
-				WTextView mOverlayDescription = (WTextView) mView.findViewById(R.id.overlayDescription);
+				TextView mOverlayDescription = (TextView) mView.findViewById(R.id.overlayDescription);
 				if (description != null)
 					mOverlayDescription.setText(description);
 				setAnimation();
@@ -87,12 +89,12 @@ public class PopWindowValidationMessage {
 				mView = mLayoutInflater.inflate(R.layout.open_overlay_got_it, null);
 				popupWindowSetting(mView);
 				WTextView mOverlayTitle = (WTextView) mView.findViewById(R.id.textApplicationNotProceed);
-				mOverlayDescription = (WTextView) mView.findViewById(R.id.overlayDescription);
+				TextView overlayDescription = mView.findViewById(R.id.overlayDescription);
 				mOverlayBtn = (WButton) mView.findViewById(R.id.btnOverlay);
 				LinearLayout mLinEmail = (LinearLayout) mView.findViewById(R.id.linEmail);
 				mLinEmail.setVisibility(View.GONE);
 				mOverlayTitle.setVisibility(View.GONE);
-				mOverlayDescription.setText(description);
+				overlayDescription.setText(description);
 				mOverlayBtn.setText(getString(R.string.got_it));
 				setAnimation();
 				mRelPopContainer.setAnimation(mFadeInAnimation);
@@ -251,29 +253,6 @@ public class PopWindowValidationMessage {
 						});
 				break;
 
-			case SIGN_OUT:
-				mView = mLayoutInflater.inflate(R.layout.sign_out, null);
-				popupWindowSetting(mView);
-				setAnimation();
-				mRelPopContainer.setAnimation(mFadeInAnimation);
-				mRelRootContainer.setAnimation(mPopEnterAnimation);
-//                mView.findViewById(R.id.btnOK)
-//                        .setOnClickListener(new View.OnClickListener() {
-//                            @Override
-//                            public void onClick(View v) {
-//                                startExitAnimation(overlay_type);
-//                            }
-//                        });
-
-				mRelPopContainer
-						.setOnClickListener(new View.OnClickListener() {
-							@Override
-							public void onClick(View v) {
-								startExitAnimation(overlay_type.ERROR);
-							}
-						});
-
-				break;
 
 			case EMAIL:
 				mView = mLayoutInflater.inflate(R.layout.cli_email_layout, null);
@@ -343,11 +322,6 @@ public class PopWindowValidationMessage {
 			public void onAnimationEnd(Animation animation) {
 				dismissLayout();
 				showStatusBar((Activity) mContext);
-				switch (type) {
-					case SIGN_OUT:
-						ScreenManager.presentSSOLogout((Activity) mContext);
-						break;
-				}
 			}
 		});
 		mRelRootContainer.startAnimation(animation);

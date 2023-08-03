@@ -34,17 +34,16 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"/>
 
-    <za.co.woolworths.financial.services.android.ui.views.WTextView
+    <TextView
         android:id="@+id/tvNoStatementDesc"
         android:layout_width="0dp"
+        style="@style/opensans_regular_13_black"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:gravity="center_horizontal"
         android:lineSpacingExtra="5sp"
         android:text="@string/no_statements_desc"
         android:textColor="@color/black_50"
-        android:textSize="@dimen/fifteen_sp"
-        app:WTextView_font="myriadpro_regular"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

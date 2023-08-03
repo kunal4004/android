@@ -12,6 +12,7 @@ import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.awfs.coordination.R;
 import com.google.gson.Gson;
@@ -72,7 +73,7 @@ public class StoreFinderListFragment extends Fragment implements UpdateStoreFind
 		onItemSelected();
 		wGlobalState = ((WoolworthsApplication) getActivity().getApplication()).getWGlobalState();
 		// handle store card
-		WTextView tvFlStockFinderMapHeader = view.findViewById(R.id.flStockFinderMapHeader);
+		TextView tvFlStockFinderMapHeader = view.findViewById(R.id.flStockFinderMapHeader);
 		if (!TextUtils.isEmpty(mCardContactInfo)) {
 			tvFlStockFinderMapHeader.setVisibility(View.VISIBLE);
 			tvFlStockFinderMapHeader.setText(mCardContactInfo);

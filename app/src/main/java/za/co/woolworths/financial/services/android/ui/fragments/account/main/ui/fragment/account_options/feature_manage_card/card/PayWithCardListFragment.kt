@@ -28,7 +28,6 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class PayWithCardListFragment : Fragment(R.layout.pay_with_card_list_fragment) {
-
     companion object {
         const val PAY_WITH_CARD_ON_DISMISS_RESULT_LISTENER = "PAY_WITH_CARD_ON_DISMISS_RESULT_LISTENER"
         const val PAY_WITH_CARD_REQUEST_LISTENER  = "PAY_WITH_CARD_REQUEST_LISTENER"
@@ -37,7 +36,7 @@ class PayWithCardListFragment : Fragment(R.layout.pay_with_card_list_fragment) {
     private var binding: PayWithCardListFragmentBinding? = null
     @Inject lateinit var router: ProductLandingRouterImpl
 
-    private val viewModel: MyAccountsRemoteApiViewModel by activityViewModels()
+    val viewModel: MyAccountsRemoteApiViewModel by activityViewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -91,17 +90,6 @@ class PayWithCardListFragment : Fragment(R.layout.pay_with_card_list_fragment) {
             }
         }
 
-        howItWorksRelativeLayout.onClick {
-            Utils.triggerFireBaseEvents(
-                FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_VTC_HOW_TO,
-                requireActivity()
-            )
-            router.routeToHowItWorks(
-                requireActivity(),
-                viewModel.dataSource.isStaffMemberAndHasTemporaryCard(),
-                viewModel.dataSource.getVirtualCardStaffMemberMessage()
-            )
-        }
     }
 
     private fun PayWithCardListFragmentBinding.initPayWithCard() {

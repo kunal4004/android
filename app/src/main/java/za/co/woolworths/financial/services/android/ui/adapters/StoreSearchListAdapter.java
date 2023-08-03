@@ -29,16 +29,16 @@ public class StoreSearchListAdapter extends RecyclerView.Adapter<StoreSearchList
 		WTextView storeName;
 		WTextView storeOfferings;
 		TextView storeDistance;
-		WTextView storeAddress;
-		WTextView storeTimeing;
+		TextView storeAddress;
+		TextView storeTimeing;
 
 		public SearchViewHolder(View cView) {
 			super(cView);
 			storeName = (WTextView) cView.findViewById(R.id.storeName);
 			storeOfferings = (WTextView) cView.findViewById(R.id.offerings);
 			storeDistance =  cView.findViewById(R.id.distance);
-			storeAddress = (WTextView) cView.findViewById(R.id.storeAddress);
-			storeTimeing = (WTextView) cView.findViewById(R.id.timeing);
+			storeAddress = (TextView) cView.findViewById(R.id.storeAddress);
+			storeTimeing = (TextView) cView.findViewById(R.id.timeing);
 		}
 	}
 

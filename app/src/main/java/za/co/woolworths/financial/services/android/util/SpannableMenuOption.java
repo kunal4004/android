@@ -30,7 +30,7 @@ public class SpannableMenuOption {
         SpannableString mTextSearchStoreLoc = new SpannableString(s);
         int mStoreFontSize = mContext.getResources().getDimensionPixelSize(R.dimen.search_store);
         int length = mTextSearchStoreLoc.length();
-        Typeface mTypfaceMyriadPro =  Typeface.createFromAsset(mContext.getAssets(), "fonts/MyriadPro-Regular.otf");
+        Typeface mTypfaceMyriadPro =  Typeface.createFromAsset(mContext.getAssets(), "OpenSans-Regular.ttf");
         mTextSearchStoreLoc.setSpan (new CustomTypefaceSpan("",mTypfaceMyriadPro), 0, length, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
         mTextSearchStoreLoc.setSpan(new ForegroundColorSpan(ContextCompat.getColor(mContext, R.color.indicator_unselected)), 0, length, 0);
         mTextSearchStoreLoc.setSpan(new AbsoluteSizeSpan(mStoreFontSize), 0, length, SPAN_INCLUSIVE_INCLUSIVE);

@@ -244,6 +244,9 @@ class GetReplacementCardFragment : MyCardExtension(R.layout.replace_card_fragmen
             EventType.LOCATION_DISABLED_ON_DEVICE -> {
                 Logger.logDebug("Permission NOT granted permanently")
             }
+            EventType.LOCATION_SERVICE_DISCONNECTED -> {
+                // do nothing
+            }
         }
     }
 

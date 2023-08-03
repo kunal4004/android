@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.models;
 
-import static com.clarisite.mobile.StartupSettings.StartupSettingsBuilder.aSettingsBuilder;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
@@ -22,9 +21,10 @@ import androidx.lifecycle.ProcessLifecycleOwner;
 
 import com.awfs.coordination.BuildConfig;
 import com.awfs.coordination.R;
-import com.clarisite.mobile.Glassbox;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.imagepipeline.core.ImagePipelineConfig;
+import com.facebook.imagepipeline.core.ImageTranscoderType;
+import com.facebook.imagepipeline.core.MemoryChunkType;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 import com.google.firebase.FirebaseApp;
@@ -160,8 +160,11 @@ public class WoolworthsApplication extends Application implements Application.Ac
         TimeZone.setDefault(TimeZone.getTimeZone("Africa/Johannesburg"));
 
         ImagePipelineConfig config = ImagePipelineConfig.newBuilder(this)
-                .setDownsampleEnabled(true)
-                .build();
+                        .setDownsampleEnabled(true)
+                        .setMemoryChunkType(MemoryChunkType.BUFFER_MEMORY)
+                        .setImageTranscoderType(ImageTranscoderType.JAVA_TRANSCODER)
+                        .experiment().setNativeCodeDisabled(true)
+                        .build();
         Fresco.initialize(this, config);
 
         // Initialise Firebase and Huawei Analytics (if this is a Huawei variant)
@@ -180,21 +183,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
         getTracker();
         bus = new RxBus();
         vtoSyncServer();
-        initializeGlassBoxSDK();
 
-    }
-
-    //GlassBox SDK for record screen session
-    private void initializeGlassBoxSDK() {
-        try {
-            Glassbox.start(aSettingsBuilder()
-                    .withApplicationCtx(this)
-                    .withAppId(AppConfigSingleton.getGlassBox().getAppId())
-                    .withReportUrl(AppConfigSingleton.getGlassBox().getReportUrl())
-                    .build());
-        } catch (Exception e) {
-            FirebaseManager.Companion.logException(e);
-        }
     }
 
     private void initializeAnalytics() {

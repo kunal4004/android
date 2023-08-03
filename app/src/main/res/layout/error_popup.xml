@@ -29,8 +29,9 @@
                 android:paddingBottom="@dimen/bank_spacing_width"
                 android:paddingTop="@dimen/bank_spacing_width">
 
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                <TextView
                     android:id="@+id/overlayDescription"
+                    style="@style/opensans_regular_13_black"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@color/white"
@@ -38,9 +39,8 @@
                     android:contentDescription="@string/errorMessageText"
                     android:lineSpacingExtra="1.4dp"
                     android:text="@string/cli_lorem_ipsum"
-                    android:textColor="@color/semi_transparent_black"
-                    android:textSize="15sp"
-                    app:WTextView_font="myriadpro_regular"/>
+                    android:textColor="@color/checkout_delivering_title"
+                 />
 
             </LinearLayout>
 

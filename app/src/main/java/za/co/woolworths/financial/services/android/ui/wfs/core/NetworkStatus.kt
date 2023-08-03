@@ -21,6 +21,7 @@ data class NetworkStatusUI<T>(
 sealed class RetrofitFailureResult {
     data class ServerResponse<T>(val data : T) : RetrofitFailureResult()
     object NoConnectionState : RetrofitFailureResult()
+    data class SessionTimeout<T>(val data : T?) : RetrofitFailureResult()
     object SocketTimeOut : RetrofitFailureResult()
 }
 
@@ -39,6 +40,7 @@ suspend fun <T : Any> mapNetworkCallToViewStateFlow(ioOperation: suspend () -> F
             when (task) {
                 is CoreDataSource.IOTaskResult.Success -> ViewState.RenderSuccess(task.data)
                 is CoreDataSource.IOTaskResult.OnFailure -> ViewState.RenderErrorFromResponse(task.data)
+                is CoreDataSource.IOTaskResult.OnSessionTimeOut -> ViewState.RenderErrorFromResponse(task.data)
                 is CoreDataSource.IOTaskResult.OnFailed -> ViewState.RenderFailure(task.throwable)
                 is CoreDataSource.IOTaskResult.Empty -> ViewState.RenderEmpty
                 is CoreDataSource.IOTaskResult.NoConnectionState -> ViewState.RenderNoConnection
@@ -58,11 +60,20 @@ suspend fun <T : Any> mapNetworkState(ioOperation: suspend () -> Flow<CoreDataSo
         emit(viewState)
         ioOperation().flowOn(Dispatchers.IO).map { task ->
             when (task) {
-                is CoreDataSource.IOTaskResult.Success -> viewState.copy(
-                    data = task.data,
+                is CoreDataSource.IOTaskResult.Success -> {
+                    viewState.copy(
+                        data = task.data,
+                        isLoading = false,
+                        hasError = false,
+                        errorMessage = null
+                    )
+                }
+
+                is CoreDataSource.IOTaskResult.OnSessionTimeOut -> viewState.copy(
+                    data = null,
                     isLoading = false,
-                    hasError = false,
-                    errorMessage = null
+                    hasError = true,
+                    errorMessage = RetrofitFailureResult.SessionTimeout(data = task.data)
                 )
 
                 is CoreDataSource.IOTaskResult.OnFailure -> viewState.copy(

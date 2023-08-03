@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.awfs.coordination.R;
 
@@ -35,12 +36,12 @@ public class POIDocumentSubmitTypeAdapter extends RecyclerView.Adapter<POIDocume
 
 	public class MyViewHolder extends RecyclerView.ViewHolder {
 		private ImageView imBankLogo, imgSelectBank;
-		private WTextView tvAccountType;
+		private TextView tvAccountType;
 		private RelativeLayout relDeaBank;
 
 		public MyViewHolder(View view) {
 			super(view);
-			tvAccountType = (WTextView) view.findViewById(R.id.tvBankName);
+			tvAccountType = (TextView) view.findViewById(R.id.tvBankName);
 			relDeaBank = (RelativeLayout) view.findViewById(R.id.relDeaBank);
 			imBankLogo = (ImageView) view.findViewById(R.id.imBankLogo);
 			imgSelectBank = (ImageView) view.findViewById(R.id.imgSelectBank);

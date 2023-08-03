@@ -50,7 +50,7 @@
                     android:text="@string/amount_of_time_info"
                     android:textColor="@color/black_50"
                     android:textSize="13sp"
-                    app:WTextView_font="myriadpro_regular" />
+                    app:WTextView_font="opensans_regular" />
 
                 <LinearLayout
                     android:id="@+id/llSlideToEditContainer"
@@ -141,7 +141,7 @@
 
                 <RelativeLayout style="@style/offer_relative_rowtype_style">
 
-                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    <TextView
                         style="@style/offer_relative_rowtype_key_style"
                         android:layout_toStartOf="@+id/llCPCurrentCreditLimit"
                         android:contentDescription="@string/currentCreditLimitTextLabel"
@@ -171,7 +171,7 @@
 
                 <RelativeLayout style="@style/offer_relative_rowtype_style">
 
-                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    <TextView
                         style="@style/offer_relative_rowtype_key_style"
                         android:layout_toStartOf="@+id/llCPAdditionalCreditLimit"
                         android:contentDescription="@string/additionalCreditLimitTextLabel"
@@ -200,7 +200,7 @@
 
                 <RelativeLayout style="@style/offer_relative_rowtype_style">
 
-                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    <TextView
                         style="@style/offer_relative_rowtype_key_style"
                         android:layout_toStartOf="@+id/llCPNewCreditLimit"
                         android:contentDescription="@string/newCreditLimitTextLabel"

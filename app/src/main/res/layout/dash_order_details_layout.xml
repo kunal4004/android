@@ -32,7 +32,9 @@
 
         <TextView
             android:id="@+id/addShoppingListButton"
-            style="@style/myriad_pro_regular"
+            style="@style/opensens_regular"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_weight="0.5"
             android:text="@string/add_to_list"
             android:gravity="end"

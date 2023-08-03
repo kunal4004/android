@@ -26,17 +26,16 @@
 
     <TextView
         android:id="@+id/failureLinkCardDescriptionTextView"
+        style="@style/opensans_regular_13_black"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="54dp"
         android:layout_marginTop="12dp"
         android:layout_marginEnd="54dp"
-        android:fontFamily="@font/myriad_pro_regular_otf"
         android:gravity="center"
         android:lineSpacingMultiplier="1.40"
         android:text="@string/link_card_failure"
         android:textColor="@color/charcoal_grey"
-        android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/failureTitleTextView" />

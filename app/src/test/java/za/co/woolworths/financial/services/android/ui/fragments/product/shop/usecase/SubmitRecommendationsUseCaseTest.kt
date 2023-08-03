@@ -10,20 +10,23 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.MockedStatic
-import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mockStatic
+import org.mockito.Mockito.`when`
 import org.powermock.core.classloader.annotations.PrepareForTest
 import org.powermock.modules.junit4.PowerMockRunner
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.cart.DeliveryDetails
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.DiscountDetails
 import za.co.woolworths.financial.services.android.models.network.Resource
 import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.recommendations.data.repository.RecommendationsRepository
 import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.RecommendationResponse
+import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.RecommendationRequest
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.dummydata.SubmittedOrdersResponseDummy
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.fake.RecommendationsRepositoryImplFake
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.utils.mock
 
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -38,6 +41,7 @@ class SubmitRecommendationsUseCaseTest {
     @Before
     fun setUp() {
         utilStaticMock = mockStatic(Utils::class.java)
+        WoolworthsApplication.testSetInstance(mock())
     }
 
     @After
@@ -50,7 +54,7 @@ class SubmitRecommendationsUseCaseTest {
         `when`(Utils.getMonetateId()).thenReturn("some-dummy-monetate-id")
         val submitOrderResponse = SubmittedOrdersResponseDummy.validSubmittedOrderResponse()
 
-        val response = submitRecommendationsUseCase(submitOrderResponse)
+        val response = submitRecommendationsUseCase.invoke(submitOrderResponse)
 
         assertEquals(response.status, Status.SUCCESS)
         assertNotNull(response.data)
@@ -146,20 +150,25 @@ class SubmitRecommendationsUseCaseTest {
     ) {
         val currency = "ZAR"
         assertEquals(recommendationRequest?.monetateId, "some-dummy-monetate-id")
-        assertEquals(recommendationRequest?.events?.size, 1)
+        assertEquals(recommendationRequest?.events?.size, 4)
 
-        val event = recommendationRequest?.events?.get(0)
+        val eventPageView = recommendationRequest?.events?.get(0) as? Event
+        assertEquals(eventPageView?.eventType, "monetate:context:PageView")
+        assertEquals(eventPageView?.url, "/orderDetails")
+        assertEquals(eventPageView?.pageType, "purchase")
 
-        assertEquals(event?.orderId, "order-id-101")
-        assertEquals(event?.eventType, "monetate:context:Purchase")
-        assertEquals(event?.purchaseLines?.size, 6)
-        assertEquals(event?.url, null)
-        assertEquals(event?.cartLines, null)
-        assertEquals(event?.categories, null)
-        assertEquals(event?.pageType, null)
-        assertEquals(event?.products, null)
+        val eventPurchase = recommendationRequest?.events?.get(1) as? Event
 
-        val foodProduct1 = event?.purchaseLines?.filter { it?.pid == "food-product-1" }?.get(0)
+        assertEquals(eventPurchase?.orderId, "order-id-101")
+        assertEquals(eventPurchase?.eventType, "monetate:context:Purchase")
+        assertEquals(eventPurchase?.purchaseLines?.size, 6)
+        assertEquals(eventPurchase?.url, null)
+        assertEquals(eventPurchase?.cartLines, null)
+        assertEquals(eventPurchase?.categories, null)
+        assertEquals(eventPurchase?.pageType, null)
+        assertEquals(eventPurchase?.products, null)
+
+        val foodProduct1 = eventPurchase?.purchaseLines?.filter { it?.pid == "food-product-1" }?.get(0)
         assertEquals(foodProduct1?.pid, "food-product-1")
         assertEquals(foodProduct1?.sku, "food-product-1")
         assertEquals(foodProduct1?.currency, currency)
@@ -167,7 +176,7 @@ class SubmitRecommendationsUseCaseTest {
         assertEquals(foodProduct1?.value, 15.0)
 
 
-        val foodProduct2 = event?.purchaseLines?.filter { it?.pid == "food-product-2" }?.get(0)
+        val foodProduct2 = eventPurchase?.purchaseLines?.filter { it?.pid == "food-product-2" }?.get(0)
         assertEquals(foodProduct2?.pid, "food-product-2")
         assertEquals(foodProduct2?.sku, "food-product-2")
         assertEquals(foodProduct2?.currency, currency)
@@ -175,28 +184,28 @@ class SubmitRecommendationsUseCaseTest {
         assertEquals(foodProduct2?.value, 20.0)
 
 
-        val otherProduct1 = event?.purchaseLines?.filter { it?.pid == "other-product-1" }?.get(0)
+        val otherProduct1 = eventPurchase?.purchaseLines?.filter { it?.pid == "other-product-1" }?.get(0)
         assertEquals(otherProduct1?.pid, "other-product-1")
         assertEquals(otherProduct1?.sku, "other-product-1")
         assertEquals(otherProduct1?.currency, currency)
         assertEquals(otherProduct1?.quantity, 1)
         assertEquals(otherProduct1?.value, 25.0)
 
-        val otherProduct2 = event?.purchaseLines?.filter { it?.pid == "other-product-2" }?.get(0)
+        val otherProduct2 = eventPurchase?.purchaseLines?.filter { it?.pid == "other-product-2" }?.get(0)
         assertEquals(otherProduct2?.pid, "other-product-2")
         assertEquals(otherProduct2?.sku, "other-product-2")
         assertEquals(otherProduct2?.currency, currency)
         assertEquals(otherProduct2?.quantity, 2)
         assertEquals(otherProduct2?.value, 30.0)
 
-        val shippingItem = event?.purchaseLines?.filter { it?.pid == "SHIPPING" }?.get(0)
+        val shippingItem = eventPurchase?.purchaseLines?.filter { it?.pid == "SHIPPING" }?.get(0)
         assertEquals(shippingItem?.pid, "SHIPPING")
         assertEquals(shippingItem?.sku, "SHIPPING")
         assertEquals(shippingItem?.currency, currency)
         assertEquals(shippingItem?.quantity, 1)
         assertEquals(shippingItem?.value, 200.0)
 
-        val discountItem = event?.purchaseLines?.filter { it?.pid == "DISCOUNT" }?.get(0)
+        val discountItem = eventPurchase?.purchaseLines?.filter { it?.pid == "DISCOUNT" }?.get(0)
         assertEquals(discountItem?.pid, "DISCOUNT")
         assertEquals(discountItem?.sku, "DISCOUNT")
         assertEquals(discountItem?.currency, currency)

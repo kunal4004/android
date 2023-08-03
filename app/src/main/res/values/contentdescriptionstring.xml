@@ -217,4 +217,5 @@
     <string name="embossed_user_name_for_active_temp_store_card_on_overlay_image">embossed_user_name_for_active_temp_store_card_on_overlay_image</string>
     <string name="active_vtsc_card_image_on_overlay">active_vtsc_card_image_on_overlay</string>
     <string name="button_my_card_has_arrived">button_my_card_has_arrived</string>
+    <string name="active_store_card_image_on_overlay_new_card">active_store_card_image_on_overlay_new_card</string>
 </resources>

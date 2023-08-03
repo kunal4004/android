@@ -96,7 +96,7 @@ class AccountLandingEventLauncherImpl @Inject constructor(
             when (event) {
                 is OfferClickEvent -> onOffer(this, activityLauncher, event)
                 is MyProfile -> onMyProfile(event, this, activityLauncher)
-                is General -> onGeneral(this, event)
+                is General -> onGeneral(this, event, activityLauncher)
                 is ManageLoginRegister -> onManageLoginRegister(event, activityLauncher)
                 is AccountLandingInstantLauncher -> onLaunch(activity  = activity, event = event,activityLauncher = activityLauncher)
                 else -> Unit

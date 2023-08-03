@@ -219,7 +219,7 @@ class SelectStoreDetailsFragment :
                             textView.setTypeface(
                                 Typeface.createFromAsset(
                                     it.assets,
-                                    "fonts/MyriadPro-Semibold.otf"
+                                    "fonts/OpenSans-SemiBold.ttf"
                                 )
                             )
                         }

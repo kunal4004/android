@@ -40,6 +40,7 @@
         android:id="@+id/description"
         style="@style/dialog_description_text_style"
         android:layout_marginTop="@dimen/sixteen_dp"
+        android:textSize="@dimen/fourteen_sp"
         android:text="@string/virtual_card_number_desc"
         app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
         app:layout_constraintRight_toRightOf="@+id/right_guideline"

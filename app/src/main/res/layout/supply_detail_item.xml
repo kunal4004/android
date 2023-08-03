@@ -22,15 +22,15 @@
 
     <TextView
         android:id="@+id/descriptionTextView"
+        style="@style/opensans_regular_13_black"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/default_margin"
-        android:fontFamily="@font/myriad_pro_regular"
         android:gravity="start|center"
         android:lineSpacingExtra="@dimen/four_dp"
         android:text="@string/loan_request_high_desc"
         android:textColor="@color/description_color"
-        android:textSize="@dimen/fifteen_sp" />
+        />
 
     <View style="@style/bottom_line" />
 

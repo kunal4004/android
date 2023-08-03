@@ -21,7 +21,7 @@
 
     <TextView
         android:id="@+id/suburbSelectionSubTitle"
-        style="@style/myriad_pro_regular"
+        style="@style/opensens_regular"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
@@ -45,7 +45,7 @@
         android:background="@color/white"
         android:drawableStart="@drawable/ic_search"
         android:drawablePadding="@dimen/ten_dp"
-        android:fontFamily="@font/myriad_pro_regular"
+        android:fontFamily="@font/opensans_regular"
         android:gravity="center_vertical"
         android:hint="@string/hint_search_for_your_suburb"
         android:paddingLeft="@dimen/twenty_four_dp"
@@ -53,7 +53,7 @@
         android:textColor="@color/black"
         android:textColorHint="@color/black_50"
         android:textCursorDrawable="@drawable/cursor_custom_color"
-        android:textSize="@dimen/fifteen_sp"
+        android:textSize="@dimen/thirteen_sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/suburbSelectionSubTitle" />

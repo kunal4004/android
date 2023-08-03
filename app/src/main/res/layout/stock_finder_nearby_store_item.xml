@@ -85,15 +85,14 @@
                     android:textSize="20sp"
                     app:WTextView_font="medium"/>
 
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                <TextView
+                    style="@style/opensans_regular_12_text_style"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:gravity="center"
                     android:text="@string/km"
-                    android:textColor="@color/black"
-                    android:textSize="12.5sp"
-                    app:WTextView_font="myriadpro_regular"/>
+                    android:textColor="@color/black" />
             </LinearLayout>
         </LinearLayout>
 
@@ -111,8 +110,9 @@
             android:paddingRight="5dp"
             android:paddingTop="8dp">
 
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
+            <TextView
                 android:id="@+id/storeAddress"
+                style="@style/opensans_regular_12_text_style"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
@@ -120,21 +120,19 @@
                 android:maxLines="2"
                 android:paddingRight="42dp"
                 android:textColor="@color/black"
-                android:textSize="13sp"
-                app:WTextView_font="myriadpro_regular"
 
                 />
 
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
+            <TextView
                 android:id="@+id/timeing"
+                style="@style/opensans_regular_12_text_style"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:paddingBottom="16dp"
                 android:paddingRight="16dp"
                 android:textColor="#ABABAB"
-                android:textSize="13sp"
-                app:WTextView_font="myriadpro_regular"/>
+             />
 
         </RelativeLayout>
 

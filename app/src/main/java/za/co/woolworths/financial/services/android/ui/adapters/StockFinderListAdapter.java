@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.awfs.coordination.R;
 
@@ -29,8 +30,8 @@ public class StockFinderListAdapter extends RecyclerView.Adapter<StockFinderList
 
 		WTextView storeName;
 		WTextView storeDistance;
-		WTextView storeAddress;
-		WTextView storeTimeing;
+		TextView storeAddress;
+		TextView storeTimeing;
 		WTextView offerings;
 		LinearLayout llKilometerContainer;
 
@@ -38,8 +39,8 @@ public class StockFinderListAdapter extends RecyclerView.Adapter<StockFinderList
 			super(cView);
 			storeName = (WTextView) cView.findViewById(R.id.storeName);
 			storeDistance = (WTextView) cView.findViewById(R.id.distance);
-			storeAddress = (WTextView) cView.findViewById(R.id.storeAddress);
-			storeTimeing = (WTextView) cView.findViewById(R.id.timeing);
+			storeAddress = (TextView) cView.findViewById(R.id.storeAddress);
+			storeTimeing = (TextView) cView.findViewById(R.id.timeing);
 			offerings = (WTextView) cView.findViewById(R.id.offerings);
 			llKilometerContainer = (LinearLayout) cView.findViewById(R.id.llKilometerContainer);
 		}

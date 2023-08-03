@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.wfs.contact_us.cell
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.selectable
 
@@ -7,65 +8,92 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.ui.wfs.component.*
 import za.co.woolworths.financial.services.android.ui.wfs.contact_us.model.Children
 import za.co.woolworths.financial.services.android.ui.wfs.contact_us.model.ChildrenItem
 import za.co.woolworths.financial.services.android.ui.wfs.contact_us.model.ContactUsType
+import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.extensions.testAutomationTag
+import za.co.woolworths.financial.services.android.ui.wfs.theme.Dimens
+import za.co.woolworths.financial.services.android.ui.wfs.theme.FontDimensions
 import za.co.woolworths.financial.services.android.ui.wfs.theme.Margin
+import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
 
+
+@Preview
 @Composable
-fun LabelTitle(params: LabelProperties) {
-    LabelTitleLarge(
-        params = LabelProperties(
-            label = params.label,
-            stringId = params.stringId,
-            fontSize = params.fontSize,
-            isUpperCased = params.isUpperCased,
-            style = params.style,
-            letterSpacing = params.letterSpacing,
-            modifier = params.modifier
-                .fillMaxWidth(),
-            textColor = params.textColor,
-            textAlign = params.textAlign)
+fun TitleDescriptionAndNextArrowItemPreview() {
+
+    val children = Children(
+         title= "General enquiries",
+        description = "Website and App Shopping",
+        children =mutableListOf()
     )
-}
 
-@Composable
-fun LabelMediumText(params: LabelProperties){
-    LabelMedium(
-        LabelProperties(
-            label = params.label,
-            isUpperCased = params.isUpperCased,
-            textDecoration = params.textDecoration,
-            stringId = params.stringId,
-            textAlign = TextAlign.Center,
-            fontSize = params.fontSize,
-            textColor = params.textColor,
-            letterSpacing = params.letterSpacing,
-            modifier = params.modifier
-                .fillMaxWidth()
-                .padding(start = Margin.start, top = 22.dp, bottom = 20.dp, end = 15.dp))
-    )}
+    val childItem = Children(
+        title= "Pet Insurance",
+        description = "Website and App Shopping",
+        type= ContactUsType.ACTION_EMAIL_INAPP,
+        children =mutableListOf()
+    )
+
+    val enquiryOption = ChildrenItem(
+        order = 1.0f,
+        title = "Black Credit Card Query",
+        description = null,
+        reference = "ENQUIRY_BLACK_CREDIT_CARD_QUERY_EMAIL",
+        type = null,
+        children = mutableListOf()
+    )
+
+    OneAppTheme {
+        Column (modifier = Modifier.background(Color.White)){
+            TextContactUsFuturaSemiBoldSectionHeader(stringResource(id = R.string.contact_us_financial_services))
+            SpacerHeight6dp()
+            TitleDescriptionAndNextArrowItem(children)
+            SpacerHeight6dp()
+            LeftIconTitleDescriptionAndNextArrowItem(childItem)
+            SpacerHeight6dp()
+            TextWithRadioButtonOption(item = enquiryOption, selectedOption = enquiryOption , onOptionSelected = {}, onSelected = {})
+        }
+    }
+}
 
 @Composable
 fun TitleDescriptionAndNextArrowItem(children: Children) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 24.dp, top = 16.dp, bottom = 16.dp, end = 13.dp),
+            .padding(
+                start = Margin.start,
+                top = Margin.dp16,
+                bottom = Margin.dp16,
+                end = Margin.dp13
+            ),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column(
             modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(2.dp)
+            verticalArrangement = Arrangement.Center
         ) {
-            LabelMedium(LabelProperties(label = children.title))
-            LabelSmall(LabelProperties(label = children.description))
+            TextOpenSansSemiBoldH3(
+                text =  children.title ?: "" ,
+                color = Color.Black,
+                fontSize = FontDimensions.sp13)
+            children.description?.let { description ->
+                SpacerHeight12dp(height = Dimens.two_dp)
+                TextOpenSansFontFamily(
+                    text =description,
+                    locator = description,
+                    color = Color.Black,
+                    fontSize = FontDimensions.sp12
+                )
+            }
         }
         MyIcon(id = R.drawable.ic_caret_black, contentDescriptionId = R.string.next_arrow)
     }
@@ -76,13 +104,30 @@ fun LeftIconTitleDescriptionAndNextArrowItem(item: Children) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 24.dp, top = 16.dp, bottom = 16.dp, end = 13.dp),
+            .padding(
+                start = Margin.start,
+                top = Margin.dp16,
+                bottom = Margin.dp16,
+                end = Margin.dp13
+            ),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        MyIcon(id = item.type?.iconId(), modifier = Modifier.padding(end = 16.dp))
-        Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-           LabelMedium(LabelProperties(label = item.title))
-           LabelSmall(LabelProperties(label = item.description))
+        MyIcon(id = item.type?.iconId(), modifier = Modifier)
+        SpacerWidth16dp()
+        Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.Center) {
+            TextOpenSansSemiBoldH3(
+                text =  item.title ?: "" ,
+                color = Color.Black,
+                fontSize = FontDimensions.sp13)
+            item.description?.let { description ->
+                SpacerHeight8dp(height = Dimens.four_dp)
+                TextOpenSansFontFamily(
+                    text = description,
+                    locator = description,
+                    color = Color.Black,
+                    fontSize = FontDimensions.sp12
+                )
+            }
         }
         MyIcon(
             id = R.drawable.ic_caret_black,
@@ -109,15 +154,27 @@ fun TextWithRadioButtonOption(
                     }),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Box(modifier = Modifier
-                .weight(1f)
-                .padding(start = 24.dp, end = 2.dp)
-            ) { LabelSmall(LabelProperties(label =  item.title))  }
-            CheckedUncheckedRadioButton(isChecked = item == selectedOption,
-                onClick = {
-                    onOptionSelected(item)
-                    onSelected(item)
-                })
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(
+                        start = Margin.start,
+                        end = Margin.dp2
+                    )
+            ) {
+
+                    TextOpenSansFontFamily(
+                        text = item.title ?: "",
+                        locator = item.title ?: "",
+                        color = Color.Black,
+                        fontSize = FontDimensions.sp12
+                    )
+            }
+                CheckedUncheckedRadioButton(isChecked = item == selectedOption,
+                    onClick = {
+                        onOptionSelected(item)
+                        onSelected(item)
+                    })
         }
         DividerThicknessOne()
     }
@@ -135,7 +192,7 @@ fun SingleTextViewRow(params: LabelProperties, isSelected : Boolean = false,  on
                     selected = isSelected,
                     onClick = { onclick(label) }
                 )
-                .padding(top = 24.dp, bottom = 24.dp),
+                .padding(top = Margin.top, bottom = Margin.bottom),
             verticalAlignment = Alignment.CenterVertically
         ) {
             LabelSmall(params)
@@ -151,10 +208,28 @@ fun SingleTextViewTitleRow(params: LabelProperties){
             modifier = Modifier
                 .testTag(label)
                 .fillMaxWidth()
-                .padding(start = 24.dp, top = 24.dp, bottom = 24.dp),
+                .padding(start = Margin.start, top = Margin.top, bottom = Margin.bottom),
             verticalAlignment = Alignment.CenterVertically
         ) {
             LabelTitleCustomStyleLarge(params)
         }
     }
+}
+
+@Composable
+fun TextContactUsFuturaSemiBoldSectionHeader(title : String){
+    TextFuturaFamilyHeader1(
+        text = title,
+        textColor = Color.Black,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = FontDimensions.sp16,
+        modifier = Modifier
+            .testAutomationTag(title)
+            .padding(
+                start = Margin.start,
+                end = Margin.end,
+                top = Margin.dp22,
+                bottom = Margin.dp20
+            )
+    )
 }

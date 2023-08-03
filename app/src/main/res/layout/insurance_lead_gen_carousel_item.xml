@@ -46,15 +46,15 @@
         app:layout_constraintBottom_toBottomOf="parent">
         <TextView
             android:id="@+id/insuranceLeadGenCarouselDescTextView"
+            style="@style/opensans_regular_14_black"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/myriad_pro_regular_otf"
             android:letterSpacing="0.014"
             android:textColor="@color/description_color"
             android:gravity="center"
             android:lineSpacingExtra="@dimen/six_dp"
             android:text="@string/bpi_opt_in_carousel_desc_1"
-            android:textSize="@dimen/sixteen_sp" />
+           />
     </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

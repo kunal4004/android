@@ -35,7 +35,7 @@ class ManageCardViewPagerFragment : Fragment(R.layout.manage_card_viewpager_frag
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val binding = ManageCardViewpagerFragmentBinding.bind(view)
-        manageCardAdapter = ManageCardViewPagerAdapter(fragment = requireActivity())
+        manageCardAdapter = ManageCardViewPagerAdapter(fragmentManager = childFragmentManager, lifecycle = lifecycle)
         with(binding) {
             initCardViewPager()
             subscribeObservers()
@@ -159,15 +159,15 @@ class ManageCardViewPagerFragment : Fragment(R.layout.manage_card_viewpager_frag
         isPopupVisibleInAccountLanding: Boolean,
         isPopupVisibleInCardDetailLanding: Boolean
     ) {
-       val cardList  = listOfStoreCardFeatures ?:  manageCardAdapter?.getListOfStoreCards()
-        if ((cardList?.size ?: 0) <= 0)  return
+       val cardList  = listOfStoreCardFeatures ?:  manageCardAdapter?.getListOfStoreCards() ?: mutableListOf()
+        if (cardList.size > 0) {
             cardFreezeViewModel.currentPagePosition.value = position
             viewModel.onManageCardPagerFragmentSelected(
-                cardList?.get(position),
+                cardList[position],
                 position,
                 isPopupVisibleInAccountLanding = isPopupVisibleInAccountLanding,
                 isPopupVisibleInCardDetailLanding = isPopupVisibleInCardDetailLanding
             )
+        }
     }
-
 }

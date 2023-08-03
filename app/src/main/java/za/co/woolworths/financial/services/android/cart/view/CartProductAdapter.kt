@@ -7,12 +7,19 @@ import android.graphics.PorterDuff
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.*
+import android.view.View.GONE
+import android.view.View.INVISIBLE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.view.animation.DecelerateInterpolator
-import android.widget.*
+import android.widget.CheckBox
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.ProgressBar
+import android.widget.RelativeLayout
+import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -20,22 +27,25 @@ import com.awfs.coordination.R
 import com.daimajia.swipe.SwipeLayout
 import com.daimajia.swipe.adapters.RecyclerSwipeAdapter
 import za.co.woolworths.financial.services.android.cart.service.network.CartItemGroup
-import za.co.woolworths.financial.services.android.cart.viewmodel.CartUtils.Companion.getAppliedVouchersCount
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton.lowStock
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
-import za.co.woolworths.financial.services.android.models.dto.*
-import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.VoucherDetails
+import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
+import za.co.woolworths.financial.services.android.models.dto.CommerceItem
+import za.co.woolworths.financial.services.android.models.dto.CommerceItemInfo
+import za.co.woolworths.financial.services.android.models.dto.OrderSummary
 import za.co.woolworths.financial.services.android.models.service.event.ProductState
-import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList.Companion.openShoppingList
 import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.ImageManager.Companion.setPicture
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.capitaliseFirstLetter
 import za.co.woolworths.financial.services.android.util.NetworkManager
+import za.co.woolworths.financial.services.android.util.ProductType
 import za.co.woolworths.financial.services.android.util.Utils
-import java.util.*
+import za.co.woolworths.financial.services.android.util.analytics.dto.AddToWishListFirebaseEventData
+import za.co.woolworths.financial.services.android.util.analytics.dto.toAnalyticItem
+import java.util.Locale
 
 
 class CartProductAdapter(
@@ -46,6 +56,12 @@ class CartProductAdapter(
 ) : RecyclerSwipeAdapter<RecyclerView.ViewHolder>() {
     private val DISABLE_VIEW_VALUE = 0.5f
     private val GIFT_ITEM = "GIFT"
+    private var hasGiftProduct: Boolean = false
+
+    init {
+        hasGiftProduct = containsGiftProduct()
+    }
+
     override fun getSwipeLayoutResourceId(position: Int): Int {
         return R.id.swipe
     }
@@ -69,6 +85,10 @@ class CartProductAdapter(
         fun onItemDeleteClick(commerceId: CommerceItem)
         fun onCheckBoxChange(isChecked: Boolean, commerceItem: CommerceItem)
         fun onCartRefresh()
+        fun openAddToListPopup(
+            addToListRequests: ArrayList<AddToListRequest>,
+            addToWishListEventData: AddToWishListFirebaseEventData?
+        )
     }
 
     private var editMode = false
@@ -107,7 +127,13 @@ class CartProductAdapter(
                     commerceItems?.size ?: 0,
                     commerceItems?.size ?: 0,
                     capitaliseFirstLetter(itemRow.category)))
-                headerHolder.addToListListener(commerceItems)
+                // Boolean flag to show GWP label on toast when added to list
+                // Cart contains Gift product + Its not Food Commerce item
+                val containsGWP = hasGiftProduct &&
+                        !itemRow.category?.uppercase().equals(
+                            ProductType.FOOD_COMMERCE_ITEM.shortHeader, ignoreCase = true
+                        )
+                headerHolder.addToListListener(commerceItems, containsGWP)
                 if (itemRow.category?.uppercase(Locale.getDefault())
                         .equals(GIFT_ITEM, ignoreCase = true)
                 ) {
@@ -431,6 +457,10 @@ class CartProductAdapter(
         return getItemTypeAtPosition(position)?.rowType?.value ?: 0
     }
 
+    private fun containsGiftProduct() = cartItems?.any {
+        it.type.equals(GIFT_ITEM, ignoreCase = true)
+    } ?: false
+
     private fun getItemTypeAtPosition(position: Int): CartCommerceItemRow? {
         var currentPosition = 0
         if (!cartItems.isNullOrEmpty()) {
@@ -486,7 +516,7 @@ class CartProductAdapter(
     private inner class CartHeaderViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val tvHeaderTitle: WTextView
         val tvAddToList: WTextView
-        fun addToListListener(commerceItems: ArrayList<CommerceItem>?) {
+        fun addToListListener(commerceItems: ArrayList<CommerceItem>?, hasGiftProduct: Boolean) {
             tvAddToList.setOnClickListener {
                 val woolworthsApplication = WoolworthsApplication.getInstance()
                 if (woolworthsApplication != null) {
@@ -495,18 +525,20 @@ class CartProductAdapter(
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYCARTADDTOLIST,
                     mContext)
                 val addToListRequests = ArrayList<AddToListRequest>()
-                if (!commerceItems.isNullOrEmpty()) {
-                    for (commerceItem in commerceItems!!) {
-                        val listItem = AddToListRequest()
-                        val commerceItemInfo = commerceItem.commerceItemInfo
-                        listItem.catalogRefId = commerceItemInfo.catalogRefId
-                        listItem.skuID = commerceItemInfo.catalogRefId
-                        listItem.giftListId = commerceItemInfo.catalogRefId
-                        listItem.quantity = "1"
-                        addToListRequests.add(listItem)
+
+                commerceItems?.forEach { commerceItem ->
+                    val commerceItemInfo = commerceItem.commerceItemInfo
+                    val listItem = AddToListRequest().apply {
+                        catalogRefId = commerceItemInfo.catalogRefId
+                        skuID = commerceItemInfo.catalogRefId
+                        giftListId = commerceItemInfo.catalogRefId
+                        quantity = "1"
+                        isGWP = commerceItemInfo.isGWP || hasGiftProduct
                     }
+                    addToListRequests.add(listItem)
                 }
-                openShoppingList(mContext, addToListRequests, "", false)
+                val addToWishListEventData = AddToWishListFirebaseEventData(products = commerceItems?.map { it.toAnalyticItem() })
+                onItemClick.openAddToListPopup(addToListRequests, addToWishListEventData)
             }
         }
 

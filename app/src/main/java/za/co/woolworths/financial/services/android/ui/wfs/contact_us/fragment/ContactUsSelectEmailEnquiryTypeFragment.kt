@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigOptions
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator
-import za.co.woolworths.financial.services.android.ui.fragments.contact_us.enquiry.emailus.EmailUsFragment
+import za.co.woolworths.financial.services.android.ui.fragments.contact_us.enquiry.emailus.ContactUsEmailUsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.contact_us.enquiry.list.EnquiriesListViewModel
 import za.co.woolworths.financial.services.android.ui.wfs.common.contentView
 import za.co.woolworths.financial.services.android.ui.wfs.contact_us.screen.SelectEnquiryTypeList
@@ -54,7 +54,7 @@ class ContactUsSelectEmailEnquiryTypeFragment : Fragment() {
                     (activity is BottomNavigationActivity).apply {
                         mBottomNavigator?.popFragment()
                         if (selectedEnquiry?.value == null) {
-                            router.push(EmailUsFragment())
+                            router.push(ContactUsEmailUsFragment())
                         }
                     }.apply {
                         selectedEnquiry?.value = ConfigOptions(key = childrenItem.reference ?: "", displayName = childrenItem.title ?: "", value = childrenItem.description ?: "")

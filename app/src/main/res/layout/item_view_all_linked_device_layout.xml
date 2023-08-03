@@ -16,9 +16,8 @@
         android:letterSpacing="@integer/point_one"
         android:padding="@dimen/_12sdp"
         android:text="@string/view_all_device_preferred"
-        android:textAllCaps="true"
         android:textColor="@color/color_333333"
-        android:textSize="@dimen/twelve_sp"
+        android:textSize="@dimen/eighteen_sp"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -56,39 +55,35 @@
 
     <TextView
         android:id="@+id/viewAllDeviceNameTextView"
+        style="@style/opensans_semi_bold_13_black_text_style"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/myriad_pro_semi_bold"
         android:paddingStart="@dimen/fifteen_dp"
         android:paddingTop="@dimen/twenty_dp"
-        android:textColor="@color/black"
-        android:textSize="@dimen/fifteen_sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/viewAllDevicesTitleSeparator"
         tools:text="Matt's iPhone" />
 
     <TextView
         android:id="@+id/viewAllDeviceSubtitleTextView"
+        style="@style/opensans_regular_12_black"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/myriad_pro_regular"
         android:paddingStart="@dimen/fifteen_dp"
         android:paddingTop="@dimen/ten_dp"
         android:textColor="@color/black_50"
-        android:textSize="@dimen/twelve_sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/viewAllDeviceNameTextView"
         tools:text="Linked 12/01/2021" />
 
     <TextView
         android:id="@+id/viewAllDeviceLocationTextView"
+        style="@style/opensans_regular_12_black"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/myriad_pro_regular"
         android:paddingStart="@dimen/fifteen_dp"
         android:paddingTop="@dimen/three_dp"
         android:textColor="@color/black_50"
-        android:textSize="@dimen/twelve_sp"
         android:paddingBottom="@dimen/fifteen_dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/viewAllDeviceSubtitleTextView"

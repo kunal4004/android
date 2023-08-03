@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/noLocationRootLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:visibility="gone"
+    android:background="@color/white">
+
+    <ImageView
+        android:id="@+id/img_location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/fourty_dp"
+        android:maxWidth="@dimen/hundred_dp"
+        android:maxHeight="@dimen/hundred_dp"
+        android:src="@drawable/location_pin"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <TextView
+        android:id="@+id/no_location_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/opensans_medium"
+        android:gravity="center_horizontal|top"
+        android:lineSpacingExtra="@dimen/two_sp"
+        android:paddingStart="@dimen/twenty_four_dp"
+        android:paddingTop="@dimen/twenty_four_dp"
+        android:paddingEnd="@dimen/twenty_four_dp"
+        android:text="@string/no_location_settings_msg"
+        android:textColor="@color/color_000000"
+        android:textSize="@dimen/thirteen_sp"
+        app:layout_constraintBottom_toTopOf="@+id/turn_on_sub_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.49"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/img_location" />
+
+    <TextView
+        android:id="@+id/turn_on_sub_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/eight_dp"
+        android:fontFamily="@font/opensans_bold"
+        android:lineSpacingExtra="@dimen/two_sp"
+        android:paddingStart="@dimen/twenty_four_dp"
+        android:paddingTop="@dimen/eight_dp"
+        android:paddingEnd="@dimen/twenty_four_dp"
+        android:singleLine="false"
+        android:text="@string/location_settings_mesg"
+        android:textAlignment="center"
+        android:textColor="@color/color_000000"
+        android:textSize="@dimen/thirteen_sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/no_location_title" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

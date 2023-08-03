@@ -29,7 +29,10 @@ import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.ImageManager.Companion.setPictureCenterInside
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 import za.co.woolworths.financial.services.android.util.expand.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 
 class SubCategoryFragment :
@@ -216,6 +219,11 @@ class SubCategoryFragment :
             isBrandLandingPage = true,
             filterContent = !ChanelUtils.isCategoryPresentInConfig(subCategory.categoryName)
         )
+        val screenViewEventData = FirebaseAnalyticsEventHelper.Utils.getPLPScreenViewEventDataForStandardAndCnc(
+            category = mRootCategory?.categoryName,
+            subCategory = subCategoryModel?.name,
+            subSubCategory = subCategory.getCategoryName()
+        )
         pushFragment(ProductListingFragment.newInstance(
             ProductsRequestParams.SearchType.NAVIGATE,
             subCategory.dimValId,
@@ -224,7 +232,7 @@ class SubCategoryFragment :
             isBrowsing = true,
             sendDeliveryDetails = this.arguments?.getBoolean(AppConstant.Keys.EXTRA_SEND_DELIVERY_DETAILS_PARAMS,
                 false),
-            false
+            false, screenViewEventData = screenViewEventData
         ))
     }
 

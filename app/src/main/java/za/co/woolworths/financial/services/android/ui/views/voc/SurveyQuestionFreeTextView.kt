@@ -17,7 +17,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -25,8 +24,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.awfs.coordination.R
-import za.co.woolworths.financial.services.android.ui.compose.FuturaFontFamily
-import za.co.woolworths.financial.services.android.ui.compose.MyriadProFontFamily
+import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.extensions.testAutomationTag
+import za.co.woolworths.financial.services.android.ui.wfs.theme.FuturaFontFamily
+import za.co.woolworths.financial.services.android.ui.wfs.theme.OpenSansFontFamily
 
 @Preview
 @Composable
@@ -39,14 +39,14 @@ fun SurveyQuestionFreeTextView(
 ) {
     Column (
         modifier = Modifier
-            .testTag(context?.getString(R.string.voc_question_freetext) ?: "")
+            .testAutomationTag(context?.getString(R.string.voc_question_freetext) ?: "")
             .fillMaxWidth()
             .background(Color.White)
             .padding(24.dp)
     ) {
         val textState = rememberSaveable { mutableStateOf(initialText ?: "") }
         Text(
-            modifier = Modifier.testTag(context?.getString(R.string.voc_question_freetext_title) ?: ""),
+            modifier = Modifier.testAutomationTag(context?.getString(R.string.voc_question_freetext_title) ?: ""),
             text = title ?: "",
             fontSize = 20.sp,
             fontFamily = FuturaFontFamily,
@@ -56,7 +56,7 @@ fun SurveyQuestionFreeTextView(
         )
         BasicTextField(
             modifier = Modifier
-                .testTag(context?.getString(R.string.voc_question_freetext_input) ?: "")
+                .testAutomationTag(context?.getString(R.string.voc_question_freetext_input) ?: "")
                 .fillMaxWidth()
                 .padding(
                     top = 19.dp
@@ -81,8 +81,8 @@ fun SurveyQuestionFreeTextView(
             singleLine = false,
             textStyle = LocalTextStyle.current.copy(
                 color = Color.Black,
-                fontSize = 15.sp,
-                fontFamily = MyriadProFontFamily,
+                fontSize = 13.sp,
+                fontFamily = OpenSansFontFamily,
                 fontWeight = FontWeight.Normal
             ),
             decorationBox = { innerTextField ->
@@ -90,8 +90,8 @@ fun SurveyQuestionFreeTextView(
                     Text(
                         text = stringResource(id = placeholder),
                         color = colorResource(id = R.color.unavailable),
-                        fontSize = 15.sp,
-                        fontFamily = MyriadProFontFamily,
+                        fontSize = 13.sp,
+                        fontFamily = OpenSansFontFamily,
                         fontWeight = FontWeight.Normal
                     )
                 }

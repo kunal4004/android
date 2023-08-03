@@ -1,56 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/recyclerLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:background="@color/white"
-    android:orientation="vertical">
+    android:minHeight="@dimen/fourty_dp">
 
-    <LinearLayout
-        android:id="@+id/recyclerLayout"
+    <TextView
+        android:id="@+id/primaryTextView"
+        style="@style/opensens_semi_bold"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="@dimen/fourty_eight_dp"
-        android:orientation="vertical"
+        android:layout_marginStart="@dimen/fourty_dp"
+        android:layout_marginTop="@dimen/sixteen_dp"
+        android:layout_marginEnd="@dimen/fourty_dp"
+        android:background="@color/white"
+        android:gravity="center_vertical"
+        android:lineSpacingExtra="@dimen/two_sp"
+        android:textColor="@color/color_000000"
+        android:textSize="@dimen/twelve_sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/primaryTextView"
-            style="@style/futura_semi_bold"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/twenty_five_dp"
-            android:layout_marginTop="@dimen/six_dp"
-            android:layout_marginEnd="@dimen/twenty_five_dp"
-            android:background="@color/white"
-            android:gravity="center_vertical"
-            android:textColor="@color/black"
-            android:textSize="@dimen/twelve_sp" />
-
-        <TextView
-            android:id="@+id/SecondaryTextView"
-            style="@style/futura_medium"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/twenty_five_dp"
-            android:layout_marginTop="@dimen/five_dp"
-            android:layout_marginEnd="@dimen/twenty_five_dp"
-            android:layout_marginBottom="@dimen/two_dp"
-            android:background="@color/white"
-            android:gravity="center_vertical"
-            android:textSize="@dimen/twelve_sp"
-            app:layout_constraintTop_toBottomOf="@+id/primaryTextView" />
-    </LinearLayout>
+    <TextView
+        android:id="@+id/SecondaryTextView"
+        style="@style/opensens_medium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/fourty_dp"
+        android:layout_marginTop="@dimen/two_dp"
+        android:layout_marginEnd="@dimen/fourty_dp"
+        android:background="@color/white"
+        android:gravity="center_vertical"
+        android:lineSpacingExtra="@dimen/two_sp"
+        android:textColor="@color/checkout_delivering_title"
+        android:textSize="@dimen/twelve_sp"
+        app:layout_constraintTop_toBottomOf="@+id/primaryTextView" />
 
     <View
         android:id="@+id/dividerRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="@dimen/one_dp"
-        android:layout_marginStart="@dimen/twelve_dp"
-        android:layout_marginEnd="@dimen/twelve_dp"
+        android:layout_marginStart="@dimen/twenty_four_dp"
+        android:layout_marginTop="@dimen/sixteen_dp"
+        android:layout_marginEnd="@dimen/twenty_four_dp"
         android:background="@color/color_12000000"
-        app:layout_constraintTop_toBottomOf="@+id/recyclerLayout" />
+        app:layout_constraintTop_toBottomOf="@+id/SecondaryTextView" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

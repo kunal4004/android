@@ -132,8 +132,7 @@
             layout="@layout/recommendation_fragment_container_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/eighty_dp"
-            android:layout_alignParentBottom="true" />
+            android:layout_marginTop="@dimen/fifty_three_dp" />
 
         <include
             android:id="@+id/incConfirmButtonLayout"

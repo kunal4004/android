@@ -19,7 +19,9 @@
 
     <TextView
         android:id="@+id/tvCurrentLocationLabel"
-        style="@style/myriad_pro_semi_bold_black_15_text_style"
+        style="@style/opensens_semi_bold"
+        android:textSize="@dimen/thirteen_sp"
+        android:textColor="@color/black"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"

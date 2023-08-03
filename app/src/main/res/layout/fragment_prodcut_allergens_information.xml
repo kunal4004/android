@@ -20,9 +20,12 @@
             app:layout_constraintStart_toStartOf="@+id/left_guideline"
             app:layout_constraintTop_toBottomOf="@+id/top_guideline" />
 
+
         <TextView
             android:id="@+id/allergensText"
-            style="@style/myriad_pro_regular_black_15_text_style"
+            style="@style/opensans_regular_13_black"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/twenty_four_dp"
             android:lineSpacingMultiplier="1.4"
             app:layout_constraintEnd_toEndOf="@id/right_guideline"

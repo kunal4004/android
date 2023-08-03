@@ -33,9 +33,9 @@ class ErrorHandlerFragment : BaseFragmentBinding<AbsaErrorFragmentLayoutBinding>
         with(descBlock1Text) {
             makeStringInteractable(emailLabel, LinkType.EMAIL)
             makeStringInteractable(phoneLabel, LinkType.PHONE)
-            makeChangeToStringFont(textLabel, R.font.myriad_pro_semi_bold_otf)
-            makeChangeToStringFont(phoneLabel, R.font.myriad_pro_semi_bold_otf)
-            makeChangeToStringFont(emailLabel, R.font.myriad_pro_semi_bold_otf)
+            makeChangeToStringFont(textLabel, R.font.opensans_semi_bold_ttf)
+            makeChangeToStringFont(phoneLabel, R.font.opensans_semi_bold_ttf)
+            makeChangeToStringFont(emailLabel, R.font.opensans_semi_bold_ttf)
             makeTextFontColor(emailLabel)
             makeTextFontColor(phoneLabel)
             makeTextFontColor(textLabel)

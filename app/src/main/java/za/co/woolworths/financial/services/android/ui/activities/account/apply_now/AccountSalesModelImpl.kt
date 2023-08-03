@@ -11,7 +11,6 @@ import za.co.woolworths.financial.services.android.models.dto.account.CardQualif
 import za.co.woolworths.financial.services.android.models.dto.account.AccountSales
 import za.co.woolworths.financial.services.android.models.dto.account.CardHeader
 import za.co.woolworths.financial.services.android.models.dto.account.MoreBenefit
-import za.co.woolworths.financial.services.android.ui.fragments.account.apply_now.AccountSalesFragment
 
 class AccountSalesModelImpl : IAccountSalesContract.AccountSalesModel {
 
@@ -211,14 +210,6 @@ class AccountSalesModelImpl : IAccountSalesContract.AccountSalesModel {
     override fun getCreditCard() = mutableListOf(
             getGoldCreditCardAccountSalesItem(),
             getBlackCreditCardAccountSalesItem())
-
-    override fun getFragment(): Map<String, Fragment>? {
-        val goldTitle = getString(R.string.credit_card_gold_title) ?: ""
-        val blackTitle = getString(R.string.credit_card_black_title) ?: ""
-        val goldCardFragment = AccountSalesFragment.newInstance(getGoldCreditCardAccountSalesItem()) as? Fragment ?: Fragment()
-        val blackCardFragment =  AccountSalesFragment.newInstance(getBlackCreditCardAccountSalesItem()) as? Fragment ?: Fragment()
-        return mapOf(goldTitle to goldCardFragment,blackTitle to blackCardFragment)
-    }
 
     private fun getString(stringId: Int): String? = (WoolworthsApplication.getInstance()?.currentActivity as? FragmentActivity)?.resources?.getString(stringId)
 }

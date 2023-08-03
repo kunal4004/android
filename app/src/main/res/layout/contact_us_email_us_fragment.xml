@@ -1,0 +1,162 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/light_gray_background"
+    android:fillViewport="true"
+    android:paddingTop="?attr/actionBarSize"
+    tools:context="za.co.woolworths.financial.services.android.ui.fragments.contact_us.enquiry.emailus.ContactUsEmailUsFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_6sdp"
+        android:background="@color/white"
+        android:paddingStart="@dimen/_10sdp"
+        android:paddingEnd="@dimen/_10sdp">
+
+        <LinearLayout
+            android:id="@+id/ll_email_us_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/tv_email_us_name"
+                style="@style/contact_us_email_us_label_style"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:letterSpacing="0"
+                android:text="@string/email_us_name" />
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/et_email_us_name"
+                style="@style/contact_us_email_us_input_field_style"
+                android:inputType="textPersonName" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_email_us_email"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_15sdp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ll_email_us_name">
+
+            <TextView
+                android:id="@+id/tv_email_us_email"
+                style="@style/contact_us_email_us_label_style"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:letterSpacing="0"
+                android:lineSpacingExtra="8sp"
+                android:text="@string/email_us_email" />
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/et_email_us_email"
+                style="@style/contact_us_email_us_input_field_style"
+                android:inputType="textEmailAddress" />
+
+            <TextView
+                android:id="@+id/tv_email_us_email_validation"
+                style="@style/contact_us_email_us_label_style"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:letterSpacing="0"
+                android:text="@string/email_us_email_validation"
+                android:textColor="@color/color_666666" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_email_us_enquiry"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_15sdp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ll_email_us_email">
+
+            <TextView
+                android:id="@+id/tv_email_us_enquiry"
+                style="@style/contact_us_email_us_label_style"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:letterSpacing="0"
+                android:lineSpacingExtra="8sp"
+                android:text="@string/email_us_enquiry" />
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/et_email_us_enquiry"
+                style="@style/contact_us_email_us_input_field_style"
+                android:cursorVisible="false"
+                android:drawableEnd="@drawable/ic_dropdown"
+                android:focusable="false"
+                android:paddingStart="@dimen/five_dp"
+                android:paddingEnd="@dimen/_10sdp"
+                android:textSize="@dimen/fourteen_sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_email_us_message"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_15sdp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ll_email_us_enquiry">
+
+            <TextView
+                android:id="@+id/tv_email_us_message"
+                style="@style/contact_us_email_us_label_style"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:letterSpacing="0"
+                android:lineSpacingExtra="8sp"
+                android:text="@string/email_us_message" />
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/et_email_us_message"
+                style="@style/contact_us_email_us_input_field_style"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:hint="@string/contact_us_email_message_placeholder"
+                android:minHeight="@dimen/_150sdp"
+                android:paddingStart="@dimen/ten_dp"
+                android:paddingTop="@dimen/twelve_dp"
+                android:paddingEnd="@dimen/ten_dp"
+                android:paddingBottom="@dimen/twelve_dp"
+                android:textSize="@dimen/fourteen_sp" />
+
+        </LinearLayout>
+
+        <za.co.woolworths.financial.services.android.ui.views.WButton
+            android:id="@+id/btn_email_us"
+            style="@style/blackButtonStyle"
+            android:layout_marginTop="@dimen/_15sdp"
+            android:layout_marginBottom="@dimen/_29sdp"
+            android:background="@drawable/btn_disable_enable"
+            android:enabled="false"
+            android:gravity="center"
+            android:text="@string/send"
+            android:textColor="@color/text_color_selector"
+            android:textSize="@dimen/_10ssp"
+            app:WButton_font="medium_bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/ll_email_us_message"
+            app:layout_constraintStart_toStartOf="@id/ll_email_us_message"
+            app:layout_constraintTop_toBottomOf="@+id/ll_email_us_message" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>

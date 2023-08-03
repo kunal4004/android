@@ -15,15 +15,16 @@
         android:id="@+id/deliveryItemsType"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/myriad_pro_regular"
+        android:fontFamily="@font/opensans_regular"
         android:textColor="@color/color_666666"
         android:textSize="@dimen/_11ssp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/guidelineTop" />
-
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/dateOfDelivery"
-        style="@style/myriad_pro_semi_bold"
+        style="@style/opensens_semi_bold"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:ellipsize="end"
         android:gravity="end"
         android:maxLines="1"

@@ -22,8 +22,9 @@
         android:textSize="@dimen/fourteen_sp"
         app:WTextView_font="medium_bold" />
 
-    <za.co.woolworths.financial.services.android.ui.views.WTextView
+    <TextView
         android:id="@+id/tvBiometricDesc"
+        style="@style/opensans_regular_13_black"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/vHorizontalDivider"
@@ -33,8 +34,7 @@
         android:lineSpacingMultiplier="1.40"
         android:text="@string/absa_biometric_desc"
         android:textColor="@color/offer_title"
-        android:textSize="@dimen/fifteen_sp"
-        app:WTextView_font="myriadpro_regular" />
+         />
 
 
     <View
@@ -53,7 +53,8 @@
         android:layout_marginTop="@dimen/twenty_seven_dp"
         android:visibility="visible">
 
-        <za.co.woolworths.financial.services.android.ui.views.WTextView
+        <TextView
+            style="@style/opensans_regular_13_black"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
@@ -62,9 +63,7 @@
             android:gravity="center_vertical"
             android:lineSpacingExtra="0.4sp"
             android:text="@string/absa_enable_biometric"
-            android:textColor="@color/black"
-            android:textSize="15sp"
-            app:WTextView_font="myriadpro_regular" />
+            android:textColor="@color/black" />
 
         <Switch
             android:id="@+id/swEnableBiometric"

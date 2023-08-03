@@ -15,10 +15,12 @@
 
     <TextView
         android:id="@+id/tvName"
-        style="@style/myriad_pro_semi_bold_black_15_text_style"
+        android:fontFamily="@font/opensans_bold"
+        android:textSize="@dimen/fifteen_sp"
+        android:textColor="@color/black"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/sixteen_dp"
+        android:layout_marginTop="@dimen/fourteen_sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -35,29 +37,29 @@
 
     <TextView
         android:id="@+id/tvVerifiedBuyer"
-        style="@style/myriad_pro_semi_bold_49BB77_15_text_style"
+        style="@style/open_sans_semi_bold_49BB77_13_text_style"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/sixteen_dp"
-        android:drawableLeft="@drawable/ic_verified_buyer"
         android:drawablePadding="@dimen/eight_dp"
         android:text="@string/verified_buyer"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvName"
-        tools:layout_editor_absoluteX="@dimen/zero_dp" />
+        tools:layout_editor_absoluteX="@dimen/zero_dp"
+        app:drawableStartCompat="@drawable/ic_verified_buyer" />
 
     <TextView
         android:id="@+id/tvVerifiedStaffMember"
-        style="@style/myriad_pro_semi_bold_777777_15_text_style"
+        style="@style/open_sans_semi_bold_777777_13_text_style"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/nine_dp"
-        android:drawableLeft="@drawable/verified_icon"
         android:drawablePadding="@dimen/eight_dp"
         android:text="@string/verified_staff_member"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvVerifiedBuyer"
-        tools:layout_editor_absoluteX="@dimen/zero_dp" />
+        tools:layout_editor_absoluteX="@dimen/zero_dp"
+        app:drawableStartCompat="@drawable/verified_icon" />
 
     <View
         android:id="@+id/view1"
@@ -81,7 +83,8 @@
 
     <TextView
         android:id="@+id/tvDate"
-        style="@style/myriad_pro_regular_black_15_text_style"
+        android:fontFamily="@font/opensans_regular"
+        android:textColor="@color/black"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/nineteen_dp"
@@ -103,7 +106,9 @@
 
     <TextView
         android:id="@+id/tvReviewHeading"
-        style="@style/myriad_pro_semi_bold_black_15_text_style"
+        android:fontFamily="@font/opensans_semi_bold"
+        android:textSize="@dimen/fourteen_sp"
+        android:textColor="@color/black"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/ten_dp"
@@ -112,7 +117,9 @@
 
     <TextView
         android:id="@+id/tvCustomerReview"
-        style="@style/myriad_pro_regular_black_15_text_style"
+        android:fontFamily="@font/opensans_regular"
+        android:textSize="@dimen/thirteen_sp"
+        android:textColor="@color/black"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/seven_dp"
@@ -124,7 +131,9 @@
 
     <TextView
         android:id="@+id/tvReviewPostedOn"
-        style="@style/myriad_pro_regular_black_13_text_style"
+        android:fontFamily="@font/opensans_semi_bold"
+        android:textSize="@dimen/thirteen_sp"
+        android:textColor="@color/black"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/sixteen_dp"

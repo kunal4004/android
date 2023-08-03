@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.util
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.models.dto.CartSummary
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse
 import za.co.woolworths.financial.services.android.models.dto.VoucherCount
@@ -10,7 +11,7 @@ import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
 import za.co.woolworths.financial.services.android.ui.extension.request
-import java.util.*
+import java.util.Observable
 
 class QueryBadgeCounter : Observable() {
     var cartCount = 0
@@ -21,6 +22,8 @@ class QueryBadgeCounter : Observable() {
         private set
     var updateAtPosition = 0
         private set
+
+    private var isCartSummaryFailed = true
 
     private var mGetMessage: Call<MessageResponse>? = null
     private var mGetVoucher: Call<VoucherCount>? = null
@@ -75,6 +78,16 @@ class QueryBadgeCounter : Observable() {
         mGetCartCount = loadShoppingCartCount()
     }
 
+    fun updateCartSummaryCount() {
+        if (!isUserAuthenticated) return
+        if(isCartSummaryFailed){
+            queryCartSummaryCount()
+            return
+        }
+        this.updateAtPosition = BottomNavigationActivity.INDEX_CART
+        notifyUpdate()
+    }
+
     private fun loadVoucherCount(): Call<VoucherCount>? {
         return request(OneAppService().getVouchersCount(), object : IGenericAPILoaderView<Any> {
             override fun onSuccess(response: Any?) {
@@ -94,9 +107,9 @@ class QueryBadgeCounter : Observable() {
             override fun onSuccess(response: CartSummaryResponse?) {
                 when (response?.httpCode) {
                     200 -> {
-                        response.data.get(0)?.apply {
+                        response.data.getOrNull(0)?.apply {
                             if (totalItemsCount != null)
-                            setCartCount(totalItemsCount)
+                                setCartCount(totalItemsCount)
                         }
                     }
                 }
@@ -138,6 +151,11 @@ class QueryBadgeCounter : Observable() {
     private fun notifyUpdate() {
         setChanged()
         notifyObservers()
+    }
+
+    fun setCartSummaryResponse(cartSummary: CartSummary?, isFailedCartSummary: Boolean = false) {
+        cartCount = cartSummary?.totalItemsCount ?: 0
+        isCartSummaryFailed = isFailedCartSummary
     }
 
     companion object {

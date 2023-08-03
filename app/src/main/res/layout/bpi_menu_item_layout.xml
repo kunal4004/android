@@ -6,7 +6,7 @@
     android:gravity="center"
     android:letterSpacing="0.2"
     android:paddingStart="@dimen/four_dp"
-    android:paddingEnd="@dimen/fourteen_dp"
+    android:paddingEnd="@dimen/twenty_four_dp"
     android:text="@string/bpi_claim_toolbar_title"
     android:textAllCaps="true"
     android:textColor="@color/black"
