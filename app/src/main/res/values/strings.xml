@@ -2583,6 +2583,7 @@
     <string name="continue_with_standard_delivery">CONTINUE WITH STANDARD DELIVERY</string>
     <string name="continue_with_cnc_delivery">CONTINUE WITH Click &amp; Collect</string>
     <string name="continue_with_dash_delivery">CONTINUE WITH DASH DELIVERY</string>
+    <string name="remove_items_standard_dialog_title">This Item Isn’t Available Using Standard Delivery.\n Save It To A Shopping List Instead.</string>
 
     <plurals name="remove_items_dash_dialog_title">
         <item quantity="one">This Item Isn’t Available Using Dash Delivery.\n Save It To A Shopping List Instead.</item>

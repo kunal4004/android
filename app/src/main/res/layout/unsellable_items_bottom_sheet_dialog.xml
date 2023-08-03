@@ -21,7 +21,7 @@
         android:layout_below="@+id/incSwipeCloseIndicator"
         android:layout_marginTop="@dimen/thirty_two_dp"
         android:paddingHorizontal="@dimen/twelve_dp"
-        android:text="@string/these_items_will_be_removed_from_your_cart"
+        android:text="@string/remove_items_standard_dialog_title"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/incSwipeCloseIndicator" />
@@ -35,7 +35,7 @@
         android:gravity="center"
         android:lineSpacingMultiplier="1.2"
         android:paddingHorizontal="@dimen/thirty_six_dp"
-        android:text="@string/remove_items_dialog_desc"
+        android:text="@string/unsellable_subtitle"
         android:textColor="@color/color_444444"
         android:textSize="@dimen/thirteen_sp"
         app:layout_constraintTop_toBottomOf="@+id/unsellable_title" />
