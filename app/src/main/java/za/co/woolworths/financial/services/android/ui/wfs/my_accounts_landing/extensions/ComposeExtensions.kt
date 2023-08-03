@@ -102,9 +102,7 @@ fun fetchFromLocalDatabase(key: SessionDao.KEY) = runBlocking {
     result
 }
 
-fun getJwtModel(): JWTDecodedModel = runBlocking {
-    withContext(Dispatchers.IO) { SessionUtilities.getInstance().jwt }
-}
+fun getJwtModel(): JWTDecodedModel = SessionUtilities.getInstance().jwt
 
 fun setBadgeCounter(badgeCount: Int) = runBlocking {
     withContext(Dispatchers.IO) {

@@ -1133,18 +1133,6 @@ public class Utils {
         }
     }
 
-    /***
-     * @method setRecyclerViewMargin - method to set margin to Recyclerview
-     * @param recyclerView - represent current Recyclerview
-     * @param bottomMargin - bottom margin of the recyclerview
-     */
-    public static void setRecyclerViewMargin(RecyclerView recyclerView, int bottomMargin) {
-        ViewGroup.MarginLayoutParams marginLayoutParams =
-                (ViewGroup.MarginLayoutParams) recyclerView.getLayoutParams();
-        marginLayoutParams.setMargins(0, 0, 0, bottomMargin);
-        recyclerView.setLayoutParams(marginLayoutParams);
-    }
-
     public static void displayValidationMessageForResult(Activity context, CustomPopUpWindow.MODAL_LAYOUT key, String description, int requestCode) {
         if(context != null){
             Intent openMsg = new Intent(context, CustomPopUpWindow.class);

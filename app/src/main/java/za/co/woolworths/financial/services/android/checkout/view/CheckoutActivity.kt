@@ -23,9 +23,9 @@ import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddress
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutAddressConfirmationListAdapter
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.CommerceItem
-import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.*
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.OrderConfirmationFragment
+import za.co.woolworths.financial.services.android.ui.views.UnsellableItemsBottomSheetDialog
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_CNC_SELETION
 import za.co.woolworths.financial.services.android.util.KeyboardUtils
@@ -209,7 +209,7 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
 
         when (fragmentList[0]) {
 
-            is UnsellableItemsFragment -> {
+            is UnsellableItemsBottomSheetDialog -> {
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHECKOUT_CANCEL_REMOVE_UNSELLABLE_ITEMS,
                     hashMapOf(
                         FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to

@@ -733,7 +733,7 @@ open class OneAppService(
     suspend fun createNewList(listName: CreateList): retrofit2.Response<ShoppingListsResponse> =
         withContext(Dispatchers.IO){
             mApiInterface.createNewList(getSessionToken(), getDeviceIdentityToken(), listName)
-        }
+    }
 
     suspend fun getShoppingListItems(listId: String): retrofit2.Response<ShoppingListItemsResponse> {
         return withContext(Dispatchers.IO) {
@@ -1303,18 +1303,6 @@ open class OneAppService(
             getDeviceIdentityToken(),
             body
         )
-    }
-
-    suspend fun confirmLocation(confirmLocationRequest: ConfirmLocationRequest): retrofit2.Response<ConfirmDeliveryAddressResponse> {
-        return withContext(Dispatchers.IO) {
-            mApiInterface.confirmPlaceLocation(
-                "",
-                "",
-                getSessionToken(),
-                getDeviceIdentityToken(),
-                confirmLocationRequest
-            )
-        }
     }
 
     fun deleteAccount(): Call<DeleteAccountResponse> {
