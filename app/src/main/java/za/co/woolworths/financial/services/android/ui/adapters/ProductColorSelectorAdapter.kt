@@ -14,7 +14,7 @@ import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeVie
 import za.co.woolworths.financial.services.android.util.DrawImage
 import java.util.*
 
-class ProductColorSelectorAdapter(val otherSKUsByGroupKey: HashMap<String, ArrayList<OtherSkus>>, var listener: ProductDetailsContract.ProductDetailsView, spanCount: Int, selectedGroupKey: String?) : RecyclerView.Adapter<ProductColorSelectorAdapter.ViewHolder>() {
+class ProductColorSelectorAdapter(val otherSKUsByGroupKey: LinkedHashMap<String, ArrayList<OtherSkus>>, var listener: ProductDetailsContract.ProductDetailsView, spanCount: Int, selectedGroupKey: String?) : RecyclerView.Adapter<ProductColorSelectorAdapter.ViewHolder>() {
 
     private var selectedColor: String? = null
     private var colorsList: List<String> = arrayListOf()

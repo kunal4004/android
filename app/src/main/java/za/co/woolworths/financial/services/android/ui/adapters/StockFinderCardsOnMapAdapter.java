@@ -42,7 +42,7 @@ public class StockFinderCardsOnMapAdapter extends PagerAdapter {
 		WTextView storeName = (WTextView) cView.findViewById(R.id.storeName);
 		WTextView storeDistance = (WTextView) cView.findViewById(R.id.distance);
 		TextView storeAddress = (TextView) cView.findViewById(R.id.storeAddress);
-		TextView storeTimeing = (WTextView) cView.findViewById(R.id.timeing);
+		TextView storeTimeing = (TextView) cView.findViewById(R.id.timeing);
 		WTextView offerings = (WTextView) cView.findViewById(R.id.offerings);
 
 		StoreDetails storeDetails = storeDetailsList.get(position);
