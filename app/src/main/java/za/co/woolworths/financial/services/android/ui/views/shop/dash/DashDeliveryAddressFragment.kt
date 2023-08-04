@@ -50,7 +50,9 @@ import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerce
 import za.co.woolworths.financial.services.android.models.dto.dash.LastOrderDetailsResponse
 import za.co.woolworths.financial.services.android.models.dto.shop.Banner
 import za.co.woolworths.financial.services.android.models.dto.shop.ProductCatalogue
+import za.co.woolworths.financial.services.android.models.network.Parameter
 import za.co.woolworths.financial.services.android.models.network.Status
+import za.co.woolworths.financial.services.android.onecartgetstream.OCChatActivity
 import za.co.woolworths.financial.services.android.onecartgetstream.service.DashChatMessageListeningService
 import za.co.woolworths.financial.services.android.receivers.DashOrderReceiver
 import za.co.woolworths.financial.services.android.receivers.DashOrderReceiverListener
@@ -64,6 +66,8 @@ import za.co.woolworths.financial.services.android.ui.adapters.shop.dash.DashDel
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.Companion.newInstance
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment
+import za.co.woolworths.financial.services.android.ui.fragments.shop.OrderDetailsFragment
+import za.co.woolworths.financial.services.android.ui.fragments.shop.OrderTrackingWebViewActivity
 import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment
 import za.co.woolworths.financial.services.android.ui.views.AddedToCartBalloonFactory
 import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
@@ -82,9 +86,9 @@ import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.GetCartSummary
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getDeliveryType
-import za.co.woolworths.financial.services.android.util.UnsellableUtils
 import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.SessionUtilities
+import za.co.woolworths.financial.services.android.util.UnsellableUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
@@ -1249,6 +1253,46 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
             R.id.btn_dash_set_address -> {
                 navigateToConfirmAddressScreen()
             }
+            // In App notification click, Navigate to Order Details
+            R.id.inappOrderNotificationContainer -> {
+                (requireActivity() as? BottomNavigationActivity)?.apply {
+                    val orderId: String? = v.getTag(R.id.inappOrderNotificationContainer) as? String
+                    orderId?.let {
+                        pushFragment(OrderDetailsFragment.getInstance(Parameter(it)))
+                    }
+                }
+            }
+            // In App notification Chat click, Navigate to Chat
+            // Chat / Driver Tracking / Location
+            R.id.inappOrderNotificationIcon -> {
+                val params = v.getTag(R.id.inappOrderNotificationIcon) as? LastOrderDetailsResponse
+                params?.apply {
+                    // Chat
+                    if (params.isChatEnabled) {
+                        navigateToChat(orderId)
+                    }
+                    // Driver tracking
+                    else if (params.isDriverTrackingEnabled) {
+                        driverTrackingUrl?.let { navigateToOrderTrackingScreen(it) }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun navigateToChat(orderId: String?) {
+        orderId?.let {
+            startActivity(OCChatActivity.newIntent(requireActivity(), it))
+        }
+    }
+
+    private fun navigateToOrderTrackingScreen(url: String) {
+        requireActivity().apply {
+            startActivity(OrderTrackingWebViewActivity.newIntent(this, url))
+            overridePendingTransition(
+                R.anim.slide_from_right,
+                R.anim.slide_out_to_left
+            )
         }
     }
 

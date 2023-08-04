@@ -1065,7 +1065,6 @@ class CheckoutAddAddressReturningUserFragment :
                         }
                     }
                 )
-                activity?.finish()
             }
 
             R.id.txtContinueToPayment -> {
