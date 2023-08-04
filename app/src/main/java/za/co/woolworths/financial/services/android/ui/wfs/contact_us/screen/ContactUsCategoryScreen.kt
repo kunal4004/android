@@ -123,7 +123,7 @@ fun CategoryList(
                             )
                         }
                     )) {
-                        //For identical name field appending extra sting for locators ifF required for automation work
+
                        var isAppendString = false
                         if (index == 0 && size > 2) {
                             isAppendString = true

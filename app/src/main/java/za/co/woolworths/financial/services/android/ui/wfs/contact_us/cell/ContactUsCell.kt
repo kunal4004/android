@@ -83,7 +83,8 @@ fun TitleDescriptionAndNextArrowItem(children: Children, isAppendString: Boolean
             modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.Center
         ) {
-            var titleAccessibilityId = titleString.getAccessibilityIdWithAppendedString(titleString, "title")
+            var titleAccessibilityId = titleString.getAccessibilityIdWithAppendedString(titleString,  stringResource(
+                id = R.string.title))
             if (isAppendString) { titleAccessibilityId = titleAccessibilityId.plus("_1") }
 
             TextOpenSansSemiBoldH3(
@@ -92,7 +93,7 @@ fun TitleDescriptionAndNextArrowItem(children: Children, isAppendString: Boolean
                 fontSize = FontDimensions.sp13,
                 locator = titleAccessibilityId
             )
-            var descriptionAccessibilityId = titleString.getAccessibilityIdWithAppendedString(titleString, "subtitle")
+            var descriptionAccessibilityId = titleString.getAccessibilityIdWithAppendedString(titleString, stringResource(id = R.string.subtitle))
             if (isAppendString) { descriptionAccessibilityId = descriptionAccessibilityId.plus("_1") }
 
             children.description?.let { description ->
@@ -105,7 +106,9 @@ fun TitleDescriptionAndNextArrowItem(children: Children, isAppendString: Boolean
                 )
             }
         }
-        var nextArrowAccessibilityId = titleString.getAccessibilityIdWithAppendedString(titleString, "next_arrow")
+        var nextArrowAccessibilityId = titleString.getAccessibilityIdWithAppendedString(titleString, stringResource(
+            id = R.string.next_arrow
+        ))
         if (isAppendString) { nextArrowAccessibilityId = nextArrowAccessibilityId.plus("_1") }
         MyIcon(id = R.drawable.ic_caret_black, contentDescriptionId = R.string.next_arrow, locator = nextArrowAccessibilityId)
     }
@@ -125,12 +128,15 @@ fun LeftIconTitleDescriptionAndNextArrowItem(item: Children) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         val titleString = item.title ?: ""
-        val imageIconAccessibilityId = titleString.getAccessibilityIdWithAppendedString(titleString, "image_icon")
+        val imageIconAccessibilityId = titleString.getAccessibilityIdWithAppendedString(titleString, stringResource(
+            id = R.string.image_icon
+        ))
 
         MyIcon(id = item.type?.iconId(), modifier = Modifier, locator = imageIconAccessibilityId)
         SpacerWidth16dp()
         Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.Center) {
-            val titleAccessibilityId = titleString.getAccessibilityIdWithAppendedString(titleString, "title")
+            val titleAccessibilityId = titleString.getAccessibilityIdWithAppendedString(titleString, stringResource(
+                id = R.string.title))
 
             TextOpenSansSemiBoldH3(
                 text =  item.title ?: "" ,
@@ -138,7 +144,9 @@ fun LeftIconTitleDescriptionAndNextArrowItem(item: Children) {
                 fontSize = FontDimensions.sp13,
                 locator = titleAccessibilityId)
             item.description?.let { description ->
-                val descriptionAccessibilityId = titleString.getAccessibilityIdWithAppendedString(titleString, "description")
+                val descriptionAccessibilityId = titleString.getAccessibilityIdWithAppendedString(titleString, stringResource(
+                    id = R.string.description
+                ))
 
                 SpacerHeight8dp(height = Dimens.four_dp)
                 TextOpenSansFontFamily(
@@ -149,7 +157,9 @@ fun LeftIconTitleDescriptionAndNextArrowItem(item: Children) {
                 )
             }
         }
-        val nextArrowAccessibilityId = titleString.getAccessibilityIdWithAppendedString(titleString, "next_arrow")
+        val nextArrowAccessibilityId = titleString.getAccessibilityIdWithAppendedString(titleString, stringResource(
+            id = R.string.next_arrow
+        ))
         MyIcon(
             id = R.drawable.ic_caret_black,
             contentDescriptionId = R.string.next_arrow,
@@ -185,7 +195,8 @@ fun TextWithRadioButtonOption(
                         end = Margin.dp2
                     )
             ) {
-                val descriptionAccessibilityId = titleString.getAccessibilityIdWithAppendedString(titleString, "title")
+                val descriptionAccessibilityId = titleString.getAccessibilityIdWithAppendedString(titleString, stringResource(
+                    id = R.string.title))
 
                 TextOpenSansFontFamily(
                         text = titleString,
@@ -194,7 +205,9 @@ fun TextWithRadioButtonOption(
                         fontSize = FontDimensions.sp12
                     )
             }
-            val checkBoxAccessibilityId = titleString.getAccessibilityIdWithAppendedString(titleString, "checkbox")
+            val checkBoxAccessibilityId = titleString.getAccessibilityIdWithAppendedString(titleString, stringResource(
+                id = R.string.checkBox
+            ))
             CheckedUncheckedRadioButton(isChecked = item == selectedOption, locator = checkBoxAccessibilityId,
                     onClick = {
                         onOptionSelected(item)

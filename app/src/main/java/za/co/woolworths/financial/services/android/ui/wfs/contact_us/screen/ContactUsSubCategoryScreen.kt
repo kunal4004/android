@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.getAccessibilityIdWithAppendedString
@@ -16,6 +17,7 @@ import za.co.woolworths.financial.services.android.ui.wfs.contact_us.model.Child
 import za.co.woolworths.financial.services.android.ui.wfs.contact_us.model.ChildrenItem
 import za.co.woolworths.financial.services.android.ui.wfs.theme.FontDimensions
 import za.co.woolworths.financial.services.android.ui.wfs.theme.Margin
+import com.awfs.coordination.R
 
 @Composable
 fun ContactUsSubCategoryScreen(viewModel: ContactUsViewModel, onSelected: (Children) -> Unit) {
@@ -31,7 +33,9 @@ fun SubCategoryList(listOfChildren: MutableList<ChildrenItem>, onSelected: (Chil
             TextContactUsFuturaSemiBoldSectionHeader(title = titleString, locator = titleAccessibilityId)
              Column(Modifier.padding(start = Margin.start, end = Margin.dp15)) {
                     item.description?.let { desc ->
-                        val descriptionAccessibilityId = titleString.getAccessibilityIdWithAppendedString(titleString, "description")
+                        val descriptionAccessibilityId = titleString.getAccessibilityIdWithAppendedString(titleString, stringResource(
+                            id = R.string.description
+                        ))
                         TextOpenSansFontFamily(
                             text =desc,
                             textAlign = TextAlign.Start,
