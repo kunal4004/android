@@ -18,4 +18,7 @@ object Constants {
     const val EVENT_TYPE_CART = "monetate:context:Cart"
     const val EVENT_URL_ORDERDETAILS = "/orderDetails"
     const val EVENT_PAGE_TYPE = "purchase"
+    const val EVENT_PAGE_TYPE_SHOPPING_LIST = "shoppingList"
+    const val EVENT_TYPE_PRODUCT_THUMBNAIL_VIEW = "monetate:context:ProductThumbnailView"
+    const val EVENT_URL_SHOPPING_LIST = "/shoppinglist"
 }

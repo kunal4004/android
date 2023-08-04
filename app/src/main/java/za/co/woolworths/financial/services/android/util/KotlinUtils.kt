@@ -339,7 +339,7 @@ class KotlinUtils {
             val words = value.split(" ").toMutableList()
             var output = ""
             for (word in words) {
-                output += word.uppercase() + " "
+                output += word.replaceFirstChar { it.titlecase() } + " "
             }
             return output.trim()
         }
