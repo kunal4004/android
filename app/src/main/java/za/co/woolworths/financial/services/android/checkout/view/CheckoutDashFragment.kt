@@ -1114,7 +1114,6 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
                         }
                     }
                 )
-                activity?.finish()
             }
 
             R.id.chooseDateLayout -> {
