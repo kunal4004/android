@@ -128,14 +128,18 @@ class CustomBottomSheetDialogFragment : WBottomSheetDialogFragment(),
                 dismiss()
             }
             R.id.tvDismiss -> {
-                setFragmentResult(DIALOG_BUTTON_DISMISS_RESULT, bundleOf())
+                val bundle = Bundle()
+                bundle.putString(DIALOG_BUTTON_CLICK_RESULT, arguments?.getString(DIALOG_BUTTON_CLICK_RESULT))
+                setFragmentResult(DIALOG_BUTTON_DISMISS_RESULT, bundle)
                 dismiss()
             }
         }
     }
 
     override fun onCancel(dialog: DialogInterface) {
-        setFragmentResult(DIALOG_BUTTON_DISMISS_RESULT, bundleOf())
+        val bundle = Bundle()
+        bundle.putString(DIALOG_BUTTON_CLICK_RESULT, arguments?.getString(DIALOG_BUTTON_CLICK_RESULT))
+        setFragmentResult(DIALOG_BUTTON_DISMISS_RESULT, bundle)
         super.onCancel(dialog)
     }
 }

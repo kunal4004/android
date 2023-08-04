@@ -21,22 +21,22 @@ class RecommendationsRepositoryImplFake : RecommendationsRepository {
             if (mId.isNullOrEmpty() || events.isNullOrEmpty() || events.size != 4) {
                 return false
             }
-            val pageViewEvent = events[0]
+            val pageViewEvent = events[0] as Event
             if (pageViewEvent.eventType != Constants.EVENT_TYPE_PAGEVIEW || pageViewEvent.pageType != Constants.EVENT_PAGE_TYPE || pageViewEvent.url != Constants.EVENT_URL_ORDERDETAILS) {
                 return false
             }
 
-            val event = events[1]
+            val event = events[1] as Event
             if (event.eventType != Constants.EVENT_TYPE_PURCHASE || event.orderId.isNullOrEmpty() || event.purchaseLines.isNullOrEmpty()) {
                 return false
             }
 
-            val userAgent = events[2]
+            val userAgent = events[2] as Event
             if (userAgent.eventType != EVENT_TYPE_USER_AGENT){
                 return false
             }
 
-            val ipAddress = events[3]
+            val ipAddress = events[3] as Event
             if (ipAddress.eventType != Event_TYPE_IP_ADDRESS){
                 return false
             }

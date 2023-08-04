@@ -14,7 +14,6 @@ import za.co.woolworths.financial.services.android.models.dao.ApiRequestDao;
 import za.co.woolworths.financial.services.android.models.dao.ApiResponseDao;
 import za.co.woolworths.financial.services.android.ui.activities.maintenance.NetworkRuntimeExceptionViewController;
 import za.co.woolworths.financial.services.android.util.GZIPCompression;
-import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager;
 
 /**
  * Created by eesajacobs on 2016/12/29.
@@ -49,7 +48,6 @@ public class WfsApiInterceptor implements Interceptor {
                         .build();
             } catch (Exception exception) {
                 if (exception instanceof SocketTimeoutException) {
-                    FirebaseManager.logException(exception);
                     new NetworkRuntimeExceptionViewController().openSocketTimeOutDialog();
                 }
                 throw exception;
@@ -83,7 +81,6 @@ public class WfsApiInterceptor implements Interceptor {
             response = chain.proceed(request);
         } catch (Exception exception) {
             if (exception instanceof SocketTimeoutException) {
-                FirebaseManager.logException(exception);
                 new NetworkRuntimeExceptionViewController().openSocketTimeOutDialog();
             }
             throw exception;
@@ -123,6 +120,4 @@ public class WfsApiInterceptor implements Interceptor {
             return "did not work";
         }
     }
-
-
 }

@@ -622,6 +622,12 @@ interface ApiInterface {
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String): Call<CartSummaryResponse>
 
+    @GET("wfs/app/v4/cart/summary")
+    suspend fun getCartsSummary(
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String
+    ): retrofit2.Response<CartSummaryResponse>
+
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @DELETE("wfs/app/v4/cartV2/item")
     suspend fun removeAllCartItems(
@@ -1345,15 +1351,6 @@ interface ApiInterface {
         @Header("deviceIdentityToken") deviceIdentityToken: String,
         @Body confirmLocationRequest: ConfirmLocationRequest
     ): Call<ConfirmDeliveryAddressResponse>
-
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @POST("wfs/app/v4/cartV2/confirmLocation")
-    suspend fun confirmPlaceLocation(
-        @Header("userAgent") userAgent: String,
-        @Header("userAgentVersion") userAgentVersion: String,
-        @Header("sessionToken") sessionToken: String,
-        @Header("deviceIdentityToken") deviceIdentityToken: String,
-        @Body confirmLocationRequest: ConfirmLocationRequest) : retrofit2.Response<ConfirmDeliveryAddressResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("wfs/app/v4/locationItems/saveLocation")
