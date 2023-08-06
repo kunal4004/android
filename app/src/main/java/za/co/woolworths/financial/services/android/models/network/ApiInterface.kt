@@ -977,6 +977,17 @@ interface ApiInterface {
         "Accept: application/json",
         "Media-Type: application/json",
     )
+    @GET("wfs/app/v4/cart/summary")
+    suspend fun getCartsSummary(
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+    ): retrofit2.Response<CartSummaryResponse>
+
+    @Headers(
+        "Content-Type: application/json",
+        "Accept: application/json",
+        "Media-Type: application/json",
+    )
     @DELETE("wfs/app/v4/cartV2/item")
     suspend fun removeAllCartItems(
 

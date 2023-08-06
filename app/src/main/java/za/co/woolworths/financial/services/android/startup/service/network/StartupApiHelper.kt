@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.startup.service.network
 
 import android.content.Context
-import android.util.Log
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse
 import za.co.woolworths.financial.services.android.models.network.AppContextProviderImpl
@@ -17,8 +16,15 @@ class StartupApiHelper : RetrofitConfig(AppContextProviderImpl(), RetrofitApiPro
         return mApiInterface.getConfig(
             getSessionToken(),
             getDeviceIdentityToken(),
-            WoolworthsApplication.getAppVersionName())
+            WoolworthsApplication.getAppVersionName(),
+        )
     }
 
-    fun isConnectedToInternet(context: Context) = NetworkManager.getInstance().isConnectedToNetwork(context)
+    suspend fun getCartSummary() = mApiInterface.getCartsSummary(
+        getSessionToken(),
+        getDeviceIdentityToken(),
+    )
+
+    fun isConnectedToInternet(context: Context) =
+        NetworkManager.getInstance().isConnectedToNetwork(context)
 }
