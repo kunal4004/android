@@ -8,7 +8,6 @@ enum class DensityDpiDimension(private val dpi: Int) {
     DPI320(320),
     DPI360(360),
     DPI400(400),
-    DPI420(420),
     DPI440(440),
     DPI480(480),
     DPI520(520),
@@ -21,7 +20,6 @@ enum class DensityDpiDimension(private val dpi: Int) {
                 screenWidthDp <= DPI320.dpi -> sw320Dimensions
                 screenWidthDp <= DPI360.dpi -> sw360Dimensions
                 screenWidthDp <= DPI400.dpi -> sw400Dimensions
-                screenWidthDp <= DPI420.dpi -> sw420Dimensions
                 screenWidthDp <= DPI440.dpi -> sw440Dimensions
                 screenWidthDp <= DPI480.dpi -> sw480Dimensions
                 screenWidthDp <= DPI520.dpi -> sw360Dimensions
@@ -37,7 +35,6 @@ enum class DensityDpiDimension(private val dpi: Int) {
                 screenWidthDp <= DPI320.dpi -> sw320MarginDimensions
                 screenWidthDp <= DPI360.dpi -> sw360MarginDimensions
                 screenWidthDp <= DPI400.dpi -> sw400MarginDimensions
-                screenWidthDp <= DPI420.dpi -> sw440MarginDimensions
                 screenWidthDp <= DPI440.dpi -> sw440MarginDimensions
                 screenWidthDp <= DPI480.dpi -> sw480MarginDimensions
                 screenWidthDp <= DPI520.dpi -> sw520MarginDimensions
@@ -53,7 +50,6 @@ enum class DensityDpiDimension(private val dpi: Int) {
                 screenWidthDp <= DPI320.dpi -> sw320FontDimensions
                 screenWidthDp <= DPI360.dpi -> sw360FontDimensions
                 screenWidthDp <= DPI400.dpi -> sw400FontDimensions
-                screenWidthDp <= DPI420.dpi -> sw420FontDimensions
                 screenWidthDp <= DPI440.dpi -> sw440FontDimensions
                 screenWidthDp <= DPI480.dpi -> sw480FontDimensions
                 screenWidthDp <= DPI520.dpi -> sw520FontDimensions
@@ -70,7 +66,6 @@ enum class DensityDpiDimension(private val dpi: Int) {
                 screenWidthDp <= DPI320.dpi -> sw320FloatDimensions
                 screenWidthDp <= DPI360.dpi -> sw360FloatDimensions
                 screenWidthDp <= DPI400.dpi -> sw400FloatDimensions
-                screenWidthDp <= DPI420.dpi -> sw440FloatDimensions
                 screenWidthDp <= DPI440.dpi -> sw440FloatDimensions
                 screenWidthDp <= DPI480.dpi -> sw480FloatDimensions
                 screenWidthDp <= DPI520.dpi -> sw520FloatDimensions
@@ -86,7 +81,6 @@ enum class DensityDpiDimension(private val dpi: Int) {
                 screenWidthDp <= DPI320.dpi -> sw320LetterSpacingDimensions
                 screenWidthDp <= DPI360.dpi -> sw360LetterSpacingDimensions
                 screenWidthDp <= DPI400.dpi -> sw400LetterSpacingDimensions
-                screenWidthDp <= DPI420.dpi -> sw440LetterSpacingDimensions
                 screenWidthDp <= DPI440.dpi -> sw440LetterSpacingDimensions
                 screenWidthDp <= DPI480.dpi -> sw480LetterSpacingDimensions
                 screenWidthDp <= DPI520.dpi -> sw520LetterSpacingDimensions

@@ -18,7 +18,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.json.JSONException
@@ -96,6 +95,7 @@ fun SignedInScreen(
 
         SignInContainer(isAccountLoading = userAccounts.isLoading, onClick = onClick, onProductClick = onProductClick,  allUserAccounts = userAccounts)
     }
+
 }
 
 @Composable
@@ -495,6 +495,7 @@ private fun LazyListScope.displayPetInsuranceProduct(
                 key = productItems.properties.automationLocatorKey
             )
         }
+
         AnimatedVisibility(
             visible = !loadingOptions.isAccountLoading && itemAppeared,
             enter = if (viewModel.petInsuranceDidAnimateOnce)
@@ -504,7 +505,9 @@ private fun LazyListScope.displayPetInsuranceProduct(
                     durationMillis = animationDurationMilis400,
                     easing = FastOutLinearInEasing
                 )
-            ), exit = ExitTransition.None) {
+            ),
+            exit = ExitTransition.None
+        ) {
             PetInsuranceView(
                 productGroup = productItems,
                 petInsuranceDefaultConfig = viewModel.getPetInsuranceMobileConfig()?.defaultCopyPetPending,
@@ -517,7 +520,8 @@ private fun LazyListScope.displayPetInsuranceProduct(
 
 private fun LazyListScope.productHeaderView(
     isLoading: Boolean,
-    brush: Brush?) {
+    brush: Brush?
+) {
     item {
         val product = MyAccountSectionHeaderType.MyProducts.title()
         val title = stringResource(product.title)

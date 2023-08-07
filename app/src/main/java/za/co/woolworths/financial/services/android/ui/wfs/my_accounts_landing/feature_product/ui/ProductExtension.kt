@@ -72,8 +72,7 @@ fun ViewRetryMyCoverButtonGroup(
                     isClickable = false,
                     buttonState = buttonState,
                     buttonLabel = petInsuranceDefaultConfig?.action ?: ""
-
-            ) {}
+                ) {}
         }
     }
 }
