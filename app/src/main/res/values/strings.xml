@@ -2993,7 +2993,7 @@
     <string name="my_products_cant_load_product">Can\'t Load Balance</string>
     <string name="application_status">Application Status</string>
 
-    <string name="only_fashion_beauty_and_home_products_available_text" >Only Fashion, Beauty and Home products available.</string>
+    <string name="only_fashion_beauty_and_home_products_available_text">Only Fashion, Beauty and Home products available.</string>
     <string name="cnc_title_text_2">Limited shop of %1$s food items.</string>
 
     <string name="recommendations_title">Recommended</string>
