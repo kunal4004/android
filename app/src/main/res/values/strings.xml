@@ -17,6 +17,7 @@
     <string name="next">NEXT</string>
     <string name="cancel" tools:ignore="ButtonCase">CANCEL</string>
     <string name="cancel_underline" tools:ignore="ButtonCase"><u>CANCEL</u></string>
+    <string name="cancel_underline_html"><![CDATA[<u>CANCEL</u>]]> </string>
     <string name="submit">SUBMIT</string>
     <string name="valid_from">VALID FROM</string>
     <string name="valid_until">VALID UNTIL</string>
@@ -487,7 +488,6 @@
     <string name="new_list">new list</string>
     <string name="shopping_search_hint">Add Items To Your List</string>
     <string name="total_item">Total*</string>
-    <string name="rlOtherDiscounts"><![CDATA[WRewards Savings & Other Discounts]]></string>
     <string name="out_of_stock">out of stock</string>
     <string name="promotional_text">You Saved </string>
     <string name="labelPromotionOne">labelPromotionOne</string>
@@ -512,7 +512,6 @@
     <string name="favourite_delivery_location_description">In order to improve your shopping experience you can set your favourite delivery location. We will use this as your default delivery location.</string>
     <string name="product_unavailable_desc">Sorry, this product is unavailable in your delivery location</string>
     <string name="delivering_to">Delivering to</string>
-    <string name="delivering_to_geo"> <![CDATA[Delivering to <font color=\'#000000\'><b>%s</b></font>]]></string>
     <string name="delivering_location_popup_message">Your Delivery Location must match your Delivery Address in Checkout. Changing your Delivery Location can affect the product availability of items in your cart.</string>
     <string name="confirm_size_range_desc">size range</string>
     <string name="set_up_device_biometrics_title">BIOMETRICS&#47;PIN</string>
@@ -1317,7 +1316,6 @@
     <string name="payment_options_desc">A payment of %1$s is required to bring your account up to date.</string>
     <string name="payment_options_title">Your Account Is In Arrears</string>
 
-    <string name="account_arrears_description">Your account is in arrears for more than 6 months and has been handed to a collections agency.</string>
     <string name="call_the_call_centre">call the call centre</string>
     <string name="view_treatment_plan_description">Your account is in arrears. Have you already agreed to a repayment plan? View your plan or make a payment now.</string>
     <string name="treatment_plan_eligible_charged_off_description_pl">Your account is being managed by our collection partners</string>
@@ -2141,7 +2139,6 @@
     <string name="woolies_chat_active">Chat is currently active</string>
 
     <string name="shop_liquor_in_our_app">Shop Liquor</string>
-    <string name="delivery_liquor_description"><![CDATA[Liquor is not available for Click & Collect.]]></string>
 
     <string name="balance_protection_insurance_claim_form">Balance Protection Insurance Claim Form</string>
 
@@ -2299,6 +2296,7 @@
 
     <!-- Native Checkout : Suburb not deliverable  -->
     <string name="dismiss">Dismiss</string>
+    <string name="dismiss_underline" tools:ignore="ButtonCase"><u>DISMISS</u></string>
     <string name="suburb_not_deliverable_msg">We Can’t Deliver To This Suburb Yet</string>
     <string name="suburb_not_deliverable_description">However, we’re growing quickly, so please check back soon.</string>
 
@@ -2585,26 +2583,24 @@
     <string name="continue_with_standard_delivery">CONTINUE WITH STANDARD DELIVERY</string>
     <string name="continue_with_cnc_delivery">CONTINUE WITH Click &amp; Collect</string>
     <string name="continue_with_dash_delivery">CONTINUE WITH DASH DELIVERY</string>
+    <string name="remove_items_standard_dialog_title">This Item Isn’t Available Using Standard Delivery.\n Save It To A Shopping List Instead.</string>
 
-    <plurals name="remove_items_dash_dialog_desc">
-        <item quantity="one">This item cannot be delivered using <b><font color='#000000'>Dash Delivery.</font></b>. The following will be removed from your cart:</item>
-        <item quantity="other">These items cannot be delivered using <b><font color='#000000'>Dash Delivery.</font></b>. The following will be removed from your cart:</item>
+    <plurals name="remove_items_dash_dialog_title">
+        <item quantity="one">This Item Isn’t Available Using Dash Delivery.\n Save It To A Shopping List Instead.</item>
+        <item quantity="other">These Items Aren’t Available Using Dash Delivery.\n Save It To A Shopping List Instead.</item>
     </plurals>
 
-    <plurals name="remove_items_standard_dialog_desc">
-        <item quantity="one">This item cannot be delivered using <b><font color='#000000'>Standard Delivery.</font></b>. The following will be removed from your cart:</item>
-        <item quantity="other">These items cannot be delivered using <b><font color='#000000'>Standard Delivery.</font></b>. The following will be removed from your cart:</item>
+    <plurals name="remove_items_standard_dialog_title">
+        <item quantity="one">This Item Isn’t Available Using Standard Delivery.\n Save It To A Shopping List Instead.</item>
+        <item quantity="other">These Items Aren’t Available Using Standard Delivery.\n Save It To A Shopping List Instead.</item>
     </plurals>
 
-    <plurals name="remove_items_cnc_dialog_desc">
-        <item quantity="one">This item cannot be delivered using <b><font color="black">Click &amp; Collect.</font></b>. The following will be removed from your cart:</item>
-        <item quantity="other">These items cannot be delivered using <b><font color="black">Click &amp; Collect.</font></b>. The following will be removed from your cart:</item>
+    <plurals name="remove_items_cnc_dialog_title">
+        <item quantity="one">This Item Isn’t Available Using Click &amp; Collect.\n Save It To A Shopping List Instead.</item>
+        <item quantity="other">These Items Aren’t Available Using Click &amp; Collect.\n Save It To A Shopping List Instead.</item>
     </plurals>
 
-    <plurals name="unsellable_title">
-        <item quantity="one">This Item Will Be Removed From Your Cart.</item>
-        <item quantity="other">@string/these_items_will_be_removed_from_your_cart</item>
-    </plurals>
+    <string name="unsellable_subtitle">The following will be removed from your cart.</string>
     <string name="minspend_error_msg_cart">A minimum spend of R%s is required to checkout.</string>
     <string name="minspend_error_msg_title">A minimum spend of R%.1f is required to checkout.</string>
     <string name="minspend_error_msg_desc">To complete your purchase, increase your order value, or change your delivery method.</string>
@@ -2997,7 +2993,7 @@
     <string name="my_products_cant_load_product">Can\'t Load Balance</string>
     <string name="application_status">Application Status</string>
 
-    <string name="only_fashion_beauty_and_home_products_available_text" >Only Fashion, Beauty and Home products available.</string>
+    <string name="only_fashion_beauty_and_home_products_available_text">Only Fashion, Beauty and Home products available.</string>
     <string name="cnc_title_text_2">Limited shop of %1$s food items.</string>
 
     <string name="recommendations_title">Recommended</string>
@@ -3059,10 +3055,21 @@
     <string name="payflex_is_unavailable_when_buying_food_items_and_gift_cards">Payflex is unavailable when buying Food items and Gift Cards.</string>
     <string name="open_until">Open until %s</string>
     <string name="contact_us_email_message_placeholder">Please provide details about your query.</string>
-
-    <string name="oops_something_went_wrong">Oops. Something Went Wrong</string>
+    <string name="save_item_to_list_text"></string>
+    <plurals name="save_item_to_list_text">
+        <item quantity="one">Save this item to a list to shop later.</item>
+        <item quantity="other">Save these items to a list to shop later.</item>
+    </plurals>
 
     <string name="add_to_list_progress_title">Adding Your Items\n to %s</string>
+    <string name="add_to_list_progress_bar_title">Adding Your Items\n to a List</string>
+    <string name="add_to_list_bottom_sheet_success_title">We\’ve Added Your Items To The ‘Saved Shopping’ List</string>
+    <string name="add_to_list_bottom_sheet_success_sub_title">You will be able to add them to your cart from there.</string>
+
+    <string name="add_to_list_error_description">The items were unable to be added to a list.</string>
+
+
+    <string name="oops_something_went_wrong">Oops. Something Went Wrong</string>
     <string name="added_to_list_desc">THIS EXCLUDES FREE GIFT ITEMS</string>
     <string name="multiple_lists">Multiple Lists</string>
     <string name="add_to_list_failure">Failed to add to list. Please try again later.</string>

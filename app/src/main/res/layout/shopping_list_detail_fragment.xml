@@ -188,18 +188,45 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
-            app:layout_constraintTop_toBottomOf="@id/deliveryLocationConstLayout"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:id="@+id/rcvShoppingListItems"
-            app:layout_constrainedHeight="true"
+        <za.co.woolworths.financial.services.android.ui.views.LockableNestedScrollViewV2
+            android:id="@+id/nestedScrollView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="@dimen/eight_dp"
-            android:overScrollMode="never"
-            android:background="@color/transparent"
-            tools:itemCount="3"
-            tools:listitem="@layout/shopping_list_commerce_item" />
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/deliveryLocationConstLayout"
+            app:layout_constraintStart_toStartOf="parent"
+            android:fillViewport="true">
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rcvShoppingListItems"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/eight_dp"
+                    android:overScrollMode="never"
+                    android:background="@color/transparent"
+                    tools:itemCount="3"
+                    android:nestedScrollingEnabled="false"
+                    tools:listitem="@layout/shopping_list_commerce_item" />
+
+                <View
+                    android:id="@+id/viewRecommendationDivider"
+                    android:layout_width="match_parent"
+                    android:visibility="gone"
+                    android:layout_height="@dimen/eight_dp"
+                    android:background="@color/color_F5F5F5"/>
+
+                <include
+                    android:id="@+id/layoutRecommendationContainer"
+                    layout="@layout/recommendation_fragment_container_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+
+        </za.co.woolworths.financial.services.android.ui.views.LockableNestedScrollViewV2>
 
         <include
             android:id="@+id/blackToolTipLayout"
