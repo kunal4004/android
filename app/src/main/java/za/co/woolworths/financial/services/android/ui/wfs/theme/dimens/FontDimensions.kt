@@ -36,12 +36,6 @@ val sw360FontDimensions by lazy {
 val sw400FontDimensions by lazy {
     FontDimensions()
 }
-val sw420FontDimensions by lazy {
-    FontDimensions(
-        policyNumberValue15Sp = 14.sp
-
-    )
-}
 
 val sw440FontDimensions by lazy {
     FontDimensions(
