@@ -58,7 +58,12 @@ class UnsellableItemsBottomSheetDialog(
             viewModel: ConfirmAddressViewModel,
             fragment: Fragment,
         ) =
-            UnsellableItemsBottomSheetDialog(deliveryType, progressBar, viewModel, fragment).withArgs {
+            UnsellableItemsBottomSheetDialog(
+                deliveryType,
+                progressBar,
+                viewModel,
+                fragment
+            ).withArgs {
                 putSerializable(KEY_ARGS_UNSELLABLE_COMMERCE_ITEMS, unsellableItemsList)
             }
     }
