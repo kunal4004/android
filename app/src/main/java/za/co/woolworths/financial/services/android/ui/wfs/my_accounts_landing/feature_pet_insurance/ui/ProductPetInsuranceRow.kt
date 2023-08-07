@@ -16,6 +16,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
@@ -49,7 +51,7 @@ import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OpenSansFontFamily
 import za.co.woolworths.financial.services.android.ui.wfs.theme.White
 
- const val columnRef = "columnRef"
+const val columnRef = "columnRef"
  const val backgroundImage = "backgroundImage"
 
 private val  insuranceProduct =  InsuranceProducts(
@@ -63,7 +65,7 @@ private val properties = ProductPropertiesViewType.PetInsurance.value()
 
 private val defaultConfig = DefaultCopyPetPending(
     title = "WPet Care",
-    subtitle = "Pet Insurance Application",
+    subtitle = "Pet Insurance Application Pet Insurance Application Pet Insurance Application",
     action = "My Cover")
 
 @Preview
@@ -72,7 +74,7 @@ fun PetInsurancePreview(){
     val insuranceProductPending = insuranceProduct.copy(
         planType = "WPet Care Origin",
         status = "PENDING",
-        policyNumber = "1234568"
+        policyNumber = "1234568123456812345681234568123456812345681234568123456812345681234568"
     )
 
     val insuranceProductPendingNoPlanTypeNoPolicyNumber = insuranceProduct.copy(status = "PENDING")
@@ -111,7 +113,6 @@ fun ProductPetInsuranceRow(
     val title = insuranceProduct?.planType ?: defaultConfig?.title ?: ""
     val policyNumber = insuranceProduct?.policyNumber
     val descLabel = if (policyNumber != null) stringResource(id = properties.availableProduct) else defaultConfig?.subtitle ?: ""
-
     TextWFuturaMedium(
         locator = my_product_pet_insurance_plan_type_title,
         text = title.uppercase(),
@@ -126,6 +127,9 @@ fun ProductPetInsuranceRow(
         TextOpenSansFontFamily(
             color = BrightGray,
             text = descLabel,
+            overflow = TextOverflow.Ellipsis,
+            maxLines = 1,
+            textAlign = TextAlign.Start,
             locator = my_product_policy_number_label,
             fontSize = FontDimensions.sp15)
 
@@ -136,6 +140,8 @@ fun ProductPetInsuranceRow(
                 locator = my_product_policy_number_value,
                 fontFamily = OpenSansFontFamily,
                 fontWeight = FontWeight.SemiBold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
                 fontSize = FontDimensions.policyNumberValue15Sp,
                 color = White
             )
