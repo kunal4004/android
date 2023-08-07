@@ -10,6 +10,7 @@ interface CommonErrorBottomSheetDialog {
         context: Context,
         title: String,
         desc: String,
-        buttonText: String
+        buttonText: String,
+        isDismissButtonNeeded: Boolean
     )
 }
