@@ -2688,7 +2688,7 @@
     <string name="send">SEND</string>
     <string name="email_us_name">Name: *</string>
     <string name="email_us_email">Email Address: *</string>
-    <string name="email_us_email_validation">Please ensure that this email is correct</string>
+    <string name="email_us_email_validation">Please ensure that this email address is correct.</string>
     <string name="email_us_enquiry">Enquiry Type: *</string>
     <string name="email_us_message">Message: *</string>
     <string name="sending_enquiry">Sending Enquiry</string>
