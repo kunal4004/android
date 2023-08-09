@@ -2586,18 +2586,18 @@
     <string name="remove_items_standard_dialog_title">This Item Isn’t Available Using Standard Delivery.\n Save It To A Shopping List Instead.</string>
 
     <plurals name="remove_items_dash_dialog_title">
-        <item quantity="one">This Item Isn’t Available Using Dash Delivery.\n Save It To A Shopping List Instead.</item>
-        <item quantity="other">These Items Aren’t Available Using Dash Delivery.\n Save It To A Shopping List Instead.</item>
+        <item quantity="one">This item can’t be delivered to your chosen address.\n Save it to a shopping list instead.</item>
+        <item quantity="other">These items can’t be delivered to your chosen address.\n Save it to a shopping list instead.</item>
     </plurals>
 
     <plurals name="remove_items_standard_dialog_title">
-        <item quantity="one">This Item Isn’t Available Using Standard Delivery.\n Save It To A Shopping List Instead.</item>
-        <item quantity="other">These Items Aren’t Available Using Standard Delivery.\n Save It To A Shopping List Instead.</item>
+        <item quantity="one">This item can’t be delivered to your chosen address.\n Save it to a shopping list instead.</item>
+        <item quantity="other">These items can’t be delivered to your chosen address.\n Save it to a shopping list instead.</item>
     </plurals>
 
     <plurals name="remove_items_cnc_dialog_title">
-        <item quantity="one">This Item Isn’t Available Using Click &amp; Collect.\n Save It To A Shopping List Instead.</item>
-        <item quantity="other">These Items Aren’t Available Using Click &amp; Collect.\n Save It To A Shopping List Instead.</item>
+        <item quantity="one">This item can’t be collected from the chosen location.\n Save it to a shopping list instead.</item>
+        <item quantity="other">These items can’t be collected from the chosen location.\n Save it to a shopping list instead.</item>
     </plurals>
 
     <string name="unsellable_subtitle">The following will be removed from your cart.</string>

@@ -20,6 +20,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.core.text.buildSpannedString
 import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.NavHostFragment
@@ -47,6 +48,8 @@ import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils.Companion.getDelivertyType
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils.Companion.getPlaceId
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils.Companion.getSelectedPlaceId
+import za.co.woolworths.financial.services.android.geolocation.viewmodel.AddToCartLiveData
+import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton.nativeCheckout
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
@@ -74,11 +77,10 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.ui.activities.online_voucher_redemption.AvailableVouchersToRedeemInCart
 import za.co.woolworths.financial.services.android.ui.fragments.cart.GiftWithPurchaseDialogDetailFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment
-import za.co.woolworths.financial.services.android.ui.fragments.product.shop.RemoveProductsFromCartDialogFragment.Companion.newInstance
-import za.co.woolworths.financial.services.android.ui.fragments.product.shop.RemoveProductsFromCartDialogFragment.IRemoveProductsFromCartDialog
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants
 import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.LockableNestedScrollViewV2
+import za.co.woolworths.financial.services.android.ui.views.UnsellableItemsBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView.IWalkthroughActionListener
 import za.co.woolworths.financial.services.android.ui.views.WTextView
@@ -115,13 +117,13 @@ import java.net.UnknownHostException
 @AndroidEntryPoint
 class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBinding::inflate),
     CartProductAdapter.OnItemClick,
-    View.OnClickListener, NetworkChangeListener, ToastInterface, IWalkthroughActionListener,
-    IRemoveProductsFromCartDialog, RecommendationEventHandler {
+    View.OnClickListener, NetworkChangeListener, ToastInterface, IWalkthroughActionListener, RecommendationEventHandler {
 
     private val viewModel: CartViewModel by viewModels(
         ownerProducer = { this }
     )
     private val recommendationViewModel: RecommendationViewModel by viewModels()
+    private val confirmAddressViewModel: ConfirmAddressViewModel by activityViewModels()
 
     private val TAG = this.javaClass.simpleName
     private var mNumberOfListSelected = 0
@@ -1807,10 +1809,63 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         }
         if (itemsTobeRemovedFromCart.size > 0) {
             if (activity != null && isAdded) {
-                val fromCartDialogFragment = newInstance(itemsTobeRemovedFromCart)
-                fromCartDialogFragment.show(this.childFragmentManager, this.javaClass.simpleName)
+                getPreferredDeliveryType()?.let {
+                    navigateToUnsellableItemsFragment(getUnsellableCommerceItem(cartItems, itemsTobeRemovedFromCart),
+                        it
+                    )
+                }
             }
         }
+    }
+
+    private fun getUnsellableCommerceItem(
+        cartItemsGroup: ArrayList<CartItemGroup>?,
+        commerceItemList: ArrayList<CommerceItem>,
+    ): ArrayList<UnSellableCommerceItem> {
+        var unsellableCommerseItemList = ArrayList<UnSellableCommerceItem>()
+        commerceItemList.forEachIndexed { i, item ->
+            val price = Price(
+                item.priceInfo.amount,
+                0.0,
+                item.priceInfo.rawTotalPrice,
+                item.priceInfo.salePrice,
+                item.priceInfo.listPrice
+            )
+            val unSellableCommerceItem = UnSellableCommerceItem(
+                item.commerceItemInfo.quantity,
+                item.commerceItemInfo.productId,
+                "",
+                item.commerceItemInfo.internalImageURL,
+                item.commerceItemInfo.catalogRefId,
+                item.commerceItemClassType,
+                item.color,
+                "",
+                item.size,
+                "",
+                price,
+                item.commerceItemInfo.externalImageRefV2,
+                item.commerceItemInfo.productDisplayName,
+                item.fulfillmentType,
+                cartItemsGroup?.get(i)?.type,
+                item.commerceItemInfo.commerceId,
+                item.isItemRemoved
+            )
+            unsellableCommerseItemList.add(unSellableCommerceItem)
+        }
+        return unsellableCommerseItemList
+    }
+
+    private fun navigateToUnsellableItemsFragment(
+        unSellableCommerceItems: ArrayList<UnSellableCommerceItem>,
+        deliveryType: Delivery
+    ) {
+        val unsellableItemsBottomSheetDialog =
+            confirmAddressViewModel?.let { it1 ->
+                UnsellableItemsBottomSheetDialog.newInstance(unSellableCommerceItems, deliveryType, binding.cartProgressBar,
+                    it1, this)
+            }
+        unsellableItemsBottomSheetDialog?.show(requireFragmentManager(),
+            UnsellableItemsBottomSheetDialog::class.java.simpleName)
     }
 
     /***
@@ -1941,10 +1996,6 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         binding.upSellMessageTextView.text = qualifierMessage
         binding.upSellMessageTextView.visibility =
             if (TextUtils.isEmpty(qualifierMessage)) View.GONE else View.VISIBLE
-    }
-
-    override fun onOutOfStockProductsRemoved() {
-        loadShoppingCart()
     }
 
     private fun showMaxItemView() {
@@ -2380,6 +2431,12 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                         true
                     )
                 }
+            }
+        }
+        AddToCartLiveData.observe(viewLifecycleOwner) {
+            if (it) {
+                AddToCartLiveData.value = false
+                loadShoppingCart()
             }
         }
     }
