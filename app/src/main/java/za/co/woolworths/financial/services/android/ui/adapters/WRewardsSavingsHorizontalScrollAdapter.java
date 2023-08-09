@@ -12,6 +12,7 @@ import com.awfs.coordination.R;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.TierHistory;
+import za.co.woolworths.financial.services.android.ui.fragments.wreward.unique_locators.WRewardUniqueLocatorsHelper;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 
 /**
@@ -47,8 +48,8 @@ public class WRewardsSavingsHorizontalScrollAdapter extends RecyclerView.Adapter
             String[] monthAndYear=tierHistoryList.get(position-1).finMonthDescription.trim().split(" ");
             holder.monthText.setText(monthAndYear[0].substring(0,3));
             holder.yearText.setText(monthAndYear[1]);
-
         }
+        WRewardUniqueLocatorsHelper.Companion.setSavingsYearMonthsLocators(holder.itemView,position == HEADER_POSITION,position);
 
         if (position == selectedPosition) {
             holder.listItem.setBackgroundResource(R.drawable.black_circle);
