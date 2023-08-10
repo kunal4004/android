@@ -1010,90 +1010,90 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
 
     //TODO- as a part of shop page enhancement, the black tooltip not required
     private fun showBlackToolTip(deliveryType: Delivery) {
-//        binding.apply {
-//            if (validateLocationResponse == null || getDeliveryType() == null) {
-//                blackToolTipLayout.root.visibility = View.GONE
-//                return
-//            }
-//            blackToolTipLayout.closeWhiteBtn?.setOnClickListener {
-//                when (deliveryType) {
-//                    Delivery.STANDARD -> {
-//                        KotlinUtils.isDeliveryLocationTabCrossClicked = true
-//                    }
-//
-//                    Delivery.CNC -> {
-//                        KotlinUtils.isCncTabCrossClicked = true
-//                    }
-//
-//                    Delivery.DASH -> {
-//                        KotlinUtils.isDashTabCrossClicked = true
-//                    }
-//                }
-//                blackToolTipLayout.root.visibility = View.GONE
-//            }
-//            blackToolTipLayout.changeLocationButton?.setOnClickListener {
-//
-//                val browsingPlaceId = when (KotlinUtils.browsingDeliveryType) {
-//                    Delivery.STANDARD -> WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.placeId
-//                    Delivery.CNC -> WoolworthsApplication.getCncBrowsingValidatePlaceDetails()?.placeDetails?.placeId
-//                        ?: WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.placeId
-//
-//                    Delivery.DASH -> WoolworthsApplication.getDashBrowsingValidatePlaceDetails()?.placeDetails?.placeId
-//                        ?: WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.placeId
-//
-//                    else -> getDeliveryType()?.address?.placeId ?: ""
-//
-//                }
-//
-//                KotlinUtils.presentEditDeliveryGeoLocationActivity(
-//                    requireActivity(),
-//                    REQUEST_CODE,
-//                    KotlinUtils.browsingDeliveryType,
-//                    browsingPlaceId
-//                )
-//            }
-//            timer?.cancel()
-//            when (deliveryType) {
-//                Delivery.STANDARD -> {
-//                    showStandardDeliveryToolTip()
-//                }
-//
-//                Delivery.CNC -> {
-//                    showClickAndCollectToolTip(
-//                        KotlinUtils.isStoreSelectedForBrowsing,
-//                        KotlinUtils.browsingCncStore?.storeId
-//                    )
-//                }
-//
-//                Delivery.DASH -> {
-//                    showDashToolTip(validateLocationResponse)
-//                }
-//            }
-//
-//            if (AppConfigSingleton.tooltipSettings?.isAutoDismissEnabled == true && blackToolTipLayout.root.visibility == VISIBLE) {
-//                val timeDuration =
-//                    AppConfigSingleton.tooltipSettings?.autoDismissDuration?.times(1000) ?: return
-//                timer = object : CountDownTimer(timeDuration, 100) {
-//                    override fun onTick(millisUntilFinished: Long) {}
-//                    override fun onFinish() {
-//                        when (KotlinUtils.fullfillmentTypeClicked) {
-//                            Delivery.STANDARD.name -> {
-//                                KotlinUtils.isDeliveryLocationTabCrossClicked = true
-//                            }
-//
-//                            Delivery.CNC.name -> {
-//                                KotlinUtils.isCncTabCrossClicked = true
-//                            }
-//
-//                            Delivery.DASH.name -> {
-//                                KotlinUtils.isDashTabCrossClicked = true
-//                            }
-//                        }
-//                        blackToolTipLayout.root.visibility = View.GONE
-//                    }
-//                }.start()
-//            }
-//        }
+        /*binding.apply {
+            if (validateLocationResponse == null || getDeliveryType() == null) {
+                blackToolTipLayout.root.visibility = View.GONE
+                return
+            }
+            blackToolTipLayout.closeWhiteBtn?.setOnClickListener {
+                when (deliveryType) {
+                    Delivery.STANDARD -> {
+                        KotlinUtils.isDeliveryLocationTabCrossClicked = true
+                    }
+
+                    Delivery.CNC -> {
+                        KotlinUtils.isCncTabCrossClicked = true
+                    }
+
+                    Delivery.DASH -> {
+                        KotlinUtils.isDashTabCrossClicked = true
+                    }
+                }
+                blackToolTipLayout.root.visibility = View.GONE
+            }
+            blackToolTipLayout.changeLocationButton?.setOnClickListener {
+
+                val browsingPlaceId = when (KotlinUtils.browsingDeliveryType) {
+                    Delivery.STANDARD -> WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.placeId
+                    Delivery.CNC -> WoolworthsApplication.getCncBrowsingValidatePlaceDetails()?.placeDetails?.placeId
+                        ?: WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.placeId
+
+                    Delivery.DASH -> WoolworthsApplication.getDashBrowsingValidatePlaceDetails()?.placeDetails?.placeId
+                        ?: WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.placeId
+
+                    else -> getDeliveryType()?.address?.placeId ?: ""
+
+                }
+
+                KotlinUtils.presentEditDeliveryGeoLocationActivity(
+                    requireActivity(),
+                    REQUEST_CODE,
+                    KotlinUtils.browsingDeliveryType,
+                    browsingPlaceId
+                )
+            }
+            timer?.cancel()
+            when (deliveryType) {
+                Delivery.STANDARD -> {
+                    showStandardDeliveryToolTip()
+                }
+
+                Delivery.CNC -> {
+                    showClickAndCollectToolTip(
+                        KotlinUtils.isStoreSelectedForBrowsing,
+                        KotlinUtils.browsingCncStore?.storeId
+                    )
+                }
+
+                Delivery.DASH -> {
+                    showDashToolTip(validateLocationResponse)
+                }
+            }
+
+            if (AppConfigSingleton.tooltipSettings?.isAutoDismissEnabled == true && blackToolTipLayout.root.visibility == VISIBLE) {
+                val timeDuration =
+                    AppConfigSingleton.tooltipSettings?.autoDismissDuration?.times(1000) ?: return
+                timer = object : CountDownTimer(timeDuration, 100) {
+                    override fun onTick(millisUntilFinished: Long) {}
+                    override fun onFinish() {
+                        when (KotlinUtils.fullfillmentTypeClicked) {
+                            Delivery.STANDARD.name -> {
+                                KotlinUtils.isDeliveryLocationTabCrossClicked = true
+                            }
+
+                            Delivery.CNC.name -> {
+                                KotlinUtils.isCncTabCrossClicked = true
+                            }
+
+                            Delivery.DASH.name -> {
+                                KotlinUtils.isDashTabCrossClicked = true
+                            }
+                        }
+                        blackToolTipLayout.root.visibility = View.GONE
+                    }
+                }.start()
+            }
+        }*/
     }
 
     private fun showStandardDeliveryToolTip() {

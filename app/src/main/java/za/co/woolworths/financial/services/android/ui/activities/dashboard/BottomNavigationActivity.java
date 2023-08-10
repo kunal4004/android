@@ -767,7 +767,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMENU, BottomNavigationActivity.this);
 
         Fragment fragment = mNavController.getCurrentFrag();
-        //TODO - remove this if block as this never executes
         if (isNewSession && fragment instanceof ShopFragment) {
             isNewSession = false;
             ((ShopFragment) fragment).setShopDefaultTab();

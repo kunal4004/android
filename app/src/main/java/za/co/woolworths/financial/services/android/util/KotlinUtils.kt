@@ -140,9 +140,9 @@ class KotlinUtils {
         var placeId: String? = null
         var isLocationPlaceIdSame: Boolean? = false
         var isNickNameChanged: Boolean? = false
-        var isDeliveryLocationTabCrossClicked: Boolean? = false// TODO, to be removed as removing the black tooltips
-        var isCncTabCrossClicked: Boolean? = false// TODO, to be removed as removing the black tooltips
-        var isDashTabCrossClicked: Boolean? = false// TODO, to be removed as removing the black tooltips
+        var isDeliveryLocationTabCrossClicked: Boolean? = false
+        var isCncTabCrossClicked: Boolean? = false
+        var isDashTabCrossClicked: Boolean? = false
         var isComingFromCncTab: Boolean? = false
         var fullfillmentTypeClicked: String? = ""
         var browsingDeliveryType: Delivery? = getPreferredDeliveryType()
@@ -592,8 +592,6 @@ class KotlinUtils {
             }
         }
 
-        //TODO - remove this method, this may not required now
-        @Deprecated("This does not require as per the new UI changes")
         fun setDeliveryAddressViewFoShop(
             context: Activity?,
             fulfillmentDetails: FulfillmentDetails,
