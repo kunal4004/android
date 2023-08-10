@@ -150,7 +150,6 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     private var voucherDetails: VoucherDetails? = null
     var productCountMap: ProductCountMap? = null
     private var liquorCompliance: LiquorCompliance? = null
-    private var cartItemList = ArrayList<CommerceItem>()
     private var isBlackCardHolder : Boolean = false
     private var isOnItemRemoved = false
     private var isViewCartEventFired = false
@@ -649,7 +648,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
 
     override fun openAddToListPopup(
         addToListRequests: ArrayList<AddToListRequest>,
-        addToWishListEventData: AddToWishListFirebaseEventData?
+        addToWishListEventData: AddToWishListFirebaseEventData?,
     ) {
         KotlinUtils.openAddToListPopup(
             requireActivity(),
@@ -1857,7 +1856,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
 
     private fun navigateToUnsellableItemsFragment(
         unSellableCommerceItems: ArrayList<UnSellableCommerceItem>,
-        deliveryType: Delivery
+        deliveryType: Delivery,
     ) {
         val unsellableItemsBottomSheetDialog =
             confirmAddressViewModel?.let { it1 ->
@@ -2448,11 +2447,23 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             setMinimumCartErrorMessage()
             resetItemDelete(true)
         }
-        setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_DISMISS_RESULT) { _, _ ->
-            fadeCheckoutButton(false)
-            setDeliveryLocationEnabled(true)
-            setMinimumCartErrorMessage()
-            resetItemDelete(true)
+        setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_DISMISS_RESULT) { requestKey, bundle ->
+            val resultCode =
+                bundle.getString(CustomBottomSheetDialogFragment.DIALOG_BUTTON_CLICK_RESULT)
+            if (resultCode == UnsellableUtils.ADD_TO_LIST_SUCCESS_RESULT_CODE) {
+                // Proceed with reload cart as unsellable items are removed.
+                loadShoppingCart()
+            }
+            else {
+                fadeCheckoutButton(false)
+                setDeliveryLocationEnabled(true)
+                setMinimumCartErrorMessage()
+                resetItemDelete(true)
+            }
+        }
+        setFragmentResultListener(UnsellableUtils.ADD_TO_LIST_SUCCESS_RESULT_CODE) { _, _ ->
+            // Proceed with reload cart as unsellable items are removed.
+            loadShoppingCart()
         }
         setFragmentResultListener(ON_CONFIRM_REMOVE_WITH_DELETE_PRESSED) { _, _ ->
             enableItemDelete(false)
