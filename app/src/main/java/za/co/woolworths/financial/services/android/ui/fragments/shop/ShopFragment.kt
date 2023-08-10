@@ -278,25 +278,27 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         }
     }
 
-    private fun setSearchText(selectedTab: SelectedTabIndex, location: CharSequence? = null, dashTimeslots: String? = null) {
-        when (selectedTab) {
-            STANDARD_TAB -> {
-                binding.tvSearchProduct.text = getString(R.string.shop_landing_product_all_search)
-                binding.fulfilmentAndLocationLayout.layoutFulfilment.tvTitle.text = getString(R.string.standard_delivery)
-                binding.fulfilmentAndLocationLayout.layoutFulfilment.tvSubTitle.text = getString(R.string.shop_landing_fulfilment_title_cnc_and_standard)
-                binding.fulfilmentAndLocationLayout.layoutLocation.tvTitle.text = location ?: getString(R.string.default_location)
-            }
-            CLICK_AND_COLLECT_TAB -> {
-                binding.tvSearchProduct.text = getCncSearchText()
-                binding.fulfilmentAndLocationLayout.layoutFulfilment.tvTitle.text = getString(R.string.click_and_collect)
-                binding.fulfilmentAndLocationLayout.layoutFulfilment.tvSubTitle.text = getString(R.string.shop_landing_fulfilment_title_cnc_and_standard)
-                binding.fulfilmentAndLocationLayout.layoutLocation.tvTitle.text = location ?: getString(R.string.select_your_preferred_store)
-            }
-            DASH_TAB -> {
-                binding.tvSearchProduct.text = getString(R.string.shop_landing_product_food_search)
-                binding.fulfilmentAndLocationLayout.layoutFulfilment.tvTitle.text = getString(R.string.dash_delivery)
-                binding.fulfilmentAndLocationLayout.layoutFulfilment.tvSubTitle.text = getString(R.string.shop_landing_fulfilment_title_dash).plus(TIME_SLOT_SEPARATOR).plus(dashTimeslots())
-                binding.fulfilmentAndLocationLayout.layoutLocation.tvTitle.text = location ?: getString(R.string.set_location_title)
+    private fun setSearchText(selectedTab: SelectedTabIndex, location: CharSequence? = null) {
+        binding.apply {
+            when (selectedTab) {
+                STANDARD_TAB -> {
+                    tvSearchProduct.text = getString(R.string.shop_landing_product_all_search)
+                    fulfilmentAndLocationLayout.layoutFulfilment.tvTitle.text = getString(R.string.standard_delivery)
+                    fulfilmentAndLocationLayout.layoutFulfilment.tvSubTitle.text = getString(R.string.shop_landing_fulfilment_title_cnc_and_standard)
+                    fulfilmentAndLocationLayout.layoutLocation.tvTitle.text = location ?: getString(R.string.default_location)
+                }
+                CLICK_AND_COLLECT_TAB -> {
+                    tvSearchProduct.text = getCncSearchText()
+                    fulfilmentAndLocationLayout.layoutFulfilment.tvTitle.text = getString(R.string.click_and_collect)
+                    fulfilmentAndLocationLayout.layoutFulfilment.tvSubTitle.text = getString(R.string.shop_landing_fulfilment_title_cnc_and_standard)
+                    fulfilmentAndLocationLayout.layoutLocation.tvTitle.text = location ?: getString(R.string.select_your_preferred_store)
+                }
+                DASH_TAB -> {
+                    tvSearchProduct.text = getString(R.string.shop_landing_product_food_search)
+                    fulfilmentAndLocationLayout.layoutFulfilment.tvTitle.text = getString(R.string.dash_delivery)
+                    fulfilmentAndLocationLayout.layoutFulfilment.tvSubTitle.text = getString(R.string.shop_landing_fulfilment_title_dash).plus(TIME_SLOT_SEPARATOR).plus(dashTimeslots())
+                    fulfilmentAndLocationLayout.layoutLocation.tvTitle.text = location ?: getString(R.string.set_location_title)
+                }
             }
         }
     }
