@@ -86,14 +86,13 @@ class ShopViewModel @Inject constructor(
     private val _lastDashOrder = MutableLiveData<Event<Resource<LastOrderDetailsResponse>>>()
     val lastDashOrder: LiveData<Event<Resource<LastOrderDetailsResponse>>> = _lastDashOrder
 
-    // TODO - this needs to be removed as it may not required as we are removing the black tooltip
-//    private var _tooltipUiState: MutableStateFlow<ShopTooltipUiState> =
-//        MutableStateFlow(ShopTooltipUiState.Hidden) //TODO: Need to discuss this with different team for the purpose of this
-//    val tooltipUiState: StateFlow<ShopTooltipUiState> = _tooltipUiState.stateIn(
-//        scope = viewModelScope,
-//        initialValue = ShopTooltipUiState.Hidden,
-//        started = SharingStarted.WhileSubscribed(5000L)
-//    )
+    private var _tooltipUiState: MutableStateFlow<ShopTooltipUiState> =
+        MutableStateFlow(ShopTooltipUiState.Hidden)
+    val tooltipUiState: StateFlow<ShopTooltipUiState> = _tooltipUiState.stateIn(
+        scope = viewModelScope,
+        initialValue = ShopTooltipUiState.Hidden,
+        started = SharingStarted.WhileSubscribed(5000L)
+    )
 
     private val _lastDashOrderInProgress = MutableLiveData(false)
     val lastDashOrderInProgress: LiveData<Boolean>
@@ -183,46 +182,46 @@ class ShopViewModel @Inject constructor(
 
     // TODO - this needs to be removed as it may not required as we are removing the black tooltip
     fun onTabClick(validateLocationResponse: ValidateLocationResponse? = null, position: Int) {
-//        viewModelScope.launch(Dispatchers.IO) {
-//
-//            _tooltipUiState.update { currentState ->
-//                when (position) {
-//                    // TODO: Include Standard and CNC
-//                    0 -> { ShopTooltipUiState.StandardTooltip }
-//                    1 -> { ShopTooltipUiState.CNCTooltip }
-//                    2 -> {  // Index of dash tab
-//
-//                        KotlinUtils.browsingDeliveryType = Delivery.DASH
-//                        setEventsForSwitchingBrowsingType(Delivery.DASH.name)
-//                        validateLocationResponse?.validatePlace?.onDemand?.let {
-//                            var visibility =
-//                                (it.deliverable && !it.firstAvailableFoodDeliveryTime.isNullOrEmpty())
-//                            // Close button isn't clicked
-//                            visibility = !(KotlinUtils.isDashTabCrossClicked ?: false) && visibility
-//
-//                            val changeButtonVisibility =
-//                                KotlinUtils.getDeliveryType() == null || Delivery.getType(
-//                                    KotlinUtils.getDeliveryType()?.deliveryType
-//                                )?.type == Delivery.DASH.type
-//
-//                            val timeSlot =
-//                                if (!(it.deliveryTimeSlots.isNullOrEmpty() && it.deliverable)) {
-//                                    it.firstAvailableFoodDeliveryTime ?: ""
-//                                } else ""
-//
-//                            ShopTooltipUiState.DashTooltip(
-//                                visibility = visibility,
-//                                changeButtonVisibility = changeButtonVisibility,
-//                                timeslotText = timeSlot,
-//                                itemLimit = it.quantityLimit?.foodMaximumQuantity ?: 0,
-//                                deliveryFee = it.firstAvailableFoodDeliveryCost ?: 0
-//                            )
-//                        } ?: ShopTooltipUiState.Hidden
-//                    }
-//                    else -> ShopTooltipUiState.Hidden
-//                }
-//            }
-//        }
+        /*viewModelScope.launch(Dispatchers.IO) {
+
+            _tooltipUiState.update { currentState ->
+                when (position) {
+                    // TODO: Include Standard and CNC
+                    0 -> { ShopTooltipUiState.StandardTooltip }
+                    1 -> { ShopTooltipUiState.CNCTooltip }
+                    2 -> {  // Index of dash tab
+
+                        KotlinUtils.browsingDeliveryType = Delivery.DASH
+                        setEventsForSwitchingBrowsingType(Delivery.DASH.name)
+                        validateLocationResponse?.validatePlace?.onDemand?.let {
+                            var visibility =
+                                (it.deliverable && !it.firstAvailableFoodDeliveryTime.isNullOrEmpty())
+                            // Close button isn't clicked
+                            visibility = !(KotlinUtils.isDashTabCrossClicked ?: false) && visibility
+
+                            val changeButtonVisibility =
+                                KotlinUtils.getDeliveryType() == null || Delivery.getType(
+                                    KotlinUtils.getDeliveryType()?.deliveryType
+                                )?.type == Delivery.DASH.type
+
+                            val timeSlot =
+                                if (!(it.deliveryTimeSlots.isNullOrEmpty() && it.deliverable)) {
+                                    it.firstAvailableFoodDeliveryTime ?: ""
+                                } else ""
+
+                            ShopTooltipUiState.DashTooltip(
+                                visibility = visibility,
+                                changeButtonVisibility = changeButtonVisibility,
+                                timeslotText = timeSlot,
+                                itemLimit = it.quantityLimit?.foodMaximumQuantity ?: 0,
+                                deliveryFee = it.firstAvailableFoodDeliveryCost ?: 0
+                            )
+                        } ?: ShopTooltipUiState.Hidden
+                    }
+                    else -> ShopTooltipUiState.Hidden
+                }
+            }
+        }*/
     }
 
     private fun setEventsForSwitchingBrowsingType(browsingType: String?) {

@@ -4,28 +4,44 @@ import android.Manifest
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.os.Handler
 import android.view.View
+import android.view.ViewGroup
+import android.view.ViewGroup.MarginLayoutParams
+import android.view.ViewGroup.VISIBLE
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
+import androidx.core.text.HtmlCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager.widget.ViewPager
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentShopBinding
+import com.awfs.coordination.databinding.ShopCustomTabBinding
+import com.daasuu.bl.ArrowDirection
+import com.google.android.material.tabs.TabLayout
 import com.google.gson.JsonSyntaxException
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.Companion.DASH_DELIVERY_BROWSE_MODE
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.Companion.DASH_SWITCH_BROWSE_MODE
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyNames.Companion.BROWSE_MODE
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyNames.Companion.DELIVERY_MODE
+import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dto.OrdersResponse
@@ -50,6 +66,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragmen
 import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment.SelectedTabIndex.DASH_TAB
 import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment.SelectedTabIndex.STANDARD_TAB
 import za.co.woolworths.financial.services.android.ui.fragments.shop.StandardDeliveryFragment.Companion.DEPARTMENT_LOGIN_REQUEST
+import za.co.woolworths.financial.services.android.ui.fragments.shop.component.ShopTooltipUiState
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.OnChildFragmentEvents
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView
 import za.co.woolworths.financial.services.android.ui.views.shop.dash.ChangeFulfillmentCollectionStoreFragment
@@ -85,7 +102,8 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
     WMaterialShowcaseView.IWalkthroughActionListener, View.OnClickListener {
 
     private val confirmAddressViewModel: ConfirmAddressViewModel by activityViewModels()
-    //private var timer: CountDownTimer? = null //TODO- as a part of shop page enhancement, this timer may not required
+
+    private var timer: CountDownTimer? = null
     private var mTabTitle: MutableList<String>? = null
     private var permissionUtils: PermissionUtils? = null
     var permissions: ArrayList<String> = arrayListOf()
@@ -145,26 +163,25 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
             bindString(R.string.dash_delivery)
         )
 
-        //TODO - remove this commented code if not required
-//        shopViewModel.tooltipUiState
-//            .flowWithLifecycle(lifecycle = lifecycle, Lifecycle.State.STARTED)
-//            .onEach { state ->
-//                when (state) {
-//                    is ShopTooltipUiState.DashTooltip -> {
-//                        if (state.visibility)
-//                            showBlackToolTip(Delivery.DASH)
-//                        else
-//                            binding.blackToolTipLayout.root.visibility = View.GONE
-//                    }
-//                    // TODO StandardTooltip, CNCTooltip
-//                    is ShopTooltipUiState.StandardTooltip,
-//                    is ShopTooltipUiState.CNCTooltip,
-//                    -> {
-//                    }
-//
-//                    else -> binding.blackToolTipLayout.root.visibility = View.GONE
-//                }
-//            }.launchIn(lifecycleScope)
+        shopViewModel.tooltipUiState
+            .flowWithLifecycle(lifecycle = lifecycle, Lifecycle.State.STARTED)
+            .onEach { state ->
+                when (state) {
+                    is ShopTooltipUiState.DashTooltip -> {
+                        if (state.visibility)
+                            showBlackToolTip(Delivery.DASH)
+                        else
+                            binding.blackToolTipLayout.root.visibility = View.GONE
+                    }
+                    // TODO StandardTooltip, CNCTooltip
+                    is ShopTooltipUiState.StandardTooltip,
+                    is ShopTooltipUiState.CNCTooltip,
+                    -> {
+                    }
+
+                    else -> binding.blackToolTipLayout.root.visibility = View.GONE
+                }
+            }.launchIn(lifecycleScope)
     }
 
     private fun setEventForDeliveryTypeAndBrowsingType() {
@@ -326,29 +343,23 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         binding.apply {
             tvSearchProduct.visibility = View.VISIBLE
             imBarcodeScanner.visibility = View.VISIBLE
-            //TODO - this code block is not required now
-            /*if (isFromCnc) {
-                setSearchText(CLICK_AND_COLLECT_TAB)
-            }*/
         }
     }
 
-    //TODO- as a part of shop page enhancement, this tooltip may not required the info displaying in this will be covered by the separate fulfilment selection screen
-    //These method may be used for other operations for the new shop enhancement experience
     fun showClickAndCollectToolTipUi(browsingStoreId: String?) {
-//        showClickAndCollectToolTip(true, browsingStoreId)
-//        timer?.cancel()
-//        if (AppConfigSingleton.tooltipSettings?.isAutoDismissEnabled == true && binding.blackToolTipLayout.root.visibility == VISIBLE) {
-//            val timeDuration =
-//                AppConfigSingleton.tooltipSettings?.autoDismissDuration?.times(1000) ?: return
-//            timer = object : CountDownTimer(timeDuration, 100) {
-//                override fun onTick(millisUntilFinished: Long) {}
-//                override fun onFinish() {
-//                    KotlinUtils.isCncTabCrossClicked = true
-//                    binding.blackToolTipLayout.root.visibility = View.GONE
-//                }
-//            }.start()
-//        }
+        showClickAndCollectToolTip(true, browsingStoreId)
+        timer?.cancel()
+        if (AppConfigSingleton.tooltipSettings?.isAutoDismissEnabled == true && binding.blackToolTipLayout.root.visibility == VISIBLE) {
+            val timeDuration =
+                AppConfigSingleton.tooltipSettings?.autoDismissDuration?.times(1000) ?: return
+            timer = object : CountDownTimer(timeDuration, 100) {
+                override fun onTick(millisUntilFinished: Long) {}
+                override fun onFinish() {
+                    KotlinUtils.isCncTabCrossClicked = true
+                    binding.blackToolTipLayout.root.visibility = View.GONE
+                }
+            }.start()
+        }
     }
 
     fun hideSearchAndBarcodeUi() {
@@ -363,13 +374,13 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         binding?.apply {
             placeId?.let {
                 shopProgressbar.visibility = View.VISIBLE
-                tabsMain.isClickable = false // TODO - this needs to be removed as we are removing the tabs
+                tabsMain.isClickable = false
                 lifecycleScope.launch {
                     try {
                         validateLocationResponse =
                             confirmAddressViewModel.getValidateLocation(it)
                         shopProgressbar.visibility = View.GONE
-                        tabsMain.isClickable = true // TODO - this needs to be removed as we are removing the tabs
+                        tabsMain.isClickable = true
                         if (validateLocationResponse != null) {
                             when (validateLocationResponse?.httpCode) {
                                 AppConstant.HTTP_OK -> {
@@ -390,10 +401,8 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                                         validateLocationResponse?.validatePlace?.placeDetails?.nickname
                                     fulfillmentDeliveryLocation?.fulfillmentDetails?.address?.nickname =
                                         nickname
-                                    //Saving the delivery location and delivery type here in user session db
                                     Utils.savePreferredDeliveryLocation(fulfillmentDeliveryLocation)
-                                    //Get the saved data of delivery location and delivery type from the user session db
-                                    //and update the current UI accordingly
+
                                     updateCurrentTab(getDeliveryType()?.deliveryType)
                                     setEventForDeliveryTypeAndBrowsingType()
                                     setDeliveryView()
@@ -406,19 +415,18 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                                 }
 
                                 else -> {
-                                    //TODO - this commented code to be removed
-                                    //blackToolTipLayout.root.visibility = View.GONE
+                                    blackToolTipLayout.root.visibility = View.GONE
                                 }
                             }
                         }
                     } catch (e: Exception) {
                         shopProgressbar.visibility = View.GONE
-                        tabsMain.isClickable = true // TODO - this needs to be removed as we are removing the tabs
+                        tabsMain.isClickable = true
                         FirebaseManager.logException(e)
                         /*TODO : show error screen*/
                     } catch (e: JsonSyntaxException) {
                         shopProgressbar.visibility = View.GONE
-                        tabsMain.isClickable = true // TODO - this needs to be removed as we are removing the tabs
+                        tabsMain.isClickable = true
                         FirebaseManager.logException(e)
                     }
                 }
@@ -566,8 +574,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
             }
         }
 
-        // TODO - this needs to be removed as we are removing the tabs
-        /*binding.tabsMain?.let { tabLayout ->
+        binding.tabsMain?.let { tabLayout ->
             tabLayout.getTabAt(selectedTab)?.customView?.isSelected = true
             for (i in mTabTitle?.indices!!) {
                 tabLayout.getTabAt(i)?.customView = prepareTabView(tabLayout, i, mTabTitle)
@@ -585,16 +592,14 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                 tab.requestLayout()
             }
 
-        }*/
+        }
     }
 
-    //TODO, to be removed as it seems not at all executing in any case
     fun setShopDefaultTab() {
         binding.viewpagerMain.currentItem = 0
     }
 
-    // TODO - this needs to be removed as we are removing the tabs
-    /*private fun prepareTabView(
+    private fun prepareTabView(
         tabLayout: TabLayout,
         pos: Int,
         tabTitle: MutableList<String>?,
@@ -609,7 +614,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
             shopCustomTabBinding.tvTitle.typeface = typeface
         }
         return shopCustomTabBinding.root
-    }*/
+    }
 
     private fun navigateToProductSearch() {
         requireActivity().apply {
@@ -625,7 +630,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         }
     }
 
-    fun currentTabPositionBasedOnDeliveryType(): Int {
+    private fun currentTabPositionBasedOnDeliveryType(): Int {
         return when(Delivery.getType(getDeliveryType()?.deliveryType)) {
             Delivery.CNC -> CLICK_AND_COLLECT_TAB.index
             Delivery.DASH -> DASH_TAB.index
@@ -635,8 +640,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
 
     fun setDeliveryView() {
         setNewDeliveryAndFulfilmentText()
-        //TODO - below code block is not required for now, will remove it
-        /*binding.apply {
+        binding.apply {
             activity?.let {
                 getDeliveryType()?.let { fulfillmentDetails ->
                     KotlinUtils.setDeliveryAddressViewFoShop(
@@ -648,7 +652,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                     )
                 }
             }
-        }*/
+        }
     }
 
     private fun setNewDeliveryAndFulfilmentText() {
@@ -705,9 +709,8 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
         if (!hidden) {
-            // TODO - this needs to be removed as we are removing the black tooltip
             //do when hidden
-            //timer?.start()
+            timer?.start()
             (activity as? BottomNavigationActivity)?.apply {
                 fadeOutToolbar(R.color.recent_search_bg)
                 showBackNavigationIcon(false)
@@ -719,12 +722,11 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                 }, AppConstant.DELAY_1000_MS)
             }
         } else {
-            // TODO - this needs to be removed as we are removing the black tooltip
-//            if (binding.blackToolTipLayout.root.isVisible) {
-//                timer?.cancel()
-//            }
+            if (binding.blackToolTipLayout.root.isVisible) {
+                timer?.cancel()
+            }
         }
-        //TODO - this code block should be in !hidden condition block
+
         if (getDeliveryType() == null) {
             setupToolbar(STANDARD_TAB.index)
             setSearchText(STANDARD_TAB)
@@ -988,7 +990,6 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         binding.imBarcodeScanner?.performClick()
     }
 
-    //TODO, need to verify with Team and other devs for the purpose of this method
     fun switchToDepartmentTab() {
         binding.viewpagerMain.currentItem = STANDARD_TAB.index
     }
@@ -1095,161 +1096,158 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
 //        }
     }
 
-    //TODO- as a part of shop page enhancement, this tooltip not required the info displaying in this will be covered by the separate fulfilment selection screen
     private fun showStandardDeliveryToolTip() {
-//        binding.apply {
-//            if (KotlinUtils.isLocationPlaceIdSame == false) {
-//                blackToolTipLayout.root.visibility = View.VISIBLE
-//            }
-//
-//            if (KotlinUtils.isDeliveryLocationTabCrossClicked == true) {
-//                blackToolTipLayout.root.visibility = View.GONE
-//                return
-//            }
-//
-//            if (validateLocationResponse?.validatePlace?.firstAvailableFoodDeliveryDate.isNullOrEmpty()
-//                && validateLocationResponse?.validatePlace?.firstAvailableOtherDeliveryDate.isNullOrEmpty()
-//            ) {
-//                blackToolTipLayout.root.visibility = View.GONE
-//                return
-//            }
-//
-//            blackToolTipLayout.root.visibility = View.VISIBLE
-//            if (getDeliveryType() == null || Delivery.getType(getDeliveryType()?.deliveryType)?.type == Delivery.STANDARD.type) {
-//                blackToolTipLayout.changeButtonLayout?.visibility = View.GONE
-//            } else {
-//                blackToolTipLayout.changeButtonLayout?.visibility = View.VISIBLE
-//                blackToolTipLayout.changeText?.text = getText(R.string.shop_using_standard_delivery)
-//            }
-//            KotlinUtils.fullfillmentTypeClicked = Delivery.STANDARD.name
-//            validateLocationResponse?.validatePlace?.let {
-//                blackToolTipLayout.fashionItemDateText?.visibility = View.VISIBLE
-//                blackToolTipLayout.foodItemTitle?.visibility = View.VISIBLE
-//                blackToolTipLayout.foodItemDateText?.visibility = View.VISIBLE
-//                blackToolTipLayout.fashionItemTitle?.visibility = View.VISIBLE
-//                blackToolTipLayout.deliveryIconLayout?.visibility = View.GONE
-//
-//                blackToolTipLayout.fashionItemTitle?.text = getString(R.string.fashion_beauty_home)
-//
-//                if (it.firstAvailableFoodDeliveryDate.isNullOrEmpty() == true) {
-//                    blackToolTipLayout.deliveryCollectionTitle?.visibility = View.GONE
-//                    blackToolTipLayout.foodItemDateText?.visibility = View.GONE
-//                    blackToolTipLayout.foodItemTitle?.visibility = View.GONE
-//                }
-//
-//                if (it.firstAvailableOtherDeliveryDate.isNullOrEmpty() == true) {
-//                    blackToolTipLayout.fashionItemTitle?.visibility = View.GONE
-//                    blackToolTipLayout.fashionItemDateText?.visibility = View.GONE
-//                }
-//
-//                blackToolTipLayout.deliveryCollectionTitle?.text =
-//                    getString(R.string.earliest_delivery_dates)
-//                blackToolTipLayout.foodItemDateText?.text = it.firstAvailableFoodDeliveryDate
-//                blackToolTipLayout.fashionItemDateText?.text = it.firstAvailableOtherDeliveryDate
-//                blackToolTipLayout.productAvailableText?.text =
-//                    getString(R.string.all_products_available)
-//                blackToolTipLayout.cartIcon.setImageResource(R.drawable.icon_cart_white)
-//                blackToolTipLayout.bubbleLayout?.arrowDirection = ArrowDirection.TOP
-//                if (tabsMain?.getTabAt(STANDARD_TAB.index)?.view != null) {
-//                    blackToolTipLayout.bubbleLayout?.arrowPosition =
-//                        tabsMain?.getTabAt(STANDARD_TAB.index)?.view?.width?.div(2)?.toFloat()!!
-//                }
-//            }
-//        }
+        binding.apply {
+            if (KotlinUtils.isLocationPlaceIdSame == false) {
+                blackToolTipLayout.root.visibility = View.VISIBLE
+            }
+
+            if (KotlinUtils.isDeliveryLocationTabCrossClicked == true) {
+                blackToolTipLayout.root.visibility = View.GONE
+                return
+            }
+
+            if (validateLocationResponse?.validatePlace?.firstAvailableFoodDeliveryDate.isNullOrEmpty()
+                && validateLocationResponse?.validatePlace?.firstAvailableOtherDeliveryDate.isNullOrEmpty()
+            ) {
+                blackToolTipLayout.root.visibility = View.GONE
+                return
+            }
+
+            blackToolTipLayout.root.visibility = View.VISIBLE
+            if (getDeliveryType() == null || Delivery.getType(getDeliveryType()?.deliveryType)?.type == Delivery.STANDARD.type) {
+                blackToolTipLayout.changeButtonLayout?.visibility = View.GONE
+            } else {
+                blackToolTipLayout.changeButtonLayout?.visibility = View.VISIBLE
+                blackToolTipLayout.changeText?.text = getText(R.string.shop_using_standard_delivery)
+            }
+            KotlinUtils.fullfillmentTypeClicked = Delivery.STANDARD.name
+            validateLocationResponse?.validatePlace?.let {
+                blackToolTipLayout.fashionItemDateText?.visibility = View.VISIBLE
+                blackToolTipLayout.foodItemTitle?.visibility = View.VISIBLE
+                blackToolTipLayout.foodItemDateText?.visibility = View.VISIBLE
+                blackToolTipLayout.fashionItemTitle?.visibility = View.VISIBLE
+                blackToolTipLayout.deliveryIconLayout?.visibility = View.GONE
+
+                blackToolTipLayout.fashionItemTitle?.text = getString(R.string.fashion_beauty_home)
+
+                if (it.firstAvailableFoodDeliveryDate.isNullOrEmpty() == true) {
+                    blackToolTipLayout.deliveryCollectionTitle?.visibility = View.GONE
+                    blackToolTipLayout.foodItemDateText?.visibility = View.GONE
+                    blackToolTipLayout.foodItemTitle?.visibility = View.GONE
+                }
+
+                if (it.firstAvailableOtherDeliveryDate.isNullOrEmpty() == true) {
+                    blackToolTipLayout.fashionItemTitle?.visibility = View.GONE
+                    blackToolTipLayout.fashionItemDateText?.visibility = View.GONE
+                }
+
+                blackToolTipLayout.deliveryCollectionTitle?.text =
+                    getString(R.string.earliest_delivery_dates)
+                blackToolTipLayout.foodItemDateText?.text = it.firstAvailableFoodDeliveryDate
+                blackToolTipLayout.fashionItemDateText?.text = it.firstAvailableOtherDeliveryDate
+                blackToolTipLayout.productAvailableText?.text =
+                    getString(R.string.all_products_available)
+                blackToolTipLayout.cartIcon.setImageResource(R.drawable.icon_cart_white)
+                blackToolTipLayout.bubbleLayout?.arrowDirection = ArrowDirection.TOP
+                if (tabsMain?.getTabAt(STANDARD_TAB.index)?.view != null) {
+                    blackToolTipLayout.bubbleLayout?.arrowPosition =
+                        tabsMain?.getTabAt(STANDARD_TAB.index)?.view?.width?.div(2)?.toFloat()!!
+                }
+            }
+        }
     }
 
-    //TODO- as a part of shop page enhancement, this tooltip not required the info displaying in this will be covered by the separate fulfilment selection screen
     fun showClickAndCollectToolTip(
         isStoreSelectedForBrowsing: Boolean = false,
         browsingStoreId: String? = "",
     ) {
-//        var browsingStoreOrStoreId: String? = browsingStoreId
-//        if (browsingStoreOrStoreId.isNullOrEmpty()) {
-//            browsingStoreOrStoreId = getDeliveryType()?.storeId ?: ""
-//        }
-//        binding.apply {
-//            if (KotlinUtils.isCncTabCrossClicked == true || browsingStoreOrStoreId.isNullOrEmpty()) {
-//                blackToolTipLayout.root.visibility = View.GONE
-//                return
-//            }
-//            blackToolTipLayout.root.visibility = View.VISIBLE
-//            blackToolTipLayout.bubbleLayout.arrowDirection = ArrowDirection.TOP_CENTER
-//            if (getDeliveryType() == null || Delivery.getType(getDeliveryType()?.deliveryType)?.type == Delivery.CNC.type) {
-//                blackToolTipLayout.changeButtonLayout?.visibility = View.GONE
-//            } else {
-//                blackToolTipLayout.changeButtonLayout?.visibility = View.VISIBLE
-//                blackToolTipLayout.changeText?.text = context?.getText(R.string.shop_using_cnc)
-//            }
-//            KotlinUtils.fullfillmentTypeClicked = Delivery.CNC.name
-//            validateLocationResponse?.validatePlace?.let { validatePlace ->
-//
-//                val store = GeoUtils.getStoreDetails(
-//                    getStoreId(isStoreSelectedForBrowsing, browsingStoreOrStoreId),
-//                    validatePlace.stores
-//                )
-//
-//                store?.apply {
-//                    blackToolTipLayout.deliveryCollectionTitle?.text =
-//                        getString(R.string.earliest_collection_Date)
-//                    val collectionQuantity =
-//                        quantityLimit?.foodMaximumQuantity
-//                    blackToolTipLayout.deliveryIconLayout?.visibility = View.VISIBLE
-//                    //checking fbh products condition
-//                    if (locationId?.isNotEmpty() == true && firstAvailableFoodDeliveryDate.isNullOrEmpty()) {
-//                        enableOrDisableFashionItems(true)
-//                        enableOrDisableFoodItems(false)
-//                        blackToolTipLayout.fashionItemTitle?.visibility = View.GONE
-//                        blackToolTipLayout.fashionItemDateText?.text =
-//                            firstAvailableOtherDeliveryDate
-//                        blackToolTipLayout.productAvailableText?.text =
-//                            context?.getString(R.string.only_fashion_beauty_and_home_products_available_text)
-//                        blackToolTipLayout.deliveryFeeText?.text =
-//                            AppConfigSingleton.clickAndCollect?.collectionFeeDescription
-//                    }
-//                    //food products checking conditions
-//                    else if (firstAvailableOtherDeliveryDate.isNullOrEmpty() && !firstAvailableFoodDeliveryDate.isNullOrEmpty()) {
-//                        enableOrDisableFashionItems(false)
-//                        enableOrDisableFoodItems(true)
-//                        blackToolTipLayout.foodItemTitle?.visibility = View.GONE
-//                        if (!firstAvailableFoodDeliveryDate.isNullOrEmpty()) {
-//                            blackToolTipLayout.foodItemDateText?.text =
-//                                firstAvailableFoodDeliveryDate
-//                        }
-//                        blackToolTipLayout.productAvailableText?.text =
-//                            bindString(
-//                                R.string.cnc_title_text_2,
-//                                collectionQuantity.toString()
-//                            )
-//                        blackToolTipLayout.deliveryFeeText?.text =
-//                            context?.getString(R.string.dash_free_collection)
-//                    } else {
-//                        //mixed basket
-//                        enableOrDisableFashionItems(true)
-//                        enableOrDisableFoodItems(true)
-//                        blackToolTipLayout.fashionItemTitle?.visibility = View.VISIBLE
-//                        blackToolTipLayout.foodItemTitle?.visibility = View.VISIBLE
-//                        blackToolTipLayout.fashionItemDateText?.text =
-//                            firstAvailableOtherDeliveryDate
-//                        if (!firstAvailableFoodDeliveryDate.isNullOrEmpty()) {
-//                            blackToolTipLayout.foodItemDateText?.text =
-//                                firstAvailableFoodDeliveryDate
-//                        }
-//                        blackToolTipLayout.productAvailableText?.text =
-//                            context?.getString(R.string.food_fashion_beauty_and_home_products_available_tool_tip)
-//                        blackToolTipLayout.deliveryFeeText.text =
-//                            AppConfigSingleton.clickAndCollect?.collectionFeeDescription
-//                    }
-//                    blackToolTipLayout.cartIcon.setImageResource(R.drawable.icon_cart_white)
-//                    blackToolTipLayout.deliveryIcon.setImageResource(R.drawable.white_shopping_bag_icon)
-//                    blackToolTipLayout.bubbleLayout?.setArrowDirection(ArrowDirection.TOP_CENTER)
-//                } ?: run {
-//                    blackToolTipLayout.root.visibility = View.GONE
-//                }
-//            }
-//        }
+        var browsingStoreOrStoreId: String? = browsingStoreId
+        if (browsingStoreOrStoreId.isNullOrEmpty()) {
+            browsingStoreOrStoreId = getDeliveryType()?.storeId ?: ""
+        }
+        binding.apply {
+            if (KotlinUtils.isCncTabCrossClicked == true || browsingStoreOrStoreId.isNullOrEmpty()) {
+                blackToolTipLayout.root.visibility = View.GONE
+                return
+            }
+            blackToolTipLayout.root.visibility = View.VISIBLE
+            blackToolTipLayout.bubbleLayout.arrowDirection = ArrowDirection.TOP_CENTER
+            if (getDeliveryType() == null || Delivery.getType(getDeliveryType()?.deliveryType)?.type == Delivery.CNC.type) {
+                blackToolTipLayout.changeButtonLayout?.visibility = View.GONE
+            } else {
+                blackToolTipLayout.changeButtonLayout?.visibility = View.VISIBLE
+                blackToolTipLayout.changeText?.text = context?.getText(R.string.shop_using_cnc)
+            }
+            KotlinUtils.fullfillmentTypeClicked = Delivery.CNC.name
+            validateLocationResponse?.validatePlace?.let { validatePlace ->
+
+                val store = GeoUtils.getStoreDetails(
+                    getStoreId(isStoreSelectedForBrowsing, browsingStoreOrStoreId),
+                    validatePlace.stores
+                )
+
+                store?.apply {
+                    blackToolTipLayout.deliveryCollectionTitle?.text =
+                        getString(R.string.earliest_collection_Date)
+                    val collectionQuantity =
+                        quantityLimit?.foodMaximumQuantity
+                    blackToolTipLayout.deliveryIconLayout?.visibility = View.VISIBLE
+                    //checking fbh products condition
+                    if (locationId?.isNotEmpty() == true && firstAvailableFoodDeliveryDate.isNullOrEmpty()) {
+                        enableOrDisableFashionItems(true)
+                        enableOrDisableFoodItems(false)
+                        blackToolTipLayout.fashionItemTitle?.visibility = View.GONE
+                        blackToolTipLayout.fashionItemDateText?.text =
+                            firstAvailableOtherDeliveryDate
+                        blackToolTipLayout.productAvailableText?.text =
+                            context?.getString(R.string.only_fashion_beauty_and_home_products_available_text)
+                        blackToolTipLayout.deliveryFeeText?.text =
+                            AppConfigSingleton.clickAndCollect?.collectionFeeDescription
+                    }
+                    //food products checking conditions
+                    else if (firstAvailableOtherDeliveryDate.isNullOrEmpty() && !firstAvailableFoodDeliveryDate.isNullOrEmpty()) {
+                        enableOrDisableFashionItems(false)
+                        enableOrDisableFoodItems(true)
+                        blackToolTipLayout.foodItemTitle?.visibility = View.GONE
+                        if (!firstAvailableFoodDeliveryDate.isNullOrEmpty()) {
+                            blackToolTipLayout.foodItemDateText?.text =
+                                firstAvailableFoodDeliveryDate
+                        }
+                        blackToolTipLayout.productAvailableText?.text =
+                            bindString(
+                                R.string.cnc_title_text_2,
+                                collectionQuantity.toString()
+                            )
+                        blackToolTipLayout.deliveryFeeText?.text =
+                            context?.getString(R.string.dash_free_collection)
+                    } else {
+                        //mixed basket
+                        enableOrDisableFashionItems(true)
+                        enableOrDisableFoodItems(true)
+                        blackToolTipLayout.fashionItemTitle?.visibility = View.VISIBLE
+                        blackToolTipLayout.foodItemTitle?.visibility = View.VISIBLE
+                        blackToolTipLayout.fashionItemDateText?.text =
+                            firstAvailableOtherDeliveryDate
+                        if (!firstAvailableFoodDeliveryDate.isNullOrEmpty()) {
+                            blackToolTipLayout.foodItemDateText?.text =
+                                firstAvailableFoodDeliveryDate
+                        }
+                        blackToolTipLayout.productAvailableText?.text =
+                            context?.getString(R.string.food_fashion_beauty_and_home_products_available_tool_tip)
+                        blackToolTipLayout.deliveryFeeText.text =
+                            AppConfigSingleton.clickAndCollect?.collectionFeeDescription
+                    }
+                    blackToolTipLayout.cartIcon.setImageResource(R.drawable.icon_cart_white)
+                    blackToolTipLayout.deliveryIcon.setImageResource(R.drawable.white_shopping_bag_icon)
+                    blackToolTipLayout.bubbleLayout?.setArrowDirection(ArrowDirection.TOP_CENTER)
+                } ?: run {
+                    blackToolTipLayout.root.visibility = View.GONE
+                }
+            }
+        }
     }
 
-    // TODO - this needs to be removed as it may not required now
     private fun getStoreId(isStoreSelectedForBrowsing: Boolean, browsingStoreId: String): String? {
         return if (isStoreSelectedForBrowsing) {
             /* select store from store list */
@@ -1259,85 +1257,84 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         }
     }
 
-    //TODO- as a part of shop page enhancement, this tooltip not required the info displaying in this will be covered by the separate fulfilment selection screen
     private fun showDashToolTip(validateLocationResponse: ValidateLocationResponse?) {
-//        binding?.apply {
-//            if (KotlinUtils.isLocationPlaceIdSame == false) {
-//                blackToolTipLayout.root.visibility = View.VISIBLE
-//            }
-//
-//            blackToolTipLayout.root.visibility = View.VISIBLE
-//            blackToolTipLayout.bubbleLayout.arrowDirection = ArrowDirection.TOP
-//            blackToolTipLayout.bubbleLayout.arrowPosition =
-//                tabsMain.width - tabsMain.getTabAt(DASH_TAB.index)?.view?.width?.div(
-//                    DASH_DIVIDER
-//                )?.toFloat()!!
-//            if (getDeliveryType() == null || Delivery.getType(getDeliveryType()?.deliveryType)?.type == Delivery.DASH.type) {
-//                blackToolTipLayout.changeButtonLayout.visibility = View.GONE
-//            } else {
-//                blackToolTipLayout.changeButtonLayout.visibility = View.VISIBLE
-//                blackToolTipLayout.changeText.text = getText(R.string.shop_using_dash_delivery)
-//            }
-//            KotlinUtils.fullfillmentTypeClicked = Delivery.DASH.name
-//            validateLocationResponse?.validatePlace?.let {
-//
-//                val timeSlots = it?.onDemand?.deliveryTimeSlots
-//
-//                blackToolTipLayout.foodItemTitle.visibility = View.GONE
-//                blackToolTipLayout.fashionItemDateText.visibility = View.GONE
-//                blackToolTipLayout.deliveryIconLayout.visibility = View.VISIBLE
-//                blackToolTipLayout.cartIconLayout.visibility = View.VISIBLE
-//                blackToolTipLayout.fashionItemTitle.visibility = View.GONE
-//                blackToolTipLayout.deliveryIcon.visibility = View.VISIBLE
-//                blackToolTipLayout.deliveryFeeText.visibility = View.VISIBLE
-//
-//                if (timeSlots?.isNullOrEmpty() == true && it?.onDemand?.deliverable == true) {
-//                    blackToolTipLayout.deliveryCollectionTitle.text =
-//                        getString(R.string.next_dash_delivery_timeslot_text)
-//                    blackToolTipLayout.foodItemDateText.visibility = View.VISIBLE
-//                    blackToolTipLayout.foodItemDateText.text =
-//                        getString(R.string.no_timeslots_available_title)
-//                    blackToolTipLayout.fashionItemTitle.visibility = View.VISIBLE
-//                    blackToolTipLayout.fashionItemTitle.text = getString(R.string.timeslot_desc)
-//                } else {
-//                    blackToolTipLayout.deliveryCollectionTitle.text =
-//                        getString(R.string.next_dash_delivery_timeslot_text)
-//                    blackToolTipLayout.foodItemDateText.visibility = View.VISIBLE
-//                    blackToolTipLayout.foodItemDateText.text =
-//                        it.onDemand?.firstAvailableFoodDeliveryTime
-//                    blackToolTipLayout.fashionItemTitle.visibility = View.GONE
-//                }
-//
-//                blackToolTipLayout.cartIcon.setImageResource(R.drawable.icon_cart_white)
-//                blackToolTipLayout.deliveryIcon.setImageResource(R.drawable.icon_scooter_white)
-//                blackToolTipLayout.productAvailableText.text =
-//                    HtmlCompat.fromHtml(
-//                        "<font><b>" + it.onDemand?.quantityLimit?.foodMaximumQuantity + "</b></font>"
-//                            .plus(" ").plus(
-//                                resources.getString(
-//                                    R.string.dash_item_limit
-//                                )
-//                            ),
-//                        HtmlCompat.FROM_HTML_MODE_COMPACT
-//                    )
-//
-//                if (it.onDemand?.firstAvailableFoodDeliveryTime?.isNullOrEmpty() == true) {
-//                    blackToolTipLayout.deliveryIconLayout.visibility = View.GONE
-//                } else {
-//                    blackToolTipLayout.deliveryIconLayout.visibility = View.VISIBLE
-//                    blackToolTipLayout.deliveryFeeText.text =
-//                        HtmlCompat.fromHtml(
-//                            "<font><b>" + it.onDemand?.firstAvailableFoodDeliveryCost + "</b></font>"
-//                                .plus(" ").plus(
-//                                    resources.getString(
-//                                        R.string.dash_delivery_fee
-//                                    )
-//                                ),
-//                            HtmlCompat.FROM_HTML_MODE_COMPACT
-//                        )
-//                }
-//            }
-//        }
+        binding?.apply {
+            if (KotlinUtils.isLocationPlaceIdSame == false) {
+                blackToolTipLayout.root.visibility = View.VISIBLE
+            }
+
+            blackToolTipLayout.root.visibility = View.VISIBLE
+            blackToolTipLayout.bubbleLayout.arrowDirection = ArrowDirection.TOP
+            blackToolTipLayout.bubbleLayout.arrowPosition =
+                tabsMain.width - tabsMain.getTabAt(DASH_TAB.index)?.view?.width?.div(
+                    DASH_DIVIDER
+                )?.toFloat()!!
+            if (getDeliveryType() == null || Delivery.getType(getDeliveryType()?.deliveryType)?.type == Delivery.DASH.type) {
+                blackToolTipLayout.changeButtonLayout.visibility = View.GONE
+            } else {
+                blackToolTipLayout.changeButtonLayout.visibility = View.VISIBLE
+                blackToolTipLayout.changeText.text = getText(R.string.shop_using_dash_delivery)
+            }
+            KotlinUtils.fullfillmentTypeClicked = Delivery.DASH.name
+            validateLocationResponse?.validatePlace?.let {
+
+                val timeSlots = it?.onDemand?.deliveryTimeSlots
+
+                blackToolTipLayout.foodItemTitle.visibility = View.GONE
+                blackToolTipLayout.fashionItemDateText.visibility = View.GONE
+                blackToolTipLayout.deliveryIconLayout.visibility = View.VISIBLE
+                blackToolTipLayout.cartIconLayout.visibility = View.VISIBLE
+                blackToolTipLayout.fashionItemTitle.visibility = View.GONE
+                blackToolTipLayout.deliveryIcon.visibility = View.VISIBLE
+                blackToolTipLayout.deliveryFeeText.visibility = View.VISIBLE
+
+                if (timeSlots?.isNullOrEmpty() == true && it?.onDemand?.deliverable == true) {
+                    blackToolTipLayout.deliveryCollectionTitle.text =
+                        getString(R.string.next_dash_delivery_timeslot_text)
+                    blackToolTipLayout.foodItemDateText.visibility = View.VISIBLE
+                    blackToolTipLayout.foodItemDateText.text =
+                        getString(R.string.no_timeslots_available_title)
+                    blackToolTipLayout.fashionItemTitle.visibility = View.VISIBLE
+                    blackToolTipLayout.fashionItemTitle.text = getString(R.string.timeslot_desc)
+                } else {
+                    blackToolTipLayout.deliveryCollectionTitle.text =
+                        getString(R.string.next_dash_delivery_timeslot_text)
+                    blackToolTipLayout.foodItemDateText.visibility = View.VISIBLE
+                    blackToolTipLayout.foodItemDateText.text =
+                        it.onDemand?.firstAvailableFoodDeliveryTime
+                    blackToolTipLayout.fashionItemTitle.visibility = View.GONE
+                }
+
+                blackToolTipLayout.cartIcon.setImageResource(R.drawable.icon_cart_white)
+                blackToolTipLayout.deliveryIcon.setImageResource(R.drawable.icon_scooter_white)
+                blackToolTipLayout.productAvailableText.text =
+                    HtmlCompat.fromHtml(
+                        "<font><b>" + it.onDemand?.quantityLimit?.foodMaximumQuantity + "</b></font>"
+                            .plus(" ").plus(
+                                resources.getString(
+                                    R.string.dash_item_limit
+                                )
+                            ),
+                        HtmlCompat.FROM_HTML_MODE_COMPACT
+                    )
+
+                if (it.onDemand?.firstAvailableFoodDeliveryTime?.isNullOrEmpty() == true) {
+                    blackToolTipLayout.deliveryIconLayout.visibility = View.GONE
+                } else {
+                    blackToolTipLayout.deliveryIconLayout.visibility = View.VISIBLE
+                    blackToolTipLayout.deliveryFeeText.text =
+                        HtmlCompat.fromHtml(
+                            "<font><b>" + it.onDemand?.firstAvailableFoodDeliveryCost + "</b></font>"
+                                .plus(" ").plus(
+                                    resources.getString(
+                                        R.string.dash_delivery_fee
+                                    )
+                                ),
+                            HtmlCompat.FROM_HTML_MODE_COMPACT
+                        )
+                }
+            }
+        }
     }
 
     fun showShopFeatureWalkThrough() {
@@ -1367,7 +1364,6 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         }
     }
 
-    //TODO- as a part of shop page enhancement, to be removed this is a tool tip on the whole tabbar
     private fun showDashFeatureWalkThrough() {
         (activity as? BottomNavigationActivity)?.let {
             // Prevent dialog to display in other section when fragment is not visible
@@ -1395,7 +1391,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
             it.walkThroughPromtView.show(it)
         }
     }
-    //TODO- as a part of shop page enhancement, to be removed as this is on whole toolbar UI
+
     private fun showDeliveryDetailsFeatureWalkThrough() {
         (activity as? BottomNavigationActivity)?.let {
             // Prevent dialog to display in other section when fragment is not visible
@@ -1589,30 +1585,28 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         }
     }
 
-    // TODO - this needs to be removed as it may not required
     private fun enableOrDisableFashionItems(isEnabled: Boolean) {
-//        binding.blackToolTipLayout?.apply {
-//            if (isEnabled) {
-//                fashionItemTitle.visibility = View.VISIBLE
-//                fashionItemDateText.visibility = View.VISIBLE
-//            } else {
-//                fashionItemTitle.visibility = View.GONE
-//                fashionItemDateText.visibility = View.GONE
-//            }
-//        }
+        binding.blackToolTipLayout?.apply {
+            if (isEnabled) {
+                fashionItemTitle.visibility = View.VISIBLE
+                fashionItemDateText.visibility = View.VISIBLE
+            } else {
+                fashionItemTitle.visibility = View.GONE
+                fashionItemDateText.visibility = View.GONE
+            }
+        }
     }
 
-    // TODO - this needs to be removed as it may not required
     private fun enableOrDisableFoodItems(isEnabled: Boolean) {
-//        binding.blackToolTipLayout?.apply {
-//            if (isEnabled) {
-//                foodItemTitle.visibility = View.VISIBLE
-//                foodItemDateText.visibility = View.VISIBLE
-//            } else {
-//                foodItemTitle.visibility = View.GONE
-//                foodItemDateText.visibility = View.GONE
-//            }
-//        }
+        binding.blackToolTipLayout?.apply {
+            if (isEnabled) {
+                foodItemTitle.visibility = View.VISIBLE
+                foodItemDateText.visibility = View.VISIBLE
+            } else {
+                foodItemTitle.visibility = View.GONE
+                foodItemDateText.visibility = View.GONE
+            }
+        }
 
     }
 }
