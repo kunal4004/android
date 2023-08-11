@@ -212,4 +212,40 @@ class SubmitRecommendationsUseCaseTest {
         assertEquals(discountItem?.quantity, 1)
         assertEquals(discountItem?.value, 20.0)
     }
+
+    @Test
+    fun `get amount last two decimal with valid input`() {
+        val price = 123.456
+        val result = submitRecommendationsUseCase.getAmountOnlyLastTwoDecimal(price)
+        assertEquals(123.45, result)
+    }
+
+    @Test
+    fun `get amount last two decimal with integer input`() {
+        val price = 123
+        val result = submitRecommendationsUseCase.getAmountOnlyLastTwoDecimal(price.toDouble())
+        assertEquals(123.00, result)
+    }
+
+    @Test
+    fun `get amount last two decimal with negative input`() {
+        val price = -123.456
+        val result = submitRecommendationsUseCase.getAmountOnlyLastTwoDecimal(price)
+        assertEquals(-123.45, result)
+    }
+
+    @Test
+    fun `get amount last two decimal with zero input`() {
+        val price = 0.0
+        val result = submitRecommendationsUseCase.getAmountOnlyLastTwoDecimal(price)
+        assertEquals(0.00, result)
+    }
+
+    @Test
+    fun `get amount last two decimal with exception`() {
+        val price = Double.NaN
+        val result = submitRecommendationsUseCase.getAmountOnlyLastTwoDecimal(price)
+        assertEquals(0.00, result)
+    }
+
 }
