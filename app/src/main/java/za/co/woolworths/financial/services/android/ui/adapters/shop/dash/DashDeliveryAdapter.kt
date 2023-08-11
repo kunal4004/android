@@ -32,6 +32,7 @@ class DashDeliveryAdapter(
         const val TYPE_NAME_LONG_BANNER_CAROUSEL = "Long Banners Carousel"
         const val TYPE_NAME_LONG_BANNER_LIST = "Long Banners List"
         const val TYPE_NAME_BANNER_FULL_WIDTH = "Banner FullWidth"
+        const val TYPE_NAME_LONG_BANNER_FULL_WIDTH = "Banner FullWidth"
 
         const val TYPE_EMPTY = 0
         const val TYPE_ON_DEMAND_CATEGORIES = 1
@@ -40,6 +41,8 @@ class DashDeliveryAdapter(
         const val TYPE_DASH_CATEGORIES_PRODUCT_CAROUSEL = 4
         const val TYPE_DASH_CATEGORIES_LONG_BANNER_CAROUSEL = 5
         const val TYPE_DASH_CATEGORIES_LONG_BANNER_LIST = 6
+        const val TYPE_DASH_TODAY_WITH_WOOLIES = 7
+
     }
 
     private val diffCallback = object : DiffUtil.ItemCallback<Any?>() {
@@ -132,6 +135,15 @@ class DashDeliveryAdapter(
                 )
             }
 
+            TYPE_DASH_TODAY_WITH_WOOLIES -> {
+                TodayWooliesLayoutViewHolder(
+                    ItemLayoutProductCarouselBinding.inflate(
+                        LayoutInflater.from(context),
+                        parent,
+                        false)
+                )
+            }
+
             else -> EmptyViewHolder(View(context))
         }
     }
@@ -188,6 +200,14 @@ class DashDeliveryAdapter(
                     dashLandingNavigationListener
                 )
             }
+            is  TodayWooliesLayoutViewHolder -> {
+                holder.bindView(
+                    context,
+                    position,
+                    categoryList[position] as ProductCatalogue,
+                    dashLandingNavigationListener
+                )
+            }
         }
     }
 
@@ -213,6 +233,9 @@ class DashDeliveryAdapter(
                     }
                     TYPE_NAME_LONG_BANNER_LIST.lowercase() -> {
                         TYPE_DASH_CATEGORIES_LONG_BANNER_LIST
+                    }
+                    TYPE_NAME_LONG_BANNER_FULL_WIDTH.lowercase() -> {
+                        TYPE_DASH_TODAY_WITH_WOOLIES
                     }
                     else -> TYPE_EMPTY
                 }
@@ -388,6 +411,28 @@ class LongBannerListLayoutViewHolder(val itemBinding: ItemLayoutProductCarouselB
             adapter = longBannerListAdapter
             productCatalogue?.let {
                 longBannerListAdapter.setData(it)
+            }
+        }
+    }
+}
+
+class TodayWooliesLayoutViewHolder(val itemBinding: ItemLayoutProductCarouselBinding) :
+    RecyclerView.ViewHolder(itemBinding.root) {
+
+    fun bindView(
+        context: Context,
+        position: Int,
+        productCatalogue: ProductCatalogue?,
+        dashLandingNavigationListener: OnDashLandingNavigationListener,
+    ) {
+        itemBinding.dashCategoryTitle.text = productCatalogue?.headerText
+        itemBinding.rvDashCategories?.apply {
+            val longBannerCarouselAdapter =
+                DashCategoryAdapter(context, dashLandingNavigationListener, null)
+            layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
+            adapter = longBannerCarouselAdapter
+            productCatalogue?.let {
+                longBannerCarouselAdapter.setData(it)
             }
         }
     }
