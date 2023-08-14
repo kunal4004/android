@@ -2,12 +2,16 @@ package za.co.woolworths.financial.services.android.ui.adapters
 
 import android.app.Activity
 import android.content.res.TypedArray
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.TipsAndTricksListItemBinding
 import za.co.woolworths.financial.services.android.contracts.ITipsAndTricksListener
+import za.co.woolworths.financial.services.android.ui.fragments.account.applynow.utils.setContentDescription
+import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.getAccessibilityIdWithAppendedString
+import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.extensions.getContext
 
 class TipsAndTricksListAdapter(val context: Activity, val listner: ITipsAndTricksListener) : RecyclerView.Adapter<TipsAndTricksListAdapter.ViewHolder>() {
 
@@ -34,6 +38,12 @@ class TipsAndTricksListAdapter(val context: Activity, val listner: ITipsAndTrick
             itemBinding.name?.text = name
             itemBinding.listIcon?.setBackgroundResource(icon)
             itemBinding.root.setOnClickListener { listener.onListItemSelected(position) }
+            itemBinding.name.contentDescription =
+                name.getAccessibilityIdWithAppendedString(name,itemBinding.root.context.getString(R.string.text))
+            itemBinding.listIcon?.contentDescription =
+                name.getAccessibilityIdWithAppendedString(name, itemBinding.root.context.getString(R.string.image_icon))
+            itemBinding.nextArrow.contentDescription =
+                name.getAccessibilityIdWithAppendedString(name, itemBinding.root.context.getString(R.string.next_arrow))
         }
     }
 

@@ -507,6 +507,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     @Override
     public void setTitle(String title) {
         setToolbarTitle(title);
+        setToolbarContentDescription(getString(R.string.toolbar_text));
     }
 
     public  void  setToolbarContentDescription(String description) {

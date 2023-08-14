@@ -27,8 +27,9 @@ class FAQAdapter(
 
     class FaqViewHolder(val itemBinding: FaqRowBinding) :
         RecyclerView.ViewHolder(itemBinding.root) {
-        fun bind(item: FAQDetail) {
+        fun bind(item: FAQDetail, position: Int) {
             itemBinding.name.text = item.question
+            itemBinding.name.contentDescription = "faq_".plus(position)
         }
     }
 
@@ -36,7 +37,7 @@ class FAQAdapter(
         holder: FaqViewHolder,
         @SuppressLint("RecyclerView") position: Int,
     ) {
-        mDataSet?.getOrNull(position)?.let { holder.bind(it) }
+        mDataSet?.getOrNull(position)?.let { holder.bind(it, position) }
         holder.itemView.setOnClickListener {
             selectedIndex = position
             if (selectedIndex < itemCount) mSelectedQuestion.onQuestionSelected(mDataSet?.getOrNull(
