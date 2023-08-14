@@ -670,9 +670,11 @@ class StartupActivity :
         var uri = intent?.data
         if (null != uri) {
             var params = uri.pathSegments
-            var forgotPassword = params[params.size - 1]
-            if (null != forgotPassword && forgotPassword.contentEquals("forgot-password")) {
-                getForgotPasswordLink(uri.toString())
+            if (params.isNullOrEmpty()== false) {
+                val forgotPassword = params[params.size - 1]
+                if (null != forgotPassword && forgotPassword.contentEquals("forgot-password")) {
+                    getForgotPasswordLink(uri.toString())
+                }
             }
         }
     }
