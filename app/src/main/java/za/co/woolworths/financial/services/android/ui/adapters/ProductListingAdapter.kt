@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.databinding.BottomProgressBarBinding
@@ -11,9 +12,18 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.IProductListing
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart
+import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
 import za.co.woolworths.financial.services.android.models.dto.ProductList
+import za.co.woolworths.financial.services.android.models.dto.toAddToListRequest
 import za.co.woolworths.financial.services.android.ui.adapters.holder.*
+import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.toFloatOrZero
+import za.co.woolworths.financial.services.android.util.KotlinUtils
+import za.co.woolworths.financial.services.android.util.ScreenManager
+import za.co.woolworths.financial.services.android.util.SessionUtilities
+import za.co.woolworths.financial.services.android.util.ToastUtils
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.analytics.dto.AddToWishListFirebaseEventData
+import za.co.woolworths.financial.services.android.util.analytics.dto.toAnalyticItem
 
 class ProductListingAdapter(
     private val navigator: IProductListing?,
@@ -81,6 +91,9 @@ class ProductListingAdapter(
                             }
                         }
                     }
+                    view.itemBinding.imAddToList?.setOnClickListener {
+                        addItemToShoppingList(productList)
+                    }
                 }
             }
         }
@@ -106,5 +119,8 @@ class ProductListingAdapter(
             product.quickShopButtonWasTapped = false
         }
         notifyDataSetChanged()
+    }
+    private fun addItemToShoppingList(productList: ProductList) {
+
     }
 }

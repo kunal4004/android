@@ -46,6 +46,17 @@
         app:layout_constraintStart_toStartOf="@+id/startMarginGuideline"
         tools:text="Product variant"
         tools:visibility="visible" />
+    <ImageView
+        android:id="@+id/imAddToList"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/ic_add_to_list"
+        app:layout_constraintBottom_toBottomOf="@+id/mainImgLayout"
+        app:layout_constraintEnd_toEndOf="@+id/endMarginGuideline"
+        android:layout_marginEnd="@dimen/eight_dp"
+        android:layout_marginBottom="@dimen/eight_dp"
+        android:visibility="gone"
+        />
 
     <View
         android:id="@+id/horizontalProductSeparator"
