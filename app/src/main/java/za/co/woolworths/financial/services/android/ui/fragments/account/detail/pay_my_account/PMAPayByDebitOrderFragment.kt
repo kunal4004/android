@@ -10,6 +10,7 @@ import com.awfs.coordination.R
 import com.awfs.coordination.databinding.PmaPayByDebitOrderFragmentBinding
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dto.pma.payByDebitOrder.PMAPayByDebitOrderEntity
+import za.co.woolworths.financial.services.android.ui.extension.makeCall
 import za.co.woolworths.financial.services.android.util.mappers.pma.EntityMapper.toDomain
 
 class PMAPayByDebitOrderFragment : Fragment() {
@@ -30,5 +31,12 @@ class PMAPayByDebitOrderFragment : Fragment() {
                 ?.toDomain()
         binding.executePendingBindings()
         return binding.root
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding.payByDebitOrderTextView.setOnClickListener {
+            requireContext().makeCall("09075771869")
+        }
     }
 }
