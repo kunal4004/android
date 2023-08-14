@@ -13,7 +13,7 @@ apply plugin: 'kotlin-parcelize'
 android {
 
     def major = "9"
-    def minor = "11"
+    def minor = "12"
     def fix = "0"
     def jobNumberProduction = 226
     def jobNumberQa = 724
@@ -100,7 +100,6 @@ android {
 
         // MARK - Release build types
         release {
-            debuggable true
             lintOptions {
                 disable 'MissingTranslation'
                 checkReleaseBuilds false
