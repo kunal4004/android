@@ -330,7 +330,7 @@ class UnsellableUtils {
                     fragment.getString(R.string.add_to_list_bottom_sheet_success_title),
                     fragment.getString(R.string.add_to_list_bottom_sheet_success_sub_title),
                     fragment.getString(R.string.got_it),
-                    fragment.getString(R.string.dismiss_underline),
+                    null,
                     ADD_TO_LIST_SUCCESS_RESULT_CODE
                 )
             customBottomSheetDialogFragment?.show(
