@@ -124,6 +124,7 @@ import za.co.woolworths.financial.services.android.ui.views.ToastFactory;
 import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.ui.views.shop.dash.ChangeFulfillmentCollectionStoreFragment;
+import za.co.woolworths.financial.services.android.ui.views.tooltip.WMaterialShowcaseViewV2;
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature.fragment.UserAccountsLandingFragment;
 import za.co.woolworths.financial.services.android.util.AppConstant;
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
@@ -179,6 +180,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     public static final int LOCK_REQUEST_CODE_ACCOUNTS = 444;
     private QueryBadgeCounter mQueryBadgeCounter;
     public WMaterialShowcaseView walkThroughPromtView = null;
+    public WMaterialShowcaseViewV2 wMaterialShowcaseViewV2 = null;
     public RefinementDrawerFragment drawerFragment;
     public JsonObject appLinkData;
     private BottomNavigationItemView accountNavigationView;
@@ -701,7 +703,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
             // To avoid clicks while feature tutorial popup showing
-            if (!Utils.isFeatureTutorialsDismissed(walkThroughPromtView))
+            if (!Utils.isFeatureTutorialsDismissed(walkThroughPromtView) || (wMaterialShowcaseViewV2 != null && !wMaterialShowcaseViewV2.isDismissed()))
                 return false;
 
             statusBarColor(R.color.white);
@@ -778,7 +780,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
        if(getCurrentFragment() instanceof ShopFragment) {
             ShopFragment fragment1 = (ShopFragment) getCurrentFragment();
-            fragment1.showShopFeatureWalkThrough();
+           fragment1.showFulfilmentTooltip();
            // Check for location permission. if permission is rejected then never ask again.
            if(Utils.isLocationEnabled(this)) {
                fragment1.checkRunTimePermissionForLocation();
@@ -871,6 +873,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             return;
         }
 
+        if (dismissNewTooltip()) return;
+
         if (mNavController.getCurrentFrag() instanceof ProductListingFragment) {
             ((ProductListingFragment) mNavController.getCurrentFrag()).onBackPressed();
         }
@@ -907,6 +911,14 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             if (!isFinishing())
                 super.onBackPressed();
         }
+    }
+
+    public boolean dismissNewTooltip() {
+        if (wMaterialShowcaseViewV2 != null && !wMaterialShowcaseViewV2.isDismissed()) {
+            wMaterialShowcaseViewV2.hide();
+            return true;
+        }
+        return false;
     }
 
     @Override

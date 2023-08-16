@@ -10,6 +10,8 @@
         android:id="@+id/shopToolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:contentInsetStartWithNavigation="0dp"
+        app:contentInsetStart="0dp"
         android:background="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -98,7 +100,6 @@
                 android:id="@+id/fulfilmentAndLocationLayout"
                 layout="@layout/layout_fulfilment_and_location"
                 android:layout_width="match_parent"
-                android:layout_marginEnd="@dimen/sixteen_dp"
                 android:layout_height="wrap_content"/>
         </LinearLayout>
     </androidx.appcompat.widget.Toolbar>
