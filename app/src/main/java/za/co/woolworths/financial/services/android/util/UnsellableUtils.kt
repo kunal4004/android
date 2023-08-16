@@ -9,6 +9,7 @@ import androidx.lifecycle.lifecycleScope
 import com.awfs.coordination.R
 import com.google.gson.JsonSyntaxException
 import kotlinx.coroutines.launch
+import za.co.woolworths.financial.services.android.cart.service.network.CartItemGroup
 import za.co.woolworths.financial.services.android.cart.view.CartFragment
 import za.co.woolworths.financial.services.android.common.ClickOnDialogButton
 import za.co.woolworths.financial.services.android.common.CommonErrorBottomSheetDialogImpl
@@ -18,7 +19,9 @@ import za.co.woolworths.financial.services.android.geolocation.viewmodel.AddToCa
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmLocationResponseLiveData
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
+import za.co.woolworths.financial.services.android.models.dto.CommerceItem
 import za.co.woolworths.financial.services.android.models.dto.CreateList
+import za.co.woolworths.financial.services.android.models.dto.Price
 import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList
@@ -506,6 +509,43 @@ class UnsellableUtils {
                     AddToCartLiveData.value = true
                 }
             }
+        }
+
+        fun getUnsellableCommerceItem(
+            cartItemsGroup: ArrayList<CartItemGroup>?,
+            commerceItemList: ArrayList<CommerceItem>,
+        ): ArrayList<UnSellableCommerceItem> {
+            var unsellableCommerceItemList = ArrayList<UnSellableCommerceItem>()
+            commerceItemList.forEachIndexed { i, item ->
+                val price = Price(
+                    item.priceInfo.amount,
+                    0.0,
+                    item.priceInfo.rawTotalPrice,
+                    item.priceInfo.salePrice,
+                    item.priceInfo.listPrice
+                )
+                val unSellableCommerceItem = UnSellableCommerceItem(
+                    item.commerceItemInfo.quantity,
+                    item.commerceItemInfo.productId,
+                    "",
+                    item.commerceItemInfo.internalImageURL,
+                    item.commerceItemInfo.catalogRefId,
+                    item.commerceItemClassType,
+                    item.color,
+                    "",
+                    item.size,
+                    "",
+                    price,
+                    item.commerceItemInfo.externalImageRefV2,
+                    item.commerceItemInfo.productDisplayName,
+                    item.fulfillmentType,
+                    cartItemsGroup?.get(i)?.type,
+                    item.commerceItemInfo.commerceId,
+                    item.isItemRemoved
+                )
+                unsellableCommerceItemList.add(unSellableCommerceItem)
+            }
+            return unsellableCommerceItemList
         }
     }
 }

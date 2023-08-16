@@ -98,6 +98,7 @@ import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.sh
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.updateCheckOutLink
 import za.co.woolworths.financial.services.android.util.QueryBadgeCounter.Companion.instance
 import za.co.woolworths.financial.services.android.util.ToastUtils.ToastInterface
+import za.co.woolworths.financial.services.android.util.UnsellableUtils.Companion.getUnsellableCommerceItem
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper.FirebaseEventAction.*
@@ -1815,43 +1816,6 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                 }
             }
         }
-    }
-
-    private fun getUnsellableCommerceItem(
-        cartItemsGroup: ArrayList<CartItemGroup>?,
-        commerceItemList: ArrayList<CommerceItem>,
-    ): ArrayList<UnSellableCommerceItem> {
-        var unsellableCommerseItemList = ArrayList<UnSellableCommerceItem>()
-        commerceItemList.forEachIndexed { i, item ->
-            val price = Price(
-                item.priceInfo.amount,
-                0.0,
-                item.priceInfo.rawTotalPrice,
-                item.priceInfo.salePrice,
-                item.priceInfo.listPrice
-            )
-            val unSellableCommerceItem = UnSellableCommerceItem(
-                item.commerceItemInfo.quantity,
-                item.commerceItemInfo.productId,
-                "",
-                item.commerceItemInfo.internalImageURL,
-                item.commerceItemInfo.catalogRefId,
-                item.commerceItemClassType,
-                item.color,
-                "",
-                item.size,
-                "",
-                price,
-                item.commerceItemInfo.externalImageRefV2,
-                item.commerceItemInfo.productDisplayName,
-                item.fulfillmentType,
-                cartItemsGroup?.get(i)?.type,
-                item.commerceItemInfo.commerceId,
-                item.isItemRemoved
-            )
-            unsellableCommerseItemList.add(unSellableCommerceItem)
-        }
-        return unsellableCommerseItemList
     }
 
     private fun navigateToUnsellableItemsFragment(
