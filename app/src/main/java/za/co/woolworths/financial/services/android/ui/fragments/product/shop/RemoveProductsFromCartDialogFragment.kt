@@ -120,7 +120,7 @@ class RemoveProductsFromCartDialogFragment : WBottomSheetDialogFragment() {
         if (isItemsRemoved) {
             listener?.onOutOfStockProductsRemoved()
         } else {
-            activity?.onBackPressed()
+            dismiss()
         }
     }
 
