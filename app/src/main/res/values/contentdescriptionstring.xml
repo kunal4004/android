@@ -219,7 +219,7 @@
     <string name="button_my_card_has_arrived">button_my_card_has_arrived</string>
     <string name="active_store_card_image_on_overlay_new_card">active_store_card_image_on_overlay_new_card</string>
 
-    //Common id's
+    <!-- Common id's -->
     <string name="title">title</string>
     <string name="subtitle">subtitle</string>
     <string name="text">text</string>
