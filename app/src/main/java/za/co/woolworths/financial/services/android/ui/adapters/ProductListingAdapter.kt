@@ -12,11 +12,7 @@ import za.co.woolworths.financial.services.android.contracts.IProductListing
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart
 import za.co.woolworths.financial.services.android.models.dto.ProductList
-import za.co.woolworths.financial.services.android.ui.adapters.holder.ProductListingViewType
-import za.co.woolworths.financial.services.android.ui.adapters.holder.RecyclerViewViewHolder
-import za.co.woolworths.financial.services.android.ui.adapters.holder.RecyclerViewViewHolderFooter
-import za.co.woolworths.financial.services.android.ui.adapters.holder.RecyclerViewViewHolderHeader
-import za.co.woolworths.financial.services.android.ui.adapters.holder.RecyclerViewViewHolderItems
+import za.co.woolworths.financial.services.android.ui.adapters.holder.*
 import za.co.woolworths.financial.services.android.util.Utils
 
 class ProductListingAdapter(
