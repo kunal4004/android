@@ -2576,7 +2576,7 @@
     <string name="hint_street_address_dash">Home • 28 Eastlake Island Drive</string>
     <string name="continue_browsing">CONTINUE BROWSING</string>
 
-    <string name="change_your_delivery_method_title">You’re About To Change Your Delivery Method</string>
+    <string name="change_your_delivery_method_title">You’re About To Change Your\n Delivery Method</string>
     <string name="change_your_delivery_method_standard">By adding this item to your cart, you will checkout using <b><font color='#000000'>Standard Delivery</font></b> instead.</string>
     <string name="change_your_delivery_method_dash">By adding this item to your cart, you will checkout using <b><font color='#000000'>Dash Delivery</font></b> instead.</string>
     <string name="change_your_delivery_method_cnc">By adding this item to your cart, you will checkout using <b><font color='#000000'>Click &amp; Collect.</font></b> instead.</string>
