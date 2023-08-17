@@ -85,7 +85,7 @@ class SubmitRecommendationsUseCase @Inject constructor(
                 pid = items.productId,
                 sku = items.productId,
                 quantity = items.quantity,
-                value = items.priceInfo?.amount?.let { getAmountOnlyLastTwoDecimal(it) },
+                value = getAmountOnlyLastTwoDecimal(items.priceInfo?.amount ?: 0.00),
                 currency = Constants.CURRENCY_VALUE
             )
         }
@@ -104,7 +104,7 @@ class SubmitRecommendationsUseCase @Inject constructor(
                 pid = foodItem.productId,
                 sku = foodItem.productId,
                 quantity = foodItem.quantity,
-                value = foodItem.priceInfo?.amount?.let { getAmountOnlyLastTwoDecimal(it) },
+                value = getAmountOnlyLastTwoDecimal(foodItem.priceInfo?.amount ?: 0.00),
                 currency = Constants.CURRENCY_VALUE
             )
         }
@@ -115,7 +115,7 @@ class SubmitRecommendationsUseCase @Inject constructor(
                 pid = Constants.PRODUCT_ID_FOR_SHIPPING,
                 sku = Constants.PRODUCT_ID_FOR_SHIPPING,
                 quantity = Constants.QUANTITY_FOR_SHIPPING,
-                value = shippingAmount?.let { getAmountOnlyLastTwoDecimal(it) },
+                value =  getAmountOnlyLastTwoDecimal(shippingAmount ?: 0.00),
                 currency = Constants.CURRENCY_VALUE
             )
         } else {
@@ -129,7 +129,7 @@ class SubmitRecommendationsUseCase @Inject constructor(
                 pid = Constants.PRODUCT_ID_FOR_DISCOUNT,
                 sku = Constants.PRODUCT_ID_FOR_DISCOUNT,
                 quantity = Constants.QUANTITY_FOR_DISCOUNT,
-                value = totalOrderDiscount?.let { getAmountOnlyLastTwoDecimal(it) },
+                value =  getAmountOnlyLastTwoDecimal(totalOrderDiscount ?: 0.00),
                 currency = Constants.CURRENCY_VALUE
             )
         } else {
