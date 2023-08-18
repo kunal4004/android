@@ -21,4 +21,6 @@ interface TooltipDialog {
     fun hide()
 
     fun removeFromWindow()
+
+    fun getFeature(): Feature?
 }

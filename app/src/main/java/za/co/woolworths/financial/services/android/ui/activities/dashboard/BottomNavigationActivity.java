@@ -868,6 +868,10 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
         if (walkThroughPromtView != null && !walkThroughPromtView.isDismissed()) {
             walkThroughPromtView.hide();
+            final Fragment currentFragment = getCurrentFragment();
+            if(walkThroughPromtView.getFeature() == TooltipDialog.Feature.SHOP_FULFILMENT && currentFragment instanceof ShopFragment && currentFragment.isVisible()){
+                ((ShopFragment)currentFragment).showFulfilmentTooltip(); // This is to display the location tooltip
+            }
             return;
         }
 

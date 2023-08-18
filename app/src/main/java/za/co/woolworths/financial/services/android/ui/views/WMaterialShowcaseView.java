@@ -27,6 +27,8 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import androidx.annotation.Nullable;
+
 import com.awfs.coordination.R;
 import com.daasuu.bl.ArrowDirection;
 import com.daasuu.bl.BubbleLayout;
@@ -1046,6 +1048,12 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
     @Override
     public boolean isDismissed() {
         return mWasDismissed;
+    }
+
+    @Nullable
+    @Override
+    public Feature getFeature() {
+        return feature;
     }
 
     public void animateIn() {
