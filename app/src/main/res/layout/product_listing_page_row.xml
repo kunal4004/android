@@ -53,7 +53,7 @@
         app:srcCompat="@drawable/ic_add_to_list"
         app:layout_constraintBottom_toBottomOf="@+id/mainImgLayout"
         app:layout_constraintEnd_toEndOf="@+id/endMarginGuideline"
-        android:layout_marginEnd="@dimen/eight_dp"
+        android:layout_marginEnd="@dimen/zero_dp"
         android:layout_marginBottom="@dimen/eight_dp"
         android:visibility="gone"
         />
