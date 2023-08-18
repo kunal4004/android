@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -16,6 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.LineBreak.Companion.Simple
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -123,13 +125,14 @@ fun ProductPetInsuranceRow(
 
     SpacerHeight8dp(bgColor = Color.Transparent)
 
-    Row(verticalAlignment = Alignment.Bottom) {
+    Row(verticalAlignment = Alignment.Top) {
         TextOpenSansFontFamily(
             color = BrightGray,
             text = descLabel,
-            overflow = TextOverflow.Ellipsis,
-            maxLines = 1,
             textAlign = TextAlign.Start,
+            style = LocalTextStyle.current.copy(
+                lineBreak = Simple
+            ),
             locator = my_product_policy_number_label,
             fontSize = FontDimensions.sp15)
 
@@ -139,9 +142,11 @@ fun ProductPetInsuranceRow(
                 text = it,
                 locator = my_product_policy_number_value,
                 fontFamily = OpenSansFontFamily,
+                maxLines = 2,
                 fontWeight = FontWeight.SemiBold,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
+                 style = LocalTextStyle.current.copy(
+                    lineBreak = Simple
+                ),
                 fontSize = FontDimensions.policyNumberValue15Sp,
                 color = White
             )
