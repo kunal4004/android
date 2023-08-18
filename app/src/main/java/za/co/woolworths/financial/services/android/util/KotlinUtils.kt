@@ -1870,6 +1870,10 @@ fun Fragment.isFragmentAttached(): Boolean {
     }
     return false
 }
+fun isAValidSouthAfricanNumber(number: String?): Boolean {
+    val regex = Regex(AppConstant.SA_MOBILE_NUMBER_PATTERN)
+    return regex.matches(number.toString())
+}
 
 
 

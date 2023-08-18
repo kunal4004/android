@@ -141,6 +141,7 @@ class AppConstant {
 
         //Payflex info html
         const val PAYFLEX_POP_UP_URL = "https://widgets.payflex.co.za/how_to.html?"
+        const val SA_MOBILE_NUMBER_PATTERN="^0\\d{9}$"
     }
 
     class Keys {

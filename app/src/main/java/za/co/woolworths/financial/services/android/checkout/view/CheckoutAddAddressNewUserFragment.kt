@@ -6,11 +6,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
-import android.widget.AdapterView
-import android.widget.EditText
-import android.widget.HorizontalScrollView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -37,14 +33,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import za.co.woolworths.financial.services.android.checkout.service.network.AddAddressRequestBody
-import za.co.woolworths.financial.services.android.checkout.service.network.AddAddressResponse
-import za.co.woolworths.financial.services.android.checkout.service.network.Address
-import za.co.woolworths.financial.services.android.checkout.service.network.DeleteAddressResponse
-import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
-import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressNewUserFragment.ProvinceSuburbType.BOTH
-import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressNewUserFragment.ProvinceSuburbType.ONLY_PROVINCE
-import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressNewUserFragment.ProvinceSuburbType.ONLY_SUBURB
+import za.co.woolworths.financial.services.android.checkout.service.network.*
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressNewUserFragment.ProvinceSuburbType.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.ADD_NEW_ADDRESS_KEY
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.DELETE_SAVED_ADDRESS_REQUEST_KEY
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.SAVED_ADDRESS_KEY
@@ -62,14 +52,7 @@ import za.co.woolworths.financial.services.android.checkout.view.adapter.Checkou
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutAddressConfirmationListAdapter.Companion.EDIT_SAVED_ADDRESS_RESPONSE_KEY
 import za.co.woolworths.financial.services.android.checkout.view.adapter.GooglePlacesAdapter
 import za.co.woolworths.financial.services.android.checkout.view.adapter.PlaceAutocomplete
-import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.ADMINISTRATIVE_AREA_LEVEL_1
-import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.LOCALITY
-import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.POSTAL_CODE
-import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.PREMISE
-import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.ROUTE
-import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.STREET_NUMBER
-import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.SUBLOCALITY_LEVEL_1
-import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.SUBLOCALITY_LEVEL_2
+import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.*
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
 import za.co.woolworths.financial.services.android.checkout.viewmodel.SelectedPlacesAddress
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
@@ -84,30 +67,22 @@ import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.poi.PoiBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorDialogFragment
-import za.co.woolworths.financial.services.android.util.AppConstant
+import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_100_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_500_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.FIFTY
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK_201
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.TEN
-import za.co.woolworths.financial.services.android.util.AuthenticateUtils
-import za.co.woolworths.financial.services.android.util.BundleKeysConstants
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DELIVERY_TYPE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_CHECKOUT
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_SLOT_SELECTION
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_PLACE_ID
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.SAVED_ADDRESS_RESPONSE
-import za.co.woolworths.financial.services.android.util.Constant
-import za.co.woolworths.financial.services.android.util.DeliveryType
 import za.co.woolworths.financial.services.android.util.KeyboardUtils.Companion.hideKeyboardIfVisible
-import za.co.woolworths.financial.services.android.util.KotlinUtils
-import za.co.woolworths.financial.services.android.util.UnIndexedAddressIdentifiedListener
-import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.location.DynamicGeocoder
-import za.co.woolworths.financial.services.android.util.value
 import java.net.HttpURLConnection.HTTP_OK
 import java.util.regex.Pattern
 import kotlin.coroutines.CoroutineContext
@@ -914,12 +889,19 @@ class CheckoutAddAddressNewUserFragment :
 
         FirebaseAnalyticsEventHelper.setFirebaseEventForm(selectedDeliveryAddressType,
                 FirebaseManagerAnalyticsProperties.FORM_COMPLETE, isComingFromCheckout)
-        if (binding.recipientDetailsLayout.cellphoneNumberEditText?.text.toString().trim()
-                .isNotEmpty()
-            && binding.recipientDetailsLayout.cellphoneNumberEditText?.text.toString()
-                .trim().length < TEN
-        ) {
-            showErrorPhoneNumber()
+        var isValidNumber: Boolean
+        binding.recipientDetailsLayout.cellphoneNumberEditText.apply {
+            if (text.toString().trim()
+                    .isNotEmpty() && text.toString()
+                    .trim().length < TEN
+            ) {
+                showErrorPhoneNumber(R.string.phone_number_invalid_error_msg)
+            }
+
+            isValidNumber= isAValidSouthAfricanNumber(text.toString().trim())
+            if(!isValidNumber){
+                showErrorPhoneNumber(R.string.enter_valid_sa_number)
+            }
         }
         if (binding.autoCompleteTextView?.text.toString().trim()
                 .isNotEmpty() && binding.recipientAddressLayout.addressNicknameEditText?.text.toString()
@@ -931,6 +913,7 @@ class CheckoutAddAddressNewUserFragment :
                 .isNotEmpty() && selectedDeliveryAddressType != null
             && binding.recipientDetailsLayout.cellphoneNumberEditText?.text.toString()
                 .trim().length == TEN
+            && isValidNumber
         ) {
             if (isNickNameExist())
                 return
@@ -1233,11 +1216,11 @@ class CheckoutAddAddressNewUserFragment :
         )
     }
 
-    private fun showErrorPhoneNumber() {
+    private fun showErrorPhoneNumber(resourceId:Int) {
         binding.recipientDetailsLayout.cellphoneNumberEditText?.setBackgroundResource(R.drawable.input_error_background)
         binding.recipientDetailsLayout.cellphoneNumberErrorMsg?.visibility = View.VISIBLE
         binding.recipientDetailsLayout.cellphoneNumberErrorMsg?.text =
-            bindString(R.string.phone_number_invalid_error_msg)
+            bindString(resourceId)
         showAnimationErrorMessage(
             binding.recipientDetailsLayout.cellphoneNumberErrorMsg,
             View.VISIBLE,
