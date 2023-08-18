@@ -1,167 +1,126 @@
-package za.co.woolworths.financial.services.android.ui.views.tooltip;
+package za.co.woolworths.financial.services.android.ui.views.tooltip
 
-import android.annotation.TargetApi;
-import android.app.Activity;
-import android.content.Context;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Point;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
-import android.graphics.Rect;
-import android.os.Build;
-import android.os.Handler;
-import android.util.AttributeSet;
-import android.util.DisplayMetrics;
-import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.app.Activity
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.Point
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffXfermode
+import android.os.Handler
+import android.os.Looper
+import android.util.AttributeSet
+import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.MotionEvent
+import android.view.View
+import android.view.View.OnTouchListener
+import android.view.ViewGroup
+import android.view.ViewTreeObserver
+import android.widget.FrameLayout
+import android.widget.ImageView
+import android.widget.TextView
+import com.awfs.coordination.R
+import uk.co.deanwild.materialshowcaseview.CircularRevealAnimationFactory
+import uk.co.deanwild.materialshowcaseview.FadeAnimationFactory
+import uk.co.deanwild.materialshowcaseview.IAnimationFactory
+import uk.co.deanwild.materialshowcaseview.ShowcaseConfig
+import uk.co.deanwild.materialshowcaseview.shape.CircleShape
+import uk.co.deanwild.materialshowcaseview.shape.NoShape
+import uk.co.deanwild.materialshowcaseview.shape.RectangleShape
+import uk.co.deanwild.materialshowcaseview.shape.Shape
+import uk.co.deanwild.materialshowcaseview.target.Target
+import uk.co.deanwild.materialshowcaseview.target.ViewTarget
 
+class WMaterialShowcaseViewV2 : FrameLayout, OnTouchListener, View.OnClickListener {
 
-import com.awfs.coordination.R;
-
-import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import uk.co.deanwild.materialshowcaseview.CircularRevealAnimationFactory;
-import uk.co.deanwild.materialshowcaseview.FadeAnimationFactory;
-import uk.co.deanwild.materialshowcaseview.IAnimationFactory;
-import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
-import uk.co.deanwild.materialshowcaseview.PrefsManager;
-import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
-import uk.co.deanwild.materialshowcaseview.shape.CircleShape;
-import uk.co.deanwild.materialshowcaseview.shape.NoShape;
-import uk.co.deanwild.materialshowcaseview.shape.RectangleShape;
-import uk.co.deanwild.materialshowcaseview.shape.Shape;
-import uk.co.deanwild.materialshowcaseview.target.Target;
-import uk.co.deanwild.materialshowcaseview.target.ViewTarget;
-
-public class WMaterialShowcaseViewV2 extends FrameLayout implements View.OnTouchListener, View.OnClickListener {
-
-    public interface IShowcaseListener {
-        void onShowcaseDisplayed(WMaterialShowcaseViewV2 showcaseView);
-
-        void onShowcaseDismissed(WMaterialShowcaseViewV2 showcaseView);
+    interface IWalkthroughActionListener {
+        fun onWalkthroughActionButtonClick(feature: Feature?)
+        fun onPromptDismiss(feature: Feature?)
     }
 
-    public interface IDetachedListener {
-        void onShowcaseDetached(WMaterialShowcaseViewV2 showcaseView, boolean wasDismissed);
+    private var mOldHeight = 0
+    private var mOldWidth = 0
+    private var mBitmap: Bitmap? = null // = new WeakReference<>(null);
+    private var mCanvas: Canvas? = null
+    private var mEraser: Paint? = null
+    private var mTarget: Target? = null
+    private var mShape: Shape? = null
+    private var mXPosition = 0
+    private var mYPosition = 0
+    var isDismissed = false
+        private set
+    private var mShapePadding = ShowcaseConfig.DEFAULT_SHAPE_PADDING
+    private var mContentBox: View? = null
+    private var mGravity = 0
+    private var mContentBottomMargin = 0
+    private var mContentTopMargin = 0
+    private var mDismissOnTouch = false
+    private var mShouldRender = true // flag to decide when we should actually render
+    private var mMaskColour = 0
+    private var mAnimationFactory: IAnimationFactory? = null
+    private val mShouldAnimate = true
+    private var mUseFadeAnimation = false
+    private var mFadeDurationInMillis = ShowcaseConfig.DEFAULT_FADE_TIME
+    private var mHandler: Handler? = null
+    private var mDelayInMillis: Long = 1000
+    private var mLayoutListener: UpdateOnGlobalLayout? = null
+    private var mTargetTouchable = false
+    private var mDismissOnTargetTouch = true
+    private var mTvTap: TextView? = null
+    private var mIvLocation: ImageView? = null
+    private var mTvTapMessage: TextView? = null
+    private var mTvTitle: TextView? = null
+    private var mArrowIcon: ImageView? = null
+    private var mTvDescription: TextView? = null
+    private var mBtnNext: TextView? = null
+    private var actionListener: IWalkthroughActionListener? = null
+    private var feature: Feature? = null
+    private var mContentView: View? = null
+    private var mTvCounter: TextView? = null
+
+    constructor(context: Context, feature: Feature?) : super(context) {
+        init()
+        this.feature = feature
     }
 
-    public interface IWalkthroughActionListener {
-        void onWalkthroughActionButtonClick(Feature feature);
-
-        void onPromptDismiss(Feature feature);
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
+        init()
     }
 
-    private int mOldHeight;
-    private int mOldWidth;
-    private Bitmap mBitmap;// = new WeakReference<>(null);
-    private Canvas mCanvas;
-    private Paint mEraser;
-    private Target mTarget;
-    private Shape mShape;
-    private int mXPosition;
-    private int mYPosition;
-    private boolean mWasDismissed = false;
-    private int mShapePadding = ShowcaseConfig.DEFAULT_SHAPE_PADDING;
-    private View mContentBox;
-    private int mGravity;
-    private int mContentBottomMargin;
-    private int mContentTopMargin;
-    private boolean mDismissOnTouch = false;
-    private boolean mShouldRender = true; // flag to decide when we should actually render
-    private int mMaskColour;
-    private IAnimationFactory mAnimationFactory;
-    private final boolean mShouldAnimate = true;
-    private boolean mUseFadeAnimation = false;
-    private long mFadeDurationInMillis = ShowcaseConfig.DEFAULT_FADE_TIME;
-    private Handler mHandler;
-    private long mDelayInMillis = 1000;
-    private boolean mSingleUse = false; // should display only once
-    private PrefsManager mPrefsManager; // used to store state doe single use mode
-    List<IShowcaseListener> mListeners; // external listeners who want to observe when we show and dismiss
-    private UpdateOnGlobalLayout mLayoutListener;
-    private IDetachedListener mDetachedListener;
-    private boolean mTargetTouchable = false;
-    private boolean mDismissOnTargetTouch = true;
-
-    private TextView mTvTap;
-
-    private ImageView mIvLocation;
-
-    private TextView mTvTapMessage;
-    private TextView mTvTitle;
-
-    private ImageView mArrowIcon;
-    private TextView mTvDescription;
-    private TextView mBtnNext;
-    private IWalkthroughActionListener actionListener;
-    public Feature feature;
-    private View mContentView;
-    private TextView mTvCounter;
-
-    public WMaterialShowcaseViewV2(Context context, Feature feature) {
-        super(context);
-        init(context);
-        this.feature = feature;
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
+        context,
+        attrs,
+        defStyleAttr
+    ) {
+        init()
     }
 
-    public WMaterialShowcaseViewV2(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init(context);
-    }
-
-    public WMaterialShowcaseViewV2(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        init(context);
-    }
-
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public WMaterialShowcaseViewV2(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-        init(context);
-    }
-
-
-    private void init(Context context) {
-        setWillNotDraw(false);
-
-        mListeners = new ArrayList<>();
+    private fun init() {
+        setWillNotDraw(false)
 
         // make sure we add a global layout listener so we can adapt to changes
-        mLayoutListener = new UpdateOnGlobalLayout();
-        getViewTreeObserver().addOnGlobalLayoutListener(mLayoutListener);
+        mLayoutListener = UpdateOnGlobalLayout()
+        viewTreeObserver.addOnGlobalLayoutListener(mLayoutListener)
 
         // consume touch events
-        setOnTouchListener(this);
-
-        mMaskColour = Color.parseColor(ShowcaseConfig.DEFAULT_MASK_COLOUR);
-        setVisibility(INVISIBLE);
-
-
-        mContentView = LayoutInflater.from(getContext()).inflate(R.layout.layout_tooltip_fulfilment_and_location, this, true);
-        mContentBox = mContentView.findViewById(R.id.rlRootView);
-        mTvTitle = mContentView.findViewById(R.id.tvTitle);
-        mTvDescription = mContentView.findViewById(R.id.tvDescription);
-        mBtnNext = mContentView.findViewById(R.id.btnNext);
-        mTvTap = mContentView.findViewById(R.id.tvTap);
-        mTvTapMessage = mContentView.findViewById(R.id.tvTapMessage);
-        mIvLocation = mContentView.findViewById(R.id.ivLocation);
-        mArrowIcon = mContentView.findViewById(R.id.ivArrow);
-        mTvCounter = mContentView.findViewById(R.id.tvCounter);
-        mBtnNext.setOnClickListener(this);
+        setOnTouchListener(this)
+        mMaskColour = Color.parseColor(ShowcaseConfig.DEFAULT_MASK_COLOUR)
+        visibility = INVISIBLE
+        mContentView = LayoutInflater.from(context)
+            .inflate(R.layout.layout_tooltip_fulfilment_and_location, this, true)
+        mContentBox = mContentView?.findViewById(R.id.rlRootView)
+        mTvTitle = mContentView?.findViewById(R.id.tvTitle)
+        mTvDescription = mContentView?.findViewById(R.id.tvDescription)
+        mBtnNext = mContentView?.findViewById(R.id.btnNext)
+        mTvTap = mContentView?.findViewById(R.id.tvTap)
+        mTvTapMessage = mContentView?.findViewById(R.id.tvTapMessage)
+        mIvLocation = mContentView?.findViewById(R.id.ivLocation)
+        mArrowIcon = mContentView?.findViewById(R.id.ivArrow)
+        mTvCounter = mContentView?.findViewById(R.id.tvCounter)
+        mBtnNext?.setOnClickListener(this)
     }
 
     /**
@@ -171,113 +130,74 @@ public class WMaterialShowcaseViewV2 extends FrameLayout implements View.OnTouch
      *
      * @param canvas, view canvas
      */
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
+    override fun onDraw(canvas: Canvas) {
+        super.onDraw(canvas)
 
         // get current dimensions
-        final int width = getMeasuredWidth();
-        final int height = getMeasuredHeight();
+        val width = measuredWidth
+        val height = measuredHeight
 
         // don't bother drawing if there is nothing to draw on
-        if (width <= 0 || height <= 0) return;
+        if (width <= 0 || height <= 0) return
 
         // build a new canvas if needed i.e first pass or new dimensions
         if (mBitmap == null || mCanvas == null || mOldHeight != height || mOldWidth != width) {
-
-            if (mBitmap != null) mBitmap.recycle();
-
-            mBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-
-            mCanvas = new Canvas(mBitmap);
+            if (mBitmap != null) mBitmap?.recycle()
+            mBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+            mCanvas = Canvas(mBitmap!!)
         }
 
         // save our 'old' dimensions
-        mOldWidth = width;
-        mOldHeight = height;
+        mOldWidth = width
+        mOldHeight = height
 
         // clear canvas
-        mCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+        mCanvas?.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR)
 
         // draw solid background
-        mCanvas.drawColor(mMaskColour);
+        mCanvas?.drawColor(mMaskColour)
 
         // Prepare eraser Paint if needed
         if (mEraser == null) {
-            mEraser = new Paint();
-            mEraser.setColor(0xFFFFFFFF);
-            mEraser.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
-            mEraser.setFlags(Paint.ANTI_ALIAS_FLAG);
+            mEraser = Paint()
+            mEraser?.color = -0x1
+            mEraser?.xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR)
+            mEraser?.flags = Paint.ANTI_ALIAS_FLAG
         }
 
         // draw (erase) shape
-        if (mShouldRender) mShape.draw(mCanvas, mEraser, mXPosition, mYPosition, mShapePadding);
-        else mShape.draw(mCanvas, mEraser, 0, 0, 0);
+        if (mShouldRender) mShape?.draw(
+            mCanvas,
+            mEraser,
+            mXPosition,
+            mYPosition,
+            mShapePadding
+        ) else mShape?.draw(mCanvas, mEraser, 0, 0, 0)
 
         // Draw the bitmap on our views  canvas.
-        canvas.drawBitmap(mBitmap, 0, 0, null);
+        canvas.drawBitmap(mBitmap!!, 0f, 0f, null)
     }
 
-    @Override
-    protected void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
-
-        /*
-         * If we're being detached from the window without the mWasDismissed flag then we weren't purposefully dismissed
-         * Probably due to an orientation change or user backed out of activity.
-         * Ensure we reset the flag so the showcase display again.
-         */
-        if (!mWasDismissed && mSingleUse && mPrefsManager != null) {
-            mPrefsManager.resetShowcase();
-        }
-
-
-        notifyOnDismissed();
-
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        notifyOnDismissed()
     }
 
-    @Override
-    public boolean onTouch(View v, MotionEvent event) {
+    override fun onTouch(v: View, event: MotionEvent): Boolean {
         if (mDismissOnTouch) {
-            hide();
+            hide()
         }
-        if (mTargetTouchable && mTarget.getBounds().contains((int) event.getX(), (int) event.getY())) {
+        if (mTargetTouchable && mTarget!!.bounds.contains(event.x.toInt(), event.y.toInt())) {
             if (mDismissOnTargetTouch) {
-                hide();
+                hide()
             }
-            return false;
+            return false
         }
-        return true;
+        return true
     }
 
-
-    private void notifyOnDisplayed() {
-
-        if (mListeners != null) {
-            for (IShowcaseListener listener : mListeners) {
-                listener.onShowcaseDisplayed(this);
-            }
-        }
-    }
-
-    private void notifyOnDismissed() {
-        if (actionListener != null) actionListener.onPromptDismiss(feature);
-
-        if (mListeners != null) {
-            for (IShowcaseListener listener : mListeners) {
-                listener.onShowcaseDismissed(this);
-            }
-
-            mListeners.clear();
-            mListeners = null;
-        }
-
-        /*
-         * internal listener used by sequence for storing progress within the sequence
-         */
-        if (mDetachedListener != null) {
-            mDetachedListener.onShowcaseDetached(this, mWasDismissed);
-        }
+    private fun notifyOnDismissed() {
+        actionListener?.onPromptDismiss(feature)
     }
 
     /**
@@ -285,12 +205,11 @@ public class WMaterialShowcaseViewV2 extends FrameLayout implements View.OnTouch
      *
      * @param v, view
      */
-    @Override
-    public void onClick(View v) {
-        if (v.getId() == R.id.btnNext) {
-            if (actionListener == null) return;
-            hide();
-            actionListener.onWalkthroughActionButtonClick(feature);
+    override fun onClick(v: View) {
+        if (v.id == R.id.btnNext) {
+            if (actionListener == null) return
+            hide()
+            actionListener?.onWalkthroughActionButtonClick(feature)
         }
     }
 
@@ -301,466 +220,366 @@ public class WMaterialShowcaseViewV2 extends FrameLayout implements View.OnTouch
      *
      * @param target, target view
      */
-    public void setTarget(Target target) {
-        mTarget = target;
-
+    fun setTarget(target: Target?) {
+        mTarget = target
         if (mTarget != null) {
 
             // apply the target position
-            Point targetPoint = mTarget.getPoint();
-            Rect targetBounds = mTarget.getBounds();
-            setPosition(targetPoint);
+            val targetPoint = mTarget!!.point
+            val targetBounds = mTarget!!.bounds
+            setPosition(targetPoint)
 
             // now figure out whether to put content above or below it
-            int height = getMeasuredHeight();
-            int midPoint = height / 2;
-            int yPos = targetPoint.y;
-
-            int radius = Math.max(targetBounds.height(), targetBounds.width()) / 2;
+            val height = measuredHeight
+            val midPoint = height / 2
+            val yPos = targetPoint.y
+            var radius = Math.max(targetBounds.height(), targetBounds.width()) / 2
             if (mShape != null) {
-                mShape.updateTarget(mTarget);
-                radius = mShape.getHeight() / 2;
+                mShape!!.updateTarget(mTarget)
+                radius = mShape!!.height / 2
             }
-
             if (yPos > midPoint) {
                 // target is in lower half of screen, we'll sit above it
-                mContentTopMargin = 0;
-                mContentBottomMargin = (height - yPos) + radius + mShapePadding;
-                mGravity = Gravity.BOTTOM;
+                mContentTopMargin = 0
+                mContentBottomMargin = height - yPos + radius + mShapePadding
+                mGravity = Gravity.BOTTOM
             } else {
                 // target is in upper half of screen, we'll sit below it
-                mContentTopMargin = yPos + radius + mShapePadding;
-                mContentBottomMargin = 0;
-                mGravity = Gravity.TOP;
+                mContentTopMargin = yPos + radius + mShapePadding
+                mContentBottomMargin = 0
+                mGravity = Gravity.TOP
             }
         }
-
-        applyLayoutParams();
+        applyLayoutParams()
     }
 
-    private void applyLayoutParams() {
-
-        if (mContentBox != null && mContentBox.getLayoutParams() != null) {
-            LayoutParams contentLP = (LayoutParams) mContentBox.getLayoutParams();
-
-            boolean layoutParamsChanged = false;
-
+    private fun applyLayoutParams() {
+        if (mContentBox != null && mContentBox!!.layoutParams != null) {
+            val contentLP = mContentBox!!.layoutParams as LayoutParams
+            var layoutParamsChanged = false
             if (contentLP.bottomMargin != mContentBottomMargin) {
-                contentLP.bottomMargin = mContentBottomMargin;
-                layoutParamsChanged = true;
+                contentLP.bottomMargin = mContentBottomMargin
+                layoutParamsChanged = true
             }
-
             if (contentLP.topMargin != mContentTopMargin) {
-                contentLP.topMargin = mContentTopMargin;
-                layoutParamsChanged = true;
+                contentLP.topMargin = mContentTopMargin
+                layoutParamsChanged = true
             }
-
             if (contentLP.gravity != mGravity) {
-                contentLP.gravity = mGravity;
-                layoutParamsChanged = true;
+                contentLP.gravity = mGravity
+                layoutParamsChanged = true
             }
 
             /*
              * Only apply the layout params if we've actually changed them, otherwise we'll get stuck in a layout loop
-             */
-            if (layoutParamsChanged) mContentBox.setLayoutParams(contentLP);
+             */if (layoutParamsChanged) mContentBox!!.layoutParams = contentLP
         }
     }
 
-    /**
-     * SETTERS
-     */
-
-    void setPosition(Point point) {
-        setPosition(point.x, point.y);
+    private fun setPosition(point: Point) {
+        setPosition(point.x, point.y)
     }
 
-    void setPosition(int x, int y) {
-        mXPosition = x;
-        mYPosition = y;
+    private fun setPosition(x: Int, y: Int) {
+        mXPosition = x
+        mYPosition = y
     }
 
-    private void setTitle(CharSequence contentText) {
-        if (mTvTitle != null && !contentText.equals("")) {
-            mTvTitle.setText(contentText);
+    private fun setTitle(contentText: CharSequence) {
+        if (contentText != "") {
+            mTvTitle?.text = contentText
         }
     }
 
-    private void setDescription(CharSequence contentText) {
-        if (mTvDescription != null) {
-            mTvDescription.setText(contentText);
-        }
+    private fun setDescription(contentText: CharSequence) {
+        mTvDescription?.text = contentText
     }
 
-    private void setActionText(CharSequence actionText) {
-        if (mBtnNext != null) {
-            mBtnNext.setText(actionText);
-        }
+    private fun setActionText(actionText: CharSequence) {
+        mBtnNext?.text = actionText
     }
 
-    private void setTitleTextColor(int textColour) {
-		/*if (mTitleTextView != null) {
-			mTitleTextView.setTextColor(textColour);
-		}*/
+    private fun setShapePadding(padding: Int) {
+        mShapePadding = padding
     }
 
-    private void setContentTextColor(int textColour) {
-		/*if (mContentTextView != null) {
-			mContentTextView.setTextColor(textColour);
-		}*/
+    private fun setDismissOnTouch(dismissOnTouch: Boolean) {
+        mDismissOnTouch = dismissOnTouch
     }
 
-    private void setShapePadding(int padding) {
-        mShapePadding = padding;
+    private fun setShouldRender(shouldRender: Boolean) {
+        mShouldRender = shouldRender
     }
 
-    private void setDismissOnTouch(boolean dismissOnTouch) {
-        mDismissOnTouch = dismissOnTouch;
+    private fun setMaskColour(maskColour: Int) {
+        mMaskColour = maskColour
     }
 
-    private void setShouldRender(boolean shouldRender) {
-        mShouldRender = shouldRender;
+    private fun setDelay(delayInMillis: Long) {
+        mDelayInMillis = delayInMillis
     }
 
-    private void setMaskColour(int maskColour) {
-        mMaskColour = maskColour;
+    private fun setFadeDuration(fadeDurationInMillis: Long) {
+        mFadeDurationInMillis = fadeDurationInMillis
     }
 
-    private void setDelay(long delayInMillis) {
-        mDelayInMillis = delayInMillis;
+    private fun setTargetTouchable(targetTouchable: Boolean) {
+        mTargetTouchable = targetTouchable
     }
 
-    private void setFadeDuration(long fadeDurationInMillis) {
-        mFadeDurationInMillis = fadeDurationInMillis;
+    private fun setDismissOnTargetTouch(dismissOnTargetTouch: Boolean) {
+        mDismissOnTargetTouch = dismissOnTargetTouch
     }
 
-    private void setTargetTouchable(boolean targetTouchable) {
-        mTargetTouchable = targetTouchable;
+    private fun setUseFadeAnimation(useFadeAnimation: Boolean) {
+        mUseFadeAnimation = useFadeAnimation
     }
 
-    private void setDismissOnTargetTouch(boolean dismissOnTargetTouch) {
-        mDismissOnTargetTouch = dismissOnTargetTouch;
+    fun setActionListener(actionListener: IWalkthroughActionListener?) {
+        this.actionListener = actionListener
     }
 
-    private void setUseFadeAnimation(boolean useFadeAnimation) {
-        mUseFadeAnimation = useFadeAnimation;
+    fun setShape(mShape: Shape?) {
+        this.mShape = mShape
     }
 
-    public void addShowcaseListener(IShowcaseListener showcaseListener) {
-
-        if (mListeners != null) mListeners.add(showcaseListener);
-    }
-
-    public void setActionListener(IWalkthroughActionListener actionListener) {
-        this.actionListener = actionListener;
-    }
-
-    public void removeShowcaseListener(MaterialShowcaseSequence showcaseListener) {
-
-        if ((mListeners != null) && mListeners.contains(showcaseListener)) {
-            mListeners.remove(showcaseListener);
-        }
-    }
-
-    void setDetachedListener(IDetachedListener detachedListener) {
-        mDetachedListener = detachedListener;
-    }
-
-    public void setShape(Shape mShape) {
-        this.mShape = mShape;
-    }
-
-    public void setAnimationFactory(IAnimationFactory animationFactory) {
-        this.mAnimationFactory = animationFactory;
+    fun setAnimationFactory(animationFactory: IAnimationFactory?) {
+        mAnimationFactory = animationFactory
     }
 
     /**
      * REDRAW LISTENER - this ensures we redraw after activity finishes laying out
      */
-    public class UpdateOnGlobalLayout implements ViewTreeObserver.OnGlobalLayoutListener {
-
-        @Override
-        public void onGlobalLayout() {
-            setTarget(mTarget);
+    inner class UpdateOnGlobalLayout : ViewTreeObserver.OnGlobalLayoutListener {
+        override fun onGlobalLayout() {
+            setTarget(mTarget)
         }
     }
-
 
     /**
      * BUILDER CLASS
      * Gives us a builder utility class with a fluent API for eaily configuring showcase views
      */
-    public static class Builder {
-        private static final int CIRCLE_SHAPE = 0;
-        private static final int RECTANGLE_SHAPE = 1;
-        private static final int NO_SHAPE = 2;
+    class Builder(private val activity: Activity, feature: Feature?) {
+        private var fullWidth = false
+        private var shapeType = CIRCLE_SHAPE
+        private val showcaseView: WMaterialShowcaseViewV2
 
-        private boolean fullWidth = false;
-        private int shapeType = CIRCLE_SHAPE;
-
-        final WMaterialShowcaseViewV2 showcaseView;
-
-        private final Activity activity;
-
-
-        public Builder(Activity activity, Feature feature) {
-            this.activity = activity;
-            showcaseView = new WMaterialShowcaseViewV2(activity, feature);
-            showcaseView.setContentBasedOnFeature();
+        init {
+            showcaseView = WMaterialShowcaseViewV2(activity, feature)
+            showcaseView.setContentBasedOnFeature()
         }
 
         /**
          * Set the title text shown on the ShowcaseView.
          */
-        public Builder setTarget(View target) {
-            showcaseView.setTarget(new ViewTarget(target));
-            return this;
+        fun setTarget(target: View?): Builder {
+            showcaseView.setTarget(ViewTarget(target))
+            return this
         }
 
         /**
          * Set the title text shown on the ShowcaseView.
          */
-        public Builder setActionText(int resId) {
-            return setActionText(activity.getString(resId));
+        fun setActionText(resId: Int): Builder {
+            return setActionText(activity.getString(resId))
         }
 
-        public Builder setActionText(CharSequence dismissText) {
-            showcaseView.setActionText(dismissText);
-            return this;
+        fun setActionText(dismissText: CharSequence): Builder {
+            showcaseView.setActionText(dismissText)
+            return this
         }
 
         /**
          * Set the content text shown on the ShowcaseView.
          */
-        public Builder setDescription(int resId) {
-            return setDescription(activity.getString(resId));
+        fun setDescription(resId: Int): Builder {
+            return setDescription(activity.getString(resId))
         }
 
         /**
          * Set the descriptive text shown on the ShowcaseView.
          */
-        public Builder setDescription(CharSequence text) {
-            showcaseView.setDescription(text);
-            return this;
+        fun setDescription(text: CharSequence): Builder {
+            showcaseView.setDescription(text)
+            return this
         }
 
-        public Builder setMessage(CharSequence text) {
-            showcaseView.setMessage(text);
-            return this;
+        fun setMessage(text: CharSequence): Builder {
+            showcaseView.setMessage(text)
+            return this
         }
 
         /**
          * Set the title text shown on the ShowcaseView.
          */
-        public Builder setTitle(int resId) {
-            return setTitle(activity.getString(resId));
+        fun setTitle(resId: Int): Builder {
+            return setTitle(activity.getString(resId))
         }
 
         /**
          * Set the descriptive text shown on the ShowcaseView as the title.
          */
-        public Builder setTitle(CharSequence text) {
-            showcaseView.setTitle(text);
-            return this;
+        fun setTitle(text: CharSequence): Builder {
+            showcaseView.setTitle(text)
+            return this
         }
 
         /**
          * Set whether or not the target view can be touched while the showcase is visible.
-         * <p>
+         *
+         *
          * False by default.
          */
-        public Builder setTargetTouchable(boolean targetTouchable) {
-            showcaseView.setTargetTouchable(targetTouchable);
-            return this;
+        fun setTargetTouchable(targetTouchable: Boolean): Builder {
+            showcaseView.setTargetTouchable(targetTouchable)
+            return this
         }
 
         /**
          * Set whether or not the showcase should dismiss when the target is touched.
-         * <p>
+         *
+         *
          * True by default.
          */
-        public Builder setDismissOnTargetTouch(boolean dismissOnTargetTouch) {
-            showcaseView.setDismissOnTargetTouch(dismissOnTargetTouch);
-            return this;
+        fun setDismissOnTargetTouch(dismissOnTargetTouch: Boolean): Builder {
+            showcaseView.setDismissOnTargetTouch(dismissOnTargetTouch)
+            return this
         }
 
-        public Builder setDismissOnTouch(boolean dismissOnTouch) {
-            showcaseView.setDismissOnTouch(dismissOnTouch);
-            return this;
+        fun setDismissOnTouch(dismissOnTouch: Boolean): Builder {
+            showcaseView.setDismissOnTouch(dismissOnTouch)
+            return this
         }
 
-        public Builder setMaskColour(int maskColour) {
-            showcaseView.setMaskColour(maskColour);
-            return this;
+        fun setMaskColour(maskColour: Int): Builder {
+            showcaseView.setMaskColour(maskColour)
+            return this
         }
 
-        public Builder setDelay(int delayInMillis) {
-            showcaseView.setDelay(delayInMillis);
-            return this;
+        fun setDelay(delayInMillis: Int): Builder {
+            showcaseView.setDelay(delayInMillis.toLong())
+            return this
         }
 
-        public Builder setFadeDuration(int fadeDurationInMillis) {
-            showcaseView.setFadeDuration(fadeDurationInMillis);
-            return this;
+        fun setFadeDuration(fadeDurationInMillis: Int): Builder {
+            showcaseView.setFadeDuration(fadeDurationInMillis.toLong())
+            return this
         }
 
-        public Builder setListener(IShowcaseListener listener) {
-            showcaseView.addShowcaseListener(listener);
-            return this;
+        fun setAction(listener: IWalkthroughActionListener?): Builder {
+            showcaseView.setActionListener(listener)
+            return this
         }
 
-        public Builder setAction(IWalkthroughActionListener listener) {
-            showcaseView.setActionListener(listener);
-            return this;
+        fun setShapePadding(padding: Int): Builder {
+            showcaseView.setShapePadding(padding)
+            return this
         }
 
-        public Builder singleUse(String showcaseID) {
-            showcaseView.singleUse(showcaseID);
-            return this;
+        @JvmOverloads
+        fun withRectangleShape(fullWidth: Boolean = false): Builder {
+            shapeType = RECTANGLE_SHAPE
+            this.fullWidth = fullWidth
+            return this
         }
 
-        public Builder setShape(Shape shape) {
-            showcaseView.setShape(shape);
-            return this;
+        fun setShouldRender(shouldRender: Boolean): Builder {
+            showcaseView.setShouldRender(shouldRender)
+            return this
         }
 
-        public Builder withCircleShape() {
-            shapeType = CIRCLE_SHAPE;
-            return this;
+        fun useFadeAnimation(): Builder {
+            showcaseView.setUseFadeAnimation(true)
+            return this
         }
 
-        public Builder withoutShape() {
-            shapeType = NO_SHAPE;
-            return this;
-        }
-
-        public Builder setShapePadding(int padding) {
-            showcaseView.setShapePadding(padding);
-            return this;
-        }
-
-        public Builder withRectangleShape() {
-            return withRectangleShape(false);
-        }
-
-        public Builder withRectangleShape(boolean fullWidth) {
-            this.shapeType = RECTANGLE_SHAPE;
-            this.fullWidth = fullWidth;
-            return this;
-        }
-
-        public Builder setShouldRender(boolean shouldRender) {
-            showcaseView.setShouldRender(shouldRender);
-            return this;
-        }
-
-        public Builder useFadeAnimation() {
-            showcaseView.setUseFadeAnimation(true);
-            return this;
-        }
-
-        public WMaterialShowcaseViewV2 build() {
+        fun build(): WMaterialShowcaseViewV2 {
             if (showcaseView.mShape == null) {
-                switch (shapeType) {
-                    case RECTANGLE_SHAPE: {
-                        showcaseView.setShape(new RectangleShape(showcaseView.mTarget.getBounds(), fullWidth));
-                        break;
+                when (shapeType) {
+                    RECTANGLE_SHAPE -> {
+                        showcaseView.setShape(
+                            RectangleShape(
+                                showcaseView.mTarget!!.bounds,
+                                fullWidth
+                            )
+                        )
                     }
-                    case CIRCLE_SHAPE: {
-                        showcaseView.setShape(new CircleShape(showcaseView.mTarget));
-                        break;
+
+                    CIRCLE_SHAPE -> {
+                        showcaseView.setShape(CircleShape(showcaseView.mTarget))
                     }
-                    case NO_SHAPE: {
-                        showcaseView.setShape(new NoShape());
-                        break;
+
+                    NO_SHAPE -> {
+                        showcaseView.setShape(NoShape())
                     }
-                    default:
-                        throw new IllegalArgumentException("Unsupported shape type: " + shapeType);
+
+                    else -> throw IllegalArgumentException("Unsupported shape type: $shapeType")
                 }
             }
-
             if (showcaseView.mAnimationFactory == null) {
                 // create our animation factory
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && !showcaseView.mUseFadeAnimation) {
-                    showcaseView.setAnimationFactory(new CircularRevealAnimationFactory());
+                if (!showcaseView.mUseFadeAnimation) {
+                    showcaseView.setAnimationFactory(CircularRevealAnimationFactory())
                 } else {
-                    showcaseView.setAnimationFactory(new FadeAnimationFactory());
+                    showcaseView.setAnimationFactory(FadeAnimationFactory())
                 }
             }
-
-            return showcaseView;
+            return showcaseView
         }
 
-        public WMaterialShowcaseViewV2 show() {
-            build().show(activity);
-            return showcaseView;
+        fun show(): WMaterialShowcaseViewV2 {
+            build().show(activity)
+            return showcaseView
         }
 
-        @NotNull
-        public Builder setArrowIcon(int arrow) {
-            showcaseView.setArrowIcon(arrow);
-            return this;
+        fun setArrowIcon(arrow: Int): Builder {
+            showcaseView.setArrowIcon(arrow)
+            return this
         }
-    }
 
-    private void setMessage(CharSequence text) {
-        if(mTvTapMessage != null){
-            mTvTapMessage.setText(text);
+        companion object {
+            private const val CIRCLE_SHAPE = 0
+            private const val RECTANGLE_SHAPE = 1
+            private const val NO_SHAPE = 2
         }
     }
 
-    private void setArrowIcon(int arrow) {
-        if (mArrowIcon != null) {
-            mArrowIcon.setImageResource(arrow);
+    private fun setMessage(text: CharSequence) {
+        mTvTapMessage?.text = text
+    }
+
+    private fun setArrowIcon(arrow: Int) {
+        mArrowIcon?.setImageResource(arrow)
+    }
+
+    private fun setContentBasedOnFeature() {
+        if (feature == Feature.SHOP_LOCATION) {
+            mTvTap?.visibility = VISIBLE
+            mTvTapMessage?.visibility = VISIBLE
+            mIvLocation?.visibility = VISIBLE
+            mTvCounter?.text = "2/2"
+        } else {
+            mTvTap?.visibility = GONE
+            mTvTapMessage?.visibility = GONE
+            mIvLocation?.visibility = GONE
+            mTvCounter?.text = "1/2"
         }
     }
 
-    private void setContentBasedOnFeature() {
-        if (mTvTap != null && mTvTapMessage != null && mIvLocation != null) {
-            if (feature == Feature.SHOP_LOCATION) {
-                mTvTap.setVisibility(View.VISIBLE);
-                mTvTapMessage.setVisibility(View.VISIBLE);
-                mIvLocation.setVisibility(View.VISIBLE);
-                mTvCounter.setText("2/2");
-            } else {
-                mTvTap.setVisibility(View.GONE);
-                mTvTapMessage.setVisibility(View.GONE);
-                mIvLocation.setVisibility(View.GONE);
-                mTvCounter.setText("1/2");
-            }
+    private fun removeFromWindow() {
+        if (parent != null && parent is ViewGroup) {
+            (parent as ViewGroup).removeView(this)
         }
+        mBitmap?.recycle()
+        mBitmap = null
+        mEraser = null
+        mAnimationFactory = null
+        mCanvas = null
+        mHandler = null
+        viewTreeObserver.removeGlobalOnLayoutListener(mLayoutListener)
+        mLayoutListener = null
     }
-
-    private void singleUse(String showcaseID) {
-        mSingleUse = true;
-        mPrefsManager = new PrefsManager(getContext(), showcaseID);
-    }
-
-    public void removeFromWindow() {
-        if (getParent() != null && getParent() instanceof ViewGroup) {
-            ((ViewGroup) getParent()).removeView(this);
-        }
-
-        if (mBitmap != null) {
-            mBitmap.recycle();
-            mBitmap = null;
-        }
-
-        mEraser = null;
-        mAnimationFactory = null;
-        mCanvas = null;
-        mHandler = null;
-
-        getViewTreeObserver().removeGlobalOnLayoutListener(mLayoutListener);
-        mLayoutListener = null;
-
-        if (mPrefsManager != null) mPrefsManager.close();
-
-        mPrefsManager = null;
-
-
-    }
-
 
     /**
      * Reveal the showcaseview. Returns a boolean telling us whether we actually did show anything
@@ -768,140 +587,63 @@ public class WMaterialShowcaseViewV2 extends FrameLayout implements View.OnTouch
      * @param activity
      * @return
      */
-    public boolean show(final Activity activity) {
-        ((ViewGroup) activity.getWindow().getDecorView()).addView(this);
-
-        mHandler = new Handler();
-        mHandler.postDelayed(() -> {
-
+    fun show(activity: Activity): Boolean {
+        (activity.window.decorView as ViewGroup).addView(this)
+        mHandler = Handler(Looper.getMainLooper())
+        mHandler?.postDelayed({
             if (mShouldAnimate) {
-                animateIn();
+                animateIn()
             } else {
-                setVisibility(VISIBLE);
-                notifyOnDisplayed();
+                visibility = VISIBLE
             }
-        }, mDelayInMillis);
-
-        return true;
+        }, mDelayInMillis)
+        return true
     }
 
-    public void hide() {
-
+    fun hide() {
         /**
          * This flag is used to indicate to onDetachedFromWindow that the showcase view was dismissed purposefully (by the user or programmatically)
          */
-        mWasDismissed = true;
-
+        isDismissed = true
         if (mShouldAnimate) {
-            animateOut();
+            animateOut()
         } else {
-            removeFromWindow();
+            removeFromWindow()
         }
     }
 
-    public boolean isDismissed() {
-        return mWasDismissed;
-    }
-
-    public void animateIn() {
-        setVisibility(INVISIBLE);
+    private fun animateIn() {
+        visibility = INVISIBLE
         //The runnable will run after the view's creation.
-        mContentView.post(new Runnable() {
-            @Override
-            public void run() {
-                if (mAnimationFactory != null) {
-                    mAnimationFactory.animateInView(WMaterialShowcaseViewV2.this, mTarget.getPoint(), mFadeDurationInMillis, new IAnimationFactory.AnimationStartListener() {
-                        @Override
-                        public void onAnimationStart() {
-                            setVisibility(View.VISIBLE);
-                            notifyOnDisplayed();
-                        }
-                    });
+        mContentView?.post {
+            if (mAnimationFactory != null) {
+                mAnimationFactory?.animateInView(
+                    this@WMaterialShowcaseViewV2,
+                    mTarget!!.point,
+                    mFadeDurationInMillis
+                ) {
+                    visibility = VISIBLE
                 }
             }
-        });
+        }
     }
 
-    public void animateOut() {
-        mContentView.post(() -> {
+    private fun animateOut() {
+        mContentView?.post {
             if (mAnimationFactory != null) {
-                mAnimationFactory.animateOutView(WMaterialShowcaseViewV2.this, mTarget.getPoint(), mFadeDurationInMillis, () -> {
-                    setVisibility(INVISIBLE);
-                    removeFromWindow();
-                });
+                mAnimationFactory?.animateOutView(
+                    this@WMaterialShowcaseViewV2,
+                    mTarget!!.point,
+                    mFadeDurationInMillis
+                ) {
+                    visibility = INVISIBLE
+                    removeFromWindow()
+                }
             }
-        });
-    }
-
-    public void resetSingleUse() {
-        if (mSingleUse && mPrefsManager != null) mPrefsManager.resetShowcase();
-    }
-
-    /*
-     * Static helper method for resetting single use flag
-     *
-     * @param context
-     * @param showcaseID
-     */
-	/*public static void resetSingleUse(Context context, String showcaseID) {
-		PrefsManager.resetShowcase(context, showcaseID);
-	}*/
-
-    /**
-     * Static helper method for resetting all single use flags
-     *
-     * @param context
-     */
-    public static void resetAll(Context context) {
-        PrefsManager.resetAll(context);
-    }
-
-    public static int getSoftButtonsBarSizePort(Activity activity) {
-        // getRealMetrics is only available with API 17 and +
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            DisplayMetrics metrics = new DisplayMetrics();
-            activity.getWindowManager().getDefaultDisplay().getMetrics(metrics);
-            int usableHeight = metrics.heightPixels;
-            activity.getWindowManager().getDefaultDisplay().getRealMetrics(metrics);
-            int realHeight = metrics.heightPixels;
-            if (realHeight > usableHeight) return realHeight - usableHeight;
-            else return 0;
-        }
-        return 0;
-    }
-
-    public static float convertDpToPixel(float dp) {
-        DisplayMetrics metrics = Resources.getSystem().getDisplayMetrics();
-        float px = dp * (metrics.densityDpi / 160f);
-        return Math.round(px);
-    }
-
-    public enum Arrow {
-        TOP_LEFT(0), BOTTOM_LEFT(1), TOP_CENTER(2), BOTTOM_CENTER(3), TOP_RIGHT(4), BOTTOM_RIGHT(5), NONE(6);
-
-
-        private int value;
-
-        Arrow(int value) {
-            this.value = value;
-        }
-
-        public int getValue() {
-            return value;
         }
     }
 
-    public enum Feature {
-        SHOP_FULFILMENT(1), SHOP_LOCATION(2);
-
-        private int value;
-
-        Feature(int value) {
-            this.value = value;
-        }
-
-        public int getValue() {
-            return value;
-        }
+    enum class Feature(val value: Int) {
+        SHOP_FULFILMENT(1), SHOP_LOCATION(2)
     }
 }
