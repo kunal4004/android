@@ -119,6 +119,7 @@ import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorDia
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SingleButtonDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.badgeview.Badge;
 import za.co.woolworths.financial.services.android.ui.views.badgeview.QBadgeView;
+import za.co.woolworths.financial.services.android.ui.views.tooltip.TooltipDialog;
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager;
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager;
 import za.co.woolworths.financial.services.android.util.tooltip.TooltipHelper;
@@ -1222,6 +1223,12 @@ public class Utils {
             case NEW_FBH_CNC:
                 appInstanceObject.featureWalkThrough.new_fbh_cnc = true;
                 break;
+            case SHOP_FULFILMENT:
+                appInstanceObject.featureWalkThrough.shopFulfilment = true;
+                break;
+            case SHOP_LOCATION:
+                appInstanceObject.featureWalkThrough.shopLocation = true;
+                break;
             default:
                 break;
         }
@@ -1238,7 +1245,7 @@ public class Utils {
         return AppInstanceObject.get().featureWalkThrough.showTutorials;
     }
 
-    public static boolean isFeatureTutorialsDismissed(WMaterialShowcaseView wMaterialShowcaseView) {
+    public static boolean isFeatureTutorialsDismissed(TooltipDialog wMaterialShowcaseView) {
         if (wMaterialShowcaseView == null)
             return true;
         else

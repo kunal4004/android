@@ -79,6 +79,7 @@ import za.co.woolworths.financial.services.android.ui.views.*
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ProductListingFindInStoreNoQuantityFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SelectYourQuantityFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SingleButtonDialogFragment
+import za.co.woolworths.financial.services.android.ui.views.tooltip.TooltipDialog
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_EXPECTATION_FAILED_417
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
@@ -1239,7 +1240,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
                 this.javaClass.canonicalName
             )
             it.walkThroughPromtView =
-                WMaterialShowcaseView.Builder(it, WMaterialShowcaseView.Feature.REFINE)
+                WMaterialShowcaseView.Builder(it, TooltipDialog.Feature.REFINE)
                     .setTarget(binding.sortAndRefineLayout.refineDownArrow)
                     .setTitle(R.string.walkthrough_refine_title)
                     .setDescription(R.string.walkthrough_refine_desc)
@@ -1255,14 +1256,14 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
         }
     }
 
-    override fun onWalkthroughActionButtonClick(feature: WMaterialShowcaseView.Feature) {
+    override fun onWalkthroughActionButtonClick(feature: TooltipDialog.Feature) {
         binding.sortAndRefineLayout.apply {
             if (refineProducts?.isClickable == true)
                 refineProducts?.let { refineProducts -> onClick(refineProducts) }
         }
     }
 
-    override fun onPromptDismiss(feature: WMaterialShowcaseView.Feature) {
+    override fun onPromptDismiss(feature: TooltipDialog.Feature) {
 
     }
 

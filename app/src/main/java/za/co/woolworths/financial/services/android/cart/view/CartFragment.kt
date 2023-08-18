@@ -85,6 +85,7 @@ import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseVie
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView.IWalkthroughActionListener
 import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ActionSheetDialogFragment
+import za.co.woolworths.financial.services.android.ui.views.tooltip.TooltipDialog
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_EXPECTATION_FAILED_502
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
@@ -1922,7 +1923,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             this.javaClass.simpleName
         )
         activity?.walkThroughPromtView =
-            WMaterialShowcaseView.Builder(activity, WMaterialShowcaseView.Feature.DELIVERY_LOCATION)
+            WMaterialShowcaseView.Builder(activity, TooltipDialog.Feature.DELIVERY_LOCATION)
                 .setTarget(binding.imgCartDelivery)
                 .setTitle(R.string.your_delivery_location)
                 .setDescription(R.string.walkthrough_delivery_location_desc)
@@ -1940,11 +1941,11 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         activity?.walkThroughPromtView?.show(activity)
     }
 
-    override fun onWalkthroughActionButtonClick(feature: WMaterialShowcaseView.Feature) {
-        if (feature == WMaterialShowcaseView.Feature.DELIVERY_LOCATION) onClick((binding.deliveryLocationConstLayout)!!)
+    override fun onWalkthroughActionButtonClick(feature: TooltipDialog.Feature) {
+        if (feature == TooltipDialog.Feature.DELIVERY_LOCATION) onClick((binding.deliveryLocationConstLayout)!!)
     }
 
-    override fun onPromptDismiss(feature: WMaterialShowcaseView.Feature) {
+    override fun onPromptDismiss(feature: TooltipDialog.Feature) {
         isMaterialPopUpClosed = true
         if (isAdded) showAvailableVouchersToast(voucherDetails?.activeTotalVouchersCount ?: 0)
     }
@@ -1992,7 +1993,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         }
         activity.walkThroughPromtView = WMaterialShowcaseView.Builder(
             activity,
-            WMaterialShowcaseView.Feature.CART_REDEEM_VOUCHERS
+            TooltipDialog.Feature.CART_REDEEM_VOUCHERS
         )
             .setTarget(View(activity))
             .setTitle(R.string.redeem_voucher_walkthrough_title)

@@ -140,7 +140,8 @@ public class AppInstanceObject {
     public class FeatureWalkThrough {
         //Show Tutorials
         public boolean showTutorials = true; // Default to show
-
+        public boolean shopFulfilment; // shop tab - fulfilment tooltip screen flag
+        public boolean shopLocation; // shop tab - location tooltip screen flag
         //features
         public boolean barcodeScan;
         public boolean findInStore;

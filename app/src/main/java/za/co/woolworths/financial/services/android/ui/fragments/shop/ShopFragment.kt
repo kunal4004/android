@@ -72,6 +72,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.OnChi
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView
 import za.co.woolworths.financial.services.android.ui.views.shop.dash.ChangeFulfillmentCollectionStoreFragment
 import za.co.woolworths.financial.services.android.ui.views.shop.dash.DashDeliveryAddressFragment
+import za.co.woolworths.financial.services.android.ui.views.tooltip.TooltipDialog
 import za.co.woolworths.financial.services.android.ui.views.tooltip.WMaterialShowcaseViewV2
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_3000_MS
@@ -240,7 +241,6 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
             tvSearchProduct.setOnClickListener { navigateToProductSearch() }
             imBarcodeScanner.setOnClickListener { checkCameraPermission() }
             shopToolbar.setOnClickListener {
-                dismissToolTip()
                 onEditDeliveryLocation()
             }
 
@@ -1342,12 +1342,6 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         }
     }
 
-    private fun dismissToolTip() {
-        (activity as? BottomNavigationActivity)?.let {
-            it.dismissNewTooltip()
-        }
-    }
-
     private fun formatToolTipTitle(context: Context, start: String, coloredText: String, end: String): Spanned {
         val labelColor = ContextCompat.getColor(context, R.color.color_yellow_FEE600)
         val сolor: String = String.format("%X", labelColor).substring(2)
@@ -1360,8 +1354,13 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
     fun showFulfilmentTooltip() {
         // Prevent dialog to display in other section when fragment is not visible
         (activity as? BottomNavigationActivity)?.let {
-            if (it.currentFragment !is ShopFragment || !isAdded)
+            if (it.currentFragment !is ShopFragment || !isAdded) {
                 return
+            }
+            if (AppInstanceObject.get().featureWalkThrough.shopFulfilment) {
+                showLocationTooltip()
+                return
+            }
             FirebaseManager.setCrashlyticsString(
                 bindString(R.string.crashlytics_materialshowcase_key),
                 this.javaClass.canonicalName
@@ -1379,8 +1378,8 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                 getString(R.string.tooltip_fulfilment_message)
             )
 
-            it.wMaterialShowcaseViewV2 =
-                WMaterialShowcaseViewV2.Builder(it, WMaterialShowcaseViewV2.Feature.SHOP_FULFILMENT)
+            it.walkThroughPromtView =
+                WMaterialShowcaseViewV2.Builder(it, TooltipDialog.Feature.SHOP_FULFILMENT)
                     .setTarget(binding.fulfilmentAndLocationLayout.layoutFulfilment.root)
                     .setTitle(title)
                     .setDescription(getString(R.string.tooltip_fulfilment_description))
@@ -1388,23 +1387,24 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                     .setDismissOnTouch(false).setDismissOnTargetTouch(false).setShapePadding(0)
                     .setAction(walkThroughListener).setDelay(0).setFadeDuration(0).setArrowIcon(R.drawable.ic_arrow_tooltip_spinning)
                     .setMaskColour(ContextCompat.getColor(it, R.color.semi_transparent_black_e6000000)).build()
-            it.wMaterialShowcaseViewV2?.show(it)
+            it.walkThroughPromtView?.show(it)
         }
     }
 
     private fun showLocationTooltip() {
         // Prevent dialog to display in other section when fragment is not visible
         (activity as? BottomNavigationActivity)?.let {
-            if (it.currentFragment !is ShopFragment || !isAdded)
+            if (it.currentFragment !is ShopFragment || !isAdded || AppInstanceObject.get().featureWalkThrough.shopLocation) {
                 return
+            }
             FirebaseManager.setCrashlyticsString(
                 bindString(R.string.crashlytics_materialshowcase_key),
                 this.javaClass.canonicalName
             )
             val (title, description, message) = getLocationTooltipArguments()
 
-            it.wMaterialShowcaseViewV2 =
-                WMaterialShowcaseViewV2.Builder(it, WMaterialShowcaseViewV2.Feature.SHOP_LOCATION)
+            it.walkThroughPromtView =
+                WMaterialShowcaseViewV2.Builder(it, TooltipDialog.Feature.SHOP_LOCATION)
                     .setTarget(binding.fulfilmentAndLocationLayout.layoutLocation.root)
                     .setTitle(title)
                     .setDescription(description)
@@ -1413,7 +1413,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                     .setDismissOnTouch(false).setDismissOnTargetTouch(false).setShapePadding(0)
                     .setAction(walkThroughListener).setDelay(0).setFadeDuration(0).setArrowIcon(R.drawable.ic_arrow_tooltip_simple)
                     .setMaskColour(ContextCompat.getColor(it, R.color.semi_transparent_black_e6000000)).build()
-            it.wMaterialShowcaseViewV2?.show(it)
+            it.walkThroughPromtView?.show(it)
         }
     }
 
@@ -1451,15 +1451,15 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
     }
 
     private val walkThroughListener = object : WMaterialShowcaseViewV2.IWalkthroughActionListener {
-        override fun onWalkthroughActionButtonClick(feature: WMaterialShowcaseViewV2.Feature?) {
-            if (feature == WMaterialShowcaseViewV2.Feature.SHOP_FULFILMENT) {
+        override fun onWalkthroughActionButtonClick(feature: TooltipDialog.Feature?) {
+            if (feature == TooltipDialog.Feature.SHOP_FULFILMENT) {
                 showLocationTooltip()
-            } else if (feature == WMaterialShowcaseViewV2.Feature.SHOP_LOCATION) {
-                showShopFeatureWalkThrough()
+            } else if (feature == TooltipDialog.Feature.SHOP_LOCATION) {
+                //TODO, display old tooltip dialog here if required or remove this else if block
             }
         }
 
-        override fun onPromptDismiss(feature: WMaterialShowcaseViewV2.Feature?) {
+        override fun onPromptDismiss(feature: TooltipDialog.Feature?) {
             //TODO("Not yet implemented")
         }
     }
@@ -1474,7 +1474,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                 this.javaClass.canonicalName
             )
             it.walkThroughPromtView =
-                WMaterialShowcaseView.Builder(it, WMaterialShowcaseView.Feature.SHOPPING)
+                WMaterialShowcaseView.Builder(it, TooltipDialog.Feature.SHOPPING)
                     .setTarget(it.bottomNavigationById?.getIconAt(INDEX_PRODUCT))
                     .setTitle(R.string.walkthrough_shop_title)
                     .setDescription(R.string.walkthrough_shop_desc)
@@ -1501,7 +1501,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                 this.javaClass.canonicalName
             )
             it.walkThroughPromtView =
-                WMaterialShowcaseView.Builder(it, WMaterialShowcaseView.Feature.DASH)
+                WMaterialShowcaseView.Builder(it, TooltipDialog.Feature.DASH)
                     .setTarget(binding.tabsMain?.getChildAt(0))
                     .setTitle(R.string.walkthrough_dash_title)
                     .setDescription(R.string.walkthrough_dash_desc)
@@ -1529,7 +1529,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                 this.javaClass.canonicalName
             )
             it.walkThroughPromtView =
-                WMaterialShowcaseView.Builder(it, WMaterialShowcaseView.Feature.DELIVERY_DETAILS)
+                WMaterialShowcaseView.Builder(it, TooltipDialog.Feature.DELIVERY_DETAILS)
                     .setTarget(binding.shopToolbar)
                     .setTitle(R.string.walkthrough_delivery_details_title)
                     .setDescription(R.string.walkthrough_delivery_details_desc)
@@ -1557,7 +1557,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                 this.javaClass.canonicalName
             )
             it.walkThroughPromtView =
-                WMaterialShowcaseView.Builder(it, WMaterialShowcaseView.Feature.MY_LIST)
+                WMaterialShowcaseView.Builder(it, TooltipDialog.Feature.MY_LIST)
                     .setTarget(it.bottomNavigationById?.getIconAt(INDEX_ACCOUNT))
                     .setTitle(R.string.new_location_list)
                     .setDescription(R.string.early_access_shopping)
@@ -1584,7 +1584,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                 this.javaClass.canonicalName
             )
             it.walkThroughPromtView =
-                WMaterialShowcaseView.Builder(it, WMaterialShowcaseView.Feature.BARCODE_SCAN)
+                WMaterialShowcaseView.Builder(it, TooltipDialog.Feature.BARCODE_SCAN)
                     .setTarget(binding.imBarcodeScanner)
                     .setTitle(R.string.feature_barcode_scanning_title)
                     .setDescription(R.string.feature_barcode_scanning_desc)
@@ -1599,12 +1599,12 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         }
     }
 
-    override fun onWalkthroughActionButtonClick(feature: WMaterialShowcaseView.Feature?) {
+    override fun onWalkthroughActionButtonClick(feature: TooltipDialog.Feature?) {
         if (activity == null) {
             return
         }
         when (feature) {
-            WMaterialShowcaseView.Feature.DASH -> {
+            TooltipDialog.Feature.DASH -> {
                 binding.viewpagerMain?.apply {
                     currentItem = DASH_TAB.index
                     adapter?.notifyDataSetChanged()
@@ -1613,19 +1613,19 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                 showDeliveryDetailsFeatureWalkThrough()
             }
 
-            WMaterialShowcaseView.Feature.SHOPPING -> {
+            TooltipDialog.Feature.SHOPPING -> {
                 showDashFeatureWalkThrough()
             }
 
-            WMaterialShowcaseView.Feature.BARCODE_SCAN -> {
+            TooltipDialog.Feature.BARCODE_SCAN -> {
                 checkCameraPermission()
             }
 
-            WMaterialShowcaseView.Feature.DELIVERY_DETAILS -> {
+            TooltipDialog.Feature.DELIVERY_DETAILS -> {
                 onEditDeliveryLocation()
             }
 
-            WMaterialShowcaseView.Feature.MY_LIST -> {
+            TooltipDialog.Feature.MY_LIST -> {
                 if (SessionUtilities.getInstance().isUserAuthenticated) {
                     navigateToMyListFragment()
                 } else {
@@ -1637,25 +1637,25 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         }
     }
 
-    override fun onPromptDismiss(feature: WMaterialShowcaseView.Feature) {
+    override fun onPromptDismiss(feature: TooltipDialog.Feature) {
         if (activity == null) {
             return
         }
         when (feature) {
-            WMaterialShowcaseView.Feature.SHOPPING -> {
+            TooltipDialog.Feature.SHOPPING -> {
                 showDashFeatureWalkThrough()
             }
 
-            WMaterialShowcaseView.Feature.DASH -> {
+            TooltipDialog.Feature.DASH -> {
                 showDeliveryDetailsFeatureWalkThrough()
             }
 
-            WMaterialShowcaseView.Feature.DELIVERY_DETAILS -> {
+            TooltipDialog.Feature.DELIVERY_DETAILS -> {
                 executeValidateSuburb()
                 showMyListsFeatureWalkThrough()
             }
 
-            WMaterialShowcaseView.Feature.MY_LIST -> {
+            TooltipDialog.Feature.MY_LIST -> {
                 showBarcodeScannerFeatureWalkThrough()
             }
 

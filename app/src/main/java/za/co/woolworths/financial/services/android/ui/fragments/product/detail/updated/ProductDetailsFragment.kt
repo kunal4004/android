@@ -99,6 +99,7 @@ import za.co.woolworths.financial.services.android.ui.views.UnsellableItemsBotto
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ProductDetailsFindInStoreDialog
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.QuantitySelectorFragment
+import za.co.woolworths.financial.services.android.ui.views.tooltip.TooltipDialog
 import za.co.woolworths.financial.services.android.ui.vto.di.qualifier.OpenSelectOption
 import za.co.woolworths.financial.services.android.ui.vto.di.qualifier.OpenTermAndLighting
 import za.co.woolworths.financial.services.android.ui.vto.presentation.DataPrefViewModel
@@ -2597,7 +2598,7 @@ class ProductDetailsFragment :
             it.walkThroughPromtView =
                 WMaterialShowcaseView.Builder(
                     it,
-                    WMaterialShowcaseView.Feature.VTO_TRY_IT,
+                    TooltipDialog.Feature.VTO_TRY_IT,
                     true
                 )
                     .setTarget(binding.imgVTOOpen)
@@ -2620,11 +2621,11 @@ class ProductDetailsFragment :
 
     }
 
-    override fun onWalkthroughActionButtonClick(feature: WMaterialShowcaseView.Feature) {
+    override fun onWalkthroughActionButtonClick(feature: TooltipDialog.Feature) {
         //Do Nothing
     }
 
-    override fun onPromptDismiss(feature: WMaterialShowcaseView.Feature) {
+    override fun onPromptDismiss(feature: TooltipDialog.Feature) {
         binding.imgVTOOpen?.setImageResource(R.drawable.ic_camera_vto)
     }
 

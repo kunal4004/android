@@ -46,13 +46,14 @@ import uk.co.deanwild.materialshowcaseview.shape.RectangleShape;
 import uk.co.deanwild.materialshowcaseview.shape.Shape;
 import uk.co.deanwild.materialshowcaseview.target.Target;
 import uk.co.deanwild.materialshowcaseview.target.ViewTarget;
+import za.co.woolworths.financial.services.android.ui.views.tooltip.TooltipDialog;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 /**
  * Created by W7099877 on 2018/08/06.
  */
 
-public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchListener, View.OnClickListener {
+public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchListener, View.OnClickListener, TooltipDialog {
 
     public interface IShowcaseListener {
         void onShowcaseDisplayed(WMaterialShowcaseView showcaseView);
@@ -957,6 +958,7 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
         mPrefsManager = new PrefsManager(getContext(), showcaseID);
     }
 
+    @Override
     public void removeFromWindow() {
         if (getParent() != null && getParent() instanceof ViewGroup) {
             ((ViewGroup) getParent()).removeView(this);
@@ -990,6 +992,7 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
      * @param activity
      * @return
      */
+    @Override
     public boolean show(final Activity activity) {
 
         /**
@@ -1025,7 +1028,7 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
         return true;
     }
 
-
+    @Override
     public void hide() {
 
         /**
@@ -1040,6 +1043,7 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
         }
     }
 
+    @Override
     public boolean isDismissed() {
         return mWasDismissed;
     }
@@ -1162,36 +1166,6 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
                           }
                       }
             );
-        }
-    }
-
-    public enum Feature{
-        BARCODE_SCAN(1),
-        FIND_IN_STORE(2),
-        DELIVERY_LOCATION(3),
-        VOUCHERS(4),
-        REFINE(5),
-        ACCOUNTS(6),
-        SHOPPING_LIST(7),
-        STATEMENTS(8),
-        CART_REDEEM_VOUCHERS(9),
-        CREDIT_SCORE(9),
-        VTO_TRY_IT(10),
-        SHOPPING(11),
-        DASH(12),
-        DELIVERY_DETAILS(13),
-        MY_LIST(14),
-        PARGO_STORE(15),
-        NEW_FBH_CNC(16);
-
-        private int value;
-
-        Feature(int value) {
-            this.value = value;
-        }
-
-        public int getValue() {
-            return value;
         }
     }
 }
