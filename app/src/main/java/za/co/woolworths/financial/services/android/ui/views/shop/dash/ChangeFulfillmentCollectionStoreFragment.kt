@@ -297,7 +297,7 @@ class ChangeFulfillmentCollectionStoreFragment :
             /*location , fulfillment is already available so only browsing location need to be save */
             setBrowsingDataInformation()
             KotlinUtils.isStoreSelectedForBrowsing = true
-            parentFragment?.showClickAndCollectToolTipUi(storeId)
+            //parentFragment?.showClickAndCollectToolTipUi(storeId) // TODO, this will be verified in the implementation and will be deleted permanently
             showCategoryList()
         }
     }
@@ -358,7 +358,7 @@ class ChangeFulfillmentCollectionStoreFragment :
                             WoolworthsApplication.setValidatedSuburbProducts(WoolworthsApplication.getCncBrowsingValidatePlaceDetails())
                             setBrowsingDataInformation()
                             setDeliveryView()
-                            parentFragment?.showClickAndCollectToolTipUi(storeId)
+//                            parentFragment?.showClickAndCollectToolTipUi(storeId) // TODO, this will be verified in the implementation and will be deleted permanently
                             showCategoryList()
                         }
                     }
