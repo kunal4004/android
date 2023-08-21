@@ -1365,7 +1365,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                 bindString(R.string.crashlytics_materialshowcase_key),
                 this.javaClass.canonicalName
             )
-            val deliveryType = when (binding.viewpagerMain.currentItem) {
+            val deliveryType = when (currentTabPositionBasedOnDeliveryType()) {
                 DASH_TAB.index ->  getString(R.string.tooltip_dash)
                 CLICK_AND_COLLECT_TAB.index -> "\n".plus(getString(R.string.tooltip_cnc))
                 else -> "\n".plus(getString(R.string.tooltip_standard_delivery))
@@ -1422,7 +1422,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         val description: String
         val message: String
 
-        when (binding.viewpagerMain.currentItem) {
+        when (currentTabPositionBasedOnDeliveryType()) {
             DASH_TAB.index -> {
                 title = getString(R.string.tooltip_location_title_usage)
                 description = getString(R.string.tooltip_location_description)
