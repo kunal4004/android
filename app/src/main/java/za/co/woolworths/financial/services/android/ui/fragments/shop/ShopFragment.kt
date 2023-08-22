@@ -117,6 +117,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
     private var user: String = ""
     private var validateLocationResponse: ValidateLocationResponse? = null
     private var tabWidth: Float? = 0f
+    private var userNavigatedFromFulfilmentTooltip = false
     private val fragmentResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode != RESULT_OK) {
@@ -241,6 +242,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
             tvSearchProduct.setOnClickListener { navigateToProductSearch() }
             imBarcodeScanner.setOnClickListener { checkCameraPermission() }
             shopToolbar.setOnClickListener {
+                hideTooltipIfVisible()
                 onEditDeliveryLocation()
             }
 
@@ -297,6 +299,18 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
             tabsMain.setupWithViewPager(viewpagerMain) // TODO - this needs to be removed as we are removing the tabs
             updateTabIconUI(currentTabPositionBasedOnDeliveryType())
             viewpagerMain.currentItem = currentTabPositionBasedOnDeliveryType()
+        }
+    }
+
+    private fun hideTooltipIfVisible() {
+        (activity as? BottomNavigationActivity)?.apply {
+            if(walkThroughPromtView != null && !walkThroughPromtView.isDismissed()) {
+                val feature = walkThroughPromtView.getFeature()
+                if (feature == TooltipDialog.Feature.SHOP_FULFILMENT) {
+                    userNavigatedFromFulfilmentTooltip = true
+                }
+                walkThroughPromtView.hide()
+            }
         }
     }
 
@@ -473,6 +487,15 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
             } else {
                 setDeliveryView()
             }
+            // This is to display location tooltip when user navigate on toolbar click while fulfilment tooltip was being displayed, so we need to display the location tooltip when user move back to the Shop page
+            displayLocationFulfilmentIfRequired()
+        }
+    }
+
+    private fun displayLocationFulfilmentIfRequired() {
+        if (!AppInstanceObject.get().featureWalkThrough.shopLocation && AppInstanceObject.get().featureWalkThrough.shopFulfilment && userNavigatedFromFulfilmentTooltip) {
+            userNavigatedFromFulfilmentTooltip = false
+            showLocationTooltip()
         }
     }
 
