@@ -488,12 +488,12 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                 setDeliveryView()
             }
             // This is to display location tooltip when user navigate on toolbar click while fulfilment tooltip was being displayed, so we need to display the location tooltip when user move back to the Shop page
-            displayLocationFulfilmentIfRequired()
+            displayLocationTooltipIfRequired()
         }
     }
 
-    private fun displayLocationFulfilmentIfRequired() {
-        if (!AppInstanceObject.get().featureWalkThrough.shopLocation && AppInstanceObject.get().featureWalkThrough.shopFulfilment && userNavigatedFromFulfilmentTooltip) {
+    private fun displayLocationTooltipIfRequired() {
+        if (AppInstanceObject.get().featureWalkThrough.shopFulfilment && userNavigatedFromFulfilmentTooltip) {
             userNavigatedFromFulfilmentTooltip = false
             showLocationTooltip()
         }
