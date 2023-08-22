@@ -10,7 +10,6 @@ import com.awfs.coordination.databinding.FaqRowBinding
 import za.co.woolworths.financial.services.android.contracts.ISelectQuestionListener
 import za.co.woolworths.financial.services.android.models.dto.FAQDetail
 
-
 class FAQAdapter(
     userDetail: List<FAQDetail>?,
     selectedQuestion: ISelectQuestionListener,
@@ -30,6 +29,7 @@ class FAQAdapter(
         fun bind(item: FAQDetail, position: Int) {
             itemBinding.name.text = item.question
             itemBinding.name.contentDescription = "faq_".plus(position)
+            itemBinding.imgNextRow.contentDescription = "faq_".plus(position).plus("_").plus(itemView.context.getString(R.string.next_arrow))
         }
     }
 
