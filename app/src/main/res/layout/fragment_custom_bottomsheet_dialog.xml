@@ -35,7 +35,6 @@
     <TextView
         android:id="@+id/tvTitle"
         style="@style/dialog_title_text_style"
-        android:layout_marginHorizontal="@dimen/sixty_dp"
         android:layout_marginBottom="@dimen/fifteen_dp"
         android:lineHeight="@dimen/twenty_four_dp"
         android:text="@string/suburb_not_deliverable_msg"
@@ -46,7 +45,6 @@
     <TextView
         android:id="@+id/tvDescription"
         style="@style/dialog_description_text_style"
-        android:layout_marginHorizontal="@dimen/twenty_four_dp"
         android:layout_marginBottom="@dimen/fourty_dp"
         android:lineHeight="@dimen/twenty_one_dp"
         android:textSize="@dimen/thirteen_sp"
@@ -89,13 +87,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_begin="@dimen/thirty_dp" />
+        app:layout_constraintGuide_begin="@dimen/twenty_four_dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/right_guideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_end="@dimen/thirty_dp" />
+        app:layout_constraintGuide_end="@dimen/twenty_four_dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -11,9 +11,13 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.models.dto.voc.SurveyAnswer
 import za.co.woolworths.financial.services.android.models.dto.voc.SurveyDetails
 import za.co.woolworths.financial.services.android.ui.activities.voc.VoiceOfCustomerActivity
@@ -114,17 +118,16 @@ class SurveyProcessRequestVocFragment : ProcessYourRequestFragment(), View.OnCli
     }
 
     private fun onRequestSuccessful() {
-        stopSpinning(true)
-        binding.processRequestNavHostFragment.includePMAProcessingSuccess.apply {
-            processRequestTitleTextView?.text = bindString(R.string.voc_request_successful_title)
-            processRequestDescriptionTextView?.text = ""
-        }
-
-        Handler(getMainLooper()).postDelayed({
-            (activity as? VoiceOfCustomerActivity)?.apply {
-                finishActivity()
+        viewLifecycleOwner.lifecycleScope.launch {
+            stopSpinning(true)
+            with(binding.processRequestNavHostFragment.includePMAProcessing) {
+                processRequestTitleTextView?.text = bindString(R.string.voc_request_successful_title)
+                processRequestDescriptionTextView?.text = ""
             }
-        }, DURATION_SUCCESS_STATE_IN_MILLISECOND)
+
+            delay(DURATION_SUCCESS_STATE_IN_MILLISECOND)
+            (activity as? VoiceOfCustomerActivity)?.finishActivity()
+        }
     }
 
     private fun onRequestFailed() {

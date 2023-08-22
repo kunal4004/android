@@ -97,7 +97,6 @@
                     style="@style/opensans_semi_bold_13_black_text_style"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="@dimen/twenty_four_dp"
                     android:ellipsize="end"
                     android:gravity="center|start"
                     android:maxLines="1"

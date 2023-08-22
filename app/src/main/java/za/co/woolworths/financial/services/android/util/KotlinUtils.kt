@@ -340,7 +340,7 @@ class KotlinUtils {
             val words = value.split(" ").toMutableList()
             var output = ""
             for (word in words) {
-                output += word.uppercase() + " "
+                output += word.replaceFirstChar { it.titlecase() } + " "
             }
             return output.trim()
         }
@@ -724,7 +724,7 @@ class KotlinUtils {
                     dialogSubTitle,
                     dialogBtnText,
                     dialogTitleImg,
-                    null
+                    context.resources.getString(R.string.cancel_underline_html)
                 )
             customBottomSheetDialogFragment.show(
                 requireFragmentManager,
