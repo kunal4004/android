@@ -306,7 +306,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     private void queryBadgeCountOnStart() {
         if (SessionUtilities.getInstance().isUserAuthenticated() && AppConfigSingleton.INSTANCE.isBadgesRequired()) {
             mQueryBadgeCounter.queryVoucherCount();
-            mQueryBadgeCounter.queryCartSummaryCount();
+            mQueryBadgeCounter.updateCartSummaryCount();
             mQueryBadgeCounter.queryMessageCount();
             AppConfigSingleton.INSTANCE.setBadgesRequired(false);
         } else if (!AppConfigSingleton.INSTANCE.isBadgesRequired()) {

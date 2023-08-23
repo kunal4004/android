@@ -39,9 +39,7 @@ interface MyProductsHandler {
 class MyProductsHandlerImpl @Inject constructor(private val status: ViewApplicationStatusImpl) :
     MyProductsHandler {
 
-    override fun isC2User() = runBlocking {
-        withContext(Dispatchers.IO) { SessionUtilities.getInstance().isC2User }
-    }
+    override fun isC2User() = SessionUtilities.getInstance().isC2User
 
     override fun isNowWfsUser(userAccountResponse: UserAccountResponse?): Boolean {
         userAccountResponse ?: return false

@@ -61,7 +61,6 @@ import za.co.woolworths.financial.services.android.ui.activities.product.Product
 import za.co.woolworths.financial.services.android.ui.adapters.ShopPagerAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment
-import za.co.woolworths.financial.services.android.ui.fragments.shop.OrderDetailsFragment.Companion.getInstance
 import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment.SelectedTabIndex.CLICK_AND_COLLECT_TAB
 import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment.SelectedTabIndex.DASH_TAB
 import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment.SelectedTabIndex.STANDARD_TAB
@@ -99,7 +98,7 @@ import za.co.woolworths.financial.services.android.viewmodels.shop.ShopViewModel
 class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBinding::inflate),
     PermissionResultCallback,
     OnChildFragmentEvents,
-    WMaterialShowcaseView.IWalkthroughActionListener, View.OnClickListener {
+    WMaterialShowcaseView.IWalkthroughActionListener {
 
     private val confirmAddressViewModel: ConfirmAddressViewModel by activityViewModels()
 
@@ -1539,51 +1538,6 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
     fun isUserAuthenticated() = SessionUtilities.getInstance().isUserAuthenticated
 
     fun getCurrentFragmentIndex() = binding.viewpagerMain?.currentItem
-
-    override fun onClick(v: View?) {
-        when (v?.id) {
-            // In App notification click, Navigate to Order Details
-            R.id.inappOrderNotificationContainer -> {
-                (requireActivity() as? BottomNavigationActivity)?.apply {
-                    val orderId: String? = v.getTag(R.id.inappOrderNotificationContainer) as? String
-                    orderId?.let {
-                        pushFragment(getInstance(Parameter(it)))
-                    }
-                }
-            }
-            // In App notification Chat click, Navigate to Chat
-            // Chat / Driver Tracking / Location
-            R.id.inappOrderNotificationIcon -> {
-                val params = v.getTag(R.id.inappOrderNotificationIcon) as? LastOrderDetailsResponse
-                params?.apply {
-                    // Chat
-                    if (params.isChatEnabled) {
-                        navigateToChat(orderId)
-                    }
-                    // Driver tracking
-                    else if (params.isDriverTrackingEnabled) {
-                        driverTrackingUrl?.let { navigateToOrderTrackingScreen(it) }
-                    }
-                }
-            }
-        }
-    }
-
-    private fun navigateToChat(orderId: String?) {
-        orderId?.let {
-            startActivity(OCChatActivity.newIntent(requireActivity(), it))
-        }
-    }
-
-    private fun navigateToOrderTrackingScreen(url: String) {
-        requireActivity().apply {
-            startActivity(OrderTrackingWebViewActivity.newIntent(this, url))
-            overridePendingTransition(
-                R.anim.slide_from_right,
-                R.anim.slide_out_to_left
-            )
-        }
-    }
 
     private fun enableOrDisableFashionItems(isEnabled: Boolean) {
         binding.blackToolTipLayout?.apply {
