@@ -178,10 +178,8 @@ class ChangeFulfillmentCollectionStoreFragment :
                     }
                 }
             } catch (e: Exception) {
-                FirebaseManager.logException(e)
                 binding.cncProgressBar.visibility = View.GONE
             } catch (e: JsonSyntaxException) {
-                FirebaseManager.logException(e)
                 binding.cncProgressBar.visibility = View.GONE
             }
         }

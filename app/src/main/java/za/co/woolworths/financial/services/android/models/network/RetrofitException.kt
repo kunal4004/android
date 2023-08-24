@@ -6,6 +6,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
 import com.google.gson.JsonParseException
 import retrofit2.Response
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.NetworkErrorResponse
 import za.co.woolworths.financial.services.android.ui.activities.maintenance.NetworkRuntimeExceptionViewController
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_NOT_FOUND_404
@@ -46,9 +47,9 @@ class RetrofitException(
                 } catch (jsonException: JsonParseException) {
                     FirebaseManager.logException(jsonException)
                     Firebase.crashlytics.setCustomKeys {
-                        key("URL", url)
-                        key("ExceptionResponse", exceptionResponse.toString())
-                        key("ExceptionMessage", "this exception will be thrown when  NetworkResponse class is getting failed to parse")
+                        key(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.URL, url)
+                        key(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.ExceptionResponse, exceptionResponse.toString())
+                        key(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.ExceptionMessage, "Unable to parse NetworkErrorResponse class")
                     }
                 }
                 true
