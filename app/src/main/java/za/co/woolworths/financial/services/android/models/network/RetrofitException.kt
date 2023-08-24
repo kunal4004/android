@@ -1,5 +1,8 @@
 package za.co.woolworths.financial.services.android.models.network
 
+import com.google.firebase.crashlytics.ktx.crashlytics
+import com.google.firebase.crashlytics.ktx.setCustomKeys
+import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
 import com.google.gson.JsonParseException
 import retrofit2.Response
@@ -42,6 +45,11 @@ class RetrofitException(
                     }
                 } catch (jsonException: JsonParseException) {
                     FirebaseManager.logException(jsonException)
+                    Firebase.crashlytics.setCustomKeys {
+                        key("URL", url)
+                        key("ExceptionResponse", exceptionResponse.toString())
+                        key("ExceptionMessage", "this exception will be thrown when  NetworkResponse class is getting failed to parse")
+                    }
                 }
                 true
             }
