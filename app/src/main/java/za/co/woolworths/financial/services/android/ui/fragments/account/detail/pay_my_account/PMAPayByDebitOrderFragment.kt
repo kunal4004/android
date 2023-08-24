@@ -25,10 +25,12 @@ class PMAPayByDebitOrderFragment : Fragment() {
             container,
             false,
         )
+
         binding.payByDebitOrderModel =
             AppConfigSingleton.mPayMyAccount?.debitOrder?.let { PMAPayByDebitOrderEntity(it) }
                 ?.toDomain()
         binding.executePendingBindings()
+
         return binding.root
     }
 }
