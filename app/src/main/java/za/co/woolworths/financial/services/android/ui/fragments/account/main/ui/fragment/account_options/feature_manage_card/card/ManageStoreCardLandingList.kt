@@ -8,6 +8,7 @@ import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.annotation.DrawableRes
+import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.awfs.coordination.R
@@ -275,10 +276,19 @@ class ManageStoreCardLandingList(
             val inflater = layoutInflater.inflate(R.layout.store_card_list_item, null)
             val label = actionButton.label
             val action = actionButton.action
+            val storeCardsItemLinearLayout = inflater.findViewById<LinearLayoutCompat>(R.id.storeCardsItemLinearLayout)
             val titleTextView = inflater.findViewById<TextView>(R.id.titleTextView)
             val rootLayout = inflater.findViewById<RelativeLayout>(R.id.linkNewCardRelativeLayout)
+            val arrowImageView = inflater.findViewById<ImageView>(R.id.arrowImageView)
             val logoImageView = inflater.findViewById<ImageView>(R.id.logoImageView)
             logoImageView.setImageResource(drawableId)
+
+            val keyActionButton = "_${actionButton.label?.lowercase()}"
+            storeCardsItemLinearLayout.contentDescription = "row$keyActionButton"
+            titleTextView.contentDescription = "title$keyActionButton"
+            logoImageView.contentDescription = "logo$keyActionButton"
+            arrowImageView.contentDescription = "arrow$keyActionButton"
+
             logoImageView.alpha = 0.3f
             rootLayout.setOnClickListener {
                 when(action) {
