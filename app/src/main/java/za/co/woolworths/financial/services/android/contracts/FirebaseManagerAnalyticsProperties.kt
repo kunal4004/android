@@ -572,8 +572,6 @@ open class FirebaseManagerAnalyticsProperties {
             const val STEP = "step"
             const val OPTION = "option"
             const val DELIVERY_TYPE = "delivery_type"
-
-
         }
     }
 
