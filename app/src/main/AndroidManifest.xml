@@ -644,7 +644,7 @@
             android:theme="@style/Theme.AppCompat.Transparent.NoActionBar" />
 
         <activity
-            android:name="za.co.woolworths.financial.services.android.shoptoggle.ShopToggleActivity"
+            android:name="za.co.woolworths.financial.services.android.shoptoggle.presentation.ShopToggleActivity"
             android:exported="true"
             android:theme="@style/Theme.AppCompat.Transparent.NoActionBar" />
 

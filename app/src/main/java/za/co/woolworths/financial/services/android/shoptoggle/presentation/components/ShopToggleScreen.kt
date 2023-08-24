@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.shoptoggle.components
+package za.co.woolworths.financial.services.android.shoptoggle.presentation.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Text
@@ -10,14 +10,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import za.co.woolworths.financial.services.android.shoptoggle.ShopToggleData
+import za.co.woolworths.financial.services.android.shoptoggle.data.ShopToggleData
 import za.co.woolworths.financial.services.android.ui.wfs.theme.FuturaFontFamily
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OpenSansFontFamily
 
 @Composable
 fun shopToggleScreen(item: List<ShopToggleData>) {
 
-    Spacer(modifier = Modifier.height(17.dp))
+    Spacer(modifier = Modifier.height(16.dp))
 
     Text(
         modifier = Modifier,
@@ -30,7 +30,7 @@ fun shopToggleScreen(item: List<ShopToggleData>) {
             color = Color.Black
         )
     )
-    Spacer(modifier = Modifier.height(17.dp))
+    Spacer(modifier = Modifier.height(16.dp))
 
     Text(
         modifier = Modifier,
@@ -43,7 +43,7 @@ fun shopToggleScreen(item: List<ShopToggleData>) {
             color = Color.Black
         )
     )
-    Spacer(modifier = Modifier.height(17.dp))
+    Spacer(modifier = Modifier.height(24.dp))
 
     ToggleExpandableList(item)
 

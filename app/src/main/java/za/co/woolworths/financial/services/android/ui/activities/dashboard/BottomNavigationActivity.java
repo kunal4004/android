@@ -94,6 +94,7 @@ import za.co.woolworths.financial.services.android.models.network.Parameter;
 import za.co.woolworths.financial.services.android.models.service.event.BadgeState;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
 import za.co.woolworths.financial.services.android.onecartgetstream.OCChatActivity;
+import za.co.woolworths.financial.services.android.shoptoggle.presentation.ShopToggleActivity;
 import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
@@ -770,6 +771,10 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         if (isNewSession && fragment instanceof ShopFragment) {
             isNewSession = false;
             ((ShopFragment) fragment).setShopDefaultTab();
+        }
+        if (getCurrentFragment() instanceof ShopFragment) {
+           Intent intent = new Intent(this, ShopToggleActivity.class);
+           startActivity(intent);
         }
 
        if(getCurrentFragment() instanceof ShopFragment) {

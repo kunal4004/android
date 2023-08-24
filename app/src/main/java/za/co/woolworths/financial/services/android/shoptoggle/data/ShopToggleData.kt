@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.shoptoggle
+package za.co.woolworths.financial.services.android.shoptoggle.data
 
 data class ShopToggleData(
     val id: Int,
@@ -10,4 +10,6 @@ data class ShopToggleData(
     val deliveryProduct: String,
     val deliveryCost: String,
     val learnMore: String,
+    val deliveryButtonText:String,
+    val isDashDelivery: Boolean
 )

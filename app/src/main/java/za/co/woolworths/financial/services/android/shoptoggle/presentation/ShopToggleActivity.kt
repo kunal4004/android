@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.shoptoggle
+package za.co.woolworths.financial.services.android.shoptoggle.presentation
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -12,7 +12,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.awfs.coordination.R
-import za.co.woolworths.financial.services.android.shoptoggle.components.shopToggleScreen
+import za.co.woolworths.financial.services.android.shoptoggle.presentation.components.shopToggleScreen
+import za.co.woolworths.financial.services.android.shoptoggle.data.ShopToggleData
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
 
 class ShopToggleActivity : ComponentActivity() {
@@ -20,20 +21,20 @@ class ShopToggleActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-
-        // expendable list
-        val item  = List(3) { index ->
+        // TODO: adding for showing UI
+        val item = List(3) { index ->
             ShopToggleData(
-                1,
-                title = "tesssst fgfg",
-                subTitle = "hsdfkhsdfsddfdgdfg",
-                icon = R.drawable.back24,
-                deliveryType = "gsfjagdsfq",
-                deliveryCost = "gsjfkjasgf",
-                deliveryTime = "784872352",
-                deliveryProduct = "food",
-                learnMore = "Learn More"
-            )
+                index,
+                title = "use standard delivery",
+                subTitle = "shop FASHION, BEAUTY, HOME AND food",
+                icon = R.drawable.ic_toggle_collection_bag,
+                deliveryType = "Earliest Standard Delivery Dates:",
+                deliveryCost = "Fashion, Beauty, Home: Weds, 21 March",
+                deliveryTime = "Food: Tues, 21 March *Unlimited items",
+                deliveryProduct = "Delivery Cost:",
+                learnMore = "Determined at checkout. Learn more",
+                deliveryButtonText = "SET TO STANDARD DELIVERY",
+                isDashDelivery = true)
         }
         setContent {
             OneAppTheme {
@@ -49,7 +50,9 @@ class ShopToggleActivity : ComponentActivity() {
                     ) {
 
                         TopAppBar(
+                            modifier = Modifier.offset(x = (-18).dp),
                             title = { Text(text = "") },
+                            colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color.White),
                             navigationIcon = {
                                 IconButton(onClick = { finish() }) {
                                     Icon(painter = painterResource(id = R.drawable.back24),
@@ -58,12 +61,10 @@ class ShopToggleActivity : ComponentActivity() {
                                 }
                             }
                         )
+
                         shopToggleScreen(item)
-
                     }
-
                 }
-
             }
 
         }
