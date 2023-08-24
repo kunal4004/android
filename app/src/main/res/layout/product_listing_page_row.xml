@@ -55,7 +55,7 @@
         app:layout_constraintEnd_toEndOf="@+id/endMarginGuideline"
         android:layout_marginEnd="@dimen/zero_dp"
         android:layout_marginBottom="@dimen/eight_dp"
-        android:visibility="gone"
+        android:visibility="visible"
         />
 
     <View

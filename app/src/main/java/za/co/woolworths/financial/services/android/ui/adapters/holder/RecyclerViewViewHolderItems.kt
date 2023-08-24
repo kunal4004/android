@@ -15,6 +15,7 @@ import za.co.woolworths.financial.services.android.ui.vto.utils.VirtualTryOnUtil
 import za.co.woolworths.financial.services.android.util.ImageManager
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
+import javax.annotation.meta.When
 
 class RecyclerViewViewHolderItems(val itemBinding: ProductListingPageRowBinding) : RecyclerViewViewHolder(itemBinding.root) {
 
@@ -178,7 +179,17 @@ class RecyclerViewViewHolderItems(val itemBinding: ProductListingPageRowBinding)
         itemBinding.apply {
             root.context?.apply {
                 productList?.apply {
-                    imAddToList?.visibility = if (productType.equals(getString(R.string.food_product_type), ignoreCase = true)) VISIBLE else GONE
+                    when(productType) {
+                       /* getString(R.string.food_product_type) -> {
+                            imAddToList?.visibility = VISIBLE
+                        }  TODO add condition for productType as connect products
+                        getString(R.string.) -> {
+                            imAddToList?.visibility = VISIBLE
+                        }
+                        else -> {
+                            imAddToList?.visibility = GONE
+                        }*/
+                    }
                 }
             }
         }
