@@ -98,7 +98,8 @@ fun TextOpenSansSemiBoldH3(
     isUpperCased: Boolean = false,
     color: Color? = null,
     letterSpacing: TextUnit? = TextUnit.Unspecified,
-    textAlign: TextAlign = TextAlign.Start
+    textAlign: TextAlign = TextAlign.Start,
+    locator: String
 ) {
     val value = if (isUpperCased) text?.uppercase() ?: "" else text ?: ""
     Text(
@@ -109,7 +110,7 @@ fun TextOpenSansSemiBoldH3(
         style = MaterialTheme.typography.titleMedium,
         textAlign = textAlign,
         letterSpacing = letterSpacing ?: Dimens.point_five_sp,
-        modifier = modifier.testAutomationTag(text ?: "")
+        modifier = modifier.testAutomationTag(locator.ifEmpty { value })
     )
 }
 
@@ -139,7 +140,7 @@ fun TextOpenSansFontFamily(
 
     Text(
         text = text,
-        modifier = modifier.testAutomationTag(locator = locator),
+        modifier = modifier.testAutomationTag(locator.ifEmpty { text }),
         color = color,
         fontSize = fontSize,
         fontStyle = fontStyle,
