@@ -85,16 +85,16 @@ class SubmitRecommendationsUseCase @Inject constructor(
                 pid = items.productId,
                 sku = items.productId,
                 quantity = items.quantity,
-                value = getAmountOnlyLastTwoDecimal(items.priceInfo?.amount ?: 0.00),
+                value = getAmountOnlyLastTwoDecimal(items.priceInfo?.amount),
                 currency = Constants.CURRENCY_VALUE
             )
         }
 
-     fun getAmountOnlyLastTwoDecimal(price: Double): Double? {
+    fun getAmountOnlyLastTwoDecimal(price: Double?): String? {
         return try {
-            "%.2f".format(price).toDoubleOrNull()
+            "%.2f".format(price ?: 0.00)
         } catch (e: Exception) {
-            0.00
+            "0.00"
         }
     }
 
@@ -104,7 +104,7 @@ class SubmitRecommendationsUseCase @Inject constructor(
                 pid = foodItem.productId,
                 sku = foodItem.productId,
                 quantity = foodItem.quantity,
-                value = getAmountOnlyLastTwoDecimal(foodItem.priceInfo?.amount ?: 0.00),
+                value = getAmountOnlyLastTwoDecimal(foodItem.priceInfo?.amount),
                 currency = Constants.CURRENCY_VALUE
             )
         }
@@ -115,7 +115,7 @@ class SubmitRecommendationsUseCase @Inject constructor(
                 pid = Constants.PRODUCT_ID_FOR_SHIPPING,
                 sku = Constants.PRODUCT_ID_FOR_SHIPPING,
                 quantity = Constants.QUANTITY_FOR_SHIPPING,
-                value =  getAmountOnlyLastTwoDecimal(shippingAmount ?: 0.00),
+                value =  getAmountOnlyLastTwoDecimal(shippingAmount),
                 currency = Constants.CURRENCY_VALUE
             )
         } else {
@@ -129,7 +129,7 @@ class SubmitRecommendationsUseCase @Inject constructor(
                 pid = Constants.PRODUCT_ID_FOR_DISCOUNT,
                 sku = Constants.PRODUCT_ID_FOR_DISCOUNT,
                 quantity = Constants.QUANTITY_FOR_DISCOUNT,
-                value =  getAmountOnlyLastTwoDecimal(totalOrderDiscount ?: 0.00),
+                value =  getAmountOnlyLastTwoDecimal(totalOrderDiscount),
                 currency = Constants.CURRENCY_VALUE
             )
         } else {
