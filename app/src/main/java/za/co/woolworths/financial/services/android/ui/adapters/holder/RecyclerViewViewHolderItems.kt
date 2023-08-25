@@ -180,15 +180,15 @@ class RecyclerViewViewHolderItems(val itemBinding: ProductListingPageRowBinding)
             root.context?.apply {
                 productList?.apply {
                     when(productType) {
-                       /* getString(R.string.food_product_type) -> {
+                       getString(R.string.food_product_type) -> {
                             imAddToList?.visibility = VISIBLE
-                        }  TODO add condition for productType as connect products once backend is ready
+                        }/* TODO add condition for productType as connect products once backend is ready
                         getString(R.string.) -> {
                             imAddToList?.visibility = VISIBLE
-                        }
+                        } */
                         else -> {
                             imAddToList?.visibility = GONE
-                        }*/
+                        }
                     }
                 }
             }
