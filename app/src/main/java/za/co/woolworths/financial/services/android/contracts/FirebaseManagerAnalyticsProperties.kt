@@ -831,7 +831,7 @@ open class FirebaseManagerAnalyticsProperties {
             const val LAST_KNOWN_LOCATION: String = "Last Known Location"
             const val URL = "URL"
             const val ExceptionResponse = "ExceptionResponse"
-            const val ExceptionMessage = "URL"
+            const val ExceptionMessage = "ExceptionMessage"
         }
     }
 
