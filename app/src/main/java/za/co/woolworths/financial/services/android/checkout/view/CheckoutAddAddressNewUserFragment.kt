@@ -895,7 +895,7 @@ class CheckoutAddAddressNewUserFragment :
                     .isNotEmpty() && text.toString()
                     .trim().length < TEN
             ) {
-                showErrorPhoneNumber(R.string.phone_number_invalid_error_msg)
+                showErrorPhoneNumber(R.string.enter_valid_sa_number)
             }
 
             isValidNumber= isAValidSouthAfricanNumber(text.toString().trim())
@@ -1267,7 +1267,7 @@ class CheckoutAddAddressNewUserFragment :
 
                 R.id.cellphoneNumberEditText -> {
                     binding.recipientDetailsLayout.cellphoneNumberErrorMsg.text =
-                        bindString(R.string.mobile_number_error_msg)
+                        bindString(R.string.enter_valid_sa_number)
                     showAnimationErrorMessage(
                         binding.recipientDetailsLayout.cellphoneNumberErrorMsg,
                         visible,
