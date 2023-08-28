@@ -15,6 +15,7 @@ import za.co.woolworths.financial.services.android.ui.vto.utils.VirtualTryOnUtil
 import za.co.woolworths.financial.services.android.util.ImageManager
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
+import javax.annotation.meta.When
 
 class RecyclerViewViewHolderItems(val itemBinding: ProductListingPageRowBinding) : RecyclerViewViewHolder(itemBinding.root) {
 
@@ -31,6 +32,7 @@ class RecyclerViewViewHolderItems(val itemBinding: ProductListingPageRowBinding)
             priceItem.setPrice(productList, itemBinding.includeProductListingPriceLayout)
             setProductVariant(this)
             quickShopAddToCartSwitch(this)
+            quickAddToListSwitch(this)
             setOnClickListener(navigator, this)
         }
     }
@@ -168,6 +170,26 @@ class RecyclerViewViewHolderItems(val itemBinding: ProductListingPageRowBinding)
             root.context?.apply {
                 productList?.apply {
                     includeProductListingPriceLayout.imQuickShopAddToCartIcon?.visibility = if (productType.equals(getString(R.string.food_product_type), ignoreCase = true)) VISIBLE else GONE
+                }
+            }
+        }
+    }
+
+    private fun quickAddToListSwitch(productList: ProductList) {
+        itemBinding.apply {
+            root.context?.apply {
+                productList?.apply {
+                    when(productType) {
+                       getString(R.string.food_product_type) -> {
+                            imAddToList?.visibility = VISIBLE
+                        } /* TODO add condition for productType as connect products once backend is ready
+                        getString(R.string.) -> {
+                            imAddToList?.visibility = VISIBLE
+                        } */
+                        else -> {
+                            imAddToList?.visibility = GONE
+                        }
+                    }
                 }
             }
         }

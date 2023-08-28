@@ -22,7 +22,8 @@ class ProductListingAdapter(
     val mBannerLabel: String?,
     val mBannerImage: String?,
     val mIsComingFromBLP: Boolean,
-    val promotionalRichText: String?
+    val promotionalRichText: String?,
+    val listener:OnTapIcon
 ) : RecyclerView.Adapter<RecyclerViewViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerViewViewHolder {
@@ -81,6 +82,9 @@ class ProductListingAdapter(
                             }
                         }
                     }
+                    view.itemBinding.imAddToList?.setOnClickListener {
+                       listener.onAddToListClicked(productList)
+                    }
                 }
             }
         }
@@ -107,4 +111,5 @@ class ProductListingAdapter(
         }
         notifyDataSetChanged()
     }
+    interface OnTapIcon { fun onAddToListClicked(productList: ProductList) }
 }
