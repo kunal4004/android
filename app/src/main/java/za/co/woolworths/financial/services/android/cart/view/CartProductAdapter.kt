@@ -71,7 +71,7 @@ class CartProductAdapter(
     }
 
     interface OnItemClick {
-        fun onItemDeleteClickInEditMode(commerceId: CommerceItem)
+        fun onItemDeleteClickInEditMode(commerceItem: CommerceItem)
         fun onChangeQuantity(commerceId: CommerceItem, quantity: Int)
         fun totalItemInBasket(total: Int)
         fun onOpenProductDetail(commerceItem: CommerceItem)
@@ -82,7 +82,7 @@ class CartProductAdapter(
         fun onEnterPromoCode()
         fun onRemovePromoCode(promoCode: String)
         fun onPromoDiscountInfo()
-        fun onItemDeleteClick(commerceId: CommerceItem)
+        fun onItemDeleteClick(commerceItem: CommerceItem)
         fun onCheckBoxChange(isChecked: Boolean, commerceItem: CommerceItem)
         fun onCartRefresh()
         fun openAddToListPopup(
