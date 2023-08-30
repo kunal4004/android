@@ -205,7 +205,7 @@ class RefinementDrawerFragment : BaseFragmentBinding<FragmentDrawerBinding>(Frag
             for (i in 0 until childFragmentManager.fragments.size) {
                 val mFragment = childFragmentManager.fragments[i]
                 if (mFragment != null) {
-                    childFragmentManager.beginTransaction().remove(mFragment).commit()
+                    childFragmentManager.beginTransaction().remove(mFragment).commitAllowingStateLoss()
                 }
             }
         }
