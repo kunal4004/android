@@ -41,6 +41,7 @@ import za.co.woolworths.financial.services.android.cart.viewmodel.CartUtils.Comp
 import za.co.woolworths.financial.services.android.cart.viewmodel.CartUtils.Companion.updateItemLimitsBanner
 import za.co.woolworths.financial.services.android.cart.viewmodel.CartViewModel
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
+import za.co.woolworths.financial.services.android.checkout.utils.AvailableVoucherPromoResultCallback
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment
@@ -545,6 +546,38 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             }
         })
         activity?.overridePendingTransition(R.anim.slide_from_right, R.anim.slide_out_to_left)
+    }
+
+    private fun launchPromoCodeAndVouchersActivity(intent: Intent) {
+        activityLauncher.launch(intent, onActivityResult = { result ->
+            AvailableVoucherPromoResultCallback().voucherPromoCallback(result).apply {
+                if (this != null) {
+                    val cartResponse = this?.let { viewModel.getConvertedCartResponse(it) }
+                    updateUIForCartResponse(cartResponse)
+                    updateCart(cartResponse, null)
+                    when (result.resultCode) {
+                        REDEEM_VOUCHERS_REQUEST_CODE -> {
+                            showVouchersOrPromoCodeAppliedToast(
+                                getString(
+                                    if ((voucherDetails?.vouchers?.let {
+                                            getAppliedVouchersCount(
+                                                it
+                                            )
+                                        } ?: 0) > 0
+                                    ) R.string.vouchers_applied_toast_message else R.string.vouchers_removed_toast_message
+                                )
+                            )
+                        }
+
+                        APPLY_PROMO_CODE_REQUEST_CODE -> {
+                            showVouchersOrPromoCodeAppliedToast(
+                                getString(R.string.promo_code_applied_toast_message)
+                            )
+                        }
+                    }
+                }
+            }
+        })
     }
 
     private fun cartBeginEventAnalytics() {
@@ -1574,31 +1607,6 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                     return
                 }
             }
-
-            REDEEM_VOUCHERS_REQUEST_CODE, APPLY_PROMO_CODE_REQUEST_CODE -> {
-                if (resultCode == Activity.RESULT_OK) {
-                    val shoppingCartResponse = Utils.strToJson(
-                        data?.getStringExtra("ShoppingCartResponse"),
-                        ShoppingCartResponse::class.java
-                    ) as ShoppingCartResponse
-                    val cartResponse = viewModel.getConvertedCartResponse(shoppingCartResponse)
-                    updateUIForCartResponse(cartResponse)
-                    updateCart(cartResponse, null)
-                    if (requestCode == REDEEM_VOUCHERS_REQUEST_CODE) showVouchersOrPromoCodeAppliedToast(
-                        getString(
-                            if ((voucherDetails?.vouchers?.let {
-                                    getAppliedVouchersCount(
-                                        it
-                                    )
-                                } ?: 0) > 0
-                            ) R.string.vouchers_applied_toast_message else R.string.vouchers_removed_toast_message
-                        )
-                    )
-                    if (requestCode == APPLY_PROMO_CODE_REQUEST_CODE) showVouchersOrPromoCodeAppliedToast(
-                        getString(R.string.promo_code_applied_toast_message)
-                    )
-                }
-            }
         }
 
         if (resultCode == CustomPopUpWindow.CART_DEFAULT_ERROR_TAPPED || resultCode == ActionSheetDialogFragment.DIALOG_REQUEST_CODE) {
@@ -2049,10 +2057,9 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         intent.putExtra(
             BLACK_CARD_HOLDER, isBlackCardHolder
         )
+        intent.putExtra(INTENT_REQUEST_CODE, REDEEM_VOUCHERS_REQUEST_CODE)
 
-        startActivityForResult(
-            intent, REDEEM_VOUCHERS_REQUEST_CODE
-        )
+        launchPromoCodeAndVouchersActivity(intent)
     }
 
     private fun navigateToAvailableVouchersPage() {
@@ -2066,9 +2073,9 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         intent.putExtra(
             BLACK_CARD_HOLDER, isBlackCardHolder
         )
-        startActivityForResult(
-            intent, REDEEM_VOUCHERS_REQUEST_CODE
-        )
+        intent.putExtra(INTENT_REQUEST_CODE, REDEEM_VOUCHERS_REQUEST_CODE)
+
+        launchPromoCodeAndVouchersActivity(intent)
     }
 
     override fun updateOrderTotal() {
@@ -2091,9 +2098,9 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
 
     private fun navigateToApplyPromoCodePage() {
         val intent = Intent(context, AvailableVouchersToRedeemInCart::class.java)
-        startActivityForResult(
-            intent, APPLY_PROMO_CODE_REQUEST_CODE
-        )
+        intent.putExtra(INTENT_REQUEST_CODE, APPLY_PROMO_CODE_REQUEST_CODE)
+
+        launchPromoCodeAndVouchersActivity(intent)
     }
 
     private fun hideProgressBar() {
@@ -2530,6 +2537,8 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         const val REDEEM_VOUCHERS_REQUEST_CODE = 1979
         const val APPLY_PROMO_CODE_REQUEST_CODE = 1989
         const val REQUEST_PAYMENT_STATUS = 4775
+        const val INTENT_REQUEST_CODE = "intent_request_code"
+        const val SHOPPING_CART_RESPONSE = "ShoppingCartResponse"
 
         private const val TAG_ADDED_TO_LIST_TOAST = "ADDED_TO_LIST"
         private const val TAG_AVAILABLE_VOUCHERS_TOAST = "AVAILABLE_VOUCHERS"
