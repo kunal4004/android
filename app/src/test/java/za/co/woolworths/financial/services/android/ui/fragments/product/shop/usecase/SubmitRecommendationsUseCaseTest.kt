@@ -150,7 +150,7 @@ class SubmitRecommendationsUseCaseTest {
     ) {
         val currency = "ZAR"
         assertEquals(recommendationRequest?.monetateId, "some-dummy-monetate-id")
-        assertEquals(recommendationRequest?.events?.size, 4)
+        assertEquals(recommendationRequest?.events?.size, 5)
 
         val eventPageView = recommendationRequest?.events?.get(0) as? Event
         assertEquals(eventPageView?.eventType, "monetate:context:PageView")
