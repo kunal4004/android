@@ -41,15 +41,15 @@ class ProductDetailsInformationFragment : BaseFragmentBinding<FragmentProdcutDet
             val head = ("<head>" +
                     "<meta charset=\"UTF-8\">" +
                     "<style>" +
-                    "@font-face {font-family: 'myriad-pro-regular';src: url('file://"
-                    + this.filesDir.absolutePath + "/fonts/myriadpro_regular.otf');}" +
+                    "@font-face {font-family: 'opensans_regular';src: url('file://"
+                    + this.filesDir.absolutePath + "/fonts/OpenSans-Regular.ttf');}" +
                     "body {" +
                     "line-height: 110%;" +
                     "font-size:15px !important;" +
                     "text-align: justify;" +
                     "color:grey;" +
                     "line-height: 1.4;" +
-                    "font-family:'myriad-pro-regular';}" +
+                    "font-family:'opensans_regular';}" +
                     "</style>" +
                     "</head>")
 

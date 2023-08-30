@@ -42,9 +42,9 @@ import za.co.woolworths.financial.services.android.ui.activities.account.LinkDev
 import za.co.woolworths.financial.services.android.ui.activities.account.LinkDeviceConfirmationInterface
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
-import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.personal_loan.PersonalLoanFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountsOptionFragment
+import za.co.woolworths.financial.services.android.ui.fragments.account.device_security.updateLinkedDevices
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity.Companion.ACTIVATE_VIRTUAL_CARD_DETAIL
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity.Companion.BLOCK_CARD_DETAIL
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity.Companion.FREEZE_CARD_DETAIL
@@ -58,6 +58,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.
 import za.co.woolworths.financial.services.android.ui.fragments.npc.OTPViewTextWatcher
 import za.co.woolworths.financial.services.android.ui.fragments.statement.StatementFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.EnableLocationSettingsFragment
+import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_device_security.navigation.DeviceSecurityActivityResult.Companion.RESULT_CODE_LINK_DEVICE
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 import za.co.woolworths.financial.services.android.util.location.DynamicGeocoder
@@ -642,7 +643,7 @@ class LinkDeviceOTPFragment :
                                     mApplyNowState?.let {
                                         activity?.apply {
                                             if (this is LinkDeviceConfirmationActivity) {
-                                                MyAccountsFragment.updateLinkedDevices()
+                                                updateLinkedDevices()
                                                 when (mApplyNowState) {
                                                     ApplyNowState.STORE_CARD,
                                                     ApplyNowState.PERSONAL_LOAN -> {
@@ -813,7 +814,7 @@ class LinkDeviceOTPFragment :
         val intent = Intent()
         intent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, mApplyNowState)
         intent.putExtra(MyPreferencesFragment.RESULT_LISTENER_LINK_DEVICE, true)
-        activity?.setResult(MyAccountsFragment.RESULT_CODE_LINK_DEVICE, intent)
+        activity?.setResult(RESULT_CODE_LINK_DEVICE, intent)
         activity?.finish()
     }
 

@@ -19,7 +19,7 @@
         android:layout_marginStart="@dimen/twenty_four_dp"
         android:layout_marginTop="@dimen/sixteen_dp"
         android:layout_marginEnd="@dimen/twenty_four_dp"
-        android:fontFamily="@font/myriad_pro_regular_otf"
+        android:fontFamily="@font/opensans_regular_ttf"
         android:lineSpacingMultiplier="1.10"
         android:textAlignment="center"
         android:textColor="@color/color_666666"

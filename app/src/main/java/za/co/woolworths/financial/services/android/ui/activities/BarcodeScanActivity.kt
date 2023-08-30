@@ -2,12 +2,10 @@ package za.co.woolworths.financial.services.android.ui.activities
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.core.content.ContextCompat
 import android.view.MenuItem
+import androidx.core.content.ContextCompat
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.BarcodeScanActivityBinding
-import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.fragments.barcode.BarcodeScanFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.Companion.ADDED_TO_SHOPPING_LIST_RESULT_CODE
@@ -73,12 +71,6 @@ class BarcodeScanActivity : RuntimePermissionActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == PDP_REQUEST_CODE && resultCode == ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE
-                || requestCode == SHOPPING_LIST_SEARCH_RESULT_REQUEST_CODE && resultCode == ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE) {
-            data?.let { setActivityResult(it, ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE) }
-            return
-        }
 
         if (requestCode == SHOPPING_LIST_SEARCH_RESULT_REQUEST_CODE && resultCode == ADDED_TO_SHOPPING_LIST_RESULT_CODE) {
             data?.let { setActivityResult(it, ADDED_TO_SHOPPING_LIST_RESULT_CODE) }

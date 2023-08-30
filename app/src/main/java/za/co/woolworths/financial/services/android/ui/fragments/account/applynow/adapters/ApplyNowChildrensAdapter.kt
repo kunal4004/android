@@ -9,11 +9,17 @@ import com.awfs.coordination.databinding.AccountSalesBulletItemBinding
 import com.awfs.coordination.databinding.AccountSalesCardBenefitsItemBinding
 import za.co.woolworths.financial.services.android.models.dto.account.applynow.ApplyNowSectionType
 import za.co.woolworths.financial.services.android.models.dto.account.applynow.ChildrenItems
+import za.co.woolworths.financial.services.android.ui.fragments.account.applynow.utils.UniqueIdentifiers
 import za.co.woolworths.financial.services.android.ui.fragments.account.applynow.utils.loadSvg
+import za.co.woolworths.financial.services.android.ui.fragments.account.applynow.utils.setContentDescription
 
 const val LEFT_ICON_WITH_CONTENT = 112
 const val LIST_UNORDERED = 114
-class ApplyNowChildrensAdapter(var type: ApplyNowSectionType, var data: List<ChildrenItems>) :
+class ApplyNowChildrensAdapter(
+    var type: ApplyNowSectionType,
+    var data: List<ChildrenItems>,
+    var sectionTitle: String
+) :
     RecyclerView.Adapter<ApplyNowChildrensAdapter.ApplyNowChildrensViewHolder>() {
 
 
@@ -41,9 +47,9 @@ class ApplyNowChildrensAdapter(var type: ApplyNowSectionType, var data: List<Chi
 
     override fun onBindViewHolder(holder: ApplyNowChildrensViewHolder, position: Int) {
         when (type) {
-            ApplyNowSectionType.LEFT_ICON_WITH_CONTENT -> {holder.bindLeftIconContent(data[position])}
-            ApplyNowSectionType.LIST_UNORDERED -> {holder.bindListUnordered(data[position])}
-            else -> {holder.bindListUnordered(data[position])}
+            ApplyNowSectionType.LEFT_ICON_WITH_CONTENT -> {holder.bindLeftIconContent(data[position],position)}
+            ApplyNowSectionType.LIST_UNORDERED -> {holder.bindListUnordered(data[position],position)}
+            else -> {holder.bindListUnordered(data[position], position)}
         }
     }
 
@@ -54,18 +60,25 @@ class ApplyNowChildrensAdapter(var type: ApplyNowSectionType, var data: List<Chi
 
     inner class ApplyNowChildrensViewHolder(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
-        fun bindLeftIconContent(item: ChildrenItems) {
+        fun bindLeftIconContent(item: ChildrenItems, position: Int) {
             with(AccountSalesCardBenefitsItemBinding.bind(itemView)){
                 salesBenefitTitleTextView.text = item.title
                 salesBenefitDescriptionTextView.text = item.description
                 salesItemImageView.loadSvg(item.imageUrl)
+                addUniqueLocators(position)
+
             }
         }
+        private fun AccountSalesCardBenefitsItemBinding.addUniqueLocators(position:Int){
+            salesBenefitTitleTextView.setContentDescription(sectionTitle, position = position, viewName = UniqueIdentifiers.Title)
+            salesBenefitDescriptionTextView.setContentDescription(sectionTitle, position = position, viewName = UniqueIdentifiers.Description)
+            salesItemImageView.setContentDescription(sectionTitle, position = position, viewName = UniqueIdentifiers.Image)
+        }
 
-        fun bindListUnordered(item: ChildrenItems) {
+        fun bindListUnordered(item: ChildrenItems, position: Int) {
             with(AccountSalesBulletItemBinding.bind(itemView)){
                 bulletTitleTextView.text = item.description
-
+                bulletTitleTextView.setContentDescription(sectionTitle, position = position, viewName = UniqueIdentifiers.Title)
             }
         }
     }

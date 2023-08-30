@@ -8,11 +8,14 @@
     <FrameLayout
         android:id="@+id/mapFrameLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_height="@dimen/zero_dp"
+        android:layout_marginTop="@dimen/sixteen_dp"
+        android:background="@color/color_D8D8D8"
+        android:paddingTop="@dimen/two_dp"
+        app:layout_constraintBottom_toTopOf="@+id/confirmAddressLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/searchLayout">
 
         <za.co.woolworths.financial.services.android.ui.views.maps.DynamicMapView
             android:id="@+id/dynamicMapView"
@@ -23,6 +26,9 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <include
+            android:id="@+id/noLocationLayout"
+            layout="@layout/geolocation_no_location_settings"/>
     </FrameLayout>
 
     <ProgressBar
@@ -41,10 +47,11 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/searchLayout"
-        android:layout_width="match_parent"
+        android:layout_width="@dimen/zero_dp"
         android:layout_height="wrap_content"
-        android:background="@color/white"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="@dimen/sixteen_dp"
+        android:background="@drawable/bg_search_corner_4"
+        app:layout_constraintEnd_toStartOf="@+id/cancelText"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -52,36 +59,57 @@
             android:id="@+id/autoCompleteTextView"
             style="@style/map_search_address"
             android:drawableStart="@drawable/ic_search"
-            android:drawablePadding="@dimen/eight_dp"
+            android:drawablePadding="@dimen/ten_dp"
+            android:dropDownWidth="match_parent"
+            android:dropDownAnchor="@+id/autoCompleteTextView"
+            android:dropDownVerticalOffset="@dimen/sixteen_dp"
             android:ellipsize="end"
-            android:hint="@string/enter_your_street_number_and_name"
+            android:textCursorDrawable = "@null"
             android:maxLines="1"
-            android:paddingEnd="@dimen/_35sdp"
-            android:textColorHint="@color/color_666666"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:scrollbars="vertical"
+            android:cursorVisible="true"
+            android:focusable="true"
+            android:hint="@string/enter_your_street_number_and_name"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/imgRemoveAddress"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/imgRemoveAddress"
-            android:layout_width="@dimen/_20sdp"
-            android:layout_height="@dimen/_20sdp"
-            android:layout_marginEnd="@dimen/fifteen_dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/twelve_dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/close_24" />
+            android:visibility="gone"
+            app:srcCompat="@drawable/close_icon" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <TextView
+        android:id="@+id/cancelText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/sixteen_dp"
+        android:fontFamily="@font/futura_medium"
+        android:letterSpacing="@integer/point_twelve"
+        android:text="@string/cancel"
+        android:textColor="@color/black"
+        android:textSize="@dimen/twelve_sp"
+        app:layout_constraintBottom_toBottomOf="@+id/searchLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/searchLayout" />
     <View
         android:id="@+id/errorMassageDivider"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_2sdp"
         android:background="@color/gray"
-        android:visibility="gone"
+        android:layout_marginTop="@dimen/seventeen_dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@+id/searchLayout" />
 
     <androidx.appcompat.widget.AppCompatTextView
@@ -96,7 +124,7 @@
         android:paddingEnd="@dimen/sixteen_dp"
         android:paddingBottom="@dimen/two_dp"
         android:text="@string/geo_loc_error_msg_title"
-        android:textColor="@color/red"
+        android:textColor="@color/red_color"
         android:textSize="@dimen/sixteen_sp"
         android:translationY="@dimen/minus_one_point_five_sp"
         android:visibility="gone"
@@ -115,7 +143,7 @@
         android:paddingEnd="@dimen/sixteen_dp"
         android:paddingBottom="@dimen/sixteen_dp"
         android:text="@string/geo_loc_error_msg"
-        android:textColor="@color/red"
+        android:textColor="@color/red_color"
         android:textSize="@dimen/thirteen_sp"
         android:translationY="@dimen/minus_one_point_five_sp"
         android:visibility="gone"
@@ -155,36 +183,78 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_selected_marker" />
 
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tvMarkerHint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/map_marker_hint_bg"
+        android:fontFamily="@font/opensans_semi_bold"
+        android:paddingHorizontal="@dimen/sixteen_dp"
+        android:paddingVertical="@dimen/five_dp"
+        android:text="@string/adjust_to_exact_location"
+        android:textColor="@color/black"
+        android:textSize="@dimen/fourteen_sp"
+        android:translationY="@dimen/minus_one_point_five_sp"
+        android:layout_marginTop="@dimen/seventeen_dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imgMapMarker" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/navigationMapArrow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/confirmAddressLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="@dimen/seventeen_dp"
+        android:layout_marginBottom="@dimen/twenty_four_dp"
+        app:srcCompat="@drawable/navigation_arrow" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/confirmAddressLayout"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/hundred_dp"
+        android:layout_height="wrap_content"
         android:background="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvLocationNikName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/map_marker_hint_bg"
+            android:fontFamily="@font/opensans_semi_bold"
+            android:paddingHorizontal="@dimen/twenty_four_dp"
+            android:paddingVertical="@dimen/five_dp"
+            android:textColor="@color/black"
+            android:textSize="@dimen/eighteen_sp"
+            android:translationY="@dimen/minus_one_point_five_sp"
+            android:layout_marginTop="@dimen/twenty_four_dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+           />
 
 
         <TextView
             android:id="@+id/confirmAddress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/twenty_five_dp"
-            android:layout_marginEnd="@dimen/twenty_five_dp"
+            android:layout_margin="@dimen/twenty_four_dp"
             android:background="@drawable/order_add_to_cart_button_bg"
             android:enabled="false"
             android:fontFamily="@font/futura_semi_bold_ttf"
             android:gravity="center"
             android:letterSpacing="@integer/point_two"
             android:minHeight="@dimen/fifty_dp"
-            android:text="@string/confirm_your_location"
+            android:text="@string/use_location"
             android:textAllCaps="true"
             android:textColor="@color/white"
             android:textSize="@dimen/twelve_sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/tvLocationNikName" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -19,8 +19,9 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/privacy_policy_list_title_text" />
 
-    <za.co.woolworths.financial.services.android.ui.views.WTextView
+    <TextView
         android:id="@+id/privacy_policy_list_title_text"
+        style="@style/opensans_regular_13_black"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingBottom="@dimen/twenty_two_dp"
@@ -30,8 +31,6 @@
         android:linksClickable="true"
         android:lineSpacingExtra="@dimen/five_dp"
         android:textColor="@color/permanent_card_block_desc_color"
-        android:textSize="@dimen/fifteen_sp"
-        app:WTextView_font="myriadpro_regular"
         app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

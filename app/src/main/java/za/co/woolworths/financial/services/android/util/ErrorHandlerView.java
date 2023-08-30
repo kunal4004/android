@@ -32,7 +32,7 @@ public class ErrorHandlerView {
 	private OfferCalculationFragment fragment;
 	private RelativeLayout mRelErrorLayout;
 	private TextView mTxtEmptyStateDesc;
-	private WTextView mTxtEmptyStateTitle;
+	private TextView mTxtEmptyStateTitle;
 	private ImageView mImgEmptyStateIcon;
 	private RelativeLayout mRlRootNoConnectionLayout;
 	private Context mContext;
@@ -51,7 +51,7 @@ public class ErrorHandlerView {
 	}
 
 	public ErrorHandlerView(Context context,
-							RelativeLayout rootNoConnectionLayout, ImageView imageIcon, WTextView
+							RelativeLayout rootNoConnectionLayout, ImageView imageIcon, TextView
 									textTitle, TextView textDesc) {
 		this.mRlRootNoConnectionLayout = rootNoConnectionLayout;
 		this.mContext = context;
@@ -61,7 +61,7 @@ public class ErrorHandlerView {
 	}
 
 	public ErrorHandlerView(Context context, WoolworthsApplication woolworthsApplication,
-							RelativeLayout relativeLayout, ImageView imageIcon, WTextView
+							RelativeLayout relativeLayout, ImageView imageIcon, TextView
 									textTitle, TextView textDesc,
 							RelativeLayout relative) {
 		this.mRlRootNoConnectionLayout = relativeLayout;
@@ -73,7 +73,7 @@ public class ErrorHandlerView {
 	}
 
 	public ErrorHandlerView(Context context,
-							RelativeLayout relativeLayout, ImageView imageIcon, WTextView
+							RelativeLayout relativeLayout, ImageView imageIcon, TextView
 									textTitle, TextView textDesc, WButton actionButton) {
 		this.mRlRootNoConnectionLayout = relativeLayout;
 		this.mContext = context;

@@ -1,190 +1,215 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/white">
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PMAPayByDebitOrderFragment">
 
-    <LinearLayout
+    <data>
+
+        <import type="za.co.woolworths.financial.services.android.models.dto.pma.payByDebitOrder.headerContents.PBDFragmentHeaderContent" />
+
+        <variable
+            name="payByDebitOrderModel"
+            type="za.co.woolworths.financial.services.android.models.dto.pma.payByDebitOrder.PMAPayByDebitOrderDomain" />
+    </data>
+
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="match_parent"
+        android:background="@color/white">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/payByDebitOrderTextView"
-                style="@style/pma_title_textview_style"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="0dp"
-                android:layout_marginTop="22dp"
-                android:gravity="start"
-                android:text="@string/pma_pay_by_debit_order"
-                app:layout_constraintStart_toStartOf="@+id/startGuideLine"
-                app:layout_constraintTop_toTopOf="parent" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/startGuideLine"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintGuide_begin="24dp" />
+                <TextView
+                    android:id="@+id/payByDebitOrderTextView"
+                    style="@style/pma_title_textview_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginTop="22dp"
+                    android:gravity="start"
+                    android:text="@{payByDebitOrderModel.header.title}"
+                    app:layout_constraintStart_toStartOf="@+id/startGuideLine"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="@string/pma_pay_by_debit_order" />
 
 
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/endGuideLine"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintGuide_end="24dp" />
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/startGuideLine"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_begin="24dp" />
 
-            <TextView
-                android:id="@+id/debitOrderTextView"
-                style="@style/debitCreditStyle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="19dp"
-                android:text="@string/debit_order_desc"
-                android:textColor="@color/account_card_desc_grey_color"
-                app:layout_constraintEnd_toStartOf="@+id/endGuideLine"
-                app:layout_constraintStart_toStartOf="@+id/startGuideLine"
-                app:layout_constraintTop_toBottomOf="@+id/payByDebitOrderTextView" />
 
-            <TextView
-                android:id="@+id/setUpDebitOrderTextView"
-                style="@style/debitCreditStyle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="14dp"
-                android:autoLink="email"
-                android:text="@string/pay_by_debit_order_desc1"
-                android:textColor="@color/account_card_desc_grey_color"
-                app:layout_constraintEnd_toStartOf="@+id/endGuideLine"
-                app:layout_constraintStart_toStartOf="@+id/startGuideLine"
-                app:layout_constraintTop_toBottomOf="@+id/debitOrderTextView" />
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/endGuideLine"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_end="24dp" />
+
+                <TextView
+                    android:id="@+id/debitOrderTextView"
+                    style="@style/payByDebitOrderDescStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="19dp"
+                    android:text="@{payByDebitOrderModel.header.headerContent.get(0).text}"
+                    android:textColor="@color/account_card_desc_grey_color"
+                    app:layout_constraintEnd_toStartOf="@+id/endGuideLine"
+                    app:layout_constraintStart_toStartOf="@+id/startGuideLine"
+                    app:layout_constraintTop_toBottomOf="@+id/payByDebitOrderTextView"
+                    tools:text="@string/debit_order_desc" />
+
+                <TextView
+                    android:id="@+id/setUpDebitOrderTextView"
+                    style="@style/payByDebitOrderDescStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:autoLink="email"
+                    android:setSpannableTtToSetDebitOrderTV="@{payByDebitOrderModel.header.headerContent.get(1).text}"
+                    android:textColor="@color/account_card_desc_grey_color"
+                    app:layout_constraintEnd_toStartOf="@+id/endGuideLine"
+                    app:layout_constraintStart_toStartOf="@+id/startGuideLine"
+                    app:layout_constraintTop_toBottomOf="@+id/debitOrderTextView"
+                    tools:text="@string/pay_by_debit_order_desc1" />
+
+                <View
+                    android:id="@+id/payMyOrderView"
+                    android:layout_width="0dp"
+                    android:layout_height="16dp"
+                    android:layout_marginTop="20dp"
+                    android:background="@color/light_gray_background"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/setUpDebitOrderTextView" />
+
+                <TextView
+                    android:id="@+id/payDebitOrderTitleTextView"
+                    style="@style/opensans_semi_bold_13_black_text_style"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="18dp"
+                    android:text="@{payByDebitOrderModel.body.subtitle}"
+                    android:textColor="@color/black"
+                    app:layout_constraintEnd_toStartOf="@+id/endGuideLine"
+                    app:layout_constraintStart_toStartOf="@+id/startGuideLine"
+                    app:layout_constraintTop_toBottomOf="@+id/payMyOrderView"
+                    tools:text="@string/send_us_the_following_title" />
+
+                <TextView
+                    android:id="@+id/bankNameTextView"
+                    style="@style/payByDebitOrderDescStyle"
+                    android:text="@{payByDebitOrderModel.body.content.get(0).text}"
+                    app:layout_constraintEnd_toStartOf="@+id/endGuideLine"
+                    app:layout_constraintStart_toStartOf="@+id/startGuideLine"
+                    app:layout_constraintTop_toBottomOf="@+id/payDebitOrderTitleTextView"
+                    tools:text="@string/bank_name_label" />
+
+                <TextView
+                    android:id="@+id/brandNameAndCodeTextView"
+                    style="@style/payByDebitOrderDescStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@{payByDebitOrderModel.body.content.get(1).text}"
+                    app:layout_constraintEnd_toStartOf="@+id/endGuideLine"
+                    app:layout_constraintStart_toStartOf="@+id/startGuideLine"
+                    app:layout_constraintTop_toBottomOf="@+id/bankNameTextView"
+                    tools:text="@string/brand_name_and_code_label" />
+
+                <TextView
+                    android:id="@+id/bankNameTextView1"
+                    style="@style/payByDebitOrderDescStyle"
+                    android:layout_marginTop="8dp"
+                    android:text="@{payByDebitOrderModel.body.content.get(0).text}"
+                    app:layout_constraintEnd_toStartOf="@+id/endGuideLine"
+                    app:layout_constraintStart_toStartOf="@+id/startGuideLine"
+                    app:layout_constraintTop_toBottomOf="@+id/brandNameAndCodeTextView"
+                    tools:text="@string/bank_name_label" />
+
+                <TextView
+                    android:id="@+id/bankAccountNumberTextView"
+                    style="@style/payByDebitOrderDescStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@{payByDebitOrderModel.body.content.get(2).text}"
+                    app:layout_constraintEnd_toStartOf="@+id/endGuideLine"
+                    app:layout_constraintStart_toStartOf="@+id/startGuideLine"
+                    app:layout_constraintTop_toBottomOf="@+id/bankNameTextView1"
+                    tools:text="@string/bank_account_number_label" />
+
+                <TextView
+                    android:id="@+id/accountTypeTextView"
+                    style="@style/payByDebitOrderDescStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@{payByDebitOrderModel.body.content.get(3).text}"
+                    app:layout_constraintEnd_toStartOf="@+id/endGuideLine"
+                    app:layout_constraintStart_toStartOf="@+id/startGuideLine"
+                    app:layout_constraintTop_toBottomOf="@+id/bankAccountNumberTextView"
+                    tools:text="@string/account_type_textView" />
+
+                <TextView
+                    android:id="@+id/debitOrderAmountTextView"
+                    style="@style/payByDebitOrderDescStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:lineSpacingExtra="10sp"
+                    android:text="@{payByDebitOrderModel.body.content.get(4).text}"
+                    app:layout_constraintEnd_toStartOf="@+id/endGuideLine"
+                    app:layout_constraintStart_toStartOf="@+id/startGuideLine"
+                    app:layout_constraintTop_toBottomOf="@+id/accountTypeTextView"
+                    tools:text="@string/debit_order_amount_label" />
+
+                <TextView
+                    android:id="@+id/debitOrderDeductionDateTextView"
+                    style="@style/payByDebitOrderDescStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@{payByDebitOrderModel.body.content.get(5).text}"
+                    app:layout_constraintEnd_toStartOf="@+id/endGuideLine"
+                    app:layout_constraintStart_toStartOf="@+id/startGuideLine"
+                    app:layout_constraintTop_toBottomOf="@+id/debitOrderAmountTextView"
+                    tools:text="@string/debit_order_deduction_date_label" />
+
+                <TextView
+                    android:id="@+id/debitOrderDeductionDescTextView"
+                    style="@style/payByDebitOrderDescStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="21dp"
+                    android:lineSpacingExtra="10sp"
+                    android:text="@{payByDebitOrderModel.body.footer.text}"
+                    app:layout_constraintEnd_toStartOf="@+id/endGuideLine"
+                    app:layout_constraintStart_toStartOf="@+id/startGuideLine"
+                    app:layout_constraintTop_toBottomOf="@+id/debitOrderDeductionDateTextView"
+                    tools:text="@string/debit_order_deduction_desc" />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <View
-                android:id="@+id/payMyOrderView"
+                android:id="@+id/view7"
                 android:layout_width="0dp"
-                android:layout_height="16dp"
-                android:layout_marginTop="20dp"
-                android:background="@color/light_gray_background"
+                android:layout_height="20dp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/setUpDebitOrderTextView" />
+                app:layout_constraintStart_toStartOf="parent" />
 
-            <TextView
-                android:id="@+id/payDebitOrderTitleTextView"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="18dp"
-                android:fontFamily="@font/myriad_pro_semi_bold_otf"
-                android:text="@string/send_us_the_following_title"
-                android:textColor="@color/black"
-                android:textSize="15sp"
-                app:layout_constraintEnd_toStartOf="@+id/endGuideLine"
-                app:layout_constraintStart_toStartOf="@+id/startGuideLine"
-                app:layout_constraintTop_toBottomOf="@+id/payMyOrderView" />
-
-            <TextView
-                android:id="@+id/bankNameTextView"
-                style="@style/descriptionPMAStyle"
-                android:text="@string/bank_name_label"
-                app:layout_constraintEnd_toStartOf="@+id/endGuideLine"
-                app:layout_constraintStart_toStartOf="@+id/startGuideLine"
-                app:layout_constraintTop_toBottomOf="@+id/payDebitOrderTitleTextView" />
-
-            <TextView
-                android:id="@+id/brandNameAndCodeTextView"
-                style="@style/descriptionPMAStyle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/brand_name_and_code_label"
-                app:layout_constraintEnd_toStartOf="@+id/endGuideLine"
-                app:layout_constraintStart_toStartOf="@+id/startGuideLine"
-                app:layout_constraintTop_toBottomOf="@+id/bankNameTextView" />
-
-            <TextView
-                android:id="@+id/bankNameTextView1"
-                style="@style/descriptionPMAStyle"
-                android:layout_marginTop="8dp"
-                android:text="@string/bank_name_label"
-                app:layout_constraintEnd_toStartOf="@+id/endGuideLine"
-                app:layout_constraintStart_toStartOf="@+id/startGuideLine"
-                app:layout_constraintTop_toBottomOf="@+id/brandNameAndCodeTextView" />
-
-            <TextView
-                android:id="@+id/bankAccountNumberTextView"
-                style="@style/descriptionPMAStyle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/bank_account_number_label"
-                app:layout_constraintEnd_toStartOf="@+id/endGuideLine"
-                app:layout_constraintStart_toStartOf="@+id/startGuideLine"
-                app:layout_constraintTop_toBottomOf="@+id/bankNameTextView1" />
-
-            <TextView
-                android:id="@+id/accountTypeTextView"
-                style="@style/descriptionPMAStyle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/account_type_textView"
-                app:layout_constraintEnd_toStartOf="@+id/endGuideLine"
-                app:layout_constraintStart_toStartOf="@+id/startGuideLine"
-                app:layout_constraintTop_toBottomOf="@+id/bankAccountNumberTextView" />
-
-            <TextView
-                android:id="@+id/debitOrderAmountTextView"
-                style="@style/descriptionPMAStyle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:lineSpacingExtra="10sp"
-                android:text="@string/debit_order_amount_label"
-                app:layout_constraintEnd_toStartOf="@+id/endGuideLine"
-                app:layout_constraintStart_toStartOf="@+id/startGuideLine"
-                app:layout_constraintTop_toBottomOf="@+id/accountTypeTextView" />
-
-            <TextView
-                android:id="@+id/debitOrderDeductionDateTextView"
-                style="@style/descriptionPMAStyle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/debit_order_deduction_date_label"
-                app:layout_constraintEnd_toStartOf="@+id/endGuideLine"
-                app:layout_constraintStart_toStartOf="@+id/startGuideLine"
-                app:layout_constraintTop_toBottomOf="@+id/debitOrderAmountTextView" />
-
-            <TextView
-                android:id="@+id/debitOrderDeductionDescTextView"
-                style="@style/descriptionPMAStyle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="21dp"
-                android:lineSpacingExtra="10sp"
-                android:text="@string/debit_order_deduction_desc"
-                app:layout_constraintEnd_toStartOf="@+id/endGuideLine"
-                app:layout_constraintStart_toStartOf="@+id/startGuideLine"
-                app:layout_constraintTop_toBottomOf="@+id/debitOrderDeductionDateTextView" />
-
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <View
-            android:id="@+id/view7"
-            android:layout_width="0dp"
-            android:layout_height="20dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-
-    </LinearLayout>
-</androidx.core.widget.NestedScrollView>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</layout>

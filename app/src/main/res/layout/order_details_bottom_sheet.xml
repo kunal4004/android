@@ -53,7 +53,7 @@
             app:layout_constraintTop_toBottomOf="@+id/orderDetailsTextView">
 
             <TextView
-                style="@style/myriad_pro_regular"
+                style="@style/opensens_regular"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="0.3"
@@ -86,7 +86,7 @@
 
             <TextView
                 android:id="@+id/deliveryLocationText"
-                style="@style/myriad_pro_regular"
+                style="@style/opensens_regular"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="0.3"
@@ -128,7 +128,7 @@
 
             <TextView
                 android:id="@+id/deliveryOrderDetailsTextView"
-                style="@style/myriad_pro_regular"
+                style="@style/opensens_regular"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="0.3"
@@ -139,12 +139,13 @@
 
             <TextView
                 android:id="@+id/deliveryDateTimeBottomSheetTextView"
-                style="@style/myriad_pro_regular_black"
+                style="@style/opensens_regular"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="0.7"
                 android:gravity="end"
                 android:textSize="@dimen/twelve_sp"
+                android:textColor="@color/black"
                 android:textStyle="bold" />
         </LinearLayout>
 
@@ -160,7 +161,7 @@
             app:layout_constraintTop_toBottomOf="@+id/oneDeliveryBottomSheetLinearLayout">
 
             <TextView
-                style="@style/myriad_pro_regular"
+                style="@style/opensens_regular"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="0.3"
@@ -171,7 +172,7 @@
 
             <TextView
                 android:id="@+id/foodDeliveryDateTimeBottomSheetTextView"
-                style="@style/myriad_pro_regular"
+                style="@style/opensens_regular"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="0.7"
@@ -192,7 +193,7 @@
             app:layout_constraintTop_toBottomOf="@+id/foodDeliveryBottomSheetLinearLayout">
 
             <TextView
-                style="@style/myriad_pro_regular"
+                style="@style/opensens_regular"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="0.3"
@@ -203,7 +204,7 @@
 
             <TextView
                 android:id="@+id/otherDeliveryDateTimeBottomSheetTextView"
-                style="@style/myriad_pro_regular"
+                style="@style/opensens_regular"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="0.7"
@@ -243,7 +244,9 @@
                 app:srcCompat="@drawable/ic_add_to_list_pdp_black" />
 
             <TextView
-                style="@style/myriad_pro_regular"
+                style="@style/opensens_regular"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/add_to_a_shopping_list"
                 android:textColor="@color/account_amount_color"

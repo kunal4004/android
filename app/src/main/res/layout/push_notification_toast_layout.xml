@@ -28,7 +28,7 @@
             android:text="@string/push_notification_turn_on_toast_message"
             android:textColor="@color/white"
             android:textSize="@dimen/twelve_sp"
-            app:WTextView_font="myriadpro_regular" />
+            app:WTextView_font="opensans_regular" />
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             android:id="@+id/tvView"

@@ -18,11 +18,11 @@
             android:layout_marginTop="16dp"
             android:background="@drawable/stores_details_background">
 
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
-                style="@style/accountsItem"
+            <TextView
+                style="@style/tipsAndTricks"
                 android:text="@string/new_feature_tutorials" />
 
-            <Switch
+            <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/featureSwitch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

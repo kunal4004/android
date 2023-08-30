@@ -15,36 +15,55 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias=".8" />
+        app:layout_constraintVertical_bias=".72" />
 
     <TextView
         android:id="@+id/tvCurrentLocationLabel"
-        style="@style/myriad_pro_semi_bold_black_15_text_style"
+        style="@style/opensans_semi_bold_13_black_text_style"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
+        android:layout_marginStart="@dimen/twenty_dp"
         android:text="@string/current_location"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/ivLocation"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.49" />
+        app:layout_constraintVertical_bias="0.49"
+        android:translationY="-0.8sp"
+        />
 
     <TextView
         android:id="@+id/tvCurrentLocation"
-        style="@style/myriad_pro_regular_black_13_text_style"
-        android:layout_width="250dp"
+        style="@style/opensans_regular_12_text_style"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/twenty_dp"
-        android:layout_marginTop="@dimen/four_dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginTop="@dimen/two_dp"
+        android:layout_marginEnd="@dimen/eight_dp"
         android:ellipsize="end"
-        android:textColor="@color/gray"
-        app:layout_constraintEnd_toStartOf="@+id/ivArrow"
-        app:layout_constraintHorizontal_bias="0.0"
+        android:lineSpacingExtra="@dimen/two_sp"
         android:maxLines="1"
+        android:textColor="@color/color_444444"
+        android:translationY="@dimen/_minus_zero_pt_eight_sp"
+        app:layout_constraintEnd_toStartOf="@+id/swEnableLocation"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/ivLocation"
         app:layout_constraintTop_toBottomOf="@+id/tvCurrentLocationLabel" />
 
+    <Switch
+        android:id="@+id/swEnableLocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:theme="@style/SwitchTheme"
+        android:thumb="@drawable/customswitchselector"
+        android:track="@drawable/custom_track"
+        android:checked="false"
+        android:layout_marginEnd="@dimen/twenty_six_dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/tvCurrentLocation"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias=".8"/>
     <ImageView
         android:id="@+id/ivArrow"
         android:layout_width="wrap_content"
@@ -53,7 +72,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/tvCurrentLocationLabel"
+        android:visibility="gone"
+        app:layout_constraintStart_toEndOf="@+id/tvCurrentLocation"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_caret_black"
         app:layout_constraintVertical_bias=".8"/>

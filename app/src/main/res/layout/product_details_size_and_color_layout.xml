@@ -45,7 +45,9 @@
 
     <TextView
         android:id="@+id/moreColor"
-        style="@style/myriad_pro_regular_black_15_text_style"
+        style="@style/opensans_regular_13_black"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/colorPlaceholder"
         app:layout_constraintRight_toRightOf="parent"
@@ -62,7 +64,9 @@
 
     <TextView
         android:id="@+id/colourUnavailableError"
-        style="@style/myriad_pro_regular"
+        style="@style/opensens_regular"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:text="@string/vto_color_selected_error"
         android:textColor="@color/promo_text_color"
         android:textSize="@dimen/fourteen_sp"

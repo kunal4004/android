@@ -12,7 +12,7 @@
         android:layout_height="@dimen/_48sdp"
         android:paddingStart="@dimen/_5sdp"
         android:paddingEnd="@dimen/_5sdp"
-        android:fontFamily="@font/myriad_pro_semi_bold"
+        android:fontFamily="@font/opensans_semi_bold"
         android:gravity="center"
         android:letterSpacing="0.07"
         android:text="@string/placeholder"

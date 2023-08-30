@@ -21,7 +21,7 @@ data class StoreCard(
     var blockType: String? = "",
     @SerializedName("cardNotReceived")
     var isCardNotReceivedFlowNeeded: Boolean = false,
-    var actions: MutableList<ActionButton>?
+    var actions: List<ActionButton>?
 ):Parcelable
 
 
@@ -30,5 +30,8 @@ data class ActionButton(var label: String?, var action : StoreCardItemActions?) 
 
 enum class StoreCardItemActions (action: String?){
     LINK_STORE_CARD("LINK_STORE_CARD"),
-    ACTIVATE_VIRTUAL_CARD("ACTIVATE_VIRTUAL_CARD")
+    ACTIVATE_VIRTUAL_CARD("ACTIVATE_VIRTUAL_CARD"),
+    CARD_REPLACEMENT("CARD_REPLACEMENT"),
+    PAY_WITH_CARD("PAY_WITH_CARD"),
+    HOW_IT_WORKS("HOW_IT_WORKS")
 }

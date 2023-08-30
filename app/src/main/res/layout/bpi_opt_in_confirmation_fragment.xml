@@ -48,14 +48,13 @@
 
             <TextView
                 android:id="@+id/optInDescription1TextView"
+                style="@style/opensans_regular_14_black"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/myriad_pro_regular_otf"
                 android:text="@string/bpi_confirm_opt_in_desc1"
                 android:gravity="center"
                 android:lineSpacingExtra="@dimen/five_dp"
                 android:textColor="@color/description_color"
-                android:textSize="@dimen/sixteen_sp"
                 android:layout_marginTop="@dimen/sixteen_dp"
                 app:layout_constraintEnd_toEndOf="@id/right_guideline"
                 app:layout_constraintStart_toEndOf="@id/left_guideline"
@@ -63,14 +62,13 @@
 
             <TextView
                 android:id="@+id/optInDescription2TextView"
+                style="@style/opensans_regular_14_black"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/myriad_pro_regular_otf"
                 android:text="@string/bpi_confirm_opt_in_desc2"
                 android:gravity="center"
                 android:lineSpacingExtra="@dimen/five_dp"
                 android:textColor="@color/description_color"
-                android:textSize="@dimen/sixteen_sp"
                 android:layout_marginTop="@dimen/sixteen_dp"
                 android:clickable="true"
                 app:layout_constraintEnd_toEndOf="@id/right_guideline"

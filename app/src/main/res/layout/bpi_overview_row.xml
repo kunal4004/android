@@ -30,7 +30,7 @@
         app:layout_constraintStart_toEndOf="@+id/spVerticalOrangeDeco"
         app:layout_constraintTop_toTopOf="parent"
         >
-        <za.co.woolworths.financial.services.android.ui.views.WTextView
+        <TextView
             android:id="@+id/tvTitle"
             style="@style/styleBPIOverviewTitle"
             android:layout_marginStart="@dimen/twenty_two_dp"
@@ -70,7 +70,7 @@
         app:layout_constraintStart_toStartOf="parent"
         />
 
-    <za.co.woolworths.financial.services.android.ui.views.WTextView
+    <TextView
         android:id="@+id/tvDescription"
         style="@style/styleBPIDescText"
         app:layout_constraintEnd_toEndOf="@+id/gDescription"

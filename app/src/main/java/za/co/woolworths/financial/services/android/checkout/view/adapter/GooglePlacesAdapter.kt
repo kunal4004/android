@@ -17,12 +17,13 @@ import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRe
 import com.google.android.libraries.places.api.net.PlacesClient
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DURATION_0_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DURATION_120000_MS
+import za.co.woolworths.financial.services.android.util.UnIndexedAddressIdentifiedListener
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
 
 
-class GooglePlacesAdapter(context: Activity, geoData: PlacesClient) : BaseAdapter(),
+class GooglePlacesAdapter(context: Activity, geoData: PlacesClient,unIndexedAddressIdentifiedListener: UnIndexedAddressIdentifiedListener) : BaseAdapter(),
     Filterable {
 
     companion object {
@@ -35,6 +36,8 @@ class GooglePlacesAdapter(context: Activity, geoData: PlacesClient) : BaseAdapte
     private val mContext = context
     private var startingTime: Long = System.currentTimeMillis()
     private var currentTime: Long = DURATION_0_MS
+    private var mUnIndexedAddressIdentifiedListener:UnIndexedAddressIdentifiedListener=unIndexedAddressIdentifiedListener
+
 
     override fun getCount(): Int {
         return mResultList.size
@@ -95,7 +98,8 @@ class GooglePlacesAdapter(context: Activity, geoData: PlacesClient) : BaseAdapte
                 } else {
                     // The API did not return any results, invalidate the data set.
                     if(constraint != null && constraint.toString().trim().length >= SEARCH_LENGTH){
-                         notifyDataSetInvalidated()
+                        mUnIndexedAddressIdentifiedListener.unIndexedAddressIdentified()
+                        notifyDataSetInvalidated()
                     }
                 }
             }

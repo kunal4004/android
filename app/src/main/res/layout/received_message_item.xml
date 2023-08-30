@@ -17,7 +17,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <za.co.woolworths.financial.services.android.ui.views.WTextView
+    <TextView
         android:id="@+id/received_message_text"
         style="@style/chat_text_style"
         android:layout_marginStart="@dimen/sixteen_dp"
@@ -27,7 +27,7 @@
         android:paddingEnd="12dp"
         android:paddingBottom="14dp"
         android:textColor="@color/white"
-        app:WTextView_font="myriadpro_regular"
+        app:WTextView_font="opensans_regular"
         app:layout_constraintLeft_toRightOf="@+id/image_message_profile"
         app:layout_constraintTop_toTopOf="parent" />
 

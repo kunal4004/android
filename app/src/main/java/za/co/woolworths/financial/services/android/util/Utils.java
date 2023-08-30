@@ -3,11 +3,6 @@ package za.co.woolworths.financial.services.android.util;
 import static android.Manifest.permission_group.STORAGE;
 import static android.graphics.Color.BLACK;
 import static android.graphics.Color.WHITE;
-import za.co.woolworths.financial.services.android.models.dao.ApiRequestDao;
-import za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY;
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
-import za.co.woolworths.financial.services.android.util.RequestInAppReviewKt;
-import za.co.woolworths.financial.services.android.ui.activities.webview.usercase.WebViewHandler;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -97,8 +92,10 @@ import za.co.absa.openbankingapi.woolworths.integration.AbsaSecureCredentials;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dao.ApiRequestDao;
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
+import za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.CartSummary;
@@ -111,7 +108,9 @@ import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.webview.activities.WInternalWebPageActivity;
+import za.co.woolworths.financial.services.android.ui.activities.webview.usercase.WebViewHandler;
 import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
@@ -1132,18 +1131,6 @@ public class Utils {
             }
         } catch (NullPointerException ignored) {
         }
-    }
-
-    /***
-     * @method setRecyclerViewMargin - method to set margin to Recyclerview
-     * @param recyclerView - represent current Recyclerview
-     * @param bottomMargin - bottom margin of the recyclerview
-     */
-    public static void setRecyclerViewMargin(RecyclerView recyclerView, int bottomMargin) {
-        ViewGroup.MarginLayoutParams marginLayoutParams =
-                (ViewGroup.MarginLayoutParams) recyclerView.getLayoutParams();
-        marginLayoutParams.setMargins(0, 0, 0, bottomMargin);
-        recyclerView.setLayoutParams(marginLayoutParams);
     }
 
     public static void displayValidationMessageForResult(Activity context, CustomPopUpWindow.MODAL_LAYOUT key, String description, int requestCode) {

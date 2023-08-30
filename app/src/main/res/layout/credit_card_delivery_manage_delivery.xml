@@ -41,34 +41,37 @@
 
             <TextView
                 android:id="@+id/deliveryDate"
-                style="@style/myriad_pro_regular"
+                style="@style/opensans_regular_13_black"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/twenty_dp"
                 android:contentDescription="@string/cd_ccd_txtdayanddate"
                 android:lineSpacingMultiplier="1.33"
                 android:textColor="@color/offer_title"
-                android:textSize="@dimen/fifteen_sp"
                 app:layout_constraintLeft_toRightOf="@id/right_guideline"
                 app:layout_constraintStart_toStartOf="@id/left_guideline"
                 app:layout_constraintTop_toBottomOf="@id/editAddressTitle" />
 
             <TextView
                 android:id="@+id/deliveryTime"
-                style="@style/myriad_pro_regular"
+                style="@style/opensans_regular_13_black"
                 android:contentDescription="@string/cd_ccd_txttimeslot"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:lineSpacingMultiplier="1.33"
                 android:textColor="@color/offer_title"
-                android:textSize="@dimen/fifteen_sp"
                 app:layout_constraintRight_toRightOf="@id/right_guideline"
                 app:layout_constraintTop_toTopOf="@id/deliveryDate" />
 
             <TextView
                 android:id="@+id/deliveryAddress"
-                style="@style/myriad_pro_regular"
+                style="@style/opensans_regular_13_black"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/twenty_dp"
                 android:contentDescription="@string/cd_ccd_txtdeliveryaddress"
                 android:lineSpacingMultiplier="1.33"
                 android:textColor="@color/offer_title"
-                android:textSize="@dimen/fifteen_sp"
                 app:layout_constraintEnd_toEndOf="@id/right_guideline"
                 app:layout_constraintStart_toStartOf="@id/left_guideline"
                 app:layout_constraintTop_toBottomOf="@id/deliveryDate" />
@@ -114,10 +117,11 @@
 
             <TextView
                 android:id="@+id/name"
-                style="@style/myriad_pro_regular"
+                style="@style/opensans_regular_13_black"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:contentDescription="@string/cd_ccd_txtvalue"
                 android:textColor="@color/offer_title"
-                android:textSize="@dimen/fifteen_sp"
                 app:layout_constraintRight_toRightOf="@id/right_guideline"
                 app:layout_constraintTop_toTopOf="@id/nameTitle" />
 
@@ -137,13 +141,14 @@
 
             <TextView
                 android:id="@+id/bookingReference"
-                style="@style/myriad_pro_regular"
+                style="@style/opensans_regular_13_black"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/thirty_two_dp"
                 android:contentDescription="@string/cd_ccd_txtbookingref"
                 android:lineSpacingMultiplier="1.33"
                 android:textAllCaps="true"
                 android:textColor="@color/offer_title"
-                android:textSize="@dimen/fifteen_sp"
                 app:layout_constraintEnd_toEndOf="@id/right_guideline"
                 app:layout_constraintStart_toStartOf="@id/left_guideline"
                 app:layout_constraintTop_toBottomOf="@id/bookingReferenceTitle" />
@@ -164,12 +169,13 @@
 
             <TextView
                 android:id="@+id/createdDate"
-                style="@style/myriad_pro_regular"
+                style="@style/opensans_regular_13_black"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/thirty_two_dp"
                 android:contentDescription="@string/cd_ccd_txtcreatedvalue"
                 android:lineSpacingMultiplier="1.33"
                 android:textColor="@color/offer_title"
-                android:textSize="@dimen/fifteen_sp"
                 app:layout_constraintEnd_toEndOf="@id/right_guideline"
                 app:layout_constraintStart_toStartOf="@id/left_guideline"
                 app:layout_constraintTop_toBottomOf="@id/createdDateTitle" />

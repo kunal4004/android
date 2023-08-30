@@ -9,6 +9,9 @@ import za.co.woolworths.financial.services.android.recommendations.data.response
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.CommonRecommendationEvent
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.RecommendationRequest
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants.EVENT_PAGE_TYPE
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants.EVENT_TYPE_PAGEVIEW
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants.EVENT_URL_ORDERDETAILS
 import za.co.woolworths.financial.services.android.util.Utils
 import javax.inject.Inject
 
@@ -33,14 +36,11 @@ class SubmitRecommendationsUseCase @Inject constructor(
             RecommendationRequest(
                 events = listOf(
                     Event(
-                        eventType = eventType,
-                        null,
-                        null,
-                        null,
-                        null,
-                        null,
-                        orderId = orderId,
-                        purchaseLines = productLines
+                        eventType = EVENT_TYPE_PAGEVIEW,
+                        pageType = EVENT_PAGE_TYPE,
+                        url = EVENT_URL_ORDERDETAILS
+                    ), Event(
+                        eventType = eventType, orderId = orderId, purchaseLines = productLines
                     )
                 ).plus(CommonRecommendationEvent.commonRecommendationEvents()),
                 monetateId = monetateId

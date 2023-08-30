@@ -160,8 +160,8 @@ class ManageCardFunctionalRequirementImpl @Inject constructor(private val accoun
                                 listOfStoreCardFeatures.add(virtualTempCard)
                                 listOfStoreCardFeatures.add(primaryStoreCard)
                             } else {
-                                listOfStoreCardFeatures.add(primaryStoreCard)
                                 listOfStoreCardFeatures.add(virtualTempCard)
+                                listOfStoreCardFeatures.add(primaryStoreCard)
                             }
                         }
                         else -> {
@@ -318,7 +318,7 @@ class ManageCardFunctionalRequirementImpl @Inject constructor(private val accoun
             )
 
             // Manage your card
-            else -> StoreCardFeatureType.ManageMyCard
+            else -> StoreCardFeatureType.ManageMyCard(storeCard)
         }
     }
 }

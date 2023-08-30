@@ -77,13 +77,13 @@
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             android:layout_width="wrap_content"
+            style="@style/opensans_regular_13_black"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:background="@color/transparent"
             android:text="@string/please_wait"
             android:textColor="@color/white"
-            android:textSize="15sp"
-            app:WTextView_font="myriadpro_regular" />
+             />
 
         <ProgressBar
             android:layout_width="60dp"

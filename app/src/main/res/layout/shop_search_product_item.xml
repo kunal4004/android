@@ -170,7 +170,7 @@
                                     android:textColor="@color/white"
                                     android:textSize="@dimen/twelve_sp"
                                     android:visibility="gone"
-                                    app:WTextView_font="myriadpro_semibold" />
+                                    app:WTextView_font="opensansans_semibold" />
 
                                 <FrameLayout
                                     android:layout_width="40dp"

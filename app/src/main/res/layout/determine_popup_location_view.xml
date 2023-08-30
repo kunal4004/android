@@ -69,7 +69,7 @@
                 android:text="@string/your_delivery_location_is_set_to"
                 android:textColor="@color/description_color"
                 android:textSize="15sp"
-                app:WTextView_font="myriadpro_regular"/>
+                app:WTextView_font="opensans_regular"/>
 
             <LinearLayout
                 android:layout_width="match_parent"

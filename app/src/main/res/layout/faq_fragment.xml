@@ -31,8 +31,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/default_margin"/>
 
-                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    <TextView
                         android:id="@+id/textNotFound"
+                        style="@style/opensans_regular_13_black"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/bank_spacing_width"
@@ -40,9 +41,8 @@
                         android:layout_marginTop="@dimen/bank_spacing_width"
                         android:text="@string/no_faq_found"
                         android:textColor="@color/black"
-                        android:textSize="15sp"
                         android:visibility="gone"
-                        app:WTextView_font="myriadpro_regular"/>
+                       />
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/faqList"
@@ -128,7 +128,7 @@
             android:visibility="gone"
             app:WTextView_font="medium_bold"/>
 
-        <za.co.woolworths.financial.services.android.ui.views.WTextView
+        <TextView
             android:id="@+id/txtWWDescription"
             style="@style/TableLeft"
             android:layout_width="wrap_content"
@@ -139,8 +139,7 @@
             android:gravity="center"
             android:text="@string/no_connection_desc_1"
             android:textColor="@color/semi_transparent_black"
-            android:background="@color/transparent"
-            app:WTextView_font="myriadpro_regular"/>
+            android:background="@color/transparent" />
 
         <za.co.woolworths.financial.services.android.ui.views.WButton
             android:id="@+id/btnRetry"

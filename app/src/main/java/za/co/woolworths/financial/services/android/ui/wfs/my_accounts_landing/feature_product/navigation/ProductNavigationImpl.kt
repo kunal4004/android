@@ -51,9 +51,7 @@ class ProductNavigationImpl @Inject constructor(private val viewApplicationStatu
                 }
             }
         }
-
-        val response = Utils.objectToJson(getUserAccountResponse())
-
+        val response : String? = getUserAccountResponse()?.let {response -> Utils.objectToJson(response)}
         with(productIntent) {
             when (productGroup) {
                 is AccountProductCardsGroup.StoreCard -> createStoreCardIntent(deepLinkParams = deepLinkParams, productGroup = productGroup)

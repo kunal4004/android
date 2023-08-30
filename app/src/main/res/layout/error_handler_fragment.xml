@@ -27,9 +27,10 @@
         android:gravity="center"
         android:text="@string/unsuccessful_request" />
 
-    <za.co.woolworths.financial.services.android.ui.views.WTextView
+    <TextView
         android:id="@+id/errorDescription"
         style="@style/absa_page_description_text_style"
+        android:fontFamily="@font/opensans_regular"
         android:layout_centerHorizontal="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

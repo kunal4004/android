@@ -50,43 +50,50 @@
 
     <TextView
         android:id="@+id/tvAddressNickName"
-        style="@style/myriad_pro_semi_bold_black_15_text_style"
+        style="@style/opensens_semi_bold"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/sixteen_dp"
         android:ellipsize="end"
+        android:lineSpacingExtra="@dimen/two_sp"
         android:maxWidth="@dimen/_150sdp"
-        android:lineSpacingExtra="@dimen/_2sdp"
-        android:textColor="@color/black"
         android:maxLines="1"
+        android:textColor="@color/black"
+        android:textSize="@dimen/thirteen_sp"
+        android:translationY="@dimen/_minus_zero_pt_nine_sp"
         app:layout_constraintStart_toEndOf="@+id/rbAddressSelector"
         app:layout_constraintTop_toTopOf="@id/guidelineTop" />
 
     <TextView
         android:id="@+id/tvUpdateAddress"
-        style="@style/myriad_pro_semi_bold_amber_14_text_style"
+        style="@style/opensens_semi_bold"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/_5sdp"
         android:ellipsize="end"
-        android:lineSpacingExtra="@dimen/_2sdp"
         android:maxLines="1"
-        app:layout_constraintEnd_toStartOf="@id/imgEditAddress"
         android:text="@string/update_address"
+        android:textColor="@color/color_F0AC4E"
+        android:textSize="@dimen/thirteen_sp"
+        android:lineSpacingExtra="@dimen/two_sp"
+        android:translationY="@dimen/_minus_zero_pt_nine_sp"
+        app:layout_constraintEnd_toStartOf="@id/imgEditAddress"
         app:layout_constraintStart_toEndOf="@+id/tvAddressNickName"
         app:layout_constraintTop_toTopOf="@id/guidelineTop" />
 
     <TextView
         android:id="@+id/tvAddress"
-        style="@style/myriad_pro_regular_black_14_text_style"
+        style="@style/opensens_regular"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/sixteen_dp"
         android:layout_marginTop="@dimen/_2sdp"
-        android:lineSpacingExtra="@dimen/_2sdp"
-        android:maxLines="1"
         android:ellipsize="end"
+        android:lineSpacingExtra="@dimen/two_sp"
+        android:maxLines="1"
         android:textColor="@color/color_444444"
+        android:textSize="@dimen/twelve_sp"
+        android:translationY="@dimen/_minus_zero_pt_eight_sp"
         app:layout_constraintBottom_toBottomOf="@id/guidelineBottom"
         app:layout_constraintEnd_toStartOf="@id/imgEditAddress"
         app:layout_constraintStart_toEndOf="@+id/rbAddressSelector"
@@ -96,10 +103,10 @@
         android:id="@+id/imgEditAddress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
         app:layout_constraintTop_toTopOf="parent"
-        android:visibility="gone"
-        app:srcCompat="@drawable/ic_geo_edit"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:srcCompat="@drawable/ic_geo_edit" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

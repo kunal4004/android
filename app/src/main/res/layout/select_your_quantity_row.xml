@@ -9,7 +9,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="26dp"
-        android:fontFamily="@font/myriad_pro_regular_otf"
+        android:fontFamily="@font/opensans_regular_ttf"
         android:gravity="center"
         android:text="@string/placeholder"
         android:textColor="#222222"

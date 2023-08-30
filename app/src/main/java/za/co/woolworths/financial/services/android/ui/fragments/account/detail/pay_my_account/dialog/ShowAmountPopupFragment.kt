@@ -19,6 +19,7 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.PmaUpdatePaymentFragmentBinding
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dto.PMACardPopupModel
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
@@ -58,7 +59,13 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
         binding = PmaUpdatePaymentFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }
-
+    private fun setNoteTextsFromConfigIfAvailable() {
+        binding.apply {
+            AppConfigSingleton.mPayMyAccount?.enterPaymentAmountDialogFooterNote?.let {
+                pmaProcessDelayNoteTextView.text = bindString(R.string.pma_payment_delay_dynamic_label, it)
+            }
+        }
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -67,6 +74,7 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
             navController = NavHostFragment.findNavController(this)
 
         with(binding) {
+            setNoteTextsFromConfigIfAvailable()
             setupListener()
 
             with(payMyAccountViewModel) {

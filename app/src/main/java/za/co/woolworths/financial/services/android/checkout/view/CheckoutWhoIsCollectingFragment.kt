@@ -16,17 +16,17 @@ import com.awfs.coordination.R
 import com.awfs.coordination.databinding.CheckoutWhoIsCollectingFragmentBinding
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import za.co.woolworths.financial.services.android.cart.view.CartFragment
 import za.co.woolworths.financial.services.android.checkout.service.network.Address
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.SAVED_ADDRESS_KEY
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutReturningUserCollectionFragment.Companion.KEY_COLLECTING_DETAILS
 import za.co.woolworths.financial.services.android.checkout.viewmodel.WhoIsCollectingDetails
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.models.dto.CommerceItem
 import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
-import za.co.woolworths.financial.services.android.cart.view.CartFragment
-import za.co.woolworths.financial.services.android.models.dto.CommerceItem
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
@@ -37,6 +37,7 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.SAVED_ADDRESS_RESPONSE
 import za.co.woolworths.financial.services.android.util.Constant
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 import java.util.regex.Pattern
 
 /**
@@ -115,6 +116,10 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(R.
                 FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
                         FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_COLLECTION_VEHICLE_SELECT
             ), activity)
+
+        FirebaseAnalyticsEventHelper.setFirebaseEventForm(FirebaseManagerAnalyticsProperties.PropertyValues.MY_VEHICLE,
+                FirebaseManagerAnalyticsProperties.FORM_START, true)
+
         isMyVehicle = true
         binding.vehiclesDetailsLayout.taxiDescription.visibility = View.GONE
         binding.vehiclesDetailsLayout.vehicleDetailsLayout.visibility = View.VISIBLE
@@ -127,6 +132,10 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(R.
                 FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
                         FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_COLLECTION_TAXI_SELECT
             ), activity)
+
+        FirebaseAnalyticsEventHelper.setFirebaseEventForm(FirebaseManagerAnalyticsProperties.PropertyValues.TAXI,
+                FirebaseManagerAnalyticsProperties.FORM_START, true)
+
         isMyVehicle = false
         binding.vehiclesDetailsLayout.taxiDescription.visibility = View.VISIBLE
         binding.vehiclesDetailsLayout.vehicleDetailsLayout.visibility = View.GONE
@@ -172,10 +181,14 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(R.
         if (isMyVehicle) {
             if (!isErrorInputFields(listOfVehicleInputFields)) {
                 onConfirmButtonClick()
+                FirebaseAnalyticsEventHelper.setFirebaseEventForm(FirebaseManagerAnalyticsProperties.PropertyValues.MY_VEHICLE,
+                        FirebaseManagerAnalyticsProperties.FORM_COMPLETE, true)
             }
         } else {
             if (!isErrorInputFields(listOfTaxiInputFields)) {
                 onConfirmButtonClick()
+                FirebaseAnalyticsEventHelper.setFirebaseEventForm(FirebaseManagerAnalyticsProperties.PropertyValues.TAXI,
+                        FirebaseManagerAnalyticsProperties.FORM_COMPLETE, true)
             }
         }
     }
@@ -271,6 +284,10 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(R.
                 }
             }
         }
+
+        // When first time visit this page default event is "My Vehicle"
+        FirebaseAnalyticsEventHelper.setFirebaseEventForm(FirebaseManagerAnalyticsProperties.PropertyValues.MY_VEHICLE,
+                FirebaseManagerAnalyticsProperties.FORM_START, true)
 
         binding.whoIsCollectingDetailsLayout.recipientDetailsTitle?.text = bindString(R.string.who_is_collecting)
         binding.confirmDetails?.setOnClickListener(this)
@@ -432,6 +449,4 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(R.
     private fun FragmentActivity.closeFragment(view: View) {
         view.postDelayed({ onBackPressed() }, AppConstant.DELAY_500_MS)
     }
-
-
 }

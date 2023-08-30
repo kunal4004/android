@@ -15,8 +15,9 @@
         android:layout_height="match_parent"
         android:gravity="center">
 
-        <za.co.woolworths.financial.services.android.ui.views.WTextView
+        <TextView
             android:id="@+id/tvTitle"
+            style="@style/opensans_regular_13_black"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -30,14 +31,11 @@
             android:paddingEnd="@dimen/twenty_four_dp"
             android:text="@string/account_statement_error"
             android:textColor="@color/black30"
-            android:textSize="@dimen/fifteen_sp"
-            app:WTextView_font="myriadpro_regular"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             android:contentDescription="@string/view_statement_details_title_layout"
-            app:layout_constraintTop_toBottomOf="@+id/imMaintenanceMessage"
             app:layout_constraintVertical_chainStyle="packed" />
 
 

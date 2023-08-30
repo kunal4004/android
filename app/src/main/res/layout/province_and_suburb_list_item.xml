@@ -19,7 +19,8 @@
 
     <TextView
         android:id="@+id/name"
-        style="@style/myriad_pro_regular_black_15_text_style"
+        style="@style/opensens_regular"
+        android:textSize="@dimen/fifteen_sp"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/sixteen_dp"

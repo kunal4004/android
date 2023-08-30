@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.core
 
 import com.google.gson.Gson
+import com.google.gson.JsonObject
 import kotlinx.coroutines.flow.*
 import retrofit2.Response
 import retrofit2.http.*
@@ -12,6 +13,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.uti
 import za.co.woolworths.financial.services.android.ui.wfs.core.NetworkStatusUI
 import za.co.woolworths.financial.services.android.ui.wfs.core.mapNetworkCallToViewStateFlow
 import za.co.woolworths.financial.services.android.ui.wfs.core.mapNetworkState
+import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.NetworkManager
 import java.io.IOException
 import java.net.ConnectException
@@ -29,6 +31,8 @@ open class CoreDataSource @Inject constructor() : NetworkConfig(AppContextProvid
     sealed class IOTaskResult<out DTO : Any> {
         data class Success<out DTO : Any>(val data: DTO) : IOTaskResult<DTO>()
         data class OnFailure<out DTO : Any>(val data: DTO) : IOTaskResult<DTO>()
+        data class OnSessionTimeOut<out DTO : Any>(val data: DTO) : IOTaskResult<DTO>()
+
         data class OnFailed(val throwable: Throwable) : IOTaskResult<Nothing>()
         object NoConnectionState : IOTaskResult<Nothing>()
         object Empty : IOTaskResult<Nothing>()
@@ -61,15 +65,25 @@ open class CoreDataSource @Inject constructor() : NetworkConfig(AppContextProvid
             if (response.isSuccessful) {
                 val responseBody = response.body()
                 if (responseBody != null) {
-                    emit(IOTaskResult.Success(responseBody))
-                } else {
-                    emit(IOTaskResult.Empty)
+                    val responseBodyObj = Gson().toJsonTree(responseBody) as? JsonObject
+                    when(responseBodyObj?.get("httpCode")?.asInt){
+                        AppConstant.HTTP_OK -> emit(IOTaskResult.Success(responseBody))
+                        AppConstant.HTTP_SESSION_TIMEOUT_440,
+                        AppConstant.HTTP_SESSION_TIMEOUT_400-> emit(IOTaskResult.OnSessionTimeOut(responseBody))
+                        else -> emit(IOTaskResult.OnFailure(responseBody))
+                    }
+                }else {
+                   emit(IOTaskResult.Empty)
                 }
             } else {
                 try {
                     val errorBodyString = response.errorBody()?.string() ?: "Network error"
                     val parsedErrorBody = parseJson(errorBodyString) as T
-                    emit(IOTaskResult.OnFailure(parsedErrorBody))
+                    when(response.code()){
+                        AppConstant.HTTP_SESSION_TIMEOUT_440,
+                        AppConstant.HTTP_SESSION_TIMEOUT_400-> emit(IOTaskResult.OnSessionTimeOut(parsedErrorBody))
+                        else -> emit(IOTaskResult.OnFailure(parsedErrorBody))
+                    }
                 } catch (e: Exception) {
                     val error = IOException("API call failed with error - ${response.errorBody()?.string() ?: "Network error"}")
                     emit(IOTaskResult.OnFailed(error))
@@ -138,3 +152,5 @@ inline fun <reified T: Any> parseJson(body: String?): T {
     // handle OkResponse only
     return Gson().fromJson(body, T::class.java)
 }
+
+inline fun <reified T : Any> classOf(item: T) = T::class

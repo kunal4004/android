@@ -16,7 +16,7 @@
         android:lineSpacingExtra="1.4dp"
         android:textColor="@color/semi_transparent_black"
         android:textSize="15sp"
-        app:WTextView_font="myriadpro_regular"
+        app:WTextView_font="opensans_regular"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

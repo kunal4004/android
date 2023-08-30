@@ -44,7 +44,7 @@ sealed class AccountProductCardsGroup(
         override val isLoadingInProgress: LoadingOptions = LoadingOptions(),
         override val shimmerOptions: ShimmerOptions? = ShimmerOptions(),
         override val properties: ProductProperties = ProductPropertiesViewType.PersonalLoan.value(),
-        override val applyNowState: ApplyNowState? = ApplyNowState.STORE_CARD
+        override val applyNowState: ApplyNowState? = ApplyNowState.PERSONAL_LOAN
     ) : AccountProductCardsGroup(
         isLoadingInProgress = isLoadingInProgress,
         shimmerOptions = shimmerOptions,
@@ -61,7 +61,7 @@ sealed class AccountProductCardsGroup(
         override val isLoadingInProgress: LoadingOptions = LoadingOptions(),
         override val shimmerOptions: ShimmerOptions? = ShimmerOptions(),
         override val properties: ProductProperties = ProductPropertiesViewType.BlackCreditCard.value(),
-        override val applyNowState: ApplyNowState? = ApplyNowState.STORE_CARD
+        override val applyNowState: ApplyNowState? = ApplyNowState.BLACK_CREDIT_CARD
     ) : AccountProductCardsGroup(
         isLoadingInProgress = isLoadingInProgress,
         shimmerOptions = shimmerOptions,
@@ -79,7 +79,7 @@ sealed class AccountProductCardsGroup(
         override val isLoadingInProgress: LoadingOptions = LoadingOptions(),
         override val shimmerOptions: ShimmerOptions? = ShimmerOptions(),
         override val properties: ProductProperties = ProductPropertiesViewType.GoldCreditCard.value(),
-        override val applyNowState: ApplyNowState? = ApplyNowState.STORE_CARD
+        override val applyNowState: ApplyNowState? = ApplyNowState.GOLD_CREDIT_CARD
     ) : AccountProductCardsGroup(
         isLoadingInProgress = isLoadingInProgress,
         shimmerOptions = shimmerOptions,
@@ -96,7 +96,7 @@ sealed class AccountProductCardsGroup(
         override var retryOptions: RetryOptions = RetryOptions(),
         override val shimmerOptions: ShimmerOptions? = ShimmerOptions(),
         override val properties: ProductProperties = ProductPropertiesViewType.SilverCreditCard.value(),
-        override val applyNowState: ApplyNowState? = ApplyNowState.STORE_CARD
+        override val applyNowState: ApplyNowState? = ApplyNowState.SILVER_CREDIT_CARD
     ) : AccountProductCardsGroup(
         isLoadingInProgress = isLoadingInProgress,
         shimmerOptions = shimmerOptions,

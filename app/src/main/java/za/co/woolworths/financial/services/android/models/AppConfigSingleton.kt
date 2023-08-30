@@ -1,5 +1,7 @@
 package za.co.woolworths.financial.services.android.models
 
+import android.util.Log
+import com.google.gson.Gson
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.dto.RatingsAndReviews
 import za.co.woolworths.financial.services.android.models.dto.app_config.*
@@ -16,7 +18,6 @@ import za.co.woolworths.financial.services.android.models.dto.app_config.native_
 import za.co.woolworths.financial.services.android.models.dto.app_config.whatsapp.ConfigWhatsApp
 import za.co.woolworths.financial.services.android.models.repository.AppConfigRepository
 import za.co.woolworths.financial.services.android.util.Utils
-
 
 object AppConfigSingleton {
     var storeCardBlockReasons: List<Map<String, String>>? = null
@@ -70,10 +71,12 @@ object AppConfigSingleton {
     var authenticVersionStamp: String? = ""
     var lowStock: ConfigLowStock? = null
     var tooltipSettings: TooltipSettings? = null
-    var ratingsAndReviews : RatingsAndReviews? = null
+    var ratingsAndReviews: RatingsAndReviews? = null
+
     @JvmStatic
-    var glassBox : GlassBox? = null
-    var bnplConfig : BnplConfig? = null
+    var searchApiSettings: SearchApiSettings? = null
+    var glassBox: GlassBox? = null
+    var bnplConfig: BnplConfig? = null
 
     init {
         initialiseFromCache()
@@ -90,8 +93,10 @@ object AppConfigSingleton {
                 wwTodayURI = env.wwTodayURI
                 authenticVersionStamp = env.authenticVersionStamp ?: ""
 
-                WoolworthsApplication.getInstance().wGlobalState.startRadius = env.storeStockLocatorConfigStartRadius ?: 0
-                WoolworthsApplication.getInstance().wGlobalState.endRadius = env.storeStockLocatorConfigEndRadius ?: 0
+                WoolworthsApplication.getInstance().wGlobalState.startRadius =
+                    env.storeStockLocatorConfigStartRadius ?: 0
+                WoolworthsApplication.getInstance().wGlobalState.endRadius =
+                    env.storeStockLocatorConfigEndRadius ?: 0
             }
 
             appConfig.defaults?.let { defaults ->
@@ -103,7 +108,8 @@ object AppConfigSingleton {
                 howToSaveLink = defaults.howtosaveLink
                 wrewardsTCLink = defaults.wrewardsTCLink
                 cartCheckoutLink = defaults.cartCheckoutLink
-                firebaseUserPropertiesForDelinquentProductGroupCodes = defaults.firebaseUserPropertiesForDelinquentProductGroupCodes
+                firebaseUserPropertiesForDelinquentProductGroupCodes =
+                    defaults.firebaseUserPropertiesForDelinquentProductGroupCodes
             }
 
             appConfig.dashConfig?.apply {
@@ -129,10 +135,11 @@ object AppConfigSingleton {
                     "",
                     "",
                     "",
-                    0
+                    0,
                 )
             } else {
-                absaBankingOpenApiServices?.isEnabled = Utils.isFeatureEnabled(absaBankingOpenApiServices?.minimumSupportedAppBuildNumber)
+                absaBankingOpenApiServices?.isEnabled =
+                    Utils.isFeatureEnabled(absaBankingOpenApiServices?.minimumSupportedAppBuildNumber)
             }
 
             inAppChat = appConfig.inAppChat
@@ -148,7 +155,7 @@ object AppConfigSingleton {
                         "",
                         "",
                         "",
-                        mutableListOf()
+                        mutableListOf(),
                     ),
                     ConfigCustomerService(
                         "",
@@ -156,25 +163,30 @@ object AppConfigSingleton {
                         "",
                         "",
                         "",
-                        mutableListOf()
+                        mutableListOf(),
                     ),
                     null,
-                    mutableListOf()
+                    mutableListOf(),
                 )
             } else {
-                inAppChat?.isEnabled = Utils.isFeatureEnabled(inAppChat?.minimumSupportedAppBuildNumber)
+                inAppChat?.isEnabled =
+                    Utils.isFeatureEnabled(inAppChat?.minimumSupportedAppBuildNumber)
             }
 
             virtualTempCard = appConfig.virtualTempCard
             if (virtualTempCard != null) {
-                virtualTempCard?.isEnabled = Utils.isFeatureEnabled(virtualTempCard?.minimumSupportedAppBuildNumber)
+                virtualTempCard?.isEnabled =
+                    Utils.isFeatureEnabled(virtualTempCard?.minimumSupportedAppBuildNumber)
             }
 
             absaBankingOpenApiServices = appConfig.absaBankingOpenApiServices
 
             instantCardReplacement = appConfig.instantCardReplacement
-            instantCardReplacement?.isEnabled = instantCardReplacement?.minimumSupportedAppBuildNumber?.let { Utils.isFeatureEnabled(it) }
-                ?: false
+            instantCardReplacement?.isEnabled =
+                instantCardReplacement?.minimumSupportedAppBuildNumber?.let {
+                    Utils.isFeatureEnabled(it)
+                }
+                    ?: false
 
             appConfig.creditCardActivation?.apply {
                 isEnabled = Utils.isFeatureEnabled(minimumSupportedAppBuildNumber)
@@ -224,7 +236,7 @@ object AppConfigSingleton {
 
             appConfig.ratingsAndReviews?.apply {
                 minimumSupportedAppBuildNumber.let { isEnabled = Utils.isFeatureEnabled(it) }
-                ratingsAndReviews= this
+                ratingsAndReviews = this
             }
 
             appConfig.glassBox?.apply {
@@ -239,6 +251,9 @@ object AppConfigSingleton {
                         Utils.isFeatureEnabled(minimumSupportedAppBuildNumber)
                     bnplConfig = this
                 }
+            }
+            appConfig.searchApiSettings?.apply {
+                searchApiSettings = this
             }
         }
     }

@@ -27,6 +27,6 @@
         android:text="@string/please_check_back_later"
         android:textColor="#80000000"
         android:textSize="15sp"
-        app:WTextView_font="myriadpro_regular"
+        app:WTextView_font="opensans_regular"
         />
 </LinearLayout>

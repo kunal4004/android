@@ -20,14 +20,14 @@
 
     <TextView
         android:id="@+id/enterOTPSubtitle"
+        style="@style/opensans_regular_13_black"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/eight_dp"
-        android:fontFamily="@font/myriad_pro_regular"
         android:lineSpacingExtra="@dimen/five_dp"
         android:paddingEnd="@dimen/thirty_two_dp"
+        android:paddingStart="0dp"
         android:textColor="@color/color_7f7f7f"
-        android:textSize="@dimen/fifteen_sp"
         app:layout_constrainedWidth="true"
         app:layout_constraintTop_toBottomOf="@id/enterOTPTitle" />
 
@@ -77,9 +77,10 @@
         style="@style/enter_otp_edit_text_style"
         android:layout_marginStart="@dimen/two_dp"
         android:background="@drawable/otp_box_background_focus_selector"
-        android:fontFamily="@font/myriad_pro_semi_bold_otf"
+        android:fontFamily="@font/opensans_semi_bold"
         android:imeOptions="actionNext"
         android:maxLength="2"
+        android:textSize="@dimen/email_text_size_12sp"
         android:nextFocusForward="@+id/linkDeviceOTPEdtTxt4"
         app:layout_constraintBottom_toBottomOf="@+id/viewOTPBackground"
         app:layout_constraintEnd_toStartOf="@+id/linkDeviceOTPEdtTxt4"
@@ -117,13 +118,12 @@
 
     <TextView
         android:id="@+id/linkDeviceOTPErrorTxt"
+        style="@style/opensans_regular_12_text_style"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/ten_dp"
-        android:fontFamily="@font/myriad_pro_regular"
         android:text="@string/icr_wrong_otp_error"
         android:textColor="@color/error_color_code"
-        android:textSize="@dimen/fourteen_sp"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

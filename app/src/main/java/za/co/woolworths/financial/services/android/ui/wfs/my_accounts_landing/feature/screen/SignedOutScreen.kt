@@ -80,5 +80,5 @@ private fun ToolbarView(title: String, locator : String = sign_out_on_boarding_t
         isUpperCased = true,
         textAlign = TextAlign.Center,
         fontSize = FontDimensions.sp12,
-        color = Obsidian)
+        textColor = Obsidian)
 }

@@ -40,97 +40,153 @@
                 android:layout_height="wrap_content"
                 android:paddingTop="@dimen/two_dp"
                 android:paddingBottom="@dimen/two_dp"
-                android:layout_marginTop="@dimen/twenty_four_dp"
+                android:layout_marginTop="@dimen/nineteen_dp"
                 android:text="@string/where_are_we_delivering"
-                android:textSize="@dimen/twenty_sp"
+                android:textSize="@dimen/text_size_18sp"
+                android:lineSpacingExtra="@dimen/seven_sp"
                 app:layout_constraintRight_toRightOf="@id/right_guideline"
                 app:layout_constraintStart_toStartOf="@id/left_guideline"
                 app:layout_constraintTop_toBottomOf="@id/backButton"/>
 
+            <TextView
+                android:id="@+id/streetAddressPlaceHolder"
+                style="@style/add_address_screen_placeholders_style"
+                android:layout_marginTop="@dimen/twenty_four_dp"
+                android:text="@string/street_address_lbl"
+                app:layout_constraintRight_toRightOf="@id/right_guideline"
+                app:layout_constraintStart_toStartOf="@id/left_guideline"
+                app:layout_constraintTop_toBottomOf="@id/whereWeDeliveringTitle" />
+
             <AutoCompleteTextView
                 android:id="@+id/autoCompleteTextView"
-                style="@style/credi_card_delivery_edittext_style"
-                android:layout_marginTop="@dimen/nineteen_dp"
-                android:drawableStart="@drawable/mapview"
+                style="@style/add_address_auto_complete_edittext_style"
+                android:layout_marginTop="@dimen/four_dp"
                 android:drawablePadding="@dimen/eight_dp"
                 android:hint="@string/places_autocomplete_tv_hint"
                 android:maxLines="1"
                 app:layout_constraintEnd_toEndOf="@id/right_guideline"
                 app:layout_constraintStart_toStartOf="@id/left_guideline"
-                app:layout_constraintTop_toBottomOf="@id/whereWeDeliveringTitle" />
+                app:layout_constraintTop_toBottomOf="@id/streetAddressPlaceHolder" />
 
-            <TextView
-                android:id="@+id/autocompletePlaceErrorMsg"
-                style="@style/myriad_pro_regular"
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/errorMessageTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/sixteen_dp"
                 android:layout_marginTop="@dimen/fifteen_dp"
-                android:lineSpacingMultiplier="1.40"
-                android:text="@string/places_address_error_msg"
-                android:textColor="@color/input_error_color_code"
-                android:textSize="@dimen/fourteen_sp"
+                android:layout_marginBottom="@dimen/four_dp"
+                android:background="@color/white"
+                android:lineSpacingExtra="@dimen/_2ssp"
+                android:text="@string/geo_loc_error_msg_title"
+                android:textColor="@color/red_color"
+                android:textSize="@dimen/fifteen_sp"
+                android:translationY="@dimen/minus_one_point_five_sp"
                 android:visibility="gone"
-                app:layout_constraintEnd_toEndOf="@id/right_guideline"
+                app:fontFamily="@font/opensans_bold"
                 app:layout_constraintStart_toStartOf="@id/left_guideline"
                 app:layout_constraintTop_toBottomOf="@id/autoCompleteTextView" />
 
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/errorMessage"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/sixteen_dp"
+                android:layout_marginEnd="@dimen/nine_dp"
+                android:layout_marginBottom="@dimen/sixteen_dp"
+                android:background="@color/white"
+                android:lineSpacingExtra="@dimen/_1ssp"
+                android:text="@string/geo_loc_error_msg_with_out_pin"
+                android:textColor="@color/red_color"
+                android:textSize="@dimen/thirteen_sp"
+                android:visibility="gone"
+                app:fontFamily="@font/opensans_regular"
+                app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+                app:layout_constraintRight_toLeftOf="@+id/right_guideline"
+                app:layout_constraintTop_toBottomOf="@id/errorMessageTitle" />
 
             <TextView
-                android:id="@+id/addressStreetNamePlaceHolder"
-                style="@style/myriad_pro_regular_black"
-                android:layout_width="wrap_content"
+                android:id="@+id/autocompletePlaceErrorMsg"
+                style="@style/add_address_screen_error_msg_style"
+                android:text="@string/places_address_error_msg"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="@id/right_guideline"
+                app:layout_constraintStart_toStartOf="@id/left_guideline"
+                app:layout_constraintTop_toBottomOf="@id/errorMessage" />
+
+            <TextView
+                android:id="@+id/suburbPlaceHolder"
+                style="@style/add_address_screen_placeholders_style"
                 android:layout_marginTop="@dimen/twenty_four_dp"
                 android:background="@color/white"
                 android:contentDescription="@string/cd_ccd_labelsuburb"
-                android:text="@string/address_street_name_text_view"
-                android:textSize="@dimen/fourteen_sp"
-                android:visibility="gone"
+                android:text="@string/suburb_colon_text_view"
                 app:layout_constraintStart_toStartOf="@id/left_guideline"
                 app:layout_constraintTop_toBottomOf="@id/autocompletePlaceErrorMsg" />
 
             <EditText
-                android:id="@+id/addressStreetNameEditText"
-                android:layout_width="0dp"
+                android:id="@+id/suburbEditText"
                 style="@style/checkout_edittext_style"
-                android:maxLength="@integer/fifty"
-                android:visibility="gone"
-                android:layout_marginTop="@dimen/_3sdp"
-                app:layout_constraintEnd_toEndOf="@id/right_guideline"
+                android:layout_marginTop="@dimen/_4sdp"
+                android:background="@drawable/input_box_inactive_bg"
+                android:enabled="false"
+                app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+                app:layout_constraintRight_toRightOf="@+id/right_guideline"
+                app:layout_constraintTop_toBottomOf="@id/suburbPlaceHolder" />
+
+            <TextView
+                android:id="@+id/provincePlaceHolder"
+                style="@style/add_address_screen_placeholders_style"
+                android:layout_marginTop="@dimen/twenty_four_dp"
+                android:background="@color/white"
+                android:contentDescription="@string/cd_ccd_labelprovince"
+                android:text="@string/province_colon_text_view"
                 app:layout_constraintStart_toStartOf="@id/left_guideline"
-                app:layout_constraintTop_toBottomOf="@id/addressStreetNamePlaceHolder" />
+                app:layout_constraintTop_toBottomOf="@id/suburbEditText" />
+
+            <EditText
+                android:id="@+id/provinceAutocompleteEditText"
+                style="@style/checkout_edittext_style"
+                android:layout_marginTop="@dimen/_4sdp"
+                android:background="@drawable/input_box_inactive_bg"
+                android:enabled="false"
+                app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+                app:layout_constraintRight_toRightOf="@+id/right_guideline"
+                app:layout_constraintTop_toBottomOf="@id/provincePlaceHolder" />
 
 
             <TextView
-                android:id="@+id/addressStreetNameEditTextErrorMsg"
-                style="@style/myriad_pro_regular"
-                android:layout_marginTop="@dimen/fifteen_dp"
-                android:lineSpacingMultiplier="1.40"
-                android:text="@string/places_address_error_msg"
-                android:textColor="@color/input_error_color_code"
-                android:textSize="@dimen/fourteen_sp"
-                android:visibility="gone"
+                android:id="@+id/postalCodePlaceHolder"
+                style="@style/add_address_screen_placeholders_style"
+                android:layout_marginTop="@dimen/twenty_four_dp"
+                android:background="@color/white"
+                android:contentDescription="@string/cd_ccd_labelpostalcode"
+                android:text="@string/postal_code_colon_text_view"
+                app:layout_constraintStart_toStartOf="@id/left_guideline"
+                app:layout_constraintTop_toBottomOf="@id/provinceAutocompleteEditText" />
+
+
+            <EditText
+                android:id="@+id/postalCode"
+                style="@style/checkout_edittext_style"
+                android:layout_marginTop="@dimen/_4sdp"
+                android:background="@drawable/input_box_inactive_bg"
+                android:contentDescription="@string/cd_ccd_txtpostalcode"
+                android:enabled="false"
+                android:imeOptions="actionDone"
+                android:inputType="number"
                 app:layout_constraintEnd_toEndOf="@id/right_guideline"
                 app:layout_constraintStart_toStartOf="@id/left_guideline"
-                app:layout_constraintTop_toBottomOf="@id/addressStreetNameEditText" />
+                app:layout_constraintTop_toBottomOf="@id/postalCodePlaceHolder" />
 
-
-            <View
-                android:id="@+id/deliveringPartition"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/eight_dp"
-                android:layout_marginTop="@dimen/fifteen_dp"
-                android:background="@color/color_F3F3F3"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/addressStreetNameEditTextErrorMsg" />
 
             <include
                 android:id="@+id/recipientAddressLayout"
                 layout="@layout/checkout_new_user_address_details"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintBottom_toTopOf="@+id/addressDetailsPartition"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/deliveringPartition" />
+                app:layout_constraintTop_toBottomOf="@+id/postalCode" />
 
             <View
                 android:id="@+id/addressDetailsPartition"

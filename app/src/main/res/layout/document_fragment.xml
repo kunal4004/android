@@ -28,8 +28,9 @@
                 android:orientation="vertical"
                 android:paddingBottom="70dp">
 
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                <TextView
                     android:layout_width="match_parent"
+                    style="@style/opensans_regular_13_black"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/twenty_four_dp"
                     android:layout_marginTop="@dimen/twelve_dp"
@@ -40,8 +41,7 @@
                     android:minHeight="@dimen/sixteen_dp"
                     android:text="@string/select_your_bank_desc"
                     android:textColor="@color/black_50"
-                    android:textSize="15sp"
-                    app:WTextView_font="myriadpro_regular" />
+                    />
 
                 <RelativeLayout
                     style="@style/increase_limit_relative_style"

@@ -311,7 +311,7 @@
             android:textColor="#80000000"
             android:textSize="15sp"
             android:visibility="gone"
-            app:WTextView_font="myriadpro_regular"
+            app:WTextView_font="opensans_regular"
             />
     </RelativeLayout>
 

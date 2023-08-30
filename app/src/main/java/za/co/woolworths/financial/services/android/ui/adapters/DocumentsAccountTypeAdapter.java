@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.awfs.coordination.R;
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -41,12 +42,12 @@ public class DocumentsAccountTypeAdapter extends RecyclerView.Adapter<DocumentsA
 	public class MyViewHolder extends RecyclerView.ViewHolder {
 		private ImageView imgSelectBank;
 		public SimpleDraweeView imBankLogo;
-		private WTextView tvAccountType;
+		private TextView tvAccountType;
 		private RelativeLayout relDeaBank;
 
 		public MyViewHolder(View view) {
 			super(view);
-			tvAccountType = (WTextView) view.findViewById(R.id.tvBankName);
+			tvAccountType = (TextView) view.findViewById(R.id.tvBankName);
 			relDeaBank = (RelativeLayout) view.findViewById(R.id.relDeaBank);
 			imBankLogo = (SimpleDraweeView) view.findViewById(R.id.imBankLogo);
 			imgSelectBank = (ImageView) view.findViewById(R.id.imgSelectBank);

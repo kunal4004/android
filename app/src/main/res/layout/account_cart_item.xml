@@ -14,7 +14,7 @@
         android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
         android:adjustViewBounds="true"
-        android:src="@drawable/icon_card"
+        android:src="@drawable/ic_replacement_card_icon"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -25,7 +25,7 @@
         android:layout_width="0dp"
         android:layout_centerVertical="true"
         android:layout_toEndOf="@+id/imLogoIncreaseLimit"
-        android:fontFamily="@font/myriad_pro_semi_bold"
+        android:fontFamily="@font/opensans_semi_bold"
         android:text="@string/manage_my_card_title"
         app:layout_constraintBottom_toBottomOf="@+id/imLogoIncreaseLimit"
         app:layout_constraintEnd_toStartOf="@+id/manageMyCardImageView"

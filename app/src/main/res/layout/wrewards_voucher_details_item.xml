@@ -256,7 +256,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/myriad_pro_regular_otf"
+                android:fontFamily="@font/opensans_regular_ttf"
                 android:letterSpacing="-0.01"
                 android:text="@string/minimum_spend"
                 android:textColor="#4d000000"
@@ -269,7 +269,7 @@
                 android:id="@+id/minSpend"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/myriad_pro_regular_otf"
+                android:fontFamily="@font/opensans_regular_ttf"
                 android:text="1500"
                 android:textAllCaps="true"
                 android:textColor="@color/black"

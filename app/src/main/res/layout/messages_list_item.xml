@@ -79,8 +79,9 @@
                                 android:textSize="14sp"
                                 app:WTextView_font="medium_bold" />
 
-                            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                            <TextView
                                 android:id="@+id/date"
+                                style="@style/opensans_regular_11_black"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_alignBottom="@+id/messagingwlogo"
@@ -90,11 +91,11 @@
                                 android:gravity="center_vertical"
                                 android:text="Today"
                                 android:textColor="#999999"
-                                android:textSize="12sp"
-                                app:WTextView_font="myriadpro_regular" />
+                            />
 
-                            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                            <TextView
                                 android:id="@+id/bodyMessage"
+                                style="@style/opensans_regular_13_black"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_below="@+id/msgTitle"
@@ -103,9 +104,7 @@
                                 android:layout_toEndOf="@+id/messagingwlogo"
                                 android:lineSpacingExtra="8dp"
                                 android:text="With Wrewards you can save up to 20% instantly on thousands of items through out the store, from food to clothing to homeware to beauty and more. "
-                                android:textColor="@color/in_app_msg_color_desc"
-                                android:textSize="15sp"
-                                app:WTextView_font="myriadpro_regular" />
+                                android:textColor="@color/in_app_msg_color_desc" />
                         </RelativeLayout>
 
 

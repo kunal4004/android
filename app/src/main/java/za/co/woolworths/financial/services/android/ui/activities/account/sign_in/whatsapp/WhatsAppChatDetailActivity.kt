@@ -51,6 +51,7 @@ class WhatsAppChatDetailActivity : AppCompatActivity(), View.OnClickListener {
             setDisplayShowTitleEnabled(false)
             setDisplayUseLogoEnabled(false)
             setHomeAsUpIndicator(R.drawable.back24)
+            setHomeActionContentDescription(getString(R.string.back_button))
         }
     }
 

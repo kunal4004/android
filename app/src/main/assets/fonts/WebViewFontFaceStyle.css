@@ -8,7 +8,7 @@
 @font-face
 {
     font-family: 'Myriad Pro';
-    src: url('MyriadPro-Regular.otf') format('opentype');
+    src: url('OpenSans-Regular.ttf') format('opentype');
 }
 
 body.bpi-notes {

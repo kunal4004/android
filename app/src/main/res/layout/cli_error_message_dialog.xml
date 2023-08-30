@@ -38,17 +38,16 @@
 
     <TextView
         android:id="@+id/descriptionTextView"
+        style="@style/opensans_regular_13_black"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/_16sdp"
         android:layout_marginTop="@dimen/_16sdp"
         android:layout_marginEnd="@dimen/_16sdp"
-        android:fontFamily="@font/myriad_pro_regular_otf"
         android:gravity="center"
         android:lineSpacingExtra="@dimen/_4sdp"
         android:text="@string/loan_request_low_desc"
         android:textColor="@color/description_color"
-        android:textSize="@dimen/fifteen_sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"

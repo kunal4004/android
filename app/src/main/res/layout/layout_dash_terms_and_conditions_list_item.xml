@@ -30,7 +30,7 @@
         android:lineSpacingExtra="@dimen/three_dp"
         android:textColor="@color/color_7f7f7f"
         android:textSize="@dimen/sixteen_sp"
-        app:WTextView_font="myriadpro_regular"
+        app:WTextView_font="opensans_regular"
         app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

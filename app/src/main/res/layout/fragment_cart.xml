@@ -197,6 +197,13 @@
                     android:id="@+id/liquorComplianceMain"
                     layout="@layout/liquor_compliance_banner"/>
 
+                <View
+                    android:id="@+id/viewRecommendationDivider"
+                    android:layout_width="match_parent"
+                    android:visibility="gone"
+                    android:layout_height="@dimen/eight_dp"
+                    android:background="@color/color_F5F5F5"/>
+
                 <include
                         android:id="@+id/layoutRecommendationContainer"
                         layout="@layout/recommendation_fragment_container_view"

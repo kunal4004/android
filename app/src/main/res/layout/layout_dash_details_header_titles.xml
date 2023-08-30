@@ -31,7 +31,7 @@
         android:layout_marginTop="@dimen/fifteen_dp"
         android:gravity="center"
         android:lineSpacingExtra="@dimen/five_dp"
-        app:WTextView_font="myriadpro_regular"
+        app:WTextView_font="opensans_regular"
         android:paddingBottom="@dimen/fifteen_dp"
         android:text="@string/dash_details_woolies_app_available_desc"
         android:textColor="@color/color_7f7f7f"

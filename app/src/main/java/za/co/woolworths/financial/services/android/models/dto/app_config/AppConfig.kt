@@ -1,7 +1,8 @@
-package za.co.woolworths.financial.services.android.models.dto.app_config
+package za.co.woolworths.financial.services.android.models.dto.app_config // ktlint-disable package-name
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
+import za.co.woolworths.financial.services.android.models.SearchApiSettings
 import za.co.woolworths.financial.services.android.models.dto.RatingsAndReviews
 import za.co.woolworths.financial.services.android.models.dto.app_config.account_options.ConfigAccountOptions
 import za.co.woolworths.financial.services.android.models.dto.app_config.balance_protection_insurance.ConfigBalanceProtectionInsurance
@@ -12,7 +13,6 @@ import za.co.woolworths.financial.services.android.models.dto.app_config.device_
 import za.co.woolworths.financial.services.android.models.dto.app_config.instant_card_replacement.ConfigInstantCardReplacement
 import za.co.woolworths.financial.services.android.models.dto.app_config.native_checkout.ConfigNativeCheckout
 import za.co.woolworths.financial.services.android.models.dto.app_config.whatsapp.ConfigWhatsApp
-import java.util.*
 
 @Parcelize
 data class AppConfig(
@@ -49,5 +49,6 @@ data class AppConfig(
     var toolTipSettings: TooltipSettings?,
     var ratingsAndReviews: RatingsAndReviews?,
     var glassBox: GlassBox?,
-    var bnplConfig: BnplConfig?
+    var bnplConfig: BnplConfig?,
+    var searchApiSettings: SearchApiSettings?,
 ) : Parcelable

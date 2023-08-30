@@ -4,7 +4,6 @@ import static za.co.woolworths.financial.services.android.ui.fragments.product.g
 import static za.co.woolworths.financial.services.android.util.AppConstant.Keys.EXTRA_SEND_DELIVERY_DETAILS_PARAMS;
 
 import android.app.Activity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -17,6 +16,8 @@ import java.util.List;
 import kotlin.jvm.functions.Function3;
 import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.IResponseListener;
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
+import za.co.woolworths.financial.services.android.models.SearchApiSettings;
 import za.co.woolworths.financial.services.android.models.dto.PagingResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.ProductView;
@@ -139,7 +140,6 @@ public class ProductListingExtensionFragment extends BaseFragmentBinding<GridLay
         }
         if (pagingResponse.numItemsInTotal != null && productView.pagingResponse.pageOffset != null) {
             mNumItemsInTotal = pagingResponse.numItemsInTotal;
-            Log.d("paginationResponse", "pageOffset " + productView.pagingResponse.pageOffset + " mNumItemsInTotal " + mNumItemsInTotal);
             if (productView.pagingResponse.pageOffset > mNumItemsInTotal) {
                 setIsLastPage(true);
             }
@@ -157,7 +157,9 @@ public class ProductListingExtensionFragment extends BaseFragmentBinding<GridLay
     }
 
     private void calculatePageOffset() {
-        pageOffset = pageOffset + Utils.PAGE_SIZE;
+        SearchApiSettings searchSettings = AppConfigSingleton.INSTANCE.getSearchApiSettings();
+        pageOffset = pageOffset + ((searchSettings!= null && searchSettings.getPageSize() > 0 )
+                ? searchSettings.getPageSize() : Utils.PAGE_SIZE);
         getProductRequestBody().setPageOffset(pageOffset);
     }
 

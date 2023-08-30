@@ -200,12 +200,13 @@
         tools:layout="@layout/fragment_suburb_not_deliverable_bottomsheet_dialog" />
     <dialog
         android:id="@+id/geoUnsellableItemsFragment"
-        android:name="za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment"
-        android:label="UnsellableItemsFragment" />
+        android:name="za.co.woolworths.financial.services.android.ui.views.UnsellableItemsBottomSheetDialog"
+        android:label="UnsellableItemsFragment"
+        tools:layout="@layout/unsellable_items_bottom_sheet_dialog"/>
 
     <dialog
         android:id="@+id/poiMapBottomSheetDialog"
-        android:name="za.co.woolworths.financial.services.android.ui.fragments.poi.MapsPoiBottomSheetDialog"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.poi.PoiBottomSheetDialog"
         android:label="MapsPoiBottomSheetDialog"/>
     <dialog
         android:id="@+id/pargoStoreInfoBottomSheetDialog"

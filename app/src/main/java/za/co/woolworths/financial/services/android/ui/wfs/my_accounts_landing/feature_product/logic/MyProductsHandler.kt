@@ -8,6 +8,7 @@ import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.fe
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.enumtype.CreditCardType
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.enumtype.ProductTransformer
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.enumtype.AccountProductCardsGroup
+import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.enumtype.LoadingOptions
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.model.ProductDetails
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.model.UserAccountResponse
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_view_application_status.ViewApplicationStatusImpl
@@ -29,7 +30,7 @@ interface MyProductsHandler {
 
     fun isNowWfsUser(userAccountResponse: UserAccountResponse?): Boolean
 
-    fun transformSingleProductResult(productGroupCode: String?, productDetails: Any?): AccountProductCardsGroup?
+    fun convertProductToAccountProductCardsGroup(productGroupCode: String?, productDetails: Any?): AccountProductCardsGroup?
 
     fun addViewApplicationStatusIfNeeded(validProductList: List<ProductDetails>?,
                                          mapOfMyProducts: MutableMap<String, AccountProductCardsGroup?>)
@@ -38,9 +39,7 @@ interface MyProductsHandler {
 class MyProductsHandlerImpl @Inject constructor(private val status: ViewApplicationStatusImpl) :
     MyProductsHandler {
 
-    override fun isC2User() = runBlocking {
-        withContext(Dispatchers.IO) { SessionUtilities.getInstance().isC2User }
-    }
+    override fun isC2User() = SessionUtilities.getInstance().isC2User
 
     override fun isNowWfsUser(userAccountResponse: UserAccountResponse?): Boolean {
         userAccountResponse ?: return false
@@ -70,18 +69,14 @@ class MyProductsHandlerImpl @Inject constructor(private val status: ViewApplicat
         productDetails: Any?
     ): AccountProductCardsGroup? {
 
-        var productDetail : ProductDetails? = null
-        var insuranceProducts : InsuranceProducts? = null
-        var transformer = ProductTransformer()
-
-        if (productDetails is ProductDetails) {
-            productDetail = productDetails
-            transformer = getProductTransformer(productDetail)
+        val productDetail = when (productDetails) {
+            is ProductDetails -> productDetails
+            else -> null
         }
 
-        if (productDetails is InsuranceProducts) {
-            insuranceProducts = productDetails
-        }
+        val insuranceProducts = productDetails as? InsuranceProducts
+
+        val transformer = getProductTransformer(productDetail)
 
         val productGroupMap = mapOf(
             AccountProductKeys.StoreCard to AccountProductCardsGroup.StoreCard(productDetails = productDetail, transformer = transformer),
@@ -89,17 +84,17 @@ class MyProductsHandlerImpl @Inject constructor(private val status: ViewApplicat
             AccountProductKeys.BlackCreditCard to AccountProductCardsGroup.BlackCreditCard(productDetails = productDetail, transformer = transformer),
             AccountProductKeys.GoldCreditCard to AccountProductCardsGroup.GoldCreditCard(productDetails = productDetail,transformer =  transformer),
             AccountProductKeys.SilverCreditCard to AccountProductCardsGroup.SilverCreditCard(productDetails = productDetail, transformer = transformer),
-            AccountProductKeys.PetInsurance to AccountProductCardsGroup.PetInsurance(insuranceProducts = insuranceProducts),
+            AccountProductKeys.PetInsurance to AccountProductCardsGroup.PetInsurance(insuranceProducts = insuranceProducts, isLoadingInProgress = LoadingOptions(isAccountLoading = true)),
             AccountProductKeys.ViewApplicationStatus to AccountProductCardsGroup.ApplicationStatus()
         )
 
         return productGroupMap[key]
     }
 
-    private fun getProductTransformer(productDetail: ProductDetails): ProductTransformer {
-        val isAccountInArrears = productDetail.productOfferingGoodStanding == false
-        val isChargedOff = Utils.ACCOUNT_CHARGED_OFF.equals(productDetail.productOfferingStatus, ignoreCase = true)
-        val availableFund = currencyFormatter(productDetail.availableFunds)
+    private fun getProductTransformer(productDetail: ProductDetails?): ProductTransformer {
+        val isAccountInArrears = productDetail?.productOfferingGoodStanding == false
+        val isChargedOff = Utils.ACCOUNT_CHARGED_OFF.equals(productDetail?.productOfferingStatus, ignoreCase = true)
+        val availableFund = currencyFormatter(productDetail?.availableFunds)
 
         return ProductTransformer(
             isAccountInArrears = isAccountInArrears,
@@ -114,13 +109,16 @@ class MyProductsHandlerImpl @Inject constructor(private val status: ViewApplicat
         ).toString().replace("R ", "R")
     }
 
-    override fun transformSingleProductResult(productGroupCode: String?, productDetails: Any?): AccountProductCardsGroup? {
-        if (productDetails is InsuranceProducts) {
-            return transformProductDetailToProductGroup(key = AccountProductKeys.PetInsurance, productDetails = productDetails)
+    override fun convertProductToAccountProductCardsGroup(productGroupCode: String?, productDetails: Any?): AccountProductCardsGroup? {
+        val transformedProductGroupKey = when (productDetails) {
+            is InsuranceProducts -> AccountProductKeys.PetInsurance
+            else -> {
+                val productDetail = productDetails as? ProductDetails
+                val code = productGroupCode ?: productDetail?.productGroupCode ?: ""
+                getProductKeyByCode(code, productDetail)
+            }
         }
-        val productDetail = productDetails as? ProductDetails
-        val code = productGroupCode ?: productDetail?.productGroupCode ?: ""
-        return transformProductDetailToProductGroup(key = getProductKeyByCode(code, productDetail), productDetails = productDetail)
+        return transformProductDetailToProductGroup(key = transformedProductGroupKey, productDetails = productDetails)
     }
 
     private fun getProductKeyByCode(code: String, productDetails: ProductDetails?): AccountProductKeys? {

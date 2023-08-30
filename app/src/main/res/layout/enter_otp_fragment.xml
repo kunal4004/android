@@ -26,17 +26,16 @@
 
     <TextView
         android:id="@+id/enterOTPDescriptionScreenTextView"
+        style="@style/opensans_regular_13_black"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginTop="@dimen/store_card_enter_otp_title_top_margin_16dp"
         android:layout_marginEnd="32dp"
-        android:fontFamily="@font/myriad_pro_regular_otf"
         android:gravity="center|start"
         android:lineSpacingExtra="1.dp"
         android:lineSpacingMultiplier="1.40"
         android:textColor="@color/permanent_card_block_desc_color"
-        android:textSize="@dimen/store_card_text_size_15_sp"
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.6"
@@ -58,17 +57,16 @@
 
     <TextView
         android:id="@+id/loadingDotsText"
+        style="@style/opensans_regular_13_black"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_marginStart="32dp"
         android:layout_marginTop="@dimen/store_card_enter_otp_title_top_margin_16dp"
-        android:fontFamily="@font/myriad_pro_regular_otf"
         android:gravity="center|start"
         android:lineSpacingExtra="1.dp"
         android:lineSpacingMultiplier="1.40"
         android:text="@string/sending_otp_text"
         android:textColor="@color/permanent_card_block_desc_color"
-        android:textSize="15sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvEnterOtpTitle" />
 
@@ -120,7 +118,7 @@
         style="@style/enter_otp_edit_text_style"
         android:layout_marginStart="2dp"
         android:background="@drawable/otp_box_background_focus_selector"
-        android:fontFamily="@font/myriad_pro_semi_bold_otf"
+        android:fontFamily="@font/futura_semi_bold_ttf"
         android:imeOptions="actionNext"
        
         android:nextFocusForward="@+id/edtVerificationCode4"
@@ -171,18 +169,17 @@
 
     <TextView
         android:id="@+id/didNotReceiveOTPTextView"
+        style="@style/opensans_regular_13_black"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_alignParentStart="true"
         android:layout_centerInParent="true"
         android:layout_marginEnd="8dp"
-        android:fontFamily="@font/myriad_pro_regular_otf"
         android:gravity="start|center"
         android:letterSpacing="0.015"
         android:text="@string/did_not_receive_title"
         android:textColor="@color/black"
         android:textAllCaps="true"
-        android:textSize="@dimen/store_card_text_size_15_sp"
         app:layout_constraintBottom_toBottomOf="@+id/vLinkBottomNavigation"
         app:layout_constraintEnd_toStartOf="@+id/imNextProcessLinkCard"
         app:layout_constraintStart_toStartOf="@+id/vLinkBottomNavigation"
@@ -211,15 +208,14 @@
 
     <TextView
         android:id="@+id/otpErrorTextView"
+        style="@style/opensans_regular_12_black"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginTop="@dimen/store_card_enter_otp_title_top_margin_8dp"
         android:layout_marginEnd="32dp"
-        android:fontFamily="@font/myriad_pro_regular_otf"
         android:text="@string/wrong_otp_desc"
         android:textColor="#D0021B"
-        android:textSize="@dimen/store_card_text_size_14_sp"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

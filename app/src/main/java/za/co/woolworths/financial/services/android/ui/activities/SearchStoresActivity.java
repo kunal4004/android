@@ -175,7 +175,7 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
 		// searchCloseIcon.setImageResource(R.drawable.close_24);
 		final TextView searchText = (TextView)
 				searchView.findViewById(R.id.search_src_text);
-		Typeface font = Typeface.createFromAsset(getAssets(), "fonts/MyriadPro-Regular.otf");
+		Typeface font = Typeface.createFromAsset(getAssets(), "fonts/OpenSans-Regular.ttf");
 		searchText.setTypeface(font);
 		mCloseButton.setOnClickListener(new View.OnClickListener() {
 			@Override

@@ -361,7 +361,7 @@ class ProductLandingRouterImpl @Inject constructor(
     ) {
         serverErrorResponse?.let { response ->
             showErrorDialog(
-                appCompatActivity as? AppCompatActivity,
+                appCompatActivity as? androidx.appcompat.app.AppCompatActivity,
                 response
             )
         }
@@ -376,7 +376,7 @@ class ProductLandingRouterImpl @Inject constructor(
     ) {
         val serverErrorResponse = ServerErrorResponse()
         serverErrorResponse.desc = activity?.getString(R.string.oops_error_message) ?: ""
-        showErrorDialog(activity as? AppCompatActivity, serverErrorResponse)
+        showErrorDialog(activity as? androidx.appcompat.app.AppCompatActivity, serverErrorResponse)
     }
 
     override fun showNoConnectionToast(activity: Activity?) {

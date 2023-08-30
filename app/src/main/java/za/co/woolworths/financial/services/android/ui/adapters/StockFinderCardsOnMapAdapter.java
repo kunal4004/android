@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import android.text.style.AbsoluteSizeSpan;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.awfs.coordination.R;
 
@@ -40,8 +41,8 @@ public class StockFinderCardsOnMapAdapter extends PagerAdapter {
 		View cView = mContext.getLayoutInflater().inflate(R.layout.stock_finder_item, container, false);
 		WTextView storeName = (WTextView) cView.findViewById(R.id.storeName);
 		WTextView storeDistance = (WTextView) cView.findViewById(R.id.distance);
-		WTextView storeAddress = (WTextView) cView.findViewById(R.id.storeAddress);
-		WTextView storeTimeing = (WTextView) cView.findViewById(R.id.timeing);
+		TextView storeAddress = (TextView) cView.findViewById(R.id.storeAddress);
+		TextView storeTimeing = (TextView) cView.findViewById(R.id.timeing);
 		WTextView offerings = (WTextView) cView.findViewById(R.id.offerings);
 
 		StoreDetails storeDetails = storeDetailsList.get(position);

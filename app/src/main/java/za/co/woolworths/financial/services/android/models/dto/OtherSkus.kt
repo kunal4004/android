@@ -2,11 +2,9 @@ package za.co.woolworths.financial.services.android.models.dto
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
-import com.google.gson.annotations.Expose
-import com.google.gson.annotations.SerializedName
 
 @Parcelize
-data class OtherSkus (
+data class OtherSkus(
     @JvmField
     var sku: String? = null,
 
@@ -32,9 +30,15 @@ data class OtherSkus (
     var wasPrice: String? = null,
 
     @JvmField
-	var quantity: Int = 0,
+    var quantity: Int = 0,
 
     var kilogramPrice: String? = null,
 
     var styleIdOnSale: Boolean? = null
-): Parcelable
+) : Parcelable
+
+fun OtherSkus.toAddToListRequest() = AddToListRequest(
+    skuID = this.sku,
+    giftListId = this.sku,
+    catalogRefId = this.sku
+)

@@ -86,7 +86,7 @@
                     android:textColor="@color/black"
                     android:textSize="12.5sp"
                     android:visibility="gone"
-                    app:WTextView_font="myriadpro_regular" />
+                    app:WTextView_font="opensans_regular" />
             </LinearLayout>
         </LinearLayout>
 
@@ -115,7 +115,7 @@
                 android:paddingEnd="42dp"
                 android:textColor="@color/black"
                 android:textSize="13sp"
-                app:WTextView_font="myriadpro_regular" />
+                app:WTextView_font="opensans_regular" />
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:id="@+id/timeing"
@@ -127,7 +127,7 @@
                 android:paddingBottom="10dp"
                 android:textColor="#ABABAB"
                 android:textSize="13sp"
-                app:WTextView_font="myriadpro_regular" />
+                app:WTextView_font="opensans_regular" />
         </RelativeLayout>
     </LinearLayout>
 

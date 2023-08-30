@@ -64,13 +64,12 @@
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tvErrorDesc"
+        style="@style/opensans_regular_13_black"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_7sdp"
         android:gravity="center"
-        android:fontFamily="@font/myriad_pro_regular"
         android:textColor="@color/color_444444"
-        android:textSize="@dimen/_13ssp"
         android:lineSpacingExtra="@dimen/_4ssp"
         tool:text="We can’t seem to reach your shopper.\n Give them a few moments, and try again."
         app:layout_constraintTop_toBottomOf="@+id/tvErrorTitle"
@@ -92,8 +91,24 @@
         android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="@id/endGuideline"
         app:layout_constraintStart_toStartOf="@id/startGuideline"
-        app:layout_constraintBottom_toTopOf="@id/bottomGuideline"
+        app:layout_constraintBottom_toTopOf="@id/cancelButton"
         app:layout_constraintTop_toBottomOf="@+id/tvErrorDesc" />
+
+    <TextView
+        android:id="@+id/cancelButton"
+        style="@style/link_text_style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/fifteen_dp"
+        android:letterSpacing="0.1"
+        android:padding="@dimen/two_dp"
+        android:text="@string/dismiss_underline"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/bottomGuideline"
+        app:layout_constraintEnd_toEndOf="@id/endGuideline"
+        app:layout_constraintStart_toStartOf="@id/startGuideline"
+        app:layout_constraintTop_toBottomOf="@+id/gotItButton" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

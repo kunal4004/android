@@ -231,7 +231,7 @@ public class StoreDetailsActivity extends AppCompatActivity implements DynamicMa
                 textView = (TextView) v.findViewById(R.id.openingHoursTextView);
                 textView.setText(storeDetail.times.get(i).day + " " + storeDetail.times.get(i).hours);
                 if (i == 0)
-                    textView.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/MyriadPro-Semibold.otf"));
+                    textView.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/OpenSans-SemiBold.ttf"));
                 timeingsLayout.addView(textView);
             }
         } else {

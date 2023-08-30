@@ -14,8 +14,8 @@
         android:shadowColor="@color/black"
         android:theme="@style/black_check_style"
         android:textColor="@color/report_text_color"
-        android:fontFamily="@font/myriad_pro_regular"
-        android:textSize="@dimen/fifteen_sp"
+        android:fontFamily="@font/opensans_regular"
+        android:textSize="@dimen/fourteen_sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

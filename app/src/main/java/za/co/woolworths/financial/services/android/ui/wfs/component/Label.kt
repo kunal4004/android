@@ -38,7 +38,7 @@ fun FontsPreview() {
             LabelMedium(LabelProperties(label = label))
             LabelSmall(LabelProperties(stringId = R.string.contact_us_financial_services))
             LabelSmall(LabelProperties(label = label))
-            SectionHeaderTitleLabel(LabelProperties(label = label, style = futuraFamilyHeader1()))
+            TextFuturaFamilyHeader1(text = label, style = futuraFamilyHeader1())
             LabelLightText(LabelProperties(label = label, style = futuraFamilyHeader3()))
         }
     }

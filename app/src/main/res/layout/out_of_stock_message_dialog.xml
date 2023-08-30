@@ -31,7 +31,7 @@
         android:lineSpacingExtra="4dp"
         android:textColor="@color/description_color"
         android:textSize="15sp"
-        app:WTextView_font="myriadpro_regular" />
+        app:WTextView_font="opensans_regular" />
 
     <View
         android:layout_width="match_parent"

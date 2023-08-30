@@ -16,6 +16,7 @@ import androidx.navigation.Navigation
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.ProcessRequestFragmentBinding
 import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.PayUPayResultResponse
 import za.co.woolworths.financial.services.android.models.network.OneAppService
@@ -214,9 +215,21 @@ class PMA3DSecureProcessRequestFragment : ProcessYourRequestFragment(), View.OnC
     private fun ProcessRequestFragmentBinding.updateUIOnSuccess() {
         menuItem?.isVisible = true
         processRequestNavHostFragment.apply {
-            includePMAProcessingSuccess?.root?.visibility = VISIBLE
-            includePMAProcessing?.root?.visibility = GONE
-            includePMAProcessingFailure?.root?.visibility = GONE
+            setSuccessTextsFromConfigIfAvailable()
+            includePMAProcessingSuccess.root.visibility = VISIBLE
+            includePMAProcessing.root.visibility = GONE
+            includePMAProcessingFailure.root.visibility = GONE
+        }
+    }
+
+    private fun ProcessRequestFragmentBinding.setSuccessTextsFromConfigIfAvailable() {
+        processRequestNavHostFragment.apply {
+            AppConfigSingleton.mPayMyAccount?.paymentSuccessfulTitle?.let {
+                includePMAProcessingSuccess.processRequestTitleTextView.text = it
+            }
+            AppConfigSingleton.mPayMyAccount?.paymentSuccessfulDescription?.let {
+                includePMAProcessingSuccess.processRequestDescriptionTextView.text = it
+            }
         }
     }
 

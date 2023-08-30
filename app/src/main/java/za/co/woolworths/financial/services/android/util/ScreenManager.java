@@ -24,18 +24,19 @@ import java.util.HashMap;
 
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
-import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.RatingReviewResponse;
 import za.co.woolworths.financial.services.android.ui.activities.BiometricsWalkthrough;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatDetailActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.onboarding.OnBoardingActivity;
-import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListDetailFragment;
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.RatingReviewResponse;
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.Reviews;
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.MoreReviewActivity;
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.ReportReviewActivity;
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.ReviewerInfoDetailsActivity;
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.shop.MyListsFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListDetailFragment;
 
 /**
  * Created by eesajacobs on 2016/11/30.
@@ -330,5 +331,14 @@ public class ScreenManager {
         activity.startActivityForResult(intent, 0);
         activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
 
+    }
+
+    public static void presentMyListScreen(Activity activity) {
+        if (!(activity instanceof BottomNavigationActivity)) {
+            return;
+        }
+        MyListsFragment fragment = new MyListsFragment();
+        BottomNavigationActivity bottomNavigationActivity = (BottomNavigationActivity) activity;
+        bottomNavigationActivity.pushFragment(fragment);
     }
 }

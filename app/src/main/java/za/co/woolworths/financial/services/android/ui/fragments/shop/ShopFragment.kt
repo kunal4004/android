@@ -3,37 +3,27 @@ package za.co.woolworths.financial.services.android.ui.fragments.shop
 import android.Manifest
 import android.app.Activity.RESULT_OK
 import android.content.Intent
-import android.content.IntentFilter
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Handler
-import android.text.Spannable
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.MarginLayoutParams
 import android.view.ViewGroup.VISIBLE
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.ConstraintSet
-import androidx.constraintlayout.widget.ConstraintSet.*
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.core.text.HtmlCompat
-import androidx.core.text.buildSpannedString
-import androidx.core.view.contains
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.viewpager.widget.ViewPager
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentShopBinding
-import com.awfs.coordination.databinding.LayoutInappOrderNotificationBinding
 import com.awfs.coordination.databinding.ShopCustomTabBinding
 import com.daasuu.bl.ArrowDirection
 import com.google.android.material.tabs.TabLayout
@@ -58,40 +48,40 @@ import za.co.woolworths.financial.services.android.models.dto.OrdersResponse
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams.SearchType
 import za.co.woolworths.financial.services.android.models.dto.RootCategories
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse
-import za.co.woolworths.financial.services.android.models.dto.dash.LastOrderDetailsResponse
-import za.co.woolworths.financial.services.android.models.network.Parameter
-import za.co.woolworths.financial.services.android.onecartgetstream.OCChatActivity
-import za.co.woolworths.financial.services.android.onecartgetstream.service.DashChatMessageListeningService
-import za.co.woolworths.financial.services.android.receivers.DashOrderReceiver
-import za.co.woolworths.financial.services.android.receivers.DashOrderReceiverListener
-import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.activities.BarcodeScanActivity
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.*
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_ACCOUNT
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_PRODUCT
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity
 import za.co.woolworths.financial.services.android.ui.adapters.ShopPagerAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment
-import za.co.woolworths.financial.services.android.ui.fragments.shop.OrderDetailsFragment.Companion.getInstance
-import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment.SelectedTabIndex.*
+import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment.SelectedTabIndex.CLICK_AND_COLLECT_TAB
+import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment.SelectedTabIndex.DASH_TAB
+import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment.SelectedTabIndex.STANDARD_TAB
 import za.co.woolworths.financial.services.android.ui.fragments.shop.StandardDeliveryFragment.Companion.DEPARTMENT_LOGIN_REQUEST
 import za.co.woolworths.financial.services.android.ui.fragments.shop.component.ShopTooltipUiState
-import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList.Companion.DISPLAY_TOAST_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.OnChildFragmentEvents
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView
 import za.co.woolworths.financial.services.android.ui.views.shop.dash.ChangeFulfillmentCollectionStoreFragment
 import za.co.woolworths.financial.services.android.ui.views.shop.dash.DashDeliveryAddressFragment
-import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_3000_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.REQUEST_CODE_BARCODE_ACTIVITY
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.REQUEST_CODE_ORDER_DETAILS_PAGE
 import za.co.woolworths.financial.services.android.util.AppConstant.Keys.Companion.ARG_FROM_NOTIFICATION
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.CNC_SET_ADDRESS_REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DASH_SET_ADDRESS_REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.REQUEST_CODE
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getDeliveryType
+import za.co.woolworths.financial.services.android.util.PermissionResultCallback
+import za.co.woolworths.financial.services.android.util.PermissionUtils
 import za.co.woolworths.financial.services.android.util.ScreenManager.SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE
+import za.co.woolworths.financial.services.android.util.SessionUtilities
+import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
@@ -103,12 +93,8 @@ import za.co.woolworths.financial.services.android.viewmodels.shop.ShopViewModel
 class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBinding::inflate),
     PermissionResultCallback,
     OnChildFragmentEvents,
-    WMaterialShowcaseView.IWalkthroughActionListener, View.OnClickListener,
-    DashOrderReceiverListener {
+    WMaterialShowcaseView.IWalkthroughActionListener {
 
-    private var isLastDashOrderAvailable: Boolean = false
-    private var isRetrievedUnreadMessagesOnLaunch: Boolean = false
-    private var dashOrderReceiver: DashOrderReceiver? = null
     private val confirmAddressViewModel: ConfirmAddressViewModel by activityViewModels()
 
     private var timer: CountDownTimer? = null
@@ -122,7 +108,6 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
     private var user: String = ""
     private var validateLocationResponse: ValidateLocationResponse? = null
     private var tabWidth: Float? = 0f
-    private var inAppNotificationViewBinding: LayoutInappOrderNotificationBinding? = null
     private val fragmentResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode != RESULT_OK) {
@@ -163,24 +148,6 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         ownerProducer = { this }
     )
 
-    override fun onStart() {
-        super.onStart()
-        dashOrderReceiver = DashOrderReceiver()
-        dashOrderReceiver?.setDashOrderReceiverListener(this)
-        dashOrderReceiver?.let {
-            LocalBroadcastManager.getInstance(requireContext()).registerReceiver(
-                it, IntentFilter(DashOrderReceiver.ACTION_LAST_DASH_ORDER)
-            )
-        }
-    }
-
-    override fun onStop() {
-        dashOrderReceiver?.let {
-            LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(it)
-        }
-        super.onStop()
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mTabTitle = mutableListOf(
@@ -189,9 +156,6 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
             bindString(R.string.dash_delivery)
         )
 
-        if (SessionUtilities.getInstance().isUserAuthenticated) {
-            shopViewModel.getLastDashOrderDetails()
-        }
         shopViewModel.tooltipUiState
             .flowWithLifecycle(lifecycle = lifecycle, Lifecycle.State.STARTED)
             .onEach { state ->
@@ -204,7 +168,10 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                     }
                     // TODO StandardTooltip, CNCTooltip
                     is ShopTooltipUiState.StandardTooltip,
-                    is ShopTooltipUiState.CNCTooltip-> {}
+                    is ShopTooltipUiState.CNCTooltip,
+                    -> {
+                    }
+
                     else -> binding.blackToolTipLayout.root.visibility = View.GONE
                 }
             }.launchIn(lifecycleScope)
@@ -293,7 +260,6 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                                 showBlackToolTip(Delivery.STANDARD)
                                 setEventsForSwitchingBrowsingType(Delivery.STANDARD.name)
                                 KotlinUtils.browsingDeliveryType = Delivery.STANDARD
-                                removeNotificationToast()
                             }
 
                             CLICK_AND_COLLECT_TAB.index -> {
@@ -301,12 +267,10 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                                 showBlackToolTip(Delivery.CNC)
                                 setEventsForSwitchingBrowsingType(Delivery.CNC.name)
                                 KotlinUtils.browsingDeliveryType = Delivery.CNC
-                                removeNotificationToast()
                             }
 
                             DASH_TAB.index -> {
                                 shopViewModel.onTabClick(validateLocationResponse, position)
-                                addObserverInAppNotificationToast()
                             }
                         }
                         setupToolbar(position)
@@ -317,143 +281,6 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
             })
             tabsMain.setupWithViewPager(viewpagerMain)
             updateTabIconUI(STANDARD_TAB.index)
-            addObserverInAppNotificationToast()
-        }
-    }
-
-    private fun addObserverInAppNotificationToast() {
-        shopViewModel.lastDashOrder.observe(viewLifecycleOwner) {
-            it.peekContent()?.data?.apply {
-                isLastDashOrderAvailable = true
-                addInAppNotificationToast(this)
-            }
-        }
-    }
-
-    private fun removeNotificationToast() {
-        // Remove view
-        if (inAppNotificationViewBinding != null && binding.fragmentShop.contains(
-                inAppNotificationViewBinding!!.root
-            )
-        )
-            binding.fragmentShop.removeView(inAppNotificationViewBinding!!.root)
-    }
-
-    private fun addInAppNotificationToast(params: LastOrderDetailsResponse) {
-        if (!isAdded || activity == null || view == null) {
-            return
-        }
-
-        // Remove view if already added.
-        removeNotificationToast()
-
-        // user should be authenticated
-        if (!SessionUtilities.getInstance().isUserAuthenticated) {
-            return
-        }
-
-        // Show only when showDashOrder flag is true
-        if (!params.showDashOrder) {
-            return
-        }
-
-
-        if (binding.viewpagerMain.currentItem != DASH_TAB.index) {
-            return
-        }
-
-        val inflater = LayoutInflater.from(requireContext())
-        inAppNotificationViewBinding =
-            LayoutInappOrderNotificationBinding.inflate(inflater, binding.fragmentShop, false)
-        inAppNotificationViewBinding?.root?.id = R.id.layoutInappNotification
-        inAppNotificationViewBinding?.root?.layoutParams =
-            ConstraintLayout.LayoutParams(MATCH_CONSTRAINT, WRAP_CONTENT)
-        // Copy LayoutParams and add view
-        val set = ConstraintSet()
-        set.clone(binding.fragmentShop)
-        // Align view to bottom
-        // pin to the bottom of the container
-        inAppNotificationViewBinding?.root?.id?.let {
-            set.clear(it)
-            set.constrainHeight(it, WRAP_CONTENT)
-            set.constrainWidth(it, MATCH_CONSTRAINT)
-            set.connect(
-                it,
-                BOTTOM,
-                PARENT_ID,
-                BOTTOM,
-                requireContext().resources.getDimension(R.dimen.sixteen_dp).toInt()
-            )
-            set.connect(
-                it,
-                START,
-                PARENT_ID,
-                START,
-                requireContext().resources.getDimension(R.dimen.sixteen_dp).toInt()
-            )
-            set.connect(
-                it,
-                END,
-                PARENT_ID,
-                END,
-                requireContext().resources.getDimension(R.dimen.sixteen_dp).toInt()
-            )
-        }
-        binding.fragmentShop.addView(inAppNotificationViewBinding!!.root)
-        // Apply the changes
-        set.applyTo(binding.fragmentShop)
-
-        inAppNotificationViewBinding?.inappOrderNotificationContainer?.setOnClickListener(this)
-        inAppNotificationViewBinding?.inappOrderNotificationContainer?.setTag(
-            R.id.inappOrderNotificationContainer,
-            params.orderId
-        )
-
-        params.orderId?.let { orderId ->
-            inAppNotificationViewBinding?.inappOrderNotificationTitle?.text = buildSpannedString {
-                val text = requireContext().getString(
-                    R.string.inapp_order_notification_title,
-                    orderId
-                )
-                append(text)
-                val index = text.indexOf(orderId)
-                val regularSpan = ResourcesCompat.getFont(requireContext(), R.font.opensans_regular)
-                setSpan(
-                    CustomTypefaceSpan("opensans", regularSpan),
-                    index,
-                    text.length,
-                    Spannable.SPAN_INCLUSIVE_INCLUSIVE
-                )
-            }
-        }
-        inAppNotificationViewBinding?.inappOrderNotificationSubitle?.text =
-            params.orderStatus ?: params.state
-        // Chat / Driver Tracking / Location
-        inAppNotificationViewBinding?.inappOrderNotificationIcon?.apply {
-            setTag(R.id.inappOrderNotificationIcon, params)
-            // Chat enabled STATUS == PACKING i.e. CONFIRMED
-            if (params.isChatEnabled) {
-                visibility = View.VISIBLE
-                setImageResource(R.drawable.ic_chat_icon)
-                setOnClickListener(this@ShopFragment)
-                if (!isRetrievedUnreadMessagesOnLaunch) {
-                    isRetrievedUnreadMessagesOnLaunch = true
-                    params.orderId?.let {
-                        DashChatMessageListeningService.getUnreadMessageForOrder(
-                            requireContext(),
-                            it
-                        )
-                    }
-                }
-            }
-            // Driver tracking enabled STATUS == EN-ROUTE
-            else if (params.isDriverTrackingEnabled) {
-                visibility = View.VISIBLE
-                setImageResource(R.drawable.ic_white_location)
-                setOnClickListener(this@ShopFragment)
-            } else {
-                visibility = View.GONE
-            }
         }
     }
 
@@ -572,46 +399,21 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
 
     override fun onResume() {
         super.onResume()
-
-        //verify if the show dash order is true
-        refreshInAppNotificationToast()
-
-        if (((KotlinUtils.isLocationPlaceIdSame == false || KotlinUtils.isNickNameChanged == true) && KotlinUtils.placeId != null) || WoolworthsApplication.getValidatePlaceDetails() == null) {
-            executeValidateSuburb()
-        } else if (Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.deliveryType.isNullOrEmpty() && KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.deliveryType.isNullOrEmpty()) {
-            return
-        } else if (KotlinUtils.isLocationPlaceIdSame == true && KotlinUtils.placeId != null) {
-            setDeliveryView()
-            (KotlinUtils.browsingDeliveryType
-                ?: Delivery.getType(getDeliveryType()?.deliveryType))?.let {
-                showBlackToolTip(it)
-            }
-        } else {
-            setDeliveryView()
-        }
-    }
-
-    private fun refreshInAppNotificationToast() {
-        if (!SessionUtilities.getInstance().isUserAuthenticated) {
-            removeNotificationToast()
-            return
-        }
-        if (!isLastDashOrderAvailable) {
-            shopViewModel.getLastDashOrderDetails()
-            return
-        }
-        shopViewModel.lastDashOrder.value?.peekContent()?.data?.apply {
-            if (showDashOrder
-                && SessionUtilities.getInstance().isUserAuthenticated
-                && shopViewModel.lastDashOrderInProgress.value == false
-            ) {
-                shopViewModel.getLastDashOrderDetails()
+        if (isVisible) {
+            if (((KotlinUtils.isLocationPlaceIdSame == false || KotlinUtils.isNickNameChanged == true) && KotlinUtils.placeId != null) || WoolworthsApplication.getValidatePlaceDetails() == null) {
+                executeValidateSuburb()
+            } else if (Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.deliveryType.isNullOrEmpty() && KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.deliveryType.isNullOrEmpty()) {
+                return
+            } else if (KotlinUtils.isLocationPlaceIdSame == true && KotlinUtils.placeId != null) {
+                setDeliveryView()
+                (KotlinUtils.browsingDeliveryType
+                    ?: Delivery.getType(getDeliveryType()?.deliveryType))?.let {
+                    showBlackToolTip(it)
+                }
+            } else {
+                setDeliveryView()
             }
         }
-    }
-
-    fun makeLastDashOrderDetailsCall() {
-        shopViewModel.getLastDashOrderDetails()
     }
 
     private fun updateCurrentTab(deliveryType: String?) {
@@ -703,13 +505,15 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
     }
 
     private fun updateTabIconUI(selectedTab: Int) {
-        when(selectedTab) {
+        when (selectedTab) {
             STANDARD_TAB.index -> {
                 showSearchAndBarcodeUi()
             }
+
             CLICK_AND_COLLECT_TAB.index -> {
                 if (KotlinUtils.browsingCncStore == null
-                    && getDeliveryType()?.deliveryType != Delivery.CNC.type) {
+                    && getDeliveryType()?.deliveryType != Delivery.CNC.type
+                ) {
                     hideSearchAndBarcodeUi()
                 }
             }
@@ -802,7 +606,6 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                     hideToolbar()
                 }, AppConstant.DELAY_1000_MS)
             }
-            refreshInAppNotificationToast()
         } else {
             if (binding.blackToolTipLayout.root.isVisible) {
                 timer?.cancel()
@@ -841,15 +644,6 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_CODE_ORDER_DETAILS_PAGE) {
             when (resultCode) {
-                DISPLAY_TOAST_RESULT_CODE -> {
-                    navigateToMyListFragment()
-                    refreshViewPagerFragment()
-                }
-
-                ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE -> {
-                    refreshViewPagerFragment()
-                }
-
                 CancelOrderProgressFragment.RESULT_CODE_CANCEL_ORDER_SUCCESS -> {
                     refreshViewPagerFragment()
                 }
@@ -864,14 +658,13 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
 
         if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
             refreshViewPagerFragment()
-            // Update Toast if logged in with another user
-            // Use Case: If first user does not have any order, Second user should update Last order details
-            shopViewModel.getLastDashOrderDetails()
-        }
-
-        if (requestCode == PDP_REQUEST_CODE && resultCode == ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE) {
-            navigateToMyListFragment()
-            refreshViewPagerFragment()
+            var fragment = binding.viewpagerMain?.adapter?.instantiateItem(
+                binding.viewpagerMain,
+                binding.viewpagerMain.currentItem
+            )
+            if (fragment is DashDeliveryAddressFragment){
+                fragment.onActivityResult(requestCode, resultCode, data)
+            }
         }
 
         if (requestCode == SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE) {
@@ -925,7 +718,10 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                         binding.viewpagerMain.currentItem
                     ) as? DashDeliveryAddressFragment
                 dashDeliveryAddressFragment?.initViews()
-                shopViewModel?.onTabClick(validateLocationResponse, DASH_TAB.index) // externally showing dash tooltip as delivery type is not same.
+                shopViewModel?.onTabClick(
+                    validateLocationResponse,
+                    DASH_TAB.index
+                ) // externally showing dash tooltip as delivery type is not same.
             }
         }
         if (requestCode == CNC_SET_ADDRESS_REQUEST_CODE) {
@@ -1626,67 +1422,6 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
     fun isUserAuthenticated() = SessionUtilities.getInstance().isUserAuthenticated
 
     fun getCurrentFragmentIndex() = binding.viewpagerMain?.currentItem
-
-    override fun onClick(v: View?) {
-        when (v?.id) {
-            // In App notification click, Navigate to Order Details
-            R.id.inappOrderNotificationContainer -> {
-                (requireActivity() as? BottomNavigationActivity)?.apply {
-                    val orderId: String? = v.getTag(R.id.inappOrderNotificationContainer) as? String
-                    orderId?.let {
-                        pushFragment(getInstance(Parameter(it)))
-                    }
-                }
-            }
-            // In App notification Chat click, Navigate to Chat
-            // Chat / Driver Tracking / Location
-            R.id.inappOrderNotificationIcon -> {
-                val params = v.getTag(R.id.inappOrderNotificationIcon) as? LastOrderDetailsResponse
-                params?.apply {
-                    // Chat
-                    if (params.isChatEnabled) {
-                        navigateToChat(orderId)
-                    }
-                    // Driver tracking
-                    else if (params.isDriverTrackingEnabled) {
-                        driverTrackingUrl?.let { navigateToOrderTrackingScreen(it) }
-                    }
-                }
-            }
-        }
-    }
-
-    private fun navigateToChat(orderId: String?) {
-        orderId?.let {
-            startActivity(OCChatActivity.newIntent(requireActivity(), it))
-        }
-    }
-
-    private fun navigateToOrderTrackingScreen(url: String) {
-        requireActivity().apply {
-            startActivity(OrderTrackingWebViewActivity.newIntent(this, url))
-            overridePendingTransition(
-                R.anim.slide_from_right,
-                R.anim.slide_out_to_left
-            )
-        }
-    }
-
-    override fun updateUnreadMessageCount(unreadMsgCount: Int) {
-        inAppNotificationViewBinding?.inAppOrderNotificationChatCount?.visibility = View.GONE
-        //TODO: Later requirements for chat bubble.
-        /*if (unreadMsgCount <= 0) {
-            inAppNotificationViewBinding?.inAppOrderNotificationChatCount?.visibility = GONE
-        } else {
-            inAppNotificationViewBinding?.inAppOrderNotificationChatCount?.text =
-                unreadMsgCount.toString()
-            inAppNotificationViewBinding?.inAppOrderNotificationChatCount?.visibility = VISIBLE
-        }*/
-    }
-
-    override fun updateLastDashOrder() {
-        makeLastDashOrderDetailsCall()
-    }
 
     private fun enableOrDisableFashionItems(isEnabled: Boolean) {
         binding.blackToolTipLayout?.apply {

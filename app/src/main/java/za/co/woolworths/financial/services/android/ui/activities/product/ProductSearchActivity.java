@@ -1,7 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.activities.product;
 
-import static za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE;
-import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE;
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.ADDED_TO_SHOPPING_LIST_RESULT_CODE;
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.MY_LIST_LIST_ID;
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.MY_LIST_LIST_NAME;
@@ -271,10 +269,6 @@ public class ProductSearchActivity extends AppCompatActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if ((requestCode == PDP_REQUEST_CODE && resultCode == ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE)
-                || (requestCode == SHOPPING_LIST_SEARCH_RESULT_REQUEST_CODE && resultCode == ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE)) {
-            setActivityResult(data, ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE);
-        }
 
         if (requestCode == SHOPPING_LIST_SEARCH_RESULT_REQUEST_CODE && resultCode == ADDED_TO_SHOPPING_LIST_RESULT_CODE) {
             setActivityResult(data, ADDED_TO_SHOPPING_LIST_RESULT_CODE);

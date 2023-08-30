@@ -6,6 +6,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import kotlinx.android.parcel.Parcelize
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.models.dto.cart.OrderItem
 import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.Product
 
 @Parcelize
@@ -93,6 +94,21 @@ fun CommerceItem.toAnalyticItem(): AnalyticProductItem {
         itemVariant = commerceItemInfo.color,
         quantity = commerceItemInfo.quantity,
         price = priceInfo.amount,
+        affiliation = FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE,
+        index = FirebaseManagerAnalyticsProperties.PropertyValues.INDEX_VALUE.toInt(),
+    )
+}
+
+fun OrderItem.toAnalyticItem(): AnalyticProductItem {
+    return AnalyticProductItem(
+        itemId = productId,
+        itemName = productDisplayName,
+        category = null,
+        itemBrand = brandName,
+        itemListName = null,
+        itemVariant = commerceItemInfo?.color,
+        quantity = quantity,
+        price = priceInfo?.amount,
         affiliation = FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE,
         index = FirebaseManagerAnalyticsProperties.PropertyValues.INDEX_VALUE.toInt(),
     )

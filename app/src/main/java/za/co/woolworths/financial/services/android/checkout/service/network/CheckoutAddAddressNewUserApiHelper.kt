@@ -6,16 +6,18 @@ import retrofit2.Response
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
-import za.co.woolworths.financial.services.android.models.dto.SuburbsResponse
-import za.co.woolworths.financial.services.android.models.network.*
+import za.co.woolworths.financial.services.android.models.network.AppContextProviderImpl
+import za.co.woolworths.financial.services.android.models.network.CompletionHandler
+import za.co.woolworths.financial.services.android.models.network.OneAppService
+import za.co.woolworths.financial.services.android.models.network.RetrofitApiProviderImpl
+import za.co.woolworths.financial.services.android.models.network.RetrofitConfig
+import za.co.woolworths.financial.services.android.models.network.StorePickupInfoBody
+import javax.inject.Inject
 
 /**
  * Created by Kunal Uttarwar on 04/06/21.
  */
-class CheckoutAddAddressNewUserApiHelper : RetrofitConfig(AppContextProviderImpl(), RetrofitApiProviderImpl()) {
-
-    fun getSuburbs(provinceId: String): Response<SuburbsResponse> =
-        OneAppService().getSuburbs(provinceId).execute()
+class CheckoutAddAddressNewUserApiHelper @Inject constructor() : RetrofitConfig (AppContextProviderImpl(), RetrofitApiProviderImpl()) {
 
     fun validateSelectedSuburb(
         suburbId: String,

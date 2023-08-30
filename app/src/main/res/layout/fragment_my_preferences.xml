@@ -39,7 +39,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/tvProofIncomeDocument" />
 
 
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                <TextView
                     style="@style/take_photo_document_desc_style"
                     android:text="@string/favourite_delivery_location_description"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -60,32 +60,34 @@
                     android:id="@+id/locationSelectedLayout"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/seventy_dp"
-                    android:paddingLeft="@dimen/twenty_four_dp"
-                    android:paddingRight="@dimen/sixteen_dp">
+                    android:paddingStart="@dimen/twenty_four_dp"
+                    android:paddingEnd="@dimen/sixteen_dp">
 
                     <ImageView
                         android:id="@+id/deliverLocationIcon"
                         android:layout_width="@dimen/twenty_four_dp"
                         android:layout_height="@dimen/twenty_four_dp"
-                        android:layout_alignParentLeft="true"
+                        android:contentDescription="@string/delivery_location"
+                        android:layout_alignParentStart="true"
                         android:layout_centerVertical="true"
                         android:background="@drawable/ic_delivery_truck" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginLeft="@dimen/sixteen_dp"
-                        android:layout_toLeftOf="@+id/editLocation"
-                        android:layout_toRightOf="@+id/deliverLocationIcon"
+                        android:layout_marginStart="@dimen/sixteen_dp"
+                        android:layout_toStartOf="@+id/editLocation"
+                        android:layout_toEndOf="@+id/deliverLocationIcon"
                         android:gravity="center_vertical"
                         android:orientation="vertical">
 
-                        <za.co.woolworths.financial.services.android.ui.views.WTextView
+                        <TextView
                             android:id="@+id/tvDeliveringTo"
                             style="@style/style_cart_delivery_to_text"
                             android:layout_width="wrap_content"
+                            android:fontFamily="@font/opensans_semi_bold"
                             android:layout_height="wrap_content"
-                            android:layout_marginRight="@dimen/four_dp"
+                            android:layout_marginEnd="@dimen/four_dp"
                             android:gravity="center_vertical"
                             android:text="@string/delivery_or_collection" />
 
@@ -101,12 +103,13 @@
                     </LinearLayout>
 
                     <ImageView
-                        android:id="@+id/iconCaretRight"
+                        android:id="@+id/iconCaretEnd"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:contentDescription="@string/close_icon_tapped"
                         android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"
-                        android:layout_marginLeft="@dimen/twenty_dp"
+                        android:layout_marginStart="@dimen/twenty_dp"
                         android:src="@drawable/ic_caret_black" />
 
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
@@ -115,7 +118,7 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"
-                        android:layout_marginLeft="@dimen/twenty_dp"
+                        android:layout_marginStart="@dimen/twenty_dp"
                         android:letterSpacing="0.1"
                         android:text="@string/edit"
                         android:textColor="@color/black"
@@ -175,27 +178,26 @@
                     android:layout_height="70dp"
                     android:visibility="visible">
 
-                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    <TextView
                         android:layout_width="wrap_content"
+                        style="@style/opensans_semi_bold_13_black_text_style"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
-                        android:layout_marginLeft="@dimen/twenty_four_dp"
-                        android:drawableLeft="@drawable/ic_touch_id"
+                        android:layout_marginStart="@dimen/twenty_four_dp"
                         android:drawablePadding="@dimen/sixteen_dp"
                         android:gravity="center_vertical"
                         android:lineSpacingExtra="0.4sp"
                         android:text="@string/authenticate_with_touch_id"
                         android:textColor="@color/black"
-                        android:textSize="@dimen/fifteen_sp"
-                        app:WTextView_font="myriadpro_regular" />
+                        app:drawableStartCompat="@drawable/ic_touch_id" />
 
-                    <Switch
+                    <androidx.appcompat.widget.SwitchCompat
                         android:id="@+id/auSwitch"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
+                        android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"
-                        android:layout_marginRight="@dimen/sixteen_dp"
+                        android:layout_marginEnd="@dimen/sixteen_dp"
                         android:theme="@style/SwitchTheme" />
                 </RelativeLayout>
             </LinearLayout>
@@ -216,7 +218,6 @@
                     android:layout_marginTop="@dimen/sixteen_dp"
                     android:layout_marginBottom="@dimen/fourteen_dp"
                     android:text="@string/my_preferences_linked_devices_title"
-                    android:textAllCaps="true"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -228,7 +229,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/tvProofIncomeDocument" />
 
 
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                <TextView
                     android:id="@+id/tvLinkedDevicesDesc"
                     style="@style/take_photo_document_desc_style"
                     android:text="@string/my_preferences_linked_devices_desc"
@@ -251,28 +252,28 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/seventy_dp">
 
-                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    <TextView
                         android:id="@+id/linkThisDeviceTextView"
+                        style="@style/opensans_semi_bold_13_black_text_style"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
-                        android:layout_marginLeft="@dimen/twenty_four_dp"
-                        android:drawableLeft="@drawable/ic_device_link"
+                        android:layout_marginStart="@dimen/twenty_four_dp"
+                        app:drawableStartCompat="@drawable/ic_device_link"
                         android:drawablePadding="@dimen/sixteen_dp"
                         android:gravity="center_vertical"
                         android:lineSpacingExtra="0.4sp"
                         android:text="@string/my_preferences_link_this_device"
                         android:textColor="@color/black"
-                        android:textSize="@dimen/fifteen_sp"
-                        app:WTextView_font="myriadpro_regular" />
+                       />
 
-                    <Switch
+                    <androidx.appcompat.widget.SwitchCompat
                         android:id="@+id/linkDeviceSwitch"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
+                        android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"
-                        android:layout_marginRight="@dimen/sixteen_dp"
+                        android:layout_marginEnd="@dimen/sixteen_dp"
                         android:theme="@style/SwitchTheme" />
 
                     <LinearLayout
@@ -289,7 +290,8 @@
                         <ImageView
                             android:id="@+id/retryLinkDeviceImageView"
                             style="@style/retryImageViewStyle"
-                            app:srcCompat="@drawable/refresh_account_drawable_icon" />
+                            app:srcCompat="@drawable/refresh_account_drawable_icon"
+                            android:contentDescription="@string/link_device_confirm_button" />
 
                     </LinearLayout>
                 </RelativeLayout>
@@ -304,20 +306,19 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/seventy_dp">
 
-                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    <TextView
                         android:id="@+id/tvMyPrefManageDevicesTitle"
+                        style="@style/opensans_semi_bold_13_text_style"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
-                        android:layout_marginLeft="@dimen/twenty_four_dp"
-                        android:drawableLeft="@drawable/ic_linked_devices"
+                        android:layout_marginStart="@dimen/twenty_four_dp"
+                        android:drawableStart="@drawable/ic_linked_devices"
                         android:drawablePadding="@dimen/sixteen_dp"
                         android:gravity="center_vertical"
                         android:lineSpacingExtra="0.4sp"
                         android:text="@string/my_preferences_linked_devices"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/fifteen_sp"
-                        app:WTextView_font="myriadpro_regular" />
+                        />
 
                     <ImageView
                         android:layout_width="wrap_content"
@@ -353,7 +354,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/tvProofIncomeDocument" />
 
 
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                <TextView
                     style="@style/take_photo_document_desc_style"
                     android:text="@string/delete_account_description"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -374,43 +375,44 @@
                     android:id="@+id/deleteAccountLayout"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/seventy_dp"
-                    android:paddingLeft="@dimen/twenty_four_dp"
-                    android:paddingRight="@dimen/sixteen_dp">
+                    android:paddingStart="@dimen/twenty_four_dp"
+                    android:paddingEnd="@dimen/sixteen_dp">
 
                     <ImageView
                         android:id="@+id/deleteAccountIcon"
                         android:layout_width="@dimen/twenty_four_dp"
                         android:layout_height="@dimen/twenty_four_dp"
-                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"
                         android:layout_centerVertical="true"
                         android:src="@drawable/ic_delete_account" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginLeft="@dimen/sixteen_dp"
-                        android:layout_toRightOf="@+id/deleteAccountIcon"
+                        android:layout_marginStart="@dimen/sixteen_dp"
+                        android:layout_toEndOf="@+id/deleteAccountIcon"
                         android:gravity="center_vertical"
                         android:orientation="horizontal">
 
-                        <za.co.woolworths.financial.services.android.ui.views.WTextView
+                        <TextView
                             android:id="@+id/tvDeleteAccount"
                             style="@style/style_cart_delivery_to_text"
                             android:layout_width="wrap_content"
+                            android:fontFamily="@font/opensans_semi_bold"
                             android:layout_height="wrap_content"
-                            android:layout_marginRight="@dimen/four_dp"
+                            android:layout_marginEnd="@dimen/four_dp"
                             android:gravity="center_vertical"
                             android:text="@string/start_the_process" />
 
                     </LinearLayout>
 
                     <ImageView
-                        android:id="@+id/iconDeleteAccountRight"
+                        android:id="@+id/iconDeleteAccountEnd"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"
-                        android:layout_marginLeft="@dimen/twenty_dp"
+                        android:layout_marginStart="@dimen/twenty_dp"
                         android:src="@drawable/ic_caret_black" />
 
 

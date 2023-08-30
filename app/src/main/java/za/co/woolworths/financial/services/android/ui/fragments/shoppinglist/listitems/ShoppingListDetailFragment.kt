@@ -5,17 +5,19 @@ import android.app.Activity.RESULT_OK
 import android.content.BroadcastReceiver
 import android.content.Intent
 import android.content.IntentFilter
-import android.graphics.Typeface.BOLD
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.text.Spannable
-import android.text.style.StyleSpan
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import android.view.ViewGroup
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.ui.text.font.Typeface
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.core.text.buildSpannedString
@@ -37,20 +39,35 @@ import za.co.woolworths.financial.services.android.contracts.IToastInterface
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils.Companion.getPlaceId
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
-import za.co.woolworths.financial.services.android.models.dto.*
-import za.co.woolworths.financial.services.android.models.dto.item_limits.ProductCountMap
+import za.co.woolworths.financial.services.android.models.dto.AddItemToCart
+import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse
+import za.co.woolworths.financial.services.android.models.dto.ProductList
+import za.co.woolworths.financial.services.android.models.dto.Response
+import za.co.woolworths.financial.services.android.models.dto.ShoppingListItem
+import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse
+import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.models.network.Status
-import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity
+import za.co.woolworths.financial.services.android.recommendations.data.response.request.Product
+import za.co.woolworths.financial.services.android.recommendations.data.response.request.Recommendation
+import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationLoader
+import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationLoaderImpl
+import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationLoadingNotifier
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity
-import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity.*
+import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity.EXTRA_LIST_ID
+import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity.EXTRA_SEARCH_TEXT_HINT
+import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity.PRODUCT_SEARCH_ACTIVITY_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.adapters.ShoppingListItemsAdapter
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.ConfirmDeliveryLocationFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants.EVENT_PAGE_TYPE_SHOPPING_LIST
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants.EVENT_TYPE_PAGEVIEW
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants.EVENT_TYPE_PRODUCT_THUMBNAIL_VIEW
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants.EVENT_URL_SHOPPING_LIST
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.Companion.ADDED_TO_SHOPPING_LIST_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.Companion.MY_LIST_LIST_ID
@@ -60,21 +77,31 @@ import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDia
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory.Companion.buildAddToCartSuccessToast
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory.Companion.buildShoppingListFromSearchResultToast
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory.Companion.showItemsLimitToastOnAddToCart
-import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_SESSION_TIMEOUT_440
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants
+import za.co.woolworths.financial.services.android.util.CustomTypefaceSpan
+import za.co.woolworths.financial.services.android.util.EmptyCartView
 import za.co.woolworths.financial.services.android.util.EmptyCartView.EmptyCartInterface
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getPreferredDeliveryType
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.presentEditDeliveryGeoLocationActivity
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.setDeliveryAddressView
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.showQuantityLimitErrror
+import za.co.woolworths.financial.services.android.util.NetworkChangeListener
+import za.co.woolworths.financial.services.android.util.NetworkManager
+import za.co.woolworths.financial.services.android.util.PostItemToCart
+import za.co.woolworths.financial.services.android.util.ScreenManager
+import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.ToastUtils.ToastInterface
+import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
 @AndroidEntryPoint
 class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartInterface,
     NetworkChangeListener, ToastInterface, ShoppingListItemsNavigator, IToastInterface,
-    IOnConfirmDeliveryLocationActionListener {
+    IOnConfirmDeliveryLocationActionListener, RecommendationLoadingNotifier, RecommendationLoader by RecommendationLoaderImpl() {
 
     private val viewModel: ShoppingListDetailViewModel by viewModels()
 
@@ -88,16 +115,6 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                         requireActivity(), bindingListDetails.rlCheckOut, listName ?: "", count
                     )
                     viewModel.getShoppingListDetails()
-                }
-                // add to list from search result -> PDP
-                AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE -> {
-                    with(requireActivity()) {
-                        setResult(
-                            AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE,
-                            result.data
-                        )
-                        onBackPressed()
-                    }
                 }
                 // searched details result
                 PRODUCT_SEARCH_ACTIVITY_RESULT_CODE -> {
@@ -174,6 +191,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         // Shopping List items
         viewModel.shoppListDetails.observe(viewLifecycleOwner) {
             val response = it.peekContent().data
+            setRecommendationDividerVisibility(visibility = false)
             when (it.peekContent().status) {
                 Status.LOADING -> {
                     mErrorHandlerView?.hideErrorHandler()
@@ -377,6 +395,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
 
                 setUpView()
                 shoppingListItemsAdapter?.setList(viewModel.mShoppingListItems)
+                showRecommendedProducts(viewModel.mShoppingListItems)
             }
             HTTP_SESSION_TIMEOUT_440 -> SessionUtilities.getInstance().setSessionState(
                 SessionDao.SESSION_STATE.INACTIVE,
@@ -387,6 +406,24 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                 onShoppingListItemsResponseError(shoppingListItemsResponse)
             }
         }
+    }
+
+    private fun showRecommendedProducts(shoppingListItems: ArrayList<ShoppingListItem>) {
+        val products = shoppingListItems.filter { !it.productId.isNullOrEmpty() }.map { Product(productId = it.productId) }
+        if(products.isEmpty()) {
+            return
+        }
+        val bundle = Bundle()
+        bundle.putParcelable(
+            BundleKeysConstants.RECOMMENDATIONS_EVENT_DATA,
+            Recommendation.PageView(eventType = EVENT_TYPE_PAGEVIEW, url = EVENT_URL_SHOPPING_LIST, pageType = EVENT_PAGE_TYPE_SHOPPING_LIST)
+        )
+        bundle.putParcelable(
+            BundleKeysConstants.RECOMMENDATIONS_EVENT_DATA_TYPE,
+            Recommendation.ShoppingListEvent(eventType = EVENT_TYPE_PRODUCT_THUMBNAIL_VIEW, products = products)
+        )
+        bundle.putBoolean(BundleKeysConstants.RECOMMENDATIONS_DYNAMIC_TITLE_REQUIRED, true)
+        loadRecommendations(bundle = bundle, fragmentManager = childFragmentManager)
     }
 
     private fun onShoppingListItemsResponseError(response: ShoppingListItemsResponse?) {
@@ -641,14 +678,14 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
 
     private fun addFragmentListener() {
         activity ?: return
-        activity?.supportFragmentManager?.setFragmentResultListener(
+        requireActivity().supportFragmentManager.setFragmentResultListener(
             ADDED_TO_SHOPPING_LIST_RESULT_CODE.toString(),
-            activity!!
+            requireActivity()
         ) { _, result: Bundle ->
             if (result.containsKey("listItems")) {
                 val count = result.getInt("listItems", 0)
                 buildShoppingListFromSearchResultToast(
-                    activity!!, bindingListDetails.rlCheckOut, listName!!, count
+                    requireActivity(), bindingListDetails.rlCheckOut, listName!!, count
                 )
             }
             viewModel.getShoppingListDetails()
@@ -727,11 +764,16 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                     count
                 )
             bindingListDetails.selectDeselectAllTextView.visibility = VISIBLE
-            Utils.setRecyclerViewMargin(bindingListDetails.rcvShoppingListItems, Utils.dp2px(60f))
+            setScrollViewBottomMargin(Utils.dp2px(60f))
         } else {
             bindingListDetails.rlCheckOut.visibility = GONE
-            Utils.setRecyclerViewMargin(bindingListDetails.rcvShoppingListItems, 0)
+            setScrollViewBottomMargin(0)
         }
+    }
+
+    private fun setScrollViewBottomMargin(margin: Int) {
+        val layoutParams : ConstraintLayout.LayoutParams? = bindingListDetails.nestedScrollView.layoutParams as? ConstraintLayout.LayoutParams
+        layoutParams?.bottomMargin = margin
     }
 
     private fun executeAddToCart(items: ArrayList<ShoppingListItem>?) {
@@ -887,21 +929,9 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (requestCode == BottomNavigationActivity.PDP_REQUEST_CODE && resultCode == AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE
-        ) {
-            activity?.setResult(
-                AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE,
-                data
-            )
-            activity?.onBackPressed()
-            return
-            // response from search product from shopping list
-        }
-
         when (requestCode) {
             DELIVERY_LOCATION_REQUEST_CODE_FROM_SELECT_ALL,
-            DELIVERY_LOCATION_REQUEST,
-            -> {
+            DELIVERY_LOCATION_REQUEST -> {
                 if (resultCode == RESULT_OK) {
                     setDeliveryLocation()
                     if (viewModel.isShoppingListContainsUnavailableItems())
@@ -910,29 +940,6 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                         hideBlackToolTip()
                     viewModel.getShoppingListDetails()
                 }
-            }
-        }
-
-        if (requestCode == BottomNavigationActivity.PDP_REQUEST_CODE && resultCode == RESULT_OK) {
-            val activity = activity ?: return
-            val productCountMap = Utils.jsonStringToObject(
-                data?.getStringExtra("ProductCountMap"), ProductCountMap::class.java
-            ) as? ProductCountMap
-            val itemsCount = data?.getIntExtra("ItemsCount", 0)
-            when {
-                ((getPreferredDeliveryType() == Delivery.DASH || getPreferredDeliveryType() == Delivery.CNC)
-                        && productCountMap?.quantityLimit?.foodLayoutColour != null) -> {
-                    showItemsLimitToastOnAddToCart(
-                        bindingListDetails.rlCheckOut,
-                        productCountMap,
-                        activity,
-                        itemsCount ?: 0,
-                        true
-                    )
-                }
-                else -> buildAddToCartSuccessToast(
-                    bindingListDetails.rlCheckOut, true, activity, this
-                )
             }
         }
     }
@@ -1059,6 +1066,16 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
     override fun onDestroy() {
         (activity as? BottomNavigationActivity)?.showToolbar()
         super.onDestroy()
+    }
+
+    override fun onRecommendationsLoadedSuccessfully() {
+        if(isAdded) {
+            setRecommendationDividerVisibility(visibility = !shoppingListItemsAdapter?.shoppingListItems.isNullOrEmpty())
+        }
+    }
+
+    private fun setRecommendationDividerVisibility(visibility: Boolean) {
+        bindingListDetails.viewRecommendationDivider.visibility = if(visibility) VISIBLE else GONE
     }
 
     companion object {

@@ -104,15 +104,14 @@
 
             <TextView
                 android:id="@+id/tvIncreaseLimitDescription"
+                style="@style/opensans_regular_13_black"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/twenty_dp"
                 android:layout_marginBottom="@dimen/twenty_four_dp"
                 android:contentDescription="@string/labelCreditLimitIncreaseStatusDescription"
-                android:fontFamily="@font/myriad_pro_regular_otf"
                 android:text="@string/increase_limit_desc"
-                android:textColor="@color/offer_active_desc"
-                android:textSize="@dimen/fifteen_dp"
+                android:textColor="@color/non_editable_edit_text_text_color"
                 android:visibility="gone" />
 
             <LinearLayout

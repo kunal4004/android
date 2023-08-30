@@ -14,8 +14,8 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
-import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountsOptionFragment
+import za.co.woolworths.financial.services.android.ui.fragments.account.device_security.verifyAppInstanceId
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.extensions.saveToLocalDatabase
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants
@@ -88,7 +88,7 @@ class SetUpDeliveryNowDialog() : WBottomSheetDialogFragment(), View.OnClickListe
             }
             R.id.setUpDeliveryNow -> {
                 handleScheduleDeliveryCreditCard {
-                    if (!MyAccountsFragment.verifyAppInstanceId())
+                    if (!verifyAppInstanceId())
                         navigateToScheduleOrManage()
                 }
             }
