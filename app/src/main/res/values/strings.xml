@@ -3075,4 +3075,25 @@
     <string name="add_to_list_failure">Failed to add to list. Please try again later.</string>
     <string name="hint_list_name">List Name</string>
     <string name="create_list_name_error">Unfortunately, this list name already exists.\nPlease try another option.</string>
+
+    <!--shop toggle-->
+    <string name="use_standard_delivery">use standard delivery</string>
+    <string name="standard_shop_fashion"> shop FASHION, BEAUTY, HOME AND food</string>
+    <string name="earliest_standard_delivery_dates">Earliest Standard Delivery Dates:</string>
+    <string name="delivery_cost">Delivery Cost:</string>
+    <string name="determined_at_checkout">Determined at checkout. Learn more</string>
+    <string name="set_to_standard_delivery">SET TO STANDARD DELIVERY</string>
+    <string name="get_food_today">GET FOOD, TODAY</string>
+    <string name="next_dash_delivery_timeslot">Next Dash Delivery Timeslot:</string>
+    <string name="use_dash_delivery">Use Dash delivery</string>
+    <string name="set_to_dash_delivery">SET TO DASH DELIVERY</string>
+    <string name="use_click_collect">use click &amp; collect</string>
+    <string name="earliest_click_and_collect">Earliest Click &amp; Collect Dates:</string>
+    <string name="collect_fashion_food">Collect FASHION, BEAUTY, HOME AND food</string>
+    <string name="set_to_click_and_collect">SET TO CLICK &amp; COLLECT</string>
+    <string name="back_arrow"> Back Arrow</string>
+    <string name="what_would_you_like_to_shop">What would you like to shop?</string>
+    <string name="you_can_choose_option">You can choose between our 3 delivery options here:</string>
+    <string name="down_arrow">Down Arrow</string>
+
 </resources>

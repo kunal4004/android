@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.shoptoggle.presentation.comp
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -14,14 +13,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.awfs.coordination.R
-import za.co.woolworths.financial.services.android.presentation.common.BlackButton
-import za.co.woolworths.financial.services.android.shoptoggle.data.dto.ShopToggleData
 import za.co.woolworths.financial.services.android.shoptoggle.domain.model.ToggleModel
 import za.co.woolworths.financial.services.android.ui.wfs.theme.*
 
@@ -31,20 +27,10 @@ import za.co.woolworths.financial.services.android.ui.wfs.theme.*
 fun ExpandableListItem(
     item: ToggleModel,
     isExpended: Boolean,
-    onItemClick: () -> Unit
+    onItemClick: () -> Unit,
 ) {
-//    var isExpandable by remember {
-//        mutableStateOf(false)
-//    }
-//    var isCollapse by remember {
-//        mutableStateOf(true)
-//    }
 
-    val rotationState by animateFloatAsState(
-        targetValue = if (isExpended) 180f else 0f, label = ""
-    )
-
-    val cardShape = RoundedCornerShape(8.dp)
+    val cardShape = RoundedCornerShape(Dimens.eight_dp)
     Card(
         colors = CardDefaults.cardColors(
             containerColor = Color.White,
@@ -52,208 +38,130 @@ fun ExpandableListItem(
         modifier = Modifier
             .fillMaxSize()
             .border(
-                BorderStroke(1.dp, color = if (isExpended) Color.Black else ColorD8D8D8),
-                shape = RoundedCornerShape(8.dp)
+                BorderStroke(if (isExpended) Dimens.oneDp else Dimens.point_five_dp,
+                    color = if (isExpended) Color.Black else ColorD8D8D8),
+                shape = RoundedCornerShape(Dimens.four_dp)
             )
             .shadow(
                 shape = cardShape,
                 spotColor = ColorD8D8D8,
-                elevation = 8.dp
+                elevation = Dimens.four_dp
             )
-//            .animateContentSize(
-//                animationSpec = tween(
-//                    durationMillis = 300,
-//                    easing = LinearOutSlowInEasing
-//                )
-                    .animateContentSize(
-                        animationSpec = spring(
-                            dampingRatio = Spring.DampingRatioMediumBouncy,
-                            stiffness = Spring.StiffnessMedium
-                        )
+            .animateContentSize(
+                animationSpec = spring(
+                    dampingRatio = Spring.DampingRatioMediumBouncy,
+                    stiffness = Spring.StiffnessMediumLow
+                )
             ),
         shape = cardShape,
         onClick = {
             onItemClick()
-           // isExpandable = !isExpandable
         }
 
     ) {
+        ExpandableCard(item, isExpended)
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp)
+    }
+
+}
+
+@Composable
+private fun ExpandableCard(
+    item: ToggleModel,
+    isExpended: Boolean,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(Dimens.sixteen_dp)
+    ) {
+        Row(
+            modifier = Modifier,
+            verticalAlignment = Alignment.CenterVertically
+
         ) {
-            Row(
-                modifier = Modifier,
-                verticalAlignment = Alignment.CenterVertically
 
-            ) {
+            Image(
+                painter = painterResource(id = item.icon),
+                contentDescription = null,
+            )
+            Spacer(modifier = Modifier.width(Dimens.eight_dp))
 
-                Image(
-                    painter = painterResource(id = item.icon),
-                    contentDescription = null,
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-
-                Column(modifier = Modifier
-                    .weight(7f)) {
-                    if (isExpended) {
-                        item.title?.let {
-                            Text(
-                                modifier = Modifier,
-                                textAlign = TextAlign.Start,
-                                text = it.uppercase(),
-                                style = TextStyle(
-                                    fontFamily = FuturaFontFamily,
-                                    fontWeight = FontWeight.W500,
-                                    fontSize = 10.sp,
-                                    color = Color.Black
-                                ),
-                                letterSpacing = 1.5.sp
-                            )
-                        }
-                    } else {
-                        Box(modifier = Modifier
-                            .width(120.dp)
-                            .height(18.dp)
-                            .background(ColorFEE600, shape = RoundedCornerShape(4.dp)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                modifier = Modifier,
-                                textAlign = TextAlign.Center,
-                                text = "use dash delivery".uppercase(),
-                                style = TextStyle(
-                                    fontFamily = FuturaFontFamily,
-                                    fontWeight = FontWeight.W600,
-                                    fontSize = 10.sp,
-                                    color = Color.Black
-                                )
-                            )
-
-                        }
-
-                    }
-
-                    item.subTitle?.let {
+            Column(modifier = Modifier
+                .weight(8f)) {
+                if (!item.isDashDelivery) {
+                    item.title?.let {
                         Text(
                             modifier = Modifier,
                             textAlign = TextAlign.Start,
                             text = it.uppercase(),
                             style = TextStyle(
                                 fontFamily = FuturaFontFamily,
-                                fontWeight = FontWeight.W600,
-                                fontSize = 14.sp,
+                                fontWeight = FontWeight.W500,
+                                fontSize = Dimens.ten_sp,
                                 color = Color.Black
                             ),
-                            letterSpacing = 1.5.sp
+                            letterSpacing = Dimens.one_point_five_sp
                         )
+                    }
+                } else {
+                    Box(modifier = Modifier
+                        .width(Dimens.one_twenty_dp)
+                        .height(Dimens.eighteen_dp)
+                        .background(ColorFEE600, shape = RoundedCornerShape(Dimens.four_dp)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        item.title?.let {
+                            Text(
+                                modifier = Modifier,
+                                textAlign = TextAlign.Center,
+                                text = it.uppercase(),
+                                style = TextStyle(
+                                    fontFamily = FuturaFontFamily,
+                                    fontWeight = FontWeight.W600,
+                                    fontSize = Dimens.ten_sp,
+                                    color = Color.Black
+                                )
+                            )
+                        }
+
                     }
 
                 }
-                Image(
-                    modifier = Modifier
-                        .weight(1f),
-                  //  .rotate(rotationState),
-                    alignment = Alignment.CenterEnd,
-                    painter = if (isExpended) painterResource(id = R.drawable.ic_up_arrow)
-                    else painterResource(id = R.drawable.ic_dwon_arrow),
-                    contentDescription = "Down Arrow")
-
-            }
-
-            if (isExpended) {
-               // isCollapse = !isCollapse
-                Spacer(modifier = Modifier.height(16.dp))
-                Divider(color = ColorD8D8D8, thickness = 1.dp)
-                Spacer(modifier = Modifier.height(16.dp))
-                item.deliveryType?.let {
+                if (item.isDashDelivery) {
+                    Spacer(modifier = Modifier.height(Dimens.eight_dp))
+                }
+                item.subTitle?.let {
                     Text(
                         modifier = Modifier,
                         textAlign = TextAlign.Start,
-                        text = it,
+                        text = it.uppercase(),
                         style = TextStyle(
-                            fontFamily = OpenSansFontFamily,
+                            fontFamily = FuturaFontFamily,
                             fontWeight = FontWeight.W600,
-                            fontSize = 13.sp,
+                            fontSize = Dimens.fourteen_sp,
                             color = Color.Black
-                        )
+                        ),
+                        letterSpacing = Dimens.one_point_five_sp
                     )
-                }
-                item.deliveryTime?.let {
-                    Text(
-                        modifier = Modifier,
-                        textAlign = TextAlign.Start,
-                        text = it,
-                        style = TextStyle(
-                            fontFamily = OpenSansFontFamily,
-                            fontWeight = FontWeight.W400,
-                            fontSize = 13.sp,
-                            color = Color.Black
-                        )
-                    )
-                }
-
-                item.deliveryProduct?.let {
-                    Text(
-                        modifier = Modifier,
-                        textAlign = TextAlign.Start,
-                        text = it,
-                        style = TextStyle(
-                            fontFamily = OpenSansFontFamily,
-                            fontWeight = FontWeight.W400,
-                            fontSize = 13.sp,
-                            color = Color.Black
-                        )
-                    )
-                }
-                Spacer(modifier = Modifier.height(2.dp))
-                item.deliveryCost?.let {
-                    Text(
-                        modifier = Modifier,
-                        textAlign = TextAlign.Start,
-                        text = it,
-                        style = TextStyle(
-                            fontFamily = OpenSansFontFamily,
-                            fontWeight = FontWeight.W600,
-                            fontSize = 13.sp,
-                            color = Color.Black
-                        )
-                    )
-                }
-
-                item.learnMore?.let {
-                    Text(
-                        modifier = Modifier,
-                        textAlign = TextAlign.Start,
-                        text = it,
-                        style = TextStyle(
-                            fontFamily = OpenSansFontFamily,
-                            fontWeight = FontWeight.W400,
-                            fontSize = 13.sp,
-                            color = Color.Black
-                        )
-                    )
-                }
-                Spacer(modifier = Modifier.height(16.dp))
-
-                BlackButton(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(50.dp),
-                    text = item.deliveryButtonText.uppercase(),
-                    enabled = true,
-                ) {
-                    //
-
                 }
 
             }
+            Image(
+                modifier = Modifier
+                    .weight(1f),
+                alignment = Alignment.CenterEnd,
+                painter = if (isExpended) painterResource(id = R.drawable.ic_up_arrow)
+                else painterResource(id = R.drawable.ic_dwon_arrow),
+                contentDescription = stringResource(R.string.down_arrow))
 
         }
 
+        ExpendedData(isExpended, item)
+
     }
 
+
 }
+
 

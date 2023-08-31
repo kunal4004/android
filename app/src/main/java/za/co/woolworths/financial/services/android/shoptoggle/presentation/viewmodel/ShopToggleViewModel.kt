@@ -10,11 +10,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ShopToggleViewModel @Inject constructor(
-    private val shopToggleUseCase: ShopToggleUseCase
+    private val shopToggleUseCase: ShopToggleUseCase,
 ) : ViewModel() {
 
-    private val _listItem  = mutableStateOf<List<ToggleModel>>(emptyList())
-    val listItem : State<List<ToggleModel>> = _listItem
+    private val _listItem = mutableStateOf<List<ToggleModel>>(emptyList())
+    val listItem: State<List<ToggleModel>> = _listItem
 
     private val _expandedItemId = mutableStateOf<Int?>(null)
     val expandedItemId get() = _expandedItemId.value
@@ -31,7 +31,7 @@ class ShopToggleViewModel @Inject constructor(
         _expandedItemId.value = null
     }
 
-   private fun getListData() {
+    private fun getListData() {
         val itemList = shopToggleUseCase.invoke()
         _listItem.value = itemList
     }

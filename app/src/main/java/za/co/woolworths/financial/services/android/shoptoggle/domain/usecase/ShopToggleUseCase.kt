@@ -7,7 +7,7 @@ import javax.inject.Inject
 
 class ShopToggleUseCase @Inject constructor(
 
-    private val shopToggleRepository: ShopToggleRepository,
+    private val shopToggleRepository: ShopToggleRepository
 
     ) {
     operator fun invoke(): List<ToggleModel> {

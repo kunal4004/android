@@ -9,15 +9,18 @@ import androidx.compose.material3.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.awfs.coordination.R
 import dagger.hilt.android.AndroidEntryPoint
-import za.co.woolworths.financial.services.android.shoptoggle.presentation.components.shopToggleScreen
+import za.co.woolworths.financial.services.android.shoptoggle.presentation.components.ShopToggleScreen
 import za.co.woolworths.financial.services.android.shoptoggle.presentation.viewmodel.ShopToggleViewModel
+import za.co.woolworths.financial.services.android.ui.wfs.theme.Dimens
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
 
 @AndroidEntryPoint
 class ShopToggleActivity : ComponentActivity() {
+
     private val viewModel by viewModels<ShopToggleViewModel>()
 
     @OptIn(ExperimentalMaterial3Api::class)
@@ -33,7 +36,7 @@ class ShopToggleActivity : ComponentActivity() {
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(16.dp)
+                            .padding(Dimens.sixteen_dp)
                     ) {
 
                         TopAppBar(
@@ -43,13 +46,13 @@ class ShopToggleActivity : ComponentActivity() {
                             navigationIcon = {
                                 IconButton(onClick = { finish() }) {
                                     Icon(painter = painterResource(id = R.drawable.back24),
-                                        contentDescription = "Back Arrow")
+                                        contentDescription = stringResource(id = R.string.back_arrow))
 
                                 }
                             }
                         )
 
-                        shopToggleScreen(viewModel,
+                        ShopToggleScreen(viewModel,
                             viewModel.listItem.value)
                     }
                 }
