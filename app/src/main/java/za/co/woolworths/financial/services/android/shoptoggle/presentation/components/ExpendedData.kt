@@ -18,7 +18,10 @@ import za.co.woolworths.financial.services.android.ui.wfs.theme.Dimens
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OpenSansFontFamily
 
 @Composable
-fun ExpendedData(isExpended: Boolean, item: ToggleModel) {
+fun ExpendedData(
+    isExpended: Boolean,
+    item: ToggleModel,
+) {
     if (isExpended) {
         Spacer(modifier = Modifier.height(Dimens.sixteen_dp))
         Divider(color = ColorD8D8D8, thickness = Dimens.oneDp)
