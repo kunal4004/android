@@ -48,6 +48,10 @@ import za.co.woolworths.financial.services.android.models.dto.OrdersResponse
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams.SearchType
 import za.co.woolworths.financial.services.android.models.dto.RootCategories
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse
+import za.co.woolworths.financial.services.android.models.dto.cart.FulfillmentDetails
+import za.co.woolworths.financial.services.android.models.dto.dash.LastOrderDetailsResponse
+import za.co.woolworths.financial.services.android.models.network.Parameter
+import za.co.woolworths.financial.services.android.onecartgetstream.OCChatActivity
 import za.co.woolworths.financial.services.android.ui.activities.BarcodeScanActivity
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
@@ -81,6 +85,7 @@ import za.co.woolworths.financial.services.android.util.PermissionResultCallback
 import za.co.woolworths.financial.services.android.util.PermissionUtils
 import za.co.woolworths.financial.services.android.util.ScreenManager.SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.SessionUtilities
+import za.co.woolworths.financial.services.android.util.StoreUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
@@ -136,6 +141,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
     companion object {
         private const val LOGIN_MY_LIST_REQUEST_CODE = 9876
         private const val DASH_DIVIDER = 1.25
+        private const val TIME_SLOT_SEPARATOR = "\t\u2022\t "
     }
 
     enum class SelectedTabIndex(val index: Int) {
@@ -260,6 +266,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                                 showBlackToolTip(Delivery.STANDARD)
                                 setEventsForSwitchingBrowsingType(Delivery.STANDARD.name)
                                 KotlinUtils.browsingDeliveryType = Delivery.STANDARD
+                                setSearchText(STANDARD_TAB)
                             }
 
                             CLICK_AND_COLLECT_TAB.index -> {
@@ -267,10 +274,12 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                                 showBlackToolTip(Delivery.CNC)
                                 setEventsForSwitchingBrowsingType(Delivery.CNC.name)
                                 KotlinUtils.browsingDeliveryType = Delivery.CNC
+                                setSearchText(CLICK_AND_COLLECT_TAB)
                             }
 
                             DASH_TAB.index -> {
                                 shopViewModel.onTabClick(validateLocationResponse, position)
+                                setSearchText(DASH_TAB)
                             }
                         }
                         setupToolbar(position)
@@ -279,13 +288,58 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                     updateTabIconUI(position)
                 }
             })
-            tabsMain.setupWithViewPager(viewpagerMain)
-            updateTabIconUI(STANDARD_TAB.index)
+            tabsMain.setupWithViewPager(viewpagerMain) // TODO - this needs to be removed as we are removing the tabs
+            updateTabIconUI(currentTabPositionBasedOnDeliveryType())
+            viewpagerMain.currentItem = currentTabPositionBasedOnDeliveryType()
         }
     }
 
-    fun showSearchAndBarcodeUi() {
-        binding?.apply {
+    private fun setSearchText(selectedTab: SelectedTabIndex, location: CharSequence? = null) {
+        binding.apply {
+            when (selectedTab) {
+                STANDARD_TAB -> {
+                    tvSearchProduct.text = getString(R.string.shop_landing_product_all_search)
+                    fulfilmentAndLocationLayout.layoutFulfilment.tvTitle.text = getString(R.string.standard_delivery)
+                    fulfilmentAndLocationLayout.layoutFulfilment.tvSubTitle.text = getString(R.string.shop_landing_fulfilment_title_cnc_and_standard)
+                    fulfilmentAndLocationLayout.layoutLocation.tvTitle.text = location ?: getString(R.string.default_location)
+                }
+                CLICK_AND_COLLECT_TAB -> {
+                    tvSearchProduct.text = getCncSearchText()
+                    fulfilmentAndLocationLayout.layoutFulfilment.tvTitle.text = getString(R.string.click_and_collect)
+                    fulfilmentAndLocationLayout.layoutFulfilment.tvSubTitle.text = getString(R.string.shop_landing_fulfilment_title_cnc_and_standard)
+                    fulfilmentAndLocationLayout.layoutLocation.tvTitle.text = location ?: getString(R.string.select_your_preferred_store)
+                }
+                DASH_TAB -> {
+                    tvSearchProduct.text = getString(R.string.shop_landing_product_food_search)
+                    fulfilmentAndLocationLayout.layoutFulfilment.tvTitle.text = getString(R.string.dash_delivery)
+                    fulfilmentAndLocationLayout.layoutFulfilment.tvSubTitle.text = getString(R.string.shop_landing_fulfilment_title_dash).plus(TIME_SLOT_SEPARATOR).plus(dashTimeslots())
+                    fulfilmentAndLocationLayout.layoutLocation.tvTitle.text = location ?: getString(R.string.set_location_title)
+                }
+            }
+        }
+    }
+
+    private fun getCncSearchText(): String {
+        var storeDeliveryType = KotlinUtils.browsingCncStore?.storeDeliveryType
+        if (storeDeliveryType.isNullOrEmpty()) {
+            storeDeliveryType = KotlinUtils.getStoreDeliveryType(getDeliveryType())
+        }
+
+        return when (storeDeliveryType?.lowercase()) {
+            StoreUtils.Companion.StoreDeliveryType.OTHER.type.lowercase() -> {
+                getString(R.string.shop_landing_product_other_search)
+            }
+            StoreUtils.Companion.StoreDeliveryType.FOOD.type.lowercase() -> {
+                getString(R.string.shop_landing_product_food_search)
+            }
+            else -> {
+                getString(R.string.shop_landing_product_all_search)
+            }
+        }
+    }
+
+    fun showSearchAndBarcodeUi(isFromCnc: Boolean = false) {
+        binding.apply {
             tvSearchProduct.visibility = View.VISIBLE
             imBarcodeScanner.visibility = View.VISIBLE
         }
@@ -575,7 +629,16 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         }
     }
 
+    private fun currentTabPositionBasedOnDeliveryType(): Int {
+        return when(Delivery.getType(getDeliveryType()?.deliveryType)) {
+            Delivery.CNC -> CLICK_AND_COLLECT_TAB.index
+            Delivery.DASH -> DASH_TAB.index
+            else -> STANDARD_TAB.index
+        }
+    }
+
     fun setDeliveryView() {
+        setNewDeliveryAndFulfilmentText()
         binding.apply {
             activity?.let {
                 getDeliveryType()?.let { fulfillmentDetails ->
@@ -589,6 +652,57 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                 }
             }
         }
+    }
+
+    private fun setNewDeliveryAndFulfilmentText() {
+        if (!isAdded) {
+            return
+        }
+        val fulfillmentDetails: FulfillmentDetails? = getDeliveryType()
+        fulfillmentDetails?.apply {
+            when (Delivery.getType(deliveryType)) {
+                Delivery.CNC -> {
+                        setSearchText(CLICK_AND_COLLECT_TAB, location = KotlinUtils.capitaliseFirstLetter(storeName))
+                }
+
+                Delivery.STANDARD -> {
+                    val fullAddress = KotlinUtils.capitaliseFirstLetter(address?.address1 ?: "")
+                    val formattedNickName = KotlinUtils.getFormattedNickName(
+                        address?.nickname,
+                        fullAddress, context
+                    )
+                    formattedNickName.append(fullAddress)
+                    setSearchText(STANDARD_TAB, location = formattedNickName)
+                }
+
+                Delivery.DASH -> {
+                    val fullAddress = KotlinUtils.capitaliseFirstLetter(address?.address1 ?: "")
+                    val formattedNickName = KotlinUtils.getFormattedNickName(
+                        address?.nickname,
+                        fullAddress, context
+                    )
+                    val location = "".plus(formattedNickName).plus(
+                        KotlinUtils.capitaliseFirstLetter(
+                            WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.address1
+                                ?: address?.address1 ?: ""
+                        )
+                    )
+                    setSearchText(DASH_TAB, location = location)
+                }
+
+                else -> {
+                    setSearchText(STANDARD_TAB)
+                }
+            }
+        }
+    }
+
+    private fun dashTimeslots(): String {
+        var timeSlot: String? = WoolworthsApplication.getValidatePlaceDetails()?.onDemand?.firstAvailableFoodDeliveryTime
+        if(timeSlot.isNullOrEmpty()) {
+            timeSlot = getString(R.string.no_timeslots_available_title)
+        }
+        return timeSlot
     }
 
     override fun onHiddenChanged(hidden: Boolean) {
@@ -614,7 +728,8 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
 
         if (getDeliveryType() == null) {
             setupToolbar(STANDARD_TAB.index)
-            binding.viewpagerMain.currentItem = STANDARD_TAB.index
+            setSearchText(STANDARD_TAB)
+            //binding.viewpagerMain.currentItem = STANDARD_TAB.index // TODO, this can be removed, page should not be loaded statically, it should be as per fulfilment selection only
         } else {
             setDeliveryView()
         }
@@ -892,8 +1007,9 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         }
     }
 
+    //TODO- as a part of shop page enhancement, the black tooltip not required
     private fun showBlackToolTip(deliveryType: Delivery) {
-        binding.apply {
+        /*binding.apply {
             if (validateLocationResponse == null || getDeliveryType() == null) {
                 blackToolTipLayout.root.visibility = View.GONE
                 return
@@ -976,7 +1092,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                     }
                 }.start()
             }
-        }
+        }*/
     }
 
     private fun showStandardDeliveryToolTip() {

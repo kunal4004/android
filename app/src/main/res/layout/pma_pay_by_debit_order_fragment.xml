@@ -76,7 +76,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="14dp"
                     android:autoLink="email"
-                    android:text="@{payByDebitOrderModel.header.headerContent.get(1).text}"
+                    android:setSpannableTtToSetDebitOrderTV="@{payByDebitOrderModel.header.headerContent.get(1).text}"
                     android:textColor="@color/account_card_desc_grey_color"
                     app:layout_constraintEnd_toStartOf="@+id/endGuideLine"
                     app:layout_constraintStart_toStartOf="@+id/startGuideLine"

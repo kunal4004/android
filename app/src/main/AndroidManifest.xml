@@ -21,6 +21,7 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.FLASHLIGHT" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission
         android:name="android.permission.WRITE_SETTINGS"
         tools:ignore="ProtectedPermissions" />
@@ -282,7 +283,7 @@
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.maintenance.MaintenanceWebViewActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Transparent.NoActionBar" />
+            android:theme="@style/MaintenanceWebActivityStyle" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.loan.LoanWithdrawalActivity"
             android:screenOrientation="portrait"

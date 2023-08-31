@@ -180,8 +180,9 @@ class ShopViewModel @Inject constructor(
         }
     }
 
+    // TODO - this needs to be removed as it may not required as we are removing the black tooltip
     fun onTabClick(validateLocationResponse: ValidateLocationResponse? = null, position: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
+        /*viewModelScope.launch(Dispatchers.IO) {
 
             _tooltipUiState.update { currentState ->
                 when (position) {
@@ -220,7 +221,7 @@ class ShopViewModel @Inject constructor(
                     else -> ShopTooltipUiState.Hidden
                 }
             }
-        }
+        }*/
     }
 
     private fun setEventsForSwitchingBrowsingType(browsingType: String?) {
