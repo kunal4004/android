@@ -19,18 +19,19 @@ data class BnplConfig(
 @Parcelize
 data class WfsPaymentMethods(
     val instalmentCount: Int?,
-    val productGroupCode: String?,
-    val accountNumberBin: String?,
-    val title: String?,
+    val productGroupCode: String,
+    val accountNumberBin: String,
+    val title: String,
     val description: String?,
     val cashbackPercentage: Float?,
-    val infoTitle: String?,
-    val infoDescription: String?,
+    val infoTitle: String,
+    val infoDescription: String,
     val infoFooterTitle: String?,
     val standalone : Standalone?,
+    val infoDescriptionBoldParts : MutableList<String>,
     val infoFooterDescription: String?) : Parcelable
 
 @Parcelize
-data class Standalone(val description: String?,
+data class Standalone(val description: String,
                       val descriptionHyperlinkPart : String?,
-                      val descriptionBoldParts : MutableList<String>? ) : Parcelable
+                      val descriptionBoldParts : MutableList<String>?) : Parcelable
