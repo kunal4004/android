@@ -2,13 +2,19 @@ package za.co.woolworths.financial.services.android.repository.shop
 
 import android.location.Location
 import com.awfs.coordination.R
+import com.google.firebase.crashlytics.ktx.crashlytics
+import com.google.firebase.crashlytics.ktx.setCustomKeys
+import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
 import com.google.gson.JsonParseException
 import com.google.gson.JsonSyntaxException
-import za.co.woolworths.financial.services.android.checkout.service.network.ConfirmDeliveryAddressResponse
-import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
-import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.models.dto.AddItemToCart
+import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse
+import za.co.woolworths.financial.services.android.models.dto.DashRootCategories
+import za.co.woolworths.financial.services.android.models.dto.LocationResponse
+import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse
 import za.co.woolworths.financial.services.android.models.dto.dash.LastOrderDetailsResponse
 import za.co.woolworths.financial.services.android.models.dto.shop.DashCategories
 import za.co.woolworths.financial.services.android.models.network.OneAppService
@@ -141,27 +147,6 @@ class MainShopRepository : ShopRepository {
         }
     }
 
-    override suspend fun confirmPlace(confirmLocationRequest: ConfirmLocationRequest): Resource<ConfirmDeliveryAddressResponse> {
-        return try {
-            val response = OneAppService().confirmLocation(confirmLocationRequest)
-            if (response.isSuccessful) {
-                response.body()?.let {
-                    return when (it.httpCode) {
-                        AppConstant.HTTP_OK, AppConstant.HTTP_OK_201 ->
-                            Resource.success(it)
-                        else ->
-                            Resource.error(R.string.error_unknown, it)
-                    }
-                } ?: Resource.error(R.string.error_unknown, null)
-            } else {
-                Resource.error(R.string.error_unknown, null)
-            }
-        } catch (e: IOException) {
-            FirebaseManager.logException(e)
-            Resource.error(R.string.error_internet_connection, null)
-        }
-    }
-
     override suspend fun callStoreFinder(
         sku: String,
         startRadius: String?,
@@ -207,6 +192,10 @@ class MainShopRepository : ShopRepository {
                         LastOrderDetailsResponse::class.java)
                 } catch (jsonException: JsonParseException) {
                     FirebaseManager.logException(jsonException)
+                    Firebase.crashlytics.setCustomKeys {
+                        key(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.ExceptionResponse, response.errorBody().toString())
+                        key(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.ExceptionMessage, "Unable to parse NetworkErrorResponse class")
+                    }
                 }
                 Resource.error(R.string.error_unknown, errorResponse)
             }

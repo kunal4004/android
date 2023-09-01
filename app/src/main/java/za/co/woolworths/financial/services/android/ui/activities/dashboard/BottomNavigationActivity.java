@@ -306,7 +306,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     private void queryBadgeCountOnStart() {
         if (SessionUtilities.getInstance().isUserAuthenticated() && AppConfigSingleton.INSTANCE.isBadgesRequired()) {
             mQueryBadgeCounter.queryVoucherCount();
-            mQueryBadgeCounter.queryCartSummaryCount();
+            mQueryBadgeCounter.updateCartSummaryCount();
             mQueryBadgeCounter.queryMessageCount();
             AppConfigSingleton.INSTANCE.setBadgesRequired(false);
         } else if (!AppConfigSingleton.INSTANCE.isBadgesRequired()) {
@@ -496,6 +496,10 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     @Override
     public void setTitle(String title) {
         setToolbarTitle(title);
+    }
+
+    public  void  setToolbarContentDescription(String description) {
+        getToolbarTitle().setContentDescription(description);
     }
 
     @Override

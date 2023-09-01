@@ -8,13 +8,20 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import za.co.woolworths.financial.services.android.checkout.service.network.ConfirmDeliveryAddressResponse
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
-import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.models.dto.AddItemToCart
+import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse
+import za.co.woolworths.financial.services.android.models.dto.DashRootCategories
+import za.co.woolworths.financial.services.android.models.dto.LocationResponse
+import za.co.woolworths.financial.services.android.models.dto.ProductList
+import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse
 import za.co.woolworths.financial.services.android.models.dto.dash.LastOrderDetailsResponse
 import za.co.woolworths.financial.services.android.models.dto.shop.DashCategories
 import za.co.woolworths.financial.services.android.models.network.Event
@@ -72,10 +79,6 @@ class ShopViewModel @Inject constructor(
     val validatePlaceDetails: LiveData<Event<Resource<ValidateLocationResponse>>> =
         _validatePlaceDetails
 
-    private val _confirmPlaceDetails =
-        MutableLiveData<Event<Resource<ConfirmDeliveryAddressResponse>>>()
-    val confirmPlaceDetails: LiveData<Event<Resource<ConfirmDeliveryAddressResponse>>> =
-        _confirmPlaceDetails
 
     private val _productStoreFinder = MutableLiveData<Event<Resource<LocationResponse>>>()
     val productStoreFinder: LiveData<Event<Resource<LocationResponse>>> = _productStoreFinder
@@ -144,14 +147,6 @@ class ShopViewModel @Inject constructor(
         viewModelScope.launch {
             val response = shopRepository.validateLocation(placeId)
             _validatePlaceDetails.value = Event(response)
-        }
-    }
-
-    fun callConfirmPlace(confirmLocationRequest: ConfirmLocationRequest) {
-        _confirmPlaceDetails.value = Event(Resource.loading(null))
-        viewModelScope.launch {
-            val response = shopRepository.confirmPlace(confirmLocationRequest)
-            _confirmPlaceDetails.value = Event(response)
         }
     }
 

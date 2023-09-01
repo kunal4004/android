@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
+import androidx.core.text.HtmlCompat
 import androidx.fragment.app.setFragmentResult
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentCustomBottomsheetDialogBinding
@@ -107,8 +108,11 @@ class CustomBottomSheetDialogFragment : WBottomSheetDialogFragment(),
                 imgView.visibility = View.GONE
 
             val linkText = getString(DIALOG_DISMISS_LINK_TEXT)
-            if (!linkText.isNullOrEmpty())
-                tvDismiss?.text = linkText
+            if (linkText.isNullOrEmpty()) {
+                tvDismiss.visibility = View.GONE
+            } else {
+                tvDismiss?.text = HtmlCompat.fromHtml(linkText, HtmlCompat.FROM_HTML_MODE_LEGACY)
+            }
         }
 
         tvDismiss.setOnClickListener(this@CustomBottomSheetDialogFragment)
@@ -118,19 +122,32 @@ class CustomBottomSheetDialogFragment : WBottomSheetDialogFragment(),
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.buttonAction -> {
-                setFragmentResult(arguments?.getString(DIALOG_BUTTON_CLICK_RESULT)
-                    ?: DIALOG_BUTTON_CLICK_RESULT, bundleOf())
+                setFragmentResult(
+                    arguments?.getString(DIALOG_BUTTON_CLICK_RESULT)
+                        ?: DIALOG_BUTTON_CLICK_RESULT, bundleOf()
+                )
                 dismiss()
             }
+
             R.id.tvDismiss -> {
-                setFragmentResult(DIALOG_BUTTON_DISMISS_RESULT, bundleOf())
+                val bundle = Bundle()
+                bundle.putString(
+                    DIALOG_BUTTON_CLICK_RESULT,
+                    arguments?.getString(DIALOG_BUTTON_CLICK_RESULT)
+                )
+                setFragmentResult(DIALOG_BUTTON_DISMISS_RESULT, bundle)
                 dismiss()
             }
         }
     }
 
     override fun onCancel(dialog: DialogInterface) {
-        setFragmentResult(DIALOG_BUTTON_DISMISS_RESULT, bundleOf())
+        val bundle = Bundle()
+        bundle.putString(
+            DIALOG_BUTTON_CLICK_RESULT,
+            arguments?.getString(DIALOG_BUTTON_CLICK_RESULT)
+        )
+        setFragmentResult(DIALOG_BUTTON_DISMISS_RESULT, bundle)
         super.onCancel(dialog)
     }
 }

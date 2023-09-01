@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.startup.utils
 
+import android.util.Log
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse
 import za.co.woolworths.financial.services.android.models.repository.AppConfigRepository
