@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.wfs.shoptimiser.data
+package za.co.woolworths.financial.services.android.ui.wfs.shoptimiser.dto
 
 import android.os.Parcelable
 import androidx.annotation.DrawableRes

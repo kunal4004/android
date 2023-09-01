@@ -19,7 +19,7 @@ data class BnplConfig(
 @Parcelize
 data class WfsPaymentMethods(
     val instalmentCount: Int?,
-    val productGroupCode: String,
+    val productGroupCode: String?,
     val accountNumberBin: String,
     val title: String,
     val description: String?,

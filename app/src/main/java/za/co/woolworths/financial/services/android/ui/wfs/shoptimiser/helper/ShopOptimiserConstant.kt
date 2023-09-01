@@ -11,5 +11,4 @@ class  ShopOptimiserConstant {
         // Constant for PayFlex key
         const val PayFlexKey = "payFlex"
     }
-
 }
