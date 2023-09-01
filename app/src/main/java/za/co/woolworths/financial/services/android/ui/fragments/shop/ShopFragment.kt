@@ -2,10 +2,12 @@ package za.co.woolworths.financial.services.android.ui.fragments.shop
 
 import android.Manifest
 import android.app.Activity.RESULT_OK
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Handler
+import android.text.Spanned
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.MarginLayoutParams
@@ -70,6 +72,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.OnChi
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView
 import za.co.woolworths.financial.services.android.ui.views.shop.dash.ChangeFulfillmentCollectionStoreFragment
 import za.co.woolworths.financial.services.android.ui.views.shop.dash.DashDeliveryAddressFragment
+import za.co.woolworths.financial.services.android.ui.views.tooltip.WMaterialShowcaseViewV2
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_3000_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.REQUEST_CODE_BARCODE_ACTIVITY
@@ -236,7 +239,10 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         binding?.apply {
             tvSearchProduct.setOnClickListener { navigateToProductSearch() }
             imBarcodeScanner.setOnClickListener { checkCameraPermission() }
-            shopToolbar.setOnClickListener { onEditDeliveryLocation() }
+            shopToolbar.setOnClickListener {
+                dismissToolTip()
+                onEditDeliveryLocation()
+            }
 
             shopPagerAdapter = ShopPagerAdapter(childFragmentManager, mTabTitle, this@ShopFragment)
             viewpagerMain.offscreenPageLimit = 2
@@ -1333,6 +1339,128 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                         )
                 }
             }
+        }
+    }
+
+    private fun dismissToolTip() {
+        (activity as? BottomNavigationActivity)?.let {
+            it.dismissNewTooltip()
+        }
+    }
+
+    private fun formatToolTipTitle(context: Context, start: String, coloredText: String, end: String): Spanned {
+        val labelColor = ContextCompat.getColor(context, R.color.color_yellow_FEE600)
+        val сolor: String = String.format("%X", labelColor).substring(2)
+        return HtmlCompat.fromHtml(
+            "$start<font color=\"#$сolor\">$coloredText</font><br>$end",
+            HtmlCompat.FROM_HTML_MODE_LEGACY
+        )
+    }
+
+    fun showFulfilmentTooltip() {
+        // Prevent dialog to display in other section when fragment is not visible
+        (activity as? BottomNavigationActivity)?.let {
+            if (it.currentFragment !is ShopFragment || !isAdded)
+                return
+            FirebaseManager.setCrashlyticsString(
+                bindString(R.string.crashlytics_materialshowcase_key),
+                this.javaClass.canonicalName
+            )
+            val deliveryType = when (binding.viewpagerMain.currentItem) {
+                DASH_TAB.index ->  getString(R.string.tooltip_dash)
+                CLICK_AND_COLLECT_TAB.index -> "\n".plus(getString(R.string.tooltip_cnc))
+                else -> "\n".plus(getString(R.string.tooltip_standard_delivery))
+            }
+
+            val title = formatToolTipTitle(
+                it,
+                getString(R.string.you_re_shopping_with),
+                deliveryType,
+                getString(R.string.tooltip_fulfilment_message)
+            )
+
+            it.wMaterialShowcaseViewV2 =
+                WMaterialShowcaseViewV2.Builder(it, WMaterialShowcaseViewV2.Feature.SHOP_FULFILMENT)
+                    .setTarget(binding.fulfilmentAndLocationLayout.layoutFulfilment.root)
+                    .setTitle(title)
+                    .setDescription(getString(R.string.tooltip_fulfilment_description))
+                    .setActionText(getString(R.string.next)).withRectangleShape().setTargetTouchable(true)
+                    .setDismissOnTouch(false).setDismissOnTargetTouch(false).setShapePadding(0)
+                    .setAction(walkThroughListener).setDelay(0).setFadeDuration(0).setArrowIcon(R.drawable.ic_arrow_tooltip_spinning)
+                    .setMaskColour(ContextCompat.getColor(it, R.color.semi_transparent_black_e6000000)).build()
+            it.wMaterialShowcaseViewV2?.show(it)
+        }
+    }
+
+    private fun showLocationTooltip() {
+        // Prevent dialog to display in other section when fragment is not visible
+        (activity as? BottomNavigationActivity)?.let {
+            if (it.currentFragment !is ShopFragment || !isAdded)
+                return
+            FirebaseManager.setCrashlyticsString(
+                bindString(R.string.crashlytics_materialshowcase_key),
+                this.javaClass.canonicalName
+            )
+            val (title, description, message) = getLocationTooltipArguments()
+
+            it.wMaterialShowcaseViewV2 =
+                WMaterialShowcaseViewV2.Builder(it, WMaterialShowcaseViewV2.Feature.SHOP_LOCATION)
+                    .setTarget(binding.fulfilmentAndLocationLayout.layoutLocation.root)
+                    .setTitle(title)
+                    .setDescription(description)
+                    .setMessage(message)
+                    .setActionText(getString(R.string.got_it)).withRectangleShape().setTargetTouchable(true)
+                    .setDismissOnTouch(false).setDismissOnTargetTouch(false).setShapePadding(0)
+                    .setAction(walkThroughListener).setDelay(0).setFadeDuration(0).setArrowIcon(R.drawable.ic_arrow_tooltip_simple)
+                    .setMaskColour(ContextCompat.getColor(it, R.color.semi_transparent_black_e6000000)).build()
+            it.wMaterialShowcaseViewV2?.show(it)
+        }
+    }
+
+    private fun getLocationTooltipArguments(): Triple<String, String, String> {
+        val title: String
+        val description: String
+        val message: String
+
+        when (binding.viewpagerMain.currentItem) {
+            DASH_TAB.index -> {
+                title = getString(R.string.tooltip_location_title_usage)
+                description = getString(R.string.tooltip_location_description)
+                message = getString(R.string.tooltip_location_message_to_change_your_location)
+            }
+            CLICK_AND_COLLECT_TAB.index -> {
+                title = getString(R.string.tooltip_location_title_cnc)
+                description = getString(R.string.tooltip_location_decription_cnc)
+                message = getString(R.string.tooltip_location_message_to_change_your_store)
+            }
+            else -> {
+                if(binding.fulfilmentAndLocationLayout.layoutLocation.tvTitle.text == getString(R.string.default_location)) {
+                    //Location is not yet set
+                    title = getString(R.string.tooltip_location_title_set_location)
+                    description = getString(R.string.tooltip_location_description)
+                    message = getString(R.string.tooltip_location_to_set_your_location)
+                } else {
+                    //Location has already been set
+                    title = getString(R.string.tooltip_location_title_usage)
+                    description = getString(R.string.tooltip_location_description)
+                    message = getString(R.string.tooltip_location_message_to_change_your_location)
+                }
+            }
+        }
+        return Triple(title, description, message)
+    }
+
+    private val walkThroughListener = object : WMaterialShowcaseViewV2.IWalkthroughActionListener {
+        override fun onWalkthroughActionButtonClick(feature: WMaterialShowcaseViewV2.Feature?) {
+            if (feature == WMaterialShowcaseViewV2.Feature.SHOP_FULFILMENT) {
+                showLocationTooltip()
+            } else if (feature == WMaterialShowcaseViewV2.Feature.SHOP_LOCATION) {
+                showShopFeatureWalkThrough()
+            }
+        }
+
+        override fun onPromptDismiss(feature: WMaterialShowcaseViewV2.Feature?) {
+            //TODO("Not yet implemented")
         }
     }
 

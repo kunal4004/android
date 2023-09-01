@@ -3080,4 +3080,19 @@
     <string name="hint_list_name">List Name</string>
     <string name="create_list_name_error">Unfortunately, this list name already exists.\nPlease try another option.</string>
     <string name="label_switch">Switch</string>
+    <string name="label_tap">Tap</string>
+    <string name="tooltip_location_to_set_your_location">To Set Your Location</string>
+    <string name="you_re_shopping_with">"You’re shopping with "</string>
+    <string name="tooltip_dash">Dash.</string>
+    <string name="tooltip_cnc">Click &amp; Collect.</string>
+    <string name="tooltip_standard_delivery">\nStandard Delivery.</string>
+    <string name="tooltip_fulfilment_message">Tap ‘Switch’ to choose between our 3 delivery options.</string>
+    <string name="tooltip_fulfilment_description"><![CDATA[You can switch between Standard Delivery, Click & Collect, or same day food delivery using Dash.]]></string>
+    <string name="tooltip_location_title_set_location">Set your location for the most accurate stock, availability, and pricing.</string>
+    <string name="tooltip_location_description">We’ll gather your full delivery address later on, when you checkout.</string>
+    <string name="tooltip_location_title_usage">We use your location for the most accurate stock, availability, and pricing.</string>
+    <string name="tooltip_location_message_to_change_your_location">to CHANGE YOUR LOCATION</string>
+    <string name="tooltip_location_title_cnc">Choose Your Collection Point</string>
+    <string name="tooltip_location_message_to_change_your_store">to CHANGE YOUR store</string>
+    <string name="tooltip_location_decription_cnc">We use your collection store details to give you the most accurate stock, availability and pricing.</string>
 </resources>
