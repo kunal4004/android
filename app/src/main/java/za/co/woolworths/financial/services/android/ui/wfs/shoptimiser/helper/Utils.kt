@@ -5,7 +5,7 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
-import za.co.woolworths.financial.services.android.ui.wfs.shoptimiser.data.ProductOnDisplay
+import za.co.woolworths.financial.services.android.ui.wfs.shoptimiser.dto.ProductOnDisplay
 import za.co.woolworths.financial.services.android.ui.wfs.theme.Color444444
 import za.co.woolworths.financial.services.android.ui.wfs.theme.HyperTextlinkBlue
 

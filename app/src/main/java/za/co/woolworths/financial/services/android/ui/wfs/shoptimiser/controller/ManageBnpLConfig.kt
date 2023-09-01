@@ -55,7 +55,6 @@ class ManageBnplConfigImpl @Inject constructor() : IManageBnpLConfig {
   return isBnplRequired && isBnplEnabled
  }
 
-
  /**
   * Retrieves the installment count value from the PayFlex configuration.
   * @return The installment count value if available, or null if not configured.
