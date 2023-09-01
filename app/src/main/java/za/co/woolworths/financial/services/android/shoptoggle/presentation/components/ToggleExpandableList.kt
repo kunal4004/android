@@ -31,7 +31,7 @@ fun ToggleExpandableList(
         items(item) { item ->
             ExpandableListItem(
                 item = item,
-                isExpended = viewModel.expandedItemId == item.id,
+                isExpanded = viewModel.expandedItemId == item.id,
                 onItemClick = {
                     if (viewModel.expandedItemId == item.id) {
                         viewModel.collapseItem()

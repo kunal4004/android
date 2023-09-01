@@ -26,7 +26,7 @@ import za.co.woolworths.financial.services.android.ui.wfs.theme.*
 @Composable
 fun ExpandableListItem(
     item: ToggleModel,
-    isExpended: Boolean,
+    isExpanded: Boolean,
     onItemClick: () -> Unit,
 ) {
 
@@ -38,8 +38,8 @@ fun ExpandableListItem(
         modifier = Modifier
             .fillMaxSize()
             .border(
-                BorderStroke(if (isExpended) Dimens.oneDp else Dimens.point_five_dp,
-                    color = if (isExpended) Color.Black else ColorD8D8D8),
+                BorderStroke(if (isExpanded) Dimens.oneDp else Dimens.point_five_dp,
+                    color = if (isExpanded) Color.Black else ColorD8D8D8),
                 shape = RoundedCornerShape(Dimens.four_dp)
             )
             .shadow(
@@ -59,7 +59,7 @@ fun ExpandableListItem(
         }
 
     ) {
-        ExpandableCard(item, isExpended)
+        ExpandableCard(item, isExpanded)
 
     }
 
@@ -68,7 +68,7 @@ fun ExpandableListItem(
 @Composable
 private fun ExpandableCard(
     item: ToggleModel,
-    isExpended: Boolean,
+    isExpanded: Boolean,
 ) {
     Column(
         modifier = Modifier
@@ -151,13 +151,13 @@ private fun ExpandableCard(
                 modifier = Modifier
                     .weight(1f),
                 alignment = Alignment.CenterEnd,
-                painter = if (isExpended) painterResource(id = R.drawable.ic_up_arrow)
+                painter = if (isExpanded) painterResource(id = R.drawable.ic_up_arrow)
                 else painterResource(id = R.drawable.ic_dwon_arrow),
                 contentDescription = stringResource(R.string.down_arrow))
 
         }
 
-        ExpendedData(isExpended, item)
+        ExpandedData(isExpanded, item)
 
     }
 
