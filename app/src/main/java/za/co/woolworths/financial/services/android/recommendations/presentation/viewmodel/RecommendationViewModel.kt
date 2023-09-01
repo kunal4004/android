@@ -25,6 +25,7 @@ class RecommendationViewModel @Inject constructor(
     }
 
     private var currentSelectedTab = 0
+    private var recommendationTitle: String? = null
     private var submittedRecImpressions: ArrayList<String> = arrayListOf()
 
     private val _recommendationResponseData = MutableLiveData<List<Action>?>()
@@ -75,13 +76,16 @@ class RecommendationViewModel @Inject constructor(
             val response =
                 recommendationsRepository.getRecommendationResponse(recommendationRequest)
             if (response.status == Status.SUCCESS) {
-                _recommendationResponseData.value = response.data?.actions
+                recommendationTitle = response.data?.title
+                _recommendationResponseData.value = response.data?.actions?.filterNot { it.products.isNullOrEmpty() }
                 if (!response.data?.monetateId.isNullOrEmpty()) {
                     Utils.saveMonetateId(response.data?.monetateId)
                 }
             }
         }
     }
+
+    fun recommendationTitle() = recommendationTitle
 
     fun parentPageScrolledToRecommendation() {
         requestVisibleRecommendationProducts()

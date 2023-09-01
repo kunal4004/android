@@ -54,11 +54,15 @@ class OCChatActivity : AppCompatActivity() {
                 override fun onClick() {
                     finish()
                 }
+
+                override fun onDismiss() {
+                }
             },
             this,
             getString(R.string.generic_error_something_wrong_newline),
             getString(R.string.one_cart_chat_error_disc),
-            getString(R.string.got_it)
+            getString(R.string.got_it),
+            false
         )
     }
 

@@ -462,7 +462,7 @@ class ConfirmAddressMapFragment :
                 getString(R.string.no_location_desc),
                 getString(R.string.change_location),
                 R.drawable.img_collection_bag,
-                null
+                resources.getString(R.string.cancel_underline_html)
             )
         customBottomSheetDialogFragment.show(
             requireFragmentManager(),
@@ -750,6 +750,11 @@ class ConfirmAddressMapFragment :
     }
 
     private fun getPlaceId(latitude: Double?, longitude: Double?) {
+        // https://woolworths.atlassian.net/browse/APP1-1501
+        // Crashing on onNavigationMapArrowClicked if no network available.
+        if (connectivityLiveData.value == false) {
+            return
+        }
         val context = GeoApiContext.Builder()
             .apiKey(getString(R.string.maps_google_api_key))
             .build()

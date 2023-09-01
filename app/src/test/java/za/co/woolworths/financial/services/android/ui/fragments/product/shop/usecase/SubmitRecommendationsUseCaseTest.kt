@@ -21,6 +21,7 @@ import za.co.woolworths.financial.services.android.models.network.Resource
 import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.recommendations.data.repository.RecommendationsRepository
 import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.RecommendationResponse
+import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.RecommendationRequest
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.dummydata.SubmittedOrdersResponseDummy
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.fake.RecommendationsRepositoryImplFake
@@ -149,14 +150,14 @@ class SubmitRecommendationsUseCaseTest {
     ) {
         val currency = "ZAR"
         assertEquals(recommendationRequest?.monetateId, "some-dummy-monetate-id")
-        assertEquals(recommendationRequest?.events?.size, 4)
+        assertEquals(recommendationRequest?.events?.size, 5)
 
-        val eventPageView = recommendationRequest?.events?.get(0)
+        val eventPageView = recommendationRequest?.events?.get(0) as? Event
         assertEquals(eventPageView?.eventType, "monetate:context:PageView")
         assertEquals(eventPageView?.url, "/orderDetails")
         assertEquals(eventPageView?.pageType, "purchase")
 
-        val eventPurchase = recommendationRequest?.events?.get(1)
+        val eventPurchase = recommendationRequest?.events?.get(1) as? Event
 
         assertEquals(eventPurchase?.orderId, "order-id-101")
         assertEquals(eventPurchase?.eventType, "monetate:context:Purchase")

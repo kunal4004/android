@@ -5,6 +5,6 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class RecommendationRequest(
-    val events: List<Event>?,
+    val events: List<RecommendationEvent>?,
     val monetateId: String?,
 ) : Parcelable
