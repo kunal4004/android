@@ -241,7 +241,7 @@ class ShopOptimiserShopOptimiserProductImpl @Inject constructor(
      * @param wfsPaymentMethods List of WfsPaymentMethods containing payment method details.
      * @param scProductGroupCode The product group code for the store card.
      * @param availableFundsForSC Available funds for the store card.
-     * @param fbhProductPrice The price of the FBH (Fulfilled by Home) product.
+     * @param fbhProductPrice The price of the FBH  product.
      * @param productOnDisplayList Mutable map representing products on display.
      */
     private fun constructStoreCard(
@@ -277,7 +277,7 @@ class ShopOptimiserShopOptimiserProductImpl @Inject constructor(
      * @param wfsPaymentMethods List of WfsPaymentMethods containing payment method details.
      * @param accountBinNumberForCC The account bin number for the credit card.
      * @param availableFundsForCC Available funds for the credit card.
-     * @param fbhProductPrice The price of the FBH (Fulfilled by Home) product.
+     * @param fbhProductPrice The price of the FBH  product.
      * @return A ProductOnDisplay representing the credit card, or null if not found or funds are insufficient.
      */
     private fun constructCreditCard(
@@ -311,7 +311,7 @@ class ShopOptimiserShopOptimiserProductImpl @Inject constructor(
      * Converts the earned cashback price based on the cashback percentage and product price.
      *
      * @param wfsStoreCardProductConfig The WfsPaymentMethods configuration for the store card.
-     * @param fbhProductPrice The price of the FBH (Fulfilled by Home) product.
+     * @param fbhProductPrice The price of the FBH  product.
      * @return A formatted string representing the earned cashback amount, or null if no cashback is applicable.
      */
     private fun convertEarnCashBackPrice(wfsStoreCardProductConfig: WfsPaymentMethods, fbhProductPrice: Double): String? {
