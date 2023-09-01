@@ -169,9 +169,9 @@ class OrderConfirmationFragment :
         val device = Device(IPAddress, config?.getDeviceModel())
         val context = Context(device, null, DY_CHANNEL)
         val cartValue: MutableList<Cart> = arrayListOf()
-        itemsOrder?.forEach {item ->
+        itemsOrder?.forEach {
             cartValue.addAll(itemsOrder!!.map {
-                Cart(it.productId,it.quantity.toString(),it.priceInfo?.amount)
+                Cart(it.productId,it.quantity,it.priceInfo?.amount.toString())
             }
             )
         }

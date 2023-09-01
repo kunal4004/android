@@ -121,7 +121,7 @@ public class ProductSearchActivity extends AppCompatActivity
         User user = new User(dyServerId, dyServerId);
         Session session = new Session(dySessionId);
         Device device = new Device(IPAddress,config.getDeviceModel());
-        Context context = new Context(device,null,DY_CHANNEL);
+        Context context = new Context(device,null,DY_CHANNEL,null);
         Properties properties = new Properties(null,null,KEYWORD_SEARCH_V1,searchProductBrand,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
         Event events = new Event(null,null,null,null,null,null,null,null,null,null,null,null,KEYWORD_SEARCH_EVENT_NAME,properties);
         ArrayList<Event> event = new ArrayList<>();

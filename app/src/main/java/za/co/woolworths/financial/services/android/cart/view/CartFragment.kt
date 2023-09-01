@@ -34,7 +34,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import org.checkerframework.checker.units.qual.A
 import za.co.woolworths.financial.services.android.cart.service.network.CartItemGroup
 import za.co.woolworths.financial.services.android.cart.service.network.CartResponse
 import za.co.woolworths.financial.services.android.cart.viewmodel.CartUtils.Companion.filterCommerceItemFromCartResponse
@@ -1459,7 +1458,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         val productList: ArrayList<String>? = ArrayList()
         for (otherProductId in viewModel.getCartItemList()) {
             if (otherProductId.commerceItemInfo.commerceId != null) {
-                var productID = otherProductId.commerceItemInfo.commerceId
+                var productID = otherProductId.commerceItemInfo.productId
                 productList?.add(productID!!)
             }
         }
@@ -2513,7 +2512,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             for (cartItemGroup: CartItemGroup in cartItems) {
                 val commerceItemList = cartItemGroup.commerceItems
                 for (cm: CommerceItem in commerceItemList) {
-                    val cart = Cart(cm.commerceItemInfo.productId, cm.commerceItemInfo.quantity.toString(),cm.priceInfo.amount)
+                    val cart = Cart(cm.commerceItemInfo.productId, cm.commerceItemInfo.quantity,cm.priceInfo.amount.toString())
                     cartLinesValue.add(cart)
                 }
             }
@@ -2541,13 +2540,13 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
           for (cartItemGroup: CartItemGroup in cartItems) {
               val commerceItemList = cartItemGroup.commerceItems
               for (cm: CommerceItem in commerceItemList) {
-                  val cart = Cart(cm.commerceItemInfo.productId, cm.commerceItemInfo.quantity.toString(),cm.priceInfo.amount)
+                  val cart = Cart(cm.commerceItemInfo.productId, cm.commerceItemInfo.quantity,cm.priceInfo.amount.toString())
                   cartLinesValue.add(cart)
               }
           }
         }
         val properties = Properties(null,null,"sync-cart-v1",null,null,Constants.CURRENCY_VALUE,null,null,null,null,null,null,null,null,null,null,null,cartLinesValue)
-        val eventsDyChangeAttribute = za.co.woolworths.financial.services.android.recommendations.data.response.request.Event(null,null,null,null,null,null,null,null,null,null,null,null,"sync car",properties)
+        val eventsDyChangeAttribute = za.co.woolworths.financial.services.android.recommendations.data.response.request.Event(null,null,null,null,null,null,null,null,null,null,null,null,"sync cart",properties)
         val events = ArrayList<Event>()
         events.add(eventsDyChangeAttribute);
         val prepareDySyncCartRequestEvent = PrepareChangeAttributeRequestEvent(

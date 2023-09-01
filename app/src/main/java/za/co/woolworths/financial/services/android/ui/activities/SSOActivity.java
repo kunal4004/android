@@ -1,8 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
 import static za.co.woolworths.financial.services.android.util.Utils.DY_CHANNEL;
-import static za.co.woolworths.financial.services.android.util.Utils.HOME_PAGE;
-import static za.co.woolworths.financial.services.android.util.Utils.MOBILE_LANDING_PAGE;
 
 import android.annotation.TargetApi;
 import android.content.DialogInterface;
@@ -42,8 +40,12 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -197,9 +199,9 @@ public class SSOActivity extends WebViewActivity {
 	private void prepareDynamicYieldRequestEvent() {
 		ArrayList dyData = new ArrayList<>();
 		Device device = new Device(Utils.IPAddress, config.getDeviceModel());
-		Page page = new Page(dyData, MOBILE_LANDING_PAGE, HOME_PAGE, null,null);
-		Context context = new Context(device,page, DY_CHANNEL);
-		Options options = new Options(true);
+		Page page = new Page(dyData, "MOBILE_PAGE", "OTHER", null,null);
+		Context context = new Context(device,page, DY_CHANNEL,null);
+		Options options = new Options(false);
 		HomePageRequestEvent homePageRequestEvent = new HomePageRequestEvent(null,null,context,options);
 		dyHomePageViewModel.createDyRequest(homePageRequestEvent);
 	}
@@ -606,6 +608,7 @@ public class SSOActivity extends WebViewActivity {
 				}
 			}
 			hideProgressBar();
+			prepareDynamicYieldRequestEvent();
 		}
 
 		@TargetApi(android.os.Build.VERSION_CODES.M)
@@ -694,7 +697,6 @@ public class SSOActivity extends WebViewActivity {
 	}
 
 	private void extractFormDataAndCloseSSOIfNeeded(String ssoActivityEvent){
-		//prepareDynamicYieldRequestEvent();
 		if (Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID) != null) {
 			dyServerId = Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID);
 		} else {
@@ -723,6 +725,7 @@ public class SSOActivity extends WebViewActivity {
 				String webviewState = list.get(0);
 
 				Intent intent = new Intent();
+				JWTDecodedModel jwtDecodedModel = null;
 
 				if (state.equals(webviewState)) {
 					jwt = list.get(1);
@@ -737,7 +740,11 @@ public class SSOActivity extends WebViewActivity {
 					}
 
 					//Trigger Firebase Tag.
-					JWTDecodedModel jwtDecodedModel = SessionUtilities.getInstance().getJwt();
+					 jwtDecodedModel = SessionUtilities.getInstance().getJwt();
+					/*if (jwtDecodedModel != null) {
+						String email = jwtDecodedModel.email.get(0);
+						Log.d(TAG, "onReceiveValue: mailid" +email);
+					}*/
 					Map<String, String> arguments = new HashMap<>();
 					arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.C2ID, (jwtDecodedModel.C2Id != null) ? jwtDecodedModel.C2Id : "");
 					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.LOGIN, arguments, SSOActivity.this);
@@ -769,26 +776,51 @@ public class SSOActivity extends WebViewActivity {
 				}
 				if (ssoActivityEvent == "SIGNIN") {
 					if (Boolean.TRUE.equals(AppConfigSingleton.getDynamicYieldConfig().isDynamicYieldEnabled())) {
-						prepareDySigninRequestEvent();
-						prepareDyIdentifyUserRequestEvent();
+						String hexvalue = null;
+						if (jwtDecodedModel != null) {
+							hexvalue = sha256Value(jwtDecodedModel.email.get(0));
+						}
+						prepareDySigninRequestEvent(hexvalue);
+						prepareDyIdentifyUserRequestEvent(hexvalue);
 					}
 
 				}else if (ssoActivityEvent == "REGISTER") {
 					if (Boolean.TRUE.equals(AppConfigSingleton.getDynamicYieldConfig().isDynamicYieldEnabled())) {
-						prepareDyRegisterRequestEvent();
-						prepareDyIdentifyUserRequestEvent();
+						String hexvalue = null;
+						if (jwtDecodedModel != null) {
+							hexvalue = sha256Value(jwtDecodedModel.email.get(0));
+						}
+						prepareDyRegisterRequestEvent(hexvalue);
+						prepareDyIdentifyUserRequestEvent(hexvalue);
 					}
 				}
 			}
 		});
 	}
 
-	private void prepareDySigninRequestEvent() {
+	private String sha256Value(String s) {
+		try{
+			final MessageDigest digest = MessageDigest.getInstance("SHA-256");
+			final byte[] hash = digest.digest(s.getBytes("UTF-8"));
+			final StringBuilder hexString = new StringBuilder();
+			for (int i = 0; i < hash.length; i++) {
+				final String hex = Integer.toHexString(0xff & hash[i]);
+				if(hex.length() == 1)
+					hexString.append('0');
+				hexString.append(hex);
+			}
+			return hexString.toString();
+		} catch(Exception ex){
+			throw new RuntimeException(ex);
+		}
+	}
+
+	private void prepareDySigninRequestEvent(String hashMail)  {
 		User user = new User(dyServerId,dyServerId);
 		Session session = new Session(dySessionId);
 		Device device = new Device(IPAddress,config.getDeviceModel());
-		Context context = new Context(device,null, DY_CHANNEL);
-		Properties properties = new Properties(null,null,"login-v1",null,null,null,null,null,null,null,jwt,null,null,null,null,null,null,null);
+		Context context = new Context(device,null, DY_CHANNEL,null);
+		Properties properties = new Properties(null,null,"login-v1",null,null,null,null,null,null,null,hashMail,null,null,null,null,null,null,null);
 		Event event = new Event(null,null,null,null,null,null,null,null,null,null,null,null,"Login",properties);
 		ArrayList<Event> eventArrayList = new ArrayList<>();
 		eventArrayList.add(event);
@@ -802,13 +834,13 @@ public class SSOActivity extends WebViewActivity {
 
 	}
 
-	private void prepareDyIdentifyUserRequestEvent() {
+	private void prepareDyIdentifyUserRequestEvent(String hashMail) {
 		User user = new User(dyServerId,dyServerId);
 		Session session = new Session(dySessionId);
 		Device device = new Device(IPAddress, config.getDeviceModel());
-		Context context = new Context(device,null, DY_CHANNEL);
-		Properties properties = new Properties(null,null,"identify-v1",null,null,null,null,null,null,null,jwt,null,null,null,null,null,null,null);
-		Event event = new Event(null,null,null,null,null,null,null,null,null,null,null,null,"Identify-User",properties);
+		Context context = new Context(device,null, DY_CHANNEL,null);
+		Properties properties = new Properties(null,null,"identify-v1",null,null,null,null,null,null,null,hashMail,null,null,null,null,null,null,null);
+		Event event = new Event(null,null,null,null,null,null,null,null,null,null,null,null,"Identify",properties);
 		ArrayList<Event> eventArrayList = new ArrayList<>();
 		eventArrayList.add(event);
 		PrepareChangeAttributeRequestEvent prepareLoginDYRequestEvent = new PrepareChangeAttributeRequestEvent(
@@ -820,12 +852,12 @@ public class SSOActivity extends WebViewActivity {
 		dyReportEventViewModel.createDyChangeAttributeRequest(prepareLoginDYRequestEvent);
 	}
 
-	private void prepareDyRegisterRequestEvent() {
+	private void prepareDyRegisterRequestEvent(String hashMail) {
 		User user = new User(dyServerId,dyServerId);
 		Session session = new Session(dySessionId);
 		Device device = new Device(IPAddress, config.getDeviceModel());
-		Context context = new Context(device,null, DY_CHANNEL);
-		Properties properties = new Properties(null,null,"signup-v1",null,null,null,null,null,null,null,jwt,null,null,null,null,null,null,null);
+		Context context = new Context(device,null, DY_CHANNEL,null);
+		Properties properties = new Properties(null,null,"signup-v1",null,null,null,null,null,null,null,hashMail,null,null,null,null,null,null,null);
 		Event event = new Event(null,null,null,null,null,null,null,null,null,null,null,null,"Signup",properties);
 		ArrayList<Event> eventArrayList = new ArrayList<>();
 		eventArrayList.add(event);

@@ -297,12 +297,30 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
         }
     }
 
-    private fun prepareCategoryDynamicYieldPageView() {
+    private fun prepareCategoryDynamicYieldPageView(
+        productLists: ArrayList<ProductList>,
+        breadCrumbList: ArrayList<String>
+    ) {
+        var pageAttributes: PageAttributes
         val user = User(dyServerId,dyServerId)
         val session = Session(dySessionId)
         val device = Device(IPAddress, config?.getDeviceModel())
-        val page = Page(breadCrumbList, PLP_SCREEN_LOCATION, CATEGORY_DY_TYPE)
-        val context = Context(device, page)
+        val skuIds: ArrayList<String>? = ArrayList()
+       for (other in productLists) {
+          if (other.sku != null) {
+              var skuData = other.sku
+              skuIds?.add(skuData!!)
+          }
+       }
+        val page = Page(skuIds, PLP_SCREEN_LOCATION, CATEGORY_DY_TYPE)
+        if (breadCrumbList?.isNullOrEmpty() == false) {
+             pageAttributes = PageAttributes(breadCrumbList)
+        } else {
+            breadCrumbList.add(mSubCategoryName)
+             pageAttributes = PageAttributes(breadCrumbList)
+        }
+
+        val context = Context(device, page, DY_CHANNEL,pageAttributes)
         val options = Options(true)
         val homePageRequestEvent = HomePageRequestEvent(user, session, context, options)
         dyChoosevariationViewModel?.createDyRequest(homePageRequestEvent)
@@ -671,7 +689,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
                 bindRecyclerViewWithUI(productLists)
                 showFeatureWalkThrough()
                 getCategoryNameAndSetTitle()
-               // prepareFilterRequestEvent(productView?.navigation)
 
                 if (AppConfigSingleton.isProductItemForLiquorInventoryPending) {
                     AppConfigSingleton.productItemForLiquorInventory?.let { productList ->
@@ -693,7 +710,11 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
             }
         }
         mProductAdapter?.notifyDataSetChanged()
-        prepareCategoryDynamicYieldPageView()
+        AppConfigSingleton.dynamicYieldConfig?.apply {
+            if (isDynamicYieldEnabled == true) {
+                prepareCategoryDynamicYieldPageView(response.products,breadCrumbList)
+            }
+        }
     }
 
     private fun viewItemListAnalytics(products: List<ProductList>, category: String?) {
@@ -1198,6 +1219,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
     }
 
     override fun onSortOptionSelected(sortOption: SortOption) {
+        var sortBy: String? = null
         if (sortOptionDialog != null && sortOptionDialog?.isShowing == true) {
             sortOptionDialog?.dismiss()
             val arguments = HashMap<String, String>()
@@ -1213,8 +1235,12 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
             reloadProductsWithSortAndFilter()
             AppConfigSingleton.dynamicYieldConfig?.apply {
                 if (isDynamicYieldEnabled == true) {
-                    val sortBy: String? = sortOption.label
-                    prepareSortByRequestEvent(sortBy)
+                    sortBy = sortOption.label
+                    if (sortBy.equals("Sort by")) {
+                        sortBy = ""
+                        prepareSortByRequestEvent(sortBy)
+                    }else
+                        prepareSortByRequestEvent(sortBy)
                 }
             }
         }
@@ -1225,7 +1251,13 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
         val session = Session(dySessionId)
         val device = Device(IPAddress, config?.getDeviceModel())
         val context = za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Context(device,null,DY_CHANNEL)
-        val properties = Properties(null,null,SORT_BY_DY_TYPE,null,null,null,null,null,null,null,null,null,sortBy,"")
+        val sortOrder = if (sortBy.equals("Price High-Low") || sortBy.equals("Name z-a")) {
+            "DESC"
+        } else if (sortBy.equals("Price Low-High") || sortBy.equals("Name a-z")) {
+            "ASC"
+        } else
+            ""
+        val properties = Properties(null,null,SORT_BY_DY_TYPE,null,null,null,null,null,null,null,null,null,sortBy,sortOrder)
         val eventsDyChangeAttribute = za.co.woolworths.financial.services.android.recommendations.data.response.request.Event(null,null,null,null,null,null,null,null,null,null,null,null,SORT_ITEMS_EVENT_NAME,properties)
         val events = ArrayList<Event>()
         events.add(eventsDyChangeAttribute);
@@ -1906,40 +1938,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
                 isChanelPage
             )
         )
-        prepareFilterRequestEvent(productView?.navigation, navigationState)
-    }
-
-    private fun prepareFilterRequestEvent(
-        navigationState: ArrayList<RefinementNavigation>?,
-        navigationState1: String
-    ) {
-        var displayname: String? = null
-        val user = User(dyServerId,dyServerId)
-        val session = Session(dySessionId)
-        val device = Device(IPAddress, config?.getDeviceModel())
-        val context = za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Context(device,null,DY_CHANNEL)
-        navigationState.let {
-            for (refinementCrumb: RefinementNavigation in navigationState!!) {
-              //  displayname = refinementCrumb.displayName
-                val crumb = refinementCrumb.refinementCrumbs
-                for (cm: RefinementCrumb in crumb) {
-                     displayname = cm.displayName
-                }
-            }
-        }
-        val properties = Properties(null,null,FILTER_ITEMS_DY_TYPE,null,null,null,null,null,null,null,null,null,null,null,
-            displayname,
-         navigationState1,null)
-        val eventsDyChangeAttribute = za.co.woolworths.financial.services.android.recommendations.data.response.request.Event(null,null,null,null,null,null,null,null,null,null,null,null,"Filter Items",properties)
-        val events = ArrayList<Event>()
-        events.add(eventsDyChangeAttribute);
-        val prepareDySortByRequestEvent = PrepareChangeAttributeRequestEvent(
-            context,
-            events,
-            session,
-            user
-        )
-        dyReportEventViewModel?.createDyChangeAttributeRequest(prepareDySortByRequestEvent)
     }
 
     fun onResetFilter() {

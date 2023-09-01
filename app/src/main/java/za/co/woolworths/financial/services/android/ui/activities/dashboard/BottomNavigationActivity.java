@@ -742,8 +742,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
                 case R.id.navigate_to_shop:
                     onShopTabSelected(item);
-                   if (Boolean.TRUE.equals(AppConfigSingleton.getDynamicYieldConfig().isDynamicYieldEnabled()))
-                        prepareDynamicYieldRequestEvent();
+                 /*  if (Boolean.TRUE.equals(AppConfigSingleton.getDynamicYieldConfig().isDynamicYieldEnabled()))
+                        prepareDynamicYieldRequestEvent();*/
                     return true;
 
                 case R.id.navigate_to_cart:
@@ -808,7 +808,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     private void prepareDynamicYieldRequestEvent() {
         Device device = new Device(Utils.IPAddress, config.getDeviceModel());
         Page page = new Page(dyData, MOBILE_LANDING_PAGE, HOME_PAGE, null,null);
-        Context context = new Context(device,page, DY_CHANNEL);
+        Context context = new Context(device,page, DY_CHANNEL,null);
         Options options = new Options(true);
         HomePageRequestEvent homePageRequestEvent = new HomePageRequestEvent(null,null,context,options);
         dyHomePageViewModel.createDyRequest(homePageRequestEvent);

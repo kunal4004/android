@@ -2,17 +2,32 @@ package za.co.woolworths.financial.services.android.ui.fragments.product.refine
 
 import android.os.Bundle
 import android.text.TextUtils
+import android.util.Log
 import android.view.View
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentRefinementBinding
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
+import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.Refinement
 import za.co.woolworths.financial.services.android.models.dto.RefinementCrumb
 import za.co.woolworths.financial.services.android.models.dto.RefinementNavigation
 import za.co.woolworths.financial.services.android.models.dto.RefinementSelectableItem
+import za.co.woolworths.financial.services.android.models.network.AppContextProviderImpl
+import za.co.woolworths.financial.services.android.models.network.NetworkConfig
+import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Device
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Session
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.User
 import za.co.woolworths.financial.services.android.ui.adapters.RefinementAdapter
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.PrepareChangeAttributeRequestEvent
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.Properties
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Response.DyChangeAttributeResponse
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.ViewModel.DyChangeAttributeViewModel
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.BaseFragmentListner
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.OnRefinementOptionSelected
 import za.co.woolworths.financial.services.android.util.Utils
@@ -23,6 +38,7 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
     private var refinementNavigation: RefinementNavigation? = null
     private var dataList = arrayListOf<RefinementSelectableItem>()
     private var refinedNavigateState = ""
+    private var dyReportEventViewModel: DyChangeAttributeViewModel? = null
 
     companion object {
         private val ARG_PARAM = "refinementNavigationObject"
@@ -51,6 +67,18 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.initViews()
+        dyReportEventViewModel()
+    }
+
+    private fun dyReportEventViewModel() {
+        dyReportEventViewModel = ViewModelProvider(this).get(DyChangeAttributeViewModel::class.java)
+        dyReportEventViewModel!!.getDyLiveData().observe(viewLifecycleOwner, androidx.lifecycle.Observer<DyChangeAttributeResponse?> {
+            if (it == null) {
+                Log.d(ProductDetailsFragment.TAG, "dyReportEventViewModel: failed to filtertype")
+            }else {
+                Log.d(ProductDetailsFragment.TAG, "dyReportEventViewModel: successed to filtertype")
+            }
+        })
     }
 
     override fun onResume() {
@@ -171,6 +199,11 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
             var item = it.item
             if (item is Refinement && it.isSelected) {
                 selectedItems.add(item.label)
+                AppConfigSingleton.dynamicYieldConfig?.apply {
+                    if (isDynamicYieldEnabled == true) {
+                        prepareFilterRequestEvent(item.label, item.displayName)
+                    }
+                }
             } else if (item is RefinementCrumb && it.isSelected) {
                 selectedItems.add(item.label)
             }
@@ -178,6 +211,35 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
         }
 
         return getString(R.string.refinement_see_result_button_text) + if (selectedItems.size > 0) selectedItems.joinToString(",") else refinementNavigation?.displayName
+    }
+
+    private fun prepareFilterRequestEvent(label: String, displayName: String) {
+        var dyServerId: String? = null
+        var dySessionId: String? = null
+        var config: NetworkConfig? = null
+        config = NetworkConfig(AppContextProviderImpl())
+        if (Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID) != null)
+            dyServerId = Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID)
+        if (Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID) != null)
+            dySessionId = Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID)
+
+        val user = User(dyServerId,dyServerId)
+        val session = Session(dySessionId)
+        val device = Device(Utils.IPAddress, config?.getDeviceModel())
+        val context = za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Context(device,null,
+            Utils.DY_CHANNEL)
+        val properties = Properties(null,null, Utils.FILTER_ITEMS_DY_TYPE,null,null,null,null,null,null,null,null,null,null,null,
+            label, displayName,null)
+        val eventsDyChangeAttribute = za.co.woolworths.financial.services.android.recommendations.data.response.request.Event(null,null,null,null,null,null,null,null,null,null,null,null,"Filter Items",properties)
+        val events = ArrayList<Event>()
+        events.add(eventsDyChangeAttribute);
+        val prepareDySortByRequestEvent = PrepareChangeAttributeRequestEvent(
+            context,
+            events,
+            session,
+            user
+        )
+        dyReportEventViewModel?.createDyChangeAttributeRequest(prepareDySortByRequestEvent)
     }
 
     private fun updateSeeResultButtonText() {

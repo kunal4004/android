@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.text.method.KeyListener
+import android.util.Log
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
@@ -17,6 +18,8 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.CreateListFromShoppingListViewBinding
 import com.awfs.coordination.databinding.CreateNewListBinding
@@ -25,14 +28,26 @@ import com.google.gson.reflect.TypeToken
 import dagger.hilt.android.AndroidEntryPoint
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.models.network.AppContextProviderImpl
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
+import za.co.woolworths.financial.services.android.models.network.NetworkConfig
 import za.co.woolworths.financial.services.android.models.network.OneAppService
+import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_REQUEST_CODE
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Device
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Session
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.User
 import za.co.woolworths.financial.services.android.ui.adapters.DepartmentAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.PrepareChangeAttributeRequestEvent
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.Properties
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Response.DyChangeAttributeResponse
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.ViewModel.DyChangeAttributeViewModel
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SingleButtonDialogFragment
@@ -61,6 +76,10 @@ class CreateShoppingListFragment : Fragment(), View.OnClickListener {
     private var mDisplayCloseIcon: Boolean = false
     private var mKeyListener: KeyListener? = null
     private var mAddToWishListEventData: AddToWishListFirebaseEventData? = null
+    private var dyServerId: String? = null
+    private var dySessionId: String? = null
+    private var config: NetworkConfig? = null
+    private lateinit var dyReportEventViewModel: DyChangeAttributeViewModel
 
     enum class AutoConnect {
         CREATE_LIST,
@@ -124,6 +143,7 @@ class CreateShoppingListFragment : Fragment(), View.OnClickListener {
         // Disable create list button when tap from create a list row
         if (!mShouldDisplayCreateListOnly) enableCancelButton(true) else enableCancelButton(false)
         networkConnectivityStatus()
+        dyReportEventViewModel()
     }
 
     private fun networkConnectivityStatus() {
@@ -461,10 +481,14 @@ class CreateShoppingListFragment : Fragment(), View.OnClickListener {
     }
 
     private fun addProductToShoppingList(listId: String?) {
+        var size: String? = null
+        var skuID: String? = null
         // Update listId value from dto AddToListRequest
         mAddToListRequest?.forEach { item ->
             item.giftListId = listId
             item.listId = null // remove list id from request body
+            size = item.size
+            skuID = item.skuID
         }
 
         mPostShoppingList = listId?.let { listID -> mAddToListRequest?.let { listItem -> OneAppService().addToList(listItem, listID) } }
@@ -477,6 +501,10 @@ class CreateShoppingListFragment : Fragment(), View.OnClickListener {
                         HTTP_SESSION_TIMEOUT_440 -> sessionExpiredHandler()
                         else -> response?.let { otherHttpCodeHandler(it) }
                     }
+                }
+                AppConfigSingleton.dynamicYieldConfig?.apply {
+                    if (isDynamicYieldEnabled == true)
+                        prepareDyAddToWishListRequestEvent(skuID, size)
                 }
             }
 
@@ -491,6 +519,32 @@ class CreateShoppingListFragment : Fragment(), View.OnClickListener {
             }
 
         }, ShoppingListItemsResponse::class.java))
+    }
+
+    private fun prepareDyAddToWishListRequestEvent(skuID: String?, size: String?) {
+        config = NetworkConfig(AppContextProviderImpl())
+        if (Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID) != null)
+            dyServerId = Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID)
+        if (Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID) != null)
+            dySessionId = Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID)
+        val user = User(dyServerId,dyServerId)
+        val session = Session(dySessionId)
+        val device = Device(Utils.IPAddress,config?.getDeviceModel())
+        val context = za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Context(device,null,
+            Utils.DY_CHANNEL)
+        val properties = Properties(null,null,
+            Utils.ADD_TO_WISH_LIST_DY_TYPE,null,null,null,null,skuID,null,null,null,size,null,null,null,null,null,null)
+        val eventsDyChangeAttribute = za.co.woolworths.financial.services.android.recommendations.data.response.request.Event(null,null,null,null,null,null,null,null,null,null,null,null,
+            Utils.ADD_TO_WISH_LIST_EVENT_NAME,properties)
+        val events = ArrayList<Event>()
+        events.add(eventsDyChangeAttribute);
+        val prepareAddToWishListRequestEvent = PrepareChangeAttributeRequestEvent(
+            context,
+            events,
+            session,
+            user
+        )
+        dyReportEventViewModel.createDyChangeAttributeRequest(prepareAddToWishListRequestEvent)
     }
 
     private fun addToListWasSendSuccessfully(listId: String?) {
@@ -673,4 +727,15 @@ class CreateShoppingListFragment : Fragment(), View.OnClickListener {
 
     fun networkConnectionAvailable(it: FragmentActivity) =
         NetworkManager.getInstance().isConnectedToNetwork(it)
+
+    private fun dyReportEventViewModel() {
+        dyReportEventViewModel = ViewModelProvider(this).get(DyChangeAttributeViewModel::class.java)
+        dyReportEventViewModel.getDyLiveData().observe(viewLifecycleOwner, Observer<DyChangeAttributeResponse?> {
+            if (it == null){
+                Log.d(ProductDetailsFragment.TAG, "dyReportEventwishlistViewModel: failed ")
+            } else {
+                Log.d(ProductDetailsFragment.TAG, "dyReportEventwishlistViewModel: Successed ")
+            }
+        })
+    }
 }
