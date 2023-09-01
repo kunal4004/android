@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rlRootView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/windowContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingStart="@dimen/twenty_four_dp"
+        android:paddingTop="@dimen/sixteen_dp"
+        android:paddingEnd="@dimen/twenty_four_dp">
+
+        <Button
+            android:id="@+id/btnNext"
+            android:layout_width="@dimen/hundred_and_sixty_dp"
+            android:layout_height="@dimen/fourty_dp"
+            android:layout_marginBottom="@dimen/fourty_eight_dp"
+            android:background="@android:color/transparent"
+            android:backgroundTint="@android:color/transparent"
+            android:fontFamily="@font/futura_semi_bold_ttf"
+            android:letterSpacing="0.04"
+            android:text="@string/next"
+            android:textAllCaps="true"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/fourteen_sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/tvCounter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/fourty_dp"
+            android:background="@drawable/bg_tooltip_count"
+            android:fontFamily="@font/futura_semi_bold_ttf"
+            android:gravity="center"
+            android:letterSpacing="0.1"
+            android:minWidth="@dimen/fourty_five_dp"
+            tools:text="1/2"
+            android:textColor="@color/black"
+            android:textSize="@dimen/thirteen_sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/ivArrow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/label_switch"
+            android:layout_marginStart="@dimen/twenty_five_dp"
+            android:src="@drawable/ic_arrow_tooltip_spinning"
+            app:layout_constraintStart_toEndOf="@+id/tvCounter"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/twenty_four_dp"
+            android:ellipsize="end"
+            android:fontFamily="@font/futura_semi_bold_ttf"
+            android:gravity="center"
+            android:lineSpacingExtra="2sp"
+            android:maxLines="4"
+            tools:text="You're shopping with"
+            android:textColor="@color/white"
+            android:textSize="@dimen/twenty_sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvCounter" />
+
+        <TextView
+            android:id="@+id/tvDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sixteen_dp"
+            android:ellipsize="end"
+            android:fontFamily="@font/opensans_semi_bold_ttf"
+            android:gravity="center"
+            android:letterSpacing="0.1"
+            android:lineSpacingExtra="2sp"
+            android:maxLines="3"
+            tools:text="You can switch between Standard Delivery, Click &amp; Collect, or same day food delivery using Dash."
+            android:textColor="@color/white"
+            android:textSize="@dimen/thirteen_sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvTitle" />
+
+        <TextView
+            android:id="@+id/tvTap"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:fontFamily="@font/futura_semi_bold_ttf"
+            android:gravity="center"
+            android:letterSpacing="0.1"
+            android:maxLines="1"
+            android:text="@string/label_tap"
+            android:textAllCaps="true"
+            android:textColor="@color/white"
+            android:textSize="@dimen/thirteen_sp"
+            app:layout_constraintBottom_toBottomOf="@+id/ivLocation"
+            app:layout_constraintEnd_toStartOf="@+id/ivLocation"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/ivLocation" />
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/ivLocation"
+            android:layout_width="@dimen/thirty_two_dp"
+            android:layout_height="@dimen/twenty_four_dp"
+            android:layout_marginStart="@dimen/four_dp"
+            android:layout_marginTop="@dimen/thirty_dp"
+            android:layout_marginEnd="@dimen/four_dp"
+            android:background="@drawable/bg_location_icon_tooltip"
+            android:clickable="false"
+            android:src="@drawable/ic_edit_tooltip"
+            app:layout_constraintEnd_toStartOf="@+id/tvTapMessage"
+            app:layout_constraintStart_toEndOf="@+id/tvTap"
+            app:layout_constraintTop_toBottomOf="@+id/tvDescription"
+            app:tint="@color/black" />
+
+        <TextView
+            android:id="@+id/tvTapMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:letterSpacing="0.1"
+            android:maxLines="1"
+            android:text="@string/tooltip_location_to_set_your_location"
+            android:textAllCaps="true"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/thirteen_sp"
+            app:layout_constraintBottom_toBottomOf="@+id/ivLocation"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/ivLocation"
+            app:layout_constraintTop_toTopOf="@+id/ivLocation" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>
