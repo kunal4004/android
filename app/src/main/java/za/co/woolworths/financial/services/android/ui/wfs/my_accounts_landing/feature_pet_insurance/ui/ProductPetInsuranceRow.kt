@@ -134,7 +134,7 @@ fun ProductPetInsuranceRow(
                 lineBreak = Simple
             ),
             locator = my_product_policy_number_label,
-            fontSize = FontDimensions.sp15)
+            fontSize = FontDimensions.policyNumberValue15Sp)
 
         policyNumber?.let {
             SpacerWidth4dp()
@@ -143,6 +143,7 @@ fun ProductPetInsuranceRow(
                 locator = my_product_policy_number_value,
                 fontFamily = OpenSansFontFamily,
                 maxLines = 2,
+                textAlign = TextAlign.Start,
                 fontWeight = FontWeight.SemiBold,
                  style = LocalTextStyle.current.copy(
                     lineBreak = Simple
