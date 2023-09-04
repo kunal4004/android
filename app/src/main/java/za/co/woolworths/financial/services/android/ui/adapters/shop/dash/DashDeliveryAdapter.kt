@@ -32,7 +32,7 @@ class DashDeliveryAdapter(
         const val TYPE_NAME_LONG_BANNER_CAROUSEL = "Long Banners Carousel"
         const val TYPE_NAME_LONG_BANNER_LIST = "Long Banners List"
         const val TYPE_NAME_BANNER_FULL_WIDTH = "Banner FullWidth"
-        const val TYPE_NAME_LONG_BANNER_FULL_WIDTH = "Banner FullWidth"
+        const val TYPE_NAME_LONG_BANNER_FULL_WIDTH = "Banner FullWidth Carousel"
 
         const val TYPE_EMPTY = 0
         const val TYPE_ON_DEMAND_CATEGORIES = 1
