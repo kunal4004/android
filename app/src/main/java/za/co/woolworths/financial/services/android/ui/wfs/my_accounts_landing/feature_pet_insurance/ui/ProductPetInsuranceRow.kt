@@ -19,7 +19,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.LineBreak.Companion.Simple
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
@@ -134,7 +133,7 @@ fun ProductPetInsuranceRow(
                 lineBreak = Simple
             ),
             locator = my_product_policy_number_label,
-            fontSize = FontDimensions.policyNumberValue15Sp)
+            fontSize = FontDimensions.policyLabel15Sp)
 
         policyNumber?.let {
             SpacerWidth4dp()
