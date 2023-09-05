@@ -140,11 +140,7 @@ class KotlinUtils {
         var placeId: String? = null
         var isLocationPlaceIdSame: Boolean? = false
         var isNickNameChanged: Boolean? = false
-        var isDeliveryLocationTabCrossClicked: Boolean? = false
-        var isCncTabCrossClicked: Boolean? = false
-        var isDashTabCrossClicked: Boolean? = false
         var isComingFromCncTab: Boolean? = false
-        var fullfillmentTypeClicked: String? = ""
         var browsingDeliveryType: Delivery? = getPreferredDeliveryType()
 
         @JvmStatic

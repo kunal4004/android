@@ -326,9 +326,6 @@ class ChangeFulfillmentCollectionStoreFragment :
                                         placeId?.equals(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId)
                                 }
 
-                                KotlinUtils.isCncTabCrossClicked =
-                                    placeId?.equals(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId)
-
                                 Utils.savePreferredDeliveryLocation(
                                     ShoppingDeliveryLocation(
                                         confirmLocationResponse.orderSummary?.fulfillmentDetails
@@ -344,8 +341,6 @@ class ChangeFulfillmentCollectionStoreFragment :
                                     KotlinUtils.isLocationPlaceIdSame =
                                         placeId?.equals(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId)
                                 }
-                                KotlinUtils.isCncTabCrossClicked =
-                                    placeId?.equals(KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.address?.placeId)
                                 KotlinUtils.saveAnonymousUserLocationDetails(
                                     ShoppingDeliveryLocation(
                                         confirmLocationResponse.orderSummary?.fulfillmentDetails
