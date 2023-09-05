@@ -26,6 +26,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.ConfirmAddressBottomSheetDialogBinding
 import com.google.gson.JsonSyntaxException
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.checkout.service.network.Address
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
@@ -47,6 +48,8 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.ui.fragments.shop.StandardDeliveryFragment.Companion.DEPARTMENT_LOGIN_REQUEST
 import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.EnableLocationSettingsFragment
+import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.VtoErrorBottomSheetDialog
+import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.listener.VtoTryAgainListener
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.ADDRESS
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
@@ -68,13 +71,14 @@ import za.co.woolworths.financial.services.android.util.location.EventType
 import za.co.woolworths.financial.services.android.util.location.Locator
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.util.*
+import javax.inject.Inject
 
-
+@AndroidEntryPoint
 class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_dialog),
     SavedAddressAdapter.OnAddressSelected,
     PermissionResultCallback,
     LocationProviderBroadcastReceiver.LocationProviderInterface,
-    View.OnClickListener {
+    View.OnClickListener, VtoTryAgainListener {
 
     private lateinit var binding: ConfirmAddressBottomSheetDialogBinding
     private lateinit var locator: Locator
@@ -91,6 +95,10 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
     private var permissionUtils: PermissionUtils? = null
     var permissions: ArrayList<String> = arrayListOf()
     private lateinit var locationBroadcastReceiver : LocationProviderBroadcastReceiver
+
+    @Inject
+    lateinit var vtoErrorBottomSheetDialog: VtoErrorBottomSheetDialog
+    private var address:Address? = null
 
     companion object {
         fun newInstance() = ConfirmAddressFragment()
@@ -346,7 +354,6 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
                 )
             )
         }
-
     }
 
     private fun ConfirmAddressBottomSheetDialogBinding.disableCurrentLocation() {
@@ -417,6 +424,7 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
                 ) {
                     selectedAddress.let {
                         if (it.placesId != null) {
+                            address = it
                             binding.validateLocation(it)
                         } else
                             return
@@ -649,12 +657,28 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
             } catch (e: Exception) {
                 FirebaseManager.logException(e)
                 progressBar?.visibility = View.GONE
+                showErrorDialog()
             } catch (e: JsonSyntaxException) {
                 FirebaseManager.logException(e)
                 progressBar?.visibility = View.GONE
+                showErrorDialog()
             }
         }
     }
+
+    private fun ConfirmAddressFragment.showErrorDialog() {
+        if(!isAdded && !isVisible) return
+        requireActivity().resources?.apply {
+            vtoErrorBottomSheetDialog?.showErrorBottomSheetDialog(
+                this@ConfirmAddressFragment,
+                requireActivity(),
+                getString(R.string.something_went_wrong),
+                getString(R.string.location_error_msg),
+                getString(R.string.retry_label)
+            )
+        }
+    }
+
 
     private fun ConfirmAddressBottomSheetDialogBinding.confirmSetAddress(
         validateLocationResponse: ValidateLocationResponse,
@@ -925,5 +949,11 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         permissionUtils?.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
+
+    override fun tryAgain() {
+        address?.let {
+            binding.validateLocation(it)
+        }
     }
 }
