@@ -296,8 +296,6 @@ class ChangeFulfillmentCollectionStoreFragment :
         } else {
             /*location , fulfillment is already available so only browsing location need to be save */
             setBrowsingDataInformation()
-            KotlinUtils.isStoreSelectedForBrowsing = true
-            //parentFragment?.showClickAndCollectToolTipUi(storeId) // TODO, this will be verified in the implementation and will be deleted permanently
             showCategoryList()
         }
     }

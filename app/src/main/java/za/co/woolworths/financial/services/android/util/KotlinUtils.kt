@@ -136,7 +136,6 @@ import kotlin.math.roundToInt
 class KotlinUtils {
     companion object {
 
-        var isStoreSelectedForBrowsing: Boolean = false
         var placeId: String? = null
         var isLocationPlaceIdSame: Boolean? = false
         var isNickNameChanged: Boolean? = false
