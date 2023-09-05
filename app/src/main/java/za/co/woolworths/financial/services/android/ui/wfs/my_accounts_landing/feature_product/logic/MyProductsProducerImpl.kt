@@ -17,8 +17,8 @@ import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.fe
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.enumtype.AccountProductCardsGroup
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.model.UserAccountResponse
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.network.datasource.IUserAccountRemote
-import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.network.repository.MyAccounts
-import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.network.repository.MyAccountsImpl
+import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.network.repository.MyAccountsLandingRemoteService
+import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.network.repository.MyAccountsLandingRemoteServiceImpl
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.network.datasource.UserAccountRemoteDataSource
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_view_application_status.ApplicationStatusView
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_view_application_status.ViewApplicationStatusImpl
@@ -53,13 +53,13 @@ class MyProductsProducerImpl @Inject constructor(
     private val productsHandler: MyProductsHandlerImpl,
     private val status: ViewApplicationStatusImpl,
     private val pet: PetInsuranceDelegateImpl,
-    private val account: MyAccountsImpl
+    private val account: MyAccountsLandingRemoteServiceImpl
 ) :
     MyProductsProducer,
     MyProductsHandler by productsHandler,
     ApplicationStatusView by status,
     PetInsuranceDelegate by pet,
-    MyAccounts by account {
+    MyAccountsLandingRemoteService by account {
 
     override fun setPetInsuranceResult(
         userAccountResponse: UserAccountResponse?,
