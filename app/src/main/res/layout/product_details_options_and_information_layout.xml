@@ -264,6 +264,15 @@
 
     </RelativeLayout>
 
+    <include
+        android:id="@+id/writeAReviewLink"
+        layout="@layout/write_a_review"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/headerCustomerReview" />
+
     <RelativeLayout
         android:id="@+id/reviewDetailsInformation"
         style="@style/clickable_card_item_layout_style"
@@ -272,7 +281,7 @@
         android:paddingEnd="@dimen/twenty_four_dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/headerCustomerReview">
+        app:layout_constraintTop_toBottomOf="@+id/writeAReviewLink">
 
         <View
             android:id="@+id/view_seprator"
