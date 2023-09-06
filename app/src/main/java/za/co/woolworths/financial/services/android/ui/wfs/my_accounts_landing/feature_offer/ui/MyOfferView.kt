@@ -196,20 +196,13 @@ fun OfferViewRow(
         OfferShimmerView(brush = brush, modifier = Modifier
             .width(params.second)
             .height(params.third)
-            .testAutomationTag(
-                createLocator(box_shimmer_image, locator)
-            ))
+            .testAutomationTag(createLocator(box_shimmer_image, locator)))
     }
 
     if (!isLoading){
         ConstraintLayout(
             modifier = Modifier
-                .testAutomationTag(
-                    createLocator(
-                        sign_out_my_offers_container_constraint_layout,
-                        locator
-                    )
-                )
+                .testAutomationTag(createLocator(sign_out_my_offers_container_constraint_layout, locator))
         ) {
             val (backgroundImageRef, columnRefs) = createRefs()
             val marginStartGuideline = createGuidelineFromStart(Margin.start)
@@ -235,12 +228,7 @@ fun OfferViewRow(
 
             Column(modifier = Modifier
                 .fillMaxWidth()
-                .testAutomationTag(
-                    createLocator(
-                        sign_out_my_offers_container_constraint_layout_column,
-                        locator
-                    )
-                )
+                .testAutomationTag(createLocator(sign_out_my_offers_container_constraint_layout_column, locator))
                 .constrainAs(columnRefs) {
                     top.linkTo(marginTopGuideline)
                     start.linkTo(marginStartGuideline)

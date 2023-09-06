@@ -363,7 +363,7 @@ class UserAccountLandingViewModel @Inject constructor(
     fun isNowWfsUser(): Boolean = isNowWfsUser(userAccountResponse)
 
     fun performClick() {
-        onActivityForResultClicked.postValue(accountProductCardsGroup)
+        onActivityForResultClicked.value = accountProductCardsGroup
     }
 
     fun getUserAccountResponse(): UserAccountResponse? = userAccountResponse
