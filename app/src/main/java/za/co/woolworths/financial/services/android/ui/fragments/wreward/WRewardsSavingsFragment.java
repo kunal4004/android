@@ -121,6 +121,7 @@ public class WRewardsSavingsFragment extends Fragment implements View.OnClickLis
 				savingSinceInfo,
 				view.findViewById(R.id.quarterlyVouchersEarnedTitle),
 				quarterlyVoucherEarned,
+				yearToDateSpend,
 				yearToDateSpendText,
 				yearToDateSpendInfo);
 		return view;

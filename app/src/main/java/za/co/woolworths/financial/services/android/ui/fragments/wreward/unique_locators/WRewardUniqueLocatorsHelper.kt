@@ -1,6 +1,9 @@
 package za.co.woolworths.financial.services.android.ui.fragments.wreward.unique_locators
 
 import android.view.View
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.TextView
 import com.google.android.material.tabs.TabLayout
 
 class WRewardUniqueLocatorsHelper {
@@ -12,6 +15,64 @@ class WRewardUniqueLocatorsHelper {
                 2 -> view.contentDescription = WRewardsUniqueLocators.SAVINGS_TITLE_TEXT.value
             }
         }
+
+        fun setLogOutFragLocators(
+            pageIndex: Int,
+            image: ImageView,
+            title: TextView,
+            desc: TextView
+        ) {
+            var imageID = ""
+            var titleID = ""
+            var descID = ""
+
+            when (pageIndex) {
+                0 -> {
+                    imageID = WRewardsUniqueLocators.WREWARDS_CARD_IMAGE.value
+                    titleID = WRewardsUniqueLocators.ALL_THE_MORE_REASON_TO_JOIN_TITLE_TEXT.value
+                    descID = WRewardsUniqueLocators.ALL_THE_MORE_REASON_TO_JOIN_DESC.value
+                }
+
+                1 -> {
+                    imageID = "${WRewardsUniqueLocators.HEADER_IMAGE.value}1"
+                    titleID =
+                        WRewardsUniqueLocators.SAVINGS_ON_WOOLIES_FAVOURITES_EVERYDAY_TITLE_TEXT.value
+                    descID =
+                        WRewardsUniqueLocators.SAVINGS_ON_WOOLIES_FAVOURITES_EVERYDAY_DESC.value
+                }
+
+                2 -> {
+                    imageID = "${WRewardsUniqueLocators.HEADER_IMAGE.value}2"
+                    titleID = WRewardsUniqueLocators.EXTRA_SAVING_PROMOS_EVENTS_TITLE_TEXT.value
+                    descID = WRewardsUniqueLocators.EXTRA_SAVING_PROMOS_EVENTS_DESC.value
+                }
+
+                3 -> {
+                    imageID = "${WRewardsUniqueLocators.HEADER_IMAGE.value}3"
+                    titleID =
+                        WRewardsUniqueLocators.EXCLUSIVE_VOUCHERS_JUST_FOR_YOU_TITLE_TEXT.value
+                    descID =
+                        WRewardsUniqueLocators.EXCLUSIVE_VOUCHERS_JUST_FOR_YOU_PROMOS_EVENTS_DESC.value
+                }
+
+                else -> {
+                    // Handle the default case if needed
+                }
+            }
+
+            image.contentDescription = imageID
+            title.contentDescription = titleID
+            desc.contentDescription = descID
+        }
+        fun setRewardsSignedOutMainIDs(joinButton: Button,signInButton: TextView,orLabel: TextView,registerButton: TextView) {
+            joinButton.contentDescription = WRewardsUniqueLocators.JOIN_WREWARDS_BUTTON.value
+            signInButton.contentDescription = WRewardsUniqueLocators.SIGN_IN_BUTTON.value
+            orLabel.contentDescription = WRewardsUniqueLocators.OR_TEXT.value
+            registerButton.contentDescription = WRewardsUniqueLocators.REGISTER_BUTTON.value
+        }
+        fun setIndicatorsLocators(tab: TabLayout.Tab?,index: Int) {
+            tab?.contentDescription = WRewardsUniqueLocators.DOT_INDICATOR.value + index
+        }
         fun setOverViewFragLocators(vararg views: View?) {
             val locators = arrayOf(
                 WRewardsUniqueLocators.VIRTUAL_CARD_NUMBER_TEXT.value,
@@ -21,7 +82,8 @@ class WRewardUniqueLocatorsHelper {
                 WRewardsUniqueLocators.SAVINGS_TEXT.value,
                 WRewardsUniqueLocators.SAVINGS_AMOUNT.value,
                 WRewardsUniqueLocators.TO_GET_TO_VIP_TEXT.value,
-                WRewardsUniqueLocators.TO_GET_TO_VIP_AMOUNT.value)
+                WRewardsUniqueLocators.TO_GET_TO_VIP_AMOUNT.value
+            )
             for (index in views.indices) {
                 views[index]?.apply {
                     contentDescription = locators[index]
@@ -38,7 +100,8 @@ class WRewardUniqueLocatorsHelper {
                 WRewardsUniqueLocators.EXTRA_SAVING_PROMOS_EVENTS_DESC.value,
                 WRewardsUniqueLocators.EXCLUSIVE_VOUCHERS_JUST_FOR_YOU_TITLE_TEXT.value,
                 WRewardsUniqueLocators.EXCLUSIVE_VOUCHERS_JUST_FOR_YOU_PROMOS_EVENTS_DESC.value,
-                WRewardsUniqueLocators.WREWARD_TERMS_AND_CONDITIONS_APPLY.value)
+                WRewardsUniqueLocators.WREWARD_TERMS_AND_CONDITIONS_APPLY.value
+            )
             for (index in views.indices) {
                 views[index]?.apply {
                     contentDescription = locators[index]
@@ -61,7 +124,8 @@ class WRewardUniqueLocatorsHelper {
                 WRewardsUniqueLocators.CALCULATION_OF_STATUS_LEVEL_TITLE_TEXT.value,
                 WRewardsUniqueLocators.CALCULATION_OF_STATUS_LEVEL_DESC_1.value,
                 WRewardsUniqueLocators.CALCULATION_OF_STATUS_LEVEL_DESC_2.value,
-                WRewardsUniqueLocators.CALCULATION_OF_STATUS_LEVEL_DESC_3.value)
+                WRewardsUniqueLocators.CALCULATION_OF_STATUS_LEVEL_DESC_3.value
+            )
             for (index in views.indices) {
                 views[index]?.apply {
                     contentDescription = locators[index]
@@ -69,12 +133,18 @@ class WRewardUniqueLocatorsHelper {
             }
         }
 
-        fun setSavingsYearMonthsLocators(view:View,isYear:Boolean = false, position:Int = 0){
-            when(isYear){
-                true->{view.contentDescription = WRewardsUniqueLocators.YEAR_TO_DATE.value}
-                false->{view.contentDescription = WRewardsUniqueLocators.MONTH.value + position}
+        fun setSavingsYearMonthsLocators(view: View, isYear: Boolean = false, position: Int = 0) {
+            when (isYear) {
+                true -> {
+                    view.contentDescription = WRewardsUniqueLocators.YEAR_TO_DATE.value
+                }
+
+                false -> {
+                    view.contentDescription = WRewardsUniqueLocators.MONTH.value + position
+                }
             }
         }
+
         fun setSavingsFragLocators(vararg views: View?) {
             val locators = arrayOf(
                 WRewardsUniqueLocators.WREWARDS_INSTANT_SAVINGS_TEXT.value,
@@ -86,7 +156,8 @@ class WRewardUniqueLocatorsHelper {
                 WRewardsUniqueLocators.QUARTELY_VOUCHERS_EARNED_AMOUNT.value,
                 WRewardsUniqueLocators.YEAR_TO_DATE_SPEND_TEXT.value,
                 WRewardsUniqueLocators.YEAR_TO_DATE_SPEND_AMOUNT.value,
-                WRewardsUniqueLocators.YEAR_TO_DATE_SPEND_INFO_ICON.value)
+                WRewardsUniqueLocators.YEAR_TO_DATE_SPEND_INFO_ICON.value
+            )
             for (index in views.indices) {
                 views[index]?.apply {
                     contentDescription = locators[index]
@@ -97,6 +168,16 @@ class WRewardUniqueLocatorsHelper {
 }
 
 enum class WRewardsUniqueLocators(val value: String) {
+    //logout
+    DOT_INDICATOR("dot_indicator_"),
+    HEADER_IMAGE("HEADER_IMAGE_"),
+    SAVINGS_ON_WOOLIES_FAVOURITES_EVERYDAY_TITLE_TEXT("savings_on_woolies_favourites_everyday_title_text"),
+    SAVINGS_ON_WOOLIES_FAVOURITES_EVERYDAY_DESC("savings_on_woolies_favourites_everyday_desc"),
+    JOIN_WREWARDS_BUTTON("join_wrewards_button"),
+    SIGN_IN_BUTTON("sign_in_button"),
+    OR_TEXT("or_text"),
+    REGISTER_BUTTON("register_button"),
+
     WREWARDS_TOOLBAR_TEXT("wrewards_toolbar_text"),
     OVERVIEW_TITLE_TEXT("overview_title_text"),
     VOUCHERS_TITLE_TEXT("vouchers_title_text"),
