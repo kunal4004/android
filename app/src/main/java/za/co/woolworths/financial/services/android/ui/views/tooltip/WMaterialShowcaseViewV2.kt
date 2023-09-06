@@ -33,12 +33,13 @@ import uk.co.deanwild.materialshowcaseview.shape.RectangleShape
 import uk.co.deanwild.materialshowcaseview.shape.Shape
 import uk.co.deanwild.materialshowcaseview.target.Target
 import uk.co.deanwild.materialshowcaseview.target.ViewTarget
+import za.co.woolworths.financial.services.android.util.Utils
 
-class WMaterialShowcaseViewV2 : FrameLayout, OnTouchListener, View.OnClickListener {
+class WMaterialShowcaseViewV2 : FrameLayout, OnTouchListener, View.OnClickListener, TooltipDialog {
 
     interface IWalkthroughActionListener {
-        fun onWalkthroughActionButtonClick(feature: Feature?)
-        fun onPromptDismiss(feature: Feature?)
+        fun onWalkthroughActionButtonClick(feature: TooltipDialog.Feature?)
+        fun onPromptDismiss(feature: TooltipDialog.Feature?)
     }
 
     private var mOldHeight = 0
@@ -50,8 +51,7 @@ class WMaterialShowcaseViewV2 : FrameLayout, OnTouchListener, View.OnClickListen
     private var mShape: Shape? = null
     private var mXPosition = 0
     private var mYPosition = 0
-    var isDismissed = false
-        private set
+    private var mWasDismissed = false
     private var mShapePadding = ShowcaseConfig.DEFAULT_SHAPE_PADDING
     private var mContentBox: View? = null
     private var mGravity = 0
@@ -77,11 +77,11 @@ class WMaterialShowcaseViewV2 : FrameLayout, OnTouchListener, View.OnClickListen
     private var mTvDescription: TextView? = null
     private var mBtnNext: TextView? = null
     private var actionListener: IWalkthroughActionListener? = null
-    private var feature: Feature? = null
+    private var feature: TooltipDialog.Feature? = null
     private var mContentView: View? = null
     private var mTvCounter: TextView? = null
 
-    constructor(context: Context, feature: Feature?) : super(context) {
+    constructor(context: Context, feature: TooltipDialog.Feature?) : super(context) {
         init()
         this.feature = feature
     }
@@ -360,7 +360,7 @@ class WMaterialShowcaseViewV2 : FrameLayout, OnTouchListener, View.OnClickListen
      * BUILDER CLASS
      * Gives us a builder utility class with a fluent API for eaily configuring showcase views
      */
-    class Builder(private val activity: Activity, feature: Feature?) {
+    class Builder(private val activity: Activity, feature: TooltipDialog.Feature?) {
         private var fullWidth = false
         private var shapeType = CIRCLE_SHAPE
         private val showcaseView: WMaterialShowcaseViewV2
@@ -554,7 +554,7 @@ class WMaterialShowcaseViewV2 : FrameLayout, OnTouchListener, View.OnClickListen
     }
 
     private fun setContentBasedOnFeature() {
-        if (feature == Feature.SHOP_LOCATION) {
+        if (feature == TooltipDialog.Feature.SHOP_LOCATION) {
             mTvTap?.visibility = VISIBLE
             mTvTapMessage?.visibility = VISIBLE
             mIvLocation?.visibility = VISIBLE
@@ -567,7 +567,7 @@ class WMaterialShowcaseViewV2 : FrameLayout, OnTouchListener, View.OnClickListen
         }
     }
 
-    private fun removeFromWindow() {
+    override fun removeFromWindow() {
         if (parent != null && parent is ViewGroup) {
             (parent as ViewGroup).removeView(this)
         }
@@ -581,13 +581,15 @@ class WMaterialShowcaseViewV2 : FrameLayout, OnTouchListener, View.OnClickListen
         mLayoutListener = null
     }
 
+    override fun getFeature() = feature
+
     /**
      * Reveal the showcaseview. Returns a boolean telling us whether we actually did show anything
      *
      * @param activity
      * @return
      */
-    fun show(activity: Activity): Boolean {
+    override fun show(activity: Activity): Boolean {
         (activity.window.decorView as ViewGroup).addView(this)
         mHandler = Handler(Looper.getMainLooper())
         mHandler?.postDelayed({
@@ -597,14 +599,17 @@ class WMaterialShowcaseViewV2 : FrameLayout, OnTouchListener, View.OnClickListen
                 visibility = VISIBLE
             }
         }, mDelayInMillis)
+        Utils.saveFeatureWalkthoughShowcase(feature)
         return true
     }
 
-    fun hide() {
+    override fun isDismissed() = mWasDismissed
+
+    override fun hide() {
         /**
          * This flag is used to indicate to onDetachedFromWindow that the showcase view was dismissed purposefully (by the user or programmatically)
          */
-        isDismissed = true
+        mWasDismissed = true
         if (mShouldAnimate) {
             animateOut()
         } else {
@@ -641,9 +646,5 @@ class WMaterialShowcaseViewV2 : FrameLayout, OnTouchListener, View.OnClickListen
                 }
             }
         }
-    }
-
-    enum class Feature(val value: Int) {
-        SHOP_FULFILMENT(1), SHOP_LOCATION(2)
     }
 }
