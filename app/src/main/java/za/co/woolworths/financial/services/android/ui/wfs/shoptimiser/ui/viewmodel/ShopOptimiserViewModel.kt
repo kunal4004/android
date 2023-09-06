@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.wfs.shoptimiser.ui
+package za.co.woolworths.financial.services.android.ui.wfs.shoptimiser.ui.viewmodel
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

@@ -33,4 +33,5 @@ val Color666666 = Color(0xFF666666)
 val ColorD8D8D8 = Color(0xFFD8D8D8)
 val ErrorLabel = Color(0xFFD0021B)
 val HyperTextlinkBlue = Color(0xff4284C3)
+val DividerColorPDP = Color(0x1A000000)
 

@@ -8,8 +8,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -259,5 +261,43 @@ fun TextFuturaFamilySemiBoldHeader1(
             style = style
         )
     }
+}
 
+@Composable
+fun TextOpenSansFontFamilyAnnotateString(
+    modifier: Modifier = Modifier,
+    annotatedString: AnnotatedString? = buildAnnotatedString {  },
+    isUpperCased: Boolean = false,
+    color: Color = WhiteWithOpacity70,
+    fontSize: TextUnit = FontDimensions.sp15,
+    fontStyle: FontStyle? = null,
+    locator: String,
+    fontWeight: FontWeight? = FontWeight.SemiBold,
+    fontFamily: FontFamily? = OpenSansFontFamily,
+    letterSpacing: TextUnit = Dimens.point_five_sp,
+    textDecoration: TextDecoration? = null,
+    textAlign: TextAlign? = TextAlign.Center,
+    lineHeight: TextUnit = TextUnit.Unspecified,
+    overflow: TextOverflow = TextOverflow.Clip,
+    softWrap: Boolean = true,
+    maxLines: Int = Int.MAX_VALUE,
+    onTextLayout: (TextLayoutResult) -> Unit = {},
+    style: TextStyle? = LocalTextStyle.current) {
+    Text(text = annotatedString ?: buildAnnotatedString {  },
+        color = color,
+        modifier = modifier.testAutomationTag(locator = locator),
+        fontSize = fontSize,
+        fontStyle = fontStyle,
+        fontWeight = fontWeight ?: FontWeight.SemiBold,
+        fontFamily = fontFamily,
+        letterSpacing = letterSpacing,
+        textDecoration = textDecoration,
+        textAlign = textAlign,
+        lineHeight = lineHeight,
+        overflow = overflow,
+        softWrap = softWrap,
+        maxLines = maxLines,
+        onTextLayout = onTextLayout,
+        style = style ?: MaterialTheme.typography.titleMedium
+    )
 }
