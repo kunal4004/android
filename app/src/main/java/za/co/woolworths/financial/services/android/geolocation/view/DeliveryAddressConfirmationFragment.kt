@@ -1099,7 +1099,7 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
                 dialogResultCode = LOCATION_ERROR
             )
         customBottomSheetDialogFragment.show(
-            requireFragmentManager(),
+            parentFragmentManager,
             CustomBottomSheetDialogFragment::class.java.simpleName
         )
     }
