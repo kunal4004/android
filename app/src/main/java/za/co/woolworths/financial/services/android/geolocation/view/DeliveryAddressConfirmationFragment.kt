@@ -383,10 +383,18 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
                 // Proceed with fragment navigation as we have moved unsellable items to List.
                 onConfirmLocationNavigation()
             }
+            if (resultCode == LOCATION_ERROR) {
+                // Proceed with fragment navigation as we have moved unsellable items to List.
+                activity?.onBackPressed()
+            }
             else{
                 // change location dismiss button clicked so land back on last delivery location tab.
                 moveToTab(lastDeliveryType)
             }
+        }
+
+        setFragmentResultListener(LOCATION_ERROR) { _, _ ->
+           binding.initView()
         }
     }
 
@@ -444,7 +452,7 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
     }
 
     private fun GeoLocationDeliveryAddressBinding.callConfirmLocation() {
-        if (placeId == null) {
+        if (placeId.isNullOrEmpty()) {
             return
         }
         val confirmLocationAddress = ConfirmLocationAddress(placeId,null,address2)
@@ -658,6 +666,7 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
     companion object {
         const val STORE_LOCATOR_REQUEST_CODE = "543"
         const val MAP_LOCATION_RESULT = "8472"
+        const val LOCATION_ERROR = "8474"
     }
 
     private fun GeoLocationDeliveryAddressBinding.initView() {
@@ -1080,15 +1089,19 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
         if(!isAdded && !isVisible) return
         geoDeliveryTab?.isEnabled = false
         geoCollectTab?.isEnabled = false
-        requireActivity().resources?.apply {
-            vtoErrorBottomSheetDialog?.showErrorBottomSheetDialog(
-                this@DeliveryAddressConfirmationFragment,
-                requireActivity(),
-                getString(R.string.vto_generic_error),
-                "",
-                getString(R.string.retry_label)
+        val customBottomSheetDialogFragment =
+            CustomBottomSheetDialogFragment.newInstance(
+                title = getString(R.string.something_went_wrong),
+                subTitle = getString(R.string.location_error_msg),
+                dialog_button_text = getString(R.string.retry_label),
+                dialog_title_img = R.drawable.ic_vto_error,
+                dismissLinkText= getString(R.string.cancel),
+                dialogResultCode = LOCATION_ERROR
             )
-        }
+        customBottomSheetDialogFragment.show(
+            requireFragmentManager(),
+            CustomBottomSheetDialogFragment::class.java.simpleName
+        )
     }
 
     override fun tryAgain() {
