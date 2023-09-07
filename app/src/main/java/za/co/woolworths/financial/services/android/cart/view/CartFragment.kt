@@ -28,16 +28,16 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentCartBinding
-import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import za.co.woolworths.financial.services.android.cart.service.network.CartItemGroup
 import za.co.woolworths.financial.services.android.cart.service.network.CartResponse
+import za.co.woolworths.financial.services.android.cart.viewmodel.CartUtils
 import za.co.woolworths.financial.services.android.cart.viewmodel.CartUtils.Companion.filterCommerceItemFromCartResponse
 import za.co.woolworths.financial.services.android.cart.viewmodel.CartUtils.Companion.getAppliedVouchersCount
+import za.co.woolworths.financial.services.android.cart.viewmodel.CartUtils.Companion.getUpdatedCommerceItem
 import za.co.woolworths.financial.services.android.cart.viewmodel.CartUtils.Companion.updateItemLimitsBanner
 import za.co.woolworths.financial.services.android.cart.viewmodel.CartViewModel
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
@@ -78,7 +78,6 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator
 import za.co.woolworths.financial.services.android.ui.activities.online_voucher_redemption.AvailableVouchersToRedeemInCart
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.BetterActivityResult
-import za.co.woolworths.financial.services.android.ui.fragments.cart.GiftWithPurchaseDialogDetailFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants
 import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
@@ -93,8 +92,8 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK_201
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_SESSION_TIMEOUT_440
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getPreferredDeliveryType
-import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getPreferredPlaceId
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.presentEditDeliveryGeoLocationActivity
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.setDeliveryAddressView
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.showGeneralInfoDialog
@@ -102,7 +101,6 @@ import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.up
 import za.co.woolworths.financial.services.android.util.QueryBadgeCounter.Companion.instance
 import za.co.woolworths.financial.services.android.util.ToastUtils.ToastInterface
 import za.co.woolworths.financial.services.android.util.UnsellableUtils.Companion.getUnsellableCommerceItem
-import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper.FirebaseEventAction.*
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper.FirebaseEventOption.ADD_PROMO
@@ -360,7 +358,11 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                 }
             }
 
-            R.id.deliveryLocationConstLayout -> locationSelectionClicked()
+            R.id.deliveryLocationConstLayout -> CartUtils.onLocationSelectionClicked(
+                requireActivity(),
+                liquorCompliance
+            )
+
             R.id.btn_dash_set_address -> {
                 (requireActivity() as? BottomNavigator)?.navigateToTabIndex(
                     BottomNavigationActivity.INDEX_PRODUCT,
@@ -452,55 +454,42 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
 
     private fun navigateToCheckout(response: SavedAddressResponse?) {
         val activity: Activity = requireActivity()
-        cartBeginEventAnalytics()
+        FirebaseAnalyticsEventHelper.cartBeginEventAnalytics(orderSummary, viewModel)
+        val checkoutActivityIntent = Intent(activity, CheckoutActivity::class.java)
+        checkoutActivityIntent.apply {
+            putExtra(CheckoutAddressConfirmationFragment.SAVED_ADDRESS_KEY, response)
+            putExtra(CheckoutAddressConfirmationFragment.IS_EDIT_ADDRESS_SCREEN, true)
+            putExtra(
+                CheckoutAddressManagementBaseFragment.CART_ITEM_LIST,
+                viewModel.getCartItemList()
+            )
+            liquorCompliance.let {
+                if ((it != null) && it!!.isLiquorOrder && !AppConfigSingleton.liquor!!.noLiquorImgUrl.isNullOrEmpty()) {
+                    putExtra(Constant.LIQUOR_ORDER, it!!.isLiquorOrder)
+                    putExtra(
+                        Constant.NO_LIQUOR_IMAGE_URL,
+                        AppConfigSingleton.liquor!!.noLiquorImgUrl
+                    )
+                }
+            }
+        }
+
         if (((getPreferredDeliveryType() == Delivery.STANDARD)
                     && !TextUtils.isEmpty(response?.defaultAddressNickname))
         ) {
-
-            val checkoutActivityIntent = Intent(activity, CheckoutActivity::class.java)
-            checkoutActivityIntent.apply {
-                putExtra(CheckoutAddressConfirmationFragment.SAVED_ADDRESS_KEY, response)
-                putExtra(CheckoutAddressConfirmationFragment.IS_EDIT_ADDRESS_SCREEN, true)
-                putExtra(CheckoutAddressManagementBaseFragment.GEO_SLOT_SELECTION, true)
-                putExtra(
-                    CheckoutAddressManagementBaseFragment.CART_ITEM_LIST,
-                    viewModel.getCartItemList()
-                )
-            }
-            if ((liquorCompliance != null) && liquorCompliance!!.isLiquorOrder && !AppConfigSingleton.liquor!!.noLiquorImgUrl.isNullOrEmpty()) {
-                checkoutActivityIntent.putExtra(
-                    Constant.LIQUOR_ORDER,
-                    liquorCompliance!!.isLiquorOrder
-                )
-                checkoutActivityIntent.putExtra(
-                    Constant.NO_LIQUOR_IMAGE_URL,
-                    AppConfigSingleton.liquor!!.noLiquorImgUrl
-                )
-            }
+            checkoutActivityIntent.putExtra(
+                CheckoutAddressManagementBaseFragment.GEO_SLOT_SELECTION,
+                true
+            )
             launchCheckoutActivity(checkoutActivityIntent)
 
         } else if (getPreferredDeliveryType() == Delivery.DASH &&
             !TextUtils.isEmpty(response?.defaultAddressNickname)
         ) {
-            val checkoutActivityIntent = Intent(activity, CheckoutActivity::class.java)
-            checkoutActivityIntent.apply {
-                putExtra(CheckoutAddressConfirmationFragment.SAVED_ADDRESS_KEY, response)
-                putExtra(CheckoutAddressConfirmationFragment.IS_EDIT_ADDRESS_SCREEN, true)
-                putExtra(CheckoutAddressManagementBaseFragment.DASH_SLOT_SELECTION, true)
-                putExtra(
-                    CheckoutAddressManagementBaseFragment.CART_ITEM_LIST,
-                    viewModel.getCartItemList()
-                )
-                liquorCompliance.let {
-                    if ((it != null) && it.isLiquorOrder && (AppConfigSingleton.liquor!!.noLiquorImgUrl != null) && AppConfigSingleton.liquor!!.noLiquorImgUrl.isNotEmpty()) {
-                        putExtra(Constant.LIQUOR_ORDER, it.isLiquorOrder)
-                        putExtra(
-                            Constant.NO_LIQUOR_IMAGE_URL,
-                            AppConfigSingleton.liquor!!.noLiquorImgUrl
-                        )
-                    }
-                }
-            }
+            checkoutActivityIntent.putExtra(
+                CheckoutAddressManagementBaseFragment.DASH_SLOT_SELECTION,
+                true
+            )
             launchCheckoutActivity(checkoutActivityIntent)
 
         } else {
@@ -580,72 +569,6 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         })
     }
 
-    private fun cartBeginEventAnalytics() {
-        val beginCheckoutParams = Bundle()
-        beginCheckoutParams.apply {
-            putString(
-                FirebaseAnalytics.Param.CURRENCY,
-                FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE
-            )
-            orderSummary?.total?.let {
-                putDouble(
-                    FirebaseAnalytics.Param.VALUE,
-                    it
-                )
-            }
-
-            viewModel?.getCartItemList()?.let {
-                val itemArrayEvent = arrayListOf<Bundle>()
-                for (cartItem in it) {
-                    val beginCheckoutItem = Bundle()
-                    beginCheckoutItem.apply {
-                        putString(
-                            FirebaseAnalytics.Param.ITEM_ID,
-                            cartItem.commerceItemInfo?.productId
-                        )
-                        putString(
-                            FirebaseAnalytics.Param.ITEM_NAME,
-                            cartItem.commerceItemInfo.productDisplayName
-                        )
-                        putDouble(
-                            FirebaseAnalytics.Param.PRICE,
-                            cartItem.priceInfo.amount
-                        )
-
-                        putString(
-                            FirebaseAnalytics.Param.ITEM_BRAND,
-                            cartItem.commerceItemInfo?.productDisplayName
-                        )
-                        putString(
-                            FirebaseAnalytics.Param.ITEM_VARIANT,
-                            cartItem.commerceItemInfo?.size
-                        )
-
-                        putString(
-                            FirebaseAnalytics.Param.ITEM_CATEGORY,
-                            cartItem.commerceItemInfo.productDisplayName
-                        )
-                        putInt(
-                            FirebaseAnalytics.Param.QUANTITY,
-                            cartItem.commerceItemInfo.quantity
-                        )
-                        itemArrayEvent.add(this)
-                    }
-                }
-                putParcelableArray(
-                    FirebaseAnalytics.Param.ITEMS,
-                    itemArrayEvent.toTypedArray()
-                )
-            }
-
-            AnalyticsManager.logEvent(
-                FirebaseManagerAnalyticsProperties.CART_BEGIN_CHECKOUT,
-                this
-            )
-        }
-
-    }
-
     override fun onItemDeleteClickInEditMode(commerceItem: CommerceItem) {
         // TODO: Make API call to remove item + show loading before removing from list
         mCommerceItem = commerceItem
@@ -715,37 +638,6 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         }
     }
 
-    override fun totalItemInBasket(total: Int) {}
-
-    override fun onOpenProductDetail(commerceItem: CommerceItem) {
-        val activity = requireActivity()
-        if (activity !is BottomNavigationActivity) {
-            return
-        }
-        val productDetails = ProductDetails()
-        val commerceItemInfo = commerceItem.commerceItemInfo
-        productDetails.externalImageRefV2 = commerceItemInfo.externalImageRefV2
-        productDetails.productName = commerceItemInfo.productDisplayName
-        productDetails.fromPrice = commerceItem.priceInfo.getAmount().toFloat()
-        productDetails.productId = commerceItemInfo.productId
-        productDetails.sku = commerceItemInfo.catalogRefId
-        val strProductList = Gson().toJson(productDetails)
-
-        // Move to shop tab first.
-        (activity as? BottomNavigationActivity)?.bottomNavigationById?.currentItem =
-            BottomNavigationActivity.INDEX_PRODUCT
-        ScreenManager.openProductDetailFragment(activity, "", strProductList)
-    }
-
-    override fun onGiftItemClicked(commerceItem: CommerceItem) {
-        val activity: FragmentActivity = requireActivity()
-        val giftWithPurchaseDialogDetailFragment = GiftWithPurchaseDialogDetailFragment()
-        giftWithPurchaseDialogDetailFragment.show(
-            (activity as AppCompatActivity).supportFragmentManager,
-            GiftWithPurchaseDialogDetailFragment::class.java.simpleName
-        )
-    }
-
     private fun toggleEditMode(): Boolean {
         val isEditMode = cartProductAdapter?.toggleEditMode() ?: false
         if (isAllInventoryAPICallSucceed) Utils.fadeInFadeOutAnimation(
@@ -790,21 +682,6 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         }
         cartProductAdapter?.notifyDataSetChanged()
         onCartRefresh()
-    }
-
-    private fun locationSelectionClicked() {
-        presentEditDeliveryGeoLocationActivity(
-            requireActivity(),
-            REQUEST_SUBURB_CHANGE,
-            getPreferredDeliveryType(),
-            getPreferredPlaceId(),
-            isComingFromCheckout = false,
-            isComingFromSlotSelection = false,
-            savedAddressResponse = null,
-            defaultAddress = null,
-            whoISCollecting = "",
-            liquorCompliance = liquorCompliance
-        )
     }
 
     private fun bindCartData(cartResponse: CartResponse?) {
@@ -860,170 +737,171 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     }
 
     private fun updatePriceInformation() {
-        val priceHolder = binding.includedPrice
-        //Added the BNPL flag checking logic.
-        AppConfigSingleton.bnplConfig?.apply {
-            if (isBnplRequiredInThisVersion && isBnplEnabled) {
-                if (viewModel.isFBHOnly()) {
-                    priceHolder.vouchersMain.rlpayflexInfo.visibility = View.GONE
+        binding.includedPrice.apply {
+            //Added the BNPL flag checking logic.
+            AppConfigSingleton.bnplConfig?.apply {
+                if (isBnplRequiredInThisVersion && isBnplEnabled) {
+                    if (viewModel.isFBHOnly()) {
+                        vouchersMain.rlpayflexInfo.visibility = View.GONE
+                    } else {
+                        vouchersMain.rlpayflexInfo.visibility = View.VISIBLE
+                    }
                 } else {
-                    priceHolder.vouchersMain.rlpayflexInfo.visibility = View.VISIBLE
-                }
-            } else {
-                priceHolder.vouchersMain.rlpayflexInfo.visibility = View.GONE
-            }
-        }
-
-        if (orderSummary != null) {
-            setPriceInformationVisibility(true)
-            orderSummary?.basketTotal?.let {
-                setPriceValue(priceHolder.txtYourCartPrice, it)
-            }
-            priceHolder.orderTotal.text = CurrencyFormatter.formatAmountToRandAndCentWithSpace(
-                orderSummary?.total
-            )
-            val discountDetails = orderSummary?.discountDetails
-            if (discountDetails != null) {
-
-                if (discountDetails.companyDiscount > 0) {
-                    setDiscountPriceValue(
-                        priceHolder.txtCompanyDiscount,
-                        discountDetails.companyDiscount
-                    )
-                    priceHolder.rlCompanyDiscount.visibility = View.VISIBLE
-                } else {
-                    priceHolder.rlCompanyDiscount.visibility = View.GONE
-                }
-                if (discountDetails.totalOrderDiscount > 0) {
-                    setDiscountPriceValue(
-                        priceHolder.txtTotalDiscount,
-                        discountDetails.totalOrderDiscount
-                    )
-                    priceHolder.rlTotalDiscount.visibility = View.VISIBLE
-                } else {
-                    priceHolder.rlTotalDiscount.visibility = View.GONE
-                }
-                if (discountDetails.otherDiscount > 0) {
-                    setDiscountPriceValue(
-                        priceHolder.txtDiscount,
-                        discountDetails.otherDiscount
-                    )
-                    priceHolder.rlDiscount.visibility = View.VISIBLE
-                } else {
-                    priceHolder.rlDiscount.visibility = View.GONE
-                }
-                if (discountDetails.voucherDiscount > 0) {
-                    setDiscountPriceValue(
-                        priceHolder.txtWrewardsDiscount,
-                        discountDetails.voucherDiscount
-                    )
-                    priceHolder.rlWrewardsDiscount.visibility = View.VISIBLE
-                } else {
-                    priceHolder.rlWrewardsDiscount.visibility = View.GONE
-                }
-                if (discountDetails.promoCodeDiscount > 0) {
-                    setDiscountPriceValue(
-                        priceHolder.txtPromoCodeDiscount,
-                        discountDetails.promoCodeDiscount
-                    )
-                    priceHolder.rlPromoCodeDiscount.visibility = View.VISIBLE
-                } else {
-                    priceHolder.rlPromoCodeDiscount.visibility = View.GONE
+                    vouchersMain.rlpayflexInfo.visibility = View.GONE
                 }
             }
-        } else {
-            setPriceInformationVisibility(false)
-        }
-        priceHolder.vouchersMain.rlAvailableWRewardsVouchers.setOnClickListener {
-            onViewVouchers()
-            triggerFirebaseEventForCart(appliedVouchersCount)
-            triggerFirebaseEventVouchersOrPromoCode(
-                VIEW_WREWARDS_VOUCHERS.value,
-                VOUCHERS.value, requireActivity()
-            )
-        }
-        priceHolder.vouchersMain.rlAvailableCashVouchers?.setOnClickListener {
-            onViewCashBackVouchers()
-            triggerFirebaseEventForCart(appliedVouchersCount)
-            triggerFirebaseEventVouchersOrPromoCode(
-                VIEW_VOUCHER.value,
-                VOUCHERS.value, requireActivity()
-            )
-        }
 
-        if (voucherDetails == null) {
-            return
-        }
-        val activeCashVouchersCount = voucherDetails?.activeCashVouchersCount
-        if (activeCashVouchersCount != null && activeCashVouchersCount > 0) {
-            val availableVouchersLabel =
-                resources?.getQuantityString(
-                    R.plurals.available_cash_vouchers_message,
-                    activeCashVouchersCount,
-                    activeCashVouchersCount
+            if (orderSummary != null) {
+                setPriceInformationVisibility(true)
+                orderSummary?.basketTotal?.let {
+                    setPriceValue(txtYourCartPrice, it)
+                }
+                orderTotal.text = CurrencyFormatter.formatAmountToRandAndCentWithSpace(
+                    orderSummary?.total
                 )
-            priceHolder.vouchersMain.availableCashVouchersCount.text = availableVouchersLabel
-            priceHolder.vouchersMain.viewCashVouchers.isEnabled = true
-            priceHolder.vouchersMain.rlAvailableCashVouchers.isClickable = true
-        } else {
-            priceHolder.vouchersMain.availableCashVouchersCount.text =
-                getString(R.string.zero_cash_vouchers_available)
-            priceHolder.vouchersMain.viewCashVouchers.isEnabled = false
-            priceHolder.vouchersMain.rlAvailableCashVouchers.isClickable = false
-        }
+                val discountDetails = orderSummary?.discountDetails
+                if (discountDetails != null) {
 
-        val activeVouchersCount = voucherDetails?.activeVouchersCount
-        if (activeVouchersCount != null && activeVouchersCount > 0) {
-            if (appliedVouchersCount > 0) {
-                val availableVouchersLabel =
-                    resources?.getQuantityString(
-                        R.plurals._rewards_vouchers_message_applied,
-                        appliedVouchersCount,
-                        appliedVouchersCount
-                    )
-                priceHolder.vouchersMain.availableVouchersCount.text = availableVouchersLabel
-                priceHolder.vouchersMain.viewVouchers.text = getString(R.string.edit)
-                priceHolder.vouchersMain.viewVouchers.isEnabled = true
-                priceHolder.vouchersMain.rlAvailableWRewardsVouchers.isClickable = true
+                    if (discountDetails.companyDiscount > 0) {
+                        setDiscountPriceValue(
+                            txtCompanyDiscount,
+                            discountDetails.companyDiscount
+                        )
+                        rlCompanyDiscount.visibility = View.VISIBLE
+                    } else {
+                        rlCompanyDiscount.visibility = View.GONE
+                    }
+                    if (discountDetails.totalOrderDiscount > 0) {
+                        setDiscountPriceValue(
+                            txtTotalDiscount,
+                            discountDetails.totalOrderDiscount
+                        )
+                        rlTotalDiscount.visibility = View.VISIBLE
+                    } else {
+                        rlTotalDiscount.visibility = View.GONE
+                    }
+                    if (discountDetails.otherDiscount > 0) {
+                        setDiscountPriceValue(
+                            txtDiscount,
+                            discountDetails.otherDiscount
+                        )
+                        rlDiscount.visibility = View.VISIBLE
+                    } else {
+                        rlDiscount.visibility = View.GONE
+                    }
+                    if (discountDetails.voucherDiscount > 0) {
+                        setDiscountPriceValue(
+                            txtWrewardsDiscount,
+                            discountDetails.voucherDiscount
+                        )
+                        rlWrewardsDiscount.visibility = View.VISIBLE
+                    } else {
+                        rlWrewardsDiscount.visibility = View.GONE
+                    }
+                    if (discountDetails.promoCodeDiscount > 0) {
+                        setDiscountPriceValue(
+                            txtPromoCodeDiscount,
+                            discountDetails.promoCodeDiscount
+                        )
+                        rlPromoCodeDiscount.visibility = View.VISIBLE
+                    } else {
+                        rlPromoCodeDiscount.visibility = View.GONE
+                    }
+                }
             } else {
+                setPriceInformationVisibility(false)
+            }
+            vouchersMain.rlAvailableWRewardsVouchers.setOnClickListener {
+                onViewVouchers()
+                triggerFirebaseEventForCart(appliedVouchersCount)
+                triggerFirebaseEventVouchersOrPromoCode(
+                    VIEW_WREWARDS_VOUCHERS.value,
+                    VOUCHERS.value, requireActivity()
+                )
+            }
+            vouchersMain.rlAvailableCashVouchers?.setOnClickListener {
+                onViewCashBackVouchers()
+                triggerFirebaseEventForCart(appliedVouchersCount)
+                triggerFirebaseEventVouchersOrPromoCode(
+                    VIEW_VOUCHER.value,
+                    VOUCHERS.value, requireActivity()
+                )
+            }
+
+            if (voucherDetails == null) {
+                return
+            }
+            val activeCashVouchersCount = voucherDetails?.activeCashVouchersCount
+            if (activeCashVouchersCount != null && activeCashVouchersCount > 0) {
                 val availableVouchersLabel =
                     resources?.getQuantityString(
-                        R.plurals.available_rewards_vouchers_message,
-                        activeVouchersCount,
-                        activeVouchersCount
+                        R.plurals.available_cash_vouchers_message,
+                        activeCashVouchersCount,
+                        activeCashVouchersCount
                     )
-                priceHolder.vouchersMain.availableVouchersCount.text = availableVouchersLabel
-                priceHolder.vouchersMain.viewVouchers.text = getString(R.string.view)
-                priceHolder.vouchersMain.viewVouchers.isEnabled = true
-                priceHolder.vouchersMain.rlAvailableWRewardsVouchers.isClickable = true
+                vouchersMain.availableCashVouchersCount.text = availableVouchersLabel
+                vouchersMain.viewCashVouchers.isEnabled = true
+                vouchersMain.rlAvailableCashVouchers.isClickable = true
+            } else {
+                vouchersMain.availableCashVouchersCount.text =
+                    getString(R.string.zero_cash_vouchers_available)
+                vouchersMain.viewCashVouchers.isEnabled = false
+                vouchersMain.rlAvailableCashVouchers.isClickable = false
             }
-        } else {
-            priceHolder.vouchersMain.availableVouchersCount.text =
-                getString(R.string.zero_wrewards_vouchers_available)
-            priceHolder.vouchersMain.viewVouchers.text = getString(R.string.view)
-            priceHolder.vouchersMain.viewVouchers.isEnabled = false
-            priceHolder.vouchersMain.rlAvailableWRewardsVouchers.isClickable = false
 
-        }
-        priceHolder.vouchersMain.promoCodeAction.text =
-            getString(if (voucherDetails?.promoCodes != null && voucherDetails!!.promoCodes.size > 0) R.string.remove else R.string.enter)
-        if (voucherDetails!!.promoCodes != null && voucherDetails!!.promoCodes.size > 0) {
-            val appliedPromoCodeText =
-                getString(R.string.promo_code_applied) + voucherDetails!!.promoCodes[0].promoCode
-            priceHolder.vouchersMain.promoCodeLabel.text = appliedPromoCodeText
-        } else {
-            priceHolder.vouchersMain.promoCodeLabel.text =
-                getString(R.string.do_you_have_a_promo_code)
-        }
-        priceHolder.vouchersMain.rlPromoCode.setOnClickListener {
-            if (voucherDetails!!.promoCodes != null && voucherDetails!!.promoCodes.size > 0) onRemovePromoCode(
-                voucherDetails!!.promoCodes[0].promoCode
-            ) else onEnterPromoCode()
-        }
-        priceHolder.promoDiscountInfo.setOnClickListener { onPromoDiscountInfo() }
-        updateLiquorBanner()
-        if (getPreferredDeliveryType() == Delivery.CNC) {
-            priceHolder.deliveryFeeLabel.text = getString(R.string.collection_fee)
+            val activeVouchersCount = voucherDetails?.activeVouchersCount
+            if (activeVouchersCount != null && activeVouchersCount > 0) {
+                if (appliedVouchersCount > 0) {
+                    val availableVouchersLabel =
+                        resources?.getQuantityString(
+                            R.plurals._rewards_vouchers_message_applied,
+                            appliedVouchersCount,
+                            appliedVouchersCount
+                        )
+                    vouchersMain.availableVouchersCount.text = availableVouchersLabel
+                    vouchersMain.viewVouchers.text = getString(R.string.edit)
+                    vouchersMain.viewVouchers.isEnabled = true
+                    vouchersMain.rlAvailableWRewardsVouchers.isClickable = true
+                } else {
+                    val availableVouchersLabel =
+                        resources?.getQuantityString(
+                            R.plurals.available_rewards_vouchers_message,
+                            activeVouchersCount,
+                            activeVouchersCount
+                        )
+                    vouchersMain.availableVouchersCount.text = availableVouchersLabel
+                    vouchersMain.viewVouchers.text = getString(R.string.view)
+                    vouchersMain.viewVouchers.isEnabled = true
+                    vouchersMain.rlAvailableWRewardsVouchers.isClickable = true
+                }
+            } else {
+                vouchersMain.availableVouchersCount.text =
+                    getString(R.string.zero_wrewards_vouchers_available)
+                vouchersMain.viewVouchers.text = getString(R.string.view)
+                vouchersMain.viewVouchers.isEnabled = false
+                vouchersMain.rlAvailableWRewardsVouchers.isClickable = false
+
+            }
+            vouchersMain.promoCodeAction.text =
+                getString(if (voucherDetails?.promoCodes != null && voucherDetails!!.promoCodes.size > 0) R.string.remove else R.string.enter)
+            if (voucherDetails!!.promoCodes != null && voucherDetails!!.promoCodes.size > 0) {
+                val appliedPromoCodeText =
+                    getString(R.string.promo_code_applied) + voucherDetails!!.promoCodes[0].promoCode
+                vouchersMain.promoCodeLabel.text = appliedPromoCodeText
+            } else {
+                vouchersMain.promoCodeLabel.text =
+                    getString(R.string.do_you_have_a_promo_code)
+            }
+            vouchersMain.rlPromoCode.setOnClickListener {
+                if (voucherDetails!!.promoCodes != null && voucherDetails!!.promoCodes.size > 0) onRemovePromoCode(
+                    voucherDetails!!.promoCodes[0].promoCode
+                ) else onEnterPromoCode()
+            }
+            promoDiscountInfo.setOnClickListener { onPromoDiscountInfo() }
+            updateLiquorBanner()
+            if (getPreferredDeliveryType() == Delivery.CNC) {
+                deliveryFeeLabel.text = getString(R.string.collection_fee)
+            }
         }
     }
 
@@ -1324,22 +1202,6 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         }
     }
 
-    private fun getUpdatedCommerceItem(
-        cartItems: ArrayList<CartItemGroup>,
-        commerceId: String,
-    ): CommerceItem? {
-        for (cartItemGroup: CartItemGroup in cartItems) {
-            for (commerceItem: CommerceItem in cartItemGroup.commerceItems) {
-                if (commerceItem.commerceItemInfo.commerceId.equals(
-                        commerceId,
-                        ignoreCase = true
-                    )
-                ) return commerceItem
-            }
-        }
-        return null
-    }
-
     private fun updateCartSummary(cartCount: Int) {
         instance.setCartCount(cartCount)
         if (cartCount == 0) {
@@ -1500,7 +1362,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         }
         navGraph?.let {
             navController?.setGraph(
-                it, bundleOf("bundle" to bundle)
+                it, bundleOf(BUNDLE to bundle)
             )
         }
     }
@@ -1525,13 +1387,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         if (response == null) return
         displayUpSellMessage(response.globalMessages)
         val fulfillmentDetailsObj = response?.orderSummary?.fulfillmentDetails
-        if (fulfillmentDetailsObj?.address?.placeId != null) {
-            val shoppingDeliveryLocation = ShoppingDeliveryLocation(fulfillmentDetailsObj)
-            setDeliveryLocation(shoppingDeliveryLocation)
-        } else {
-            // If user logs out and login with new registration who don't have location.
-            setDeliveryLocation(ShoppingDeliveryLocation(fulfillmentDetailsObj))
-        }
+        setDeliveryLocation(ShoppingDeliveryLocation(fulfillmentDetailsObj))
     }
 
     override fun onResume() {
@@ -1542,9 +1398,8 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             mConnectionBroadcast,
             IntentFilter("android.net.conn.CONNECTIVITY_CHANGE")
         )
-        val lastDeliveryLocation = Utils.getPreferredDeliveryLocation()
-        lastDeliveryLocation?.let { setDeliveryLocation(it) }
-        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.VIEW_CART, requireActivity())
+        loadShoppingCartAndSetDeliveryLocation()
+        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.VIEW_CART, activity)
     }
 
     override fun onPause() {
