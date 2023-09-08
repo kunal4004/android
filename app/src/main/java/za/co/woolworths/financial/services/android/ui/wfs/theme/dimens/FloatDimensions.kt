@@ -4,8 +4,9 @@ class FloatDimensions(
     val zero: Float = 0f,
     val one: Float = 1f,
     val my_offer_margin_end_guideline: Float = 0.36f,
-    val my_offer_card_width: Float =  0.85f
-)
+    val my_offer_card_width: Float =  0.85f,
+    val native_swipe_up_rounded_corner : Float= 3.5f
+    )
 
 val smallFloatDimensions by lazy { FloatDimensions() }
 
