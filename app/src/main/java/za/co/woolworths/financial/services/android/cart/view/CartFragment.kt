@@ -14,6 +14,7 @@ import android.view.View
 import android.view.View.OnTouchListener
 import android.view.WindowManager
 import android.widget.ScrollView
+import androidx.activity.result.ActivityResultLauncher
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
@@ -40,6 +41,7 @@ import za.co.woolworths.financial.services.android.cart.viewmodel.CartUtils.Comp
 import za.co.woolworths.financial.services.android.cart.viewmodel.CartUtils.Companion.updateItemLimitsBanner
 import za.co.woolworths.financial.services.android.cart.viewmodel.CartViewModel
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
+import za.co.woolworths.financial.services.android.checkout.utils.AvailableVoucherPromoResultCallback
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment
@@ -75,6 +77,7 @@ import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator
 import za.co.woolworths.financial.services.android.ui.activities.online_voucher_redemption.AvailableVouchersToRedeemInCart
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.BetterActivityResult
 import za.co.woolworths.financial.services.android.ui.fragments.cart.GiftWithPurchaseDialogDetailFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants
@@ -155,6 +158,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     private var isBlackCardHolder: Boolean = false
     private var isOnItemRemoved = false
     private var isViewCartEventFired = false
+    private var activityResultLauncher: ActivityResultLauncher<Intent>? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -407,12 +411,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
 
                     // Go to Web checkout journey if...
                     if (nativeCheckout?.isNativeCheckoutEnabled == false) {
-                        val openCheckOutActivity = Intent(context, CartCheckoutActivity::class.java)
-                        requireActivity().startActivityForResult(
-                            openCheckOutActivity,
-                            CheckOutFragment.REQUEST_CART_REFRESH_ON_DESTROY
-                        )
-                        requireActivity().overridePendingTransition(0, 0)
+                        launchCheckoutActivity(Intent(context, CartCheckoutActivity::class.java))
                     } else {
                         if (binding.cartProgressBar.visibility == View.VISIBLE) {
                             return
@@ -478,14 +477,8 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                     AppConfigSingleton.liquor!!.noLiquorImgUrl
                 )
             }
-            activity.startActivityForResult(
-                checkoutActivityIntent,
-                REQUEST_PAYMENT_STATUS
-            )
-            activity.overridePendingTransition(
-                R.anim.slide_from_right,
-                R.anim.slide_out_to_left
-            )
+            launchCheckoutActivity(checkoutActivityIntent)
+
         } else if (getPreferredDeliveryType() == Delivery.DASH &&
             !TextUtils.isEmpty(response?.defaultAddressNickname)
         ) {
@@ -507,15 +500,9 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                         )
                     }
                 }
-                activity.startActivityForResult(
-                    checkoutActivityIntent,
-                    REQUEST_PAYMENT_STATUS
-                )
             }
-            activity.overridePendingTransition(
-                R.anim.slide_from_right,
-                R.anim.slide_out_to_left
-            )
+            launchCheckoutActivity(checkoutActivityIntent)
+
         } else {
 //            - GNAV
 //            CNC or No Address or no default address*/
@@ -544,6 +531,53 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                 cartItemList = viewModel.getCartItemList()
             )
         }
+    }
+
+    private fun launchCheckoutActivity(intent: Intent) {
+        activityLauncher.launch(intent, onActivityResult = { result ->
+            when (result.resultCode) {
+                CheckOutFragment.REQUEST_CHECKOUT_ON_DESTROY,
+                CheckOutFragment.RESULT_RELOAD_CART,
+                Activity.RESULT_CANCELED,
+                CheckOutFragment.REQUEST_CART_REFRESH_ON_DESTROY,
+                -> reloadFragment()
+
+                Activity.RESULT_OK -> requireActivity().onBackPressed()
+            }
+        })
+        activity?.overridePendingTransition(R.anim.slide_from_right, R.anim.slide_out_to_left)
+    }
+
+    private fun launchPromoCodeAndVouchersActivity(intent: Intent) {
+        activityLauncher.launch(intent, onActivityResult = { result ->
+            AvailableVoucherPromoResultCallback().voucherPromoCallback(result).apply {
+                if (this != null) {
+                    val cartResponse = this?.let { viewModel.getConvertedCartResponse(it) }
+                    updateUIForCartResponse(cartResponse)
+                    updateCart(cartResponse, null)
+                    when (result.resultCode) {
+                        REDEEM_VOUCHERS_REQUEST_CODE -> {
+                            showVouchersOrPromoCodeAppliedToast(
+                                getString(
+                                    if ((voucherDetails?.vouchers?.let {
+                                            getAppliedVouchersCount(
+                                                it
+                                            )
+                                        } ?: 0) > 0
+                                    ) R.string.vouchers_applied_toast_message else R.string.vouchers_removed_toast_message
+                                )
+                            )
+                        }
+
+                        APPLY_PROMO_CODE_REQUEST_CODE -> {
+                            showVouchersOrPromoCodeAppliedToast(
+                                getString(R.string.promo_code_applied_toast_message)
+                            )
+                        }
+                    }
+                }
+            }
+        })
     }
 
     private fun cartBeginEventAnalytics() {
@@ -1520,92 +1554,67 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         }
     }
 
+    private val activityLauncher = BetterActivityResult.registerActivityForResult(this)
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        when (requestCode) {
+            SSOActivity.SSOActivityResult.LAUNCH.rawValue() -> {
+                if (SessionUtilities.getInstance().isUserAuthenticated) {
+                    if (resultCode == Activity.RESULT_OK) {
+                        // Checkout completed successfully
+                        val lastDeliveryLocation = Utils.getPreferredDeliveryLocation()
+                        if (lastDeliveryLocation != null) {
+                            binding.apply {
+                                // Show loading state
+                                rlCheckOut.visibility = View.GONE
+                                cartProgressBar.visibility = View.VISIBLE
+                            }
+                            cartProductAdapter?.clear()
+                            hideEditCart()
+                        } else {
+                            // Fallback if there is no cached location
+                            loadShoppingCart()
+                            loadShoppingCartAndSetDeliveryLocation()
+                        }
+                    } else {
+                        // Checkout was cancelled
+                        loadShoppingCart()
+                        loadShoppingCartAndSetDeliveryLocation()
+                    }
+                } else {
+                    requireActivity().onBackPressed()
+                }
+            }
+
+            CART_BACK_PRESSED_CODE, PDP_LOCATION_CHANGED_BACK_PRESSED_CODE, ScreenManager.SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE -> {
+                reloadFragment()
+                return
+            }
+
+            REQUEST_SUBURB_CHANGE -> {
+                initializeLoggedInUserCartUI()
+                loadShoppingCartAndSetDeliveryLocation()
+                return
+            }
+
+            ScreenManager.CART_LAUNCH_VALUE -> {
+                if (resultCode == SSOActivity.SSOActivityResult.STATE_MISMATCH.rawValue()) {
+                    // login screen opens on cart and user closes it without login then move tab to last opened tab.
+                    (requireActivity() as? BottomNavigationActivity)?.let { activity ->
+                        val previousTabIndex = activity.previousTabIndex
+                        activity.bottomNavigationById.currentItem = previousTabIndex
+                    }
+                    return
+                }
+            }
+        }
+
         if (resultCode == CustomPopUpWindow.CART_DEFAULT_ERROR_TAPPED || resultCode == ActionSheetDialogFragment.DIALOG_REQUEST_CODE) {
             val activity: Activity = requireActivity()
             activity.setResult(CustomPopUpWindow.CART_DEFAULT_ERROR_TAPPED)
             activity.finish()
             activity.overridePendingTransition(R.anim.slide_down_anim, R.anim.stay)
             return
-        }
-        if (requestCode == SSOActivity.SSOActivityResult.LAUNCH.rawValue()) {
-            if (SessionUtilities.getInstance().isUserAuthenticated) {
-                if (resultCode == Activity.RESULT_OK) {
-                    // Checkout completed successfully
-                    val lastDeliveryLocation = Utils.getPreferredDeliveryLocation()
-                    if (lastDeliveryLocation != null) {
-                        binding.apply {
-                            // Show loading state
-                            rlCheckOut.visibility = View.GONE
-                            cartProgressBar.visibility = View.VISIBLE
-                        }
-                        cartProductAdapter?.clear()
-                        hideEditCart()
-                    } else {
-                        // Fallback if there is no cached location
-                        loadShoppingCart()
-                        loadShoppingCartAndSetDeliveryLocation()
-                    }
-                } else {
-                    // Checkout was cancelled
-                    loadShoppingCart()
-                    loadShoppingCartAndSetDeliveryLocation()
-                }
-            } else {
-                requireActivity().onBackPressed()
-            }
-        } else if (requestCode == CART_BACK_PRESSED_CODE) {
-            reloadFragment()
-            return
-        } else if (requestCode == PDP_LOCATION_CHANGED_BACK_PRESSED_CODE || requestCode == ScreenManager.SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE) {
-            reloadFragment()
-        }
-        if (resultCode == Activity.RESULT_OK) {
-            when (requestCode) {
-                REDEEM_VOUCHERS_REQUEST_CODE, APPLY_PROMO_CODE_REQUEST_CODE -> {
-                    val shoppingCartResponse = Utils.strToJson(
-                        data?.getStringExtra("ShoppingCartResponse"),
-                        ShoppingCartResponse::class.java
-                    ) as ShoppingCartResponse
-                    val cartResponse = viewModel.getConvertedCartResponse(shoppingCartResponse)
-                    updateUIForCartResponse(cartResponse)
-                    updateCart(cartResponse, null)
-                    if (requestCode == REDEEM_VOUCHERS_REQUEST_CODE) showVouchersOrPromoCodeAppliedToast(
-                        getString(
-                            if ((voucherDetails?.vouchers?.let {
-                                    getAppliedVouchersCount(
-                                        it
-                                    )
-                                } ?: 0) > 0
-                            ) R.string.vouchers_applied_toast_message else R.string.vouchers_removed_toast_message
-                        )
-                    )
-                    if (requestCode == APPLY_PROMO_CODE_REQUEST_CODE) showVouchersOrPromoCodeAppliedToast(
-                        getString(R.string.promo_code_applied_toast_message)
-                    )
-                }
-
-                else -> {}
-            }
-        }
-        if (requestCode == REQUEST_PAYMENT_STATUS) {
-            when (resultCode) {
-                CheckOutFragment.REQUEST_CHECKOUT_ON_DESTROY -> reloadFragment()
-                CheckOutFragment.RESULT_RELOAD_CART -> reloadFragment()
-                Activity.RESULT_OK -> requireActivity().onBackPressed()
-                Activity.RESULT_CANCELED -> reloadFragment()
-            }
-        }
-        if (requestCode == REQUEST_SUBURB_CHANGE) {
-            initializeLoggedInUserCartUI()
-            loadShoppingCartAndSetDeliveryLocation()
-        }
-        if (requestCode == ScreenManager.CART_LAUNCH_VALUE && resultCode == SSOActivity.SSOActivityResult.STATE_MISMATCH.rawValue()) {
-            // login screen opens on cart and user closes it without login then move tab to last opened tab.
-            (requireActivity() as? BottomNavigationActivity)?.let { activity ->
-                val previousTabIndex = activity.previousTabIndex
-                activity.bottomNavigationById.currentItem = previousTabIndex
-            }
         }
 
         // Retry callback when saved address api fails
@@ -2048,10 +2057,9 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         intent.putExtra(
             BLACK_CARD_HOLDER, isBlackCardHolder
         )
+        intent.putExtra(INTENT_REQUEST_CODE, REDEEM_VOUCHERS_REQUEST_CODE)
 
-        startActivityForResult(
-            intent, REDEEM_VOUCHERS_REQUEST_CODE
-        )
+        launchPromoCodeAndVouchersActivity(intent)
     }
 
     private fun navigateToAvailableVouchersPage() {
@@ -2065,9 +2073,9 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         intent.putExtra(
             BLACK_CARD_HOLDER, isBlackCardHolder
         )
-        startActivityForResult(
-            intent, REDEEM_VOUCHERS_REQUEST_CODE
-        )
+        intent.putExtra(INTENT_REQUEST_CODE, REDEEM_VOUCHERS_REQUEST_CODE)
+
+        launchPromoCodeAndVouchersActivity(intent)
     }
 
     override fun updateOrderTotal() {
@@ -2090,9 +2098,9 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
 
     private fun navigateToApplyPromoCodePage() {
         val intent = Intent(context, AvailableVouchersToRedeemInCart::class.java)
-        startActivityForResult(
-            intent, APPLY_PROMO_CODE_REQUEST_CODE
-        )
+        intent.putExtra(INTENT_REQUEST_CODE, APPLY_PROMO_CODE_REQUEST_CODE)
+
+        launchPromoCodeAndVouchersActivity(intent)
     }
 
     private fun hideProgressBar() {
@@ -2529,6 +2537,8 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         const val REDEEM_VOUCHERS_REQUEST_CODE = 1979
         const val APPLY_PROMO_CODE_REQUEST_CODE = 1989
         const val REQUEST_PAYMENT_STATUS = 4775
+        const val INTENT_REQUEST_CODE = "intent_request_code"
+        const val SHOPPING_CART_RESPONSE = "ShoppingCartResponse"
 
         private const val TAG_ADDED_TO_LIST_TOAST = "ADDED_TO_LIST"
         private const val TAG_AVAILABLE_VOUCHERS_TOAST = "AVAILABLE_VOUCHERS"
