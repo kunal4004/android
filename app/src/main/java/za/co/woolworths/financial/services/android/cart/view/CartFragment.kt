@@ -1431,7 +1431,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                 CartProducts(
                     it.commerceItemInfo.productId,
                     it.commerceItemInfo.quantity,
-                    it.priceInfo.amount,
+                    it.priceInfo.amount.toString(),
                     it.commerceItemInfo.productId,
                     Constants.CURRENCY_VALUE
                 )
