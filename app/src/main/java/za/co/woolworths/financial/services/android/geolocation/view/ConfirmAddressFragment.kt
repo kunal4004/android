@@ -677,7 +677,7 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
                 subTitle = getString(R.string.location_error_msg),
                 dialog_button_text = getString(R.string.retry_label),
                 dialog_title_img = R.drawable.ic_vto_error,
-                dismissLinkText= getString(R.string.cancel),
+                dismissLinkText= getString(R.string.cancel_underline_html),
                 dialogResultCode = DeliveryAddressConfirmationFragment.LOCATION_ERROR
             )
         customBottomSheetDialogFragment.show(
