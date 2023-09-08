@@ -7,7 +7,7 @@ import kotlinx.android.parcel.Parcelize
 data class CartProducts(
     val pid: String?,
     var quantity: Int = 0,
-    val value: Double?,
+    val value: String?,
     val sku: String?,
     val currency: String?,
 ) : Parcelable
