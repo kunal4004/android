@@ -452,9 +452,6 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
     }
 
     private fun GeoLocationDeliveryAddressBinding.callConfirmLocation() {
-        if (placeId.isNullOrEmpty()) {
-            return
-        }
         val confirmLocationAddress = ConfirmLocationAddress(placeId,null,address2)
         var currentDeliveryType = Delivery.STANDARD
         val confirmLocationRequest = when (deliveryType) {
