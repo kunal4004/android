@@ -3078,5 +3078,6 @@
 
     <string name="something_went_wrong">Something went wrong</string>
     <string name="location_error_msg">We are unable to access your location details.Please try again later.</string>
+    <string name="cancel_button"><b>CANCEL</b></string>
 
 </resources>

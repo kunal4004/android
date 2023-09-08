@@ -78,7 +78,7 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
     SavedAddressAdapter.OnAddressSelected,
     PermissionResultCallback,
     LocationProviderBroadcastReceiver.LocationProviderInterface,
-    View.OnClickListener, VtoTryAgainListener {
+    View.OnClickListener {
 
     private lateinit var binding: ConfirmAddressBottomSheetDialogBinding
     private lateinit var locator: Locator
@@ -96,8 +96,6 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
     var permissions: ArrayList<String> = arrayListOf()
     private lateinit var locationBroadcastReceiver : LocationProviderBroadcastReceiver
 
-    @Inject
-    lateinit var vtoErrorBottomSheetDialog: VtoErrorBottomSheetDialog
     private var address:Address? = null
 
     companion object {
@@ -210,6 +208,11 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
     private fun addFragmentListener() {
         setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_CLICK_RESULT) { _, _ ->
             // Do nothing. Only want to close this listener.
+        }
+        setFragmentResultListener(DeliveryAddressConfirmationFragment.LOCATION_ERROR) { _, _ ->
+            address?.let {
+                binding.validateLocation(it)
+            }
         }
     }
 
@@ -666,17 +669,21 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
         }
     }
 
-    private fun ConfirmAddressFragment.showErrorDialog() {
+    private fun showErrorDialog() {
         if(!isAdded && !isVisible) return
-        requireActivity().resources?.apply {
-            vtoErrorBottomSheetDialog?.showErrorBottomSheetDialog(
-                this@ConfirmAddressFragment,
-                requireActivity(),
-                getString(R.string.something_went_wrong),
-                getString(R.string.location_error_msg),
-                getString(R.string.retry_label)
+        val customBottomSheetDialogFragment =
+            CustomBottomSheetDialogFragment.newInstance(
+                title = getString(R.string.something_went_wrong),
+                subTitle = getString(R.string.location_error_msg),
+                dialog_button_text = getString(R.string.retry_label),
+                dialog_title_img = R.drawable.ic_vto_error,
+                dismissLinkText= getString(R.string.cancel),
+                dialogResultCode = DeliveryAddressConfirmationFragment.LOCATION_ERROR
             )
-        }
+        customBottomSheetDialogFragment.show(
+            parentFragmentManager,
+            CustomBottomSheetDialogFragment::class.java.simpleName
+        )
     }
 
 
@@ -951,9 +958,4 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
         permissionUtils?.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
-    override fun tryAgain() {
-        address?.let {
-            binding.validateLocation(it)
-        }
-    }
 }
