@@ -725,6 +725,7 @@ class StartupActivity :
                     .withApplicationCtx(this)
                     .withAppId(glassBox?.appId)
                     .withReportUrl(glassBox?.reportUrl)
+                    .hybridMode()
                     .build(),
             )
         } catch (e: Exception) {
