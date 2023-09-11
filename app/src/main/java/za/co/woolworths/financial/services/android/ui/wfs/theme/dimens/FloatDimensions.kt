@@ -17,12 +17,15 @@ val sw320FloatDimensions by lazy {
 }
 val sw360FloatDimensions by lazy {
     FloatDimensions(
-        my_offer_card_width = 0.87f
+        my_offer_card_width = 0.875f
     )
 }
 val sw400FloatDimensions by lazy { FloatDimensions() }
 
 val sw440FloatDimensions by lazy {
+    FloatDimensions(my_offer_card_width = 0.845f)
+}
+val sw420FloatDimensions by lazy {
     FloatDimensions(my_offer_card_width = 0.845f)
 }
 
