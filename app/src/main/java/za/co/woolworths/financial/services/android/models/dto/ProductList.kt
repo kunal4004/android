@@ -79,5 +79,7 @@ data class ProductList(
     var averageRating: String? = null,
     @SerializedName("reviewCount")
     @Expose
-    var reviewCount: String? = null
+    var reviewCount: String? = null,
+    @SerializedName("network")
+    var network: String? = null
 ) : Parcelable

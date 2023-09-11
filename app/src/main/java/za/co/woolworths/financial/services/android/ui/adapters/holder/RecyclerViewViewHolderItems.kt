@@ -34,6 +34,7 @@ class RecyclerViewViewHolderItems(val itemBinding: ProductListingPageRowBinding)
             quickShopAddToCartSwitch(this)
             quickAddToListSwitch(this)
             setOnClickListener(navigator, this)
+            setNetworkName(this)
         }
     }
 
@@ -42,6 +43,16 @@ class RecyclerViewViewHolderItems(val itemBinding: ProductListingPageRowBinding)
         mainImgLayout.setOnClickListener { navigator.openProductDetailView(productList) }
         brandName.setOnClickListener { navigator.openProductDetailView(productList) }
         tvRangeName.setOnClickListener { navigator.openProductDetailView(productList) }
+    }
+
+    private fun setNetworkName(productList: ProductList?)= itemBinding.apply {
+        if (!TextUtils.isEmpty(productList?.network)) {
+            SIMLabel.visibility = VISIBLE
+            SIMLabel.text = productList?.network
+        } else {
+            SIMLabel.visibility = GONE
+            SIMLabel.text = ""
+        }
     }
 
     private fun setProductName(productList: ProductList?) = itemBinding.apply {
@@ -169,7 +180,17 @@ class RecyclerViewViewHolderItems(val itemBinding: ProductListingPageRowBinding)
         itemBinding.apply {
             root.context?.apply {
                 productList?.apply {
-                    includeProductListingPriceLayout.imQuickShopAddToCartIcon?.visibility = if (productType.equals(getString(R.string.food_product_type), ignoreCase = true)) VISIBLE else GONE
+                    when (productType) {
+                        getString(R.string.food_product_type) -> {
+                            includeProductListingPriceLayout.imQuickShopAddToCartIcon?.visibility = VISIBLE
+                        }
+                        getString(R.string.digital_product_type) -> {
+                            includeProductListingPriceLayout.imQuickShopAddToCartIcon?.visibility = VISIBLE
+                        }
+                        else -> {
+                            includeProductListingPriceLayout.imQuickShopAddToCartIcon?.visibility = GONE
+                        }
+                    }
                 }
             }
         }
@@ -182,10 +203,10 @@ class RecyclerViewViewHolderItems(val itemBinding: ProductListingPageRowBinding)
                     when(productType) {
                        getString(R.string.food_product_type) -> {
                             imAddToList?.visibility = VISIBLE
-                        } /* TODO add condition for productType as connect products once backend is ready
-                        getString(R.string.) -> {
+                        }
+                        getString(R.string.digital_product_type) -> {
                             imAddToList?.visibility = VISIBLE
-                        } */
+                        }
                         else -> {
                             imAddToList?.visibility = GONE
                         }

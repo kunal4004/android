@@ -68,6 +68,22 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
+        android:id="@+id/SIM_label"
+        style="@style/futura_semi_bold_black"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/eight_dp"
+        android:textAllCaps="true"
+        android:textSize="@dimen/nine_sp"
+        android:visibility="gone"
+        android:textColor="@color/color_666666"
+        app:layout_constrainedHeight="true"
+        app:layout_constraintEnd_toStartOf="@+id/endMarginGuideline"
+        app:layout_constraintStart_toStartOf="@+id/startMarginGuideline"
+        app:layout_constraintTop_toBottomOf="@+id/mainImgLayout"
+        tools:text="@string/sim_label"
+        tools:visibility="gone" />
+
+    <TextView
         android:id="@+id/brandName"
         style="@style/futura_semi_bold_black"
         android:layout_height="wrap_content"
@@ -81,7 +97,7 @@
         app:layout_constrainedHeight="true"
         app:layout_constraintEnd_toStartOf="@+id/endMarginGuideline"
         app:layout_constraintStart_toStartOf="@+id/startMarginGuideline"
-        app:layout_constraintTop_toBottomOf="@+id/mainImgLayout"
+        app:layout_constraintTop_toBottomOf="@+id/SIM_label"
         tools:text="@string/brands"
         tools:visibility="visible" />
 
