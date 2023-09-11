@@ -1,23 +1,24 @@
 package za.co.woolworths.financial.services.android.geolocation.network.validatestoremodel
 
-import com.google.gson.annotations.SerializedName
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 
 
-data class ValidatePlace (
+@Parcelize
+data class ValidatePlace(
+  var hasDeliverySlotReservations: Boolean? = null,
+  var unDeliverableCommerceItems: ArrayList<String> = arrayListOf(),
+  var stores: ArrayList<Stores> = arrayListOf(),
+  var deliverable: Boolean? = null,
+  var firstAvailableFoodDeliveryDate: String? = null,
+  var firstAvailableOtherDeliveryDate: String? = null,
+  var cacheKey: String? = null,
+  var deliveryDetails: String? = null,
+  var quantityLimit: QuantityLimit? = QuantityLimit(),
+  var links: ArrayList<String> = arrayListOf(),
+  var liquorDeliverable: Boolean? = null,
+  var placeDetails: PlaceDetails? = PlaceDetails(),
+  var unSellableCommerceItems: ArrayList<String> = arrayListOf(),
+  var deliveryStatus: DeliveryStatus? = DeliveryStatus(),
 
-  @SerializedName("hasDeliverySlotReservations"     ) var hasDeliverySlotReservations     : Boolean?          = null,
-  @SerializedName("unDeliverableCommerceItems"      ) var unDeliverableCommerceItems      : ArrayList<String> = arrayListOf(),
-  @SerializedName("stores"                          ) var stores                          : ArrayList<Stores> = arrayListOf(),
-  @SerializedName("deliverable"                     ) var deliverable                     : Boolean?          = null,
-  @SerializedName("firstAvailableFoodDeliveryDate"  ) var firstAvailableFoodDeliveryDate  : String?           = null,
-  @SerializedName("firstAvailableOtherDeliveryDate" ) var firstAvailableOtherDeliveryDate : String?           = null,
-  @SerializedName("cacheKey"                        ) var cacheKey                        : String?           = null,
-  @SerializedName("deliveryDetails"                 ) var deliveryDetails                 : String?           = null,
-  @SerializedName("quantityLimit"                   ) var quantityLimit                   : QuantityLimit?    = QuantityLimit(),
-  @SerializedName("links"                           ) var links                           : ArrayList<String> = arrayListOf(),
-  @SerializedName("liquorDeliverable"               ) var liquorDeliverable               : Boolean?          = null,
-  @SerializedName("placeDetails"                    ) var placeDetails                    : PlaceDetails?     = PlaceDetails(),
-  @SerializedName("unSellableCommerceItems"         ) var unSellableCommerceItems         : ArrayList<String> = arrayListOf(),
-  @SerializedName("deliveryStatus"                  ) var deliveryStatus                  : DeliveryStatus?   = DeliveryStatus()
-
-)
+  ) : Parcelable

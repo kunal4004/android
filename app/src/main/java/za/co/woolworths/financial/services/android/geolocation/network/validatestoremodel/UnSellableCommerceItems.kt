@@ -1,25 +1,27 @@
 package za.co.woolworths.financial.services.android.geolocation.network.validatestoremodel
 
-import com.google.gson.annotations.SerializedName
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 
 
-data class UnSellableCommerceItems (
+@Parcelize
+data class UnSellableCommerceItems(
 
-  @SerializedName("quantity"              ) var quantity              : Int?    = null,
-  @SerializedName("productId"             ) var productId             : String? = null,
-  @SerializedName("displayCategory"       ) var displayCategory       : String? = null,
-  @SerializedName("internalImageURL"      ) var internalImageURL      : String? = null,
-  @SerializedName("catalogRefId"          ) var catalogRefId          : String? = null,
-  @SerializedName("commerceItemClassType" ) var commerceItemClassType : String? = null,
-  @SerializedName("colour"                ) var colour                : String? = null,
-  @SerializedName("detailPageURL"         ) var detailPageURL         : String? = null,
-  @SerializedName("size"                  ) var size                  : String? = null,
-  @SerializedName("productVariant"        ) var productVariant        : String? = null,
-  @SerializedName("price"                 ) var price                 : Price?  = Price(),
-  @SerializedName("externalImageURL"      ) var externalImageURL      : String? = null,
-  @SerializedName("productDisplayName"    ) var productDisplayName    : String? = null,
-  @SerializedName("fulfillerType"         ) var fulfillerType         : String? = null,
-  @SerializedName("productType"           ) var productType           : String? = null,
-  @SerializedName("externalImageRefV2"    ) var externalImageRefV2    : String? = null
+  var quantity: Int? = null,
+  var productId: String? = null,
+  var displayCategory: String? = null,
+  var internalImageURL: String? = null,
+  var catalogRefId: String? = null,
+  var commerceItemClassType: String? = null,
+  var colour: String? = null,
+  var detailPageURL: String? = null,
+  var size: String? = null,
+  var productVariant: String? = null,
+  var price: Price? = Price(),
+  var externalImageURL: String? = null,
+  var productDisplayName: String? = null,
+  var fulfillerType: String? = null,
+  var productType: String? = null,
+  var externalImageRefV2: String? = null,
 
-)
+  ) : Parcelable

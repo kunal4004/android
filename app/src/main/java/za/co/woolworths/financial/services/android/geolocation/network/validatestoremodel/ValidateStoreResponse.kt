@@ -1,12 +1,11 @@
 package za.co.woolworths.financial.services.android.geolocation.network.validatestoremodel
 
-import com.google.gson.annotations.SerializedName
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 
-
+@Parcelize
 data class ValidateStoreResponse(
-
-  @SerializedName("validatePlace") var validatePlace: ValidatePlace? = ValidatePlace(),
-  @SerializedName("response") var response: Response? = Response(),
-  @SerializedName("httpCode") var httpCode: Int? = null,
-
-  )
+    var validatePlace: ValidatePlace? = ValidatePlace(),
+    var response: Response? = Response(),
+    var httpCode: Int? = null,
+) : Parcelable
