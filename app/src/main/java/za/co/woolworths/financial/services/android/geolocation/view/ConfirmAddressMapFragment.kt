@@ -462,7 +462,7 @@ class ConfirmAddressMapFragment :
                 getString(R.string.no_location_desc),
                 getString(R.string.change_location),
                 R.drawable.img_collection_bag,
-                null
+                resources.getString(R.string.cancel_underline_html)
             )
         customBottomSheetDialogFragment.show(
             requireFragmentManager(),

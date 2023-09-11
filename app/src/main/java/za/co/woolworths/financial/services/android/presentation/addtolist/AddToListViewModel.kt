@@ -68,9 +68,9 @@ class AddToListViewModel @Inject constructor(
                         Status.SUCCESS -> listState.value = listState.value.copy(
                             isLoading = false,
                             isError = isError,
-                            list = it.data?.lists ?: emptyList()
+                            list = it.data?.lists ?: emptyList(),
+                            showCreateList = it.data?.lists?.isEmpty() ?: true
                         )
-
                         Status.ERROR -> listState.value = listState.value.copy(
                             isLoading = false,
                             isError = true

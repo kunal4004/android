@@ -15,6 +15,7 @@ import androidx.compose.ui.res.stringResource
 import com.awfs.coordination.R
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import za.co.woolworths.financial.services.android.models.dto.account.ServerErrorResponse
+import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.getAccessibilityIdWithAppendedString
 import za.co.woolworths.financial.services.android.ui.wfs.common.ButtonEvent
 import za.co.woolworths.financial.services.android.ui.wfs.common.ConnectionState
 import za.co.woolworths.financial.services.android.ui.wfs.common.FailureScenario
@@ -85,8 +86,9 @@ fun CategoryList(
 ) {
     BoxBackground {
         ListColumn(list = contentList) { item ->
-
-            TextContactUsFuturaSemiBoldSectionHeader(title = item.title ?: "")
+            val titleString = item.title ?: ""
+            val titleAccessibilityId = titleString.getAccessibilityIdWithAppendedString(titleString, "")
+            TextContactUsFuturaSemiBoldSectionHeader(title = titleString, locator = titleAccessibilityId)
             DividerThicknessOne()
 
             val size = item.children.size.minus(1)
@@ -120,7 +122,14 @@ fun CategoryList(
                                 )
                             )
                         }
-                    )) { TitleDescriptionAndNextArrowItem(child) }
+                    )) {
+
+                       var isAppendString = false
+                        if (index == 0 && size > 2) {
+                            isAppendString = true
+                        }
+                        TitleDescriptionAndNextArrowItem(child, isAppendString)
+                    }
                     if (index == size) DividerThicknessEight() else DividerThicknessOne()
                 }
             }

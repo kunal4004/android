@@ -31,12 +31,14 @@
                 style="@style/contact_us_email_us_label_style"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:contentDescription="@string/name_text"
                 android:letterSpacing="0"
                 android:text="@string/email_us_name" />
 
             <androidx.appcompat.widget.AppCompatEditText
                 android:id="@+id/et_email_us_name"
                 style="@style/contact_us_email_us_input_field_style"
+                android:contentDescription="@string/name_input_field"
                 android:inputType="textPersonName" />
 
         </LinearLayout>
@@ -58,11 +60,13 @@
                 android:layout_height="wrap_content"
                 android:letterSpacing="0"
                 android:lineSpacingExtra="8sp"
+                android:contentDescription="@string/email_address_text"
                 android:text="@string/email_us_email" />
 
             <androidx.appcompat.widget.AppCompatEditText
                 android:id="@+id/et_email_us_email"
                 style="@style/contact_us_email_us_input_field_style"
+                android:contentDescription="@string/email_address_input_field"
                 android:inputType="textEmailAddress" />
 
             <TextView
@@ -73,6 +77,7 @@
                 android:layout_marginTop="@dimen/_5sdp"
                 android:letterSpacing="0"
                 android:text="@string/email_us_email_validation"
+                android:contentDescription="@string/email_address_description"
                 android:textColor="@color/color_666666" />
         </LinearLayout>
 
@@ -93,11 +98,13 @@
                 android:layout_height="wrap_content"
                 android:letterSpacing="0"
                 android:lineSpacingExtra="8sp"
+                android:contentDescription="@string/enquiry_type_text"
                 android:text="@string/email_us_enquiry" />
 
             <androidx.appcompat.widget.AppCompatEditText
                 android:id="@+id/et_email_us_enquiry"
                 style="@style/contact_us_email_us_input_field_style"
+                android:contentDescription="@string/enquiry_type_dropdown"
                 android:cursorVisible="false"
                 android:drawableEnd="@drawable/ic_dropdown"
                 android:focusable="false"
@@ -122,6 +129,7 @@
                 style="@style/contact_us_email_us_label_style"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:contentDescription="message_text"
                 android:letterSpacing="0"
                 android:lineSpacingExtra="8sp"
                 android:text="@string/email_us_message" />
@@ -129,6 +137,7 @@
             <androidx.appcompat.widget.AppCompatEditText
                 android:id="@+id/et_email_us_message"
                 style="@style/contact_us_email_us_input_field_style"
+                android:contentDescription="@string/message_input_field"
                 android:layout_height="wrap_content"
                 android:gravity="start"
                 android:hint="@string/contact_us_email_message_placeholder"
@@ -144,6 +153,7 @@
         <za.co.woolworths.financial.services.android.ui.views.WButton
             android:id="@+id/btn_email_us"
             style="@style/blackButtonStyle"
+            android:contentDescription="@string/send_button"
             android:layout_marginTop="@dimen/_15sdp"
             android:layout_marginBottom="@dimen/_29sdp"
             android:background="@drawable/btn_disable_enable"

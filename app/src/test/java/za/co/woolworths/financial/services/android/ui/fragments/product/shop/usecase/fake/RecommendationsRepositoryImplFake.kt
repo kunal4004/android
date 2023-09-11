@@ -5,9 +5,11 @@ import za.co.woolworths.financial.services.android.models.network.Resource
 import za.co.woolworths.financial.services.android.recommendations.data.repository.RecommendationsRepository
 import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.RecommendationResponse
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
+import za.co.woolworths.financial.services.android.recommendations.data.response.request.Recommendation
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.RecommendationRequest
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants.EVENT_TYPE_USER_AGENT
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants.Event_TYPE_CUSTOM_VARIABLES
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants.Event_TYPE_IP_ADDRESS
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants.PRODUCT_ID_FOR_DISCOUNT
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants.PRODUCT_ID_FOR_SHIPPING
@@ -18,7 +20,7 @@ class RecommendationsRepositoryImplFake : RecommendationsRepository {
         fun verifyValidRequest(request: RecommendationRequest?): Boolean {
             val mId = request?.monetateId
             val events = request?.events
-            if (mId.isNullOrEmpty() || events.isNullOrEmpty() || events.size != 4) {
+            if (mId.isNullOrEmpty() || events.isNullOrEmpty() || events.size != 5) {
                 return false
             }
             val pageViewEvent = events[0] as Event
@@ -38,6 +40,11 @@ class RecommendationsRepositoryImplFake : RecommendationsRepository {
 
             val ipAddress = events[3] as Event
             if (ipAddress.eventType != Event_TYPE_IP_ADDRESS){
+                return false
+            }
+
+            val customVariable = events[4] as Recommendation.CustomVariables
+            if (customVariable.eventType != Event_TYPE_CUSTOM_VARIABLES){
                 return false
             }
 
