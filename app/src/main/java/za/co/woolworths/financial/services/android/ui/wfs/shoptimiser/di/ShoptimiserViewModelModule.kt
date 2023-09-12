@@ -20,6 +20,8 @@ import za.co.woolworths.financial.services.android.ui.wfs.shoptimiser.controller
 import za.co.woolworths.financial.services.android.ui.wfs.shoptimiser.controller.RetailBNPLImpl
 import za.co.woolworths.financial.services.android.ui.wfs.shoptimiser.controller.WfsShopOptimiserProductDetailsBuilder
 import za.co.woolworths.financial.services.android.ui.wfs.shoptimiser.controller.WfsShopOptimiserProductDetailsBuilderImpl
+import za.co.woolworths.financial.services.android.ui.wfs.shoptimiser.ui.pdp.ShoptimiserProductDetailPage
+import za.co.woolworths.financial.services.android.ui.wfs.shoptimiser.ui.pdp.ShoptimiserProductDetailPageImpl
 
 /**
  * Dagger Hilt Module for providing dependencies used in ShoptimiserViewModel.
@@ -61,4 +63,8 @@ abstract class ShoptimiserViewModelModule {
     // Bind RetailBNPLImpl to IRetailBNPL
     @Binds
     abstract fun provideRetailBNPL(calculation: RetailBNPLImpl): IRetailBNPL
+
+    @Binds
+    abstract fun provideShoptimiserProductDetailPage(calculation: ShoptimiserProductDetailPageImpl): ShoptimiserProductDetailPage
 }
+
