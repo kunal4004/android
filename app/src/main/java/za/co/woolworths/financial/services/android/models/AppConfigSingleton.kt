@@ -96,7 +96,6 @@ object AppConfigSingleton {
     var ratingsAndReviews: RatingsAndReviews? = null
 
     var enhanceSubstitution: EnhanceSubstitution? = null
-    var ratingsAndReviews : RatingsAndReviews? = null
     @JvmStatic
     var searchApiSettings: SearchApiSettings? = null
     var glassBox: GlassBox? = null
