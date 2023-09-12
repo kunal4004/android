@@ -312,13 +312,9 @@ class ConfirmAddressMapFragment :
 
                                         if (KotlinUtils.getDeliveryType() == null) {
                                             // User don't have any location (signin or signout both) that's why we are setting new location.
-                                            KotlinUtils.isDashTabCrossClicked =
-                                                placeId?.equals(KotlinUtils.getDeliveryType()?.address?.placeId) // changing black tooltip flag as user changes in his location.
                                             confirmSetAddress(validateLocationResponse)
                                         } else {
                                             // User has location. Means only changing browsing location.
-                                            KotlinUtils.isDashTabCrossClicked =
-                                                placeId?.equals(KotlinUtils.getDeliveryType()?.address?.placeId) // changing black tooltip flag as user changes his browsing location.
                                             // directly go back to Dash landing screen. Don't call confirm location API as user only wants to browse Dash.
                                             val intent = Intent()
                                             intent.putExtra(

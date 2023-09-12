@@ -564,8 +564,6 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
 
                                 if (isFromDashTab == true) {
                                     if (place.onDemand != null && place.onDemand!!.deliverable == true) {
-                                        KotlinUtils.isDashTabCrossClicked =
-                                            address.placesId?.equals(getDeliveryType()?.address?.placeId) // changing black tooltip flag as user changes in his location.
                                         if (getDeliveryType() == null) {
                                             // User don't have any location (sign in or sign out both) that's why we are setting new location.
                                             binding.confirmSetAddress(

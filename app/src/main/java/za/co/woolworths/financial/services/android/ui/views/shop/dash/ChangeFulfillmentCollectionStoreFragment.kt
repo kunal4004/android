@@ -296,8 +296,6 @@ class ChangeFulfillmentCollectionStoreFragment :
         } else {
             /*location , fulfillment is already available so only browsing location need to be save */
             setBrowsingDataInformation()
-            KotlinUtils.isStoreSelectedForBrowsing = true
-            //parentFragment?.showClickAndCollectToolTipUi(storeId) // TODO, this will be verified in the implementation and will be deleted permanently
             showCategoryList()
         }
     }
@@ -326,9 +324,6 @@ class ChangeFulfillmentCollectionStoreFragment :
                                         placeId?.equals(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId)
                                 }
 
-                                KotlinUtils.isCncTabCrossClicked =
-                                    placeId?.equals(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId)
-
                                 Utils.savePreferredDeliveryLocation(
                                     ShoppingDeliveryLocation(
                                         confirmLocationResponse.orderSummary?.fulfillmentDetails
@@ -344,8 +339,6 @@ class ChangeFulfillmentCollectionStoreFragment :
                                     KotlinUtils.isLocationPlaceIdSame =
                                         placeId?.equals(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId)
                                 }
-                                KotlinUtils.isCncTabCrossClicked =
-                                    placeId?.equals(KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.address?.placeId)
                                 KotlinUtils.saveAnonymousUserLocationDetails(
                                     ShoppingDeliveryLocation(
                                         confirmLocationResponse.orderSummary?.fulfillmentDetails
