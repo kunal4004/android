@@ -2224,8 +2224,6 @@ interface ApiInterface {
         @Header("deviceIdentityToken") deviceIdentityToken: String,
         @Body appGUIDRequestModel: AppGUIDRequestModel,
     ): Call<AppGUIDModel>
-        @Body appGUIDRequestModel: AppGUIDRequestModel
-    ):  Call<AppGUIDModel>
 
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
