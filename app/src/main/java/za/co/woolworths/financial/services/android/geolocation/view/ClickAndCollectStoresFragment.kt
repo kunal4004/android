@@ -15,14 +15,19 @@ import com.awfs.coordination.databinding.FragmentClickAndCollectStoresBinding
 import com.google.gson.JsonSyntaxException
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.geolocation.network.model.Store
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
+import za.co.woolworths.financial.services.android.geolocation.network.validatestoremodel.ValidateStoreResponse
 import za.co.woolworths.financial.services.android.geolocation.view.adapter.StoreListAdapter
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderLoading
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderSuccess
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.VtoErrorBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.listener.VtoTryAgainListener
 import za.co.woolworths.financial.services.android.util.*
@@ -36,7 +41,10 @@ import za.co.woolworths.financial.services.android.util.binding.BaseDialogFragme
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class ClickAndCollectStoresFragment : BaseDialogFragmentBinding<FragmentClickAndCollectStoresBinding>(FragmentClickAndCollectStoresBinding::inflate),
+class ClickAndCollectStoresFragment :
+    BaseDialogFragmentBinding<FragmentClickAndCollectStoresBinding>(
+        FragmentClickAndCollectStoresBinding::inflate
+    ),
     StoreListAdapter.OnStoreSelected, View.OnClickListener, TextWatcher, VtoTryAgainListener {
 
     private var mValidateLocationResponse: ValidateLocationResponse? = null
@@ -104,13 +112,13 @@ class ClickAndCollectStoresFragment : BaseDialogFragmentBinding<FragmentClickAnd
                 )
             }
         }
+        addObserver()
     }
-
 
 
     private fun setAddressUI(
         address: List<Store>?,
-        mValidateLocationResponse: ValidateLocationResponse?
+        mValidateLocationResponse: ValidateLocationResponse?,
     ) {
         binding.apply {
             tvStoresNearMe?.text = resources.getString(R.string.near_stores, address?.size)
@@ -124,9 +132,10 @@ class ClickAndCollectStoresFragment : BaseDialogFragmentBinding<FragmentClickAnd
         binding.apply {
             rvStoreList.layoutManager =
                 activity?.let { activity -> LinearLayoutManager(activity) }
-            val storesListWithHeaders=StoreUtils.getStoresListWithHeaders(StoreUtils.sortedStoreList(address))
+            val storesListWithHeaders =
+                StoreUtils.getStoresListWithHeaders(StoreUtils.sortedStoreList(address))
 
-            if(storesListWithHeaders.isNotEmpty()){
+            if (storesListWithHeaders.isNotEmpty()) {
                 tvConfirmStore?.isEnabled = false
                 rvStoreList.adapter = activity?.let { activity ->
                     StoreListAdapter(
@@ -147,6 +156,57 @@ class ClickAndCollectStoresFragment : BaseDialogFragmentBinding<FragmentClickAnd
             rvStoreList.adapter?.notifyDataSetChanged()
         }
     }
+
+    private fun addObserver() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            confirmAddressViewModel.validateStoreInventoryData.collectLatest { validatePlaceResponse ->
+                with(validatePlaceResponse) {
+                    renderLoading {
+                        if (isLoading) {
+                            binding.clickCollectProgress.visibility = View.VISIBLE
+                        } else
+                            binding.clickCollectProgress.visibility = View.GONE
+                    }
+                    renderSuccess {
+                        setBrowsingDataInformation(output)
+                        navigateToFulfillmentScreen()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun setBrowsingDataInformation(validateStoreResponse: ValidateStoreResponse) {
+        val browsingStoreList = validateStoreResponse?.validatePlace?.stores
+        if (!browsingStoreList.isNullOrEmpty()) {
+            dataStore = browsingStoreList[0]
+            (WoolworthsApplication.getCncBrowsingValidatePlaceDetails()?.stores
+                ?: WoolworthsApplication.getValidatePlaceDetails()?.stores)?.map { listStore ->
+                if (listStore.storeId == browsingStoreList[0].storeId) {
+                    listStore.apply {
+                        unDeliverableCommerceItems =
+                            browsingStoreList[0].unDeliverableCommerceItems
+                        firstAvailableFoodDeliveryDate =
+                            browsingStoreList[0].firstAvailableFoodDeliveryDate
+                        firstAvailableOtherDeliveryDate =
+                            browsingStoreList[0].firstAvailableOtherDeliveryDate
+                    }
+                }
+                return@map
+            }
+        }
+    }
+
+    private fun callValidateStoreInventory() {
+        lifecycleScope.launch {
+            if (placeId.isNullOrEmpty() && dataStore?.storeId.isNullOrEmpty()) {
+                return@launch
+            } else {
+                confirmAddressViewModel.queryValidateStoreInventory(placeId!!, dataStore?.storeId!!)
+            }
+        }
+    }
+
     override fun onStoreSelected(mStore: Store?) {
         dataStore = mStore
         binding.tvConfirmStore?.isEnabled = true
@@ -161,12 +221,15 @@ class ClickAndCollectStoresFragment : BaseDialogFragmentBinding<FragmentClickAnd
                         FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
                                 FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_SHOP_CONFIRM_STORE
                     ),
-                    activity)
-                navigateToFulfillmentScreen()
+                    activity
+                )
+                callValidateStoreInventory()
             }
+
             R.id.backButton -> {
-               dismiss()
+                dismiss()
             }
+
             R.id.btChange -> {
                 IS_FROM_STORE_LOCATOR = true
                 findNavController().navigate(
@@ -186,7 +249,8 @@ class ClickAndCollectStoresFragment : BaseDialogFragmentBinding<FragmentClickAnd
                 IS_FROM_STORE_LOCATOR = false
                 setFragmentResult(
                     DeliveryAddressConfirmationFragment.STORE_LOCATOR_REQUEST_CODE,
-                    bundleOf(BUNDLE to it))
+                    bundleOf(BUNDLE to it)
+                )
             }
             findNavController().navigate(
                 R.id.action_clickAndCollectStoresFragment_to_deliveryAddressConfirmationFragment,
@@ -196,7 +260,8 @@ class ClickAndCollectStoresFragment : BaseDialogFragmentBinding<FragmentClickAnd
             dataStore?.let {
                 setFragmentResult(
                     DeliveryAddressConfirmationFragment.STORE_LOCATOR_REQUEST_CODE,
-                    bundleOf(BUNDLE to it))
+                    bundleOf(BUNDLE to it)
+                )
             }
             dismiss()
         }
@@ -214,14 +279,16 @@ class ClickAndCollectStoresFragment : BaseDialogFragmentBinding<FragmentClickAnd
         val list = ArrayList<Store>()
         mValidateLocationResponse?.validatePlace?.stores?.let {
             for (store in it) {
-                if (store.storeName?.contains(s.toString(),
-                        true) == true || store.storeAddress?.contains(s.toString(), true) == true
+                if (store.storeName?.contains(
+                        s.toString(),
+                        true
+                    ) == true || store.storeAddress?.contains(s.toString(), true) == true
                 ) {
                     list.add(store)
                 }
             }
         }
-        if(list.isNotEmpty()){
+        if (list.isNotEmpty()) {
             setStoreList(list)
         }
     }
@@ -239,8 +306,12 @@ class ClickAndCollectStoresFragment : BaseDialogFragmentBinding<FragmentClickAnd
                     if (validateLocationResponse != null) {
                         when (validateLocationResponse?.httpCode) {
                             AppConstant.HTTP_OK -> {
-                                setAddressUI(validateLocationResponse?.validatePlace?.stores, validateLocationResponse)
+                                setAddressUI(
+                                    validateLocationResponse?.validatePlace?.stores,
+                                    validateLocationResponse
+                                )
                             }
+
                             else -> {
                                 showErrorDialog()
                             }
@@ -277,7 +348,7 @@ class ClickAndCollectStoresFragment : BaseDialogFragmentBinding<FragmentClickAnd
     }
 
     override fun onFirstTimePargo() {
-        findNavController().navigate( R.id.action_clickAndCollectStoresFragment_to_pargoStoreInfoBottomSheetDialog)
+        findNavController().navigate(R.id.action_clickAndCollectStoresFragment_to_pargoStoreInfoBottomSheetDialog)
     }
 
     private fun firstTimeFBHCNCIntroDialog() {
