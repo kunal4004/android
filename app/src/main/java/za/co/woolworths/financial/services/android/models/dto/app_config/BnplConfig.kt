@@ -20,7 +20,7 @@ data class BnplConfig(
 data class WfsPaymentMethods(
     val instalmentCount: Int?,
     val productGroupCode: String?,
-    val accountNumberBin: String,
+    val accountNumberBin: String?,
     val title: String,
     val description: String?,
     val cashbackPercentage: Float?,
