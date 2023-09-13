@@ -1494,6 +1494,7 @@ class ProductDetailsFragment :
                         prodId = it.productId
                         tvTotalReviews?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
                     }
+                    showRatingAndReview()
                 } else {
                     hideRatingAndReview()
                 }
@@ -1512,6 +1513,8 @@ class ProductDetailsFragment :
             reviewDetailsInformation?.visibility = View.GONE
             customerReview.root.visibility = View.GONE
             rlViewMoreReview?.visibility = View.GONE
+            leaveUsReview?.visibility = View.GONE
+            writeAReviewLink.root.visibility = View.GONE
         }
     }
 
@@ -1521,6 +1524,8 @@ class ProductDetailsFragment :
             reviewDetailsInformation?.visibility = View.VISIBLE
             customerReview.root.visibility = View.VISIBLE
             rlViewMoreReview?.visibility = View.VISIBLE
+            leaveUsReview?.visibility = View.VISIBLE
+            writeAReviewLink.root.visibility = View.VISIBLE
         }
     }
 
