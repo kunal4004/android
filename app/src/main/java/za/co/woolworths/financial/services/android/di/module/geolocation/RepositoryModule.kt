@@ -15,7 +15,7 @@ import za.co.woolworths.financial.services.android.models.network.ApiInterface
 
 @Module
 @InstallIn(ViewModelComponent::class)
-object RepositoryModule {
+abstract class RepositoryModule {
 
     @Provides
     fun provideConfirmAddressRepository(
@@ -24,7 +24,6 @@ object RepositoryModule {
         return ConfirmAddressRepositoryImp(apiInterface)
     }
 
-    
     @Provides
     fun provideApiService(retrofit: Retrofit): ApiInterface = retrofit.create(
         ApiInterface::class.java
