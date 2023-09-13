@@ -8,7 +8,7 @@
     android:paddingBottom="@dimen/eight_dp" >
 
     <RelativeLayout
-        android:id="@+id/productDetailsInformation"
+        android:id="@+id/writeAReviewDetailsUI"
         style="@style/clickable_card_item_layout_style"
         android:layout_height="@dimen/eighty_dp"
         android:layout_marginTop="@dimen/zero_dp"
@@ -28,11 +28,10 @@
             app:srcCompat="@drawable/ic_edit"/>
 
         <TextView
-            style="@style/opensans_regular_text_style_14sp_black"
+            style="@style/write_a_review_opensans_bold_text_style_14sp_black"
             android:layout_toEndOf="@+id/logoEditIcon"
             android:text="@string/write_a_review"
-            android:textColor="@color/account_amount_color"
-            />
+            android:textColor="@color/account_amount_color" />
 
         <ImageView style="@style/card_item_end_icon_style" />
     </RelativeLayout>

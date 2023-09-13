@@ -3077,4 +3077,6 @@
     <string name="create_list_name_error">Unfortunately, this list name already exists.\nPlease try another option.</string>
     <!--  Write a Review Details -->
     <string name="write_a_review">Write a Review</string>
+    <string name="leave_us_a_review">Leave us a review</string>
+    <string name="subtitle_leave_us_a_review">Share with us your experience with this product.</string>
 </resources>
