@@ -180,19 +180,13 @@ class ClickAndCollectStoresFragment :
         val browsingStoreList = validateStoreResponse?.validatePlace?.stores
         if (!browsingStoreList.isNullOrEmpty()) {
             dataStore = browsingStoreList[0]
-            (WoolworthsApplication.getCncBrowsingValidatePlaceDetails()?.stores
-                ?: WoolworthsApplication.getValidatePlaceDetails()?.stores)?.map { listStore ->
+            val storeData = WoolworthsApplication.getCncBrowsingValidatePlaceDetails()?.stores
+                ?: WoolworthsApplication.getValidatePlaceDetails()?.stores
+            storeData?.forEach { listStore ->
                 if (listStore.storeId == browsingStoreList[0].storeId) {
-                    listStore.apply {
-                        unDeliverableCommerceItems =
-                            browsingStoreList[0].unDeliverableCommerceItems
-                        firstAvailableFoodDeliveryDate =
-                            browsingStoreList[0].firstAvailableFoodDeliveryDate
-                        firstAvailableOtherDeliveryDate =
-                            browsingStoreList[0].firstAvailableOtherDeliveryDate
-                    }
+                    KotlinUtils.setCncStoreValidateResponse(browsingStoreList[0], listStore)
+                    return@forEach
                 }
-                return@map
             }
         }
     }

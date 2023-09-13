@@ -678,6 +678,29 @@ class KotlinUtils {
             }
         }
 
+        fun setCncStoreValidateResponse(browsingStoreData: Store, listStore: Store) {
+            listStore.apply {
+                unDeliverableCommerceItems = browsingStoreData.unDeliverableCommerceItems
+                distance = browsingStoreData.distance
+                deliverable = browsingStoreData.deliverable
+                storeId = browsingStoreData.storeId
+                deliverySlotsDetails = browsingStoreData.deliverySlotsDetails
+                firstAvailableFoodDeliveryDate =
+                    browsingStoreData.firstAvailableFoodDeliveryDate
+                firstAvailableOtherDeliveryDate =
+                    browsingStoreData.firstAvailableOtherDeliveryDate
+                storeAddress = browsingStoreData.storeAddress
+                quantityLimit = browsingStoreData.quantityLimit
+                storeName = browsingStoreData.storeName
+                storeDeliveryType = browsingStoreData.storeDeliveryType
+                unSellableCommerceItems = browsingStoreData.unSellableCommerceItems
+                locationId = browsingStoreData.locationId
+                longitude = browsingStoreData.longitude
+                latitude = browsingStoreData.latitude
+                deliveryDetails = browsingStoreData.deliveryDetails
+            }
+        }
+
         fun showChangeDeliveryTypeDialog(
             context: Context,
             requireFragmentManager: FragmentManager,

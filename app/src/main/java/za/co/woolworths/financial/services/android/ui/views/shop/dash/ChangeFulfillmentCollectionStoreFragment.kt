@@ -342,16 +342,10 @@ class ChangeFulfillmentCollectionStoreFragment :
 
     private fun setCnCStoreInValidateResponse(browsingStoreData: ArrayList<Store>?) {
         if (!WoolworthsApplication.getValidatePlaceDetails()?.stores.isNullOrEmpty() && !browsingStoreData.isNullOrEmpty()) {
-            WoolworthsApplication.getValidatePlaceDetails()?.stores?.map { listStore ->
+            WoolworthsApplication.getValidatePlaceDetails()?.stores?.forEach { listStore ->
                 if (listStore.storeId == browsingStoreData[0].storeId) {
-                    listStore.apply {
-                        unDeliverableCommerceItems = browsingStoreData[0].unDeliverableCommerceItems
-                        firstAvailableFoodDeliveryDate =
-                            browsingStoreData[0].firstAvailableFoodDeliveryDate
-                        firstAvailableOtherDeliveryDate =
-                            browsingStoreData[0].firstAvailableOtherDeliveryDate
-                    }
-                    return@map
+                    KotlinUtils.setCncStoreValidateResponse(browsingStoreData[0], listStore)
+                    return@forEach
                 }
             }
             WoolworthsApplication.setCncBrowsingValidatePlaceDetails(WoolworthsApplication.getValidatePlaceDetails())

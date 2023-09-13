@@ -544,16 +544,10 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
         /*reset browsing data for cnc and dash both once fulfillment location is confirmed*/
         if (store != null) {
             // set the store data in validate response as user changed the store.
-            validateLocationResponse?.validatePlace?.stores?.map { mainStore ->
+            validateLocationResponse?.validatePlace?.stores?.forEach { mainStore ->
                 if (mainStore.storeId == store!!.storeId) {
-                    mainStore.apply {
-                        unDeliverableCommerceItems = store!!.unDeliverableCommerceItems
-                        firstAvailableFoodDeliveryDate =
-                            store!!.firstAvailableFoodDeliveryDate
-                        firstAvailableOtherDeliveryDate =
-                            store!!.firstAvailableOtherDeliveryDate
-                    }
-                    return@map
+                    KotlinUtils.setCncStoreValidateResponse(store!!, mainStore)
+                    return@forEach
                 }
             }
         }
