@@ -21,7 +21,6 @@
         <ImageView
             android:id="@+id/payWithCardIconImageView"
             style="@style/accountOptionsImageviewStyle"
-            android:alpha="0.3"
             android:contentDescription="@string/pay_with_card_vtsc_action_button_card_icon_image_on_overlay"
             android:src="@drawable/ic_replacement_card_icon" />
 
@@ -73,7 +72,6 @@
         <ImageView
             android:id="@+id/howItWorksIconImageView"
             style="@style/accountOptionsImageviewStyle"
-            android:alpha="0.3"
             android:contentDescription="@string/how_it_works_vtsc_action_button_document_icon_image_on_overlay"
             android:src="@drawable/ic_how_to_pay" />
 

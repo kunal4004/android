@@ -289,7 +289,6 @@ class ManageStoreCardLandingList(
             logoImageView.contentDescription = "logo$keyActionButton"
             arrowImageView.contentDescription = "arrow$keyActionButton"
 
-            logoImageView.alpha = 0.3f
             rootLayout.setOnClickListener {
                 when(action) {
                     StoreCardItemActions.LINK_STORE_CARD -> includeListOptions.linkNewCardRelativeLayout.performClick()
