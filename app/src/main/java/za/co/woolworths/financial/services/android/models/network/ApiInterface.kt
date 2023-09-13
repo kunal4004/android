@@ -1640,9 +1640,8 @@ interface ApiInterface {
         "Media-Type: application/json",
     )
 
-    @GET
+    @GET("wfs/app/v4/locationItems/validateLocation")
     fun geoValidateLocation(
-        @Url url:String,
         @Header("userAgent") userAgent: String,
         @Header("userAgentVersion") userAgentVersion: String,
         @Header("sessionToken") sessionToken: String,

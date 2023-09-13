@@ -21,7 +21,6 @@ class GeoLocationApiHelper @Inject constructor() : RetrofitConfig(AppContextProv
 
     suspend fun getValidateLocation(placeId: String) =
         mApiInterface.geoValidateLocation(
-            url = "https://13eb58c1-ecf7-418b-96c2-9b1c13d622f1.mock.pstmn.io/wfs/app/v4/locationItems/validateLocation",
             "",
             "",
             getSessionToken(),
