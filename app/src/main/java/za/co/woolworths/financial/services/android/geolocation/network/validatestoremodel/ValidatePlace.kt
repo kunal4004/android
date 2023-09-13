@@ -2,13 +2,14 @@ package za.co.woolworths.financial.services.android.geolocation.network.validate
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
+import za.co.woolworths.financial.services.android.geolocation.network.model.Store
 
 
 @Parcelize
 data class ValidatePlace(
   var hasDeliverySlotReservations: Boolean? = null,
   var unDeliverableCommerceItems: ArrayList<String> = arrayListOf(),
-  var stores: ArrayList<Stores> = arrayListOf(),
+  var stores: ArrayList<Store> = arrayListOf(),
   var deliverable: Boolean? = null,
   var firstAvailableFoodDeliveryDate: String? = null,
   var firstAvailableOtherDeliveryDate: String? = null,
