@@ -25,7 +25,7 @@ class GeoLocationApiHelper @Inject constructor() : RetrofitConfig(AppContextProv
             "",
             getSessionToken(),
             getDeviceIdentityToken(),
-            "").await()
+            placeId).await()
 
     suspend fun postConfirmLocation(confirmLocationRequest: ConfirmLocationRequest) =
         mApiInterface.confirmLocation("",
