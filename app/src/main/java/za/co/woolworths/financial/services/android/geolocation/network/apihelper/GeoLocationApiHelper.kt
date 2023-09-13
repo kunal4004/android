@@ -20,8 +20,7 @@ class GeoLocationApiHelper @Inject constructor() : RetrofitConfig(AppContextProv
         mApiInterface.getSavedAddresses("", "", getSessionToken(), getDeviceIdentityToken()).await()
 
     suspend fun getValidateLocation(placeId: String) =
-        mApiInterface.geoValidateLocation(
-            "",
+        mApiInterface.geoValidateLocation("",
             "",
             getSessionToken(),
             getDeviceIdentityToken(),
