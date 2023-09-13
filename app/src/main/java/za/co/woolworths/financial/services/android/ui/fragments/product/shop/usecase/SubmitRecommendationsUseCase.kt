@@ -79,15 +79,24 @@ class SubmitRecommendationsUseCase @Inject constructor(
     }
 
     private fun otherOrderedItems(otherItems: Array<OrderItem>?) =
+
         otherItems?.map { items ->
             CartProducts(
                 pid = items.productId,
                 sku = items.productId,
                 quantity = items.quantity,
-                value = items.priceInfo?.amount,
+                value = getAmountOnlyLastTwoDecimal(items.priceInfo?.amount),
                 currency = Constants.CURRENCY_VALUE
             )
         }
+
+    fun getAmountOnlyLastTwoDecimal(price: Double?): String? {
+        return try {
+            "%.2f".format(price ?: 0.00)
+        } catch (e: Exception) {
+            "0.00"
+        }
+    }
 
     private fun orderedFoodItems(foodItems: Array<OrderItem>?) =
         foodItems?.map { foodItem ->
@@ -95,7 +104,7 @@ class SubmitRecommendationsUseCase @Inject constructor(
                 pid = foodItem.productId,
                 sku = foodItem.productId,
                 quantity = foodItem.quantity,
-                value = foodItem.priceInfo?.amount,
+                value = getAmountOnlyLastTwoDecimal(foodItem.priceInfo?.amount),
                 currency = Constants.CURRENCY_VALUE
             )
         }
@@ -106,7 +115,7 @@ class SubmitRecommendationsUseCase @Inject constructor(
                 pid = Constants.PRODUCT_ID_FOR_SHIPPING,
                 sku = Constants.PRODUCT_ID_FOR_SHIPPING,
                 quantity = Constants.QUANTITY_FOR_SHIPPING,
-                value = shippingAmount,
+                value =  getAmountOnlyLastTwoDecimal(shippingAmount),
                 currency = Constants.CURRENCY_VALUE
             )
         } else {
@@ -120,7 +129,7 @@ class SubmitRecommendationsUseCase @Inject constructor(
                 pid = Constants.PRODUCT_ID_FOR_DISCOUNT,
                 sku = Constants.PRODUCT_ID_FOR_DISCOUNT,
                 quantity = Constants.QUANTITY_FOR_DISCOUNT,
-                value = totalOrderDiscount,
+                value =  getAmountOnlyLastTwoDecimal(totalOrderDiscount),
                 currency = Constants.CURRENCY_VALUE
             )
         } else {
