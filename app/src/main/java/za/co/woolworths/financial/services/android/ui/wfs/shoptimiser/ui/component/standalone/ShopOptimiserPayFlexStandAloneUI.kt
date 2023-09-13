@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.ui.wfs.component.TextOpenSansFontFamilyAnnotateString
@@ -62,6 +63,7 @@ fun ShopOptimiserViewModel.ShopOptimiserPayFlexStandAloneUI() {
                 annotatedString = generatePayFlexAnnotatedString(),
                 color = Black,
                 fontSize = FontDimensions.sp12,
+                fontWeight = FontWeight.W400,
                 textAlign = TextAlign.Start,
                 lineHeight = Dimens.twenty_sp,
                 modifier = Modifier.weight(1f).padding(end = Margin.dp4),

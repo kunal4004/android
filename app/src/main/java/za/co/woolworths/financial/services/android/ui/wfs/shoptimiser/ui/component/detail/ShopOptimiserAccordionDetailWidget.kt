@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
@@ -108,6 +109,7 @@ fun ShopOptimiserAccordionDetailPopup(viewModel: ShopOptimiserViewModel, onClick
         TextOpenSansFontFamilyAnnotateString(
             modifier  = Modifier.padding(start = Margin.start, end = Margin.end),
             annotatedString = infoDescription,
+            fontWeight = FontWeight.W400,
             locator = "infoDescription",
             color = Color.Black
         )
@@ -212,7 +214,7 @@ fun GotItButton(text: String? = stringResource(id = R.string.got_it), onClick : 
                     .background(Color.Black),
                 text = text?.uppercase() ?: "",
                 textColor = Color.White,
-                letterSpacing = 0.3.sp,
+                letterSpacing = 0.6.sp,
                 fontSize = FontDimensions.sp12,
                 textAlign = TextAlign.Center
             )

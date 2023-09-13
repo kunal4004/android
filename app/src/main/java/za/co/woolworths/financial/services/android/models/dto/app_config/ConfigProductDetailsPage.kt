@@ -7,5 +7,5 @@ import kotlinx.parcelize.Parcelize
 data class ConfigProductDetailsPage(
     var shareItemURITemplate: String,
     var shareItemMessage: String,
-    var bnpl : BnplConfig? = null
+    var bnpl : BnplEmbeddedFinanceConfig? = null
 ) : Parcelable

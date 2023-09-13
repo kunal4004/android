@@ -4,14 +4,15 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class BnplConfig(
+data class BnplConfig(val minimumSupportedAppBuildNumber: Int?,
+                          var isBnplEnabled: Boolean = false,
+                          var isBnplRequiredInThisVersion: Boolean = false) : Parcelable
+@Parcelize
+data class BnplEmbeddedFinanceConfig(
     val componentTitle: String?,
     val componentDescription: String?,
     val infoLabelAvailableBalance: String?,
     val infoLabelEarnCashback: String?,
-    val minimumSupportedAppBuildNumber: Int?,
-    var isBnplEnabled: Boolean = false,
-    var isBnplRequiredInThisVersion: Boolean = false,
     val payflex: WfsPaymentMethods?,
     val wfsPaymentMethods: MutableList<WfsPaymentMethods>
 ) : Parcelable

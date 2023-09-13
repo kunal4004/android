@@ -6,6 +6,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import za.co.woolworths.financial.services.android.ui.wfs.shoptimiser.dto.ProductOnDisplay
+import za.co.woolworths.financial.services.android.ui.wfs.theme.Black
 import za.co.woolworths.financial.services.android.ui.wfs.theme.Color444444
 import za.co.woolworths.financial.services.android.ui.wfs.theme.HyperTextlinkBlue
 
@@ -44,8 +45,8 @@ fun convertTextToAnnotationString(
             if (startIndex != -1) {
                 val endIndex = (startIndex + word.trim().length)
                 addStyle(
-                    style = SpanStyle(color = Color444444,
-                        fontWeight = FontWeight.Bold),
+                    style = SpanStyle(color = Black,
+                        fontWeight = FontWeight.SemiBold),
                     start = startIndex,
                     end = endIndex
                 )

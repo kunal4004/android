@@ -2,7 +2,7 @@ package za.co.woolworths.financial.services.android.ui.wfs.shoptimiser.controlle
 
 import androidx.compose.ui.text.AnnotatedString
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
-import za.co.woolworths.financial.services.android.models.dto.app_config.BnplConfig
+import za.co.woolworths.financial.services.android.models.dto.app_config.BnplEmbeddedFinanceConfig
 import za.co.woolworths.financial.services.android.models.dto.app_config.WfsPaymentMethods
 import za.co.woolworths.financial.services.android.ui.wfs.shoptimiser.helper.ShopOptimiserConstant.ShopOptimiserConstant.installmentAmountTag
 import za.co.woolworths.financial.services.android.ui.wfs.shoptimiser.helper.convertTextToAnnotationString
@@ -22,14 +22,14 @@ interface IManageBnpLConfig {
 
 class ManageBnplConfigImpl @Inject constructor() : IManageBnpLConfig {
 
- private val bnplConfig: BnplConfig? by lazy { AppConfigSingleton.productDetailsPage?.bnpl }
+ private val bnplEmbeddedFinanceConfig: BnplEmbeddedFinanceConfig? by lazy { AppConfigSingleton.productDetailsPage?.bnpl }
 
- private val payFlex: WfsPaymentMethods? by lazy { bnplConfig?.payflex }
- override fun getComponentTitle(): String?  = bnplConfig?.componentTitle
- override fun getComponentDescription(): String?  = bnplConfig?.componentDescription
- override fun getInfoLabelAvailableBalance(): String?  = bnplConfig?.infoLabelAvailableBalance
- override fun getInfoLabelEarnCashback(): String?  = bnplConfig?.infoLabelEarnCashback
- override fun getWfsPaymentMethods(): MutableList<WfsPaymentMethods>? = bnplConfig?.wfsPaymentMethods
+ private val payFlex: WfsPaymentMethods? by lazy { bnplEmbeddedFinanceConfig?.payflex }
+ override fun getComponentTitle(): String?  = bnplEmbeddedFinanceConfig?.componentTitle
+ override fun getComponentDescription(): String?  = bnplEmbeddedFinanceConfig?.componentDescription
+ override fun getInfoLabelAvailableBalance(): String?  = bnplEmbeddedFinanceConfig?.infoLabelAvailableBalance
+ override fun getInfoLabelEarnCashback(): String?  = bnplEmbeddedFinanceConfig?.infoLabelEarnCashback
+ override fun getWfsPaymentMethods(): MutableList<WfsPaymentMethods>? = bnplEmbeddedFinanceConfig?.wfsPaymentMethods
 
  /**
   * Combines the list of WFS payment methods with the PayFlex payment method,
@@ -50,9 +50,10 @@ class ManageBnplConfigImpl @Inject constructor() : IManageBnpLConfig {
   * @return true if BNPL configuration is enabled, false otherwise.
   */
  override fun isPayFlexBNPLConfigEnabled(): Boolean {
-  val isBnplRequired = bnplConfig?.isBnplRequiredInThisVersion ?: false
+  val bnplConfig = AppConfigSingleton.bnplConfig
+  val isBnplRequiredInThisVersion = bnplConfig?.isBnplRequiredInThisVersion ?: false
   val isBnplEnabled = bnplConfig?.isBnplEnabled ?: false
-  return isBnplRequired && isBnplEnabled
+  return isBnplRequiredInThisVersion && isBnplEnabled
  }
 
  /**
