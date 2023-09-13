@@ -3287,4 +3287,32 @@
         <item name="android:layout_marginTop">@dimen/_5sdp</item>
         <item name="android:textColorHint">@color/color_9D9D9D</item>
     </style>
+
+    <style name="edit_icon_style">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:layout_alignParentStart">true</item>
+        <item name="android:layout_marginRight">@dimen/eight_dp</item>
+    </style>
+
+    <style name="write_a_review_opensans_bold_text_style_14sp_black">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:textSize">@dimen/fourteen_sp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:fontFamily">@font/opensans_bold</item>
+    </style>
+
+    <style name="leave_us_review_opensans_regular_text_style_14sp_black">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:textSize">@dimen/fourteen_sp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/color_03030380</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:fontFamily">@font/opensans_regular</item>
+    </style>
 </resources>

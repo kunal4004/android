@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/default_background"
+    android:paddingBottom="@dimen/eight_dp" >
+
+    <RelativeLayout
+        android:id="@+id/writeAReviewDetailsUI"
+        style="@style/clickable_card_item_layout_style"
+        android:layout_height="@dimen/eighty_dp"
+        android:layout_marginTop="@dimen/zero_dp"
+        android:paddingEnd="@dimen/twenty_four_dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/one_dp"
+            android:background="@color/layout_background_gray" />
+
+        <ImageView
+            android:id="@+id/logoEditIcon"
+            style="@style/edit_icon_style"
+            app:srcCompat="@drawable/ic_edit"/>
+
+        <TextView
+            style="@style/write_a_review_opensans_bold_text_style_14sp_black"
+            android:layout_toEndOf="@+id/logoEditIcon"
+            android:text="@string/write_a_review"
+            android:textColor="@color/account_amount_color" />
+
+        <ImageView style="@style/card_item_end_icon_style" />
+    </RelativeLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
