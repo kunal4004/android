@@ -841,6 +841,9 @@ open class FirebaseManagerAnalyticsProperties {
             const val PRODUCT_SKU: String = "Product SKU"
             const val SELECTED_SKU_QUANTITY: String = "Selected SKU Quantity"
             const val LAST_KNOWN_LOCATION: String = "Last Known Location"
+            const val URL = "URL"
+            const val ExceptionResponse = "ExceptionResponse"
+            const val ExceptionMessage = "ExceptionMessage"
         }
     }
 

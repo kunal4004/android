@@ -77,6 +77,7 @@ public abstract class BaseActivity<T extends ViewDataBinding, V extends BaseView
 				actionBar.setHomeButtonEnabled(true);
 				actionBar.setDisplayShowHomeEnabled(true);
 				getToolbar().setNavigationIcon(R.drawable.back24);
+				getToolbar().setNavigationContentDescription(getString(R.string.back_button));
 			} else {
 				actionBar.setDisplayHomeAsUpEnabled(false);
 				actionBar.setHomeButtonEnabled(false);

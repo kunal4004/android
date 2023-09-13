@@ -1333,10 +1333,12 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
             putString(ErrorHandlerBottomSheetDialog.ERROR_DESCRIPTION, subTitle)
             putInt(ErrorHandlerBottomSheetDialog.ERROR_TYPE, errorType)
         }
-        view?.findNavController()?.navigate(
-            R.id.action_checkoutDashFragment_to_errorHandlerBottomSheetDialog,
-            bundle
-        )
+        if (navController?.currentDestination?.id == R.id.checkoutDashFragment) {
+            view?.findNavController()?.navigate(
+                R.id.action_checkoutDashFragment_to_errorHandlerBottomSheetDialog,
+                bundle
+            )
+        }
     }
 
     private fun setScreenClickEvents(isClickable: Boolean) {

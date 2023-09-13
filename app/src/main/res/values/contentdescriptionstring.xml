@@ -218,4 +218,46 @@
     <string name="active_vtsc_card_image_on_overlay">active_vtsc_card_image_on_overlay</string>
     <string name="button_my_card_has_arrived">button_my_card_has_arrived</string>
     <string name="active_store_card_image_on_overlay_new_card">active_store_card_image_on_overlay_new_card</string>
+
+    <!-- Common id's -->
+    <string name="title">title</string>
+    <string name="subtitle">subtitle</string>
+    <string name="text">text</string>
+    <string name="button">button</string>
+    <string name="nextArrow">next_arrow</string>
+    <string name="description">description</string>
+    <string name="image_icon">image_icon</string>
+    <string name="checkBox">checkbox</string>
+    <string name="toolbarText">toolbar_text</string>
+    <string name="send_button">send_button</string>
+
+    <!-- Unique Ids for contact us-->
+    <string name="name_text">name_text</string>
+    <string name="name_input_field">name_input_field</string>
+    <string name="email_address_text">email_address_text</string>
+    <string name="email_address_input_field">email_address_input_field</string>
+    <string name="email_address_description">email_address_description</string>
+    <string name="enquiry_type_text">enquiry_type_text</string>
+    <string name="enquiry_type_dropdown">enquiry_type_dropdown</string>
+    <string name="message_text">message_text</string>
+    <string name="message_input_field">message_input_field</string>
+    <string name="enquiry_successfully_sent_image_icon">enquiry_successfully_sent_image_icon</string>
+    <string name="enquiry_successfully_sent_title_text">enquiry_successfully_sent_title_text</string>
+    <string name="enquiry_successfully_sent_description">enquiry_successfully_sent_description</string>
+    <string name="got_it_button">got_it_button</string>
+    <string name="toolbar_text">toolbar_text</string>
+    <string name= "chat_to_us_on_whatsapp_image">chat_to_us_on_whatsapp_image</string>
+    <string name= "chat_to_us_on_title_text">chat_to_us_on_title_text</string>
+    <string name= "chat_to_us_on_whatsapp_description">chat_to_us_on_whatsapp_description</string>
+    <string name= "how_to_pay_your_woolies_account_image_icon">how_to_pay_your_woolies_account_image_icon</string>
+    <string name= "how_to_pay_your_woolies_account_image_desc">how_to_pay_your_woolies_account_image_desc</string>
+    <string name= "unable_to_pay_woolies_account_image_icon">unable_to_pay_woolies_account_image_icon</string>
+    <string name= "unable_to_pay_woolies_account_image_desc">unable_to_pay_woolies_account_image_desc</string>
+    <string name= "payment_not_reflecting_image_icon">payment_not_reflecting_image_icon</string>
+    <string name= "payment_not_reflecting_desc">payment_not_reflecting_desc</string>
+    <string name= "chat_to_us_now_button">chat_to_us_now_button</string>
+    <string name= "whatsapp_number_image_icon">whatsapp_number_image_icon</string>
+    <string name= "whatsapp_number_text">whatsapp_number_text</string>
+    <string name= "whatsapp_number_number">whatsapp_number_number</string>
+    <string name= "back_button">"back_button"</string>
 </resources>

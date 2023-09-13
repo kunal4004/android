@@ -36,7 +36,7 @@ class StartupViewModel(private val startUpRepository: StartUpRepository, private
     var isVideoPlaying: Boolean = false
     var videoPlayerShouldPlay: Boolean = false
 
-    //var pushNotificationUpdate: String?
+    // var pushNotificationUpdate: String?
     val randomVideoPath: String = ""
     var environment: String? = null
     var appVersion: String? = null
@@ -51,7 +51,6 @@ class StartupViewModel(private val startUpRepository: StartUpRepository, private
         const val APP_SERVER_ENVIRONMENT_KEY = "app_server_environment"
         const val APP_VERSION_KEY = "app_version"
     }
-
 
     fun queryServiceGetConfig() = liveData(Dispatchers.IO) {
         emit(ConfigResource.loading(data = null))
@@ -95,7 +94,8 @@ class StartupViewModel(private val startUpRepository: StartUpRepository, private
             AnalyticsManager.apply {
                 val token = SessionUtilities.getInstance().jwt
                 token.AtgId?.apply {
-                    val atgId = if (this.isJsonArray) this.asJsonArray.first().asString else this.asString
+                    val atgId =
+                        if (this.isJsonArray) this.asJsonArray.first().asString else this.asString
                     setUserId(atgId)
                     FirebaseManager.setCrashLyticsUserId(atgId)
                     setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.ATGId, atgId)
@@ -103,7 +103,10 @@ class StartupViewModel(private val startUpRepository: StartUpRepository, private
 
                 token.C2Id?.apply {
                     setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.C2ID, this)
-                    FirebaseManager.setCrashLyticsCustomKeyValue(FirebaseManagerAnalyticsProperties.PropertyNames.C2ID, this)
+                    FirebaseManager.setCrashLyticsCustomKeyValue(
+                        FirebaseManagerAnalyticsProperties.PropertyNames.C2ID,
+                        this,
+                    )
                 }
             }
         }
@@ -111,27 +114,28 @@ class StartupViewModel(private val startUpRepository: StartUpRepository, private
 
     fun setupFirebaseUserProperty() {
         AnalyticsManager.apply {
-            setUserProperty(APP_SERVER_ENVIRONMENT_KEY, if (environment?.isEmpty() == true) "prod" else environment?.toLowerCase(Locale.getDefault()))
+            setUserProperty(
+                APP_SERVER_ENVIRONMENT_KEY,
+                if (environment?.isEmpty() == true) "prod" else environment?.toLowerCase(Locale.getDefault()),
+            )
             setUserProperty(APP_VERSION_KEY, appVersion)
         }
     }
 
-
     fun fetchFirebaseRemoteConifgData(): String {
         firebaseRemoteConfig = getFirebaseRemoteConfigData()
-        val jsonString = firebaseRemoteConfig.getString(FirebaseConfigUtils.CONFIG_KEY);
-        return  jsonString
+        val jsonString = firebaseRemoteConfig.getString(FirebaseConfigUtils.CONFIG_KEY)
+        return jsonString
     }
 
     fun parseRemoteconfigData(remoteConfigData: String): ConfigData? {
         val gson = Gson()
         try {
             return gson.fromJson(remoteConfigData, ConfigData::class.java)
-        } catch (exception:Exception) {
-            return  null
+        } catch (exception: Exception) {
+            return null
         }
     }
 
     fun getFirebaseRemoteConfigData() = FirebaseConfigUtils.getFirebaseRemoteConfigInstance()
-
 }

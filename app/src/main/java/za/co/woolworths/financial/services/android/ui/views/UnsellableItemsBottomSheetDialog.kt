@@ -20,6 +20,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.UnsellableItemsBottomSheetDialogBinding
+import za.co.woolworths.financial.services.android.cart.view.CartFragment
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationParams
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmLocationResponseLiveData
@@ -58,7 +59,12 @@ class UnsellableItemsBottomSheetDialog(
             viewModel: ConfirmAddressViewModel,
             fragment: Fragment,
         ) =
-            UnsellableItemsBottomSheetDialog(deliveryType, progressBar, viewModel, fragment).withArgs {
+            UnsellableItemsBottomSheetDialog(
+                deliveryType,
+                progressBar,
+                viewModel,
+                fragment
+            ).withArgs {
                 putSerializable(KEY_ARGS_UNSELLABLE_COMMERCE_ITEMS, unsellableItemsList)
             }
     }
@@ -170,13 +176,21 @@ class UnsellableItemsBottomSheetDialog(
                 commerceItems?.let { unsellableItems ->
                     FirebaseAnalyticsEventHelper.removeFromCartUnsellable(unsellableItems)
                 }
-                UnsellableUtils.callConfirmPlace(
-                    currentFragment,
-                    if (isCheckBoxSelected) ConfirmLocationParams(commerceItems, null) else null,
-                    progressBar,
-                    confirmAddressViewModel,
-                    deliveryType
-                )
+                if (currentFragment is CartFragment) {
+                    // If it is coming from Cart means we will not call confirm Location API. We will remove items from cart and then will process the same flow.
+                    UnsellableUtils.removeItemsFromCart(progressBar, commerceItems, isCheckBoxSelected, currentFragment, confirmAddressViewModel)
+                } else {
+                    UnsellableUtils.callConfirmPlace(
+                        currentFragment,
+                        if (isCheckBoxSelected) ConfirmLocationParams(
+                            commerceItems,
+                            null
+                        ) else null,
+                        progressBar,
+                        confirmAddressViewModel,
+                        deliveryType
+                    )
+                }
                 confirmRemoveItems()
             }
         }

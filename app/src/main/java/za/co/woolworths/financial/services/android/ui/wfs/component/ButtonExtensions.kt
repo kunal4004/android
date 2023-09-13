@@ -48,7 +48,8 @@ fun SurfaceTag(
                 ),
             color = contentColor,
             text = value.uppercase(),
-            letterSpacing = Dimens.one_sp
+            letterSpacing = Dimens.one_sp,
+            locator = ""
         )
     }
 }
@@ -72,7 +73,7 @@ fun ButtonBorder(label: String, modifier: Modifier = Modifier,textAlign : TextAl
 
         border = BorderStroke(Dimens.oneDp, BlackOpacity10)
     ) {
-        TextOpenSansSemiBoldH3(text = label.uppercase(), modifier = modifier, textAlign = textAlign, letterSpacing = Dimens.one_sp)
+        TextOpenSansSemiBoldH3(text = label.uppercase(), modifier = modifier, textAlign = textAlign, letterSpacing = Dimens.one_sp, locator = "")
     }
 }
 
