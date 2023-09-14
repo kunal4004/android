@@ -15,7 +15,7 @@ import za.co.woolworths.financial.services.android.models.network.ApiInterface
 
 @Module
 @InstallIn(ViewModelComponent::class)
-abstract class RepositoryModule {
+object RepositoryModule {
 
     @Provides
     fun provideConfirmAddressRepository(

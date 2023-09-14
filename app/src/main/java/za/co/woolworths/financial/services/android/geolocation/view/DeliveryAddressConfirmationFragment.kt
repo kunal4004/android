@@ -96,6 +96,7 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
     private lateinit var binding: GeoLocationDeliveryAddressBinding
     private var isUnSellableItemsRemoved: Boolean? = false
     private var placeId: String? = null
+    private var oldLocationPlaceId: String? = null
     private var isComingFromSlotSelection: Boolean = false
     private var isComingFromCheckout: Boolean = false
     private var latitude: String? = null
@@ -156,6 +157,7 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
             latitude = getString(KEY_LATITUDE, "")
             longitude = this.getString(KEY_LONGITUDE, "")
             placeId = this.getString(KEY_PLACE_ID, "")
+            oldLocationPlaceId = this.getString(KEY_PLACE_ID, Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId)
             address2 = this.getString(KEY_ADDRESS2, "")
             isComingFromSlotSelection = this.getBoolean(IS_COMING_FROM_SLOT_SELECTION, false)
             isComingFromCheckout = this.getBoolean(IS_COMING_FROM_CHECKOUT, false)
@@ -527,7 +529,7 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
                 Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
             KotlinUtils.let {
                 it.placeId = placeId
-                it.isLocationPlaceIdSame = placeId?.equals(savedPlaceId)
+                it.isLocationPlaceIdSame = oldLocationPlaceId?.equals(savedPlaceId)
 
                 if (it.isLocationPlaceIdSame == false) {
                     KotlinUtils.isDeliveryLocationTabCrossClicked = false
@@ -541,7 +543,7 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
                 KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.address?.placeId
             KotlinUtils.let {
                 it.placeId = placeId
-                it.isLocationPlaceIdSame = placeId?.equals(anonymousUserPlaceId)
+                it.isLocationPlaceIdSame = oldLocationPlaceId?.equals(anonymousUserPlaceId)
                 if (it.isLocationPlaceIdSame == false) {
                     KotlinUtils.isDeliveryLocationTabCrossClicked = false
                     KotlinUtils.isCncTabCrossClicked = false
