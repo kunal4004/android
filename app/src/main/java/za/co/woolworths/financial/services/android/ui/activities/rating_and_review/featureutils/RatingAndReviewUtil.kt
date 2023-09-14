@@ -30,6 +30,7 @@ class RatingAndReviewUtil {
 
 
         fun isRatingAndReviewConfigavailbel () =AppConfigSingleton.ratingsAndReviews?.isEnabled ?: false
+        fun isFoodItemAvailable () = AppConfigSingleton.ratingsAndReviews?.enableWriteReview?.foodItem ?: false
 
 
         fun setSecondaryRatingsUI(secondaryRatings: List<SecondaryRatings>,
