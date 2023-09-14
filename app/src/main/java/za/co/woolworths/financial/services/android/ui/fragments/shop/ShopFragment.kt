@@ -897,6 +897,10 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
 
     private fun showBlackToolTip(deliveryType: Delivery) {
         binding.apply {
+            if (validateLocationResponse == null && WoolworthsApplication.getValidatePlaceDetails() != null){
+                executeValidateSuburb()
+                return
+            }
             if (validateLocationResponse == null || getDeliveryType() == null) {
                 blackToolTipLayout.root.visibility = View.GONE
                 return
