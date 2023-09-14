@@ -37,12 +37,14 @@ import com.google.gson.JsonSyntaxException
 import com.skydoves.balloon.balloon
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import za.co.woolworths.financial.services.android.cart.view.SubstitutionChoice
 import za.co.woolworths.financial.services.android.chanel.utils.ChanelUtils
 import za.co.woolworths.financial.services.android.chanel.views.ChanelNavigationClickListener
 import za.co.woolworths.financial.services.android.chanel.views.adapter.BrandLandingAdapter
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IProductListing
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.enhancedSubstitution.util.isEnhanceSubstitutionFeatureAvailable
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.AddToCartLiveData
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
@@ -580,7 +582,11 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
                             dismissProgressBar()
                             queryInventoryForStore(
                                 it,
-                                AddItemToCart(productList.productId, productList.sku, 0),
+                                if (isEnhanceSubstitutionFeatureAvailable()) {
+                                    AddItemToCart(productList.productId, productList.sku, 0, SubstitutionChoice.SHOPPER_CHOICE.name, "")
+                                } else {
+                                    AddItemToCart(productList.productId, productList.sku, 0)
+                                },
                                 productList
                             )
                         }
@@ -1463,18 +1469,40 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
                                 }
                             } else if (skuInventoryList[0].quantity == 1) {
                                 addFoodProductTypeToCart(
-                                    AddItemToCart(
-                                        addItemToCart?.productId,
-                                        addItemToCart?.catalogRefId,
-                                        1
-                                    )
+                                    if (isEnhanceSubstitutionFeatureAvailable()) {
+                                        AddItemToCart(
+                                            addItemToCart?.productId,
+                                            addItemToCart?.catalogRefId,
+                                            1,
+                                            SubstitutionChoice.SHOPPER_CHOICE.name,
+                                            ""
+                                        )
+                                    } else {
+                                        AddItemToCart(
+                                            addItemToCart?.productId,
+                                            addItemToCart?.catalogRefId,
+                                            1
+                                        )
+                                    }
                                 )
                             } else {
-                                val cartItem = AddItemToCart(
-                                    addItemToCart?.productId
-                                        ?: "", addItemToCart?.catalogRefId
-                                        ?: "", skuInventoryList[0].quantity
-                                )
+                                val cartItem =
+                                    if (isEnhanceSubstitutionFeatureAvailable()) {
+                                        AddItemToCart(
+                                            addItemToCart?.productId
+                                                ?: "", addItemToCart?.catalogRefId
+                                                ?: "", skuInventoryList[0].quantity,
+                                            SubstitutionChoice.SHOPPER_CHOICE.name,
+                                            ""
+                                        )
+                                    } else {
+                                        AddItemToCart(
+                                            addItemToCart?.productId
+                                                ?: "", addItemToCart?.catalogRefId
+                                                ?: "", skuInventoryList[0].quantity
+                                        )
+                                    }
+
                                 try {
                                     val selectYourQuantityFragment =
                                         SelectYourQuantityFragment.newInstance(
@@ -1542,7 +1570,9 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
     override fun addFoodProductTypeToCart(addItemToCart: AddItemToCart?) {
         showProgressBar()
         mAddItemsToCart = mutableListOf()
-        addItemToCart?.let { cartItem -> mAddItemsToCart?.add(cartItem) }
+        addItemToCart?.let {
+                cartItem -> mAddItemsToCart?.add(cartItem)
+        }
         PostItemToCart().make(mAddItemsToCart
             ?: mutableListOf(), object : IResponseListener<AddItemToCartResponse> {
             override fun onSuccess(addItemToCartResponse: AddItemToCartResponse?) {
