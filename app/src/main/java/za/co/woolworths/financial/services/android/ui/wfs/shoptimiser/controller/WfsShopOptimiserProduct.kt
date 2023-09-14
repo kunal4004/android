@@ -159,6 +159,7 @@ class ShopOptimiserShopOptimiserProductImpl @Inject constructor(
         // Define the product group codes to check
         val keysToCheck = listOf(
             AccountProductKeys.StoreCard.value,
+            AccountProductKeys.PersonalLoan.value,
             AccountProductKeys.BlackCreditCard.value
         )
 

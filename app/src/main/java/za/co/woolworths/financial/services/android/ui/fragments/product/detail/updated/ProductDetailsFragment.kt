@@ -1073,6 +1073,7 @@ class ProductDetailsFragment :
 
         binding.setupBrandView()
         //Added the BNPL flag checking logic.
+        wfsShoptimiserProduct.addProductDetails(productDetails = productDetails)
         wfsShoptimiserProduct.initWfsEmbeddedFinance()
 
         if (hasSize)

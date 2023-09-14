@@ -484,4 +484,8 @@ class UserAccountLandingViewModel @Inject constructor(
             }
         }
     }
+
+    fun deleteShoptimiser(){
+        SessionDao().delete(SessionDao.KEY.SHOP_OPTIMISER_SQLITE_MODEL)
+    }
 }
