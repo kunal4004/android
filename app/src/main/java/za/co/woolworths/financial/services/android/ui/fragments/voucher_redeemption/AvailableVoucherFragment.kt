@@ -1,11 +1,11 @@
 package za.co.woolworths.financial.services.android.ui.fragments.voucher_redeemption
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.view.View
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
@@ -13,6 +13,7 @@ import com.awfs.coordination.databinding.AvailableVouchersFragmentBinding
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.tabs.TabLayout
 import dagger.hilt.android.AndroidEntryPoint
+import za.co.woolworths.financial.services.android.cart.view.CartFragment
 import za.co.woolworths.financial.services.android.cart.view.CartFragment.Companion.BLACK_CARD_HOLDER
 import za.co.woolworths.financial.services.android.cart.view.CartFragment.Companion.CASH_BACK_VOUCHERS
 import za.co.woolworths.financial.services.android.cart.view.CartFragment.Companion.VOUCHER_DETAILS
@@ -230,7 +231,10 @@ class AvailableVoucherFragment : Fragment(R.layout.available_vouchers_fragment),
                     showGenericErrorMessage()
                 }
                 false -> {
-                    setResult(Activity.RESULT_OK, Intent().putExtra("ShoppingCartResponse", Utils.toJson(shoppingCartResponse)))
+                    setResult(intent.getIntExtra(
+                        CartFragment.INTENT_REQUEST_CODE,
+                        AppCompatActivity.RESULT_OK
+                    ), Intent().putExtra(CartFragment.SHOPPING_CART_RESPONSE, Utils.toJson(shoppingCartResponse)))
                     finish()
                 }
             }
