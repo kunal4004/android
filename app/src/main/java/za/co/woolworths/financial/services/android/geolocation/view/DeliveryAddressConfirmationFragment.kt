@@ -402,13 +402,26 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
         setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_DISMISS_RESULT) { requestKey, bundle ->
             val resultCode =
                 bundle.getString(CustomBottomSheetDialogFragment.DIALOG_BUTTON_CLICK_RESULT)
-            if (resultCode == UnsellableUtils.ADD_TO_LIST_SUCCESS_RESULT_CODE) {
-                // Proceed with fragment navigation as we have moved unsellable items to List.
-                onConfirmLocationNavigation()
-            } else {
-                // change location dismiss button clicked so land back on last delivery location tab.
-                moveToTab(lastDeliveryType)
+            when (resultCode) {
+                UnsellableUtils.ADD_TO_LIST_SUCCESS_RESULT_CODE -> {
+                    // Proceed with fragment navigation as we have moved unsellable items to List.
+                    onConfirmLocationNavigation()
+                }
+
+                LOCATION_ERROR -> {
+                    // Proceed with fragment navigation as we have moved unsellable items to List.
+                    activity?.onBackPressed()
+                }
+
+                else -> {
+                    // change location dismiss button clicked so land back on last delivery location tab.
+                    moveToTab(lastDeliveryType)
+                }
             }
+        }
+
+        setFragmentResultListener(LOCATION_ERROR) { _, _ ->
+            binding.initView()
         }
     }
 
@@ -471,9 +484,6 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
     }
 
     private fun GeoLocationDeliveryAddressBinding.callConfirmLocation() {
-        if (placeId == null) {
-            return
-        }
         val confirmLocationAddress = ConfirmLocationAddress(placeId, null, address2)
         var currentDeliveryType = Delivery.STANDARD
         val confirmLocationRequest = when (deliveryType) {
@@ -708,6 +718,7 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
     companion object {
         const val STORE_LOCATOR_REQUEST_CODE = "543"
         const val MAP_LOCATION_RESULT = "8472"
+        const val LOCATION_ERROR = "8474"
     }
 
     private fun GeoLocationDeliveryAddressBinding.initView() {
@@ -1198,15 +1209,19 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
         if (!isAdded && !isVisible) return
         geoDeliveryTab?.isEnabled = false
         geoCollectTab?.isEnabled = false
-        requireActivity().resources?.apply {
-            vtoErrorBottomSheetDialog?.showErrorBottomSheetDialog(
-                this@DeliveryAddressConfirmationFragment,
-                requireActivity(),
-                getString(R.string.vto_generic_error),
-                "",
-                getString(R.string.retry_label)
+        val customBottomSheetDialogFragment =
+            CustomBottomSheetDialogFragment.newInstance(
+                title = getString(R.string.something_went_wrong),
+                subTitle = getString(R.string.location_error_msg),
+                dialog_button_text = getString(R.string.retry_label),
+                dialog_title_img = R.drawable.ic_vto_error,
+                dismissLinkText = getString(R.string.cancel_underline_html),
+                dialogResultCode = LOCATION_ERROR
             )
-        }
+        customBottomSheetDialogFragment.show(
+            parentFragmentManager,
+            CustomBottomSheetDialogFragment::class.java.simpleName
+        )
     }
 
     override fun tryAgain() {

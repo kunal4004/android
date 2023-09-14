@@ -19,6 +19,9 @@ open class ConfirmLocation {
     private fun postConfirmLocation(
         confirmLocationRequest: ConfirmLocationRequest, activity: Activity, intent: Intent,
     ) {
+        if (confirmLocationRequest.address.placeId.isNullOrEmpty()) {
+            return
+        }
         val postConfirmLocation = GeoLocationApiHelper().initConfirmLocation(confirmLocationRequest)
         postConfirmLocation.enqueue(CompletionHandler(object :
             IResponseListener<ConfirmDeliveryAddressResponse> {

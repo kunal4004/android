@@ -354,6 +354,9 @@ class ChangeFulfillmentCollectionStoreFragment :
     }
 
     private fun postConfirmLocationApi() {
+        if (placeId?.isNullOrEmpty() == true) {
+            return
+        }
         lifecycleScope.launch {
             try {
                 binding.cncProgressBar.visibility = View.VISIBLE
