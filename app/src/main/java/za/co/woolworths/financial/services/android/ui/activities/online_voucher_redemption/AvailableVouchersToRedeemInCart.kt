@@ -11,6 +11,8 @@ import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.CartAvailableVouchersToRedeemBinding
 import dagger.hilt.android.AndroidEntryPoint
+import za.co.woolworths.financial.services.android.cart.view.CartFragment.Companion.INTENT_REQUEST_CODE
+import za.co.woolworths.financial.services.android.cart.view.CartFragment.Companion.SHOPPING_CART_RESPONSE
 import za.co.woolworths.financial.services.android.ui.fragments.voucher_redeemption.AvailableVoucherFragment
 import za.co.woolworths.financial.services.android.util.Utils
 @AndroidEntryPoint
@@ -50,13 +52,13 @@ class AvailableVouchersToRedeemInCart : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        supportFragmentManager?.primaryNavigationFragment?.childFragmentManager?.fragments?.get(0)?.let {
-            when (it) {
+        supportFragmentManager?.primaryNavigationFragment?.childFragmentManager?.fragments?.get(0)?.let { fragment ->
+            when (fragment) {
                 is AvailableVoucherFragment -> {
-                    val appliedVouchersCount: Int = it.shoppingCartResponse?.data?.get(0)?.voucherDetails?.vouchers?.filter { it.voucherApplied }?.size
+                    val appliedVouchersCount: Int = fragment.shoppingCartResponse?.data?.get(0)?.voucherDetails?.vouchers?.filter { it.voucherApplied }?.size
                             ?: 0
-                    if (it.shoppingCartResponse != null && appliedVouchersCount > 0) {
-                        setResult(Activity.RESULT_OK, Intent().putExtra("ShoppingCartResponse", Utils.toJson(it.shoppingCartResponse)))
+                    if (fragment.shoppingCartResponse != null && appliedVouchersCount > 0) {
+                        setResult(intent.getIntExtra(INTENT_REQUEST_CODE, RESULT_OK), Intent().putExtra(SHOPPING_CART_RESPONSE, Utils.toJson(fragment.shoppingCartResponse)))
                         finish()
                         return
                     }
