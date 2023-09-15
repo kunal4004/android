@@ -157,6 +157,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     private var isOnItemRemoved = false
     private var isViewCartEventFired = false
     private var activityResultLauncher: ActivityResultLauncher<Intent>? = null
+    private var isFromBottomNavigation: Boolean = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -1255,14 +1256,14 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                 }
                 setItemLimitsBanner()
                 instance.queryCartSummaryCount()
-                if (!isViewCartEventFired) {
+                if (isFromBottomNavigation) {
                     orderSummary?.total?.let {
                         viewCartEvent(
                             viewModel.getCartItemList(),
                             it
                         )
                     }
-                    isViewCartEventFired = true
+                    isFromBottomNavigation = false
                 }
                 showRecommendedProducts()
             }
@@ -1483,8 +1484,9 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         lastDeliveryLocation?.let { setDeliveryLocation(it) }
     }
 
-    fun reloadFragment() {
+    fun reloadFragment(isFromBottomNavigation: Boolean = false) {
         //Reload screen
+        this@CartFragment.isFromBottomNavigation = isFromBottomNavigation
         setPriceInformationVisibility(false)
         setupToolbar()
         initializeBottomTab()
