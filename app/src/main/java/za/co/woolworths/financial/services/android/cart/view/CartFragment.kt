@@ -1399,7 +1399,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             IntentFilter("android.net.conn.CONNECTIVITY_CHANGE")
         )
         loadShoppingCartAndSetDeliveryLocation()
-        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.VIEW_CART, activity)
+        requestInAppReview(FirebaseManagerAnalyticsProperties.VIEW_CART, activity)
     }
 
     override fun onPause() {
