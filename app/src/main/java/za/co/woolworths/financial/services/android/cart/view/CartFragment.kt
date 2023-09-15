@@ -155,7 +155,6 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     private var liquorCompliance: LiquorCompliance? = null
     private var isBlackCardHolder: Boolean = false
     private var isOnItemRemoved = false
-    private var isViewCartEventFired = false
     private var activityResultLauncher: ActivityResultLauncher<Intent>? = null
     private var isFromBottomNavigation: Boolean = false
 
