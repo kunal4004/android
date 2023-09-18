@@ -80,8 +80,7 @@
         app:layout_constraintEnd_toStartOf="@+id/endMarginGuideline"
         app:layout_constraintStart_toStartOf="@+id/startMarginGuideline"
         app:layout_constraintTop_toBottomOf="@+id/mainImgLayout"
-        tools:text="@string/sim_label"
-        tools:visibility="gone" />
+        tools:text="@string/sim_label" />
 
     <TextView
         android:id="@+id/brandName"
