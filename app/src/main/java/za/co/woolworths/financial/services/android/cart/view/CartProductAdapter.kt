@@ -29,6 +29,7 @@ import com.awfs.coordination.R
 import com.daimajia.swipe.SwipeLayout
 import com.daimajia.swipe.adapters.RecyclerSwipeAdapter
 import za.co.woolworths.financial.services.android.cart.service.network.CartItemGroup
+import za.co.woolworths.financial.services.android.cart.viewmodel.CartUtils
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.SubstitutionInfo
 import za.co.woolworths.financial.services.android.enhancedSubstitution.util.isEnhanceSubstitutionFeatureEnable
@@ -80,18 +81,15 @@ class CartProductAdapter(
     }
 
     interface OnItemClick {
-        fun onItemDeleteClickInEditMode(commerceId: CommerceItem)
+        fun onItemDeleteClickInEditMode(commerceItem: CommerceItem)
         fun onChangeQuantity(commerceId: CommerceItem, quantity: Int)
-        fun totalItemInBasket(total: Int)
-        fun onOpenProductDetail(commerceItem: CommerceItem)
         fun onViewVouchers()
         fun onViewCashBackVouchers()
         fun updateOrderTotal()
-        fun onGiftItemClicked(commerceItem: CommerceItem)
         fun onEnterPromoCode()
         fun onRemovePromoCode(promoCode: String)
         fun onPromoDiscountInfo()
-        fun onItemDeleteClick(commerceId: CommerceItem)
+        fun onItemDeleteClick(commerceItem: CommerceItem)
         fun onCheckBoxChange(isChecked: Boolean, commerceItem: CommerceItem)
         fun onSubstituteProductClick(
             substitutionSelection: String,
@@ -318,10 +316,10 @@ class CartProductAdapter(
                     onRemoveSingleItem(productHolder, commerceItem)
                 }
                 productHolder.productImage.setOnClickListener {
-                    onItemClick.onOpenProductDetail(commerceItem)
+                    CartUtils.openProductDetailFragment(commerceItem, mContext)
                 }
                 productHolder.tvTitle.setOnClickListener {
-                    onItemClick.onOpenProductDetail(commerceItem)
+                    CartUtils.openProductDetailFragment(commerceItem, mContext)
                 }
                 if (commerceItem.lowStockThreshold > commerceItem.quantityInStock && commerceItem.quantityInStock > 0 && lowStock?.isEnabled == true) {
                     showLowStockIndicator(productHolder)
@@ -357,7 +355,7 @@ class CartProductAdapter(
                 val sizeColor = getSizeColor(giftCommerceItemInfo)
                 giftProductHolder.brandProductDescriptionTextView.text = sizeColor
                 giftProductHolder.giftRootContainerConstraintLayout.setOnClickListener {
-                    onItemClick.onGiftItemClicked(giftCommerceItem)
+                    mContext?.let { activity -> CartUtils.onGiftItemClicked(activity) }
                 }
             }
         }

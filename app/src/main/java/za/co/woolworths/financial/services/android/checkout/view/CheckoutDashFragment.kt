@@ -431,6 +431,10 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
             KotlinUtils.getDeliveryType()?.storeId, "checkout"
         )
 
+        if(confirmLocationAddress.placeId?.isNullOrEmpty() == true) {
+            return
+        }
+
         isItemLimitExceeded = false
         checkoutAddAddressNewUserViewModel?.getConfirmLocationDetails(body)
             ?.observe(viewLifecycleOwner) { response ->

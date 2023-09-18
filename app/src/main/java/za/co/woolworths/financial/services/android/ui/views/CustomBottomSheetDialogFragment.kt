@@ -60,6 +60,23 @@ class CustomBottomSheetDialogFragment : WBottomSheetDialogFragment(),
                 putString(DIALOG_DISMISS_LINK_TEXT, dismissLinkText)
                 putString(DIALOG_BUTTON_CLICK_RESULT, dialogResultCode)
             }
+
+        fun newInstance(
+            title: String,
+            subTitle: CharSequence,
+            dialog_button_text: String,
+            dismissLinkText: String?,
+            dialog_title_img: Int,
+            dialogResultCode: String,
+        ) =
+            CustomBottomSheetDialogFragment().withArgs {
+                putString(DIALOG_TITLE, title)
+                putCharSequence(DIALOG_SUB_TITLE, subTitle)
+                putString(DIALOG_BUTTON_TEXT, dialog_button_text)
+                putString(DIALOG_DISMISS_LINK_TEXT, dismissLinkText)
+                putInt(DIALOG_TITLE_IMG, dialog_title_img)
+                putString(DIALOG_BUTTON_CLICK_RESULT, dialogResultCode)
+            }
     }
 
     private lateinit var binding: FragmentCustomBottomsheetDialogBinding

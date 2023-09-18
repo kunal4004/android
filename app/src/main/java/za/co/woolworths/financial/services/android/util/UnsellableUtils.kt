@@ -61,6 +61,10 @@ class UnsellableUtils {
                 try {
                     val confirmLocationRequest = confirmLocationParams?.confirmLocationRequest
                         ?: KotlinUtils.getConfirmLocationRequest(deliveryType)
+                    if (confirmLocationRequest.address.placeId.isNullOrEmpty()) {
+                        progressBar?.visibility = View.GONE
+                        return@launch
+                    }
                     val confirmLocationResponse =
                         confirmAddressViewModel.postConfirmAddress(confirmLocationRequest)
                     progressBar?.visibility = View.GONE
