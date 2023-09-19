@@ -51,6 +51,7 @@ import za.co.woolworths.financial.services.android.ui.wfs.theme.White
  * @param viewModel The ViewModel for Shoptimiser providing data.
  * @param onClick A callback function to handle button click events.
  */
+
 @Composable
 fun ShopOptimiserAccordionDetailPopup(viewModel: ShopOptimiserViewModel, onClick: () -> Unit) {
 
@@ -58,8 +59,9 @@ fun ShopOptimiserAccordionDetailPopup(viewModel: ShopOptimiserViewModel, onClick
     val productOnDisplay = viewModel.selectedOnDisplayProduct
     val availableFundsTitle = viewModel.getInfoLabelAvailableBalance()
     val availableFunds = productOnDisplay?.availableFunds
+    val wfsPaymentMethods = productOnDisplay?.wfsPaymentMethods
     val infoTitle = productOnDisplay?.wfsPaymentMethods?.infoTitle ?: ""
-    val infoDescription = viewModel.getInfoDescription(productOnDisplay)
+    val infoDescription = viewModel.getInfoDescription(infoDescription = wfsPaymentMethods?.infoDescription,infoDescriptionBoldParts  =  wfsPaymentMethods?.infoDescriptionBoldParts )
     val infoFooterTitle = productOnDisplay?.wfsPaymentMethods?.infoFooterTitle
     val infoFooterDescription = productOnDisplay?.wfsPaymentMethods?.infoFooterDescription
     val cashbackPercentage = productOnDisplay?.earnCashBack
@@ -186,11 +188,11 @@ fun SwipeUpRectangleUiIndicator() {
 
 /**
  * Composable function for rendering a "Got It" button with optional text.
- * @param text The text to display on the button (default is "Got It").
+ * @param buttonLabel The text to display on the button (default is "Got It").
  * @param onClick A callback function to handle button click events.
  */
 @Composable
-fun GotItButton(text: String? = stringResource(id = R.string.got_it), onClick : () -> Unit) {
+fun GotItButton(buttonLabel: String? = stringResource(id = R.string.got_it), onClick : () -> Unit) {
     // Create a row layout for the button
     Row(
         modifier = Modifier.padding(
@@ -212,9 +214,9 @@ fun GotItButton(text: String? = stringResource(id = R.string.got_it), onClick : 
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(Color.Black),
-                text = text?.uppercase() ?: "",
+                text = buttonLabel?.uppercase() ?: "",
                 textColor = Color.White,
-                letterSpacing = 0.6.sp,
+                letterSpacing = 1.2.sp,
                 fontSize = FontDimensions.sp12,
                 textAlign = TextAlign.Center
             )

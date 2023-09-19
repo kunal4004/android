@@ -7,7 +7,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.runtime.remember
+import za.co.woolworths.financial.services.android.ui.wfs.core.NetworkStatusUI
 import za.co.woolworths.financial.services.android.ui.wfs.shoptimiser.dto.ShopOptimiserVisibleUiType
 import za.co.woolworths.financial.services.android.ui.wfs.shoptimiser.helper.enterExpandVerticallyFadeInAnimation
 import za.co.woolworths.financial.services.android.ui.wfs.shoptimiser.helper.exitShrinkVerticallyFadeOutAnimation
@@ -20,11 +21,8 @@ import za.co.woolworths.financial.services.android.ui.wfs.shoptimiser.ui.viewmod
 @Composable
 fun ShopOptimiserViewModel.ShopOptimiserAccordionWidget() {
 
-    // Collect the shopOptimiserVisibleType state
-    val shopOptimiserVisibility by shopOptimiserVisibleType.collectAsState()
-
-    // Choose the content to display based on shopOptimiserVisibility
-    when(shopOptimiserVisibility) {
+    // Choose the content to display based on shopOptimiserVisibleUiType
+    when(shopOptimiserVisibleUiType) {
         ShopOptimiserVisibleUiType.ACCORDION -> { ShopOptimiserAccordionUI() }
         ShopOptimiserVisibleUiType.STANDALONE -> { ShopOptimiserPayFlexStandAloneUI() }
         ShopOptimiserVisibleUiType.GONE -> Unit
@@ -40,8 +38,11 @@ fun ShopOptimiserViewModel.ShopOptimiserAccordionWidget() {
  */
 @Composable
 private fun ShopOptimiserViewModel.ShopOptimiserAccordionUI() {
+
     val enterTransition: EnterTransition = enterExpandVerticallyFadeInAnimation()
     val exitTransition: ExitTransition = exitShrinkVerticallyFadeOutAnimation()
+
+    val listOfProductsOnDisplay = remember { shoptimiserProductsList }
 
     Column {
         // Render the parent item for the accordion
@@ -54,7 +55,7 @@ private fun ShopOptimiserViewModel.ShopOptimiserAccordionUI() {
             exit = exitTransition) {
             Column {
                 // Iterate through the list of products and display each item
-                for (productOnDisplay in shoptimiserProductsList) {
+                for (productOnDisplay in listOfProductsOnDisplay) {
                     ShopOptimiserAccordionContent(productOnDisplay)
                 }
             }
@@ -70,10 +71,10 @@ private fun ShopOptimiserViewModel.ShopOptimiserAccordionUI() {
 fun ShopOptimiserViewModel.ShopOptimiserAccordionController() {
 
     // Collect the user account response from the flow
-    val accountResponse by userAccountsFlow.collectAsStateWithLifecycle()
+    val accountResponse by userAccountsFlow.collectAsState(initial = NetworkStatusUI())
 
     // Check if the product detail page was reopened and set the accordion UI visible if necessary
-    if (productDetailPageWasReopened()) {
+    if (wasProductDetailPageReOpened()) {
         setAccordionUIVisible()
     }
 

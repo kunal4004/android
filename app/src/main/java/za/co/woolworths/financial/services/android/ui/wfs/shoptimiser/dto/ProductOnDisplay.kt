@@ -26,9 +26,11 @@ data class ProductOnDisplay(
     val isLoading : Boolean = false,
     val availableFunds: String? = null,
     val earnCashBack :String?=null,
-   @DrawableRes val drawableId : Int,
+    @DrawableRes val drawableId : Int,
     val installmentAmount : String? = null,
-    val isSufficientFundsAvailable: Boolean? = false,
+    val isSufficientFundsAvailable: AvailableFundsSufficiency? = AvailableFundsSufficiency.INSUFFICIENT,
     val wfsPaymentMethods : WfsPaymentMethods? = null,
     val isLastProduct : Boolean = false
 ) : Parcelable
+
+enum class AvailableFundsSufficiency { SUFFICIENT , INSUFFICIENT }

@@ -1,12 +1,10 @@
 package za.co.woolworths.financial.services.android.models.dao;
 
-
 import java.util.HashMap;
 import java.util.Map;
 
 import za.co.woolworths.financial.services.android.util.PersistenceLayer;
 import za.co.woolworths.financial.services.android.util.Utils;
-import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager;
 
 /**
  * Created by eesajacobs on 2016/11/29.
@@ -154,17 +152,6 @@ public class SessionDao extends BaseDao {
 		PersistenceLayer.getInstance().executeVoidQuery(query, new String[]{
                 Utils.aes256EncryptStringAsBase64String(this.key.toString())
 		});
-	}
-
-	public void delete(SessionDao.KEY key) throws Exception {
-		String query = "DELETE FROM Session WHERE [key] = ?";
-		String encryptedKey = Utils.aes256EncryptStringAsBase64String(key.toString());
-
-		try {
-			PersistenceLayer.getInstance().executeVoidQuery(query, new String[]{encryptedKey});
-		} catch (Exception e) {
-			FirebaseManager.logException(e);
-		}
 	}
 
 	@Override

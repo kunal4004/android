@@ -6,6 +6,7 @@ import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.fe
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.enumtype.CreditCardType
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.model.ProductDetails
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.model.UserAccountResponse
+import za.co.woolworths.financial.services.android.ui.wfs.shoptimiser.dto.AvailableFundsSufficiency
 import za.co.woolworths.financial.services.android.ui.wfs.shoptimiser.dto.FBHProduct
 import za.co.woolworths.financial.services.android.ui.wfs.shoptimiser.dto.PdpProductVariant
 import za.co.woolworths.financial.services.android.ui.wfs.shoptimiser.dto.ProductOnDisplay
@@ -22,6 +23,7 @@ interface WfsShopOptimiserProduct : IManageBnpLConfig, IManageShopOptimiserSQLit
     fun getWFSProductsForUser(userAccountResponse: UserAccountResponse?): MutableMap<String, ProductDetails?>
     fun payFlexCalculation(fbhProductPrice: Double?): String
     fun constructPayFlex(wfsPaymentMethods: MutableList<WfsPaymentMethods>?, fbhProductPrice: Double): ProductOnDisplay?
+    fun isLoggedIn():Boolean
 }
 
 class ShopOptimiserShopOptimiserProductImpl @Inject constructor(
@@ -46,7 +48,7 @@ class ShopOptimiserShopOptimiserProductImpl @Inject constructor(
      * Checks if the user is logged in.
      * @return True if the user is logged in, otherwise false.
      */
-    private fun isLoggedIn(): Boolean = SessionUtilities.getInstance().isUserAuthenticated
+     override fun isLoggedIn(): Boolean = SessionUtilities.getInstance().isUserAuthenticated
 
     /**
      * Checks if Shop Optimizer is enabled for the given PDP (Product Detail Page) product variant.
@@ -113,7 +115,7 @@ class ShopOptimiserShopOptimiserProductImpl @Inject constructor(
             )
 
             return ProductOnDisplay(
-                isSufficientFundsAvailable = true,
+                isSufficientFundsAvailable = AvailableFundsSufficiency.SUFFICIENT,
                 installmentAmount = installmentAmountFormatted,
                 drawableId = drawableId,
                 wfsPaymentMethods = paymentMethod
@@ -266,7 +268,7 @@ class ShopOptimiserShopOptimiserProductImpl @Inject constructor(
                             ),
                             earnCashBack = currencyFormatter,
                             drawableId = drawableId,
-                            isSufficientFundsAvailable = isSufficientFundsAvailable,
+                            isSufficientFundsAvailable = if (isSufficientFundsAvailable) AvailableFundsSufficiency.SUFFICIENT else AvailableFundsSufficiency.INSUFFICIENT,
                             wfsPaymentMethods = wfsStoreCardProductConfig
                         )
             }
@@ -300,7 +302,8 @@ class ShopOptimiserShopOptimiserProductImpl @Inject constructor(
                     ),
                     earnCashBack = currencyFormat,
                     drawableId = drawableId,
-                    isSufficientFundsAvailable = isSufficientFundsAvailableForFbhProductCC,
+                    isSufficientFundsAvailable = if (isSufficientFundsAvailableForFbhProductCC)
+                        AvailableFundsSufficiency.SUFFICIENT else AvailableFundsSufficiency.INSUFFICIENT,
                     wfsPaymentMethods = wfsCreditCardProductConfig
                 )
             }

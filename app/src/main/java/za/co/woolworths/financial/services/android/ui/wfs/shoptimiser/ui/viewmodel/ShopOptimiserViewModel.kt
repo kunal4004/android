@@ -1,14 +1,14 @@
 package za.co.woolworths.financial.services.android.ui.wfs.shoptimiser.ui.viewmodel
 
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.AnnotatedString
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.models.dto.ProductDetails
 import za.co.woolworths.financial.services.android.ui.wfs.core.NetworkStatusUI
@@ -37,38 +37,34 @@ class ShopOptimiserViewModel @Inject constructor(
     WfsShopOptimiserProductDetailsBuilder by wfsShopOptimiserProductDetailsBuilder,
     IRetailBNPL by retailBNPL {
 
-    // UI State Flow...
-    private var _shopOptimiserVisibleUiType = MutableStateFlow(ShopOptimiserVisibleUiType.GONE)
-    var shopOptimiserVisibleType = _shopOptimiserVisibleUiType.asStateFlow()
-
-    private val _userAccountsFlow = MutableStateFlow(NetworkStatusUI<UserAccountResponse>())
-    val userAccountsFlow = _userAccountsFlow.asStateFlow()
+    val userAccountsFlow = MutableSharedFlow<NetworkStatusUI<UserAccountResponse>>(replay = 0)
 
     // Other properties...
     private var pdpProductVariant by mutableStateOf(PdpProductVariant())
-    var shoptimiserProductsList = mutableMapOf<String, ProductOnDisplay>()
+    var shoptimiserProductsList = mutableStateMapOf<String, ProductOnDisplay>()
     var isExpanded by mutableStateOf(false)
     var selectedOnDisplayProduct : ProductOnDisplay? = null
+    var shopOptimiserVisibleUiType by mutableStateOf(ShopOptimiserVisibleUiType.GONE)
 
     /**
      * Sets the visibility of the Shop Optimiser UI to the Accordion view.
      */
     fun setAccordionUIVisible() {
-        _shopOptimiserVisibleUiType.value = ShopOptimiserVisibleUiType.ACCORDION
+            shopOptimiserVisibleUiType = ShopOptimiserVisibleUiType.ACCORDION
     }
 
     /**
      * Sets the visibility of the Shop Optimiser UI to the Stand-Alone view.
      */
     fun setStandaloneUIVisible() {
-        _shopOptimiserVisibleUiType.value = ShopOptimiserVisibleUiType.STANDALONE
+        shopOptimiserVisibleUiType = ShopOptimiserVisibleUiType.STANDALONE
     }
 
     /**
      * Clears the visibility of the Shop Optimiser UI.
      */
     fun clearUIVisibility() {
-        _shopOptimiserVisibleUiType.value = ShopOptimiserVisibleUiType.GONE
+        shopOptimiserVisibleUiType = ShopOptimiserVisibleUiType.GONE
     }
 
     /**
@@ -101,7 +97,7 @@ class ShopOptimiserViewModel @Inject constructor(
      */
     fun getWFSProductsForUser() {
         viewModelScope.launch {
-            queryUserAccountService(isRefreshing = !isAccountResponseCachedWithin3Hours(), _state = _userAccountsFlow)
+            queryUserAccountService(isRefreshing = !isAccountResponseCachedWithin3Hours(), _state = userAccountsFlow)
         }
     }
 
@@ -190,7 +186,7 @@ class ShopOptimiserViewModel @Inject constructor(
      * Checks if the product detail page was reopened.
      * @return `true` if the default PDP is displayed and the account response is cached within 3 hours, `false` otherwise.
      */
-    fun productDetailPageWasReopened() : Boolean {
+    fun wasProductDetailPageReOpened() : Boolean {
         return retrieveShopOptimiserSQLiteModel().isDefaultPdpDisplayed && isAccountResponseCachedWithin3Hours()
     }
 
@@ -207,7 +203,7 @@ class ShopOptimiserViewModel @Inject constructor(
      * Checks if the Stand-Alone PayFlex view is enabled for the current product.
      * @return `true` if Stand-Alone PayFlex is enabled, `false` otherwise.
      */
-    fun isStandAlonePayFlexViewEnabled() = isStandAlonePayFlexEnabled(pdpProductVariant.productDetail)
+    fun isStandAlonePayFlexViewEnabled() = isLoggedIn() && isStandAlonePayFlexEnabled(pdpProductVariant.productDetail)
 
     /**
      * Retrieves the PayFlex payment details for display.
@@ -218,4 +214,14 @@ class ShopOptimiserViewModel @Inject constructor(
         return constructPayFlex(wfsPaymentMethods, fbhProductPrice = pdpProductVariant.price?.toDouble() ?: 0.0)
     }
 
+    fun getInfoDisabledFinancialProductTitleAndDescription(): Pair<String?, AnnotatedString?> {
+        val infoDisabledFinancialProduct = getInfoDisabledFinancialProduct()
+        val infoTitle = infoDisabledFinancialProduct?.infoTitle
+        val infoDescription = getInfoDescription(infoDescription = infoDisabledFinancialProduct?.infoDescription,infoDescriptionBoldParts  =  infoDisabledFinancialProduct?.infoDescriptionBoldParts)
+        return infoTitle to infoDescription
+    }
+
+    fun insufficientFundsFooterLabel(): String? {
+        return  getInfoDisabledFinancialProduct()?.footerLabel
+    }
 }

@@ -9,6 +9,6 @@ class  ShopOptimiserConstant {
         const val installmentAmountTag = "{instalmentAmount}"
 
         // Constant for PayFlex key
-        const val PayFlexKey = "payFlex"
+        const val PayFlexKey = "ZP"
     }
 }

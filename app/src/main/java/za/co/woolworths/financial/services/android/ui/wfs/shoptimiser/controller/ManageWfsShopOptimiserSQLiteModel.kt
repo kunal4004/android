@@ -21,8 +21,6 @@ interface IManageShopOptimiserSQLite {
 
 class ManageShopOptimiserSQLiteImpl @Inject constructor() : IManageShopOptimiserSQLite {
 
-    private var shopOptimiserSQLiteModel = retrieveShopOptimiserSQLiteModel()
-
     /**
      * Saves a ShopOptimiserSQLiteModel to the local database.
      * @param model The ShopOptimiserSQLiteModel to be saved.
@@ -45,6 +43,9 @@ class ManageShopOptimiserSQLiteImpl @Inject constructor() : IManageShopOptimiser
      * The timestamp represents the last update time for the ShopOptimiser data.
      */
     override fun saveShopOptimiserTimestampInSQLiteModel() {
+
+        var shopOptimiserSQLiteModel = retrieveShopOptimiserSQLiteModel()
+
         // Get the current timestamp in ISO_INSTANT format
         val currentTimestamp = DateTimeFormatter.ISO_INSTANT.format(Instant.now())
 
@@ -57,11 +58,13 @@ class ManageShopOptimiserSQLiteImpl @Inject constructor() : IManageShopOptimiser
 
     /**
      * Updates and saves the 'isDefaultPdpDisplayed' flag in the ShopOptimiserSQLiteModel.
-     * This flag indicates whether the default PDP (Product Display Page) is displayed.
+     * This flag indicates whether the default PDP (Product Detail Page) is displayed.
      * @param isDisplayed Boolean flag indicating whether the default PDP is displayed or not.
      */
     override fun saveDefaultPdpDisplayedInSQLiteModel(isDisplayed: Boolean) {
         // Update the 'isDefaultPdpDisplayed' flag in the ShopOptimiserSQLiteModel
+        var shopOptimiserSQLiteModel = retrieveShopOptimiserSQLiteModel()
+
         shopOptimiserSQLiteModel = shopOptimiserSQLiteModel.copy(isDefaultPdpDisplayed = isDisplayed)
 
         // Save the updated model to the local database

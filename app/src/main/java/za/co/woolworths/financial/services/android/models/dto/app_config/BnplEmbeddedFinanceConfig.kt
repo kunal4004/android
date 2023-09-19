@@ -13,6 +13,7 @@ data class BnplEmbeddedFinanceConfig(
     val componentDescription: String?,
     val infoLabelAvailableBalance: String?,
     val infoLabelEarnCashback: String?,
+    val infoDisabledFinancialProduct : WfsPaymentMethods?,
     val payflex: WfsPaymentMethods?,
     val wfsPaymentMethods: MutableList<WfsPaymentMethods>
 ) : Parcelable
@@ -28,6 +29,7 @@ data class WfsPaymentMethods(
     val infoTitle: String,
     val infoDescription: String,
     val infoFooterTitle: String?,
+    val footerLabel : String?,
     val standalone : Standalone?,
     val infoDescriptionBoldParts : MutableList<String>,
     val infoFooterDescription: String?) : Parcelable

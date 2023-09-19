@@ -11,7 +11,7 @@ import javax.inject.Inject
 
 interface WfsShopOptimiserProductDetailsBuilder {
     fun getShopOptimiserProductImage(accountBinNumber: String? = null, productGroupCode: String?): Int
-    fun getInfoDescription(productOnDisplay: ProductOnDisplay?): AnnotatedString?
+    fun getInfoDescription(infoDescription: String?, infoDescriptionBoldParts : MutableList<String>?): AnnotatedString?
 }
 
 class WfsShopOptimiserProductDetailsBuilderImpl @Inject constructor() :
@@ -46,20 +46,12 @@ class WfsShopOptimiserProductDetailsBuilderImpl @Inject constructor() :
         }
     }
 
-    /**
-     * Retrieves an AnnotatedString containing information description for a product detail on display.
-     * @param productOnDisplay The product details to retrieve the information description for.
-     * @return An AnnotatedString representing the information description with annotations (bold parts).
-     */
-    override fun getInfoDescription(productOnDisplay: ProductOnDisplay?): AnnotatedString {
-        // Get the infoDescription from the productOnDisplay, if available
-        val infoDescription = productOnDisplay?.wfsPaymentMethods?.infoDescription
-
-        // Get the list of bold items from the productOnDisplay, if available
-        val listOfBoldItems = productOnDisplay?.wfsPaymentMethods?.infoDescriptionBoldParts
-
+    override fun getInfoDescription(
+        infoDescription: String?,
+        infoDescriptionBoldParts: MutableList<String>?
+    ): AnnotatedString? {
         // Convert the text with annotations (bold parts) into an AnnotatedString
-        return convertTextToAnnotationString(infoDescription, listOfBoldItems)
+        return convertTextToAnnotationString(infoDescription, infoDescriptionBoldParts)
     }
 
 }
