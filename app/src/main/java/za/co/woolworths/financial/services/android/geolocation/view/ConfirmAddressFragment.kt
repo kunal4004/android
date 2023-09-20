@@ -360,7 +360,7 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
         inCurrentLocation?.ivArrow?.visibility = View.GONE
         inCurrentLocation?.swEnableLocation?.visibility = View.VISIBLE
         inCurrentLocation?.swEnableLocation?.isChecked = false
-        inCurrentLocation?.tvCurrentLocation?.text = getString(R.string.enable_location_services)
+        inCurrentLocation?.tvCurrentLocation?.text = requireContext()?.resources?.getString(R.string.enable_location_services)
     }
 
     override fun onAddressSelected(address: Address, position: Int) {
@@ -370,10 +370,10 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
         binding.setButtonUI(true)
         if (address.verified) {
             selectedAddress?.apply {
-                    binding.tvConfirmAddress?.text=getString(R.string.use)+nickname
+                    binding.tvConfirmAddress?.text=requireContext()?.resources?.getString(R.string.use)+nickname
             }
         } else {
-            binding.tvConfirmAddress?.text = getString(R.string.update_address)
+            binding.tvConfirmAddress?.text = requireContext()?.resources?.getString(R.string.update_address)
         }
     }
 
@@ -398,7 +398,7 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
 
                 if (binding.progressBar.visibility == View.GONE
                     && selectedAddress != null
-                    && binding.tvConfirmAddress?.text == getString(R.string.update_address)
+                    && binding.tvConfirmAddress?.text == requireContext()?.resources?.getString(R.string.update_address)
                 ) {
                     savedAddressResponse?.let {
 
@@ -417,10 +417,10 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
                 }
                 if (binding.progressBar.visibility == View.GONE
                     && selectedAddress != null
-                    && binding.tvConfirmAddress?.text == getString(R.string.confirm) || binding.tvConfirmAddress?.text?.take(
+                    && binding.tvConfirmAddress?.text == requireContext()?.resources?.getString(R.string.confirm) || binding.tvConfirmAddress?.text?.take(
                         4
                     )
-                    == (getString(R.string.use))
+                    == (requireContext()?.resources?.getString(R.string.use))
                 ) {
                     selectedAddress.let {
                         if (it.placesId != null) {
