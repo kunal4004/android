@@ -13,6 +13,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import za.co.woolworths.financial.services.android.models.dto.app_config.account_options.DefaultCopyPetPending
 import za.co.woolworths.financial.services.android.ui.wfs.component.SurfaceTextButton
 import za.co.woolworths.financial.services.android.ui.wfs.component.TextWFuturaMedium
@@ -72,7 +73,8 @@ fun ViewRetryMyCoverButtonGroup(
                     isClickable = false,
                     buttonState = buttonState,
                     buttonLabel = petInsuranceDefaultConfig?.action ?: ""
-                ) {}
+
+            ) {}
         }
     }
 }
@@ -103,7 +105,8 @@ fun MyProductTitleText(
         locator = titleLocator,
         text = title,
         color = color ?: White,
-        fontSize = FontDimensions.sp12,
+        textAlign = TextAlign.Start,
+        fontSize = FontDimensions.offerTitleTextSP12,
         letterSpacing = LetterSpacing.ls05
     )
 }

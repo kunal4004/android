@@ -198,6 +198,11 @@ fun ViewPager2.disableNestedScrolling() {
         overScrollMode = View.OVER_SCROLL_NEVER
     }
 }
+
+fun String.getAccessibilityIdWithAppendedString(content: String, appendString: String): String {
+    return content.replace(" ", "_").plus(if (appendString.isEmpty()) "" else "_".plus(appendString) ).lowercase()
+}
+
 fun Context.displayLabel() : String? = resources?.getString(R.string.view_your_payment_plan)
 
 fun String.toMaskABSAPhoneNumber() = this.replace("\\d(?!\\d{0,2}\$|\\d{7,10}\$)".toRegex(), "*")

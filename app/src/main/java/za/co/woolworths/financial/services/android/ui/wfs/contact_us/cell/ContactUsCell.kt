@@ -14,6 +14,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import com.awfs.coordination.R
+import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.getAccessibilityIdWithAppendedString
 import za.co.woolworths.financial.services.android.ui.wfs.component.*
 import za.co.woolworths.financial.services.android.ui.wfs.contact_us.model.Children
 import za.co.woolworths.financial.services.android.ui.wfs.contact_us.model.ChildrenItem
@@ -53,9 +54,9 @@ fun TitleDescriptionAndNextArrowItemPreview() {
 
     OneAppTheme {
         Column (modifier = Modifier.background(Color.White)){
-            TextContactUsFuturaSemiBoldSectionHeader(stringResource(id = R.string.contact_us_financial_services))
+            TextContactUsFuturaSemiBoldSectionHeader(stringResource(id = R.string.contact_us_financial_services), locator ="")
             SpacerHeight6dp()
-            TitleDescriptionAndNextArrowItem(children)
+            TitleDescriptionAndNextArrowItem(children, false)
             SpacerHeight6dp()
             LeftIconTitleDescriptionAndNextArrowItem(childItem)
             SpacerHeight6dp()
@@ -65,7 +66,7 @@ fun TitleDescriptionAndNextArrowItemPreview() {
 }
 
 @Composable
-fun TitleDescriptionAndNextArrowItem(children: Children) {
+fun TitleDescriptionAndNextArrowItem(children: Children, isAppendString: Boolean) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -77,25 +78,39 @@ fun TitleDescriptionAndNextArrowItem(children: Children) {
             ),
         verticalAlignment = Alignment.CenterVertically
     ) {
+        val titleString = children.title ?: ""
         Column(
             modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.Center
         ) {
+            var titleAccessibilityId = titleString.getAccessibilityIdWithAppendedString(titleString,  stringResource(
+                id = R.string.title))
+            if (isAppendString) { titleAccessibilityId = titleAccessibilityId.plus("_1") }
+
             TextOpenSansSemiBoldH3(
                 text =  children.title ?: "" ,
                 color = Color.Black,
-                fontSize = FontDimensions.sp13)
+                fontSize = FontDimensions.sp13,
+                locator = titleAccessibilityId
+            )
+            var descriptionAccessibilityId = titleString.getAccessibilityIdWithAppendedString(titleString, stringResource(id = R.string.subtitle))
+            if (isAppendString) { descriptionAccessibilityId = descriptionAccessibilityId.plus("_1") }
+
             children.description?.let { description ->
                 SpacerHeight12dp(height = Dimens.two_dp)
                 TextOpenSansFontFamily(
                     text =description,
-                    locator = description,
+                    locator = descriptionAccessibilityId,
                     color = Color.Black,
                     fontSize = FontDimensions.sp12
                 )
             }
         }
-        MyIcon(id = R.drawable.ic_caret_black, contentDescriptionId = R.string.next_arrow)
+        var nextArrowAccessibilityId = titleString.getAccessibilityIdWithAppendedString(titleString, stringResource(
+            id = R.string.next_arrow
+        ))
+        if (isAppendString) { nextArrowAccessibilityId = nextArrowAccessibilityId.plus("_1") }
+        MyIcon(id = R.drawable.ic_caret_black, contentDescriptionId = R.string.next_arrow, locator = nextArrowAccessibilityId)
     }
 }
 
@@ -112,27 +127,44 @@ fun LeftIconTitleDescriptionAndNextArrowItem(item: Children) {
             ),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        MyIcon(id = item.type?.iconId(), modifier = Modifier)
+        val titleString = item.title ?: ""
+        val imageIconAccessibilityId = titleString.getAccessibilityIdWithAppendedString(titleString, stringResource(
+            id = R.string.image_icon
+        ))
+
+        MyIcon(id = item.type?.iconId(), modifier = Modifier, locator = imageIconAccessibilityId)
         SpacerWidth16dp()
         Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.Center) {
+            val titleAccessibilityId = titleString.getAccessibilityIdWithAppendedString(titleString, stringResource(
+                id = R.string.title))
+
             TextOpenSansSemiBoldH3(
                 text =  item.title ?: "" ,
                 color = Color.Black,
-                fontSize = FontDimensions.sp13)
+                fontSize = FontDimensions.sp13,
+                locator = titleAccessibilityId)
             item.description?.let { description ->
+                val descriptionAccessibilityId = titleString.getAccessibilityIdWithAppendedString(titleString, stringResource(
+                    id = R.string.description
+                ))
+
                 SpacerHeight8dp(height = Dimens.four_dp)
                 TextOpenSansFontFamily(
                     text = description,
-                    locator = description,
+                    locator = descriptionAccessibilityId,
                     color = Color.Black,
                     fontSize = FontDimensions.sp12
                 )
             }
         }
+        val nextArrowAccessibilityId = titleString.getAccessibilityIdWithAppendedString(titleString, stringResource(
+            id = R.string.next_arrow
+        ))
         MyIcon(
             id = R.drawable.ic_caret_black,
             contentDescriptionId = R.string.next_arrow,
-            modifier = Modifier.alpha(if(item.type == ContactUsType.ACTION_FAX) 0f else 1f))
+            modifier = Modifier.alpha(if(item.type == ContactUsType.ACTION_FAX) 0f else 1f,),
+        locator = nextArrowAccessibilityId)
     }
 }
 
@@ -154,6 +186,7 @@ fun TextWithRadioButtonOption(
                     }),
             verticalAlignment = Alignment.CenterVertically
         ) {
+            val titleString =  item.title ?: ""
             Box(
                 modifier = Modifier
                     .weight(1f)
@@ -162,15 +195,20 @@ fun TextWithRadioButtonOption(
                         end = Margin.dp2
                     )
             ) {
+                val descriptionAccessibilityId = titleString.getAccessibilityIdWithAppendedString(titleString, stringResource(
+                    id = R.string.title))
 
-                    TextOpenSansFontFamily(
-                        text = item.title ?: "",
-                        locator = item.title ?: "",
+                TextOpenSansFontFamily(
+                        text = titleString,
+                        locator = descriptionAccessibilityId,
                         color = Color.Black,
                         fontSize = FontDimensions.sp12
                     )
             }
-                CheckedUncheckedRadioButton(isChecked = item == selectedOption,
+            val checkBoxAccessibilityId = titleString.getAccessibilityIdWithAppendedString(titleString, stringResource(
+                id = R.string.checkBox
+            ))
+            CheckedUncheckedRadioButton(isChecked = item == selectedOption, locator = checkBoxAccessibilityId,
                     onClick = {
                         onOptionSelected(item)
                         onSelected(item)
@@ -217,14 +255,14 @@ fun SingleTextViewTitleRow(params: LabelProperties){
 }
 
 @Composable
-fun TextContactUsFuturaSemiBoldSectionHeader(title : String){
+fun TextContactUsFuturaSemiBoldSectionHeader(title : String, locator: String){
     TextFuturaFamilyHeader1(
         text = title,
         textColor = Color.Black,
         fontWeight = FontWeight.SemiBold,
         fontSize = FontDimensions.sp16,
         modifier = Modifier
-            .testAutomationTag(title)
+            .testAutomationTag(if (locator.isEmpty()) title else locator)
             .padding(
                 start = Margin.start,
                 end = Margin.end,
@@ -233,3 +271,4 @@ fun TextContactUsFuturaSemiBoldSectionHeader(title : String){
             )
     )
 }
+

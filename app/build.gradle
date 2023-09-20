@@ -16,7 +16,7 @@ android {
     def minor = "12"
     def fix = "0"
     def jobNumberProduction = 226
-    def jobNumberQa = 723
+    def jobNumberQa = 727
 
     buildFeatures {
         dataBinding true
@@ -411,7 +411,14 @@ dependencies {
     implementation 'androidx.paging:paging-runtime-ktx:3.0.1'
     // glassbox SDK for record screen session
     implementation 'com.clarisite.mobile.android:glassbox:6.660'
-
+    // Kotlin reflexion
+    implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_reflect"
+    // truth library for testing
+    testImplementation "com.google.truth:truth:$truth_library_version"
+    androidTestImplementation "com.google.truth:truth:$truth_library_version"
+    //leak canary
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.12'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-object-watcher-android:2.12'
 }
 
 apply plugin: 'com.google.gms.google-services'

@@ -13,6 +13,7 @@
         android:layout_marginStart="@dimen/_15sdp"
         android:layout_marginTop="@dimen/_12sdp"
         android:padding="@dimen/_5sdp"
+        android:contentDescription="@string/cd_navigate_back"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_back_black" />
@@ -37,6 +38,7 @@
         app:srcCompat="@drawable/img_delivery_truck"
         android:layout_marginTop="@dimen/sixty_five_dp"
         app:layout_constraintTop_toBottomOf="@id/geoDeliveryTab"
+        android:contentDescription="@string/cd_fulfillment_delivery_icon"
         />
 
     <TextView
@@ -179,6 +181,7 @@
         android:maxLines="1"
         android:textColor="@color/black"
         android:textSize="@dimen/thirteen_sp"
+        android:contentDescription="@string/cd_fulfillment_earliest_food_delivery_date_value"
         app:layout_constraintBottom_toTopOf="@+id/earliestFashionDeliveryDateLabel"
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
         app:layout_constraintStart_toEndOf="@id/earliestDeliveryDateLabel" />
@@ -209,6 +212,7 @@
         android:textColor="@color/black"
         android:textSize="@dimen/thirteen_sp"
         android:layout_marginBottom="@dimen/twenty_four_dp"
+        android:contentDescription="@string/cd_fulfillment_earliest_fashion_delivery_date_value"
         app:layout_constraintBottom_toTopOf="@+id/geoDivider"
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
         app:layout_constraintStart_toEndOf="@id/earliestFashionDeliveryDateLabel" />
@@ -239,6 +243,7 @@
         android:textColor="@color/black"
         android:textSize="@dimen/thirteen_sp"
         android:layout_marginBottom="@dimen/twenty_four_dp"
+        android:contentDescription="@string/cd_fulfillment_earliest_delivery_date_value"
         app:layout_constraintBottom_toTopOf="@+id/geoDivider"
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
         app:layout_constraintStart_toEndOf="@id/earliestDeliveryDashLabel" />
@@ -252,6 +257,7 @@
         android:indeterminateTint="@color/black"
         android:indeterminateTintMode="src_atop"
         android:visibility="gone"
+        android:contentDescription="@string/cd_progress_bar"
         app:layout_constraintBottom_toBottomOf="@id/guidelineBottom"
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
         app:layout_constraintStart_toStartOf="@id/guidelineStart"
@@ -292,6 +298,7 @@
         android:layout_height="@dimen/twenty_four_dp"
         android:layout_marginBottom="@dimen/twenty_four_dp"
         android:background="@drawable/ic_mapview"
+        android:contentDescription="@string/cd_fulfillment_location_icon"
         app:layout_constraintBottom_toTopOf="@id/btnConfirmAddress"
         app:layout_constraintHorizontal_chainStyle="spread"
         app:layout_constraintStart_toStartOf="@id/guidelineStart" />
@@ -309,6 +316,7 @@
         android:textAlignment="gravity"
         android:textColor="@color/black"
         android:textSize="@dimen/thirteen_sp"
+        android:contentDescription="@string/cd_fulfillment_delivery_location_text"
         app:layout_constraintBottom_toBottomOf="@id/imgDelIcon"
         app:layout_constraintEnd_toStartOf="@+id/editDelivery"
         app:layout_constraintStart_toEndOf="@id/imgDelIcon"

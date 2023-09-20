@@ -69,7 +69,9 @@ import za.co.woolworths.financial.services.android.util.pushnotification.PushNot
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
+class StartupActivity :
+    AppCompatActivity(),
+    MediaPlayer.OnCompletionListener,
     View.OnClickListener {
 
     private lateinit var bindingStartup: ActivityStartupBinding
@@ -84,7 +86,8 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
     private var remoteConfigJsonString: String = AppConstant.EMPTY_STRING
     private var isAppSideLoaded = false
 
-    @Inject lateinit var notificationUtils : NotificationUtils
+    @Inject
+    lateinit var notificationUtils: NotificationUtils
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -103,11 +106,15 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
 
             window?.setFlags(
                 WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN
+                WindowManager.LayoutParams.FLAG_FULLSCREEN,
             )
-            if (supportActionBar?.isShowing == true)
+            if (supportActionBar?.isShowing == true) {
                 supportActionBar?.hide()
-            bindingStartup.splashNoVideoView.progressBar?.indeterminateDrawable?.setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY)
+            }
+            bindingStartup.splashNoVideoView.progressBar?.indeterminateDrawable?.setColorFilter(
+                Color.BLACK,
+                PorterDuff.Mode.MULTIPLY,
+            )
             bindingStartup.splashNoVideoView.retry?.setOnClickListener(this@StartupActivity)
             deeplinkIntent = intent
             init()
@@ -158,23 +165,25 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
         configBuilder = FirebaseRemoteConfigSettings.Builder()
             .setMinimumFetchIntervalInSeconds(AppConstant.FIREBASE_REMOTE_CONFIG_FETCH_INTERVAL)
             .setFetchTimeoutInSeconds(AppConstant.FIREBASE_REMOTE_CONFIG_TIMEOUT_INTERVAL)
-        val defaultJsonString = FirebaseConfigUtils.getJsonDataFromAsset(this, FirebaseConfigUtils.FILE_NAME)
-        val defaultValues = mutableMapOf( FirebaseConfigUtils.CONFIG_KEY to defaultJsonString)
+        val defaultJsonString =
+            FirebaseConfigUtils.getJsonDataFromAsset(this, FirebaseConfigUtils.FILE_NAME)
+        val defaultValues = mutableMapOf(FirebaseConfigUtils.CONFIG_KEY to defaultJsonString)
         firebaseRemoteConfig.setConfigSettingsAsync(configBuilder.build())
         firebaseRemoteConfig.setDefaultsAsync(defaultValues as Map<String, Any>)
     }
 
-    private fun fetchFirebaseConfigData(isComingFromSuccess:Boolean) {
+    private fun fetchFirebaseConfigData(isComingFromSuccess: Boolean) {
         firebaseRemoteConfig
-            .fetch(AppConstant.FIREBASE_REMOTE_CONFIG_FETCH_INTERVAL).addOnCompleteListener { task ->
+            .fetch(AppConstant.FIREBASE_REMOTE_CONFIG_FETCH_INTERVAL)
+            .addOnCompleteListener { task ->
                 run {
                     if (task.isSuccessful) {
-                        //set dynamic ui here
+                        // set dynamic ui here
                         firebaseRemoteConfig.activate()
                         remoteConfigJsonString = startupViewModel.fetchFirebaseRemoteConifgData()
 
                         if (isComingFromSuccess) {
-                            //success of api
+                            // success of api
                             if (remoteConfigJsonString.isEmpty()) {
                                 // api successful but firebase not configured so navigate with normal flow
                                 presentNextScreenOrServerMessage()
@@ -182,7 +191,8 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                                 // api successful and  firebase also configured so display sunsetting ui
                                 bindingSplash = ActivitySplashScreenBinding.inflate(layoutInflater)
                                 setContentView(bindingSplash.root)
-                                val configData:ConfigData? = startupViewModel.parseRemoteconfigData(remoteConfigJsonString)
+                                val configData: ConfigData? =
+                                    startupViewModel.parseRemoteconfigData(remoteConfigJsonString)
                                 if (configData?.expiryTime == -1L || configData == null) {
                                     // in case we get json exception while parsing then we navigate with normal flow
                                     bindingSplash.progressBar?.visibility = View.GONE
@@ -199,12 +209,14 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                             } else {
                                 // api is failed and sunsetting is configured then show sunsetting ui
 
-                                val configData:ConfigData? = startupViewModel.parseRemoteconfigData(remoteConfigJsonString)
+                                val configData: ConfigData? =
+                                    startupViewModel.parseRemoteconfigData(remoteConfigJsonString)
                                 if (configData?.expiryTime == -1L || configData == null) {
                                     // in case we get json exception while parsing then show error screen of api
                                     bindingStartup.showNonVideoViewWithErrorLayout()
                                 } else {
-                                    bindingSplash = ActivitySplashScreenBinding.inflate(layoutInflater)
+                                    bindingSplash =
+                                        ActivitySplashScreenBinding.inflate(layoutInflater)
                                     setContentView(bindingSplash.root)
                                     bindingSplash.setDataOnUI(configData, false)
                                 }
@@ -215,7 +227,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                         if (isComingFromSuccess) {
                             // api is success and firebase  is failed so navigate to next screen
                             presentNextScreenOrServerMessage()
-                        } else  {
+                        } else {
                             // api is failed and firebase  is failed so display error layout
                             bindingStartup.showNonVideoViewWithErrorLayout()
                         }
@@ -224,7 +236,10 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
             }
     }
 
-    private fun ActivitySplashScreenBinding.setDataOnUI(configData: ConfigData?, isComingFromSuccess: Boolean) {
+    private fun ActivitySplashScreenBinding.setDataOnUI(
+        configData: ConfigData?,
+        isComingFromSuccess: Boolean,
+    ) {
         Utils.setScreenName(FirebaseManagerAnalyticsProperties.ScreenNames.SPLASH_WITH_CTA)
         progressBar?.visibility = View.GONE
         firstBtn?.visibility = View.VISIBLE
@@ -238,35 +253,38 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
             if (timeIntervalSince1970 < configData.expiryTime) {
                 val activeConfiguration = configData.activeConfiguration
                 activeConfiguration?.run {
-                    if (title == null)
+                    if (title == null) {
                         txtTitle?.visibility = View.GONE
-                    else
+                    } else {
                         txtTitle?.text = activeConfiguration.title
-
-                    if (description == null)
-                        txtDesc?.visibility = View.GONE
-                    else
-                        txtDesc?.text = activeConfiguration.description
-
-                    if (imageUrl == null)
-                        imgView?.visibility = View.GONE
-                    else {
-                        if (imageUrl.isEmpty())
-                            imgView.setImageResource(R.drawable.link_icon)
-                        else
-                            ImageManager.setPictureWithSplashPlaceHolder(imgView, imageUrl)
                     }
 
-                    if (firstButton == null)
+                    if (description == null) {
+                        txtDesc?.visibility = View.GONE
+                    } else {
+                        txtDesc?.text = activeConfiguration.description
+                    }
+
+                    if (imageUrl == null) {
+                        imgView?.visibility = View.GONE
+                    } else {
+                        if (imageUrl.isEmpty()) {
+                            imgView.setImageResource(R.drawable.link_icon)
+                        } else {
+                            ImageManager.setPictureWithSplashPlaceHolder(imgView, imageUrl)
+                        }
+                    }
+
+                    if (firstButton == null) {
                         firstBtn?.visibility = View.GONE
-                    else {
+                    } else {
                         firstBtn?.text = firstButton.title
                         actionUrlFirst = firstButton.actionUrl
                     }
 
-                    if (secondButton == null)
+                    if (secondButton == null) {
                         secondBtn?.visibility = View.GONE
-                    else {
+                    } else {
                         secondBtn?.text = secondButton.title
                         actionUrlSecond = secondButton.actionUrl
                     }
@@ -274,40 +292,43 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
             } else if (timeIntervalSince1970 >= configData.expiryTime && timeIntervalSince1970 != -1L) {
                 val inActiveConfiguration = configData?.inactiveConfiguration
                 inActiveConfiguration?.run {
-                    if (title == null)
+                    if (title == null) {
                         txtTitle?.visibility = View.GONE
-                    else
+                    } else {
                         txtTitle?.text = inActiveConfiguration.title
-
-                    if (description == null)
-                        txtDesc?.visibility = View.GONE
-                    else
-                        txtDesc?.text = inActiveConfiguration.description
-
-                    if (imageUrl == null)
-                        imgView?.visibility = View.GONE
-                    else {
-                        if(imageUrl.isEmpty())
-                            imgView.setImageResource(R.drawable.link_icon)
-                        else
-                            ImageManager.setPictureWithSplashPlaceHolder(imgView, imageUrl)
                     }
 
-                    if (firstButton == null)
+                    if (description == null) {
+                        txtDesc?.visibility = View.GONE
+                    } else {
+                        txtDesc?.text = inActiveConfiguration.description
+                    }
+
+                    if (imageUrl == null) {
+                        imgView?.visibility = View.GONE
+                    } else {
+                        if (imageUrl.isEmpty()) {
+                            imgView.setImageResource(R.drawable.link_icon)
+                        } else {
+                            ImageManager.setPictureWithSplashPlaceHolder(imgView, imageUrl)
+                        }
+                    }
+
+                    if (firstButton == null) {
                         firstBtn?.visibility = View.GONE
-                    else {
+                    } else {
                         firstBtn?.text = firstButton.title
                         actionUrlFirst = firstButton.actionUrl
                     }
 
-                    if (secondButton == null)
+                    if (secondButton == null) {
                         secondBtn?.visibility = View.GONE
-                    else {
+                    } else {
                         secondBtn?.text = secondButton.title
                         actionUrlSecond = secondButton.actionUrl
                     }
                 }
-            } else if(configData.expiryTime == -1L && isComingFromSuccess) {
+            } else if (configData.expiryTime == -1L && isComingFromSuccess) {
                 presentNextScreenOrServerMessage()
             } else if (configData.expiryTime == -1L && !isComingFromSuccess) {
                 bindingStartup.showNonVideoViewWithErrorLayout()
@@ -327,7 +348,11 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
         } else {
             bindingStartup.showNonVideoViewWithErrorLayout()
         }
-        //Remove old usage of SharedPreferences data.
+
+        if (startupViewModel.isConnectedToInternet(this@StartupActivity)) {
+            configureDashChatServices()
+        }
+        // Remove old usage of SharedPreferences data.
         //   startupViewModel.clearSharedPreference(this@StartupActivity)
         AuthenticateUtils.getInstance(this@StartupActivity).enableBiometricForCurrentSession(true)
     }
@@ -393,8 +418,8 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                         bindingStartup.showNonVideoViewWithErrorLayout()
                     }
                 }
-                R.id.first_btn-> bindingSplash.handleFirstbuttonClick()
-                R.id.second_btn-> bindingSplash.handleSecondbuttonClick()
+                R.id.first_btn -> bindingSplash.handleFirstbuttonClick()
+                R.id.second_btn -> bindingSplash.handleSecondbuttonClick()
             }
         }
     }
@@ -405,7 +430,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
         if (!text.isEmpty()) {
             Utils.triggerFireBaseEvents(
                 FirebaseManagerAnalyticsProperties.SPLASH_BTN.plus(updatedText),
-                this@StartupActivity
+                this@StartupActivity,
             )
         }
         if (actionUrlSecond.isNullOrEmpty()) {
@@ -420,13 +445,13 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
         val updatedText: String = Utils.formatAnalyticsButtonText(text)
         if (!text.isEmpty()) {
             Utils.triggerFireBaseEvents(
-                FirebaseManagerAnalyticsProperties.SPLASH_BTN.plus(updatedText) ,
-                this@StartupActivity
+                FirebaseManagerAnalyticsProperties.SPLASH_BTN.plus(updatedText),
+                this@StartupActivity,
             )
         }
         if (actionUrlFirst.isNullOrEmpty()) {
             presentNextScreen()
-        }  else {
+        } else {
             ScreenManager.presentToActionView(this@StartupActivity, actionUrlFirst)
         }
     }
@@ -499,7 +524,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
     private fun setupViewModel() {
         startupViewModel = ViewModelProviders.of(
             this,
-            ViewModelFactory(StartUpRepository(StartupApiHelper()), StartupApiHelper())
+            ViewModelFactory(StartUpRepository(StartupApiHelper()), StartupApiHelper()),
         ).get(StartupViewModel::class.java)
     }
 
@@ -507,7 +532,8 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
         val isFirstTime = startupViewModel.getSessionDao(SessionDao.KEY.ON_BOARDING_SCREEN)
         var appLinkData: Any? = deeplinkIntent.data
 
-        AppConfigSingleton.isBadgesRequired = deeplinkIntent.extras?.containsKey("google.message_id") != true
+        AppConfigSingleton.isBadgesRequired =
+            deeplinkIntent.extras?.containsKey("google.message_id") != true
 
         if (appLinkData == null && deeplinkIntent.extras != null) {
             appLinkData = deeplinkIntent.extras
@@ -518,9 +544,9 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
             handleAppLink(appLinkData)
         } else {
             val activity = this as Activity
-            if (isFirstTime == null || Utils.isAppUpdated(this))
+            if (isFirstTime == null || Utils.isAppUpdated(this)) {
                 ScreenManager.presentOnboarding(activity)
-            else {
+            } else {
                 ScreenManager.presentMain(activity)
             }
         }
@@ -530,13 +556,13 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
 
     fun handleAppLink(appLinkData: Any?) {
         // val productSearchViewModel: ProductSearchViewModel = ProductSearchViewModelImpl();
-        //productSearchViewModel.getTypeAndTerm(urlString = appLinkData.toString())
-        //1. check URL
-        //2. navigate to facet that URL corresponds to
+        // productSearchViewModel.getTypeAndTerm(urlString = appLinkData.toString())
+        // 1. check URL
+        // 2. navigate to facet that URL corresponds to
         if (appLinkData is Uri) {
             val bundle = bundleOf(
                 "feature" to AppConstant.DP_LINKING_PRODUCT_LISTING,
-                "parameters" to "{\"url\": \"${appLinkData}\"}"
+                "parameters" to "{\"url\": \"${appLinkData}\"}",
             )
             ScreenManager.presentMain(this@StartupActivity, bundle)
         } else if (appLinkData is Bundle && appLinkData.containsKey(AppConstant.DP_LINKING_STREAM_CHAT_CHANNEL_ID)) {
@@ -548,36 +574,38 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                 onSuccess = { orderId ->
                     val bundle = bundleOf(
                         "feature" to AppConstant.DP_LINKING_STREAM_CHAT_CHANNEL_ID,
-                        "parameters" to "{\"${AppConstant.DP_LINKING_PARAM_STREAM_ORDER_ID}\": \"${orderId}\", \"${AppConstant.DP_LINKING_PARAM_STREAM_CHANNEL_ID}\": \"${channelId}\"}"
+                        "parameters" to "{\"${AppConstant.DP_LINKING_PARAM_STREAM_ORDER_ID}\": \"${orderId}\", \"${AppConstant.DP_LINKING_PARAM_STREAM_CHANNEL_ID}\": \"${channelId}\"}",
                     )
                     ScreenManager.presentMain(this@StartupActivity, bundle)
                 },
                 onFailure = {
                     ScreenManager.presentMain(this@StartupActivity)
-                }
+                },
             )
         } else if (appLinkData is Bundle && appLinkData.containsKey(PushNotificationManager.PAYLOAD_STREAM_CHANNEL)) {
             // Push notification created by OS, when app was inactive
-            val streamChannelJson = appLinkData[PushNotificationManager.PAYLOAD_STREAM_CHANNEL] as String
+            val streamChannelJson =
+                appLinkData[PushNotificationManager.PAYLOAD_STREAM_CHANNEL] as String
             val streamChannelParameters = Gson().fromJson(
                 streamChannelJson,
-                JsonObject::class.java
+                JsonObject::class.java,
             )
             // Stream Channel's cid needs to be in the format channelType:channelId. For example, messaging:123
-            val channelId = "${streamChannelParameters[PushNotificationManager.PAYLOAD_STREAM_CHANNEL_TYPE].asString}:${streamChannelParameters[PushNotificationManager.PAYLOAD_STREAM_CHANNEL_ID].asString}"
+            val channelId =
+                "${streamChannelParameters[PushNotificationManager.PAYLOAD_STREAM_CHANNEL_TYPE].asString}:${streamChannelParameters[PushNotificationManager.PAYLOAD_STREAM_CHANNEL_ID].asString}"
             DashChatMessageListeningService.getOrderIdForChannel(
                 this,
                 channelId,
                 onSuccess = { orderId ->
                     val bundle = bundleOf(
                         "feature" to AppConstant.DP_LINKING_STREAM_CHAT_CHANNEL_ID,
-                        "parameters" to "{\"${AppConstant.DP_LINKING_PARAM_STREAM_ORDER_ID}\": \"${orderId}\", \"${AppConstant.DP_LINKING_PARAM_STREAM_CHANNEL_ID}\": \"${channelId}\"}"
+                        "parameters" to "{\"${AppConstant.DP_LINKING_PARAM_STREAM_ORDER_ID}\": \"${orderId}\", \"${AppConstant.DP_LINKING_PARAM_STREAM_CHANNEL_ID}\": \"${channelId}\"}",
                     )
                     ScreenManager.presentMain(this@StartupActivity, bundle)
                 },
                 onFailure = {
                     ScreenManager.presentMain(this@StartupActivity)
-                }
+                },
             )
         } else {
             ScreenManager.presentMain(this@StartupActivity, appLinkData as Bundle)
@@ -588,20 +616,20 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
         super.onStart()
         if (isAppSideLoaded) {
             Utils.setScreenName(
-                FirebaseManagerAnalyticsProperties.ScreenNames.DEVICE_SIDELOADED_AT_STARTUP
+                FirebaseManagerAnalyticsProperties.ScreenNames.DEVICE_SIDELOADED_AT_STARTUP,
             )
         } else {
             if (Utils.checkForBinarySu() && CommonUtils.isRooted() && !Util.isDebug(
-                    this.applicationContext
+                    this.applicationContext,
                 )
             ) {
                 Utils.setScreenName(
-                    FirebaseManagerAnalyticsProperties.ScreenNames.DEVICE_ROOTED_AT_STARTUP
+                    FirebaseManagerAnalyticsProperties.ScreenNames.DEVICE_ROOTED_AT_STARTUP,
                 )
                 val rootedDeviceInfoFragment = newInstance(getString(R.string.rooted_phone_desc))
                 rootedDeviceInfoFragment.show(
                     supportFragmentManager,
-                    RootedDeviceInfoFragment::class.java.simpleName
+                    RootedDeviceInfoFragment::class.java.simpleName,
                 )
                 return
             }
@@ -642,17 +670,18 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
         var uri = intent?.data
         if (null != uri) {
             var params = uri.pathSegments
-            var forgotPassword = params[params.size - 1]
-            if (null != forgotPassword && forgotPassword.contentEquals("forgot-password")) {
-                getForgotPasswordLink(uri.toString())
+            if (params.isNullOrEmpty()== false) {
+                val forgotPassword = params[params.size - 1]
+                if (null != forgotPassword && forgotPassword.contentEquals("forgot-password")) {
+                    getForgotPasswordLink(uri.toString())
+                }
             }
         }
     }
 
     private fun getForgotPasswordLink(forgotPasswordUri: String) {
-        ScreenManager.forgotPassword(this@StartupActivity,forgotPasswordUri)
+        ScreenManager.forgotPassword(this@StartupActivity, forgotPasswordUri)
     }
-
 
     private fun configureDashChatServices() {
         try {
@@ -665,37 +694,40 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                     .build()
 
                 val chatApp =
-                    FirebaseApp.initializeApp(this,
+                    FirebaseApp.initializeApp(
+                        this,
                         firebaseChatOptions,
-                        getString(R.string.oc_chat_app))
+                        getString(R.string.oc_chat_app),
+                    )
                 val fbMessaging = chatApp.get(FirebaseMessaging::class.java)
                 fbMessaging.token.addOnCompleteListener { it: Task<String?> ->
                     if (it.isSuccessful) {
                         Utils.setOCChatFCMToken(it.result)
                     }
-
                 }
             }
             // Start service to listen to incoming messages from Stream
             if (SessionUtilities.getInstance().isUserAuthenticated &&
-                (!OCConstant.isOCChatBackgroundServiceRunning)) {
+                (!OCConstant.isOCChatBackgroundServiceRunning)
+            ) {
                 startOCChatService(this)
             }
-
         } catch (e: Exception) {
             FirebaseManager.logException(e)
         }
-
     }
 
-    //GlassBox SDK for record screen session
+    // GlassBox SDK for record screen session
     private fun initializeGlassBoxSDK() {
         try {
-            Glassbox.start(aSettingsBuilder()
-                .withApplicationCtx(this)
-                .withAppId(glassBox?.appId)
-                .withReportUrl(glassBox?.reportUrl)
-                .build())
+            Glassbox.start(
+                aSettingsBuilder()
+                    .withApplicationCtx(this)
+                    .withAppId(glassBox?.appId)
+                    .withReportUrl(glassBox?.reportUrl)
+                    .hybridMode()
+                    .build(),
+            )
         } catch (e: Exception) {
             FirebaseManager.logException(e)
         }

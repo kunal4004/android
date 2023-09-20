@@ -92,7 +92,6 @@ class AccountInDelinquencyFragment : Fragment(R.layout.remove_block_dc_main_frag
                         )
                     )
                 }
-                    delay(AppConstant.DELAY_200_MS)
                     binding.setHelpWithPaymentViewLabel(eligibilityPlan)
                     binding.setHelpWithPaymentViewVisibility(eligibilityPlan)
                 }
