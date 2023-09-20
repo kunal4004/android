@@ -92,6 +92,8 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
     var permissions: ArrayList<String> = arrayListOf()
     private lateinit var locationBroadcastReceiver : LocationProviderBroadcastReceiver
 
+    private var address:Address? = null
+
     companion object {
         fun newInstance() = ConfirmAddressFragment()
     }
@@ -202,6 +204,11 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
     private fun addFragmentListener() {
         setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_CLICK_RESULT) { _, _ ->
             // Do nothing. Only want to close this listener.
+        }
+        setFragmentResultListener(DeliveryAddressConfirmationFragment.LOCATION_ERROR) { _, _ ->
+            address?.let {
+                binding.validateLocation(it)
+            }
         }
     }
 
@@ -353,7 +360,7 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
         inCurrentLocation?.ivArrow?.visibility = View.GONE
         inCurrentLocation?.swEnableLocation?.visibility = View.VISIBLE
         inCurrentLocation?.swEnableLocation?.isChecked = false
-        inCurrentLocation?.tvCurrentLocation?.text = getString(R.string.enable_location_services)
+        inCurrentLocation?.tvCurrentLocation?.text = requireContext()?.resources?.getString(R.string.enable_location_services)
     }
 
     override fun onAddressSelected(address: Address, position: Int) {
@@ -363,10 +370,10 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
         binding.setButtonUI(true)
         if (address.verified) {
             selectedAddress?.apply {
-                    binding.tvConfirmAddress?.text=getString(R.string.use)+nickname
+                    binding.tvConfirmAddress?.text=requireContext()?.resources?.getString(R.string.use)+nickname
             }
         } else {
-            binding.tvConfirmAddress?.text = getString(R.string.update_address)
+            binding.tvConfirmAddress?.text = requireContext()?.resources?.getString(R.string.update_address)
         }
     }
 
@@ -391,7 +398,7 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
 
                 if (binding.progressBar.visibility == View.GONE
                     && selectedAddress != null
-                    && binding.tvConfirmAddress?.text == getString(R.string.update_address)
+                    && binding.tvConfirmAddress?.text == requireContext()?.resources?.getString(R.string.update_address)
                 ) {
                     savedAddressResponse?.let {
 
@@ -410,13 +417,14 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
                 }
                 if (binding.progressBar.visibility == View.GONE
                     && selectedAddress != null
-                    && binding.tvConfirmAddress?.text == getString(R.string.confirm) || binding.tvConfirmAddress?.text?.take(
+                    && binding.tvConfirmAddress?.text == requireContext()?.resources?.getString(R.string.confirm) || binding.tvConfirmAddress?.text?.take(
                         4
                     )
-                    == (getString(R.string.use))
+                    == (requireContext()?.resources?.getString(R.string.use))
                 ) {
                     selectedAddress.let {
                         if (it.placesId != null) {
+                            address = it
                             binding.validateLocation(it)
                         } else
                             return
@@ -649,12 +657,32 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
             } catch (e: Exception) {
                 FirebaseManager.logException(e)
                 progressBar?.visibility = View.GONE
+                showErrorDialog()
             } catch (e: JsonSyntaxException) {
                 FirebaseManager.logException(e)
                 progressBar?.visibility = View.GONE
+                showErrorDialog()
             }
         }
     }
+
+    private fun showErrorDialog() {
+        if(!isAdded && !isVisible) return
+        val customBottomSheetDialogFragment =
+            CustomBottomSheetDialogFragment.newInstance(
+                title = getString(R.string.something_went_wrong),
+                subTitle = getString(R.string.location_error_msg),
+                dialog_button_text = getString(R.string.retry_label),
+                dialog_title_img = R.drawable.ic_vto_error,
+                dismissLinkText= getString(R.string.cancel_underline_html),
+                dialogResultCode = DeliveryAddressConfirmationFragment.LOCATION_ERROR
+            )
+        customBottomSheetDialogFragment.show(
+            parentFragmentManager,
+            CustomBottomSheetDialogFragment::class.java.simpleName
+        )
+    }
+
 
     private fun ConfirmAddressBottomSheetDialogBinding.confirmSetAddress(
         validateLocationResponse: ValidateLocationResponse,
