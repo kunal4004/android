@@ -114,7 +114,14 @@ public class WRewardsSavingsFragment extends Fragment implements View.OnClickLis
 			public void onLongClick(View view, int position) {
 			}
 		}));
-		WRewardUniqueLocatorsHelper.Companion.setSavingsFragLocators(tvWRewardInstantSaving,
+		return view;
+	}
+
+	@Override
+	public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+		super.onViewCreated(view, savedInstanceState);
+		uniqueIdsForWRewardsSavings();
+		WRewardUniqueLocatorsHelper.Companion.setSavingsFragLocators(view.findViewById(R.id.tvWRewardInstantSaving),
 				wRewardsInstantSaving,
 				view.findViewById(R.id.savingSinceTitle),
 				savingSince,
@@ -124,13 +131,6 @@ public class WRewardsSavingsFragment extends Fragment implements View.OnClickLis
 				yearToDateSpend,
 				yearToDateSpendText,
 				yearToDateSpendInfo);
-		return view;
-	}
-
-	@Override
-	public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-		super.onViewCreated(view, savedInstanceState);
-		uniqueIdsForWRewardsSavings();
 	}
 
 	private void uniqueIdsForWRewardsSavings() {

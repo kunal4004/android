@@ -21,15 +21,8 @@ class JoinRewardViewHolder(val itemBinding: JoinRewardWalkthroughRowBinding) : R
                 val spanBuilder = updateWRewardCharacter(root.context, description)
                 tvReasonToJoinDesc?.text = spanBuilder
                 imHeader?.setImageResource(imageDrawable)
-                WRewardUniqueLocatorsHelper.setLogOutFragLocators(absoluteAdapterPosition,imHeader,tvReasonToJoinTitle,tvReasonToJoinDesc)
+                WRewardUniqueLocatorsHelper.setLogOutFragLocators(bindingAdapterPosition,imHeader,tvReasonToJoinTitle,tvReasonToJoinDesc)
             }
-            uniqueIdsForRewards()
-        }
-    }
-
-    private fun JoinRewardWalkthroughRowBinding.uniqueIdsForRewards() {
-        root.context?.resources?.apply {
-            infoLinearLayoutCompat?.contentDescription = getString(R.string.infoLayout)
         }
     }
 
