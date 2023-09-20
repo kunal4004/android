@@ -74,6 +74,7 @@
                 android:id="@+id/radioBtnPhoneConfirmation"
                 style="@style/FoodSubstRadioButtonStyle"
                 android:layout_width="wrap_content"
+                android:contentDescription="@string/cd_btn_radio_selection"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="@dimen/seven_dp"
                 android:paddingHorizontal="@dimen/ten_dp"
@@ -82,6 +83,7 @@
             <androidx.appcompat.widget.AppCompatRadioButton
                 android:id="@+id/radioBtnSimilarSubst"
                 style="@style/FoodSubstRadioButtonStyle"
+                android:contentDescription="@string/cd_btn_radio_selection"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="@dimen/seven_dp"
@@ -92,6 +94,7 @@
             <androidx.appcompat.widget.AppCompatRadioButton
                 android:id="@+id/radioBtnNoThanks"
                 style="@style/FoodSubstRadioButtonStyle"
+                android:contentDescription="@string/cd_btn_radio_selection"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="@dimen/seven_dp"

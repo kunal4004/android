@@ -260,4 +260,50 @@
     <string name= "whatsapp_number_text">whatsapp_number_text</string>
     <string name= "whatsapp_number_number">whatsapp_number_number</string>
     <string name= "back_button">"back_button"</string>
+
+    <!-- Delivery Address Fulfillment   -->
+    <string name="cd_fulfillment_delivery_icon">fulfillmentDeliveryIcon</string>
+    <string name="cd_fulfillment_earliest_food_delivery_date_value">fulfillmentEarliestFoodDeliveryDate</string>
+    <string name="cd_fulfillment_earliest_fashion_delivery_date_value">fulfillmentEarliestFashionDeliveryDate</string>
+    <string name="cd_fulfillment_earliest_delivery_date_value">fulfillmentEarliestDeliveryDate</string>
+    <string name="cd_fulfillment_location_icon">fulfillmentLocationIcon</string>
+    <string name="cd_fulfillment_delivery_location_text">fulfillmentDeliveryLocationText</string>
+    <string name="cd_progress_bar">progressBar</string>
+    <string name="cd_navigate_back">navigateBack</string>
+
+    <!-- Location Selection     -->
+    <string name="cd_enable_current_location_switch">enableCurrentLocationSwitch</string>
+    <string name="cd_btn_radio_selection">btnRadioSelection</string>
+    <string name="cd_address_nickname">addressNicknameLabel</string>
+    <string name="cd_address_value">addressValueLabel</string>
+    <string name="cd_edit_address_icon">editAddressIcon</string>
+
+    <!-- Delivery Details   -->
+    <string name="cd_delivery_details_suburb_value">deliveryDetailsSuburbValue</string>
+    <string name="cd_delivery_details_street_address_value">deliveryDetailsStreetAddressValue</string>
+    <string name="cd_delivery_details_province_value">deliveryDetailsProvinceValue</string>
+    <string name="cd_delivery_details_address_nickname_value">deliveryDetailsAddressNicknameValue</string>
+    <string name="cd_delivery_details_additional_location_details_value">deliveryDetailsAdditionalLocationDetailsValue</string>
+    <string name="cd_delivery_details_recipient_name_value">deliveryDetailsRecipientNameValue</string>
+    <string name="cd_delivery_details_vehicle_color_value">deliveryDetailsVehicleColorValue</string>
+    <string name="cd_delivery_details_vehicle_model_value">deliveryDetailsVehicleModelValue</string>
+    <string name="cd_delivery_details_vehicle_registration_value">deliveryDetailsVehicleRegistrationValue</string>
+
+    <!-- Unsellable Popup    -->
+    <string name="cd_unsellable_product_name_label">unsellableProductNameLabel</string>
+    <string name="cd_unsellable_product_price_label">unsellableProductPriceLabel</string>
+    <string name="cd_unsellable_product_quantity_label">unsellableProductQuantityLabel</string>
+
+    <!-- Checkout   -->
+    <string name="cd_checkout_delivery_address">checkoutDeliveryAddressLabel</string>
+    <string name="cd_checkout_user_profile_icon">checkoutUserProfileIcon</string>
+    <string name="cd_checkout_user_name">checkoutUserName</string>
+    <string name="cd_checkout_user_mobile_number">checkoutUserMobileNumber</string>
+    <string name="cd_checkout_order_total_value">checkoutOrderTotalValueLabel</string>
+    <string name="cd_checkout_shopping_bag_switch">checkoutShoppingBagSwitch</string>
+    <string name="cd_checkout_special_instructions_switch">checkoutSpecialInstructionsSwitch</string>
+    <string name="cd_checkout_gift_switch">checkoutGiftSwitch</string>
+    <string name="cd_checkout_gift_instruction_value">checkoutGiftInstructionsText</string>
+    <string name="cd_checkout_delivery_instruction_value">checkoutSpecialDeliveryInstructionsText</string>
+
 </resources>
