@@ -33,6 +33,7 @@
                 android:background="@color/color_F3F3F3"
                 android:fontFamily="@font/futura_semi_bold"
                 android:src="@drawable/profile_icon"
+                android:contentDescription="@string/cd_checkout_user_profile_icon"
                 android:textColor="@color/black"
                 android:textSize="@dimen/twenty_sp" />
         </com.facebook.shimmer.ShimmerFrameLayout>
@@ -51,6 +52,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
+                android:contentDescription="@string/cd_checkout_user_name"
                 style="@style/opensans_semi_bold_13_black_text_style"
                 android:text="@string/native_checkout_collecting_from" />
 
@@ -71,6 +73,7 @@
                 android:background="@color/white"
                 style="@style/opensans_regular_13_black"
                 android:textColor="@color/color_444444"
+                android:contentDescription="@string/cd_checkout_user_mobile_number"
                 tools:text="082 ••• 3209" />
         </com.facebook.shimmer.ShimmerFrameLayout>
 
