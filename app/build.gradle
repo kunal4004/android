@@ -16,7 +16,7 @@ android {
     def minor = "12"
     def fix = "0"
     def jobNumberProduction = 226
-    def jobNumberQa = 726
+    def jobNumberQa = 727
 
     buildFeatures {
         dataBinding true
@@ -416,7 +416,9 @@ dependencies {
     // truth library for testing
     testImplementation "com.google.truth:truth:$truth_library_version"
     androidTestImplementation "com.google.truth:truth:$truth_library_version"
-
+    //leak canary
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.12'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-object-watcher-android:2.12'
 }
 
 apply plugin: 'com.google.gms.google-services'
