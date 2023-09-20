@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.fragments.voucher_redeemption
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -10,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.ApplyPromoCodeFragmentBinding
+import za.co.woolworths.financial.services.android.cart.view.CartFragment
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse
 import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
@@ -21,7 +21,7 @@ import za.co.woolworths.financial.services.android.util.Utils
 class ApplyPromoCodeFragment : Fragment(R.layout.apply_promo_code_fragment), VoucherAndPromoCodeContract.ApplyPromoCodeView, View.OnClickListener {
 
     private lateinit var binding: ApplyPromoCodeFragmentBinding
-    var presenter: ApplyPromoCodePresenterImpl? = null
+    private var presenter: ApplyPromoCodePresenterImpl? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,10 +34,10 @@ class ApplyPromoCodeFragment : Fragment(R.layout.apply_promo_code_fragment), Vou
 
         binding.apply {
             activity?.apply {
-                etPromoCode?.let {
-                    it.showKeyboard(this as AppCompatActivity)
-                    it.afterTextChanged { onPromoCodeTextChanged(it) }
-                    it.filters = it.filters + InputFilter.AllCaps()
+                etPromoCode?.let { editText ->
+                    editText.showKeyboard(this as AppCompatActivity)
+                    editText.afterTextChanged { onPromoCodeTextChanged(it) }
+                    editText.filters = editText.filters + InputFilter.AllCaps()
                 }
             }
             cancel?.setOnClickListener(this@ApplyPromoCodeFragment)
@@ -48,7 +48,10 @@ class ApplyPromoCodeFragment : Fragment(R.layout.apply_promo_code_fragment), Vou
 
     override fun onApplyPromoCodeSuccess(shoppingCartResponse: ShoppingCartResponse) {
         activity?.apply {
-            setResult(Activity.RESULT_OK, Intent().putExtra("ShoppingCartResponse", Utils.toJson(shoppingCartResponse)))
+            setResult(intent.getIntExtra(
+                CartFragment.INTENT_REQUEST_CODE,
+                AppCompatActivity.RESULT_OK
+            ), Intent().putExtra(CartFragment.SHOPPING_CART_RESPONSE, Utils.toJson(shoppingCartResponse)))
             finish()
         }
     }

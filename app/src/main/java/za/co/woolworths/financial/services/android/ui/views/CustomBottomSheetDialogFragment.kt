@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
+import androidx.core.text.HtmlCompat
 import androidx.fragment.app.setFragmentResult
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentCustomBottomsheetDialogBinding
@@ -59,6 +60,23 @@ class CustomBottomSheetDialogFragment : WBottomSheetDialogFragment(),
                 putString(DIALOG_DISMISS_LINK_TEXT, dismissLinkText)
                 putString(DIALOG_BUTTON_CLICK_RESULT, dialogResultCode)
             }
+
+        fun newInstance(
+            title: String,
+            subTitle: CharSequence,
+            dialog_button_text: String,
+            dismissLinkText: String?,
+            dialog_title_img: Int,
+            dialogResultCode: String,
+        ) =
+            CustomBottomSheetDialogFragment().withArgs {
+                putString(DIALOG_TITLE, title)
+                putCharSequence(DIALOG_SUB_TITLE, subTitle)
+                putString(DIALOG_BUTTON_TEXT, dialog_button_text)
+                putString(DIALOG_DISMISS_LINK_TEXT, dismissLinkText)
+                putInt(DIALOG_TITLE_IMG, dialog_title_img)
+                putString(DIALOG_BUTTON_CLICK_RESULT, dialogResultCode)
+            }
     }
 
     private lateinit var binding: FragmentCustomBottomsheetDialogBinding
@@ -107,8 +125,11 @@ class CustomBottomSheetDialogFragment : WBottomSheetDialogFragment(),
                 imgView.visibility = View.GONE
 
             val linkText = getString(DIALOG_DISMISS_LINK_TEXT)
-            if (!linkText.isNullOrEmpty())
-                tvDismiss?.text = linkText
+            if (linkText.isNullOrEmpty()) {
+                tvDismiss.visibility = View.GONE
+            } else {
+                tvDismiss?.text = HtmlCompat.fromHtml(linkText, HtmlCompat.FROM_HTML_MODE_LEGACY)
+            }
         }
 
         tvDismiss.setOnClickListener(this@CustomBottomSheetDialogFragment)
@@ -118,13 +139,19 @@ class CustomBottomSheetDialogFragment : WBottomSheetDialogFragment(),
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.buttonAction -> {
-                setFragmentResult(arguments?.getString(DIALOG_BUTTON_CLICK_RESULT)
-                    ?: DIALOG_BUTTON_CLICK_RESULT, bundleOf())
+                setFragmentResult(
+                    arguments?.getString(DIALOG_BUTTON_CLICK_RESULT)
+                        ?: DIALOG_BUTTON_CLICK_RESULT, bundleOf()
+                )
                 dismiss()
             }
+
             R.id.tvDismiss -> {
                 val bundle = Bundle()
-                bundle.putString(DIALOG_BUTTON_CLICK_RESULT, arguments?.getString(DIALOG_BUTTON_CLICK_RESULT))
+                bundle.putString(
+                    DIALOG_BUTTON_CLICK_RESULT,
+                    arguments?.getString(DIALOG_BUTTON_CLICK_RESULT)
+                )
                 setFragmentResult(DIALOG_BUTTON_DISMISS_RESULT, bundle)
                 dismiss()
             }
@@ -133,7 +160,10 @@ class CustomBottomSheetDialogFragment : WBottomSheetDialogFragment(),
 
     override fun onCancel(dialog: DialogInterface) {
         val bundle = Bundle()
-        bundle.putString(DIALOG_BUTTON_CLICK_RESULT, arguments?.getString(DIALOG_BUTTON_CLICK_RESULT))
+        bundle.putString(
+            DIALOG_BUTTON_CLICK_RESULT,
+            arguments?.getString(DIALOG_BUTTON_CLICK_RESULT)
+        )
         setFragmentResult(DIALOG_BUTTON_DISMISS_RESULT, bundle)
         super.onCancel(dialog)
     }
