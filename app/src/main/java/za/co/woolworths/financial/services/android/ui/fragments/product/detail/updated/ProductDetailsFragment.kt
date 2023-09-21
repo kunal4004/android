@@ -1481,7 +1481,26 @@ class ProductDetailsFragment :
                     onlinePromotionalTextView2?.visibility = View.GONE
                     onlinePromotionalTextView3?.visibility = View.GONE
                 }
-                if (true == it.isRnREnabled && RatingAndReviewUtil.isRatingAndReviewConfigavailbel() || RatingAndReviewUtil.isFoodItemAvailable()) {
+                if (true == it.isRnREnabled && RatingAndReviewUtil.isRatingAndReviewConfigavailbel() ) {
+                    if (RatingAndReviewUtil.isFoodItemAvailable()) {
+                        productDetailOptionsAndInformation.apply {
+                            headerCustomerReview?.visibility = View.VISIBLE
+                            reviewDetailsInformation?.visibility = View.VISIBLE
+                            customerReview.root.visibility = View.VISIBLE
+                            rlViewMoreReview?.visibility = View.VISIBLE
+                            leaveUsReview?.visibility = View.VISIBLE
+                            writeAReviewLink.root.visibility = View.VISIBLE
+                        }
+                    } else {
+                        productDetailOptionsAndInformation.apply {
+                            headerCustomerReview?.visibility = View.VISIBLE
+                            reviewDetailsInformation?.visibility = View.VISIBLE
+                            customerReview.root.visibility = View.VISIBLE
+                            rlViewMoreReview?.visibility = View.VISIBLE
+                            leaveUsReview?.visibility = View.GONE
+                            writeAReviewLink.root.visibility = View.GONE
+                        }
+                    }
                     ratingLayout.apply {
                         ratingBarTop?.rating = it.averageRating
                         tvTotalReviews?.text = resources.getQuantityString(
@@ -1494,7 +1513,7 @@ class ProductDetailsFragment :
                         prodId = it.productId
                         tvTotalReviews?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
                     }
-                    showRatingAndReview()
+                   // showRatingAndReview()
                 } else {
                     hideRatingAndReview()
                 }
@@ -1507,14 +1526,26 @@ class ProductDetailsFragment :
         }
     }
 
+    private fun ProductDetailsFragmentBinding.hideWriteAReview() {
+        productDetailOptionsAndInformation.apply {
+            leaveUsReview?.visibility = View.GONE
+            writeAReviewLink.root.visibility = View.GONE
+        }
+    }
+
+    private fun ProductDetailsFragmentBinding.ShowWriteAReview() {
+        productDetailOptionsAndInformation.apply {
+            leaveUsReview?.visibility = View.VISIBLE
+            writeAReviewLink.root.visibility = View.VISIBLE
+        }
+    }
+
     private fun ProductDetailsFragmentBinding.hideRatingAndReview() {
         productDetailOptionsAndInformation.apply {
             headerCustomerReview?.visibility = View.GONE
             reviewDetailsInformation?.visibility = View.GONE
             customerReview.root.visibility = View.GONE
             rlViewMoreReview?.visibility = View.GONE
-            leaveUsReview?.visibility = View.GONE
-            writeAReviewLink.root.visibility = View.GONE
         }
     }
 
@@ -1524,8 +1555,6 @@ class ProductDetailsFragment :
             reviewDetailsInformation?.visibility = View.VISIBLE
             customerReview.root.visibility = View.VISIBLE
             rlViewMoreReview?.visibility = View.VISIBLE
-            leaveUsReview?.visibility = View.VISIBLE
-            writeAReviewLink.root.visibility = View.VISIBLE
         }
     }
 
