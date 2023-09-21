@@ -8,6 +8,7 @@ import android.view.View.VISIBLE
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.ProductListingPageRowBinding
 import za.co.woolworths.financial.services.android.contracts.IProductListing
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.dto.PromotionImages
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.featureutils.RatingAndReviewUtil
@@ -48,7 +49,8 @@ class RecyclerViewViewHolderItems(val itemBinding: ProductListingPageRowBinding)
     private fun setNetworkName(productList: ProductList?)= itemBinding.apply {
         if (!TextUtils.isEmpty(productList?.network)) {
             SIMLabel.visibility = VISIBLE
-            SIMLabel.text = productList?.network
+            val networkOperator = productList?.network
+            SIMLabel.text = networkOperator?.let { AppConfigSingleton.connectOnline?.freeSimTextMsg?.replace("\${networkOperator}", it) }
         } else {
             SIMLabel.visibility = GONE
             SIMLabel.text = ""
