@@ -29,7 +29,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class UserAccountsLandingFragment : Fragment() {
 
-    private val viewModel: UserAccountLandingViewModel by activityViewModels()
+    val viewModel: UserAccountLandingViewModel by activityViewModels()
     private var deepLinkParams: JsonObject? = null
 
     private val mRegisterActivityForResult = BetterActivityResult.registerActivityForResult(this)

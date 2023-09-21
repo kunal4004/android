@@ -59,15 +59,18 @@ class FAQDetailFragment : BaseFragmentBinding<FaqDetailBinding>(FaqDetailBinding
 
 
     private fun FaqDetailBinding.populateTextView() {
-        title?.setText(mQuestion)
-        description?.text = Html.fromHtml(mAnswer)
-        description?.setOnClickListener {
+        title.text = mQuestion
+        description.text = Html.fromHtml(mAnswer)
+        description.setOnClickListener {
             val spans = description.urls
             if (spans.isNotEmpty()) {
-                val url = spans[0].url
-                if (URLUtil.isValidUrl(url)) {
+                var spanUrl = spans[0].url
+                if (!URLUtil.isValidUrl(spanUrl)) {
+                    spanUrl = "$woolworthsDomainUrl$spanUrl"
+                }
+                if (URLUtil.isValidUrl(spanUrl)) {
                     val bundle = Bundle()
-                    bundle.putString("web_url", url)
+                    bundle.putString("web_url", spanUrl)
                     val webFragment = WebFragment()
                     webFragment.arguments = bundle
                     mBottomNavigator?.pushFragment(webFragment)
@@ -82,5 +85,9 @@ class FAQDetailFragment : BaseFragmentBinding<FaqDetailBinding>(FaqDetailBinding
         if (!hidden) {
             setupToolbar()
         }
+    }
+
+    companion object {
+        const val woolworthsDomainUrl = "https://www.woolworths.co.za"
     }
 }

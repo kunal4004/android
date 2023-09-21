@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Switch;
 
@@ -18,7 +19,7 @@ import za.co.woolworths.financial.services.android.util.Utils;
 
 public class BiometricsWalkthrough extends AppCompatActivity implements View.OnClickListener, View.OnTouchListener {
 
-	public ImageView closeWindow;
+	public FrameLayout closeWindow;
 	private Switch authenticateSwitch;
 	private static final int LOCK_REQUEST_CODE_TO_ENABLE = 222;
 	private static final int SECURITY_SETTING_REQUEST_CODE = 232;
@@ -33,12 +34,10 @@ public class BiometricsWalkthrough extends AppCompatActivity implements View.OnC
 	}
 
 	public void init() {
-		closeWindow = findViewById(R.id.close);
-		authenticateSwitch = findViewById(R.id.auSwitch);
+		closeWindow = findViewById(R.id.closeWindow);
 		closeWindow.setOnClickListener(this);
+		authenticateSwitch = findViewById(R.id.auSwitch);
 		authenticateSwitch.setOnClickListener(this);
-		authenticateSwitch.setOnTouchListener(this);
-
 		// One time Biometrics walkthrough
 		this.oneTimeWalkthroughPresented();
 	}
@@ -46,7 +45,7 @@ public class BiometricsWalkthrough extends AppCompatActivity implements View.OnC
 	@Override
 	public void onClick(View view) {
 		switch (view.getId()) {
-			case R.id.close:
+			case R.id.closeWindow:
 				finishActivity();
 				break;
 			case R.id.auSwitch:

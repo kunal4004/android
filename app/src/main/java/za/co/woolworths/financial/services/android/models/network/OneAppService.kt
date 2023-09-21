@@ -733,7 +733,7 @@ open class OneAppService(
     suspend fun createNewList(listName: CreateList): retrofit2.Response<ShoppingListsResponse> =
         withContext(Dispatchers.IO){
             mApiInterface.createNewList(getSessionToken(), getDeviceIdentityToken(), listName)
-        }
+    }
 
     suspend fun getShoppingListItems(listId: String): retrofit2.Response<ShoppingListItemsResponse> {
         return withContext(Dispatchers.IO) {
@@ -861,7 +861,7 @@ open class OneAppService(
         body: OrderToShoppingListRequestBody
     ): retrofit2.Response<OrderToListReponse> = mApiInterface.addToListByOrderId(
         getSessionToken(), getDeviceIdentityToken(), orderId, body
-    )
+    ).execute()
 
     fun getOrderTaxInvoice(taxNoteNumber: String): Call<OrderTaxInvoiceResponse> {
         return mApiInterface.getTaxInvoice(
@@ -1075,7 +1075,8 @@ open class OneAppService(
                 "",
                 getSessionToken(),
                 getDeviceIdentityToken(),
-                placeId
+                placeId,
+                false
             )
         }
     }
@@ -1303,18 +1304,6 @@ open class OneAppService(
             getDeviceIdentityToken(),
             body
         )
-    }
-
-    suspend fun confirmLocation(confirmLocationRequest: ConfirmLocationRequest): retrofit2.Response<ConfirmDeliveryAddressResponse> {
-        return withContext(Dispatchers.IO) {
-            mApiInterface.confirmPlaceLocation(
-                "",
-                "",
-                getSessionToken(),
-                getDeviceIdentityToken(),
-                confirmLocationRequest
-            )
-        }
     }
 
     fun deleteAccount(): Call<DeleteAccountResponse> {

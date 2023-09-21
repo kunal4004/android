@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.models.dto.app_config
+package za.co.woolworths.financial.services.android.models.dto.app_config // ktlint-disable package-name
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
@@ -50,5 +50,5 @@ data class AppConfig(
     var ratingsAndReviews: RatingsAndReviews?,
     var glassBox: GlassBox?,
     var bnplConfig: BnplConfig?,
-    var searchApiSettings: SearchApiSettings?
+    var searchApiSettings: SearchApiSettings?,
 ) : Parcelable

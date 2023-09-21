@@ -43,6 +43,7 @@
         android:layout_marginEnd="@dimen/twenty_four_dp"
         android:theme="@style/SwitchTheme"
         app:layout_constraintEnd_toEndOf="parent"
+        android:contentDescription="@string/cd_checkout_shopping_bag_switch"
         app:layout_constraintTop_toBottomOf="@+id/viewHorizontalSeparator" />
 
     <View
@@ -86,6 +87,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@color/white"
+            android:contentDescription="@string/cd_checkout_special_instructions_switch"
             android:theme="@style/SwitchTheme" />
     </com.facebook.shimmer.ShimmerFrameLayout>
 
@@ -113,6 +115,7 @@
             android:maxLength="240"
             android:minHeight="@dimen/hundred_and_twenty_dp"
             android:padding="@dimen/ten_dp"
+            android:contentDescription="@string/cd_checkout_delivery_instruction_value"
             android:textColor="@color/black"
             android:textColorHint="@color/color_cccccc"
             android:textSize="@dimen/fourteen_sp"
@@ -188,6 +191,7 @@
             android:id="@+id/switchGiftInstructions"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:contentDescription="@string/cd_checkout_gift_switch"
             android:background="@color/white"
             android:theme="@style/SwitchTheme" />
     </com.facebook.shimmer.ShimmerFrameLayout>
@@ -221,6 +225,7 @@
             android:textColorHint="@color/color_cccccc"
             android:textSize="@dimen/fourteen_sp"
             android:visibility="gone"
+            android:contentDescription="@string/cd_checkout_gift_instruction_value"
             app:layout_constrainedWidth="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

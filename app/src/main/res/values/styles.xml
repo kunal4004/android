@@ -262,6 +262,16 @@
         <item name="android:backgroundDimEnabled">false</item>
     </style>
 
+<!--    // Fixing crash https://woolworths.atlassian.net/browse/APP1-2036-->
+    <style name="MaintenanceWebActivityStyle" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowIsTranslucent">false</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:backgroundDimEnabled">false</item>
+    </style>
+
     <style name="contact_us_item_header_textview" parent="opensans_regular_13_black">
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">wrap_content</item>
@@ -1912,8 +1922,8 @@
     </style>
 
     <style name="accountPaymentOptionIconImageViewStyle">
-        <item name="android:layout_width">@dimen/_24sdp</item>
-        <item name="android:layout_height">@dimen/_24sdp</item>
+        <item name="android:layout_width">24dp</item>
+        <item name="android:layout_height">24dp</item>
         <item name="android:contentDescription">@string/label_view_statements</item>
     </style>
 
@@ -1936,7 +1946,7 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:gravity">center</item>
         <item name="android:fontFamily">@font/opensans_semi_bold</item>
-        <item name="android:textSize">@dimen/heading6</item>
+        <item name="android:textSize">12sp</item>
         <item name="android:paddingTop">@dimen/_1sdp</item>
         <item name="android:paddingBottom">@dimen/_1sdp</item>
         <item name="android:alpha">0.7</item>

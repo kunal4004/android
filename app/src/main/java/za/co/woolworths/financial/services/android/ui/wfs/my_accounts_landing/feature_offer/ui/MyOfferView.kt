@@ -1,9 +1,10 @@
 package za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_offer.ui
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -123,20 +124,16 @@ fun OfferViewMainList(
                     OfferCards(locator, item, onClick, isLoading, brush, listOfOfferSize)
                 }
 
-                if (!viewModel.petInsuranceDidLoadOnce) {
                     AnimatedVisibility(
                         visible = item.data.isAnimationEnabled,
-                        enter = slideInHorizontally(animationSpec = tween(durationMillis = animationDurationMilis400, easing = LinearEasing)),
-                        exit = fadeOut()
+                        enter = if (!viewModel.petInsuranceDidAnimateOnce) slideInHorizontally(animationSpec = tween(durationMillis = animationDurationMilis400, easing = LinearEasing))
+                        else EnterTransition.None,
+                        exit = ExitTransition.Companion.None
                     ) {
                         OfferCards(locator, item, onClick, isLoading, brush, listOfOfferSize)
+                        viewModel.petInsuranceDidAnimateOnce = true
                     }
-                   viewModel.petInsuranceDidLoadOnce = true
-                }
 
-                if (viewModel.petInsuranceDidLoadOnce &&  item.data.isAnimationEnabled) {
-                        OfferCards(locator, item, onClick, isLoading, brush, listOfOfferSize)
-                }
             })
 
 
@@ -199,20 +196,13 @@ fun OfferViewRow(
         OfferShimmerView(brush = brush, modifier = Modifier
             .width(params.second)
             .height(params.third)
-            .testAutomationTag(
-                createLocator(box_shimmer_image, locator)
-            ))
+            .testAutomationTag(createLocator(box_shimmer_image, locator)))
     }
 
     if (!isLoading){
         ConstraintLayout(
             modifier = Modifier
-                .testAutomationTag(
-                    createLocator(
-                        sign_out_my_offers_container_constraint_layout,
-                        locator
-                    )
-                )
+                .testAutomationTag(createLocator(sign_out_my_offers_container_constraint_layout, locator))
         ) {
             val (backgroundImageRef, columnRefs) = createRefs()
             val marginStartGuideline = createGuidelineFromStart(Margin.start)
@@ -238,12 +228,7 @@ fun OfferViewRow(
 
             Column(modifier = Modifier
                 .fillMaxWidth()
-                .testAutomationTag(
-                    createLocator(
-                        sign_out_my_offers_container_constraint_layout_column,
-                        locator
-                    )
-                )
+                .testAutomationTag(createLocator(sign_out_my_offers_container_constraint_layout_column, locator))
                 .constrainAs(columnRefs) {
                     top.linkTo(marginTopGuideline)
                     start.linkTo(marginStartGuideline)
