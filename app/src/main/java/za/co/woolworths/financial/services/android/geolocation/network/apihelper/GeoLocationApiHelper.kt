@@ -20,11 +20,11 @@ class GeoLocationApiHelper @Inject constructor() : RetrofitConfig(AppContextProv
         mApiInterface.getSavedAddresses("", "", getSessionToken(), getDeviceIdentityToken()).await()
 
     suspend fun getValidateLocation(placeId: String) =
-        mApiInterface.geoValidateLocation("",
+        mApiInterface.validateLocation("",
             "",
             getSessionToken(),
             getDeviceIdentityToken(),
-            placeId).await()
+            placeId, false).await()
 
     suspend fun postConfirmLocation(confirmLocationRequest: ConfirmLocationRequest) =
         mApiInterface.confirmLocation("",
@@ -49,13 +49,6 @@ class GeoLocationApiHelper @Inject constructor() : RetrofitConfig(AppContextProv
             getDeviceIdentityToken(),
             confirmLocationRequest
         )
-
-    fun validateLocation(placeId: String) =
-        mApiInterface.validateLocation("",
-            "",
-            getSessionToken(),
-            getDeviceIdentityToken(),
-            placeId)
 
     fun isConnectedToInternet(context: Context) =
         NetworkManager.getInstance().isConnectedToNetwork(context)
