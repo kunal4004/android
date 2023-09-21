@@ -270,6 +270,7 @@ class ProductDetailsFragment :
         const val IS_BROWSING = "isBrowsing"
         const val BRAND_NAVIGATION_DETAILS = "BRAND_NAVIGATION_DETAILS"
     }
+
     private val  shoptimiserViewModel: ShopOptimiserViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -1073,8 +1074,10 @@ class ProductDetailsFragment :
 
         binding.setupBrandView()
         //Added the BNPL flag checking logic.
-        wfsShoptimiserProduct.addProductDetails(productDetails = productDetails)
-        wfsShoptimiserProduct.initWfsEmbeddedFinance()
+        wfsShoptimiserProduct.apply {
+            addProductDetails(productDetails = productDetails)
+            shoptimiserViewModel.initWfsEmbeddedFinance()
+        }
 
         if (hasSize)
             setSelectedGroupKey(defaultGroupKey)

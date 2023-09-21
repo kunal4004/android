@@ -17,6 +17,7 @@ interface IManageBnpLConfig {
  fun getWfsPaymentMethodsWithPayflex() : MutableList<WfsPaymentMethods>?
  fun isPayFlexBNPLConfigEnabled() : Boolean
  fun installmentCountValue() : Int?
+ fun getInfoDisabledFinancialProduct() : WfsPaymentMethods?
  fun formatPayFlexDescriptionWithPrice(price: String?) : AnnotatedString?
 }
 
@@ -62,6 +63,10 @@ class ManageBnplConfigImpl @Inject constructor() : IManageBnpLConfig {
   */
  override fun installmentCountValue(): Int? {
   return payFlex?.instalmentCount
+ }
+
+ override fun getInfoDisabledFinancialProduct(): WfsPaymentMethods? {
+  return bnplEmbeddedFinanceConfig?.infoDisabledFinancialProduct
  }
 
  /**

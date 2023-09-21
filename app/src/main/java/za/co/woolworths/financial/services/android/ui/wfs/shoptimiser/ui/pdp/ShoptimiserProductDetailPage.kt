@@ -14,7 +14,7 @@ import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
 import javax.inject.Inject
 
 interface ShoptimiserProductDetailPage {
-    fun initWfsEmbeddedFinance()
+    fun ShopOptimiserViewModel.initWfsEmbeddedFinance()
     fun addProductDetails(productDetails: ProductDetails)
     fun addProductDetailsToPdpVariant(productDetails: ProductDetails?)
     fun  addPrice(otherSkus : OtherSkus?)
@@ -29,16 +29,15 @@ class ShoptimiserProductDetailPageImpl @Inject constructor(
      * Initialize the Shop Optimizer embedded finance UI.
      * This function sets up the Shop Optimizer accordion widget and observes its visibility type.
      */
-    override fun initWfsEmbeddedFinance() {
+    override fun ShopOptimiserViewModel.initWfsEmbeddedFinance() {
         binding.wfsShoptimiserComposable.setContent {
             OneAppTheme {
                 // Initialize the Shop Optimizer Accordion Widget
-                shoptimiserViewModel.ShopOptimiserAccordionWidget()
+                ShopOptimiserAccordionWidget()
 
                 // Observe the visibility type and adjust the layout accordingly
-                LaunchedEffect(shoptimiserViewModel.shopOptimiserVisibleType) {
-                    shoptimiserViewModel.shopOptimiserVisibleType.collect { type ->
-                        when (type) {
+                LaunchedEffect(shopOptimiserVisibleUiType) {
+                        when (shopOptimiserVisibleUiType) {
                             ShopOptimiserVisibleUiType.ACCORDION,
                             ShopOptimiserVisibleUiType.STANDALONE -> {
                                 // Move and adjust the layout for Shop Optimizer
@@ -52,9 +51,9 @@ class ShoptimiserProductDetailPageImpl @Inject constructor(
                                 binding.wfsShoptimiserComposable.visibility = View.GONE
                                 binding.resetShopOptimiserLayout()
                             }
-                        }
                     }
                 }
+                binding.sizeColorSelectorLayout.divider1.visibility = if (isExpanded) View.GONE else View.VISIBLE
             }
         }
     }

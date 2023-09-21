@@ -32,7 +32,9 @@ fun SignedOutScreen(
     onClick: (OnAccountItemClickListener) -> Unit) {
     val listOfSignedOutItems = viewModel.listOfSignedOutItem()
     ClearBadgeCountInLogoutState()
-    viewModel.deleteShoptimiser()
+    LaunchedEffect(true) {
+        viewModel.clearShoptimiser()
+    }
     Column(
         modifier = Modifier
             .testAutomationTag(locator = sign_out_container)

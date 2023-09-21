@@ -19,6 +19,7 @@ import androidx.compose.ui.text.style.TextAlign
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.ui.wfs.component.TextOpenSansFontFamilyAnnotateString
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.extensions.findActivity
+import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.extensions.noRippleClickable
 import za.co.woolworths.financial.services.android.ui.wfs.shoptimiser.ui.component.accordion.navigateToShopOptimiserDetailWidget
 import za.co.woolworths.financial.services.android.ui.wfs.shoptimiser.ui.viewmodel.ShopOptimiserViewModel
 import za.co.woolworths.financial.services.android.ui.wfs.theme.Black
@@ -40,20 +41,17 @@ fun ShopOptimiserViewModel.ShopOptimiserPayFlexStandAloneUI() {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable(
-                    interactionSource = MutableInteractionSource(), // Remove ripple effect
-                    indication = null,
-                    onClick = {
-                        // Handle click event by setting the selected product and navigating to detail widget
-                        selectedOnDisplayProduct = standAlonePayFlexPaymentOnDisplay()
-                        navigateToShopOptimiserDetailWidget(context.findActivity())
-                    })
+                .noRippleClickable {
+                    // Handle click event by setting the selected product and navigating to detail widget
+                    selectedOnDisplayProduct = standAlonePayFlexPaymentOnDisplay()
+                    navigateToShopOptimiserDetailWidget(context.findActivity())
+                }
                 .background(Color.White)
                 .padding(
-                    top = Margin.dp16,
+                    top = Margin.noMargin,
                     start = Margin.dp24,
                     end = Margin.end,
-                    bottom = Margin.dp24
+                    bottom = Margin.noMargin
                 ),
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically
