@@ -17,5 +17,6 @@ class Constant {
         const val FOOD_ITEMS_ONLY="Food Items Only"
         const val ALL_WOOL_WORTHS_PRODUCTS_ONLY="All Woolworths Products"
         const val PARGO="pargo"
+        const val AUTO_SHOPPING_LIST_NAME = "Saved Shopping"
     }
 }

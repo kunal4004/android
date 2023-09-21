@@ -3,12 +3,12 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View.GONE
-import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.annotation.DrawableRes
+import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.awfs.coordination.R
@@ -214,15 +214,11 @@ class ManageStoreCardLandingList(
 
                         StoreCardItemActions.ACTIVATE_VIRTUAL_CARD -> addViewToViewGroup(
                             actionButton,
-                            R.drawable.icon_activate_virtual_temp_card,
-                            isAlphaEnabled = true
-                        )
+                            R.drawable.ic_replacement_card_icon)
 
                         StoreCardItemActions.CARD_REPLACEMENT -> addViewToViewGroup(
                             actionButton,
-                            R.drawable.icon_card,
-                            isAlphaEnabled = true
-                        )
+                            R.drawable.ic_replacement_card_icon)
 
                         StoreCardItemActions.PAY_WITH_CARD -> showTemporaryCardEnabled(
                             storeCard,
@@ -231,9 +227,7 @@ class ManageStoreCardLandingList(
 
                         StoreCardItemActions.HOW_IT_WORKS -> addViewToViewGroup(
                             actionButton,
-                            R.drawable.ic_how_to_pay,
-                            isAlphaEnabled = true
-                        )
+                            R.drawable.ic_how_to_pay)
 
                         else -> Unit
                     }
@@ -276,16 +270,25 @@ class ManageStoreCardLandingList(
     }
 
     @SuppressLint("InflateParams")
-    private fun addViewToViewGroup(actionButton: ActionButton, @DrawableRes drawableId : Int, isAlphaEnabled : Boolean = false) {
+    private fun addViewToViewGroup(actionButton: ActionButton, @DrawableRes drawableId : Int) {
         includeListOptions.parentLinearLayout.apply {
             val layoutInflater = LayoutInflater.from(this.context)
             val inflater = layoutInflater.inflate(R.layout.store_card_list_item, null)
             val label = actionButton.label
             val action = actionButton.action
+            val storeCardsItemLinearLayout = inflater.findViewById<LinearLayoutCompat>(R.id.storeCardsItemLinearLayout)
             val titleTextView = inflater.findViewById<TextView>(R.id.titleTextView)
             val rootLayout = inflater.findViewById<RelativeLayout>(R.id.linkNewCardRelativeLayout)
+            val arrowImageView = inflater.findViewById<ImageView>(R.id.arrowImageView)
             val logoImageView = inflater.findViewById<ImageView>(R.id.logoImageView)
             logoImageView.setImageResource(drawableId)
+
+            val keyActionButton = "_${actionButton.label?.lowercase()}"
+            storeCardsItemLinearLayout.contentDescription = "row$keyActionButton"
+            titleTextView.contentDescription = "title$keyActionButton"
+            logoImageView.contentDescription = "logo$keyActionButton"
+            arrowImageView.contentDescription = "arrow$keyActionButton"
+
             rootLayout.setOnClickListener {
                 when(action) {
                     StoreCardItemActions.LINK_STORE_CARD -> includeListOptions.linkNewCardRelativeLayout.performClick()
@@ -305,8 +308,6 @@ class ManageStoreCardLandingList(
                     else -> Unit
                 }
             }
-            if (isAlphaEnabled)
-                logoImageView.alpha = 0.7f
             titleTextView.text = label
             addView(inflater)
         }

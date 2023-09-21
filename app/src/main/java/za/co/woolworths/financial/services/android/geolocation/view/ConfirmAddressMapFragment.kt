@@ -82,6 +82,7 @@ class ConfirmAddressMapFragment :
     LocationProviderBroadcastReceiver.LocationProviderInterface,
     PoiBottomSheetDialog.ClickListener, UnIndexedAddressIdentifiedListener {
 
+    private lateinit var validateLocationResponse: ValidateLocationResponse
     private lateinit var binding: GeolocationConfirmAddressBinding
     private var mAddress: String? = null
     private var placeId: String? = null
@@ -297,7 +298,7 @@ class ConfirmAddressMapFragment :
         lifecycleScope.launch {
             binding?.progressBar?.visibility = View.VISIBLE
             try {
-                val validateLocationResponse =
+                 validateLocationResponse =
                     confirmAddressViewModel.getValidateLocation(placeId!!)
                 binding?.progressBar?.visibility = View.GONE
                 if (!isAdded || !isVisible) return@launch
@@ -424,6 +425,17 @@ class ConfirmAddressMapFragment :
                     )
                 }
             }
+            if(deliveryType==Delivery.CNC.name){
+                bundle.apply {
+                    putSerializable(
+                    BundleKeysConstants.VALIDATE_RESPONSE, validateLocationResponse)
+                }
+                findNavController().navigate(
+                    R.id.actionClickAndCollectStoresFragment,
+                    bundleOf(BUNDLE to bundle)
+                )
+                return
+            }
 
             findNavController().navigateUp() // This will land on confirmAddress fragment.
             if (findNavController().graph.startDestination != findNavController().currentDestination?.id) {
@@ -462,7 +474,7 @@ class ConfirmAddressMapFragment :
                 getString(R.string.no_location_desc),
                 getString(R.string.change_location),
                 R.drawable.img_collection_bag,
-                null
+                resources.getString(R.string.cancel_underline_html)
             )
         customBottomSheetDialogFragment.show(
             requireFragmentManager(),
@@ -750,6 +762,11 @@ class ConfirmAddressMapFragment :
     }
 
     private fun getPlaceId(latitude: Double?, longitude: Double?) {
+        // https://woolworths.atlassian.net/browse/APP1-1501
+        // Crashing on onNavigationMapArrowClicked if no network available.
+        if (connectivityLiveData.value == false) {
+            return
+        }
         val context = GeoApiContext.Builder()
             .apiKey(getString(R.string.maps_google_api_key))
             .build()

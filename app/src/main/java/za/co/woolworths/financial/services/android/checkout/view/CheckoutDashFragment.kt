@@ -19,6 +19,7 @@ import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
 import android.view.View
 import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.widget.CompoundButton
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -428,6 +429,10 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
             Delivery.DASH.type, confirmLocationAddress,
             KotlinUtils.getDeliveryType()?.storeId, "checkout"
         )
+
+        if(confirmLocationAddress.placeId?.isNullOrEmpty() == true) {
+            return
+        }
 
         isItemLimitExceeded = false
         checkoutAddAddressNewUserViewModel?.getConfirmLocationDetails(body)
@@ -879,10 +884,13 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
         binding.layoutDeliveryInstructions.edtTxtSpecialDeliveryInstruction?.addTextChangedListener(
             deliveryInstructionsTextWatcher
         )
-        binding.layoutDeliveryInstructions.edtTxtInputLayoutSpecialDeliveryInstruction?.visibility =
-            GONE
+        //Special delivery instructions by default enabled for dash delivery and for other delivery
+        // type(standard and click and collect)  by default it is disabled
+        binding.layoutDeliveryInstructions.edtTxtInputLayoutSpecialDeliveryInstruction?.visibility = VISIBLE
+        binding.layoutDeliveryInstructions.edtTxtSpecialDeliveryInstruction?.visibility = VISIBLE
+        binding.layoutDeliveryInstructions.switchSpecialDeliveryInstruction?.isChecked = true
         binding.layoutDeliveryInstructions.edtTxtInputLayoutSpecialDeliveryInstruction?.isCounterEnabled =
-            false
+            true
         deliveryInstructionClickListener(binding.layoutDeliveryInstructions.switchSpecialDeliveryInstruction.isChecked)
 
         binding.layoutDeliveryInstructions.switchSpecialDeliveryInstruction?.setOnCheckedChangeListener { _, isChecked ->
@@ -1110,7 +1118,6 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
                         }
                     }
                 )
-                activity?.finish()
             }
 
             R.id.chooseDateLayout -> {
@@ -1317,10 +1324,12 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
             putString(ErrorHandlerBottomSheetDialog.ERROR_DESCRIPTION, subTitle)
             putInt(ErrorHandlerBottomSheetDialog.ERROR_TYPE, errorType)
         }
-        view?.findNavController()?.navigate(
-            R.id.action_checkoutDashFragment_to_errorHandlerBottomSheetDialog,
-            bundle
-        )
+        if (navController?.currentDestination?.id == R.id.checkoutDashFragment) {
+            view?.findNavController()?.navigate(
+                R.id.action_checkoutDashFragment_to_errorHandlerBottomSheetDialog,
+                bundle
+            )
+        }
     }
 
     private fun setScreenClickEvents(isClickable: Boolean) {

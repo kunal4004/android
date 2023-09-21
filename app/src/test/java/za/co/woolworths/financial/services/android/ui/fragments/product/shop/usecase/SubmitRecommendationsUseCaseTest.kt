@@ -21,6 +21,7 @@ import za.co.woolworths.financial.services.android.models.network.Resource
 import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.recommendations.data.repository.RecommendationsRepository
 import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.RecommendationResponse
+import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.RecommendationRequest
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.dummydata.SubmittedOrdersResponseDummy
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.fake.RecommendationsRepositoryImplFake
@@ -149,14 +150,14 @@ class SubmitRecommendationsUseCaseTest {
     ) {
         val currency = "ZAR"
         assertEquals(recommendationRequest?.monetateId, "some-dummy-monetate-id")
-        assertEquals(recommendationRequest?.events?.size, 4)
+        assertEquals(recommendationRequest?.events?.size, 5)
 
-        val eventPageView = recommendationRequest?.events?.get(0)
+        val eventPageView = recommendationRequest?.events?.get(0) as? Event
         assertEquals(eventPageView?.eventType, "monetate:context:PageView")
         assertEquals(eventPageView?.url, "/orderDetails")
         assertEquals(eventPageView?.pageType, "purchase")
 
-        val eventPurchase = recommendationRequest?.events?.get(1)
+        val eventPurchase = recommendationRequest?.events?.get(1) as? Event
 
         assertEquals(eventPurchase?.orderId, "order-id-101")
         assertEquals(eventPurchase?.eventType, "monetate:context:Purchase")
@@ -172,7 +173,7 @@ class SubmitRecommendationsUseCaseTest {
         assertEquals(foodProduct1?.sku, "food-product-1")
         assertEquals(foodProduct1?.currency, currency)
         assertEquals(foodProduct1?.quantity, 1)
-        assertEquals(foodProduct1?.value, 15.0)
+        assertEquals(foodProduct1?.value, "15.00")
 
 
         val foodProduct2 = eventPurchase?.purchaseLines?.filter { it?.pid == "food-product-2" }?.get(0)
@@ -180,7 +181,7 @@ class SubmitRecommendationsUseCaseTest {
         assertEquals(foodProduct2?.sku, "food-product-2")
         assertEquals(foodProduct2?.currency, currency)
         assertEquals(foodProduct2?.quantity, 2)
-        assertEquals(foodProduct2?.value, 20.0)
+        assertEquals(foodProduct2?.value, "20.00")
 
 
         val otherProduct1 = eventPurchase?.purchaseLines?.filter { it?.pid == "other-product-1" }?.get(0)
@@ -188,27 +189,57 @@ class SubmitRecommendationsUseCaseTest {
         assertEquals(otherProduct1?.sku, "other-product-1")
         assertEquals(otherProduct1?.currency, currency)
         assertEquals(otherProduct1?.quantity, 1)
-        assertEquals(otherProduct1?.value, 25.0)
+        assertEquals(otherProduct1?.value, "25.00")
 
         val otherProduct2 = eventPurchase?.purchaseLines?.filter { it?.pid == "other-product-2" }?.get(0)
         assertEquals(otherProduct2?.pid, "other-product-2")
         assertEquals(otherProduct2?.sku, "other-product-2")
         assertEquals(otherProduct2?.currency, currency)
         assertEquals(otherProduct2?.quantity, 2)
-        assertEquals(otherProduct2?.value, 30.0)
+        assertEquals(otherProduct2?.value, "30.00")
 
         val shippingItem = eventPurchase?.purchaseLines?.filter { it?.pid == "SHIPPING" }?.get(0)
         assertEquals(shippingItem?.pid, "SHIPPING")
         assertEquals(shippingItem?.sku, "SHIPPING")
         assertEquals(shippingItem?.currency, currency)
         assertEquals(shippingItem?.quantity, 1)
-        assertEquals(shippingItem?.value, 200.0)
+        assertEquals(shippingItem?.value, "200.00")
 
         val discountItem = eventPurchase?.purchaseLines?.filter { it?.pid == "DISCOUNT" }?.get(0)
         assertEquals(discountItem?.pid, "DISCOUNT")
         assertEquals(discountItem?.sku, "DISCOUNT")
         assertEquals(discountItem?.currency, currency)
         assertEquals(discountItem?.quantity, 1)
-        assertEquals(discountItem?.value, 20.0)
+        assertEquals(discountItem?.value, "20.00")
     }
+
+    @Test
+    fun `get amount last two decimal with valid input`() {
+        val price = 123.456
+        val result = submitRecommendationsUseCase.getAmountOnlyLastTwoDecimal(price)
+        assertEquals("123.46", result)
+    }
+
+    @Test
+    fun `get amount last two decimal with integer input`() {
+        val price = 123
+        val result = submitRecommendationsUseCase.getAmountOnlyLastTwoDecimal(price.toDouble())
+        assertEquals("123.00", result)
+    }
+
+    @Test
+    fun `get amount last two decimal with negative input`() {
+        val price = -123.456
+        val result = submitRecommendationsUseCase.getAmountOnlyLastTwoDecimal(price)
+        assertEquals("-123.46", result)
+    }
+
+    @Test
+    fun `get amount last two decimal with zero input`() {
+        val price = 0.0
+        val result = submitRecommendationsUseCase.getAmountOnlyLastTwoDecimal(price)
+        assertEquals("0.00", result)
+    }
+
+
 }

@@ -226,7 +226,7 @@
                 android:layout_width="wrap_content"
                 android:alpha="0.8"
                 android:layout_height="wrap_content"
-                app:srcCompat="@drawable/icon_freeze_grey" />
+                app:srcCompat="@drawable/ic_temporary_freeze_card_row" />
 
             <TextView
                 style="@style/card_item_semi_bold_text_style"
@@ -271,7 +271,7 @@
                 style="@style/card_item_start_icon_style"
                 android:layout_width="@dimen/twenty_four_dp"
                 android:layout_height="@dimen/twenty_four_dp"
-                app:srcCompat="@drawable/icon_card" />
+                app:srcCompat="@drawable/ic_replacement_card_icon" />
 
             <TextView
                 style="@style/card_item_semi_bold_text_style"
@@ -295,7 +295,7 @@
                 style="@style/card_item_start_icon_style"
                 android:layout_width="@dimen/twenty_four_dp"
                 android:layout_height="@dimen/twenty_four_dp"
-                app:srcCompat="@drawable/icon_card" />
+                app:srcCompat="@drawable/ic_replacement_card_icon" />
 
             <TextView
                 style="@style/card_item_semi_bold_text_style"

@@ -18,7 +18,7 @@
             android:id="@+id/storeCardItem3ImageView"
             style="@style/accountOptionsImageviewStyle"
             android:contentDescription="@string/temporary_card_freeze_switch_button_snowflake_icon_image_on_overlay"
-            android:src="@drawable/icon_freeze_grey" />
+            android:src="@drawable/ic_temporary_freeze_card_row" />
 
         <TextView
             android:id="@+id/storeCardItem3TextView"
