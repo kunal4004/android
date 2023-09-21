@@ -4,16 +4,17 @@ import okhttp3.MultipartBody
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
-import retrofit2.http.* // ktlint-disable no-wildcard-imports
+import retrofit2.http.*
 import za.co.absa.openbankingapi.woolworths.integration.dto.PayUResponse
-import za.co.woolworths.financial.services.android.checkout.service.network.* // ktlint-disable no-wildcard-imports
+import za.co.woolworths.financial.services.android.checkout.service.network.*
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.request.SaveAddressLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
+import za.co.woolworths.financial.services.android.geolocation.network.validatestoremodel.ValidateStoreResponse
 import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
-import za.co.woolworths.financial.services.android.models.dto.* // ktlint-disable no-wildcard-imports
+import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.Response
-import za.co.woolworths.financial.services.android.models.dto.account.* // ktlint-disable no-wildcard-imports
+import za.co.woolworths.financial.services.android.models.dto.account.*
 import za.co.woolworths.financial.services.android.models.dto.bpi.BPIBody
 import za.co.woolworths.financial.services.android.models.dto.bpi.InsuranceTypeOptInBody
 import za.co.woolworths.financial.services.android.models.dto.cart.SubmittedOrderResponse
@@ -27,7 +28,7 @@ import za.co.woolworths.financial.services.android.models.dto.dash.LastOrderDeta
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.LinkDeviceBody
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.LinkedDeviceResponse
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.ViewAllLinkedDeviceResponse
-import za.co.woolworths.financial.services.android.models.dto.npc.* // ktlint-disable no-wildcard-imports
+import za.co.woolworths.financial.services.android.models.dto.npc.*
 import za.co.woolworths.financial.services.android.models.dto.otp.RetrieveOTPResponse
 import za.co.woolworths.financial.services.android.models.dto.otp.ValidateOTPRequest
 import za.co.woolworths.financial.services.android.models.dto.otp.ValidateOTPResponse
@@ -1632,6 +1633,7 @@ interface ApiInterface {
         @Header("sessionToken") sessionToken: String,
         @Header("deviceIdentityToken") deviceIdentityToken: String,
         @Query("placeId") placeId: String,
+        @Query("inventoryCheck") inventoryCheck: Boolean,
     ): Call<ValidateLocationResponse>
 
     @Headers(
@@ -1639,14 +1641,15 @@ interface ApiInterface {
         "Accept: application/json",
         "Media-Type: application/json",
     )
-    @GET("wfs/app/v4/locationItems/validateLocation")
-    fun geoValidateLocation(
+    @GET("wfs/app/v4/locationItems/validateStoreInventory")
+   suspend fun callValidateStoreInventory(
         @Header("userAgent") userAgent: String,
         @Header("userAgentVersion") userAgentVersion: String,
         @Header("sessionToken") sessionToken: String,
         @Header("deviceIdentityToken") deviceIdentityToken: String,
         @Query("placeId") placeId: String,
-    ): Call<ValidateLocationResponse>
+        @Query("storeId") storeId: String,
+    ): retrofit2.Response<ValidateStoreResponse>
 
     @Headers(
         "Content-Type: application/json",
@@ -1660,6 +1663,7 @@ interface ApiInterface {
         @Header("sessionToken") sessionToken: String,
         @Header("deviceIdentityToken") deviceIdentityToken: String,
         @Query("placeId") placeId: String,
+        @Query("inventoryCheck") inventoryCheck: Boolean,
     ): retrofit2.Response<ValidateLocationResponse>
 
     @Headers(
