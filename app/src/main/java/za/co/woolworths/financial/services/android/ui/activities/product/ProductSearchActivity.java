@@ -79,8 +79,8 @@ public class ProductSearchActivity extends AppCompatActivity
     private String dyServerId = null;
     private String dySessionId = null;
     private NetworkConfig config = null;
-    public static final String KEYWORD_SEARCH_V1 = "keyword-search-v1";
-    public static final String KEYWORD_SEARCH_EVENT_NAME = "keywordSearchV1";
+    public static final String KEYWORD_SEARCH_V1 = "OTHER";
+    public static final String KEYWORD_SEARCH_EVENT_NAME = "Keyword Search";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

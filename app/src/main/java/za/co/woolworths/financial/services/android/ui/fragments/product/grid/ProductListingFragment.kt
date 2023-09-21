@@ -312,7 +312,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
               skuIds?.add(skuData!!)
           }
        }
-        val page = Page(skuIds, PLP_SCREEN_LOCATION, CATEGORY_DY_TYPE)
+        val page = Page(breadCrumbList, PLP_SCREEN_LOCATION, CATEGORY_DY_TYPE)
         if (breadCrumbList?.isNullOrEmpty() == false) {
              pageAttributes = PageAttributes(breadCrumbList)
         } else {
@@ -320,7 +320,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
              pageAttributes = PageAttributes(breadCrumbList)
         }
 
-        val context = Context(device, page, DY_CHANNEL,pageAttributes)
+        val context = Context(device, page, DY_CHANNEL,null)
         val options = Options(true)
         val homePageRequestEvent = HomePageRequestEvent(user, session, context, options)
         dyChoosevariationViewModel?.createDyRequest(homePageRequestEvent)
