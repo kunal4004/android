@@ -261,6 +261,7 @@
     <string name= "whatsapp_number_number">whatsapp_number_number</string>
     <string name= "back_button">"back_button"</string>
 
+    <!-- Product Details - Shoptimiser   -->
     <string name="shoptimiser_chevron_up_icon">shoptimiser_chevron_up_icon</string>
     <string name="shoptimiser_parent_accordion_container_row">shoptimiser_parent_accordion_container_row</string>
     <string name="shoptimiser_parent_accordion_container_column">shoptimiser_parent_accordion_container_column</string>
