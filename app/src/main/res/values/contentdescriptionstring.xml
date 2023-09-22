@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="cli_pop_insolvency_content_desc_title">cliPopInsolvencyContentDescTitle</string>
+    <string name="cli_pop_insolvency_content_desc_desc">cliPopInsolvencyContentDescDesc</string>
+    <string name="global_button_label">globalOkButtonLabel</string>
+    <string name="cli_pop_confidential_content_desc_title">cliPopConfidentialContentDescTitle</string>
+    <string name="cli_pop_confidential_content_desc_desc">cliPopConfidentialContentDescDesc</string>
+    <string name="document_required_select_your_bank_content_desc">documentRequiredSelectYourBankContentDesc</string>
+    <string name="document_required_as_a_responsible_leader_text_content_desc">documentRequiredAsAResponsibleLeaderTextContentDesc</string>
+    <string name="eligibilityQuestion1NoButton">eligibilityQuestion1NoButton</string>
+    <string name="permissionToProceedTitle">permissionToProceedTitle</string>
+    <string name="permissionToProceedDesc">permissionToProceedDesc</string>
+    <string name="permissionToProceedYesButton">permissionToProceedYesButton</string>
+    <string name="permissionToProceedNoButton">permissionToProceedNoButton</string>
+    <string name="permissionToProceedContentLayout">permissionToProceedContentLayout</string>
+    <string name="maritalStatusHeaderText">maritalStatusLabel</string>
+    <string name="maritalStatusLabel">maritalStatusTextLabel</string>
+    <string name="maritalStatusSelectOptionDropDown">maritalStatusSelectedLabel</string>
+    <string name="maritalStatusDoneButton">maritalStatusDoneButton</string>
+    <string name="maritalStatusSelectedOptionPleaseSelect">maritalStatusSelectedOptionPleaseSelect</string>
+    <string name="maritalStatusSelectedOptionSingle">maritalStatusSelectedOptionSingle</string>
+    <string name="maritalStatusSelectedOptionMarried">maritalStatusSelectedOptionMarried</string>
+    <string name="maritalStatusSelectedOptionDivorced">maritalStatusSelectedOptionDivorced</string>
+    <string name="maritalStatusSelectedOptionWidow">maritalStatusSelectedOptionWidow</string>
+    <string name="maritalStatusSelectedCheckbox">maritalStatusAgreementCheckbox</string>
+    <string name="confirmLabelDescription">maritalStatusAgreementDesc</string>
+    <string name="confirmationButton">maritalStatusButtonNext</string>
+    <string name="maritalStatusAgreementContainer">maritalStatusAgreementContainer</string>
+
+    <string name="stepIndicatorContainer">stepIndicatorContainer</string>
+    <string name="imageViewIncome">imageViewIncome</string>
+    <string name="imageViewExpenses">imageViewExpenses</string>
+    <string name="imageViewOffer">imageViewOffer</string>
+    <string name="imageViewComplete">imageViewComplete</string>
+    <string name="incomeLabel">incomeLabel</string>
+    <string name="expenseLabel">expenseLabel</string>
+    <string name="offerLabel">offerLabel</string>
+    <string name="completeLabel">completeLabel</string>
+
+    <string name="incomeNumericText">incomeNumericText</string>
+    <string name="expenseNumericText">expenseNumericText</string>
+    <string name="offerNumericText">offerNumericText</string>
+    <string name="completeNumericText">completeNumericText</string>
+
+    <string name="supplyIncomeDetailSubTitle">supplyIncomeDetailSubTitle</string>
+    <string name="supplyIncomeDetailInfoIcon">supplyIncomeDetailInfoIcon</string>
+
+    <string name="incomeGrossMonthlyInfoTitle">incomeGrossMonthlyInfoTitle</string>
+    <string name="incomeGrossMonthlyInfoDesc">incomeGrossMonthlyInfoDesc</string>
+    <string name="netMonthlyIncomeInfoTitle">netMonthlyIncomeInfoTitle</string>
+    <string name="netMonthlyIncomeInfoDesc">netMonthlyIncomeInfoDesc</string>
+    <string name="additionalMonthlyIncomeInfoTitle">additionalMonthlyIncomeInfoTitle</string>
+    <string name="additionalMonthlyIncomeInfoDesc">additionalMonthlyIncomeInfoDesc</string>
+
+    <string name="grossMonthlyIncomeTextLabel">grossMonthlyIncomeTextLabel</string>
+    <string name="grossMonthlyIncomeField">grossMonthlyIncomeField</string>
+    <string name="netMonthlyTextLabel">netMonthlyIncomeTextLabel</string>
+    <string name="netMonthlyIncomeField">netMonthlyIncomeField</string>
+    <string name="additionalMonthlyTextLabel">additionalMonthlyIncomeTextLabel</string>
+    <string name="additionalMonthlyIncomeField">additionalMonthlyIncomeField</string>
+    <string name="incomeNextButton">incomeNextButton</string>
+
+    <string name="expensesMortgagePaymentInfoTitle">expensesMortgagePaymentInfoTitle</string>
+    <string name="expensesMortgagePaymentInfoDesc">expensesMortgagePaymentInfoDesc</string>
+    <string name="rentalPaymentsInfoTitle">rentalPaymentsInfoTitle</string>
+    <string name="rentalPaymentsInfoDesc">rentalPaymentsInfoDesc</string>
+    <string name="maintenanceExpensesInfoTitle">maintenanceExpensesInfoTitle</string>
+    <string name="maintenanceExpensesInfoDesc">maintenanceExpensesInfoDesc</string>
+    <string name="monthlyCreditPaymentsInfoTitle">monthlyCreditPaymentsInfoTitle</string>
+    <string name="monthlyCreditPaymentsInfoDesc">monthlyCreditPaymentsInfoDesc</string>
+    <string name="otherExpensesInfoTitle">otherExpensesInfoTitle</string>
+    <string name="otherExpensesInfoDesc">otherExpensesInfoDesc</string>
+
+    <string name="mortgagePaymentsTextField">mortgagePaymentsTextField</string>
+    <string name="rentalPaymentsTextField">rentalPaymentsTextField</string>
+    <string name="monthlyCreditPaymentsTextField">monthlyCreditPaymentsTextField</string>
+    <string name="otherExpensesTextField">otherExpensesTextField</string>
+    <string name="maintenanceExpensesTextField">maintenanceExpensesTextField</string>
+
+    <string name="mortgagePaymentsTextLabel">mortgagePaymentsTextLabel</string>
+    <string name="rentalPaymentsTextLabel">rentalPaymentsTextField</string>
+    <string name="maintenanceExpensesTextLabel">maintenanceExpensesTextLabel</string>
+    <string name="monthlyCreditPaymentsTextLabel">monthlyCreditPaymentsTextLabel</string>
+    <string name="otherExpensesTextLabel">otherExpensesTextLabel</string>
+    <string name="expensesNextButton">expensesNextButton</string>
+    <string name="supplyExpenseDetailIcon">supplyExpenseDetailIcon</string>
+    <string name="supplyExpenseDetailSubTitle">supplyExpenseDetailSubTitle</string>
+
+    <string name="currentCreditLimitTextLabel">currentCreditLimitTextLabel</string>
+    <string name="currentCreditLimitValueLabel">currentCreditLimitValueLabel</string>
+    <string name="additionalCreditLimitTextLabel">additionalCreditLimitTextLabel</string>
+    <string name="additionalCreditLimitValueLabel">additionalCreditLimitValueLabel</string>
+    <string name="newCreditLimitTextLabel">newCreditLimitTextLabel</string>
+    <string name="newCreditLimitValueLabel">newCreditLimitValueLabel</string>
+    <string name="acceptOfferButton">acceptOfferButton</string>
+    <string name="valueOfferSliderLabel">valueOfferSliderLabel</string>
+    <string name="calculatorGifAnimatedIcon">calculatorGifAnimatedIcon</string>
+    <string name="circularLoadingSpinner">circularLoadingSpinner</string>
+    <string name="slideAmountSeekbarSlider">slideAmountSeekbarSlider</string>
+    <string name="slideToEditAmountInfoTooltip">slideToEditAmountInfoTooltip</string>
+    <string name="offerTakeUpTo2MinutesSubtitle">offerTakeUpTo2MinutesSubtitle</string>
+    <string name="calculatingYourOfferTitle">calculatingYourOfferTitle</string>
+    <string name="currentCreditLimitLoadingIndicator">currentCreditLimitLoadingIndicator</string>
+    <string name="additionalCreditLimitLoadingIndicator">additionalCreditLimitLoadingIndicator</string>
+    <string name="newCreditLimitLoadingIndicator">newCreditLimitLoadingIndicator</string>
+    <string name="cliOverlayOfferDeclineTitle">cliOverlayOfferDeclineTitle</string>
+    <string name="cliOverlayOfferDeclineDesc">cliOverlayOfferDeclineDesc</string>
+    <string name="errorMessageText">errorMessageText</string>
+    <string name="documentRequiredListComponent">deaBankListComponent</string>
+    <string name="deaBankLoadingIndicator">deaBankLoadingIndicator</string>
+    <string name="bankTypeConfirmationLayout">bankTypeConfirmationLayout</string>
+    <string name="bankTypeConfirmationAccountTypeLabel">accountTypeLabel</string>
+    <string name="AccountTypeDescriptionLabel">accountTypeDescriptionLabel</string>
+    <string name="AccountTypeAgreementText">accountTypeAgreementText</string>
+    <string name="AccountTypeAgreementYesButton">accountTypeAgreementYesButton</string>
+    <string name="proofOfIncomeDocumentTitle">proofOfIncomeDocumentTitle</string>
+    <string name="proofOfIncomeDocumentDescription">proofOfIncomeDocumentDescription</string>
+    <string name="proofOfIncomeDocumentDescriptionParagraph1">proofOfIncomeDocumentDescriptionParagraph!</string>
+    <string name="proofOfIncomeRequirementTextTitle">proofOfIncomeRequirementTextTitle</string>
+    <string name="clearPhotoScanOfDocumentText">clearPhotoScanOfDocumentText</string>
+    <string name="nameAndAddressMustBeVisibleText">nameAndAddressMustBeVisibleText</string>
+    <string name="statementPeriodMustBeVisibleText">statementPeriodMustBeVisibleText</string>
+    <string name="cantBeOlderThan3MonthsText">cantBeOlderThan3MonthsText</string>
+    <string name="noRequiredDocumentDescText">noRequiredDocumentDescText</string>
+    <string name="submitButton">submitButton</string>
+    <string name="submitLoadingBar">submitLoadingBar</string>
+    <string name="noConnectionLayoutTitle">noConnectionLayoutTitle</string>
+    <string name="noConnectionLayoutSubTitle">noConnectionLayoutSubTitle</string>
+    <string name="wwDescriptionText">wwDescriptionText</string>
+    <string name="buttonRetry">buttonRetry</string>
+    <string name="ProcessCompleteTitle">ProcessCompleteTitle</string>
+    <string name="ProcessCompleteDesc">ProcessCompleteDesc</string>
+    <string name="backToMyAccountButton">backToMyAccountButton</string>
+    <string name="documentSentToTitle">documentSentToTitle</string>
+    <string name="emailLogoIcon">emailLogoIcon</string>
+    <string name="instructionSentToEmailDesc">instructionSentToEmailDesc</string>
+    <string name="userEmailAddressValue">userEmailAddressValue</string>
+    <string name="logoIncreaseMyLimit">logoIncreaseMyLimit</string>
+    <string name="labelCreditLimitIncreaseTitle">labelCreditLimitIncreaseTitle</string>
+    <string name="labelCreditLimitIncreaseBadgeText">labelCreditLimitIncreaseBadgeText</string>
+    <string name="imageViewIncreaseMyLimit">imageViewIncreaseMyLimit</string>
+    <string name="labelCreditLimitIncreaseItemName">imageViewIncreaseMyLimit</string>
+    <string name="nextArrowImageView">nextArrowImageView</string>
+    <string name="cliItemContainer">cliItemContainer</string>
+    <string name="labelCreditLimitIncreaseStatusDescription">labelCreditLimitIncreaseStatusDescription</string>
+    <string name="applicationBeingProcessedImage">applicationBeingProcessedImage</string>
+    <string name="manageCardDotIndicator1">manageCardDotIndicator</string>
+    <string name="manageCardDotIndicator2">manageCardDotIndicator2</string>
+
+    <!-- Voice of Customer -->
+    <string name="voc_list_questions">voc_list_questions</string>
+    <string name="voc_question_slider">voc_question_slider</string>
+    <string name="voc_question_freetext">voc_question_freetext</string>
+    <string name="voc_question_freetext_title">voc_question_freetext_title</string>
+    <string name="voc_question_freetext_input">voc_question_freetext_input</string>
+    <string name="voc_footer_action">voc_footer_action</string>
+    <string name="voc_action_submit">voc_action_submit</string>
+    <string name="voc_action_submit_label">voc_action_submit_label</string>
+    <string name="voc_action_optout">voc_action_optout</string>
+    <string name="voc_action_optout_label">voc_action_optout_label</string>
+
+    <!-- Generic Action or Cancel Dialog -->
+    <string name="dialog_confirmorcancel">dialog_confirmorcancel</string>
+    <string name="dialog_confirmorcancel_title">dialog_confirmorcancel_title</string>
+    <string name="dialog_confirmorcancel_description">dialog_confirmorcancel_description</string>
+    <string name="dialog_confirmorcancel_action_proceed">dialog_confirmorcancel_action_proceed</string>
+    <string name="dialog_confirmorcancel_action_proceed_label">dialog_confirmorcancel_action_proceed_label</string>
+    <string name="dialog_confirmorcancel_action_cancel">dialog_confirmorcancel_action_cancel</string>
+    <string name="dialog_confirmorcancel_action_cancel_label">dialog_confirmorcancel_action_cancel_label</string>
+    <string name="next_arrow">next_arrow</string>
+    <string name="failure_icon">failure_icon</string>
+
+    <string name="store_card_overlay_my_cards_text_label">store_card_overlay_my_cards_text_label</string>
+    <string name="store_card_overlay_manage_my_cards_action_button">store_card_overlay_manage_my_cards_action_button</string>
+    <string name="inactive_store_card_image_on_overlay">inactive_store_card_image_on_overlay</string>
+    <string name="inactive_store_card_image_text_label_on_overlay">inactive_store_card_image_text_label_on_overlay</string>
+    <string name="get_replacement_card_action_button_card_icon_image_on_overlay">get_replacement_card_action_button_card_icon_image_on_overlay</string>
+    <string name="get_replacement_card_action_button_directional_arrow_on_overlay">get_replacement_card_action_button_directional_arrow_on_overlay</string>
+    <string name="link_new_card_action_button_link_icon_image_on_overlay">link_new_card_action_button_link_icon_image_on_overlay</string>
+    <string name="link_new_card_action_button_text_label_on_overlay">link_new_card_action_button_text_label_on_overlay</string>
+    <string name="link_new_card_action_button_directional_arrow_on_overlay">link_new_card_action_button_directional_arrow_on_overlay</string>
+    <string name="active_store_card_image_on_overlay">active_store_card_image_on_overlay</string>
+    <string name="active_store_card_image_embossed_user_name_on_overlay">active_store_card_image_embossed_user_name_on_overlay</string>
+    <string name="temporary_card_freeze_switch_button_snowflake_icon_image_on_overlay">temporary_card_freeze_switch_button_snowflake_icon_image_on_overlay</string>
+    <string name="block_card_action_button_text_label_on_overlay">block_card_action_button_text_label_on_overlay</string>
+    <string name="block_card_action_button_directional_arrow_on_overlay">block_card_action_button_directional_arrow_on_overlay</string>
+    <string name="block_card_action_button_card_icon_image_on_overlay">block_card_action_button_card_icon_image_on_overlay</string>
+    <string name="freeze_card_upsell_card_image_text_label_on_overlay">freeze_card_upsell_card_image_text_label_on_overlay</string>
+
+    <string name="freeze_card_upsell_card_image_action_button_text_label_on_overlay">freeze_card_upsell_card_image_action_button_text_label_on_overlay</string>
+    <string name="freeze_card_upsell_card_image_action_button_on_overlay">freeze_card_upsell_card_image_action_button_on_overlay</string>
+    <string name="temporary_card_freeze_switch_button_disabled_on_overlay">temporary_card_freeze_switch_button_disabled_on_overlay</string>
+    <string name="activate_vtsc_action_button_icon_image_on_overlay">activate_vtsc_action_button_icon_image_on_overlay</string>
+    <string name="temporary_card_freeze_switch_button_icon_image_on_overlay">temporary_card_freeze_switch_button_icon_image_on_overlay</string>
+    <string name="activate_vtsc_action_button_text_label_on_overlay">activate_vtsc_action_button_text_label_on_overlay</string>
+    <string name="temporary_card_freeze_switch_button_enabled_on_overlay">temporary_card_freeze_switch_button_enabled_on_overlay</string>
+    <string name="temporary_card_freeze_switch_button_text_label_on_overlay">temporary_card_freeze_switch_button_text_label_on_overlay</string>
+    <string name="activate_vtsc_action_button_directional_arrow_on_overlay">activate_vtsc_action_button_directional_arrow_on_overlay</string>
+    <string name="activate_vtsc_upsell_card_image_on_overlay">activate_vtsc_upsell_card_image_on_overlay</string>
+    <string name="activate_vtsc_upsell_card_image_text_label_on_overlay">activate_vtsc_upsell_card_image_text_label_on_overlay</string>
+    <string name="activate_vtsc_upsell_card_image_action_button_text_label_on_overlay">activate_vtsc_upsell_card_image_action_button_text_label_on_overlay</string>
+    <string name="activate_vtsc_upsell_card_image_action_button_on_overlay">activate_vtsc_upsell_card_image_action_button_on_overlay</string>
+    <string name="active_vtsc_card_image_temp_card_label_text_on_overlay">active_vtsc_card_image_temp_card_label_text_on_overlay</string>
+    <string name="active_vtsc_card_image_embossed_name_label_text_on_overlay">active_vtsc_card_image_embossed_name_label_text_on_overlay</string>
+    <string name="pay_with_card_vtsc_action_button_card_icon_image_on_overlay">pay_with_card_vtsc_action_button_card_icon_image_on_overlay</string>
+    <string name="pay_with_card_vtsc_action_button_text_label_on_overlay">pay_with_card_vtsc_action_button_text_label_on_overlay</string>
+    <string name="pay_with_card_vtsc_action_button_directional_arrow_on_overlay">pay_with_card_vtsc_action_button_directional_arrow_on_overlay</string>
+    <string name="how_it_works_vtsc_action_button_document_icon_image_on_overlay">how_it_works_vtsc_action_button_document_icon_image_on_overlay</string>
+    <string name="how_it_works_vtsc_action_button_text_label_on_overlay">how_it_works_vtsc_action_button_text_label_on_overlay</string>
+    <string name="how_it_works_vtsc_action_button_directional_arrow_on_overlay">how_it_works_vtsc_action_button_directional_arrow_on_overlay</string>
+    <string name="frozen_store_card_image_on_overlay">frozen_store_card_image_on_overlay</string>
+    <string name="page_dot_indicator_for_active_temp_store_card_on_overlay">page_dot_indicator_for_active_temp_store_card_on_overlay</string>
+    <string name="page_dot_indicator_for_primary_store_card_on_overlay">page_dot_indicator_for_primary_store_card_on_overlay</string>
+    <string name="active_temp_store_card_overlay_image">active_temp_store_card_overlay_image</string>
+    <string name="active_temp_store_card_label_for_overlay_image">active_temp_store_card_label_for_overlay_image</string>
+    <string name="embossed_user_name_for_active_temp_store_card_on_overlay_image">embossed_user_name_for_active_temp_store_card_on_overlay_image</string>
+    <string name="active_vtsc_card_image_on_overlay">active_vtsc_card_image_on_overlay</string>
+    <string name="button_my_card_has_arrived">button_my_card_has_arrived</string>
+    <string name="active_store_card_image_on_overlay_new_card">active_store_card_image_on_overlay_new_card</string>
+
+    <!-- Common id's -->
+    <string name="title">title</string>
+    <string name="subtitle">subtitle</string>
+    <string name="text">text</string>
+    <string name="button">button</string>
+    <string name="nextArrow">next_arrow</string>
+    <string name="description">description</string>
+    <string name="image_icon">image_icon</string>
+    <string name="checkBox">checkbox</string>
+    <string name="toolbarText">toolbar_text</string>
+    <string name="send_button">send_button</string>
+
+    <!-- Unique Ids for contact us-->
+    <string name="name_text">name_text</string>
+    <string name="name_input_field">name_input_field</string>
+    <string name="email_address_text">email_address_text</string>
+    <string name="email_address_input_field">email_address_input_field</string>
+    <string name="email_address_description">email_address_description</string>
+    <string name="enquiry_type_text">enquiry_type_text</string>
+    <string name="enquiry_type_dropdown">enquiry_type_dropdown</string>
+    <string name="message_text">message_text</string>
+    <string name="message_input_field">message_input_field</string>
+    <string name="enquiry_successfully_sent_image_icon">enquiry_successfully_sent_image_icon</string>
+    <string name="enquiry_successfully_sent_title_text">enquiry_successfully_sent_title_text</string>
+    <string name="enquiry_successfully_sent_description">enquiry_successfully_sent_description</string>
+    <string name="got_it_button">got_it_button</string>
+    <string name="toolbar_text">toolbar_text</string>
+
+    <string name="chat_to_us_on_whatsapp_image">chat_to_us_on_whatsapp_image</string>
+    <string name="chat_to_us_on_title_text">chat_to_us_on_title_text</string>
+    <string name="chat_to_us_on_whatsapp_description">chat_to_us_on_whatsapp_description</string>
+    <string name="how_to_pay_your_woolies_account_image_icon">how_to_pay_your_woolies_account_image_icon</string>
+    <string name="how_to_pay_your_woolies_account_image_desc">how_to_pay_your_woolies_account_image_desc</string>
+    <string name="unable_to_pay_woolies_account_image_icon">unable_to_pay_woolies_account_image_icon</string>
+    <string name="unable_to_pay_woolies_account_image_desc">unable_to_pay_woolies_account_image_desc</string>
+    <string name="payment_not_reflecting_image_icon">payment_not_reflecting_image_icon</string>
+    <string name="payment_not_reflecting_desc">payment_not_reflecting_desc</string>
+    <string name="chat_to_us_now_button">chat_to_us_now_button</string>
+    <string name="whatsapp_number_image_icon">whatsapp_number_image_icon</string>
+    <string name="whatsapp_number_text">whatsapp_number_text</string>
+    <string name="whatsapp_number_number">whatsapp_number_number</string>
+    <string name="back_button">back_button</string>
+    <string name="shoptimiser_chevron_up_icon">shoptimiser_chevron_up_icon</string>
+    <string name="shoptimiser_parent_accordion_container_row">shoptimiser_parent_accordion_container_row</string>
+    <string name="shoptimiser_parent_accordion_container_column">shoptimiser_parent_accordion_container_column</string>
+    <string name="shoptimiser_parent_accordion_title_text">shoptimiser_parent_accordion_title_text</string>
+    <string name="shoptimiser_parent_accordion_subtitle_text">shoptimiser_parent_accordion_subtitle_text</string>
+    <string name="shoptimiser_child_accordion_column">shoptimiser_child_accordion_column</string>
+    <string name="shoptimiser_child_accordion_row">shoptimiser_child_accordion_row</string>
+    <string name="shoptimiser_child_accordion_icon">shoptimiser_child_accordion_icon_%1s</string>
+    <string name="shoptimiser_child_accordion_text">shoptimiser_child_accordion_text_%1s</string>
+    <string name="shoptimiser_child_accordion_currency_text">shoptimiser_child_accordion_currency_text_%1s</string>
+    <string name="shoptimiser_child_accordion_image">shoptimiser_child_accordion_image</string>
+
+    <!-- Delivery Address Fulfillment   -->
+    <string name="cd_fulfillment_delivery_icon">fulfillmentDeliveryIcon</string>
+    <string name="cd_fulfillment_earliest_food_delivery_date_value">fulfillmentEarliestFoodDeliveryDate</string>
+    <string name="cd_fulfillment_earliest_fashion_delivery_date_value">fulfillmentEarliestFashionDeliveryDate</string>
+    <string name="cd_fulfillment_earliest_delivery_date_value">fulfillmentEarliestDeliveryDate</string>
+    <string name="cd_fulfillment_location_icon">fulfillmentLocationIcon</string>
+    <string name="cd_fulfillment_delivery_location_text">fulfillmentDeliveryLocationText</string>
+    <string name="cd_progress_bar">progressBar</string>
+    <string name="cd_navigate_back">navigateBack</string>
+
+    <!-- Location Selection     -->
+    <string name="cd_enable_current_location_switch">enableCurrentLocationSwitch</string>
+    <string name="cd_btn_radio_selection">btnRadioSelection</string>
+    <string name="cd_address_nickname">addressNicknameLabel</string>
+    <string name="cd_address_value">addressValueLabel</string>
+    <string name="cd_edit_address_icon">editAddressIcon</string>
+
+    <!-- Delivery Details   -->
+    <string name="cd_delivery_details_suburb_value">deliveryDetailsSuburbValue</string>
+    <string name="cd_delivery_details_street_address_value">deliveryDetailsStreetAddressValue</string>
+    <string name="cd_delivery_details_province_value">deliveryDetailsProvinceValue</string>
+    <string name="cd_delivery_details_address_nickname_value">deliveryDetailsAddressNicknameValue</string>
+    <string name="cd_delivery_details_additional_location_details_value">deliveryDetailsAdditionalLocationDetailsValue</string>
+    <string name="cd_delivery_details_recipient_name_value">deliveryDetailsRecipientNameValue</string>
+    <string name="cd_delivery_details_vehicle_color_value">deliveryDetailsVehicleColorValue</string>
+    <string name="cd_delivery_details_vehicle_model_value">deliveryDetailsVehicleModelValue</string>
+    <string name="cd_delivery_details_vehicle_registration_value">deliveryDetailsVehicleRegistrationValue</string>
+
+    <!-- Unsellable Popup    -->
+    <string name="cd_unsellable_product_name_label">unsellableProductNameLabel</string>
+    <string name="cd_unsellable_product_price_label">unsellableProductPriceLabel</string>
+    <string name="cd_unsellable_product_quantity_label">unsellableProductQuantityLabel</string>
+
+    <!-- Checkout   -->
+    <string name="cd_checkout_delivery_address">checkoutDeliveryAddressLabel</string>
+    <string name="cd_checkout_user_profile_icon">checkoutUserProfileIcon</string>
+    <string name="cd_checkout_user_name">checkoutUserName</string>
+    <string name="cd_checkout_user_mobile_number">checkoutUserMobileNumber</string>
+    <string name="cd_checkout_order_total_value">checkoutOrderTotalValueLabel</string>
+    <string name="cd_checkout_shopping_bag_switch">checkoutShoppingBagSwitch</string>
+    <string name="cd_checkout_special_instructions_switch">checkoutSpecialInstructionsSwitch</string>
+    <string name="cd_checkout_gift_switch">checkoutGiftSwitch</string>
+    <string name="cd_checkout_gift_instruction_value">checkoutGiftInstructionsText</string>
+    <string name="cd_checkout_delivery_instruction_value">checkoutSpecialDeliveryInstructionsText</string>
+
+</resources>
