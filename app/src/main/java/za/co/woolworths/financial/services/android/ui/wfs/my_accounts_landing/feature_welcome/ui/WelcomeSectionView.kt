@@ -1,16 +1,24 @@
 package za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_welcome.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import za.co.woolworths.financial.services.android.ui.wfs.component.*
+import za.co.woolworths.financial.services.android.ui.wfs.component.MyIcon
+import za.co.woolworths.financial.services.android.ui.wfs.component.ShimmerIconWithRoundedCorner
+import za.co.woolworths.financial.services.android.ui.wfs.component.ShimmerLabelWithRoundedCorner
+import za.co.woolworths.financial.services.android.ui.wfs.component.SpacerHeight24dp
+import za.co.woolworths.financial.services.android.ui.wfs.component.TextOpenSansFamilyBoldH1
+import za.co.woolworths.financial.services.android.ui.wfs.component.TextOpenSansMediumH3
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.analytics.AutomationTestScreenLocator.Locator.welcome_section_child_column
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.analytics.AutomationTestScreenLocator.Locator.welcome_section_child_row
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.analytics.AutomationTestScreenLocator.Locator.welcome_section_child_row_box
@@ -24,21 +32,22 @@ import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.ex
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.schema.OnAccountItemClickListener
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.schema.RefreshAccountItem
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.viewmodel.UserAccountLandingViewModel
-import za.co.woolworths.financial.services.android.ui.wfs.theme.*
+import za.co.woolworths.financial.services.android.ui.wfs.theme.FontDimensions
+import za.co.woolworths.financial.services.android.ui.wfs.theme.Margin
+import za.co.woolworths.financial.services.android.ui.wfs.theme.Shimmer
+import za.co.woolworths.financial.services.android.ui.wfs.theme.TextLightSilver
 
 @Composable
 fun WelcomeSectionView(
     viewModel: UserAccountLandingViewModel,
-    brush: Brush?,
     icon: Int,
     isLoadingInProgress: Boolean,
     isRotating: Boolean,
     isRotatingState: (Boolean) -> Unit,
     onClick: (OnAccountItemClickListener) -> Unit
 ) {
-    brush ?: return
-
-    val rotation = rotationAnimation()
+//    val rotation = rotationAnimation()
+    val rotation = 1.0f
     val greetings = stringResource(id = viewModel.getUsernameAndGreeting().greeting)
 
     Column(
@@ -57,7 +66,6 @@ fun WelcomeSectionView(
 
             if (isLoadingInProgress) {
                 ShimmerLabelWithRoundedCorner(
-                    brush = brush,
                     width = Shimmer.point35F,
                     height = Shimmer.sevenDp
                 )
@@ -76,7 +84,6 @@ fun WelcomeSectionView(
             NameAndRefreshButtonView(
                 viewModel,
                 isLoadingInProgress,
-                brush,
                 isRotating,
                 rotation,
                 isRotatingState,
@@ -95,7 +102,6 @@ fun WelcomeSectionView(
 private fun NameAndRefreshButtonView(
     viewModel: UserAccountLandingViewModel,
     isLoadingInProgress: Boolean,
-    brush: Brush,
     isRotating: Boolean,
     rotation: Float, isRotatingState: (Boolean) -> Unit,
     onClick: (OnAccountItemClickListener) -> Unit,
@@ -116,7 +122,6 @@ private fun NameAndRefreshButtonView(
                     .weight(1f)
             ) {
                 ShimmerLabelWithRoundedCorner(
-                    brush = brush,
                     width = Shimmer.pointFiveFiveF,
                     height = Shimmer.tenDp
                 )
@@ -148,7 +153,7 @@ private fun NameAndRefreshButtonView(
         }
 
         if (isLoadingInProgress) {
-            ShimmerIconWithRoundedCorner(brush = brush)
+            ShimmerIconWithRoundedCorner()
         }
     }
 }
