@@ -200,7 +200,6 @@
     <string name="activate_vtsc_upsell_card_image_text_label_on_overlay">activate_vtsc_upsell_card_image_text_label_on_overlay</string>
     <string name="activate_vtsc_upsell_card_image_action_button_text_label_on_overlay">activate_vtsc_upsell_card_image_action_button_text_label_on_overlay</string>
     <string name="activate_vtsc_upsell_card_image_action_button_on_overlay">activate_vtsc_upsell_card_image_action_button_on_overlay</string>
-
     <string name="active_vtsc_card_image_temp_card_label_text_on_overlay">active_vtsc_card_image_temp_card_label_text_on_overlay</string>
     <string name="active_vtsc_card_image_embossed_name_label_text_on_overlay">active_vtsc_card_image_embossed_name_label_text_on_overlay</string>
     <string name="pay_with_card_vtsc_action_button_card_icon_image_on_overlay">pay_with_card_vtsc_action_button_card_icon_image_on_overlay</string>
@@ -246,6 +245,7 @@
     <string name="enquiry_successfully_sent_description">enquiry_successfully_sent_description</string>
     <string name="got_it_button">got_it_button</string>
     <string name="toolbar_text">toolbar_text</string>
+
     <string name= "chat_to_us_on_whatsapp_image">chat_to_us_on_whatsapp_image</string>
     <string name= "chat_to_us_on_title_text">chat_to_us_on_title_text</string>
     <string name= "chat_to_us_on_whatsapp_description">chat_to_us_on_whatsapp_description</string>
@@ -260,6 +260,18 @@
     <string name= "whatsapp_number_text">whatsapp_number_text</string>
     <string name= "whatsapp_number_number">whatsapp_number_number</string>
     <string name= "back_button">"back_button"</string>
+
+    <string name="shoptimiser_chevron_up_icon">shoptimiser_chevron_up_icon</string>
+    <string name="shoptimiser_parent_accordion_container_row">shoptimiser_parent_accordion_container_row</string>
+    <string name="shoptimiser_parent_accordion_container_column">shoptimiser_parent_accordion_container_column</string>
+    <string name="shoptimiser_parent_accordion_title_text">shoptimiser_parent_accordion_title_text</string>
+    <string name="shoptimiser_parent_accordion_subtitle_text">shoptimiser_parent_accordion_subtitle_text</string>
+    <string name="shoptimiser_child_accordion_column">shoptimiser_child_accordion_column</string>
+    <string name="shoptimiser_child_accordion_row">shoptimiser_child_accordion_row</string>
+    <string name="shoptimiser_child_accordion_icon">shoptimiser_child_accordion_icon_%1s</string>
+    <string name="shoptimiser_child_accordion_text">shoptimiser_child_accordion_text_%1s</string>
+    <string name="shoptimiser_child_accordion_currency_text">shoptimiser_child_accordion_currency_text_%1s</string>
+    <string name="shoptimiser_child_accordion_image">shoptimiser_child_accordion_image</string>
 
     <!-- Delivery Address Fulfillment   -->
     <string name="cd_fulfillment_delivery_icon">fulfillmentDeliveryIcon</string>
