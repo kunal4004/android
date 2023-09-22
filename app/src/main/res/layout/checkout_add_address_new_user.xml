@@ -31,8 +31,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/sixteen_dp"
                 android:src="@drawable/back24"
+                android:contentDescription="@string/cd_navigate_back"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="@id/left_guideline" />
+
             <TextView
                 android:id="@+id/whereWeDeliveringTitle"
                 style="@style/futura_semi_bold_black"
@@ -64,6 +66,7 @@
                 android:drawablePadding="@dimen/eight_dp"
                 android:hint="@string/places_autocomplete_tv_hint"
                 android:maxLines="1"
+                android:contentDescription="@string/cd_delivery_details_street_address_value"
                 app:layout_constraintEnd_toEndOf="@id/right_guideline"
                 app:layout_constraintStart_toStartOf="@id/left_guideline"
                 app:layout_constraintTop_toBottomOf="@id/streetAddressPlaceHolder" />
@@ -129,6 +132,7 @@
                 android:layout_marginTop="@dimen/_4sdp"
                 android:background="@drawable/input_box_inactive_bg"
                 android:enabled="false"
+                android:contentDescription="@string/cd_delivery_details_suburb_value"
                 app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
                 app:layout_constraintRight_toRightOf="@+id/right_guideline"
                 app:layout_constraintTop_toBottomOf="@id/suburbPlaceHolder" />
@@ -149,6 +153,7 @@
                 android:layout_marginTop="@dimen/_4sdp"
                 android:background="@drawable/input_box_inactive_bg"
                 android:enabled="false"
+                android:contentDescription="@string/cd_delivery_details_province_value"
                 app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
                 app:layout_constraintRight_toRightOf="@+id/right_guideline"
                 app:layout_constraintTop_toBottomOf="@id/provincePlaceHolder" />

@@ -13,7 +13,7 @@ class EventTest {
             pageType = "EmptyCart",
             categories = arrayListOf("food"),
             products = arrayListOf(ProductX(productId = "123456")),
-            cartLines = arrayListOf(CartProducts(pid = "654321", currency = "ZAR", sku = "abcd", value = 1.2)),
+            cartLines = arrayListOf(CartProducts(pid = "654321", currency = "ZAR", sku = "abcd", value = "1.20")),
             orderId = "orderId",
             purchaseLines = emptyList(),
             userAgent = "deviceUserAgent",

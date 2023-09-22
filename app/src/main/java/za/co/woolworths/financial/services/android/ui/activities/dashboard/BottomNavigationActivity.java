@@ -498,6 +498,10 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         setToolbarTitle(title);
     }
 
+    public  void  setToolbarContentDescription(String description) {
+        getToolbarTitle().setContentDescription(description);
+    }
+
     @Override
     public void setTitle(String title, int color) {
         setToolbarTitle(title, color);
@@ -1347,7 +1351,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 return;
             }
             CartFragment cartFragment = (CartFragment) mNavController.getCurrentFrag();
-            cartFragment.reloadFragment();
+            cartFragment.reloadFragment(true);
         }
     }
 

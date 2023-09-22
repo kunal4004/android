@@ -2576,7 +2576,7 @@
     <string name="hint_street_address_dash">Home • 28 Eastlake Island Drive</string>
     <string name="continue_browsing">CONTINUE BROWSING</string>
 
-    <string name="change_your_delivery_method_title">You’re About To Change Your Delivery Method</string>
+    <string name="change_your_delivery_method_title">You’re About To Change Your\n Delivery Method</string>
     <string name="change_your_delivery_method_standard">By adding this item to your cart, you will checkout using <b><font color='#000000'>Standard Delivery</font></b> instead.</string>
     <string name="change_your_delivery_method_dash">By adding this item to your cart, you will checkout using <b><font color='#000000'>Dash Delivery</font></b> instead.</string>
     <string name="change_your_delivery_method_cnc">By adding this item to your cart, you will checkout using <b><font color='#000000'>Click &amp; Collect.</font></b> instead.</string>
@@ -2586,18 +2586,18 @@
     <string name="remove_items_standard_dialog_title">This Item Isn’t Available Using Standard Delivery.\n Save It To A Shopping List Instead.</string>
 
     <plurals name="remove_items_dash_dialog_title">
-        <item quantity="one">This Item Isn’t Available Using Dash Delivery.\n Save It To A Shopping List Instead.</item>
-        <item quantity="other">These Items Aren’t Available Using Dash Delivery.\n Save It To A Shopping List Instead.</item>
+        <item quantity="one">This item can’t be delivered to your chosen address.\n Save it to a shopping list instead.</item>
+        <item quantity="other">These items can’t be delivered to your chosen address.\n Save it to a shopping list instead.</item>
     </plurals>
 
     <plurals name="remove_items_standard_dialog_title">
-        <item quantity="one">This Item Isn’t Available Using Standard Delivery.\n Save It To A Shopping List Instead.</item>
-        <item quantity="other">These Items Aren’t Available Using Standard Delivery.\n Save It To A Shopping List Instead.</item>
+        <item quantity="one">This item can’t be delivered to your chosen address.\n Save it to a shopping list instead.</item>
+        <item quantity="other">These items can’t be delivered to your chosen address.\n Save it to a shopping list instead.</item>
     </plurals>
 
     <plurals name="remove_items_cnc_dialog_title">
-        <item quantity="one">This Item Isn’t Available Using Click &amp; Collect.\n Save It To A Shopping List Instead.</item>
-        <item quantity="other">These Items Aren’t Available Using Click &amp; Collect.\n Save It To A Shopping List Instead.</item>
+        <item quantity="one">This item can’t be collected from the chosen location.\n Save it to a shopping list instead.</item>
+        <item quantity="other">These items can’t be collected from the chosen location.\n Save it to a shopping list instead.</item>
     </plurals>
 
     <string name="unsellable_subtitle">The following will be removed from your cart.</string>
@@ -3075,5 +3075,12 @@
     <string name="add_to_list_failure">Failed to add to list. Please try again later.</string>
     <string name="hint_list_name">List Name</string>
     <string name="create_list_name_error">Unfortunately, this list name already exists.\nPlease try another option.</string>
+
+    <string name="something_went_wrong">Something went wrong</string>
+    <string name="location_error_msg">We are unable to access your location details.Please try again later.</string>
+
+    <string name="add_your_favourite_Food_items_to_your_shopping_lists">Add Your Favourite Food Items To Your Shopping Lists</string>
+    <string name="create_custom_shopping_lists_for_quick_access">Create custom shopping lists for quick access.</string>
     <string name="enter_valid_sa_number">Enter a valid 10 digit SA number(e.g 0xxxxxxxxx)</string>
+
 </resources>
