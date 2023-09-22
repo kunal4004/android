@@ -44,6 +44,7 @@ object AppConfigSingleton {
 
     var absaBankingOpenApiServices: ConfigAbsaBankingOpenApiServices? = null
     var quickShopDefaultValues: ConfigQuickShopDefaultValues? = null
+    var connectOnline: ConnectOnline? = null
     var instantCardReplacement: ConfigInstantCardReplacement? = null
     var virtualTempCard: ConfigVirtualTempCard? = null
     var whitelistedDomainsForQRScanner: ArrayList<String>? = null
@@ -124,6 +125,7 @@ object AppConfigSingleton {
             mPayMyAccount = appConfig.payMyAccount
 
             quickShopDefaultValues = appConfig.quickShopDefaultValues
+            connectOnline = appConfig.connectOnline
             whitelistedDomainsForQRScanner = appConfig.whitelistedDomainsForQRScanner
             stsValues = appConfig.sts
             applyNowLink = appConfig.applyNowLinks
