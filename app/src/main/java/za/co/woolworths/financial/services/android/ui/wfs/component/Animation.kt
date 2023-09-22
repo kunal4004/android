@@ -4,11 +4,10 @@ import androidx.compose.animation.core.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 
-
 @Composable
 fun rotationAnimation(): Float {
     val transition = rememberInfiniteTransition()
-    return transition.animateValue(
+    val animatedValue = transition.animateValue(
         0f,
         1f,
         Float.VectorConverter,
@@ -18,8 +17,10 @@ fun rotationAnimation(): Float {
                 easing = LinearEasing
             )
         )
-    ).value * 360
+    )
+    return animatedValue.value * 360
 }
+
 
 @Composable
 fun animateAlpha(isAnimating : Boolean): Float {
