@@ -158,6 +158,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     private var activityResultLauncher: ActivityResultLauncher<Intent>? = null
     private var isFromBottomNavigation: Boolean = false
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupToolbar()
@@ -1990,7 +1991,8 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                     itemLimitsBanner,
                     itemLimitsMessage,
                     itemLimitsCounter,
-                    showBanner = (getPreferredDeliveryType() === Delivery.CNC || getPreferredDeliveryType() === Delivery.DASH)
+                    showBanner = (KotlinUtils.isDeliveryOptionClickAndCollect() ||
+                            (KotlinUtils.isDeliveryOptionDash() && productCountMap?.totalProductCount?: 0 > CartUtils.THRESHOLD_FOR_DASH_CART_LIMIT_BANNER))
                 )
             }
         }
