@@ -2,9 +2,13 @@ package za.co.woolworths.financial.services.android.repository.shop
 
 import android.location.Location
 import com.awfs.coordination.R
+import com.google.firebase.crashlytics.ktx.crashlytics
+import com.google.firebase.crashlytics.ktx.setCustomKeys
+import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
 import com.google.gson.JsonParseException
 import com.google.gson.JsonSyntaxException
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse
@@ -188,6 +192,10 @@ class MainShopRepository : ShopRepository {
                         LastOrderDetailsResponse::class.java)
                 } catch (jsonException: JsonParseException) {
                     FirebaseManager.logException(jsonException)
+                    Firebase.crashlytics.setCustomKeys {
+                        key(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.ExceptionResponse, response?.errorBody()?.charStream().toString())
+                        key(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.ExceptionMessage, "Unable to parse LastOrderDetailsResponse class")
+                    }
                 }
                 Resource.error(R.string.error_unknown, errorResponse)
             }

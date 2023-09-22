@@ -837,6 +837,10 @@ class CheckoutAddAddressReturningUserFragment :
         val confirmLocationAddress =
             ConfirmLocationAddress(defaultAddress?.placesId, defaultAddress?.nickname)
 
+        if (confirmLocationAddress.placeId?.isNullOrEmpty() == true) {
+            return
+        }
+
         val body =
             ConfirmLocationRequest(Delivery.STANDARD.name, confirmLocationAddress, "", "checkout")
 
@@ -1065,7 +1069,6 @@ class CheckoutAddAddressReturningUserFragment :
                         }
                     }
                 )
-                activity?.finish()
             }
 
             R.id.txtContinueToPayment -> {

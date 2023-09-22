@@ -17,6 +17,7 @@
     <string name="next">NEXT</string>
     <string name="cancel" tools:ignore="ButtonCase">CANCEL</string>
     <string name="cancel_underline" tools:ignore="ButtonCase"><u>CANCEL</u></string>
+    <string name="cancel_underline_html"><![CDATA[<u>CANCEL</u>]]> </string>
     <string name="submit">SUBMIT</string>
     <string name="valid_from">VALID FROM</string>
     <string name="valid_until">VALID UNTIL</string>
@@ -487,7 +488,6 @@
     <string name="new_list">new list</string>
     <string name="shopping_search_hint">Add Items To Your List</string>
     <string name="total_item">Total*</string>
-    <string name="rlOtherDiscounts"><![CDATA[WRewards Savings & Other Discounts]]></string>
     <string name="out_of_stock">out of stock</string>
     <string name="promotional_text">You Saved </string>
     <string name="labelPromotionOne">labelPromotionOne</string>
@@ -512,7 +512,6 @@
     <string name="favourite_delivery_location_description">In order to improve your shopping experience you can set your favourite delivery location. We will use this as your default delivery location.</string>
     <string name="product_unavailable_desc">Sorry, this product is unavailable in your delivery location</string>
     <string name="delivering_to">Delivering to</string>
-    <string name="delivering_to_geo"> <![CDATA[Delivering to <font color=\'#000000\'><b>%s</b></font>]]></string>
     <string name="delivering_location_popup_message">Your Delivery Location must match your Delivery Address in Checkout. Changing your Delivery Location can affect the product availability of items in your cart.</string>
     <string name="confirm_size_range_desc">size range</string>
     <string name="set_up_device_biometrics_title">BIOMETRICS&#47;PIN</string>
@@ -2140,7 +2139,6 @@
     <string name="woolies_chat_active">Chat is currently active</string>
 
     <string name="shop_liquor_in_our_app">Shop Liquor</string>
-    <string name="delivery_liquor_description"><![CDATA[Liquor is not available for Click & Collect.]]></string>
 
     <string name="balance_protection_insurance_claim_form">Balance Protection Insurance Claim Form</string>
 
@@ -2578,27 +2576,28 @@
     <string name="hint_street_address_dash">Home • 28 Eastlake Island Drive</string>
     <string name="continue_browsing">CONTINUE BROWSING</string>
 
-    <string name="change_your_delivery_method_title">You’re About To Change Your Delivery Method</string>
+    <string name="change_your_delivery_method_title">You’re About To Change Your\n Delivery Method</string>
     <string name="change_your_delivery_method_standard">By adding this item to your cart, you will checkout using <b><font color='#000000'>Standard Delivery</font></b> instead.</string>
     <string name="change_your_delivery_method_dash">By adding this item to your cart, you will checkout using <b><font color='#000000'>Dash Delivery</font></b> instead.</string>
     <string name="change_your_delivery_method_cnc">By adding this item to your cart, you will checkout using <b><font color='#000000'>Click &amp; Collect.</font></b> instead.</string>
     <string name="continue_with_standard_delivery">CONTINUE WITH STANDARD DELIVERY</string>
     <string name="continue_with_cnc_delivery">CONTINUE WITH Click &amp; Collect</string>
     <string name="continue_with_dash_delivery">CONTINUE WITH DASH DELIVERY</string>
+    <string name="remove_items_standard_dialog_title">This Item Isn’t Available Using Standard Delivery.\n Save It To A Shopping List Instead.</string>
 
     <plurals name="remove_items_dash_dialog_title">
-        <item quantity="one">This item isn’t available using Dash Delivery. Save it to a shopping list instead.</item>
-        <item quantity="other">These items aren’t available using Dash Delivery. Save it to a shopping list instead.</item>
+        <item quantity="one">This item can’t be delivered to your chosen address.\n Save it to a shopping list instead.</item>
+        <item quantity="other">These items can’t be delivered to your chosen address.\n Save it to a shopping list instead.</item>
     </plurals>
 
     <plurals name="remove_items_standard_dialog_title">
-        <item quantity="one">This item isn’t available using Standard Delivery. Save it to a shopping list instead.</item>
-        <item quantity="other">These items aren’t available using Standard Delivery. Save it to a shopping list instead.</item>
+        <item quantity="one">This item can’t be delivered to your chosen address.\n Save it to a shopping list instead.</item>
+        <item quantity="other">These items can’t be delivered to your chosen address.\n Save it to a shopping list instead.</item>
     </plurals>
 
     <plurals name="remove_items_cnc_dialog_title">
-        <item quantity="one">This item isn’t available using Click &amp; Collect. Save it to a shopping list instead.</item>
-        <item quantity="other">These items aren’t available using Click &amp; Collect. Save it to a shopping list instead.</item>
+        <item quantity="one">This item can’t be collected from the chosen location.\n Save it to a shopping list instead.</item>
+        <item quantity="other">These items can’t be collected from the chosen location.\n Save it to a shopping list instead.</item>
     </plurals>
 
     <string name="unsellable_subtitle">The following will be removed from your cart.</string>
@@ -2689,7 +2688,7 @@
     <string name="send">SEND</string>
     <string name="email_us_name">Name: *</string>
     <string name="email_us_email">Email Address: *</string>
-    <string name="email_us_email_validation">Please ensure that the email address is correct</string>
+    <string name="email_us_email_validation">Please ensure that this email address is correct.</string>
     <string name="email_us_enquiry">Enquiry Type: *</string>
     <string name="email_us_message">Message: *</string>
     <string name="sending_enquiry">Sending Enquiry</string>
@@ -2994,7 +2993,7 @@
     <string name="my_products_cant_load_product">Can\'t Load Balance</string>
     <string name="application_status">Application Status</string>
 
-    <string name="only_fashion_beauty_and_home_products_available_text" >Only Fashion, Beauty and Home products available.</string>
+    <string name="only_fashion_beauty_and_home_products_available_text">Only Fashion, Beauty and Home products available.</string>
     <string name="cnc_title_text_2">Limited shop of %1$s food items.</string>
 
     <string name="recommendations_title">Recommended</string>
@@ -3064,7 +3063,7 @@
 
     <string name="add_to_list_progress_title">Adding Your Items\n to %s</string>
     <string name="add_to_list_progress_bar_title">Adding Your Items\n to a List</string>
-    <string name="add_to_list_bottom_sheet_success_title">We\’ve added your items to the ‘Saved Shopping’ List</string>
+    <string name="add_to_list_bottom_sheet_success_title">We\’ve Added Your Items To The ‘Saved Shopping’ List</string>
     <string name="add_to_list_bottom_sheet_success_sub_title">You will be able to add them to your cart from there.</string>
 
     <string name="add_to_list_error_description">The items were unable to be added to a list.</string>
@@ -3076,4 +3075,8 @@
     <string name="add_to_list_failure">Failed to add to list. Please try again later.</string>
     <string name="hint_list_name">List Name</string>
     <string name="create_list_name_error">Unfortunately, this list name already exists.\nPlease try another option.</string>
+
+    <string name="something_went_wrong">Something went wrong</string>
+    <string name="location_error_msg">We are unable to access your location details.Please try again later.</string>
+
 </resources>

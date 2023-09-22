@@ -14,6 +14,7 @@
         android:layout_marginTop="@dimen/sixteen_dp"
         android:layout_marginEnd="@dimen/sixteen_dp"
         android:src="@drawable/back24"
+        android:contentDescription="@string/cd_navigate_back"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
