@@ -89,6 +89,8 @@ import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyt
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.logException
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.setCrashlyticsString
+import za.co.woolworths.financial.services.android.util.analytics.dto.AddToWishListFirebaseEventData
+import za.co.woolworths.financial.services.android.util.analytics.dto.AnalyticProductItem
 import za.co.woolworths.financial.services.android.util.analytics.dto.ScreenViewEventData
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.net.ConnectException
@@ -100,10 +102,13 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
     GridNavigator,
     IProductListing, View.OnClickListener, SortOptionsAdapter.OnSortOptionSelected,
     WMaterialShowcaseView.IWalkthroughActionListener,
-    IOnConfirmDeliveryLocationActionListener, ChanelNavigationClickListener {
+    IOnConfirmDeliveryLocationActionListener, ChanelNavigationClickListener,
+    ProductListingAdapter.OnTapIcon {
 
+    private lateinit var mAddToListProduct: ProductList
     private var state: Parcelable? = null
     private var LOGIN_REQUEST_SUBURB_CHANGE = 1419
+    private val SSO_REQUEST_ADD_TO_SHOPPING_LIST = 1420
     private var lastVisibleItem: Int = 0
     internal var totalItemCount: Int = 0
 
@@ -732,6 +737,12 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
     }
 
     override fun bindRecyclerViewWithUI(productLists: MutableList<ProductList>) {
+        if(!AppInstanceObject.get().featureWalkThrough.plp_add_to_list) {
+            PLPAddToListInfoBottomSheetDialog().show(
+                parentFragmentManager,
+                AppConstant.TAG_ADD_TO_LIST_PLP
+            )
+        }
         mProductList?.clear()
         mProductList = ArrayList()
         mProductList = productLists
@@ -751,7 +762,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
                 mBannerLabel,
                 mBannerImage,
                 mIsComingFromBLP,
-                mPromotionalCopy
+                mPromotionalCopy,
+                this@ProductListingFragment
             )
         }
         val mRecyclerViewLayoutManager: GridLayoutManager?
@@ -787,7 +799,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
                     mBannerLabel,
                     mBannerImage,
                     mIsComingFromBLP,
-                    mPromotionalCopy
+                    mPromotionalCopy,
+                    this@ProductListingFragment
                 )
             }
         binding.productsRecyclerView.apply {
@@ -1198,6 +1211,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
                 } else if (resultCode == RESULT_OK) {
                     AppConfigSingleton.isProductItemForLiquorInventoryPending = true
                 }
+            }
+            SSO_REQUEST_ADD_TO_SHOPPING_LIST ->{
+                addItemToShoppingList(mAddToListProduct)
+                activity?.apply { ScreenManager.presentBiometricWalkthrough(this) }
             }
             BundleKeysConstants.REQUEST_CODE -> {
                 updateToolbarTitle()
@@ -2021,6 +2038,65 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
                     arguments?.getBoolean(EXTRA_SEND_DELIVERY_DETAILS_PARAMS, false),
                     isChanelPage
                 )
+            )
+        }
+    }
+
+    override fun onAddToListClicked(productList: ProductList) {
+        addItemToShoppingList(productList)
+    }
+
+    private fun addItemToShoppingList(productList: ProductList) {
+        activity?.apply {
+            Utils.triggerFireBaseEvents(
+                FirebaseManagerAnalyticsProperties.SHOPADDTOLIST,
+                this
+            )
+        }
+        mAddToListProduct = productList
+        if (!SessionUtilities.getInstance().isUserAuthenticated) {
+            ScreenManager.presentSSOSigninActivity(
+                activity,
+                SSO_REQUEST_ADD_TO_SHOPPING_LIST,
+                isUserBrowsing
+            )
+        } else {
+            val woolworthsApplication = WoolworthsApplication.getInstance()
+            if (woolworthsApplication != null) {
+                woolworthsApplication.wGlobalState.selectedSKUId = null
+            }
+            Utils.triggerFireBaseEvents(
+                FirebaseManagerAnalyticsProperties.MYCARTADDTOLIST,
+                activity
+            )
+            val addToListRequests = ArrayList<AddToListRequest>()
+            val listItem = AddToListRequest().apply {
+                catalogRefId = productList.sku
+                skuID = productList.sku
+                giftListId = productList.sku
+                quantity = "1"
+            }
+            addToListRequests.add(listItem)
+            val analyticProductItemList = ArrayList<AnalyticProductItem>()
+            val analyticProductItem = AnalyticProductItem(
+                itemId = productList.productId,
+                itemName = productList.productName,
+                itemBrand = productList.brandText,
+                itemVariant = productList.productVariants,
+                category = mSubCategoryName,
+                quantity = 1,
+                price = productList.price?.toDouble(),
+                affiliation = FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE,
+                index = FirebaseManagerAnalyticsProperties.PropertyValues.INDEX_VALUE.toInt()
+            )
+            analyticProductItemList.add(analyticProductItem)
+            val addToWishListEventData =
+                AddToWishListFirebaseEventData(products = analyticProductItemList)
+            KotlinUtils.openAddToListPopup(
+                requireActivity(),
+                requireActivity().supportFragmentManager,
+                addToListRequests,
+                eventData = addToWishListEventData
             )
         }
     }
