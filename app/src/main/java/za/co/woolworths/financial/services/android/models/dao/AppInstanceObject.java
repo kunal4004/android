@@ -159,6 +159,7 @@ public class AppInstanceObject {
         public boolean my_lists;
         public boolean pargo_store;
         public boolean new_fbh_cnc;
+        public boolean plp_add_to_list;
 
     }
 

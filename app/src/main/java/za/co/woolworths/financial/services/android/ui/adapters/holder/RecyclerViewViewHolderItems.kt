@@ -31,6 +31,7 @@ class RecyclerViewViewHolderItems(val itemBinding: ProductListingPageRowBinding)
             priceItem.setPrice(productList, itemBinding.includeProductListingPriceLayout)
             setProductVariant(this)
             quickShopAddToCartSwitch(this)
+            quickAddToListSwitch(this)
             setOnClickListener(navigator, this)
         }
     }
@@ -168,6 +169,16 @@ class RecyclerViewViewHolderItems(val itemBinding: ProductListingPageRowBinding)
             root.context?.apply {
                 productList?.apply {
                     includeProductListingPriceLayout.imQuickShopAddToCartIcon?.visibility = if (productType.equals(getString(R.string.food_product_type), ignoreCase = true)) VISIBLE else GONE
+                }
+            }
+        }
+    }
+
+    private fun quickAddToListSwitch(productList: ProductList) {
+        itemBinding.apply {
+            root.context?.apply {
+                productList?.apply {
+                    imAddToList?.visibility = if (productType.equals(getString(R.string.food_product_type), ignoreCase = true)) VISIBLE else GONE
                 }
             }
         }
