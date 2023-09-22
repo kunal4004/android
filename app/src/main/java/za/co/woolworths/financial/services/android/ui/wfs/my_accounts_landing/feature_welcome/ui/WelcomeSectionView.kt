@@ -19,6 +19,7 @@ import za.co.woolworths.financial.services.android.ui.wfs.component.ShimmerLabel
 import za.co.woolworths.financial.services.android.ui.wfs.component.SpacerHeight24dp
 import za.co.woolworths.financial.services.android.ui.wfs.component.TextOpenSansFamilyBoldH1
 import za.co.woolworths.financial.services.android.ui.wfs.component.TextOpenSansMediumH3
+import za.co.woolworths.financial.services.android.ui.wfs.component.rotationAnimation
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.analytics.AutomationTestScreenLocator.Locator.welcome_section_child_column
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.analytics.AutomationTestScreenLocator.Locator.welcome_section_child_row
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.analytics.AutomationTestScreenLocator.Locator.welcome_section_child_row_box
@@ -46,8 +47,7 @@ fun WelcomeSectionView(
     isRotatingState: (Boolean) -> Unit,
     onClick: (OnAccountItemClickListener) -> Unit
 ) {
-//    val rotation = rotationAnimation()
-    val rotation = 1.0f
+    val rotation = rotationAnimation()
     val greetings = stringResource(id = viewModel.getUsernameAndGreeting().greeting)
 
     Column(
