@@ -23,7 +23,6 @@ data class AppConfig(
     var absaBankingOpenApiServices: ConfigAbsaBankingOpenApiServices?,
     var payMyAccount: ConfigPayMyAccount?,
     var quickShopDefaultValues: ConfigQuickShopDefaultValues?,
-    var connectOnline: ConnectOnline?,
     var instantCardReplacement: ConfigInstantCardReplacement?,
     var virtualTempCard: ConfigVirtualTempCard?,
     var applyNowLinks: ConfigApplyNowLinks?,

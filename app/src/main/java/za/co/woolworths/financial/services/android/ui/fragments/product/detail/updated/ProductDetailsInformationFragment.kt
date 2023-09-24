@@ -62,7 +62,7 @@ class ProductDetailsInformationFragment : BaseFragmentBinding<FragmentProdcutDet
                     "font-family:'opensans_regular';}" +
                     "</style>" +
                     "</head>")
-            val html = "<b> Please Note: This item may only be returned at a Woolies store with a <a href=${AppConfigSingleton.connectOnline?.connectOnlineCounterUrl}>Connect Counter</a></ul>. Find your nearest Connect Counter <a href=${AppConfigSingleton.connectOnline?.connectOnlineCounterUrl}>here.</a><br/></b>"
+            val html = "<b>Please Note: This item may only be returned at a Woolies store with a <a href=${AppConfigSingleton.connectOnline?.connectOnlineCounterUrl}>Connect Counter</a></ul>. Find your nearest Connect Counter <a href=${AppConfigSingleton.connectOnline?.connectOnlineCounterUrl}>here.</a><br/></b>"
             val digitalNote = if(productType == AppConstant.PRODUCT_TYPE_DIGITAL) html else ""
             var descriptionWithoutExtraTag = ""
             if (!TextUtils.isEmpty(description)) {

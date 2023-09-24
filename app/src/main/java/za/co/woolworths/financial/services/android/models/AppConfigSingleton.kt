@@ -44,7 +44,6 @@ object AppConfigSingleton {
 
     var absaBankingOpenApiServices: ConfigAbsaBankingOpenApiServices? = null
     var quickShopDefaultValues: ConfigQuickShopDefaultValues? = null
-    var connectOnline: ConnectOnline? = null
     var instantCardReplacement: ConfigInstantCardReplacement? = null
     var virtualTempCard: ConfigVirtualTempCard? = null
     var whitelistedDomainsForQRScanner: ArrayList<String>? = null
