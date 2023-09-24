@@ -77,6 +77,7 @@ object AppConfigSingleton {
     var searchApiSettings: SearchApiSettings? = null
     var glassBox: GlassBox? = null
     var bnplConfig: BnplConfig? = null
+    var connectOnline: ConnectOnline? = null
 
     init {
         initialiseFromCache()
@@ -254,6 +255,9 @@ object AppConfigSingleton {
             }
             appConfig.searchApiSettings?.apply {
                 searchApiSettings = this
+            }
+            appConfig.connectOnline?.apply {
+                connectOnline = this
             }
         }
     }

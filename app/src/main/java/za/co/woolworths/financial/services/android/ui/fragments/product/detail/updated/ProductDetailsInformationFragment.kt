@@ -1,21 +1,30 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.View
+import android.webkit.WebResourceRequest
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentProdcutDetailsInformationBinding
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
+import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
+
 
 class ProductDetailsInformationFragment : BaseFragmentBinding<FragmentProdcutDetailsInformationBinding>(FragmentProdcutDetailsInformationBinding::inflate) {
     var description: String = ""
     var productCode: String = ""
+    var productType: String = ""
 
     companion object {
-        fun newInstance(description: String?, productCode: String?) = ProductDetailsInformationFragment().withArgs {
+        fun newInstance(description: String?, productCode: String?,productType:String?) = ProductDetailsInformationFragment().withArgs {
             putString("DESCRIPTION", description)
             putString("PRODUCT_CODE", productCode)
+            putString("PRODUCT_TYPE",productType)
         }
 
     }
@@ -26,6 +35,7 @@ class ProductDetailsInformationFragment : BaseFragmentBinding<FragmentProdcutDet
         arguments?.apply {
             description = getString("DESCRIPTION", "")
             productCode = getString("PRODUCT_CODE", "")
+            productType = getString("PRODUCT_TYPE", "")
         }
     }
 
@@ -52,7 +62,8 @@ class ProductDetailsInformationFragment : BaseFragmentBinding<FragmentProdcutDet
                     "font-family:'opensans_regular';}" +
                     "</style>" +
                     "</head>")
-
+            val html = "<b> Please Note: This item may only be returned at a Woolies store with a <a href=${AppConfigSingleton.connectOnline?.connectOnlineCounterUrl}>Connect Counter</a></ul>. Find your nearest Connect Counter <a href=${AppConfigSingleton.connectOnline?.connectOnlineCounterUrl}>here.</a><br/></b>"
+            val digitalNote = if(productType == AppConstant.PRODUCT_TYPE_DIGITAL) html else ""
             var descriptionWithoutExtraTag = ""
             if (!TextUtils.isEmpty(description)) {
                 descriptionWithoutExtraTag = description.replace("</ul>\n\n<ul>\n".toRegex(), " ")
@@ -63,11 +74,24 @@ class ProductDetailsInformationFragment : BaseFragmentBinding<FragmentProdcutDet
             val htmlData = ("<!DOCTYPE html><html>"
                     + head
                     + "<body>"
+                    + digitalNote
                     + descriptionWithoutExtraTag
                     + "</body></html>")
 
             binding.webDescription.loadDataWithBaseURL("file:///android_res/drawable/",
                     htmlData, "text/html; charset=UTF-8", "UTF-8", null)
+            binding.webDescription.settings.javaScriptEnabled = true
+            binding.webDescription.settings.javaScriptCanOpenWindowsAutomatically = true;
+            binding.webDescription.webViewClient = object : WebViewClient() {
+                override fun shouldOverrideUrlLoading(
+                    view: WebView,
+                    request: WebResourceRequest
+                ): Boolean {
+                    val intent = Intent(Intent.ACTION_VIEW, request.url)
+                    view.context.startActivity(intent)
+                    return false
+                }
+            }
         }
     }
 
