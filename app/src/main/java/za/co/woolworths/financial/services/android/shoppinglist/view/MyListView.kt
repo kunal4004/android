@@ -21,16 +21,6 @@ fun MyListView(
 ) {
     Box(modifier = modifier) {
         MyListScreen(
-            onEvent = {
-                when (it) {
-                    is MyLIstUIEvents.CreateListClick -> onEvent(
-                        MyLIstUIEvents.CreateListClick
-                    )
-
-                    else -> {
-                    }
-                }
-            },
             onCreateNewList = {
                 onEvent(MyLIstUIEvents.CreateListClick)
             },
@@ -40,7 +30,6 @@ fun MyListView(
 
 @Composable
 fun MyListScreen(
-    onEvent: (event: MyLIstUIEvents) -> Unit,
     onCreateNewList: () -> Unit,
 ) {
     Column(

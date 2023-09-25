@@ -40,7 +40,7 @@ fun AppToolBar(
                 .padding(horizontal = 22.dp)
                 .size(24.dp)
                 .clickable {
-                    onClick(ToolbarEvents.BackPressed)
+                    onClick(ToolbarEvents.OnBackPressed)
                 }
         )
         Text(
