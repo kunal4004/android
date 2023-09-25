@@ -44,7 +44,6 @@ object AppConfigSingleton {
 
     var absaBankingOpenApiServices: ConfigAbsaBankingOpenApiServices? = null
     var quickShopDefaultValues: ConfigQuickShopDefaultValues? = null
-    var connectOnline: ConnectOnline? = null
     var instantCardReplacement: ConfigInstantCardReplacement? = null
     var virtualTempCard: ConfigVirtualTempCard? = null
     var whitelistedDomainsForQRScanner: ArrayList<String>? = null
@@ -78,6 +77,7 @@ object AppConfigSingleton {
     var searchApiSettings: SearchApiSettings? = null
     var glassBox: GlassBox? = null
     var bnplConfig: BnplConfig? = null
+    var connectOnline: ConnectOnline? = null
 
     init {
         initialiseFromCache()
@@ -256,6 +256,9 @@ object AppConfigSingleton {
             }
             appConfig.searchApiSettings?.apply {
                 searchApiSettings = this
+            }
+            appConfig.connectOnline?.apply {
+                connectOnline = this
             }
         }
     }

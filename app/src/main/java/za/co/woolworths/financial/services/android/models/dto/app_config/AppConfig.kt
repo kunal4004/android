@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.models.dto.app_config // ktl
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
+import za.co.woolworths.financial.services.android.models.ConnectOnline
 import za.co.woolworths.financial.services.android.models.SearchApiSettings
 import za.co.woolworths.financial.services.android.models.dto.RatingsAndReviews
 import za.co.woolworths.financial.services.android.models.dto.app_config.account_options.ConfigAccountOptions
@@ -22,7 +23,6 @@ data class AppConfig(
     var absaBankingOpenApiServices: ConfigAbsaBankingOpenApiServices?,
     var payMyAccount: ConfigPayMyAccount?,
     var quickShopDefaultValues: ConfigQuickShopDefaultValues?,
-    var connectOnline: ConnectOnline?,
     var instantCardReplacement: ConfigInstantCardReplacement?,
     var virtualTempCard: ConfigVirtualTempCard?,
     var applyNowLinks: ConfigApplyNowLinks?,
@@ -52,4 +52,5 @@ data class AppConfig(
     var glassBox: GlassBox?,
     var bnplConfig: BnplConfig?,
     var searchApiSettings: SearchApiSettings?,
+    var connectOnline: ConnectOnline?
 ) : Parcelable

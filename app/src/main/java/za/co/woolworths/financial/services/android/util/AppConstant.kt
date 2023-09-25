@@ -141,6 +141,9 @@ class AppConstant {
 
         //Payflex info html
         const val PAYFLEX_POP_UP_URL = "https://widgets.payflex.co.za/how_to.html?"
+
+        //connect online
+        const val PRODUCT_TYPE_DIGITAL = "DIGITAL"
     }
 
     class Keys {

@@ -1423,8 +1423,24 @@ class ProductDetailsFragment :
                     }
                 }
                 if (!it.freeGiftText.isNullOrEmpty()) {
-                    freeGiftWithPurchaseLayout.freeGiftText.text = it.freeGiftText
-                    freeGiftWithPurchaseLayout.root.visibility = View.VISIBLE
+                    if(it.productType==AppConstant.PRODUCT_TYPE_DIGITAL && !it.network.isNullOrEmpty()){
+                        freeSimOnlineConnectLayout.freeSimTitle.text = getString(R.string.free_sim_with_purchase,it.network)
+                        freeSimOnlineConnectLayout.freeSimDesc.text = it.freeGiftText
+                        freeSimOnlineConnectLayout.root.visibility = View.VISIBLE
+                        freeSimOnlineConnectLayout.downArrow.setOnClickListener {
+                            if(freeSimOnlineConnectLayout.freeSimDesc.visibility == View.VISIBLE) {
+                                freeSimOnlineConnectLayout.freeSimDesc.visibility = View.GONE
+                                freeSimOnlineConnectLayout.downArrow.rotation = 0.0f
+                            }else{
+                                freeSimOnlineConnectLayout.freeSimDesc.visibility = View.VISIBLE
+                                freeSimOnlineConnectLayout.downArrow.rotation = 180.0f
+                            }
+                        }
+                    }
+                    else {
+                        freeGiftWithPurchaseLayout.freeGiftText.text = it.freeGiftText
+                        freeGiftWithPurchaseLayout.root.visibility = View.VISIBLE
+                    }
                 }
                 if (productDetails?.promotionsList?.isEmpty() == false) {
                     productDetails?.promotionsList?.forEachIndexed { i, it ->
