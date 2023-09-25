@@ -1181,6 +1181,9 @@ public class Utils {
             case NEW_FBH_CNC:
                 appInstanceObject.featureWalkThrough.new_fbh_cnc = true;
                 break;
+            case PLP_ADD_TO_LIST:
+                appInstanceObject.featureWalkThrough.plp_add_to_list = true;
+                break;
             default:
                 break;
         }
