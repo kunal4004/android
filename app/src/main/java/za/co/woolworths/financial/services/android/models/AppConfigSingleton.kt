@@ -76,8 +76,7 @@ object AppConfigSingleton {
     var searchApiSettings: SearchApiSettings? = null
     var glassBox: GlassBox? = null
     var bnplConfig: BnplConfig? = null
-    var glassBox : GlassBox? = null
-    var bnplConfig : BnplConfig? = null
+
     @JvmStatic
     var dynamicYieldConfig : DynamicYieldConfig? = null
 

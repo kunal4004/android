@@ -52,6 +52,5 @@ data class AppConfig(
     var glassBox: GlassBox?,
     var bnplConfig: BnplConfig?,
     var searchApiSettings: SearchApiSettings?,
-    var bnplConfig: BnplConfig?,
     var dynamicYieldConfig: DynamicYieldConfig?
 ) : Parcelable
