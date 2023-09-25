@@ -42,7 +42,6 @@
     <string name="set_your_delivery_location">Set your Delivery Location</string>
     <string name="sign_out">Sign Out</string>
     <string name="brands">Brands</string>
-    <string name="sim_label">+ Free Vodacom Sim</string>
     <string name="why_we_need_location_services">WHY WE NEED LOCATION SERVICES</string>
     <string name="location_off_message">We use location services to show you stock at your nearest store, and delivery slots in your area.</string>
     <string name="go_to_settings">ENABLE LOCATION SERVICES</string>
@@ -866,7 +865,6 @@
     <string name="absa_general_error_title">Oops something went wrong</string>
     <string name="link_reward_account">link account</string>
     <string name="food_product_type">foodProducts</string>
-    <string name="digital_product_type">digitalProducts</string>
     <string name="select_your_quantity">Select Your Quantity</string>
     <string name="no_stock_available">No Stock Available Online</string>
     <string name="no_stock_available_desc">Try our find-in-store feature, or change the details around your delivery or collection method, to see if stock is available at another Woolies store near you.</string>
@@ -3077,13 +3075,14 @@
     <string name="add_to_list_failure">Failed to add to list. Please try again later.</string>
     <string name="hint_list_name">List Name</string>
     <string name="create_list_name_error">Unfortunately, this list name already exists.\nPlease try another option.</string>
-    <string name="free_sim_with_purchase">Free %S Sim with Purchase</string>
-
-
 
     <string name="something_went_wrong">Something went wrong</string>
     <string name="location_error_msg">We are unable to access your location details.Please try again later.</string>
 
     <string name="add_your_favourite_Food_items_to_your_shopping_lists">Add Your Favourite Food Items To Your Shopping Lists</string>
     <string name="create_custom_shopping_lists_for_quick_access">Create custom shopping lists for quick access.</string>
+
+    <string name="sim_label">+ Free Vodacom Sim</string>
+    <string name="free_sim_with_purchase">Free %S Sim with Purchase</string>
+    <string name="digital_product_type">digitalProducts</string>
 </resources>
