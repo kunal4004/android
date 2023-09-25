@@ -57,6 +57,7 @@ import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.fe
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_welcome.logic.UserInformationTransformer
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_welcome.logic.UserInformationTransformerImpl
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
+import za.co.woolworths.financial.services.android.util.Utils
 import javax.inject.Inject
 
 @HiltViewModel
@@ -102,19 +103,21 @@ class UserAccountLandingViewModel @Inject constructor(
     var isAutoReconnectActivated: Boolean = false
 
     private var _mapOfFinalProductItems = mutableMapOf<String, AccountProductCardsGroup?>()
-    val mapOfFinalProductItems: MutableMap<String, AccountProductCardsGroup?> = _mapOfFinalProductItems
+    val mapOfFinalProductItems: MutableMap<String, AccountProductCardsGroup?> =
+        _mapOfFinalProductItems
 
     private val _fetchPetInsuranceState = MutableStateFlow(NetworkStatusUI<PetInsuranceModel>())
     val fetchPetInsuranceState = _fetchPetInsuranceState.asStateFlow()
 
     val onActivityForResultClicked by lazy { MutableLiveData<AccountProductCardsGroup?>() }
-    val errorResponse by lazy { MutableLiveData<ServerErrorResponse?>()}
+    val errorResponse by lazy { MutableLiveData<ServerErrorResponse?>() }
     val mapOfMyOffers: MutableMap<AccountOfferKeys, CommonItem.OfferItem?> = _mapOfMyOffers
 
     private val _messageState = MutableStateFlow(NetworkStatusUI<MessageResponse>())
     val messageState = _messageState.asStateFlow()
 
-    private val _scheduleDeliveryNetworkState = MutableStateFlow(NetworkStatusUI<CreditCardDeliveryStatusResponse>())
+    private val _scheduleDeliveryNetworkState =
+        MutableStateFlow(NetworkStatusUI<CreditCardDeliveryStatusResponse>())
     val scheduleDeliveryNetworkState = _scheduleDeliveryNetworkState.asStateFlow()
 
     private val _isDeeplinkParamsAvailable = MutableStateFlow(false)
@@ -128,7 +131,8 @@ class UserAccountLandingViewModel @Inject constructor(
     private val _getAllUserAccounts = MutableStateFlow(NetworkStatusUI<UserAccountResponse>())
     val getAllUserAccounts = _getAllUserAccounts.asStateFlow()
 
-    private val _getUserAccountsByProductOfferingId = MutableStateFlow(NetworkStatusUI<UserAccountResponse>())
+    private val _getUserAccountsByProductOfferingId =
+        MutableStateFlow(NetworkStatusUI<UserAccountResponse>())
     val getUserAccountsByProductOfferingId = _getUserAccountsByProductOfferingId.asStateFlow()
 
 
@@ -184,8 +188,8 @@ class UserAccountLandingViewModel @Inject constructor(
     fun getApplyNowState(accountNumberBin: String?) = product.getApplyNowState(accountNumberBin)
 
     private fun constructMapOfMyOffers() {
-        val listOfOffers
-        = offerUseCase.constructMapOfMyOffers(_mapOfFinalProductItems, _fetchPetInsuranceState)
+        val listOfOffers =
+            offerUseCase.constructMapOfMyOffers(_mapOfFinalProductItems, _fetchPetInsuranceState)
         clearMyOffersMap()
         mapOfMyOffers.putAll(listOfOffers)
     }
@@ -224,18 +228,24 @@ class UserAccountLandingViewModel @Inject constructor(
             if (productDetails == null) {
                 when (product) {
                     is AccountProductCardsGroup.BlackCreditCard ->
-                        product.retryOptions = product.retryOptions.copy(isRetryButtonEnabled = true)
+                        product.retryOptions =
+                            product.retryOptions.copy(isRetryButtonEnabled = true)
 
                     is AccountProductCardsGroup.GoldCreditCard ->
-                        product.retryOptions = product.retryOptions.copy(isRetryButtonEnabled = true)
+                        product.retryOptions =
+                            product.retryOptions.copy(isRetryButtonEnabled = true)
 
                     is AccountProductCardsGroup.PersonalLoan ->
-                        product.retryOptions = product.retryOptions.copy(isRetryButtonEnabled = true)
+                        product.retryOptions =
+                            product.retryOptions.copy(isRetryButtonEnabled = true)
+
                     is AccountProductCardsGroup.SilverCreditCard ->
-                        product.retryOptions = product.retryOptions.copy(isRetryButtonEnabled = true)
+                        product.retryOptions =
+                            product.retryOptions.copy(isRetryButtonEnabled = true)
 
                     is AccountProductCardsGroup.StoreCard ->
-                        product.retryOptions = product.retryOptions.copy(isRetryButtonEnabled = true)
+                        product.retryOptions =
+                            product.retryOptions.copy(isRetryButtonEnabled = true)
 
                     else -> Unit
                 }
@@ -262,12 +272,13 @@ class UserAccountLandingViewModel @Inject constructor(
     }
 
     private fun clearProductMap() {
-      _mapOfFinalProductItems.clear()
+        _mapOfFinalProductItems.clear()
     }
 
-    private fun clearMyOffersMap(){
+    private fun clearMyOffersMap() {
         _mapOfMyOffers.clear()
     }
+
     fun onStopLoadingGetAccountCall() {
         isAccountRefreshingTriggered = false
         isAutoReconnectActivated = false
@@ -438,7 +449,8 @@ class UserAccountLandingViewModel @Inject constructor(
 
     fun handlePetInsurancePendingCoveredNotCoveredUI(
         petModel: PetInsuranceModel,
-        petAwarenessModelNotCovered: (InsuranceProducts) -> Unit) {
+        petAwarenessModelNotCovered: (InsuranceProducts) -> Unit
+    ) {
         // Determine whether Pet insurance model is displayed in product section
         product.setPetInsuranceResult(
             userAccountResponse = userAccountResponse,
@@ -465,7 +477,8 @@ class UserAccountLandingViewModel @Inject constructor(
         petInsuranceResponse?.let { handlePetInsurancePendingCoveredNotCoveredUI(petModel = it) {} }
     }
 
-    fun isPetInsuranceNotCovered() = product.getInsuranceProduct(petInsuranceResponse)?.statusType() == CoveredStatus.NOT_COVERED
+    fun isPetInsuranceNotCovered() =
+        product.getInsuranceProduct(petInsuranceResponse)?.statusType() == CoveredStatus.NOT_COVERED
 
     fun removeProductFromProductsMap() {
         listOf(
@@ -484,4 +497,11 @@ class UserAccountLandingViewModel @Inject constructor(
             }
         }
     }
+
+    fun clearShoptimiser() {
+        viewModelScope.launch {
+            Utils.removeFromDb(SessionDao.KEY.SHOP_OPTIMISER_SQLITE_MODEL)
+        }
+    }
+
 }

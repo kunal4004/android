@@ -38,7 +38,6 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.ProductDetailsFragmentBinding
 import com.awfs.coordination.databinding.PromotionalImageBinding
-import com.bumptech.glide.util.Util
 import com.facebook.FacebookSdk.getApplicationContext
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.gson.Gson
@@ -130,6 +129,9 @@ import za.co.woolworths.financial.services.android.ui.vto.ui.gallery.ImageResult
 import za.co.woolworths.financial.services.android.ui.vto.utils.PermissionUtil
 import za.co.woolworths.financial.services.android.ui.vto.utils.SdkUtility
 import za.co.woolworths.financial.services.android.ui.vto.utils.VirtualTryOnUtil
+import za.co.woolworths.financial.services.android.ui.wfs.shoptimiser.ui.pdp.ShoptimiserProductDetailPage
+import za.co.woolworths.financial.services.android.ui.wfs.shoptimiser.ui.pdp.ShoptimiserProductDetailPageImpl
+import za.co.woolworths.financial.services.android.ui.wfs.shoptimiser.ui.viewmodel.ShopOptimiserViewModel
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_1000_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_1500_MS
@@ -279,6 +281,8 @@ class ProductDetailsFragment :
     @Inject
     lateinit var enhancedSubstitutionBottomSheetDialog: EnhancedSubstitutionBottomSheetDialog
 
+    lateinit var wfsShoptimiserProduct: ShoptimiserProductDetailPageImpl
+
     companion object {
         const val INDEX_STORE_FINDER = 1
         const val INDEX_ADD_TO_CART = 2
@@ -303,6 +307,8 @@ class ProductDetailsFragment :
             putSerializable(PRODUCTLIST, productList)
         }
     }
+
+    private val  shoptimiserViewModel: ShopOptimiserViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -331,10 +337,14 @@ class ProductDetailsFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mFuseLocationAPISingleton = FuseLocationAPISingleton
+        wfsShoptimiserProduct  = ShoptimiserProductDetailPageImpl(binding, shoptimiserViewModel)
         binding.initViews()
         addFragmentListener()
         setUniqueIds()
-        productDetails?.let { addViewItemEvent(it) }
+        productDetails?.let {
+            addViewItemEvent(it)
+            wfsShoptimiserProduct.addProductDetails(it)
+        }
         setUpCartCountPDP()
 
     }
@@ -821,12 +831,13 @@ class ProductDetailsFragment :
                     it.priceType,
                     it.kilogramPrice
                 )
+                wfsShoptimiserProduct.addProductDetailsToPdpVariant(productDetails = it)
             }
+
             auxiliaryImages.add(activity?.let { it1 -> getImageByWidth(it.externalImageRefV2, it1) }
                 .toString())
             updateAuxiliaryImages(auxiliaryImages)
         }
-
         mFreeGiftPromotionalImage = productDetails?.promotionImages?.freeGift
 
         loadPromotionalImages()
@@ -1202,13 +1213,11 @@ class ProductDetailsFragment :
 
         binding.setupBrandView()
         //Added the BNPL flag checking logic.
-        AppConfigSingleton.bnplConfig?.apply {
-            if (isBnplRequiredInThisVersion && isBnplEnabled) {
-                setupBNPLViewForFbhProducts()
-            } else {
-                binding.payFlexWidget.visibility = View.GONE
-            }
+        wfsShoptimiserProduct.apply {
+            addProductDetails(productDetails = productDetails)
+            shoptimiserViewModel.initWfsEmbeddedFinance()
         }
+
         if (hasSize)
             setSelectedGroupKey(defaultGroupKey)
 
@@ -2215,6 +2224,7 @@ class ProductDetailsFragment :
                     it.kilogramPrice
                 )
             }
+            wfsShoptimiserProduct.addPrice(otherSkus = otherSku)
         }
         updateAddToCartButtonForSelectedSKU()
     }

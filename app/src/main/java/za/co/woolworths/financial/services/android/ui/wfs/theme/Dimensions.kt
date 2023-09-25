@@ -49,7 +49,9 @@ class Dimensions(
     val pull_to_refresh_offset_dp: Dp,
     val account_landing_my_offers_image_height_dp : Dp,
     val button_height_twenty_six_dp : Dp,
-    val fourteen_dp : Dp
+    val fourteen_dp : Dp,
+    val thirty_four_dp: Dp = 34.dp,
+    val forty_dp: Dp = 40.dp
 )
 
 val sw320Dimensions = Dimensions(
