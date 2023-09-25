@@ -889,19 +889,12 @@ class CheckoutAddAddressNewUserFragment :
 
         FirebaseAnalyticsEventHelper.setFirebaseEventForm(selectedDeliveryAddressType,
                 FirebaseManagerAnalyticsProperties.FORM_COMPLETE, isComingFromCheckout)
-        var isValidNumber: Boolean
-        binding.recipientDetailsLayout.cellphoneNumberEditText.apply {
-            if (text.toString().trim()
-                    .isNotEmpty() && text.toString()
-                    .trim().length < TEN
-            ) {
-                showErrorPhoneNumber(R.string.enter_valid_sa_number)
-            }
+        val isValidNumber = isAValidSouthAfricanNumber(
+            binding.recipientDetailsLayout.cellphoneNumberEditText.text.toString().trim()
+        )
 
-            isValidNumber= isAValidSouthAfricanNumber(text.toString().trim())
-            if(!isValidNumber){
-                showErrorPhoneNumber(R.string.enter_valid_sa_number)
-            }
+        if (!isValidNumber) {
+            showErrorPhoneNumber(R.string.enter_valid_sa_number)
         }
         if (binding.autoCompleteTextView?.text.toString().trim()
                 .isNotEmpty() && binding.recipientAddressLayout.addressNicknameEditText?.text.toString()

@@ -256,19 +256,13 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(R.
 
         binding.whoIsCollectingDetailsLayout.apply {
 
-            if (cellphoneNumberEditText.text.toString().trim()
-                    .isNotEmpty() && cellphoneNumberEditText.text.toString().trim().length < 10
-            ) {
-                isEmptyError = true
-                showErrorPhoneNumber(R.string.enter_valid_sa_number)
-            } else if (!isAValidSouthAfricanNumber(
+            if (!isAValidSouthAfricanNumber(
                     cellphoneNumberEditText.text.toString().trim()
                 )
             ) {
                 isEmptyError = true
                 showErrorPhoneNumber(R.string.enter_valid_sa_number)
             }
-
 
             listOfInputFields.forEach {
                 if (it is EditText) {
