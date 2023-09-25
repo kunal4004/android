@@ -3,6 +3,11 @@ package za.co.woolworths.financial.services.android.util;
 import static android.Manifest.permission_group.STORAGE;
 import static android.graphics.Color.BLACK;
 import static android.graphics.Color.WHITE;
+import za.co.woolworths.financial.services.android.models.dao.ApiRequestDao;
+import za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
+import za.co.woolworths.financial.services.android.ui.wfs.common.NetworkUtilsKt;
+import za.co.woolworths.financial.services.android.ui.activities.webview.usercase.WebViewHandler;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -165,6 +170,59 @@ public class Utils {
             "image/jpeg",
             "image/tiff"
     };
+
+    //Dynamic Yield constant value
+    public static final String MOBILE_LANDING_PAGE = "MobileLandingPageAndroid";
+    public static final String HOME_PAGE = "HOMEPAGE";
+    public static final String IPAddress = NetworkUtilsKt.getIpAddress(WoolworthsApplication.getInstance(),WoolworthsApplication.getInstance());
+    public static final String PRODUCT_PAGE = "PRODUCT";
+    public static final String PRODUCT_DETAILS_PAGE = "ProductDetailsPageAndroid";
+    public static final String COLOR_ATTRIBUTE = "Color";
+    public static final String SIZE_ATTRIBUTE = "Size";
+    public static final String QUANTITY_ATTRIBUTE = "quantity";
+    public static final String CHANGE_ATTRIBUTE_DY_TYPE = "change-attr-v1";
+    public static final String CATEGORY_DY_TYPE = "CATEGORY";
+    public static final String ADD_TO_WISH_LIST_DY_TYPE = "add-to-wishlist-v1";
+    public static final String ADD_TO_WISH_LIST_EVENT_NAME = "Add to Wishlist";
+    public static final String SORT_BY_DY_TYPE = "sort-items-v1";
+    public static final String SORT_ITEMS_EVENT_NAME = "Sort Items";
+    public static final String FILTER_ITEMS_DY_TYPE = "filter-items-v1";
+    public static final String FILTER_ITEMS_EVENT_NAME = "Filter Items";
+    public static final String ORDER_CONFIRMATION_DY_TYPE = "order_confirmation_v1";
+    public static final String ORDER_CONFIRMATION_PAGE = "ORDER_CONFIRMATION";
+    public static final String DY_CHANNEL = "APP";
+    public static final String KEYWORD_SEARCH_V1 = "OTHER";
+    public static final String KEYWORD_SEARCH_EVENT_NAME = "Keyword Search";
+    public static final String PRICE_HIGH_LOW = "Price High-Low";
+    public static final String PRICE_LOW_HIGH = "Price Low-High";
+    public static final String NAME_Z_A = "Name Z-A";
+    public static final String NAME_A_Z = "Name A-Z";
+    public static final String DESC = "DESC";
+    public static final String ASC = "ASC";
+    public static final String SORT_BY = "Sort by";
+    public static final String CHANGE_ATTRIBUTE = "Change Attribute";
+    public static final String ADD_TO_CART_V1 = "add-to-cart-v1";
+    public static final String ADD_TO_CART = "Add to Cart";
+    public static final String ZAR = "ZAR";
+    public static final String SYNC_CART_V1 = "sync-cart-v1";
+    public static final String SYNC_CART = "sync cart";
+    public static final String REMOVE_FROM_CART_V1 = "remove-from-cart-v1";
+    public static final String REMOVE_FROM_CART = "Remove from Cart";
+    public static final String OTHER = "OTHER";
+    public static final String PURCHASE_V1 = "purchase-v1";
+    public static final String PURCHASE = "Purchase";
+    public static final String DY_LOCATION = "Cart page in Mobile App";
+    public static final String DY_CART_TYPE = "CART";
+    public static final String DY_CHECKOUT = "Checkout page in Mobile App";
+    public static final String DY_CART_CHECKOUT_TYPE = "CHECKOUT";
+    public static final String PAYMENT_PAGE = "PAYMENT_PAGE";
+    public static final String MOBILE_PAGE = "MOBILE_PAGE";
+    public static final String LOGIN_V1 = "login-v1";
+    public static final String LOGIN = "Login";
+    public static final String IDENTIFY_V1 = "identify-v1";
+    public static final String IDENTIFY = "Identify";
+    public static final String SIGNUP_V1 = "signup-v1";
+    public static final String SIGNUP = "Signup";
 
     public static void saveLastLocation(Location loc, Context mContext) {
         try {
@@ -1644,6 +1702,56 @@ public class Utils {
     public static String getMonetateId() {
         AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
         return currentUserObject.mId;
+    }
+
+    public static void saveDyServerId(String dyServerId) {
+        AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
+        currentUserObject.serverDyId = dyServerId;
+        currentUserObject.save();
+    }
+
+    public static String getDyServerId() {
+        AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
+        return currentUserObject.serverDyId;
+    }
+
+    public static void saveDySessionId(String dySessionId) {
+        AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
+        currentUserObject.sessionDyId = dySessionId;
+        currentUserObject.save();
+    }
+
+    public static String getDySessionId() {
+        AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
+        return currentUserObject.sessionDyId;
+    }
+    public static void sessionDaoSaveDyServerId(SessionDao.KEY key, String value) {
+        SessionDao sessionDao = SessionDao.getByKey(key);
+        sessionDao.value = value;
+        try {
+            sessionDao.save();
+        } catch (Exception e) {
+            Log.e("TAG", e.getMessage());
+        }
+    }
+
+    public static String getSessionDaoDyServerId(SessionDao.KEY key) {
+        SessionDao sessionDao = SessionDao.getByKey(key);
+        return sessionDao.value;
+    }
+    public static void sessionDaoSaveDySessionId(SessionDao.KEY key, String value) {
+        SessionDao sessionDao = SessionDao.getByKey(key);
+        sessionDao.value = value;
+        try {
+            sessionDao.save();
+        } catch (Exception e) {
+            Log.e("TAG", e.getMessage());
+        }
+    }
+
+    public static String getSessionDaoDySessionId(SessionDao.KEY key) {
+        SessionDao sessionDao = SessionDao.getByKey(key);
+        return sessionDao.value;
     }
 
 }

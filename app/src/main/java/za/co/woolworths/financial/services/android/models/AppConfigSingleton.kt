@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.models
 
+import DynamicYieldConfig
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.dto.RatingsAndReviews
 import za.co.woolworths.financial.services.android.models.dto.app_config.*
@@ -75,6 +76,10 @@ object AppConfigSingleton {
     var searchApiSettings: SearchApiSettings? = null
     var glassBox: GlassBox? = null
     var bnplConfig: BnplConfig? = null
+    var glassBox : GlassBox? = null
+    var bnplConfig : BnplConfig? = null
+    @JvmStatic
+    var dynamicYieldConfig : DynamicYieldConfig? = null
 
     init {
         initialiseFromCache()
@@ -252,6 +257,13 @@ object AppConfigSingleton {
             }
             appConfig.searchApiSettings?.apply {
                 searchApiSettings = this
+            }
+            appConfig.dynamicYieldConfig?.apply {
+                minimumSupportedAppBuildNumber.let {
+                    isDynamicYieldEnabled =
+                        Utils.isFeatureEnabled(minimumSupportedAppBuildNumber)
+                    dynamicYieldConfig = this
+                }
             }
         }
     }
