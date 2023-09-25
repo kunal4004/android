@@ -9,7 +9,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.shoppinglist.MyLIstUIEvents
-import za.co.woolworths.financial.services.android.shoppinglist.viewmodel.MyListViewModel
 
 /**
  * Created by Kunal Uttarwar on 21/09/23.
@@ -18,26 +17,31 @@ import za.co.woolworths.financial.services.android.shoppinglist.viewmodel.MyList
 @Composable
 fun MyListView(
     modifier: Modifier = Modifier,
-    viewModel: MyListViewModel,
     onEvent: (event: MyLIstUIEvents) -> Unit,
 ) {
     Box(modifier = modifier) {
-        MyListScreen(onEvent = {
-            when (it) {
-                is MyLIstUIEvents.CreateListClick -> onEvent(
-                    MyLIstUIEvents.CreateListClick
-                )
+        MyListScreen(
+            onEvent = {
+                when (it) {
+                    is MyLIstUIEvents.CreateListClick -> onEvent(
+                        MyLIstUIEvents.CreateListClick
+                    )
 
-                else -> {
+                    else -> {
+                    }
                 }
-            }
-        })
+            },
+            onCreateNewList = {
+                onEvent(MyLIstUIEvents.CreateListClick)
+            },
+        )
     }
 }
 
 @Composable
 fun MyListScreen(
     onEvent: (event: MyLIstUIEvents) -> Unit,
+    onCreateNewList: () -> Unit,
 ) {
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -45,7 +49,7 @@ fun MyListScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         CreateNewListView(icon = R.drawable.ic_add_circle, title = R.string.shop_create_list) {
-
+            onCreateNewList()
         }
     }
 }

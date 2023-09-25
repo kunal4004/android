@@ -20,14 +20,12 @@ import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import com.awfs.coordination.R
 import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.presentation.common.AppToolBar
 import za.co.woolworths.financial.services.android.presentation.createlist.CreateListFragment
 import za.co.woolworths.financial.services.android.shoppinglist.MyLIstUIEvents
-import za.co.woolworths.financial.services.android.shoppinglist.viewmodel.MyListViewModel
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator
 import za.co.woolworths.financial.services.android.ui.compose.contentView
@@ -43,7 +41,6 @@ import za.co.woolworths.financial.services.android.util.Utils
 class MyShoppingListFragment : Fragment() {
 
     private var mBottomNavigator: BottomNavigator? = null
-    private val myListViewModel: MyListViewModel by viewModels()
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -84,7 +81,6 @@ class MyShoppingListFragment : Fragment() {
                     Modifier
                         .padding(paddingValues = it)
                         .background(Color.White),
-                    myListViewModel
                 ) { event ->
                     when (event) {
                         is MyLIstUIEvents.CreateListClick -> {
@@ -100,11 +96,30 @@ class MyShoppingListFragment : Fragment() {
         }
     }
 
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (!hidden) {
+            hideActivityToolbar()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        hideActivityToolbar()
+    }
+
+    private fun hideActivityToolbar() {
+        mBottomNavigator?.apply {
+            removeToolbar()
+        }
+    }
+
     private fun navigateToCreateListFragment() {
         activity?.apply {
             Utils.triggerFireBaseEvents(
                 FirebaseManagerAnalyticsProperties.SHOP_MY_LIST_NEW_LIST,
-                this)
+                this
+            )
         }
         (requireActivity() as? BottomNavigationActivity)?.apply {
             pushFragmentSlideUp(CreateListFragment())
