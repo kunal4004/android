@@ -476,6 +476,7 @@ public class SSOActivity extends WebViewActivity {
 						SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE);
 						ServiceTools.Companion.stop(SSOActivity.this, LiveChatService.class);
 						OCConstant.Companion.stopOCChatService(SSOActivity.this);
+						Utils.removeFromDb(SessionDao.KEY.SHOP_OPTIMISER_SQLITE_MODEL);
 						Intent intent = new Intent();
 						setResult(SSOActivityResult.SIGNED_OUT.rawValue(), intent);
 						Utils.setUserKMSIState(false);
