@@ -70,24 +70,7 @@ class StandardDeliveryFragment : DepartmentExtensionFragment(R.layout.fragment_s
     }
 
     private fun dyHomePageViewModel() {
-        dyHomePageViewModel = ViewModelProvider(this).get(DyHomePageViewModel::class.java)
-        dyHomePageViewModel?.createDyHomePageLiveData?.observe(
-            viewLifecycleOwner
-        ) { dynamicYieldChooseVariationResponse ->
-            if (dynamicYieldChooseVariationResponse == null) {
-                /* Toast.makeText(
-                     activity,
-                     "Checkout Page DY failed",
-                     Toast.LENGTH_LONG
-                 ).show()*/
-            } else {
-                /* Toast.makeText(
-                     activity,
-                     "Checkout Page DY Success",
-                     Toast.LENGTH_LONG
-                 ).show()*/
-            }
-        }
+        dyHomePageViewModel = ViewModelProvider(this)[DyHomePageViewModel::class.java]
     }
 
     private fun prepareDynamicYieldRequestEvent() {

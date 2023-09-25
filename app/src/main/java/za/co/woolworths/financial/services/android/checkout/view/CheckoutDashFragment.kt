@@ -78,6 +78,7 @@ import za.co.woolworths.financial.services.android.ui.views.ToastFactory.Compani
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.removeRandFromAmount
+import za.co.woolworths.financial.services.android.util.Utils.*
 import za.co.woolworths.financial.services.android.util.WFormatter.DATE_FORMAT_EEEE_COMMA_dd_MMMM
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
@@ -174,21 +175,11 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
         setFragmentResults()
         binding.txtContinueToPayment?.setOnClickListener(this)
         binding.checkoutCollectingFromLayout?.root?.setOnClickListener(this)
-        config = NetworkConfig(AppContextProviderImpl())
-        if (Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID) != null)
-            dyServerId = Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID)
-        if (Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID) != null)
-            dySessionId = Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID)
-        dyChoosevariationViewModel()
+        dyChooseVariationViewModel()
     }
 
-    private fun dyChoosevariationViewModel() {
+    private fun dyChooseVariationViewModel() {
         dyChooseVariationViewModel = ViewModelProvider(this).get(DyHomePageViewModel::class.java)
-        dyChooseVariationViewModel?.createDyHomePageLiveData?.observe(
-            viewLifecycleOwner
-        ) {
-            //no update to UI
-        }
     }
 
 
@@ -1135,13 +1126,18 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
     }
 
     private fun preparePaymentPageViewRequest(orderTotalValue: Double) {
+        config = NetworkConfig(AppContextProviderImpl())
+        if (Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID) != null)
+            dyServerId = Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID)
+        if (Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID) != null)
+            dySessionId = Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID)
         val user = User(dyServerId,dyServerId)
         val session = Session(dySessionId)
         val device = Device(Utils.IPAddress, config?.getDeviceModel())
-        val dataOther = DataOther(null,null,"ZAR","",orderTotalValue)
+        val dataOther = DataOther(null,null,ZAR,"",orderTotalValue)
         val dataOtherArray: ArrayList<DataOther>? = ArrayList<DataOther>()
         dataOtherArray?.add(dataOther)
-        val page = Page(null, "PAYMENT_PAGE", "OTHER", null, dataOtherArray)
+        val page = Page(null, PAYMENT_PAGE, OTHER, null, dataOtherArray)
         val context = Context(device, page, Utils.DY_CHANNEL)
         val options = Options(true)
         val homePageRequestEvent = HomePageRequestEvent(user, session, context, options)

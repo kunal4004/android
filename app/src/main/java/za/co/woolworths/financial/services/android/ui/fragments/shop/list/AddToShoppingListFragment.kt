@@ -3,7 +3,6 @@ package za.co.woolworths.financial.services.android.ui.fragments.shop.list
 import android.content.Intent
 import android.os.Bundle
 import android.util.DisplayMetrics
-import android.util.Log
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -34,7 +33,6 @@ import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.PrepareChangeAttributeRequestEvent
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.Properties
-import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Response.DyChangeAttributeResponse
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.ViewModel.DyChangeAttributeViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
@@ -43,6 +41,7 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.OR
 import za.co.woolworths.financial.services.android.util.AppConstant.Keys.Companion.BUNDLE_WISHLIST_EVENT_DATA
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 import za.co.woolworths.financial.services.android.util.analytics.dto.AddToWishListFirebaseEventData
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Context
 
 class AddToShoppingListFragment : DepartmentExtensionFragment(R.layout.add_to_list_content), View.OnClickListener {
 
@@ -285,11 +284,10 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(R.layout.add_to_li
         val user = User(dyServerId,dyServerId)
         val session = Session(dySessionId)
         val device = Device(Utils.IPAddress,config?.getDeviceModel())
-        val context = za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Context(device,null,
-            Utils.DY_CHANNEL)
+        val context = Context(device,null, Utils.DY_CHANNEL)
         val properties = Properties(null,null,
             Utils.ADD_TO_WISH_LIST_DY_TYPE,null,null,null,null,skuID,null,null,null,size,null,null,null,null,null,null)
-        val eventsDyChangeAttribute = za.co.woolworths.financial.services.android.recommendations.data.response.request.Event(null,null,null,null,null,null,null,null,null,null,null,null,
+        val eventsDyChangeAttribute = Event(null,null,null,null,null,null,null,null,null,null,null,null,
             Utils.ADD_TO_WISH_LIST_EVENT_NAME,properties)
         val events = ArrayList<Event>()
         events.add(eventsDyChangeAttribute);
@@ -569,12 +567,5 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(R.layout.add_to_li
 
     private fun dyReportEventViewModel() {
         dyReportEventViewModel = ViewModelProvider(this).get(DyChangeAttributeViewModel::class.java)
-        dyReportEventViewModel.getDyLiveData().observe(viewLifecycleOwner, Observer<DyChangeAttributeResponse?> {
-            if (it == null){
-                Log.d(ProductDetailsFragment.TAG, "dyReportEventwishlistViewModel: failed ")
-            } else {
-                Log.d(ProductDetailsFragment.TAG, "dyReportEventwishlistViewModel: Successed ")
-            }
-        })
     }
 }

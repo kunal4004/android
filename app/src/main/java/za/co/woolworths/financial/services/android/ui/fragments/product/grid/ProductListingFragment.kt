@@ -10,7 +10,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Parcelable
-import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.View.GONE
@@ -79,10 +78,8 @@ import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.PrepareChangeAttributeRequestEvent
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.Properties
-import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Response.DyChangeAttributeResponse
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.ViewModel.DyChangeAttributeViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener
-import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants.EVENT_TYPE_CART
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants.EVENT_TYPE_PAGEVIEW
 import za.co.woolworths.financial.services.android.ui.views.*
@@ -107,6 +104,7 @@ import java.net.ConnectException
 import java.net.UnknownHostException
 import java.util.*
 import kotlin.collections.ArrayList
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Context
 
 @AndroidEntryPoint
 open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBinding::inflate),
@@ -266,42 +264,17 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
     }
 
     private fun dyReportEventViewModel() {
-        dyReportEventViewModel = ViewModelProvider(this).get(DyChangeAttributeViewModel::class.java)
-        dyReportEventViewModel!!.getDyLiveData().observe(viewLifecycleOwner, androidx.lifecycle.Observer<DyChangeAttributeResponse?> {
-            if (it == null) {
-                Log.d(ProductDetailsFragment.TAG, "dyReportEventViewModel: failed to sortby")
-            }else {
-                Log.d(ProductDetailsFragment.TAG, "dyReportEventViewModel: successed to sortby")
-            }
-        })
+        dyReportEventViewModel = ViewModelProvider(this)[DyChangeAttributeViewModel::class.java]
     }
 
     private fun dyCategoryChooseVariationViewModel() {
-        dyChoosevariationViewModel = ViewModelProvider(this).get(DyHomePageViewModel::class.java)
-        dyChoosevariationViewModel?.createDyHomePageLiveData?.observe(
-            viewLifecycleOwner
-        ) { dynamicYieldChooseVariationResponse ->
-            if (dynamicYieldChooseVariationResponse == null) {
-               /* Toast.makeText(
-                    activity,
-                    "Category Page DY failed",
-                    Toast.LENGTH_LONG
-                ).show()*/
-            } else {
-               /* Toast.makeText(
-                    activity,
-                    "Category Page DY Success",
-                    Toast.LENGTH_LONG
-                ).show()*/
-            }
-        }
+        dyChoosevariationViewModel = ViewModelProvider(this)[DyHomePageViewModel::class.java]
     }
 
     private fun prepareCategoryDynamicYieldPageView(
         productLists: ArrayList<ProductList>,
         breadCrumbList: ArrayList<String>
     ) {
-        var pageAttributes: PageAttributes
         val user = User(dyServerId,dyServerId)
         val session = Session(dySessionId)
         val device = Device(IPAddress, config?.getDeviceModel())
@@ -313,11 +286,11 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
           }
        }
         val page = Page(breadCrumbList, PLP_SCREEN_LOCATION, CATEGORY_DY_TYPE)
-        if (breadCrumbList?.isNullOrEmpty() == false) {
-             pageAttributes = PageAttributes(breadCrumbList)
+        var pageAttributes: PageAttributes = if (breadCrumbList.isNotEmpty()) {
+            PageAttributes(breadCrumbList)
         } else {
             breadCrumbList.add(mSubCategoryName)
-             pageAttributes = PageAttributes(breadCrumbList)
+            PageAttributes(breadCrumbList)
         }
 
         val context = Context(device, page, DY_CHANNEL,null)
@@ -1236,7 +1209,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
             AppConfigSingleton.dynamicYieldConfig?.apply {
                 if (isDynamicYieldEnabled == true) {
                     sortBy = sortOption.label
-                    if (sortBy.equals("Sort by")) {
+                    if (sortBy.equals(SORT_BY)) {
                         sortBy = ""
                         prepareSortByRequestEvent(sortBy)
                     }else
@@ -1250,11 +1223,11 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
         val user = User(dyServerId,dyServerId)
         val session = Session(dySessionId)
         val device = Device(IPAddress, config?.getDeviceModel())
-        val context = za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Context(device,null,DY_CHANNEL)
-        val sortOrder = if (sortBy.equals("Price High-Low") || sortBy.equals("Name z-a")) {
-            "DESC"
-        } else if (sortBy.equals("Price Low-High") || sortBy.equals("Name a-z")) {
-            "ASC"
+        val context = Context(device,null,DY_CHANNEL)
+        val sortOrder = if (sortBy.equals(PRICE_HIGH_LOW) || sortBy.equals(NAME_Z_A)) {
+            DESC
+        } else if (sortBy.equals(PRICE_LOW_HIGH) || sortBy.equals(NAME_A_Z)) {
+            ASC
         } else
             ""
         val properties = Properties(null,null,SORT_BY_DY_TYPE,null,null,null,null,null,null,null,null,null,sortBy,sortOrder)

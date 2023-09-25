@@ -80,7 +80,6 @@ class OrderConfirmationFragment :
     private var config: NetworkConfig? = null
     private var dyChooseVariationViewModel: DyHomePageViewModel? = null
     private lateinit var dyReportEventViewModel: DyChangeAttributeViewModel
-    val currency: String? = "ZAR"
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -96,22 +95,10 @@ class OrderConfirmationFragment :
 
     private fun dyReportEventViewModel() {
         dyReportEventViewModel = ViewModelProvider(this).get(DyChangeAttributeViewModel::class.java)
-        dyReportEventViewModel.getDyLiveData().observe(viewLifecycleOwner, Observer<DyChangeAttributeResponse?> {
-            if (it == null){
-                Log.d(ProductDetailsFragment.TAG, "dyReportEventViewModel: failed ")
-            } else {
-                Log.d(ProductDetailsFragment.TAG, "dyReportEventViewModel: Successed ")
-            }
-        })
     }
 
     private fun dyChoosevariationViewModel() {
         dyChooseVariationViewModel = ViewModelProvider(this).get(DyHomePageViewModel::class.java)
-        dyChooseVariationViewModel?.createDyHomePageLiveData?.observe(
-            viewLifecycleOwner
-        ) {
-            //no update to UI
-        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -175,8 +162,8 @@ class OrderConfirmationFragment :
             }
             )
         }
-        val properties = Properties(null,null,"purchase-v1",null,response.orderSummary?.total.toString(),currency,null,null,null,null, null,null,null,null,null,null,response.orderSummary?.orderId,cartValue)
-        val eventsDyPurchase = Event(null,null,null,null,null,null,null,null,null,null,null,null,"Purchase",properties)
+        val properties = Properties(null,null,PURCHASE_V1,null,response.orderSummary?.total.toString(),ZAR,null,null,null,null, null,null,null,null,null,null,response.orderSummary?.orderId,cartValue)
+        val eventsDyPurchase = Event(null,null,null,null,null,null,null,null,null,null,null,null,PURCHASE,properties)
         val events = ArrayList<Event>()
         events.add(eventsDyPurchase)
         val preparePurchaseRequestEvent = PrepareChangeAttributeRequestEvent(
@@ -192,10 +179,10 @@ class OrderConfirmationFragment :
         val user = User(dyServerId,dyServerId)
         val session = Session(dySessionId)
         val device = Device(IPAddress, config?.getDeviceModel())
-        val dataOther = DataOther(response.orderSummary?.orderId.toString(),response.orderSummary?.total,currency,null,null)
+        val dataOther = DataOther(response.orderSummary?.orderId.toString(),response.orderSummary?.total,ZAR,null,null)
         val dataOtherArray: ArrayList<DataOther>? = ArrayList<DataOther>()
         dataOtherArray?.add(dataOther)
-        val page = Page(null, ORDER_CONFIRMATION_PAGE, "OTHER", null, dataOtherArray)
+        val page = Page(null, ORDER_CONFIRMATION_PAGE, OTHER, null, dataOtherArray)
         val context = Context(device, page,DY_CHANNEL)
         val options = Options(true)
         val homePageRequestEvent = HomePageRequestEvent(user, session, context, options)

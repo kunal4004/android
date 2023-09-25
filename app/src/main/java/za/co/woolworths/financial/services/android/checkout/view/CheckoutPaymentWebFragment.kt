@@ -43,6 +43,7 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Dynam
 import za.co.woolworths.financial.services.android.util.AdvancedWebView
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.Utils.*
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
 import java.net.URI
 
@@ -86,21 +87,11 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
         binding = FragmentCheckoutPaymentWebBinding.bind(view)
         cartItemList = arguments?.getSerializable(CheckoutAddressManagementBaseFragment.CART_ITEM_LIST) as ArrayList<CommerceItem>?
         initPaymentWebView()
-        config = NetworkConfig(AppContextProviderImpl())
-        if (Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID) != null)
-            dyServerId = Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID)
-        if (Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID) != null)
-            dySessionId = Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID)
         dyChoosevariationViewModel()
     }
 
     private fun dyChoosevariationViewModel() {
         dyChooseVariationViewModel = ViewModelProvider(this).get(DyHomePageViewModel::class.java)
-        dyChooseVariationViewModel?.createDyHomePageLiveData?.observe(
-            viewLifecycleOwner
-        ) {
-            //no update to UI
-        }
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -283,13 +274,18 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
     }
 
     private fun preparePaymentPageViewRequest(jsonToAnalyticsList: PaymentAnalyticsData?) {
+        config = NetworkConfig(AppContextProviderImpl())
+        if (Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID) != null)
+            dyServerId = Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID)
+        if (Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID) != null)
+            dySessionId = Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID)
         val user = User(dyServerId,dyServerId)
         val session = Session(dySessionId)
         val device = Device(Utils.IPAddress, config?.getDeviceModel())
-        val dataOther = DataOther(null,null,"ZAR",jsonToAnalyticsList?.payment_type,jsonToAnalyticsList?.value)
+        val dataOther = DataOther(null,null,ZAR,jsonToAnalyticsList?.payment_type,jsonToAnalyticsList?.value)
         val dataOtherArray: ArrayList<DataOther>? = ArrayList<DataOther>()
         dataOtherArray?.add(dataOther)
-        val page = Page(null, "PAYMENT_PAGE", "OTHER", null, dataOtherArray)
+        val page = Page(null, PAYMENT_PAGE, OTHER, null, dataOtherArray)
         val context = Context(device, page, Utils.DY_CHANNEL)
         val options = Options(true)
         val homePageRequestEvent = HomePageRequestEvent(user, session, context, options)

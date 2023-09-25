@@ -86,7 +86,6 @@ import io.reactivex.functions.Consumer;
 import za.co.woolworths.financial.services.android.cart.view.CartFragment;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.IToastInterface;
-import za.co.woolworths.financial.services.android.dynamicyield.data.response.getResponse.DynamicYieldChooseVariationResponse;
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
 import za.co.woolworths.financial.services.android.models.BrandNavigationDetails;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
@@ -108,15 +107,8 @@ import za.co.woolworths.financial.services.android.onecartgetstream.OCChatActivi
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity;
 import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
-import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity;
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Context;
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Device;
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.HomePageRequestEvent;
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Options;
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Page;
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.response.DyHomePageViewModel;
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity;
 import za.co.woolworths.financial.services.android.ui.base.BaseActivity;
 import za.co.woolworths.financial.services.android.ui.base.SavedInstanceFragment;
@@ -210,9 +202,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     private Boolean isNewSession = false;
     private int currentTabIndex = INDEX_TODAY;
     private int previousTabIndex = INDEX_TODAY;
-    private DyHomePageViewModel dyHomePageViewModel;
-    private NetworkConfig config;
-    private ArrayList dyData;
 
     @Override
     public int getLayoutId() {
@@ -257,8 +246,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(SavedInstanceFragment.getInstance(getFragmentManager()).popData());
         mBundle = getIntent().getExtras();
-        dyData = new ArrayList<>();
-        config = new NetworkConfig(new AppContextProviderImpl());
         parseDeepLinkData();
         new AmplifyInit();
         mNavController = FragNavController.newBuilder(savedInstanceState,
@@ -311,7 +298,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
         queryBadgeCountOnStart();
         addDrawerFragment();
-        dyHomePageViewModel();
     }
 
     private void parseDeepLinkData() {
@@ -742,8 +728,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
                 case R.id.navigate_to_shop:
                     onShopTabSelected(item);
-                 /*  if (Boolean.TRUE.equals(AppConfigSingleton.getDynamicYieldConfig().isDynamicYieldEnabled()))
-                        prepareDynamicYieldRequestEvent();*/
                     return true;
 
                 case R.id.navigate_to_cart:
@@ -789,30 +773,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             return false;
         }
     };
-
-    private void dyHomePageViewModel() {
-        dyHomePageViewModel = new ViewModelProvider(this).get(DyHomePageViewModel.class);
-       dyHomePageViewModel.createDyHomePageLiveData.observe(this, new androidx.lifecycle.Observer<DynamicYieldChooseVariationResponse>() {
-           @Override
-           public void onChanged(DynamicYieldChooseVariationResponse dynamicYieldChooseVariationResponse) {
-               if (dynamicYieldChooseVariationResponse == null) {
-                 //  Toast.makeText(BottomNavigationActivity.this, "Home Page DY failed", Toast.LENGTH_LONG).show();
-               } else {
-                  // Toast.makeText(BottomNavigationActivity.this, "Home Page DY Success", Toast.LENGTH_LONG).show();
-
-               }
-           }
-       });
-    }
-
-    private void prepareDynamicYieldRequestEvent() {
-        Device device = new Device(Utils.IPAddress, config.getDeviceModel());
-        Page page = new Page(dyData, MOBILE_LANDING_PAGE, HOME_PAGE, null,null);
-        Context context = new Context(device,page, DY_CHANNEL,null);
-        Options options = new Options(true);
-        HomePageRequestEvent homePageRequestEvent = new HomePageRequestEvent(null,null,context,options);
-        dyHomePageViewModel.createDyRequest(homePageRequestEvent);
-    }
 
     public void onShopTabSelected(MenuItem item) {
         replaceAccountIcon(item);

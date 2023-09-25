@@ -1,42 +1,25 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.ViewModel
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import za.co.woolworths.financial.services.android.models.network.OneAppService
+import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
+import za.co.woolworths.financial.services.android.models.network.Status
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Repository.DyReportEventRepository
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.PrepareChangeAttributeRequestEvent
-import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Response.DyChangeAttributeResponse
+import javax.inject.Inject
 
-class DyChangeAttributeViewModel: ViewModel() {
-    lateinit var createDyChangeAttributeLiveData: MutableLiveData<DyChangeAttributeResponse?>
-    init {
-        createDyChangeAttributeLiveData = MutableLiveData()
-    }
+@HiltViewModel
+class DyChangeAttributeViewModel @Inject constructor(
+    private val dyReportEventRepository: DyReportEventRepository
+): ViewModel() {
 
-    fun getDyLiveData(): MutableLiveData<DyChangeAttributeResponse?> {
-        return createDyChangeAttributeLiveData
-    }
-
-    fun createDyChangeAttributeRequest(prepareChangeAttributeRequestEvent: PrepareChangeAttributeRequestEvent) {
-        // val retroService = ApiInterface::class
-        val call = OneAppService().dynamicYieldChangeAttribute(prepareChangeAttributeRequestEvent)
-       call.enqueue(object: Callback<DyChangeAttributeResponse> {
-           override fun onResponse(
-               call: Call<DyChangeAttributeResponse>,
-               response: Response<DyChangeAttributeResponse>
-           ) {
-               if (response.isSuccessful)
-                   createDyChangeAttributeLiveData.postValue(response.body())
-               else
-                   createDyChangeAttributeLiveData.postValue(null)
-           }
-
-           override fun onFailure(call: Call<DyChangeAttributeResponse>, t: Throwable) {
-               createDyChangeAttributeLiveData.postValue(null)
-           }
-
-       })
+    fun createDyChangeAttributeRequest(reportEventRequest: PrepareChangeAttributeRequestEvent) {
+        viewModelScope.launch {
+            val response = dyReportEventRepository.getDyReportEventResponse(reportEventRequest)
+            if (response.status == Status.SUCCESS) {
+                var value = response.data?.response?.desc
+            }
+        }
     }
 }

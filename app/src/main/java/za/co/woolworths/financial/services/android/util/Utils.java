@@ -187,6 +187,38 @@ public class Utils {
     public static final String ORDER_CONFIRMATION_DY_TYPE = "order_confirmation_v1";
     public static final String ORDER_CONFIRMATION_PAGE = "ORDER_CONFIRMATION";
     public static final String DY_CHANNEL = "APP";
+    public static final String KEYWORD_SEARCH_V1 = "OTHER";
+    public static final String KEYWORD_SEARCH_EVENT_NAME = "Keyword Search";
+    public static final String PRICE_HIGH_LOW = "Price High-Low";
+    public static final String PRICE_LOW_HIGH = "Price Low-High";
+    public static final String NAME_Z_A = "Name Z-A";
+    public static final String NAME_A_Z = "Name A-Z";
+    public static final String DESC = "DESC";
+    public static final String ASC = "ASC";
+    public static final String SORT_BY = "Sort by";
+    public static final String CHANGE_ATTRIBUTE = "Change Attribute";
+    public static final String ADD_TO_CART_V1 = "add-to-cart-v1";
+    public static final String ADD_TO_CART = "Add to Cart";
+    public static final String ZAR = "ZAR";
+    public static final String SYNC_CART_V1 = "sync-cart-v1";
+    public static final String SYNC_CART = "sync cart";
+    public static final String REMOVE_FROM_CART_V1 = "remove-from-cart-v1";
+    public static final String REMOVE_FROM_CART = "Remove from Cart";
+    public static final String OTHER = "OTHER";
+    public static final String PURCHASE_V1 = "purchase-v1";
+    public static final String PURCHASE = "Purchase";
+    public static final String DY_LOCATION = "Cart page in Mobile App";
+    public static final String DY_CART_TYPE = "CART";
+    public static final String DY_CHECKOUT = "Checkout page in Mobile App";
+    public static final String DY_CART_CHECKOUT_TYPE = "CHECKOUT";
+    public static final String PAYMENT_PAGE = "PAYMENT_PAGE";
+    public static final String MOBILE_PAGE = "MOBILE_PAGE";
+    public static final String LOGIN_V1 = "login-v1";
+    public static final String LOGIN = "Login";
+    public static final String IDENTIFY_V1 = "identify-v1";
+    public static final String IDENTIFY = "Identify";
+    public static final String SIGNUP_V1 = "signup-v1";
+    public static final String SIGNUP = "Signup";
 
     public static void saveLastLocation(Location loc, Context mContext) {
         try {

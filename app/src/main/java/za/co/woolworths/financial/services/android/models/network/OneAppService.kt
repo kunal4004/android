@@ -47,7 +47,6 @@ import za.co.woolworths.financial.services.android.onecartgetstream.model.OCAuth
 import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.RecommendationResponse
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.RecommendationRequest
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.RatingAndReviewData
-import za.co.woolworths.financial.services.android.dynamicyield.data.response.request.DynamicVariantRequestEvent
 import za.co.woolworths.financial.services.android.dynamicyield.data.response.getResponse.DynamicYieldChooseVariationResponse
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.HomePageRequestEvent
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.PrepareChangeAttributeRequestEvent
@@ -1297,23 +1296,7 @@ open class OneAppService(
         )
     }
 
-     fun dynamicYieldChooseVariation(dynamicVariantRequestEvent: DynamicVariantRequestEvent): Call<DynamicYieldChooseVariationResponse> {
-        return mApiInterface.dynamicYieldChooseVariation(
-                getSessionToken(),
-                getDeviceIdentityToken(),
-                dynamicVariantRequestEvent
-            )
-    }
-
-   /* fun dynamicYieldKeywordSearch(dyKeywordSearchRequestEvent: DyKeywordSearchRequestEvent): Call<DyKeywordSearchResponse> {
-        return mApiInterface.dynamicYieldKeywordSearch(
-            getSessionToken(),
-            getDeviceIdentityToken(),
-            dyKeywordSearchRequestEvent
-        )
-    }*/
-
-    fun dynamicYieldHomePage(dyHomePageRequestEvent: HomePageRequestEvent): Call<DynamicYieldChooseVariationResponse> {
+    suspend fun dynamicYieldHomePage(dyHomePageRequestEvent: HomePageRequestEvent): retrofit2.Response<DynamicYieldChooseVariationResponse> {
         return mApiInterface.dynamicYieldHomePage(
             getSessionToken(),
             getDeviceIdentityToken(),
@@ -1321,7 +1304,7 @@ open class OneAppService(
         )
     }
 
-    fun dynamicYieldChangeAttribute(dyPrepareChangeAttributeRequestEvent: PrepareChangeAttributeRequestEvent): Call<DyChangeAttributeResponse> {
+    suspend fun dynamicYieldChangeAttribute(dyPrepareChangeAttributeRequestEvent: PrepareChangeAttributeRequestEvent): retrofit2.Response<DyChangeAttributeResponse> {
         return mApiInterface.dynamicYieldChangeAttribute(
             getSessionToken(),
             getDeviceIdentityToken(),

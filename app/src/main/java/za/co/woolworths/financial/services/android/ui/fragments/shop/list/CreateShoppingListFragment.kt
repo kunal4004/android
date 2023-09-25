@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.text.method.KeyListener
-import android.util.Log
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
@@ -45,7 +44,6 @@ import za.co.woolworths.financial.services.android.ui.adapters.DepartmentAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.PrepareChangeAttributeRequestEvent
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.Properties
-import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Response.DyChangeAttributeResponse
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.ViewModel.DyChangeAttributeViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment
@@ -530,11 +528,15 @@ class CreateShoppingListFragment : Fragment(), View.OnClickListener {
         val user = User(dyServerId,dyServerId)
         val session = Session(dySessionId)
         val device = Device(Utils.IPAddress,config?.getDeviceModel())
-        val context = za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Context(device,null,
-            Utils.DY_CHANNEL)
+        val context =
+            za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Context(
+                device,
+                null,
+                Utils.DY_CHANNEL
+            )
         val properties = Properties(null,null,
             Utils.ADD_TO_WISH_LIST_DY_TYPE,null,null,null,null,skuID,null,null,null,size,null,null,null,null,null,null)
-        val eventsDyChangeAttribute = za.co.woolworths.financial.services.android.recommendations.data.response.request.Event(null,null,null,null,null,null,null,null,null,null,null,null,
+        val eventsDyChangeAttribute = Event(null,null,null,null,null,null,null,null,null,null,null,null,
             Utils.ADD_TO_WISH_LIST_EVENT_NAME,properties)
         val events = ArrayList<Event>()
         events.add(eventsDyChangeAttribute);
@@ -729,13 +731,6 @@ class CreateShoppingListFragment : Fragment(), View.OnClickListener {
         NetworkManager.getInstance().isConnectedToNetwork(it)
 
     private fun dyReportEventViewModel() {
-        dyReportEventViewModel = ViewModelProvider(this).get(DyChangeAttributeViewModel::class.java)
-        dyReportEventViewModel.getDyLiveData().observe(viewLifecycleOwner, Observer<DyChangeAttributeResponse?> {
-            if (it == null){
-                Log.d(ProductDetailsFragment.TAG, "dyReportEventwishlistViewModel: failed ")
-            } else {
-                Log.d(ProductDetailsFragment.TAG, "dyReportEventwishlistViewModel: Successed ")
-            }
-        })
+        dyReportEventViewModel = ViewModelProvider(this)[DyChangeAttributeViewModel::class.java]
     }
 }

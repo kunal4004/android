@@ -10,6 +10,8 @@ import static za.co.woolworths.financial.services.android.ui.fragments.shoppingl
 import static za.co.woolworths.financial.services.android.util.AppConstant.Keys.EXTRA_SEND_DELIVERY_DETAILS_PARAMS;
 import static za.co.woolworths.financial.services.android.util.Utils.DY_CHANNEL;
 import static za.co.woolworths.financial.services.android.util.Utils.IPAddress;
+import static za.co.woolworths.financial.services.android.util.Utils.KEYWORD_SEARCH_EVENT_NAME;
+import static za.co.woolworths.financial.services.android.util.Utils.KEYWORD_SEARCH_V1;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -33,6 +35,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.awfs.coordination.R;
@@ -43,6 +46,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
@@ -61,7 +65,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.detail.D
 import za.co.woolworths.financial.services.android.ui.fragments.shop.ChanelMessageDialogFragment;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event;
-
+@AndroidEntryPoint
 public class ProductSearchActivity extends AppCompatActivity
         implements View.OnClickListener, ChanelMessageDialogFragment.IChanelMessageDialogDismissListener {
     public LinearLayoutManager mLayoutManager;
@@ -79,8 +83,6 @@ public class ProductSearchActivity extends AppCompatActivity
     private String dyServerId = null;
     private String dySessionId = null;
     private NetworkConfig config = null;
-    public static final String KEYWORD_SEARCH_V1 = "OTHER";
-    public static final String KEYWORD_SEARCH_EVENT_NAME = "Keyword Search";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,15 +111,14 @@ public class ProductSearchActivity extends AppCompatActivity
                 mEditSearchProduct.setHint(mSearchTextHint);
             }
         }
+    }
+
+    private void prepareDyKeywordSearchRequestEvent(String searchProductBrand) {
         config = new NetworkConfig(new AppContextProviderImpl());
         if (Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID) != null)
             dyServerId = Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID);
         if (Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID) != null)
             dySessionId = Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID);
-        initKeywordSearchViewModel();
-    }
-
-    private void prepareDyKeywordSearchRequestEvent(String searchProductBrand) {
         User user = new User(dyServerId, dyServerId);
         Session session = new Session(dySessionId);
         Device device = new Device(IPAddress,config.getDeviceModel());
@@ -132,20 +133,6 @@ public class ProductSearchActivity extends AppCompatActivity
                 session,
                 user);
         dyKeywordSearchViewModel.createDyChangeAttributeRequest(dyKeywordSearchRequestEvent);
-    }
-
-    private void initKeywordSearchViewModel() {
-        dyKeywordSearchViewModel = new ViewModelProvider(this).get(DyChangeAttributeViewModel.class);
-        dyKeywordSearchViewModel.getDyLiveData().observe(this, new Observer<DyChangeAttributeResponse>() {
-            @Override
-            public void onChanged(DyChangeAttributeResponse dyKeywordSearchResponse) {
-                if (dyKeywordSearchResponse == null) {
-                   // Toast.makeText(ProductSearchActivity.this, "failed to DY keyword search", Toast.LENGTH_LONG).show();
-                } else {
-                  //  Toast.makeText(ProductSearchActivity.this, "Success to DY keyword search", Toast.LENGTH_LONG).show();
-                }
-            }
-        });
     }
 
     private void initUI() {
@@ -212,8 +199,10 @@ public class ProductSearchActivity extends AppCompatActivity
                     intent.putExtra(EXTRA_SEND_DELIVERY_DETAILS_PARAMS, isUserBrowsingDash);
                     setActivityResult(intent, PRODUCT_SEARCH_ACTIVITY_RESULT_CODE);
 				}
-            if (Boolean.TRUE.equals(AppConfigSingleton.getDynamicYieldConfig().isDynamicYieldEnabled()))
+            if (Boolean.TRUE.equals(AppConfigSingleton.getDynamicYieldConfig().isDynamicYieldEnabled())) {
+                dyKeywordSearchViewModel = new ViewModelProvider(this).get(DyChangeAttributeViewModel.class);
                 prepareDyKeywordSearchRequestEvent(searchProductBrand);
+            }
 		}
 	}
 

@@ -1,6 +1,14 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
 import static za.co.woolworths.financial.services.android.util.Utils.DY_CHANNEL;
+import static za.co.woolworths.financial.services.android.util.Utils.IDENTIFY;
+import static za.co.woolworths.financial.services.android.util.Utils.IDENTIFY_V1;
+import static za.co.woolworths.financial.services.android.util.Utils.LOGIN;
+import static za.co.woolworths.financial.services.android.util.Utils.LOGIN_V1;
+import static za.co.woolworths.financial.services.android.util.Utils.MOBILE_PAGE;
+import static za.co.woolworths.financial.services.android.util.Utils.OTHER;
+import static za.co.woolworths.financial.services.android.util.Utils.SIGNUP;
+import static za.co.woolworths.financial.services.android.util.Utils.SIGNUP_V1;
 
 import android.annotation.TargetApi;
 import android.content.DialogInterface;
@@ -54,7 +62,6 @@ import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
-import za.co.woolworths.financial.services.android.dynamicyield.data.response.getResponse.DynamicYieldChooseVariationResponse;
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
@@ -76,7 +83,6 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Dynam
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.PrepareChangeAttributeRequestEvent;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.Properties;
-import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Response.DyChangeAttributeResponse;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.ViewModel.DyChangeAttributeViewModel;
 import za.co.woolworths.financial.services.android.ui.wfs.common.NetworkUtilsKt;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
@@ -183,23 +189,12 @@ public class SSOActivity extends WebViewActivity {
 
 	private void dyHomePageViewModel() {
 		dyHomePageViewModel = new ViewModelProvider(this).get(DyHomePageViewModel.class);
-		dyHomePageViewModel.createDyHomePageLiveData.observe(this, new androidx.lifecycle.Observer<DynamicYieldChooseVariationResponse>() {
-			@Override
-			public void onChanged(DynamicYieldChooseVariationResponse dynamicYieldChooseVariationResponse) {
-				if (dynamicYieldChooseVariationResponse == null) {
-					//  Toast.makeText(BottomNavigationActivity.this, "Home Page DY failed", Toast.LENGTH_LONG).show();
-				} else {
-					// Toast.makeText(BottomNavigationActivity.this, "Home Page DY Success", Toast.LENGTH_LONG).show();
-
-				}
-			}
-		});
 	}
 
 	private void prepareDynamicYieldRequestEvent() {
 		ArrayList dyData = new ArrayList<>();
 		Device device = new Device(Utils.IPAddress, config.getDeviceModel());
-		Page page = new Page(dyData, "MOBILE_PAGE", "OTHER", null,null);
+		Page page = new Page(dyData, MOBILE_PAGE, OTHER, null,null);
 		Context context = new Context(device,page, DY_CHANNEL,null);
 		Options options = new Options(false);
 		HomePageRequestEvent homePageRequestEvent = new HomePageRequestEvent(null,null,context,options);
@@ -207,17 +202,7 @@ public class SSOActivity extends WebViewActivity {
 	}
 
 	private void dyReportEventViewModel() {
-		dyReportEventViewModel = new DyChangeAttributeViewModel();
-		dyReportEventViewModel.getDyLiveData().observe(this, new Observer<DyChangeAttributeResponse>() {
-			@Override
-			public void onChanged(DyChangeAttributeResponse dyChangeAttributeResponse) {
-				if (dyChangeAttributeResponse == null) {
-					//Toast.makeText(SSOActivity.this, "Login DY Event failed", Toast.LENGTH_LONG).show();
-				} else {
-					//Toast.makeText(SSOActivity.this, "Login DY Event Successed", Toast.LENGTH_LONG).show();
-				}
-			}
-		});
+		dyReportEventViewModel = new ViewModelProvider(this).get(DyChangeAttributeViewModel.class);
 	}
 
 	// Display progress bar as soon as user land on profile
@@ -820,8 +805,8 @@ public class SSOActivity extends WebViewActivity {
 		Session session = new Session(dySessionId);
 		Device device = new Device(IPAddress,config.getDeviceModel());
 		Context context = new Context(device,null, DY_CHANNEL,null);
-		Properties properties = new Properties(null,null,"login-v1",null,null,null,null,null,null,null,hashMail,null,null,null,null,null,null,null);
-		Event event = new Event(null,null,null,null,null,null,null,null,null,null,null,null,"Login",properties);
+		Properties properties = new Properties(null,null,LOGIN_V1,null,null,null,null,null,null,null,hashMail,null,null,null,null,null,null,null);
+		Event event = new Event(null,null,null,null,null,null,null,null,null,null,null,null,LOGIN,properties);
 		ArrayList<Event> eventArrayList = new ArrayList<>();
 		eventArrayList.add(event);
 		PrepareChangeAttributeRequestEvent prepareLoginDYRequestEvent = new PrepareChangeAttributeRequestEvent(
@@ -839,8 +824,8 @@ public class SSOActivity extends WebViewActivity {
 		Session session = new Session(dySessionId);
 		Device device = new Device(IPAddress, config.getDeviceModel());
 		Context context = new Context(device,null, DY_CHANNEL,null);
-		Properties properties = new Properties(null,null,"identify-v1",null,null,null,null,null,null,null,hashMail,null,null,null,null,null,null,null);
-		Event event = new Event(null,null,null,null,null,null,null,null,null,null,null,null,"Identify",properties);
+		Properties properties = new Properties(null,null,IDENTIFY_V1,null,null,null,null,null,null,null,hashMail,null,null,null,null,null,null,null);
+		Event event = new Event(null,null,null,null,null,null,null,null,null,null,null,null,IDENTIFY,properties);
 		ArrayList<Event> eventArrayList = new ArrayList<>();
 		eventArrayList.add(event);
 		PrepareChangeAttributeRequestEvent prepareLoginDYRequestEvent = new PrepareChangeAttributeRequestEvent(
@@ -857,8 +842,8 @@ public class SSOActivity extends WebViewActivity {
 		Session session = new Session(dySessionId);
 		Device device = new Device(IPAddress, config.getDeviceModel());
 		Context context = new Context(device,null, DY_CHANNEL,null);
-		Properties properties = new Properties(null,null,"signup-v1",null,null,null,null,null,null,null,hashMail,null,null,null,null,null,null,null);
-		Event event = new Event(null,null,null,null,null,null,null,null,null,null,null,null,"Signup",properties);
+		Properties properties = new Properties(null,null,SIGNUP_V1,null,null,null,null,null,null,null,hashMail,null,null,null,null,null,null,null);
+		Event event = new Event(null,null,null,null,null,null,null,null,null,null,null,null,SIGNUP,properties);
 		ArrayList<Event> eventArrayList = new ArrayList<>();
 		eventArrayList.add(event);
 		PrepareChangeAttributeRequestEvent prepareLoginDYRequestEvent = new PrepareChangeAttributeRequestEvent(

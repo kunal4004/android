@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.ui.fragments.product.refine
 
 import android.os.Bundle
 import android.text.TextUtils
-import android.util.Log
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -25,12 +24,13 @@ import za.co.woolworths.financial.services.android.ui.adapters.RefinementAdapter
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.PrepareChangeAttributeRequestEvent
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.Properties
-import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Response.DyChangeAttributeResponse
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.ViewModel.DyChangeAttributeViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.BaseFragmentListner
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.OnRefinementOptionSelected
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Context
+import za.co.woolworths.financial.services.android.util.Utils.FILTER_ITEMS_EVENT_NAME
 
 class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
     private lateinit var listener: OnRefinementOptionSelected
@@ -71,14 +71,7 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
     }
 
     private fun dyReportEventViewModel() {
-        dyReportEventViewModel = ViewModelProvider(this).get(DyChangeAttributeViewModel::class.java)
-        dyReportEventViewModel!!.getDyLiveData().observe(viewLifecycleOwner, androidx.lifecycle.Observer<DyChangeAttributeResponse?> {
-            if (it == null) {
-                Log.d(ProductDetailsFragment.TAG, "dyReportEventViewModel: failed to filtertype")
-            }else {
-                Log.d(ProductDetailsFragment.TAG, "dyReportEventViewModel: successed to filtertype")
-            }
-        })
+        dyReportEventViewModel = ViewModelProvider(this)[DyChangeAttributeViewModel::class.java]
     }
 
     override fun onResume() {
@@ -226,11 +219,10 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
         val user = User(dyServerId,dyServerId)
         val session = Session(dySessionId)
         val device = Device(Utils.IPAddress, config?.getDeviceModel())
-        val context = za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Context(device,null,
-            Utils.DY_CHANNEL)
+        val context = Context(device,null, Utils.DY_CHANNEL)
         val properties = Properties(null,null, Utils.FILTER_ITEMS_DY_TYPE,null,null,null,null,null,null,null,null,null,null,null,
             label, displayName,null)
-        val eventsDyChangeAttribute = za.co.woolworths.financial.services.android.recommendations.data.response.request.Event(null,null,null,null,null,null,null,null,null,null,null,null,"Filter Items",properties)
+        val eventsDyChangeAttribute = Event(null,null,null,null,null,null,null,null,null,null,null,null,FILTER_ITEMS_EVENT_NAME,properties)
         val events = ArrayList<Event>()
         events.add(eventsDyChangeAttribute);
         val prepareDySortByRequestEvent = PrepareChangeAttributeRequestEvent(
