@@ -1075,7 +1075,8 @@ open class OneAppService(
                 "",
                 getSessionToken(),
                 getDeviceIdentityToken(),
-                placeId
+                placeId,
+                false
             )
         }
     }

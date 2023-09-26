@@ -336,6 +336,7 @@
             android:fontFamily="@font/futura_semi_bold"
             android:textColor="@color/black"
             android:textSize="@dimen/fourteen_sp"
+            android:contentDescription="@string/cd_checkout_order_total_value"
             tools:text="R 690.0" />
     </com.facebook.shimmer.ShimmerFrameLayout>
 
