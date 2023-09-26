@@ -1432,8 +1432,29 @@ class ProductDetailsFragment :
                     }
                 }
                 if (!it.freeGiftText.isNullOrEmpty()) {
-                    freeGiftWithPurchaseLayout.freeGiftText.text = it.freeGiftText
                     freeGiftWithPurchaseLayout.root.visibility = View.VISIBLE
+                    if(it.productType==AppConstant.PRODUCT_TYPE_DIGITAL && !it.network.isNullOrEmpty()){
+                        freeGiftWithPurchaseLayout.freeSim.visibility = View.VISIBLE
+                        freeGiftWithPurchaseLayout.giftPurchase.visibility = View.GONE
+                        freeGiftWithPurchaseLayout.freeSimTitle.text = getString(R.string.free_sim_with_purchase,it.network)
+                        freeGiftWithPurchaseLayout.freeSimDesc.text = it.freeGiftText
+                        freeGiftWithPurchaseLayout.root.visibility = View.VISIBLE
+                        freeGiftWithPurchaseLayout.downArrow.setOnClickListener {
+                            if(freeGiftWithPurchaseLayout.freeSimDesc.visibility == View.VISIBLE) {
+                                freeGiftWithPurchaseLayout.freeSimDesc.visibility = View.GONE
+                                freeGiftWithPurchaseLayout.downArrow.rotation = 0.0f
+                            }else{
+                                freeGiftWithPurchaseLayout.freeSimDesc.visibility = View.VISIBLE
+                                freeGiftWithPurchaseLayout.downArrow.rotation = 180.0f
+                            }
+                        }
+                    }
+                    else {
+                        freeGiftWithPurchaseLayout.freeSim.visibility = View.GONE
+                        freeGiftWithPurchaseLayout.giftPurchase.visibility = View.VISIBLE
+                        freeGiftWithPurchaseLayout.freeGiftText.text = it.freeGiftText
+
+                    }
                 }
                 if (productDetails?.promotionsList?.isEmpty() == false) {
                     productDetails?.promotionsList?.forEachIndexed { i, it ->
