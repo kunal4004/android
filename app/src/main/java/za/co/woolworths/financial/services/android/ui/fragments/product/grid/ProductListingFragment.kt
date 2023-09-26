@@ -92,7 +92,6 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_SESSION_TIMEOUT_440
 import za.co.woolworths.financial.services.android.util.AppConstant.Keys.Companion.EXTRA_SEND_DELIVERY_DETAILS_PARAMS
-import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.saveAnonymousUserLocationDetails
 import za.co.woolworths.financial.services.android.util.Utils.*
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
@@ -279,7 +278,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
 
     private fun prepareCategoryDynamicYieldPageView(
         productLists: ArrayList<ProductList>,
-        breadCrumbList: ArrayList<String>
+        breadCrumbList: ArrayList<String>,
+        category_dyType: String
     ) {
         val user = User(dyServerId,dyServerId)
         val session = Session(dySessionId)
@@ -291,7 +291,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
               skuIds?.add(skuData!!)
           }
        }
-        val page = Page(breadCrumbList, PLP_SCREEN_LOCATION, CATEGORY_DY_TYPE)
+        val page = Page(breadCrumbList, PLP_SCREEN_LOCATION, category_dyType)
         var pageAttributes: PageAttributes = if (breadCrumbList.isNotEmpty()) {
             PageAttributes(breadCrumbList)
         } else {
@@ -669,7 +669,11 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
         mProductAdapter?.notifyDataSetChanged()
         AppConfigSingleton.dynamicYieldConfig?.apply {
             if (isDynamicYieldEnabled == true) {
-                prepareCategoryDynamicYieldPageView(response.products,breadCrumbList)
+               val categoryDyType = if (mSearchType?.value.equals("search"))
+                    "OTHER"
+                else
+                    "CATEGORY"
+                prepareCategoryDynamicYieldPageView(response.products,breadCrumbList,categoryDyType)
             }
         }
     }
@@ -1223,7 +1227,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
         } else
             ""
         val properties = Properties(null,null,SORT_BY_DY_TYPE,null,null,null,null,null,null,null,null,null,sortBy,sortOrder)
-        val eventsDyChangeAttribute = za.co.woolworths.financial.services.android.recommendations.data.response.request.Event(null,null,null,null,null,null,null,null,null,null,null,null,SORT_ITEMS_EVENT_NAME,properties)
+        val eventsDyChangeAttribute = Event(null,null,null,null,null,null,null,null,null,null,null,null,SORT_ITEMS_EVENT_NAME,properties)
         val events = ArrayList<Event>()
         events.add(eventsDyChangeAttribute);
         val prepareDySortByRequestEvent = PrepareChangeAttributeRequestEvent(

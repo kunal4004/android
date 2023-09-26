@@ -191,7 +191,7 @@ public class Utils {
     public static final String ORDER_CONFIRMATION_DY_TYPE = "order_confirmation_v1";
     public static final String ORDER_CONFIRMATION_PAGE = "ORDER_CONFIRMATION";
     public static final String DY_CHANNEL = "APP";
-    public static final String KEYWORD_SEARCH_V1 = "OTHER";
+    public static final String KEYWORD_SEARCH_V1 = "keyword-search-v1";
     public static final String KEYWORD_SEARCH_EVENT_NAME = "Keyword Search";
     public static final String PRICE_HIGH_LOW = "Price High-Low";
     public static final String PRICE_LOW_HIGH = "Price Low-High";
