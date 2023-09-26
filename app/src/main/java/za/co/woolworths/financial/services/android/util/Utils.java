@@ -957,48 +957,6 @@ public class Utils {
     }
 
 
-    public static void fadeView(final View view, final boolean editMode) {
-        Animation animation;
-        if (editMode) {
-            animation = android.view.animation.AnimationUtils.loadAnimation(view.getContext(), R.anim.edit_mode_fade_in);
-        } else {
-            animation = android.view.animation.AnimationUtils.loadAnimation(view.getContext(), R.anim.edit_mode_fade_out);
-        }
-
-        if (view instanceof WButton) {
-            animation.setAnimationListener(new Animation.AnimationListener() {
-                @Override
-                public void onAnimationStart(Animation animation) {
-
-                }
-
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    view.setEnabled(editMode);
-                }
-
-                @Override
-                public void onAnimationRepeat(Animation animation) {
-
-                }
-            });
-        }
-        view.startAnimation(animation);
-    }
-
-    public static void whiteEffectClick(WButton button) {
-        //TODO:: TEST FOR DIFFERENT POPUP
-
-        try {
-            if (button != null) {
-                button.setBackgroundColor(Color.BLACK);
-                button.setTextColor(Color.WHITE);
-            }
-        } catch (Exception ex) {
-            Log.e("whiteEffectClick", ex.toString());
-        }
-    }
-
     public static void removeFromDb(SessionDao.KEY key) {
         try {
             SessionDao.getByKey(key).delete();
@@ -1014,6 +972,7 @@ public class Utils {
         Utils.removeFromDb(SessionDao.KEY.STORES_USER_LAST_LOCATION);
         Utils.removeFromDb(SessionDao.KEY.LIVE_CHAT_EXTRAS);
         Utils.removeFromDb(SessionDao.KEY.CARD_NOT_RECEIVED_DIALOG_WAS_SHOWN);
+        Utils.removeFromDb(KEY.SHOP_OPTIMISER_SQLITE_MODEL);
 
         AppInstanceObject appInstanceObject = AppInstanceObject.get();
         appInstanceObject.setDefaultInAppChatTipAcknowledgements();
@@ -1221,6 +1180,9 @@ public class Utils {
                 break;
             case NEW_FBH_CNC:
                 appInstanceObject.featureWalkThrough.new_fbh_cnc = true;
+                break;
+            case PLP_ADD_TO_LIST:
+                appInstanceObject.featureWalkThrough.plp_add_to_list = true;
                 break;
             default:
                 break;

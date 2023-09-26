@@ -162,6 +162,10 @@ class StartupActivity :
 
     private fun setUpFirebaseconfig() {
         firebaseRemoteConfig = startupViewModel.getFirebaseRemoteConfigData()
+        if (Utils.isAppUpdated(this)) {
+            // Reset Firebase Remote Config cache if the app has been updated
+            firebaseRemoteConfig.reset()
+        }
         configBuilder = FirebaseRemoteConfigSettings.Builder()
             .setMinimumFetchIntervalInSeconds(AppConstant.FIREBASE_REMOTE_CONFIG_FETCH_INTERVAL)
             .setFetchTimeoutInSeconds(AppConstant.FIREBASE_REMOTE_CONFIG_TIMEOUT_INTERVAL)

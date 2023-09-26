@@ -1,7 +1,5 @@
 package za.co.woolworths.financial.services.android.models
 
-import android.util.Log
-import com.google.gson.Gson
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.dto.RatingsAndReviews
 import za.co.woolworths.financial.services.android.models.dto.app_config.BnplConfig

@@ -125,12 +125,10 @@ class CustomBottomSheetDialogFragment : WBottomSheetDialogFragment(),
                 imgView.visibility = View.GONE
 
             val linkText = getString(DIALOG_DISMISS_LINK_TEXT)
-            if (linkText == null) {
-                tvDismiss?.text = getText(R.string.cancel_underline)
-            } else if (linkText.isEmpty()) {
-                tvDismiss?.visibility = View.GONE
+            if (linkText.isNullOrEmpty()) {
+                tvDismiss.visibility = View.GONE
             } else {
-                tvDismiss?.text = linkText
+                tvDismiss?.text = HtmlCompat.fromHtml(linkText, HtmlCompat.FROM_HTML_MODE_LEGACY)
             }
         }
 

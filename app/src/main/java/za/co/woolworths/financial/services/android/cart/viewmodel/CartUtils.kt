@@ -23,9 +23,11 @@ import za.co.woolworths.financial.services.android.util.ScreenManager
 
 class CartUtils {
     companion object {
-        fun filterCommerceItemFromCartResponse(
-            cartResponse: CartResponse,
-            commerceId: String,
+
+        //Threshold level is 24 to hide the blue banner as per the requirement and it 0 to show it
+        public const val THRESHOLD_FOR_DASH_CART_LIMIT_BANNER = 24
+
+        fun filterCommerceItemFromCartResponse(cartResponse: CartResponse, commerceId: String,
         ): CommerceItem? {
             var commerceItem: CommerceItem? = null
             cartResponse.cartItems?.forEach { group ->

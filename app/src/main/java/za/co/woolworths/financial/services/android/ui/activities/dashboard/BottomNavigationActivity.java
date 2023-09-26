@@ -1351,7 +1351,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 return;
             }
             CartFragment cartFragment = (CartFragment) mNavController.getCurrentFrag();
-            cartFragment.reloadFragment();
+            cartFragment.reloadFragment(true);
         }
     }
 
