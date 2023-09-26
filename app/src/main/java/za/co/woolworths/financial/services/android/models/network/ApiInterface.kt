@@ -11,6 +11,7 @@ import za.co.woolworths.financial.services.android.enhancedSubstitution.service.
 import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.AddSubstitutionResponse
 import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.KiboProductRequest
 import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.KiboProductResponse
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.ProductSubstitution
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.request.SaveAddressLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse

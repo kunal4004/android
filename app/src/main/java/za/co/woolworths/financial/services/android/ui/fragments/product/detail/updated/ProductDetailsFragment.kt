@@ -433,8 +433,6 @@ class ProductDetailsFragment :
         }
     }
 
-
-
     //firebase event view_item
     private fun addViewItemEvent(productDetails: ProductDetails) {
         val viewItemListParams = Bundle()
@@ -1140,7 +1138,6 @@ class ProductDetailsFragment :
             updateAddToCartButtonForSelectedSKU()
             return
         }
-
         //finally add to cart after all checks
         getSelectedSku()?.apply {
             addToCartForSelectedSKU()
@@ -4284,36 +4281,7 @@ class ProductDetailsFragment :
         }
     }
 
-    private fun setupBNPLViewForFbhProducts() {
-        if (this.productDetails?.fulfillmentType == StoreUtils.Companion.FulfillmentType.CLOTHING_ITEMS?.type || this.productDetails?.fulfillmentType == StoreUtils.Companion.FulfillmentType.CRG_ITEMS?.type) {
-            binding.payFlexWidget.apply {
-                visibility = View.VISIBLE
-                setOnTouchListener { _, motionEvent ->
-                    if (motionEvent.action == MotionEvent.ACTION_DOWN) {
-                        if (bottomSheetWebView == null) {
-                            bottomSheetWebView = PayFlexBottomSheetDialog()
-                        }
 
-                        if (bottomSheetWebView != null && bottomSheetWebView?.isAdded == true) {
-                            false
-                        }
-                        if (bottomSheetWebView?.isVisible == false && bottomSheetWebView?.isAdded == false) {
-                            bottomSheetWebView?.show(
-                                requireActivity().supportFragmentManager,
-                                PayFlexBottomSheetDialog::class.java.simpleName
-                            )
-                        }
-                    }
-                    true
-                }
-                setOnClickListener(null)
-                settings.javaScriptEnabled = true
-                loadData(loadpayFlexWidget(productDetails?.price), "text/html", "UTF-8")
-            }
-        } else {
-            binding.payFlexWidget.visibility = View.GONE
-        }
-    }
     override fun openManageSubstituion() {
         (activity as? BottomNavigationActivity)?.pushFragment(
             ManageSubstitutionFragment.newInstance(selectionChoice, commarceItemId, prodId, getSelectedSku()?.sku))
