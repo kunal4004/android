@@ -3085,4 +3085,5 @@
     <string name="sim_label">+ Free Vodacom Sim</string>
     <string name="free_sim_with_purchase">Free %S Sim with Purchase</string>
     <string name="digital_product_type">digitalProducts</string>
+    <string name="enter_valid_sa_number">Enter a valid 10 digit SA number(e.g 0xxxxxxxxx)</string>
 </resources>

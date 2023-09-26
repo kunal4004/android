@@ -145,6 +145,7 @@ class AppConstant {
 
         //connect online
         const val PRODUCT_TYPE_DIGITAL = "DIGITAL"
+        const val SA_MOBILE_NUMBER_PATTERN="^0\\d{9}$"
     }
 
     class Keys {
