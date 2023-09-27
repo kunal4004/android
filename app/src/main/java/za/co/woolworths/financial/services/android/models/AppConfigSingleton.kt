@@ -1,29 +1,8 @@
 package za.co.woolworths.financial.services.android.models
 
+import DynamicYieldConfig
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.dto.RatingsAndReviews
-import za.co.woolworths.financial.services.android.models.dto.app_config.BnplConfig
-import za.co.woolworths.financial.services.android.models.dto.app_config.BrandLandingPage
-import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigAbsaBankingOpenApiServices
-import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigApplyNowLinks
-import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigClickAndCollect
-import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigCreditCardActivation
-import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigCreditCardDelivery
-import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigCreditView
-import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigCustomerFeedback
-import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigDashConfig
-import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigInAppReview
-import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigLiquor
-import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigLowStock
-import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigPayMyAccount
-import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigProductDetailsPage
-import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigQuickShopDefaultValues
-import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigSts
-import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigVirtualTempCard
-import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigVirtualTryOn
-import za.co.woolworths.financial.services.android.models.dto.app_config.EnhanceSubstitution
-import za.co.woolworths.financial.services.android.models.dto.app_config.GlassBox
-import za.co.woolworths.financial.services.android.models.dto.app_config.TooltipSettings
 import za.co.woolworths.financial.services.android.models.dto.app_config.*
 import za.co.woolworths.financial.services.android.models.dto.app_config.account_options.ConfigAccountOptions
 import za.co.woolworths.financial.services.android.models.dto.app_config.balance_protection_insurance.ConfigBalanceProtectionInsurance
@@ -99,6 +78,9 @@ object AppConfigSingleton {
     var glassBox: GlassBox? = null
     var bnplConfig: BnplConfig? = null
     var connectOnline: ConnectOnline? = null
+
+    @JvmStatic
+    var dynamicYieldConfig : DynamicYieldConfig? = null
 
     init {
         initialiseFromCache()
@@ -279,6 +261,14 @@ object AppConfigSingleton {
             appConfig.searchApiSettings?.apply {
                 searchApiSettings = this
             }
+            appConfig.dynamicYieldConfig?.apply {
+                minimumSupportedAppBuildNumber.let {
+                    isDynamicYieldEnabled =
+                        Utils.isFeatureEnabled(minimumSupportedAppBuildNumber)
+                    dynamicYieldConfig = this
+                }
+            }
+
             appConfig.connectOnline?.apply {
                 connectOnline = this
             }

@@ -7,6 +7,7 @@ import retrofit2.Callback
 import retrofit2.http.*
 import za.co.absa.openbankingapi.woolworths.integration.dto.PayUResponse
 import za.co.woolworths.financial.services.android.checkout.service.network.*
+import za.co.woolworths.financial.services.android.dynamicyield.data.response.getResponse.DynamicYieldChooseVariationResponse
 import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.AddSubstitutionRequest
 import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.AddSubstitutionResponse
 import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.KiboProductRequest
@@ -56,8 +57,11 @@ import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_
 import za.co.woolworths.financial.services.android.onecartgetstream.model.OCAuthenticationResponse
 import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.RecommendationResponse
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.RecommendationRequest
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.HomePageRequestEvent
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.RatingAndReviewData
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.ReviewFeedback
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.PrepareChangeAttributeRequestEvent
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Response.DyChangeAttributeResponse
 
 interface ApiInterface {
 
@@ -2234,6 +2238,22 @@ interface ApiInterface {
 
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @POST("wfs/app/dynamicYield/chooseVariation")
+    suspend fun dynamicYieldHomePage(
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Body dyHomePageRequestEvent: HomePageRequestEvent
+    ) : retrofit2.Response<DynamicYieldChooseVariationResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @POST("wfs/app/dynamicYield/reportEvent")
+    suspend fun dynamicYieldChangeAttribute(
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Body dyPrepareChangeAttributeRequestEvent: PrepareChangeAttributeRequestEvent
+    ) : retrofit2.Response<DyChangeAttributeResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("wfs/app/v4/cart/get-substitution")
     suspend fun getSubstitution(
             @Header("sessionToken") sessionToken: String,
@@ -2316,4 +2336,5 @@ interface ApiInterface {
         @Path("store_id") store_id: String,
         @Path("multipleSku") multipleSku: String,
         @Query("substitution") substitution: Boolean): retrofit2.Response<SkusInventoryForStoreResponse>
+
 }
