@@ -1200,6 +1200,8 @@ public class Utils {
         return AppInstanceObject.get().featureWalkThrough.showTutorials;
     }
 
+
+
     public static boolean isFeatureTutorialsDismissed(WMaterialShowcaseView wMaterialShowcaseView) {
         if (wMaterialShowcaseView == null)
             return true;
@@ -1644,6 +1646,28 @@ public class Utils {
     public static String getMonetateId() {
         AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
         return currentUserObject.mId;
+    }
+
+    public static boolean isEnhanceSubstitutionFeatureShown(){
+        AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
+        if (!currentUserObject.enhanceSubstitutionFeatureShown) {
+            /*feature is not shown till now*/
+            currentUserObject.enhanceSubstitutionFeatureShown = true;
+            currentUserObject.save();
+            return false;
+        }
+        return currentUserObject.enhanceSubstitutionFeatureShown;
+    }
+
+    public static void saveDeliveryDetails(String deliveryDetails) {
+        AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
+        currentUserObject.deliveryDetails = deliveryDetails;
+        currentUserObject.save();
+    }
+
+    public static String getDeliveryDetails() {
+        AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
+        return currentUserObject.deliveryDetails;
     }
 
 }

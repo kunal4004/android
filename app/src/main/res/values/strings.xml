@@ -3005,9 +3005,14 @@
     <string name="enhanced_substitution_desc">Add or remove substitutes as you shop your favourite products, or let our shoppers choose for you!</string>
     <string name="enhanced_substitution_btn">Manage substitutions</string>
     <string name="got_it_btn"><u>GOT IT</u></string>
+    <string name="substitution_work_info">How Do Substitutions Work?</string>
+    <string name="substitution_how_it_works_title">How It Works</string>
+    <string name="substitution_how_it_works_subtitle">If no substitutions are selected, our shoppers will choose one for you. If you don’t want an alternative product, you can edit your choice to “I don’t want a substitute” instead.</string>
 
     <string name="substitutions">Substitutions</string>
     <string name="let_my_shooper_choose_for_me">Let My Shopper Choose For Me</string>
+    <string name="item_outofstock_error">You can’t set this product as a substitute because it is out of stock. Please find another item to use instead.</string>
+    <string name="food_substitution_message">If an item is out of stock, our shoppers might contact you in the app about an alternative. Keep your phone close to chat with them.</string>
 
     <string name="timeslot_title">All Dash Timeslots Are Fully Booked.</string>
     <string name="timeslot_desc">Check back later to see if any new delivery slots become available.</string>
@@ -3078,6 +3083,27 @@
 
     <string name="something_went_wrong">Something went wrong</string>
     <string name="location_error_msg">We are unable to access your location details.Please try again later.</string>
+
+
+
+    <string name="substitute_default">Let My Shopper Choose For Me</string>
+    <string name="search_alternative_product">Search for an alternative product</string>
+    <string name="choose_substitute">Choose My Own Substitute</string>
+    <string name="dont_want_substitute"><u>i don\'t want a substitute</u></string>
+    <string name="dont_substitute">Don\'t Substitute</string>
+    <string name="more_details">More Details</string>
+    <string name="promotion_txt">you have saved</string>
+    <string name="item_found">\t ITEMS FOUND</string>
+    <string name="tap_to_retry">tap to retry</string>
+    <string name="substitution_retry_msg">Unfortunately, we can’t load our substitution recommendations. Search for a suitable alternative, or tap to retry.</string>
+    <string name="sign_in_label">Sign in to add substitute items</string>
+    <string name="oos_label">Only available when product is in stock.
+</string>
+    <string name="empty_subst_list_title">We Can’t Recommend Any Substitutes For This Item Yet.</string>
+    <string name="empty_subst_list_desc">Please use the search bar to browse our food catalogue to find a suitable alternative. </string>
+    <string name="add_substitution_error_msg">Failed to add substitute</string>
+    <string name="add_substitution_success_msg">Substitute Added</string>
+    <string name="back">BACK</string>
 
     <string name="add_your_favourite_Food_items_to_your_shopping_lists">Add Your Favourite Food Items To Your Shopping Lists</string>
     <string name="create_custom_shopping_lists_for_quick_access">Create custom shopping lists for quick access.</string>

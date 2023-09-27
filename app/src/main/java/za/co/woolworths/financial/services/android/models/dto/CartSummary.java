@@ -33,4 +33,7 @@ public class CartSummary {
 	@SerializedName("fulfillmentDetails")
 	@Expose
 	public FulfillmentDetails fulfillmentDetails;
+	@SerializedName("deliveryDetails")
+	@Expose
+	public String deliveryDetails;
 }
