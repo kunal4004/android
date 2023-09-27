@@ -6,7 +6,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextLayoutResult
@@ -20,7 +19,15 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.extensions.testAutomationTag
-import za.co.woolworths.financial.services.android.ui.wfs.theme.*
+import za.co.woolworths.financial.services.android.ui.wfs.theme.Black
+import za.co.woolworths.financial.services.android.ui.wfs.theme.Dimens
+import za.co.woolworths.financial.services.android.ui.wfs.theme.FontDimensions
+import za.co.woolworths.financial.services.android.ui.wfs.theme.FuturaFontFamily
+import za.co.woolworths.financial.services.android.ui.wfs.theme.Obsidian
+import za.co.woolworths.financial.services.android.ui.wfs.theme.OpenSansFontFamily
+import za.co.woolworths.financial.services.android.ui.wfs.theme.WhiteWithOpacity30
+import za.co.woolworths.financial.services.android.ui.wfs.theme.WhiteWithOpacity70
+import za.co.woolworths.financial.services.android.ui.wfs.theme.futuraFamilyHeader1
 
 
 @Composable
@@ -177,7 +184,6 @@ fun TextFuturaFamilyHeader1(
     textAlign: TextAlign? = TextAlign.Start,
     lineHeight: TextUnit = TextUnit.Unspecified,
     isLoading: Boolean = false,
-    brush: Brush? = null,
     overflow: TextOverflow = TextOverflow.Clip,
     softWrap: Boolean = true,
     maxLines: Int = Int.MAX_VALUE,
@@ -186,7 +192,7 @@ fun TextFuturaFamilyHeader1(
 ) {
 
     if (isLoading){
-        HeaderItemShimmer(brush, locator)
+        HeaderItemShimmer(locator)
     }
 
     if (!isLoading) {
@@ -229,7 +235,6 @@ fun TextFuturaFamilySemiBoldHeader1(
     textAlign: TextAlign? = TextAlign.Start,
     lineHeight: TextUnit = TextUnit.Unspecified,
     isLoading: Boolean = false,
-    brush: Brush? = null,
     overflow: TextOverflow = TextOverflow.Clip,
     softWrap: Boolean = true,
     maxLines: Int = Int.MAX_VALUE,
@@ -238,7 +243,7 @@ fun TextFuturaFamilySemiBoldHeader1(
 ) {
 
     if (isLoading){
-        HeaderItemShimmer(brush, locator)
+        HeaderItemShimmer(locator)
     }
 
     if (!isLoading) {

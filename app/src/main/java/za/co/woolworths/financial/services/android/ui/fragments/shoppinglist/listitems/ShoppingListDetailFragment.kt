@@ -32,10 +32,12 @@ import com.google.gson.Gson
 import com.google.gson.JsonElement
 import dagger.hilt.android.AndroidEntryPoint
 import retrofit2.Call
+import za.co.woolworths.financial.services.android.cart.view.SubstitutionChoice
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.ScreenNames.Companion.SHOPPING_LIST_ITEMS
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.contracts.IToastInterface
+import za.co.woolworths.financial.services.android.enhancedSubstitution.util.isEnhanceSubstitutionFeatureAvailable
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils.Companion.getPlaceId
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
@@ -781,11 +783,22 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         val selectedItems: MutableList<AddItemToCart> = ArrayList(0)
         for (item in items!!) {
             if (item.isSelected && item.quantityInStock > 0) selectedItems.add(
-                AddItemToCart(
-                    item.productId,
-                    item.catalogRefId,
-                    item.userQuantity
-                )
+                if (isEnhanceSubstitutionFeatureAvailable()) {
+                    AddItemToCart(
+                        item.productId,
+                        item.catalogRefId,
+                        item.userQuantity,
+                        SubstitutionChoice.SHOPPER_CHOICE.name,
+                        ""
+                    )
+                } else {
+                    AddItemToCart(
+                        item.productId,
+                        item.catalogRefId,
+                        item.userQuantity
+                    )
+                }
+
             )
         }
         Utils.triggerFireBaseEvents(
