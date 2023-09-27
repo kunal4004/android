@@ -36,7 +36,7 @@ fun MyListView(
             onEvent = {
                 when (it) {
                     is MyLIstUIEvents.ChangeLocationClick -> onEvent(it)
-                    else -> Unit
+                    else -> myListviewModel.onEvent(it)
                 }
             },
             myListviewModel

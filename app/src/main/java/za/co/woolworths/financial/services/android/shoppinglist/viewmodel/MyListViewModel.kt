@@ -21,18 +21,18 @@ class MyListViewModel @Inject constructor(
     private val resources: ResourcesProvider,
 ) : ViewModel() {
 
-    val deliveryDetailsState = mutableStateOf(LocationDetailsState())
+    var deliveryDetailsState = mutableStateOf(LocationDetailsState())
 
     fun onEvent(events: MyLIstUIEvents) {
         when (events) {
-            is MyLIstUIEvents.ChangeLocationClick -> setDeliveryDetails()
+            is MyLIstUIEvents.SetDeliveryLocation -> setDeliveryDetails()
             else -> Unit
         }
     }
 
     private fun setDeliveryDetails() {
         Utils.getPreferredDeliveryLocation().fulfillmentDetails?.let {
-            when (Delivery.getType(it?.deliveryType)) {
+            deliveryDetailsState.value = when (Delivery.getType(it?.deliveryType)) {
                 Delivery.CNC -> {
                     deliveryDetailsState.value.copy(
                         icon = R.drawable.ic_collection_circle,

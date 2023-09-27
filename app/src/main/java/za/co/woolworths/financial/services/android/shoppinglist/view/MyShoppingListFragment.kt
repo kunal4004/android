@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.shoppinglist.view
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -97,7 +98,7 @@ class MyShoppingListFragment : Fragment() {
                         }
 
                         else -> {
-
+                            myListviewModel.onEvent(event)
                         }
                     }
                 }
@@ -114,7 +115,17 @@ class MyShoppingListFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        myListviewModel.onEvent(MyLIstUIEvents.SetDeliveryLocation)
         hideActivityToolbar()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            0 -> {
+                myListviewModel.onEvent(MyLIstUIEvents.SetDeliveryLocation)
+            }
+        }
     }
 
     private fun hideActivityToolbar() {
