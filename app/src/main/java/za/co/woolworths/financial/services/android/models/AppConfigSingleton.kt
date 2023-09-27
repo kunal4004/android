@@ -261,7 +261,6 @@ object AppConfigSingleton {
             appConfig.searchApiSettings?.apply {
                 searchApiSettings = this
             }
-
             appConfig.dynamicYieldConfig?.apply {
                 minimumSupportedAppBuildNumber.let {
                     isDynamicYieldEnabled =
