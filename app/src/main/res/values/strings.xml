@@ -3107,4 +3107,9 @@
 
     <string name="add_your_favourite_Food_items_to_your_shopping_lists">Add Your Favourite Food Items To Your Shopping Lists</string>
     <string name="create_custom_shopping_lists_for_quick_access">Create custom shopping lists for quick access.</string>
+
+    <string name="sim_label">+ Free Vodacom Sim</string>
+    <string name="free_sim_with_purchase">Free %S Sim with Purchase</string>
+    <string name="digital_product_type">digitalProducts</string>
+    <string name="enter_valid_sa_number">Enter a valid 10 digit SA number(e.g 0xxxxxxxxx)</string>
 </resources>
