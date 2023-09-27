@@ -42,6 +42,8 @@
 
     <TextView
         android:id="@+id/currentDeliveryLocation"
+        android:maxLines="1"
+        android:ellipsize="end"
         style="@style/opensens_semi_bold"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

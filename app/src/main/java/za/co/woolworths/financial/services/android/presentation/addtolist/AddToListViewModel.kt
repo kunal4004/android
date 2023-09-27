@@ -17,15 +17,27 @@ import za.co.woolworths.financial.services.android.domain.usecase.AddToListByOrd
 import za.co.woolworths.financial.services.android.domain.usecase.AddToListUC
 import za.co.woolworths.financial.services.android.domain.usecase.CreateNewListUC
 import za.co.woolworths.financial.services.android.domain.usecase.GetMyListsUC
+import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
 import za.co.woolworths.financial.services.android.models.dto.OrderToShoppingListRequestBody
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList
+import za.co.woolworths.financial.services.android.models.network.AppContextProviderImpl
+import za.co.woolworths.financial.services.android.models.network.NetworkConfig
 import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.presentation.addtolist.components.AddToListScreenEvents
 import za.co.woolworths.financial.services.android.presentation.addtolist.components.AddToListUiState
 import za.co.woolworths.financial.services.android.presentation.addtolist.components.AddedToListState
 import za.co.woolworths.financial.services.android.presentation.addtolist.components.CreateNewListState
+import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Context
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Device
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Session
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.User
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Repository.DyReportEventRepository
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.PrepareChangeAttributeRequestEvent
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.Properties
 import za.co.woolworths.financial.services.android.util.AppConstant.Keys.Companion.BUNDLE_WISHLIST_EVENT_DATA
+import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 import za.co.woolworths.financial.services.android.util.analytics.dto.AddToWishListFirebaseEventData
 import javax.inject.Inject
@@ -36,7 +48,8 @@ class AddToListViewModel @Inject constructor(
     val getMyListsUC: GetMyListsUC,
     val addProductsToList: AddToListUC,
     val addToListByOrderIdUC: AddToListByOrderIdUC,
-    val createListUC: CreateNewListUC
+    val createListUC: CreateNewListUC,
+    val dyReportEventRepository: DyReportEventRepository
 ) : ViewModel() {
 
     private val createNewListState = mutableStateOf(CreateNewListState())
@@ -183,8 +196,12 @@ class AddToListViewModel @Inject constructor(
                     return@launch
                 }
                 val listId = it.listId
+                val skuID: String? = null
+                val size: String? = null
                 // If giftListId is empty pass listId as giftListId
                 items.map { item -> if(item.giftListId.isNullOrEmpty()) { item.giftListId = listId } }
+                items.map {item -> if (item.skuID?.isNotEmpty() == true) {item.skuID = skuID} }
+                items.map {item -> if (item.size?.isNotEmpty() == true) {item.size = size} }
 
                 async {
                     addProductsToList(listId, items.toList()).collect {
@@ -207,6 +224,7 @@ class AddToListViewModel @Inject constructor(
                                         isAddToListInProgress = false,
                                         isAddToListSuccess = isSuccess
                                     )
+                                    prepareDyAddToWishListRequestEvent(skuID, size)
                                 }
 
                                 Status.ERROR -> {
@@ -237,6 +255,46 @@ class AddToListViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    private fun prepareDyAddToWishListViewModel(reportEventRequest: PrepareChangeAttributeRequestEvent) {
+        viewModelScope.launch {
+            val response = dyReportEventRepository.getDyReportEventResponse(reportEventRequest)
+            if (response.status == Status.SUCCESS) {
+                var value = response.data?.response?.desc
+            }
+        }
+    }
+
+    private fun prepareDyAddToWishListRequestEvent(skuID: String?, size: String?) {
+        var dyServerId: String? = null
+        var dySessionId: String? = null
+        val config = NetworkConfig(AppContextProviderImpl())
+        if (Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID) != null) {
+            dyServerId = Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID)
+        }
+        if (Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID) != null) {
+            dySessionId = Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID)
+        }
+        val user = User(dyServerId,dyServerId)
+        val session = Session(dySessionId)
+        val device = Device(Utils.IPAddress,config?.getDeviceModel())
+        val context = Context(device,null, Utils.DY_CHANNEL)
+        val properties = Properties(null,null,
+            Utils.ADD_TO_WISH_LIST_DY_TYPE,null,null,null,null,skuID,null,null,null,size,null,null,null,null,null,null)
+        val eventsDyChangeAttribute = Event(null,null,null,null,null,null,null,null,null,null,null,null,
+            Utils.ADD_TO_WISH_LIST_EVENT_NAME,properties)
+        val events = ArrayList<Event>()
+        events.add(eventsDyChangeAttribute);
+        val prepareAddToWishListRequestEvent = PrepareChangeAttributeRequestEvent(
+            context,
+            events,
+            session,
+            user
+        )
+        //return reportEventRequest
+        prepareDyAddToWishListViewModel(prepareAddToWishListRequestEvent)
+
     }
 
     private suspend fun addToListByOrderId(
