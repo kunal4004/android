@@ -8,7 +8,9 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.databinding.SelectYourQuantityFragmentBinding
 import com.google.gson.Gson
+import za.co.woolworths.financial.services.android.cart.view.SubstitutionChoice
 import za.co.woolworths.financial.services.android.contracts.IProductListing
+import za.co.woolworths.financial.services.android.enhancedSubstitution.util.isEnhanceSubstitutionFeatureAvailable
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart
 import za.co.woolworths.financial.services.android.ui.adapters.SelectQuantityAdapter
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
@@ -56,7 +58,15 @@ class SelectYourQuantityFragment(private val productListing: IProductListing?) :
     }
 
     private fun quantityItemClicked(quantity: Int) {
-        mAddItemToCart?.apply { productListing?.addFoodProductTypeToCart(AddItemToCart(productId, catalogRefId, quantity)) }
+        mAddItemToCart?.apply {
+            productListing?.addFoodProductTypeToCart(
+                if (isEnhanceSubstitutionFeatureAvailable()) {
+                    AddItemToCart(productId, catalogRefId, quantity, SubstitutionChoice.SHOPPER_CHOICE.name, "")
+                } else {
+                    AddItemToCart(productId, catalogRefId, quantity)
+                }
+            )
+        }
         dismiss()
     }
 }
