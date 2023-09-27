@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
+import com.awfs.coordination.R
 import com.awfs.coordination.databinding.BottomProgressBarBinding
 import com.awfs.coordination.databinding.ItemFoundLayoutBinding
 import com.awfs.coordination.databinding.ProductListingPageRowBinding
@@ -70,8 +71,20 @@ class ProductListingAdapter(
                     }
                     view.itemBinding.includeProductListingPriceLayout.imQuickShopAddToCartIcon?.setOnClickListener {
                         if (!productList.quickShopButtonWasTapped) {
+                            var fulfilmentTypeId  = ""
                             activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPQS_ADD_TO_CART, this) }
-                            val fulfilmentTypeId = AppConfigSingleton.quickShopDefaultValues?.foodFulfilmentTypeId
+                            activity?.apply {
+                                productList?.apply {
+                                    when (productType) {
+                                        getString(R.string.food_product_type) -> {
+                                            fulfilmentTypeId = AppConfigSingleton.quickShopDefaultValues?.foodFulfilmentTypeId.toString()
+                                        }
+                                        getString(R.string.digital_product_type) -> {
+                                            fulfilmentTypeId = AppConfigSingleton.quickShopDefaultValues?.digitalProductsFulfilmentTypeId.toString()
+                                        }
+                                    }
+                                }
+                            }
                             val storeId = fulfilmentTypeId?.let { it1 -> RecyclerViewViewHolderItems.getFulFillmentStoreId(it1) }
                             fulfilmentTypeId?.let { id ->
                                 navigator?.queryInventoryForStore(
