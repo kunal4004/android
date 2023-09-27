@@ -72,6 +72,7 @@ object AppConfigSingleton {
     var tooltipSettings: TooltipSettings? = null
     var ratingsAndReviews: RatingsAndReviews? = null
 
+    var enhanceSubstitution: EnhanceSubstitution? = null
     @JvmStatic
     var searchApiSettings: SearchApiSettings? = null
     var glassBox: GlassBox? = null
@@ -237,6 +238,7 @@ object AppConfigSingleton {
             }
 
             this.tooltipSettings = appConfig.toolTipSettings
+            this.enhanceSubstitution = appConfig.enhanceSubstitution
 
             appConfig.ratingsAndReviews?.apply {
                 minimumSupportedAppBuildNumber.let { isEnabled = Utils.isFeatureEnabled(it) }
@@ -266,6 +268,7 @@ object AppConfigSingleton {
                     dynamicYieldConfig = this
                 }
             }
+
             appConfig.connectOnline?.apply {
                 connectOnline = this
             }

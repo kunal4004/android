@@ -32,8 +32,6 @@ import za.co.woolworths.financial.services.android.ui.wfs.theme.White
 @Composable
 fun ProductViewApplicationStatusView(applicationStatus: AccountProductCardsGroup.ApplicationStatus,
                                      onClick: (AccountProductCardsGroup) -> Unit) {
-    val shimmerOptions = applicationStatus.shimmerOptions
-    shimmerOptions?.brush ?: return
 
     if (!applicationStatus.isLoadingInProgress.isAccountLoading) {
         Card(
@@ -79,7 +77,7 @@ fun ProductViewApplicationStatusView(applicationStatus: AccountProductCardsGroup
     }
 
     if (applicationStatus.isLoadingInProgress.isAccountLoading) {
-        ProductShimmerView(key = applicationStatus.properties.automationLocatorKey, height = Dimens.fifty_dp, shimmerOptions.brush)
+        ProductShimmerView(key = applicationStatus.properties.automationLocatorKey, height = Dimens.fifty_dp)
     }
 
 }

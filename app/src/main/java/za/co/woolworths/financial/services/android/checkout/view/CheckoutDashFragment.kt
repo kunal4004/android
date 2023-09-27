@@ -68,6 +68,7 @@ import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAd
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyValues.Companion.SHIPPING_TIER_VALUE_DASH
 import za.co.woolworths.financial.services.android.contracts.IToastInterface
+import za.co.woolworths.financial.services.android.enhancedSubstitution.util.isEnhanceSubstitutionFeatureEnable
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
@@ -994,6 +995,18 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
      * @see [FoodSubstitution]
      */
     private fun initializeFoodSubstitution() {
+        /* if feature flag is disabled then only show food substitution layout */
+        if (isEnhanceSubstitutionFeatureEnable() == true) {
+            binding.nativeCheckoutFoodSubstitutionLayout.apply {
+                this.radioGroupFoodSubstitution.visibility = GONE
+                this.txtFoodSubstitutionDesc.text = getString(R.string.food_substitution_message)
+            }
+        } else {
+            binding.nativeCheckoutFoodSubstitutionLayout.apply {
+                this.radioGroupFoodSubstitution.visibility = VISIBLE
+                this.txtFoodSubstitutionDesc.text = getString(R.string.native_checkout_delivery_food_substitution_desc)
+            }
+        }
         binding.nativeCheckoutFoodSubstitutionLayout.radioBtnPhoneConfirmation?.text =
             requireContext().getString(R.string.native_checkout_delivery_food_substitution_chat)
 
@@ -1388,7 +1401,11 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
         oddDeliverySlotId = ""
         foodDeliveryStartHour = selectedTimeSlot?.intHourFrom?.toLong() ?: 0
         otherDeliveryStartHour = 0
-        substituesAllowed = selectedFoodSubstitution.rgb
+        if (isEnhanceSubstitutionFeatureEnable() == false) {
+          substituesAllowed = selectedFoodSubstitution.rgb
+        } else {
+            substituesAllowed = FoodSubstitution.NO_THANKS.rgb
+        }
         plasticBags = binding.layoutDeliveryInstructions.switchNeedBags?.isChecked ?: false
         shoppingBagType = selectedShoppingBagType
         deliverySpecialInstructions =

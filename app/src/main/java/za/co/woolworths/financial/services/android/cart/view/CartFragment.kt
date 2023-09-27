@@ -49,6 +49,8 @@ import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddress
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.enhancedSubstitution.view.ManageSubstitutionFragment
+import za.co.woolworths.financial.services.android.enhancedSubstitution.view.SearchSubstitutionFragment
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils.Companion.getDelivertyType
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils.Companion.getPlaceId
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils.Companion.getSelectedPlaceId
@@ -137,7 +139,6 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     private val recommendationViewModel: RecommendationViewModel by viewModels()
     private val confirmAddressViewModel: ConfirmAddressViewModel by activityViewModels()
 
-    private val TAG = this.javaClass.simpleName
     private var mNumberOfListSelected = 0
     private var changeQuantityWasClicked = false
     private var errorMessageWasPopUp = false
@@ -641,6 +642,17 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             }
     }
 
+    override fun onSubstituteProductClick(
+        substitutionSelection: String,
+        commerceId: String,
+        productId: String?,
+        catalogRefId: String?
+    ) {
+        (activity as? BottomNavigationActivity)?.pushFragment(
+            ManageSubstitutionFragment.newInstance(substitutionSelection, commerceId, productId, catalogRefId)
+        )
+    }
+
     override fun onCartRefresh() {
         //refresh the pricing view
         if (cartProductAdapter?.cartItems?.isNullOrEmpty() == true) {
@@ -648,6 +660,14 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             setRecommendationDividerVisibility(visibility = false)
         } else {
             updatePriceInformation()
+        }
+    }
+
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        setFragmentResultListener(SearchSubstitutionFragment.SELECTED_SUBSTITUTED_PRODUCT) { _, bundle ->
+            // User Substitute product from search screen and came back to cart
+            loadShoppingCart()
         }
     }
 
@@ -2462,6 +2482,11 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             toastContainerView = binding.rlCheckOut,
             onToastClick = {}
         )
+
+        setFragmentResultListener(SearchSubstitutionFragment.SELECTED_SUBSTITUTED_PRODUCT) { _, bundle ->
+            // User Substitute product from search screen and came back to cart
+            loadShoppingCart()
+        }
     }
 
     private fun postAnalyticsRemoveFromCart(commerceItems: List<CommerceItem>) {
@@ -2532,6 +2557,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         private const val TAG_ADDED_TO_LIST_TOAST = "ADDED_TO_LIST"
         private const val TAG_AVAILABLE_VOUCHERS_TOAST = "AVAILABLE_VOUCHERS"
         private const val GIFT_ITEM = "GIFT"
+        private val TAG = CartFragment::class.java.simpleName
 
         // constants for deletion confirmation.
         private const val ON_CONFIRM_REMOVE_WITH_DELETE_PRESSED = "remove_with_delete_pressed"

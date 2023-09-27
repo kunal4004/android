@@ -596,7 +596,7 @@ open class OneAppService(
         }
     }
 
-    private fun getSuburbOrStoreId(): Pair<String?, String?> {
+     fun getSuburbOrStoreId(): Pair<String?, String?> {
         val suburbId: String? = null
         val storeId: String? = null
         return Pair(suburbId, storeId)

@@ -14,8 +14,10 @@ import com.awfs.coordination.databinding.*
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DecodeFormat
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import za.co.woolworths.financial.services.android.cart.view.SubstitutionChoice
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IProductListing
+import za.co.woolworths.financial.services.android.enhancedSubstitution.util.isEnhanceSubstitutionFeatureAvailable
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart
 import za.co.woolworths.financial.services.android.models.dto.ProductList
@@ -353,7 +355,11 @@ class ProductCarouselItemViewHolder(val itemBinding: ItemProductCarouselListBind
             fulfilmentTypeId?.let { id ->
                 navigator?.queryInventoryForStore(
                     id,
-                    AddItemToCart(productList.productId, productList.sku, 0),
+                    if (isEnhanceSubstitutionFeatureAvailable()){
+                        AddItemToCart(productList.productId, productList.sku, 0, SubstitutionChoice.SHOPPER_CHOICE.name, "")
+                    } else {
+                        AddItemToCart(productList.productId, productList.sku, 0)
+                    },
                     productList
                 )
             }

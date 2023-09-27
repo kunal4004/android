@@ -49,10 +49,11 @@ data class AppConfig(
     var lowStockIndicator: ConfigLowStock?,
     var brandLandingPage: BrandLandingPage?,
     var toolTipSettings: TooltipSettings?,
+    var enhanceSubstitution: EnhanceSubstitution?,
     var ratingsAndReviews: RatingsAndReviews?,
     var glassBox: GlassBox?,
     var bnplConfig: BnplConfig?,
     var searchApiSettings: SearchApiSettings?,
-    var connectOnline: ConnectOnline?,
-    var dynamicYieldConfig: DynamicYieldConfig?
+    var dynamicYieldConfig: DynamicYieldConfig?,
+    var connectOnline: ConnectOnline?
 ) : Parcelable

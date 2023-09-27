@@ -1,11 +1,15 @@
 package za.co.woolworths.financial.services.android.ui.wfs.component
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.ClickableText
-import androidx.compose.material3.*
+import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
@@ -23,7 +27,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.extensions.testAutomationTag
-import za.co.woolworths.financial.services.android.ui.wfs.theme.*
+import za.co.woolworths.financial.services.android.ui.wfs.theme.Dimens
+import za.co.woolworths.financial.services.android.ui.wfs.theme.FontDimensions
+import za.co.woolworths.financial.services.android.ui.wfs.theme.FuturaFontFamily
+import za.co.woolworths.financial.services.android.ui.wfs.theme.Margin
+import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
+import za.co.woolworths.financial.services.android.ui.wfs.theme.OpenSansFontFamily
+import za.co.woolworths.financial.services.android.ui.wfs.theme.TitleSmall
+import za.co.woolworths.financial.services.android.ui.wfs.theme.White
+import za.co.woolworths.financial.services.android.ui.wfs.theme.futuraFamilyHeader1
+import za.co.woolworths.financial.services.android.ui.wfs.theme.futuraFamilyHeader3
 import za.co.woolworths.financial.services.android.util.Utils
 
 @Preview(showBackground = true)
@@ -200,11 +213,13 @@ fun SectionHeaderTitleLabel(params: LabelProperties) {
 }
 
 @Composable
-fun HeaderItemShimmer(brush: Brush?, locator: String) {
-    Row(modifier = Modifier
-        .padding(start = 27.dp, top = 24.dp)
-        .testAutomationTag(locator)) {
-        brush?.let { ShimmerLabel(brush = it, width = 0.45f, height = 12.dp) }
+fun HeaderItemShimmer(locator: String) {
+    Row(
+        modifier = Modifier
+            .padding(start = 27.dp, top = 24.dp)
+            .testAutomationTag(locator)
+    ) {
+        ShimmerLabel(width = 0.45f, height = 12.dp)
     }
 }
 
