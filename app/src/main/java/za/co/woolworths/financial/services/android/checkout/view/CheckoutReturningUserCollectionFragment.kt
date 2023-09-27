@@ -1239,7 +1239,7 @@ class CheckoutReturningUserCollectionFragment :
                             if(response.httpCode == AppConstant.HTTP_EXPECTATION_FAILED_502){
                                 presentErrorDialog(
                                     response.response?.message.toString(),
-                                    response.response?.desc.toString(),
+                                    "",
                                     ERROR_TYPE_CONNECT_ONLINE
                                 )
                             }else {

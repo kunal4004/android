@@ -88,10 +88,13 @@ class ErrorHandlerBottomSheetDialog : WBottomSheetDialogFragment(),
         errorLogo.setImageResource(R.drawable.ic_error_icon)
         cancelButton?.visibility = View.VISIBLE
         incSwipeCloseIndicator.root.visibility = View.VISIBLE
-        if(errorType == ERROR_TYPE_CONNECT_ONLINE)
+        if(errorType == ERROR_TYPE_CONNECT_ONLINE) {
             actionButton.text = getString(R.string.got_it)
-        else
+            cancelButton.visibility = View.GONE
+        }
+        else {
             actionButton.text = getString(R.string.retry)
+        }
     }
 
     override fun onClick(v: View?) {
