@@ -8,8 +8,10 @@ import com.awfs.coordination.R
 import com.awfs.coordination.databinding.BottomProgressBarBinding
 import com.awfs.coordination.databinding.ItemFoundLayoutBinding
 import com.awfs.coordination.databinding.ProductListingPageRowBinding
+import za.co.woolworths.financial.services.android.cart.view.SubstitutionChoice
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IProductListing
+import za.co.woolworths.financial.services.android.enhancedSubstitution.util.isEnhanceSubstitutionFeatureAvailable
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart
 import za.co.woolworths.financial.services.android.models.dto.ProductList
@@ -89,7 +91,11 @@ class ProductListingAdapter(
                             fulfilmentTypeId?.let { id ->
                                 navigator?.queryInventoryForStore(
                                     id,
-                                    AddItemToCart(productList.productId, productList.sku, 0),
+                                    if (isEnhanceSubstitutionFeatureAvailable()) {
+                                        AddItemToCart(productList.productId, productList.sku, 0, SubstitutionChoice.SHOPPER_CHOICE.name, "")
+                                    } else {
+                                        AddItemToCart(productList.productId, productList.sku, 0)
+                                    },
                                     productList
                                 )
                             }
