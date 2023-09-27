@@ -3107,7 +3107,7 @@
     <string name="standard_shop_fashion"> shop FASHION, BEAUTY, HOME AND food</string>
     <string name="earliest_standard_delivery_dates">Earliest Standard Delivery Dates:</string>
     <string name="delivery_cost">Delivery Cost:</string>
-    <string name="determined_at_checkout">Determined at checkout. Learn more</string>
+    <string name="determined_at_checkout">Determined at checkout. </string>
     <string name="set_to_standard_delivery">SET TO STANDARD DELIVERY</string>
     <string name="get_food_today">GET FOOD, TODAY</string>
     <string name="next_dash_delivery_timeslot">Next Dash Delivery Timeslot:</string>
@@ -3121,6 +3121,10 @@
     <string name="what_would_you_like_to_shop">What would you like to shop?</string>
     <string name="you_can_choose_option">You can choose between our 3 delivery options here:</string>
     <string name="down_arrow">Down Arrow</string>
+    <string name="learn_more_description">Between R0 - R80* delivery fee, or free for Fashion, Beauty and Home orders over R475. Free delivery for Woolies Black Card holders.\n<i>*This depends on your location / products.</i></string>
+    <string name="learn_more_dash_desc">R35 fixed delivery fee. Driver tipping available.</string>
+    <string name="learn_more_click_desc">Between R0 - R20 collection fee, or free for orders over R450.</string>
+    <string name="our_delivery_costs">Our Delivery Costs</string>
 
 
     <string name="something_went_wrong">Something went wrong</string>

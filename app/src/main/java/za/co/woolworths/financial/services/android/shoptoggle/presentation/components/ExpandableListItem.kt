@@ -19,6 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.shoptoggle.domain.model.ToggleModel
+import za.co.woolworths.financial.services.android.shoptoggle.presentation.viewmodel.ShopToggleViewModel
 import za.co.woolworths.financial.services.android.ui.wfs.theme.*
 
 
@@ -28,6 +29,7 @@ fun ExpandableListItem(
     item: ToggleModel,
     isExpanded: Boolean,
     onItemClick: () -> Unit,
+    viewModel: ShopToggleViewModel,
 ) {
 
     val cardShape = RoundedCornerShape(Dimens.eight_dp)
@@ -59,7 +61,7 @@ fun ExpandableListItem(
         }
 
     ) {
-        ExpandableCard(item, isExpanded)
+        ExpandableCard(item, isExpanded,viewModel)
 
     }
 
@@ -69,6 +71,7 @@ fun ExpandableListItem(
 private fun ExpandableCard(
     item: ToggleModel,
     isExpanded: Boolean,
+    viewModel: ShopToggleViewModel,
 ) {
     Column(
         modifier = Modifier
@@ -157,7 +160,7 @@ private fun ExpandableCard(
 
         }
 
-        ExpandedData(isExpanded, item)
+        ExpandedData(isExpanded, item,viewModel)
 
     }
 
