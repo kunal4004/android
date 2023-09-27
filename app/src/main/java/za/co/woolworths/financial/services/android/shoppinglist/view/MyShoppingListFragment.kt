@@ -20,16 +20,19 @@ import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.awfs.coordination.R
 import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.presentation.common.AppToolBar
 import za.co.woolworths.financial.services.android.presentation.createlist.CreateListFragment
-import za.co.woolworths.financial.services.android.shoppinglist.MyLIstUIEvents
+import za.co.woolworths.financial.services.android.shoppinglist.component.MyLIstUIEvents
+import za.co.woolworths.financial.services.android.shoppinglist.viewmodel.MyListViewModel
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator
 import za.co.woolworths.financial.services.android.ui.compose.contentView
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 
 /**
@@ -41,6 +44,7 @@ import za.co.woolworths.financial.services.android.util.Utils
 class MyShoppingListFragment : Fragment() {
 
     private var mBottomNavigator: BottomNavigator? = null
+    private val myListviewModel: MyListViewModel by viewModels()
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -81,10 +85,15 @@ class MyShoppingListFragment : Fragment() {
                     Modifier
                         .padding(paddingValues = it)
                         .background(Color.White),
+                    myListviewModel
                 ) { event ->
                     when (event) {
                         is MyLIstUIEvents.CreateListClick -> {
                             navigateToCreateListFragment()
+                        }
+
+                        is MyLIstUIEvents.ChangeLocationClick -> {
+                            locationSelectionClicked()
                         }
 
                         else -> {
@@ -112,6 +121,15 @@ class MyShoppingListFragment : Fragment() {
         mBottomNavigator?.apply {
             removeToolbar()
         }
+    }
+
+    private fun locationSelectionClicked() {
+        KotlinUtils.presentEditDeliveryGeoLocationActivity(
+            requireActivity(),
+            0,
+            KotlinUtils.getPreferredDeliveryType(),
+            Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
+        )
     }
 
     private fun navigateToCreateListFragment() {
