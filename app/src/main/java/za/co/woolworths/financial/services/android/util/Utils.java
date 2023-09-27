@@ -3,11 +3,6 @@ package za.co.woolworths.financial.services.android.util;
 import static android.Manifest.permission_group.STORAGE;
 import static android.graphics.Color.BLACK;
 import static android.graphics.Color.WHITE;
-import za.co.woolworths.financial.services.android.models.dao.ApiRequestDao;
-import za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY;
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
-import za.co.woolworths.financial.services.android.ui.wfs.common.NetworkUtilsKt;
-import za.co.woolworths.financial.services.android.ui.activities.webview.usercase.WebViewHandler;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -18,7 +13,6 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Typeface;
 import android.location.Location;
@@ -51,7 +45,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.awfs.coordination.BuildConfig;
 import com.awfs.coordination.R;
@@ -124,6 +117,7 @@ import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorDia
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SingleButtonDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.badgeview.Badge;
 import za.co.woolworths.financial.services.android.ui.views.badgeview.QBadgeView;
+import za.co.woolworths.financial.services.android.ui.wfs.common.NetworkUtilsKt;
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager;
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager;
 import za.co.woolworths.financial.services.android.util.tooltip.TooltipHelper;
@@ -1258,6 +1252,8 @@ public class Utils {
         return AppInstanceObject.get().featureWalkThrough.showTutorials;
     }
 
+
+
     public static boolean isFeatureTutorialsDismissed(WMaterialShowcaseView wMaterialShowcaseView) {
         if (wMaterialShowcaseView == null)
             return true;
@@ -1752,6 +1748,28 @@ public class Utils {
     public static String getSessionDaoDySessionId(SessionDao.KEY key) {
         SessionDao sessionDao = SessionDao.getByKey(key);
         return sessionDao.value;
+    }
+
+    public static boolean isEnhanceSubstitutionFeatureShown(){
+        AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
+        if (!currentUserObject.enhanceSubstitutionFeatureShown) {
+            /*feature is not shown till now*/
+            currentUserObject.enhanceSubstitutionFeatureShown = true;
+            currentUserObject.save();
+            return false;
+        }
+        return currentUserObject.enhanceSubstitutionFeatureShown;
+    }
+
+    public static void saveDeliveryDetails(String deliveryDetails) {
+        AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
+        currentUserObject.deliveryDetails = deliveryDetails;
+        currentUserObject.save();
+    }
+
+    public static String getDeliveryDetails() {
+        AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
+        return currentUserObject.deliveryDetails;
     }
 
 }

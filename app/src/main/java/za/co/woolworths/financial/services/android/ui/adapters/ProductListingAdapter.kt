@@ -4,11 +4,14 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
+import com.awfs.coordination.R
 import com.awfs.coordination.databinding.BottomProgressBarBinding
 import com.awfs.coordination.databinding.ItemFoundLayoutBinding
 import com.awfs.coordination.databinding.ProductListingPageRowBinding
+import za.co.woolworths.financial.services.android.cart.view.SubstitutionChoice
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IProductListing
+import za.co.woolworths.financial.services.android.enhancedSubstitution.util.isEnhanceSubstitutionFeatureAvailable
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart
 import za.co.woolworths.financial.services.android.models.dto.ProductList
@@ -70,13 +73,29 @@ class ProductListingAdapter(
                     }
                     view.itemBinding.includeProductListingPriceLayout.imQuickShopAddToCartIcon?.setOnClickListener {
                         if (!productList.quickShopButtonWasTapped) {
+                            var fulfilmentTypeId  = ""
                             activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPQS_ADD_TO_CART, this) }
-                            val fulfilmentTypeId = AppConfigSingleton.quickShopDefaultValues?.foodFulfilmentTypeId
+                            activity?.apply {
+                                productList?.apply {
+                                    when (productType) {
+                                        getString(R.string.food_product_type) -> {
+                                            fulfilmentTypeId = AppConfigSingleton.quickShopDefaultValues?.foodFulfilmentTypeId.toString()
+                                        }
+                                        getString(R.string.digital_product_type) -> {
+                                            fulfilmentTypeId = AppConfigSingleton.quickShopDefaultValues?.digitalProductsFulfilmentTypeId.toString()
+                                        }
+                                    }
+                                }
+                            }
                             val storeId = fulfilmentTypeId?.let { it1 -> RecyclerViewViewHolderItems.getFulFillmentStoreId(it1) }
                             fulfilmentTypeId?.let { id ->
                                 navigator?.queryInventoryForStore(
                                     id,
-                                    AddItemToCart(productList.productId, productList.sku, 0),
+                                    if (isEnhanceSubstitutionFeatureAvailable()) {
+                                        AddItemToCart(productList.productId, productList.sku, 0, SubstitutionChoice.SHOPPER_CHOICE.name, "")
+                                    } else {
+                                        AddItemToCart(productList.productId, productList.sku, 0)
+                                    },
                                     productList
                                 )
                             }

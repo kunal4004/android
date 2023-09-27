@@ -7,6 +7,12 @@ import retrofit2.Callback
 import retrofit2.http.*
 import za.co.absa.openbankingapi.woolworths.integration.dto.PayUResponse
 import za.co.woolworths.financial.services.android.checkout.service.network.*
+import za.co.woolworths.financial.services.android.dynamicyield.data.response.getResponse.DynamicYieldChooseVariationResponse
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.AddSubstitutionRequest
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.AddSubstitutionResponse
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.KiboProductRequest
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.KiboProductResponse
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.ProductSubstitution
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.request.SaveAddressLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
@@ -51,10 +57,9 @@ import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_
 import za.co.woolworths.financial.services.android.onecartgetstream.model.OCAuthenticationResponse
 import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.RecommendationResponse
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.RecommendationRequest
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.HomePageRequestEvent
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.RatingAndReviewData
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.ReviewFeedback
-import za.co.woolworths.financial.services.android.dynamicyield.data.response.getResponse.DynamicYieldChooseVariationResponse
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.HomePageRequestEvent
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.PrepareChangeAttributeRequestEvent
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Response.DyChangeAttributeResponse
 
@@ -2231,6 +2236,7 @@ interface ApiInterface {
         @Body appGUIDRequestModel: AppGUIDRequestModel,
     ): Call<AppGUIDModel>
 
+
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("wfs/app/dynamicYield/chooseVariation")
     suspend fun dynamicYieldHomePage(
@@ -2246,5 +2252,89 @@ interface ApiInterface {
         @Header("deviceIdentityToken") deviceIdentityToken: String,
         @Body dyPrepareChangeAttributeRequestEvent: PrepareChangeAttributeRequestEvent
     ) : retrofit2.Response<DyChangeAttributeResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @GET("wfs/app/v4/cart/get-substitution")
+    suspend fun getSubstitution(
+            @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
+            @Query("productId") productId: String?,
+    ): retrofit2.Response<ProductSubstitution>
+
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip")
+    @GET("wfs/app/v4/searchSortAndFilterV2")
+    suspend fun getSearchedProducts(
+
+            @Header("userAgent") userAgent: String,
+            @Header("userAgentVersion") userAgentVersion: String,
+            @Header("longitude") longitude: String,
+            @Header("latitude") latitude: String,
+            @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
+            @Query("searchTerm") searchTerm: String,
+            @Query("searchType") searchType: String,
+            @Query("responseType") responseType: String,
+            @Query("pageOffset") pageOffset: Int,
+            @Query("pageSize") pageSize: Int,
+            @Query("sortOption") sortOption: String,
+            @Query("refinement") refinement: String,
+            @Query("suburbId") suburbId: String?,
+            @Query("storeId") storeId: String?,
+            @Query("filterContent") filterContent: Boolean?,
+            @Query("deliveryType") deliveryType: String?,
+            @Query("deliveryDetails") deliveryDetails: String?
+    ): ProductView
+
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip")
+    @GET("wfs/app/v4/searchSortAndFilterV2")
+    suspend fun getSearchedProductsWithoutLocation(
+
+            @Header("userAgent") userAgent: String,
+            @Header("userAgentVersion") userAgentVersion: String,
+            @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
+            @Query("searchTerm") searchTerm: String,
+            @Query("searchType") searchType: String,
+            @Query("responseType") responseType: String,
+            @Query("pageOffset") pageOffset: Int,
+            @Query("pageSize") pageSize: Int,
+            @Query("sortOption") sortOption: String,
+            @Query("refinement") refinement: String,
+            @Header("longitude") longitude: String = "",
+            @Header("latitude") latitude: String = "",
+            @Query("suburbId") suburbId: String?,
+            @Query("storeId") storeId: String?,
+            @Query("filterContent") filterContent: Boolean?,
+            @Query("deliveryType") deliveryType: String?,
+            @Query("deliveryDetails") deliveryDetails: String?
+    ): ProductView
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @POST("wfs/app/v4/cart/add-substitution")
+    suspend fun addSubstitution(
+            @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
+            @Body addSubstitutionRequest: AddSubstitutionRequest
+    ): retrofit2.Response<AddSubstitutionResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @POST("wfs/app/recommendations/kibo-substitution-list")
+    suspend fun getKiboProductsFromResponse(
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Body addSubstitutionRequest: KiboProductRequest
+    ): retrofit2.Response<KiboProductResponse>
+
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @GET("wfs/app/v4/isninventory/multi/{store_id}/{multipleSku}")
+    suspend fun fetchKiboInventorySKUForStore(
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Path("store_id") store_id: String,
+        @Path("multipleSku") multipleSku: String,
+        @Query("substitution") substitution: Boolean): retrofit2.Response<SkusInventoryForStoreResponse>
 
 }

@@ -639,7 +639,7 @@ class KotlinUtils {
                             fullAddress, context
                         )
 
-                        if (timeSlot.isNullOrEmpty()) {
+                        if (timeSlot?.isNullOrEmpty() == true) {
                             tvDeliveryLocation?.text =
                                 context?.getString(R.string.no_timeslots_available_title)
                                     ?.plus("\t\u2022\t")?.plus(
@@ -1843,6 +1843,16 @@ class KotlinUtils {
             logEvent(eventName, params)
             requestInAppReview(eventName, activity)
         }
+
+        fun extractPlistFromDeliveryDetails(): String? {
+            val deliveryDetails: String? = Utils.getDeliveryDetails()
+            if (deliveryDetails.isNullOrEmpty()) {
+                return ""
+            } else {
+                val deliveryDetailsArray = deliveryDetails?.split("-")
+                return deliveryDetailsArray?.getOrNull(1)
+            }
+        }
     }
 }
 
@@ -1890,6 +1900,10 @@ fun Fragment.isFragmentAttached(): Boolean {
         return true
     }
     return false
+}
+fun isAValidSouthAfricanNumber(number: String?): Boolean {
+    val regex = Regex(AppConstant.SA_MOBILE_NUMBER_PATTERN)
+    return regex.matches(number.toString())
 }
 
 
