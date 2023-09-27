@@ -271,6 +271,7 @@ val sw420Dimensions = Dimensions(
     point_five_dp = 0.5.dp,
     one_point_five_sp = 1.5.sp,
     ten_sp = 10.sp,
+    dp40 = 40.dp
 )
 
 val sw440Dimensions = Dimensions(
