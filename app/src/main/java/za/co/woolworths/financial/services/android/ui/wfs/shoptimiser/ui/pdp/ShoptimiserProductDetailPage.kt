@@ -53,7 +53,13 @@ class ShoptimiserProductDetailPageImpl @Inject constructor(
                             }
                     }
                 }
-                binding.sizeColorSelectorLayout.divider1.visibility = if (isExpanded) View.GONE else View.VISIBLE
+
+                when (shopOptimiserVisibleUiType) {
+                    ShopOptimiserVisibleUiType.STANDALONE ->  binding.sizeColorSelectorLayout.divider1.visibility = View.GONE
+                    ShopOptimiserVisibleUiType.ACCORDION ->  binding.sizeColorSelectorLayout.divider1.visibility = if (isExpanded) View.GONE else View.VISIBLE
+                    ShopOptimiserVisibleUiType.GONE -> Unit
+                }
+
             }
         }
     }
