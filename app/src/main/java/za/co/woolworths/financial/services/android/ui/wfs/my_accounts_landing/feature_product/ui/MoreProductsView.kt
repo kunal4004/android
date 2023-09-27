@@ -1,21 +1,25 @@
 package za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.ui
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
-
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
-import com.awfs.coordination.R
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
-import za.co.woolworths.financial.services.android.ui.wfs.component.*
+import com.awfs.coordination.R
+import za.co.woolworths.financial.services.android.ui.wfs.component.ShimmerLabelWithRoundedCorner
+import za.co.woolworths.financial.services.android.ui.wfs.component.SpacerHeight24dp
+import za.co.woolworths.financial.services.android.ui.wfs.component.TextOpenSansFontFamily
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.analytics.AutomationTestScreenLocator.Locator.my_application_status_card
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.analytics.AutomationTestScreenLocator.Locator.my_products_section_box_link_woolies_card_shimmer_row
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.analytics.AutomationTestScreenLocator.Locator.my_products_section_box_link_woolies_card_text
@@ -28,16 +32,16 @@ import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.fe
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.enumtype.AccountOfferKeys
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.enumtype.AccountProductCardsGroup
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.schema.CommonItem
-import za.co.woolworths.financial.services.android.ui.wfs.theme.*
+import za.co.woolworths.financial.services.android.ui.wfs.theme.FontDimensions
+import za.co.woolworths.financial.services.android.ui.wfs.theme.Margin
+import za.co.woolworths.financial.services.android.ui.wfs.theme.Obsidian
+import za.co.woolworths.financial.services.android.ui.wfs.theme.Shimmer
 @Composable
 fun NoC2IdNorProductView(
     isLoadingInProgress: Boolean,
     isBottomSpacerShown : Boolean = false,
-        brush: Brush?,
     onClick: (AccountProductCardsGroup.ApplicationStatus) -> Unit
 ) {
-    brush ?: return
-
     Column(
         modifier = Modifier
             .testAutomationTag(my_products_section_box_no_c2id_product_view_column)
@@ -46,7 +50,7 @@ fun NoC2IdNorProductView(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         if (isLoadingInProgress) {
-            OfferShimmerView(brush = brush)
+            OfferShimmerView()
         }
 
         if (!isLoadingInProgress) {
@@ -54,7 +58,6 @@ fun NoC2IdNorProductView(
             ViewApplicationStatusCard(
                 isBottomSpacerShown = isBottomSpacerShown,
                 isLoading = isLoadingInProgress,
-                brush = brush,
                 onClick = onClick
             )
         }
@@ -65,10 +68,8 @@ fun NoC2IdNorProductView(
 @Composable
 fun LinkYourWooliesCardUI(
     isLoadingInProgress: Boolean,
-    brush: Brush?,
     onClick: (AccountProductCardsGroup.LinkYourWooliesCard) -> Unit
 ) {
-    brush ?: return
     val labelLinkYourWooliesCard = stringResource(id = R.string.link_your_woolies_card).uppercase()
     if (isLoadingInProgress) {
         Row(
@@ -78,7 +79,6 @@ fun LinkYourWooliesCardUI(
             horizontalArrangement = Arrangement.Center
         ) {
             ShimmerLabelWithRoundedCorner(
-                brush = brush,
                 width = Shimmer.pointFiveFiveF,
                 height = Shimmer.tenDp
             )
@@ -107,7 +107,6 @@ fun LinkYourWooliesCardUI(
 fun ViewApplicationStatusCard(
     isBottomSpacerShown:Boolean = false,
     isLoading :Boolean = false,
-    brush: Brush? = null,
     onClick: (AccountProductCardsGroup.ApplicationStatus) -> Unit){
     val lists: MutableMap<AccountOfferKeys, CommonItem.OfferItem?> = mutableMapOf(
         AccountOfferKeys.ViewApplicationStatus to OfferProductType.ViewApplicationStatus.value()
@@ -123,8 +122,7 @@ fun ViewApplicationStatusCard(
         ) {
             lists.values.toMutableList()[0]?.let { statusItem ->
                 OfferViewRow(
-                    item = statusItem, isLoading,
-                    brush, listSize = 1
+                    item = statusItem, isLoading, listSize = 1
                 )
             }
             }
