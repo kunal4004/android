@@ -31,6 +31,7 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.findNavController
@@ -70,13 +71,18 @@ import za.co.woolworths.financial.services.android.contracts.IToastInterface
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
+import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.CommerceItem
 import za.co.woolworths.financial.services.android.models.dto.LiquorCompliance
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
 import za.co.woolworths.financial.services.android.models.dto.app_config.native_checkout.ConfigShoppingBagsOptions
+import za.co.woolworths.financial.services.android.models.network.AppContextProviderImpl
+import za.co.woolworths.financial.services.android.models.network.NetworkConfig
 import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.*
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.response.DyHomePageViewModel
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment
@@ -89,6 +95,7 @@ import za.co.woolworths.financial.services.android.util.ImageManager
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.removeRandFromAmount
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.Utils.*
 import za.co.woolworths.financial.services.android.util.WFormatter
 import za.co.woolworths.financial.services.android.util.WFormatter.DATE_FORMAT_EEEE_COMMA_dd_MMMM
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
@@ -135,6 +142,10 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
 
     @Inject
     lateinit var addShippingInfoEventsAnalytics: AddShippingInfoEventsAnalytics
+    private var dyServerId: String? = null
+    private var dySessionId: String? = null
+    private var config: NetworkConfig? = null
+    private var dyChooseVariationViewModel: DyHomePageViewModel? = null
 
     private val deliveryInstructionsTextWatcher: TextWatcher = object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -185,8 +196,12 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
         setFragmentResults()
         binding.txtContinueToPayment?.setOnClickListener(this)
         binding.checkoutCollectingFromLayout?.root?.setOnClickListener(this)
+        dyChooseVariationViewModel()
     }
 
+    private fun dyChooseVariationViewModel() {
+        dyChooseVariationViewModel = ViewModelProvider(this).get(DyHomePageViewModel::class.java)
+    }
 
 
     private fun hideInstructionLayout() {
@@ -1132,8 +1147,29 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
                         SHIPPING_TIER_VALUE_DASH, orderTotalValue
                     )
                 }
+                preparePaymentPageViewRequest(orderTotalValue)
+
             }
         }
+    }
+
+    private fun preparePaymentPageViewRequest(orderTotalValue: Double) {
+        config = NetworkConfig(AppContextProviderImpl())
+        if (Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID) != null)
+            dyServerId = Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID)
+        if (Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID) != null)
+            dySessionId = Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID)
+        val user = User(dyServerId,dyServerId)
+        val session = Session(dySessionId)
+        val device = Device(Utils.IPAddress, config?.getDeviceModel())
+        val dataOther = DataOther(null,null,ZAR,"",orderTotalValue)
+        val dataOtherArray: ArrayList<DataOther>? = ArrayList<DataOther>()
+        dataOtherArray?.add(dataOther)
+        val page = Page(null, PAYMENT_PAGE, OTHER, null, dataOtherArray)
+        val context = Context(device, page, Utils.DY_CHANNEL)
+        val options = Options(true)
+        val homePageRequestEvent = HomePageRequestEvent(user, session, context, options)
+        dyChooseVariationViewModel?.createDyRequest(homePageRequestEvent)
     }
 
     private fun onChooseDateClicked() {

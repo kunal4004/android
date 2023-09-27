@@ -20,10 +20,7 @@ import android.text.Html
 import android.text.TextUtils
 import android.view.*
 import android.webkit.MimeTypeMap
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
@@ -54,6 +51,7 @@ import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.ILocationProvider
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.AddToCartLiveData
+import za.co.woolworths.financial.services.android.dynamicyield.data.response.request.*
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmLocationResponseLiveData
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
@@ -62,6 +60,8 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.models.network.AppContextProviderImpl
+import za.co.woolworths.financial.services.android.models.network.NetworkConfig
 import za.co.woolworths.financial.services.android.presentation.addtolist.AddToListFragment.Companion.ADD_TO_SHOPPING_LIST_REQUEST_CODE
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.ProductX
@@ -72,6 +72,10 @@ import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_CART
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.*
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Options
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Page
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.response.DyHomePageViewModel
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductInformationActivity
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.featureutils.RatingAndReviewUtil
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.*
@@ -83,12 +87,15 @@ import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerA
 import za.co.woolworths.financial.services.android.ui.extension.deviceWidth
 import za.co.woolworths.financial.services.android.ui.extension.underline
 import za.co.woolworths.financial.services.android.ui.fragments.payflex.PayFlexBottomSheetDialog
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.*
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.ViewModel.DyChangeAttributeViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.OutOfStockMessageDialogFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.size_guide.SkinProfileDialog
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment.Companion.SET_DELIVERY_LOCATION_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.FoodProductNotAvailableForCollectionDialog
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.ProductNotAvailableForCollectionDialog
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.BaseProductUtils
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.ColourSizeVariants
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListDetailFragment.Companion.ADD_TO_CART_SUCCESS_RESULT
@@ -128,6 +135,7 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_COLOR_NOT_MATCH
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_FACE_NOT_DETECT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_FAIL_IMAGE_LOAD
+import za.co.woolworths.financial.services.android.util.Utils.*
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.logException
@@ -142,6 +150,7 @@ import java.io.File
 import javax.inject.Inject
 import kotlin.collections.get
 import kotlin.collections.set
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.*
 
 
 @AndroidEntryPoint
@@ -253,6 +262,13 @@ class ProductDetailsFragment :
 
     lateinit var wfsShoptimiserProduct: ShoptimiserProductDetailPageImpl
 
+    private lateinit var dyReportEventViewModel: DyChangeAttributeViewModel
+    private var productId: String? = null
+    private var dyChooseVariationViewModel: DyHomePageViewModel? = null
+    private var dyServerId: String? = null
+    private var dySessionId: String? = null
+    private var config: NetworkConfig? = null
+
     companion object {
         const val INDEX_STORE_FINDER = 1
         const val INDEX_ADD_TO_CART = 2
@@ -294,6 +310,12 @@ class ProductDetailsFragment :
             isUserBrowsing = getBoolean(IS_BROWSING, false)
         }
         productDetailsPresenter = ProductDetailsPresenterImpl(this, ProductDetailsInteractorImpl())
+        productId = productDetails?.productId
+        config = NetworkConfig(AppContextProviderImpl())
+        if (Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID) != null)
+            dyServerId = Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID)
+        if (Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID) != null)
+            dySessionId = Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -308,7 +330,32 @@ class ProductDetailsFragment :
             wfsShoptimiserProduct.addProductDetails(it)
         }
         setUpCartCountPDP()
+        dyChooseVariationViewModel()
+        dyReportEventViewModel()
     }
+
+    private fun dyChooseVariationViewModel() {
+        dyChooseVariationViewModel = ViewModelProvider(this).get(DyHomePageViewModel::class.java)
+    }
+
+    private fun prepareDynamicYieldPageViewRequestEvent() {
+        val user = User(dyServerId,dyServerId)
+        val session = Session(dySessionId)
+        val device = Device(IPAddress, config?.getDeviceModel())
+        val skuIdList: ArrayList<String>? = ArrayList()
+        for (othersku in productDetails!!.otherSkus) {
+            if (othersku.sku != null) {
+                var skuID = othersku.sku
+                skuIdList?.add(skuID!!)
+            }
+        }
+        val page = Page(skuIdList, PRODUCT_DETAILS_PAGE, PRODUCT_PAGE, null,null)
+        val context = Context(device, page, DY_CHANNEL)
+        val options = Options(true)
+        val homePageRequestEvent = HomePageRequestEvent(user, session, context, options)
+        dyChooseVariationViewModel?.createDyRequest(homePageRequestEvent)
+    }
+
 
     private fun setUpCartCountPDP() {
         val cartIconMargin = requireContext().resources.getDimensionPixelSize(R.dimen.five_dp)
@@ -1070,6 +1117,21 @@ class ProductDetailsFragment :
         if ((!hasColor && !hasSize)) {
             setSelectedSku(this.defaultSku)
             updateAddToCartButtonForSelectedSKU()
+            AppConfigSingleton.dynamicYieldConfig?.apply {
+                if (isDynamicYieldEnabled == true) {
+                    prepareDyChangeAttributeQuantityRequestEvent(
+                        defaultSku?.quantity.toString(),
+                        defaultSku?.sku
+                    )
+                }
+            }
+        } else {
+            AppConfigSingleton.dynamicYieldConfig?.apply {
+                if (isDynamicYieldEnabled == true) {
+                    var color = defaultSku?.colour
+                    prepareDyChangeAttributeRequestEvent(color, defaultSku?.sku)
+                }
+            }
         }
 
         binding.setupBrandView()
@@ -1113,6 +1175,7 @@ class ProductDetailsFragment :
             if (!SessionUtilities.getInstance().isUserAuthenticated || Utils.getPreferredDeliveryLocation() == null) {
                 updateDefaultUI(false)
                 hideProductDetailsLoading()
+                prepareDynamicYieldPageViewRequestEvent()
                 return
             }
 
@@ -1141,6 +1204,10 @@ class ProductDetailsFragment :
             showErrorWhileLoadingProductDetails()
         }
         sendRecommendationsDetail()
+        AppConfigSingleton.dynamicYieldConfig?.apply {
+            if (isDynamicYieldEnabled == true)
+                prepareDynamicYieldPageViewRequestEvent()
+        }
     }
 
     private fun sendRecommendationsDetail() {
@@ -1747,8 +1814,32 @@ class ProductDetailsFragment :
 
     override fun onSizeSelection(selectedSku: OtherSkus) {
         setSelectedSku(selectedSku)
+        var size: String? = selectedSku.size
         binding.showSelectedSize(selectedSku)
         binding.updateUIForSelectedSKU(getSelectedSku())
+        AppConfigSingleton.dynamicYieldConfig?.apply {
+            if (isDynamicYieldEnabled == true)
+                prepareDyChangeAttributeSizeRequestEvent(size, selectedSku.sku)
+        }
+    }
+
+    private fun prepareDyChangeAttributeSizeRequestEvent(size: String?, sku: String?): PrepareChangeAttributeRequestEvent {
+        val user = User(dyServerId,dyServerId)
+        val session = Session(dySessionId)
+        val device = Device(IPAddress,config?.getDeviceModel())
+        val context = Context(device,null,DY_CHANNEL)
+        val properties = Properties(SIZE_ATTRIBUTE, size,CHANGE_ATTRIBUTE_DY_TYPE,null,null,null,null,null,null,sku,null,null,null,null,null,null,null,null)
+        val eventsDyChangeAttribute = Event(null,null,null,null,null,null,null,null,null,null,null,null,CHANGE_ATTRIBUTE,properties)
+        val events = ArrayList<Event>()
+        events.add(eventsDyChangeAttribute);
+        val prepareChangeAttributeRequestEvent = PrepareChangeAttributeRequestEvent(
+            context,
+            events,
+            session,
+            user
+        )
+        dyReportEventViewModel.createDyChangeAttributeRequest(prepareChangeAttributeRequestEvent)
+        return prepareChangeAttributeRequestEvent
     }
 
     override fun onColorSelection(selectedColor: String?, isFeature: Boolean) {
@@ -1775,6 +1866,33 @@ class ProductDetailsFragment :
             binding.hideLowStockFromSelectedColor()
 
         }
+        AppConfigSingleton.dynamicYieldConfig?.apply {
+            if (isDynamicYieldEnabled == true)
+                prepareDyChangeAttributeRequestEvent(selectedColor, selectedSku?.sku)
+        }
+    }
+
+    private fun prepareDyChangeAttributeRequestEvent(selectedColor: String?, sku: String?): PrepareChangeAttributeRequestEvent {
+        val user = User(dyServerId,dyServerId)
+        val session = Session(dySessionId)
+        val device = Device(IPAddress,config?.getDeviceModel())
+        val context = Context(device,null,DY_CHANNEL)
+        val properties = Properties(COLOR_ATTRIBUTE,selectedColor,CHANGE_ATTRIBUTE_DY_TYPE,null,null,null,null,null,null,sku,null,null,null,null,null,null,null,null)
+        val eventsDyChangeAttribute = Event(null,null,null,null,null,null,null,null,null,null,null,null,CHANGE_ATTRIBUTE,properties)
+        val events = ArrayList<Event>()
+        events.add(eventsDyChangeAttribute)
+        val prepareChangeAttributeRequestEvent = PrepareChangeAttributeRequestEvent(
+            context,
+            events,
+            session,
+            user
+        )
+        dyReportEventViewModel.createDyChangeAttributeRequest(prepareChangeAttributeRequestEvent)
+        return prepareChangeAttributeRequestEvent
+    }
+
+    private fun dyReportEventViewModel() {
+        dyReportEventViewModel = ViewModelProvider(this)[DyChangeAttributeViewModel::class.java]
     }
 
     private fun applyEffectOnLiveCamera() {
@@ -1922,6 +2040,27 @@ class ProductDetailsFragment :
 
     }
 
+    private fun prepareDyAddToCartRequestEvent() {
+        val user = User(dyServerId,dyServerId)
+        val session = Session(dySessionId)
+        val device = Device(IPAddress,config?.getDeviceModel())
+        val context = Context(device,null,DY_CHANNEL)
+        val cartLinesValue: MutableList<Cart> = arrayListOf()
+        val cart = Cart(getSelectedSku()?.sku, getSelectedQuantity(), getSelectedSku()?.price?.toString())
+        cartLinesValue.add(cart)
+        val properties = Properties(null,null,ADD_TO_CART_V1,null,getSelectedSku()?.price,ZAR,selectedQuantity,getSelectedSku()?.sku,getSelectedSku()?.colour,null,null,null,null,null,null,null,null,cartLinesValue)
+        val eventsDyChangeAttribute = Event(null,null,null,null,null,null,null,null,null,null,null,null,ADD_TO_CART,properties)
+        val events = ArrayList<Event>()
+        events.add(eventsDyChangeAttribute);
+        val prepareDyAddToCartRequestEvent = PrepareChangeAttributeRequestEvent(
+            context,
+            events,
+            session,
+            user
+        )
+        dyReportEventViewModel.createDyChangeAttributeRequest(prepareDyAddToCartRequestEvent)
+    }
+
     private fun ProductDetailsFragmentBinding.showFindInStore() {
         productDetails?.isnAvailable?.toBoolean()?.apply {
             if (!this) {
@@ -1994,6 +2133,29 @@ class ProductDetailsFragment :
         }
         setSelectedQuantity(quantity)
         binding.toCartAndFindInStoreLayout.quantityText?.text = quantity.toString()
+        AppConfigSingleton.dynamicYieldConfig?.apply {
+            if (isDynamicYieldEnabled == true)
+                prepareDyChangeAttributeQuantityRequestEvent(quantity.toString(), selectedSku?.sku)
+        }
+    }
+
+    private fun prepareDyChangeAttributeQuantityRequestEvent(quantity: String, sku: String?): PrepareChangeAttributeRequestEvent {
+        val user = User(dyServerId,dyServerId)
+        val session = Session(dySessionId)
+        val device = Device(IPAddress,config?.getDeviceModel())
+        val context = Context(device,null,DY_CHANNEL)
+        val properties = Properties(QUANTITY_ATTRIBUTE,quantity,CHANGE_ATTRIBUTE_DY_TYPE,null,null,null,null,null,null,sku,null,null,null,null,null,null,null,null)
+        val eventsDyChangeAttribute = Event(null,null,null,null,null,null,null,null,null,null,null,null,CHANGE_ATTRIBUTE,properties)
+        val events = ArrayList<Event>()
+        events.add(eventsDyChangeAttribute);
+        val prepareChangeAttributeQuantityRequestEvent = PrepareChangeAttributeRequestEvent(
+            context,
+            events,
+            session,
+            user
+        )
+        dyReportEventViewModel.createDyChangeAttributeRequest(prepareChangeAttributeQuantityRequestEvent)
+        return prepareChangeAttributeQuantityRequestEvent
     }
 
     override fun setSelectedQuantity(selectedQuantity: Int?) {
@@ -2137,6 +2299,34 @@ class ProductDetailsFragment :
                 addToCartEvent(productDetails)
             }
         }
+        AppConfigSingleton.dynamicYieldConfig?.apply {
+            if (isDynamicYieldEnabled == true) {
+                prepareDyAddToCartRequestEvent()
+                prepareSyncCartRequestEvent()
+            }
+        }
+    }
+
+    private fun prepareSyncCartRequestEvent() {
+        val user = User(dyServerId,dyServerId)
+        val session = Session(dySessionId)
+        val device = Device(IPAddress, config?.getDeviceModel())
+        val context = Context(device, null, DY_CHANNEL)
+        val cartLinesValue: MutableList<Cart> = arrayListOf()
+        val cart = Cart(getSelectedSku()?.sku, getSelectedQuantity(), getSelectedSku()?.price?.toString())
+        cartLinesValue.add(cart)
+        val properties = Properties(null,null,SYNC_CART_V1,null,null,
+            Constants.CURRENCY_VALUE,null,null,null,null,null,null,null,null,null,null,null,cartLinesValue)
+        val eventsDyChangeAttribute = Event(null,null,null,null,null,null,null,null,null,null,null,null,SYNC_CART,properties)
+        val events = ArrayList<Event>()
+        events.add(eventsDyChangeAttribute);
+        val prepareDySyncCartRequestEvent = PrepareChangeAttributeRequestEvent(
+            context,
+            events,
+            session,
+            user
+        )
+        dyReportEventViewModel.createDyChangeAttributeRequest(prepareDySyncCartRequestEvent)
     }
 
     override fun onAddToCartError(addItemToCartResponse: AddItemToCartResponse) {

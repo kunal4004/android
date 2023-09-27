@@ -53,6 +53,10 @@ import za.co.woolworths.financial.services.android.recommendations.data.response
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.RecommendationRequest
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.RatingAndReviewData
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.ReviewFeedback
+import za.co.woolworths.financial.services.android.dynamicyield.data.response.getResponse.DynamicYieldChooseVariationResponse
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.HomePageRequestEvent
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.PrepareChangeAttributeRequestEvent
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Response.DyChangeAttributeResponse
 
 interface ApiInterface {
 
@@ -2226,4 +2230,21 @@ interface ApiInterface {
         @Header("deviceIdentityToken") deviceIdentityToken: String,
         @Body appGUIDRequestModel: AppGUIDRequestModel,
     ): Call<AppGUIDModel>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @POST("wfs/app/dynamicYield/chooseVariation")
+    suspend fun dynamicYieldHomePage(
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Body dyHomePageRequestEvent: HomePageRequestEvent
+    ) : retrofit2.Response<DynamicYieldChooseVariationResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @POST("wfs/app/dynamicYield/reportEvent")
+    suspend fun dynamicYieldChangeAttribute(
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Body dyPrepareChangeAttributeRequestEvent: PrepareChangeAttributeRequestEvent
+    ) : retrofit2.Response<DyChangeAttributeResponse>
+
 }
