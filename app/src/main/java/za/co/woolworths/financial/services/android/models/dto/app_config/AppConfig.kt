@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.models.dto.app_config // ktlint-disable package-name
 
+import DynamicYieldConfig
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
 import za.co.woolworths.financial.services.android.models.ConnectOnline
@@ -53,5 +54,6 @@ data class AppConfig(
     var glassBox: GlassBox?,
     var bnplConfig: BnplConfig?,
     var searchApiSettings: SearchApiSettings?,
+    var dynamicYieldConfig: DynamicYieldConfig?,
     var connectOnline: ConnectOnline?
 ) : Parcelable
