@@ -10,10 +10,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import za.co.woolworths.financial.services.android.ui.wfs.component.BrushShimmerEffect
 import za.co.woolworths.financial.services.android.ui.wfs.component.DividerLight1dp
 import za.co.woolworths.financial.services.android.ui.wfs.component.ShimmerLabelWithRoundedCorner
@@ -24,7 +22,6 @@ import za.co.woolworths.financial.services.android.ui.wfs.component.SpacerWidth2
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.analytics.AutomationTestScreenLocator
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.extensions.testAutomationTag
 import za.co.woolworths.financial.services.android.ui.wfs.theme.Dimens
-import za.co.woolworths.financial.services.android.ui.wfs.theme.Margin
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
 import za.co.woolworths.financial.services.android.ui.wfs.theme.White
 
@@ -46,51 +43,48 @@ fun ShopOptimiserAccordionLoadingShimmerPreview() {
  */
 @Composable
 fun ShopOptimiserAccordionLoadingShimmer() {
-    BrushShimmerEffect { brush ->
-        Column(modifier = Modifier.background(White)) {
-            SpacerHeight16dp()
-            Row {
-                SpacerWidth24dp()
-                ShimmerIconLabel(
-                    brush = brush,
-                    width = Dimens.fifty_dp,
-                    height = Dimens.thirty_four_dp
+    Column(modifier = Modifier.background(White)) {
+        SpacerHeight16dp()
+        Row {
+            SpacerWidth24dp()
+            ShimmerIconLabel(
+                width = Dimens.fifty_dp,
+                height = Dimens.thirty_four_dp
+            )
+            SpacerWidth16dp()
+            Column {
+                ShimmerLabelWithRoundedCorner(
+                    width = 0.4f,
+                    height = Dimens.fifteen_dp
                 )
-                SpacerWidth16dp()
-                Column {
-                    ShimmerLabelWithRoundedCorner(
-                        width = 0.4f,
-                        brush = brush,
-                        height = Dimens.fifteen_dp
-                    )
-                    SpacerHeight6dp(height = Dimens.four_dp)
-                    ShimmerLabelWithRoundedCorner(
-                        width = 0.3f,
-                        brush = brush,
-                        height = Dimens.fifteen_dp
-                    )
-                }
+                SpacerHeight6dp(height = Dimens.four_dp)
+                ShimmerLabelWithRoundedCorner(
+                    width = 0.3f,
+                    height = Dimens.fifteen_dp
+                )
             }
         }
-        SpacerHeight16dp()
-        DividerLight1dp()
     }
+    SpacerHeight16dp()
+    DividerLight1dp()
 }
 
 /**
  * Composable function for displaying a shimmering icon label.
  * @param height The height of the shimmering icon label.
  * @param width The width of the shimmering icon label.
- * @param brush The brush to apply the shimmer effect.
  */
 @Composable
-fun ShimmerIconLabel(height: Dp = Dimens.icon_size_dp, width: Dp = Dimens.icon_size_dp, brush: Brush) {
-    Box(modifier = Modifier
-        .width(width)
-        .height(height)
-        .testAutomationTag(AutomationTestScreenLocator.box_shimmer_icon_label)
-        .clip(MaterialTheme.shapes.small)
-        .background(brush = brush)
-    )
+fun ShimmerIconLabel(height: Dp = Dimens.icon_size_dp, width: Dp = Dimens.icon_size_dp) {
+    BrushShimmerEffect { brush ->
+        Box(
+            modifier = Modifier
+                .width(width)
+                .height(height)
+                .testAutomationTag(AutomationTestScreenLocator.box_shimmer_icon_label)
+                .clip(MaterialTheme.shapes.small)
+                .background(brush = brush)
+        )
+    }
 }
 
