@@ -48,6 +48,7 @@ import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddress
 import za.co.woolworths.financial.services.android.checkout.view.CollectionDatesBottomSheetDialog.Companion.ARGS_KEY_COLLECTION_DATES
 import za.co.woolworths.financial.services.android.checkout.view.CollectionDatesBottomSheetDialog.Companion.ARGS_KEY_SELECTED_POSITION
 import za.co.woolworths.financial.services.android.checkout.view.ErrorHandlerBottomSheetDialog.Companion.ERROR_TYPE_CONFIRM_COLLECTION_ADDRESS
+import za.co.woolworths.financial.services.android.checkout.view.ErrorHandlerBottomSheetDialog.Companion.ERROR_TYPE_CONNECT_ONLINE
 import za.co.woolworths.financial.services.android.checkout.view.ErrorHandlerBottomSheetDialog.Companion.ERROR_TYPE_SHIPPING_DETAILS_COLLECTION
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CollectionTimeSlotsAdapter
 import za.co.woolworths.financial.services.android.checkout.view.adapter.ShoppingBagsRadioGroupAdapter
@@ -1092,6 +1093,7 @@ class CheckoutReturningUserCollectionFragment :
                         }
                     }
                 )
+                activity?.finish()
             }
 
             R.id.checkoutCollectingUserInfoLayout -> {
@@ -1233,12 +1235,21 @@ class CheckoutReturningUserCollectionFragment :
                 setScreenClickEvents(true)
                 when (response) {
                     is ShippingDetailsResponse -> {
+
                         if (TextUtils.isEmpty(response.jsessionId) || TextUtils.isEmpty(response.auth)) {
-                            presentErrorDialog(
-                                getString(R.string.common_error_unfortunately_something_went_wrong),
-                                getString(R.string.common_error_message_without_contact_info),
-                                ERROR_TYPE_SHIPPING_DETAILS_COLLECTION
-                            )
+                            if(response.httpCode == AppConstant.HTTP_EXPECTATION_FAILED_502){
+                                presentErrorDialog(
+                                    response.response?.message.toString(),
+                                    "",
+                                    ERROR_TYPE_CONNECT_ONLINE
+                                )
+                            }else {
+                                presentErrorDialog(
+                                    getString(R.string.common_error_unfortunately_something_went_wrong),
+                                    getString(R.string.common_error_message_without_contact_info),
+                                    ERROR_TYPE_SHIPPING_DETAILS_COLLECTION
+                                )
+                            }
                             return@observe
                         }
                         navigateToPaymentWebpage(response)
