@@ -820,12 +820,13 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
     }
 
     override fun bindRecyclerViewWithUI(productLists: MutableList<ProductList>) {
-        if(!AppInstanceObject.get().featureWalkThrough.plp_add_to_list) {
+        /* Commenting showing pop up since it is not implemented in IOS for oct 2023 release */
+       /* if(!AppInstanceObject.get().featureWalkThrough.plp_add_to_list) {
             PLPAddToListInfoBottomSheetDialog().show(
                 parentFragmentManager,
                 AppConstant.TAG_ADD_TO_LIST_PLP
             )
-        }
+        }*/
         mProductList?.clear()
         mProductList = ArrayList()
         mProductList = productLists
