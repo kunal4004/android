@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.product.refine
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.View
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
@@ -38,7 +39,7 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
     private var refinementNavigation: RefinementNavigation? = null
     private var dataList = arrayListOf<RefinementSelectableItem>()
     private var refinedNavigateState = ""
-    private var dyReportEventViewModel: DyChangeAttributeViewModel? = null
+    private val dyReportEventViewModel: DyChangeAttributeViewModel by viewModels()
 
     companion object {
         private val ARG_PARAM = "refinementNavigationObject"
@@ -67,11 +68,6 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.initViews()
-        dyReportEventViewModel()
-    }
-
-    private fun dyReportEventViewModel() {
-        dyReportEventViewModel = ViewModelProvider(this)[DyChangeAttributeViewModel::class.java]
     }
 
     override fun onResume() {
@@ -231,7 +227,7 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
             session,
             user
         )
-        dyReportEventViewModel?.createDyChangeAttributeRequest(prepareDySortByRequestEvent)
+        dyReportEventViewModel.createDyChangeAttributeRequest(prepareDySortByRequestEvent)
     }
 
     private fun updateSeeResultButtonText() {

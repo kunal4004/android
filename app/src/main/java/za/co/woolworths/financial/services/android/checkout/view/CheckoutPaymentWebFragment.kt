@@ -15,6 +15,7 @@ import android.webkit.WebViewClient
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.awfs.coordination.R
@@ -73,7 +74,7 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
     private var dyServerId: String? = null
     private var dySessionId: String? = null
     private var config: NetworkConfig? = null
-    private var dyChooseVariationViewModel: DyHomePageViewModel? = null
+    private val dyChooseVariationViewModel: DyHomePageViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -87,11 +88,6 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
         binding = FragmentCheckoutPaymentWebBinding.bind(view)
         cartItemList = arguments?.getSerializable(CheckoutAddressManagementBaseFragment.CART_ITEM_LIST) as ArrayList<CommerceItem>?
         initPaymentWebView()
-        dyChoosevariationViewModel()
-    }
-
-    private fun dyChoosevariationViewModel() {
-        dyChooseVariationViewModel = ViewModelProvider(this).get(DyHomePageViewModel::class.java)
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -289,7 +285,7 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
         val context = Context(device, page, Utils.DY_CHANNEL)
         val options = Options(true)
         val homePageRequestEvent = HomePageRequestEvent(user, session, context, options)
-        dyChooseVariationViewModel?.createDyRequest(homePageRequestEvent)
+        dyChooseVariationViewModel.createDyRequest(homePageRequestEvent)
     }
 
     override fun onPageError(errorCode: Int, description: String?, failingUrl: String?) {

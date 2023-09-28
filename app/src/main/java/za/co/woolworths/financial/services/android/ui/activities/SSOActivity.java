@@ -41,6 +41,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
 
 import com.awfs.coordination.R;
 import com.google.gson.Gson;
@@ -183,11 +184,7 @@ public class SSOActivity extends WebViewActivity {
 		handleUIForKMSIEntry((Utils.getUserKMSIState() && SSOActivity.this.path == Path.SIGNIN));
 		showProfileProgressBar();
 		config = new NetworkConfig(new AppContextProviderImpl());
-		dyHomePageViewModel();
-		dyReportEventViewModel();
-	}
-
-	private void dyHomePageViewModel() {
+		dyReportEventViewModel = new ViewModelProvider(this).get(DyChangeAttributeViewModel.class);
 		dyHomePageViewModel = new ViewModelProvider(this).get(DyHomePageViewModel.class);
 	}
 
@@ -199,10 +196,6 @@ public class SSOActivity extends WebViewActivity {
 		Options options = new Options(false);
 		HomePageRequestEvent homePageRequestEvent = new HomePageRequestEvent(null,null,context,options);
 		dyHomePageViewModel.createDyRequest(homePageRequestEvent);
-	}
-
-	private void dyReportEventViewModel() {
-		dyReportEventViewModel = new ViewModelProvider(this).get(DyChangeAttributeViewModel.class);
 	}
 
 	// Display progress bar as soon as user land on profile
@@ -594,7 +587,9 @@ public class SSOActivity extends WebViewActivity {
 				}
 			}
 			hideProgressBar();
-			prepareDynamicYieldRequestEvent();
+			if (Boolean.TRUE.equals(AppConfigSingleton.getDynamicYieldConfig().isDynamicYieldEnabled())) {
+				prepareDynamicYieldRequestEvent();
+			}
 		}
 
 		@TargetApi(android.os.Build.VERSION_CODES.M)
