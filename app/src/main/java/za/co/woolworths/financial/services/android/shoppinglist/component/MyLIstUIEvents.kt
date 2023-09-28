@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.shoppinglist
+package za.co.woolworths.financial.services.android.shoppinglist.component
 
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList
 
@@ -8,4 +8,6 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingList
 sealed class MyLIstUIEvents {
     data class ListItemClick(val item: ShoppingList) : MyLIstUIEvents()
     object CreateListClick : MyLIstUIEvents()
+    object ChangeLocationClick : MyLIstUIEvents()
+    object SetDeliveryLocation : MyLIstUIEvents()
 }
