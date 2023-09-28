@@ -8,7 +8,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -28,6 +30,7 @@ fun MyListView(
     myListviewModel: MyListViewModel,
     onEvent: (event: MyLIstUIEvents) -> Unit,
 ) {
+    val isProgressBarNeeded = myListviewModel.isLoading.collectAsState()
     Box(modifier = modifier) {
         MyListScreen(
             onCreateNewList = {
@@ -41,6 +44,12 @@ fun MyListView(
             },
             myListviewModel
         )
+        if (isProgressBarNeeded.value) {
+            CircularProgressIndicator(
+                modifier = Modifier.align(Alignment.Center),
+                color = Color.Black
+            )
+        }
     }
 }
 

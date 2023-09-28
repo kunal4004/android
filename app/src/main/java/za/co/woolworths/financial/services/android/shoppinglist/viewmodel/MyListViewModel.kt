@@ -2,12 +2,27 @@ package za.co.woolworths.financial.services.android.shoppinglist.viewmodel
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.awfs.coordination.R
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.common.ResourcesProvider
+import za.co.woolworths.financial.services.android.domain.repository.MyListRepository
+import za.co.woolworths.financial.services.android.domain.usecase.GetMyListsUC
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
+import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.shoppinglist.component.LocationDetailsState
 import za.co.woolworths.financial.services.android.shoppinglist.component.MyLIstUIEvents
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.mapNetworkCallToViewStateFlow
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderFailure
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderLoading
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderSuccess
+import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import javax.inject.Inject
@@ -19,9 +34,17 @@ import javax.inject.Inject
 @HiltViewModel
 class MyListViewModel @Inject constructor(
     private val resources: ResourcesProvider,
+    val getMyListsUC: GetMyListsUC,
+    private val myListRepository: MyListRepository,
 ) : ViewModel() {
 
     var deliveryDetailsState = mutableStateOf(LocationDetailsState())
+    private var _isLoading = MutableStateFlow(false)
+    val isLoading = _isLoading.asStateFlow()
+
+    init {
+        onInit()
+    }
 
     fun onEvent(events: MyLIstUIEvents) {
         when (events) {
@@ -31,6 +54,7 @@ class MyListViewModel @Inject constructor(
     }
 
     private fun setDeliveryDetails() {
+        // update the data class of location details to show location details on UI.
         Utils.getPreferredDeliveryLocation().fulfillmentDetails?.let {
             deliveryDetailsState.value = when (Delivery.getType(it?.deliveryType)) {
                 Delivery.CNC -> {
@@ -69,6 +93,104 @@ class MyListViewModel @Inject constructor(
                         deliveryType = resources.getString(R.string.standard_delivery),
                         deliveryLocation = it?.address?.address1 ?: ""
                     )
+                }
+            }
+        }
+    }
+
+    private fun onInit() {
+        if (SessionUtilities.getInstance().isUserAuthenticated) {
+            if (Utils.getPreferredDeliveryLocation() == null) {
+                viewModelScope.launch {
+                    // It's mostly a new user who don't have location.
+                    getCartSummary()
+                }
+            } else if (WoolworthsApplication.getValidatePlaceDetails() == null && isDashDelivery()) {
+                // call validate Place API only in case of Dash Delivery as we need timeslots.
+                viewModelScope.launch {
+                    val placeId =
+                        Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
+                    if (!placeId.isNullOrEmpty())
+                        callValidatePlaceDetails(placeId)
+                }
+            }
+            getShoppingList()
+        }
+    }
+
+    private fun isDashDelivery(): Boolean {
+        val deliveryType = Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.deliveryType
+        return if (deliveryType != null) {
+            Delivery.DASH == Delivery.getType(deliveryType)
+        } else false
+    }
+
+    suspend fun getCartSummary() =
+        viewModelScope.launch {
+            mapNetworkCallToViewStateFlow {
+                myListRepository.getCartSummary()
+            }.collectLatest { cartSummaryResponse ->
+                with(cartSummaryResponse) {
+                    renderSuccess {
+                        val cartSummaryResponse = output
+                        cartSummaryResponse?.data?.getOrNull(0)?.fulfillmentDetails?.apply {
+                            this.deliveryType?.let {
+                                Utils.savePreferredDeliveryLocation(ShoppingDeliveryLocation(this))
+                                setDeliveryDetails()
+                            }
+                        }
+                    }
+                    renderLoading {
+                        _isLoading.value = this.isLoading
+                    }
+                    renderFailure {
+                        setDeliveryDetails()
+                    }
+                }
+            }
+        }
+
+    private suspend fun callValidatePlaceDetails(placeId: String) =
+        viewModelScope.launch {
+            mapNetworkCallToViewStateFlow {
+                myListRepository.callValidatePlaceDetails(placeId)
+            }.collectLatest { validateLocationResponse ->
+                with(validateLocationResponse) {
+                    renderSuccess {
+                        if (WoolworthsApplication.getCncBrowsingValidatePlaceDetails() == null) {
+                            WoolworthsApplication.setCncBrowsingValidatePlaceDetails(
+                                output?.validatePlace
+                            )
+                        }
+                        WoolworthsApplication.setValidatedSuburbProducts(
+                            output?.validatePlace
+                        )
+                        setDeliveryDetails()
+                    }
+                    renderLoading {
+                        _isLoading.value = this.isLoading
+                    }
+                }
+            }
+        }
+
+    private fun getShoppingList() {
+        viewModelScope.launch(Dispatchers.IO) {
+            getMyListsUC().collect {
+                viewModelScope.launch(Dispatchers.Main) {
+                    when (it.status) {
+                        Status.SUCCESS -> {
+                            _isLoading.value = false
+                        }
+
+                        Status.ERROR -> {
+                            _isLoading.value = false
+                        }
+
+                        Status.LOADING -> {
+                                _isLoading.value = true
+                        }
+                    }
                 }
             }
         }
