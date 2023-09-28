@@ -56,80 +56,83 @@ class UnsellableUtils {
         ) {
             commerceItemList = confirmLocationParams?.commerceItemList
             // Call Confirm location API.
-            fragment.viewLifecycleOwner.lifecycleScope.launch {
-                progressBar?.visibility = View.VISIBLE
-                try {
-                    val confirmLocationRequest = confirmLocationParams?.confirmLocationRequest
-                        ?: KotlinUtils.getConfirmLocationRequest(deliveryType)
-                    if (confirmLocationRequest.address.placeId.isNullOrEmpty()) {
+            if (fragment.view != null) {
+                fragment.viewLifecycleOwner.lifecycleScope.launch {
+                    progressBar?.visibility = View.VISIBLE
+                    try {
+                        val confirmLocationRequest = confirmLocationParams?.confirmLocationRequest
+                            ?: KotlinUtils.getConfirmLocationRequest(deliveryType)
+                        if (confirmLocationRequest.address.placeId.isNullOrEmpty()) {
+                            progressBar?.visibility = View.GONE
+                            return@launch
+                        }
+                        val confirmLocationResponse =
+                            confirmAddressViewModel.postConfirmAddress(confirmLocationRequest)
                         progressBar?.visibility = View.GONE
-                        return@launch
-                    }
-                    val confirmLocationResponse =
-                        confirmAddressViewModel.postConfirmAddress(confirmLocationRequest)
-                    progressBar?.visibility = View.GONE
-                    if (confirmLocationResponse != null) {
-                        when (confirmLocationResponse.httpCode) {
-                            AppConstant.HTTP_OK, HTTP_OK_201 -> {
-                                if (SessionUtilities.getInstance().isUserAuthenticated) {
-                                    Utils.savePreferredDeliveryLocation(
-                                        ShoppingDeliveryLocation(
-                                            confirmLocationResponse.orderSummary?.fulfillmentDetails
+                        if (confirmLocationResponse != null) {
+                            when (confirmLocationResponse.httpCode) {
+                                AppConstant.HTTP_OK, HTTP_OK_201 -> {
+                                    if (SessionUtilities.getInstance().isUserAuthenticated) {
+                                        Utils.savePreferredDeliveryLocation(
+                                            ShoppingDeliveryLocation(
+                                                confirmLocationResponse.orderSummary?.fulfillmentDetails
+                                            )
                                         )
-                                    )
-                                    if (KotlinUtils.getAnonymousUserLocationDetails() != null)
-                                        KotlinUtils.clearAnonymousUserLocationDetails()
-                                } else {
-                                    KotlinUtils.saveAnonymousUserLocationDetails(
-                                        ShoppingDeliveryLocation(
-                                            confirmLocationResponse.orderSummary?.fulfillmentDetails
+                                        if (KotlinUtils.getAnonymousUserLocationDetails() != null)
+                                            KotlinUtils.clearAnonymousUserLocationDetails()
+                                    } else {
+                                        KotlinUtils.saveAnonymousUserLocationDetails(
+                                            ShoppingDeliveryLocation(
+                                                confirmLocationResponse.orderSummary?.fulfillmentDetails
+                                            )
                                         )
-                                    )
-                                }
-                                val savedPlaceId = KotlinUtils.getDeliveryType()?.address?.placeId
-                                KotlinUtils.apply {
-                                    this.placeId = confirmLocationRequest.address.placeId
-                                    isLocationPlaceIdSame =
-                                        confirmLocationRequest.address.placeId?.equals(
-                                            savedPlaceId
+                                    }
+                                    val savedPlaceId =
+                                        KotlinUtils.getDeliveryType()?.address?.placeId
+                                    KotlinUtils.apply {
+                                        this.placeId = confirmLocationRequest.address.placeId
+                                        isLocationPlaceIdSame =
+                                            confirmLocationRequest.address.placeId?.equals(
+                                                savedPlaceId
+                                            )
+                                    }
+                                    // This will update the previous fragment data like location details.
+                                    ConfirmLocationResponseLiveData.value = true
+                                    if (confirmLocationParams?.commerceItemList != null) {
+                                        // If unsellable items are removed from popup with addToList checkBox selected then call getList and createList/AddToList API.
+                                        callGetListAPI(
+                                            progressBar,
+                                            fragment,
+                                            confirmAddressViewModel,
                                         )
+                                    } else {
+                                        //This is not a unsellable flow or we don't have unsellable items so this will give callBack to AddToCart function or Checkout Summary Flow.
+                                        AddToCartLiveData.value = true
+                                    }
                                 }
-                                // This will update the previous fragment data like location details.
-                                ConfirmLocationResponseLiveData.value = true
-                                if (confirmLocationParams?.commerceItemList != null) {
-                                    // If unsellable items are removed from popup with addToList checkBox selected then call getList and createList/AddToList API.
-                                    callGetListAPI(
-                                        progressBar,
-                                        fragment,
-                                        confirmAddressViewModel,
-                                    )
-                                } else {
-                                    //This is not a unsellable flow or we don't have unsellable items so this will give callBack to AddToCart function or Checkout Summary Flow.
-                                    AddToCartLiveData.value = true
-                                }
-                            }
 
-                            else -> {
-                                showConfirmLocationErrorDialog(
-                                    fragment,
-                                    confirmLocationParams,
-                                    progressBar,
-                                    confirmAddressViewModel,
-                                    deliveryType
-                                )
+                                else -> {
+                                    showConfirmLocationErrorDialog(
+                                        fragment,
+                                        confirmLocationParams,
+                                        progressBar,
+                                        confirmAddressViewModel,
+                                        deliveryType
+                                    )
+                                }
                             }
                         }
+                    } catch (e: Exception) {
+                        FirebaseManager.logException(e)
+                        progressBar?.visibility = View.GONE
+                        showConfirmLocationErrorDialog(
+                            fragment,
+                            confirmLocationParams,
+                            progressBar,
+                            confirmAddressViewModel,
+                            deliveryType
+                        )
                     }
-                } catch (e: Exception) {
-                    FirebaseManager.logException(e)
-                    progressBar?.visibility = View.GONE
-                    showConfirmLocationErrorDialog(
-                        fragment,
-                        confirmLocationParams,
-                        progressBar,
-                        confirmAddressViewModel,
-                        deliveryType
-                    )
                 }
             }
         }
