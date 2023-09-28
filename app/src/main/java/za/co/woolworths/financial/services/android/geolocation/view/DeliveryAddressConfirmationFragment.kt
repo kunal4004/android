@@ -629,7 +629,7 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
                                 getLiquorImageUrl()
                             )
                         }
-                    checkoutActivityIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+                    //checkoutActivityIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
                     activity?.apply {
                         startActivityForResult(
                             checkoutActivityIntent,

@@ -1092,6 +1092,7 @@ class CheckoutReturningUserCollectionFragment :
                         }
                     }
                 )
+                activity?.finish()
             }
 
             R.id.checkoutCollectingUserInfoLayout -> {
