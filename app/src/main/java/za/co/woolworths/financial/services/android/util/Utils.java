@@ -207,7 +207,7 @@ public class Utils {
     public static final String PURCHASE = "Purchase";
     public static final String DY_LOCATION = "Cart page in Mobile App";
     public static final String DY_CART_TYPE = "CART";
-    public static final String DY_CHECKOUT = "Checkout page in Mobile App";
+    public static final String DY_CHECKOUT = "Checkout";
     public static final String DY_CART_CHECKOUT_TYPE = "CHECKOUT";
     public static final String PAYMENT_PAGE = "PAYMENT_PAGE";
     public static final String MOBILE_PAGE = "MOBILE_PAGE";
