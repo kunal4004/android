@@ -23,6 +23,7 @@ import com.awfs.coordination.databinding.FragmentCheckoutPaymentWebBinding
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.checkout.service.network.PaymentAnalyticsData
 import za.co.woolworths.financial.services.android.checkout.service.network.ShippingDetailsResponse
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
@@ -49,6 +50,7 @@ import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManag
 import java.net.URI
 
 
+@AndroidEntryPoint
 class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_web),
     AdvancedWebView.Listener {
 

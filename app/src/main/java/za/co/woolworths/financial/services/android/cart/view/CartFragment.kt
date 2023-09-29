@@ -2164,6 +2164,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                     AppConfigSingleton.dynamicYieldConfig?.apply {
                         if (isDynamicYieldEnabled == true) {
                             prepareDyRemoveFromCartRequestEvent(mCommerceItem)
+                            prepareSyncCartRequestEvent()
                         }
                     }
                 }

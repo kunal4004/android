@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentRefinementBinding
+import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
@@ -33,6 +34,7 @@ import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Context
 import za.co.woolworths.financial.services.android.util.Utils.FILTER_ITEMS_EVENT_NAME
 
+@AndroidEntryPoint
 class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
     private lateinit var listener: OnRefinementOptionSelected
     private var refinementAdapter: RefinementAdapter? = null
@@ -214,20 +216,20 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
 
         val user = User(dyServerId,dyServerId)
         val session = Session(dySessionId)
-        val device = Device(Utils.IPAddress, config?.getDeviceModel())
+        val device = Device(Utils.IPAddress, config.getDeviceModel())
         val context = Context(device,null, Utils.DY_CHANNEL)
         val properties = Properties(null,null, Utils.FILTER_ITEMS_DY_TYPE,null,null,null,null,null,null,null,null,null,null,null,
             label, displayName,null)
         val eventsDyChangeAttribute = Event(null,null,null,null,null,null,null,null,null,null,null,null,FILTER_ITEMS_EVENT_NAME,properties)
         val events = ArrayList<Event>()
         events.add(eventsDyChangeAttribute);
-        val prepareDySortByRequestEvent = PrepareChangeAttributeRequestEvent(
+        val prepareDyFilterRequestEvent = PrepareChangeAttributeRequestEvent(
             context,
             events,
             session,
             user
         )
-        dyReportEventViewModel.createDyChangeAttributeRequest(prepareDySortByRequestEvent)
+        dyReportEventViewModel.createDyChangeAttributeRequest(prepareDyFilterRequestEvent)
     }
 
     private fun updateSeeResultButtonText() {
