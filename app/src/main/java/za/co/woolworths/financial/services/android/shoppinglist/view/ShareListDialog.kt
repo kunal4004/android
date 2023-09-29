@@ -19,6 +19,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -29,7 +30,6 @@ import androidx.compose.ui.unit.sp
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.presentation.common.BlackButton
 import za.co.woolworths.financial.services.android.presentation.common.UnderlineButton
-import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.extensions.getContext
 import za.co.woolworths.financial.services.android.ui.wfs.theme.ColorD8D8D8
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OpenSansFontFamily
@@ -37,8 +37,9 @@ import za.co.woolworths.financial.services.android.ui.wfs.theme.OpenSansFontFami
 @Composable
 fun ShowShareListDialog(onShareButtonClick:()->Unit, onCancelClick:()->Unit) {
 
+    val context = LocalContext.current
     var selectedOption by remember {
-        mutableStateOf("")
+        mutableStateOf(context.getString(R.string.view_only_option))
     }
 
     Column(
@@ -54,14 +55,12 @@ fun ShowShareListDialog(onShareButtonClick:()->Unit, onCancelClick:()->Unit) {
                 .background(ColorD8D8D8)
                 .align(Alignment.CenterHorizontally)
         )
-
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 16.dp)
                 .align(Alignment.Start)
         ) {
-
             Image(
                 painter = painterResource(
                     id = if (selectedOption.equals(stringResource(id = R.string.view_only_option))) R.drawable.check_mark_icon
@@ -69,7 +68,7 @@ fun ShowShareListDialog(onShareButtonClick:()->Unit, onCancelClick:()->Unit) {
                 ),
                 contentDescription = null,
                 modifier = Modifier.clickable {
-                    selectedOption = "View Only"
+                    selectedOption = context.getString(R.string.view_only_option)
                 }
             )
 
@@ -104,7 +103,6 @@ fun ShowShareListDialog(onShareButtonClick:()->Unit, onCancelClick:()->Unit) {
             }
         }
 
-
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -117,9 +115,8 @@ fun ShowShareListDialog(onShareButtonClick:()->Unit, onCancelClick:()->Unit) {
                 ),
                 contentDescription = null,
                 modifier = Modifier.clickable {
-                    selectedOption = "Edit"
+                    selectedOption = context.getString(R.string.edit_option)
                 },
-
             )
 
             Column(
@@ -173,7 +170,6 @@ fun ShowShareListDialog(onShareButtonClick:()->Unit, onCancelClick:()->Unit) {
         }
     }
 }
-
 
 @Preview(showSystemUi = true, showBackground = true)
 @Composable

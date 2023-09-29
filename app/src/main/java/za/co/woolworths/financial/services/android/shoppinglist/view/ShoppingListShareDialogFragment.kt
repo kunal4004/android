@@ -28,7 +28,7 @@ class ShoppingListShareDialogFragment : WBottomSheetDialogFragment() {
     ) {
         OneAppTheme {
             ShowShareListDialog(onShareButtonClick = {
-                context?.let {
+                requireContext().let {
                     dialog?.dismiss()
                     shareListUrl(it,
                         "https://www.woolworths.co.za/prod/Food/Bakery/Bread-Rolls/Bread/Brown-Bread/Thick-Slice-Brown-Bread-700-g/_/A-6001009005168",
