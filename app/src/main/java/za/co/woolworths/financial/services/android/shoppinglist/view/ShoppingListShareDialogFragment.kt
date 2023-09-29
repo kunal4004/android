@@ -31,6 +31,7 @@ class ShoppingListShareDialogFragment : WBottomSheetDialogFragment() {
                 requireContext().let {
                     dialog?.dismiss()
                     shareListUrl(it,
+                        /*todo remove hardcoded url once api is integrated*/
                         "https://www.woolworths.co.za/prod/Food/Bakery/Bread-Rolls/Bread/Brown-Bread/Thick-Slice-Brown-Bread-700-g/_/A-6001009005168",
                         requireActivity())
                 }

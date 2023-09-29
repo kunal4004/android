@@ -87,8 +87,7 @@ class MyShoppingListFragment : Fragment() {
                 ) { event ->
                     when (event) {
                         is MyLIstUIEvents.CreateListClick -> {
-                          //  navigateToCreateListFragment()
-                            navigateToShareListDialog()
+                            navigateToCreateListFragment()
                         }
 
                         else -> {
