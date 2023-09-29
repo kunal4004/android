@@ -15,7 +15,6 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -58,7 +57,6 @@ fun GeneralItemPreview() {
 fun GeneralItem(
     item: GeneralProductType?,
     isLoading: Boolean = false,
-    brush: Brush? = null,
     onClickListener: (OnAccountItemClickListener) -> Unit
 ) {
     item ?: return
@@ -84,7 +82,7 @@ fun GeneralItem(
     }
 
     if (isLoading) {
-        GeneralItemShimmer(generalItem, brush)
+        GeneralItemShimmer(generalItem)
     }
 
     if (!isLoading) {
@@ -138,8 +136,7 @@ fun GeneralItem(
 }
 
 @Composable
-fun GeneralItemShimmer(row: CommonItem.General, brush: Brush?) {
-    brush ?: return
+fun GeneralItemShimmer(row: CommonItem.General) {
     val locator = row.automationLocatorKey
     Row(
         modifier = Modifier
@@ -159,16 +156,15 @@ fun GeneralItemShimmer(row: CommonItem.General, brush: Brush?) {
                 .testAutomationTag(locator = createLocator(default = box_shimmer_general_row, key = locator)),
         verticalAlignment = Alignment.CenterVertically
         ) {
-            ShimmerIconLabel(brush = brush)
+            ShimmerIconLabel()
             Spacer(modifier = Modifier.width(Margin.start))
             ShimmerLabel(
-                brush = brush,
                 width = if (row.isShimmerDividedByTwo) 0.25f else 0.5f,
                 height = Dimens.ten_dp
             )
         }
 
-        ShimmerIconLabel(brush = brush)
+        ShimmerIconLabel()
 
     }
 }

@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.shoppinglist.view
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -20,6 +21,7 @@ import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.awfs.coordination.R
 import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
@@ -27,11 +29,13 @@ import za.co.woolworths.financial.services.android.presentation.addtolist.AddToL
 import za.co.woolworths.financial.services.android.presentation.addtolist.AddToListViewModel
 import za.co.woolworths.financial.services.android.presentation.common.AppToolBar
 import za.co.woolworths.financial.services.android.presentation.createlist.CreateListFragment
-import za.co.woolworths.financial.services.android.shoppinglist.MyLIstUIEvents
+import za.co.woolworths.financial.services.android.shoppinglist.component.MyLIstUIEvents
+import za.co.woolworths.financial.services.android.shoppinglist.viewmodel.MyListViewModel
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator
 import za.co.woolworths.financial.services.android.ui.compose.contentView
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -44,6 +48,7 @@ import za.co.woolworths.financial.services.android.util.Utils
 class MyShoppingListFragment : Fragment() {
 
     private var mBottomNavigator: BottomNavigator? = null
+    private val myListviewModel: MyListViewModel by viewModels()
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -84,14 +89,19 @@ class MyShoppingListFragment : Fragment() {
                     Modifier
                         .padding(paddingValues = it)
                         .background(Color.White),
+                    myListviewModel
                 ) { event ->
                     when (event) {
                         is MyLIstUIEvents.CreateListClick -> {
                             navigateToCreateListFragment()
                         }
 
-                        else -> {
+                        is MyLIstUIEvents.ChangeLocationClick -> {
+                            locationSelectionClicked()
+                        }
 
+                        else -> {
+                            myListviewModel.onEvent(event)
                         }
                     }
                 }
@@ -108,13 +118,32 @@ class MyShoppingListFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        myListviewModel.onEvent(MyLIstUIEvents.SetDeliveryLocation)
         hideActivityToolbar()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            0 -> {
+                myListviewModel.onEvent(MyLIstUIEvents.SetDeliveryLocation)
+            }
+        }
     }
 
     private fun hideActivityToolbar() {
         mBottomNavigator?.apply {
             removeToolbar()
         }
+    }
+
+    private fun locationSelectionClicked() {
+        KotlinUtils.presentEditDeliveryGeoLocationActivity(
+            requireActivity(),
+            0,
+            KotlinUtils.getPreferredDeliveryType(),
+            Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
+        )
     }
 
     private fun navigateToCreateListFragment() {
