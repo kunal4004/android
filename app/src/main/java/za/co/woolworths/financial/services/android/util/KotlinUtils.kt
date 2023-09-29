@@ -1896,6 +1896,17 @@ fun isAValidSouthAfricanNumber(number: String?): Boolean {
     return regex.matches(number.toString())
 }
 
+fun shareListUrl(context: Context, message:String, activity: Activity) {
+    val sendIntent: Intent = Intent().apply {
+        action = Intent.ACTION_SEND
+        putExtra(Intent.EXTRA_TEXT, message)
+        type = "text/plain"
+    }
+
+    val shareIntent = Intent.createChooser(sendIntent, null)
+    activity?.startActivity(shareIntent)
+}
+
 
 
 

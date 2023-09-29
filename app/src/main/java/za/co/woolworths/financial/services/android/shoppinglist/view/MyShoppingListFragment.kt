@@ -23,6 +23,8 @@ import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.presentation.addtolist.AddToListFragment
+import za.co.woolworths.financial.services.android.presentation.addtolist.AddToListViewModel
 import za.co.woolworths.financial.services.android.presentation.common.AppToolBar
 import za.co.woolworths.financial.services.android.presentation.createlist.CreateListFragment
 import za.co.woolworths.financial.services.android.shoppinglist.MyLIstUIEvents
@@ -30,6 +32,7 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator
 import za.co.woolworths.financial.services.android.ui.compose.contentView
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
+import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.Utils
 
 /**
@@ -84,7 +87,8 @@ class MyShoppingListFragment : Fragment() {
                 ) { event ->
                     when (event) {
                         is MyLIstUIEvents.CreateListClick -> {
-                            navigateToCreateListFragment()
+                          //  navigateToCreateListFragment()
+                            navigateToShareListDialog()
                         }
 
                         else -> {
@@ -124,5 +128,10 @@ class MyShoppingListFragment : Fragment() {
         (requireActivity() as? BottomNavigationActivity)?.apply {
             pushFragmentSlideUp(CreateListFragment())
         }
+    }
+
+    private fun navigateToShareListDialog() {
+        val fragment = ShoppingListShareDialogFragment()
+        fragment.show(parentFragmentManager, ShoppingListShareDialogFragment::class.simpleName)
     }
 }

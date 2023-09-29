@@ -24,6 +24,7 @@ import java.util.HashMap;
 
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
+import za.co.woolworths.financial.services.android.shoppinglist.view.MyShoppingListFragment;
 import za.co.woolworths.financial.services.android.ui.activities.BiometricsWalkthrough;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatDetailActivity;
@@ -337,7 +338,8 @@ public class ScreenManager {
         if (!(activity instanceof BottomNavigationActivity)) {
             return;
         }
-        MyListsFragment fragment = new MyListsFragment();
+      //  MyListsFragment fragment = new MyListsFragment();
+        MyShoppingListFragment fragment = new MyShoppingListFragment();
         BottomNavigationActivity bottomNavigationActivity = (BottomNavigationActivity) activity;
         bottomNavigationActivity.pushFragment(fragment);
     }
