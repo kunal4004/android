@@ -29,6 +29,7 @@ import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.ex
 import za.co.woolworths.financial.services.android.ui.wfs.shoptimiser.dto.AvailableFundsSufficiency
 import za.co.woolworths.financial.services.android.ui.wfs.shoptimiser.dto.ProductOnDisplay
 import za.co.woolworths.financial.services.android.ui.wfs.shoptimiser.ui.fragment.ShoptimiserDetailsFragment
+import za.co.woolworths.financial.services.android.ui.wfs.shoptimiser.ui.viewmodel.AccordionDividerVisibility
 import za.co.woolworths.financial.services.android.ui.wfs.shoptimiser.ui.viewmodel.ShopOptimiserViewModel
 import za.co.woolworths.financial.services.android.ui.wfs.theme.Dimens
 import za.co.woolworths.financial.services.android.ui.wfs.theme.FontDimensions
@@ -71,7 +72,7 @@ fun ShopOptimiserViewModel.ShopOptimiserAccordionContent(
                         selectedOnDisplayProduct = productOnDisplay.value
                         navigateToShopOptimiserDetailWidget(context.findActivity()) }
                     .padding(
-                        bottom = if (isSufficientFundsAvailable) Margin.dp16 else Margin.noMargin,
+                        bottom = if (isSufficientFundsAvailable) { if (isLastProduct) Margin.noMargin else Margin.dp16 } else Margin.noMargin,
                         top = Margin.dp16,
                         start = Margin.start,
                         end = Margin.end
@@ -131,7 +132,7 @@ fun ShopOptimiserViewModel.ShopOptimiserAccordionContent(
             }
 
             // Add a divider if this is the last product
-            if (isLastProduct) {
+            if (isLastProduct && accordionDividerVisibility == AccordionDividerVisibility.VISIBLE) {
                 DividerLight1dp()
             }
         }

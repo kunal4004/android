@@ -9,6 +9,7 @@ import za.co.woolworths.financial.services.android.models.dto.OtherSkus
 import za.co.woolworths.financial.services.android.models.dto.ProductDetails
 import za.co.woolworths.financial.services.android.ui.wfs.shoptimiser.dto.ShopOptimiserVisibleUiType
 import za.co.woolworths.financial.services.android.ui.wfs.shoptimiser.ui.component.accordion.ShopOptimiserAccordionWidget
+import za.co.woolworths.financial.services.android.ui.wfs.shoptimiser.ui.viewmodel.AccordionDividerVisibility
 import za.co.woolworths.financial.services.android.ui.wfs.shoptimiser.ui.viewmodel.ShopOptimiserViewModel
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
 import javax.inject.Inject
@@ -54,12 +55,24 @@ class ShoptimiserProductDetailPageImpl @Inject constructor(
                     }
                 }
 
-                when (shopOptimiserVisibleUiType) {
-                    ShopOptimiserVisibleUiType.STANDALONE ->  binding.sizeColorSelectorLayout.divider1.visibility = View.GONE
-                    ShopOptimiserVisibleUiType.ACCORDION ->  binding.sizeColorSelectorLayout.divider1.visibility = if (isExpanded) View.GONE else View.VISIBLE
-                    ShopOptimiserVisibleUiType.GONE -> Unit
-                }
 
+                /**
+                 * This code snippet is responsible for hiding a separator under the "shoptimiser" item
+                 * when a product lacks a gift but possesses a color attribute.
+                 */
+                when (shopOptimiserVisibleUiType) {
+                    ShopOptimiserVisibleUiType.ACCORDION -> {
+
+                        val isColorSelectorLayoutVisible = binding.sizeColorSelectorLayout.colorSelectorLayout.visibility == View.VISIBLE
+                        val isSizeSelectorLayoutVisible = binding.sizeColorSelectorLayout.sizeSelectorLayout.visibility == View.VISIBLE
+                        val isFreeGiftWithPurchaseVisible = binding.freeGiftWithPurchaseLayout.root.visibility == View.VISIBLE
+
+                        if ((isColorSelectorLayoutVisible || isSizeSelectorLayoutVisible) || isFreeGiftWithPurchaseVisible){
+                            accordionDividerVisibility = if (isExpanded) AccordionDividerVisibility.HIDDEN else AccordionDividerVisibility.NONE
+                        }
+                    }
+                    ShopOptimiserVisibleUiType.GONE, ShopOptimiserVisibleUiType.STANDALONE -> Unit
+                }
             }
         }
     }
@@ -111,9 +124,6 @@ class ShoptimiserProductDetailPageImpl @Inject constructor(
             layoutParams.topToBottom = R.id.freeGiftWithPurchaseLayout
             sizeColorSelectorLayout.root.layoutParams = layoutParams
         }
-
-        // Hide the divider1 in sizeColorSelectorLayout
-        sizeColorSelectorLayout.divider1.visibility = View.GONE
     }
 
     /**
@@ -121,8 +131,6 @@ class ShoptimiserProductDetailPageImpl @Inject constructor(
      * This function adjusts the visibility and layout constraints for specific views.
      */
     private fun ProductDetailsFragmentBinding.resetShopOptimiserLayout() {
-        // Make the divider1 in sizeColorSelectorLayout visible
-        sizeColorSelectorLayout.divider1.visibility = View.VISIBLE
 
         // Adjust the topToBottom constraint of the freeGiftWithPurchaseLayout
         (freeGiftWithPurchaseLayout.root.layoutParams as ConstraintLayout.LayoutParams).let { layoutParams ->
