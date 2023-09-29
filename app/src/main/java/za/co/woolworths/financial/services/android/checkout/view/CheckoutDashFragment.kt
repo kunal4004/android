@@ -31,6 +31,7 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
@@ -146,7 +147,7 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
     private var dyServerId: String? = null
     private var dySessionId: String? = null
     private var config: NetworkConfig? = null
-    private var dyChooseVariationViewModel: DyHomePageViewModel? = null
+    private val dyChooseVariationViewModel: DyHomePageViewModel by viewModels()
 
     private val deliveryInstructionsTextWatcher: TextWatcher = object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -197,11 +198,6 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
         setFragmentResults()
         binding.txtContinueToPayment?.setOnClickListener(this)
         binding.checkoutCollectingFromLayout?.root?.setOnClickListener(this)
-        dyChooseVariationViewModel()
-    }
-
-    private fun dyChooseVariationViewModel() {
-        dyChooseVariationViewModel = ViewModelProvider(this).get(DyHomePageViewModel::class.java)
     }
 
 
@@ -1183,7 +1179,7 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
         val context = Context(device, page, Utils.DY_CHANNEL)
         val options = Options(true)
         val homePageRequestEvent = HomePageRequestEvent(user, session, context, options)
-        dyChooseVariationViewModel?.createDyRequest(homePageRequestEvent)
+        dyChooseVariationViewModel.createDyRequest(homePageRequestEvent)
     }
 
     private fun onChooseDateClicked() {
