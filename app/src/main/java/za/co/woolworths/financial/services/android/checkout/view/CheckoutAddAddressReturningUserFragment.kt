@@ -25,6 +25,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.findNavController
@@ -159,7 +160,7 @@ class CheckoutAddAddressReturningUserFragment :
     private var dyServerId: String? = null
     private var dySessionId: String? = null
     private var config: NetworkConfig? = null
-    private var dyChooseVariationViewModel: DyHomePageViewModel? = null
+    private val dyChooseVariationViewModel: DyHomePageViewModel by viewModels()
 
     enum class FoodSubstitution(val rgb: String) {
         PHONE_CONFIRM("YES_CALL_CONFIRM"),
@@ -199,11 +200,6 @@ class CheckoutAddAddressReturningUserFragment :
         }
         cartItemList = arguments?.getSerializable(CART_ITEM_LIST) as ArrayList<CommerceItem>?
         initViews()
-        dyChoosevariationViewModel()
-    }
-
-    private fun dyChoosevariationViewModel() {
-        dyChooseVariationViewModel = ViewModelProvider(this)[DyHomePageViewModel::class.java]
     }
 
     private fun initViews() {
@@ -1119,7 +1115,7 @@ class CheckoutAddAddressReturningUserFragment :
         val context = Context(device, page, Utils.DY_CHANNEL)
         val options = Options(true)
         val homePageRequestEvent = HomePageRequestEvent(user, session, context, options)
-        dyChooseVariationViewModel?.createDyRequest(homePageRequestEvent)
+        dyChooseVariationViewModel.createDyRequest(homePageRequestEvent)
     }
 
     private fun onCheckoutPaymentClick() {
