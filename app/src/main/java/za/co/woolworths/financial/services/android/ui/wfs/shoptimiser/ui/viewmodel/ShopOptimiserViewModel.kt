@@ -26,6 +26,7 @@ import za.co.woolworths.financial.services.android.ui.wfs.shoptimiser.helper.Sho
 import za.co.woolworths.financial.services.android.ui.wfs.shoptimiser.helper.sortMapByCustomKeyOrder
 import javax.inject.Inject
 
+enum class AccordionDividerVisibility { NONE, VISIBLE, HIDDEN }
 @HiltViewModel
 class ShopOptimiserViewModel @Inject constructor(
     private val accountLandingNetwork: MyAccountsLandingRemoteService,
@@ -45,6 +46,7 @@ class ShopOptimiserViewModel @Inject constructor(
     var isExpanded by mutableStateOf(false)
     var selectedOnDisplayProduct : ProductOnDisplay? = null
     var shopOptimiserVisibleUiType by mutableStateOf(ShopOptimiserVisibleUiType.GONE)
+    var accordionDividerVisibility by mutableStateOf(AccordionDividerVisibility.NONE)
 
     /**
      * Sets the visibility of the Shop Optimiser UI to the Accordion view.

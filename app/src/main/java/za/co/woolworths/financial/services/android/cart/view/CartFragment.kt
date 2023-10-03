@@ -171,8 +171,8 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     private var dyServerId: String? = null
     private var dySessionId: String? = null
     private var config: NetworkConfig? = null
-    private var dyHomePageViewModel: DyHomePageViewModel? = null
-    private lateinit var dyChangeAttributeViewModel: DyChangeAttributeViewModel
+    private val dyHomePageViewModel: DyHomePageViewModel by viewModels()
+    private val dyChangeAttributeViewModel: DyChangeAttributeViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -239,16 +239,6 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             dyServerId = Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID)
         if (Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID) != null)
             dySessionId = Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID)
-        dyCategoryChooseVariationViewModel()
-        dyReportEventViewModel()
-    }
-
-    private fun dyReportEventViewModel() {
-        dyChangeAttributeViewModel = ViewModelProvider(this).get(DyChangeAttributeViewModel::class.java)
-    }
-
-    private fun dyCategoryChooseVariationViewModel() {
-        dyHomePageViewModel = ViewModelProvider(this).get(DyHomePageViewModel::class.java)
     }
 
     private fun initializeLoggedInUserCartUI() {
@@ -1388,7 +1378,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         val context = Context(device, page, DY_CHANNEL)
         val options = Options(true)
         val homePageRequestEvent = HomePageRequestEvent(user, session, context, options)
-        dyHomePageViewModel?.createDyRequest(homePageRequestEvent)
+        dyHomePageViewModel.createDyRequest(homePageRequestEvent)
     }
 
     private fun viewCartEvent(commerceItems: List<CommerceItem>, value: Double) {
@@ -2174,6 +2164,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                     AppConfigSingleton.dynamicYieldConfig?.apply {
                         if (isDynamicYieldEnabled == true) {
                             prepareDyRemoveFromCartRequestEvent(mCommerceItem)
+                            prepareSyncCartRequestEvent()
                         }
                     }
                 }
@@ -2370,11 +2361,11 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         val session = Session(dySessionId)
         val device = Device(Utils.IPAddress, config?.getDeviceModel())
         val productList: ArrayList<String>? = ArrayList()
-        val page = Page(productList, DY_CHECKOUT, DY_CART_CHECKOUT_TYPE, null)
+        val page = Page(productList, DY_CHECKOUT, OTHER, null)
         val context = Context(device, page, DY_CHANNEL)
         val options = Options(true)
         val homePageRequestEvent = HomePageRequestEvent(user, session, context, options)
-        dyHomePageViewModel?.createDyRequest(homePageRequestEvent)
+        dyHomePageViewModel.createDyRequest(homePageRequestEvent)
     }
 
     private fun prepareDyRemoveFromCartRequestEvent(mCommerceItem: CommerceItem?) {
@@ -2387,7 +2378,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             for (cartItemGroup: CartItemGroup in cartItems) {
                 val commerceItemList = cartItemGroup.commerceItems
                 for (cm: CommerceItem in commerceItemList) {
-                    val cart = Cart(cm.commerceItemInfo.productId, cm.commerceItemInfo.quantity,cm.priceInfo.amount.toString())
+                    val cart = Cart(cm.commerceItemInfo.catalogRefId, cm.commerceItemInfo.quantity,cm.priceInfo.amount.toString())
                     cartLinesValue.add(cart)
                 }
             }
@@ -2415,7 +2406,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
           for (cartItemGroup: CartItemGroup in cartItems) {
               val commerceItemList = cartItemGroup.commerceItems
               for (cm: CommerceItem in commerceItemList) {
-                  val cart = Cart(cm.commerceItemInfo.productId, cm.commerceItemInfo.quantity,cm.priceInfo.amount.toString())
+                  val cart = Cart(cm.commerceItemInfo.catalogRefId, cm.commerceItemInfo.quantity,cm.priceInfo.amount.toString())
                   cartLinesValue.add(cart)
               }
           }

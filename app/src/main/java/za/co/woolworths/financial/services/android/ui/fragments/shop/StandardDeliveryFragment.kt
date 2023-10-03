@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
@@ -47,7 +48,7 @@ class StandardDeliveryFragment : DepartmentExtensionFragment(R.layout.fragment_s
     private var isFragmentVisible: Boolean = false
     private var parentFragment: ShopFragment? = null
     private var localPlaceId: String? = null
-    private var dyHomePageViewModel: DyHomePageViewModel? = null
+    private val dyHomePageViewModel: DyHomePageViewModel by viewModels()
 
     companion object {
         var DEPARTMENT_LOGIN_REQUEST = 1717
@@ -69,10 +70,6 @@ class StandardDeliveryFragment : DepartmentExtensionFragment(R.layout.fragment_s
         }
     }
 
-    private fun dyHomePageViewModel() {
-        dyHomePageViewModel = ViewModelProvider(this)[DyHomePageViewModel::class.java]
-    }
-
     private fun prepareDynamicYieldRequestEvent() {
         val config = NetworkConfig(AppContextProviderImpl())
         val dyData = ArrayList<String>()
@@ -81,7 +78,7 @@ class StandardDeliveryFragment : DepartmentExtensionFragment(R.layout.fragment_s
         val context = Context(device, page, Utils.DY_CHANNEL)
         val options = Options(true)
         val homePageRequestEvent = HomePageRequestEvent(null, null, context, options)
-        dyHomePageViewModel?.createDyRequest(homePageRequestEvent)
+        dyHomePageViewModel.createDyRequest(homePageRequestEvent)
     }
 
     override fun noConnectionLayout(isVisible: Boolean) {
@@ -101,7 +98,6 @@ class StandardDeliveryFragment : DepartmentExtensionFragment(R.layout.fragment_s
         }
         AppConfigSingleton.dynamicYieldConfig?.apply {
             if (isDynamicYieldEnabled == true) {
-                dyHomePageViewModel()
                 prepareDynamicYieldRequestEvent()
             }
         }
