@@ -15,5 +15,6 @@ data class ShoppingList(
     @SerializedName("itemCount")
     var listCount: Int = 0,
     var shoppingListRowWasSelected: Boolean = false,
-    var wasSentToServer: Boolean = false
+    var wasSentToServer: Boolean = false,
+    var modifiedListCount: String = ""
 ): Parcelable

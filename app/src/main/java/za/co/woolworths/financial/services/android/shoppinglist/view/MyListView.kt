@@ -83,5 +83,18 @@ fun MyListScreen(
         CreateNewListView(icon = R.drawable.ic_add_circle, title = R.string.shop_create_list) {
             onCreateNewList()
         }
+
+        Spacer(
+            modifier = Modifier
+                .height(8.dp)
+                .fillMaxWidth()
+                .background(color = colorResource(id = R.color.color_F3F3F3))
+        )
+
+        ListOfListView(modifier = Modifier.background(Color.White),
+            myListviewModel.listDataState.value,
+            onItemClick = { list ->
+                onEvent(MyLIstUIEvents.ListItemClick(list))
+            })
     }
 }

@@ -15,7 +15,10 @@ import za.co.woolworths.financial.services.android.domain.repository.MyListRepos
 import za.co.woolworths.financial.services.android.domain.usecase.GetMyListsUC
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
+import za.co.woolworths.financial.services.android.models.dto.ShoppingList
+import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse
 import za.co.woolworths.financial.services.android.models.network.Status
+import za.co.woolworths.financial.services.android.shoppinglist.component.ListDataState
 import za.co.woolworths.financial.services.android.shoppinglist.component.LocationDetailsState
 import za.co.woolworths.financial.services.android.shoppinglist.component.MyLIstUIEvents
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.mapNetworkCallToViewStateFlow
@@ -41,6 +44,7 @@ class MyListViewModel @Inject constructor(
     var deliveryDetailsState = mutableStateOf(LocationDetailsState())
     private var _isLoading = MutableStateFlow(false)
     val isLoading = _isLoading.asStateFlow()
+    val listDataState = mutableStateOf(ListDataState())
 
     init {
         onInit()
@@ -132,8 +136,7 @@ class MyListViewModel @Inject constructor(
             }.collectLatest { cartSummaryResponse ->
                 with(cartSummaryResponse) {
                     renderSuccess {
-                        val cartSummaryResponse = output
-                        cartSummaryResponse?.data?.getOrNull(0)?.fulfillmentDetails?.apply {
+                        output?.data?.getOrNull(0)?.fulfillmentDetails?.apply {
                             this.deliveryType?.let {
                                 Utils.savePreferredDeliveryLocation(ShoppingDeliveryLocation(this))
                                 setDeliveryDetails()
@@ -176,11 +179,12 @@ class MyListViewModel @Inject constructor(
 
     private fun getShoppingList() {
         viewModelScope.launch(Dispatchers.IO) {
-            getMyListsUC().collect {
+            getMyListsUC().collect { shoppingListResponse ->
                 viewModelScope.launch(Dispatchers.Main) {
-                    when (it.status) {
+                    when (shoppingListResponse.status) {
                         Status.SUCCESS -> {
                             _isLoading.value = false
+                            setListData(shoppingListResponse.data)
                         }
 
                         Status.ERROR -> {
@@ -188,11 +192,24 @@ class MyListViewModel @Inject constructor(
                         }
 
                         Status.LOADING -> {
-                                _isLoading.value = true
+                            _isLoading.value = true
                         }
                     }
                 }
             }
         }
+    }
+
+    private fun setListData(shoppingListResponse: ShoppingListsResponse?) {
+        listDataState.value = listDataState.value.copy(
+            list = shoppingListResponse?.lists?.let { getUpdatedList(it) } ?: emptyList()
+        )
+    }
+
+    private fun getUpdatedList(list: List<ShoppingList>): List<ShoppingList> {
+        list.map { shoppingList ->
+            shoppingList.modifiedListCount = "(" + shoppingList.listCount + ")"
+        }
+        return list
     }
 }

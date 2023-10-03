@@ -97,6 +97,10 @@ class MyShoppingListFragment : Fragment() {
                             locationSelectionClicked()
                         }
 
+                        is MyLIstUIEvents.ListItemClick -> {
+                            //todo navigate to list details screen.
+                        }
+
                         else -> {
                             myListviewModel.onEvent(event)
                         }
