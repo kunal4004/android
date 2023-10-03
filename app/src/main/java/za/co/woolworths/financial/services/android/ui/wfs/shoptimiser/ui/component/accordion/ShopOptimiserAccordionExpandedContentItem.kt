@@ -17,6 +17,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import com.awfs.coordination.R
+import za.co.woolworths.financial.services.android.ui.wfs.common.click.clickableSingle
 import za.co.woolworths.financial.services.android.ui.wfs.component.DividerLight1dp
 import za.co.woolworths.financial.services.android.ui.wfs.component.MyIcon
 import za.co.woolworths.financial.services.android.ui.wfs.component.SpacerHeight6dp
@@ -24,7 +25,6 @@ import za.co.woolworths.financial.services.android.ui.wfs.component.SpacerWidth1
 import za.co.woolworths.financial.services.android.ui.wfs.component.TextFuturaFamilyHeader1
 import za.co.woolworths.financial.services.android.ui.wfs.component.TextOpenSansSemiBoldH3
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.extensions.findActivity
-import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.extensions.noRippleClickable
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.extensions.testAutomationTag
 import za.co.woolworths.financial.services.android.ui.wfs.shoptimiser.dto.AvailableFundsSufficiency
 import za.co.woolworths.financial.services.android.ui.wfs.shoptimiser.dto.ProductOnDisplay
@@ -67,7 +67,7 @@ fun ShopOptimiserViewModel.ShopOptimiserAccordionContent(
             Row(
                 modifier = Modifier
                     .testAutomationTag(stringResource(id = R.string.shoptimiser_child_accordion_row))
-                    .noRippleClickable {                            // Handle click event if sufficient funds are available
+                    .clickableSingle {                            // Handle click event if sufficient funds are available
                         selectedOnDisplayProduct = productOnDisplay.value
                         navigateToShopOptimiserDetailWidget(context.findActivity()) }
                     .padding(
