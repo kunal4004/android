@@ -85,5 +85,6 @@ class AccountLandingDialogFragment :
     companion object {
         val requestKeyAccountLandingDialog: String = AccountLandingDialogFragment::class.java.simpleName
     }
+    
 }
 

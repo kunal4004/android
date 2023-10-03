@@ -8,5 +8,6 @@ import za.co.woolworths.financial.services.android.models.dto.Suburb
 @Parcelize
 data class ConfigQuickShopDefaultValues(
     @SerializedName("foodFulfilmentTypeId") val foodFulfilmentTypeId: String,
+    @SerializedName("digitalProductsFulfilmentTypeId") val digitalProductsFulfilmentTypeId: String,
     @SerializedName("suburb") val suburb: ConfigSuburb
 ) : Parcelable

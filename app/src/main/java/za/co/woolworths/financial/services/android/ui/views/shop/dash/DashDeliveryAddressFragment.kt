@@ -31,9 +31,11 @@ import com.awfs.coordination.databinding.LayoutInappOrderNotificationBinding
 import com.google.gson.Gson
 import com.skydoves.balloon.balloon
 import dagger.hilt.android.AndroidEntryPoint
+import za.co.woolworths.financial.services.android.cart.view.SubstitutionChoice
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IProductListing
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.enhancedSubstitution.util.isEnhanceSubstitutionFeatureAvailable
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.AddToCartLiveData
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
@@ -400,20 +402,43 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                             }
                             skuInventoryList?.get(0)?.quantity == 1 -> {
                                 addFoodProductTypeToCart(
-                                    AddItemToCart(
-                                        addItemToCart?.productId,
-                                        addItemToCart?.catalogRefId,
-                                        1
-                                    )
+                                    if (isEnhanceSubstitutionFeatureAvailable()) {
+                                        AddItemToCart(
+                                            addItemToCart?.productId,
+                                            addItemToCart?.catalogRefId,
+                                            1,
+                                            SubstitutionChoice.SHOPPER_CHOICE.name,
+                                            ""
+                                        )
+                                    } else {
+                                        AddItemToCart(
+                                            addItemToCart?.productId,
+                                            addItemToCart?.catalogRefId,
+                                            1
+                                        )
+                                    }
+
                                 )
                             }
                             else -> {
                                 try {
-                                    val cartItem = AddItemToCart(
-                                        addItemToCart?.productId ?: "",
-                                        addItemToCart?.catalogRefId ?: "",
-                                        skuInventoryList?.get(0)?.quantity ?: 0
-                                    )
+                                    val cartItem =
+                                        if (isEnhanceSubstitutionFeatureAvailable()) {
+                                            AddItemToCart(
+                                                addItemToCart?.productId ?: "",
+                                                addItemToCart?.catalogRefId ?: "",
+                                                skuInventoryList?.getOrNull(0)?.quantity ?: 0,
+                                                SubstitutionChoice.SHOPPER_CHOICE.name,
+                                                ""
+                                            )
+                                        } else {
+                                            AddItemToCart(
+                                                addItemToCart?.productId ?: "",
+                                                addItemToCart?.catalogRefId ?: "",
+                                                skuInventoryList?.getOrNull(0)?.quantity ?: 0
+                                            )
+                                        }
+
                                     val selectYourQuantityFragment =
                                         SelectYourQuantityFragment.newInstance(
                                             cartItem,

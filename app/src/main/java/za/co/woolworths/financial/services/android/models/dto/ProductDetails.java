@@ -123,4 +123,9 @@ public class ProductDetails {
 	@SerializedName("lowStockThreshold")
 	@Expose
 	public Integer lowStockIndicator;
+
+	@SerializedName("network")
+	@Expose
+	public String network;
+
 }

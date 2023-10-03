@@ -13,7 +13,9 @@ import com.awfs.coordination.databinding.FragmentAddOrderToCartBinding
 import com.google.gson.Gson
 import org.json.JSONObject
 import retrofit2.Call
+import za.co.woolworths.financial.services.android.cart.view.SubstitutionChoice
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.enhancedSubstitution.util.isEnhanceSubstitutionFeatureAvailable
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.*
@@ -26,6 +28,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.Fragm
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.RESPONSE_ERROR_CODE_1235
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 
 
@@ -157,11 +160,15 @@ class AddOrderToCartFragment : BaseFragmentBinding<FragmentAddOrderToCartBinding
             val orderDetailCommerceItem = arrayListOf<OrderDetailsItem>()
             if (orderItemLength > 0) {
                 for (i in 0 until orderItemLength) {
-                    val commerceItem: OrderHistoryCommerceItem = Gson().fromJson(productsArray.getJSONObject(i).toString(), OrderHistoryCommerceItem::class.java)
-                    val fulfillmentStoreId = Utils.retrieveStoreId(commerceItem.fulfillmentType)
-                    commerceItem.fulfillmentStoreId = fulfillmentStoreId!!.replace("\"".toRegex(), "")
-                    if (!commerceItem.isGWP)
-                        orderDetailCommerceItem.add(OrderDetailsItem(commerceItem, OrderDetailsItem.ViewType.COMMERCE_ITEM, orderItemLength))
+                    try {
+                        val commerceItem: OrderHistoryCommerceItem = Gson().fromJson(productsArray.getJSONObject(i).toString(), OrderHistoryCommerceItem::class.java)
+                        val fulfillmentStoreId = Utils.retrieveStoreId(commerceItem.fulfillmentType)
+                        commerceItem.fulfillmentStoreId = fulfillmentStoreId!!.replace("\"".toRegex(), "")
+                        if (!commerceItem.isGWP)
+                            orderDetailCommerceItem.add(OrderDetailsItem(commerceItem, OrderDetailsItem.ViewType.COMMERCE_ITEM, orderItemLength))
+                    } catch (e:Exception) {
+                        FirebaseManager.logException(e)
+                    }
                 }
             }
 
@@ -406,7 +413,13 @@ class AddOrderToCartFragment : BaseFragmentBinding<FragmentAddOrderToCartBinding
             if (listItem.type == OrderDetailsItem.ViewType.COMMERCE_ITEM) {
                 var item = listItem.item as OrderHistoryCommerceItem
                 if (item.isSelected && item.quantityInStock > 0)
-                    selectedItems.add(AddItemToCart(item.commerceItemInfo.productId, item.commerceItemInfo.catalogRefId, item.userQuantity))
+                    selectedItems.add(
+                        if (isEnhanceSubstitutionFeatureAvailable()) {
+                            AddItemToCart(item.commerceItemInfo.productId, item.commerceItemInfo.catalogRefId, item.userQuantity, SubstitutionChoice.SHOPPER_CHOICE.name, "")
+                        } else {
+                            AddItemToCart(item.commerceItemInfo.productId, item.commerceItemInfo.catalogRefId, item.userQuantity)
+                        }
+                    )
             }
         }
 
