@@ -2671,6 +2671,7 @@ class ProductDetailsFragment :
                         it.toAddToListRequest().apply {
                             quantity = "1"
                             isGWP = !productDetails?.freeGift.isNullOrEmpty()
+                            size = getSelectedSku()?.size
                         }
                     )
                 }
