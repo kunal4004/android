@@ -8,6 +8,7 @@ import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.lifecycleScope
 import com.awfs.coordination.R
 import com.google.gson.JsonSyntaxException
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.cart.service.network.CartItemGroup
 import za.co.woolworths.financial.services.android.cart.view.CartFragment
@@ -122,6 +123,8 @@ class UnsellableUtils {
                                 }
                             }
                         }
+                    } catch (coroutineException: CancellationException) {
+                        FirebaseManager.logException(coroutineException)
                     } catch (e: Exception) {
                         FirebaseManager.logException(e)
                         progressBar?.visibility = View.GONE
