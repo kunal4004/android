@@ -81,8 +81,8 @@ class OrderConfirmationFragment :
     private var dyServerId: String? = null
     private var dySessionId: String? = null
     private var config: NetworkConfig? = null
-    private var dyChooseVariationViewModel: DyHomePageViewModel? = null
-    private lateinit var dyReportEventViewModel: DyChangeAttributeViewModel
+    private val dyChooseVariationViewModel: DyHomePageViewModel by viewModels()
+    private val dyReportEventViewModel: DyChangeAttributeViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -102,16 +102,6 @@ class OrderConfirmationFragment :
             dyServerId = Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID)
         if (Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID) != null)
             dySessionId = Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID)
-        dyChoosevariationViewModel()
-        dyReportEventViewModel()
-    }
-
-    private fun dyReportEventViewModel() {
-        dyReportEventViewModel = ViewModelProvider(this).get(DyChangeAttributeViewModel::class.java)
-    }
-
-    private fun dyChoosevariationViewModel() {
-        dyChooseVariationViewModel = ViewModelProvider(this).get(DyHomePageViewModel::class.java)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -199,7 +189,7 @@ class OrderConfirmationFragment :
         val context = Context(device, page,DY_CHANNEL)
         val options = Options(true)
         val homePageRequestEvent = HomePageRequestEvent(user, session, context, options)
-        dyChooseVariationViewModel?.createDyRequest(homePageRequestEvent)
+        dyChooseVariationViewModel.createDyRequest(homePageRequestEvent)
     }
 
     private fun showPurchaseEvent(response: SubmittedOrderResponse) {

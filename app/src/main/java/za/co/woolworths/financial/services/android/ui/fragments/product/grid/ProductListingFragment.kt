@@ -21,10 +21,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
-import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.FragmentTransaction
-import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.setFragmentResultListener
+import androidx.fragment.app.*
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
@@ -157,14 +154,14 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
     private var localDeliveryTypeForHiddenChange: String? = null
     private var mPromotionalCopy: String? = null
     private var isChanelPage = false
-    private var dyChoosevariationViewModel: DyHomePageViewModel? = null
+    private val dyChoosevariationViewModel: DyHomePageViewModel by viewModels()
     private var breadCrumbList: ArrayList<String> = ArrayList()
     private var breadCrumb: ArrayList<BreadCrumb> = ArrayList()
     private var dyServerId: String? = null
     private var dySessionId: String? = null
     private var config: NetworkConfig? = null
     private var PLP_SCREEN_LOCATION: String? = "PLP Screen"
-    private var dyReportEventViewModel: DyChangeAttributeViewModel? = null
+    private val dyReportEventViewModel: DyChangeAttributeViewModel by viewModels()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -266,16 +263,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
         binding.layoutErrorBlp.blpErrorBackBtn.setOnClickListener {
             startProductRequest()
         }
-        dyCategoryChooseVariationViewModel()
-        dyReportEventViewModel()
-    }
-
-    private fun dyReportEventViewModel() {
-        dyReportEventViewModel = ViewModelProvider(this)[DyChangeAttributeViewModel::class.java]
-    }
-
-    private fun dyCategoryChooseVariationViewModel() {
-        dyChoosevariationViewModel = ViewModelProvider(this)[DyHomePageViewModel::class.java]
     }
 
     private fun prepareCategoryDynamicYieldPageView(
@@ -304,7 +291,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
         val context = Context(device, page, DY_CHANNEL,null)
         val options = Options(true)
         val homePageRequestEvent = HomePageRequestEvent(user, session, context, options)
-        dyChoosevariationViewModel?.createDyRequest(homePageRequestEvent)
+        dyChoosevariationViewModel.createDyRequest(homePageRequestEvent)
     }
 
     private fun addFragmentListner() {
@@ -820,12 +807,13 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
     }
 
     override fun bindRecyclerViewWithUI(productLists: MutableList<ProductList>) {
-        if(!AppInstanceObject.get().featureWalkThrough.plp_add_to_list) {
+        /* Commenting showing pop up since it is not implemented in IOS for oct 2023 release */
+       /* if(!AppInstanceObject.get().featureWalkThrough.plp_add_to_list) {
             PLPAddToListInfoBottomSheetDialog().show(
                 parentFragmentManager,
                 AppConstant.TAG_ADD_TO_LIST_PLP
             )
-        }
+        }*/
         mProductList?.clear()
         mProductList = ArrayList()
         mProductList = productLists
@@ -1242,7 +1230,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
             session,
             user
         )
-        dyReportEventViewModel?.createDyChangeAttributeRequest(prepareDySortByRequestEvent)
+        dyReportEventViewModel.createDyChangeAttributeRequest(prepareDySortByRequestEvent)
     }
 
     @SuppressLint("InflateParams")

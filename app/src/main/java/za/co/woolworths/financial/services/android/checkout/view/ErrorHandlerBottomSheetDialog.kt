@@ -33,6 +33,7 @@ class ErrorHandlerBottomSheetDialog : WBottomSheetDialogFragment(),
         const val ERROR_TYPE_CONFIRM_DELIVERY_ADDRESS = 1036
         const val ERROR_TYPE_CONFIRM_COLLECTION_ADDRESS = 1037
         const val ERROR_TYPE_SHIPPING_DETAILS_COLLECTION = 1038
+        const val ERROR_TYPE_CONNECT_ONLINE = 1039
         const val RESULT_ERROR_CODE_RETRY = "RESULT_ERROR_CODE_RETRY"
 
         fun newInstance(bundle: Bundle, clickListener: ClickListener) = ErrorHandlerBottomSheetDialog().apply {
@@ -87,15 +88,23 @@ class ErrorHandlerBottomSheetDialog : WBottomSheetDialogFragment(),
         errorLogo.setImageResource(R.drawable.ic_error_icon)
         cancelButton?.visibility = View.VISIBLE
         incSwipeCloseIndicator.root.visibility = View.VISIBLE
-        actionButton.text = getString(R.string.retry)
+        if(errorType == ERROR_TYPE_CONNECT_ONLINE) {
+            actionButton.text = getString(R.string.got_it)
+            cancelButton.visibility = View.GONE
+        }
+        else {
+            actionButton.text = getString(R.string.retry)
+        }
     }
 
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.actionButton -> {
-                setFragmentResult(RESULT_ERROR_CODE_RETRY, bundleOf("bundle" to errorType))
-                errorType?.let {
-                    mclickListener?.onRetryClick(it)
+                if(errorType != ERROR_TYPE_CONNECT_ONLINE) {
+                    setFragmentResult(RESULT_ERROR_CODE_RETRY, bundleOf("bundle" to errorType))
+                    errorType?.let {
+                        mclickListener?.onRetryClick(it)
+                    }
                 }
                 dismiss()
             }

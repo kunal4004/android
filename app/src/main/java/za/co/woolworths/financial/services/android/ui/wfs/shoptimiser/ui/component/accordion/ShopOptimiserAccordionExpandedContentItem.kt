@@ -17,6 +17,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import com.awfs.coordination.R
+import za.co.woolworths.financial.services.android.ui.wfs.common.click.clickableSingle
 import za.co.woolworths.financial.services.android.ui.wfs.component.DividerLight1dp
 import za.co.woolworths.financial.services.android.ui.wfs.component.MyIcon
 import za.co.woolworths.financial.services.android.ui.wfs.component.SpacerHeight6dp
@@ -24,11 +25,11 @@ import za.co.woolworths.financial.services.android.ui.wfs.component.SpacerWidth1
 import za.co.woolworths.financial.services.android.ui.wfs.component.TextFuturaFamilyHeader1
 import za.co.woolworths.financial.services.android.ui.wfs.component.TextOpenSansSemiBoldH3
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.extensions.findActivity
-import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.extensions.noRippleClickable
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.extensions.testAutomationTag
 import za.co.woolworths.financial.services.android.ui.wfs.shoptimiser.dto.AvailableFundsSufficiency
 import za.co.woolworths.financial.services.android.ui.wfs.shoptimiser.dto.ProductOnDisplay
 import za.co.woolworths.financial.services.android.ui.wfs.shoptimiser.ui.fragment.ShoptimiserDetailsFragment
+import za.co.woolworths.financial.services.android.ui.wfs.shoptimiser.ui.viewmodel.AccordionDividerVisibility
 import za.co.woolworths.financial.services.android.ui.wfs.shoptimiser.ui.viewmodel.ShopOptimiserViewModel
 import za.co.woolworths.financial.services.android.ui.wfs.theme.Dimens
 import za.co.woolworths.financial.services.android.ui.wfs.theme.FontDimensions
@@ -67,11 +68,11 @@ fun ShopOptimiserViewModel.ShopOptimiserAccordionContent(
             Row(
                 modifier = Modifier
                     .testAutomationTag(stringResource(id = R.string.shoptimiser_child_accordion_row))
-                    .noRippleClickable {                            // Handle click event if sufficient funds are available
+                    .clickableSingle {                            // Handle click event if sufficient funds are available
                         selectedOnDisplayProduct = productOnDisplay.value
                         navigateToShopOptimiserDetailWidget(context.findActivity()) }
                     .padding(
-                        bottom = if (isSufficientFundsAvailable) Margin.dp16 else Margin.noMargin,
+                        bottom = if (isSufficientFundsAvailable) { if (isLastProduct) Margin.noMargin else Margin.dp16 } else Margin.noMargin,
                         top = Margin.dp16,
                         start = Margin.start,
                         end = Margin.end
@@ -131,7 +132,7 @@ fun ShopOptimiserViewModel.ShopOptimiserAccordionContent(
             }
 
             // Add a divider if this is the last product
-            if (isLastProduct) {
+            if (isLastProduct && accordionDividerVisibility == AccordionDividerVisibility.VISIBLE) {
                 DividerLight1dp()
             }
         }
