@@ -88,8 +88,7 @@ class UnsellableUtils {
                                             )
                                         )
                                     }
-                                    val savedPlaceId =
-                                        KotlinUtils.getDeliveryType()?.address?.placeId
+                                    val savedPlaceId = KotlinUtils.getDeliveryType()?.address?.placeId
                                     KotlinUtils.apply {
                                         this.placeId = confirmLocationRequest.address.placeId
                                         isLocationPlaceIdSame =
