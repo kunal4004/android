@@ -125,6 +125,7 @@ class UnsellableUtils {
                         }
                     } catch (coroutineException: CancellationException) {
                         FirebaseManager.logException(coroutineException)
+                        progressBar?.visibility = View.GONE
                     } catch (e: Exception) {
                         FirebaseManager.logException(e)
                         progressBar?.visibility = View.GONE
