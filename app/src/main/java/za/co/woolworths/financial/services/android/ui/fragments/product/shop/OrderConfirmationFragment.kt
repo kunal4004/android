@@ -182,7 +182,7 @@ class OrderConfirmationFragment :
         val user = User(dyServerId,dyServerId)
         val session = Session(dySessionId)
         val device = Device(IPAddress, config?.getDeviceModel())
-        val dataOther = DataOther(response.orderSummary?.orderId.toString(),response.orderSummary?.total,ZAR,null,null)
+        val dataOther = DataOther(response.orderSummary?.orderId.toString(),response.orderSummary?.total,ZAR,null,null,null)
         val dataOtherArray: ArrayList<DataOther>? = ArrayList<DataOther>()
         dataOtherArray?.add(dataOther)
         val page = Page(null, ORDER_CONFIRMATION_PAGE, OTHER, null, dataOtherArray)
