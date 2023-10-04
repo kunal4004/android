@@ -24,6 +24,7 @@ import java.util.HashMap;
 
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
+import za.co.woolworths.financial.services.android.shoppinglist.view.MyShoppingListFragment;
 import za.co.woolworths.financial.services.android.ui.activities.BiometricsWalkthrough;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatDetailActivity;
