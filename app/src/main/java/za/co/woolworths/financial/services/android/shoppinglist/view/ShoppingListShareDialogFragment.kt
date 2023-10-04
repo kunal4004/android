@@ -11,10 +11,10 @@ import com.awfs.coordination.R
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
+import za.co.woolworths.financial.services.android.shoppinglist.utility.shareListUrl
 import za.co.woolworths.financial.services.android.ui.compose.contentView
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
-import za.co.woolworths.financial.services.android.util.shareListUrl
 
 @OptIn(ExperimentalComposeUiApi::class)
 @AndroidEntryPoint
@@ -30,7 +30,7 @@ class ShoppingListShareDialogFragment : WBottomSheetDialogFragment() {
             ShowShareListDialog(onShareButtonClick = {
                 requireContext().let {
                     dialog?.dismiss()
-                    shareListUrl(it,
+                    shareListUrl(
                         /*todo remove hardcoded url once api is integrated*/
                         "https://www.woolworths.co.za/prod/Food/Bakery/Bread-Rolls/Bread/Brown-Bread/Thick-Slice-Brown-Bread-700-g/_/A-6001009005168",
                         requireActivity())

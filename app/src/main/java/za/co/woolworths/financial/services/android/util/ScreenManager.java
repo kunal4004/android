@@ -338,8 +338,7 @@ public class ScreenManager {
         if (!(activity instanceof BottomNavigationActivity)) {
             return;
         }
-      //  MyListsFragment fragment = new MyListsFragment();
-        MyShoppingListFragment fragment = new MyShoppingListFragment();
+        MyListsFragment fragment = new MyListsFragment();
         BottomNavigationActivity bottomNavigationActivity = (BottomNavigationActivity) activity;
         bottomNavigationActivity.pushFragment(fragment);
     }
