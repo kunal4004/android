@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <include
+        android:id="@+id/incSwipeCloseIndicator"
+        layout="@layout/popup_close_header_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/sixteen_dp"
+        android:layout_marginEnd="@dimen/sixteen_dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/addToListImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/incSwipeCloseIndicator"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/fourty_dp"
+        android:contentDescription="@string/placeholder"
+        android:src="@drawable/ic_add_to_list_info" />
+    <ImageView
+        android:id="@+id/addToListArrowImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/addToListImage"
+        android:layout_alignParentEnd="true"
+        android:rotation="-10"
+        android:layout_marginEnd="@dimen/sixty_five_dp"
+        android:layout_marginTop="@dimen/_minus20sdp"
+        android:contentDescription="@string/placeholder"
+        android:src="@drawable/ic_add_to_list_info_arrow" />
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/addToListInfoTitle"
+        style="@style/absa_page_title_text_style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/addToListImage"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="@dimen/thirty_two_dp"
+        android:layout_marginTop="@dimen/thirty_five_dp"
+        android:layout_marginEnd="@dimen/thirty_two_dp"
+        android:layout_marginBottom="@dimen/eight_dp"
+        android:gravity="center"
+        android:text="@string/add_your_favourite_Food_items_to_your_shopping_lists" />
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/addToListInfoDescription"
+        style="@style/pargo_info_description_text_style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/addToListInfoTitle"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="@dimen/thirty_two_dp"
+        android:layout_marginTop="@dimen/eight_dp"
+        android:layout_marginEnd="@dimen/thirty_two_dp"
+        android:background="@color/white"
+        android:gravity="center"
+        android:text="@string/create_custom_shopping_lists_for_quick_access" />
+
+    <LinearLayout
+        android:id="@+id/actionsLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/addToListInfoDescription"
+        android:layout_marginTop="@dimen/thirty_five_dp"
+        android:orientation="vertical">
+        <za.co.woolworths.financial.services.android.ui.views.WButton
+            android:id="@+id/gotItButton"
+            style="@style/blackButtonStyle"
+            android:layout_marginLeft="@dimen/twenty_four_dp"
+            android:layout_marginRight="@dimen/twenty_four_dp"
+            android:layout_marginBottom="@dimen/twenty_four_dp"
+            android:text="@string/got_it" />
+    </LinearLayout>
+
+</RelativeLayout>

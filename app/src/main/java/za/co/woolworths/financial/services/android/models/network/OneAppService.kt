@@ -134,6 +134,10 @@ import za.co.woolworths.financial.services.android.onecartgetstream.model.OCAuth
 import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.RecommendationResponse
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.RecommendationRequest
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.RatingAndReviewData
+import za.co.woolworths.financial.services.android.dynamicyield.data.response.getResponse.DynamicYieldChooseVariationResponse
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.HomePageRequestEvent
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.PrepareChangeAttributeRequestEvent
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Response.DyChangeAttributeResponse
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
@@ -592,7 +596,7 @@ open class OneAppService(
         }
     }
 
-    private fun getSuburbOrStoreId(): Pair<String?, String?> {
+     fun getSuburbOrStoreId(): Pair<String?, String?> {
         val suburbId: String? = null
         val storeId: String? = null
         return Pair(suburbId, storeId)
@@ -733,7 +737,7 @@ open class OneAppService(
     suspend fun createNewList(listName: CreateList): retrofit2.Response<ShoppingListsResponse> =
         withContext(Dispatchers.IO){
             mApiInterface.createNewList(getSessionToken(), getDeviceIdentityToken(), listName)
-        }
+    }
 
     suspend fun getShoppingListItems(listId: String): retrofit2.Response<ShoppingListItemsResponse> {
         return withContext(Dispatchers.IO) {
@@ -861,7 +865,7 @@ open class OneAppService(
         body: OrderToShoppingListRequestBody
     ): retrofit2.Response<OrderToListReponse> = mApiInterface.addToListByOrderId(
         getSessionToken(), getDeviceIdentityToken(), orderId, body
-    )
+    ).execute()
 
     fun getOrderTaxInvoice(taxNoteNumber: String): Call<OrderTaxInvoiceResponse> {
         return mApiInterface.getTaxInvoice(
@@ -1075,7 +1079,8 @@ open class OneAppService(
                 "",
                 getSessionToken(),
                 getDeviceIdentityToken(),
-                placeId
+                placeId,
+                false
             )
         }
     }
@@ -1305,18 +1310,6 @@ open class OneAppService(
         )
     }
 
-    suspend fun confirmLocation(confirmLocationRequest: ConfirmLocationRequest): retrofit2.Response<ConfirmDeliveryAddressResponse> {
-        return withContext(Dispatchers.IO) {
-            mApiInterface.confirmPlaceLocation(
-                "",
-                "",
-                getSessionToken(),
-                getDeviceIdentityToken(),
-                confirmLocationRequest
-            )
-        }
-    }
-
     fun deleteAccount(): Call<DeleteAccountResponse> {
         return mApiInterface.deleteAccount(
             "",
@@ -1370,6 +1363,22 @@ open class OneAppService(
             getSessionToken(),
             getDeviceIdentityToken(),
             getRequestBody(appGUIDRequestType)
+        )
+    }
+
+    suspend fun dynamicYieldHomePage(dyHomePageRequestEvent: HomePageRequestEvent): retrofit2.Response<DynamicYieldChooseVariationResponse> {
+        return mApiInterface.dynamicYieldHomePage(
+            getSessionToken(),
+            getDeviceIdentityToken(),
+            dyHomePageRequestEvent
+        )
+    }
+
+    suspend fun dynamicYieldChangeAttribute(dyPrepareChangeAttributeRequestEvent: PrepareChangeAttributeRequestEvent): retrofit2.Response<DyChangeAttributeResponse> {
+        return mApiInterface.dynamicYieldChangeAttribute(
+            getSessionToken(),
+            getDeviceIdentityToken(),
+            dyPrepareChangeAttributeRequestEvent
         )
     }
 }

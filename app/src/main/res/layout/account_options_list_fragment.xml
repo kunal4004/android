@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/white">
 
     <LinearLayout
@@ -87,6 +88,7 @@
                 android:id="@+id/payMyAccountImageView"
                 style="@style/accountOptionsImageviewStyle"
                 android:contentDescription="@string/payment_option_title"
+                app:tint="@color/black"
                 android:src="@drawable/payment_options_grey" />
 
             <TextView
@@ -112,7 +114,6 @@
             <ImageView
                 android:id="@+id/balanceProtectionInsuranceImageView"
                 style="@style/accountOptionsImageviewStyle"
-                android:alpha="0.3"
                 android:src="@drawable/insurance" />
 
             <TextView
@@ -143,8 +144,7 @@
             <ImageView
                 android:id="@+id/withdrawCashImageView"
                 style="@style/accountOptionsImageviewStyle"
-                android:alpha="0.3"
-                android:src="@drawable/money" />
+                android:src="@drawable/ic_cashback" />
 
             <TextView
                 android:id="@+id/withdrawCashTextView"
@@ -172,8 +172,7 @@
             <ImageView
                 android:id="@+id/debitOrderImageView"
                 style="@style/accountOptionsImageviewStyle"
-                android:alpha="0.3"
-                android:src="@drawable/ic_debit_order" />
+                android:src="@drawable/ic_debit_black" />
 
             <TextView
                 android:id="@+id/debitOrderTextView"

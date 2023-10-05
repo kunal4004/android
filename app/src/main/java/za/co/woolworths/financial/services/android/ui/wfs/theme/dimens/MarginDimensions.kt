@@ -6,6 +6,7 @@ import androidx.compose.ui.unit.dp
 
 @Stable
 data class MarginDimensions(
+    val noMargin : Dp = 0.dp,
     val start: Dp = 24.dp,
     val end: Dp = 24.dp,
     val top: Dp = 24.dp,
@@ -21,6 +22,7 @@ data class MarginDimensions(
     val dp6: Dp = 6.dp,
     val dp4: Dp = 4.dp,
     val dp10: Dp = 10.dp,
+    val dp24: Dp = 24.dp,
     val account_landing_general_icon_spacing_end: Dp = 24.dp
 )
 

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/emptySubstIcon"
+        android:layout_width="@dimen/hundred_and_twenty_dp"
+        android:layout_height="@dimen/hundred_and_twenty_dp"
+        android:contentDescription="@string/empty_subst_list_title"
+        android:src="@drawable/ic_empty_subst_list"
+        app:layout_constraintBottom_toTopOf="@+id/emptySubstListTitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <TextView
+        android:id="@+id/emptySubstListTitle"
+        style="@style/futura_semi_bold_black"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/twenty_four_dp"
+        android:layout_marginTop="@dimen/twenty_four_dp"
+        android:paddingHorizontal="@dimen/twenty_four_dp"
+        android:text="@string/empty_subst_list_title"
+        android:textAlignment="center"
+        android:textSize="@dimen/eighteen_sp"
+        app:layout_constraintBottom_toTopOf="@+id/emptySubstListDesc"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/emptySubstIcon" />
+
+    <TextView
+        android:id="@+id/emptySubstListDesc"
+        style="@style/opensans_regular_text_style_14sp_black"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/twenty_four_dp"
+        android:layout_marginTop="@dimen/eight_dp"
+        android:paddingHorizontal="@dimen/twenty_four_dp"
+        android:text="@string/empty_subst_list_desc"
+        android:textAlignment="center"
+        android:textSize="@dimen/thirteen_sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/emptySubstListTitle" />
+</androidx.constraintlayout.widget.ConstraintLayout>

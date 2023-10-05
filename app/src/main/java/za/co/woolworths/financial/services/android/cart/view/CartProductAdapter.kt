@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.cart.view
 import android.animation.ObjectAnimator
 import android.app.Activity
 import android.graphics.Color
+import android.graphics.Paint
 import android.graphics.PorterDuff
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
@@ -20,6 +21,7 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -27,7 +29,10 @@ import com.awfs.coordination.R
 import com.daimajia.swipe.SwipeLayout
 import com.daimajia.swipe.adapters.RecyclerSwipeAdapter
 import za.co.woolworths.financial.services.android.cart.service.network.CartItemGroup
+import za.co.woolworths.financial.services.android.cart.viewmodel.CartUtils
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.SubstitutionInfo
+import za.co.woolworths.financial.services.android.enhancedSubstitution.util.isEnhanceSubstitutionFeatureEnable
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton.lowStock
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
@@ -35,10 +40,12 @@ import za.co.woolworths.financial.services.android.models.dto.CommerceItem
 import za.co.woolworths.financial.services.android.models.dto.CommerceItemInfo
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary
 import za.co.woolworths.financial.services.android.models.service.event.ProductState
+import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.ImageManager.Companion.setPicture
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.capitaliseFirstLetter
 import za.co.woolworths.financial.services.android.util.NetworkManager
 import za.co.woolworths.financial.services.android.util.ProductType
@@ -46,6 +53,8 @@ import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.analytics.dto.AddToWishListFirebaseEventData
 import za.co.woolworths.financial.services.android.util.analytics.dto.toAnalyticItem
 import java.util.Locale
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
+import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
 
 class CartProductAdapter(
@@ -56,6 +65,7 @@ class CartProductAdapter(
 ) : RecyclerSwipeAdapter<RecyclerView.ViewHolder>() {
     private val DISABLE_VIEW_VALUE = 0.5f
     private val GIFT_ITEM = "GIFT"
+    private val FOOD_ITEM = "FOOD"
     private var hasGiftProduct: Boolean = false
 
     init {
@@ -71,19 +81,22 @@ class CartProductAdapter(
     }
 
     interface OnItemClick {
-        fun onItemDeleteClickInEditMode(commerceId: CommerceItem)
+        fun onItemDeleteClickInEditMode(commerceItem: CommerceItem)
         fun onChangeQuantity(commerceId: CommerceItem, quantity: Int)
-        fun totalItemInBasket(total: Int)
-        fun onOpenProductDetail(commerceItem: CommerceItem)
         fun onViewVouchers()
         fun onViewCashBackVouchers()
         fun updateOrderTotal()
-        fun onGiftItemClicked(commerceItem: CommerceItem)
         fun onEnterPromoCode()
         fun onRemovePromoCode(promoCode: String)
         fun onPromoDiscountInfo()
-        fun onItemDeleteClick(commerceId: CommerceItem)
+        fun onItemDeleteClick(commerceItem: CommerceItem)
         fun onCheckBoxChange(isChecked: Boolean, commerceItem: CommerceItem)
+        fun onSubstituteProductClick(
+            substitutionSelection: String,
+            commerceId: String,
+            productId: String?,
+            catalogRefId: String?
+        )
         fun onCartRefresh()
         fun openAddToListPopup(
             addToListRequests: ArrayList<AddToListRequest>,
@@ -139,6 +152,15 @@ class CartProductAdapter(
                 ) {
                     headerHolder.tvAddToList.visibility = GONE
                 } else {
+                    if (itemRow.category.contentEquals(FOOD_ITEM)
+                        && KotlinUtils.getPreferredDeliveryType() == Delivery.DASH
+                        && isEnhanceSubstitutionFeatureEnable() == true) {
+                        headerHolder.substitutionLayout.visibility = VISIBLE
+                        headerHolder.topDivider.visibility = GONE
+                    } else {
+                        headerHolder.substitutionLayout.visibility = GONE
+                        headerHolder.topDivider.visibility = VISIBLE
+                    }
                     headerHolder.tvAddToList.visibility = VISIBLE
                     headerHolder.tvAddToList.visibility =
                         if (editMode) INVISIBLE else VISIBLE
@@ -166,6 +188,12 @@ class CartProductAdapter(
                 productHolder.quantity.setText(commerceItemInfo?.getQuantity()?.toString() ?: "")
                 productHolder.price.setText(formatAmountToRandAndCentWithSpace(commerceItem.getPriceInfo()
                     .getAmount()))
+                productHolder.bindSubstitutionInfo(
+                    commerceItem.substitutionInfo,
+                    commerceItemInfo?.commerceId,
+                    commerceItemInfo?.productId,
+                    commerceItemInfo?.catalogRefId
+                )
                 val productImageUrl =
                     if (commerceItemInfo == null) "" else commerceItemInfo.externalImageRefV2
                 setPicture(productHolder.productImage, productImageUrl)
@@ -288,10 +316,10 @@ class CartProductAdapter(
                     onRemoveSingleItem(productHolder, commerceItem)
                 }
                 productHolder.productImage.setOnClickListener {
-                    onItemClick.onOpenProductDetail(commerceItem)
+                    CartUtils.openProductDetailFragment(commerceItem, mContext)
                 }
                 productHolder.tvTitle.setOnClickListener {
-                    onItemClick.onOpenProductDetail(commerceItem)
+                    CartUtils.openProductDetailFragment(commerceItem, mContext)
                 }
                 if (commerceItem.lowStockThreshold > commerceItem.quantityInStock && commerceItem.quantityInStock > 0 && lowStock?.isEnabled == true) {
                     showLowStockIndicator(productHolder)
@@ -327,7 +355,7 @@ class CartProductAdapter(
                 val sizeColor = getSizeColor(giftCommerceItemInfo)
                 giftProductHolder.brandProductDescriptionTextView.text = sizeColor
                 giftProductHolder.giftRootContainerConstraintLayout.setOnClickListener {
-                    onItemClick.onGiftItemClicked(giftCommerceItem)
+                    mContext?.let { activity -> CartUtils.onGiftItemClicked(activity) }
                 }
             }
         }
@@ -516,6 +544,8 @@ class CartProductAdapter(
     private inner class CartHeaderViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val tvHeaderTitle: WTextView
         val tvAddToList: WTextView
+        val substitutionLayout: ConstraintLayout
+        val topDivider: View
         fun addToListListener(commerceItems: ArrayList<CommerceItem>?, hasGiftProduct: Boolean) {
             tvAddToList.setOnClickListener {
                 val woolworthsApplication = WoolworthsApplication.getInstance()
@@ -540,11 +570,32 @@ class CartProductAdapter(
                 val addToWishListEventData = AddToWishListFirebaseEventData(products = commerceItems?.map { it.toAnalyticItem() })
                 onItemClick.openAddToListPopup(addToListRequests, addToWishListEventData)
             }
+            substitutionLayout.setOnClickListener {
+                // show info dialog
+                mContext?.let {
+                    val customBottomSheetDialogFragment =
+                        CustomBottomSheetDialogFragment.newInstance(
+                            it.getString(R.string.substitution_how_it_works_title),
+                            it.getString(R.string.substitution_how_it_works_subtitle),
+                            it.getString(R.string.got_it_btn),
+                            R.drawable.pop_up_union,
+                            it.getString(R.string.empty)
+                        )
+                    if (it is AppCompatActivity) {
+                        customBottomSheetDialogFragment.show(
+                            it.supportFragmentManager,
+                            CustomBottomSheetDialogFragment::class.java.simpleName
+                        )
+                    }
+                }
+            }
         }
 
         init {
             tvHeaderTitle = view.findViewById(R.id.tvHeaderTitle)
             tvAddToList = view.findViewById(R.id.tvAddToList)
+            substitutionLayout = view.findViewById(R.id.substitutionLayout)
+            topDivider = view.findViewById(R.id.topDivider)
         }
     }
 
@@ -555,6 +606,7 @@ class CartProductAdapter(
         val price: WTextView
         val promotionalText: WTextView
         val btnDeleteRow: ImageView
+        private val substitutionIcon: ImageView
         val llQuantity: LinearLayout
         val productImage: ImageView
         val clCartItems: ConstraintLayout
@@ -566,6 +618,7 @@ class CartProductAdapter(
         val swipeLayout: SwipeLayout
         val cartLowStock: View
         val txtCartLowStock: TextView
+        private val tvSubstituteItem: TextView
         val minusDeleteCountImage: ImageView
         val minusDeleteCountImageLayout: RelativeLayout
         val addCountImageLayout: RelativeLayout
@@ -597,6 +650,72 @@ class CartProductAdapter(
             cbShoppingList = view.findViewById(R.id.cbShoppingList)
             pbLoadProduct = view.findViewById(R.id.pbLoadProduct)
             swipeRight = view.findViewById(R.id.swipeRight)
+            tvSubstituteItem = view.findViewById(R.id.tvSubstituteItem)
+            tvSubstituteItem.paintFlags += Paint.UNDERLINE_TEXT_FLAG
+            substitutionIcon = view.findViewById(R.id.substitutionIcon)
+            substitutionIcon.setImageResource(R.drawable.union_row)
+            substitutionIcon.visibility = VISIBLE
+        }
+
+        fun bindSubstitutionInfo(
+            substitutionInfo: SubstitutionInfo?,
+            commerceId: String?,
+            productId: String?,
+            catalogRefId: String?
+        ) {
+
+            if (KotlinUtils.getPreferredDeliveryType() == Delivery.DASH && isEnhanceSubstitutionFeatureEnable() == true)  {
+                tvSubstituteItem.visibility = VISIBLE
+                substitutionIcon.visibility = VISIBLE
+                tvSubstituteItem.text = mContext?.getString(R.string.substitute_default) ?: ""
+            } else {
+                tvSubstituteItem.visibility = GONE
+                substitutionIcon.visibility = GONE
+                return
+            }
+
+            tvSubstituteItem.setOnClickListener {
+                if (commerceId.isNullOrEmpty()) {
+                    FirebaseManager.logException(IllegalArgumentException("CommerceId not found."))
+                    return@setOnClickListener
+                }
+                val substitutionSelection =
+                    if (!substitutionInfo?.substitutionSelection.isNullOrEmpty()) {
+                        substitutionInfo?.substitutionSelection
+                            ?: SubstitutionChoice.SHOPPER_CHOICE.toString()
+                    }
+                    else  SubstitutionChoice.SHOPPER_CHOICE.toString()
+
+                onItemClick.onSubstituteProductClick(
+                    substitutionSelection,
+                    commerceId,
+                    productId,
+                    catalogRefId
+                )
+            }
+            if (substitutionInfo == null) {
+                return
+            }
+            with(substitutionInfo) {
+                when (substitutionSelection) {
+                    SubstitutionChoice.USER_CHOICE.toString() -> {
+                        substitutionIcon.setImageResource(R.drawable.ic_edit_black)
+                        if (isSubstitutionInStock) {
+                            tvSubstituteItem.text = displayName
+                        } else {
+                            tvSubstituteItem.text =  mContext?.getString(R.string.substitute_default)
+                        }
+                    }
+                    SubstitutionChoice.NO.toString() -> {
+                        tvSubstituteItem.text =
+                            mContext?.getString(R.string.dont_substitute) ?: ""
+                    }
+                    else -> {
+                        tvSubstituteItem.text =
+                            mContext?.getString(R.string.substitute_default) ?: ""
+                    }
+                }
+            }
         }
     }
 
@@ -820,4 +939,10 @@ class CartProductAdapter(
         this.orderSummary = orderSummary
         mContext = context
     }
+}
+
+enum class SubstitutionChoice {
+    USER_CHOICE,
+    SHOPPER_CHOICE,
+    NO
 }

@@ -17,6 +17,7 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.core.text.buildSpannedString
@@ -31,10 +32,12 @@ import com.google.gson.Gson
 import com.google.gson.JsonElement
 import dagger.hilt.android.AndroidEntryPoint
 import retrofit2.Call
+import za.co.woolworths.financial.services.android.cart.view.SubstitutionChoice
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.ScreenNames.Companion.SHOPPING_LIST_ITEMS
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.contracts.IToastInterface
+import za.co.woolworths.financial.services.android.enhancedSubstitution.util.isEnhanceSubstitutionFeatureAvailable
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils.Companion.getPlaceId
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
@@ -48,6 +51,11 @@ import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForSt
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.models.network.Status
+import za.co.woolworths.financial.services.android.recommendations.data.response.request.Product
+import za.co.woolworths.financial.services.android.recommendations.data.response.request.Recommendation
+import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationLoader
+import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationLoaderImpl
+import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationLoadingNotifier
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity
@@ -58,6 +66,10 @@ import za.co.woolworths.financial.services.android.ui.adapters.ShoppingListItems
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.ConfirmDeliveryLocationFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants.EVENT_PAGE_TYPE_SHOPPING_LIST
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants.EVENT_TYPE_PAGEVIEW
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants.EVENT_TYPE_PRODUCT_THUMBNAIL_VIEW
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants.EVENT_URL_SHOPPING_LIST
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.Companion.ADDED_TO_SHOPPING_LIST_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.Companion.MY_LIST_LIST_ID
@@ -70,6 +82,7 @@ import za.co.woolworths.financial.services.android.ui.views.ToastFactory.Compani
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_SESSION_TIMEOUT_440
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants
 import za.co.woolworths.financial.services.android.util.CustomTypefaceSpan
 import za.co.woolworths.financial.services.android.util.EmptyCartView
 import za.co.woolworths.financial.services.android.util.EmptyCartView.EmptyCartInterface
@@ -90,7 +103,7 @@ import za.co.woolworths.financial.services.android.util.wenum.Delivery
 @AndroidEntryPoint
 class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartInterface,
     NetworkChangeListener, ToastInterface, ShoppingListItemsNavigator, IToastInterface,
-    IOnConfirmDeliveryLocationActionListener {
+    IOnConfirmDeliveryLocationActionListener, RecommendationLoadingNotifier, RecommendationLoader by RecommendationLoaderImpl() {
 
     private val viewModel: ShoppingListDetailViewModel by viewModels()
 
@@ -180,6 +193,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         // Shopping List items
         viewModel.shoppListDetails.observe(viewLifecycleOwner) {
             val response = it.peekContent().data
+            setRecommendationDividerVisibility(visibility = false)
             when (it.peekContent().status) {
                 Status.LOADING -> {
                     mErrorHandlerView?.hideErrorHandler()
@@ -383,6 +397,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
 
                 setUpView()
                 shoppingListItemsAdapter?.setList(viewModel.mShoppingListItems)
+                showRecommendedProducts(viewModel.mShoppingListItems)
             }
             HTTP_SESSION_TIMEOUT_440 -> SessionUtilities.getInstance().setSessionState(
                 SessionDao.SESSION_STATE.INACTIVE,
@@ -393,6 +408,24 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                 onShoppingListItemsResponseError(shoppingListItemsResponse)
             }
         }
+    }
+
+    private fun showRecommendedProducts(shoppingListItems: ArrayList<ShoppingListItem>) {
+        val products = shoppingListItems.filter { !it.productId.isNullOrEmpty() }.map { Product(productId = it.productId) }
+        if(products.isEmpty()) {
+            return
+        }
+        val bundle = Bundle()
+        bundle.putParcelable(
+            BundleKeysConstants.RECOMMENDATIONS_EVENT_DATA,
+            Recommendation.PageView(eventType = EVENT_TYPE_PAGEVIEW, url = EVENT_URL_SHOPPING_LIST, pageType = EVENT_PAGE_TYPE_SHOPPING_LIST)
+        )
+        bundle.putParcelable(
+            BundleKeysConstants.RECOMMENDATIONS_EVENT_DATA_TYPE,
+            Recommendation.ShoppingListEvent(eventType = EVENT_TYPE_PRODUCT_THUMBNAIL_VIEW, products = products)
+        )
+        bundle.putBoolean(BundleKeysConstants.RECOMMENDATIONS_DYNAMIC_TITLE_REQUIRED, true)
+        loadRecommendations(bundle = bundle, fragmentManager = childFragmentManager)
     }
 
     private fun onShoppingListItemsResponseError(response: ShoppingListItemsResponse?) {
@@ -733,11 +766,16 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                     count
                 )
             bindingListDetails.selectDeselectAllTextView.visibility = VISIBLE
-            Utils.setRecyclerViewMargin(bindingListDetails.rcvShoppingListItems, Utils.dp2px(60f))
+            setScrollViewBottomMargin(Utils.dp2px(60f))
         } else {
             bindingListDetails.rlCheckOut.visibility = GONE
-            Utils.setRecyclerViewMargin(bindingListDetails.rcvShoppingListItems, 0)
+            setScrollViewBottomMargin(0)
         }
+    }
+
+    private fun setScrollViewBottomMargin(margin: Int) {
+        val layoutParams : ConstraintLayout.LayoutParams? = bindingListDetails.nestedScrollView.layoutParams as? ConstraintLayout.LayoutParams
+        layoutParams?.bottomMargin = margin
     }
 
     private fun executeAddToCart(items: ArrayList<ShoppingListItem>?) {
@@ -745,11 +783,22 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         val selectedItems: MutableList<AddItemToCart> = ArrayList(0)
         for (item in items!!) {
             if (item.isSelected && item.quantityInStock > 0) selectedItems.add(
-                AddItemToCart(
-                    item.productId,
-                    item.catalogRefId,
-                    item.userQuantity
-                )
+                if (isEnhanceSubstitutionFeatureAvailable()) {
+                    AddItemToCart(
+                        item.productId,
+                        item.catalogRefId,
+                        item.userQuantity,
+                        SubstitutionChoice.SHOPPER_CHOICE.name,
+                        ""
+                    )
+                } else {
+                    AddItemToCart(
+                        item.productId,
+                        item.catalogRefId,
+                        item.userQuantity
+                    )
+                }
+
             )
         }
         Utils.triggerFireBaseEvents(
@@ -1030,6 +1079,16 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
     override fun onDestroy() {
         (activity as? BottomNavigationActivity)?.showToolbar()
         super.onDestroy()
+    }
+
+    override fun onRecommendationsLoadedSuccessfully() {
+        if(isAdded) {
+            setRecommendationDividerVisibility(visibility = !shoppingListItemsAdapter?.shoppingListItems.isNullOrEmpty())
+        }
+    }
+
+    private fun setRecommendationDividerVisibility(visibility: Boolean) {
+        bindingListDetails.viewRecommendationDivider.visibility = if(visibility) VISIBLE else GONE
     }
 
     companion object {

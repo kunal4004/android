@@ -4,6 +4,9 @@ import android.content.Context
 import retrofit2.await
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.request.SaveAddressLocationRequest
+import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
+import za.co.woolworths.financial.services.android.models.dto.CreateList
+import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse
 import za.co.woolworths.financial.services.android.models.network.AppContextProviderImpl
 import za.co.woolworths.financial.services.android.models.network.RetrofitApiProviderImpl
 import za.co.woolworths.financial.services.android.models.network.RetrofitConfig
@@ -17,11 +20,11 @@ class GeoLocationApiHelper @Inject constructor() : RetrofitConfig(AppContextProv
         mApiInterface.getSavedAddresses("", "", getSessionToken(), getDeviceIdentityToken()).await()
 
     suspend fun getValidateLocation(placeId: String) =
-        mApiInterface.geoValidateLocation("",
+        mApiInterface.validateLocation("",
             "",
             getSessionToken(),
             getDeviceIdentityToken(),
-            placeId).await()
+            placeId, false).await()
 
     suspend fun postConfirmLocation(confirmLocationRequest: ConfirmLocationRequest) =
         mApiInterface.confirmLocation("",
@@ -47,13 +50,23 @@ class GeoLocationApiHelper @Inject constructor() : RetrofitConfig(AppContextProv
             confirmLocationRequest
         )
 
-    fun validateLocation(placeId: String) =
-        mApiInterface.validateLocation("",
-            "",
-            getSessionToken(),
-            getDeviceIdentityToken(),
-            placeId)
-
     fun isConnectedToInternet(context: Context) =
         NetworkManager.getInstance().isConnectedToNetwork(context)
+
+    suspend fun getShoppingList() =
+        mApiInterface.getShoppingList(getSessionToken(), getDeviceIdentityToken())
+
+    suspend fun createNewList(createList: CreateList) =
+        mApiInterface.createNewList(getSessionToken(), getDeviceIdentityToken(), createList)
+
+    suspend fun addProductsToList(
+        productId: String,
+        addToListRequest: List<AddToListRequest>,
+    ): retrofit2.Response<ShoppingListItemsResponse> =
+        mApiInterface.addProductsToList(
+            getSessionToken(),
+            getDeviceIdentityToken(),
+            productId,
+            addToListRequest
+        )
 }

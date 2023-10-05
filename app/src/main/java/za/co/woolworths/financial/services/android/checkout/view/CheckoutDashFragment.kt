@@ -19,6 +19,7 @@ import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
 import android.view.View
 import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.widget.CompoundButton
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -30,6 +31,8 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.findNavController
@@ -66,16 +69,22 @@ import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAd
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyValues.Companion.SHIPPING_TIER_VALUE_DASH
 import za.co.woolworths.financial.services.android.contracts.IToastInterface
+import za.co.woolworths.financial.services.android.enhancedSubstitution.util.isEnhanceSubstitutionFeatureEnable
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
+import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.CommerceItem
 import za.co.woolworths.financial.services.android.models.dto.LiquorCompliance
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
 import za.co.woolworths.financial.services.android.models.dto.app_config.native_checkout.ConfigShoppingBagsOptions
+import za.co.woolworths.financial.services.android.models.network.AppContextProviderImpl
+import za.co.woolworths.financial.services.android.models.network.NetworkConfig
 import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.*
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.response.DyHomePageViewModel
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment
@@ -88,6 +97,7 @@ import za.co.woolworths.financial.services.android.util.ImageManager
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.removeRandFromAmount
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.Utils.*
 import za.co.woolworths.financial.services.android.util.WFormatter
 import za.co.woolworths.financial.services.android.util.WFormatter.DATE_FORMAT_EEEE_COMMA_dd_MMMM
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
@@ -134,6 +144,10 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
 
     @Inject
     lateinit var addShippingInfoEventsAnalytics: AddShippingInfoEventsAnalytics
+    private var dyServerId: String? = null
+    private var dySessionId: String? = null
+    private var config: NetworkConfig? = null
+    private val dyChooseVariationViewModel: DyHomePageViewModel by viewModels()
 
     private val deliveryInstructionsTextWatcher: TextWatcher = object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -185,7 +199,6 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
         binding.txtContinueToPayment?.setOnClickListener(this)
         binding.checkoutCollectingFromLayout?.root?.setOnClickListener(this)
     }
-
 
 
     private fun hideInstructionLayout() {
@@ -428,6 +441,10 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
             Delivery.DASH.type, confirmLocationAddress,
             KotlinUtils.getDeliveryType()?.storeId, "checkout"
         )
+
+        if(confirmLocationAddress.placeId?.isNullOrEmpty() == true) {
+            return
+        }
 
         isItemLimitExceeded = false
         checkoutAddAddressNewUserViewModel?.getConfirmLocationDetails(body)
@@ -879,10 +896,13 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
         binding.layoutDeliveryInstructions.edtTxtSpecialDeliveryInstruction?.addTextChangedListener(
             deliveryInstructionsTextWatcher
         )
-        binding.layoutDeliveryInstructions.edtTxtInputLayoutSpecialDeliveryInstruction?.visibility =
-            GONE
+        //Special delivery instructions by default enabled for dash delivery and for other delivery
+        // type(standard and click and collect)  by default it is disabled
+        binding.layoutDeliveryInstructions.edtTxtInputLayoutSpecialDeliveryInstruction?.visibility = VISIBLE
+        binding.layoutDeliveryInstructions.edtTxtSpecialDeliveryInstruction?.visibility = VISIBLE
+        binding.layoutDeliveryInstructions.switchSpecialDeliveryInstruction?.isChecked = true
         binding.layoutDeliveryInstructions.edtTxtInputLayoutSpecialDeliveryInstruction?.isCounterEnabled =
-            false
+            true
         deliveryInstructionClickListener(binding.layoutDeliveryInstructions.switchSpecialDeliveryInstruction.isChecked)
 
         binding.layoutDeliveryInstructions.switchSpecialDeliveryInstruction?.setOnCheckedChangeListener { _, isChecked ->
@@ -971,6 +991,18 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
      * @see [FoodSubstitution]
      */
     private fun initializeFoodSubstitution() {
+        /* if feature flag is disabled then only show food substitution layout */
+        if (isEnhanceSubstitutionFeatureEnable() == true) {
+            binding.nativeCheckoutFoodSubstitutionLayout.apply {
+                this.radioGroupFoodSubstitution.visibility = GONE
+                this.txtFoodSubstitutionDesc.text = getString(R.string.food_substitution_message)
+            }
+        } else {
+            binding.nativeCheckoutFoodSubstitutionLayout.apply {
+                this.radioGroupFoodSubstitution.visibility = VISIBLE
+                this.txtFoodSubstitutionDesc.text = getString(R.string.native_checkout_delivery_food_substitution_desc)
+            }
+        }
         binding.nativeCheckoutFoodSubstitutionLayout.radioBtnPhoneConfirmation?.text =
             requireContext().getString(R.string.native_checkout_delivery_food_substitution_chat)
 
@@ -1125,8 +1157,29 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
                         SHIPPING_TIER_VALUE_DASH, orderTotalValue
                     )
                 }
+                preparePaymentPageViewRequest(orderTotalValue)
+
             }
         }
+    }
+
+    private fun preparePaymentPageViewRequest(orderTotalValue: Double) {
+        config = NetworkConfig(AppContextProviderImpl())
+        if (Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID) != null)
+            dyServerId = Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID)
+        if (Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID) != null)
+            dySessionId = Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID)
+        val user = User(dyServerId,dyServerId)
+        val session = Session(dySessionId)
+        val device = Device(Utils.IPAddress, config?.getDeviceModel())
+        val dataOther = DataOther(null,null,ZAR,"",orderTotalValue)
+        val dataOtherArray: ArrayList<DataOther>? = ArrayList<DataOther>()
+        dataOtherArray?.add(dataOther)
+        val page = Page(null, PAYMENT_PAGE, OTHER, null, dataOtherArray)
+        val context = Context(device, page, Utils.DY_CHANNEL)
+        val options = Options(true)
+        val homePageRequestEvent = HomePageRequestEvent(user, session, context, options)
+        dyChooseVariationViewModel.createDyRequest(homePageRequestEvent)
     }
 
     private fun onChooseDateClicked() {
@@ -1317,10 +1370,12 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
             putString(ErrorHandlerBottomSheetDialog.ERROR_DESCRIPTION, subTitle)
             putInt(ErrorHandlerBottomSheetDialog.ERROR_TYPE, errorType)
         }
-        view?.findNavController()?.navigate(
-            R.id.action_checkoutDashFragment_to_errorHandlerBottomSheetDialog,
-            bundle
-        )
+        if (navController?.currentDestination?.id == R.id.checkoutDashFragment) {
+            view?.findNavController()?.navigate(
+                R.id.action_checkoutDashFragment_to_errorHandlerBottomSheetDialog,
+                bundle
+            )
+        }
     }
 
     private fun setScreenClickEvents(isClickable: Boolean) {
@@ -1343,7 +1398,11 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
         oddDeliverySlotId = ""
         foodDeliveryStartHour = selectedTimeSlot?.intHourFrom?.toLong() ?: 0
         otherDeliveryStartHour = 0
-        substituesAllowed = selectedFoodSubstitution.rgb
+        if (isEnhanceSubstitutionFeatureEnable() == false) {
+          substituesAllowed = selectedFoodSubstitution.rgb
+        } else {
+            substituesAllowed = FoodSubstitution.NO_THANKS.rgb
+        }
         plasticBags = binding.layoutDeliveryInstructions.switchNeedBags?.isChecked ?: false
         shoppingBagType = selectedShoppingBagType
         deliverySpecialInstructions =

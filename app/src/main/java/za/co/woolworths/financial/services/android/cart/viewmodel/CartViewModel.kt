@@ -9,11 +9,14 @@ import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.cart.service.network.CartResponse
 import za.co.woolworths.financial.services.android.cart.service.repository.CartRepository
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
-import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.models.dto.ChangeQuantity
+import za.co.woolworths.financial.services.android.models.dto.CommerceItem
+import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse
+import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.CouponClaimCode
-import javax.inject.Inject
 import za.co.woolworths.financial.services.android.models.network.Event
 import za.co.woolworths.financial.services.android.models.network.Resource
+import javax.inject.Inject
 
 
 /**
@@ -25,6 +28,8 @@ class CartViewModel @Inject constructor(
     private val cartRepository: CartRepository,
 ) : ViewModel() {
 
+
+    private var isLoading: Boolean = false
     private val _getCarV2 =
         MutableLiveData<Event<Resource<CartResponse>>>()
     val getCarV2: LiveData<Event<Resource<CartResponse>>> =
@@ -58,9 +63,14 @@ class CartViewModel @Inject constructor(
         _onRemovePromoCode
 
     fun getShoppingCartV2() {
+        if(isLoading) {
+            return
+        }
+        isLoading = true
         _getCarV2.value = Event(Resource.loading(null))
         viewModelScope.launch {
             val response = cartRepository.getShoppingCartV2()
+            isLoading = false
             _getCarV2.value = Event(response)
         }
     }

@@ -8,9 +8,8 @@
 
     <ImageView
         android:id="@+id/imQuickShopAddToCartIcon"
-        android:layout_width="@dimen/fourty_dp"
-        android:layout_height="@dimen/fourty_dp"
-        android:padding="@dimen/seven_dp"
+        android:layout_width="@dimen/twenty_five_dp"
+        android:layout_height="@dimen/twenty_five_dp"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
         android:contentDescription="@string/plp_buttonAddToCart"
