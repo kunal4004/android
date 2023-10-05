@@ -303,9 +303,9 @@ class ProductDetailsFragment :
 
     lateinit var wfsShoptimiserProduct: ShoptimiserProductDetailPageImpl
 
-    private lateinit var dyReportEventViewModel: DyChangeAttributeViewModel
+    private val dyReportEventViewModel: DyChangeAttributeViewModel by viewModels()
     private var productId: String? = null
-    private var dyChooseVariationViewModel: DyHomePageViewModel? = null
+    private val dyChooseVariationViewModel: DyHomePageViewModel by viewModels()
     private var dyServerId: String? = null
     private var dySessionId: String? = null
     private var config: NetworkConfig? = null
@@ -379,8 +379,6 @@ class ProductDetailsFragment :
             wfsShoptimiserProduct.addProductDetails(it)
         }
         setUpCartCountPDP()
-        dyChooseVariationViewModel()
-        dyReportEventViewModel()
 
     }
 
@@ -400,10 +398,6 @@ class ProductDetailsFragment :
         }
     }
 
-    private fun dyChooseVariationViewModel() {
-        dyChooseVariationViewModel = ViewModelProvider(this).get(DyHomePageViewModel::class.java)
-    }
-
     private fun prepareDynamicYieldPageViewRequestEvent() {
         val user = User(dyServerId,dyServerId)
         val session = Session(dySessionId)
@@ -419,7 +413,7 @@ class ProductDetailsFragment :
         val context = Context(device, page, DY_CHANNEL)
         val options = Options(true)
         val homePageRequestEvent = HomePageRequestEvent(user, session, context, options)
-        dyChooseVariationViewModel?.createDyRequest(homePageRequestEvent)
+        dyChooseVariationViewModel.createDyRequest(homePageRequestEvent)
     }
 
 
@@ -2112,7 +2106,7 @@ class ProductDetailsFragment :
         }
     }
 
-    private fun prepareDyChangeAttributeSizeRequestEvent(size: String?, sku: String?): PrepareChangeAttributeRequestEvent {
+    private fun prepareDyChangeAttributeSizeRequestEvent(size: String?, sku: String?) {
         val user = User(dyServerId,dyServerId)
         val session = Session(dySessionId)
         val device = Device(IPAddress,config?.getDeviceModel())
@@ -2128,7 +2122,6 @@ class ProductDetailsFragment :
             user
         )
         dyReportEventViewModel.createDyChangeAttributeRequest(prepareChangeAttributeRequestEvent)
-        return prepareChangeAttributeRequestEvent
     }
 
     override fun onColorSelection(selectedColor: String?, isFeature: Boolean) {
@@ -2161,7 +2154,7 @@ class ProductDetailsFragment :
         }
     }
 
-    private fun prepareDyChangeAttributeRequestEvent(selectedColor: String?, sku: String?): PrepareChangeAttributeRequestEvent {
+    private fun prepareDyChangeAttributeRequestEvent(selectedColor: String?, sku: String?) {
         val user = User(dyServerId,dyServerId)
         val session = Session(dySessionId)
         val device = Device(IPAddress,config?.getDeviceModel())
@@ -2177,11 +2170,6 @@ class ProductDetailsFragment :
             user
         )
         dyReportEventViewModel.createDyChangeAttributeRequest(prepareChangeAttributeRequestEvent)
-        return prepareChangeAttributeRequestEvent
-    }
-
-    private fun dyReportEventViewModel() {
-        dyReportEventViewModel = ViewModelProvider(this)[DyChangeAttributeViewModel::class.java]
     }
 
     private fun applyEffectOnLiveCamera() {

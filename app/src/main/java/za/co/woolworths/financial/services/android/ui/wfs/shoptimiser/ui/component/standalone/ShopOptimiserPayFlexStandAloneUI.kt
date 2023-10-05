@@ -17,6 +17,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import com.awfs.coordination.R
+import za.co.woolworths.financial.services.android.ui.wfs.common.click.clickableSingle
 import za.co.woolworths.financial.services.android.ui.wfs.component.TextOpenSansFontFamilyAnnotateString
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.extensions.findActivity
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.extensions.noRippleClickable
@@ -41,7 +42,7 @@ fun ShopOptimiserViewModel.ShopOptimiserPayFlexStandAloneUI() {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .noRippleClickable {
+                .clickableSingle {
                     // Handle click event by setting the selected product and navigating to detail widget
                     selectedOnDisplayProduct = standAlonePayFlexPaymentOnDisplay()
                     navigateToShopOptimiserDetailWidget(context.findActivity())
