@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -18,7 +17,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -27,6 +25,7 @@ import androidx.compose.ui.unit.sp
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList
 import za.co.woolworths.financial.services.android.shoppinglist.component.ListDataState
+import za.co.woolworths.financial.services.android.shoppinglist.service.network.ProductListDetails
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OpenSansFontFamily
 
@@ -91,23 +90,7 @@ fun MyListItemRowView(
                     )
             }
         }
-        Row(
-            modifier = Modifier
-                .clickable {
-                    onItemClick()
-                }
-                .padding(5.dp, 2.dp, 0.dp, 5.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Start,
-        ) {
-            Icon(
-                modifier = Modifier
-                    .height(64.dp)
-                    .width(51.dp),
-                painter = painterResource(id = listDataState.shareIcon),
-                contentDescription = stringResource(id = R.string.description)
-            )
-        }
+        ListOfImagesView(listItem, onImageItemClick = {})
     }
 }
 
@@ -120,10 +103,18 @@ private fun MyListItemRowPreview() {
             listName = "Test"
             listCount = 14
             modifiedListCount = "(14)"
+            val productListDetails = ProductListDetails().apply {
+                imgUrl =
+                    "https://assets.woolworthsstatic.co.za/Mini-Ginger-Cookies-30-g-6009182707657.jpg?V=kb1C&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDE4LTEwLTExLzYwMDkxODI3MDc2NTdfaGVyby5qcGcifQ&"
+            }
+
+            var mockListDetails = ArrayList<ProductListDetails>()
+            mockListDetails.add(productListDetails)
+            mockListDetails.add(productListDetails)
+            mockListDetails.add(productListDetails)
+            productImageList = mockListDetails
         }
         var mockListData: List<ShoppingList> = emptyList()
-        mockListData.plus(mockList)
-        mockListData.plus(mockList)
         mockListData.plus(mockList)
         val listData =
             ListDataState(mockListData, R.drawable.ic_share, R.drawable.ic_white_chevron_right)

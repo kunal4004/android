@@ -21,6 +21,7 @@ import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.shoppinglist.component.ListDataState
 import za.co.woolworths.financial.services.android.shoppinglist.component.LocationDetailsState
 import za.co.woolworths.financial.services.android.shoppinglist.component.MyLIstUIEvents
+import za.co.woolworths.financial.services.android.shoppinglist.service.network.ProductListDetails
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.mapNetworkCallToViewStateFlow
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderFailure
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderLoading
@@ -209,6 +210,15 @@ class MyListViewModel @Inject constructor(
     private fun getUpdatedList(list: List<ShoppingList>): List<ShoppingList> {
         list.map { shoppingList ->
             shoppingList.modifiedListCount = "(" + shoppingList.listCount + ")"
+            val productListDetails = ProductListDetails().apply {
+                imgUrl =
+                    "https://assets.woolworthsstatic.co.za/Mini-Ginger-Cookies-30-g-6009182707657.jpg?V=kb1C&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDE4LTEwLTExLzYwMDkxODI3MDc2NTdfaGVyby5qcGcifQ&"
+            }
+            var mockListDetails = ArrayList<ProductListDetails>()
+            mockListDetails.add(productListDetails)
+            mockListDetails.add(productListDetails)
+            mockListDetails.add(productListDetails)
+            shoppingList.productImageList = mockListDetails
         }
         return list
     }
