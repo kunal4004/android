@@ -1,16 +1,18 @@
 package za.co.woolworths.financial.services.android.di.module.shop
 
-import dagger.Binds
 import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
 import za.co.woolworths.financial.services.android.data.repository.MyListRepositoryImpl
 import za.co.woolworths.financial.services.android.domain.repository.MyListRepository
+import za.co.woolworths.financial.services.android.models.network.ApiInterface
 
 @Module
 @InstallIn(ViewModelComponent::class)
-abstract class RepositoryModule {
-
-    @Binds
-    abstract fun bindsMyListRepository(impl: MyListRepositoryImpl): MyListRepository
+object RepositoryModule {
+    @Provides
+    fun bindsMyListRepository(apiInterface: ApiInterface): MyListRepository {
+        return MyListRepositoryImpl(apiInterface)
+    }
 }

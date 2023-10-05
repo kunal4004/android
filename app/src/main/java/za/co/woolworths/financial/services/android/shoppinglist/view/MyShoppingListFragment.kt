@@ -123,6 +123,7 @@ class MyShoppingListFragment : Fragment() {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
             0 -> {
+                // This is mostly after changing location from change fulfillment.
                 myListviewModel.onEvent(MyLIstUIEvents.SetDeliveryLocation)
             }
         }
