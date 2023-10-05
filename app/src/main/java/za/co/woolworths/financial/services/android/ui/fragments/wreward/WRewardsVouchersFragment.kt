@@ -28,7 +28,6 @@ import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.ui.activities.WRewardsVoucherDetailsActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.WRewardsVoucherListAdapter;
 import za.co.woolworths.financial.services.android.ui.views.ScrollingLinearLayoutManager;
-import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.RecycleViewClickListner;
 import za.co.woolworths.financial.services.android.util.Utils;
