@@ -155,4 +155,9 @@ class MyShoppingListFragment : Fragment() {
             pushFragmentSlideUp(CreateListFragment())
         }
     }
+
+    private fun navigateToShareListDialog() {
+        val fragment = ShoppingListShareDialogFragment()
+        fragment.show(parentFragmentManager, ShoppingListShareDialogFragment::class.simpleName)
+    }
 }

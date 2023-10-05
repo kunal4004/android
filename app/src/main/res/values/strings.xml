@@ -3112,4 +3112,13 @@
     <string name="free_sim_with_purchase">Free %S Sim with Purchase</string>
     <string name="digital_product_type">digitalProducts</string>
     <string name="enter_valid_sa_number">Enter a valid 10 digit SA number(e.g 0xxxxxxxxx)</string>
+
+
+    <!--shopping List enhancement-->
+    <string name="view_only_option">View Only</string>
+    <string name="view_only_desc">Anyone with a link can view your list without making changes.</string>
+    <string name="edit_option">Edit</string>
+    <string name="edit_option_desc">Invited people can add or remove items from your list.</string>
+    <string name="share_btn">SHARE</string>
+
 </resources>

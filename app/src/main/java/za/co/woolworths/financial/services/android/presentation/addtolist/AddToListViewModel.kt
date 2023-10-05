@@ -327,6 +327,7 @@ class AddToListViewModel @Inject constructor(
                                 isAddToListInProgress = false,
                                 isAddToListSuccess = isSuccess
                             )
+                            prepareDyAddToWishListRequestEvent(orderId, "")
                         }
 
                         Status.ERROR -> {
