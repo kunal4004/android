@@ -208,18 +208,90 @@ class MyListViewModel @Inject constructor(
     }
 
     private fun getUpdatedList(list: List<ShoppingList>): List<ShoppingList> {
-        list.map { shoppingList ->
+        list.mapIndexed { index, shoppingList ->
             shoppingList.modifiedListCount = "(" + shoppingList.listCount + ")"
-            val productListDetails = ProductListDetails().apply {
-                imgUrl =
-                    "https://assets.woolworthsstatic.co.za/Mini-Ginger-Cookies-30-g-6009182707657.jpg?V=kb1C&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDE4LTEwLTExLzYwMDkxODI3MDc2NTdfaGVyby5qcGcifQ&"
-            }
-            var mockListDetails = ArrayList<ProductListDetails>()
-            mockListDetails.add(productListDetails)
-            mockListDetails.add(productListDetails)
-            mockListDetails.add(productListDetails)
-            shoppingList.productImageList = mockListDetails
+            shoppingList.productImageList = getImageListData(index)
         }
         return list
+    }
+
+    private fun getImageListData(index: Int): ArrayList<ProductListDetails> {
+        var mockListDetails = ArrayList<ProductListDetails>()
+        when (index) {
+            0 -> {
+                val productListDetails = ProductListDetails().apply {
+                    imgUrl =
+                        "https://assets.woolworthsstatic.co.za/Mini-Ginger-Cookies-30-g-6009182707657.jpg?V=kb1C&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDE4LTEwLTExLzYwMDkxODI3MDc2NTdfaGVyby5qcGcifQ&"
+                }
+                mockListDetails.add(productListDetails)
+                mockListDetails.add(productListDetails)
+                mockListDetails.add(productListDetails)
+                mockListDetails.add(productListDetails)
+                mockListDetails.add(productListDetails)
+
+            }
+
+            1 -> {
+                val productListDetails = ProductListDetails().apply {
+                    imgUrl =
+                        "https://assets.woolworthsstatic.co.za/Mini-Oat-Crunchies-150-g-6009223195009.jpg?V=buKH&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDIxLTA2LTAyLzYwMDkyMjMxOTUwMDlfaGVyby5qcGcifQ&"
+                }
+                mockListDetails.add(productListDetails)
+                mockListDetails.add(productListDetails)
+                mockListDetails.add(productListDetails)
+                mockListDetails.add(productListDetails)
+                mockListDetails.add(productListDetails)
+                mockListDetails.add(productListDetails)
+                mockListDetails.add(productListDetails)
+                mockListDetails.add(productListDetails)
+                mockListDetails.add(productListDetails)
+                mockListDetails.add(productListDetails)
+                mockListDetails.add(productListDetails)
+                mockListDetails.add(productListDetails)
+                mockListDetails.add(productListDetails)
+                mockListDetails.add(productListDetails)
+                mockListDetails.add(productListDetails)
+            }
+
+            2 -> {
+                val productListDetails = ProductListDetails().apply {
+                    imgUrl =
+                        "https://assets.woolworthsstatic.co.za/Mini-Chocolate-Digestives-30-g-6009189506246.jpg?V=fur0&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDIxLTA2LTI0LzYwMDkxODk1MDYyNDZfaGVyby5qcGcifQ&"
+                }
+                mockListDetails.add(productListDetails)
+                mockListDetails.add(productListDetails)
+                mockListDetails.add(productListDetails)
+                mockListDetails.add(productListDetails)
+                mockListDetails.add(productListDetails)
+                mockListDetails.add(productListDetails)
+                mockListDetails.add(productListDetails)
+                mockListDetails.add(productListDetails)
+                mockListDetails.add(productListDetails)
+            }
+
+            3 -> {
+                val productListDetails = ProductListDetails().apply {
+                    imgUrl =
+                        "https://assets.woolworthsstatic.co.za/Yoghurt-Digestives-200-g-6009175106443.jpg?V=Xzz6&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDIxLTA2LTI0LzYwMDkxNzUxMDY0NDNfaGVyby5qcGcifQ&"
+                }
+                mockListDetails.add(productListDetails)
+                mockListDetails.add(productListDetails)
+                mockListDetails.add(productListDetails)
+                mockListDetails.add(productListDetails)
+                mockListDetails.add(productListDetails)
+                mockListDetails.add(productListDetails)
+            }
+
+            else -> {
+                val productListDetails = ProductListDetails().apply {
+                    imgUrl = ""
+                }
+                mockListDetails.add(productListDetails)
+                mockListDetails.add(productListDetails)
+                mockListDetails.add(productListDetails)
+            }
+        }
+
+        return mockListDetails
     }
 }

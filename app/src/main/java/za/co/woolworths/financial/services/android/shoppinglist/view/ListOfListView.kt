@@ -2,9 +2,8 @@ package za.co.woolworths.financial.services.android.shoppinglist.view
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Divider
 import androidx.compose.runtime.Composable
@@ -41,7 +40,7 @@ fun ListOfListView(
                 onItemClick(listItem)
             }
             Divider(
-                modifier = Modifier.padding(horizontal = 24.dp),
+
                 color = colorResource(id = R.color.color_D8D8D8)
             )
         }
@@ -59,8 +58,6 @@ fun ListOfListViewPreview() {
             modifiedListCount = "(14)"
         }
         var mockListData: List<ShoppingList> = emptyList()
-        mockListData.plus(mockList)
-        mockListData.plus(mockList)
         mockListData.plus(mockList)
         val listData =
             ListDataState(mockListData, R.drawable.ic_share, R.drawable.ic_white_chevron_right)

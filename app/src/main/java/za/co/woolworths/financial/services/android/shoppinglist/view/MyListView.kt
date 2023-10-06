@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -75,9 +76,9 @@ fun MyListScreen(
 
         Spacer(
             modifier = Modifier
-                .height(8.dp)
+                .height(1.dp)
                 .fillMaxWidth()
-                .background(color = colorResource(id = R.color.color_F3F3F3))
+                .background(color = colorResource(id = R.color.color_D8D8D8))
         )
 
         CreateNewListView(icon = R.drawable.ic_add_circle, title = R.string.shop_create_list) {
@@ -86,12 +87,14 @@ fun MyListScreen(
 
         Spacer(
             modifier = Modifier
-                .height(8.dp)
+                .height(1.dp)
                 .fillMaxWidth()
-                .background(color = colorResource(id = R.color.color_F3F3F3))
+                .background(color = colorResource(id = R.color.color_D8D8D8))
         )
 
-        ListOfListView(modifier = Modifier.background(Color.White),
+        ListOfListView(modifier = Modifier
+            .background(Color.White)
+            .padding(horizontal = 24.dp, vertical = 10.dp),
             myListviewModel.listDataState.value,
             onItemClick = { list ->
                 onEvent(MyLIstUIEvents.ListItemClick(list))
