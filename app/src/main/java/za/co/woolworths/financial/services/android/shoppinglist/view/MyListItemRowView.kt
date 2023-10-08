@@ -43,10 +43,10 @@ fun MyListItemRowView(
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
-                .padding(10.dp)
                 .fillMaxWidth()
                 .wrapContentHeight()
-                .background(Color.White),
+                .background(Color.White)
+                .padding(vertical = 10.dp),
         ) {
             Text(
                 text = listItem.listName,
@@ -85,7 +85,7 @@ fun MyListItemRowView(
                 Icon(
                     painter = painterResource(id = listDataState.openIcon),
                     contentDescription = null,
-                    modifier = Modifier.padding(5.dp),
+                    modifier = Modifier.padding(5.dp, 5.dp, 0.dp, 0.dp),
 
                     )
             }

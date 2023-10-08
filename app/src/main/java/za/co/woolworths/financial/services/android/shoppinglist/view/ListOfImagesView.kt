@@ -34,7 +34,8 @@ fun ListOfImagesView(
         modifier = Modifier
             .clickable {
                 onImageItemClick()
-            },
+            }
+            .padding(0.dp, 0.dp, 0.dp, 10.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start,
         state = rememberLazyListState(),
@@ -44,8 +45,7 @@ fun ListOfImagesView(
             AsyncImage(
                 modifier = Modifier
                     .height(64.dp)
-                    .width(51.dp)
-                    .padding(5.dp, 0.dp, 0.dp, 5.dp),
+                    .width(51.dp),
                 model = listImages.imgUrl,
                 placeholder = painterResource(id = R.drawable.placeholder_product_list),
                 error = painterResource(id = R.drawable.placeholder_product_list),

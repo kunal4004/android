@@ -31,7 +31,7 @@ fun ListOfListView(
     LazyColumn(
         state = rememberLazyListState(),
         modifier = modifier,
-        contentPadding = PaddingValues(10.dp)
+        //contentPadding = PaddingValues(0.dp, 10.dp, 0.dp, 0.dp)
     ) {
         items(listDataState.list, key = { item ->
             item.listId
@@ -40,7 +40,6 @@ fun ListOfListView(
                 onItemClick(listItem)
             }
             Divider(
-
                 color = colorResource(id = R.color.color_D8D8D8)
             )
         }

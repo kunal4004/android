@@ -216,12 +216,13 @@ class MyListViewModel @Inject constructor(
     }
 
     private fun getImageListData(index: Int): ArrayList<ProductListDetails> {
+        // todo Once we receive API response we will remove this function.
         var mockListDetails = ArrayList<ProductListDetails>()
         when (index) {
             0 -> {
                 val productListDetails = ProductListDetails().apply {
                     imgUrl =
-                        "https://assets.woolworthsstatic.co.za/Mini-Ginger-Cookies-30-g-6009182707657.jpg?V=kb1C&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDE4LTEwLTExLzYwMDkxODI3MDc2NTdfaGVyby5qcGcifQ&"
+                        "https://assets.woolworthsstatic.co.za/Split-Neck-Cropped-Tencel-Shirt-BLACK-506262324-hero.jpg?V=ab0h&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDIyLTEwLTE3LzUwNjI2MjMyNF9CTEFDS19oZXJvLmpwZyJ9&"
                 }
                 mockListDetails.add(productListDetails)
                 mockListDetails.add(productListDetails)
@@ -272,7 +273,7 @@ class MyListViewModel @Inject constructor(
             3 -> {
                 val productListDetails = ProductListDetails().apply {
                     imgUrl =
-                        "https://assets.woolworthsstatic.co.za/Yoghurt-Digestives-200-g-6009175106443.jpg?V=Xzz6&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDIxLTA2LTI0LzYwMDkxNzUxMDY0NDNfaGVyby5qcGcifQ&"
+                        "https://assets.woolworthsstatic.co.za/Frill-Balloon-Sleeve-Blouse-BLACK-506629130-hero.jpg?V=raxB&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDIzLTA1LTA4LzUwNjYyOTEzMF9CTEFDS19oZXJvLmpwZyJ9&"
                 }
                 mockListDetails.add(productListDetails)
                 mockListDetails.add(productListDetails)
