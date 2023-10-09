@@ -22,14 +22,17 @@ import za.co.woolworths.financial.services.android.shoppinglist.component.ListDa
 import za.co.woolworths.financial.services.android.shoppinglist.component.LocationDetailsState
 import za.co.woolworths.financial.services.android.shoppinglist.component.MyLIstUIEvents
 import za.co.woolworths.financial.services.android.shoppinglist.service.network.ProductListDetails
+import za.co.woolworths.financial.services.android.ui.extension.deviceWidth
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.mapNetworkCallToViewStateFlow
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderFailure
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderLoading
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderSuccess
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.Utils.convertPixelsToDp
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import javax.inject.Inject
+
 
 /**
  * Created by Kunal Uttarwar on 26/09/23.
@@ -208,8 +211,10 @@ class MyListViewModel @Inject constructor(
     }
 
     private fun getUpdatedList(list: List<ShoppingList>): List<ShoppingList> {
+        val imageCountInRow = getProductCount()
         list.mapIndexed { index, shoppingList ->
             shoppingList.modifiedListCount = "(" + shoppingList.listCount + ")"
+            shoppingList.noOfProductInRow = imageCountInRow
             shoppingList.productImageList = getImageListData(index)
         }
         return list
@@ -229,11 +234,18 @@ class MyListViewModel @Inject constructor(
                 mockListDetails.add(productListDetails)
                 mockListDetails.add(productListDetails)
                 mockListDetails.add(productListDetails)
+                mockListDetails.add(productListDetails)
+                mockListDetails.add(productListDetails)
+                mockListDetails.add(productListDetails)
+                mockListDetails.add(productListDetails)
+                mockListDetails.add(productListDetails)
+                mockListDetails.add(productListDetails)
+                mockListDetails.add(productListDetails)
 
             }
 
             1 -> {
-                val productListDetails = ProductListDetails().apply {
+                /*val productListDetails = ProductListDetails().apply {
                     imgUrl =
                         "https://assets.woolworthsstatic.co.za/Mini-Oat-Crunchies-150-g-6009223195009.jpg?V=buKH&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDIxLTA2LTAyLzYwMDkyMjMxOTUwMDlfaGVyby5qcGcifQ&"
                 }
@@ -251,7 +263,7 @@ class MyListViewModel @Inject constructor(
                 mockListDetails.add(productListDetails)
                 mockListDetails.add(productListDetails)
                 mockListDetails.add(productListDetails)
-                mockListDetails.add(productListDetails)
+                mockListDetails.add(productListDetails)*/
             }
 
             2 -> {
@@ -259,8 +271,6 @@ class MyListViewModel @Inject constructor(
                     imgUrl =
                         "https://assets.woolworthsstatic.co.za/Mini-Chocolate-Digestives-30-g-6009189506246.jpg?V=fur0&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDIxLTA2LTI0LzYwMDkxODk1MDYyNDZfaGVyby5qcGcifQ&"
                 }
-                mockListDetails.add(productListDetails)
-                mockListDetails.add(productListDetails)
                 mockListDetails.add(productListDetails)
                 mockListDetails.add(productListDetails)
                 mockListDetails.add(productListDetails)
@@ -276,6 +286,31 @@ class MyListViewModel @Inject constructor(
                         "https://assets.woolworthsstatic.co.za/Frill-Balloon-Sleeve-Blouse-BLACK-506629130-hero.jpg?V=raxB&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDIzLTA1LTA4LzUwNjYyOTEzMF9CTEFDS19oZXJvLmpwZyJ9&"
                 }
                 mockListDetails.add(productListDetails)
+            }
+
+            4 -> {
+                val productListDetails = ProductListDetails().apply {
+                    imgUrl =
+                        "https://assets.woolworthsstatic.co.za/Easy-Care-Check-Shirt-NATURAL-506536382.jpg?V=7SRx&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDIzLTAyLTIxLzUwNjUzNjM4Ml9OQVRVUkFMX2hlcm8uanBnIn0&"
+                }
+                mockListDetails.add(productListDetails)
+                mockListDetails.add(productListDetails)
+                mockListDetails.add(productListDetails)
+                mockListDetails.add(productListDetails)
+                mockListDetails.add(productListDetails)
+                mockListDetails.add(productListDetails)
+                mockListDetails.add(productListDetails)
+                mockListDetails.add(productListDetails)
+                mockListDetails.add(productListDetails)
+                mockListDetails.add(productListDetails)
+                mockListDetails.add(productListDetails)
+                mockListDetails.add(productListDetails)
+                mockListDetails.add(productListDetails)
+                mockListDetails.add(productListDetails)
+                mockListDetails.add(productListDetails)
+                mockListDetails.add(productListDetails)
+                mockListDetails.add(productListDetails)
+                mockListDetails.add(productListDetails)
                 mockListDetails.add(productListDetails)
                 mockListDetails.add(productListDetails)
                 mockListDetails.add(productListDetails)
@@ -290,9 +325,21 @@ class MyListViewModel @Inject constructor(
                 mockListDetails.add(productListDetails)
                 mockListDetails.add(productListDetails)
                 mockListDetails.add(productListDetails)
+                mockListDetails.add(productListDetails)
+                mockListDetails.add(productListDetails)
+                mockListDetails.add(productListDetails)
+                mockListDetails.add(productListDetails)
+                mockListDetails.add(productListDetails)
+                mockListDetails.add(productListDetails)
             }
         }
 
         return mockListDetails
+    }
+
+    private fun getProductCount(): Int {
+        val deviceWidthInDp = convertPixelsToDp(deviceWidth())
+        val usableDeviceWidth = (deviceWidthInDp - 50) // 50 is the left and right margin
+        return (usableDeviceWidth / 54) // 54 is the width of productImage
     }
 }

@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.shoppinglist.view
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -11,10 +10,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList
 import za.co.woolworths.financial.services.android.shoppinglist.component.ListDataState
+import za.co.woolworths.financial.services.android.ui.wfs.component.SpacerHeight10dp
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
 
 /**
@@ -31,7 +30,6 @@ fun ListOfListView(
     LazyColumn(
         state = rememberLazyListState(),
         modifier = modifier,
-        //contentPadding = PaddingValues(0.dp, 10.dp, 0.dp, 0.dp)
     ) {
         items(listDataState.list, key = { item ->
             item.listId
@@ -39,6 +37,7 @@ fun ListOfListView(
             MyListItemRowView(listDataState, listItem) {
                 onItemClick(listItem)
             }
+            SpacerHeight10dp()
             Divider(
                 color = colorResource(id = R.color.color_D8D8D8)
             )
@@ -56,7 +55,7 @@ fun ListOfListViewPreview() {
             listCount = 14
             modifiedListCount = "(14)"
         }
-        var mockListData: List<ShoppingList> = emptyList()
+        val mockListData: List<ShoppingList> = emptyList()
         mockListData.plus(mockList)
         val listData =
             ListDataState(mockListData, R.drawable.ic_share, R.drawable.ic_white_chevron_right)

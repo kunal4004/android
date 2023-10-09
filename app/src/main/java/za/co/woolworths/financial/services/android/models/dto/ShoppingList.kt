@@ -18,5 +18,6 @@ data class ShoppingList(
     var shoppingListRowWasSelected: Boolean = false,
     var wasSentToServer: Boolean = false,
     var modifiedListCount: String = "",
+    var noOfProductInRow: Int = 1,
     var productImageList: List<ProductListDetails> = emptyList() // todo This will get replace once we get actual data from response.
 ): Parcelable
