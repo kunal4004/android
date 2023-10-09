@@ -371,9 +371,10 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                         binding.progressBar.visibility = View.VISIBLE
                     }
                     Status.SUCCESS -> {
+                        recommendationViewModel.clearRecommendations()
                         binding.layoutDashSetAddress?.root?.visibility = View.GONE
                         resource.data?.productCatalogues?.let { productCatalog ->
-                            val recommendationNeeded = productCatalog.any { catalog -> catalog.name == DashDeliveryAdapter.TYPE_NAME_RECOMMENDATION_SLOT }
+                            val recommendationNeeded = productCatalog.any { catalog -> catalog.name == DashDeliveryAdapter.TYPE_NAME_RECOMMENDATION_SLOT } && SessionUtilities.getInstance().isUserAuthenticated
                             if (recommendationNeeded) {
                                 fetchRecommendations()
                             }

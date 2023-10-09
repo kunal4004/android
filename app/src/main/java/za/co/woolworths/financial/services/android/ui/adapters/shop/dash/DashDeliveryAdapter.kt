@@ -13,7 +13,6 @@ import com.awfs.coordination.databinding.ItemLayoutProductCarouselBinding
 import za.co.woolworths.financial.services.android.contracts.IProductListing
 import za.co.woolworths.financial.services.android.models.dto.RootCategory
 import za.co.woolworths.financial.services.android.models.dto.shop.ProductCatalogue
-import za.co.woolworths.financial.services.android.recommendations.presentation.adapter.ProductListRecommendationAdapter
 import za.co.woolworths.financial.services.android.ui.views.shop.dash.OnDashLandingNavigationListener
 import za.co.woolworths.financial.services.android.ui.views.shop.dash.OnDataUpdateListener
 import za.co.woolworths.financial.services.android.ui.views.shop.dash.OnDemandNavigationListener
@@ -278,6 +277,10 @@ class DashDeliveryAdapter(
         }
     }
 
+    private fun removeEmptyRecommendationCarousel(itemList: ArrayList<Any?>?) {
+        itemList?.removeAll { item -> item is ProductCatalogue && item.name == TYPE_NAME_RECOMMENDATION_SLOT && item.products.isNullOrEmpty() }
+    }
+
     fun setData(
         onDemandCategories: List<RootCategory>?,
         dashCategories: ArrayList<ProductCatalogue>?,
@@ -293,6 +296,7 @@ class DashDeliveryAdapter(
             }
         }
         mergeRecommendations(list, recommendedProducts)
+        removeEmptyRecommendationCarousel(list)
         categoryList = list
         onDataUpdateListener?.onProductCatalogueUpdate(productCatalogues = dashCategories)
     }
@@ -478,20 +482,13 @@ class RecommendationLayoutViewHolder(
     fun bindView(productCatalogue: ProductCatalogue?) {
         itemBinding.dashCategoryTitle.text = productCatalogue?.headerText
         itemBinding.rvDashCategories.apply {
-            productCatalogue?.products?.let { products ->
-                val productsAdapter = ProductListRecommendationAdapter(products, iProductListing,activity)
-                layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
-                adapter = productsAdapter
-            }
-        }
-        /*itemBinding.rvDashCategories.apply {
             val productCarouselAdapter = DashCategoryAdapter(context, null, iProductListing)
             layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
             adapter = productCarouselAdapter
             productCatalogue?.let {
                 productCarouselAdapter.setData(it)
             }
-        }*/
+        }
     }
 }
 

@@ -25,6 +25,7 @@ import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.dto.PromotionImages
 import za.co.woolworths.financial.services.android.models.dto.shop.Banner
 import za.co.woolworths.financial.services.android.models.dto.shop.ProductCatalogue
+import za.co.woolworths.financial.services.android.recommendations.presentation.fragment.RecommendationFragment
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.adapters.holder.PriceItem
 import za.co.woolworths.financial.services.android.ui.adapters.shop.dash.DashDeliveryAdapter.Companion.TYPE_EMPTY
@@ -385,6 +386,10 @@ class ProductCarouselItemViewHolder(val itemBinding: ItemProductCarouselListBind
             )
             val fulfilmentTypeId = AppConfigSingleton.quickShopDefaultValues?.foodFulfilmentTypeId
             fulfilmentTypeId?.let { id ->
+                if (productList.sku.isNullOrEmpty()) {
+                    // This might be the case of th recommendation product where we do not have sku from API so we'll add productId as a sku here
+                    productList.sku = productList.productId
+                }
                 navigator?.queryInventoryForStore(
                     id,
                     if (isEnhanceSubstitutionFeatureAvailable()){
@@ -484,7 +489,8 @@ class ProductCarouselItemViewHolder(val itemBinding: ItemProductCarouselListBind
                             getString(R.string.food_product_type),
                             ignoreCase = true
                         )
-                    ) View.VISIBLE else View.GONE
+                        || productType.equals(
+                            RecommendationFragment.ITEM_TYPE_FOOD, ignoreCase = true)) View.VISIBLE else View.GONE
                 }
             }
         }
