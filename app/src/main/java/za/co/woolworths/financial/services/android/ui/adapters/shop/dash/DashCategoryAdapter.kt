@@ -83,7 +83,7 @@ class DashCategoryAdapter(
                 )
             }
 
-            DashDeliveryAdapter.TYPE_DASH_CATEGORIES_PRODUCT_CAROUSEL -> {
+            DashDeliveryAdapter.TYPE_DASH_CATEGORIES_PRODUCT_CAROUSEL, DashDeliveryAdapter.TYPE_DASH_RECOMMENDATION_SLOT -> {
                 ProductCarouselItemViewHolder(
                     ItemProductCarouselListBinding.inflate(LayoutInflater.from(context), parent, false)
                 )
@@ -188,6 +188,9 @@ class DashCategoryAdapter(
             }
             DashDeliveryAdapter.TYPE_NAME_LONG_BANNER_FULL_WIDTH.lowercase() -> {
                 DashDeliveryAdapter.TYPE_DASH_TODAY_WITH_WOOLIES
+            }
+            DashDeliveryAdapter.TYPE_NAME_RECOMMENDATION_SLOT.lowercase() -> {
+                DashDeliveryAdapter.TYPE_DASH_RECOMMENDATION_SLOT
             }
             else -> TYPE_EMPTY
         }
