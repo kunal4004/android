@@ -14,7 +14,7 @@ import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList
 import za.co.woolworths.financial.services.android.shoppinglist.component.ListDataState
 import za.co.woolworths.financial.services.android.shoppinglist.component.MyLIstUIEvents
-import za.co.woolworths.financial.services.android.ui.wfs.component.SpacerHeight10dp
+import za.co.woolworths.financial.services.android.ui.wfs.component.SpacerHeight15dp
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
 
 /**
@@ -42,7 +42,7 @@ fun ListOfListView(
             })
             if (listItem.listCount != 0) {
                 // If list has no products then we don't need extra spacing.
-                SpacerHeight10dp()
+                SpacerHeight15dp()
             }
             if (listDataState.list.size != index + 1) {
                 // This condition will not show divider after last list

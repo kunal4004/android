@@ -57,6 +57,7 @@ class MyListViewModel @Inject constructor(
     fun onEvent(events: MyLIstUIEvents) {
         when (events) {
             is MyLIstUIEvents.SetDeliveryLocation -> setDeliveryDetails()
+            is MyLIstUIEvents.UpdateListEvent -> getShoppingList()
             else -> Unit
         }
     }
@@ -225,7 +226,7 @@ class MyListViewModel @Inject constructor(
         shoppingList: ShoppingList,
     ): ArrayList<ProductListDetails> {
         // todo Once we receive API response we will remove this function.
-        var mockListDetails = ArrayList<ProductListDetails>()
+        val mockListDetails = ArrayList<ProductListDetails>()
         val productListDetails = ProductListDetails().apply {
             imgUrl = when (index) {
                 0 -> "https://assets.woolworthsstatic.co.za/Split-Neck-Cropped-Tencel-Shirt-BLACK-506262324-hero.jpg?V=ab0h&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDIyLTEwLTE3LzUwNjI2MjMyNF9CTEFDS19oZXJvLmpwZyJ9&"
@@ -247,7 +248,6 @@ class MyListViewModel @Inject constructor(
                 mockListDetails.add(productListDetails)
             }
         }
-
         return mockListDetails
     }
 

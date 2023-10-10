@@ -47,7 +47,7 @@ fun MyListItemRowView(
                 .fillMaxWidth()
                 .wrapContentHeight()
                 .background(Color.White)
-                .padding(vertical = 10.dp),
+                .padding(vertical = 15.dp),
         ) {
             Text(
                 text = listItem.listName,
@@ -77,7 +77,7 @@ fun MyListItemRowView(
                 Icon(painter = painterResource(id = listDataState.shareIcon),
                     contentDescription = null,
                     modifier = Modifier
-                        .padding(5.dp, 0.dp, 5.dp, 0.dp)
+                        .padding(5.dp, 0.dp, 7.dp, 0.dp)
                         .clickable {
                             onShareIconClick(listItem)
                         }
@@ -87,7 +87,7 @@ fun MyListItemRowView(
                     painter = painterResource(id = listDataState.openIcon),
                     contentDescription = null,
                     modifier = Modifier
-                        .padding(5.dp, 5.dp, 0.dp, 0.dp)
+                        .padding(7.dp, 0.dp, 0.dp, 0.dp)
                         .clickable {
                             onDetailsArrowClick(listItem)
                         },

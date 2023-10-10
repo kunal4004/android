@@ -3,6 +3,8 @@ package za.co.woolworths.financial.services.android.shoppinglist.view
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -58,13 +60,15 @@ fun ListOfImagesView(
                 AsyncImage(
                     modifier = Modifier
                         .height(64.dp)
-                        .width(54.17.dp),
+                        .width(51.17.dp)
+                        .fillMaxWidth()
+                        .fillMaxHeight(),
                     model = listImages.imgUrl,
                     placeholder = painterResource(id = R.drawable.placeholder_product_list),
                     error = painterResource(id = R.drawable.placeholder_product_list),
                     contentDescription = stringResource(id = R.string.description),
                 )
-            } else if (maxProductsCountInRow == index + 1) {
+            } else if ((maxProductsCountInRow == index + 1) && (maxProductsCountInRow -1) != listItem.listCount) {
                 Text(
                     modifier = Modifier
                         .height(64.dp)

@@ -96,7 +96,7 @@ fun MyListScreen(
 
         ListOfListView(modifier = Modifier
             .background(Color.White)
-            .padding(horizontal = 24.dp, vertical = 10.dp),
+            .padding(horizontal = 24.dp, vertical = 15.dp),
             myListviewModel.listDataState.value, onEvent = {
                 when (it) {
                     is MyLIstUIEvents.ListItemClick -> onEvent(it)

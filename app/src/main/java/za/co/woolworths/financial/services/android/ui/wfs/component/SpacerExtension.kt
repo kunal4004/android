@@ -87,7 +87,7 @@ fun SpacerHeight80dp(height: Dp = Dimens.eighty_dp, bgColor: Color = White) {
 }
 
 @Composable
-fun SpacerHeight10dp(height: Dp = Dimens.ten_dp, bgColor: Color = White) {
+fun SpacerHeight15dp(height: Dp = Dimens.fifteen_dp, bgColor: Color = White) {
     SpacerHeight24dp(height = height, bgColor = bgColor)
 }
 
