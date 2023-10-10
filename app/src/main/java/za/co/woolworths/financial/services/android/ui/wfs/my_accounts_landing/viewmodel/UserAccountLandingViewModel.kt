@@ -103,7 +103,7 @@ class UserAccountLandingViewModel @Inject constructor(
     var isBiometricPopupEnabled by mutableStateOf(false)
     var isAutoReconnectActivated: Boolean = false
 
-    var isBiometricAuthenticationRequired by mutableStateOf(LifecycleTransitionType.FOREGROUND)
+    var isBiometricAuthenticationRequired = mutableStateOf(LifecycleTransitionType.FOREGROUND)
 
     private var _mapOfFinalProductItems = mutableMapOf<String, AccountProductCardsGroup?>()
     val mapOfFinalProductItems: MutableMap<String, AccountProductCardsGroup?> =

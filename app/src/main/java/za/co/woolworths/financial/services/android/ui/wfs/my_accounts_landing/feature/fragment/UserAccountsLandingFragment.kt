@@ -1,8 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature.fragment
 
-import android.content.Intent
 import android.os.Bundle
-import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,11 +14,9 @@ import androidx.lifecycle.lifecycleScope
 import com.google.gson.JsonObject
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.showErrorDialog
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.BetterActivityResult
 import za.co.woolworths.financial.services.android.ui.fragments.credit_card_delivery.SetUpDeliveryNowDialog
-import za.co.woolworths.financial.services.android.ui.fragments.mypreferences.MyPreferencesFragment
 import za.co.woolworths.financial.services.android.ui.wfs.common.contentView
 import za.co.woolworths.financial.services.android.ui.wfs.common.state.ActivityLifecycleObserver
 import za.co.woolworths.financial.services.android.ui.wfs.common.state.LifecycleTransitionType
@@ -31,8 +27,7 @@ import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.fe
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.schema.ManageLoginRegister
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.viewmodel.UserAccountLandingViewModel
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
-import za.co.woolworths.financial.services.android.util.AuthenticateUtils
-import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.logException
+
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -54,8 +49,6 @@ class UserAccountsLandingFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?)
     = contentView(ViewCompositionStrategy.DisposeOnLifecycleDestroyed(viewLifecycleOwner)) {
         OneAppTheme {
-            val biometricAuthenticationState = viewModel.isBiometricAuthenticationRequired
-            if (biometricAuthenticationState == LifecycleTransitionType.FOREGROUND) {
                 UserAccountsLandingScene(viewModel, onProductClick = { productGroup ->
                     viewModel.accountProductCardsGroup = productGroup
                     navigation.onProductClicked(
@@ -71,27 +64,10 @@ class UserAccountsLandingFragment : Fragment() {
                         activityLauncher = mRegisterActivityForResult
                     )
                 }
-            } else {
-                if (AuthenticateUtils.getInstance(requireActivity()).isBiometricAuthenticationRequired) {
-                    try {
-                        AuthenticateUtils.getInstance(requireActivity())
-                            .startAuthenticateApp(BottomNavigationActivity.LOCK_REQUEST_CODE_ACCOUNTS)
-                    } catch (e: Exception) {
-                        try {
-                            val intent = Intent(Settings.ACTION_SECURITY_SETTINGS)
-                            startActivityForResult(intent,
-                                MyPreferencesFragment.SECURITY_SETTING_REQUEST_CODE
-                            )
-                        } catch (ex: Exception) {
-                            logException(ex)
-                        }
-                    }
-                }
-            }
         }
 
         lifecycle.addObserver(ActivityLifecycleObserver { status ->
-            viewModel.isBiometricAuthenticationRequired = status
+            viewModel.isBiometricAuthenticationRequired.value = status
             when(status) {
                 LifecycleTransitionType.BACKGROUND_TO_FOREGROUND -> {
                     if (isAdded && isVisible) {
