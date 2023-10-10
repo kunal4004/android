@@ -67,7 +67,7 @@ class UserAccountsLandingFragment : Fragment() {
         }
 
         lifecycle.addObserver(ActivityLifecycleObserver { status ->
-            viewModel.isBiometricAuthenticationRequired.value = status
+            viewModel.setBiometricSecurityState(status)
             when(status) {
                 LifecycleTransitionType.BACKGROUND_TO_FOREGROUND -> {
                     if (isAdded && isVisible) {

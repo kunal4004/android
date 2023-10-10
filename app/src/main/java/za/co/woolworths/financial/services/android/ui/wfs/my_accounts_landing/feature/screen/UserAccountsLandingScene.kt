@@ -3,9 +3,12 @@ package za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.f
 import android.content.Intent
 import android.provider.Settings
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
+import kotlinx.coroutines.flow.collectLatest
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.fragments.mypreferences.MyPreferencesFragment
 import za.co.woolworths.financial.services.android.ui.wfs.common.state.LifecycleTransitionType
@@ -24,9 +27,13 @@ fun UserAccountsLandingScene(
     onProductClick : (AccountProductCardsGroup) -> Unit,
     onClickEvent: (OnAccountItemClickListener) -> Unit) {
     val isUserAuthenticated by remember { viewModel.isUserAuthenticated }
-    val biometricAuthenticationState by remember { viewModel.isBiometricAuthenticationRequired }
+    val biometricAuthenticationState by  viewModel.securityTransitionType.collectAsState(LifecycleTransitionType.FOREGROUND)
     val context= LocalContext.current
     val activity = context.findActivity()
+
+    viewModel.securityTransitionType.collectLatest {
+
+    }
 
     when (isUserAuthenticated) {
         Authenticated -> {
@@ -37,6 +44,7 @@ fun UserAccountsLandingScene(
                     onClick = onClickEvent
                     )
                 }else {
+                    LaunchedEffect(true){
                     if (AuthenticateUtils.getInstance(activity).isBiometricAuthenticationRequired) {
                         try {
                             AuthenticateUtils.getInstance(activity)
@@ -44,15 +52,17 @@ fun UserAccountsLandingScene(
                         } catch (e: Exception) {
                             try {
                                 val intent = Intent(Settings.ACTION_SECURITY_SETTINGS)
-                                activity?.startActivityForResult(intent,
+                                activity?.startActivityForResult(
+                                    intent,
                                     MyPreferencesFragment.SECURITY_SETTING_REQUEST_CODE
                                 )
                             } catch (ex: Exception) {
-                                    FirebaseManager.logException(ex)
-                                }
+                                FirebaseManager.logException(ex)
                             }
                         }
                     }
+                    }
+                }
             }
 
             NotAuthenticated -> {

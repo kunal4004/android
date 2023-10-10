@@ -103,7 +103,9 @@ class UserAccountLandingViewModel @Inject constructor(
     var isBiometricPopupEnabled by mutableStateOf(false)
     var isAutoReconnectActivated: Boolean = false
 
-    var isBiometricAuthenticationRequired = mutableStateOf(LifecycleTransitionType.FOREGROUND)
+
+    private val _securityTransitionType = MutableSharedFlow<LifecycleTransitionType>()
+    val securityTransitionType = _securityTransitionType.asSharedFlow()
 
     private var _mapOfFinalProductItems = mutableMapOf<String, AccountProductCardsGroup?>()
     val mapOfFinalProductItems: MutableMap<String, AccountProductCardsGroup?> =
@@ -141,6 +143,12 @@ class UserAccountLandingViewModel @Inject constructor(
 
     init {
         initProductAndOfferItem()
+    }
+
+    fun setBiometricSecurityState(state : LifecycleTransitionType){
+        viewModelScope.launch {
+            _securityTransitionType.emit(state)
+        }
     }
 
     private fun initProductAndOfferItem() {
