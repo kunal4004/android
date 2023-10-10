@@ -31,10 +31,6 @@ fun UserAccountsLandingScene(
     val context= LocalContext.current
     val activity = context.findActivity()
 
-    viewModel.securityTransitionType.collectLatest {
-
-    }
-
     when (isUserAuthenticated) {
         Authenticated -> {
             if (biometricAuthenticationState == LifecycleTransitionType.FOREGROUND) {
