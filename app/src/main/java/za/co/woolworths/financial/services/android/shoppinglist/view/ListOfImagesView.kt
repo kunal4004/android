@@ -46,7 +46,7 @@ fun ListOfImagesView(
             },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(
-            space = 3.dp,
+            space = 4.dp,
             alignment = Alignment.Start
         ),
         state = rememberLazyListState(),
@@ -58,7 +58,7 @@ fun ListOfImagesView(
                 AsyncImage(
                     modifier = Modifier
                         .height(64.dp)
-                        .width(51.17.dp),
+                        .width(54.17.dp),
                     model = listImages.imgUrl,
                     placeholder = painterResource(id = R.drawable.placeholder_product_list),
                     error = painterResource(id = R.drawable.placeholder_product_list),
@@ -101,7 +101,7 @@ fun ListOfImagesViewPreview() {
                     "https://assets.woolworthsstatic.co.za/Mini-Ginger-Cookies-30-g-6009182707657.jpg?V=kb1C&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDE4LTEwLTExLzYwMDkxODI3MDc2NTdfaGVyby5qcGcifQ&"
             }
 
-            var mockListDetails = ArrayList<ProductListDetails>().apply {
+            val mockListDetails = ArrayList<ProductListDetails>().apply {
                 add(productListDetails)
                 add(productListDetails)
                 add(productListDetails)

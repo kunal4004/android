@@ -25,6 +25,7 @@ import androidx.fragment.app.viewModels
 import com.awfs.coordination.R
 import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.models.dto.ShoppingList
 import za.co.woolworths.financial.services.android.presentation.common.AppToolBar
 import za.co.woolworths.financial.services.android.presentation.createlist.CreateListFragment
 import za.co.woolworths.financial.services.android.shoppinglist.component.MyLIstUIEvents
@@ -34,6 +35,7 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.ui.compose.contentView
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
 import za.co.woolworths.financial.services.android.util.KotlinUtils
+import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.Utils
 
 /**
@@ -98,7 +100,11 @@ class MyShoppingListFragment : Fragment() {
                         }
 
                         is MyLIstUIEvents.ListItemClick -> {
-                            //todo navigate to list details screen.
+                            onShoppingListItemSelected(event.item)
+                        }
+
+                        is MyLIstUIEvents.ShareListClick -> {
+                            navigateToShareListDialog(event.item)
                         }
 
                         else -> {
@@ -160,7 +166,16 @@ class MyShoppingListFragment : Fragment() {
         }
     }
 
-    private fun navigateToShareListDialog() {
+    private fun onShoppingListItemSelected(shoppingList: ShoppingList) {
+        activity?.let {
+            ScreenManager.presentShoppingListDetailActivity(it,
+                shoppingList.listId,
+                shoppingList.listName,
+                true)
+        }
+    }
+
+    private fun navigateToShareListDialog(shoppingList: ShoppingList) {
         val fragment = ShoppingListShareDialogFragment()
         fragment.show(parentFragmentManager, ShoppingListShareDialogFragment::class.simpleName)
     }

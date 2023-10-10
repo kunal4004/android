@@ -37,7 +37,8 @@ import za.co.woolworths.financial.services.android.ui.wfs.theme.OpenSansFontFami
 fun MyListItemRowView(
     listDataState: ListDataState,
     listItem: ShoppingList,
-    onItemClick: () -> Unit,
+    onShareIconClick: (item: ShoppingList) -> Unit,
+    onDetailsArrowClick: (item: ShoppingList) -> Unit,
 ) {
     Column {
         Row(
@@ -76,18 +77,21 @@ fun MyListItemRowView(
                 Icon(painter = painterResource(id = listDataState.shareIcon),
                     contentDescription = null,
                     modifier = Modifier
-                        .padding(5.dp,0.dp,5.dp,0.dp)
+                        .padding(5.dp, 0.dp, 5.dp, 0.dp)
                         .clickable {
-                            onItemClick()
+                            onShareIconClick(listItem)
                         }
                 )
 
                 Icon(
                     painter = painterResource(id = listDataState.openIcon),
                     contentDescription = null,
-                    modifier = Modifier.padding(5.dp, 5.dp, 0.dp, 0.dp),
-
-                    )
+                    modifier = Modifier
+                        .padding(5.dp, 5.dp, 0.dp, 0.dp)
+                        .clickable {
+                            onDetailsArrowClick(listItem)
+                        },
+                )
             }
         }
         ListOfImagesView(listItem, onImageItemClick = {})
@@ -108,16 +112,16 @@ private fun MyListItemRowPreview() {
                     "https://assets.woolworthsstatic.co.za/Mini-Ginger-Cookies-30-g-6009182707657.jpg?V=kb1C&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDE4LTEwLTExLzYwMDkxODI3MDc2NTdfaGVyby5qcGcifQ&"
             }
 
-            var mockListDetails = ArrayList<ProductListDetails>()
+            val mockListDetails = ArrayList<ProductListDetails>()
             mockListDetails.add(productListDetails)
             mockListDetails.add(productListDetails)
             mockListDetails.add(productListDetails)
             productImageList = mockListDetails
         }
-        var mockListData: List<ShoppingList> = emptyList()
+        val mockListData: List<ShoppingList> = emptyList()
         mockListData.plus(mockList)
         val listData =
             ListDataState(mockListData, R.drawable.ic_share, R.drawable.ic_white_chevron_right)
-        MyListItemRowView(listData, mockList, onItemClick = {})
+        MyListItemRowView(listData, mockList, onShareIconClick = {}, onDetailsArrowClick = {})
     }
 }

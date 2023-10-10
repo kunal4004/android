@@ -13,6 +13,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList
 import za.co.woolworths.financial.services.android.shoppinglist.component.ListDataState
+import za.co.woolworths.financial.services.android.shoppinglist.component.MyLIstUIEvents
 import za.co.woolworths.financial.services.android.ui.wfs.component.SpacerHeight10dp
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
 
@@ -25,7 +26,7 @@ import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
 fun ListOfListView(
     modifier: Modifier = Modifier,
     listDataState: ListDataState,
-    onItemClick: (item: ShoppingList) -> Unit,
+    onEvent: (event: MyLIstUIEvents) -> Unit,
 ) {
     LazyColumn(
         state = rememberLazyListState(),
@@ -34,9 +35,11 @@ fun ListOfListView(
         itemsIndexed(listDataState.list, key = { _, item ->
             item.listId
         }) { index, listItem ->
-            MyListItemRowView(listDataState, listItem) {
-                onItemClick(listItem)
-            }
+            MyListItemRowView(listDataState, listItem, onDetailsArrowClick = { list ->
+                onEvent(MyLIstUIEvents.ListItemClick(list))
+            }, onShareIconClick = { list ->
+                onEvent(MyLIstUIEvents.ShareListClick(list))
+            })
             if (listItem.listCount != 0) {
                 // If list has no products then we don't need extra spacing.
                 SpacerHeight10dp()
@@ -65,6 +68,6 @@ fun ListOfListViewPreview() {
         mockListData.plus(mockList)
         val listData =
             ListDataState(mockListData, R.drawable.ic_share, R.drawable.ic_white_chevron_right)
-        ListOfListView(modifier = Modifier.background(Color.White), listData, onItemClick = {})
+        ListOfListView(modifier = Modifier.background(Color.White), listData, onEvent = {})
     }
 }

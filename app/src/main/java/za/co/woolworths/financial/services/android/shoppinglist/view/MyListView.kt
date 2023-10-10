@@ -40,6 +40,8 @@ fun MyListView(
             onEvent = {
                 when (it) {
                     is MyLIstUIEvents.ChangeLocationClick -> onEvent(it)
+                    is MyLIstUIEvents.ListItemClick -> onEvent(it)
+                    is MyLIstUIEvents.ShareListClick -> onEvent(it)
                     else -> myListviewModel.onEvent(it)
                 }
             },
@@ -95,9 +97,12 @@ fun MyListScreen(
         ListOfListView(modifier = Modifier
             .background(Color.White)
             .padding(horizontal = 24.dp, vertical = 10.dp),
-            myListviewModel.listDataState.value,
-            onItemClick = { list ->
-                onEvent(MyLIstUIEvents.ListItemClick(list))
+            myListviewModel.listDataState.value, onEvent = {
+                when (it) {
+                    is MyLIstUIEvents.ListItemClick -> onEvent(it)
+                    is MyLIstUIEvents.ShareListClick -> onEvent(it)
+                    else -> myListviewModel.onEvent(it)
+                }
             })
     }
 }
