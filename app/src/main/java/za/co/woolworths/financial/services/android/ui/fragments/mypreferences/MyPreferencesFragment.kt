@@ -51,7 +51,7 @@ import za.co.woolworths.financial.services.android.util.location.Locator
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MyPreferencesFragment : BaseFragmentBinding<FragmentMyPreferencesBinding>(FragmentMyPreferencesBinding::inflate), View.OnClickListener, View.OnTouchListener ,
+class MyPreferencesFragment : BaseFragmentBinding<FragmentMyPreferencesBinding>(FragmentMyPreferencesBinding::inflate), View.OnClickListener,
     VtoTryAgainListener {
 
     private lateinit var locator: Locator
@@ -97,9 +97,9 @@ class MyPreferencesFragment : BaseFragmentBinding<FragmentMyPreferencesBinding>(
         locator = Locator(activity as AppCompatActivity)
 
         binding.apply {
-            auSwitch.setOnClickListener(this@MyPreferencesFragment)
+            biometricAuthenticationSwitchCompat.setOnClickListener(this@MyPreferencesFragment)
             locationSelectedLayout.setOnClickListener(this@MyPreferencesFragment)
-            auSwitch.setOnTouchListener(this@MyPreferencesFragment)
+            //biometricAuthenticationSwitchCompat.setOnTouchListener(this@MyPreferencesFragment)
             linkDeviceSwitch.setOnClickListener(this@MyPreferencesFragment)
             retryLinkDeviceLinearLayout?.setOnClickListener(this@MyPreferencesFragment)
             viewAllLinkedDevicesRelativeLayout?.setOnClickListener(this@MyPreferencesFragment)
@@ -163,7 +163,7 @@ class MyPreferencesFragment : BaseFragmentBinding<FragmentMyPreferencesBinding>(
     fun bindDataWithUI() {
         binding.apply {
             if (AuthenticateUtils.getInstance(activity).isAppSupportsAuthentication) {
-                if (AuthenticateUtils.getInstance(activity).isDeviceSecure) auSwitch.isChecked =
+                if (AuthenticateUtils.getInstance(activity).isDeviceSecure) biometricAuthenticationSwitchCompat.isChecked =
                     AuthenticateUtils.getInstance(activity).isAuthenticationEnabled else setUserAuthentication(
                     false
                 )
@@ -295,8 +295,8 @@ class MyPreferencesFragment : BaseFragmentBinding<FragmentMyPreferencesBinding>(
 
     override fun onClick(view: View?) {
         when (view?.id) {
-            R.id.auSwitch -> if (AuthenticateUtils.getInstance(activity).isDeviceSecure) {
-                if (binding.auSwitch.isChecked) {
+            R.id.biometricAuthenticationSwitchCompat -> if (AuthenticateUtils.getInstance(activity).isDeviceSecure) {
+                if (binding.biometricAuthenticationSwitchCompat.isChecked) {
                     startBiometricAuthentication(LOCK_REQUEST_CODE_TO_ENABLE)
                 } else {
                     Utils.displayValidationMessageForResult(
@@ -431,7 +431,7 @@ class MyPreferencesFragment : BaseFragmentBinding<FragmentMyPreferencesBinding>(
             }
             SECURITY_SETTING_REQUEST_DIALOG -> if (resultCode == Activity.RESULT_OK) {
                 try {
-                    val intent = Intent(Settings.ACTION_SETTINGS)
+                    val intent = Intent(Settings.ACTION_SECURITY_SETTINGS)
                     startActivityForResult(intent, SECURITY_SETTING_REQUEST_CODE)
                 } catch (ex: Exception) {
                     setUserAuthentication(false)
@@ -458,7 +458,7 @@ class MyPreferencesFragment : BaseFragmentBinding<FragmentMyPreferencesBinding>(
     fun setUserAuthentication(isAuthenticated: Boolean) {
         AuthenticateUtils.getInstance(activity)
             .setUserAuthenticate(if (isAuthenticated) SessionDao.BIOMETRIC_AUTHENTICATION_STATE.ON else SessionDao.BIOMETRIC_AUTHENTICATION_STATE.OFF)
-        binding.auSwitch?.isChecked = isAuthenticated
+        binding.biometricAuthenticationSwitchCompat?.isChecked = isAuthenticated
     }
 
     fun openDeviceSecuritySettings() {
@@ -497,15 +497,6 @@ class MyPreferencesFragment : BaseFragmentBinding<FragmentMyPreferencesBinding>(
                 StandardDeliveryFragment.DEPARTMENT_LOGIN_REQUEST)
         }
 
-    }
-
-    override fun onTouch(view: View, motionEvent: MotionEvent): Boolean {
-        when (view.id) {
-            R.id.auSwitch -> return motionEvent.actionMasked == MotionEvent.ACTION_MOVE
-            else -> {
-            }
-        }
-        return false
     }
 
     fun setDeliveryLocation(shoppingDeliveryLocation: ShoppingDeliveryLocation?) {

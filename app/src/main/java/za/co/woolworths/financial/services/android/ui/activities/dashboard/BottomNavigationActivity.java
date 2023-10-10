@@ -761,7 +761,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                         try {
                             AuthenticateUtils.getInstance(BottomNavigationActivity.this).startAuthenticateApp(LOCK_REQUEST_CODE_ACCOUNTS);
                         } catch (Exception e) {
-                            e.printStackTrace();
+                            FirebaseManager.logException(e);
                         }
                     } else {
                         setToolbarBackgroundColor(R.color.white);

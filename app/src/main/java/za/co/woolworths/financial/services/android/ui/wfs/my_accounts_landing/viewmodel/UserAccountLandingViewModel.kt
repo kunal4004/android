@@ -21,6 +21,7 @@ import za.co.woolworths.financial.services.android.models.dto.account.ServerErro
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.CreditCardDeliveryStatusResponse
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.wfs.common.ConnectionState
+import za.co.woolworths.financial.services.android.ui.wfs.common.state.LifecycleTransitionType
 import za.co.woolworths.financial.services.android.ui.wfs.core.FirebaseAnalyticsUserProperty
 import za.co.woolworths.financial.services.android.ui.wfs.core.IFirebaseAnalyticsUserProperty
 import za.co.woolworths.financial.services.android.ui.wfs.core.NetworkStatusUI
@@ -101,6 +102,8 @@ class UserAccountLandingViewModel @Inject constructor(
     var isAccountFragmentVisible by mutableStateOf(false)
     var isBiometricPopupEnabled by mutableStateOf(false)
     var isAutoReconnectActivated: Boolean = false
+
+    var isBiometricAuthenticationRequired by mutableStateOf(LifecycleTransitionType.FOREGROUND)
 
     private var _mapOfFinalProductItems = mutableMapOf<String, AccountProductCardsGroup?>()
     val mapOfFinalProductItems: MutableMap<String, AccountProductCardsGroup?> =
