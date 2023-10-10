@@ -121,8 +121,8 @@ class AddToListViewModel @Inject constructor(
         if (name.isEmpty()) {
             return
         }
-        val isListNamePresent = listState.value.list.any { it.listName.equals(name, ignoreCase =
-        false) }
+        val isListNamePresent = listState.value.list.any { it.listName.equals(name.trim(), ignoreCase =
+        true) }
 
         if(isListNamePresent) {
             createNewListState.value = createNewListState.value.copy(
@@ -200,8 +200,8 @@ class AddToListViewModel @Inject constructor(
                 val size: String? = null
                 // If giftListId is empty pass listId as giftListId
                 items.map { item -> if(item.giftListId.isNullOrEmpty()) { item.giftListId = listId } }
-                items.map {item -> if (item.skuID?.isNotEmpty() == true) {item.skuID = skuID} }
-                items.map {item -> if (item.size?.isNotEmpty() == true) {item.size = size} }
+//                items.map {item -> if (item.skuID?.isNotEmpty() == true) {item.skuID = skuID} }
+//                items.map {item -> if (item.size?.isNotEmpty() == true) {item.size = size} }
 
                 async {
                     addProductsToList(listId, items.toList()).collect {
