@@ -45,6 +45,7 @@ fun BlackButton(
 fun UnderlineButton(
     modifier: Modifier = Modifier,
     text: String = "",
+    textColor: Color = Color666666,
     onButtonClick: () -> Unit
 ) {
     Button(

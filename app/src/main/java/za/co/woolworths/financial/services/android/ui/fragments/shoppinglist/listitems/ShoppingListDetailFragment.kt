@@ -56,6 +56,9 @@ import za.co.woolworths.financial.services.android.recommendations.data.response
 import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationLoader
 import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationLoaderImpl
 import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationLoadingNotifier
+import za.co.woolworths.financial.services.android.shoppinglist.view.MoreOptionDialog
+import za.co.woolworths.financial.services.android.shoppinglist.view.MoreOptionDialogFragment
+import za.co.woolworths.financial.services.android.shoppinglist.view.ShoppingListShareDialogFragment
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity
@@ -276,6 +279,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             blackToolTipLayout.changeLocationButton.setOnClickListener(this@ShoppingListDetailFragment)
 
             btnRetry.setOnClickListener(this@ShoppingListDetailFragment)
+            txtMoreOptions.setOnClickListener(this@ShoppingListDetailFragment)
 
             mErrorHandlerView = ErrorHandlerView(activity, noConnectionLayout)
             mErrorHandlerView?.setMargin(noConnectionLayout, 0, 0, 0, 0)
@@ -365,8 +369,14 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             R.id.btnCheckOut -> addItemsToCart()
             R.id.changeLocationButton -> deliverySelectionIntent(DELIVERY_LOCATION_REQUEST)
             R.id.closeWhiteBtn -> hideBlackToolTip()
+            R.id.txtMoreOptions -> openMoreOptionsDialog()
             else -> {}
         }
+    }
+
+    private fun openMoreOptionsDialog() {
+        val fragment = MoreOptionDialogFragment()
+        fragment.show(parentFragmentManager, MoreOptionDialogFragment::class.simpleName)
     }
 
     private fun openProductSearchActivity() {
