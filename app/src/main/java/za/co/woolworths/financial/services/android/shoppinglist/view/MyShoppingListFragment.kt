@@ -126,7 +126,6 @@ class MyShoppingListFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         myListviewModel.onEvent(MyLIstUIEvents.SetDeliveryLocation)
-        myListviewModel.onEvent(MyLIstUIEvents.UpdateListEvent)
         hideActivityToolbar()
     }
 

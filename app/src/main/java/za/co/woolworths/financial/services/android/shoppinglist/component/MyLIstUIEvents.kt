@@ -11,5 +11,4 @@ sealed class MyLIstUIEvents {
     object CreateListClick : MyLIstUIEvents()
     object ChangeLocationClick : MyLIstUIEvents()
     object SetDeliveryLocation : MyLIstUIEvents()
-    object UpdateListEvent : MyLIstUIEvents()
 }

@@ -57,7 +57,6 @@ class MyListViewModel @Inject constructor(
     fun onEvent(events: MyLIstUIEvents) {
         when (events) {
             is MyLIstUIEvents.SetDeliveryLocation -> setDeliveryDetails()
-            is MyLIstUIEvents.UpdateListEvent -> getShoppingList()
             else -> Unit
         }
     }
@@ -184,7 +183,7 @@ class MyListViewModel @Inject constructor(
 
     private fun getShoppingList() {
         viewModelScope.launch(Dispatchers.IO) {
-            getMyListsUC().collect { shoppingListResponse ->
+            getMyListsUC().collectLatest { shoppingListResponse ->
                 viewModelScope.launch(Dispatchers.Main) {
                     when (shoppingListResponse.status) {
                         Status.SUCCESS -> {
