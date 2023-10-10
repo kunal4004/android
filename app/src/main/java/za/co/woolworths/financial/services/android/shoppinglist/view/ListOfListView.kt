@@ -2,7 +2,7 @@ package za.co.woolworths.financial.services.android.shoppinglist.view
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Divider
 import androidx.compose.runtime.Composable
@@ -31,16 +31,22 @@ fun ListOfListView(
         state = rememberLazyListState(),
         modifier = modifier,
     ) {
-        items(listDataState.list, key = { item ->
+        itemsIndexed(listDataState.list, key = { _, item ->
             item.listId
-        }) { listItem ->
+        }) { index, listItem ->
             MyListItemRowView(listDataState, listItem) {
                 onItemClick(listItem)
             }
-            SpacerHeight10dp()
-            Divider(
-                color = colorResource(id = R.color.color_D8D8D8)
-            )
+            if (listItem.listCount != 0) {
+                // If list has no products then we don't need extra spacing.
+                SpacerHeight10dp()
+            }
+            if (listDataState.list.size != index + 1) {
+                // This condition will not show divider after last list
+                Divider(
+                    color = colorResource(id = R.color.color_D8D8D8)
+                )
+            }
         }
     }
 }

@@ -76,7 +76,7 @@ fun MyListItemRowView(
                 Icon(painter = painterResource(id = listDataState.shareIcon),
                     contentDescription = null,
                     modifier = Modifier
-                        .padding(5.dp)
+                        .padding(5.dp,0.dp,5.dp,0.dp)
                         .clickable {
                             onItemClick()
                         }

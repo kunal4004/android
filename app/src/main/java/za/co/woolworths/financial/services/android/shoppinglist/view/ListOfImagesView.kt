@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -53,7 +54,7 @@ fun ListOfImagesView(
 
         val maxProductsCountInRow = listItem.noOfProductInRow - 1
         itemsIndexed(listItem.productImageList) { index, listImages ->
-            if (maxProductsCountInRow > index) {
+            if (maxProductsCountInRow > index + 1) {
                 AsyncImage(
                     modifier = Modifier
                         .height(64.dp)
@@ -63,13 +64,14 @@ fun ListOfImagesView(
                     error = painterResource(id = R.drawable.placeholder_product_list),
                     contentDescription = stringResource(id = R.string.description),
                 )
-            } else if (maxProductsCountInRow == index) {
+            } else if (maxProductsCountInRow == index + 1) {
                 Text(
                     modifier = Modifier
                         .height(64.dp)
                         .width(51.17.dp)
                         .background(color = colorResource(id = R.color.color_F3F3F3))
-                        .wrapContentHeight(align = Alignment.CenterVertically),
+                        .wrapContentHeight(align = Alignment.CenterVertically)
+                        .wrapContentWidth(align = Alignment.CenterHorizontally),
                     style = TextStyle(
                         fontFamily = OpenSansFontFamily,
                         fontWeight = FontWeight.Normal,
@@ -77,7 +79,7 @@ fun ListOfImagesView(
                         color = colorResource(id = R.color.color_666666),
                     ),
                     textAlign = TextAlign.Center,
-                    text = "+" + (listItem.listCount - maxProductsCountInRow),
+                    text = "+" + (listItem.listCount - maxProductsCountInRow + 1),
                 )
             }
         }
@@ -99,16 +101,17 @@ fun ListOfImagesViewPreview() {
                     "https://assets.woolworthsstatic.co.za/Mini-Ginger-Cookies-30-g-6009182707657.jpg?V=kb1C&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDE4LTEwLTExLzYwMDkxODI3MDc2NTdfaGVyby5qcGcifQ&"
             }
 
-            var mockListDetails = ArrayList<ProductListDetails>()
-            mockListDetails.add(productListDetails)
-            mockListDetails.add(productListDetails)
-            mockListDetails.add(productListDetails)
-            mockListDetails.add(productListDetails)
-            mockListDetails.add(productListDetails)
-            mockListDetails.add(productListDetails)
-            mockListDetails.add(productListDetails)
-            mockListDetails.add(productListDetails)
-            mockListDetails.add(productListDetails)
+            var mockListDetails = ArrayList<ProductListDetails>().apply {
+                add(productListDetails)
+                add(productListDetails)
+                add(productListDetails)
+                add(productListDetails)
+                add(productListDetails)
+                add(productListDetails)
+                add(productListDetails)
+                add(productListDetails)
+                add(productListDetails)
+            }
             productImageList = mockListDetails
         }
 
