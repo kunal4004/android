@@ -57,13 +57,6 @@ fun CreateNewListView(
             contentDescription = stringResource(id = title)
         )
     }
-
-    Spacer(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(1.dp)
-            .background(color = colorResource(id = R.color.color_D8D8D8))
-    )
 }
 @Preview(showBackground = true)
 @Composable

@@ -15,17 +15,24 @@ import za.co.woolworths.financial.services.android.domain.repository.MyListRepos
 import za.co.woolworths.financial.services.android.domain.usecase.GetMyListsUC
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
+import za.co.woolworths.financial.services.android.models.dto.ShoppingList
+import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse
 import za.co.woolworths.financial.services.android.models.network.Status
+import za.co.woolworths.financial.services.android.shoppinglist.component.ListDataState
 import za.co.woolworths.financial.services.android.shoppinglist.component.LocationDetailsState
 import za.co.woolworths.financial.services.android.shoppinglist.component.MyLIstUIEvents
+import za.co.woolworths.financial.services.android.shoppinglist.service.network.ProductListDetails
+import za.co.woolworths.financial.services.android.ui.extension.deviceWidth
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.mapNetworkCallToViewStateFlow
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderFailure
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderLoading
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderSuccess
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.Utils.convertPixelsToDp
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import javax.inject.Inject
+
 
 /**
  * Created by Kunal Uttarwar on 26/09/23.
@@ -41,6 +48,7 @@ class MyListViewModel @Inject constructor(
     var deliveryDetailsState = mutableStateOf(LocationDetailsState())
     private var _isLoading = MutableStateFlow(false)
     val isLoading = _isLoading.asStateFlow()
+    val listDataState = mutableStateOf(ListDataState())
 
     init {
         onInit()
@@ -132,8 +140,7 @@ class MyListViewModel @Inject constructor(
             }.collectLatest { cartSummaryResponse ->
                 with(cartSummaryResponse) {
                     renderSuccess {
-                        val cartSummaryResponse = output
-                        cartSummaryResponse?.data?.getOrNull(0)?.fulfillmentDetails?.apply {
+                        output?.data?.getOrNull(0)?.fulfillmentDetails?.apply {
                             this.deliveryType?.let {
                                 Utils.savePreferredDeliveryLocation(ShoppingDeliveryLocation(this))
                                 setDeliveryDetails()
@@ -176,11 +183,12 @@ class MyListViewModel @Inject constructor(
 
     private fun getShoppingList() {
         viewModelScope.launch(Dispatchers.IO) {
-            getMyListsUC().collect {
+            getMyListsUC().collectLatest { shoppingListResponse ->
                 viewModelScope.launch(Dispatchers.Main) {
-                    when (it.status) {
+                    when (shoppingListResponse.status) {
                         Status.SUCCESS -> {
                             _isLoading.value = false
+                            setListData(shoppingListResponse.data)
                         }
 
                         Status.ERROR -> {
@@ -188,11 +196,63 @@ class MyListViewModel @Inject constructor(
                         }
 
                         Status.LOADING -> {
-                                _isLoading.value = true
+                            _isLoading.value = true
                         }
                     }
                 }
             }
         }
+    }
+
+    private fun setListData(shoppingListResponse: ShoppingListsResponse?) {
+        listDataState.value = listDataState.value.copy(
+            list = shoppingListResponse?.lists?.let { getUpdatedList(it) } ?: emptyList()
+        )
+    }
+
+    private fun getUpdatedList(list: List<ShoppingList>): List<ShoppingList> {
+        val imageCountInRow = getProductCount()
+        list.mapIndexed { index, shoppingList ->
+            shoppingList.modifiedListCount = "(" + shoppingList.listCount + ")"
+            shoppingList.noOfProductInRow = imageCountInRow
+            shoppingList.productImageList = getImageListData(index, shoppingList)
+        }
+        return list
+    }
+
+    private fun getImageListData(
+        index: Int,
+        shoppingList: ShoppingList,
+    ): ArrayList<ProductListDetails> {
+        // todo Once we receive API response we will remove this function.
+        val mockListDetails = ArrayList<ProductListDetails>()
+        val productListDetails = ProductListDetails().apply {
+            imgUrl = when (index) {
+                0 -> "https://assets.woolworthsstatic.co.za/Split-Neck-Cropped-Tencel-Shirt-BLACK-506262324-hero.jpg?V=ab0h&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDIyLTEwLTE3LzUwNjI2MjMyNF9CTEFDS19oZXJvLmpwZyJ9&"
+
+                1 -> "https://assets.woolworthsstatic.co.za/Mini-Oat-Crunchies-150-g-6009223195009.jpg?V=buKH&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDIxLTA2LTAyLzYwMDkyMjMxOTUwMDlfaGVyby5qcGcifQ&"
+
+                2 -> "https://assets.woolworthsstatic.co.za/Mini-Chocolate-Digestives-30-g-6009189506246.jpg?V=fur0&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDIxLTA2LTI0LzYwMDkxODk1MDYyNDZfaGVyby5qcGcifQ&"
+
+                3 -> "https://assets.woolworthsstatic.co.za/Frill-Balloon-Sleeve-Blouse-BLACK-506629130-hero.jpg?V=raxB&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDIzLTA1LTA4LzUwNjYyOTEzMF9CTEFDS19oZXJvLmpwZyJ9&"
+
+                4 -> "https://assets.woolworthsstatic.co.za/Easy-Care-Check-Shirt-NATURAL-506536382.jpg?V=7SRx&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDIzLTAyLTIxLzUwNjUzNjM4Ml9OQVRVUkFMX2hlcm8uanBnIn0&"
+
+                else -> ""
+            }
+        }
+
+        if (shoppingList.listCount > 0) {
+            for (i in 0..shoppingList.listCount) {
+                mockListDetails.add(productListDetails)
+            }
+        }
+        return mockListDetails
+    }
+
+    private fun getProductCount(): Int {
+        val deviceWidthInDp = convertPixelsToDp(deviceWidth())
+        val usableDeviceWidth = (deviceWidthInDp - 60) // 60 is the left and right margin
+        return (usableDeviceWidth / 54) // 54 is the width of productImage
     }
 }

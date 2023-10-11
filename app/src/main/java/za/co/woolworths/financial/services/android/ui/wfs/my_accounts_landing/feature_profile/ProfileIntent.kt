@@ -74,7 +74,7 @@ class ProfileIntent @Inject constructor(private val activity : Activity?,
     override fun createShoppingListIntent() {
         activity?.apply {
             analytics.onShoppingListItem()
-            val fragment = MyListsFragment()
+            val fragment = MyShoppingListFragment()
             when (this) {
                 is BottomNavigationActivity -> getBottomNavigationActivity()?.pushFragment(
                     fragment
