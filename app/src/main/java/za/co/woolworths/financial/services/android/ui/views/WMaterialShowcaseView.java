@@ -1182,7 +1182,8 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
         DELIVERY_DETAILS(13),
         MY_LIST(14),
         PARGO_STORE(15),
-        NEW_FBH_CNC(16);
+        NEW_FBH_CNC(16),
+        PLP_ADD_TO_LIST(17);
 
         private int value;
 

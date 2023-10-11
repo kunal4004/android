@@ -31,7 +31,7 @@ val sw360FontDimensions by lazy {
     FontDimensions(
         sp15 = 14.sp,
         sp16 = 15.sp,
-        policyLabel15Sp = 13.sp,
+        policyLabel15Sp = 12.sp,
         policyNumberValue15Sp = 12.sp,
     offerTitleTextSP12 = 11.sp
     )

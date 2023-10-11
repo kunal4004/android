@@ -1,10 +1,14 @@
 package za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_version_info.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -26,11 +30,10 @@ import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppBackground
 @Composable
 fun ApplicationInfoView(
     applicationInfo: CommonItem.UserAccountApplicationInfo,
-    isLoading: Boolean = false,
-    brush : Brush? = null
+    isLoading: Boolean = false
 ) {
     if (isLoading) {
-        ApplicationInfoViewShimmer(brush)
+        ApplicationInfoViewShimmer()
     }
     if (!isLoading) {
         Column(
@@ -62,27 +65,26 @@ fun ApplicationInfoView(
 }
 
 @Composable
-fun ApplicationInfoViewShimmer(brush: Brush?) {
-    brush ?: return
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(OneAppBackground)
+fun ApplicationInfoViewShimmer() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(OneAppBackground)
+    ) {
+        Spacer(modifier = Modifier.height(16.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
         ) {
-            Spacer(modifier = Modifier.height(16.dp))
+            ShimmerLabel(width = 0.5f, height = 6.dp)
+        }
+            Spacer(modifier = Modifier.height(6.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
             ) {
-                ShimmerLabel(brush = brush, width = 0.5f, height = 6.dp)
+                ShimmerLabel(width = 0.8f, height = 6.dp)
             }
-                Spacer(modifier = Modifier.height(6.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    ShimmerLabel(brush = brush, width = 0.8f, height = 6.dp)
-                }
-                Spacer(modifier = Modifier.height(17.dp))
-            }
-    }
+            Spacer(modifier = Modifier.height(17.dp))
+        }
+}
