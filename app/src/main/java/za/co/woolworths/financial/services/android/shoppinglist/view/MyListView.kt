@@ -42,6 +42,7 @@ fun MyListView(
                     is MyLIstUIEvents.ChangeLocationClick -> onEvent(it)
                     is MyLIstUIEvents.ListItemClick -> onEvent(it)
                     is MyLIstUIEvents.ShareListClick -> onEvent(it)
+                    is MyLIstUIEvents.CreateListClick -> onEvent(it)
                     else -> myListviewModel.onEvent(it)
                 }
             },
@@ -62,6 +63,8 @@ fun MyListScreen(
     onEvent: (event: MyLIstUIEvents) -> Unit,
     myListviewModel: MyListViewModel,
 ) {
+    val myListState = myListviewModel.myListState.value
+    val listStateData = myListviewModel.listDataState.value
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Top,
@@ -83,26 +86,39 @@ fun MyListScreen(
                 .background(color = colorResource(id = R.color.color_D8D8D8))
         )
 
-        CreateNewListView(icon = R.drawable.ic_add_circle, title = R.string.shop_create_list) {
-            onCreateNewList()
-        }
-
-        Spacer(
-            modifier = Modifier
-                .height(1.dp)
-                .fillMaxWidth()
-                .background(color = colorResource(id = R.color.color_D8D8D8))
-        )
-
-        ListOfListView(modifier = Modifier
-            .background(Color.White)
-            .padding(horizontal = 24.dp, vertical = 15.dp),
-            myListviewModel.listDataState.value, onEvent = {
-                when (it) {
-                    is MyLIstUIEvents.ListItemClick -> onEvent(it)
-                    is MyLIstUIEvents.ShareListClick -> onEvent(it)
-                    else -> myListviewModel.onEvent(it)
+        if (listStateData.isError || (listStateData.list.isEmpty() && listStateData.isSuccessResponse)) {
+            EmptyStateTemplate(
+                myListState,
+                onClickEvent = {
+                    if (it) {
+                        onEvent(MyLIstUIEvents.SignInClick)
+                    } else {
+                        onEvent(MyLIstUIEvents.CreateListClick)
+                    }
                 }
-            })
+            )
+        } else {
+            CreateNewListView(icon = R.drawable.ic_add_circle, title = R.string.shop_create_list) {
+                onCreateNewList()
+            }
+
+            Spacer(
+                modifier = Modifier
+                    .height(1.dp)
+                    .fillMaxWidth()
+                    .background(color = colorResource(id = R.color.color_D8D8D8))
+            )
+
+            ListOfListView(modifier = Modifier
+                .background(Color.White)
+                .padding(horizontal = 24.dp, vertical = 15.dp),
+                myListviewModel.listDataState.value, onEvent = {
+                    when (it) {
+                        is MyLIstUIEvents.ListItemClick -> onEvent(it)
+                        is MyLIstUIEvents.ShareListClick -> onEvent(it)
+                        else -> myListviewModel.onEvent(it)
+                    }
+                })
+        }
     }
 }

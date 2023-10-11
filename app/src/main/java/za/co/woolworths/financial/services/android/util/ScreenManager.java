@@ -36,7 +36,6 @@ import za.co.woolworths.financial.services.android.ui.activities.rating_and_revi
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.ReportReviewActivity;
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.ReviewerInfoDetailsActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.shop.MyListsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListDetailFragment;
 
 /**
@@ -338,7 +337,7 @@ public class ScreenManager {
         if (!(activity instanceof BottomNavigationActivity)) {
             return;
         }
-        MyListsFragment fragment = new MyListsFragment();
+        MyShoppingListFragment fragment = new MyShoppingListFragment();
         BottomNavigationActivity bottomNavigationActivity = (BottomNavigationActivity) activity;
         bottomNavigationActivity.pushFragment(fragment);
     }
