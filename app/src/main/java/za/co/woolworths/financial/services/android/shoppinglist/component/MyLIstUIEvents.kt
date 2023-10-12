@@ -9,6 +9,7 @@ sealed class MyLIstUIEvents {
     data class ListItemClick(val item: ShoppingList) : MyLIstUIEvents()
     data class ShareListClick(val item: ShoppingList) : MyLIstUIEvents()
     object CreateListClick : MyLIstUIEvents()
+    object OnNewListCreatedEvent : MyLIstUIEvents()
     object ChangeLocationClick : MyLIstUIEvents()
     object SetDeliveryLocation : MyLIstUIEvents()
 

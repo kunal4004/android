@@ -60,6 +60,7 @@ class MyListViewModel @Inject constructor(
         when (events) {
             is MyLIstUIEvents.SetDeliveryLocation -> setDeliveryDetails()
             is MyLIstUIEvents.SignedOutStateEvent -> showSignedOutState()
+            is MyLIstUIEvents.OnNewListCreatedEvent -> getShoppingList()
             is MyLIstUIEvents.SignInClick -> {
                 // Rare scenario where user logged-in in MyList screen
                 onInit()

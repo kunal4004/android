@@ -21,6 +21,7 @@ import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import com.awfs.coordination.R
 import dagger.hilt.android.AndroidEntryPoint
@@ -34,6 +35,7 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator
 import za.co.woolworths.financial.services.android.ui.compose.contentView
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
+import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.Utils
@@ -66,6 +68,8 @@ class MyShoppingListFragment : Fragment() {
     ) = contentView(
         ViewCompositionStrategy.DisposeOnLifecycleDestroyed(viewLifecycleOwner)
     ) {
+        addObserver()
+
         OneAppTheme {
             Scaffold(
                 topBar = {
@@ -201,5 +205,17 @@ class MyShoppingListFragment : Fragment() {
     private fun navigateToShareListDialog(shoppingList: ShoppingList) {
         val fragment = ShoppingListShareDialogFragment()
         fragment.show(parentFragmentManager, ShoppingListShareDialogFragment::class.simpleName)
+    }
+
+    private fun addObserver() {
+        setFragmentResultListener(AppConstant.REQUEST_CODE_CREATE_LIST.toString()) { _, bundle ->
+            when (bundle.getInt(AppConstant.RESULT_CODE)) {
+                AppConstant.REQUEST_CODE_CREATE_LIST -> {
+                    myListviewModel.onEvent(MyLIstUIEvents.OnNewListCreatedEvent)
+                }
+
+                else -> {}
+            }
+        }
     }
 }
