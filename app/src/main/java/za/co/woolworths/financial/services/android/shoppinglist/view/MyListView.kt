@@ -43,6 +43,7 @@ fun MyListView(
                     is MyLIstUIEvents.ListItemClick -> onEvent(it)
                     is MyLIstUIEvents.ShareListClick -> onEvent(it)
                     is MyLIstUIEvents.CreateListClick -> onEvent(it)
+                    is MyLIstUIEvents.SignInClick -> onEvent(it)
                     else -> myListviewModel.onEvent(it)
                 }
             },

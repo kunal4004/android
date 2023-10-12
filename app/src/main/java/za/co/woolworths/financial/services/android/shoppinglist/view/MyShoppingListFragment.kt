@@ -49,6 +49,10 @@ class MyShoppingListFragment : Fragment() {
     private var mBottomNavigator: BottomNavigator? = null
     private val myListviewModel: MyListViewModel by viewModels()
 
+    companion object {
+        private const val MY_LIST_SIGN_IN_REQUEST_CODE = 7878
+    }
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is BottomNavigationActivity)
@@ -107,6 +111,10 @@ class MyShoppingListFragment : Fragment() {
                             navigateToShareListDialog(event.item)
                         }
 
+                        is MyLIstUIEvents.SignInClick -> {
+                            navigateToSignInScreen()
+                        }
+
                         else -> {
                             myListviewModel.onEvent(event)
                         }
@@ -135,6 +143,10 @@ class MyShoppingListFragment : Fragment() {
             0 -> {
                 // This is mostly after changing location from change fulfillment.
                 myListviewModel.onEvent(MyLIstUIEvents.SetDeliveryLocation)
+            }
+
+            MY_LIST_SIGN_IN_REQUEST_CODE -> {
+                myListviewModel.onEvent(MyLIstUIEvents.SignInClick)
             }
         }
     }
@@ -166,12 +178,23 @@ class MyShoppingListFragment : Fragment() {
         }
     }
 
+    private fun navigateToSignInScreen() {
+        activity?.let {
+            ScreenManager.presentSSOSignin(
+                it,
+                MY_LIST_SIGN_IN_REQUEST_CODE
+            )
+        }
+    }
+
     private fun onShoppingListItemSelected(shoppingList: ShoppingList) {
         activity?.let {
-            ScreenManager.presentShoppingListDetailActivity(it,
+            ScreenManager.presentShoppingListDetailActivity(
+                it,
                 shoppingList.listId,
                 shoppingList.listName,
-                true)
+                true
+            )
         }
     }
 
