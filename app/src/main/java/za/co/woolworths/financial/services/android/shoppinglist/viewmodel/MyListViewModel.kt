@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import za.co.woolworths.financial.services.android.common.ResourcesProvider
 import za.co.woolworths.financial.services.android.domain.repository.MyListRepository
 import za.co.woolworths.financial.services.android.domain.usecase.GetMyListsUC
@@ -57,7 +58,34 @@ class MyListViewModel @Inject constructor(
     fun onEvent(events: MyLIstUIEvents) {
         when (events) {
             is MyLIstUIEvents.SetDeliveryLocation -> setDeliveryDetails()
+            is MyLIstUIEvents.ListItemRevealed -> addToRevealItems(events.item)
+            is MyLIstUIEvents.ListItemCollapsed -> collapseRevealItems(events.item)
+            is MyLIstUIEvents.OnSwipeDeleteAction -> {} //TODO: Implement in upcoming sprint
             else -> Unit
+        }
+    }
+
+    private fun addToRevealItems(item: ShoppingList) {
+        viewModelScope.launch {
+            withContext(Dispatchers.Default){
+                val newList = listDataState.value.revealedList.toMutableList()
+                newList.add(item.listId)
+                listDataState.value = listDataState.value.copy(
+                    revealedList = newList
+                )
+            }
+        }
+    }
+
+    private fun collapseRevealItems(item: ShoppingList) {
+        viewModelScope.launch {
+            withContext(Dispatchers.Default){
+                val newList = listDataState.value.revealedList.toMutableList()
+                newList.remove(item.listId)
+                listDataState.value = listDataState.value.copy(
+                    revealedList = newList
+                )
+            }
         }
     }
 
