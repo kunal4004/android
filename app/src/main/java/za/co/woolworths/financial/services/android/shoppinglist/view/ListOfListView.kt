@@ -81,6 +81,7 @@ fun ListOfListView(
                         if (listDataState.list.size != index + 1) {
                             // This condition will not show divider after last list
                             Divider(
+                                modifier = Modifier.padding(24.dp),
                                 color = colorResource(id = R.color.color_D8D8D8)
                             )
                         }
