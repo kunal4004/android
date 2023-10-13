@@ -456,7 +456,7 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
             }
 
             Delivery.CNC.name -> {
-                validateLocationResponse?.validatePlace?.stores?.forEach {
+                WoolworthsApplication.getCncBrowsingValidatePlaceDetails().stores?.forEach {
                     if (it.storeId.equals(mStoreId)) {
                         unSellableCommerceItems = it.unSellableCommerceItems
                     }
