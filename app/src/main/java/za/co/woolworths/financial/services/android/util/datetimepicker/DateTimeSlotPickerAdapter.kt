@@ -40,13 +40,15 @@ class DateTimeSlotPickerAdapter(private val context: Context,
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(item: TimeSlot, position: Int) {
             val view = itemView as LinearLayout
-            view.contentDescription = bindString(R.string.day_slot) + (position + 1)
+            view.contentDescription = bindString(R.string.day_and_Time_slot) + (position + 1)
 
             val dayTextView = view.findViewById<TextView>(R.id.dayText)
             val dateTextView = view.findViewById<TextView>(R.id.dateText)
 
             dayTextView.text = formatToCorrespondingDay(item.date)
+            dayTextView.contentDescription = bindString(R.string.day_slot) + (position + 1)
             dateTextView.text = formatToDateMonth(item.date)
+            dateTextView.contentDescription = bindString(R.string.month_slot) + (position + 1)
 
             val itemViewBackground: Drawable? = if (position == selectedItemPosition) {
                 ContextCompat.getDrawable(context, R.drawable.selected_date_item)
