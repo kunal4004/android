@@ -3083,7 +3083,9 @@
     <string name="date_picker_today">Today</string>
     <string name="date_picker_tomorrow">Tomorrow</string>
     <string name="navigate_up">"Navigate up"</string>
-    <string name="day_slot">"daySlot_"</string>
+    <string name="day_slot">"day_lot_"</string>
+    <string name="month_slot">"month_slot_"</string>
+    <string name="day_and_Time_slot">"day_And_Time_Slot_"</string>
     <string name="choose_time_slot">"lableChooseTimeSlot"</string>
     <string name="time_slot">"timeSlot_"</string>
     <string name="check_box">"check_Box_"</string>
