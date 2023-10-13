@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.wfs.common.state
 
+import android.util.Log
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 
@@ -12,6 +13,7 @@ class ActivityLifecycleObserver(private val listener: (LifecycleTransitionType) 
      private var isApplicationInForeground = false
      private var isScreenInForeground = false
      private var previousState: LifecycleTransitionType? = null
+
 
     override fun onStart(owner: LifecycleOwner) {
         isScreenInForeground = true

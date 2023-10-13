@@ -3,8 +3,6 @@ package za.co.woolworths.financial.services.android.util;
 import android.app.Activity;
 import android.app.KeyguardManager;
 import android.content.Intent;
-import android.os.Build;
-import android.util.Log;
 
 import com.awfs.coordination.R;
 
@@ -37,23 +35,19 @@ public class AuthenticateUtils {
 	public boolean isDeviceSecure() {
 
 		KeyguardManager keyguardManager = (KeyguardManager) mContext.getSystemService(KEYGUARD_SERVICE);
-		return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && keyguardManager.isKeyguardSecure();
+		return keyguardManager.isKeyguardSecure();
 
 	}
 
 	//method to authenticate app
 	public void startAuthenticateApp(int requestCode) throws Exception {
 		KeyguardManager keyguardManager = (KeyguardManager) mContext.getSystemService(KEYGUARD_SERVICE);
-
-		//Check if the device version is greater than or equal to Lollipop(21)
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-			Intent i = keyguardManager.createConfirmDeviceCredentialIntent(mContext.getString(R.string.enter_password), "");
-			try {
-				//Start activity for result
-				mContext.startActivityForResult(i, requestCode);
-			} catch (Exception e) {
-				throw e;
-			}
+		Intent i = keyguardManager.createConfirmDeviceCredentialIntent(mContext.getString(R.string.enter_password), "");
+		try {
+			//Start activity for result
+			mContext.startActivityForResult(i, requestCode);
+		} catch (Exception e) {
+			throw e;
 		}
 	}
 
@@ -87,7 +81,7 @@ public class AuthenticateUtils {
 		if (result == null)
 			isEnabled = true;
 		else
-			isEnabled = result.equalsIgnoreCase("1") ? true : false;
+			isEnabled = result.equalsIgnoreCase("1");
 		return isEnabled;
 	}
 
@@ -96,6 +90,6 @@ public class AuthenticateUtils {
 	}
 
 	public boolean isAppSupportsAuthentication() {
-		return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP);
+		return true;
 	}
 }

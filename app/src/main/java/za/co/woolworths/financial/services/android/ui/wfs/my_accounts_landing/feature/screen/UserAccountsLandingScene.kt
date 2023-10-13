@@ -24,49 +24,27 @@ import za.co.woolworths.financial.services.android.util.analytics.FirebaseManage
 @Composable
 fun UserAccountsLandingScene(
     viewModel: UserAccountLandingViewModel,
-    onProductClick : (AccountProductCardsGroup) -> Unit,
-    onClickEvent: (OnAccountItemClickListener) -> Unit) {
+    onProductClick: (AccountProductCardsGroup) -> Unit,
+    onClickEvent: (OnAccountItemClickListener) -> Unit
+) {
     val isUserAuthenticated by remember { viewModel.isUserAuthenticated }
-    val biometricAuthenticationState by  viewModel.securityTransitionType.collectAsState(LifecycleTransitionType.FOREGROUND)
-    val context= LocalContext.current
-    val activity = context.findActivity()
 
     when (isUserAuthenticated) {
         Authenticated -> {
-            if (biometricAuthenticationState == LifecycleTransitionType.FOREGROUND) {
-                SignedInScreen(
-                    viewModel = viewModel,
-                    onProductClick = onProductClick,
-                    onClick = onClickEvent
-                    )
-                }else {
-                    LaunchedEffect(true){
-                    if (AuthenticateUtils.getInstance(activity).isBiometricAuthenticationRequired) {
-                        try {
-                            AuthenticateUtils.getInstance(activity)
-                                .startAuthenticateApp(BottomNavigationActivity.LOCK_REQUEST_CODE_ACCOUNTS)
-                        } catch (e: Exception) {
-                            try {
-                                val intent = Intent(Settings.ACTION_SECURITY_SETTINGS)
-                                activity?.startActivityForResult(
-                                    intent,
-                                    MyPreferencesFragment.SECURITY_SETTING_REQUEST_CODE
-                                )
-                            } catch (ex: Exception) {
-                                FirebaseManager.logException(ex)
-                            }
-                        }
-                    }
-                    }
-                }
-            }
 
-            NotAuthenticated -> {
-                SignedOutScreen(
-                    viewModel = viewModel,
-                    onClick = onClickEvent
-                )
-            }
+            SignedInScreen(
+                viewModel = viewModel,
+                onProductClick = onProductClick,
+                onClick = onClickEvent
+            )
         }
+
+        NotAuthenticated -> {
+            SignedOutScreen(
+                viewModel = viewModel,
+                onClick = onClickEvent
+            )
+        }
+    }
 }
 

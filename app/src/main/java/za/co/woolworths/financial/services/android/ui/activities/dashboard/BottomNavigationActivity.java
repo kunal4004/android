@@ -24,15 +24,13 @@ import static za.co.woolworths.financial.services.android.util.AppConstant.REQUE
 import static za.co.woolworths.financial.services.android.util.FuseLocationAPISingleton.REQUEST_CHECK_SETTINGS;
 import static za.co.woolworths.financial.services.android.util.ScreenManager.CART_LAUNCH_VALUE;
 import static za.co.woolworths.financial.services.android.util.ScreenManager.SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE;
-import static za.co.woolworths.financial.services.android.util.Utils.DY_CHANNEL;
-import static za.co.woolworths.financial.services.android.util.Utils.HOME_PAGE;
-import static za.co.woolworths.financial.services.android.util.Utils.MOBILE_LANDING_PAGE;
 import static za.co.woolworths.financial.services.android.util.nav.tabhistory.FragNavTabHistoryController.UNLIMITED_TAB_HISTORY;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.hardware.biometrics.BiometricManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -78,6 +76,8 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
+
+import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
 import io.reactivex.functions.Consumer;
