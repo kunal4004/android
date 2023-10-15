@@ -11,7 +11,9 @@ import com.awfs.coordination.R
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
+import za.co.woolworths.financial.services.android.shoppinglist.listener.MyShoppingListItemClickListener
 import za.co.woolworths.financial.services.android.ui.compose.contentView
+import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
 
@@ -19,17 +21,30 @@ import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
 @AndroidEntryPoint
 class ConfirmationDialogFragment : WBottomSheetDialogFragment() {
 
+
+    companion object {
+        var listener : MyShoppingListItemClickListener? = null
+        fun newInstance(
+            shoppingListItemClickListener: MyShoppingListItemClickListener?): ConfirmationDialogFragment {
+            return ConfirmationDialogFragment().withArgs {
+                listener = shoppingListItemClickListener
+            }
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ) = contentView(
         ViewCompositionStrategy.DisposeOnDetachedFromWindow
     ) {
+
         OneAppTheme {
-            ShowConfirmationdoalog(
+            Confirmationdoalog(
                 title = getString(R.string.are_you_sure),
                 desc = getString(R.string.remove_desc) , {
-
+                    dialog?.dismiss()
+                    listener?.itemRemoveClick()
                 }, {
                    dialog?.dismiss()
                 }

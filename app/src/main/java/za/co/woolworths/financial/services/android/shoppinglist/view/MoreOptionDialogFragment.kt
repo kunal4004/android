@@ -11,13 +11,22 @@ import com.awfs.coordination.R
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
+import za.co.woolworths.financial.services.android.shoppinglist.listener.MyShoppingListItemClickListener
 import za.co.woolworths.financial.services.android.ui.compose.contentView
+import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
 
 @OptIn(ExperimentalComposeUiApi::class)
 @AndroidEntryPoint
 class MoreOptionDialogFragment : WBottomSheetDialogFragment() {
+
+    companion object {
+        var listener : MyShoppingListItemClickListener? = null
+        fun newInstance(shoppingListItemClickListener:MyShoppingListItemClickListener) = MoreOptionDialogFragment().withArgs {
+            listener = shoppingListItemClickListener
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -30,12 +39,11 @@ class MoreOptionDialogFragment : WBottomSheetDialogFragment() {
               //todo item copy
             }, {
               //todo item move
-            }, {
-                //todo item remove
+            }) {
                 dialog?.dismiss()
-                val fragment = ConfirmationDialogFragment()
+                val fragment = ConfirmationDialogFragment.newInstance(listener)
                 fragment.show(parentFragmentManager, ConfirmationDialogFragment::class.simpleName)
-            })
+            }
         }
     }
 

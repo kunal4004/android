@@ -56,9 +56,9 @@ import za.co.woolworths.financial.services.android.recommendations.data.response
 import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationLoader
 import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationLoaderImpl
 import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationLoadingNotifier
-import za.co.woolworths.financial.services.android.shoppinglist.view.MoreOptionDialog
+import za.co.woolworths.financial.services.android.shoppinglist.listener.MyShoppingListItemClickListener
+import za.co.woolworths.financial.services.android.shoppinglist.model.RemoveApiRequest
 import za.co.woolworths.financial.services.android.shoppinglist.view.MoreOptionDialogFragment
-import za.co.woolworths.financial.services.android.shoppinglist.view.ShoppingListShareDialogFragment
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity
@@ -106,7 +106,8 @@ import za.co.woolworths.financial.services.android.util.wenum.Delivery
 @AndroidEntryPoint
 class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartInterface,
     NetworkChangeListener, ToastInterface, ShoppingListItemsNavigator, IToastInterface,
-    IOnConfirmDeliveryLocationActionListener, RecommendationLoadingNotifier, RecommendationLoader by RecommendationLoaderImpl() {
+    IOnConfirmDeliveryLocationActionListener, RecommendationLoadingNotifier, RecommendationLoader by RecommendationLoaderImpl(),
+    MyShoppingListItemClickListener {
 
     private val viewModel: ShoppingListDetailViewModel by viewModels()
 
@@ -251,6 +252,22 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                 }
             }
         }
+
+        /*viewModel.shoppingListDetailsAfterDelete.observe(viewLifecycleOwner) {
+            val response = it.peekContent().data
+            when (it.peekContent().status) {
+                Status.LOADING -> {
+                    bindingListDetails.loadingBar.visibility = VISIBLE
+                }
+                Status.SUCCESS -> {
+                    bindingListDetails.loadingBar.visibility = GONE
+                    response?.let { it1 -> onShoppingListItemDelete(it1) }
+                }
+                Status.ERROR -> {
+                    bindingListDetails.loadingBar.visibility = GONE
+                }
+            }
+        }*/
     }
 
     private fun setUpToolbar(listName: String?) {
@@ -375,7 +392,14 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
     }
 
     private fun openMoreOptionsDialog() {
-        val fragment = MoreOptionDialogFragment()
+        val selectedItems  = ArrayList<String>()
+        for (item in viewModel.mShoppingListItems) {
+            if (item.isSelected == true) {
+                selectedItems.add(item.Id)
+            }
+        }
+
+        val fragment = MoreOptionDialogFragment.newInstance(this@ShoppingListDetailFragment)
         fragment.show(parentFragmentManager, MoreOptionDialogFragment::class.simpleName)
     }
 
@@ -1114,5 +1138,16 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         // constants for deletion confirmation.
         private const val ON_CONFIRM_REMOVE_WITH_DELETE_ICON_PRESSED =
             "remove_with_delete_icon_pressed"
+    }
+
+    override fun itemRemoveClick() {
+        /*val selectedItems  = ArrayList<String>()
+        for (item in viewModel.mShoppingListItems) {
+            if (item.isSelected == true) {
+                selectedItems.add(item.Id)
+            }
+        }
+        val removeApiRequest = RemoveApiRequest(viewModel.listId, selectedItems)
+        viewModel.removeMultipleItemsFromList(viewModel.listId, removeApiRequest)*/
     }
 }
