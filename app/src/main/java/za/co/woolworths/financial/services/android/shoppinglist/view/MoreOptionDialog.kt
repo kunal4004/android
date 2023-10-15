@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -49,7 +50,7 @@ fun MoreOptionDialog(itemMove:()->Unit,itemCopy:()->Unit,itemRemove:()->Unit) {
     Column(
        modifier = Modifier
            .fillMaxWidth()
-           .padding(24.dp)
+           .padding(top = 24.dp, start = 24.dp, end = 24.dp)
     ) {
 
         Spacer(
@@ -77,6 +78,19 @@ fun MoreOptionDialog(itemMove:()->Unit,itemCopy:()->Unit,itemRemove:()->Unit) {
                     ?.let { MoreOptionDialogCell(it.img, it.title, index, itemCopy, itemMove, itemRemove) }
             }
         }
+
+        Box(
+            modifier = Modifier.padding(top = 48.dp, bottom = 8.dp)
+                .align(Alignment.CenterHorizontally),
+            contentAlignment = Alignment.BottomCenter,
+        ) {
+            Spacer(
+                modifier = Modifier
+                    .width(134.dp)
+                    .height(5.dp)
+                    .background(Color.Black)
+            )
+        }
     }
 }
 
@@ -99,19 +113,23 @@ fun MoreOptionDialogCell(
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start,
-        modifier = Modifier.fillMaxWidth().padding(top = 19.dp).clickable {
-            when(index) {
-                0 -> itemCopy()
-                1 -> itemMove()
-                2 -> itemRemove()
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 19.dp)
+            .clickable {
+                when (index) {
+                    0 -> itemCopy()
+                    1 -> itemMove()
+                    2 -> itemRemove()
+                }
             }
-        }
     ) {
 
         Image(
             painter = painterResource(id = image),
             contentDescription = "" ,
-            modifier = Modifier.size(16.dp)
+            modifier = Modifier
+                .size(16.dp)
                 .align(Alignment.CenterVertically)
         )
         Text(
@@ -122,7 +140,9 @@ fun MoreOptionDialogCell(
                 fontWeight = FontWeight.W400,
                 color = Color.Black,
             ),
-            modifier = Modifier.align(Alignment.CenterVertically).padding(start=10.dp)
+            modifier = Modifier
+                .align(Alignment.CenterVertically)
+                .padding(start = 10.dp)
         )
     }
 }
