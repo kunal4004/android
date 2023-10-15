@@ -206,18 +206,18 @@ class MyListViewModel @Inject constructor(
                 viewModelScope.launch(Dispatchers.Main) {
                     when (shoppingListResponse.status) {
                         Status.SUCCESS -> {
-                            _isLoading.value = false
                             listDataState.value = listDataState.value.copy(
                                 isSuccessResponse = true
                             )
                             setListData(shoppingListResponse.data)
+                            _isLoading.value = false
                         }
 
                         Status.ERROR -> {
-                            _isLoading.value = false
                             listDataState.value = listDataState.value.copy(
                                 isError = true
                             )
+                            _isLoading.value = false
                         }
 
                         Status.LOADING -> {
