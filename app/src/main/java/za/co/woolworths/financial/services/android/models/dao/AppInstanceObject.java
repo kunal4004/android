@@ -91,6 +91,13 @@ public class AppInstanceObject {
         public Long linkedDeviceIdentityId;
         public String mId;
 
+        public String serverDyId;
+        public String sessionDyId;
+
+        public boolean enhanceSubstitutionFeatureShown;
+        public String deliveryDetails;
+
+
         public User() {
             id = AppInstanceObject.getCurrentUsersID();
             shoppingDeliveryLocationHistory = new ArrayList<>();
@@ -160,6 +167,7 @@ public class AppInstanceObject {
         public boolean my_lists;
         public boolean pargo_store;
         public boolean new_fbh_cnc;
+        public boolean plp_add_to_list;
 
     }
 

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto">
+
+    <CheckBox
+        android:id="@+id/optionCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="@dimen/sixteen_dp"
+        android:enabled="false"
+        android:button="@drawable/shopping_list_item_selector"
+        android:checked="false"
+        android:saveEnabled="false"
+        app:layout_constraintBottom_toBottomOf="@+id/productIamge"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/productIamge" />
+
+    <za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
+        android:id="@+id/productIamge"
+        android:layout_width="@dimen/eighty_dp"
+        android:layout_height="112dp"
+        android:layout_gravity="center"
+        android:layout_marginStart="@dimen/sixteen_dp"
+        android:layout_marginTop="@dimen/twenty_four_dp"
+        android:contentDescription="@string/placeholder"
+        android:src="@drawable/scooter"
+        android:background="@color/color_F3F3F3"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/optionCheckBox"
+        app:layout_constraintTop_toTopOf="parent"
+        fresco:fadeDuration="10"
+        fresco:failureImage="@drawable/woolworth_logo_icon" />
+
+    <TextView
+        android:id="@+id/txtProductTitle"
+        android:layout_width="@dimen/zero_dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/sixteen_dp"
+        android:layout_marginEnd="@dimen/sixteen_dp"
+        android:background="@color/color_F3F3F3"
+        android:fontFamily="@font/opensans_regular"
+        android:gravity="top"
+        android:lineSpacingExtra="@dimen/two_sp"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/black"
+        android:textSize="@dimen/fourteen_sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/productIamge"
+        app:layout_constraintTop_toTopOf="@+id/productIamge" />
+
+    <TextView
+        android:id="@+id/txtProductPrice"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/sixteen_dp"
+        android:layout_marginEnd="@dimen/sixteen_dp"
+        android:background="@color/color_F3F3F3"
+        android:fontFamily="@font/futura_semi_bold"
+        android:lineSpacingExtra="6sp"
+        android:textColor="@color/black"
+        android:textSize="@dimen/fourteen_sp"
+        app:layout_constraintBottom_toBottomOf="@+id/productIamge"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/productIamge" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+

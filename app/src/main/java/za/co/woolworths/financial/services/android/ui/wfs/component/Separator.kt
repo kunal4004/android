@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import za.co.woolworths.financial.services.android.ui.wfs.theme.DividerColor
+import za.co.woolworths.financial.services.android.ui.wfs.theme.DividerColorPDP
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppBackground
 
 
@@ -43,4 +44,14 @@ fun Divider1dp() {
             .background(DividerColor)
     )
 
+}
+
+@Composable
+fun DividerLight1dp() {
+    Divider(
+        modifier = Modifier
+            .height(1.dp)
+            .padding(start = 24.dp, end = 24.dp)
+            .background(DividerColorPDP)
+    )
 }

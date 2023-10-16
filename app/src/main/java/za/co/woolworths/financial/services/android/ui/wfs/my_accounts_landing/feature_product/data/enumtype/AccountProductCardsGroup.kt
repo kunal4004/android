@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.f
 
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Immutable
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
@@ -14,7 +13,6 @@ import za.co.woolworths.financial.services.android.ui.wfs.theme.Obsidian
 
 sealed class AccountProductCardsGroup(
     open val isLoadingInProgress: LoadingOptions = LoadingOptions(),
-    open val shimmerOptions: ShimmerOptions? = ShimmerOptions(),
     open val properties: ProductProperties,
     open val retryOptions: RetryOptions? = null,
     open val applyNowState: ApplyNowState? = null,
@@ -25,12 +23,10 @@ sealed class AccountProductCardsGroup(
         override val productDetails: ProductDetails?,
         override var retryOptions: RetryOptions = RetryOptions(),
         override val isLoadingInProgress: LoadingOptions = LoadingOptions(),
-        override val shimmerOptions: ShimmerOptions? = ShimmerOptions(),
         override val properties: ProductProperties = ProductPropertiesViewType.StoreCard.value(),
         override val applyNowState: ApplyNowState? = ApplyNowState.STORE_CARD,
     ) : AccountProductCardsGroup(
         isLoadingInProgress = isLoadingInProgress,
-        shimmerOptions = shimmerOptions,
         properties = properties,
         retryOptions = retryOptions,
         applyNowState = applyNowState,
@@ -42,12 +38,10 @@ sealed class AccountProductCardsGroup(
         override val productDetails: ProductDetails?,
         override var retryOptions: RetryOptions = RetryOptions(),
         override val isLoadingInProgress: LoadingOptions = LoadingOptions(),
-        override val shimmerOptions: ShimmerOptions? = ShimmerOptions(),
         override val properties: ProductProperties = ProductPropertiesViewType.PersonalLoan.value(),
         override val applyNowState: ApplyNowState? = ApplyNowState.PERSONAL_LOAN
     ) : AccountProductCardsGroup(
         isLoadingInProgress = isLoadingInProgress,
-        shimmerOptions = shimmerOptions,
         properties = properties,
         retryOptions = retryOptions,
         applyNowState = applyNowState,
@@ -59,12 +53,10 @@ sealed class AccountProductCardsGroup(
         override val productDetails: ProductDetails?,
         override var retryOptions: RetryOptions = RetryOptions(),
         override val isLoadingInProgress: LoadingOptions = LoadingOptions(),
-        override val shimmerOptions: ShimmerOptions? = ShimmerOptions(),
         override val properties: ProductProperties = ProductPropertiesViewType.BlackCreditCard.value(),
         override val applyNowState: ApplyNowState? = ApplyNowState.BLACK_CREDIT_CARD
     ) : AccountProductCardsGroup(
         isLoadingInProgress = isLoadingInProgress,
-        shimmerOptions = shimmerOptions,
         properties = properties,
         retryOptions = retryOptions,
         applyNowState = applyNowState,
@@ -77,12 +69,10 @@ sealed class AccountProductCardsGroup(
         override val productDetails: ProductDetails?,
         override var retryOptions: RetryOptions = RetryOptions(),
         override val isLoadingInProgress: LoadingOptions = LoadingOptions(),
-        override val shimmerOptions: ShimmerOptions? = ShimmerOptions(),
         override val properties: ProductProperties = ProductPropertiesViewType.GoldCreditCard.value(),
         override val applyNowState: ApplyNowState? = ApplyNowState.GOLD_CREDIT_CARD
     ) : AccountProductCardsGroup(
         isLoadingInProgress = isLoadingInProgress,
-        shimmerOptions = shimmerOptions,
         properties = properties,
         retryOptions = retryOptions,
         applyNowState = applyNowState,
@@ -94,12 +84,10 @@ sealed class AccountProductCardsGroup(
         override val isLoadingInProgress: LoadingOptions = LoadingOptions(),
         override val productDetails: ProductDetails?,
         override var retryOptions: RetryOptions = RetryOptions(),
-        override val shimmerOptions: ShimmerOptions? = ShimmerOptions(),
         override val properties: ProductProperties = ProductPropertiesViewType.SilverCreditCard.value(),
         override val applyNowState: ApplyNowState? = ApplyNowState.SILVER_CREDIT_CARD
     ) : AccountProductCardsGroup(
         isLoadingInProgress = isLoadingInProgress,
-        shimmerOptions = shimmerOptions,
         properties = properties,
         retryOptions = retryOptions,
         applyNowState = applyNowState,
@@ -113,32 +101,26 @@ sealed class AccountProductCardsGroup(
         val description: String? = null,
         val action: String? = null,
         val petInsuranceConfig : PetInsuranceConfig? = null,
-        override val shimmerOptions: ShimmerOptions? = ShimmerOptions(),
         override val properties: ProductProperties = ProductPropertiesViewType.PetInsurance.value()
     ) : AccountProductCardsGroup(
         isLoadingInProgress = isLoadingInProgress,
-        shimmerOptions = shimmerOptions,
         properties = properties)
 
     data class ApplicationStatus(
         override val isLoadingInProgress: LoadingOptions = LoadingOptions(),
         @StringRes val title: Int = R.string.application_status,
         @StringRes val buttonLabel: Int = R.string.view,
-        val color: Color = Obsidian,
-        override val shimmerOptions: ShimmerOptions? = ShimmerOptions()
+        val color: Color = Obsidian
     ) : AccountProductCardsGroup(
-        isLoadingInProgress = isLoadingInProgress, shimmerOptions = shimmerOptions,
         properties = ProductProperties(automationLocatorKey = application_status)
     )
 
     data class LinkYourWooliesCard(
         override val isLoadingInProgress: LoadingOptions = LoadingOptions(),
-        override val properties: ProductProperties = ProductPropertiesViewType.PersonalLoan.value(),
-        override val shimmerOptions: ShimmerOptions? = ShimmerOptions()
+        override val properties: ProductProperties = ProductPropertiesViewType.PersonalLoan.value()
     ) : AccountProductCardsGroup(
         isLoadingInProgress = isLoadingInProgress,
-        properties = properties,
-        shimmerOptions = shimmerOptions
+        properties = properties
     )
 }
 
@@ -160,6 +142,3 @@ data class RetryOptions(
 
 @Immutable
 data class LoadingOptions(val isAccountLoading: Boolean = false)
-
-@Immutable
-data class ShimmerOptions(val brush: Brush? = null)

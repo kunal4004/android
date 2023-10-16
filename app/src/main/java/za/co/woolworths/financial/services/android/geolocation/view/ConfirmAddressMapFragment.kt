@@ -82,6 +82,7 @@ class ConfirmAddressMapFragment :
     LocationProviderBroadcastReceiver.LocationProviderInterface,
     PoiBottomSheetDialog.ClickListener, UnIndexedAddressIdentifiedListener {
 
+    private lateinit var validateLocationResponse: ValidateLocationResponse
     private lateinit var binding: GeolocationConfirmAddressBinding
     private var mAddress: String? = null
     private var placeId: String? = null
@@ -297,7 +298,7 @@ class ConfirmAddressMapFragment :
         lifecycleScope.launch {
             binding?.progressBar?.visibility = View.VISIBLE
             try {
-                val validateLocationResponse =
+                 validateLocationResponse =
                     confirmAddressViewModel.getValidateLocation(placeId!!)
                 binding?.progressBar?.visibility = View.GONE
                 if (!isAdded || !isVisible) return@launch
@@ -419,6 +420,17 @@ class ConfirmAddressMapFragment :
                         KEY_ADDRESS2, address2
                     )
                 }
+            }
+            if(deliveryType==Delivery.CNC.name){
+                bundle.apply {
+                    putSerializable(
+                    BundleKeysConstants.VALIDATE_RESPONSE, validateLocationResponse)
+                }
+                findNavController().navigate(
+                    R.id.actionClickAndCollectStoresFragment,
+                    bundleOf(BUNDLE to bundle)
+                )
+                return
             }
 
             findNavController().navigateUp() // This will land on confirmAddress fragment.

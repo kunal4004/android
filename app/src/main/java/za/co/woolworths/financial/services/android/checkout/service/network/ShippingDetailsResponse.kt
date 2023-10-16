@@ -9,4 +9,10 @@ class ShippingDetailsResponse : Serializable {
 
     @SerializedName("auth")
     var auth: String? = null
+
+    @SerializedName("response")
+    var response: Response? = null
+
+    @SerializedName("httpCode")
+    var httpCode: Int? = null
 }
