@@ -53,7 +53,6 @@ class Dimensions(
     val fourteen_dp : Dp,
     val thirty_four_dp: Dp = 34.dp,
     val forty_dp: Dp = 40.dp,
-    val fourteen_dp : Dp,
     val eighteen_dp : Dp,
     val one_twenty_dp : Dp,
     val point_five_dp : Dp,
@@ -262,7 +261,12 @@ val sw420Dimensions = Dimensions(
     pull_to_refresh_offset_dp = 60.dp,
     account_landing_my_offers_image_height_dp = 190.dp,
     button_height_twenty_six_dp = 26.dp,
-    fourteen_dp = 14.dp
+    fourteen_dp = 14.dp,
+    eighteen_dp = 18.dp,
+    one_twenty_dp = 120.dp,
+    point_five_dp = 0.5.dp,
+    one_point_five_sp = 1.5.sp,
+    ten_sp = 10.sp,
 )
 
 val sw440Dimensions = Dimensions(

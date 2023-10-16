@@ -568,7 +568,6 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
                     mStoreId,
                     validateLocationResponse?.validatePlace?.stores
                 )
-            KotlinUtils.isStoreSelectedForBrowsing = false
         }
 
         WoolworthsApplication.setValidatedSuburbProducts(

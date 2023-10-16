@@ -552,7 +552,6 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
             if (WoolworthsApplication.getValidatePlaceDetails() == null || validateLocationResponse == null) {
                 executeValidateSuburb()
             }
-            timer?.start()
             (activity as? BottomNavigationActivity)?.apply {
                 fadeOutToolbar(R.color.recent_search_bg)
                 showBackNavigationIcon(false)
