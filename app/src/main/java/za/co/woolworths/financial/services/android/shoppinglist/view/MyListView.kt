@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -111,9 +110,9 @@ fun MyListScreen(
             )
 
             ListOfListView(modifier = Modifier
-                .background(Color.White)
-                .padding(horizontal = 24.dp, vertical = 15.dp),
-                myListviewModel.listDataState.value, onEvent = {
+                .background(Color.White),
+                myListviewModel.listDataState.value,
+                onEvent = {
                     when (it) {
                         is MyLIstUIEvents.ListItemClick -> onEvent(it)
                         is MyLIstUIEvents.ShareListClick -> onEvent(it)

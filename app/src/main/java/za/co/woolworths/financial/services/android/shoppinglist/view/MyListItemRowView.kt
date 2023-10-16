@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -35,19 +36,19 @@ import za.co.woolworths.financial.services.android.ui.wfs.theme.OpenSansFontFami
 
 @Composable
 fun MyListItemRowView(
+    modifier: Modifier = Modifier,
     listDataState: ListDataState,
     listItem: ShoppingList,
     onShareIconClick: (item: ShoppingList) -> Unit,
     onDetailsArrowClick: (item: ShoppingList) -> Unit,
 ) {
-    Column {
+    Column(modifier = modifier) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
-                .background(Color.White)
-                .padding(vertical = 15.dp),
+                .background(Color.White),
         ) {
             Text(
                 text = listItem.listName,
@@ -94,6 +95,9 @@ fun MyListItemRowView(
                 )
             }
         }
+
+        Spacer(modifier = Modifier.height(15.dp))
+
         ListOfImagesView(listItem, onImageItemClick = {})
     }
 }
@@ -121,7 +125,9 @@ private fun MyListItemRowPreview() {
         val mockListData: List<ShoppingList> = emptyList()
         mockListData.plus(mockList)
         val listData =
-            ListDataState(mockListData, R.drawable.ic_share, R.drawable.ic_white_chevron_right)
-        MyListItemRowView(listData, mockList, onShareIconClick = {}, onDetailsArrowClick = {})
+            ListDataState(mockListData, emptyList(),R.drawable.ic_share, R.drawable
+                .ic_white_chevron_right)
+        MyListItemRowView(listDataState = listData,listItem = mockList, onShareIconClick = {},
+            onDetailsArrowClick = {})
     }
 }

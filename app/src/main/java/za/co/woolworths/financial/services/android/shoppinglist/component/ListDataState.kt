@@ -8,6 +8,7 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingList
  */
 data class ListDataState(
     val list: List<ShoppingList> = emptyList(),
+    val revealedList: List<String> = emptyList(),
     val shareIcon : Int = R.drawable.ic_share,
     val openIcon: Int = R.drawable.ic_white_chevron_right,
     val isError: Boolean = false,

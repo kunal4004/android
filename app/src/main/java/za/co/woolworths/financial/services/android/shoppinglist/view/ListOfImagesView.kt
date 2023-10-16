@@ -43,6 +43,7 @@ fun ListOfImagesView(
 ) {
     LazyRow(
         modifier = Modifier
+            .height(70.dp)
             .clickable {
                 onImageItemClick()
             },
