@@ -1170,13 +1170,13 @@ interface ApiInterface {
         "Accept: application/json",
         "Media-Type: application/json",
     )
-    @DELETE("wfs/app/v4/list/{id}")
-    fun deleteShoppingList(
 
+    @DELETE("wfs/app/v4/list/{id}")
+    suspend fun deleteShoppingList(
         @Header("sessionToken") sessionToken: String,
         @Header("deviceIdentityToken") deviceIdentityToken: String,
         @Path("id") id: String,
-    ): Call<ShoppingListsResponse>
+    ): retrofit2.Response<ShoppingListsResponse>
 
     @Headers(
         "Content-Type: application/json",

@@ -900,6 +900,11 @@ public class Utils {
         return (int) (dpValue * scale + 0.5f);
     }
 
+    public static int convertPixelsToDp(int px){
+        Context context = WoolworthsApplication.getAppContext();
+        return px / (context.getResources().getDisplayMetrics().densityDpi / DisplayMetrics.DENSITY_DEFAULT);
+    }
+
     public static ShoppingDeliveryLocation getPreferredDeliveryLocation() {
         ShoppingDeliveryLocation preferredDeliveryLocation = null;
         AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();

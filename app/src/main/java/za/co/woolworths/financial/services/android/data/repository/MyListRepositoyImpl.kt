@@ -49,7 +49,7 @@ class MyListRepositoryImpl @Inject constructor(private val apiInterface: ApiInte
             )
         }
 
-    override suspend fun callValidatePlaceDetails(placeId:String): Flow<IOTaskResult<ValidateLocationResponse>> =
+    override suspend fun callValidatePlaceDetails(placeId: String): Flow<IOTaskResult<ValidateLocationResponse>> =
         executeSafeNetworkApiCall {
             validatePlace(
                 "",
@@ -60,4 +60,8 @@ class MyListRepositoryImpl @Inject constructor(private val apiInterface: ApiInte
                 false
             )
         }
+
+    override suspend fun deleteShoppingList(id: String): Response<ShoppingListsResponse> =
+        OneAppService().deleteShoppingList(listId = id)
+
 }

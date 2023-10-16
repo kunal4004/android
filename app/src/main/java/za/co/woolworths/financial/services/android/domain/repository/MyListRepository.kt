@@ -28,6 +28,8 @@ interface MyListRepository {
 
     suspend fun createNewList(createList: CreateList): Response<ShoppingListsResponse>
 
+    suspend fun deleteShoppingList(id: String): Response<ShoppingListsResponse>
+
     suspend fun getCartSummary(): Flow<CoreDataSource.IOTaskResult<CartSummaryResponse>>
     suspend fun callValidatePlaceDetails(placeId: String): Flow<CoreDataSource.IOTaskResult<ValidateLocationResponse>>
 }

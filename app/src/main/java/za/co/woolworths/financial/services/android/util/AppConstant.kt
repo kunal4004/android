@@ -34,11 +34,11 @@ class AppConstant {
          * Durations
          *****************************************************************************************/
         const val DURATION_1000_MS: Long = 1000
-        const val DURATION_120000_MS:Long=120000
-        const val DURATION_0_MS:Long=0L
+        const val DURATION_120000_MS: Long = 120000
+        const val DURATION_0_MS: Long = 0L
 
-        const val FIREBASE_REMOTE_CONFIG_TIMEOUT_INTERVAL:Long = 15
-        const val FIREBASE_REMOTE_CONFIG_FETCH_INTERVAL:Long = 7200
+        const val FIREBASE_REMOTE_CONFIG_TIMEOUT_INTERVAL: Long = 15
+        const val FIREBASE_REMOTE_CONFIG_FETCH_INTERVAL: Long = 7200
 
         /*****************************************************************************************
          * API Response Code
@@ -65,8 +65,10 @@ class AppConstant {
         const val REQUEST_CODE_QUERY_INVENTORY_FOR_STORE = 3343
         const val SET_DELIVERY_LOCATION_REQUEST_CODE = 3346
         const val REQUEST_CODE_QUERY_STORE_FINDER = 3344
+
         //order details
         const val REQUEST_CODE_ORDER_DETAILS_PAGE = 1989
+
         //Barcode scanning
         const val REQUEST_CODE_BARCODE_ACTIVITY = 1947
 
@@ -74,6 +76,10 @@ class AppConstant {
 
         const val BALANCE_PROTECTION_INSURANCE_REQUEST_CODE: Int = 291621
         const val BALANCE_PROTECTION_INSURANCE_OPT_IN_SUCCESS_RESULT_CODE: Int = 20
+
+        const val REQUEST_KEY_CONFIRMATION_DIALOG = "REQUEST_KEY_CONFIRMATION_DIALOG"
+        const val RESULT_DELETE_LIST_CONFIRMED =
+            "RESULT_DELETE_LIST_CONFIRMED"
 
         /*****************************************************************************************
          * Miscellaneous
@@ -122,17 +128,19 @@ class AppConstant {
         const val ORDER_SHIPPING_TOTAL = "Order_Shipping_Total"
         const val QUICK_LINK = "Quick Link - Slot "
 
-        const val RED_HEX_COLOR ="#ff0000"
-        const val DEFAULT_TAG_HEX_COLOR="#b2b2b2"
+        const val RED_HEX_COLOR = "#ff0000"
+        const val DEFAULT_TAG_HEX_COLOR = "#b2b2b2"
+
         // delete my profile
         const val DELETE_ACCOUNT = "DELETE_ACCOUNT"
         const val DELETE_ACCOUNT_CONFIRMATION = "DELETE_ACCOUNT_CONFIRMATION"
         const val RESULT_CODE_DELETE_ACCOUNT = 444
-        const val FIFTY=50
-        const val TEN=10
+        const val FIFTY = 50
+        const val TEN = 10
 
         // pargo store
-        const val TAG_CHANGEFULLFILMENT_COLLECTION_STORE_FRAGMENT: String = "ChangeFullfilmentCollectionStoreFragment"
+        const val TAG_CHANGEFULLFILMENT_COLLECTION_STORE_FRAGMENT: String =
+            "ChangeFullfilmentCollectionStoreFragment"
         const val TAG_FBH_CNC_FRAGMENT: String = "FBHCNC"
 
         // My List
@@ -145,7 +153,10 @@ class AppConstant {
 
         //connect online
         const val PRODUCT_TYPE_DIGITAL = "DIGITAL"
-        const val SA_MOBILE_NUMBER_PATTERN="^0\\d{9}$"
+        const val SA_MOBILE_NUMBER_PATTERN = "^0\\d{9}$"
+
+        const val SCREEN_NAME_DELETE_LIST_CONFIRMATION = "Delete List Confirmation Screen"
+        const val SCREEN_NAME_DELETE_LIST_PROGRESS_BAR = "Delete List Progress Bar Screen"
     }
 
     class Keys {
@@ -161,6 +172,7 @@ class AppConstant {
             const val EXTRA_PRODUCT_NAME = "PRODUCT_NAME"
             const val EXTRA_SEARCH_TYPE = "searchType"
             const val EXTRA_SEARCH_TERM = "searchTerm"
+
             /*****************************************************************************************
              * Bundle Keys
              * const val BUNDLE_EXAMPLE_NAME = "BUNDLE_KEY_NAME"
@@ -170,6 +182,12 @@ class AppConstant {
             const val KEY_HAS_GIFT_PRODUCT = "KEY_HAS_GIFT_PRODUCT"
 
             const val BUNDLE_WISHLIST_EVENT_DATA = "BUNDLE_WISHLIST_EVENT_DATA"
+
+            const val BUNDLE_KEY = "BUNDLE_KEY"
+            const val BUNDLE_KEY_ITEM = "item"
+            const val BUNDLE_KEY_POSITION = "position"
+            const val BUNDLE_KEY_SCREEN_NAME = "screenName"
+            const val BUNDLE_KEY_DONT_ASK_AGAIN_CHECKED = "dontAskAgainChecked"
 
             /*****************************************************************************************
              * Args Keys
@@ -187,5 +205,9 @@ class AppConstant {
         }
     }
 
-    enum class DashDetailsViewType(val value: Int) { HEADER_TITLE(0), APP_FEATURE_LIST(1), TERMS_AND_CONDITION(2) }
+    enum class DashDetailsViewType(val value: Int) {
+        HEADER_TITLE(0), APP_FEATURE_LIST(1), TERMS_AND_CONDITION(
+            2
+        )
+    }
 }
