@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.compose.foundation.background
@@ -20,6 +22,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -50,6 +53,7 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.ui.compose.contentView
 import za.co.woolworths.financial.services.android.ui.wfs.theme.FuturaFontFamily
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
+import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.REQUEST_KEY_CONFIRMATION_DIALOG
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.RESULT_DELETE_LIST_CONFIRMED
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.SCREEN_NAME_DELETE_LIST_CONFIRMATION
@@ -74,6 +78,7 @@ class MyShoppingListFragment : Fragment() {
     private var mBottomNavigator: BottomNavigator? = null
     private val myListviewModel: MyListViewModel by viewModels()
     private var bottomsheetConfirmationDialog: ConfirmationBottomsheetDialogFragment? = null
+    private var appBarShowState = mutableStateOf(String())
 
     companion object {
         private const val MY_LIST_SIGN_IN_REQUEST_CODE = 7878
@@ -87,25 +92,7 @@ class MyShoppingListFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        setFragmentResultListener(REQUEST_KEY_CONFIRMATION_DIALOG) { _, bundle ->
-            val result = bundle.getString(BUNDLE_KEY)
-            if (result == RESULT_DELETE_LIST_CONFIRMED) {
-                val item = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    bundle.getParcelable(BUNDLE_KEY_ITEM, ShoppingList::class.java)
-                } else {
-                    bundle.getParcelable(BUNDLE_KEY_ITEM) as? ShoppingList
-                }
-                val position = bundle.getInt(BUNDLE_KEY_POSITION, -1)
-                val isCheckedDontAskAgain =
-                    bundle.getBoolean(BUNDLE_KEY_DONT_ASK_AGAIN_CHECKED, false)
-                item?.let {
-                    navigateToDeleteProgressDialog(item)
-                    myListviewModel.setIsCheckedDontAskAgain(isCheckedDontAskAgain)
-                    myListviewModel.onEvent(MyLIstUIEvents.OnDeleteListConfirm(item, position))
-                }
-            }
-        }
+        addObserver()
     }
 
     override fun onCreateView(
@@ -115,7 +102,6 @@ class MyShoppingListFragment : Fragment() {
     ) = contentView(
         ViewCompositionStrategy.DisposeOnLifecycleDestroyed(viewLifecycleOwner)
     ) {
-
         OneAppTheme {
 
             val scope = rememberCoroutineScope()
@@ -146,7 +132,7 @@ class MyShoppingListFragment : Fragment() {
                                 .fillMaxWidth()
                                 .heightIn(min = 56.dp)
                                 .background(color = Color.White),
-                            title = LocalContext.current.getString(R.string.my_shopping_lists),
+                            title = appBarShowState.value,
                             onClick = {
                                 activity?.onBackPressed()
                             }
@@ -267,14 +253,20 @@ class MyShoppingListFragment : Fragment() {
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
         if (!hidden) {
-            hideActivityToolbar()
+            Handler(Looper.getMainLooper()).postDelayed({
+                hideActivityToolbar()
+                appBarShowState.value = getString(R.string.my_shopping_lists)
+            }, 2000L)
         }
     }
 
     override fun onResume() {
         super.onResume()
         myListviewModel.onEvent(MyLIstUIEvents.SetDeliveryLocation)
-        hideActivityToolbar()
+        Handler(Looper.getMainLooper()).postDelayed({
+            hideActivityToolbar()
+            appBarShowState.value = getString(R.string.my_shopping_lists)
+        }, 2000L)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -341,5 +333,36 @@ class MyShoppingListFragment : Fragment() {
     private fun navigateToShareListDialog(shoppingList: ShoppingList) {
         val fragment = ShoppingListShareDialogFragment()
         fragment.show(parentFragmentManager, ShoppingListShareDialogFragment::class.simpleName)
+    }
+
+    private fun addObserver() {
+        setFragmentResultListener(AppConstant.REQUEST_CODE_CREATE_LIST.toString()) { _, bundle ->
+            when (bundle.getInt(AppConstant.RESULT_CODE)) {
+                AppConstant.REQUEST_CODE_CREATE_LIST -> {
+                    myListviewModel.onEvent(MyLIstUIEvents.OnNewListCreatedEvent)
+                }
+
+                else -> {}
+            }
+        }
+
+        setFragmentResultListener(REQUEST_KEY_CONFIRMATION_DIALOG) { _, bundle ->
+            val result = bundle.getString(BUNDLE_KEY)
+            if (result == RESULT_DELETE_LIST_CONFIRMED) {
+                val item = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    bundle.getParcelable(BUNDLE_KEY_ITEM, ShoppingList::class.java)
+                } else {
+                    bundle.getParcelable(BUNDLE_KEY_ITEM) as? ShoppingList
+                }
+                val position = bundle.getInt(BUNDLE_KEY_POSITION, -1)
+                val isCheckedDontAskAgain =
+                    bundle.getBoolean(BUNDLE_KEY_DONT_ASK_AGAIN_CHECKED, false)
+                item?.let {
+                    navigateToDeleteProgressDialog(item)
+                    myListviewModel.setIsCheckedDontAskAgain(isCheckedDontAskAgain)
+                    myListviewModel.onEvent(MyLIstUIEvents.OnDeleteListConfirm(item, position))
+                }
+            }
+        }
     }
 }

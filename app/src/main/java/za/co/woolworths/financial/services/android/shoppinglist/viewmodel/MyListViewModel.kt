@@ -76,6 +76,7 @@ class MyListViewModel @Inject constructor(
                 events.position
             )
             is MyLIstUIEvents.SignedOutStateEvent -> showSignedOutState()
+            is MyLIstUIEvents.OnNewListCreatedEvent -> getShoppingList()
             is MyLIstUIEvents.SignInClick -> {
                 // Rare scenario where user logged-in in MyList screen
                 onInit()
@@ -281,18 +282,18 @@ class MyListViewModel @Inject constructor(
                 viewModelScope.launch(Dispatchers.Main) {
                     when (shoppingListResponse.status) {
                         Status.SUCCESS -> {
-                            _isLoading.value = false
                             listDataState.value = listDataState.value.copy(
                                 isSuccessResponse = true
                             )
                             setListData(shoppingListResponse.data)
+                            _isLoading.value = false
                         }
 
                         Status.ERROR -> {
-                            _isLoading.value = false
                             listDataState.value = listDataState.value.copy(
                                 isError = true
                             )
+                            _isLoading.value = false
                         }
 
                         Status.LOADING -> {
