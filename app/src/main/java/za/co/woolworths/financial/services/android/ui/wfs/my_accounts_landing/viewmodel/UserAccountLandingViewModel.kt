@@ -21,7 +21,6 @@ import za.co.woolworths.financial.services.android.models.dto.account.ServerErro
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.CreditCardDeliveryStatusResponse
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.wfs.common.ConnectionState
-import za.co.woolworths.financial.services.android.ui.wfs.common.state.LifecycleTransitionType
 import za.co.woolworths.financial.services.android.ui.wfs.core.FirebaseAnalyticsUserProperty
 import za.co.woolworths.financial.services.android.ui.wfs.core.IFirebaseAnalyticsUserProperty
 import za.co.woolworths.financial.services.android.ui.wfs.core.NetworkStatusUI
@@ -102,10 +101,7 @@ class UserAccountLandingViewModel @Inject constructor(
     var isAccountFragmentVisible by mutableStateOf(false)
     var isBiometricPopupEnabled by mutableStateOf(false)
     var isAutoReconnectActivated: Boolean = false
-
-
-    private val _securityTransitionType = MutableSharedFlow<LifecycleTransitionType>()
-    val securityTransitionType = _securityTransitionType.asSharedFlow()
+    var isBiometricUiBlurEnabled by mutableStateOf(false)
 
     private var _mapOfFinalProductItems = mutableMapOf<String, AccountProductCardsGroup?>()
     val mapOfFinalProductItems: MutableMap<String, AccountProductCardsGroup?> =
@@ -145,11 +141,6 @@ class UserAccountLandingViewModel @Inject constructor(
         initProductAndOfferItem()
     }
 
-    fun setBiometricSecurityState(state : LifecycleTransitionType){
-        viewModelScope.launch {
-            _securityTransitionType.emit(state)
-        }
-    }
 
     private fun initProductAndOfferItem() {
         populateMapOfMyProducts()
@@ -164,6 +155,13 @@ class UserAccountLandingViewModel @Inject constructor(
             petInsuranceResponse = null
             isUserAuthenticated.value = NotAuthenticated
         }
+    }
+
+    fun enableBiometricBlur() {
+        isBiometricUiBlurEnabled = true
+    }
+    fun disableBiometricBlur() {
+        isBiometricUiBlurEnabled = false
     }
 
     fun setUserAuthenticated(resultCode: Int?) {

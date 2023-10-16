@@ -5,12 +5,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.lifecycleScope
-import com.facebook.gamingservices.GameRequestDialog.show
 import com.google.gson.JsonObject
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -18,11 +24,11 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.showErrorDialog
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.BetterActivityResult
 import za.co.woolworths.financial.services.android.ui.fragments.credit_card_delivery.SetUpDeliveryNowDialog
-import za.co.woolworths.financial.services.android.ui.wfs.common.biometric.BiometricCallback
 import za.co.woolworths.financial.services.android.ui.wfs.common.biometric.WfsBiometricManager
 import za.co.woolworths.financial.services.android.ui.wfs.common.contentView
 import za.co.woolworths.financial.services.android.ui.wfs.common.state.ActivityLifecycleObserver
 import za.co.woolworths.financial.services.android.ui.wfs.common.state.LifecycleTransitionType
+import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.extensions.conditional
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature.navigation.AccountLandingEventLauncherImpl
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature.navigation.FragmentResultType
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature.screen.UserAccountsLandingScene
@@ -30,8 +36,6 @@ import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.fe
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.schema.ManageLoginRegister
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.viewmodel.UserAccountLandingViewModel
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
-import za.co.woolworths.financial.services.android.util.AuthenticateUtils
-import za.co.woolworths.financial.services.android.util.SessionUtilities
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -43,19 +47,22 @@ class UserAccountsLandingFragment : Fragment() {
     private val mRegisterActivityForResult = BetterActivityResult.registerActivityForResult(this)
 
     @Inject lateinit var navigation: AccountLandingEventLauncherImpl
+
     @Inject lateinit var biometricManager: WfsBiometricManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         navigation.onCreatePutC2Id()
         deepLinkParams = viewModel.parseDeepLinkData(arguments)
-        biometricManager.isFragmentObscuredByOverlay(isHidden = false)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?)
     = contentView(ViewCompositionStrategy.DisposeOnLifecycleDestroyed(viewLifecycleOwner)) {
+
         OneAppTheme {
+            Box (modifier = Modifier.background(Color.White).conditional(viewModel.isBiometricUiBlurEnabled, ifTrue = { blur(30.dp) }, ifFalse = null)) {
                 UserAccountsLandingScene(viewModel, onProductClick = { productGroup ->
+                    biometricManager.isFragmentObscuredByOverlay(true)
                     viewModel.accountProductCardsGroup = productGroup
                     navigation.onProductClicked(
                         productGroup = productGroup,
@@ -64,43 +71,34 @@ class UserAccountsLandingFragment : Fragment() {
                     )
                 })
                 { view ->
+                    biometricManager.isFragmentObscuredByOverlay(true)
                     navigation.onItemSelectedListener(
                         event = view,
                         viewModel = viewModel,
                         activityLauncher = mRegisterActivityForResult
                     )
                 }
+            }
         }
+        setupBiometricAuthentication()
+    }
 
-        if (SessionUtilities.getInstance().isUserAuthenticated
-            && AuthenticateUtils.instance.isBiometricAuthenticationRequired) {
-            viewLifecycleOwner.lifecycle.addObserver(ActivityLifecycleObserver { status ->
-                viewModel.setBiometricSecurityState(status)
-                when (status) {
-                    LifecycleTransitionType.BACKGROUND_TO_FOREGROUND -> {
-                        if (isAdded && isVisible && biometricManager.isFragmentObscuredByOverlay.not()) {
-                            (requireActivity() as? BottomNavigationActivity)?.apply {
-                                biometricManager.apply {
-                                    configureBiometricResult { prompt ->
-                                        when (prompt) {
-                                            BiometricCallback.ErrorUserCanceled -> {
-                                                val bottomNavigationById = (requireActivity() as? BottomNavigationActivity)?.bottomNavigationById
-                                                bottomNavigationById?.currentItem = BottomNavigationActivity.INDEX_TODAY
-                                            }
-                                            else -> Unit
-                                        }
-                                    }
-                                    show()
-                                }
+    private fun setupBiometricAuthentication() {
+                viewLifecycleOwner.lifecycle.addObserver(ActivityLifecycleObserver { status ->
+                    when (status) {
+                        LifecycleTransitionType.BACKGROUND_TO_FOREGROUND -> {
+                            if (biometricManager.isBiometricEnabled()) {
+                                val bottomNavigationActivity =
+                                (requireActivity() as? BottomNavigationActivity)
+                            val bottomNavigationView =
+                                bottomNavigationActivity?.bottomNavigationById
+                            biometricManager.setupBiometricAuthenticationForAccountLanding(
+                                this, bottomNavigationView, viewModel)
                             }
                         }
-                        biometricManager.isFragmentObscuredByOverlay(isHidden = false)
+                        else -> viewModel.disableBiometricBlur()
                     }
-
-                    else -> Unit
-                }
-            })
-        }
+                })
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -164,18 +162,19 @@ class UserAccountsLandingFragment : Fragment() {
         }
     }
 
-    override fun onHiddenChanged(hidden: Boolean) {
-        super.onHiddenChanged(hidden)
-
-        if (hidden) {
-            biometricManager.isFragmentObscuredByOverlay(isHidden = true)
+    override fun onHiddenChanged(isHidden: Boolean) {
+        super.onHiddenChanged(isHidden)
+         val bottomNavigationActivity = (requireActivity() as? BottomNavigationActivity)
+         val bottomNavigationById = bottomNavigationActivity?.bottomNavigationById
+        if (isHidden) {
+            if (bottomNavigationById?.currentItem == BottomNavigationActivity.INDEX_ACCOUNT) {
+                biometricManager.isFragmentObscuredByOverlay(isHidden = true)
+            }
         }
-
         with(viewModel) {
-            isAccountFragmentVisible(isVisible = !hidden)
-
+            isAccountFragmentVisible(isVisible = !isHidden)
             setUserAuthentication()
-        if (!hidden) {
+        if (!isHidden) {
             navigation.setScreenNameMyAccount()
             navigation.hideToolbar()
                 if (isUserAuthenticated.value == Authenticated) {

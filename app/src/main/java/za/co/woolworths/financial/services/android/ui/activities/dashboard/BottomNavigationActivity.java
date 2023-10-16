@@ -30,9 +30,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.graphics.Typeface;
-import android.hardware.biometrics.BiometricManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -44,10 +42,8 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.core.widget.NestedScrollView;
@@ -86,7 +82,6 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.IToastInterface;
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
 import za.co.woolworths.financial.services.android.models.BrandNavigationDetails;
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.CartSummary;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetails;
@@ -96,8 +91,6 @@ import za.co.woolworths.financial.services.android.models.dto.ProductView;
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams;
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionStateType;
 import za.co.woolworths.financial.services.android.models.dto.item_limits.ProductCountMap;
-import za.co.woolworths.financial.services.android.models.network.AppContextProviderImpl;
-import za.co.woolworths.financial.services.android.models.network.NetworkConfig;
 import za.co.woolworths.financial.services.android.models.network.Parameter;
 import za.co.woolworths.financial.services.android.models.service.event.BadgeState;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
@@ -106,7 +99,6 @@ import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSiz
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity;
-import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity;
 import za.co.woolworths.financial.services.android.ui.base.BaseActivity;
 import za.co.woolworths.financial.services.android.ui.base.SavedInstanceFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.RefinementDrawerFragment;
@@ -133,8 +125,9 @@ import za.co.woolworths.financial.services.android.ui.views.ToastFactory;
 import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.ui.views.shop.dash.ChangeFulfillmentCollectionStoreFragment;
-import za.co.woolworths.financial.services.android.ui.wfs.common.NetworkUtilsKt;
+import za.co.woolworths.financial.services.android.ui.wfs.common.biometric.WfsBiometricManager;
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature.fragment.UserAccountsLandingFragment;
+import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.viewmodel.UserAccountLandingViewModel;
 import za.co.woolworths.financial.services.android.util.AppConstant;
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
 import za.co.woolworths.financial.services.android.util.DeepLinkingUtils;
@@ -158,6 +151,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         PermissionResultCallback, ToastUtils.ToastInterface, IToastInterface, Observer {
 
 
+    UserAccountLandingViewModel userAccountLandingViewModel;
     public static final int INDEX_PRODUCT = FragNavController.TAB1;
     public static final int INDEX_TODAY = FragNavController.TAB2;
     public static final int INDEX_CART = FragNavController.TAB3;
@@ -199,6 +193,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     private int currentTabIndex = INDEX_TODAY;
     private int previousTabIndex = INDEX_TODAY;
 
+    @Inject WfsBiometricManager biometricManager;
+
     @Override
     public int getLayoutId() {
         return R.layout.activity_bottom_navigation;
@@ -237,12 +233,12 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(SavedInstanceFragment.getInstance(getFragmentManager()).popData());
         mBundle = getIntent().getExtras();
         parseDeepLinkData();
+         userAccountLandingViewModel = new ViewModelProvider(this).get(UserAccountLandingViewModel.class);
         new AmplifyInit();
         mNavController = FragNavController.newBuilder(savedInstanceState,
                         getSupportFragmentManager(),

@@ -38,7 +38,7 @@ object BiometricUtils {
         return false
     }
 
-    fun Context.isDeviceScreenLocked(): Boolean {
+    fun Fragment.isDeviceScreenLocked(): Boolean {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             isDeviceLocked()
         } else {
@@ -49,8 +49,8 @@ object BiometricUtils {
     /**
      * @return true if pattern set, false if not (or if an issue when checking)
      */
-    private fun Context.isPatternSet(): Boolean {
-        val cr: ContentResolver = contentResolver
+    private fun Fragment.isPatternSet(): Boolean {
+        val cr: ContentResolver = requireContext().contentResolver
         return try {
             val lockPatternEnable: Int =
                 Settings.Secure.getInt(cr, Settings.Secure.LOCK_PATTERN_ENABLED)
@@ -63,9 +63,9 @@ object BiometricUtils {
     /**
      * @return true if pass or pin set
      */
-    private fun Context.isPassOrPinSet(): Boolean {
+    private fun Fragment.isPassOrPinSet(): Boolean {
         val keyguardManager =
-            getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager //api 16+
+            requireContext().getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager //api 16+
         return keyguardManager.isKeyguardSecure
     }
 
@@ -73,9 +73,8 @@ object BiometricUtils {
      * @return true if pass or pin or pattern locks screen
      */
     @TargetApi(23)
-    private fun Context.isDeviceLocked(): Boolean {
-        val keyguardManager =
-            getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager //api 23+
+    private fun Fragment.isDeviceLocked(): Boolean {
+        val keyguardManager = requireContext().getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager //api 23+
         return keyguardManager.isDeviceSecure
     }
 }
