@@ -3121,4 +3121,11 @@
     <string name="edit_option_desc">Invited people can add or remove items from your list.</string>
     <string name="share_btn">SHARE</string>
 
+    <string name="my_list_delete_this_list">Delete This List?</string>
+    <string name="my_list_delete_this_list_desc">If you choose to remove this list, you can still shop for the items in the app.</string>
+    <string name="my_list_delete_this_list_checkbox_title">Don’t show me this message again.</string>
+    <string name="my_list_deleting_title">Removing Your %s List</string>
+    <string name="my_list_snackbar_message">Your list has been removed</string>
+
+
 </resources>

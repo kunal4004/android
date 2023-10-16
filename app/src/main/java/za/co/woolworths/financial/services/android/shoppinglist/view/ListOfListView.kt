@@ -103,7 +103,7 @@ fun ListOfListView(
                         ),
                         actionText = R.string.remove
                     ) {
-                        onEvent(MyLIstUIEvents.OnSwipeDeleteAction(listItem))
+                        onEvent(MyLIstUIEvents.OnSwipeDeleteAction(listItem, index))
                     }
                 }
             )

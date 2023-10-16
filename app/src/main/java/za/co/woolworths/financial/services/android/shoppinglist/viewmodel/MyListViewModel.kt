@@ -7,12 +7,14 @@ import com.awfs.coordination.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import za.co.woolworths.financial.services.android.common.ResourcesProvider
 import za.co.woolworths.financial.services.android.domain.repository.MyListRepository
+import za.co.woolworths.financial.services.android.domain.usecase.DeleteShoppingListUC
 import za.co.woolworths.financial.services.android.domain.usecase.GetMyListsUC
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
@@ -23,6 +25,7 @@ import za.co.woolworths.financial.services.android.shoppinglist.component.EmptyS
 import za.co.woolworths.financial.services.android.shoppinglist.component.ListDataState
 import za.co.woolworths.financial.services.android.shoppinglist.component.LocationDetailsState
 import za.co.woolworths.financial.services.android.shoppinglist.component.MyLIstUIEvents
+import za.co.woolworths.financial.services.android.shoppinglist.component.MyListScreenEvents
 import za.co.woolworths.financial.services.android.shoppinglist.service.network.ProductListDetails
 import za.co.woolworths.financial.services.android.ui.extension.deviceWidth
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.mapNetworkCallToViewStateFlow
@@ -44,9 +47,15 @@ import javax.inject.Inject
 class MyListViewModel @Inject constructor(
     private val resources: ResourcesProvider,
     val getMyListsUC: GetMyListsUC,
+    val deleteShoppingListUC: DeleteShoppingListUC,
     private val myListRepository: MyListRepository,
 ) : ViewModel() {
 
+    private var _onScreenEvents: MutableStateFlow<MyListScreenEvents> =
+        MutableStateFlow(MyListScreenEvents.None)
+    val onScreenEvents: StateFlow<MyListScreenEvents> = _onScreenEvents.asStateFlow()
+
+    private var isCheckedDontAskAgain: Boolean = false
     var deliveryDetailsState = mutableStateOf(LocationDetailsState())
     private var _isLoading = MutableStateFlow(false)
     val isLoading = _isLoading.asStateFlow()
@@ -62,7 +71,10 @@ class MyListViewModel @Inject constructor(
             is MyLIstUIEvents.SetDeliveryLocation -> setDeliveryDetails()
             is MyLIstUIEvents.ListItemRevealed -> addToRevealItems(events.item)
             is MyLIstUIEvents.ListItemCollapsed -> collapseRevealItems(events.item)
-            is MyLIstUIEvents.OnSwipeDeleteAction -> {} //TODO: Implement in upcoming sprint
+            is MyLIstUIEvents.OnDeleteListConfirm -> deleteShoppingList(
+                events.item,
+                events.position
+            )
             is MyLIstUIEvents.SignedOutStateEvent -> showSignedOutState()
             is MyLIstUIEvents.OnNewListCreatedEvent -> getShoppingList()
             is MyLIstUIEvents.SignInClick -> {
@@ -74,9 +86,45 @@ class MyListViewModel @Inject constructor(
         }
     }
 
+    private fun deleteShoppingList(item: ShoppingList, position: Int) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                deleteShoppingListUC(item.listId).collectLatest { shoppingListResponse ->
+                    withContext(Dispatchers.Default) {
+                        when (shoppingListResponse.status) {
+                            Status.SUCCESS -> {
+                                val updatedList = listDataState.value.list.toMutableList()
+                                updatedList.remove(item)
+                                val newList = shoppingListResponse.data?.lists
+                                listDataState.value = listDataState.value.copy(
+                                    list = updatedList
+                                )
+                                _onScreenEvents.emit(
+                                    MyListScreenEvents.DismissDialog(
+                                        true, item.listName
+                                    )
+                                )
+                            }
+
+                            Status.ERROR -> {
+                                _onScreenEvents.emit(
+                                    MyListScreenEvents.DismissDialog(
+                                        false, item.listName
+                                    )
+                                )
+                            }
+
+                            Status.LOADING -> {}
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     private fun addToRevealItems(item: ShoppingList) {
         viewModelScope.launch {
-            withContext(Dispatchers.Default){
+            withContext(Dispatchers.Default) {
                 val newList = listDataState.value.revealedList.toMutableList()
                 newList.add(item.listId)
                 listDataState.value = listDataState.value.copy(
@@ -88,7 +136,7 @@ class MyListViewModel @Inject constructor(
 
     private fun collapseRevealItems(item: ShoppingList) {
         viewModelScope.launch {
-            withContext(Dispatchers.Default){
+            withContext(Dispatchers.Default) {
                 val newList = listDataState.value.revealedList.toMutableList()
                 newList.remove(item.listId)
                 listDataState.value = listDataState.value.copy(
@@ -308,4 +356,10 @@ class MyListViewModel @Inject constructor(
         val usableDeviceWidth = (deviceWidthInDp - 60) // 60 is the left and right margin
         return (usableDeviceWidth / 54) // 54 is the width of productImage
     }
+
+    fun setIsCheckedDontAskAgain(checkedDontAskAgain: Boolean) {
+        isCheckedDontAskAgain = checkedDontAskAgain
+    }
+
+    fun isCheckedDontAskAgain() = isCheckedDontAskAgain
 }
