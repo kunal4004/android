@@ -396,6 +396,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         if (isVisible) {
             if (((KotlinUtils.isLocationPlaceIdSame == false || KotlinUtils.isNickNameChanged == true) && KotlinUtils.placeId != null) || WoolworthsApplication.getValidatePlaceDetails() == null) {
                 executeValidateSuburb()
+                return
             } else if (Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.deliveryType.isNullOrEmpty() && KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.deliveryType.isNullOrEmpty()) {
                 return
             } else if (KotlinUtils.isLocationPlaceIdSame == true && KotlinUtils.placeId != null) {
@@ -548,6 +549,10 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         super.onHiddenChanged(hidden)
         if (!hidden) {
             //do when hidden
+            if (WoolworthsApplication.getValidatePlaceDetails() == null || validateLocationResponse == null) {
+                executeValidateSuburb()
+            }
+            timer?.start()
             (activity as? BottomNavigationActivity)?.apply {
                 fadeOutToolbar(R.color.recent_search_bg)
                 showBackNavigationIcon(false)
@@ -608,7 +613,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                 binding.viewpagerMain,
                 binding.viewpagerMain.currentItem
             )
-            if (fragment is DashDeliveryAddressFragment){
+            if (fragment is DashDeliveryAddressFragment) {
                 fragment.onActivityResult(requestCode, resultCode, data)
             }
         }

@@ -51,6 +51,7 @@
             android:ellipsize="end"
             android:fontFamily="@font/opensans_regular"
             android:maxLines="1"
+            android:contentDescription="@string/cd_checkout_delivery_address"
             tools:text="Constantia Emporium"
             android:textColor="@color/black"
             android:textSize="@dimen/thirteen_sp" />
@@ -73,6 +74,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@color/white"
+            android:contentDescription="@string/next_arrow"
             android:src="@drawable/ic_caret_black" />
     </com.facebook.shimmer.ShimmerFrameLayout>
 

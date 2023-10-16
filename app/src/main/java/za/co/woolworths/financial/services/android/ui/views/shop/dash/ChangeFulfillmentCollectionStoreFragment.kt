@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.LayoutDashCollectionStoreBinding
 import com.google.gson.JsonSyntaxException
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
@@ -38,10 +39,13 @@ import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.ge
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.geolocation.network.model.PlaceDetails
+import za.co.woolworths.financial.services.android.geolocation.network.validatestoremodel.ValidateStoreResponse
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.TAG_CHANGEFULLFILMENT_COLLECTION_STORE_FRAGMENT
 import za.co.woolworths.financial.services.android.geolocation.view.PargoStoreInfoBottomSheetDialog
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.geolocation.view.FBHInfoBottomSheetDialog
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderLoading
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderSuccess
 
 class ChangeFulfillmentCollectionStoreFragment :
     DepartmentExtensionFragment(R.layout.layout_dash_collection_store),
@@ -64,6 +68,7 @@ class ChangeFulfillmentCollectionStoreFragment :
 
         parentFragment = (activity as? BottomNavigationActivity)?.currentFragment as? ShopFragment
         this.saveInstanceState = savedInstanceState
+        addObserver()
     }
 
     override fun onResume() {
@@ -121,6 +126,25 @@ class ChangeFulfillmentCollectionStoreFragment :
                 setStoreCollectionData(WoolworthsApplication.getCncBrowsingValidatePlaceDetails())
             } else {
                 showCategoryList()
+            }
+        }
+    }
+
+    private fun addObserver() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            confirmAddressViewModel.validateStoreInventoryData.collectLatest { validatePlaceResponse ->
+                with(validatePlaceResponse) {
+                    renderLoading {
+                        if (isLoading) {
+                            binding.cncProgressBar.visibility = View.VISIBLE
+                        } else
+                            binding.cncProgressBar.visibility = View.GONE
+
+                    }
+                    renderSuccess {
+                        checkAndCallConfirmLocationApi(output)
+                    }
+                }
             }
         }
     }
@@ -278,7 +302,8 @@ class ChangeFulfillmentCollectionStoreFragment :
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.tvConfirmStore -> {
-                callConfirmLocationApi()
+                // first will call store inventory to get store data then after success will make confirmLocation API.
+                callValidateStoreInventory()
             }
 
             R.id.btChange -> {
@@ -287,7 +312,20 @@ class ChangeFulfillmentCollectionStoreFragment :
         }
     }
 
-    private fun callConfirmLocationApi() {
+    private fun callValidateStoreInventory() {
+        lifecycleScope.launch {
+            if (placeId.isNullOrEmpty() && storeId.isNullOrEmpty()) {
+                return@launch
+            } else {
+                confirmAddressViewModel.queryValidateStoreInventory(placeId!!, storeId!!)
+            }
+        }
+    }
+
+    private fun checkAndCallConfirmLocationApi(validateStoreResponse: ValidateStoreResponse) {
+        if (validateStoreResponse.validatePlace != null) {
+            setCnCStoreInValidateResponse(validateStoreResponse?.validatePlace?.stores)
+        }
         if (Utils.getPreferredDeliveryLocation()?.fulfillmentDetails == null &&
             KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails == null
         ) {
@@ -300,7 +338,23 @@ class ChangeFulfillmentCollectionStoreFragment :
         }
     }
 
+    private fun setCnCStoreInValidateResponse(browsingStoreData: ArrayList<Store>?) {
+        val storeListData = WoolworthsApplication.getValidatePlaceDetails()?.stores
+            ?: WoolworthsApplication.getCncBrowsingValidatePlaceDetails()?.stores
+        if (!storeListData.isNullOrEmpty() && !browsingStoreData.isNullOrEmpty()) {
+            storeListData?.forEach { listStore ->
+                if (listStore.storeId == browsingStoreData[0].storeId) {
+                    KotlinUtils.setCncStoreValidateResponse(browsingStoreData[0], listStore)
+                    return@forEach
+                }
+            }
+        }
+    }
+
     private fun postConfirmLocationApi() {
+        if (placeId?.isNullOrEmpty() == true) {
+            return
+        }
         lifecycleScope.launch {
             try {
                 binding.cncProgressBar.visibility = View.VISIBLE

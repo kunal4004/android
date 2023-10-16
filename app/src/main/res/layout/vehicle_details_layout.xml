@@ -110,6 +110,7 @@
             android:hint="@string/optional_hint"
             android:inputType="textEmailAddress"
             android:maxLength="@integer/twenty"
+            android:contentDescription="@string/cd_delivery_details_vehicle_color_value"
             android:textColorHint="@color/color_9D9D9D" />
 
         <TextView
@@ -138,6 +139,7 @@
             android:id="@+id/vehicleModelEditText"
             style="@style/checkout_edittext_style"
             android:layout_width="match_parent"
+            android:contentDescription="@string/cd_delivery_details_vehicle_model_value"
             android:maxLength="@integer/twenty" />
 
         <TextView
@@ -169,6 +171,7 @@
             android:hint="@string/optional_hint"
             android:imeOptions="actionDone"
             android:maxLength="@integer/twenty"
+            android:contentDescription="@string/cd_delivery_details_vehicle_registration_value"
             android:textColorHint="@color/color_9D9D9D" />
 
     </LinearLayout>

@@ -6,6 +6,10 @@ import static za.co.woolworths.financial.services.android.ui.fragments.shoppingl
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.PRODUCT_DETAILS_FROM_MY_LIST_SEARCH;
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.SHOPPING_LIST_SEARCH_RESULT_REQUEST_CODE;
 import static za.co.woolworths.financial.services.android.util.AppConstant.Keys.EXTRA_SEND_DELIVERY_DETAILS_PARAMS;
+import static za.co.woolworths.financial.services.android.util.Utils.DY_CHANNEL;
+import static za.co.woolworths.financial.services.android.util.Utils.IPAddress;
+import static za.co.woolworths.financial.services.android.util.Utils.KEYWORD_SEARCH_EVENT_NAME;
+import static za.co.woolworths.financial.services.android.util.Utils.KEYWORD_SEARCH_V1;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -22,10 +26,14 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.awfs.coordination.R;
@@ -36,13 +44,26 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.SearchHistory;
+import za.co.woolworths.financial.services.android.models.network.AppContextProviderImpl;
+import za.co.woolworths.financial.services.android.models.network.NetworkConfig;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Context;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Device;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Session;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.User;
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.PrepareChangeAttributeRequestEvent;
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.Properties;
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Response.DyChangeAttributeResponse;
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.ViewModel.DyChangeAttributeViewModel;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.ChanelMessageDialogFragment;
 import za.co.woolworths.financial.services.android.util.Utils;
-
+import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event;
+@AndroidEntryPoint
 public class ProductSearchActivity extends AppCompatActivity
         implements View.OnClickListener, ChanelMessageDialogFragment.IChanelMessageDialogDismissListener {
     public LinearLayoutManager mLayoutManager;
@@ -56,6 +77,10 @@ public class ProductSearchActivity extends AppCompatActivity
     public static final String EXTRA_SEARCH_TEXT_HINT = "SEARCH_TEXT_HINT";
     public static final String EXTRA_LIST_ID = "listId";
     public static final int PRODUCT_SEARCH_ACTIVITY_RESULT_CODE = 1244;
+    private DyChangeAttributeViewModel dyKeywordSearchViewModel;
+    private String dyServerId = null;
+    private String dySessionId = null;
+    private NetworkConfig config = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +109,28 @@ public class ProductSearchActivity extends AppCompatActivity
                 mEditSearchProduct.setHint(mSearchTextHint);
             }
         }
+    }
+
+    private void prepareDyKeywordSearchRequestEvent(String searchProductBrand) {
+        config = new NetworkConfig(new AppContextProviderImpl());
+        if (Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID) != null)
+            dyServerId = Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID);
+        if (Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID) != null)
+            dySessionId = Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID);
+        User user = new User(dyServerId, dyServerId);
+        Session session = new Session(dySessionId);
+        Device device = new Device(IPAddress,config.getDeviceModel());
+        Context context = new Context(device,null,DY_CHANNEL,null);
+        Properties properties = new Properties(null,null,KEYWORD_SEARCH_V1,searchProductBrand,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+        Event events = new Event(null,null,null,null,null,null,null,null,null,null,null,null,KEYWORD_SEARCH_EVENT_NAME,properties);
+        ArrayList<Event> event = new ArrayList<>();
+        event.add(events);
+        PrepareChangeAttributeRequestEvent dyKeywordSearchRequestEvent = new PrepareChangeAttributeRequestEvent(
+                context,
+                event,
+                session,
+                user);
+        dyKeywordSearchViewModel.createDyChangeAttributeRequest(dyKeywordSearchRequestEvent);
     }
 
     private void initUI() {
@@ -150,6 +197,10 @@ public class ProductSearchActivity extends AppCompatActivity
                     intent.putExtra(EXTRA_SEND_DELIVERY_DETAILS_PARAMS, isUserBrowsingDash);
                     setActivityResult(intent, PRODUCT_SEARCH_ACTIVITY_RESULT_CODE);
 				}
+            if (Boolean.TRUE.equals(AppConfigSingleton.getDynamicYieldConfig().isDynamicYieldEnabled())) {
+                dyKeywordSearchViewModel = new ViewModelProvider(this).get(DyChangeAttributeViewModel.class);
+                prepareDyKeywordSearchRequestEvent(searchProductBrand);
+            }
 		}
 	}
 

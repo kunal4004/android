@@ -79,4 +79,8 @@ class RecommendationsRepositoryImplFake : RecommendationsRepository {
             Resource.error(R.string.error_unknown, null)
         }
     }
+
+   /* override suspend fun getRecommendationResponse(requestEvent: Event?): Resource<RecommendationResponse> {
+        TODO("Not yet implemented")
+    }*/
 }
