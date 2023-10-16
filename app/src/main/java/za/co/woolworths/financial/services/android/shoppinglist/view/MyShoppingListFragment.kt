@@ -151,7 +151,7 @@ class MyShoppingListFragment : Fragment() {
                     ) {
                         Snackbar(
                             modifier = Modifier
-                                .padding(24.dp)
+                                .padding(horizontal = 24.dp)
                                 .height(40.dp),
                             containerColor = Color(0xCC030303),
                             contentColor = Color.White
