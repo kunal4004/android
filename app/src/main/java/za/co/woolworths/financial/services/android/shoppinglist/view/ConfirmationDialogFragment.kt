@@ -5,12 +5,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.compose.ui.unit.dp
 import com.awfs.coordination.R
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
+import za.co.woolworths.financial.services.android.presentation.common.confirmationdialog.DeleteListConfirmationView
+import za.co.woolworths.financial.services.android.presentation.common.confirmationdialog.components.ConfirmationUiState
 import za.co.woolworths.financial.services.android.shoppinglist.listener.MyShoppingListItemClickListener
 import za.co.woolworths.financial.services.android.ui.compose.contentView
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
@@ -39,14 +44,24 @@ class ConfirmationDialogFragment : WBottomSheetDialogFragment() {
         ViewCompositionStrategy.DisposeOnDetachedFromWindow
     ) {
 
+
         OneAppTheme {
-            Confirmationdialog(
-                title = getString(R.string.are_you_sure),
-                desc = getString(R.string.remove_desc) , {
+            DeleteListConfirmationView(
+                modifier = Modifier
+                    .padding(top = 25.dp),
+                ConfirmationUiState(
+                    title = R.string.are_you_sure,
+                    desc = R.string.remove_desc
+                ),
+                onCheckBoxChange = {
+
+                },
+                onConfirmClick = {
                     dialog?.dismiss()
                     listener?.itemRemoveClick()
-                }, {
-                   dialog?.dismiss()
+                },
+                onCancelClick = {
+                    dialog?.dismiss()
                 }
             )
         }
