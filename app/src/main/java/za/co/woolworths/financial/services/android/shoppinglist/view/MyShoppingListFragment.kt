@@ -3,6 +3,8 @@ package za.co.woolworths.financial.services.android.shoppinglist.view
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.compose.foundation.background
@@ -14,13 +16,14 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import com.awfs.coordination.R
 import dagger.hilt.android.AndroidEntryPoint
@@ -34,6 +37,7 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator
 import za.co.woolworths.financial.services.android.ui.compose.contentView
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
+import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.Utils
@@ -48,6 +52,7 @@ class MyShoppingListFragment : Fragment() {
 
     private var mBottomNavigator: BottomNavigator? = null
     private val myListviewModel: MyListViewModel by viewModels()
+    private var appBarShowState = mutableStateOf(String())
 
     companion object {
         private const val MY_LIST_SIGN_IN_REQUEST_CODE = 7878
@@ -66,6 +71,8 @@ class MyShoppingListFragment : Fragment() {
     ) = contentView(
         ViewCompositionStrategy.DisposeOnLifecycleDestroyed(viewLifecycleOwner)
     ) {
+        addObserver()
+
         OneAppTheme {
             Scaffold(
                 topBar = {
@@ -75,7 +82,7 @@ class MyShoppingListFragment : Fragment() {
                                 .fillMaxWidth()
                                 .heightIn(min = 56.dp)
                                 .background(color = Color.White),
-                            title = LocalContext.current.getString(R.string.my_shopping_lists),
+                            title = appBarShowState.value,
                             onClick = {
                                 activity?.onBackPressed()
                             }
@@ -127,14 +134,20 @@ class MyShoppingListFragment : Fragment() {
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
         if (!hidden) {
-            hideActivityToolbar()
+            Handler(Looper.getMainLooper()).postDelayed({
+                hideActivityToolbar()
+                appBarShowState.value = getString(R.string.my_shopping_lists)
+            }, 2000L)
         }
     }
 
     override fun onResume() {
         super.onResume()
         myListviewModel.onEvent(MyLIstUIEvents.SetDeliveryLocation)
-        hideActivityToolbar()
+        Handler(Looper.getMainLooper()).postDelayed({
+            hideActivityToolbar()
+            appBarShowState.value = getString(R.string.my_shopping_lists)
+        }, 2000L)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -201,5 +214,17 @@ class MyShoppingListFragment : Fragment() {
     private fun navigateToShareListDialog(shoppingList: ShoppingList) {
         val fragment = ShoppingListShareDialogFragment()
         fragment.show(parentFragmentManager, ShoppingListShareDialogFragment::class.simpleName)
+    }
+
+    private fun addObserver() {
+        setFragmentResultListener(AppConstant.REQUEST_CODE_CREATE_LIST.toString()) { _, bundle ->
+            when (bundle.getInt(AppConstant.RESULT_CODE)) {
+                AppConstant.REQUEST_CODE_CREATE_LIST -> {
+                    myListviewModel.onEvent(MyLIstUIEvents.OnNewListCreatedEvent)
+                }
+
+                else -> {}
+            }
+        }
     }
 }
