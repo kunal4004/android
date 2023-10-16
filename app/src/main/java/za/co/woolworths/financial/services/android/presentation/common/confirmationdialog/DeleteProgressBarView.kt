@@ -7,11 +7,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import za.co.woolworths.financial.services.android.presentation.common.ProgressView
-import za.co.woolworths.financial.services.android.presentation.common.confirmationdialog.components.DeleteProgressViewUiState
+import za.co.woolworths.financial.services.android.presentation.common.confirmationdialog.components.ProgressViewUiState
 
 @Composable
 fun DeleteProgressBarView(
-    state: DeleteProgressViewUiState
+    state: ProgressViewUiState
 ) {
     ProgressView(
         modifier = Modifier

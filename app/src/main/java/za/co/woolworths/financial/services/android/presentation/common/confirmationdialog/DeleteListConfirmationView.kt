@@ -21,12 +21,12 @@ import za.co.woolworths.financial.services.android.presentation.common.CheckboxT
 import za.co.woolworths.financial.services.android.presentation.common.DescriptionText
 import za.co.woolworths.financial.services.android.presentation.common.TitleText
 import za.co.woolworths.financial.services.android.presentation.common.UnderlineButton
-import za.co.woolworths.financial.services.android.presentation.common.confirmationdialog.components.DeleteListConfirmationUiState
+import za.co.woolworths.financial.services.android.presentation.common.confirmationdialog.components.ConfirmationUiState
 
 @Composable
 fun DeleteListConfirmationView(
     modifier: Modifier = Modifier,
-    data: DeleteListConfirmationUiState,
+    data: ConfirmationUiState,
     onCheckBoxChange: (Boolean) -> Unit,
     onConfirmClick: () -> Unit,
     onCancelClick: () -> Unit
@@ -58,7 +58,7 @@ fun DeleteListConfirmationView(
                 CheckboxTitleText(text = stringResource(id = data.checkBoxTitle))
                 Checkbox(
                     modifier = Modifier.scale(0.7f),
-                    checked = data.isCheckedDoNotAskAgain,
+                    checked = data.isChecked,
                     onCheckedChange = onCheckBoxChange,
                     colors = CheckboxDefaults.colors(
                         checkedColor = Color.Black,

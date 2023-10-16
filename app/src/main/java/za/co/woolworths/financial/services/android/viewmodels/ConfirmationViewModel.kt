@@ -15,8 +15,8 @@ import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList
 import za.co.woolworths.financial.services.android.presentation.common.confirmationdialog.components.ConfirmationDialogEvents
 import za.co.woolworths.financial.services.android.presentation.common.confirmationdialog.components.ConfirmationDialogUiState
-import za.co.woolworths.financial.services.android.presentation.common.confirmationdialog.components.DeleteListConfirmationUiState
-import za.co.woolworths.financial.services.android.presentation.common.confirmationdialog.components.DeleteProgressViewUiState
+import za.co.woolworths.financial.services.android.presentation.common.confirmationdialog.components.ConfirmationUiState
+import za.co.woolworths.financial.services.android.presentation.common.confirmationdialog.components.ProgressViewUiState
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.RESULT_DELETE_LIST_CONFIRMED
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.SCREEN_NAME_DELETE_LIST_CONFIRMATION
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.SCREEN_NAME_DELETE_LIST_PROGRESS_BAR
@@ -29,7 +29,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ConfirmationViewModel @Inject constructor(
-    val savedStateHandle: SavedStateHandle,
+    val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     private var _uiState: MutableStateFlow<ConfirmationDialogUiState> =
@@ -37,10 +37,10 @@ class ConfirmationViewModel @Inject constructor(
     val uiState: StateFlow<ConfirmationDialogUiState> = _uiState.asStateFlow()
 
     // Progress UI state
-    val deleteProgressViewUiState = mutableStateOf(DeleteProgressViewUiState())
+    val deleteProgressViewUiState = mutableStateOf(ProgressViewUiState())
 
     // Delete List UI state
-    val deleteListConfirmationUiState = mutableStateOf(DeleteListConfirmationUiState())
+    val deleteListConfirmationUiState = mutableStateOf(ConfirmationUiState())
 
     init {
         val screenName = savedStateHandle.get<String>(BUNDLE_KEY_SCREEN_NAME) ?: ""
@@ -82,7 +82,7 @@ class ConfirmationViewModel @Inject constructor(
         when (event) {
             is ConfirmationDialogEvents.OnCheckedChange -> {
                 deleteListConfirmationUiState.value = deleteListConfirmationUiState.value.copy(
-                    isCheckedDoNotAskAgain = event.isChecked
+                    isChecked = event.isChecked
                 )
             }
 
@@ -109,7 +109,7 @@ class ConfirmationViewModel @Inject constructor(
                     )
                     it.putBoolean(
                         BUNDLE_KEY_DONT_ASK_AGAIN_CHECKED,
-                        deleteListConfirmationUiState.value.isCheckedDoNotAskAgain
+                        deleteListConfirmationUiState.value.isChecked
                     )
                 }
 

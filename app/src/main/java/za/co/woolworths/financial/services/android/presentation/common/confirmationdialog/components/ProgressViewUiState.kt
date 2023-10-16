@@ -6,7 +6,7 @@ import com.awfs.coordination.R
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class DeleteProgressViewUiState(
+data class ProgressViewUiState(
     @StringRes val title: Int = R.string.processing_your_request,
     @StringRes val desc: Int = R.string.processing_your_request_desc,
     val listName: String = ""
