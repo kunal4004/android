@@ -28,7 +28,7 @@ import za.co.woolworths.financial.services.android.ui.wfs.theme.FuturaFontFamily
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OpenSansFontFamily
 
 @Composable
-fun Confirmationdoalog(
+fun Confirmationdialog(
     title: String, desc: String, onRemoveButtonClick: () -> Unit, onCancelButtonClick: () -> Unit
 ) {
     val context = LocalContext.current
@@ -100,7 +100,7 @@ fun Confirmationdoalog(
 @Preview(showBackground = true)
 @Composable
 fun PreviewShowConfirmationDilog() {
-    Confirmationdoalog(
+    Confirmationdialog(
         "Are You Sure?",
         "If you remove these products from your list, you can still shop for them in the app.",
         {

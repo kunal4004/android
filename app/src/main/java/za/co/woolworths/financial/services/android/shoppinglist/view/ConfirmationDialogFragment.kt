@@ -40,7 +40,7 @@ class ConfirmationDialogFragment : WBottomSheetDialogFragment() {
     ) {
 
         OneAppTheme {
-            Confirmationdoalog(
+            Confirmationdialog(
                 title = getString(R.string.are_you_sure),
                 desc = getString(R.string.remove_desc) , {
                     dialog?.dismiss()
