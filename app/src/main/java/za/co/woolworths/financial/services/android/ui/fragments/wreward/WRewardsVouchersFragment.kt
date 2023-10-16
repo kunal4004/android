@@ -144,7 +144,6 @@ public class WRewardsVouchersFragment extends Fragment {
                 } else {
                     startVoucherDetailsActivity();
                 }
-
             }
 
             @Override
