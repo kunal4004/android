@@ -17,7 +17,6 @@ import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationVie
 import za.co.woolworths.financial.services.android.ui.wfs.common.biometric.BiometricUtils.deviceHasPasswordPinLock
 import za.co.woolworths.financial.services.android.ui.wfs.common.biometric.BiometricUtils.isBiometricHardWareAvailable
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.viewmodel.UserAccountLandingViewModel
-import za.co.woolworths.financial.services.android.util.AuthenticateUtils
 import za.co.woolworths.financial.services.android.util.SessionUtilities.*
 import java.util.concurrent.Executor
 import javax.inject.Inject
@@ -26,7 +25,7 @@ enum class BiometricCallback { Error, Succeeded, Failed, ErrorUserCanceled }
 
 interface WfsBiometricManager {
     var isFragmentObscuredByOverlay: Boolean
-    fun isBiometricEnabled() : Boolean
+    fun isBiometricEnabled(context: Context) : Boolean
     fun setupBiometricAuthenticationForAccountLanding(
         fragment: Fragment,
         bottomNavigation: WBottomNavigationView?,
@@ -45,9 +44,9 @@ class WfsBiometricManagerImpl @Inject constructor() : WfsBiometricManager {
     private lateinit var biometricPrompt: BiometricPrompt
     private lateinit var promptInfo: BiometricPrompt.PromptInfo
     override var isFragmentObscuredByOverlay: Boolean = false
-    override fun isBiometricEnabled(): Boolean {
+    override fun isBiometricEnabled(context: Context): Boolean {
         return getInstance().isUserAuthenticated
-                && AuthenticateUtils.instance.isBiometricAuthenticationRequired
+                && AuthenticateUtils.isBiometricAuthenticationSupported(context)
     }
 
     private fun Fragment.setPrompt(callback: (BiometricCallback) -> Unit) {
@@ -174,8 +173,7 @@ class WfsBiometricManagerImpl @Inject constructor() : WfsBiometricManager {
                             BiometricCallback.ErrorUserCanceled -> {
                                 bottomNavigation?.currentItem = BottomNavigationActivity.INDEX_TODAY
                                 viewModel.disableBiometricBlur()
-                                AuthenticateUtils.getInstance(this)
-                                    .enableBiometricForCurrentSession(true)
+                                AuthenticateUtils.enableBiometricForCurrentSession(true)
                             }
 
                             BiometricCallback.Succeeded -> viewModel.disableBiometricBlur()

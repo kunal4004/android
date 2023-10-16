@@ -87,7 +87,7 @@ class UserAccountsLandingFragment : Fragment() {
                 viewLifecycleOwner.lifecycle.addObserver(ActivityLifecycleObserver { status ->
                     when (status) {
                         LifecycleTransitionType.BACKGROUND_TO_FOREGROUND -> {
-                            if (biometricManager.isBiometricEnabled()) {
+                            if (biometricManager.isBiometricEnabled(requireContext())) {
                                 val bottomNavigationActivity =
                                 (requireActivity() as? BottomNavigationActivity)
                             val bottomNavigationView =

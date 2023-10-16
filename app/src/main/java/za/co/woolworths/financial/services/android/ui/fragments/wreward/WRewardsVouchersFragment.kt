@@ -21,11 +21,11 @@ import za.co.woolworths.financial.services.android.ui.activities.WRewardsVoucher
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.adapters.WRewardsVoucherListAdapter
 import za.co.woolworths.financial.services.android.ui.views.ScrollingLinearLayoutManager
+import za.co.woolworths.financial.services.android.ui.wfs.common.biometric.AuthenticateUtils
 import za.co.woolworths.financial.services.android.ui.wfs.common.biometric.BiometricCallback
 import za.co.woolworths.financial.services.android.ui.wfs.common.biometric.WfsBiometricManager
 import za.co.woolworths.financial.services.android.ui.wfs.common.blur.BlurView
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
-import za.co.woolworths.financial.services.android.util.AuthenticateUtils
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.RecycleViewClickListner
 import za.co.woolworths.financial.services.android.util.Utils
@@ -70,8 +70,7 @@ class WRewardsVouchersFragment : Fragment(R.layout.wrewards_vouchers_fragment) {
             when (callback) {
                 BiometricCallback.ErrorUserCanceled -> {
                     bottomNavigationActivity?.bottomNavigationById?.currentItem = BottomNavigationActivity.INDEX_TODAY
-                    AuthenticateUtils.getInstance(requireActivity())
-                        .enableBiometricForCurrentSession(true)
+                    AuthenticateUtils.enableBiometricForCurrentSession(true)
                 }
                 BiometricCallback.Succeeded -> {
                       if (!isBiometricAuthenticated) {
@@ -84,8 +83,7 @@ class WRewardsVouchersFragment : Fragment(R.layout.wrewards_vouchers_fragment) {
     }
 
     private fun presentVoucherDetail() {
-        AuthenticateUtils.getInstance(requireActivity())
-            .enableBiometricForCurrentSession(false)
+        AuthenticateUtils.enableBiometricForCurrentSession(false)
         startVoucherDetailsActivity()
         isBiometricAuthenticated = true
     }
@@ -114,7 +112,7 @@ class WRewardsVouchersFragment : Fragment(R.layout.wrewards_vouchers_fragment) {
         if (vouchers.isNullOrEmpty() || vouchers.size == 0) {
             presentEmptyVoucherView()
         } else {
-            presentVouchersListView(voucherResponse)
+            presentVouchersListView(this, voucherResponse)
         }
     }
 
@@ -142,7 +140,7 @@ class WRewardsVouchersFragment : Fragment(R.layout.wrewards_vouchers_fragment) {
         mVoucherFrameLayoutContainer?.visibility = View.GONE
     }
 
-    private fun presentVouchersListView(vResponse: VoucherResponse?) {
+    private fun presentVouchersListView(fragment: Fragment, vResponse: VoucherResponse?) {
         mErrorHandlerView?.hideEmpyState()
         val voucherListAdapter = WRewardsVoucherListAdapter()
         voucherListAdapter.setItem(vResponse?.voucherCollection?.vouchers ?: listOf())
@@ -153,7 +151,7 @@ class WRewardsVouchersFragment : Fragment(R.layout.wrewards_vouchers_fragment) {
             RecycleViewClickListner(requireActivity(), this, object : RecycleViewClickListner.ClickListener {
                     override fun onClick(view: View, position: Int) {
                         selectedVoucherPosition = position
-                        if (biometricManager.isBiometricEnabled() && !isBiometricAuthenticated) {
+                        if (biometricManager.isBiometricEnabled(fragment.requireContext()) && !isBiometricAuthenticated) {
                             biometricManager.show()
                         }else {
                             presentVoucherDetail()

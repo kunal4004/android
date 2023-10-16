@@ -9,14 +9,12 @@ import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.Switch;
 
 import com.awfs.coordination.R;
 
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
-import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
+import za.co.woolworths.financial.services.android.ui.wfs.common.biometric.AuthenticateUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class BiometricsWalkthrough extends AppCompatActivity implements View.OnClickListener, View.OnTouchListener {
@@ -51,7 +49,7 @@ public class BiometricsWalkthrough extends AppCompatActivity implements View.OnC
 				finishActivity();
 				break;
 			case R.id.biometricAuthenticationSwitchCompat:
-				if (AuthenticateUtils.getInstance(BiometricsWalkthrough.this).isDeviceSecure()&& biometricAuthenticationSwitchCompat.isChecked()) {
+				if (AuthenticateUtils.Companion.isDeviceSecure(BiometricsWalkthrough.this)&& biometricAuthenticationSwitchCompat.isChecked()) {
 						startBiometricAuthentication(LOCK_REQUEST_CODE_TO_ENABLE);
 				} else {
 					openDeviceSecuritySettings();
@@ -66,14 +64,14 @@ public class BiometricsWalkthrough extends AppCompatActivity implements View.OnC
 		super.onActivityResult(requestCode, resultCode, data);
 		switch (requestCode) {
 			case LOCK_REQUEST_CODE_TO_ENABLE:
-				setUserAuthentication(resultCode == RESULT_OK ? true : false);
+				setUserAuthentication(resultCode == RESULT_OK);
 				if (resultCode == RESULT_OK) {
-					AuthenticateUtils.getInstance(BiometricsWalkthrough.this).enableBiometricForCurrentSession(false);
+					AuthenticateUtils.Companion.enableBiometricForCurrentSession(false);
 					finishActivity();
 				}
 				break;
 			case SECURITY_SETTING_REQUEST_CODE:
-				if (AuthenticateUtils.getInstance(BiometricsWalkthrough.this).isDeviceSecure()) {
+				if (AuthenticateUtils.Companion.isDeviceSecure(BiometricsWalkthrough.this)) {
 					startBiometricAuthentication(LOCK_REQUEST_CODE_TO_ENABLE);
 				} else {
 					setUserAuthentication(false);
@@ -109,14 +107,14 @@ public class BiometricsWalkthrough extends AppCompatActivity implements View.OnC
 
 	public void startBiometricAuthentication(int requestCode) {
 		try {
-			AuthenticateUtils.getInstance(BiometricsWalkthrough.this).startAuthenticateApp(requestCode);
+			AuthenticateUtils.Companion.startAuthenticateApp(BiometricsWalkthrough.this, requestCode);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
 	public void setUserAuthentication(boolean isAuthenticated) {
-		AuthenticateUtils.getInstance(BiometricsWalkthrough.this).setUserAuthenticate(isAuthenticated ? SessionDao.BIOMETRIC_AUTHENTICATION_STATE.ON : SessionDao.BIOMETRIC_AUTHENTICATION_STATE.OFF);
+		AuthenticateUtils.Companion.setUserAuthenticate(isAuthenticated ? SessionDao.BIOMETRIC_AUTHENTICATION_STATE.ON : SessionDao.BIOMETRIC_AUTHENTICATION_STATE.OFF);
 		biometricAuthenticationSwitchCompat.setChecked(isAuthenticated);
 	}
 

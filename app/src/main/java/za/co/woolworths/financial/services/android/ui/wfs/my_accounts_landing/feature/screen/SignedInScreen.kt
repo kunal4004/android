@@ -72,10 +72,8 @@ import za.co.woolworths.financial.services.android.ui.wfs.theme.FontDimensions
 import za.co.woolworths.financial.services.android.ui.wfs.theme.Margin
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppBackground
 import za.co.woolworths.financial.services.android.ui.wfs.theme.White
-import za.co.woolworths.financial.services.android.util.AuthenticateUtils
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities
 import za.co.woolworths.financial.services.android.util.SessionUtilities
-import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 
 @Composable
 fun SignedInScreen(

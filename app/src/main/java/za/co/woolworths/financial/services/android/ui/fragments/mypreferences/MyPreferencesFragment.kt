@@ -36,6 +36,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.shop.StandardDel
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.EnableLocationSettingsFragment
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.VtoErrorBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.listener.VtoTryAgainListener
+import za.co.woolworths.financial.services.android.ui.wfs.common.biometric.AuthenticateUtils
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELETE_ACCOUNT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELETE_ACCOUNT_CONFIRMATION
@@ -162,14 +163,10 @@ class MyPreferencesFragment : BaseFragmentBinding<FragmentMyPreferencesBinding>(
 
     fun bindDataWithUI() {
         binding.apply {
-            if (AuthenticateUtils.getInstance(activity).isAppSupportsAuthentication) {
-                if (AuthenticateUtils.getInstance(activity).isDeviceSecure) biometricAuthenticationSwitchCompat.isChecked =
-                    AuthenticateUtils.getInstance(activity).isAuthenticationEnabled else setUserAuthentication(
+                if (AuthenticateUtils.isDeviceSecure(requireContext())) biometricAuthenticationSwitchCompat.isChecked =
+                    AuthenticateUtils.isAuthenticationEnabled() else setUserAuthentication(
                     false
                 )
-            } else {
-                biometricsLayout.setVerticalGravity(View.GONE)
-            }
             val lastDeliveryLocation = Utils.getPreferredDeliveryLocation()
             lastDeliveryLocation?.let { setDeliveryLocation(it) }
 
@@ -295,7 +292,7 @@ class MyPreferencesFragment : BaseFragmentBinding<FragmentMyPreferencesBinding>(
 
     override fun onClick(view: View?) {
         when (view?.id) {
-            R.id.biometricAuthenticationSwitchCompat -> if (AuthenticateUtils.getInstance(activity).isDeviceSecure) {
+            R.id.biometricAuthenticationSwitchCompat -> if (AuthenticateUtils.isDeviceSecure(requireContext())) {
                 if (binding.biometricAuthenticationSwitchCompat.isChecked) {
                     startBiometricAuthentication(LOCK_REQUEST_CODE_TO_ENABLE)
                 } else {
@@ -416,11 +413,11 @@ class MyPreferencesFragment : BaseFragmentBinding<FragmentMyPreferencesBinding>(
             LOCK_REQUEST_CODE_TO_ENABLE -> {
                 setUserAuthentication(resultCode == Activity.RESULT_OK)
                 if (resultCode == Activity.RESULT_OK) {
-                    AuthenticateUtils.getInstance(activity).enableBiometricForCurrentSession(false)
+                    AuthenticateUtils.enableBiometricForCurrentSession(false)
                 }
             }
             LOCK_REQUEST_CODE_TO_DISABLE -> setUserAuthentication(resultCode != Activity.RESULT_OK)
-            SECURITY_SETTING_REQUEST_CODE -> if (AuthenticateUtils.getInstance(activity).isDeviceSecure) {
+            SECURITY_SETTING_REQUEST_CODE -> if (AuthenticateUtils.isDeviceSecure(requireContext())) {
                 startBiometricAuthentication(LOCK_REQUEST_CODE_TO_ENABLE)
             } else {
                 setUserAuthentication(false)
@@ -449,14 +446,14 @@ class MyPreferencesFragment : BaseFragmentBinding<FragmentMyPreferencesBinding>(
 
     fun startBiometricAuthentication(requestCode: Int) {
         try {
-            AuthenticateUtils.getInstance(activity).startAuthenticateApp(requestCode)
+            AuthenticateUtils.startAuthenticateApp(requireActivity(), requestCode)
         } catch (e: Exception) {
-            e.printStackTrace()
+           FirebaseManager.logException(e)
         }
     }
 
     fun setUserAuthentication(isAuthenticated: Boolean) {
-        AuthenticateUtils.getInstance(activity)
+        AuthenticateUtils
             .setUserAuthenticate(if (isAuthenticated) SessionDao.BIOMETRIC_AUTHENTICATION_STATE.ON else SessionDao.BIOMETRIC_AUTHENTICATION_STATE.OFF)
         binding.biometricAuthenticationSwitchCompat?.isChecked = isAuthenticated
     }

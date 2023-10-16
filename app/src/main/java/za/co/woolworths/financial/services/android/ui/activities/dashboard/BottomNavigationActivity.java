@@ -125,11 +125,11 @@ import za.co.woolworths.financial.services.android.ui.views.ToastFactory;
 import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.ui.views.shop.dash.ChangeFulfillmentCollectionStoreFragment;
+import za.co.woolworths.financial.services.android.ui.wfs.common.biometric.AuthenticateUtils;
 import za.co.woolworths.financial.services.android.ui.wfs.common.biometric.WfsBiometricManager;
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature.fragment.UserAccountsLandingFragment;
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.viewmodel.UserAccountLandingViewModel;
 import za.co.woolworths.financial.services.android.util.AppConstant;
-import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
 import za.co.woolworths.financial.services.android.util.DeepLinkingUtils;
 import za.co.woolworths.financial.services.android.util.KotlinUtils;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
@@ -753,9 +753,9 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                     if (AppConfigSingleton.INSTANCE.isBadgesRequired() && !isDeeplinkAction)
                         queryBadgeCountOnStart();
                     isDeeplinkAction = false;
-                    if (AuthenticateUtils.getInstance(BottomNavigationActivity.this).isBiometricAuthenticationRequired()) {
+                    if (AuthenticateUtils.Companion.isBiometricAuthenticationAvailable(BottomNavigationActivity.this)) {
                         try {
-                            AuthenticateUtils.getInstance(BottomNavigationActivity.this).startAuthenticateApp(LOCK_REQUEST_CODE_ACCOUNTS);
+                            AuthenticateUtils.Companion.startAuthenticateApp(BottomNavigationActivity.this, LOCK_REQUEST_CODE_ACCOUNTS);
                         } catch (Exception e) {
                             FirebaseManager.logException(e);
                         }
@@ -1283,11 +1283,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case LOCK_REQUEST_CODE_ACCOUNTS:
-                    AuthenticateUtils.getInstance(BottomNavigationActivity.this).enableBiometricForCurrentSession(false);
+                    AuthenticateUtils.Companion.enableBiometricForCurrentSession(false);
                     getBottomNavigationById().setCurrentItem(INDEX_ACCOUNT);
-                    break;
-                case LOCK_REQUEST_CODE_WREWARDS:
-                    Utils.sendBus(new WRewardsVouchersFragment());
                     break;
                 default:
                     break;
