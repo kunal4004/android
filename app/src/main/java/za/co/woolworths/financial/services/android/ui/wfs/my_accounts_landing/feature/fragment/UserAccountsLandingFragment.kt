@@ -71,7 +71,6 @@ class UserAccountsLandingFragment : Fragment() {
                     )
                 })
                 { view ->
-                    biometricManager.isFragmentObscuredByOverlay(true)
                     navigation.onItemSelectedListener(
                         event = view,
                         viewModel = viewModel,
