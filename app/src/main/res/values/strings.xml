@@ -529,7 +529,7 @@
     <string name="faq">FAQ</string>
     <string name="tips_tricks">Tips &amp; Tricks</string>
     <string name="tips_tricks_titles_vouchers">Your Vouchers</string>
-    <string name="tips_tricks_titles_stores">Find a Product in-Store</string>
+    <string name="tips_tricks_titles_stores">Find a Product In-Store</string>
     <string name="tips_tricks_titles_barcode">Barcode Scanning</string>
     <string name="tips_tricks_titles_delivery"> Your Delivery Location</string>
     <string name="tips_tricks_titles_navigation">My Cart</string>
@@ -545,7 +545,7 @@
     <string name="tips_tricks_desc_navigation">Tap the cart icon in the bottom menu to see the items you’ve added to your cart.</string>
     <string name="tips_tricks_desc_my_accounts">See all your active Woolworths accounts and check your available balance, amount due and credit limit.</string>
     <string name="tips_tricks_desc_statements">View and send your latest statements for your Woolworths accounts.</string>
-    <string name="tips_tricks_desc_shopping_list">Create and manage shopping lists and easily add a list to your cart.</string>
+    <string name="tips_tricks_desc_shopping_list">Create and manage shopping lists, and add a list to your cart.</string>
     <string name="tips_tricks_button_stores">check in-Store availability</string>
     <string name="tips_tricks_button_barcode">Scan a product</string>
     <string name="tips_tricks_button_refine">Refine</string>
