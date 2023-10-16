@@ -19,6 +19,7 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLo
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse
 import za.co.woolworths.financial.services.android.models.network.Status
+import za.co.woolworths.financial.services.android.shoppinglist.component.EmptyStateData
 import za.co.woolworths.financial.services.android.shoppinglist.component.ListDataState
 import za.co.woolworths.financial.services.android.shoppinglist.component.LocationDetailsState
 import za.co.woolworths.financial.services.android.shoppinglist.component.MyLIstUIEvents
@@ -50,6 +51,7 @@ class MyListViewModel @Inject constructor(
     private var _isLoading = MutableStateFlow(false)
     val isLoading = _isLoading.asStateFlow()
     val listDataState = mutableStateOf(ListDataState())
+    var myListState = mutableStateOf(EmptyStateData())
 
     init {
         onInit()
@@ -61,6 +63,12 @@ class MyListViewModel @Inject constructor(
             is MyLIstUIEvents.ListItemRevealed -> addToRevealItems(events.item)
             is MyLIstUIEvents.ListItemCollapsed -> collapseRevealItems(events.item)
             is MyLIstUIEvents.OnSwipeDeleteAction -> {} //TODO: Implement in upcoming sprint
+            is MyLIstUIEvents.SignedOutStateEvent -> showSignedOutState()
+            is MyLIstUIEvents.SignInClick -> {
+                // Rare scenario where user logged-in in MyList screen
+                onInit()
+            }
+
             else -> Unit
         }
     }
@@ -91,7 +99,7 @@ class MyListViewModel @Inject constructor(
 
     private fun setDeliveryDetails() {
         // update the data class of location details to show location details on UI.
-        Utils.getPreferredDeliveryLocation().fulfillmentDetails?.let {
+        Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.let {
             deliveryDetailsState.value = when (Delivery.getType(it?.deliveryType)) {
                 Delivery.CNC -> {
                     deliveryDetailsState.value.copy(
@@ -132,6 +140,16 @@ class MyListViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    private fun showSignedOutState() {
+        myListState.value = myListState.value.copy(
+            isSignedOut = true,
+            icon = R.drawable.ic_shopping_list_sign_out,
+            title = R.string.shop_sign_out_order_title,
+            description = R.string.shop_sign_out_order_desc,
+            buttonText = R.string.sign_in
+        )
     }
 
     private fun onInit() {
@@ -216,11 +234,17 @@ class MyListViewModel @Inject constructor(
                     when (shoppingListResponse.status) {
                         Status.SUCCESS -> {
                             _isLoading.value = false
+                            listDataState.value = listDataState.value.copy(
+                                isSuccessResponse = true
+                            )
                             setListData(shoppingListResponse.data)
                         }
 
                         Status.ERROR -> {
                             _isLoading.value = false
+                            listDataState.value = listDataState.value.copy(
+                                isError = true
+                            )
                         }
 
                         Status.LOADING -> {
