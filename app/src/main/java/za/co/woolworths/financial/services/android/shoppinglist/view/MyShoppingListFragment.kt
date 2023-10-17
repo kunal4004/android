@@ -24,7 +24,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -104,7 +103,6 @@ class MyShoppingListFragment : Fragment() {
     ) {
         OneAppTheme {
 
-            val scope = rememberCoroutineScope()
             val snackbarHostState = remember { SnackbarHostState() }
             val context = LocalContext.current
 
@@ -151,7 +149,7 @@ class MyShoppingListFragment : Fragment() {
                     ) {
                         Snackbar(
                             modifier = Modifier
-                                .padding(horizontal = 24.dp)
+                                .padding(horizontal = 8.dp)
                                 .height(40.dp),
                             containerColor = Color(0xCC030303),
                             contentColor = Color.White
