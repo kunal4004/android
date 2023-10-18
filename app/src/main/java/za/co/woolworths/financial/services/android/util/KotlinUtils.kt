@@ -696,6 +696,7 @@ class KotlinUtils {
                 longitude = browsingStoreData.longitude
                 latitude = browsingStoreData.latitude
                 deliveryDetails = browsingStoreData.deliveryDetails
+                browsingCncStore = browsingStoreData
             }
         }
 
