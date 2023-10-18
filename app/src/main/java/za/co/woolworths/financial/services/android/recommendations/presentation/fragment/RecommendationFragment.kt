@@ -15,10 +15,13 @@ import com.awfs.coordination.databinding.RecommendationsLayoutBinding
 import com.google.gson.Gson
 import com.skydoves.balloon.balloon
 import dagger.hilt.android.AndroidEntryPoint
+import za.co.woolworths.financial.services.android.cart.view.SubstitutionChoice
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.enhancedSubstitution.util.isEnhanceSubstitutionFeatureAvailable
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.models.dto.app_config.EnhanceSubstitution
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.Action
@@ -323,19 +326,45 @@ class RecommendationFragment :
                                     productOutOfStockErrorMessage()
                                 }
                             } else if (skuInventoryList[0].quantity == 1) {
-                                addFoodProductTypeToCart(
-                                    AddItemToCart(
-                                        addItemToCart?.productId,
-                                        addItemToCart?.catalogRefId,
-                                        1
+                                if (isEnhanceSubstitutionFeatureAvailable()) {
+                                    addFoodProductTypeToCart(
+                                        AddItemToCart(
+                                            addItemToCart?.productId,
+                                            addItemToCart?.catalogRefId,
+                                            1,
+                                            SubstitutionChoice.SHOPPER_CHOICE.name,
+                                            ""
+
+                                        )
                                     )
-                                )
+                                } else {
+                                    addFoodProductTypeToCart(
+                                        AddItemToCart(
+                                            addItemToCart?.productId,
+                                            addItemToCart?.catalogRefId,
+                                            1
+                                        )
+                                    )
+                                }
+
                             } else {
-                                val cartItem = AddItemToCart(
-                                    addItemToCart?.productId
-                                        ?: "", addItemToCart?.catalogRefId
-                                        ?: "", skuInventoryList[0].quantity
-                                )
+                                val cartItem =
+                                    if (isEnhanceSubstitutionFeatureAvailable()) {
+                                        AddItemToCart(
+                                            addItemToCart?.productId
+                                                ?: "", addItemToCart?.catalogRefId
+                                                ?: "", skuInventoryList[0].quantity,
+                                            SubstitutionChoice.SHOPPER_CHOICE.name,
+                                            ""
+                                        )
+                                    } else {
+                                        AddItemToCart(
+                                            addItemToCart?.productId
+                                                ?: "", addItemToCart?.catalogRefId
+                                                ?: "", skuInventoryList[0].quantity
+                                        )
+                                    }
+
                                 try {
                                     val selectYourQuantityFragment =
                                         SelectYourQuantityFragment.newInstance(

@@ -200,6 +200,25 @@
         </LinearLayout>
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/tvPromotionText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/sixteen_dp"
+            android:ellipsize="end"
+            android:fontFamily="@font/opensans_semi_bold"
+            android:gravity="center|start"
+            android:lineHeight="@dimen/fifteen_dp"
+            android:lineSpacingExtra="@dimen/one_sp"
+            android:maxLines="2"
+            android:textColor="@color/was_price_color"
+            android:textSize="@dimen/ten_sp"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintBottom_toTopOf="@+id/tvPrice"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/tvProductAvailability"
+            tools:text="You Saved R5.00" />
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
             android:id="@+id/tvPrice"
             style="@style/style_cart_item_price"
             android:layout_width="match_parent"

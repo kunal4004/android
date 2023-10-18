@@ -91,6 +91,7 @@ public class ProductListingExtensionFragment extends BaseFragmentBinding<GridLay
             @Override
             public void onSuccess(ProductView productView) {
                 if (productView.httpCode == 200) {
+                   // setProductIsLoading(true);
                     List<ProductList> productLists = productView.products;
                     if (productLists != null || (productView != null && productView.isBanners)) {
                         numItemsInTotal(productView);

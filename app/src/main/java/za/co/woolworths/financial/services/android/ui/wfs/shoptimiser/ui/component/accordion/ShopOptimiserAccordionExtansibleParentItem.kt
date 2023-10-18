@@ -64,7 +64,7 @@ fun ShopOptimiserAccordionParentItem(viewModel: ShopOptimiserViewModel) {
             .padding(
                 start = Margin.start,
                 end = Margin.end,
-                top = Margin.dp16,
+                top = Margin.noMargin,
                 bottom = if (viewModel.isExpanded) Margin.dp16 else Margin.noMargin
             )
             .clickable(

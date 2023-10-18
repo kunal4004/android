@@ -134,6 +134,10 @@ import za.co.woolworths.financial.services.android.onecartgetstream.model.OCAuth
 import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.RecommendationResponse
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.RecommendationRequest
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.RatingAndReviewData
+import za.co.woolworths.financial.services.android.dynamicyield.data.response.getResponse.DynamicYieldChooseVariationResponse
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.HomePageRequestEvent
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.PrepareChangeAttributeRequestEvent
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Response.DyChangeAttributeResponse
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
@@ -592,7 +596,7 @@ open class OneAppService(
         }
     }
 
-    private fun getSuburbOrStoreId(): Pair<String?, String?> {
+     fun getSuburbOrStoreId(): Pair<String?, String?> {
         val suburbId: String? = null
         val storeId: String? = null
         return Pair(suburbId, storeId)
@@ -1359,6 +1363,22 @@ open class OneAppService(
             getSessionToken(),
             getDeviceIdentityToken(),
             getRequestBody(appGUIDRequestType)
+        )
+    }
+
+    suspend fun dynamicYieldHomePage(dyHomePageRequestEvent: HomePageRequestEvent): retrofit2.Response<DynamicYieldChooseVariationResponse> {
+        return mApiInterface.dynamicYieldHomePage(
+            getSessionToken(),
+            getDeviceIdentityToken(),
+            dyHomePageRequestEvent
+        )
+    }
+
+    suspend fun dynamicYieldChangeAttribute(dyPrepareChangeAttributeRequestEvent: PrepareChangeAttributeRequestEvent): retrofit2.Response<DyChangeAttributeResponse> {
+        return mApiInterface.dynamicYieldChangeAttribute(
+            getSessionToken(),
+            getDeviceIdentityToken(),
+            dyPrepareChangeAttributeRequestEvent
         )
     }
 }
