@@ -120,7 +120,6 @@ public class WRewardsSavingsFragment extends Fragment implements View.OnClickLis
 	@Override
 	public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		uniqueIdsForWRewardsSavings();
 		WRewardUniqueLocatorsHelper.Companion.setSavingsFragLocators(view.findViewById(R.id.tvWRewardInstantSaving),
 				wRewardsInstantSaving,
 				view.findViewById(R.id.savingSinceTitle),
@@ -131,17 +130,6 @@ public class WRewardsSavingsFragment extends Fragment implements View.OnClickLis
 				yearToDateSpend,
 				yearToDateSpendText,
 				yearToDateSpendInfo);
-	}
-
-	private void uniqueIdsForWRewardsSavings() {
-		Activity activity = getActivity();
-		if (activity != null && activity.getResources() != null) {
-			noSavingsView.setContentDescription(getString(R.string.savingsLayout));
-			wRewardInstantSavingsRelativeLayout.setContentDescription(getString(R.string.tvWRewardInstantSavingLayout));
-			savingSinceRelativeLayout.setContentDescription(getString(R.string.savingSinceLayout));
-			quartlyVoucherEarnedRelativeLayout.setContentDescription(getString(R.string.quarterlyVouchersEarnedLayout));
-			yearDateSpendRelativeLayout.setContentDescription(getString(R.string.yearToDateSpendTextLayout));
-		}
 	}
 
 	@Override
