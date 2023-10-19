@@ -65,7 +65,7 @@
     </integer-array>
 
     <string-array name="tips_tricks_descriptions">
-        <item>@string/tips_tricks_desc_navigation</item>
+        <item>@string/tips_tricks_desc_navigation_sign_in</item>
         <item>@string/feature_barcode_scanning_desc</item>
         <item>@string/tips_tricks_desc_refine</item>
         <item>@string/tips_tricks_desc_stores</item>
