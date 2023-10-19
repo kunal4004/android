@@ -163,7 +163,7 @@ class ToastFactory {
             tvBoldTitle?.visibility = VISIBLE
             tvAddedTo?.visibility = GONE
             tvAddedTo?.setAllCaps(true)
-
+            tvBoldTitle?.text = message
             popupWindow.isFocusable = false
 
             // dismiss the popup window after 3sec

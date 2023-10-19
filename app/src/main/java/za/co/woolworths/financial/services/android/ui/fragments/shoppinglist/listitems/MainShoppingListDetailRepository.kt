@@ -5,12 +5,14 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsR
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.models.network.Resource
+import za.co.woolworths.financial.services.android.shoppinglist.model.RemoveApiRequest
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.CoreDataSource
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import java.io.IOException
 import javax.inject.Inject
 
-class MainShoppingListDetailRepository @Inject constructor() : ShoppingListDetailRepository {
+class MainShoppingListDetailRepository @Inject constructor() : ShoppingListDetailRepository , CoreDataSource() {
 
     override suspend fun getShoppingListItems(listId: String): Resource<ShoppingListItemsResponse> {
         return try {
@@ -39,7 +41,34 @@ class MainShoppingListDetailRepository @Inject constructor() : ShoppingListDetai
         isUserBrowsing: Boolean
     ): Resource<SkusInventoryForStoreResponse> {
         return try {
-            val response = OneAppService().getInventorySkusForStore(storeId, multiSku, isUserBrowsing)
+            val response =
+                OneAppService().getInventorySkusForStore(storeId, multiSku, isUserBrowsing)
+            if (response.isSuccessful) {
+                response.body()?.let {
+                    return when (it.httpCode) {
+                        AppConstant.HTTP_OK, AppConstant.HTTP_OK_201 ->
+                            Resource.success(it)
+
+                        else ->
+                            Resource.error(R.string.error_unknown, it)
+                    }
+                } ?: Resource.error(R.string.error_unknown, null)
+            } else {
+                Resource.error(R.string.error_unknown, null)
+            }
+        } catch (e: IOException) {
+            FirebaseManager.logException(e)
+            Resource.error(R.string.error_internet_connection, null)
+        }
+    }
+
+    override suspend fun removeMultipleItemsFromList(
+        listId: String,
+        removeApiRequest: RemoveApiRequest
+    ): Resource<ShoppingListItemsResponse>  {
+        return try {
+            val response =
+                OneAppService().removeItemFromShoppingItemList(listId, removeApiRequest)
             if (response.isSuccessful) {
                 response.body()?.let {
                     return when (it.httpCode) {

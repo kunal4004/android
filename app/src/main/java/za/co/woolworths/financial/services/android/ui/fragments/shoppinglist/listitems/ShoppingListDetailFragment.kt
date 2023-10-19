@@ -57,6 +57,7 @@ import za.co.woolworths.financial.services.android.recommendations.presentation.
 import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationLoaderImpl
 import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationLoadingNotifier
 import za.co.woolworths.financial.services.android.shoppinglist.listener.MyShoppingListItemClickListener
+import za.co.woolworths.financial.services.android.shoppinglist.model.RemoveApiRequest
 import za.co.woolworths.financial.services.android.shoppinglist.view.MoreOptionDialogFragment
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
@@ -78,6 +79,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.sea
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.Companion.MY_LIST_LIST_NAME
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.Companion.MY_LIST_SEARCH_TERM
 import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
+import za.co.woolworths.financial.services.android.ui.views.ToastFactory
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory.Companion.buildAddToCartSuccessToast
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory.Companion.buildShoppingListFromSearchResultToast
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory.Companion.showItemsLimitToastOnAddToCart
@@ -85,6 +87,7 @@ import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_SESSION_TIMEOUT_440
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants
+import za.co.woolworths.financial.services.android.util.CustomProgressBar
 import za.co.woolworths.financial.services.android.util.CustomTypefaceSpan
 import za.co.woolworths.financial.services.android.util.EmptyCartView
 import za.co.woolworths.financial.services.android.util.EmptyCartView.EmptyCartInterface
@@ -109,6 +112,9 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
     MyShoppingListItemClickListener {
 
     private val viewModel: ShoppingListDetailViewModel by viewModels()
+    private val selectedItems  = ArrayList<String>()
+    private var customProgressDialog: CustomProgressBar? = null
+
 
     private val productSearchResult =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
@@ -252,21 +258,64 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             }
         }
 
-        /*viewModel.shoppingListDetailsAfterDelete.observe(viewLifecycleOwner) {
+       viewModel.shoppingListDetailsAfterDelete.observe(viewLifecycleOwner) {
             val response = it.peekContent().data
             when (it.peekContent().status) {
                 Status.LOADING -> {
-                    bindingListDetails.loadingBar.visibility = VISIBLE
+                    showLoadingProgress(this)
                 }
                 Status.SUCCESS -> {
-                    bindingListDetails.loadingBar.visibility = GONE
-                    response?.let { it1 -> onShoppingListItemDelete(it1) }
+                    hideLoadingProgress()
+                    updateShoppingListAfterDeletion(response)
+                    val count = selectedItems.size
+                    val itemCount =
+                        resources.getQuantityString(
+                            R.plurals.remove_list,
+                            count,
+                            count
+                        )
+                    ToastFactory.showToast(
+                        requireActivity(),
+                        bindingListDetails.rlCheckOut,
+                        itemCount + "\t" +listName
+                    )
                 }
                 Status.ERROR -> {
-                    bindingListDetails.loadingBar.visibility = GONE
+                    hideLoadingProgress()
                 }
             }
-        }*/
+        }
+    }
+
+    private fun showLoadingProgress(fragment: Fragment) {
+        if (customProgressDialog != null && customProgressDialog!!.isVisible)
+            return
+        val title = getString(R.string.remove_item) + "\t" + listName
+        customProgressDialog = CustomProgressBar.newInstance(
+            title,
+            getString(R.string.processing_your_request_desc)
+        )
+        customProgressDialog?.show(
+            fragment.requireActivity().supportFragmentManager,
+            CustomProgressBar::class.java.simpleName
+        )
+    }
+
+    private fun hideLoadingProgress() {
+        customProgressDialog?.dismiss()
+    }
+
+    fun updateShoppingListAfterDeletion(response: ShoppingListItemsResponse?) {
+        val currentList =
+            shoppingListItemsAdapter?.shoppingListItems ?: ArrayList(0)
+
+        val updatedList =
+            response?.listItems?.let { ArrayList(it) } ?: ArrayList(0)
+
+        shoppingListItemsAdapter?.shoppingListItems = response?.listItems as? ArrayList<ShoppingListItem>?
+        viewModel.mShoppingListItems = updatedList
+        viewModel.onDeleteSyncList(currentList)
+        shoppingListItemsAdapter?.notifyDataSetChanged()
     }
 
     private fun setUpToolbar(listName: String?) {
@@ -391,7 +440,6 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
     }
 
     private fun openMoreOptionsDialog() {
-        val selectedItems  = ArrayList<String>()
         for (item in viewModel.mShoppingListItems) {
             if (item.isSelected == true) {
                 selectedItems.add(item.Id)
@@ -1140,13 +1188,13 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
     }
 
     override fun itemRemoveClick() {
-        /*val selectedItems  = ArrayList<String>()
+        val selectedItems  = ArrayList<String>()
         for (item in viewModel.mShoppingListItems) {
             if (item.isSelected == true) {
                 selectedItems.add(item.Id)
             }
         }
         val removeApiRequest = RemoveApiRequest(viewModel.listId, selectedItems)
-        viewModel.removeMultipleItemsFromList(viewModel.listId, removeApiRequest)*/
+        viewModel.removeMultipleItemsFromList(viewModel.listId, removeApiRequest)
     }
 }

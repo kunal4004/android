@@ -3134,6 +3134,12 @@
     <string name="my_list_delete_this_list_checkbox_title">Don’t show me this message again.</string>
     <string name="my_list_deleting_title">Removing Your %s List</string>
     <string name="my_list_snackbar_message">Your list has been removed</string>
+    <string name="remove_from">Removed from</string>
+    <string name="remove_item">Removing Your Item from</string>
+    <plurals name="remove_list">
+        <item quantity="one">%d ITEM REMOVE FROM</item>
+        <item quantity="other">%d ITEMS REMOVE FROM </item>
+    </plurals>
 
 
 </resources>

@@ -131,6 +131,7 @@ import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_
 import za.co.woolworths.financial.services.android.onecartgetstream.model.OCAuthenticationResponse
 import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.RecommendationResponse
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.RecommendationRequest
+import za.co.woolworths.financial.services.android.shoppinglist.model.RemoveApiRequest
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.HomePageRequestEvent
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.RatingAndReviewData
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.PrepareChangeAttributeRequestEvent
@@ -1379,4 +1380,8 @@ open class OneAppService(
             dyPrepareChangeAttributeRequestEvent
         )
     }
+
+    suspend fun removeItemFromShoppingItemList (listId: String, removeApiRequest: RemoveApiRequest) =
+        mApiInterface.removeItemsFromShoppingItem(super.getSessionToken(), super.getDeviceIdentityToken(), listId, removeApiRequest)
+
 }

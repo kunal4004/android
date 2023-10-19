@@ -357,16 +357,14 @@ class ShoppingListItemsAdapter(
 
     @Synchronized
     fun setList(listItems: ArrayList<ShoppingListItem>?) {
-        synchronized(this) {
-            if (listItems.isNullOrEmpty()) {
+        if (listItems.isNullOrEmpty()) {
                 return
             }
-            type = getPreferredDeliveryType()
-            userShouldSetSuburb = userShouldSetSuburb()
-            shoppingListItems = listItems
-            notifyItemRangeChanged(0, (shoppingListItems?.size ?: 0).plus(1))
-            closeAllItems()
-        }
+        type = getPreferredDeliveryType()
+        userShouldSetSuburb = userShouldSetSuburb()
+        shoppingListItems = listItems
+        notifyItemRangeChanged(0, (shoppingListItems?.size ?: 0).plus(1))
+        closeAllItems()
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -398,14 +396,12 @@ class ShoppingListItemsAdapter(
     }
 
     fun deleteListItem(mCatalogRefId: String) {
-        synchronized(this) {
-            val item = shoppingListItems?.find { it.catalogRefId.equals(mCatalogRefId, ignoreCase = true) }
-            val index = shoppingListItems?.indexOf(item) ?: -1
-            if(index < 0 || index >= (shoppingListItems?.size ?: -1)) {
+        val item = shoppingListItems?.find { it.catalogRefId.equals(mCatalogRefId, ignoreCase = true) }
+        val index = shoppingListItems?.indexOf(item) ?: -1
+        if(index < 0 || index >= (shoppingListItems?.size ?: -1)) {
                 return
-            }
-            shoppingListItems?.remove(item)
-            notifyItemRemoved(index + 1)
         }
+        shoppingListItems?.remove(item)
+        notifyItemRemoved(index + 1)
     }
 }
