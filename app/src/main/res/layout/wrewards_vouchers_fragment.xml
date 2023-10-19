@@ -5,26 +5,13 @@
     android:background="@color/grey_bg"
     android:orientation="vertical">
 
-    <FrameLayout
-        android:id="@+id/voucherFrameLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_view"
+            android:id="@+id/vouchersRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:clipToPadding="false"
             android:paddingTop="16dp"
             android:visibility="gone" />
-
-        <androidx.compose.ui.platform.ComposeView
-            android:id="@+id/voucherComposeView"
-            android:background="@color/arrears_red_color_code"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-    </FrameLayout>
 
     <include layout="@layout/empty_state_template" />
 

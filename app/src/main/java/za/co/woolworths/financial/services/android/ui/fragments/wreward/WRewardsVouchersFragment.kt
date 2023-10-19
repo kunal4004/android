@@ -3,12 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.wreward
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.FrameLayout
 import android.widget.RelativeLayout
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Surface
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -24,8 +19,6 @@ import za.co.woolworths.financial.services.android.ui.views.ScrollingLinearLayou
 import za.co.woolworths.financial.services.android.ui.wfs.common.biometric.AuthenticateUtils
 import za.co.woolworths.financial.services.android.ui.wfs.common.biometric.BiometricCallback
 import za.co.woolworths.financial.services.android.ui.wfs.common.biometric.WfsBiometricManager
-import za.co.woolworths.financial.services.android.ui.wfs.common.blur.BlurView
-import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.RecycleViewClickListner
 import za.co.woolworths.financial.services.android.util.Utils
@@ -34,9 +27,8 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class WRewardsVouchersFragment : Fragment(R.layout.wrewards_vouchers_fragment) {
 
-    private var recyclerView: RecyclerView? = null
+    private var vouchersRecyclerView: RecyclerView? = null
     private var voucherResponse: VoucherResponse? = null
-    private var mVoucherFrameLayoutContainer : FrameLayout? = null
     private var mErrorHandlerView: ErrorHandlerView? = null
     var selectedVoucherPosition = 0
     private var relEmptyStateHandler: RelativeLayout? = null
@@ -47,20 +39,9 @@ class WRewardsVouchersFragment : Fragment(R.layout.wrewards_vouchers_fragment) {
         super.onViewCreated(view, savedInstanceState)
         voucherResponse = Gson().fromJson(arguments?.getString(WREWARDS), VoucherResponse::class.java)
         initView(view)
-        initComposeBlur(view)
         initVouchers()
         setUpBiometricAuthentication()
         uniqueIdsForRewardVoucherAutomation()
-    }
-
-    private fun initComposeBlur(view: View) {
-        view.findViewById<ComposeView>(R.id.voucherComposeView).setContent {
-            OneAppTheme {
-                BlurView {
-                    Surface(modifier = Modifier.fillMaxSize()) {}
-                }
-            }
-        }
     }
 
     private fun setUpBiometricAuthentication() {
@@ -89,8 +70,7 @@ class WRewardsVouchersFragment : Fragment(R.layout.wrewards_vouchers_fragment) {
     }
 
     private fun initView(view: View) {
-        recyclerView = view.findViewById(R.id.recycler_view)
-        mVoucherFrameLayoutContainer = view.findViewById<FrameLayout>(R.id.voucherFrameLayout)
+        vouchersRecyclerView = view.findViewById(R.id.vouchersRecyclerView)
         relEmptyStateHandler = view.findViewById(R.id.relEmptyStateHandler)
         mErrorHandlerView = ErrorHandlerView(
             requireActivity(),
@@ -104,7 +84,7 @@ class WRewardsVouchersFragment : Fragment(R.layout.wrewards_vouchers_fragment) {
             LinearLayoutManager.VERTICAL,
             false, 1500
         )
-        recyclerView?.layoutManager = mLayoutManager
+        vouchersRecyclerView?.layoutManager = mLayoutManager
     }
 
     private fun initVouchers() {
@@ -118,7 +98,7 @@ class WRewardsVouchersFragment : Fragment(R.layout.wrewards_vouchers_fragment) {
 
     private fun uniqueIdsForRewardVoucherAutomation() {
         if (requireActivity().resources != null) {
-            recyclerView?.contentDescription = getString(R.string.vouchersLayout)
+            vouchersRecyclerView?.contentDescription = getString(R.string.vouchersLayout)
             relEmptyStateHandler?.contentDescription = getString(R.string.voucher_empty_state)
         }
     }
@@ -137,16 +117,16 @@ class WRewardsVouchersFragment : Fragment(R.layout.wrewards_vouchers_fragment) {
             hideTitle()
             textDescription(getString(R.string.no_vouchers))
         }
-        mVoucherFrameLayoutContainer?.visibility = View.GONE
+        vouchersRecyclerView?.visibility = View.GONE
     }
 
     private fun presentVouchersListView(fragment: Fragment, vResponse: VoucherResponse?) {
         mErrorHandlerView?.hideEmpyState()
         val voucherListAdapter = WRewardsVoucherListAdapter()
         voucherListAdapter.setItem(vResponse?.voucherCollection?.vouchers ?: listOf())
-        mVoucherFrameLayoutContainer?.visibility = View.VISIBLE
-        recyclerView?.apply {
-        adapter = voucherListAdapter
+        vouchersRecyclerView?.apply {
+            visibility = View.VISIBLE
+            adapter = voucherListAdapter
         addOnItemTouchListener(
             RecycleViewClickListner(requireActivity(), this, object : RecycleViewClickListner.ClickListener {
                     override fun onClick(view: View, position: Int) {
@@ -172,7 +152,7 @@ class WRewardsVouchersFragment : Fragment(R.layout.wrewards_vouchers_fragment) {
     }
 
     fun scrollToTop() {
-        recyclerView?.smoothScrollToPosition(0)
+        vouchersRecyclerView?.smoothScrollToPosition(0)
     }
 
     companion object {
@@ -181,5 +161,4 @@ class WRewardsVouchersFragment : Fragment(R.layout.wrewards_vouchers_fragment) {
         const val POSITION = "POSITION"
         const val WREWARDS = "WREWARDS"
     }
-
 }

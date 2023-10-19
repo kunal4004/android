@@ -86,14 +86,15 @@ class UserAccountsLandingFragment : Fragment() {
                 viewLifecycleOwner.lifecycle.addObserver(ActivityLifecycleObserver { status ->
                     when (status) {
                         LifecycleTransitionType.BACKGROUND_TO_FOREGROUND -> {
-                            if (biometricManager.isBiometricEnabled(requireContext())) {
-                                val bottomNavigationActivity =
+                            val bottomNavigationActivity =
                                 (requireActivity() as? BottomNavigationActivity)
+                            if (bottomNavigationActivity?.wasBiometricFromAccountTabEnabled  == false && biometricManager.isBiometricEnabled(requireContext())) {
                             val bottomNavigationView =
                                 bottomNavigationActivity?.bottomNavigationById
                             biometricManager.setupBiometricAuthenticationForAccountLanding(
                                 this, bottomNavigationView, viewModel)
                             }
+                            bottomNavigationActivity?.wasBiometricFromAccountTabEnabled  = false
                         }
                         else -> viewModel.disableBiometricBlur()
                     }

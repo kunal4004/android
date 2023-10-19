@@ -150,7 +150,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         implements BottomNavigator, FragNavController.TransactionListener, FragNavController.RootFragmentListener,
         PermissionResultCallback, ToastUtils.ToastInterface, IToastInterface, Observer {
 
-
+    public Boolean wasBiometricFromAccountTabEnabled = false;
     UserAccountLandingViewModel userAccountLandingViewModel;
     public static final int INDEX_PRODUCT = FragNavController.TAB1;
     public static final int INDEX_TODAY = FragNavController.TAB2;
@@ -1283,6 +1283,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case LOCK_REQUEST_CODE_ACCOUNTS:
+                    wasBiometricFromAccountTabEnabled = true;
                     AuthenticateUtils.Companion.enableBiometricForCurrentSession(false);
                     getBottomNavigationById().setCurrentItem(INDEX_ACCOUNT);
                     break;
