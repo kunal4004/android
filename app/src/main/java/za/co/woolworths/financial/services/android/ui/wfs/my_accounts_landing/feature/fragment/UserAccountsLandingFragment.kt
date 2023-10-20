@@ -36,6 +36,7 @@ import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.fe
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.schema.ManageLoginRegister
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.viewmodel.UserAccountLandingViewModel
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
+import za.co.woolworths.financial.services.android.util.ScreenManager
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -180,6 +181,9 @@ class UserAccountsLandingFragment : Fragment() {
                 if (isUserAuthenticated.value == Authenticated) {
                     queryAccountLandingService(isApiUpdateForced = !fetchAccountDidLoadOnce)
                 }
+            if (isUserAuthenticated.value == Authenticated){
+                ScreenManager.presentBiometricWalkthrough(activity)
+            }
             }
         }
     }
