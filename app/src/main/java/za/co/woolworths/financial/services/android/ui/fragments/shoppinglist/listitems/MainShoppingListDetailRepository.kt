@@ -6,13 +6,12 @@ import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForSt
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.models.network.Resource
 import za.co.woolworths.financial.services.android.shoppinglist.model.RemoveApiRequest
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.CoreDataSource
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import java.io.IOException
 import javax.inject.Inject
 
-class MainShoppingListDetailRepository @Inject constructor() : ShoppingListDetailRepository , CoreDataSource() {
+class MainShoppingListDetailRepository @Inject constructor() : ShoppingListDetailRepository {
 
     override suspend fun getShoppingListItems(listId: String): Resource<ShoppingListItemsResponse> {
         return try {
