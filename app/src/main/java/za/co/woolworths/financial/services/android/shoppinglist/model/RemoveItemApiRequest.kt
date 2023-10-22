@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.shoppinglist.model
 
-data class RemoveApiRequest (
-    val giftListId:String?,
+data class RemoveItemApiRequest (
     val removalGiftItemIds:List<String>
 )

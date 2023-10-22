@@ -5,7 +5,7 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsR
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.models.network.Resource
-import za.co.woolworths.financial.services.android.shoppinglist.model.RemoveApiRequest
+import za.co.woolworths.financial.services.android.shoppinglist.model.RemoveItemApiRequest
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import java.io.IOException
@@ -63,11 +63,11 @@ class MainShoppingListDetailRepository @Inject constructor() : ShoppingListDetai
 
     override suspend fun removeMultipleItemsFromList(
         listId: String,
-        removeApiRequest: RemoveApiRequest
+        removeItemApiRequest: RemoveItemApiRequest
     ): Resource<ShoppingListItemsResponse>  {
         return try {
             val response =
-                OneAppService().removeItemFromShoppingItemList(listId, removeApiRequest)
+                OneAppService().removeItemFromShoppingItemList(listId, removeItemApiRequest)
             if (response.isSuccessful) {
                 response.body()?.let {
                     return when (it.httpCode) {

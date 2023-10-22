@@ -15,7 +15,7 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsR
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse
 import za.co.woolworths.financial.services.android.models.network.Event
 import za.co.woolworths.financial.services.android.models.network.Resource
-import za.co.woolworths.financial.services.android.shoppinglist.model.RemoveApiRequest
+import za.co.woolworths.financial.services.android.shoppinglist.model.RemoveItemApiRequest
 import za.co.woolworths.financial.services.android.util.Utils
 import javax.inject.Inject
 
@@ -205,11 +205,11 @@ class ShoppingListDetailViewModel @Inject constructor(
 
     fun getIsStockAvailable(): Boolean = mShoppingListItems.any { it.quantityInStock > 0 }
 
-    fun removeMultipleItemsFromList(listId: String, removeApiRequest: RemoveApiRequest) {
+    fun removeMultipleItemsFromList(listId: String, removeItemApiRequest: RemoveItemApiRequest) {
         _shoppingListDetailsAfterDelete.value = Event(Resource.loading(null))
         viewModelScope.launch {
             val response =
-                shoppingListDetailRepository.removeMultipleItemsFromList(listId, removeApiRequest)
+                shoppingListDetailRepository.removeMultipleItemsFromList(listId, removeItemApiRequest)
             mShoppingListItems = response.data?.listItems?.let { ArrayList(it) } ?: ArrayList(0)
             _shoppingListDetailsAfterDelete.value = Event(response)
         }

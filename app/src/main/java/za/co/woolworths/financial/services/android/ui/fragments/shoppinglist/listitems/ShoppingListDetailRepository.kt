@@ -3,7 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.li
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse
 import za.co.woolworths.financial.services.android.models.network.Resource
-import za.co.woolworths.financial.services.android.shoppinglist.model.RemoveApiRequest
+import za.co.woolworths.financial.services.android.shoppinglist.model.RemoveItemApiRequest
 
 interface ShoppingListDetailRepository {
     suspend fun getShoppingListItems(listId: String): Resource<ShoppingListItemsResponse>
@@ -13,6 +13,6 @@ interface ShoppingListDetailRepository {
         isUserBrowsing: Boolean = false
     ): Resource<SkusInventoryForStoreResponse>
 
-    suspend fun removeMultipleItemsFromList(listId: String, removeApiRequest: RemoveApiRequest): Resource<ShoppingListItemsResponse>
+    suspend fun removeMultipleItemsFromList(listId: String, removeItemApiRequest: RemoveItemApiRequest): Resource<ShoppingListItemsResponse>
 
 }

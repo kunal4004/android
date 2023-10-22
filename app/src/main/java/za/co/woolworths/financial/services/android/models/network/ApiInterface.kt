@@ -57,7 +57,7 @@ import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_
 import za.co.woolworths.financial.services.android.onecartgetstream.model.OCAuthenticationResponse
 import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.RecommendationResponse
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.RecommendationRequest
-import za.co.woolworths.financial.services.android.shoppinglist.model.RemoveApiRequest
+import za.co.woolworths.financial.services.android.shoppinglist.model.RemoveItemApiRequest
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.HomePageRequestEvent
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.RatingAndReviewData
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.ReviewFeedback
@@ -2357,7 +2357,7 @@ interface ApiInterface {
         @Header("sessionToken") sessionToken: String,
         @Header("deviceIdentityToken") deviceIdentityToken: String,
         @Path("id") id: String,
-        @Body removeApiRequest: RemoveApiRequest
+        @Body removeItemApiRequest: RemoveItemApiRequest
     ): retrofit2.Response<ShoppingListItemsResponse>
 
 }
