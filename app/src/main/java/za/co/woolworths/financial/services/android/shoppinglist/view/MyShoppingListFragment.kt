@@ -364,7 +364,8 @@ class MyShoppingListFragment : Fragment() {
             }
         }
 
-        setFragmentResultListener(SearchResultFragment.UPDATED_SHOPPING_LIST_RESULT_CODE.toString()) { _, _ ->
+        setFragmentResultListener(SearchResultFragment.REFRESH_SHOPPING_LIST_RESULT_CODE.toString()) { _, _ ->
+            // As the items in the list has been updated so call getList API again.
             myListviewModel.onEvent(MyLIstUIEvents.OnRefreshEvent)
         }
     }

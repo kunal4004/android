@@ -76,7 +76,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.sea
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.Companion.MY_LIST_LIST_ID
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.Companion.MY_LIST_LIST_NAME
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.Companion.MY_LIST_SEARCH_TERM
-import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.Companion.UPDATED_SHOPPING_LIST_RESULT_CODE
+import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.Companion.REFRESH_SHOPPING_LIST_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory.Companion.buildAddToCartSuccessToast
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory.Companion.buildShoppingListFromSearchResultToast
@@ -121,7 +121,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                     viewModel.getShoppingListDetails()
                     val addedToListIntent = Bundle()
                     addedToListIntent.putInt(EXTRA_LIST_ITEMS, count)
-                    setFragmentResult(UPDATED_SHOPPING_LIST_RESULT_CODE.toString(), addedToListIntent)
+                    setFragmentResult(REFRESH_SHOPPING_LIST_RESULT_CODE.toString(), addedToListIntent)
                 }
                 // searched details result
                 PRODUCT_SEARCH_ACTIVITY_RESULT_CODE -> {
@@ -525,6 +525,8 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                                 response?.let { onShoppingListItemDelete(it) }
                             }
                         }
+                        //refresh main myList fragment to show updated count.
+                        setFragmentResult(REFRESH_SHOPPING_LIST_RESULT_CODE.toString(), bundleOf())
                         onDeleteUIUpdate()
                     }
 
@@ -696,7 +698,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                 )
             }
             viewModel.getShoppingListDetails()
-            setFragmentResult(UPDATED_SHOPPING_LIST_RESULT_CODE.toString(), result)
+            setFragmentResult(REFRESH_SHOPPING_LIST_RESULT_CODE.toString(), result)
         }
 
         setFragmentResultListener(ON_CONFIRM_REMOVE_WITH_DELETE_ICON_PRESSED) { _, _ ->
