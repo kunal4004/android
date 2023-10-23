@@ -82,6 +82,10 @@ class MyListViewModel @Inject constructor(
                 onInit()
             }
 
+            is MyLIstUIEvents.OnRefreshEvent -> {
+                onInit()
+            }
+
             else -> Unit
         }
     }

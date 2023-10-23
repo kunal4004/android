@@ -815,6 +815,7 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
 
     companion object {
         const val ADDED_TO_SHOPPING_LIST_RESULT_CODE = 1312
+        const val UPDATED_SHOPPING_LIST_RESULT_CODE = 1314
         const val SHOPPING_LIST_SEARCH_RESULT_REQUEST_CODE = 2012
         const val PRODUCT_DETAILS_FROM_MY_LIST_SEARCH = 7657
         const val MY_LIST_LIST_NAME = "listName"
