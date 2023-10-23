@@ -160,12 +160,12 @@ private fun UserAccountLandingViewModel.SignInContainer(
     onClick: (OnAccountItemClickListener) -> Unit,
     allUserAccounts: NetworkStatusUI<UserAccountResponse>
 ) {
+    val signInList = remember { this@SignInContainer.buildSignInList() }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column {
             WelcomeSectionView(
                 viewModel = this@SignInContainer,
-                isRotating = isRefreshButtonRotating,
                 isLoadingInProgress = isAccountLoading,
                 isRotatingState = { isRotating ->
                     isRefreshButtonRotating = isRotating
@@ -214,6 +214,7 @@ private fun UserAccountLandingViewModel.SignInContainer(
                     profileAndGeneralViewGroup(
                         isLoading = isAccountLoading,
                         viewModel = this@SignInContainer,
+                        signInList = signInList,
                         onClick
                     )
 
@@ -364,9 +365,10 @@ private fun UserAccountLandingViewModel.LinkMyDevice() {
 private fun LazyListScope.profileAndGeneralViewGroup(
     isLoading: Boolean,
     viewModel: UserAccountLandingViewModel,
+    signInList: MutableList<Any>,
     onClick: (OnAccountItemClickListener) -> Unit
 ) {
-    viewModel.buildSignInList().forEach {
+    signInList.forEach {
         item {
             viewModel.UiElements(isLoading = isLoading, it, onClick)
         }
@@ -415,7 +417,7 @@ private fun LazyListScope.myProductsSection(
 
     productHeaderView(isLoading)
 
-    for (item in viewModel.mapOfFinalProductItems) {
+    for (item in myProductList) {
         when (val productItems = item.value) {
             is AccountProductCardsGroup.ApplicationStatus -> item {
                 ProductViewApplicationStatusView(
@@ -441,8 +443,7 @@ private fun LazyListScope.myProductsSection(
                         ProductShimmerView(
                             key = item.properties.automationLocatorKey
                         )
-                    }
-                    if (!loadingOptions.isAccountLoading) {
+                    } else {
                         ProductContainerSwitcher(productGroup = item, onProductClick = onProductClick)
                     }
                 }
