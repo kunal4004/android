@@ -5,20 +5,31 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import com.awfs.coordination.R
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
+import za.co.woolworths.financial.services.android.shoppinglist.utility.prepareUrl
 import za.co.woolworths.financial.services.android.shoppinglist.utility.shareListUrl
 import za.co.woolworths.financial.services.android.ui.compose.contentView
+import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
 
-@OptIn(ExperimentalComposeUiApi::class)
 @AndroidEntryPoint
 class ShoppingListShareDialogFragment : WBottomSheetDialogFragment() {
+
+    private var listid: String = ""
+    private var selectedUrlOption: String = ""
+
+    companion object {
+        const val LIST_ID = "LISTID"
+        fun newInstance(listId: String?) =
+            ShoppingListShareDialogFragment().withArgs {
+                this.putString(LIST_ID, listId)
+            }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -26,18 +37,28 @@ class ShoppingListShareDialogFragment : WBottomSheetDialogFragment() {
     ) = contentView(
         ViewCompositionStrategy.DisposeOnDetachedFromWindow
     ) {
+        arguments?.apply {
+            listid = getString(LIST_ID, "")
+        }
+
         OneAppTheme {
-            ShowShareListDialog(onShareButtonClick = {
-                requireContext().let {
-                    dialog?.dismiss()
-                    shareListUrl(
-                        /*todo remove hardcoded url once api is integrated*/
-                        "https://www.woolworths.co.za/prod/Food/Bakery/Bread-Rolls/Bread/Brown-Bread/Thick-Slice-Brown-Bread-700-g/_/A-6001009005168",
-                        requireActivity())
-                }
-            }, onCancelClick = {
+            ShareListDialog(onShareButtonClick = { selectedOption ->
+                selectedUrlOption =
+                    if (selectedOption == getString(R.string.view_only_option)) {
+                        getString(R.string.view_only_url_option)
+                    } else {
+                        getString(R.string.edit_url_option)
+                    }
                 dialog?.dismiss()
-            })
+                activity?.let {
+                    shareListUrl(
+                        prepareUrl(listId = listid, selectedUrlOption),
+                        requireActivity()
+                    )
+                }
+            }) {
+                dialog?.dismiss()
+            }
         }
     }
 

@@ -329,7 +329,7 @@ class MyShoppingListFragment : Fragment() {
     }
 
     private fun navigateToShareListDialog(shoppingList: ShoppingList) {
-        val fragment = ShoppingListShareDialogFragment()
+        val fragment = ShoppingListShareDialogFragment.newInstance(shoppingList.listId)
         fragment.show(parentFragmentManager, ShoppingListShareDialogFragment::class.simpleName)
     }
 

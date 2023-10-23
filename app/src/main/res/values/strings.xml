@@ -3126,6 +3126,7 @@
     <string name="my_list_delete_this_list_checkbox_title">Don’t show me this message again.</string>
     <string name="my_list_deleting_title">Removing Your %s List</string>
     <string name="my_list_snackbar_message">Your list has been removed</string>
-
+    <string name="view_only_url_option">viewOnly</string>
+    <string name="edit_url_option">viewAndEdit</string>
 
 </resources>
