@@ -7,11 +7,18 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.FrameLayout
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.stringResource
@@ -32,6 +39,7 @@ import za.co.woolworths.financial.services.android.presentation.createlist.Creat
 import za.co.woolworths.financial.services.android.presentation.createlist.components.CreateListScreenEvent
 import za.co.woolworths.financial.services.android.ui.compose.contentView
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
+import za.co.woolworths.financial.services.android.ui.wfs.theme.ColorD8D8D8
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.RESULT_FAILED
@@ -93,7 +101,7 @@ class AddToListFragment : WBottomSheetDialogFragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ) = contentView(
         ViewCompositionStrategy.DisposeOnDetachedFromWindow
     ) {
@@ -139,16 +147,26 @@ class AddToListFragment : WBottomSheetDialogFragment() {
                 }
 
                 listState.isAddToListInProgress -> {
-                    ProgressView(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .heightIn(min = 290.dp),
-                        title = stringResource(
-                            id = R.string.add_to_list_progress_title,
-                            listName
-                        ),
-                        desc = stringResource(id = R.string.processing_your_request_desc)
-                    )
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Spacer(
+                            modifier = Modifier
+                                .width(40.dp)
+                                .height(4.dp)
+                                .clip(RoundedCornerShape(20.dp))
+                                .background(ColorD8D8D8)
+                        )
+
+                        ProgressView(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .heightIn(min = 290.dp),
+                            title = stringResource(
+                                id = R.string.add_to_list_progress_title,
+                                listName
+                            ),
+                            desc = stringResource(id = R.string.processing_your_request_desc)
+                        )
+                    }
                 }
 
                 else -> {
