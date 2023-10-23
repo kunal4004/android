@@ -96,9 +96,12 @@ fun MyListItemRowView(
             }
         }
 
-        Spacer(modifier = Modifier.height(15.dp))
+        if (listItem.productImageList.isNotEmpty()) {
 
-        ListOfImagesView(listItem, onImageItemClick = {})
+            Spacer(modifier = Modifier.height(15.dp))
+
+            ListOfImagesView(listItem, onImageItemClick = {})
+        }
     }
 }
 
@@ -125,9 +128,11 @@ private fun MyListItemRowPreview() {
         val mockListData: List<ShoppingList> = emptyList()
         mockListData.plus(mockList)
         val listData =
-            ListDataState(mockListData, emptyList(),R.drawable.ic_share, R.drawable
-                .ic_white_chevron_right)
-        MyListItemRowView(listDataState = listData,listItem = mockList, onShareIconClick = {},
+            ListDataState(
+                mockListData, emptyList(), R.drawable.ic_share, R.drawable
+                    .ic_white_chevron_right
+            )
+        MyListItemRowView(listDataState = listData, listItem = mockList, onShareIconClick = {},
             onDetailsArrowClick = {})
     }
 }
