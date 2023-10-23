@@ -52,7 +52,7 @@ class ShoppingListShareDialogFragment : WBottomSheetDialogFragment() {
                 dialog?.dismiss()
                 activity?.let {
                     shareListUrl(
-                        prepareUrl(listId = listid, selectedOption),
+                        prepareUrl(listId = listid, selectedUrlOption),
                         requireActivity()
                     )
                 }
