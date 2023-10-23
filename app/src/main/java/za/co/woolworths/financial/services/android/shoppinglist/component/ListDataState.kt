@@ -11,6 +11,9 @@ data class ListDataState(
     val revealedList: List<String> = emptyList(),
     val shareIcon : Int = R.drawable.ic_share,
     val openIcon: Int = R.drawable.ic_white_chevron_right,
+    val deleteIcon: Int = R.drawable.ic_delete_icon_big,
     val isError: Boolean = false,
-    val isSuccessResponse: Boolean = false
+    val isSuccessResponse: Boolean = false,
+    val isEditMode: Boolean = false
+
 )
