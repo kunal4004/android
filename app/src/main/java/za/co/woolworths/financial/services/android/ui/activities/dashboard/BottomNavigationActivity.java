@@ -28,7 +28,14 @@ import static za.co.woolworths.financial.services.android.util.Utils.DY_CHANNEL;
 import static za.co.woolworths.financial.services.android.util.Utils.HOME_PAGE;
 import static za.co.woolworths.financial.services.android.util.Utils.MOBILE_LANDING_PAGE;
 import static za.co.woolworths.financial.services.android.util.nav.tabhistory.FragNavTabHistoryController.UNLIMITED_TAB_HISTORY;
-
+import static za.co.woolworths.financial.services.android.util.AppConstant.APP_GALLERY_APP_NOT_RELEASED;
+import static za.co.woolworths.financial.services.android.util.AppConstant.APP_GALLERY_RATING_SUBMITTED;
+import static za.co.woolworths.financial.services.android.util.AppConstant.APP_GALLERY_COMMENT_SUBMITTED;
+import static za.co.woolworths.financial.services.android.util.AppConstant.APP_GALLERY_SIGN_IN_INVALID;
+import static za.co.woolworths.financial.services.android.util.AppConstant.APP_GALLERY_USER_DOES_NOT_ALLOWED;
+import static za.co.woolworths.financial.services.android.util.AppConstant.APP_GALLERY_COMMENT_FUNCTION_DISABLED;
+import static za.co.woolworths.financial.services.android.util.AppConstant.APP_GALLERY_USER_CANCELLED;
+import static za.co.woolworths.financial.services.android.util.AppConstant.RESULT_OK_HUAWEI_REQUEST_CODE;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
@@ -1165,6 +1172,25 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
             case DEEP_LINK_REQUEST_CODE:
                 finish();
+                break;
+
+            case RESULT_OK_HUAWEI_REQUEST_CODE:
+
+                switch (resultCode) {
+
+                    case APP_GALLERY_APP_NOT_RELEASED:
+                    case APP_GALLERY_RATING_SUBMITTED:
+                    case APP_GALLERY_COMMENT_SUBMITTED:
+                    case APP_GALLERY_SIGN_IN_INVALID:
+                    case APP_GALLERY_USER_DOES_NOT_ALLOWED:
+                    case APP_GALLERY_COMMENT_FUNCTION_DISABLED:
+                    case APP_GALLERY_USER_CANCELLED:
+
+                        Utils.setInAppReviewRequested();
+
+                        break;
+                }
+
                 break;
 
             default:
