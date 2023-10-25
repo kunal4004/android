@@ -82,6 +82,10 @@ class MyListViewModel @Inject constructor(
                 onInit()
             }
 
+            is MyLIstUIEvents.OnRefreshEvent -> {
+                onInit()
+            }
+
             else -> Unit
         }
     }
@@ -344,7 +348,7 @@ class MyListViewModel @Inject constructor(
         }
 
         if (shoppingList.listCount > 0) {
-            for (i in 0..shoppingList.listCount) {
+            for (i in 1..shoppingList.listCount) {
                 mockListDetails.add(productListDetails)
             }
         }

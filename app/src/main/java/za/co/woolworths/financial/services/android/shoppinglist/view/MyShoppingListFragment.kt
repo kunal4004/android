@@ -50,6 +50,7 @@ import za.co.woolworths.financial.services.android.shoppinglist.viewmodel.MyList
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator
 import za.co.woolworths.financial.services.android.ui.compose.contentView
+import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment
 import za.co.woolworths.financial.services.android.ui.wfs.theme.FuturaFontFamily
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
 import za.co.woolworths.financial.services.android.util.AppConstant
@@ -361,6 +362,11 @@ class MyShoppingListFragment : Fragment() {
                     myListviewModel.onEvent(MyLIstUIEvents.OnDeleteListConfirm(item, position))
                 }
             }
+        }
+
+        setFragmentResultListener(SearchResultFragment.REFRESH_SHOPPING_LIST_RESULT_CODE.toString()) { _, _ ->
+            // As the items in the list has been updated so call getList API again.
+            myListviewModel.onEvent(MyLIstUIEvents.OnRefreshEvent)
         }
     }
 }
