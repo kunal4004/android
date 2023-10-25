@@ -3091,7 +3091,7 @@
     <string name="tooltip_dash">Dash.</string>
     <string name="tooltip_cnc">Click &amp; Collect.</string>
     <string name="tooltip_standard_delivery">\nStandard Delivery.</string>
-    <string name="tooltip_fulfilment_message">Tap ‘Switch’ to choose between our 3 delivery options.</string>
+    <string name="tooltip_fulfilment_message">Tap ‘Switch’ to choose between our 3 delivery options:</string>
     <string name="tooltip_fulfilment_description"><![CDATA[You can switch between Standard Delivery, Click & Collect, or same day food delivery using Dash.]]></string>
     <string name="tooltip_location_title_set_location">Set your location for the most accurate stock, availability, and pricing.</string>
     <string name="tooltip_location_description">We’ll gather your full delivery address later on, when you checkout.</string>
@@ -3153,4 +3153,18 @@
     <string name="free_sim_with_purchase">Free %S Sim with Purchase</string>
     <string name="digital_product_type">digitalProducts</string>
     <string name="enter_valid_sa_number">Enter a valid 10 digit SA number(e.g 0xxxxxxxxx)</string>
+
+
+
+<!--    //Test tooltip-->
+
+    <string name="standard_delivery_next_day">• Standard Delivery next day</string>
+    <string name="dash_delivery_same_day">• Dash Food Delivery same day</string>
+    <string name="click_and_collects">• Click &amp; Collect</string>
+
+
+
+
+
+
 </resources>
