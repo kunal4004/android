@@ -100,7 +100,6 @@ class MyPreferencesFragment : BaseFragmentBinding<FragmentMyPreferencesBinding>(
         binding.apply {
             biometricAuthenticationSwitchCompat.setOnClickListener(this@MyPreferencesFragment)
             locationSelectedLayout.setOnClickListener(this@MyPreferencesFragment)
-            //biometricAuthenticationSwitchCompat.setOnTouchListener(this@MyPreferencesFragment)
             linkDeviceSwitch.setOnClickListener(this@MyPreferencesFragment)
             retryLinkDeviceLinearLayout?.setOnClickListener(this@MyPreferencesFragment)
             viewAllLinkedDevicesRelativeLayout?.setOnClickListener(this@MyPreferencesFragment)
