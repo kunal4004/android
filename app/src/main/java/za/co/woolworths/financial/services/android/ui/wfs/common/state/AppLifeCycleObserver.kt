@@ -27,7 +27,7 @@ class AppLifeCycleObserver(private val biometricSingleton: BiometricSingleton?, 
 
     override fun onStop(owner: LifecycleOwner) {
         super.onStop(owner)
-        when (biometricSingleton?.currentScreenType?.value) {
+        when (biometricSingleton?.currentScreenType) {
              CurrentScreenType.BOTTOM_NAVIGATION_ACTIVITY -> {
                 previousState = LifecycleTransitionType.BACKGROUND
                 isApplicationInForeground = false
