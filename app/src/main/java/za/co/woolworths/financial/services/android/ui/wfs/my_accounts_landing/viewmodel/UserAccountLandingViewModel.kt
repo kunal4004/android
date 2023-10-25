@@ -21,6 +21,7 @@ import za.co.woolworths.financial.services.android.models.dto.account.ServerErro
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.CreditCardDeliveryStatusResponse
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.wfs.common.ConnectionState
+import za.co.woolworths.financial.services.android.ui.wfs.common.biometric.AuthenticateUtils
 import za.co.woolworths.financial.services.android.ui.wfs.core.FirebaseAnalyticsUserProperty
 import za.co.woolworths.financial.services.android.ui.wfs.core.IFirebaseAnalyticsUserProperty
 import za.co.woolworths.financial.services.android.ui.wfs.core.NetworkStatusUI
@@ -99,9 +100,11 @@ class UserAccountLandingViewModel @Inject constructor(
     var isRefreshButtonRotating by mutableStateOf(false)
     var isAccountRefreshingTriggered by mutableStateOf(false)
     var isAccountFragmentVisible by mutableStateOf(false)
-    var isBiometricPopupEnabled by mutableStateOf(false)
     var isAutoReconnectActivated: Boolean = false
-    var isBiometricUiBlurEnabled by mutableStateOf(false)
+    var isBiometricPopupEnabled by mutableStateOf(false)
+    var isBiometricScreenEnabled by mutableStateOf(false)
+
+    var wasActivityOpened : Boolean = true
 
     private var _mapOfFinalProductItems = mutableMapOf<String, AccountProductCardsGroup?>()
     val mapOfFinalProductItems: MutableMap<String, AccountProductCardsGroup?> =
@@ -157,11 +160,19 @@ class UserAccountLandingViewModel @Inject constructor(
         }
     }
 
-    fun enableBiometricBlur() {
-        isBiometricUiBlurEnabled = true
+    fun setBiometricDisabled(){
+        AuthenticateUtils.enableBiometricForCurrentSession(false)
     }
-    fun disableBiometricBlur() {
-        isBiometricUiBlurEnabled = false
+
+    fun setBiometricEnabled(){
+        AuthenticateUtils.enableBiometricForCurrentSession(true)
+    }
+
+    fun setScreenBlurDisabled() {
+        isBiometricScreenEnabled = false
+    }
+    fun setScreenBlurEnabled() {
+        isBiometricScreenEnabled = true
     }
 
     fun setUserAuthenticated(resultCode: Int?) {
@@ -511,6 +522,14 @@ class UserAccountLandingViewModel @Inject constructor(
         viewModelScope.launch {
             Utils.removeFromDb(SessionDao.KEY.SHOP_OPTIMISER_SQLITE_MODEL)
         }
+    }
+
+    fun setOnTapActivated() {
+        wasActivityOpened = true
+    }
+
+    fun setOnTapNotActivated() {
+        wasActivityOpened = false
     }
 
 }

@@ -91,8 +91,9 @@ class AccountLandingEventLauncherImpl @Inject constructor(
         deepLinkParams: String?,
         viewModel: UserAccountLandingViewModel,
         activityLauncher: BetterActivityResult<Intent, ActivityResult>?) {
-        viewModel.disableBiometricBlur()
         with(viewModel) {
+            setBiometricDisabled()
+            setOnTapNotActivated()
             when (event) {
                 is OfferClickEvent -> onOffer(this, activityLauncher, event)
                 is MyProfile -> onMyProfile(event, this, activityLauncher)
@@ -110,7 +111,8 @@ class AccountLandingEventLauncherImpl @Inject constructor(
         deepLinkParams: String?,
         activityLauncher: BetterActivityResult<Intent, ActivityResult>?) {
         with(viewModel) {
-            disableBiometricBlur()
+            setOnTapNotActivated()
+            setBiometricDisabled()
             when (productGroup) {
                 is AccountProductCardsGroup.ApplicationStatus -> accountCardsAction(
                     productGroup = productGroup,

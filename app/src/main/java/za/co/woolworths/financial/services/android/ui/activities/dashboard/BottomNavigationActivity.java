@@ -17,7 +17,6 @@ import static za.co.woolworths.financial.services.android.ui.fragments.product.s
 import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.RESULT_RELOAD_CART;
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListDetailFragment.ADD_TO_CART_SUCCESS_RESULT;
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.PRODUCT_DETAILS_FROM_MY_LIST_SEARCH;
-import static za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsVouchersFragment.LOCK_REQUEST_CODE_WREWARDS;
 import static za.co.woolworths.financial.services.android.util.AppConstant.DP_LINKING_MY_ACCOUNTS_ORDER_DETAILS;
 import static za.co.woolworths.financial.services.android.util.AppConstant.REQUEST_CODE_BARCODE_ACTIVITY;
 import static za.co.woolworths.financial.services.android.util.AppConstant.REQUEST_CODE_ORDER_DETAILS_PAGE;
@@ -116,7 +115,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNear
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsLoggedInAndNotLinkedFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsLoggedOutFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsVouchersFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.logged_in.WRewardsLoggedinAndLinkedFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wtoday.WTodayFragment;
 import za.co.woolworths.financial.services.android.ui.views.NestedScrollableViewHelper;
@@ -150,7 +148,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         implements BottomNavigator, FragNavController.TransactionListener, FragNavController.RootFragmentListener,
         PermissionResultCallback, ToastUtils.ToastInterface, IToastInterface, Observer {
 
-    public Boolean wasBiometricFromAccountTabEnabled = false;
     UserAccountLandingViewModel userAccountLandingViewModel;
     public static final int INDEX_PRODUCT = FragNavController.TAB1;
     public static final int INDEX_TODAY = FragNavController.TAB2;
@@ -210,6 +207,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         return bottomNavigationViewModel;
     }
 
+    public Boolean wasAccountOpenenedFromBottomNavigationActivity = true;
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         try {
@@ -760,6 +758,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                             FirebaseManager.logException(e);
                         }
                     } else {
+                        closeMyAccountOpenedFromBottomNavigationActivity();
                         setToolbarBackgroundColor(R.color.white);
                         switchTab(INDEX_ACCOUNT);
                         Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSMENU, BottomNavigationActivity.this);
@@ -1076,7 +1075,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             fragment.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
 
-
         // redirects to utils
         permissionUtils.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
@@ -1277,13 +1275,12 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             if (getBottomFragmentById() instanceof ProductDetailsFragment) {
                 getBottomFragmentById().onActivityResult(requestCode, resultCode, null);
             }
-
         }
         // Biometric Authentication check
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case LOCK_REQUEST_CODE_ACCOUNTS:
-                    wasBiometricFromAccountTabEnabled = true;
+                    closeMyAccountOpenedFromBottomNavigationActivity();
                     AuthenticateUtils.Companion.enableBiometricForCurrentSession(false);
                     getBottomNavigationById().setCurrentItem(INDEX_ACCOUNT);
                     break;
@@ -1628,5 +1625,12 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             ScreenManager.presentSSOSignin(this);
         }, AppConstant.DELAY_500_MS);
 
+    }
+
+    public void setMyAccountOpenedFromBottomNavigationActivity() {
+        wasAccountOpenenedFromBottomNavigationActivity = true;
+    }
+    public void closeMyAccountOpenedFromBottomNavigationActivity() {
+        wasAccountOpenenedFromBottomNavigationActivity = false;
     }
 }

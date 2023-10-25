@@ -24,17 +24,21 @@ import javax.inject.Inject
 enum class BiometricCallback { Error, Succeeded, Failed, ErrorUserCanceled }
 
 interface WfsBiometricManager {
-    var isFragmentObscuredByOverlay: Boolean
-    fun isBiometricEnabled(context: Context) : Boolean
+    fun isBiometricEnabled(context: Context): Boolean
+    fun isBiometricInMyPreferencesEnabled(context: Context): Boolean
+
     fun setupBiometricAuthenticationForAccountLanding(
         fragment: Fragment,
-        bottomNavigation: WBottomNavigationView?,
-        viewModel: UserAccountLandingViewModel)
+        bottomNavigation: BottomNavigationActivity?,
+        viewModel: UserAccountLandingViewModel
+    )
+
     fun setupBiometricInWRewardsVouchersOnItemTap(
         fragment: Fragment,
         bottomNavigation: WBottomNavigationView?,
-        callback: (BiometricCallback) -> Unit)
-    fun isFragmentObscuredByOverlay(isHidden : Boolean)
+        callback: (BiometricCallback) -> Unit
+    )
+
     fun show()
 }
 
@@ -43,15 +47,22 @@ class WfsBiometricManagerImpl @Inject constructor() : WfsBiometricManager {
     private lateinit var executor: Executor
     private lateinit var biometricPrompt: BiometricPrompt
     private lateinit var promptInfo: BiometricPrompt.PromptInfo
-    override var isFragmentObscuredByOverlay: Boolean = false
     override fun isBiometricEnabled(context: Context): Boolean {
+        return getInstance().isUserAuthenticated
+                && AuthenticateUtils.isBiometricAuthenticationAvailable(context)
+    }
+
+    override fun isBiometricInMyPreferencesEnabled(context: Context): Boolean {
         return getInstance().isUserAuthenticated
                 && AuthenticateUtils.isBiometricAuthenticationSupported(context)
     }
 
     private fun Fragment.setPrompt(callback: (BiometricCallback) -> Unit) {
         executor = ContextCompat.getMainExecutor(this.requireContext())
-        biometricPrompt = BiometricPrompt(this, executor, biometricPromptAuthenticationCallback { result -> callback(result) })
+        biometricPrompt = BiometricPrompt(
+            this,
+            executor,
+            biometricPromptAuthenticationCallback { result -> callback(result) })
     }
 
     private fun biometricPromptAuthenticationCallback(callback: (BiometricCallback) -> Unit): BiometricPrompt.AuthenticationCallback {
@@ -78,7 +89,8 @@ class WfsBiometricManagerImpl @Inject constructor() : WfsBiometricManager {
     }
 
     private fun Fragment.isDeviceSecure(): Boolean {
-        val keyguardManager = requireContext().getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
+        val keyguardManager =
+            requireContext().getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
         return keyguardManager.isKeyguardSecure
     }
 
@@ -125,13 +137,9 @@ class WfsBiometricManagerImpl @Inject constructor() : WfsBiometricManager {
         biometricPrompt.authenticate(promptInfo)
     }
 
-    override fun isFragmentObscuredByOverlay(isHidden: Boolean) {
-                this.isFragmentObscuredByOverlay = isHidden
-    }
-
     private fun Fragment.unlockWithPinPasswordPatternOrBiometric(callback: (BiometricCallback) -> Unit) {
         if (isDeviceSecure()) {
-            val title= getString(R.string.enter_password)
+            val title = getString(R.string.enter_password)
             if (isBiometricHardWareAvailable()) {
                 initBiometricPrompt(
                     title,
@@ -154,7 +162,7 @@ class WfsBiometricManagerImpl @Inject constructor() : WfsBiometricManager {
                 }
             }
             this.setPrompt(callback = callback)
-        }else {
+        } else {
             val intent = Intent(Settings.ACTION_SECURITY_SETTINGS)
             startActivity(intent)
         }
@@ -162,45 +170,51 @@ class WfsBiometricManagerImpl @Inject constructor() : WfsBiometricManager {
 
     override fun setupBiometricAuthenticationForAccountLanding(
         fragment: Fragment,
-        bottomNavigation: WBottomNavigationView?,
-        viewModel: UserAccountLandingViewModel) {
+        bottomNavigation: BottomNavigationActivity?,
+        viewModel: UserAccountLandingViewModel
+    ) {
         with(fragment) {
-            if (isAdded && isVisible && isFragmentObscuredByOverlay.not()) {
-                viewModel.enableBiometricBlur()
-                (requireActivity() as? AppCompatActivity)?.apply {
+            if (isAdded &&
+                isVisible &&
+                isBiometricEnabled(fragment.requireContext())) {
+                bottomNavigation?.apply {
                     unlockWithPinPasswordPatternOrBiometric { callback ->
                         when (callback) {
                             BiometricCallback.ErrorUserCanceled -> {
-                                bottomNavigation?.currentItem = BottomNavigationActivity.INDEX_TODAY
-                                viewModel.disableBiometricBlur()
-                                AuthenticateUtils.enableBiometricForCurrentSession(true)
+                                bottomNavigation?.bottomNavigationById?.currentItem = BottomNavigationActivity.INDEX_TODAY
+                                viewModel.setScreenBlurDisabled()
+                                viewModel.setBiometricEnabled()
                             }
 
-                            BiometricCallback.Succeeded -> viewModel.disableBiometricBlur()
-
+                            BiometricCallback.Succeeded ->  {
+                                viewModel.setScreenBlurDisabled()
+                                viewModel.setBiometricDisabled()
+                            }
                             else -> Unit
                         }
                     }
+                    viewModel.setScreenBlurEnabled()
                     show()
                 }
-            }
-            isFragmentObscuredByOverlay(isHidden = false)
+            }else {
+                viewModel.setScreenBlurDisabled()
             }
         }
+    }
 
     override fun setupBiometricInWRewardsVouchersOnItemTap(
         fragment: Fragment,
         bottomNavigation: WBottomNavigationView?,
-        callback: (BiometricCallback) -> Unit) {
+        callback: (BiometricCallback) -> Unit
+    ) {
         with(fragment) {
-            if (isAdded && isVisible && isFragmentObscuredByOverlay.not()) {
+            if (isAdded && isVisible) {
                 (requireActivity() as? AppCompatActivity)?.apply {
                     unlockWithPinPasswordPatternOrBiometric { result ->
                         callback(result)
                     }
                 }
             }
-            isFragmentObscuredByOverlay(isHidden = false)
         }
     }
 }
