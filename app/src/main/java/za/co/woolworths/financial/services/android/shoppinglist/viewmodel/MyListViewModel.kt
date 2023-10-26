@@ -22,6 +22,7 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLo
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse
 import za.co.woolworths.financial.services.android.models.network.Status
+import za.co.woolworths.financial.services.android.shoppinglist.component.AppbarUiState
 import za.co.woolworths.financial.services.android.shoppinglist.component.EmptyStateData
 import za.co.woolworths.financial.services.android.shoppinglist.component.ListDataState
 import za.co.woolworths.financial.services.android.shoppinglist.component.LocationDetailsState
@@ -61,6 +62,7 @@ class MyListViewModel @Inject constructor(
     val isLoading = _isLoading.asStateFlow()
     val listDataState = mutableStateOf(ListDataState())
     var myListState = mutableStateOf(EmptyStateData())
+    var appBarUIState = mutableStateOf(AppbarUiState())
 
     init {
         onInit()
@@ -87,7 +89,37 @@ class MyListViewModel @Inject constructor(
                 onInit()
             }
 
+            is MyLIstUIEvents.OnToolbarEditClick -> {
+                if (listDataState.value.isEditMode) {
+                    onDoneButtonClick()
+                } else {
+                    onEditButtonClick()
+                }
+            }
+
             else -> Unit
+        }
+    }
+
+    private fun onDoneButtonClick() {
+        viewModelScope.launch(Dispatchers.Default) {
+            appBarUIState.value = appBarUIState.value.copy(
+                rightButtonRes = R.string.edit
+            )
+            listDataState.value = listDataState.value.copy(
+                isEditMode = false
+            )
+        }
+    }
+
+    private fun onEditButtonClick() {
+        viewModelScope.launch(Dispatchers.Default) {
+            appBarUIState.value = appBarUIState.value.copy(
+                rightButtonRes = R.string.done
+            )
+            listDataState.value = listDataState.value.copy(
+                isEditMode = true
+            )
         }
     }
 
@@ -292,6 +324,9 @@ class MyListViewModel @Inject constructor(
                             )
                             setListData(shoppingListResponse.data)
                             _isLoading.value = false
+                            appBarUIState.value = appBarUIState.value.copy(
+                                showRightButton = listDataState.value.list.isNotEmpty()
+                            )
                         }
 
                         Status.ERROR -> {
@@ -299,10 +334,16 @@ class MyListViewModel @Inject constructor(
                                 isError = true
                             )
                             _isLoading.value = false
+                            appBarUIState.value = appBarUIState.value.copy(
+                                showRightButton = false
+                            )
                         }
 
                         Status.LOADING -> {
                             _isLoading.value = true
+                            appBarUIState.value = appBarUIState.value.copy(
+                                showRightButton = false
+                            )
                         }
                     }
                 }

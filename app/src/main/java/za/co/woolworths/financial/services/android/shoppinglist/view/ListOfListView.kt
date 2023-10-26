@@ -72,6 +72,9 @@ fun ListOfListView(
                             onEvent(MyLIstUIEvents.ListItemClick(list))
                         }, onShareIconClick = { list ->
                             onEvent(MyLIstUIEvents.ShareListClick(list))
+                        },
+                        onDeleteIconClick = {
+                            onEvent(MyLIstUIEvents.OnSwipeDeleteAction(it, index))
                         })
 
                         if (listItem.listCount != 0 && listDataState.list.size == index + 1) {
