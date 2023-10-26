@@ -134,7 +134,6 @@ fun OnBoardingItem(item: WalkThrough) {
             textColor = Black,
             textAlign = TextAlign.Center,
             fontSize = FontDimensions.sp16,
-            brush = null,
             isLoading = false)
 
     }

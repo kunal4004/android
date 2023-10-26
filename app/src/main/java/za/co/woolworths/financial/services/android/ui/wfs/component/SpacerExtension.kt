@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import za.co.woolworths.financial.services.android.ui.wfs.theme.Dimens
+import za.co.woolworths.financial.services.android.ui.wfs.theme.Margin
 import za.co.woolworths.financial.services.android.ui.wfs.theme.White
 
 @Composable
@@ -97,5 +98,10 @@ fun SpacerHeight5dp(height: Dp = Dimens.five_dp, bgColor: Color = White) {
 }
 @Composable
 fun SpacerHeight6dp(height: Dp = Dimens.six_dp, bgColor: Color = White) {
+    SpacerHeight24dp(height = height, bgColor = bgColor)
+}
+
+@Composable
+fun SpacerHeight16dp(height: Dp = Margin.dp16, bgColor: Color = White) {
     SpacerHeight24dp(height = height, bgColor = bgColor)
 }

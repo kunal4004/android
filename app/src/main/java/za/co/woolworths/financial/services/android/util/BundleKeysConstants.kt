@@ -49,6 +49,16 @@ class BundleKeysConstants {
 
         const val RECOMMENDATIONS_EVENT_DATA = "recommendations_event_data"
         const val RECOMMENDATIONS_EVENT_DATA_TYPE = "recommendations_event_data_type"
+        const val RECOMMENDATIONS_DYNAMIC_TITLE_REQUIRED = "recommendations_dynamic_title_required"
+
+        const val DYNAMIC_YIELD_USER = "dynamic_yield_user"
+        const val DYNAMIC_YIELD_SESSION = "dynamic_yield_session"
+        const val DYNAMIC_YIELD_DATA = "dynamic_yield_data"
+        const val DYNAMIC_YIELD_PAGE = "dynamic_yield_page"
+        const val DYNAMIC_YIELD_DEVICE = "dynamic_yield_device"
+        const val DYNAMIC_YIELD_PAGE_ATTRIBUTE = "dynamic_yield_page_attribute"
+
+
     }
 
 }

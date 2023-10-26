@@ -6,7 +6,7 @@ import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 
-class RetrofitApiProviderImpl: RetrofitApiProviderInterface {
+class RetrofitApiProviderImpl : RetrofitApiProviderInterface {
     override fun getRetrofit(httpBuilder: OkHttpClient.Builder): ApiInterface {
         return Retrofit.Builder()
             .baseUrl(BuildConfig.HOST + "/")

@@ -13,10 +13,10 @@ class EnableLocationSettingsFragment : WBottomSheetDialogFragment(), View.OnClic
         const val ACCESS_MY_LOCATION_REQUEST_CODE = 1200
     }
 
-    private lateinit var binding: EnableLocationSettingsFragmentBinding
-
+    private var _binding: EnableLocationSettingsFragmentBinding? = null
+    private val binding get() = _binding!!
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = EnableLocationSettingsFragmentBinding.inflate(inflater, container, false)
+        _binding = EnableLocationSettingsFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -28,5 +28,10 @@ class EnableLocationSettingsFragment : WBottomSheetDialogFragment(), View.OnClic
     override fun onClick(view: View) {
         KotlinUtils.openAccessMyLocationDeviceSettings(ACCESS_MY_LOCATION_REQUEST_CODE, activity)
         dismissAllowingStateLoss()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

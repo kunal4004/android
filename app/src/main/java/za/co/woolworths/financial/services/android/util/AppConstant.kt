@@ -138,9 +138,14 @@ class AppConstant {
         // My List
         const val CONST_NO_SIZE = "NO SZ"
         const val LOCATION_PERMISSION_REQUEST_CODE = 1
+        const val TAG_ADD_TO_LIST_PLP: String = "ProductListingFragment"
 
         //Payflex info html
         const val PAYFLEX_POP_UP_URL = "https://widgets.payflex.co.za/how_to.html?"
+
+        //connect online
+        const val PRODUCT_TYPE_DIGITAL = "DIGITAL"
+        const val SA_MOBILE_NUMBER_PATTERN="^0\\d{9}$"
     }
 
     class Keys {

@@ -6,6 +6,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import za.co.woolworths.financial.services.android.ui.wfs.theme.ShimmerColorShades
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 
 // Domain Layer
 data class ShimmerAnimationSpec(
@@ -65,12 +66,20 @@ class ShimmerUseCaseImpl : ShimmerUseCase {
 
 @Composable
 fun BrushShimmerEffect(content: @Composable (Brush) -> Unit) {
-    val animationSpec = ShimmerAnimationSpec(
-        durationMillis = 300,
-        easing = FastOutSlowInEasing,
-        repeatMode = RepeatMode.Restart
-    )
-    val shimmerUseCase = ShimmerUseCaseImpl()
+    val animationSpec = remember {
+        ShimmerAnimationSpec(
+            durationMillis = 300,
+            easing = FastOutSlowInEasing,
+            repeatMode = RepeatMode.Restart
+        )
+    }
+
+    val shimmerUseCase = remember {
+        ShimmerUseCaseImpl()
+    }
+
     val brush = shimmerUseCase.animate(animationSpec)
+
     content(brush)
 }
+

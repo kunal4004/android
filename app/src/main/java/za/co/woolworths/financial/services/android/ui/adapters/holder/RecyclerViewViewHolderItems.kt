@@ -8,6 +8,7 @@ import android.view.View.VISIBLE
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.ProductListingPageRowBinding
 import za.co.woolworths.financial.services.android.contracts.IProductListing
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.dto.PromotionImages
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.featureutils.RatingAndReviewUtil
@@ -15,6 +16,7 @@ import za.co.woolworths.financial.services.android.ui.vto.utils.VirtualTryOnUtil
 import za.co.woolworths.financial.services.android.util.ImageManager
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
+import javax.annotation.meta.When
 
 class RecyclerViewViewHolderItems(val itemBinding: ProductListingPageRowBinding) : RecyclerViewViewHolder(itemBinding.root) {
 
@@ -31,7 +33,9 @@ class RecyclerViewViewHolderItems(val itemBinding: ProductListingPageRowBinding)
             priceItem.setPrice(productList, itemBinding.includeProductListingPriceLayout)
             setProductVariant(this)
             quickShopAddToCartSwitch(this)
+            quickAddToListSwitch(this)
             setOnClickListener(navigator, this)
+            setNetworkName(this)
         }
     }
 
@@ -40,6 +44,17 @@ class RecyclerViewViewHolderItems(val itemBinding: ProductListingPageRowBinding)
         mainImgLayout.setOnClickListener { navigator.openProductDetailView(productList) }
         brandName.setOnClickListener { navigator.openProductDetailView(productList) }
         tvRangeName.setOnClickListener { navigator.openProductDetailView(productList) }
+    }
+
+    private fun setNetworkName(productList: ProductList?)= itemBinding.apply {
+        if (!TextUtils.isEmpty(productList?.network)) {
+            SIMLabel.visibility = VISIBLE
+            val networkOperator = productList?.network
+            SIMLabel.text = networkOperator?.let { AppConfigSingleton.connectOnline?.freeSimTextMsg?.replace("\${networkOperator}", it) }
+        } else {
+            SIMLabel.visibility = GONE
+            SIMLabel.text = ""
+        }
     }
 
     private fun setProductName(productList: ProductList?) = itemBinding.apply {
@@ -167,7 +182,37 @@ class RecyclerViewViewHolderItems(val itemBinding: ProductListingPageRowBinding)
         itemBinding.apply {
             root.context?.apply {
                 productList?.apply {
-                    includeProductListingPriceLayout.imQuickShopAddToCartIcon?.visibility = if (productType.equals(getString(R.string.food_product_type), ignoreCase = true)) VISIBLE else GONE
+                    when (productType) {
+                        getString(R.string.food_product_type) -> {
+                            includeProductListingPriceLayout.imQuickShopAddToCartIcon?.visibility = VISIBLE
+                        }
+                        getString(R.string.digital_product_type) -> {
+                            includeProductListingPriceLayout.imQuickShopAddToCartIcon?.visibility = VISIBLE
+                        }
+                        else -> {
+                            includeProductListingPriceLayout.imQuickShopAddToCartIcon?.visibility = GONE
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun quickAddToListSwitch(productList: ProductList) {
+        itemBinding.apply {
+            root.context?.apply {
+                productList?.apply {
+                    when(productType) {
+                       getString(R.string.food_product_type) -> {
+                            imAddToList?.visibility = VISIBLE
+                        }
+                        getString(R.string.digital_product_type) -> {
+                            imAddToList?.visibility = VISIBLE
+                        }
+                        else -> {
+                            imAddToList?.visibility = GONE
+                        }
+                    }
                 }
             }
         }
