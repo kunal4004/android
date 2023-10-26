@@ -69,10 +69,15 @@ class DisplayInArrearsPopup(
                     with(it) {
                         renderLoading { isLoading(this.isLoading) }
                         renderSuccess {
-                            mEligibilityPlan = output.eligibilityPlan
-                            setEligibilityPlan(output.eligibilityPlan)
-                            homeViewModel.setTreatmentPlan(output.eligibilityPlan)
-                            navigationTo(homeViewModel.viewTreatmentPlan?.getPopupData(output.eligibilityPlan),output.eligibilityPlan)
+                            if(output.eligibilityPlan != null) {
+                                mEligibilityPlan = output.eligibilityPlan
+                                setEligibilityPlan(output.eligibilityPlan)
+                                homeViewModel.setTreatmentPlan(output.eligibilityPlan)
+                                navigationTo(homeViewModel.viewTreatmentPlan?.getPopupData(output.eligibilityPlan),output.eligibilityPlan)
+                            }
+                            else{
+                                showAccountInArrears()
+                            }
                         }
                         renderEmpty { showAccountInArrears() }
                         renderHttpFailureFromServer { showAccountInArrears() }
