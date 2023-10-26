@@ -192,7 +192,7 @@
                         app:drawableStartCompat="@drawable/ic_touch_id" />
 
                     <androidx.appcompat.widget.SwitchCompat
-                        android:id="@+id/biometricAuthenticationSwitchCompat"
+                        android:id="@+id/auSwitch"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"

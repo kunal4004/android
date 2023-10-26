@@ -60,8 +60,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.Cha
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService;
 import za.co.woolworths.financial.services.android.ui.vto.ui.PfSDKInitialCallback;
 import za.co.woolworths.financial.services.android.ui.vto.utils.SdkUtility;
-import za.co.woolworths.financial.services.android.ui.wfs.common.state.CurrentScreenType;
-import za.co.woolworths.financial.services.android.ui.wfs.common.state.BiometricSingleton;
 import za.co.woolworths.financial.services.android.util.ConnectivityLiveData;
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager;
 import za.co.woolworths.financial.services.android.util.analytics.HuaweiManager;
@@ -69,7 +67,6 @@ import za.co.woolworths.financial.services.android.util.analytics.HuaweiManager;
 @HiltAndroidApp
 public class WoolworthsApplication extends Application implements Application.ActivityLifecycleCallbacks, LifecycleObserver {
 
-    public BiometricSingleton biometricSingleton;
     private static Context mContextApplication;
     private UserManager mUserManager;
     private Tracker mTracker;
@@ -103,6 +100,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
         final CoroutineScope coroutineScope = CoroutineScopeProvider.INSTANCE.getExternalScope();
         return RecommendationAnalytics.Companion.getInstance(recommendationUseCases, coroutineScope);
     }
+
 
     public static String getApiId() {
         PackageInfo packageInfo = null;
@@ -147,7 +145,6 @@ public class WoolworthsApplication extends Application implements Application.Ac
         super.onCreate();
         mInstance = this;
         this.registerActivityLifecycleCallbacks(this);
-        biometricSingleton = new BiometricSingleton();
         ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
@@ -362,7 +359,6 @@ public class WoolworthsApplication extends Application implements Application.Ac
     }
 
     public void setCurrentActivity(Activity mCurrentActivity) {
-        biometricSingleton.setCurrentActivity(mCurrentActivity);
         this.mCurrentActivity = mCurrentActivity;
     }
 
@@ -477,5 +473,4 @@ public class WoolworthsApplication extends Application implements Application.Ac
         });
 
     }
-
 }

@@ -39,7 +39,9 @@ import android.widget.RelativeLayout;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
 
 import com.awfs.coordination.R;
 import com.google.gson.Gson;
@@ -47,9 +49,12 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -81,7 +86,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.detail.D
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.Properties;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.ViewModel.DyChangeAttributeViewModel;
 import za.co.woolworths.financial.services.android.ui.wfs.common.NetworkUtilsKt;
-import za.co.woolworths.financial.services.android.ui.wfs.common.biometric.AuthenticateUtils;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.KotlinUtils;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
@@ -742,7 +746,7 @@ public class SSOActivity extends WebViewActivity {
 							closeActivity();
 						}
 					} else {
-						setSignInSuccessful(intent);
+						setResult(SSOActivityResult.SUCCESS.rawValue(), intent);
 						startOCDashChatServices();
 						setStSParameters();
 					}
@@ -773,11 +777,6 @@ public class SSOActivity extends WebViewActivity {
 				}
 			}
 		});
-	}
-
-	private void setSignInSuccessful(Intent intent) {
-		AuthenticateUtils.Companion.enableBiometricForCurrentSession(true);
-		setResult(SSOActivityResult.SUCCESS.rawValue(), intent);
 	}
 
 	private String sha256Value(String s) {
@@ -964,7 +963,7 @@ public class SSOActivity extends WebViewActivity {
 	protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()){
-			setSignInSuccessful(data);
+			setResult(SSOActivityResult.SUCCESS.rawValue(), data);
 			setStSParameters();
 		}
 	}

@@ -101,11 +101,11 @@
                 android:text="Enable Biometrics"
                 android:textColor="@color/black" />
 
-            <androidx.appcompat.widget.SwitchCompat
-                android:id="@+id/biometricAuthenticationSwitchCompat"
+            <Switch
+                android:id="@+id/auSwitch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:theme="@style/SwitchTheme" />
         </RelativeLayout>
