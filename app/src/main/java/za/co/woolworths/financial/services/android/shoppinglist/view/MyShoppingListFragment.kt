@@ -22,13 +22,14 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -42,6 +43,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList
 import za.co.woolworths.financial.services.android.presentation.common.AppToolBar
+import za.co.woolworths.financial.services.android.presentation.common.ToolbarEvents
 import za.co.woolworths.financial.services.android.presentation.common.confirmationdialog.ConfirmationBottomsheetDialogFragment
 import za.co.woolworths.financial.services.android.presentation.createlist.CreateListFragment
 import za.co.woolworths.financial.services.android.shoppinglist.component.MyLIstUIEvents
@@ -78,7 +80,6 @@ class MyShoppingListFragment : Fragment() {
     private var mBottomNavigator: BottomNavigator? = null
     private val myListviewModel: MyListViewModel by viewModels()
     private var bottomsheetConfirmationDialog: ConfirmationBottomsheetDialogFragment? = null
-    private var appBarShowState = mutableStateOf(String())
 
     companion object {
         private const val MY_LIST_SIGN_IN_REQUEST_CODE = 7878
@@ -106,7 +107,6 @@ class MyShoppingListFragment : Fragment() {
 
             val snackbarHostState = remember { SnackbarHostState() }
             val context = LocalContext.current
-
             LaunchedEffect(context) {
                 myListviewModel.onScreenEvents.collect {
                     when (it) {
@@ -125,15 +125,24 @@ class MyShoppingListFragment : Fragment() {
 
             Scaffold(
                 topBar = {
+                    val appbarUiState by myListviewModel.appBarUIState
                     Column {
                         AppToolBar(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .heightIn(min = 56.dp)
                                 .background(color = Color.White),
-                            title = appBarShowState.value,
+                            title = stringResource(id = appbarUiState.titleRes),
+                            rightButton = stringResource(id = appbarUiState.rightButtonRes),
+                            showRightButton = appbarUiState.showRightButton,
                             onClick = {
-                                activity?.onBackPressed()
+                                when (it) {
+                                    ToolbarEvents.OnBackPressed -> activity?.onBackPressed()
+                                    is ToolbarEvents.OnRightButtonClick -> {
+                                        myListviewModel.onEvent(MyLIstUIEvents.OnToolbarEditClick(it.buttonText))
+                                    }
+                                    else -> {}
+                                }
                             }
                         )
                         Spacer(
@@ -254,7 +263,6 @@ class MyShoppingListFragment : Fragment() {
         if (!hidden) {
             Handler(Looper.getMainLooper()).postDelayed({
                 hideActivityToolbar()
-                appBarShowState.value = getString(R.string.my_shopping_lists)
             }, 2000L)
         }
     }
@@ -264,7 +272,6 @@ class MyShoppingListFragment : Fragment() {
         myListviewModel.onEvent(MyLIstUIEvents.SetDeliveryLocation)
         Handler(Looper.getMainLooper()).postDelayed({
             hideActivityToolbar()
-            appBarShowState.value = getString(R.string.my_shopping_lists)
         }, 2000L)
     }
 

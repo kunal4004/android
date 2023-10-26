@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.presentation.common
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -13,6 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -29,6 +31,8 @@ fun AppToolBar(
     modifier: Modifier = Modifier,
     title: String = "",
     backIcon: Int = R.drawable.back24,
+    showRightButton: Boolean = false,
+    rightButton: String = "",
     onClick: (event: ToolbarEvents) -> Unit
 ) {
     Box(modifier = modifier) {
@@ -54,12 +58,40 @@ fun AppToolBar(
                 color = Color.Black
             )
         )
+
+        AnimatedVisibility(
+            modifier = Modifier
+                .align(Alignment.CenterEnd)
+                .padding(16.dp),
+            visible = showRightButton
+        ) {
+            Text(
+                modifier = Modifier.clickable {
+                    onClick(ToolbarEvents.OnRightButtonClick(rightButton))
+                },
+                text = rightButton,
+                style = TextStyle(
+                    fontFamily = FuturaFontFamily,
+                    fontWeight = FontWeight.W500,
+                    fontSize = 12.sp,
+                    color = Color.Black,
+                    textAlign = TextAlign.Right,
+                    letterSpacing = 1.sp
+                )
+            )
+        }
     }
 }
+
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
 fun AppToolbarPreview() {
     OneAppTheme {
-        AppToolBar(title = "My Shopping Lists", onClick = {})
+        AppToolBar(
+            title = "My Shopping Lists",
+            rightButton = "EDIT",
+            showRightButton = true,
+            onClick = {}
+        )
     }
 }

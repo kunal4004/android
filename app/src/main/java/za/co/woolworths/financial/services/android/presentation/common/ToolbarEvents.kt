@@ -5,4 +5,5 @@ package za.co.woolworths.financial.services.android.presentation.common
  */
 sealed class ToolbarEvents {
     object OnBackPressed: ToolbarEvents()
+    data class OnRightButtonClick(val buttonText: String): ToolbarEvents()
 }

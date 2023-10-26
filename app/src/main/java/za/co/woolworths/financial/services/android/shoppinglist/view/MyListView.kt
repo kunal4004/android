@@ -36,17 +36,7 @@ fun MyListView(
             onCreateNewList = {
                 onEvent(MyLIstUIEvents.CreateListClick)
             },
-            onEvent = {
-                when (it) {
-                    is MyLIstUIEvents.ChangeLocationClick -> onEvent(it)
-                    is MyLIstUIEvents.ListItemClick -> onEvent(it)
-                    is MyLIstUIEvents.ShareListClick -> onEvent(it)
-                    is MyLIstUIEvents.OnSwipeDeleteAction -> onEvent(it)
-                    is MyLIstUIEvents.CreateListClick -> onEvent(it)
-                    is MyLIstUIEvents.SignInClick -> onEvent(it)
-                    else -> myListviewModel.onEvent(it)
-                }
-            },
+            onEvent = onEvent,
             myListviewModel
         )
         if (isProgressBarNeeded.value) {
@@ -110,14 +100,16 @@ fun MyListScreen(
                     .background(color = colorResource(id = R.color.color_D8D8D8))
             )
 
-            ListOfListView(modifier = Modifier
-                .background(Color.White),
+            ListOfListView(
+                modifier = Modifier
+                    .background(Color.White),
                 myListviewModel.listDataState.value,
                 onEvent = {
                     when (it) {
                         is MyLIstUIEvents.ListItemClick -> onEvent(it)
                         is MyLIstUIEvents.ShareListClick -> onEvent(it)
-                        is MyLIstUIEvents.OnSwipeDeleteAction -> onEvent(it)else -> myListviewModel.onEvent(it)
+                        is MyLIstUIEvents.OnSwipeDeleteAction -> onEvent(it)
+                        else -> myListviewModel.onEvent(it)
                     }
                 })
         }

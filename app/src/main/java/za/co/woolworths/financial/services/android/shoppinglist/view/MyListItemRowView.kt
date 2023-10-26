@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Icon
@@ -39,6 +40,7 @@ fun MyListItemRowView(
     modifier: Modifier = Modifier,
     listDataState: ListDataState,
     listItem: ShoppingList,
+    onDeleteIconClick: (item: ShoppingList) -> Unit,
     onShareIconClick: (item: ShoppingList) -> Unit,
     onDetailsArrowClick: (item: ShoppingList) -> Unit,
 ) {
@@ -75,24 +77,35 @@ fun MyListItemRowView(
                 horizontalArrangement = Arrangement.End,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Icon(painter = painterResource(id = listDataState.shareIcon),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .padding(5.dp, 0.dp, 7.dp, 0.dp)
-                        .clickable {
-                            onShareIconClick(listItem)
-                        }
-                )
+                if(listDataState.isEditMode) {
+                    Icon(painter = painterResource(id = listDataState.deleteIcon),
+                        contentDescription = "Delete List",
+                        modifier = Modifier
+                            .size(24.dp)
+                            .clickable {
+                                onDeleteIconClick(listItem)
+                            }
+                    )
+                } else {
+                    Icon(painter = painterResource(id = listDataState.shareIcon),
+                        contentDescription = "Share List",
+                        modifier = Modifier
+                            .padding(5.dp, 0.dp, 7.dp, 0.dp)
+                            .clickable {
+                                onShareIconClick(listItem)
+                            }
+                    )
 
-                Icon(
-                    painter = painterResource(id = listDataState.openIcon),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .padding(7.dp, 0.dp, 0.dp, 0.dp)
-                        .clickable {
-                            onDetailsArrowClick(listItem)
-                        },
-                )
+                    Icon(
+                        painter = painterResource(id = listDataState.openIcon),
+                        contentDescription = "Open List",
+                        modifier = Modifier
+                            .padding(7.dp, 0.dp, 0.dp, 0.dp)
+                            .clickable {
+                                onDetailsArrowClick(listItem)
+                            },
+                    )
+                }
             }
         }
 
@@ -130,9 +143,10 @@ private fun MyListItemRowPreview() {
         val listData =
             ListDataState(
                 mockListData, emptyList(), R.drawable.ic_share, R.drawable
-                    .ic_white_chevron_right
+                    .ic_white_chevron_right,
+                isEditMode = true
             )
         MyListItemRowView(listDataState = listData, listItem = mockList, onShareIconClick = {},
-            onDetailsArrowClick = {})
+            onDetailsArrowClick = {}, onDeleteIconClick = {})
     }
 }
