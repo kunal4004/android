@@ -11,6 +11,7 @@ import com.awfs.coordination.R
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
+import za.co.woolworths.financial.services.android.presentation.addtolist.AddToListFragment
 import za.co.woolworths.financial.services.android.shoppinglist.listener.MyShoppingListItemClickListener
 import za.co.woolworths.financial.services.android.ui.compose.contentView
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
@@ -23,7 +24,9 @@ class MoreOptionDialogFragment : WBottomSheetDialogFragment() {
 
     companion object {
         var listener : MyShoppingListItemClickListener? = null
-        fun newInstance(shoppingListItemClickListener:MyShoppingListItemClickListener) = MoreOptionDialogFragment().withArgs {
+        fun newInstance(
+            shoppingListItemClickListener: MyShoppingListItemClickListener,
+        ) = MoreOptionDialogFragment().withArgs {
             listener = shoppingListItemClickListener
         }
     }
@@ -35,10 +38,15 @@ class MoreOptionDialogFragment : WBottomSheetDialogFragment() {
         ViewCompositionStrategy.DisposeOnDetachedFromWindow
     ) {
         OneAppTheme {
-            MoreOptionDialog({
-              //todo item copy
+
+            MoreOptionDialog(
+                {
+                  dialog?.dismiss()
+                  val fragment = AddToListFragment.newInstance(listener)
+                  fragment.show(parentFragmentManager, AddToListFragment::class.simpleName)
+
             }, {
-              //todo item move
+                //todo item move
             }) {
                 dialog?.dismiss()
                 val fragment = ConfirmationDialogFragment.newInstance(listener)

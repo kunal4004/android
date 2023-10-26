@@ -46,6 +46,7 @@ import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
 fun AddToListScreen(
     modifier: Modifier = Modifier,
     listUiState: AddToListUiState = AddToListUiState(),
+    copyItemToList: Boolean = false,
     onEvent: (event: AddToListScreenEvents) -> Unit
 ) {
     Box(
@@ -68,7 +69,10 @@ fun AddToListScreen(
             HeaderView(
                 modifier = Modifier.padding(top = 20.dp, bottom = 24.dp),
                 headerViewState = HeaderViewState.HeaderStateType2(
-                    title = stringResource(id = R.string.add_to_list)
+                    title = if (copyItemToList)
+                        stringResource(id = R.string.copy_to_list)
+                    else
+                        stringResource(id = R.string.add_to_list)
                 )
             ) {
                 onEvent(AddToListScreenEvents.CreateListClick)
@@ -106,7 +110,11 @@ fun AddToListScreen(
                     text = stringResource(id = R.string.confirm).uppercase(),
                     enabled = listUiState.selectedListItem.isNotEmpty()
                 ) {
-                    onEvent(AddToListScreenEvents.ConfirmClick)
+                    if (copyItemToList) {
+                        onEvent(AddToListScreenEvents.CopyConfirmClick)
+                    } else {
+                        onEvent(AddToListScreenEvents.ConfirmClick)
+                    }
                 }
 
                 UnderlineButton(

@@ -57,7 +57,10 @@ import za.co.woolworths.financial.services.android.recommendations.presentation.
 import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationLoaderImpl
 import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationLoadingNotifier
 import za.co.woolworths.financial.services.android.shoppinglist.listener.MyShoppingListItemClickListener
+import za.co.woolworths.financial.services.android.shoppinglist.model.EditOptionType
 import za.co.woolworths.financial.services.android.shoppinglist.model.RemoveItemApiRequest
+import za.co.woolworths.financial.services.android.shoppinglist.service.network.CopyItemDetail
+import za.co.woolworths.financial.services.android.shoppinglist.service.network.CopyItemToListRequest
 import za.co.woolworths.financial.services.android.shoppinglist.view.MoreOptionDialogFragment
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
@@ -112,9 +115,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
     MyShoppingListItemClickListener {
 
     private val viewModel: ShoppingListDetailViewModel by viewModels()
-    private val selectedItems  = ArrayList<String>()
     private var customProgressDialog: CustomProgressBar? = null
-
 
     private val productSearchResult =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
@@ -164,6 +165,9 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val bindingListDetails get() = _bindingListDetails!!
+
+    private var selectedListCount = 0
+    private var selectedItemsForRemoval = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -262,22 +266,51 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             val response = it.peekContent().data
             when (it.peekContent().status) {
                 Status.LOADING -> {
-                    showLoadingProgress(this)
+                    val message  = getString(R.string.remove_item) + "\n" + listName
+                    showLoadingProgress(this, message)
                 }
                 Status.SUCCESS -> {
                     hideLoadingProgress()
                     updateShoppingListAfterDeletion(response)
-                    val count = selectedItems.size
-                    val itemCount =
-                        resources.getQuantityString(
-                            R.plurals.remove_list,
-                            count,
-                            count
-                        )
+                    val message =  getFormatedString(
+                        count = selectedItemsForRemoval, R.plurals.remove_list) +"\t\t" +listName
                     ToastFactory.showToast(
                         requireActivity(),
                         bindingListDetails.rlCheckOut,
-                        itemCount + "\t" +listName
+                        message
+                    )
+                }
+                Status.ERROR -> {
+                    hideLoadingProgress()
+                }
+            }
+        }
+
+        viewModel.copyItemsToList.observe(viewLifecycleOwner) {
+            val response = it.peekContent().data
+            when (it.peekContent().status) {
+                Status.LOADING -> {
+                    val message = if (selectedListCount == 1) {
+                        getFormatedString(selectedListCount, R.plurals.copy_item) + "\n" + listName
+                    } else {
+                        getFormatedString(selectedListCount, R.plurals.copy_item) + "\n" + getString(R.string.multiple_lists)
+                    }
+                    showLoadingProgress(this, message)
+                }
+
+                Status.SUCCESS -> {
+                    hideLoadingProgress()
+                    val count = shoppingListItemsAdapter?.addedItemsCount?:0
+                    val message = if (selectedListCount == 1 ) {
+                         count.toString() + "\t\t" + getFormatedString(count, R.plurals.copy_item_msg) +"\t\t" + listName
+                    } else {
+                         count.toString() + "\t\t" + getFormatedString(count, R.plurals.copy_item_msg) + "\t\t" + getString(R.string.multiple_lists)
+                    }
+                    ToastFactory.showToast(
+                        requireActivity(),
+                        bindingListDetails.rlCheckOut,
+                        message,
+                        if (selectedListCount ==1) true else false
                     )
                 }
                 Status.ERROR -> {
@@ -287,12 +320,19 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         }
     }
 
-    private fun showLoadingProgress(fragment: Fragment) {
+    private fun getFormatedString(count:Int ,msg:Int): String {
+        return requireContext().resources.getQuantityString(
+            msg,
+            count,
+            count
+        )
+    }
+
+    private fun showLoadingProgress(fragment: Fragment, message: String) {
         if (customProgressDialog != null && customProgressDialog!!.isVisible)
             return
-        val title = getString(R.string.remove_item) + "\t" + listName
         customProgressDialog = CustomProgressBar.newInstance(
-            title,
+            message,
             getString(R.string.processing_your_request_desc)
         )
         customProgressDialog?.show(
@@ -440,12 +480,6 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
     }
 
     private fun openMoreOptionsDialog() {
-        for (item in viewModel.mShoppingListItems) {
-            if (item.isSelected == true) {
-                selectedItems.add(item.Id)
-            }
-        }
-
         val fragment = MoreOptionDialogFragment.newInstance(this@ShoppingListDetailFragment)
         fragment.show(parentFragmentManager, MoreOptionDialogFragment::class.simpleName)
     }
@@ -1187,14 +1221,48 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             "remove_with_delete_icon_pressed"
     }
 
-    override fun itemRemoveClick() {
+    override fun itemEditOptionsClick(editOptionType: EditOptionType) {
+        when (editOptionType) {
+
+            is EditOptionType.RemoveItemFromList -> {
+                removeItemFromList()
+            }
+            is EditOptionType.CopyItemFromList -> {
+                copytemFromList(editOptionType.list)
+            }
+            is EditOptionType.MoveItemFromList -> {
+
+            }
+            else -> {}
+        }
+
+    }
+
+    private fun removeItemFromList() {
         val selectedItems  = ArrayList<String>()
         for (item in viewModel.mShoppingListItems) {
             if (item.isSelected == true) {
                 selectedItems.add(item.Id)
             }
         }
+        selectedItemsForRemoval = selectedItems.size
         val removeItemApiRequest = RemoveItemApiRequest(selectedItems)
         viewModel.removeMultipleItemsFromList(viewModel.listId, removeItemApiRequest)
+    }
+
+    private fun copytemFromList(list: List<String>) {
+        val selectedItems  = ArrayList<CopyItemDetail>()
+        for (item in viewModel.mShoppingListItems) {
+            if (item.isSelected == true) {
+                selectedItems.add(CopyItemDetail(skuID = item.catalogRefId, catalogRefId = item.catalogRefId, quantity = "1"))
+            }
+        }
+        selectedListCount = list.size
+        val copyItemToListRequest = CopyItemToListRequest(items = selectedItems ,giftListIds = list)
+        viewModel.copyMultipleItemsFromList(copyItemToListRequest)
+    }
+
+    private fun moveItemFromList() {
+       /*todo */
     }
 }

@@ -3136,10 +3136,23 @@
     <string name="my_list_snackbar_message">Your list has been removed</string>
     <string name="remove_from">Removed from</string>
     <string name="remove_item">Removing Your Item from</string>
+    <string name="move_to_list">move to a list</string>
+    <string name="copy_to_list_progress_title">Copying Your Items\n to %s</string>
+
     <plurals name="remove_list">
         <item quantity="one">%d ITEM REMOVE FROM</item>
         <item quantity="other">%d ITEMS REMOVE FROM </item>
     </plurals>
 
+
+    <plurals name="copy_item">
+        <item quantity="one">Copying Your Item</item>
+        <item quantity="other">Copying Your Items </item>
+    </plurals>
+
+    <plurals name="copy_item_msg">
+        <item quantity="one">item copied to</item>
+        <item quantity="other">items copied to </item>
+    </plurals>
 
 </resources>

@@ -30,7 +30,10 @@ import za.co.woolworths.financial.services.android.presentation.addtolist.compon
 import za.co.woolworths.financial.services.android.presentation.common.ProgressView
 import za.co.woolworths.financial.services.android.presentation.createlist.CreateListScreen
 import za.co.woolworths.financial.services.android.presentation.createlist.components.CreateListScreenEvent
+import za.co.woolworths.financial.services.android.shoppinglist.listener.MyShoppingListItemClickListener
+import za.co.woolworths.financial.services.android.shoppinglist.model.EditOptionType
 import za.co.woolworths.financial.services.android.ui.compose.contentView
+import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
 import za.co.woolworths.financial.services.android.util.AppConstant
@@ -44,7 +47,14 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Keys.Compani
 class AddToListFragment : WBottomSheetDialogFragment() {
 
     companion object {
+        var listener : MyShoppingListItemClickListener? = null
+        var copyItemToList:Boolean = false
+
         const val ADD_TO_SHOPPING_LIST_REQUEST_CODE = 1209
+        fun newInstance(shoppingListItemClickListener: MyShoppingListItemClickListener?) = AddToListFragment().withArgs {
+            listener = shoppingListItemClickListener
+            copyItemToList = true
+        }
     }
 
     private val viewModel: AddToListViewModel by viewModels()
@@ -157,9 +167,18 @@ class AddToListFragment : WBottomSheetDialogFragment() {
                             .background(Color.White)
                             .wrapContentHeight()
                             .heightIn(max = 600.dp),
-                        listUiState = listState
+                        listUiState = listState,
+                        copyItemToList = copyItemToList
                     ) { event ->
                         when (event) {
+                            AddToListScreenEvents.CopyConfirmClick -> {
+                                val list = mutableListOf<String>()
+                                viewModel.getListState().selectedListItem.forEach {
+                                    list.add(it.listId)
+                                }
+                                dialog?.dismiss()
+                                listener?.itemEditOptionsClick(EditOptionType.CopyItemFromList(list))
+                            }
                             AddToListScreenEvents.CancelClick -> dismiss()
                             else -> viewModel.onEvent(event)
                         }

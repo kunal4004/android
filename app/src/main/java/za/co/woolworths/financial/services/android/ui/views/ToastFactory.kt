@@ -142,7 +142,7 @@ class ToastFactory {
             return popupWindow
         }
 
-        fun showToast(activity: Activity, viewLocation: View, message: String): PopupWindow? {
+        fun showToast(activity: Activity, viewLocation: View, message: String, buttonIsVisible: Boolean = false): PopupWindow? {
             val context = WoolworthsApplication.getAppContext()
             // inflate your xml layout
             val inflater =
@@ -159,7 +159,7 @@ class ToastFactory {
                 LinearLayout.LayoutParams.WRAP_CONTENT, true
             )
 
-            tvButtonClick?.visibility = GONE
+            tvButtonClick?.visibility = if (buttonIsVisible) VISIBLE else GONE
             tvBoldTitle?.visibility = VISIBLE
             tvAddedTo?.visibility = GONE
             tvAddedTo?.setAllCaps(true)

@@ -17,6 +17,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.presentation.common.confirmationdialog.DeleteListConfirmationView
 import za.co.woolworths.financial.services.android.presentation.common.confirmationdialog.components.ConfirmationUiState
 import za.co.woolworths.financial.services.android.shoppinglist.listener.MyShoppingListItemClickListener
+import za.co.woolworths.financial.services.android.shoppinglist.model.EditOptionType
 import za.co.woolworths.financial.services.android.ui.compose.contentView
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
@@ -58,7 +59,7 @@ class ConfirmationDialogFragment : WBottomSheetDialogFragment() {
                 },
                 onConfirmClick = {
                     dialog?.dismiss()
-                    listener?.itemRemoveClick()
+                    listener?.itemEditOptionsClick(EditOptionType.RemoveItemFromList)
                 },
                 onCancelClick = {
                     dialog?.dismiss()
