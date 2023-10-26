@@ -1,7 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_general.ui
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,7 +10,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,6 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
+import za.co.woolworths.financial.services.android.ui.wfs.common.click.clickableSingle
 import za.co.woolworths.financial.services.android.ui.wfs.component.MyIcon
 import za.co.woolworths.financial.services.android.ui.wfs.component.ShimmerIconLabel
 import za.co.woolworths.financial.services.android.ui.wfs.component.ShimmerLabel
@@ -89,10 +87,11 @@ fun GeneralItem(
         val title = generalItem.title?.let { stringResource(id = it) } ?: ""
         Row(
             modifier = Modifier
-                .clickable(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = rememberRipple(bounded = true, color = Obsidian),
-                ) { onClickListener(generalItem.clickable) }
+                .clickableSingle(
+                    indication = rememberRipple(bounded = true, color = Obsidian)
+                ) {
+                    onClickListener(generalItem.clickable)
+                }
                 .testAutomationTag(locator = createLocator(default = general_row, key = locator) )
                 .padding(top = Margin.start, bottom = Margin.end)
                 .fillMaxWidth(),
