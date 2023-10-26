@@ -6,6 +6,7 @@ import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -99,6 +100,12 @@ class DashCategoryAdapter(
                     ItemLongBannerListBinding.inflate(LayoutInflater.from(context), parent, false)
                 )
             }
+
+            DashDeliveryAdapter.TYPE_DASH_TODAY_WITH_WOOLIES -> {
+                TodayWooliesListItemViewHolder(
+                    TodayWithWooliesListItemBinding.inflate(LayoutInflater.from(context), parent, false)
+                )
+            }
             else -> EmptyViewHolder(View(context))
         }
     }
@@ -150,6 +157,15 @@ class DashCategoryAdapter(
                     iProductListing
                 )
             }
+            is TodayWooliesListItemViewHolder -> {
+                holder.bind(
+                    context,
+                    position,
+                    list[position] as Banner,
+                    headerText = headerText ?: "",
+                    dashLandingNavigationListener
+                )
+            }
         }
     }
 
@@ -170,6 +186,9 @@ class DashCategoryAdapter(
             DashDeliveryAdapter.TYPE_NAME_LONG_BANNER_LIST.lowercase() -> {
                 DashDeliveryAdapter.TYPE_DASH_CATEGORIES_LONG_BANNER_LIST
             }
+            DashDeliveryAdapter.TYPE_NAME_LONG_BANNER_FULL_WIDTH.lowercase() -> {
+                DashDeliveryAdapter.TYPE_DASH_TODAY_WITH_WOOLIES
+            }
             else -> TYPE_EMPTY
         }
     }
@@ -181,6 +200,31 @@ class DashCategoryAdapter(
         type = productCatalogue.name
         productCatalogue.banners?.let { list = it }
         productCatalogue.products?.let { list = it }
+    }
+}
+
+class TodayWooliesListItemViewHolder(val itemBinding: TodayWithWooliesListItemBinding) :
+    RecyclerView.ViewHolder(itemBinding.root) {
+
+    fun bind(
+        context: Context,
+        position: Int,
+        banner: Banner,
+        headerText: String?,
+        dashLandingNavigationListener: OnDashLandingNavigationListener?,
+    ) {
+        itemBinding.root?.setOnClickListener {
+            dashLandingNavigationListener?.onDashLandingNavigationClicked(
+                position,
+                it,
+                banner,
+                headerText = headerText)
+
+        }
+        itemBinding.todayWooliesTitle?.text = banner.subTitleText
+        itemBinding.todayWooliesDescription?.text = banner.descriptionText
+        setBannerImage(context, banner, itemBinding.fullWidthImage)
+
     }
 }
 
@@ -202,15 +246,8 @@ class BannerCarouselItemViewHolder(val itemBinding: ItemBannerCarouselBinding) :
                 headerText
                 )
         }
-        Glide.with(context)
-            .load(banner.externalImageRefV2)
-            .format(DecodeFormat.PREFER_ARGB_8888)
-            .placeholder(R.drawable.woolworth_logo_icon)
-            .transform(
-                RoundedCorners(context.resources.getDimensionPixelOffset(R.dimen.seven_dp))
-            )
-            .dontAnimate()
-            .into(itemBinding.imgCategoryImage)
+        setBannerImage(context,banner,itemBinding.imgCategoryImage)
+
     }
 }
 
@@ -230,15 +267,7 @@ class BannerGridItemViewHolder(val itemBinding: ItemBannerGridBinding) : Recycle
                 banner,
                 headerText = headerText)
         }
-        Glide.with(context)
-            .load(banner.externalImageRefV2)
-            .format(DecodeFormat.PREFER_ARGB_8888)
-            .placeholder(R.drawable.woolworth_logo_icon)
-            .transform(
-                RoundedCorners(context.resources.getDimensionPixelOffset(R.dimen.seven_dp))
-            )
-            .dontAnimate()
-            .into(itemBinding.imgCategoryImage)
+        setBannerImage(context,banner,itemBinding.imgCategoryImage)
     }
 }
 
@@ -260,17 +289,26 @@ class LongBannerCarouselItemViewHolder(val itemBinding: ItemLongBannerCarouselBi
         }
         itemBinding.includeItemLongBannerList.tvLongBannerTitle?.text = banner.displayName
         itemBinding.includeItemLongBannerList.tvLongBannerSubtitle?.text = banner.subTitle
+        setBannerImage(context, banner, itemBinding.includeItemLongBannerList.imgLongBannerItem)
 
-        Glide.with(context)
-            .load(banner.externalImageRefV2)
-            .format(DecodeFormat.PREFER_ARGB_8888)
-            .placeholder(R.drawable.woolworth_logo_icon)
-            .transform(
-                RoundedCorners(context.resources.getDimensionPixelOffset(R.dimen.seven_dp))
-            )
-            .dontAnimate()
-            .into(itemBinding.includeItemLongBannerList.imgLongBannerItem)
     }
+
+}
+
+private fun setBannerImage(
+    context: Context,
+    banner: Banner,
+    image: ImageView
+) {
+    Glide.with(context)
+        .load(banner.externalImageRefV2)
+        .format(DecodeFormat.PREFER_ARGB_8888)
+        .placeholder(R.drawable.woolworth_logo_icon)
+        .transform(
+            RoundedCorners(context.resources.getDimensionPixelOffset(R.dimen.seven_dp))
+        )
+        .dontAnimate()
+        .into(image)
 }
 
 class LongBannerListItemViewHolder(val itemBinding: ItemLongBannerListBinding) : RecyclerView.ViewHolder(itemBinding.root) {
@@ -292,16 +330,7 @@ class LongBannerListItemViewHolder(val itemBinding: ItemLongBannerListBinding) :
         }
         itemBinding.tvLongBannerTitle?.text = banner.displayName
         itemBinding.tvLongBannerSubtitle?.text = banner.subTitle
-
-        Glide.with(context)
-            .load(banner.externalImageRefV2)
-            .format(DecodeFormat.PREFER_ARGB_8888)
-            .placeholder(R.drawable.woolworth_logo_icon)
-            .transform(
-                RoundedCorners(context.resources.getDimensionPixelOffset(R.dimen.seven_dp))
-            )
-            .dontAnimate()
-            .into(itemBinding.imgLongBannerItem)
+        setBannerImage(context,banner,itemBinding.imgLongBannerItem)
     }
 }
 
