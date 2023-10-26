@@ -998,6 +998,19 @@ interface ApiInterface {
         "Accept: application/json",
         "Media-Type: application/json",
     )
+    @GET("wfs/app/v4/cart/summary")
+    suspend fun getShoppingCartSummary(
+        @Header("userAgent") userAgent: String,
+        @Header("userAgentVersion") userAgentVersion: String,
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+    ): retrofit2.Response<CartSummaryResponse>
+
+    @Headers(
+        "Content-Type: application/json",
+        "Accept: application/json",
+        "Media-Type: application/json",
+    )
     @DELETE("wfs/app/v4/cartV2/item")
     suspend fun removeAllCartItems(
 
@@ -1157,13 +1170,13 @@ interface ApiInterface {
         "Accept: application/json",
         "Media-Type: application/json",
     )
-    @DELETE("wfs/app/v4/list/{id}")
-    fun deleteShoppingList(
 
+    @DELETE("wfs/app/v4/list/{id}")
+    suspend fun deleteShoppingList(
         @Header("sessionToken") sessionToken: String,
         @Header("deviceIdentityToken") deviceIdentityToken: String,
         @Path("id") id: String,
-    ): Call<ShoppingListsResponse>
+    ): retrofit2.Response<ShoppingListsResponse>
 
     @Headers(
         "Content-Type: application/json",

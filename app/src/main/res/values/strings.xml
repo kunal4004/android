@@ -3112,4 +3112,21 @@
     <string name="free_sim_with_purchase">Free %S Sim with Purchase</string>
     <string name="digital_product_type">digitalProducts</string>
     <string name="enter_valid_sa_number">Enter a valid 10 digit SA number(e.g 0xxxxxxxxx)</string>
+
+
+    <!--shopping List enhancement-->
+    <string name="view_only_option">View Only</string>
+    <string name="view_only_desc">Anyone with a link can view your list without making changes.</string>
+    <string name="edit_option">Edit</string>
+    <string name="edit_option_desc">Invited people can add or remove items from your list.</string>
+    <string name="share_btn">SHARE</string>
+
+    <string name="my_list_delete_this_list">Delete This List?</string>
+    <string name="my_list_delete_this_list_desc">If you choose to remove this list, you can still shop for the items in the app.</string>
+    <string name="my_list_delete_this_list_checkbox_title">Don’t show me this message again.</string>
+    <string name="my_list_deleting_title">Removing Your %s List</string>
+    <string name="my_list_snackbar_message">Your list has been removed</string>
+    <string name="view_only_url_option">viewOnly</string>
+    <string name="edit_url_option">viewAndEdit</string>
+
 </resources>
