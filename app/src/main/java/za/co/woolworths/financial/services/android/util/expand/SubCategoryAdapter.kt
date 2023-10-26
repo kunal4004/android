@@ -6,6 +6,7 @@ import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.awfs.coordination.databinding.OrderAgainCategoryViewBinding
 import com.awfs.coordination.databinding.SubCategoryChildViewBinding
 import com.awfs.coordination.databinding.SubCategoryHeaderViewBinding
 import com.awfs.coordination.databinding.SubCategoryParentViewBinding
@@ -18,7 +19,8 @@ class SubCategoryAdapter(
     context: Context,
     subCategoryNavigator: SubCategoryNavigator,
     parentItemList: List<ParentListItem?>?
-) : ExpandableRecyclerAdapter<HeaderViewHolder, ParentSubCategoryViewHolder, SubCategoryViewHolder>(
+) : ExpandableRecyclerAdapter<HeaderViewHolder, OrderAgainViewHolder, ParentSubCategoryViewHolder,
+        SubCategoryViewHolder>(
     parentItemList
 ) {
     private val mContext: Context
@@ -58,6 +60,26 @@ class SubCategoryAdapter(
         return HeaderViewHolder(
             SubCategoryHeaderViewBinding.inflate(LayoutInflater.from(headerViewGroup.context), headerViewGroup, false)
         )
+    }
+
+    override fun onCreateOrderAgainViewHolder(parentViewGroup: ViewGroup): OrderAgainViewHolder {
+        return OrderAgainViewHolder(
+            OrderAgainCategoryViewBinding.inflate(LayoutInflater.from(parentViewGroup.context), parentViewGroup, false)
+        )
+    }
+
+    override fun onBindOrderAgainViewHolder(
+        orderAgainViewHolder: OrderAgainViewHolder,
+        position: Int,
+        item: ParentListItem?
+    ) {
+        with(orderAgainViewHolder) {
+            val subCategoryModel = item as SubCategoryModel
+            bind(subCategoryModel)
+            itemView.setOnClickListener {
+                mSubCategoryNavigator.onOrderAgainClicked()
+            }
+        }
     }
 
     override fun onBindParentViewHolder(

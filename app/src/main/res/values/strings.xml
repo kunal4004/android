@@ -3112,4 +3112,6 @@
     <string name="free_sim_with_purchase">Free %S Sim with Purchase</string>
     <string name="digital_product_type">digitalProducts</string>
     <string name="enter_valid_sa_number">Enter a valid 10 digit SA number(e.g 0xxxxxxxxx)</string>
+    <string name="order_again_title">Reorder your favourite foods now.</string>
+    <string name="sign_in_to_order_again">sign in to order again</string>
 </resources>
