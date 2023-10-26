@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.viewmodel
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.runtime.*
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -160,11 +161,13 @@ class UserAccountLandingViewModel @Inject constructor(
         }
     }
 
-    fun setBiometricDisabled(){
+    fun setBiometricDisabled() {
+        Log.e("enableBiometrics", "setBiometricDisabled --")
         AuthenticateUtils.enableBiometricForCurrentSession(false)
     }
 
     fun setBiometricEnabled(){
+        Log.e("enableBiometrics", "setBiometricEnabled --")
         AuthenticateUtils.enableBiometricForCurrentSession(true)
     }
 

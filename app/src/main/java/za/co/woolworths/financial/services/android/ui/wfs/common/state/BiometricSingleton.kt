@@ -10,6 +10,7 @@ enum class CurrentScreenType {
 class BiometricSingleton {
     // LiveData to observe the current activity
     var currentScreenType : CurrentScreenType? = null
+    var wasBiometricAuthenticationScreenActive = false
 
     // Use this method to set the current activity in the ViewModel
     fun setCurrentActivity(activity: Activity?) {
@@ -18,6 +19,7 @@ class BiometricSingleton {
             else -> CurrentScreenType.OTHERS
         }
     }
+
 
     fun isCurrentActivityBottomNavigationActivity(): Boolean {
         return currentScreenType == CurrentScreenType.BOTTOM_NAVIGATION_ACTIVITY

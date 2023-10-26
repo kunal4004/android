@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature.fragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -151,6 +152,7 @@ class UserAccountsLandingFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
+        Log.e("enableBiometrics", "onStart")
         enableBiometric()
     }
 
@@ -163,7 +165,6 @@ class UserAccountsLandingFragment : Fragment() {
             }
         }
         viewModel.setOnTapActivated()
-        bottomNavigationActivity?.setMyAccountOpenedFromBottomNavigationActivity()
     }
 
     override fun onHiddenChanged(isHidden: Boolean) {
@@ -205,6 +206,7 @@ class UserAccountsLandingFragment : Fragment() {
                 }
                 setOnTapActivated()
                 biometricManager.setupBiometricAuthenticationForAccountLanding(
+                    biometricSingleton = getBiometricSingleton(),
                     this@UserAccountsLandingFragment,
                     (requireActivity() as? BottomNavigationActivity),
                     this
@@ -220,7 +222,7 @@ class UserAccountsLandingFragment : Fragment() {
         const val PET_INSURANCE_REQUEST_CODE = 1212
     }
 
-    fun getBiometricSingleton(): BiometricSingleton? {
+    private fun getBiometricSingleton(): BiometricSingleton? {
        val woolworthsApplication : WoolworthsApplication? = WoolworthsApplication.getInstance()
        return  woolworthsApplication?.biometricSingleton
     }

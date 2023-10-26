@@ -124,6 +124,7 @@ import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationVie
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.ui.views.shop.dash.ChangeFulfillmentCollectionStoreFragment;
 import za.co.woolworths.financial.services.android.ui.wfs.common.biometric.AuthenticateUtils;
+import za.co.woolworths.financial.services.android.ui.wfs.common.biometric.BiometricCallback;
 import za.co.woolworths.financial.services.android.ui.wfs.common.biometric.WfsBiometricManager;
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature.fragment.UserAccountsLandingFragment;
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.viewmodel.UserAccountLandingViewModel;
@@ -207,7 +208,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         return bottomNavigationViewModel;
     }
 
-    public Boolean wasAccountOpenenedFromBottomNavigationActivity = true;
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         try {
@@ -753,12 +753,23 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                     isDeeplinkAction = false;
                     if (AuthenticateUtils.Companion.isBiometricAuthenticationAvailable(BottomNavigationActivity.this)) {
                         try {
-                            AuthenticateUtils.Companion.startAuthenticateApp(BottomNavigationActivity.this, LOCK_REQUEST_CODE_ACCOUNTS);
+                            biometricManager.setupBiometricAuthenticationForBottomNavigation(BottomNavigationActivity.this, callback -> {
+                                if (callback == BiometricCallback.ErrorUserCanceled){
+                                    AuthenticateUtils.Companion.enableBiometricForCurrentSession(true);
+                                    getBottomNavigationById().setCurrentItem(INDEX_TODAY);
+                                } else if (callback == BiometricCallback.Succeeded){
+                                    AuthenticateUtils.Companion.enableBiometricForCurrentSession(false);
+                                    setToolbarBackgroundColor(R.color.white);
+                                    getBottomNavigationById().setCurrentItem(INDEX_ACCOUNT);
+                                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSMENU, BottomNavigationActivity.this);
+                                }else {}
+                                return null;
+                            });
+                            biometricManager.show();
                         } catch (Exception e) {
                             FirebaseManager.logException(e);
                         }
                     } else {
-                        closeMyAccountOpenedFromBottomNavigationActivity();
                         setToolbarBackgroundColor(R.color.white);
                         switchTab(INDEX_ACCOUNT);
                         Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSMENU, BottomNavigationActivity.this);
@@ -1276,18 +1287,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 getBottomFragmentById().onActivityResult(requestCode, resultCode, null);
             }
         }
-        // Biometric Authentication check
-        if (resultCode == RESULT_OK) {
-            switch (requestCode) {
-                case LOCK_REQUEST_CODE_ACCOUNTS:
-                    closeMyAccountOpenedFromBottomNavigationActivity();
-                    AuthenticateUtils.Companion.enableBiometricForCurrentSession(false);
-                    getBottomNavigationById().setCurrentItem(INDEX_ACCOUNT);
-                    break;
-                default:
-                    break;
-            }
-        }
 
         if (requestCode == ADD_TO_CART_SUCCESS_RESULT) {
             if (resultCode == ADD_TO_CART_SUCCESS_RESULT) {
@@ -1627,10 +1626,4 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
     }
 
-    public void setMyAccountOpenedFromBottomNavigationActivity() {
-        wasAccountOpenenedFromBottomNavigationActivity = true;
-    }
-    public void closeMyAccountOpenedFromBottomNavigationActivity() {
-        wasAccountOpenenedFromBottomNavigationActivity = false;
-    }
 }

@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.wfs.common.biometric
 
-import android.app.KeyguardManager
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -16,6 +15,7 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView
 import za.co.woolworths.financial.services.android.ui.wfs.common.biometric.BiometricUtils.deviceHasPasswordPinLock
 import za.co.woolworths.financial.services.android.ui.wfs.common.biometric.BiometricUtils.isBiometricHardWareAvailable
+import za.co.woolworths.financial.services.android.ui.wfs.common.state.BiometricSingleton
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.viewmodel.UserAccountLandingViewModel
 import za.co.woolworths.financial.services.android.util.SessionUtilities.*
 import java.util.concurrent.Executor
@@ -28,6 +28,7 @@ interface WfsBiometricManager {
     fun isBiometricInMyPreferencesEnabled(context: Context): Boolean
 
     fun setupBiometricAuthenticationForAccountLanding(
+        biometricSingleton: BiometricSingleton?,
         fragment: Fragment,
         bottomNavigation: BottomNavigationActivity?,
         viewModel: UserAccountLandingViewModel
@@ -38,6 +39,12 @@ interface WfsBiometricManager {
         bottomNavigation: WBottomNavigationView?,
         callback: (BiometricCallback) -> Unit
     )
+
+    fun setupBiometricAuthenticationForBottomNavigation(
+        bottomNavigation: BottomNavigationActivity?,
+        callback: (BiometricCallback) -> Unit
+    )
+
 
     fun show()
 }
@@ -64,7 +71,10 @@ class WfsBiometricManagerImpl @Inject constructor() : WfsBiometricManager {
             executor,
             biometricPromptAuthenticationCallback { result -> callback(result) })
     }
-
+    private fun AppCompatActivity.setPrompt(callback: (BiometricCallback) -> Unit) {
+        executor = ContextCompat.getMainExecutor(this)
+        biometricPrompt = BiometricPrompt(this, executor, biometricPromptAuthenticationCallback { result -> callback(result) })
+    }
     private fun biometricPromptAuthenticationCallback(callback: (BiometricCallback) -> Unit): BiometricPrompt.AuthenticationCallback {
         return object : BiometricPrompt.AuthenticationCallback() {
             override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
@@ -86,12 +96,6 @@ class WfsBiometricManagerImpl @Inject constructor() : WfsBiometricManager {
                 callback(BiometricCallback.Failed)
             }
         }
-    }
-
-    private fun Fragment.isDeviceSecure(): Boolean {
-        val keyguardManager =
-            requireContext().getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
-        return keyguardManager.isKeyguardSecure
     }
 
     private fun initBiometricPrompt(
@@ -137,8 +141,8 @@ class WfsBiometricManagerImpl @Inject constructor() : WfsBiometricManager {
         biometricPrompt.authenticate(promptInfo)
     }
 
-    private fun Fragment.unlockWithPinPasswordPatternOrBiometric(callback: (BiometricCallback) -> Unit) {
-        if (isDeviceSecure()) {
+    private fun Context.unlockWithPinPasswordPatternOrBiometric() : Boolean {
+        return if (AuthenticateUtils.isDeviceSecure(context = this)) {
             val title = getString(R.string.enter_password)
             if (isBiometricHardWareAvailable()) {
                 initBiometricPrompt(
@@ -156,19 +160,17 @@ class WfsBiometricManagerImpl @Inject constructor() : WfsBiometricManager {
                         isDeviceCredentialsAvailable = true
                     )
                 } else {
-                    val intent = Intent(Settings.ACTION_SECURITY_SETTINGS)
-                    startActivity(intent)
-                    return
+                     false
                 }
             }
-            this.setPrompt(callback = callback)
+            true
         } else {
-            val intent = Intent(Settings.ACTION_SECURITY_SETTINGS)
-            startActivity(intent)
+            false
         }
     }
 
     override fun setupBiometricAuthenticationForAccountLanding(
+        biometricSingleton: BiometricSingleton?,
         fragment: Fragment,
         bottomNavigation: BottomNavigationActivity?,
         viewModel: UserAccountLandingViewModel
@@ -178,19 +180,31 @@ class WfsBiometricManagerImpl @Inject constructor() : WfsBiometricManager {
                 isVisible &&
                 isBiometricEnabled(fragment.requireContext())) {
                 bottomNavigation?.apply {
-                    unlockWithPinPasswordPatternOrBiometric { callback ->
-                        when (callback) {
-                            BiometricCallback.ErrorUserCanceled -> {
-                                bottomNavigation?.bottomNavigationById?.currentItem = BottomNavigationActivity.INDEX_TODAY
-                                viewModel.setScreenBlurDisabled()
-                                viewModel.setBiometricEnabled()
-                            }
+                    when (unlockWithPinPasswordPatternOrBiometric()){
+                        true -> {
+                            biometricSingleton?.wasBiometricAuthenticationScreenActive = true
+                            fragment.setPrompt { callback ->
+                            when (callback) {
+                                BiometricCallback.ErrorUserCanceled -> {
+                                    bottomNavigation?.bottomNavigationById?.currentItem = BottomNavigationActivity.INDEX_TODAY
+                                    viewModel.setScreenBlurDisabled()
+                                    viewModel.setBiometricEnabled()
+                                    biometricSingleton?.wasBiometricAuthenticationScreenActive = false
+                                }
 
-                            BiometricCallback.Succeeded ->  {
-                                viewModel.setScreenBlurDisabled()
-                                viewModel.setBiometricDisabled()
+                                BiometricCallback.Succeeded ->  {
+                                    viewModel.setOnTapNotActivated()
+                                    viewModel.setScreenBlurDisabled()
+                                    viewModel.setBiometricDisabled()
+                                    biometricSingleton?.wasBiometricAuthenticationScreenActive = false
+                                }
+                                else -> Unit
                             }
-                            else -> Unit
+                        }
+                        }
+                        false -> {
+                            val intent = Intent(Settings.ACTION_SECURITY_SETTINGS)
+                            startActivity(intent)
                         }
                     }
                     viewModel.setScreenBlurEnabled()
@@ -210,11 +224,24 @@ class WfsBiometricManagerImpl @Inject constructor() : WfsBiometricManager {
         with(fragment) {
             if (isAdded && isVisible) {
                 (requireActivity() as? AppCompatActivity)?.apply {
-                    unlockWithPinPasswordPatternOrBiometric { result ->
-                        callback(result)
+                    when(unlockWithPinPasswordPatternOrBiometric()) {
+                        true -> fragment.setPrompt { result -> callback(result) }
+                        false -> Unit
                     }
                 }
             }
         }
     }
+
+    override fun setupBiometricAuthenticationForBottomNavigation(
+        bottomNavigation: BottomNavigationActivity?,
+        callback: (BiometricCallback) -> Unit) {
+        bottomNavigation?.apply {
+            when (unlockWithPinPasswordPatternOrBiometric()) {
+                true -> { setPrompt { result -> callback(result) }}
+                false -> Unit
+            }
+        }
+    }
+
 }
