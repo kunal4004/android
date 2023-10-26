@@ -106,10 +106,8 @@ fun SignedInScreen(
         FicaModelCollector(onClick = onClick)
 
         SignInContainer(isAccountLoading = userAccounts.isLoading, onClick = onClick, onProductClick = onProductClick,  allUserAccounts = userAccounts)
-
     }
 }
-
 
 @Composable
 fun UserAccountLandingViewModel.BiometricsCollector(onClick: (OnAccountItemClickListener) -> Unit) {

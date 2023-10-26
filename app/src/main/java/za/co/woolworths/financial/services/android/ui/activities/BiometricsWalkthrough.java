@@ -3,24 +3,24 @@ package za.co.woolworths.financial.services.android.ui.activities;
 import android.content.Intent;
 import android.provider.Settings;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SwitchCompat;
-
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.Switch;
 
 import com.awfs.coordination.R;
 
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
-import za.co.woolworths.financial.services.android.ui.wfs.common.biometric.AuthenticateUtils;
+import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class BiometricsWalkthrough extends AppCompatActivity implements View.OnClickListener, View.OnTouchListener {
 
 	public FrameLayout closeWindow;
-	private SwitchCompat biometricAuthenticationSwitchCompat;
+	private Switch authenticateSwitch;
 	private static final int LOCK_REQUEST_CODE_TO_ENABLE = 222;
 	private static final int SECURITY_SETTING_REQUEST_CODE = 232;
 	public static final int SECURITY_SETTING_REQUEST_DIALOG = 234;
@@ -36,8 +36,8 @@ public class BiometricsWalkthrough extends AppCompatActivity implements View.OnC
 	public void init() {
 		closeWindow = findViewById(R.id.closeWindow);
 		closeWindow.setOnClickListener(this);
-		biometricAuthenticationSwitchCompat = findViewById(R.id.biometricAuthenticationSwitchCompat);
-		biometricAuthenticationSwitchCompat.setOnClickListener(this);
+		authenticateSwitch = findViewById(R.id.auSwitch);
+		authenticateSwitch.setOnClickListener(this);
 		// One time Biometrics walkthrough
 		this.oneTimeWalkthroughPresented();
 	}
@@ -48,8 +48,8 @@ public class BiometricsWalkthrough extends AppCompatActivity implements View.OnC
 			case R.id.closeWindow:
 				finishActivity();
 				break;
-			case R.id.biometricAuthenticationSwitchCompat:
-				if (AuthenticateUtils.Companion.isDeviceSecure(BiometricsWalkthrough.this)&& biometricAuthenticationSwitchCompat.isChecked()) {
+			case R.id.auSwitch:
+				if (AuthenticateUtils.getInstance(BiometricsWalkthrough.this).isDeviceSecure()&& authenticateSwitch.isChecked()) {
 						startBiometricAuthentication(LOCK_REQUEST_CODE_TO_ENABLE);
 				} else {
 					openDeviceSecuritySettings();
@@ -64,14 +64,14 @@ public class BiometricsWalkthrough extends AppCompatActivity implements View.OnC
 		super.onActivityResult(requestCode, resultCode, data);
 		switch (requestCode) {
 			case LOCK_REQUEST_CODE_TO_ENABLE:
-				setUserAuthentication(resultCode == RESULT_OK);
+				setUserAuthentication(resultCode == RESULT_OK ? true : false);
 				if (resultCode == RESULT_OK) {
-					AuthenticateUtils.Companion.enableBiometricForCurrentSession(false);
+					AuthenticateUtils.getInstance(BiometricsWalkthrough.this).enableBiometricForCurrentSession(false);
 					finishActivity();
 				}
 				break;
 			case SECURITY_SETTING_REQUEST_CODE:
-				if (AuthenticateUtils.Companion.isDeviceSecure(BiometricsWalkthrough.this)) {
+				if (AuthenticateUtils.getInstance(BiometricsWalkthrough.this).isDeviceSecure()) {
 					startBiometricAuthentication(LOCK_REQUEST_CODE_TO_ENABLE);
 				} else {
 					setUserAuthentication(false);
@@ -80,7 +80,7 @@ public class BiometricsWalkthrough extends AppCompatActivity implements View.OnC
 			case SECURITY_SETTING_REQUEST_DIALOG:
 				if (resultCode == RESULT_OK) {
 					try {
-						Intent intent = new Intent(Settings.ACTION_SECURITY_SETTINGS);
+						Intent intent = new Intent(Settings.ACTION_SETTINGS);
 						startActivityForResult(intent, SECURITY_SETTING_REQUEST_CODE);
 					} catch (Exception ex) {
 						setUserAuthentication(false);
@@ -97,7 +97,7 @@ public class BiometricsWalkthrough extends AppCompatActivity implements View.OnC
 	@Override
 	public boolean onTouch(View view, MotionEvent motionEvent) {
 		switch (view.getId()) {
-			case R.id.biometricAuthenticationSwitchCompat:
+			case R.id.auSwitch:
 				return motionEvent.getActionMasked() == MotionEvent.ACTION_MOVE;
 			default:
 				break;
@@ -107,15 +107,15 @@ public class BiometricsWalkthrough extends AppCompatActivity implements View.OnC
 
 	public void startBiometricAuthentication(int requestCode) {
 		try {
-			AuthenticateUtils.Companion.startAuthenticateApp(BiometricsWalkthrough.this, requestCode);
+			AuthenticateUtils.getInstance(BiometricsWalkthrough.this).startAuthenticateApp(requestCode);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
 	public void setUserAuthentication(boolean isAuthenticated) {
-		AuthenticateUtils.Companion.setUserAuthenticate(isAuthenticated ? SessionDao.BIOMETRIC_AUTHENTICATION_STATE.ON : SessionDao.BIOMETRIC_AUTHENTICATION_STATE.OFF);
-		biometricAuthenticationSwitchCompat.setChecked(isAuthenticated);
+		AuthenticateUtils.getInstance(BiometricsWalkthrough.this).setUserAuthenticate(isAuthenticated ? SessionDao.BIOMETRIC_AUTHENTICATION_STATE.ON : SessionDao.BIOMETRIC_AUTHENTICATION_STATE.OFF);
+		authenticateSwitch.setChecked(isAuthenticated);
 	}
 
 	public void openDeviceSecuritySettings() {
