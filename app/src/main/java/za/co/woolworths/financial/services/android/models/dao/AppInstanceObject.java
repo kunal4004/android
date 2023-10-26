@@ -91,6 +91,13 @@ public class AppInstanceObject {
         public Long linkedDeviceIdentityId;
         public String mId;
 
+        public String serverDyId;
+        public String sessionDyId;
+
+        public boolean enhanceSubstitutionFeatureShown;
+        public String deliveryDetails;
+
+
         public User() {
             id = AppInstanceObject.getCurrentUsersID();
             shoppingDeliveryLocationHistory = new ArrayList<>();
