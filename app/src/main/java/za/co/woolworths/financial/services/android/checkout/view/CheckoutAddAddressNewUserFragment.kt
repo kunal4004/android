@@ -403,7 +403,7 @@ class CheckoutAddAddressNewUserFragment :
                             }.addOnFailureListener { exception ->
                                 if (exception is ApiException) {
                                     Toast.makeText(
-                                        AuthenticateUtils.mContext,
+                                        requireContext(),
                                         exception.message + "",
                                         Toast.LENGTH_SHORT
                                     )
