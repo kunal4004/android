@@ -12,6 +12,7 @@ sealed class MyLIstUIEvents {
     object OnNewListCreatedEvent : MyLIstUIEvents()
     object ChangeLocationClick : MyLIstUIEvents()
     object SetDeliveryLocation : MyLIstUIEvents()
+    object OnRefreshEvent : MyLIstUIEvents()
     data class ListItemRevealed(val item: ShoppingList) : MyLIstUIEvents()
     data class ListItemCollapsed(val item: ShoppingList) : MyLIstUIEvents()
     data class OnSwipeDeleteAction(val item: ShoppingList, val position: Int) : MyLIstUIEvents()
