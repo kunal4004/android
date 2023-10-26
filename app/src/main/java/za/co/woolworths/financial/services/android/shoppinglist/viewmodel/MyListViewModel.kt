@@ -359,13 +359,13 @@ class MyListViewModel @Inject constructor(
     private fun getProductCount(): Int {
         val displayMetrics: DisplayMetrics? =
             WoolworthsApplication.getAppContext()?.resources?.displayMetrics
-        var productsCountInRow = 3
+        var productsCountInRow = 3 // minimum items in a row
         if (displayMetrics != null) {
             val screenWidthDp = displayMetrics?.widthPixels?.div(displayMetrics?.density!!)
-            val usableDeviceWidth = (screenWidthDp?.minus(60)) // 60 is the left and right margin
+            val usableDeviceWidth = (screenWidthDp?.minus(50)) // 50 is the left and right margin
             if (usableDeviceWidth != null) {
                 productsCountInRow =
-                    ((usableDeviceWidth / 54).roundToInt()) // 54 is the width of productImage*/
+                    ((usableDeviceWidth / 54).roundToInt()) // 54 is the width of productImage
             }
         }
         return productsCountInRow
