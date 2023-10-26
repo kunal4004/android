@@ -56,6 +56,7 @@ import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAd
 import za.co.woolworths.financial.services.android.checkout.viewmodel.WhoIsCollectingDetails
 import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.endlessaisle.utils.isEndlessAisleAvailable
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
@@ -71,6 +72,8 @@ import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_ENDLESS_AISLE_JOURNEY
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_MIXED_BASKET
 import za.co.woolworths.financial.services.android.util.Constant
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 import za.co.woolworths.financial.services.android.util.ImageManager
@@ -108,6 +111,7 @@ class CheckoutReturningUserCollectionFragment :
     private var liquorOrder: Boolean? = false
     private var cartItemList: ArrayList<CommerceItem>? = null
     private var orderTotalValue: Double = -1.0
+    private var isMixedBasket: Boolean? = false
 
     @Inject
     lateinit var addShippingInfoEventsAnalytics: AddShippingInfoEventsAnalytics
@@ -151,8 +155,11 @@ class CheckoutReturningUserCollectionFragment :
         (activity as? CheckoutActivity)?.apply {
             showBackArrowWithTitle(bindString(R.string.checkout))
         }
+
         cartItemList =
             arguments?.getSerializable(CheckoutAddressManagementBaseFragment.CART_ITEM_LIST) as ArrayList<CommerceItem>?
+        isMixedBasket = arguments?.getBoolean(Constant.IS_MIXED_BASKET, false)
+
         initializeCollectingFromView()
         initializeCollectingDetailsView()
         initializeCollectionTimeSlots()
@@ -1115,6 +1122,8 @@ class CheckoutReturningUserCollectionFragment :
             }
 
             R.id.txtContinueToPaymentCollection -> {
+                // Handle the End Less Aisle
+                isEndlessAisleAvailable()
                 onCheckoutPaymentClick()
                 cartItemList?.let {
                     addShippingInfoEventsAnalytics.sendEventData(
@@ -1399,7 +1408,8 @@ class CheckoutReturningUserCollectionFragment :
             R.id.action_checkoutReturningUserCollectionFragment_to_checkoutPaymentWebFragment,
             bundleOf(
                 CheckoutPaymentWebFragment.KEY_ARGS_WEB_TOKEN to webTokens,
-                CheckoutAddressManagementBaseFragment.CART_ITEM_LIST to cartItemList
+                CheckoutAddressManagementBaseFragment.CART_ITEM_LIST to cartItemList,
+                IS_ENDLESS_AISLE_JOURNEY to (isEndlessAisleAvailable() && isMixedBasket == false)
             )
         )
     }
