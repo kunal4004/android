@@ -170,7 +170,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     public static final String KEY_PRODUCT_NAME = "productName";
 
     public final String TAG = this.getClass().getSimpleName();
-    public AccountMasterCache mAccountMasterCache = AccountMasterCache.INSTANCE;
     private PermissionUtils permissionUtils;
     private ArrayList<String> permissions;
     private BottomNavigationViewModel bottomNavigationViewModel;
@@ -190,6 +189,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     private Boolean isNewSession = false;
     private int currentTabIndex = INDEX_TODAY;
     private int previousTabIndex = INDEX_TODAY;
+
+    public Boolean isAuthenticatedFromOtherTab = false;
 
     @Inject WfsBiometricManager biometricManager;
 
@@ -235,8 +236,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(SavedInstanceFragment.getInstance(getFragmentManager()).popData());
         mBundle = getIntent().getExtras();
+        userAccountLandingViewModel = new ViewModelProvider(this).get(UserAccountLandingViewModel.class);
         parseDeepLinkData();
-         userAccountLandingViewModel = new ViewModelProvider(this).get(UserAccountLandingViewModel.class);
         new AmplifyInit();
         mNavController = FragNavController.newBuilder(savedInstanceState,
                         getSupportFragmentManager(),
@@ -1257,6 +1258,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         }
         // prevent firing reward and account api on every activity resume
         if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
+            isAuthenticatedFromOtherTab = true;
             //load count on login success
             switch (getCurrentSection()) {
                 case R.id.navigate_to_cart:

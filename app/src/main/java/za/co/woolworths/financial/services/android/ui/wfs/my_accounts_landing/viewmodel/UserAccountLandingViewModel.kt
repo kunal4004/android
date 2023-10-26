@@ -183,7 +183,7 @@ class UserAccountLandingViewModel @Inject constructor(
             showShimmer(isC2User())
             queryAccountLandingService(true)
             isUserAuthenticated.value = Authenticated
-            isBiometricPopupEnabled = isBiometricScreenNeeded()
+            isBiometricPopupEnabled = true
         }
     }
 
@@ -534,5 +534,6 @@ class UserAccountLandingViewModel @Inject constructor(
     fun setOnTapNotActivated() {
         wasActivityOpened = false
     }
+
 
 }

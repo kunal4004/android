@@ -152,7 +152,6 @@ class UserAccountsLandingFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        Log.e("enableBiometrics", "onStart")
         enableBiometric()
     }
 
@@ -171,9 +170,11 @@ class UserAccountsLandingFragment : Fragment() {
         super.onHiddenChanged(isHidden)
         val bottomNavigationActivity = (requireActivity() as? BottomNavigationActivity)
         val bottomNavigationById = bottomNavigationActivity?.bottomNavigationById
+        val isAccountTab = bottomNavigationById?.currentItem == BottomNavigationActivity.INDEX_ACCOUNT
+        val isAuthenticatedFromOtherTab = bottomNavigationActivity?.isAuthenticatedFromOtherTab == true
 
         if (isHidden) {
-            if (bottomNavigationById?.currentItem == BottomNavigationActivity.INDEX_ACCOUNT) {
+            if (isAccountTab) {
                 viewModel.setOnTapNotActivated()
                 viewModel.setBiometricDisabled()
             }
@@ -194,6 +195,11 @@ class UserAccountsLandingFragment : Fragment() {
                     queryAccountLandingService(isApiUpdateForced = !fetchAccountDidLoadOnce)
                 }
             }
+        }
+
+        if(!isHidden && isAccountTab && isAuthenticatedFromOtherTab) {
+            viewModel.isBiometricPopupEnabled = true
+            bottomNavigationActivity?.isAuthenticatedFromOtherTab = false
         }
     }
 
@@ -226,6 +232,7 @@ class UserAccountsLandingFragment : Fragment() {
        val woolworthsApplication : WoolworthsApplication? = WoolworthsApplication.getInstance()
        return  woolworthsApplication?.biometricSingleton
     }
+
 
 }
 

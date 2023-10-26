@@ -110,10 +110,9 @@ fun SignedInScreen(
     }
 }
 
-
 @Composable
 fun UserAccountLandingViewModel.BiometricsCollector(onClick: (OnAccountItemClickListener) -> Unit) {
-    LaunchedEffect(Unit) {
+    LaunchedEffect(isBiometricPopupEnabled) {
         if (isBiometricPopupEnabled) {
             onClick(AccountLandingInstantLauncher.BiometricIsRequired)
             isBiometricPopupEnabled = false
