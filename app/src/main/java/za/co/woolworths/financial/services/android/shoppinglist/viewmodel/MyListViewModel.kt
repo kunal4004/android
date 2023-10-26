@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.shoppinglist.viewmodel
 
+import android.util.DisplayMetrics
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -27,16 +28,15 @@ import za.co.woolworths.financial.services.android.shoppinglist.component.Locati
 import za.co.woolworths.financial.services.android.shoppinglist.component.MyLIstUIEvents
 import za.co.woolworths.financial.services.android.shoppinglist.component.MyListScreenEvents
 import za.co.woolworths.financial.services.android.shoppinglist.service.network.ProductListDetails
-import za.co.woolworths.financial.services.android.ui.extension.deviceWidth
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.mapNetworkCallToViewStateFlow
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderFailure
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderLoading
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderSuccess
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
-import za.co.woolworths.financial.services.android.util.Utils.convertPixelsToDp
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import javax.inject.Inject
+import kotlin.math.roundToInt
 
 
 /**
@@ -75,6 +75,7 @@ class MyListViewModel @Inject constructor(
                 events.item,
                 events.position
             )
+
             is MyLIstUIEvents.SignedOutStateEvent -> showSignedOutState()
             is MyLIstUIEvents.OnNewListCreatedEvent -> getShoppingList()
             is MyLIstUIEvents.SignInClick -> {
@@ -356,9 +357,18 @@ class MyListViewModel @Inject constructor(
     }
 
     private fun getProductCount(): Int {
-        val deviceWidthInDp = convertPixelsToDp(deviceWidth())
-        val usableDeviceWidth = (deviceWidthInDp - 60) // 60 is the left and right margin
-        return (usableDeviceWidth / 54) // 54 is the width of productImage
+        val displayMetrics: DisplayMetrics? =
+            WoolworthsApplication.getAppContext()?.resources?.displayMetrics
+        var productsCountInRow = 3
+        if (displayMetrics != null) {
+            val screenWidthDp = displayMetrics?.widthPixels?.div(displayMetrics?.density!!)
+            val usableDeviceWidth = (screenWidthDp?.minus(60)) // 60 is the left and right margin
+            if (usableDeviceWidth != null) {
+                productsCountInRow =
+                    ((usableDeviceWidth / 54).roundToInt()) // 54 is the width of productImage*/
+            }
+        }
+        return productsCountInRow
     }
 
     fun setIsCheckedDontAskAgain(checkedDontAskAgain: Boolean) {
