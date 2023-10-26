@@ -9,6 +9,5 @@ fun isEndlessAisleEnable() =
     AppConfigSingleton.endlessAisle?.isEndlessAisleEnabled
 
 fun isEndlessAisleAvailable() =
-     KotlinUtils.getDeliveryType()?.deliveryType == Delivery.STANDARD.type
-             && KotlinUtils.getDeliveryType()?.deliveryType == Delivery.CNC.type
-             && isEndlessAisleEnable() == true
+    (KotlinUtils.isDeliveryOptionStandard()
+            || KotlinUtils.isDeliveryOptionClickAndCollect()) && isEndlessAisleEnable() == true
