@@ -1,0 +1,80 @@
+package za.co.woolworths.financial.services.android.ui.wfs.common.biometric
+
+import android.annotation.TargetApi
+import android.app.KeyguardManager
+import android.content.ContentResolver
+import android.content.Context
+import android.os.Build
+import android.provider.Settings
+import androidx.biometric.BiometricManager
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
+
+
+object BiometricUtils {
+
+    fun Fragment.isBiometricHardWareAvailable(): Boolean {
+        val biometricManager = BiometricManager.from(this.requireContext())
+        val isBiometricHardWareAvailable = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            when (biometricManager.canAuthenticate(BiometricManager.Authenticators.DEVICE_CREDENTIAL or BiometricManager.Authenticators.BIOMETRIC_STRONG)) {
+                BiometricManager.BIOMETRIC_SUCCESS -> true
+                BiometricManager.BIOMETRIC_ERROR_SECURITY_UPDATE_REQUIRED -> true
+                BiometricManager.BIOMETRIC_ERROR_UNSUPPORTED -> true
+                else -> false
+            }
+        } else {
+            when (biometricManager.canAuthenticate()) {
+                BiometricManager.BIOMETRIC_SUCCESS -> true
+                else -> false
+            }
+        }
+        return isBiometricHardWareAvailable
+    }
+
+    fun Fragment.deviceHasPasswordPinLock(): Boolean {
+        val km = requireContext().getSystemService(FragmentActivity.KEYGUARD_SERVICE) as KeyguardManager
+        if (km.isKeyguardSecure)
+            return true
+        return false
+    }
+
+    fun Fragment.isDeviceScreenLocked(): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            isDeviceLocked()
+        } else {
+            isPatternSet() || isPassOrPinSet()
+        }
+    }
+
+    /**
+     * @return true if pattern set, false if not (or if an issue when checking)
+     */
+    private fun Fragment.isPatternSet(): Boolean {
+        val cr: ContentResolver = requireContext().contentResolver
+        return try {
+            val lockPatternEnable: Int =
+                Settings.Secure.getInt(cr, Settings.Secure.LOCK_PATTERN_ENABLED)
+            lockPatternEnable == 1
+        } catch (e: Settings.SettingNotFoundException) {
+            false
+        }
+    }
+
+    /**
+     * @return true if pass or pin set
+     */
+    private fun Fragment.isPassOrPinSet(): Boolean {
+        val keyguardManager =
+            requireContext().getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager //api 16+
+        return keyguardManager.isKeyguardSecure
+    }
+
+    /**
+     * @return true if pass or pin or pattern locks screen
+     */
+    @TargetApi(23)
+    private fun Fragment.isDeviceLocked(): Boolean {
+        val keyguardManager = requireContext().getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager //api 23+
+        return keyguardManager.isDeviceSecure
+    }
+}
