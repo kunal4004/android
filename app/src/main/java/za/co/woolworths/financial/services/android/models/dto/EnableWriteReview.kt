@@ -4,4 +4,9 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class EnableWriteReview(var foodItem: Boolean = false): Parcelable
+data class EnableWriteReview(
+    var foodItem: Boolean = false,
+    var fashion: Boolean = false,
+    var home: Boolean = false,
+    var beauty: Boolean = false
+): Parcelable

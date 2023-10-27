@@ -1482,24 +1482,18 @@ class ProductDetailsFragment :
                     onlinePromotionalTextView3?.visibility = View.GONE
                 }
                 if (true == it.isRnREnabled && RatingAndReviewUtil.isRatingAndReviewConfigavailbel() ) {
+                    showRatingAndReview()
                     if (RatingAndReviewUtil.isFoodItemAvailable()) {
-                        productDetailOptionsAndInformation.apply {
-                            headerCustomerReview?.visibility = View.VISIBLE
-                            reviewDetailsInformation?.visibility = View.VISIBLE
-                            customerReview.root.visibility = View.VISIBLE
-                            rlViewMoreReview?.visibility = View.VISIBLE
-                            leaveUsReview?.visibility = View.VISIBLE
-                            writeAReviewLink.root.visibility = View.VISIBLE
-                        }
+                        ShowWriteAReview()
+                    } else if (RatingAndReviewUtil.isFashionItemAvailable()) {
+                        ShowWriteAReview()
+                    } else if (RatingAndReviewUtil.isHomeItemAvailable()) {
+                        ShowWriteAReview()
+                    } else if (RatingAndReviewUtil.isBeautyItemAvailable()) {
+                        ShowWriteAReview()
                     } else {
-                        productDetailOptionsAndInformation.apply {
-                            headerCustomerReview?.visibility = View.VISIBLE
-                            reviewDetailsInformation?.visibility = View.VISIBLE
-                            customerReview.root.visibility = View.VISIBLE
-                            rlViewMoreReview?.visibility = View.VISIBLE
-                            leaveUsReview?.visibility = View.GONE
-                            writeAReviewLink.root.visibility = View.GONE
-                        }
+                        showRatingAndReview()
+                        hideWriteAReview()
                     }
                     ratingLayout.apply {
                         ratingBarTop?.rating = it.averageRating
@@ -1516,6 +1510,7 @@ class ProductDetailsFragment :
                    // showRatingAndReview()
                 } else {
                     hideRatingAndReview()
+                    hideWriteAReview()
                 }
             }
 
