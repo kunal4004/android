@@ -1092,8 +1092,6 @@ class CheckoutAddAddressReturningUserFragment :
             }
 
             R.id.txtContinueToPayment -> {
-                // Handle the End Less Aisle
-                isEndlessAisleAvailable()
                 cartItemList?.let {
                     addShippingInfoEventsAnalytics.sendEventData(
                         it,

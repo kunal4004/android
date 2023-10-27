@@ -1122,8 +1122,6 @@ class CheckoutReturningUserCollectionFragment :
             }
 
             R.id.txtContinueToPaymentCollection -> {
-                // Handle the End Less Aisle
-                isEndlessAisleAvailable()
                 onCheckoutPaymentClick()
                 cartItemList?.let {
                     addShippingInfoEventsAnalytics.sendEventData(
