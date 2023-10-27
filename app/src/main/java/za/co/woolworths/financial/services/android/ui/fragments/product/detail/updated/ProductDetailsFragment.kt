@@ -175,7 +175,6 @@ import za.co.woolworths.financial.services.android.util.pickimagecontract.PickIm
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.io.File
 import javax.inject.Inject
-import kotlin.collections.get
 import kotlin.collections.set
 
 
@@ -210,6 +209,7 @@ class ProductDetailsFragment :
     private var productColorSelectorAdapter: ProductColorSelectorAdapter? = null
     private var selectedQuantity: Int? = 1
     private val SSO_REQUEST_ADD_TO_CART = 1010
+    private val SSO_REQUEST_WRITE_A_REVIEW = 1020
     private val REQUEST_SUBURB_CHANGE = 153
     private val REQUEST_SUBURB_CHANGE_FOR_STOCK = 155
     private val REQUEST_SUBURB_CHANGE_FOR_LIQUOR = 156
@@ -541,6 +541,7 @@ class ProductDetailsFragment :
             allergensInformation?.setOnClickListener(this@ProductDetailsFragment)
             btViewMoreReview.setOnClickListener(this@ProductDetailsFragment)
             tvRatingDetails.setOnClickListener(this@ProductDetailsFragment)
+            writeAReviewLink.root.setOnClickListener(this@ProductDetailsFragment)
         }
         deliveryLocationLayout.apply {
             editDeliveryLocation?.setOnClickListener(this@ProductDetailsFragment)
@@ -690,8 +691,21 @@ class ProductDetailsFragment :
             R.id.tvReport -> navigateToReportReviewScreen()
             R.id.iv_like -> likeButtonClicked()
             R.id.txt_substitution_edit -> substitutionEditButtonClick()
+            R.id.writeAReviewLink -> openWriteAReviewFragment(productDetails?.productName,productDetails?.externalImageRefV2, productDetails?.productId)
         }
     }
+
+    private fun openWriteAReviewFragment(productName: String?, imagePath: String?, productId: String?) {
+        if (!SessionUtilities.getInstance().isUserAuthenticated) {
+            ScreenManager.presentSSOSigninActivity(activity,
+                SSO_REQUEST_WRITE_A_REVIEW,
+                isUserBrowsing)
+
+        } else {
+            (activity as? BottomNavigationActivity)?.openWriteAReviewFragment(productName, imagePath, productId)
+        }
+    }
+
 
     private fun savePhoto(bitmap: Bitmap) {
         ImageResultContract.saveImageToStorage(requireContext(), bitmap)

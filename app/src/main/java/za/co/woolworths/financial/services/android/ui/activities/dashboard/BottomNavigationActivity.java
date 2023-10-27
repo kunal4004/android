@@ -24,9 +24,6 @@ import static za.co.woolworths.financial.services.android.util.AppConstant.REQUE
 import static za.co.woolworths.financial.services.android.util.FuseLocationAPISingleton.REQUEST_CHECK_SETTINGS;
 import static za.co.woolworths.financial.services.android.util.ScreenManager.CART_LAUNCH_VALUE;
 import static za.co.woolworths.financial.services.android.util.ScreenManager.SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE;
-import static za.co.woolworths.financial.services.android.util.Utils.DY_CHANNEL;
-import static za.co.woolworths.financial.services.android.util.Utils.HOME_PAGE;
-import static za.co.woolworths.financial.services.android.util.Utils.MOBILE_LANDING_PAGE;
 import static za.co.woolworths.financial.services.android.util.nav.tabhistory.FragNavTabHistoryController.UNLIMITED_TAB_HISTORY;
 
 import android.animation.Animator;
@@ -46,7 +43,6 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -57,7 +53,6 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.awfs.coordination.BR;
@@ -70,6 +65,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -86,7 +82,6 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.IToastInterface;
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
 import za.co.woolworths.financial.services.android.models.BrandNavigationDetails;
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.CartSummary;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetails;
@@ -96,8 +91,6 @@ import za.co.woolworths.financial.services.android.models.dto.ProductView;
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams;
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionStateType;
 import za.co.woolworths.financial.services.android.models.dto.item_limits.ProductCountMap;
-import za.co.woolworths.financial.services.android.models.network.AppContextProviderImpl;
-import za.co.woolworths.financial.services.android.models.network.NetworkConfig;
 import za.co.woolworths.financial.services.android.models.network.Parameter;
 import za.co.woolworths.financial.services.android.models.service.event.BadgeState;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
@@ -106,7 +99,8 @@ import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSiz
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity;
-import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity;
+import za.co.woolworths.financial.services.android.ui.activities.write_a_review.view.WriteAReviewForm;
+import za.co.woolworths.financial.services.android.ui.activities.write_a_review.view.WriteAReviewSuccessScreenFragment;
 import za.co.woolworths.financial.services.android.ui.base.BaseActivity;
 import za.co.woolworths.financial.services.android.ui.base.SavedInstanceFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.RefinementDrawerFragment;
@@ -133,7 +127,6 @@ import za.co.woolworths.financial.services.android.ui.views.ToastFactory;
 import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.ui.views.shop.dash.ChangeFulfillmentCollectionStoreFragment;
-import za.co.woolworths.financial.services.android.ui.wfs.common.NetworkUtilsKt;
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature.fragment.UserAccountsLandingFragment;
 import za.co.woolworths.financial.services.android.util.AppConstant;
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
@@ -588,6 +581,17 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         productDetailsFragmentNew.setArguments(bundle);
         Utils.updateStatusBarBackground(this);
         pushFragment(productDetailsFragmentNew);
+    }
+
+    public void openWriteAReviewFragment(String productName, String imagePath, String productId) {
+        Bundle bundle = new Bundle();
+        bundle.putString("PRODUCT_NAME", productName);
+        bundle.putString("IMGE_PATH", imagePath);
+        bundle.putString("PRODUCT_ID", productId);
+        WriteAReviewForm writeAReviewForm = WriteAReviewForm.Companion.newInstance();
+        writeAReviewForm.setArguments(bundle);
+        Utils.updateStatusBarBackground(this);
+        pushFragmentNoAnim(writeAReviewForm);
     }
 
     @Override
@@ -1634,5 +1638,14 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             ScreenManager.presentSSOSignin(this);
         }, AppConstant.DELAY_500_MS);
 
+    }
+
+    public void openWriteAReviewSuccessScreenFragment(@NotNull String actionItems) {
+        Bundle bundle = new Bundle();
+        bundle.putString("ACTION_ITEMS", actionItems);
+        WriteAReviewSuccessScreenFragment writeAReviewSuccessScreenFragment = WriteAReviewSuccessScreenFragment.Companion.newInstance();
+        writeAReviewSuccessScreenFragment.setArguments(bundle);
+        Utils.updateStatusBarBackground(this);
+        pushFragmentNoAnim(writeAReviewSuccessScreenFragment);
     }
 }
