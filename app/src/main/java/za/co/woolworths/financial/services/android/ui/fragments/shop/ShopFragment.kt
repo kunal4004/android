@@ -4,12 +4,16 @@ import android.Manifest
 import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.content.Intent
+import android.graphics.Typeface
 import android.os.Bundle
 import android.os.Handler
+import android.text.Spannable
+import android.text.SpannableString
 import android.text.Spanned
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.core.text.HtmlCompat
 import androidx.fragment.app.activityViewModels
@@ -51,6 +55,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.shop.StandardDel
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.OnChildFragmentEvents
 import za.co.woolworths.financial.services.android.ui.views.shop.dash.ChangeFulfillmentCollectionStoreFragment
 import za.co.woolworths.financial.services.android.ui.views.shop.dash.DashDeliveryAddressFragment
+import za.co.woolworths.financial.services.android.ui.views.tooltip.CustomText
 import za.co.woolworths.financial.services.android.ui.views.tooltip.TooltipDialog
 import za.co.woolworths.financial.services.android.ui.views.tooltip.WMaterialShowcaseViewV2
 import za.co.woolworths.financial.services.android.util.AppConstant
@@ -188,6 +193,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         activity?.apply {
             permissionUtils = PermissionUtils(this, this@ShopFragment)
             permissions.add(Manifest.permission.CAMERA)
@@ -838,6 +844,48 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         )
     }
 
+
+    private fun getCustomToolTipText(context: Context): SpannableString {
+        val descriptionText=getString(R.string.description_tooltip)
+
+        val spannableString = SpannableString(descriptionText)
+        val customTypeface1: Typeface? = ResourcesCompat.getFont(context, R.font.futura_semi_bold)
+        val customTypeface2: Typeface? =
+            ResourcesCompat.getFont(context, R.font.futura_medium)
+
+        val yellowColor = ContextCompat.getColor(context, R.color.color_yellow_FEE600)
+        val whiteColor =  ContextCompat.getColor(context, R.color.white)
+      // Apply the custom typefaces to specific text
+        spannableString.setSpan(CustomText(customTypeface1, whiteColor) , 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        spannableString.setSpan(CustomText(customTypeface1, yellowColor) , 2, 19, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        spannableString.setSpan(CustomText(customTypeface2, whiteColor) , 20, 29, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+
+        spannableString.setSpan(CustomText(customTypeface1, whiteColor) , 29, 30, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        spannableString.setSpan(CustomText(customTypeface1, yellowColor) , 30, 49, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        spannableString.setSpan(CustomText(customTypeface2, whiteColor) , 50, 58, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+
+        spannableString.setSpan(CustomText(customTypeface1, whiteColor) , 59, 60, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        spannableString.setSpan(CustomText(customTypeface1, yellowColor) , 61, 76, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        return spannableString
+    }
+
+
+    private fun formatNewToolTipTitle(context: Context, start: String, coloredText: String, end: String): Spanned {
+        val labelColor = ContextCompat.getColor(context, R.color.color_yellow_FEE600)
+        val сolor: String = String.format("%X", labelColor).substring(2)
+        return HtmlCompat.fromHtml(
+            "$start <font color=\"#$сolor\"><br>$coloredText</font><br><br>$end",
+            HtmlCompat.FROM_HTML_MODE_LEGACY
+        )
+    }
+    //getting text with HtMl formate
+    private fun textToolTip(text:Int): Spanned{
+       return HtmlCompat.fromHtml(getString(text),HtmlCompat.FROM_HTML_MODE_LEGACY)
+    }
+
+
+
+
     fun showFulfilmentTooltip() {
         // Prevent dialog to display in other section when fragment is not visible
         (activity as? BottomNavigationActivity)?.let {
@@ -865,12 +913,22 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                 getString(R.string.tooltip_fulfilment_message)
             )
 
+          //New formatToolTip
+            val titleToolTip = formatNewToolTipTitle(
+                it,
+                getString(R.string.you_re_shopping_with),
+                deliveryType,
+                getString(R.string.tooltip_fulfilment_message)
+            )
+
+            val descriptionText=getCustomToolTipText(it)
+
             it.walkThroughPromtView =
                 WMaterialShowcaseViewV2.Builder(it, TooltipDialog.Feature.SHOP_FULFILMENT)
                     .setTarget(binding.fulfilmentAndLocationLayout.layoutFulfilment.root)
-                    .setTitle(title)
-                    .setDescription(getString(R.string.tooltip_fulfilment_description))
-                    .setActionText(getString(R.string.next)).withRectangleShape().setTargetTouchable(true)
+                    .setTitle(titleToolTip)
+                    .setDescription(descriptionText)
+                    .setActionText(getString(R.string.got_it)).withRectangleShape().setTargetTouchable(true)
                     .setDismissOnTouch(false).setDismissOnTargetTouch(false).setShapePadding(0)
                     .setAction(walkThroughListener).setDelay(0).setFadeDuration(0).setArrowIcon(R.drawable.ic_arrow_tooltip_spinning)
                     .setMaskColour(ContextCompat.getColor(it, R.color.semi_transparent_black_e6000000)).build()
@@ -942,6 +1000,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
             if (feature == TooltipDialog.Feature.SHOP_FULFILMENT) {
                 showLocationTooltip()
             }
+
         }
 
         override fun onPromptDismiss(feature: TooltipDialog.Feature?) {
