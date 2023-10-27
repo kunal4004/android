@@ -21,6 +21,7 @@ import com.google.gson.JsonObject
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.showErrorDialog
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.BetterActivityResult
@@ -171,7 +172,6 @@ class UserAccountsLandingFragment : Fragment() {
         val bottomNavigationActivity = (requireActivity() as? BottomNavigationActivity)
         val bottomNavigationById = bottomNavigationActivity?.bottomNavigationById
         val isAccountTab = bottomNavigationById?.currentItem == BottomNavigationActivity.INDEX_ACCOUNT
-        val isAuthenticatedFromOtherTab = bottomNavigationActivity?.isAuthenticatedFromOtherTab == true
 
         if (isHidden) {
             if (isAccountTab) {
@@ -197,9 +197,8 @@ class UserAccountsLandingFragment : Fragment() {
             }
         }
 
-        if(!isHidden && isAccountTab && isAuthenticatedFromOtherTab) {
+        if(!isHidden && isAccountTab  && !AppInstanceObject.get().isBiometricWalkthroughPresented) {
             viewModel.isBiometricPopupEnabled = true
-            bottomNavigationActivity?.isAuthenticatedFromOtherTab = false
         }
     }
 

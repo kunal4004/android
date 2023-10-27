@@ -99,7 +99,10 @@ class WRewardsFragment : Fragment(R.layout.wrewards_fragment) {
             }
         } else if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
             //One time biometricsWalkthrough
-            ScreenManager.presentBiometricWalkthrough(activity)
+            val bottomNavigationActivity = (requireActivity() as? BottomNavigationActivity)
+            if(bottomNavigationActivity?.bottomNavigationById?.currentItem == INDEX_REWARD) {
+                ScreenManager.presentBiometricWalkthrough(activity)
+            }
         }
         init()
     }

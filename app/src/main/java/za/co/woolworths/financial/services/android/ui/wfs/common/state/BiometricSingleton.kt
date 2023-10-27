@@ -1,7 +1,9 @@
 package za.co.woolworths.financial.services.android.ui.wfs.common.state
 
 import android.app.Activity
+import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
+import za.co.woolworths.financial.services.android.util.Utils
 
 enum class CurrentScreenType {
     BOTTOM_NAVIGATION_ACTIVITY, OTHERS

@@ -81,6 +81,7 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.IToastInterface;
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
 import za.co.woolworths.financial.services.android.models.BrandNavigationDetails;
+import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dto.CartSummary;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetails;
@@ -189,8 +190,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     private Boolean isNewSession = false;
     private int currentTabIndex = INDEX_TODAY;
     private int previousTabIndex = INDEX_TODAY;
-
-    public Boolean isAuthenticatedFromOtherTab = false;
 
     @Inject WfsBiometricManager biometricManager;
 
@@ -1258,7 +1257,10 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         }
         // prevent firing reward and account api on every activity resume
         if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
-            isAuthenticatedFromOtherTab = true;
+            AppInstanceObject appInstanceObject = AppInstanceObject.get();
+            if (appInstanceObject!=null) {
+                appInstanceObject.setBiometricWalkthroughPresented(false);
+            }
             //load count on login success
             switch (getCurrentSection()) {
                 case R.id.navigate_to_cart:

@@ -10,7 +10,6 @@ import za.co.woolworths.financial.services.android.models.dto.OrderSummary;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.app_config.chat.ConfigChatEnabledForProductFeatures;
 import za.co.woolworths.financial.services.android.models.dto.chat.InAppChatTipAcknowledgements;
-import za.co.woolworths.financial.services.android.ui.wfs.common.biometric.AuthenticateUtils;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 
 /**

@@ -2,12 +2,10 @@ package za.co.woolworths.financial.services.android.ui.wfs.common.biometric
 
 import android.annotation.TargetApi
 import android.app.KeyguardManager
-import android.content.ContentResolver
 import android.content.Context
 import android.os.Build
 import android.provider.Settings
 import androidx.biometric.BiometricManager
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 
 
@@ -76,4 +74,5 @@ object BiometricUtils {
         val keyguardManager = getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager //api 23+
         return keyguardManager.isDeviceSecure
     }
+
 }
