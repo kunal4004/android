@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.views.actionsheet
 
+import android.content.Intent
 import android.graphics.Paint
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,7 +11,9 @@ import com.awfs.coordination.R
 import com.awfs.coordination.databinding.CcsEndSessionDialogFragmentBinding
 import za.co.woolworths.financial.services.android.ui.activities.WChatActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatViewModel
+import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
+import za.co.woolworths.financial.services.android.util.huaweiRatingsWindowResult
 import za.co.woolworths.financial.services.android.util.voc.VoiceOfCustomerManager
 import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
 
@@ -66,6 +69,13 @@ class ChatEndSessionDialogFragment : WBottomSheetDialogFragment(), View.OnClickL
                 VoiceOfCustomerManager().showVocSurveyIfNeeded(context, vocTriggerEvent)
             }
             R.id.noContinueSessionButton -> dismiss()
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == AppConstant.RESULT_OK_HUAWEI_REQUEST_CODE) {
+            huaweiRatingsWindowResult(resultCode)
         }
     }
 }
