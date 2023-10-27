@@ -115,7 +115,6 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
     private val selectedItems  = ArrayList<String>()
     private var customProgressDialog: CustomProgressBar? = null
 
-
     private val productSearchResult =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
             when (result.resultCode) {
@@ -164,6 +163,8 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val bindingListDetails get() = _bindingListDetails!!
+
+    private var selectedItemsForRemoval = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -262,22 +263,19 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             val response = it.peekContent().data
             when (it.peekContent().status) {
                 Status.LOADING -> {
-                    showLoadingProgress(this)
+                    bindingListDetails.rlCheckOut.visibility = GONE
+                    val message  = getString(R.string.remove_item) + "\n" + listName
+                    showLoadingProgress(this, message)
                 }
                 Status.SUCCESS -> {
                     hideLoadingProgress()
                     updateShoppingListAfterDeletion(response)
-                    val count = selectedItems.size
-                    val itemCount =
-                        resources.getQuantityString(
-                            R.plurals.remove_list,
-                            count,
-                            count
-                        )
+                    val message =  getFormatedString(
+                        count = selectedItemsForRemoval, R.plurals.remove_list) +"\t\t" +listName
                     ToastFactory.showToast(
                         requireActivity(),
                         bindingListDetails.rlCheckOut,
-                        itemCount + "\t" +listName
+                        message
                     )
                 }
                 Status.ERROR -> {
@@ -287,12 +285,19 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         }
     }
 
-    private fun showLoadingProgress(fragment: Fragment) {
+    private fun getFormatedString(count:Int ,msg:Int): String {
+        return requireContext().resources.getQuantityString(
+            msg,
+            count,
+            count
+        )
+    }
+
+    private fun showLoadingProgress(fragment: Fragment, message: String) {
         if (customProgressDialog != null && customProgressDialog!!.isVisible)
             return
-        val title = getString(R.string.remove_item) + "\t" + listName
         customProgressDialog = CustomProgressBar.newInstance(
-            title,
+            message,
             getString(R.string.processing_your_request_desc)
         )
         customProgressDialog?.show(
@@ -440,13 +445,9 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
     }
 
     private fun openMoreOptionsDialog() {
-        for (item in viewModel.mShoppingListItems) {
-            if (item.isSelected == true) {
-                selectedItems.add(item.Id)
-            }
-        }
+        val count = shoppingListItemsAdapter?.addedItemsCount?:0
 
-        val fragment = MoreOptionDialogFragment.newInstance(this@ShoppingListDetailFragment)
+        val fragment = MoreOptionDialogFragment.newInstance(this@ShoppingListDetailFragment, count)
         fragment.show(parentFragmentManager, MoreOptionDialogFragment::class.simpleName)
     }
 
@@ -1194,6 +1195,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                 selectedItems.add(item.Id)
             }
         }
+        selectedItemsForRemoval = selectedItems.size
         val removeItemApiRequest = RemoveItemApiRequest(selectedItems)
         viewModel.removeMultipleItemsFromList(viewModel.listId, removeItemApiRequest)
     }

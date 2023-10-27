@@ -50,7 +50,7 @@ class ConfirmationDialogFragment : WBottomSheetDialogFragment() {
                 modifier = Modifier
                     .padding(top = 25.dp),
                 ConfirmationUiState(
-                    title = R.string.are_you_sure,
+                    title = R.string.remove_dialog_title,
                     desc = R.string.remove_desc
                 ),
                 onCheckBoxChange = {

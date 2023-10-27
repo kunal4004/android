@@ -21,10 +21,13 @@ import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
 @AndroidEntryPoint
 class MoreOptionDialogFragment : WBottomSheetDialogFragment() {
 
+    private var selectedItemCount = 0
     companion object {
         var listener : MyShoppingListItemClickListener? = null
-        fun newInstance(shoppingListItemClickListener:MyShoppingListItemClickListener) = MoreOptionDialogFragment().withArgs {
+        var ITEM_COUNT = "ITEM_COUNT"
+        fun newInstance(shoppingListItemClickListener:MyShoppingListItemClickListener, itemCount:Int) = MoreOptionDialogFragment().withArgs {
             listener = shoppingListItemClickListener
+            putInt(ITEM_COUNT, itemCount)
         }
     }
 
@@ -35,11 +38,13 @@ class MoreOptionDialogFragment : WBottomSheetDialogFragment() {
         ViewCompositionStrategy.DisposeOnDetachedFromWindow
     ) {
         OneAppTheme {
-            MoreOptionDialog({
-              //todo item copy
-            }, {
-              //todo item move
-            }) {
+            MoreOptionDialog(
+                selectedItemCount,
+                {
+                    //todo item copy
+                }, {
+                    //todo item move
+                }) {
                 dialog?.dismiss()
                 val fragment = ConfirmationDialogFragment.newInstance(listener)
                 fragment.show(parentFragmentManager, ConfirmationDialogFragment::class.simpleName)
@@ -50,6 +55,10 @@ class MoreOptionDialogFragment : WBottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         dialog?.apply {
+
+            arguments?.apply {
+                selectedItemCount = getInt(ITEM_COUNT, 0)
+            }
 
             setOnShowListener { dialog ->
                 val bottomSheet =
