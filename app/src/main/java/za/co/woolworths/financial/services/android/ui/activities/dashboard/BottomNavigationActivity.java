@@ -727,7 +727,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 case R.id.navigate_to_cart:
                     replaceAccountIcon(item);
                     setCurrentSection(R.id.navigate_to_cart);
-                    switchTab(INDEX_CART);
                     hideToolbar();
                     identifyTokenValidationAPI();
                     if (AppConfigSingleton.INSTANCE.isBadgesRequired())
@@ -1128,12 +1127,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         // Navigate from shopping list detail activity
         switch (requestCode) {
             case REQUEST_PAYMENT_STATUS:
-                if (resultCode == REQUEST_CHECKOUT_ON_CONTINUE_SHOPPING) {
-                    navigateToTabIndex(BottomNavigationActivity.INDEX_PRODUCT, null);
-                    QueryBadgeCounter.getInstance().queryCartSummaryCount();
-                    break;
-                }
-                else if (resultCode == RESULT_RELOAD_CART) {
+
+                if (resultCode == RESULT_RELOAD_CART) {
                     getCurrentFragment().onActivityResult(requestCode, resultCode, data);
                 }
                 else {
@@ -1174,6 +1169,10 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
             default:
                 break;
+        }
+
+        if (resultCode == REQUEST_CHECKOUT_ON_CONTINUE_SHOPPING) {
+            navigateToTabIndex(BottomNavigationActivity.INDEX_PRODUCT, null);
         }
 
         if (resultCode == PRODUCT_DETAILS_FROM_MY_LIST_SEARCH) {
@@ -1351,6 +1350,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             getGlobalState().setDetermineLocationPopUpEnabled(true);
             ScreenManager.presentCartSSOSignin(BottomNavigationActivity.this);
         } else {
+            switchTab(INDEX_CART);
             if (!(mNavController.getCurrentFrag() instanceof CartFragment)) {
                 return;
             }
