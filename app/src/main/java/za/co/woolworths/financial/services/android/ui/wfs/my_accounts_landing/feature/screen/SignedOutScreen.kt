@@ -29,7 +29,7 @@ import za.co.woolworths.financial.services.android.util.QueryBadgeCounter
 fun SignedOutScreen(
     viewModel: UserAccountLandingViewModel,
     onClick: (OnAccountItemClickListener) -> Unit) {
-    val listOfSignedOutItems = viewModel.listOfSignedOutItem()
+    val listOfSignedOutItems = remember {viewModel.listOfSignedOutItem()}
     ClearBadgeCountInLogoutState()
     Column(
         modifier = Modifier

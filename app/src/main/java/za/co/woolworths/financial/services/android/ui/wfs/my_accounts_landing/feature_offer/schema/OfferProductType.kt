@@ -10,6 +10,7 @@ import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.an
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.analytics.AutomationTestScreenLocator.Locator.pet_insurance
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.analytics.AutomationTestScreenLocator.Locator.store_card_apply_now_key
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.analytics.AutomationTestScreenLocator.Locator.view_free_credit_report
+import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.analytics.AutomationTestScreenLocator.Locator.wolworths_store_card_apply_now_key
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.schema.CommonItem
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.schema.OfferClickEvent
 import javax.annotation.concurrent.Immutable
@@ -33,7 +34,8 @@ enum class OfferProductType {
             ),
             properties = OfferViewColors.Dark.color(),
             onClick = OfferClickEvent.PetInsurance,
-            automationLocatorKey = pet_insurance
+            automationLocatorKey = pet_insurance,
+            key = pet_insurance
         )
         BlackCreditCardApplyNow -> CommonItem.OfferItem(
             data = MyOfferData(
@@ -44,7 +46,8 @@ enum class OfferProductType {
             ),
             properties = OfferViewColors.Dark.color(),
             automationLocatorKey = black_credit_card_apply_now_key,
-            onClick = OfferClickEvent.BlackCreditCardApplyNow
+            onClick = OfferClickEvent.BlackCreditCardApplyNow,
+            key = black_credit_card_apply_now_key
         )
 
         CreditCardApplyNow -> CommonItem.OfferItem(
@@ -56,7 +59,8 @@ enum class OfferProductType {
             ),
             automationLocatorKey = black_credit_card_apply_now_key,
             properties = OfferViewColors.Dark.color(),
-            onClick = OfferClickEvent.CreditCardApplyNow
+            onClick = OfferClickEvent.CreditCardApplyNow,
+            key = wolworths_store_card_apply_now_key
         )
         StoreCardApplyNow -> CommonItem.OfferItem(
             data = MyOfferData(
@@ -67,7 +71,8 @@ enum class OfferProductType {
             ),
             automationLocatorKey = store_card_apply_now_key,
             properties = OfferViewColors.Light.color(),
-            onClick = OfferClickEvent.StoreCardApplyNow
+            onClick = OfferClickEvent.StoreCardApplyNow,
+            key = store_card_apply_now_key
         )
 
         PersonalLoanApplyNow -> CommonItem.OfferItem(
@@ -79,7 +84,8 @@ enum class OfferProductType {
             ),
             automationLocatorKey = personal_loan_apply_now_key,
             properties = OfferViewColors.Light.color(),
-            onClick = OfferClickEvent.PersonalLoanApplyNow
+            onClick = OfferClickEvent.PersonalLoanApplyNow,
+            key = personal_loan_apply_now_key
         )
 
         ViewFreeCreditReport -> CommonItem.OfferItem(
@@ -91,7 +97,8 @@ enum class OfferProductType {
             ),
             automationLocatorKey = view_free_credit_report,
             properties = OfferViewColors.Dark.color(),
-            onClick = OfferClickEvent.ViewFreeCreditReport
+            onClick = OfferClickEvent.ViewFreeCreditReport,
+            key = view_free_credit_report
         )
         ViewApplicationStatus -> CommonItem.OfferItem(
             data = MyOfferData(
@@ -102,7 +109,8 @@ enum class OfferProductType {
             ),
             properties = OfferViewColors.Dark.color(),
             onClick = OfferClickEvent.ViewApplicationStatus,
-            automationLocatorKey = application_status
+            automationLocatorKey = application_status,
+            key = application_status
         )
     }
 }
