@@ -3156,11 +3156,12 @@
 
 
 
-<!--    //Test tooltip-->
+<!--    // Tooltip-->
+    <string name="description_tooltip">
+    <![CDATA[• Standard Delivery next day\n• Dash Food Delivery same day\n• Click & Collect]]>
+</string>
 
-    <string name="standard_delivery_next_day">• Standard Delivery next day</string>
-    <string name="dash_delivery_same_day">• Dash Food Delivery same day</string>
-    <string name="click_and_collects">• Click &amp; Collect</string>
+
 
 
 

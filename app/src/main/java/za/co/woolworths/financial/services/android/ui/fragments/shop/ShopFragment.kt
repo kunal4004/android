@@ -846,10 +846,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
 
 
     private fun getCustomToolTipText(context: Context): SpannableString {
-        val descriptionText=getString(R.string.standard_delivery_next_day) + "\n" +
-                            getString(R.string.dash_delivery_same_day) + "\n" +
-                            getString(R.string.click_and_collects);
-        val text = "• Standard Delivery next day\n• Dash Food Delivery same day\n• Click & Collect"
+        val descriptionText=getString(R.string.description_tooltip)
 
         val spannableString = SpannableString(descriptionText)
         val customTypeface1: Typeface? = ResourcesCompat.getFont(context, R.font.futura_semi_bold)
