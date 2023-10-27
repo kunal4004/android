@@ -218,6 +218,7 @@ class ShoppingListItemsAdapter(
 
         fun bindUnavailableProduct() {
             itemBinding?.apply {
+                iconKebab.visibility = GONE
                 adapterClickable(true)
                 val msg = getUnavailableMsgByDeliveryType(itemBinding.root.context)
                 tvProductAvailability.text = msg
@@ -227,6 +228,7 @@ class ShoppingListItemsAdapter(
 
         fun bindOutOfStockProduct() {
             itemBinding?.apply {
+                iconKebab.visibility = VISIBLE
                 adapterClickable(true)
                 tvProductAvailability.text =
                     itemBinding.root.context.getString(R.string.out_of_stock)
@@ -342,6 +344,18 @@ class ShoppingListItemsAdapter(
                         navigator.onAddListItemCount(listItem)
                         notifyItemChanged(position, listItem)
                     }
+                }
+                iconKebab.visibility = VISIBLE
+                if (cbShoppingList.isChecked) {
+                    iconKebab.setImageResource(R.drawable.icon_kebab_inactive)
+                    iconKebab.isEnabled = false
+                } else {
+                    iconKebab.setImageResource(R.drawable.icon_kebab_active)
+                    iconKebab.isEnabled = true
+                }
+
+                iconKebab.setOnClickListener {
+                    navigator.naviagteToMoreOptionDialog(shoppingListItem)
                 }
             }
         }

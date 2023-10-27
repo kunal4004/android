@@ -165,6 +165,8 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
     private val bindingListDetails get() = _bindingListDetails!!
 
     private var selectedItemsForRemoval = 0
+    private var isSingleItemSelected = false
+    private var singleShoppingListItem:ShoppingListItem? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -445,8 +447,11 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
     }
 
     private fun openMoreOptionsDialog() {
-        val count = shoppingListItemsAdapter?.addedItemsCount?:0
-
+        val count = if (isSingleItemSelected) {
+            shoppingListItemsAdapter?.addedItemsCount ?: 0
+        } else {
+            1
+        }
         val fragment = MoreOptionDialogFragment.newInstance(this@ShoppingListDetailFragment, count)
         fragment.show(parentFragmentManager, MoreOptionDialogFragment::class.simpleName)
     }
@@ -1190,13 +1195,27 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
 
     override fun itemRemoveClick() {
         val selectedItems  = ArrayList<String>()
-        for (item in viewModel.mShoppingListItems) {
-            if (item.isSelected == true) {
-                selectedItems.add(item.Id)
+
+        if (isSingleItemSelected) {
+            singleShoppingListItem?.Id?.let {
+                selectedItems.add(it)
             }
+        } else {
+            for (item in viewModel.mShoppingListItems) {
+                if (item.isSelected == true) {
+                    selectedItems.add(item.Id)
+                }
+            }
+            selectedItemsForRemoval = selectedItems.size
         }
-        selectedItemsForRemoval = selectedItems.size
+
         val removeItemApiRequest = RemoveItemApiRequest(selectedItems)
         viewModel.removeMultipleItemsFromList(viewModel.listId, removeItemApiRequest)
+    }
+
+    override fun naviagteToMoreOptionDialog(shoppingListItem: ShoppingListItem) {
+        isSingleItemSelected = true
+        singleShoppingListItem = shoppingListItem
+        openMoreOptionsDialog()
     }
 }
