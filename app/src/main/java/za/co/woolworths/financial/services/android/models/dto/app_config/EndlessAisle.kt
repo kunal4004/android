@@ -5,5 +5,6 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class EndlessAisle(
-    var isEndlessAisleEnabled: Boolean
+    var isEndlessAisleEnabled: Boolean,
+    var barcodeMessage: String
 ):Parcelable
