@@ -725,7 +725,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 case R.id.navigate_to_cart:
                     replaceAccountIcon(item);
                     setCurrentSection(R.id.navigate_to_cart);
-                    switchTab(INDEX_CART);
                     hideToolbar();
                     identifyTokenValidationAPI();
                     if (AppConfigSingleton.INSTANCE.isBadgesRequired())
@@ -1349,6 +1348,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             getGlobalState().setDetermineLocationPopUpEnabled(true);
             ScreenManager.presentCartSSOSignin(BottomNavigationActivity.this);
         } else {
+            switchTab(INDEX_CART);
             if (!(mNavController.getCurrentFrag() instanceof CartFragment)) {
                 return;
             }
