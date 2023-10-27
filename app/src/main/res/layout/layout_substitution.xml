@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/white">
+
+    <TextView
+        android:id="@+id/txt_substitution"
+        android:fontFamily="@font/futura_semi_bold"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/twenty_four_dp"
+        android:layout_marginTop="@dimen/twenty_four_dp"
+        android:text="@string/substitutions"
+        android:gravity="center_vertical"
+        android:textSize="@dimen/eighteen_sp"
+        android:textColor="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/one_dp"
+        android:layout_marginStart="@dimen/twenty_four_dp"
+        android:layout_marginTop="@dimen/twenty_four_dp"
+        android:layout_marginEnd="@dimen/twenty_four_dp"
+        android:background="@color/layout_background_gray"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txt_substitution" />
+
+    <TextView
+        android:id="@+id/txt_substitution_title"
+        style="@style/opensans_regular_text_style_14sp_black"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/twenty_four_dp"
+        android:layout_marginTop="@dimen/twenty_four_dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="@dimen/sixteen_dp"
+        android:drawableLeft="@drawable/union_row"
+        android:ellipsize="end"
+        android:drawablePadding="@dimen/eight_dp"
+        android:maxLines="1"
+        android:text="@string/substitute_default"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/txt_substitution_edit"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/view" />
+
+    <TextView
+        android:id="@+id/txt_substitution_edit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/eight_dp"
+        android:layout_marginTop="@dimen/twenty_four_dp"
+        android:layout_marginEnd="@dimen/twenty_four_dp"
+        android:layout_marginBottom="@dimen/sixteen_dp"
+        android:background="@drawable/black_background_with_corner_5"
+        android:gravity="center"
+        android:text="@string/change_label"
+        android:letterSpacing="0.1"
+        style="@style/futura_semi_bold_white_12_text_style"
+        android:textAllCaps="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/view" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -43,6 +43,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -98,6 +99,7 @@ import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSiz
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity;
+import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity;
 import za.co.woolworths.financial.services.android.ui.base.BaseActivity;
 import za.co.woolworths.financial.services.android.ui.base.SavedInstanceFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.RefinementDrawerFragment;
@@ -1113,12 +1115,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         // Navigate from shopping list detail activity
         switch (requestCode) {
             case REQUEST_PAYMENT_STATUS:
-                if (resultCode == REQUEST_CHECKOUT_ON_CONTINUE_SHOPPING) {
-                    navigateToTabIndex(BottomNavigationActivity.INDEX_PRODUCT, null);
-                    QueryBadgeCounter.getInstance().queryCartSummaryCount();
-                    break;
-                }
-                else if (resultCode == RESULT_RELOAD_CART) {
+
+                if (resultCode == RESULT_RELOAD_CART) {
                     getCurrentFragment().onActivityResult(requestCode, resultCode, data);
                 }
                 else {
@@ -1159,6 +1157,10 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
             default:
                 break;
+        }
+
+        if (resultCode == REQUEST_CHECKOUT_ON_CONTINUE_SHOPPING) {
+            navigateToTabIndex(BottomNavigationActivity.INDEX_PRODUCT, null);
         }
 
         if (resultCode == PRODUCT_DETAILS_FROM_MY_LIST_SEARCH) {
@@ -1351,7 +1353,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 return;
             }
             CartFragment cartFragment = (CartFragment) mNavController.getCurrentFrag();
-            cartFragment.reloadFragment();
+            cartFragment.reloadFragment(true);
         }
     }
 
