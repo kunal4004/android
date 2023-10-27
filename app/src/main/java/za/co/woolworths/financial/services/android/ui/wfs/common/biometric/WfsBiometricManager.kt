@@ -2,13 +2,10 @@ package za.co.woolworths.financial.services.android.ui.wfs.common.biometric
 
 import android.content.Context
 import android.content.Intent
-import android.hardware.biometrics.BiometricManager.Authenticators.BIOMETRIC_STRONG
-import android.hardware.biometrics.BiometricManager.Authenticators.DEVICE_CREDENTIAL
 import android.os.Build
 import android.provider.Settings
 import androidx.appcompat.app.AppCompatActivity
-import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG
-import androidx.biometric.BiometricManager.Authenticators.DEVICE_CREDENTIAL
+import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -106,7 +103,7 @@ class WfsBiometricManagerImpl @Inject constructor() : WfsBiometricManager {
         description: String,
         isDeviceCredentialsAvailable: Boolean
     ) {
-        val authFlag = DEVICE_CREDENTIAL or BIOMETRIC_STRONG
+        val authFlag = BiometricManager.Authenticators.DEVICE_CREDENTIAL or BiometricManager.Authenticators.BIOMETRIC_STRONG
         if (isDeviceCredentialsAvailable) {
             /*For API level > 30
               Newer API setAllowedAuthenticators is used*/
