@@ -888,16 +888,6 @@ interface ApiInterface {
         @Body suburbRequest: SetDeliveryLocationSuburbRequest,
     ): Call<SetDeliveryLocationSuburbResponse>
 
-    @Headers(
-        "Content-Type: application/json",
-        "Accept: application/json",
-        "Media-Type: application/json",
-    )
-    @GET("wfs/app/v4/cartV2")
-    fun getShoppingCart(
-        @Header("sessionToken") sessionToken: String,
-        @Header("deviceIdentityToken") deviceIdentityToken: String,
-    ): Call<ShoppingCartResponse>
 
     @Headers(
         "Content-Type: application/json",
@@ -2045,16 +2035,6 @@ interface ApiInterface {
         @Body body: Any,
     ): Response
 
-    @Headers(
-        "Content-Type: application/json",
-        "Accept: application/json",
-        "Media-Type: application/json",
-    )
-    @GET("wfs/app/v4/user/fica/refreshStatus")
-    fun getFica(
-        @Header("sessionToken") sessionToken: String,
-        @Header("deviceIdentityToken") deviceIdentityToken: String,
-    ): Call<FicaModel>
 
     @Headers(
         "Content-Type: application/json",
@@ -2070,20 +2050,6 @@ interface ApiInterface {
         @Header("deviceIdentityToken") deviceIdentityToken: String,
         @Body confirmLocationRequest: ConfirmLocationRequest,
     ): Call<ConfirmDeliveryAddressResponse>
-
-    @Headers(
-        "Content-Type: application/json",
-        "Accept: application/json",
-        "Media-Type: application/json",
-    )
-    @POST("wfs/app/v4/cartV2/confirmLocation")
-    suspend fun confirmPlaceLocation(
-        @Header("userAgent") userAgent: String,
-        @Header("userAgentVersion") userAgentVersion: String,
-        @Header("sessionToken") sessionToken: String,
-        @Header("deviceIdentityToken") deviceIdentityToken: String,
-        @Body confirmLocationRequest: ConfirmLocationRequest,
-    ): retrofit2.Response<ConfirmDeliveryAddressResponse>
 
     @Headers(
         "Content-Type: application/json",
