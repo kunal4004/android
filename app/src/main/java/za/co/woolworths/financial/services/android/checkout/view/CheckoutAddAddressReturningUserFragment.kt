@@ -25,6 +25,9 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -63,13 +66,18 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
+import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.CommerceItem
 import za.co.woolworths.financial.services.android.models.dto.LiquorCompliance
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary
 import za.co.woolworths.financial.services.android.models.dto.app_config.native_checkout.ConfigShoppingBagsOptions
+import za.co.woolworths.financial.services.android.models.network.AppContextProviderImpl
+import za.co.woolworths.financial.services.android.models.network.NetworkConfig
 import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity.Companion.ERROR_TYPE_EMPTY_CART
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.*
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.response.DyHomePageViewModel
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.RESULT_EMPTY_CART
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.RESULT_RELOAD_CART
@@ -79,6 +87,7 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.Constant.Companion.LIQUOR_ORDER
 import za.co.woolworths.financial.services.android.util.Constant.Companion.NO_LIQUOR_IMAGE_URL
 import za.co.woolworths.financial.services.android.util.ImageManager.Companion.setPicture
+import za.co.woolworths.financial.services.android.util.Utils.*
 import za.co.woolworths.financial.services.android.util.pushnotification.NotificationUtils
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.util.regex.Pattern
@@ -148,6 +157,10 @@ class CheckoutAddAddressReturningUserFragment :
 
     private var defaultAddress: Address? = null
     private var cartItemList: ArrayList<CommerceItem>? = null
+    private var dyServerId: String? = null
+    private var dySessionId: String? = null
+    private var config: NetworkConfig? = null
+    private val dyChooseVariationViewModel: DyHomePageViewModel by viewModels()
 
     enum class FoodSubstitution(val rgb: String) {
         PHONE_CONFIRM("YES_CALL_CONFIRM"),
@@ -837,6 +850,10 @@ class CheckoutAddAddressReturningUserFragment :
         val confirmLocationAddress =
             ConfirmLocationAddress(defaultAddress?.placesId, defaultAddress?.nickname)
 
+        if (confirmLocationAddress.placeId?.isNullOrEmpty() == true) {
+            return
+        }
+
         val body =
             ConfirmLocationRequest(Delivery.STANDARD.name, confirmLocationAddress, "", "checkout")
 
@@ -1065,6 +1082,7 @@ class CheckoutAddAddressReturningUserFragment :
                         }
                     }
                 )
+                activity?.finish()
             }
 
             R.id.txtContinueToPayment -> {
@@ -1076,8 +1094,28 @@ class CheckoutAddAddressReturningUserFragment :
                     )
                 }
                 onCheckoutPaymentClick()
+                preparePaymentPageViewRequest(orderTotalValue)
             }
         }
+    }
+
+    private fun preparePaymentPageViewRequest(orderTotalValue: Double) {
+        config = NetworkConfig(AppContextProviderImpl())
+        if (Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID) != null)
+            dyServerId = Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID)
+        if (Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID) != null)
+            dySessionId = Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID)
+        val user = User(dyServerId,dyServerId)
+        val session = Session(dySessionId)
+        val device = Device(Utils.IPAddress, config?.getDeviceModel())
+        val dataOther = DataOther(null,null,ZAR,"",orderTotalValue)
+        val dataOtherArray: ArrayList<DataOther>? = ArrayList<DataOther>()
+        dataOtherArray?.add(dataOther)
+        val page = Page(null, PAYMENT_PAGE, Utils.OTHER, null, dataOtherArray)
+        val context = Context(device, page, Utils.DY_CHANNEL)
+        val options = Options(true)
+        val homePageRequestEvent = HomePageRequestEvent(user, session, context, options)
+        dyChooseVariationViewModel.createDyRequest(homePageRequestEvent)
     }
 
     private fun onCheckoutPaymentClick() {

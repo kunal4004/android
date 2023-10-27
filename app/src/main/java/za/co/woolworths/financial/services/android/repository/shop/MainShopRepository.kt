@@ -193,8 +193,8 @@ class MainShopRepository : ShopRepository {
                 } catch (jsonException: JsonParseException) {
                     FirebaseManager.logException(jsonException)
                     Firebase.crashlytics.setCustomKeys {
-                        key(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.ExceptionResponse, response.errorBody().toString())
-                        key(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.ExceptionMessage, "Unable to parse NetworkErrorResponse class")
+                        key(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.ExceptionResponse, response?.errorBody()?.charStream().toString())
+                        key(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.ExceptionMessage, "Unable to parse LastOrderDetailsResponse class")
                     }
                 }
                 Resource.error(R.string.error_unknown, errorResponse)

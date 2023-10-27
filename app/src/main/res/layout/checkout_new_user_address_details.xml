@@ -60,6 +60,7 @@
         android:layout_marginTop="@dimen/_4sdp"
         android:inputType="textEmailAddress"
         android:maxLength="@integer/forty"
+        android:contentDescription="@string/cd_delivery_details_address_nickname_value"
         app:layout_constraintEnd_toEndOf="@id/right_guideline"
         app:layout_constraintStart_toStartOf="@id/left_guideline"
         app:layout_constraintTop_toBottomOf="@id/addressNicknamePlaceHolder" />
@@ -91,6 +92,7 @@
         android:layout_marginTop="@dimen/_4sdp"
         android:maxLength="@integer/fifty"
         android:inputType="text"
+        android:contentDescription="@string/cd_delivery_details_additional_location_details_value"
         app:layout_constraintEnd_toEndOf="@id/right_guideline"
         app:layout_constraintStart_toStartOf="@id/left_guideline"
         app:layout_constraintTop_toBottomOf="@id/unitComplexFloorPlaceHolder" />

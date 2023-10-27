@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.recommendations.data.respons
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.Properties
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants
 import za.co.woolworths.financial.services.android.ui.wfs.common.getIpAddress
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getDeliveryType
@@ -21,7 +22,9 @@ data class Event(
     val userAgent: String? = null,
     val ipAddress: String? = null,
     val recClicks: List<String>? = null,
-    val recImpressions: List<String>? = null
+    val recImpressions: List<String>? = null,
+    val name: String? = null,
+    val properties: Properties? = null
 ) : RecommendationEvent
 
 interface RecommendationEvent: Parcelable

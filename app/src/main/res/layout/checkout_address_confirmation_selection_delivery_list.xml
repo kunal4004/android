@@ -25,6 +25,7 @@
             android:layout_height="wrap_content"
             android:button="@drawable/shopping_list_item_selector"
             android:clickable="false"
+            android:contentDescription="@string/cd_btn_radio_selection"
             tools:ignore="MissingConstraints" />
     </com.facebook.shimmer.ShimmerFrameLayout>
 
