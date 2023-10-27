@@ -866,7 +866,12 @@ class CheckoutAddAddressNewUserFragment :
             showErrorDialog()
             return
         }
-        if (!isValidAddress) {
+        if(selectedAddress.savedAddress.address2.isNullOrEmpty() && binding.recipientAddressLayout.unitComplexFloorPlaceHolder?.text ==
+                getString(R.string.additional_details)){
+            showErrorInputField(binding.recipientAddressLayout.unitComplexFloorEditText, View.VISIBLE)
+            return
+        }
+       if (!isValidAddress) {
             binding.autocompletePlaceErrorMsg.text =
                 getString(R.string.geo_loc_error_msg_on_edit_address)
             showAnimationErrorMessage(binding.autocompletePlaceErrorMsg, View.VISIBLE, 0)
