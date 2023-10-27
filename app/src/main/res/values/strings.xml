@@ -3137,6 +3137,7 @@
     <string name="remove_from">Removed from</string>
     <string name="remove_item">Removing Your Item from</string>
     <string name="remove_dialog_title">Delete these Items?</string>
+    <string name="remove_error_msg">An error occurred while removing your item. \n Please try again later.</string>
     <plurals name="remove_list">
         <item quantity="one">%d ITEM REMOVE FROM</item>
         <item quantity="other">%d ITEMS REMOVE FROM </item>

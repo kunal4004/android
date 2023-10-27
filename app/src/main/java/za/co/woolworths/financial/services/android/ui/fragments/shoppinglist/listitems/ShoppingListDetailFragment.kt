@@ -441,16 +441,19 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             R.id.btnCheckOut -> addItemsToCart()
             R.id.changeLocationButton -> deliverySelectionIntent(DELIVERY_LOCATION_REQUEST)
             R.id.closeWhiteBtn -> hideBlackToolTip()
-            R.id.txtMoreOptions -> openMoreOptionsDialog()
+            R.id.txtMoreOptions -> {
+                isSingleItemSelected = false
+                openMoreOptionsDialog()
+            }
             else -> {}
         }
     }
 
     private fun openMoreOptionsDialog() {
         val count = if (isSingleItemSelected) {
-            shoppingListItemsAdapter?.addedItemsCount ?: 0
-        } else {
             1
+        } else {
+            shoppingListItemsAdapter?.addedItemsCount ?: 0
         }
         val fragment = MoreOptionDialogFragment.newInstance(this@ShoppingListDetailFragment, count)
         fragment.show(parentFragmentManager, MoreOptionDialogFragment::class.simpleName)
@@ -1200,6 +1203,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             singleShoppingListItem?.Id?.let {
                 selectedItems.add(it)
             }
+            selectedItemsForRemoval = 1
         } else {
             for (item in viewModel.mShoppingListItems) {
                 if (item.isSelected == true) {

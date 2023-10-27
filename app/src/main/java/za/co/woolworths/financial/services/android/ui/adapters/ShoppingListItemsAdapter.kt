@@ -79,7 +79,7 @@ class ShoppingListItemsAdapter(
 
                 when (shoppingListItem.availability) {
                     ProductAvailability.UNAVAILABLE.value -> holder.bindUnavailableProduct()
-                    ProductAvailability.OUT_OF_STOCK.value -> holder.bindOutOfStockProduct()
+                    ProductAvailability.OUT_OF_STOCK.value -> holder.bindOutOfStockProduct(shoppingListItem)
                     else -> holder.bindAvailableProduct(shoppingListItem)
                 }
             }
@@ -226,13 +226,16 @@ class ShoppingListItemsAdapter(
             }
         }
 
-        fun bindOutOfStockProduct() {
+        fun bindOutOfStockProduct(shoppingListItem: ShoppingListItem) {
             itemBinding?.apply {
                 iconKebab.visibility = VISIBLE
                 adapterClickable(true)
                 tvProductAvailability.text =
                     itemBinding.root.context.getString(R.string.out_of_stock)
                 tvProductAvailability.visibility = VISIBLE
+                iconKebab.setOnClickListener {
+                    navigator.naviagteToMoreOptionDialog(shoppingListItem)
+                }
             }
         }
 
