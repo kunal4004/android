@@ -1895,8 +1895,8 @@
     <string name="chat_greeting_problems_paying_installement_desc">Having problems paying installments? Chat to us Now.</string>
     <string name="chat_greeting_description">Having problems paying your account?\nWe can assist you.</string>
     <string name="chat_send_message_session_var_params">PRS_AccountNumber=%1$s,PRS_CardNumber=%2$s,PRS_C2Id=%3$s,PRS_Firstname=%4$s,PRS_Surname=%5$s,PRS_ProductOfferingId=%6$s,PRS_ProductOfferingDescription=%7$s</string>
-    <string name="end_session_title">"End Session  "</string>
-    <string name="end_session_desc">"Leaving the Chat window will end your conversation. Are you sure you want to end your session?  "</string>
+    <string name="end_session_title">End Session</string>
+    <string name="end_session_desc">Leaving the Chat window will end your conversation. Are you sure you want to end your session?</string>
     <string name="no_continue_session">No, continue session</string>
     <string name="end_session_button_caption">yes, end session</string>
     <string name="chat_retrieve_absa_card_token_error_desc">We are having issues retrieving your account information.</string>

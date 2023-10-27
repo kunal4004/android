@@ -2594,7 +2594,7 @@
         <item name="android:paddingTop">@dimen/eight_dp</item>
         <item name="android:paddingStart">@dimen/eight_dp</item>
         <item name="android:paddingEnd">0dp</item>
-        <item name="android:fontFamily">@font/futura_semi_bold_ttf</item>
+        <item name="android:fontFamily">@font/futura_medium_ttf</item>
     </style>
 
     <style name="chatWithUsTipStyle">

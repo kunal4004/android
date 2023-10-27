@@ -733,6 +733,7 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
             responseType = ProductsRequestParams.ResponseType.DETAIL,
             pageOffset = pageOffset
         )
+        productRequestBody?.filterContent = mListId != null
     }
 
     private fun executeSearchProduct(lp: ProductsRequestParams?) {
