@@ -12,24 +12,27 @@ import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.vi
 @Composable
 fun UserAccountsLandingScene(
     viewModel: UserAccountLandingViewModel,
-    onProductClick : (AccountProductCardsGroup) -> Unit,
-    onClickEvent: (OnAccountItemClickListener) -> Unit) {
-        val isUserAuthenticated by remember { viewModel.isUserAuthenticated }
-        when (isUserAuthenticated) {
-            Authenticated -> {
-                SignedInScreen(
-                    viewModel = viewModel,
-                    onProductClick =  onProductClick,
-                    onClick = onClickEvent
-                )
-            }
+    onProductClick: (AccountProductCardsGroup) -> Unit,
+    onClickEvent: (OnAccountItemClickListener) -> Unit
+) {
+    val isUserAuthenticated by remember { viewModel.isUserAuthenticated }
 
-            NotAuthenticated -> {
-                SignedOutScreen(
-                    viewModel = viewModel,
-                    onClick = onClickEvent
-                )
-            }
+    when (isUserAuthenticated) {
+        Authenticated -> {
+
+            SignedInScreen(
+                viewModel = viewModel,
+                onProductClick = onProductClick,
+                onClick = onClickEvent
+            )
         }
+
+        NotAuthenticated -> {
+            SignedOutScreen(
+                viewModel = viewModel,
+                onClick = onClickEvent
+            )
+        }
+    }
 }
 
