@@ -108,7 +108,8 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
             var paymentUrl = if(isEndlessAisleJourney == false)
                     AppConfigSingleton.nativeCheckout?.checkoutPaymentURL
                 else
-                    AppConfigSingleton.nativeCheckout?.checkoutPaymentUrlPayInStore
+                    AppConfigSingleton.nativeCheckout?.checkoutPaymentURL
+                    //AppConfigSingleton.nativeCheckout?.checkoutPaymentUrlPayInStore
             val webTokens =
                 arguments?.getSerializable(KEY_ARGS_WEB_TOKEN) as? ShippingDetailsResponse
             val cookie = "TOKEN=${webTokens?.jsessionId};AUTHENTICATION=${webTokens?.auth};"

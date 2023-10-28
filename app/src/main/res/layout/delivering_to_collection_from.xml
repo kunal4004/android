@@ -51,6 +51,15 @@
         app:layout_constraintRight_toRightOf="@+id/right_guideline"
         app:layout_constraintTop_toBottomOf="@+id/optionLocation" />
 
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/standardAndCncItemsGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        app:constraint_referenced_ids="oneDeliveryLinearLayout, foodDeliveryLinearLayout,
+        otherDeliveryLinearLayout, infoDeliveryDateTimeTextView,
+        dashDeliveryLinearLayout, continueBrowsingStandardLinearLayout"/>
+
     <LinearLayout
         android:id="@+id/oneDeliveryLinearLayout"
         android:layout_width="0dp"
@@ -315,6 +324,89 @@
             android:background="@color/black"
             android:contentDescription="@string/continue_browsing"
             android:text="@string/continue_browsing" />
+    </LinearLayout>
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/payInStoreBarcodeItemsGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="orderNumber, barcodeImage, barcodeNumber, barcodeMessageLayout" />
+
+    <TextView
+        android:id="@+id/orderNumber"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/_5sdp"
+        android:fontFamily="@font/futura_medium_ttf"
+        android:gravity="center"
+        android:lineSpacingExtra="1dp"
+        android:lineSpacingMultiplier="1.1"
+        android:textAllCaps="true"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        app:autoSizeMaxTextSize="20sp"
+        app:autoSizeMinTextSize="11sp"
+        app:autoSizeStepGranularity="1sp"
+        android:text="order No. #123456789"
+        app:autoSizeTextType="uniform"
+        android:paddingTop="@dimen/twenty_dp"
+        android:paddingBottom="@dimen/twenty_dp"
+        app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+        app:layout_constraintRight_toRightOf="@+id/right_guideline"
+        app:layout_constraintTop_toBottomOf="@+id/separator"
+        tools:ignore="UnusedAttribute" />
+
+    <ImageView
+        android:id="@+id/barcodeImage"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/seventy_four_dp"
+        android:src="@drawable/barcode_img"
+        android:layout_marginTop="@dimen/_5sdp"
+        android:adjustViewBounds="true"
+        android:scaleType="fitXY"
+        app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+        app:layout_constraintRight_toRightOf="@+id/right_guideline"
+        app:layout_constraintTop_toBottomOf="@+id/orderNumber" />
+
+    <TextView
+        android:id="@+id/barcodeNumber"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:fontFamily="@font/futura_light"
+        android:gravity="center"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:text="123456789087"
+        android:textSize="@dimen/seventeen_sp"
+        app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+        app:layout_constraintRight_toRightOf="@+id/right_guideline"
+        app:layout_constraintTop_toBottomOf="@+id/barcodeImage" />
+
+    <LinearLayout
+        android:id="@+id/barcodeMessageLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/twenty_four_dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="@+id/right_guideline"
+        app:layout_constraintStart_toStartOf="@+id/left_guideline"
+        app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+        app:layout_constraintRight_toRightOf="@+id/right_guideline"
+        app:layout_constraintTop_toBottomOf="@+id/barcodeNumber">
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/barcodeMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/ten_dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textColor="@color/color_444444"
+            android:textSize="@dimen/_10ssp"
+            app:WTextView_font="opensans_regular"
+            android:text="@string/a_report_for_this_review_has_already_been_submitted"/>
     </LinearLayout>
 
     <androidx.constraintlayout.widget.Guideline

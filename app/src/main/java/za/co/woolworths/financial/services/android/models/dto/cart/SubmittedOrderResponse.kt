@@ -16,6 +16,7 @@ class SubmittedOrderResponse {
     var deliveryDetails: DeliveryDetails? = null
     var firstOrderInProfile: Boolean? = null
     var items: OrderItems? = null
+    var barcodeNumber: String = ""
     var httpCode: Int = 0
     var response: Response? = null
 }
