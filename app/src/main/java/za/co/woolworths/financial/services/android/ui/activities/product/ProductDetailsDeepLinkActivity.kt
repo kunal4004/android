@@ -36,6 +36,7 @@ import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.Companion.TAG
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.Companion.newInstance
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory.Companion.showItemsLimitToastOnAddToCart
+import za.co.woolworths.financial.services.android.ui.wfs.common.biometric.AuthenticateUtils
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.isDeliveryOptionClickAndCollect
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.isDeliveryOptionDash
@@ -161,8 +162,7 @@ class ProductDetailsDeepLinkActivity : AppCompatActivity(),
         }
         //Remove old usage of SharedPreferences data.
         startupViewModel.clearSharedPreference(this@ProductDetailsDeepLinkActivity)
-        AuthenticateUtils.getInstance(this@ProductDetailsDeepLinkActivity)
-            .enableBiometricForCurrentSession(true)
+        AuthenticateUtils.enableBiometricForCurrentSession(true)
     }
 
     private fun getConfig(productId: String) {
