@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.viewmodel
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.runtime.*
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -21,6 +22,7 @@ import za.co.woolworths.financial.services.android.models.dto.account.ServerErro
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.CreditCardDeliveryStatusResponse
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.wfs.common.ConnectionState
+import za.co.woolworths.financial.services.android.ui.wfs.common.biometric.AuthenticateUtils
 import za.co.woolworths.financial.services.android.ui.wfs.core.FirebaseAnalyticsUserProperty
 import za.co.woolworths.financial.services.android.ui.wfs.core.IFirebaseAnalyticsUserProperty
 import za.co.woolworths.financial.services.android.ui.wfs.core.NetworkStatusUI
@@ -99,8 +101,11 @@ class UserAccountLandingViewModel @Inject constructor(
     var isRefreshButtonRotating by mutableStateOf(false)
     var isAccountRefreshingTriggered by mutableStateOf(false)
     var isAccountFragmentVisible by mutableStateOf(false)
-    var isBiometricPopupEnabled by mutableStateOf(false)
     var isAutoReconnectActivated: Boolean = false
+    var isBiometricPopupEnabled by mutableStateOf(false)
+    var isBiometricScreenEnabled by mutableStateOf(false)
+
+    var wasActivityOpened : Boolean = true
 
     private var _mapOfFinalProductItems = mutableMapOf<String, AccountProductCardsGroup?>()
     val mapOfFinalProductItems: MutableMap<String, AccountProductCardsGroup?> =
@@ -140,6 +145,7 @@ class UserAccountLandingViewModel @Inject constructor(
         initProductAndOfferItem()
     }
 
+
     private fun initProductAndOfferItem() {
         populateMapOfMyProducts()
         populateMapOfMyOffers()
@@ -155,12 +161,29 @@ class UserAccountLandingViewModel @Inject constructor(
         }
     }
 
+    fun setBiometricDisabled() {
+        Log.e("enableBiometrics", "setBiometricDisabled --")
+        AuthenticateUtils.enableBiometricForCurrentSession(false)
+    }
+
+    fun setBiometricEnabled(){
+        Log.e("enableBiometrics", "setBiometricEnabled --")
+        AuthenticateUtils.enableBiometricForCurrentSession(true)
+    }
+
+    fun setScreenBlurDisabled() {
+        isBiometricScreenEnabled = false
+    }
+    fun setScreenBlurEnabled() {
+        isBiometricScreenEnabled = true
+    }
+
     fun setUserAuthenticated(resultCode: Int?) {
         if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
             showShimmer(isC2User())
             queryAccountLandingService(true)
             isUserAuthenticated.value = Authenticated
-            isBiometricPopupEnabled = isBiometricScreenNeeded()
+            isBiometricPopupEnabled = true
         }
     }
 
@@ -503,5 +526,14 @@ class UserAccountLandingViewModel @Inject constructor(
             Utils.removeFromDb(SessionDao.KEY.SHOP_OPTIMISER_SQLITE_MODEL)
         }
     }
+
+    fun setOnTapActivated() {
+        wasActivityOpened = true
+    }
+
+    fun setOnTapNotActivated() {
+        wasActivityOpened = false
+    }
+
 
 }

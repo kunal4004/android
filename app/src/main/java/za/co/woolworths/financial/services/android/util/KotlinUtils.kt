@@ -697,6 +697,7 @@ class KotlinUtils {
                 latitude = browsingStoreData.latitude
                 deliveryDetails = browsingStoreData.deliveryDetails
             }
+            setBrowsingCncStore(browsingStoreData)
         }
 
         fun showChangeDeliveryTypeDialog(
@@ -1856,6 +1857,9 @@ class KotlinUtils {
     }
 }
 
+fun setBrowsingCncStore(browsingStoreData: Store) {
+    KotlinUtils.browsingCncStore = browsingStoreData
+}
 fun Group.setAlphaForGroupdViews(alpha: Float) = referencedIds.forEach {
     rootView.findViewById<View>(it).alpha = alpha
 }

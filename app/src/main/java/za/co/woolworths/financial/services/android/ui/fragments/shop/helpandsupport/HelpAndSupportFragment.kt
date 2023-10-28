@@ -12,7 +12,6 @@ import za.co.woolworths.financial.services.android.onecartgetstream.OCChatActivi
 import za.co.woolworths.financial.services.android.ui.activities.CancelOrderProgressActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
-import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.CancelOrderConfirmationDialogFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.CancelOrderProgressFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.OrderTrackingWebViewActivity
@@ -54,11 +53,10 @@ class HelpAndSupportFragment : BaseFragmentBinding<LayoutHelpAndSupportFragement
         llm.orientation = LinearLayoutManager.VERTICAL
 
         binding.apply {
-            rvHelpAndSupport.setLayoutManager(llm)
-            rvHelpAndSupport.setAdapter(adapter)
-            imgDelBack?.setOnClickListener {
-                requireActivity()?.setResult(CheckOutFragment.REQUEST_CHECKOUT_ON_CONTINUE_SHOPPING)
-                requireActivity()?.finish()
+            rvHelpAndSupport.layoutManager = llm
+            rvHelpAndSupport.adapter = adapter
+            imgDelBack.setOnClickListener {
+                requireActivity().onBackPressed()
             }
         }
     }
