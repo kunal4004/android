@@ -1748,7 +1748,6 @@ class ProductDetailsFragment :
                         prodId = it.productId
                         tvTotalReviews?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
                     }
-                    showRatingAndReview()
                     if (RatingAndReviewUtil.isFoodItemAvailable() ||
                         RatingAndReviewUtil.isFashionItemAvailable() ||
                         RatingAndReviewUtil.isHomeItemAvailable() ||
