@@ -1,8 +1,8 @@
 package za.co.woolworths.financial.services.android.recommendations.analytics.usecase
 
+import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.network.Resource
 import za.co.woolworths.financial.services.android.recommendations.data.repository.RecommendationsRepository
-import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.Product
 import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.RecommendationResponse
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.CommonRecommendationEvent
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
@@ -15,12 +15,12 @@ class RecClickUseCase @Inject constructor(
     private val recommendationsRepository: RecommendationsRepository
 ) {
 
-    suspend operator fun invoke(products: List<Product>): Resource<RecommendationResponse> {
+    suspend operator fun invoke(products: List<ProductList>): Resource<RecommendationResponse> {
         val event = prepareEvent(products)
         return recommendationsRepository.getRecommendationResponse(event)
     }
 
-    private fun prepareEvent(products: List<Product>): RecommendationRequest? {
+    private fun prepareEvent(products: List<ProductList>): RecommendationRequest? {
         val monetateId = Utils.getMonetateId()
         val eventType = Constants.EVENT_TYPE_REC_CLICKS
         val recClicks = products.mapNotNull { it.recToken }.filter { it.isNotEmpty() }

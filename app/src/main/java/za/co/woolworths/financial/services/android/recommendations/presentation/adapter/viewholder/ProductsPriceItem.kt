@@ -8,13 +8,13 @@ import androidx.core.content.ContextCompat
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.ProductListingPriceLayoutBinding
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
-import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.Product
+import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 import java.util.*
 
 class ProductsPriceItem {
 
-    fun setPrice(productList: Product?, binding: ProductListingPriceLayoutBinding, shopFromItem: Boolean = false) {
+    fun setPrice(productList: ProductList?, binding: ProductListingPriceLayoutBinding, shopFromItem: Boolean = false) {
         val wasPrice: String = productList?.wasPrice?.toString() ?: ""
         val price: String = productList?.price?.toString() ?: "0"
         val kilogramPrice: String = productList?.kilogramPrice?.toString() ?: ""
