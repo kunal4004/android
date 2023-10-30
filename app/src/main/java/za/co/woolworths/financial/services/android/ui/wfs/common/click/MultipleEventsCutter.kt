@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.wfs.common.click
 
+import androidx.compose.foundation.Indication
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -46,6 +47,7 @@ fun Modifier.clickableSingle(
     enabled: Boolean = true,
     onClickLabel: String? = null,
     role: Role? = null,
+    indication: Indication? = null,
     onClick: () -> Unit
 ) = composed(
     inspectorInfo = debugInspectorInfo {
@@ -65,7 +67,7 @@ fun Modifier.clickableSingle(
         onClickLabel = onClickLabel,
         onClick = { multipleEventsCutter.processEvent { onClick() } },
         role = role,
-        indication = LocalIndication.current,
+        indication = indication ?: LocalIndication.current,
         interactionSource = remember { MutableInteractionSource() }
     )
 }

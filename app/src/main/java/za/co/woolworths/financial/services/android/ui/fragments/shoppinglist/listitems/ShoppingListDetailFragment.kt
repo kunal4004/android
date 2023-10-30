@@ -22,6 +22,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.core.text.buildSpannedString
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -81,6 +82,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.sea
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.Companion.MY_LIST_LIST_ID
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.Companion.MY_LIST_LIST_NAME
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.Companion.MY_LIST_SEARCH_TERM
+import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.Companion.REFRESH_SHOPPING_LIST_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory.Companion.buildAddToCartSuccessToast
@@ -115,6 +117,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
     MyShoppingListItemClickListener {
 
     private val viewModel: ShoppingListDetailViewModel by viewModels()
+    private val selectedItems  = ArrayList<String>()
     private var customProgressDialog: CustomProgressBar? = null
 
     private val productSearchResult =
@@ -127,6 +130,9 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                         requireActivity(), bindingListDetails.rlCheckOut, listName ?: "", count
                     )
                     viewModel.getShoppingListDetails()
+                    val addedToListIntent = Bundle()
+                    addedToListIntent.putInt(EXTRA_LIST_ITEMS, count)
+                    setFragmentResult(REFRESH_SHOPPING_LIST_RESULT_CODE.toString(), addedToListIntent)
                 }
                 // searched details result
                 PRODUCT_SEARCH_ACTIVITY_RESULT_CODE -> {
@@ -166,8 +172,11 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
     // onDestroyView.
     private val bindingListDetails get() = _bindingListDetails!!
 
-    private var selectedListCount = 0
     private var selectedItemsForRemoval = 0
+    private var isSingleItemSelected = false
+    private var singleShoppingListItem:ShoppingListItem? = null
+
+    private var selectedListCount = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -266,6 +275,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             val response = it.peekContent().data
             when (it.peekContent().status) {
                 Status.LOADING -> {
+                    bindingListDetails.rlCheckOut.visibility = GONE
                     val message  = getString(R.string.remove_item) + "\n" + listName
                     showLoadingProgress(this, message)
                 }
@@ -274,38 +284,6 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                     updateShoppingListAfterDeletion(response)
                     val message =  getFormatedString(
                         count = selectedItemsForRemoval, R.plurals.remove_list) +"\t\t" +listName
-                    ToastFactory.showToast(
-                        requireActivity(),
-                        bindingListDetails.rlCheckOut,
-                        message
-                    )
-                }
-                Status.ERROR -> {
-                    hideLoadingProgress()
-                }
-            }
-        }
-
-        viewModel.copyItemsToList.observe(viewLifecycleOwner) {
-            val response = it.peekContent().data
-            when (it.peekContent().status) {
-                Status.LOADING -> {
-                    val message = if (selectedListCount == 1) {
-                        getFormatedString(selectedListCount, R.plurals.copy_item) + "\n" + listName
-                    } else {
-                        getFormatedString(selectedListCount, R.plurals.copy_item) + "\n" + getString(R.string.multiple_lists)
-                    }
-                    showLoadingProgress(this, message)
-                }
-
-                Status.SUCCESS -> {
-                    hideLoadingProgress()
-                    val count = shoppingListItemsAdapter?.addedItemsCount?:0
-                    val message = if (selectedListCount == 1 ) {
-                         count.toString() + "\t\t" + getFormatedString(count, R.plurals.copy_item_msg) +"\t\t" + listName
-                    } else {
-                         count.toString() + "\t\t" + getFormatedString(count, R.plurals.copy_item_msg) + "\t\t" + getString(R.string.multiple_lists)
-                    }
                     ToastFactory.showToast(
                         requireActivity(),
                         bindingListDetails.rlCheckOut,
@@ -474,13 +452,21 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             R.id.btnCheckOut -> addItemsToCart()
             R.id.changeLocationButton -> deliverySelectionIntent(DELIVERY_LOCATION_REQUEST)
             R.id.closeWhiteBtn -> hideBlackToolTip()
-            R.id.txtMoreOptions -> openMoreOptionsDialog()
+            R.id.txtMoreOptions -> {
+                isSingleItemSelected = false
+                openMoreOptionsDialog()
+            }
             else -> {}
         }
     }
 
     private fun openMoreOptionsDialog() {
-        val fragment = MoreOptionDialogFragment.newInstance(this@ShoppingListDetailFragment)
+        val count = if (isSingleItemSelected) {
+            1
+        } else {
+            shoppingListItemsAdapter?.addedItemsCount ?: 0
+        }
+        val fragment = MoreOptionDialogFragment.newInstance(this@ShoppingListDetailFragment, count)
         fragment.show(parentFragmentManager, MoreOptionDialogFragment::class.simpleName)
     }
 
@@ -635,6 +621,8 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                                 response?.let { onShoppingListItemDelete(it) }
                             }
                         }
+                        //refresh main myList fragment to show updated count.
+                        setFragmentResult(REFRESH_SHOPPING_LIST_RESULT_CODE.toString(), bundleOf())
                         onDeleteUIUpdate()
                     }
 
@@ -806,6 +794,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                 )
             }
             viewModel.getShoppingListDetails()
+            setFragmentResult(REFRESH_SHOPPING_LIST_RESULT_CODE.toString(), result)
         }
 
         setFragmentResultListener(ON_CONFIRM_REMOVE_WITH_DELETE_ICON_PRESSED) { _, _ ->
@@ -1240,14 +1229,28 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
 
     private fun removeItemFromList() {
         val selectedItems  = ArrayList<String>()
-        for (item in viewModel.mShoppingListItems) {
-            if (item.isSelected == true) {
-                selectedItems.add(item.Id)
+
+        if (isSingleItemSelected) {
+            singleShoppingListItem?.Id?.let {
+                selectedItems.add(it)
             }
+            selectedItemsForRemoval = 1
+        } else {
+            for (item in viewModel.mShoppingListItems) {
+                if (item.isSelected == true) {
+                    selectedItems.add(item.Id)
+                }
+            }
+            selectedItemsForRemoval = selectedItems.size
         }
-        selectedItemsForRemoval = selectedItems.size
         val removeItemApiRequest = RemoveItemApiRequest(selectedItems)
         viewModel.removeMultipleItemsFromList(viewModel.listId, removeItemApiRequest)
+    }
+
+    override fun naviagteToMoreOptionDialog(shoppingListItem: ShoppingListItem) {
+        isSingleItemSelected = true
+        singleShoppingListItem = shoppingListItem
+        openMoreOptionsDialog()
     }
 
     private fun copytemFromList(list: List<String>) {

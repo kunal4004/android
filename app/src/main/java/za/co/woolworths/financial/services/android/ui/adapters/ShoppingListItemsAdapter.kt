@@ -79,7 +79,7 @@ class ShoppingListItemsAdapter(
 
                 when (shoppingListItem.availability) {
                     ProductAvailability.UNAVAILABLE.value -> holder.bindUnavailableProduct()
-                    ProductAvailability.OUT_OF_STOCK.value -> holder.bindOutOfStockProduct()
+                    ProductAvailability.OUT_OF_STOCK.value -> holder.bindOutOfStockProduct(shoppingListItem)
                     else -> holder.bindAvailableProduct(shoppingListItem)
                 }
             }
@@ -218,6 +218,7 @@ class ShoppingListItemsAdapter(
 
         fun bindUnavailableProduct() {
             itemBinding?.apply {
+                iconKebab.visibility = GONE
                 adapterClickable(true)
                 val msg = getUnavailableMsgByDeliveryType(itemBinding.root.context)
                 tvProductAvailability.text = msg
@@ -225,12 +226,16 @@ class ShoppingListItemsAdapter(
             }
         }
 
-        fun bindOutOfStockProduct() {
+        fun bindOutOfStockProduct(shoppingListItem: ShoppingListItem) {
             itemBinding?.apply {
+                iconKebab.visibility = VISIBLE
                 adapterClickable(true)
                 tvProductAvailability.text =
                     itemBinding.root.context.getString(R.string.out_of_stock)
                 tvProductAvailability.visibility = VISIBLE
+                iconKebab.setOnClickListener {
+                    navigator.naviagteToMoreOptionDialog(shoppingListItem)
+                }
             }
         }
 
@@ -342,6 +347,18 @@ class ShoppingListItemsAdapter(
                         navigator.onAddListItemCount(listItem)
                         notifyItemChanged(position, listItem)
                     }
+                }
+                iconKebab.visibility = VISIBLE
+                if (cbShoppingList.isChecked) {
+                    iconKebab.setImageResource(R.drawable.icon_kebab_inactive)
+                    iconKebab.isEnabled = false
+                } else {
+                    iconKebab.setImageResource(R.drawable.icon_kebab_active)
+                    iconKebab.isEnabled = true
+                }
+
+                iconKebab.setOnClickListener {
+                    navigator.naviagteToMoreOptionDialog(shoppingListItem)
                 }
             }
         }
