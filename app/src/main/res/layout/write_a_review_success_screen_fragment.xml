@@ -84,15 +84,6 @@
                     android:textColor="@color/white"
                     android:textSize="@dimen/_12ssp" />
 
-               <!-- <TextView
-                    android:id="@+id/textView5"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="@string/share_this_product"
-                    android:textColor="@color/color_666666"
-                    android:textSize="@dimen/_12ssp" />-->
-
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 

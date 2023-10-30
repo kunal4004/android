@@ -15,6 +15,7 @@ class WriteAReviewSuccessScreenFragment: Fragment(), View.OnClickListener {
 
     companion object {
         fun newInstance() = WriteAReviewSuccessScreenFragment()
+        const val ACTION_ITEMS = "ACTION_ITEMS"
     }
 
 
