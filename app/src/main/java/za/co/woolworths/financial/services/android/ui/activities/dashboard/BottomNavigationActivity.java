@@ -8,6 +8,10 @@ import static za.co.woolworths.financial.services.android.ui.activities.TipsAndT
 import static za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity.RESULT_OK_ACCOUNTS;
 import static za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity.RESULT_OK_OPEN_CART_FROM_TIPS_AND_TRICKS;
 import static za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity.RESULT_CODE_MY_ACCOUNT_FRAGMENT;
+import static za.co.woolworths.financial.services.android.ui.activities.write_a_review.view.WriteAReviewForm.IMAGE_PATH;
+import static za.co.woolworths.financial.services.android.ui.activities.write_a_review.view.WriteAReviewForm.PRODUCT_ID;
+import static za.co.woolworths.financial.services.android.ui.activities.write_a_review.view.WriteAReviewForm.PRODUCT_NAME;
+import static za.co.woolworths.financial.services.android.ui.activities.write_a_review.view.WriteAReviewSuccessScreenFragment.ACTION_ITEMS;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.BRAND_NAVIGATION_DETAILS;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.IS_BROWSING;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.STR_BRAND_HEADER;
@@ -63,6 +67,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -99,6 +104,8 @@ import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSiz
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity;
+import za.co.woolworths.financial.services.android.ui.activities.write_a_review.view.WriteAReviewForm;
+import za.co.woolworths.financial.services.android.ui.activities.write_a_review.view.WriteAReviewSuccessScreenFragment;
 import za.co.woolworths.financial.services.android.ui.base.BaseActivity;
 import za.co.woolworths.financial.services.android.ui.base.SavedInstanceFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.RefinementDrawerFragment;
@@ -582,6 +589,17 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         productDetailsFragmentNew.setArguments(bundle);
         Utils.updateStatusBarBackground(this);
         pushFragment(productDetailsFragmentNew);
+    }
+
+    public void openWriteAReviewFragment(String productName, String imagePath, String productId) {
+        Bundle bundle = new Bundle();
+        bundle.putString(PRODUCT_NAME, productName);
+        bundle.putString(IMAGE_PATH, imagePath);
+        bundle.putString(PRODUCT_ID, productId);
+        WriteAReviewForm writeAReviewForm = WriteAReviewForm.Companion.newInstance();
+        writeAReviewForm.setArguments(bundle);
+        Utils.updateStatusBarBackground(this);
+        pushFragmentNoAnim(writeAReviewForm);
     }
 
     @Override
@@ -1628,6 +1646,15 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             ScreenManager.presentSSOSignin(this);
         }, AppConstant.DELAY_500_MS);
 
+    }
+
+    public void openWriteAReviewSuccessScreenFragment(@NotNull String actionItems) {
+        Bundle bundle = new Bundle();
+        bundle.putString(ACTION_ITEMS, actionItems);
+        WriteAReviewSuccessScreenFragment writeAReviewSuccessScreenFragment = WriteAReviewSuccessScreenFragment.Companion.newInstance();
+        writeAReviewSuccessScreenFragment.setArguments(bundle);
+        Utils.updateStatusBarBackground(this);
+        pushFragmentNoAnim(writeAReviewSuccessScreenFragment);
     }
 
 }

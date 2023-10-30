@@ -21,6 +21,7 @@ import androidx.core.view.contains
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -58,6 +59,10 @@ import za.co.woolworths.financial.services.android.onecartgetstream.OCChatActivi
 import za.co.woolworths.financial.services.android.onecartgetstream.service.DashChatMessageListeningService
 import za.co.woolworths.financial.services.android.receivers.DashOrderReceiver
 import za.co.woolworths.financial.services.android.receivers.DashOrderReceiverListener
+import za.co.woolworths.financial.services.android.recommendations.data.response.request.CommonRecommendationEvent
+import za.co.woolworths.financial.services.android.recommendations.data.response.request.Recommendation
+import za.co.woolworths.financial.services.android.recommendations.data.response.request.RecommendationRequest
+import za.co.woolworths.financial.services.android.recommendations.presentation.viewmodel.RecommendationViewModel
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity
@@ -68,6 +73,7 @@ import za.co.woolworths.financial.services.android.ui.adapters.shop.dash.DashDel
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.Companion.newInstance
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants
 import za.co.woolworths.financial.services.android.ui.fragments.shop.OrderDetailsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.OrderTrackingWebViewActivity
 import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment
@@ -108,6 +114,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
     DashOrderReceiverListener {
 
     private lateinit var viewModel: ShopViewModel
+    private val recommendationViewModel: RecommendationViewModel by viewModels()
     private val confirmAddressViewModel: ConfirmAddressViewModel by activityViewModels()
     private lateinit var binding: FragmentDashDeliveryBinding
     private lateinit var dashDeliveryAdapter: DashDeliveryAdapter
@@ -126,7 +133,8 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
             dashDeliveryAdapter =
                 DashDeliveryAdapter(
                     requireContext(), onDemandNavigationListener = this,
-                    dashLandingNavigationListener = this, onDataUpdateListener = onDataUpdateListener, this
+                    dashLandingNavigationListener = this, onDataUpdateListener = onDataUpdateListener, this,
+                    activity = activity
                 )
         }
     }
@@ -287,7 +295,8 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                 binding.progressBar?.visibility = View.GONE
                 dashDeliveryAdapter.setData(
                     viewModel.onDemandCategories.value?.peekContent()?.data?.onDemandCategories,
-                    viewModel.dashLandingDetails.value?.peekContent()?.data?.productCatalogues
+                    viewModel.dashLandingDetails.value?.peekContent()?.data?.productCatalogues,
+                    recommendedProducts = recommendationCatalogue()
                 )
             }
             // Either of API data available
@@ -311,6 +320,46 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
         subscribeToObservers()
     }
 
+    private fun fetchRecommendations() {
+        val recommendationRequest = RecommendationRequest(
+            events = listOf(
+                Recommendation.PageView(
+                    pageType = Constants.EVENT_PAGE_TYPE_MAIN,
+                    eventType = Constants.EVENT_TYPE_PAGEVIEW,
+                    url = Constants.EVENT_URL_MAIN
+                ),
+            ).plus(CommonRecommendationEvent.commonRecommendationEvents()),
+            monetateId = Utils.getMonetateId()
+        )
+        recommendationViewModel.getRecommendationResponse(recommendationRequest)
+
+        recommendationViewModel.recommendationResponseData.observe(viewLifecycleOwner) { actionItems ->
+            if (!actionItems.isNullOrEmpty()) {
+                dashDeliveryAdapter.setData(
+                    onDemandCategories = viewModel.onDemandCategories.value?.peekContent()?.data?.onDemandCategories,
+                    dashCategories = viewModel.dashLandingDetails.value?.peekContent()?.data?.productCatalogues,
+                    recommendedProducts = recommendationCatalogue()
+                )
+            }
+        }
+    }
+
+    private fun recommendationCatalogue(): ProductCatalogue? {
+        val actions = recommendationViewModel.recommendationResponseData.value
+        if (actions.isNullOrEmpty()) {
+            return  null
+        }
+        val products = actions[0].products
+        if (products.isNullOrEmpty()) {
+            return  null
+        }
+        return ProductCatalogue(
+            name = DashDeliveryAdapter.TYPE_NAME_RECOMMENDATION_SLOT,
+            headerText = recommendationViewModel.recommendationTitle(),
+            products = products
+        )
+    }
+
     private fun subscribeToObservers() {
 
         //Dash API.
@@ -322,16 +371,25 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                         binding.progressBar.visibility = View.VISIBLE
                     }
                     Status.SUCCESS -> {
+                        recommendationViewModel.clearRecommendations()
                         binding.layoutDashSetAddress?.root?.visibility = View.GONE
+                        resource.data?.productCatalogues?.let { productCatalog ->
+                            val recommendationNeeded = productCatalog.any { catalog -> catalog.name == DashDeliveryAdapter.TYPE_NAME_RECOMMENDATION_SLOT } && SessionUtilities.getInstance().isUserAuthenticated
+                            if (recommendationNeeded) {
+                                fetchRecommendations()
+                            }
+                        }
                         if (viewModel.isOnDemandCategoriesAvailable.value == true) {
                             dashDeliveryAdapter.setData(
                                 viewModel.onDemandCategories.value?.peekContent()?.data?.onDemandCategories,
-                                resource.data?.productCatalogues
+                                resource.data?.productCatalogues,
+                                recommendedProducts = recommendationCatalogue()
                             )
                         } else {
                             dashDeliveryAdapter.setData(
                                 null,
-                                resource.data?.productCatalogues
+                                resource.data?.productCatalogues,
+                                recommendedProducts = recommendationCatalogue()
                             )
                         }
                         binding.progressBar.visibility = View.GONE
@@ -359,6 +417,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                             dashDeliveryAdapter.setData(
                                 resource.data?.onDemandCategories,
                                 viewModel.dashLandingDetails.value?.peekContent()?.data?.productCatalogues,
+                                recommendedProducts = recommendationCatalogue()
                             )
                         }
                         binding.progressBar.visibility = View.GONE
@@ -371,6 +430,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                             dashDeliveryAdapter.setData(
                                 null,
                                 viewModel.dashLandingDetails.value?.peekContent()?.data?.productCatalogues,
+                                recommendedProducts = recommendationCatalogue()
                             )
                         }
                         binding.progressBar.visibility = View.GONE
@@ -973,6 +1033,10 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
     }
 
     override fun openProductDetailView(productList: ProductList) {
+        if (!productList.recToken.isNullOrEmpty() && productList.sku.isNullOrEmpty()) {
+            // This is recommendation product which does not have sku so will add it here
+            productList.sku = productList.productId
+        }
         val productDetailsFragment = newInstance()
         productDetailsFragment.arguments = bundleOf(
             ProductDetailsFragment.STR_PRODUCT_LIST to Gson().toJson(productList),
