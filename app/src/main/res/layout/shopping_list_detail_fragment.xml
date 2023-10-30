@@ -497,8 +497,16 @@
                 app:WButton_font="medium_bold" />
         </RelativeLayout>
 
+        <TextView
+            android:id="@+id/txtMoreOptions"
+            android:layout_margin="@dimen/sixteen_dp"
+            android:textColor="@color/color_666666"
+            android:layout_centerHorizontal="true"
+            android:text="@string/more_options_btn"
+            android:layout_below="@+id/rlCheckOutContainer"
+            android:layout_width= "wrap_content"
+            android:layout_height="wrap_content"/>
     </RelativeLayout>
-
 
     <ProgressBar
         android:id="@+id/loadingBar"

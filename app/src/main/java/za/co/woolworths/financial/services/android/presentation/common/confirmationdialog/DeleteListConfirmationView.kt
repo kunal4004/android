@@ -67,6 +67,8 @@ fun DeleteListConfirmationView(
                     )
                 )
             }
+        } else {
+            Spacer(modifier = Modifier.height(40.dp))
         }
 
         BlackButton(
