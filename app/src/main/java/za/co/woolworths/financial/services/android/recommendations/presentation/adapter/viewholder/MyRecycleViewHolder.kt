@@ -5,10 +5,10 @@ import android.text.TextUtils
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.databinding.RecommendationsProductListingPageRowBinding
-import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.Product
-import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.PromotionImages
+import za.co.woolworths.financial.services.android.contracts.IProductListing
+import za.co.woolworths.financial.services.android.models.dto.ProductList
+import za.co.woolworths.financial.services.android.models.dto.PromotionImages
 import za.co.woolworths.financial.services.android.recommendations.presentation.fragment.RecommendationFragment
-import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationsProductListingListener
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.featureutils.RatingAndReviewUtil
 import za.co.woolworths.financial.services.android.util.ImageManager
 import za.co.woolworths.financial.services.android.util.KotlinUtils
@@ -18,10 +18,10 @@ class MyRecycleViewHolder(val mProductListingPageRowBinding: RecommendationsProd
 
 
     fun setProductItem(
-        productList: Product,
-        navigator: RecommendationsProductListingListener,
-        nextProduct: Product? = null,
-        previousProduct: Product? = null
+        productList: ProductList,
+        navigator: IProductListing,
+        nextProduct: ProductList? = null,
+        previousProduct: ProductList? = null
     ) {
         with(productList) {
             setProductImage(this)
@@ -42,7 +42,7 @@ class MyRecycleViewHolder(val mProductListingPageRowBinding: RecommendationsProd
         }
     }
 
-    private fun setOnClickListener(navigator: RecommendationsProductListingListener, productList: Product
+    private fun setOnClickListener(navigator: IProductListing, productList: ProductList
     ) {
         mProductListingPageRowBinding.imProductImage.setOnClickListener { navigator.openProductDetailView(productList) }
         mProductListingPageRowBinding.brandName.setOnClickListener { navigator.openProductDetailView(productList) }
@@ -50,7 +50,7 @@ class MyRecycleViewHolder(val mProductListingPageRowBinding: RecommendationsProd
         mProductListingPageRowBinding.tvProductName.setOnClickListener { navigator.openProductDetailView(productList) }
     }
 
-    private fun setProductImage(productList: Product) {
+    private fun setProductImage(productList: ProductList) {
         val productImageUrl = productList.externalImageRefV2 ?: ""
         ImageManager.setPicture(
             mProductListingPageRowBinding.imProductImage,
@@ -81,16 +81,16 @@ class MyRecycleViewHolder(val mProductListingPageRowBinding: RecommendationsProd
         }
     }
 
-    private fun setProductName(productList: Product?) = mProductListingPageRowBinding.apply {
+    private fun setProductName(productList: ProductList?) = mProductListingPageRowBinding.apply {
         tvProductName.maxLines = 3
         tvProductName.minLines = 1
         tvProductName?.text = productList?.productName ?: ""
     }
 
     private fun setBrandText(
-        productList: Product?,
-        nextProduct: Product?,
-        previousProduct: Product?
+        productList: ProductList?,
+        nextProduct: ProductList?,
+        previousProduct: ProductList?
     ) = mProductListingPageRowBinding.apply {
         brandName?.text = productList?.brandText ?: ""
         previousProduct?.let {
@@ -111,7 +111,7 @@ class MyRecycleViewHolder(val mProductListingPageRowBinding: RecommendationsProd
         }
     }
 
-    private fun setBrandHeaderDescriptionText(productList: Product?) =
+    private fun setBrandHeaderDescriptionText(productList: ProductList?) =
         mProductListingPageRowBinding.apply {
             if (TextUtils.isEmpty(productList?.brandHeaderDescription)) {
                 tvRangeName?.visibility = View.GONE
@@ -121,7 +121,7 @@ class MyRecycleViewHolder(val mProductListingPageRowBinding: RecommendationsProd
             }
         }
 
-    private fun setPromotionalText(productList: Product?) = mProductListingPageRowBinding.apply {
+    private fun setPromotionalText(productList: ProductList?) = mProductListingPageRowBinding.apply {
         if (productList?.promotions?.isEmpty() == false) {
             productList?.promotions?.forEachIndexed { i, it ->
                 var editedPromotionalText: String? = it.promotionalText
@@ -151,7 +151,7 @@ class MyRecycleViewHolder(val mProductListingPageRowBinding: RecommendationsProd
         }
     }
 
-    private fun setRatingAndReviewCount(productList: Product) =
+    private fun setRatingAndReviewCount(productList: ProductList) =
         mProductListingPageRowBinding.apply {
             if (RatingAndReviewUtil.isRatingAndReviewConfigavailbel() &&
                 productList.isRnREnabled == true
@@ -175,7 +175,7 @@ class MyRecycleViewHolder(val mProductListingPageRowBinding: RecommendationsProd
 
         }
 
-    private fun setProductVariant(productList: Product?) = mProductListingPageRowBinding.apply {
+    private fun setProductVariant(productList: ProductList?) = mProductListingPageRowBinding.apply {
         val productVarientName = productList?.productVariants ?: ""
         if (!TextUtils.isEmpty(productVarientName)) {
             productVariantTextView?.visibility = View.VISIBLE
@@ -186,7 +186,7 @@ class MyRecycleViewHolder(val mProductListingPageRowBinding: RecommendationsProd
         }
     }
 
-    private fun quickShopAddToCartSwitch(productList: Product?) {
+    private fun quickShopAddToCartSwitch(productList: ProductList?) {
         mProductListingPageRowBinding.apply {
             root.context?.apply {
                 productList?.apply {
