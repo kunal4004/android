@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.shoppinglist.viewmodel
 
+import android.util.DisplayMetrics
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -21,22 +22,22 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLo
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse
 import za.co.woolworths.financial.services.android.models.network.Status
+import za.co.woolworths.financial.services.android.shoppinglist.component.AppbarUiState
 import za.co.woolworths.financial.services.android.shoppinglist.component.EmptyStateData
 import za.co.woolworths.financial.services.android.shoppinglist.component.ListDataState
 import za.co.woolworths.financial.services.android.shoppinglist.component.LocationDetailsState
 import za.co.woolworths.financial.services.android.shoppinglist.component.MyLIstUIEvents
 import za.co.woolworths.financial.services.android.shoppinglist.component.MyListScreenEvents
 import za.co.woolworths.financial.services.android.shoppinglist.service.network.ProductListDetails
-import za.co.woolworths.financial.services.android.ui.extension.deviceWidth
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.mapNetworkCallToViewStateFlow
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderFailure
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderLoading
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderSuccess
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
-import za.co.woolworths.financial.services.android.util.Utils.convertPixelsToDp
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import javax.inject.Inject
+import kotlin.math.roundToInt
 
 
 /**
@@ -61,6 +62,7 @@ class MyListViewModel @Inject constructor(
     val isLoading = _isLoading.asStateFlow()
     val listDataState = mutableStateOf(ListDataState())
     var myListState = mutableStateOf(EmptyStateData())
+    var appBarUIState = mutableStateOf(AppbarUiState())
 
     init {
         onInit()
@@ -75,6 +77,7 @@ class MyListViewModel @Inject constructor(
                 events.item,
                 events.position
             )
+
             is MyLIstUIEvents.SignedOutStateEvent -> showSignedOutState()
             is MyLIstUIEvents.OnNewListCreatedEvent -> getShoppingList()
             is MyLIstUIEvents.SignInClick -> {
@@ -82,7 +85,41 @@ class MyListViewModel @Inject constructor(
                 onInit()
             }
 
+            is MyLIstUIEvents.OnRefreshEvent -> {
+                onInit()
+            }
+
+            is MyLIstUIEvents.OnToolbarEditClick -> {
+                if (listDataState.value.isEditMode) {
+                    onDoneButtonClick()
+                } else {
+                    onEditButtonClick()
+                }
+            }
+
             else -> Unit
+        }
+    }
+
+    private fun onDoneButtonClick() {
+        viewModelScope.launch(Dispatchers.Default) {
+            appBarUIState.value = appBarUIState.value.copy(
+                rightButtonRes = R.string.edit
+            )
+            listDataState.value = listDataState.value.copy(
+                isEditMode = false
+            )
+        }
+    }
+
+    private fun onEditButtonClick() {
+        viewModelScope.launch(Dispatchers.Default) {
+            appBarUIState.value = appBarUIState.value.copy(
+                rightButtonRes = R.string.done
+            )
+            listDataState.value = listDataState.value.copy(
+                isEditMode = true
+            )
         }
     }
 
@@ -287,6 +324,9 @@ class MyListViewModel @Inject constructor(
                             )
                             setListData(shoppingListResponse.data)
                             _isLoading.value = false
+                            appBarUIState.value = appBarUIState.value.copy(
+                                showRightButton = listDataState.value.list.isNotEmpty()
+                            )
                         }
 
                         Status.ERROR -> {
@@ -294,10 +334,16 @@ class MyListViewModel @Inject constructor(
                                 isError = true
                             )
                             _isLoading.value = false
+                            appBarUIState.value = appBarUIState.value.copy(
+                                showRightButton = false
+                            )
                         }
 
                         Status.LOADING -> {
                             _isLoading.value = true
+                            appBarUIState.value = appBarUIState.value.copy(
+                                showRightButton = false
+                            )
                         }
                     }
                 }
@@ -344,7 +390,7 @@ class MyListViewModel @Inject constructor(
         }
 
         if (shoppingList.listCount > 0) {
-            for (i in 0..shoppingList.listCount) {
+            for (i in 1..shoppingList.listCount) {
                 mockListDetails.add(productListDetails)
             }
         }
@@ -352,9 +398,18 @@ class MyListViewModel @Inject constructor(
     }
 
     private fun getProductCount(): Int {
-        val deviceWidthInDp = convertPixelsToDp(deviceWidth())
-        val usableDeviceWidth = (deviceWidthInDp - 60) // 60 is the left and right margin
-        return (usableDeviceWidth / 54) // 54 is the width of productImage
+        val displayMetrics: DisplayMetrics? =
+            WoolworthsApplication.getAppContext()?.resources?.displayMetrics
+        var productsCountInRow = 3 // minimum items in a row
+        if (displayMetrics != null) {
+            val screenWidthDp = displayMetrics?.widthPixels?.div(displayMetrics?.density!!)
+            val usableDeviceWidth = (screenWidthDp?.minus(50)) // 50 is the left and right margin
+            if (usableDeviceWidth != null) {
+                productsCountInRow =
+                    ((usableDeviceWidth / 54).roundToInt()) // 54 is the width of productImage
+            }
+        }
+        return productsCountInRow
     }
 
     fun setIsCheckedDontAskAgain(checkedDontAskAgain: Boolean) {
