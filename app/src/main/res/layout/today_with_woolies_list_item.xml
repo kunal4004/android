@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="@dimen/three_twenty_seven_dp"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:padding="@dimen/fifteen_dp">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/fullWidthImage"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/one_fifty_two"
+        android:adjustViewBounds="true"
+        android:scaleType="fitXY"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/todayWooliesTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/fifteen_dp"
+        android:ellipsize="end"
+        android:fontFamily="@font/futura_semi_bold"
+        android:maxLines="1"
+        android:textAlignment="textStart"
+        android:textColor="@color/black"
+        android:textSize="@dimen/fifteen_sp"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/fullWidthImage"
+        tools:text="It’s Snack Time" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/todayWooliesDescription"
+        style="@style/opensans_regular_12_text_style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/five_dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textAlignment="textStart"
+        android:textColor="@color/color_666666"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/todayWooliesTitle"
+        tools:text="Quck and easy low calorie snacks for the family." />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

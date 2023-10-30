@@ -35,7 +35,7 @@ import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OpenSansFontFamily
 
 @Composable
-fun ShowShareListDialog(onShareButtonClick:()->Unit, onCancelClick:()->Unit) {
+fun ShareListDialog(onShareButtonClick:(String)->Unit, onCancelClick:()->Unit) {
 
     val context = LocalContext.current
     var selectedOption by remember {
@@ -63,7 +63,7 @@ fun ShowShareListDialog(onShareButtonClick:()->Unit, onCancelClick:()->Unit) {
         ) {
             Image(
                 painter = painterResource(
-                    id = if (selectedOption.equals(stringResource(id = R.string.view_only_option))) R.drawable.check_mark_icon
+                    id = if (selectedOption == stringResource(id = R.string.view_only_option)) R.drawable.check_mark_icon
                     else R.drawable.uncheck_item
                 ),
                 contentDescription = null,
@@ -110,7 +110,7 @@ fun ShowShareListDialog(onShareButtonClick:()->Unit, onCancelClick:()->Unit) {
         ) {
             Image(
                 painter = painterResource(
-                    id = if (selectedOption.equals(stringResource(id = R.string.edit_option))) R.drawable.check_mark_icon
+                    id = if (selectedOption == stringResource(id = R.string.edit_option)) R.drawable.check_mark_icon
                     else R.drawable.uncheck_item
                 ),
                 contentDescription = null,
@@ -156,7 +156,9 @@ fun ShowShareListDialog(onShareButtonClick:()->Unit, onCancelClick:()->Unit) {
                 .padding(16.dp),
             text = stringResource(id = R.string.share_btn)
         ) {
-            onShareButtonClick()
+            onShareButtonClick(
+                selectedOption
+            )
         }
 
         UnderlineButton(
@@ -173,8 +175,8 @@ fun ShowShareListDialog(onShareButtonClick:()->Unit, onCancelClick:()->Unit) {
 
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
-fun PreviewShowShareListDialog() {
+fun PreviewShareListDialog() {
     OneAppTheme {
-        ShowShareListDialog(onShareButtonClick = {},onCancelClick = {})
+        ShareListDialog(onShareButtonClick = {},onCancelClick = {})
     }
 }
