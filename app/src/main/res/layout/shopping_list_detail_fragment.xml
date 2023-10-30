@@ -116,14 +116,6 @@
             android:layout_height="@dimen/dimen_0_5dp"
             android:background="@color/color_E5E5E5" />
 
-        <include
-            android:visibility="gone"
-            android:id="@+id/errorMessageLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            layout="@layout/list_error_msg_layout"/>
-
-
         <androidx.constraintlayout.widget.ConstraintLayout
             app:layout_constraintTop_toBottomOf="@id/toolbar_separator"
             android:layout_marginTop="0dp"

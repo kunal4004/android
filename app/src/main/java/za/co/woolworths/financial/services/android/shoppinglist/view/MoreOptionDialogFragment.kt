@@ -24,7 +24,7 @@ class MoreOptionDialogFragment : WBottomSheetDialogFragment() {
     private var selectedItemCount = 0
     companion object {
         var listener : MyShoppingListItemClickListener? = null
-        var ITEM_COUNT = "ITEM_COUNT"
+        const val ITEM_COUNT = "ITEM_COUNT"
         fun newInstance(shoppingListItemClickListener:MyShoppingListItemClickListener, itemCount:Int) = MoreOptionDialogFragment().withArgs {
             listener = shoppingListItemClickListener
             putInt(ITEM_COUNT, itemCount)
