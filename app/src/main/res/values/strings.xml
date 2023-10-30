@@ -3121,7 +3121,7 @@
     <string name="edit_option_desc">Invited people can add or remove items from your list.</string>
     <string name="share_btn">SHARE</string>
     <string name="more_options_btn"><u>More Options</u></string>
-    <string name="edit_items">Edit 3 Items </string>
+    <string name="edit_items">Edit %d Items </string>
     <string name="copy_to_list">Copy to a List </string>
     <string name="move_from_list">Move to Another List </string>
     <string name="remove_from_list">Remove from List </string>
@@ -3138,6 +3138,8 @@
     <string name="edit_url_option">viewAndEdit</string>
     <string name="remove_from">Removed from</string>
     <string name="remove_item">Removing Your Item from</string>
+    <string name="remove_dialog_title">Delete these Items?</string>
+    <string name="remove_error_msg">An error occurred while removing your item. \n Please try again later.</string>
     <plurals name="remove_list">
         <item quantity="one">%d ITEM REMOVE FROM</item>
         <item quantity="other">%d ITEMS REMOVE FROM </item>

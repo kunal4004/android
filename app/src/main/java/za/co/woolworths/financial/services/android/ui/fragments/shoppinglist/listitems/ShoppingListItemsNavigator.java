@@ -1,5 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems;
 
+import org.jetbrains.annotations.NotNull;
+
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItem;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse;
@@ -29,4 +31,6 @@ public interface ShoppingListItemsNavigator {
     void onSubstractListItemCount(ShoppingListItem listItem);
 
     void showListBlackToolTip();
+
+    void naviagteToMoreOptionDialog(@NotNull ShoppingListItem shoppingListItem);
 }
