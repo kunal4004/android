@@ -16,7 +16,8 @@ fun ShopToggleData.toDomain(): ToggleModel {
         deliveryCost = deliveryCost,
         learnMore = learnMore,
         deliveryButtonText = deliveryButtonText,
-        isDashDelivery = isDashDelivery
+        isDashDelivery = isDashDelivery,
+        dataFailure = false
     )
 }
 

@@ -52,13 +52,16 @@ class ShopToggleActivity : ComponentActivity() {
                             }
                         )
 
-                        ShopToggleScreen(viewModel,
-                            viewModel.listItem.value)
+                        val state = viewModel.state.value
+
+                        if (state.isLoading) {
+                            CircularProgressIndicator()
+                        } else {
+                            ShopToggleScreen(viewModel, state.data)
+                        }
                     }
                 }
             }
-
         }
     }
-
 }
