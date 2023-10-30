@@ -44,6 +44,8 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Dynam
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.response.DyHomePageViewModel
 import za.co.woolworths.financial.services.android.util.AdvancedWebView
 import za.co.woolworths.financial.services.android.util.AppConstant
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_ENDLESS_AISLE_JOURNEY
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.Utils.*
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
@@ -76,6 +78,7 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
     private var dyServerId: String? = null
     private var dySessionId: String? = null
     private var config: NetworkConfig? = null
+    private var isEndlessAisleJourney: Boolean? = false
     private val dyChooseVariationViewModel: DyHomePageViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -89,6 +92,7 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentCheckoutPaymentWebBinding.bind(view)
         cartItemList = arguments?.getSerializable(CheckoutAddressManagementBaseFragment.CART_ITEM_LIST) as ArrayList<CommerceItem>?
+        isEndlessAisleJourney = arguments?.getBoolean(IS_ENDLESS_AISLE_JOURNEY)
         initPaymentWebView()
     }
 
@@ -101,7 +105,11 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
             CookieManager.getInstance().flush()
 
             CookieManager.getInstance().acceptCookie()
-            val paymentUrl = AppConfigSingleton.nativeCheckout?.checkoutPaymentURL
+            var paymentUrl = if(isEndlessAisleJourney == false)
+                    AppConfigSingleton.nativeCheckout?.checkoutPaymentURL
+                else
+                    AppConfigSingleton.nativeCheckout?.checkoutPaymentURL
+                    //AppConfigSingleton.nativeCheckout?.checkoutPaymentUrlPayInStore
             val webTokens =
                 arguments?.getSerializable(KEY_ARGS_WEB_TOKEN) as? ShippingDetailsResponse
             val cookie = "TOKEN=${webTokens?.jsessionId};AUTHENTICATION=${webTokens?.auth};"

@@ -18,13 +18,17 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.DeliveringToCollectionFromBinding
 import com.awfs.coordination.databinding.FragmentOrderConfirmationBinding
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.zxing.BarcodeFormat
+import com.google.zxing.WriterException
 import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity
 import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.endlessaisle.utils.getBarcodeMessage
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
@@ -56,6 +60,7 @@ import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.Utils.*
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.analytics.dto.AddToWishListFirebaseEventData
 import za.co.woolworths.financial.services.android.util.analytics.dto.toAnalyticItem
 import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
@@ -118,6 +123,7 @@ class OrderConfirmationFragment :
                                     setupDeliveryOrCollectionDetails(response)
                                     setupOrderTotalDetails(response)
                                     displayVocifNeeded(response)
+                                    updateLayoutForPayInStore(response, binding.deliveryCollectionDetailsConstraintLayout)
                                     if (!isPurchaseEventTriggered)
                                     {
                                         showPurchaseEvent(response)
@@ -817,5 +823,25 @@ class OrderConfirmationFragment :
             listOfItems,
             eventData = addToWishListEventData
         )
+    }
+
+    private fun updateLayoutForPayInStore(response: SubmittedOrderResponse?,
+                                          deliveringToCollectionFromBinding: DeliveringToCollectionFromBinding
+    ) {
+        response?.barcodeNumber = "80069123812960"
+        if(response?.barcodeNumber.isNullOrEmpty()){
+            deliveringToCollectionFromBinding.standardAndCncItemsGroup.visibility = VISIBLE
+            deliveringToCollectionFromBinding.payInStoreBarcodeItemsGroup.visibility = GONE
+        }else{
+            deliveringToCollectionFromBinding.standardAndCncItemsGroup.visibility = GONE
+            deliveringToCollectionFromBinding.payInStoreBarcodeItemsGroup.visibility = VISIBLE
+            deliveringToCollectionFromBinding.barcodeNumber.text = response?.barcodeNumber
+            deliveringToCollectionFromBinding.barcodeMessage.text = getBarcodeMessage()
+            try {
+                deliveringToCollectionFromBinding.barcodeImage.setImageBitmap(Utils.encodeAsBitmap(response?.barcodeNumber, BarcodeFormat.CODE_128, deliveringToCollectionFromBinding.barcodeImage.width, 60));
+            } catch (e: WriterException) {
+                FirebaseManager.Companion.logException(e);
+            }
+        }
     }
 }
