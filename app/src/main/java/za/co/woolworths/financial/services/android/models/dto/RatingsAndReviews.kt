@@ -5,4 +5,5 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class RatingsAndReviews (val minimumSupportedAppBuildNumber: Int?,
-                              var isEnabled: Boolean = false) :Parcelable
+                              var isEnabled: Boolean = false,
+                              var enableWriteReview: EnableWriteReview ) :Parcelable
