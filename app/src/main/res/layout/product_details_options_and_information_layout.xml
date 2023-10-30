@@ -358,7 +358,7 @@
             android:id="@+id/leaveUsTextView"
             style="@style/write_a_review_opensans_bold_text_style_14sp_black"
             android:text="@string/leave_us_a_review"
-            android:layout_marginTop="21dp"
+            android:layout_marginTop="@dimen/_21sdp"
             android:layout_centerVertical="true"
             android:layout_below="@+id/viewSeparator" />
 

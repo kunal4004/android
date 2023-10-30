@@ -8,6 +8,10 @@ import static za.co.woolworths.financial.services.android.ui.activities.TipsAndT
 import static za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity.RESULT_OK_ACCOUNTS;
 import static za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity.RESULT_OK_OPEN_CART_FROM_TIPS_AND_TRICKS;
 import static za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity.RESULT_CODE_MY_ACCOUNT_FRAGMENT;
+import static za.co.woolworths.financial.services.android.ui.activities.write_a_review.view.WriteAReviewForm.IMAGE_PATH;
+import static za.co.woolworths.financial.services.android.ui.activities.write_a_review.view.WriteAReviewForm.PRODUCT_ID;
+import static za.co.woolworths.financial.services.android.ui.activities.write_a_review.view.WriteAReviewForm.PRODUCT_NAME;
+import static za.co.woolworths.financial.services.android.ui.activities.write_a_review.view.WriteAReviewSuccessScreenFragment.ACTION_ITEMS;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.BRAND_NAVIGATION_DETAILS;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.IS_BROWSING;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.STR_BRAND_HEADER;
@@ -589,9 +593,9 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
     public void openWriteAReviewFragment(String productName, String imagePath, String productId) {
         Bundle bundle = new Bundle();
-        bundle.putString("PRODUCT_NAME", productName);
-        bundle.putString("IMGE_PATH", imagePath);
-        bundle.putString("PRODUCT_ID", productId);
+        bundle.putString(PRODUCT_NAME, productName);
+        bundle.putString(IMAGE_PATH, imagePath);
+        bundle.putString(PRODUCT_ID, productId);
         WriteAReviewForm writeAReviewForm = WriteAReviewForm.Companion.newInstance();
         writeAReviewForm.setArguments(bundle);
         Utils.updateStatusBarBackground(this);
@@ -1646,7 +1650,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
     public void openWriteAReviewSuccessScreenFragment(@NotNull String actionItems) {
         Bundle bundle = new Bundle();
-        bundle.putString("ACTION_ITEMS", actionItems);
+        bundle.putString(ACTION_ITEMS, actionItems);
         WriteAReviewSuccessScreenFragment writeAReviewSuccessScreenFragment = WriteAReviewSuccessScreenFragment.Companion.newInstance();
         writeAReviewSuccessScreenFragment.setArguments(bundle);
         Utils.updateStatusBarBackground(this);
