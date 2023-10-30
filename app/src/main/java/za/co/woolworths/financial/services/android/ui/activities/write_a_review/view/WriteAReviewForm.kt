@@ -4,21 +4,19 @@ import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
+import android.view.*
 import android.view.animation.AnimationUtils
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.RequiresApi
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
-import com.awfs.coordination.databinding.WriteAReviewBottomSheetDialogBinding
 import com.awfs.coordination.databinding.WriteAReviewFormBinding
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
@@ -27,18 +25,13 @@ import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.write_a_review.request.PrepareWriteAReviewFormRequestEvent
 import za.co.woolworths.financial.services.android.ui.activities.write_a_review.viewmodel.WriteAReviewFormViewModel
-import za.co.woolworths.financial.services.android.util.AppConstant
-import za.co.woolworths.financial.services.android.util.ErrorHandlerView
-import za.co.woolworths.financial.services.android.util.ImageManager
-import za.co.woolworths.financial.services.android.util.SessionUtilities
+import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.logException
 
 
 @AndroidEntryPoint
 class WriteAReviewForm : Fragment(), View.OnClickListener {
     private var _binding: WriteAReviewFormBinding? = null
-    private var _bottomSheetBinding: WriteAReviewBottomSheetDialogBinding? = null
-    private val bottomSheetBinding get() = _bottomSheetBinding!!
     var isrecommended: Boolean? = null
     private val binding get() = _binding!!
     var imageView: ImageView? = null
@@ -184,59 +177,86 @@ class WriteAReviewForm : Fragment(), View.OnClickListener {
     }
 
     private fun showButtomDialog() {
-        val bottomSheetDialog = BottomSheetDialog(requireContext())
-        bottomSheetDialog.setContentView(R.layout.write_a_review_bottom_sheet_dialog)
-        bottomSheetDialog.show()
-        _bottomSheetBinding?.close?.setOnClickListener {
-            if (bottomSheetDialog.isShowing)
-                bottomSheetDialog.dismiss()
-            else
-                bottomSheetDialog.show()
+        val bottomSheetBinding = BottomSheetDialog(requireContext())
+        bottomSheetBinding.apply {
+            val view = layoutInflater.inflate(R.layout.write_a_review_bottom_sheet_dialog, null)
+            val close = view.findViewById<Button>(R.id.close)
+            close?.setOnClickListener { dismiss() }
+            setContentView(view)
+            setCancelable(true)
+            show()
         }
     }
 
-    private fun validateSubmitForm(): Boolean {
+    private fun validateSubmitForm() {
+        var rating: Int? = null
+        var ratingQualityValue: Int? = null
+        var ratingValueBox: Int? = null
+        var reviewText: String? = null
+        var title: String? = null
+        var nickName: String? = null
         if (binding.ratingBar.rating == 0f) {
-            binding.rating.setTextColor(resources.getColor(R.color.red))
-            focusOnView(binding.rating)
-            startShakeAnimation(binding.rating)
-            startShakeAnimation(binding.ratingBar)
-            return false
-        } else if (binding.reviewTitleEdit.text.isNullOrEmpty() || (binding.reviewTitleEdit.text.length <= 1)) {
-            binding.rvwTitle.setTextColor(resources.getColor(R.color.red))
-            binding.reviewInput.background = resources.getDrawable(R.drawable.error_edit_box)
-            startShakeAnimation(binding.rvwTitle)
+            binding.errorMsgOfRatingbar.visibility = View.VISIBLE
+        } else {
+            rating = binding.ratingBar.rating.toInt()
+        }
+        if (!binding.yesButton.isSelected && !binding.noButton.isSelected) {
+            binding.yesButton.background =
+                ResourcesCompat.getDrawable(resources, R.drawable.error_edit_box, null)
+            binding.noButton.background =
+                ResourcesCompat.getDrawable(resources, R.drawable.error_edit_box, null)
+            startShakeAnimation(binding.rccd)
+            binding.errorMsgOfToggleBtn.visibility = View.VISIBLE
+
+        }
+        if (binding.reviewTitleEdit.text.isNullOrEmpty() || (binding.reviewTitleEdit.text.length <= 1)) {
+            binding.reviewInput.background =
+                ResourcesCompat.getDrawable(resources, R.drawable.error_edit_box, null)
             startShakeAnimation(binding.reviewInput)
-            return false
-        } else if (binding.descrEdt.text.isNullOrEmpty() || (binding.descrEdt.text.length <= 10)) {
-            binding.rvwDes.setTextColor(resources.getColor(R.color.red))
-            binding.descInput.background = resources.getDrawable(R.drawable.error_edit_box)
-            startShakeAnimation(binding.rvwDes)
+            binding.errorMsgOfReviewTitle.visibility = View.VISIBLE
+
+        } else {
+            title = binding.reviewTitleEdit.text.toString()
+
+        }
+        if (binding.descrEdt.text.isNullOrEmpty() || (binding.descrEdt.text.length <= 10)) {
+            binding.descInput.background =
+                ResourcesCompat.getDrawable(resources, R.drawable.error_edit_box, null)
             startShakeAnimation(binding.descInput)
-            return false
-        } else if (binding.nameEdt.text.isNullOrEmpty()) {
-            binding.displayName.setTextColor(resources.getColor(R.color.red))
-            binding.nameInput.background = resources.getDrawable(R.drawable.error_edit_box)
-            startShakeAnimation(binding.displayName)
+            binding.errorMsgOfReviewDesc.visibility = View.VISIBLE
+
+        } else {
+            reviewText = binding.descrEdt.text.toString()
+        }
+        if (binding.nameEdt.text.isNullOrEmpty()) {
+            binding.nameInput.background =
+                ResourcesCompat.getDrawable(resources, R.drawable.error_edit_box, null)
             startShakeAnimation(binding.nameInput)
-            return false
-        } else return true
+            binding.errorMsgOfDisplayName.visibility = View.VISIBLE
+
+        } else {
+            nickName = binding.nameEdt.text.toString()
+        }
+        ratingQualityValue = ratingQuality?.toInt()
+        ratingValueBox = ratingValue?.toInt()
+        if ((rating != 0) && (title != null) && (reviewText != null) && (nickName != null) && (isrecommended == true || isrecommended == false)) {
+            submitForm(
+                rating,
+                title,
+                reviewText,
+                nickName,
+                isrecommended,
+                ratingQualityValue,
+                ratingValueBox
+            )
+        }
+
+
     }
 
     private fun startShakeAnimation(rating: View) {
         val shakeAnimation = AnimationUtils.loadAnimation(context, R.anim.edit_text_shake)
         rating.startAnimation(shakeAnimation)
-    }
-
-    private fun focusOnView(rating: TextView) {
-        lifecycleScope.launch {
-            binding.scrollView.scrollTo(0, rating.top)
-        }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 
     private fun hideProgressBar() {
@@ -252,13 +272,16 @@ class WriteAReviewForm : Fragment(), View.OnClickListener {
         )
     }
 
-    private fun submitForm() {
-        val rating = binding.ratingBar.rating.toInt()
-        val reviewText = binding.descrEdt.text.toString()
-        val title = binding.reviewTitleEdit.text.toString()
-        val nickName = binding.nameEdt.text.toString()
-        val ratingQualityValue = ratingQuality?.toInt()
-        val ratingValueBox = ratingValue?.toInt()
+    private fun submitForm(
+        rating: Int?,
+        title: String?,
+        reviewText: String?,
+        nickName: String?,
+        isrecommended: Boolean?,
+        ratingQualityValue: Int?,
+        ratingValueBox: Int?
+    ) {
+
         val prepareWriteAReviewFormRequestEvent = PrepareWriteAReviewFormRequestEvent(
             nickName,
             rating,
@@ -284,8 +307,6 @@ class WriteAReviewForm : Fragment(), View.OnClickListener {
                             (activity as? BottomNavigationActivity)?.openWriteAReviewSuccessScreenFragment(
                                 response.toString()
                             )
-                        } else {
-
                         }
                         hideProgressBar()
                     } catch (ex: Exception) {
@@ -298,16 +319,14 @@ class WriteAReviewForm : Fragment(), View.OnClickListener {
                         mErrorHandlerView?.showToast()
                     }
                 }
-
-
             }
-
         }
     }
 
     private fun editable() {
         binding.ratingBar?.setOnRatingBarChangeListener { p0, p1, p2 ->
             binding.rating?.setTextColor(resources.getColor(R.color.text_colors))
+            binding.errorMsgOfRatingbar.visibility = View.GONE
         }
         binding.reviewTitleEdit?.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
@@ -316,16 +335,20 @@ class WriteAReviewForm : Fragment(), View.OnClickListener {
             @RequiresApi(Build.VERSION_CODES.O)
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 binding.reviewInput?.background =
-                    resources.getDrawable(R.drawable.edit_box_write_a_review)
+                    ResourcesCompat.getDrawable(resources, R.drawable.edit_box_write_a_review, null)
 
                 if (binding.reviewTitleEdit.text.toString().trim().length < 151) {
-                    binding.reviewInput?.background =
-                        resources.getDrawable(R.drawable.edit_box_write_a_review)
+                    binding.reviewInput?.background = ResourcesCompat.getDrawable(
+                        resources,
+                        R.drawable.edit_box_write_a_review,
+                        null
+                    )
                     val number = s?.length.toString()
                     binding.reviewTitleEditCounter.text = number
                 } else {
                     binding.reviewTitleEditCounter.text = "0"
                 }
+                binding.errorMsgOfReviewTitle.visibility = View.GONE
             }
 
             override fun afterTextChanged(p0: Editable?) {
@@ -340,13 +363,15 @@ class WriteAReviewForm : Fragment(), View.OnClickListener {
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
                 binding.descInput?.background =
-                    resources.getDrawable(R.drawable.edit_box_write_a_review)
+                    ResourcesCompat.getDrawable(resources, R.drawable.edit_box_write_a_review, null)
+
                 if (binding.descrEdt.text.toString().length < 1501) {
                     val number = (1500 - binding.descrEdt.text.toString().trim().length).toString()
                     binding.descrEdtCounter.text = number
                 } else {
                     binding.descrEdtCounter.text = "1500"
                 }
+                binding.errorMsgOfReviewDesc.visibility = View.GONE
             }
 
             override fun afterTextChanged(p0: Editable?) {
@@ -362,7 +387,8 @@ class WriteAReviewForm : Fragment(), View.OnClickListener {
                 binding.displayName?.focusable = View.NOT_FOCUSABLE
                 binding.displayName?.setTextColor(resources.getColor(R.color.text_colors))
                 binding.nameInput?.background =
-                    resources.getDrawable(R.drawable.edit_box_write_a_review)
+                    ResourcesCompat.getDrawable(resources, R.drawable.edit_box_write_a_review, null)
+                binding.errorMsgOfDisplayName.visibility = View.GONE
 
             }
 
@@ -378,9 +404,8 @@ class WriteAReviewForm : Fragment(), View.OnClickListener {
             }
 
             R.id.submit -> {
-                if (validateSubmitForm()) {
-                    submitForm()
-                }
+                validateSubmitForm()
+
             }
 
             R.id.descp -> {
@@ -391,12 +416,22 @@ class WriteAReviewForm : Fragment(), View.OnClickListener {
                 binding.yesButton.isSelected = true
                 binding.noButton.isSelected = false
                 isrecommended = true
+                binding.errorMsgOfToggleBtn.visibility = View.GONE
+                binding.yesButton.background =
+                    ResourcesCompat.getDrawable(resources, R.drawable.customrating, null)
+                binding.noButton.background =
+                    ResourcesCompat.getDrawable(resources, R.drawable.customrating, null)
             }
 
             R.id.noButton -> {
                 binding.noButton.isSelected = true
                 binding.yesButton.isSelected = false
                 isrecommended = false
+                binding.errorMsgOfToggleBtn.visibility = View.GONE
+                binding.yesButton.background =
+                    ResourcesCompat.getDrawable(resources, R.drawable.customrating, null)
+                binding.noButton.background =
+                    ResourcesCompat.getDrawable(resources, R.drawable.customrating, null)
             }
 
         }

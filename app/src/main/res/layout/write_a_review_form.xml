@@ -40,8 +40,8 @@
                     android:id="@+id/textView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="50dp"
+                    android:layout_marginStart="@dimen/_16sdp"
+                    android:layout_marginTop="@dimen/_50sdp"
                     android:contentDescription="@string/add_a_review"
                     android:fontFamily="@font/opensans_bold"
                     android:gravity="start"
@@ -54,10 +54,10 @@
 
                 <ImageView
                     android:id="@+id/imageView"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="42dp"
+                    android:layout_width="@dimen/_50sdp"
+                    android:layout_height="@dimen/_50sdp"
+                    android:layout_marginStart="@dimen/_16sdp"
+                    android:layout_marginTop="@dimen/_42sdp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/textView" />
 
@@ -65,14 +65,15 @@
                     android:id="@+id/productName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginBottom="6dp"
+                    android:layout_marginStart="@dimen/_24sdp"
+                    android:layout_marginBottom="@dimen/_6sdp"
                     android:contentDescription="@string/add_a_review"
-                    android:fontFamily="@font/opensans_bold"
+                    android:fontFamily="@font/opensans_regular"
                     android:text="@string/organic_banana"
                     android:textAllCaps="false"
                     android:textSize="@dimen/text_size_12sp"
                     android:typeface="normal"
+                    android:textColor="@color/black"
                     app:layout_constraintBottom_toBottomOf="@+id/imageView"
                     app:layout_constraintStart_toEndOf="@+id/imageView"
                     app:layout_constraintTop_toTopOf="@+id/imageView"
@@ -94,15 +95,15 @@
                 android:id="@+id/secondHeader"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="16dp"
+                android:padding="@dimen/_16sdp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/view">
 
                 <TextView
                     android:id="@+id/tv"
-                    android:layout_width="300dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="24dp"
+                    android:layout_marginStart="@dimen/_16sdp"
                     android:contentDescription="@string/how_much_did_you_like_this_product_overall"
                     android:fontFamily="@font/opensans_bold"
                     android:text="@string/how_much_did_you_like_this_product_overall"
@@ -117,10 +118,11 @@
                     android:id="@+id/rating"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginStart="@dimen/_16sdp"
+                    android:layout_marginTop="@dimen/_20sdp"
                     android:fontFamily="@font/opensans_regular"
                     android:text="@string/rating_star"
+                    android:textColor="@color/black"
                     android:textSize="@dimen/_13ssp"
                     android:textStyle="normal"
                     app:layout_constraintStart_toStartOf="parent"
@@ -130,34 +132,50 @@
                     android:id="@+id/ratingBar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginStart="@dimen/_16sdp"
+                    android:layout_marginTop="@dimen/_16sdp"
                     android:numStars="5"
                     android:progressTint="@color/black"
                     android:rating="0"
-                    android:stepSize="0.5"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/rating" />
+
+                <TextView
+                    android:id="@+id/error_msg_of_ratingbar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_16sdp"
+                    android:layout_marginTop="@dimen/_20sdp"
+                    android:fontFamily="@font/opensans_regular"
+                    android:text="@string/please_select_a_rating"
+                    android:textColor="@color/red"
+                    android:textSize="@dimen/_13ssp"
+                    android:textStyle="normal"
+                    android:visibility="gone"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/ratingBar" />
+
 
                 <TextView
                     android:id="@+id/value"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginStart="@dimen/_16sdp"
+                    android:layout_marginTop="@dimen/_20sdp"
                     android:fontFamily="@font/opensans_regular"
                     android:text="@string/rating_value"
+                    android:textColor="@color/black"
                     android:textSize="@dimen/_13ssp"
                     android:textStyle="normal"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/ratingBar" />
+                    app:layout_constraintTop_toBottomOf="@+id/error_msg_of_ratingbar" />
 
                 <LinearLayout
                     android:id="@+id/toggleButtonGroup"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginStart="@dimen/_16sdp"
+                    android:layout_marginTop="@dimen/_20sdp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/value"
@@ -166,7 +184,7 @@
                     <TextView
                         android:id="@+id/boxOne"
                         android:layout_width="0dp"
-                        android:layout_height="40dp"
+                        android:layout_height="@dimen/_40sdp"
                         android:layout_weight="1"
                         android:background="@drawable/customrating"
                         android:fontFamily="@font/opensans_regular"
@@ -179,7 +197,7 @@
                     <TextView
                         android:id="@+id/boxTwo"
                         android:layout_width="0dp"
-                        android:layout_height="40dp"
+                        android:layout_height="@dimen/_40sdp"
                         android:layout_weight="1"
                         android:background="@drawable/customrating"
                         android:fontFamily="@font/opensans_regular"
@@ -192,7 +210,7 @@
                     <TextView
                         android:id="@+id/boxThree"
                         android:layout_width="0dp"
-                        android:layout_height="40dp"
+                        android:layout_height="@dimen/_40sdp"
                         android:layout_weight="1"
                         android:background="@drawable/customrating"
                         android:fontFamily="@font/opensans_regular"
@@ -205,7 +223,7 @@
                     <TextView
                         android:id="@+id/boxFour"
                         android:layout_width="0dp"
-                        android:layout_height="40dp"
+                        android:layout_height="@dimen/_40sdp"
                         android:layout_weight="1"
                         android:background="@drawable/customrating"
                         android:fontFamily="@font/opensans_regular"
@@ -218,7 +236,7 @@
                     <TextView
                         android:id="@+id/boxFive"
                         android:layout_width="0dp"
-                        android:layout_height="40dp"
+                        android:layout_height="@dimen/_40sdp"
                         android:layout_weight="1"
                         android:background="@drawable/customrating"
                         android:fontFamily="@font/opensans_regular"
@@ -234,10 +252,11 @@
                     android:id="@+id/product"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginStart="@dimen/_16sdp"
+                    android:layout_marginTop="@dimen/_20sdp"
                     android:fontFamily="@font/opensans_regular"
                     android:text="@string/product_quality"
+                    android:textColor="@color/black"
                     android:textSize="@dimen/_13ssp"
                     android:textStyle="normal"
                     app:layout_constraintStart_toStartOf="parent"
@@ -247,8 +266,8 @@
                     android:id="@+id/productRating"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginStart="@dimen/_16sdp"
+                    android:layout_marginTop="@dimen/_20sdp"
                     android:orientation="horizontal"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -258,7 +277,7 @@
                     <TextView
                         android:id="@+id/boxQual1"
                         android:layout_width="0dp"
-                        android:layout_height="40dp"
+                        android:layout_height="@dimen/_40sdp"
                         android:layout_weight="1"
                         android:background="@drawable/customrating"
                         android:fontFamily="@font/opensans_regular"
@@ -271,7 +290,7 @@
                     <TextView
                         android:id="@+id/boxQual2"
                         android:layout_width="0dp"
-                        android:layout_height="40dp"
+                        android:layout_height="@dimen/_40sdp"
                         android:layout_weight="1"
                         android:background="@drawable/customrating"
                         android:fontFamily="@font/opensans_regular"
@@ -284,7 +303,7 @@
                     <TextView
                         android:id="@+id/boxQual3"
                         android:layout_width="0dp"
-                        android:layout_height="40dp"
+                        android:layout_height="@dimen/_40sdp"
                         android:layout_weight="1"
                         android:background="@drawable/customrating"
                         android:fontFamily="@font/opensans_regular"
@@ -297,7 +316,7 @@
                     <TextView
                         android:id="@+id/boxQual4"
                         android:layout_width="0dp"
-                        android:layout_height="40dp"
+                        android:layout_height="@dimen/_40sdp"
                         android:layout_weight="1"
                         android:background="@drawable/customrating"
                         android:fontFamily="@font/opensans_regular"
@@ -310,7 +329,7 @@
                     <TextView
                         android:id="@+id/boxQual5"
                         android:layout_width="0dp"
-                        android:layout_height="40dp"
+                        android:layout_height="@dimen/_40sdp"
                         android:layout_weight="1"
                         android:background="@drawable/customrating"
                         android:fontFamily="@font/opensans_regular"
@@ -334,23 +353,24 @@
 
                 <TextView
                     android:id="@+id/recommend"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginTop="20dp"
-                    android:fontFamily="@font/opensans_bold"
+                    android:layout_marginStart="@dimen/_16sdp"
+                    android:layout_marginTop="@dimen/_20sdp"
+                    android:fontFamily="@font/opensans_regular"
                     android:text="@string/Would_you_recommend_this_product_to_a_friend"
                     android:textSize="@dimen/_13ssp"
                     android:textStyle="normal"
+                    android:textColor="@color/black"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/viewSec" />
 
                 <LinearLayout
                     android:id="@+id/rccd"
                     android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginTop="10dp"
+                    android:layout_height="@dimen/_60sdp"
+                    android:layout_marginStart="@dimen/_16sdp"
+                    android:layout_marginTop="@dimen/_20sdp"
                     android:orientation="horizontal"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -381,6 +401,20 @@
                         android:textStyle="normal" />
                 </LinearLayout>
 
+                <TextView
+                    android:id="@+id/error_msg_of_toggle_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_16sdp"
+                    android:fontFamily="@font/opensans_regular"
+                    android:text="@string/please_select_an_option."
+                    android:textColor="@color/red"
+                    android:textSize="@dimen/_13ssp"
+                    android:textStyle="normal"
+                    android:visibility="gone"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/rccd" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <View
@@ -397,16 +431,16 @@
                 android:id="@+id/thrdHeader"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
+                android:layout_marginStart="@dimen/_16sdp"
                 android:orientation="vertical"
-                android:padding="16dp"
+                android:padding="@dimen/_16sdp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/viewtr">
 
                 <TextView
-                    android:layout_width="300dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="@dimen/_20sdp"
                     android:contentDescription="@string/write_a_review2"
                     android:fontFamily="@font/opensans_bold"
                     android:text="@string/write_a_review2"
@@ -418,12 +452,13 @@
 
                 <TextView
                     android:id="@+id/rvwTitle"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="26dp"
+                    android:layout_marginTop="@dimen/_20sdp"
                     android:contentDescription="@string/write_a_review2"
                     android:fontFamily="@font/opensans_regular"
                     android:text="@string/review_title"
+                    android:textColor="@color/black"
                     android:textSize="@dimen/_13ssp"
                     android:textStyle="normal"
                     app:layout_constraintStart_toStartOf="parent"
@@ -432,8 +467,8 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/reviewInput"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_marginTop="10dp"
+                    android:layout_height="@dimen/_50sdp"
+                    android:layout_marginTop="@dimen/_10sdp"
                     android:background="@drawable/bg_input_edittext"
                     android:orientation="horizontal"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -447,20 +482,20 @@
                         android:background="@android:color/transparent"
                         android:fontFamily="@font/opensans_regular"
                         android:hint="@string/review_title_hint"
-                        android:maxLength="250"
-                        android:padding="12dp"
+                        android:maxLength="150"
+                        android:padding="@dimen/_12sdp"
                         android:textColor="@color/black"
-                        android:textSize="14sp" />
+                        android:textSize="@dimen/_14ssp" />
 
                     <TextView
                         android:id="@+id/reviewTitleEditCounter"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="60dp"
+                        android:layout_marginEnd="@dimen/_60sdp"
                         android:contentDescription="@string/write_a_review2"
                         android:text="@string/zero"
                         android:textColor="@color/black"
-                        android:textSize="11sp"
+                        android:textSize="@dimen/_11ssp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
@@ -469,11 +504,11 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="32dp"
+                        android:layout_marginEnd="@dimen/_32sdp"
                         android:contentDescription="@string/write_a_review2"
                         android:text="@string/review_title_edit_counter"
                         android:textColor="@color/color_9D9D9D"
-                        android:textSize="11sp"
+                        android:textSize="@dimen/_11ssp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
@@ -481,27 +516,41 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
+                <TextView
+                    android:id="@+id/error_msg_of_review_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/opensans_regular"
+                    android:text="@string/please_enter_a_review_title."
+                    android:textColor="@color/red"
+                    android:textSize="@dimen/_13ssp"
+                    android:textStyle="normal"
+                    android:visibility="gone"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/reviewInput" />
+
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="26dp">
+                    android:layout_marginTop="@dimen/_26sdp">
 
                     <TextView
                         android:id="@+id/rvwDes"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/opensans_bold"
+                        android:fontFamily="@font/opensans_regular"
                         android:text="@string/review_desc"
-                        android:textSize="13sp"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/_13ssp"
                         android:textStyle="normal"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <ImageView
                         android:id="@+id/descp"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_marginStart="7dp"
+                        android:layout_width="@dimen/_24sdp"
+                        android:layout_height="@dimen/_24sdp"
+                        android:layout_marginStart="@dimen/_7sdp"
                         android:src="@drawable/icon_info"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -511,8 +560,8 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/descInput"
                     android:layout_width="match_parent"
-                    android:layout_height="250dp"
-                    android:layout_marginTop="10dp"
+                    android:layout_height="@dimen/_250sdp"
+                    android:layout_marginTop="@dimen/_10sdp"
                     android:background="@drawable/bg_input_edittext"
                     android:orientation="horizontal"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -528,10 +577,10 @@
                         android:gravity="start"
                         android:hint="@string/please_enter_your_full_review"
                         android:maxLength="1500"
-                        android:padding="12dp"
+                        android:padding="@dimen/_12sdp"
                         android:textAlignment="viewStart"
                         android:textColor="@color/black"
-                        android:textSize="14sp"
+                        android:textSize="@dimen/_14ssp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -540,11 +589,11 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="128dp"
-                        android:layout_marginBottom="12dp"
+                        android:layout_marginEnd="@dimen/_128sdp"
+                        android:layout_marginBottom="@dimen/_12sdp"
                         android:text="@string/min_ten_char"
                         android:textColor="@color/color_9D9D9D"
-                        android:textSize="11sp"
+                        android:textSize="@dimen/_11ssp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -552,26 +601,39 @@
                         android:id="@+id/descrEdtCounter"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="100dp"
-                        android:layout_marginBottom="12dp"
+                        android:layout_marginEnd="@dimen/_100sdp"
+                        android:layout_marginBottom="@dimen/_12sdp"
                         android:text="@string/fifteen_hundred"
                         android:textColor="@color/black"
-                        android:textSize="11sp"
+                        android:textSize="@dimen/_11ssp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="16dp"
-                        android:layout_marginBottom="12dp"
+                        android:layout_marginEnd="@dimen/_16sdp"
+                        android:layout_marginBottom="@dimen/_12sdp"
                         android:text="@string/characters_left"
                         android:textColor="@color/black"
-                        android:textSize="11sp"
+                        android:textSize="@dimen/_11ssp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <TextView
+                    android:id="@+id/error_msg_of_review_desc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/opensans_regular"
+                    android:text="@string/please_enter_a_minimum_0f_10_characters"
+                    android:textColor="@color/red"
+                    android:textSize="@dimen/_13ssp"
+                    android:textStyle="normal"
+                    android:visibility="gone"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/descInput" />
 
                 <View
                     android:layout_width="match_parent"
@@ -584,17 +646,18 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="26dp"
-                    android:fontFamily="@font/opensans_bold"
+                    android:fontFamily="@font/opensans_regular"
                     android:text="@string/display_name"
-                    android:textSize="14sp"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_14ssp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/valEdit" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/nameInput"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_marginTop="10dp"
+                    android:layout_height="@dimen/_50sdp"
+                    android:layout_marginTop="@dimen/_10sdp"
                     android:background="@drawable/bg_input_edittext"
                     android:orientation="horizontal"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -607,12 +670,25 @@
                         android:layout_height="match_parent"
                         android:background="@android:color/transparent"
                         android:fontFamily="@font/opensans_regular"
-                        android:maxLength="250"
-                        android:padding="12dp"
+                        android:maxLength="150"
+                        android:padding="@dimen/_12sdp"
                         android:textColor="@color/black"
-                        android:textSize="14sp" />
+                        android:textSize="@dimen/_14ssp" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <TextView
+                    android:id="@+id/error_msg_of_display_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/opensans_regular"
+                    android:text="@string/please_enter_a_display_name."
+                    android:textColor="@color/red"
+                    android:textSize="@dimen/_13ssp"
+                    android:textStyle="normal"
+                    android:visibility="gone"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/nameInput" />
 
             </LinearLayout>
 
@@ -630,7 +706,7 @@
                 android:id="@+id/constraintLayout2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="16dp"
+                android:padding="@dimen/_16sdp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/viewfr">
 
@@ -638,10 +714,10 @@
                     android:id="@+id/addPhoto"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="@dimen/_20sdp"
                     android:fontFamily="@font/opensans_extra_bold"
                     android:text="@string/add_photos"
-                    android:textSize="18sp"
+                    android:textSize="@dimen/_18ssp"
                     android:textStyle="bold"
                     android:visibility="gone"
                     app:layout_constraintStart_toStartOf="parent"
@@ -649,9 +725,9 @@
 
                 <ImageView
                     android:id="@+id/uploadPhoto"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
-                    android:layout_marginStart="7dp"
+                    android:layout_width="@dimen/_25sdp"
+                    android:layout_height="@dimen/_25sdp"
+                    android:layout_marginStart="@dimen/_7sdp"
                     android:src="@drawable/icon_info"
                     android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="@+id/addPhoto"
@@ -665,7 +741,7 @@
                     android:fontFamily="@font/opensans_extra_bold"
                     android:text="@string/optional"
                     android:textColor="@color/black"
-                    android:textSize="15sp"
+                    android:textSize="@dimen/_15ssp"
                     android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="@+id/addPhoto"
                     app:layout_constraintEnd_toEndOf="@id/addPhoto"
@@ -675,7 +751,7 @@
                     android:id="@+id/photInp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="9dp"
+                    android:layout_marginTop="@dimen/_9sdp"
                     android:visibility="gone"
                     app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                     app:layout_constraintTop_toBottomOf="@+id/addPhoto"
@@ -704,7 +780,7 @@
                 <LinearLayout
                     android:id="@+id/linearLayout2"
                     android:layout_width="match_parent"
-                    android:layout_height="100dp"
+                    android:layout_height="@dimen/_100sdp"
                     android:gravity="center"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -714,16 +790,16 @@
 
                     <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/submit"
-                        android:layout_width="280dp"
-                        android:layout_height="50dp"
-                        android:layout_marginTop="20dp"
-                        android:layout_marginBottom="10dp"
+                        android:layout_width="@dimen/_280sdp"
+                        android:layout_height="@dimen/_50sdp"
+                        android:layout_marginTop="@dimen/_20sdp"
+                        android:layout_marginBottom="@dimen/_10sdp"
                         android:background="@color/black"
                         android:fontFamily="@font/opensans_regular"
                         android:gravity="center"
                         android:text="@string/submit_review"
                         android:textColor="@color/white"
-                        android:textSize="12sp" />
+                        android:textSize="@dimen/_12sdp" />
 
                 </LinearLayout>
 

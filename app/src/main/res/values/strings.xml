@@ -3147,5 +3147,10 @@
     <string name="submit_review">Submit Review</string>
     <string name="tips_For_writing_great_reviews">Tips For Writing Great Reviews</string>
     <string name="close">CLOSE</string>
+    <string name="please_select_a_rating">Please select a rating.</string>
+    <string name="please_select_an_option.">Please select an option.</string>
+    <string name="please_enter_a_review_title.">Please enter a review title.</string>
+    <string name="please_enter_a_display_name.">Please enter a display name.</string>
+    <string name="please_enter_a_minimum_0f_10_characters">Please enter a minimum of 10 characters</string>
 
 </resources>

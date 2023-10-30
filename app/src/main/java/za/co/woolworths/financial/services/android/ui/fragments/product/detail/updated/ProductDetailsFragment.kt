@@ -700,7 +700,7 @@ class ProductDetailsFragment :
             ScreenManager.presentSSOSigninActivity(activity,
                 SSO_REQUEST_WRITE_A_REVIEW,
                 isUserBrowsing)
-
+            return
         } else {
             (activity as? BottomNavigationActivity)?.openWriteAReviewFragment(productName, imagePath, productId)
         }
@@ -1735,7 +1735,7 @@ class ProductDetailsFragment :
                     onlinePromotionalTextView2?.visibility = View.GONE
                     onlinePromotionalTextView3?.visibility = View.GONE
                 }
-                if (true == it.isRnREnabled && RatingAndReviewUtil.isRatingAndReviewConfigavailbel()) {
+                if (true == it.isRnREnabled && RatingAndReviewUtil.isRatingAndReviewConfigavailbel() ) {
                     ratingLayout.apply {
                         ratingBarTop?.rating = it.averageRating
                         tvTotalReviews?.text = resources.getQuantityString(
@@ -1748,8 +1748,13 @@ class ProductDetailsFragment :
                         prodId = it.productId
                         tvTotalReviews?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
                     }
+                    if (RatingAndReviewUtil.isFoodItemAvailable() ||
+                        RatingAndReviewUtil.isFashionItemAvailable() ||
+                        RatingAndReviewUtil.isHomeItemAvailable() ||
+                        RatingAndReviewUtil.isBeautyItemAvailable()) ShowWriteAReview() else  hideWriteAReview()
                 } else {
                     hideRatingAndReview()
+                    hideWriteAReview()
                 }
             }
 
@@ -1877,6 +1882,20 @@ class ProductDetailsFragment :
 
     private fun hideSubstitutionLayout() {
         binding?.productDetailOptionsAndInformation?.substitutionLayout?.root?.visibility = View.GONE
+    }
+
+    private fun ProductDetailsFragmentBinding.hideWriteAReview() {
+        productDetailOptionsAndInformation.apply {
+            leaveUsReview?.visibility = View.GONE
+            writeAReviewLink.root.visibility = View.GONE
+        }
+    }
+
+    private fun ProductDetailsFragmentBinding.ShowWriteAReview() {
+        productDetailOptionsAndInformation.apply {
+            leaveUsReview?.visibility = View.VISIBLE
+            writeAReviewLink.root.visibility = View.VISIBLE
+        }
     }
 
     private fun ProductDetailsFragmentBinding.hideRatingAndReview() {
