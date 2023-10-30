@@ -373,10 +373,14 @@ class SubCategoryFragment :
             hideToolbar()
             (activity as? BottomNavigationActivity)?.showBottomNavigationMenu()
             // This is to re-iterate if the user is signed in from other fragments
-            if("1".equals(mRootCategory?.categoryId) || "FOOD".equals(mRootCategory?.categoryName, true)) {
-                // 1: Index Position for Order Again
-                mAdapter?.notifyItemChanged(1)
-            }
+            notifyOrderAgainUpdate()
+        }
+    }
+
+    private fun notifyOrderAgainUpdate() {
+        if("1".equals(mRootCategory?.categoryId) || "FOOD".equals(mRootCategory?.categoryName, true)) {
+            // 1: Index Position for Order Again
+            mAdapter?.notifyItemChanged(1)
         }
     }
 
@@ -391,6 +395,7 @@ class SubCategoryFragment :
             }
         } else if(requestCode == REQUEST_CODE_ORDER_AGAIN_LOGIN
             && resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
+            notifyOrderAgainUpdate()
             // TODO: Implement and navigate user to Order Again List screen.
         }
     }
