@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.geolocation.view
 
+import android.app.Activity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -25,6 +26,7 @@ import za.co.woolworths.financial.services.android.geolocation.view.adapter.Stor
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
+import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderLoading
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderSuccess
@@ -33,11 +35,13 @@ import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.listene
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_CONFIRM_ADD
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_NEW_TOGGLE_FULFILMENT_SCREEN
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_FROM_STORE_LOCATOR
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_PLACE_ID
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.VALIDATE_RESPONSE
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.binding.BaseDialogFragmentBinding
+import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -53,6 +57,7 @@ class ClickAndCollectStoresFragment :
     private var validateLocationResponse: ValidateLocationResponse? = null
     private var placeId: String? = null
     private var isComingFromConfirmAddress: Boolean? = false
+    private var isComingFromNewToggleFulfilment: Boolean? = false
 
     @Inject
     lateinit var vtoErrorBottomSheetDialog: VtoErrorBottomSheetDialog
@@ -72,6 +77,7 @@ class ClickAndCollectStoresFragment :
         bundle = arguments?.getBundle(BUNDLE)
         bundle?.apply {
             placeId = this.getString(KEY_PLACE_ID, "")
+            isComingFromNewToggleFulfilment = this.getBoolean(IS_COMING_FROM_NEW_TOGGLE_FULFILMENT_SCREEN, false)
             isComingFromConfirmAddress = getBoolean(IS_COMING_CONFIRM_ADD, false)
             if (containsKey(VALIDATE_RESPONSE)) {
                 getSerializable(VALIDATE_RESPONSE)?.let {
@@ -250,6 +256,10 @@ class ClickAndCollectStoresFragment :
                 R.id.action_clickAndCollectStoresFragment_to_deliveryAddressConfirmationFragment,
                 bundleOf(BUNDLE to bundle)
             )
+        } else if (isComingFromNewToggleFulfilment == true) {
+            if (mValidateLocationResponse != null) {
+                confirmSetAddress(mValidateLocationResponse!!)
+            }
         } else {
             dataStore?.let {
                 setFragmentResult(
@@ -258,6 +268,75 @@ class ClickAndCollectStoresFragment :
                 )
             }
             dismiss()
+        }
+    }
+
+    private fun confirmSetAddress(validateLocationResponse: ValidateLocationResponse) {
+        if (placeId.isNullOrEmpty())
+            return
+
+        //make confirm Location call
+        val confirmLocationRequest = KotlinUtils.getConfirmLocationRequest(Delivery.CNC)
+        if (!dataStore?.storeId.isNullOrEmpty()) {
+            confirmLocationRequest.storeId = dataStore?.storeId
+        }
+
+        lifecycleScope.launch {
+            binding.clickCollectProgress?.visibility = View.VISIBLE
+            try {
+                val confirmLocationResponse =
+                    confirmAddressViewModel.postConfirmAddress(confirmLocationRequest)
+                binding.clickCollectProgress?.visibility = View.GONE
+                if (!isAdded || !isVisible) return@launch
+
+                when (confirmLocationResponse.httpCode) {
+                    AppConstant.HTTP_OK -> {
+
+                        /*reset browsing data for cnc and dash both once fulfillment location is confirmed*/
+                        WoolworthsApplication.setCncBrowsingValidatePlaceDetails(
+                            validateLocationResponse?.validatePlace
+                        )
+                        WoolworthsApplication.setDashBrowsingValidatePlaceDetails(
+                            validateLocationResponse?.validatePlace
+                        )
+
+                        KotlinUtils.placeId = placeId
+                        KotlinUtils.isLocationPlaceIdSame =
+                            placeId?.equals(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId)
+
+                        WoolworthsApplication.setValidatedSuburbProducts(
+                            validateLocationResponse.validatePlace
+                        )
+
+                        // save details in cache
+                        if (SessionUtilities.getInstance().isUserAuthenticated) {
+                            Utils.savePreferredDeliveryLocation(
+                                ShoppingDeliveryLocation(
+                                    confirmLocationResponse.orderSummary?.fulfillmentDetails
+                                )
+                            )
+                            if (KotlinUtils.getAnonymousUserLocationDetails() != null)
+                                KotlinUtils.clearAnonymousUserLocationDetails()
+                        } else {
+                            KotlinUtils.saveAnonymousUserLocationDetails(
+                                ShoppingDeliveryLocation(
+                                    confirmLocationResponse.orderSummary?.fulfillmentDetails
+                                )
+                            )
+                        }
+
+                        // navigate to Dash home tab.
+                        activity?.setResult(Activity.RESULT_OK)
+                        activity?.finish()
+                    }
+                }
+            } catch (e: Exception) {
+                if (!isAdded || !isVisible) return@launch
+
+                binding.clickCollectProgress?.visibility = View.GONE
+                FirebaseManager.logException(e)
+                showErrorDialog()
+            }
         }
     }
 

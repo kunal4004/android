@@ -60,6 +60,7 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DE
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_CONFIRM_ADD
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_NEW_TOGGLE_FULFILMENT_SCREEN
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_ADDRESS2
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_LATITUDE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_LONGITUDE
@@ -106,6 +107,7 @@ class ConfirmAddressMapFragment :
     private var unIndexedAddressIdentified: Boolean? = false
     private var unIndexedBottomSheetDialog: PoiBottomSheetDialog? = null
     private var poiBottomSheetDialog: PoiBottomSheetDialog? = null
+    private var newDeliveryType: String? = null
 
     val confirmAddressViewModel: ConfirmAddressViewModel by activityViewModels()
 
@@ -122,6 +124,7 @@ class ConfirmAddressMapFragment :
     private lateinit var locator: Locator
     private lateinit var locationBroadcastReceiver : LocationProviderBroadcastReceiver
     private val unIndexedLiveData = MutableLiveData<Boolean>()
+    private var isComingFromNewToggleFulfilment: Boolean? = false
     override fun onViewCreated(
         view: View, savedInstanceState: Bundle?,
     ) {
@@ -145,6 +148,8 @@ class ConfirmAddressMapFragment :
         isComingFromCheckout = args.mapData.isComingFromCheckout
         isFromDashTab = args.mapData.isFromDashTab
         deliveryType = args.mapData.deliveryType
+        isComingFromNewToggleFulfilment = args.mapData.isFromNewFulfilmentScreen
+        newDeliveryType = args.mapData.newDeliveryType
         clearAddress()
         confirmAddressClick()
         onNavigationMapArrowClicked()
@@ -340,6 +345,19 @@ class ConfirmAddressMapFragment :
                                         validateLocationResponse?.validatePlace
                                     )
                                     activity?.finish()
+                                } else if (isComingFromNewToggleFulfilment == true && !newDeliveryType.isNullOrEmpty()) {
+                                    // User don't have any location (signin or signout both) that's why we are setting new location.
+                                    WoolworthsApplication.setValidatedSuburbProducts(
+                                        validateLocationResponse?.validatePlace
+                                    )
+                                    WoolworthsApplication.setCncBrowsingValidatePlaceDetails(
+                                        validateLocationResponse?.validatePlace
+                                    )
+                                    WoolworthsApplication.setDashBrowsingValidatePlaceDetails(
+                                        validateLocationResponse?.validatePlace
+                                    )
+                                    confirmSetAddress(validateLocationResponse)
+                                    return@let
                                 }
 
                                 when (deliveryType) {
@@ -482,14 +500,39 @@ class ConfirmAddressMapFragment :
         if (placeId.isNullOrEmpty())
             return
 
+        if (isComingFromNewToggleFulfilment == true && newDeliveryType == Delivery.CNC.type) {
+            val bundle = Bundle()
+            bundle.apply {
+                putString(KEY_PLACE_ID, placeId)
+                putBoolean(IS_COMING_FROM_NEW_TOGGLE_FULFILMENT_SCREEN, isComingFromNewToggleFulfilment!!)
+                putSerializable(
+                    BundleKeysConstants.VALIDATE_RESPONSE, validateLocationResponse)
+            }
+            findNavController().navigate(
+                R.id.actionClickAndCollectStoresFragment,
+                bundleOf(BUNDLE to bundle)
+            )
+            return
+        }
+
         //make confirm Location call
         val confirmLocationAddress = ConfirmLocationAddress(placeId)
         val confirmLocationRequest =
+        if (isComingFromNewToggleFulfilment == true && !newDeliveryType.isNullOrEmpty()) {
+            KotlinUtils.getConfirmLocationRequest(
+                if (newDeliveryType == Delivery.DASH.type) {
+                    Delivery.DASH
+                } else {
+                    Delivery.STANDARD
+                }
+            )
+        } else {
             ConfirmLocationRequest(
                 BundleKeysConstants.DASH,
                 confirmLocationAddress,
                 validateLocationResponse.validatePlace?.onDemand?.storeId
             )
+        }
 
         lifecycleScope.launch {
             binding?.progressBar?.visibility = View.VISIBLE

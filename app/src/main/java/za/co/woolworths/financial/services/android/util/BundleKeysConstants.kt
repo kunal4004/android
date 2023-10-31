@@ -18,6 +18,7 @@ class BundleKeysConstants {
         const val CREDITCARD_TOKEN = "creditCardToken"
 
         //geo location
+        const val IS_COMING_FROM_NEW_TOGGLE_FULFILMENT_SCREEN = "new_toggle"
         const val KEY_PLACE_ID = "placeId"
         const val KEY_LATITUDE = "latitude"
         const val KEY_LONGITUDE = "longitude"
@@ -35,6 +36,7 @@ class BundleKeysConstants {
         const val DASH_SET_ADDRESS_REQUEST_CODE = 1516
         const val CNC_SET_ADDRESS_REQUEST_CODE = 1517
         const val DELIVERY_TYPE = "DELIVERY_TYPE"
+        const val NEW_DELIVERY_TYPE = "NEW_DELIVERY_TYPE"
         const val IS_COMING_FROM_CHECKOUT = "isComingFromCheckout"
         const val IS_COMING_FROM_SLOT_SELECTION = "isComingFromSlotSelection"
         const val IS_FROM_DASH_TAB = "isFromDashTab"

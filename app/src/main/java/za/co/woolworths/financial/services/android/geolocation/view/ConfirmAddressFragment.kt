@@ -54,6 +54,7 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DELIVERY_TYPE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_CONFIRM_ADD
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_CHECKOUT
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_NEW_TOGGLE_FULFILMENT_SCREEN
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_SLOT_SELECTION
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_FROM_DASH_TAB
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_FROM_STORE_LOCATOR
@@ -84,9 +85,11 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
     private var selectedAddress = Address()
     private var bundle: Bundle? = null
     private var isComingFromCheckout: Boolean = false
+    private var isComingFromNewToggleFulfilment: Boolean = false
     private var isComingFromSlotSelection: Boolean = false
     private var isFromDashTab: Boolean = false
     private var deliveryType: String? = null
+    private var newDeliveryType: String? = null
     private var isAddressAvailable: Boolean = false
     private var permissionUtils: PermissionUtils? = null
     var permissions: ArrayList<String> = arrayListOf()
@@ -108,6 +111,8 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
             isComingFromSlotSelection = this.getBoolean(IS_COMING_FROM_SLOT_SELECTION, false)
             isFromDashTab = this.getBoolean(IS_FROM_DASH_TAB, false)
             deliveryType = this.getString(DELIVERY_TYPE, "")
+            isComingFromNewToggleFulfilment = this.getBoolean(IS_COMING_FROM_NEW_TOGGLE_FULFILMENT_SCREEN, false)
+            newDeliveryType = this.getString(BundleKeysConstants.NEW_DELIVERY_TYPE, null)
         }
         hideBottomNav()
     }
@@ -453,7 +458,9 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
                             false,
                             isComingFromCheckout = false,
                             isFromDashTab = isFromDashTab,
-                            deliveryType = deliveryType
+                            deliveryType = deliveryType,
+                            isFromNewFulfilmentScreen = isComingFromNewToggleFulfilment,
+                            newDeliveryType = newDeliveryType
                         )
                     val directions =
                         ConfirmAddressFragmentDirections.actionToConfirmAddressMapFragment(
@@ -470,7 +477,9 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
                             false,
                             isComingFromCheckout = false,
                             isFromDashTab = false,
-                            deliveryType = deliveryType
+                            deliveryType = deliveryType,
+                            isFromNewFulfilmentScreen = isComingFromNewToggleFulfilment,
+                            newDeliveryType = newDeliveryType
                         )
                     val directions =
                         ConfirmAddressFragmentDirections.actionToConfirmAddressMapFragment(
@@ -522,7 +531,9 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
                             0.0, 0.0, true,
                             isComingFromCheckout = false,
                             isFromDashTab = isFromDashTab,
-                            deliveryType = deliveryType
+                            deliveryType = deliveryType,
+                            isFromNewFulfilmentScreen = isComingFromNewToggleFulfilment,
+                            newDeliveryType = newDeliveryType
                         )
                     val directions =
                         ConfirmAddressFragmentDirections.actionToConfirmAddressMapFragment(
@@ -537,7 +548,9 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
                             0.0, 0.0, true,
                             isComingFromCheckout = false,
                             isFromDashTab = false,
-                            deliveryType = deliveryType
+                            deliveryType = deliveryType,
+                            isFromNewFulfilmentScreen = isComingFromNewToggleFulfilment,
+                            newDeliveryType = newDeliveryType
                         )
                     val directions =
                         ConfirmAddressFragmentDirections.actionToConfirmAddressMapFragment(
@@ -826,7 +839,9 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
             confirmAddressStoreLocator.isAddAddress,
             isComingFromCheckout = true,
             isFromDashTab = false,
-            deliveryType = confirmAddressStoreLocator.deliveryType
+            deliveryType = confirmAddressStoreLocator.deliveryType,
+            isFromNewFulfilmentScreen = isComingFromNewToggleFulfilment,
+            newDeliveryType = newDeliveryType
         )
         val directions =
             ConfirmAddressFragmentDirections.actionToConfirmAddressMapFragment(
