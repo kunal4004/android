@@ -21,6 +21,7 @@ import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.shoptoggle.domain.model.ToggleModel
 import za.co.woolworths.financial.services.android.shoptoggle.presentation.viewmodel.ShopToggleViewModel
 import za.co.woolworths.financial.services.android.ui.wfs.theme.*
+import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -29,6 +30,7 @@ fun ExpandableListItem(
     item: ToggleModel,
     isExpanded: Boolean,
     onItemClick: () -> Unit,
+    onSelectDeliveryType: (Delivery?) -> Unit,
     viewModel: ShopToggleViewModel,
 ) {
 
@@ -61,7 +63,7 @@ fun ExpandableListItem(
         }
 
     ) {
-        ExpandableCard(item, isExpanded,viewModel)
+        ExpandableCard(item, isExpanded,viewModel, onSelectDeliveryType)
 
     }
 
@@ -72,6 +74,7 @@ private fun ExpandableCard(
     item: ToggleModel,
     isExpanded: Boolean,
     viewModel: ShopToggleViewModel,
+    onSelectDeliveryType: (Delivery?) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -160,7 +163,7 @@ private fun ExpandableCard(
 
         }
 
-        ExpandedData(isExpanded, item,viewModel)
+        ExpandedData(isExpanded, item,viewModel, onSelectDeliveryType)
 
     }
 

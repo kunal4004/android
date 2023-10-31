@@ -5,11 +5,13 @@ data class ShopToggleData(
     val title: String?,
     val subTitle: String? = "",
     val icon: Int,
+    val deliveryTypeLabel: String,
     val deliveryType: String,
-    val deliveryTime: String,
-    val deliveryProduct: String,
+    val deliverySlotFood: String,
+    val deliverySlotFbh: String,
     val deliveryCost: String,
     val learnMore: String,
     val deliveryButtonText: String,
-    val isDashDelivery: Boolean
+    val isDashDelivery: Boolean,
+    val quantity: Int
 )

@@ -19,6 +19,7 @@ import za.co.woolworths.financial.services.android.shoptoggle.domain.usecase.Lea
 import za.co.woolworths.financial.services.android.shoptoggle.domain.usecase.Resource
 import za.co.woolworths.financial.services.android.shoptoggle.domain.usecase.ShopToggleUseCase
 import za.co.woolworths.financial.services.android.util.KotlinUtils
+import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import javax.inject.Inject
 
 @HiltViewModel
@@ -30,9 +31,6 @@ class ShopToggleViewModel @Inject constructor(
 
     private val _state = mutableStateOf(ToggleScreenState())
     val state: State<ToggleScreenState> = _state
-
-    private val _listItem = mutableStateOf<List<ToggleModel>>(emptyList())
-    val listItem: State<List<ToggleModel>> = _listItem
 
     private val _expandedItemId = mutableStateOf<Int?>(null)
     val expandedItemId get() = _expandedItemId.value
@@ -52,22 +50,25 @@ class ShopToggleViewModel @Inject constructor(
 
 
     init {
-        getListData()
         val placeId = KotlinUtils.getDeliveryType()?.address?.placeId
         getToggleScreenData(placeId)
     }
 
     private fun getToggleScreenData(placeId: String?) {
-        shopToggleUseCase.getValidateLocationDetails1(placeId).onEach { result->
-            when(result){
+        shopToggleUseCase.getValidateLocationDetails1(placeId).onEach { result ->
+            when (result) {
                 is Resource.Loading -> {
                     _state.value = ToggleScreenState(isLoading = true)
                 }
+
                 is Resource.Error -> {
                     _state.value = ToggleScreenState(data = shopToggleUseCase.getFailureData())
                 }
+
                 is Resource.Success -> {
-                    _state.value = ToggleScreenState(data = result.data ?: shopToggleUseCase.getFailureData())
+                    _state.value =
+                        ToggleScreenState(data = result.data ?: shopToggleUseCase.getFailureData())
+                    _expandedItemId.value = shopToggleUseCase.getSelectedDeliveryId()
                 }
             }
         }.launchIn(viewModelScope)
@@ -77,13 +78,24 @@ class ShopToggleViewModel @Inject constructor(
         _expandedItemId.value = itemId
     }
 
-    fun collapseItem() {
-        _expandedItemId.value = null
+    fun deliveryType(): Delivery {
+        return when (_expandedItemId.value) {
+            ShopToggleUseCase.STANDARD_DELIVERY_ID -> {
+                Delivery.STANDARD
+            }
+
+            ShopToggleUseCase.DASH_DELIVERY_ID -> {
+                Delivery.DASH
+            }
+
+            else -> {
+                Delivery.CNC
+            }
+        }
     }
 
-    private fun getListData() {
-        val itemList = shopToggleUseCase.invoke()
-        _listItem.value = itemList
+    fun collapseItem() {
+        _expandedItemId.value = null
     }
 
     fun getLearnMoreList() {
@@ -98,6 +110,5 @@ class ShopToggleViewModel @Inject constructor(
 }
 
 data class ToggleScreenState(
-    val isLoading: Boolean = false,
-    val data: List<ToggleModel> = emptyList()
+    val isLoading: Boolean = false, val data: List<ToggleModel> = emptyList()
 )

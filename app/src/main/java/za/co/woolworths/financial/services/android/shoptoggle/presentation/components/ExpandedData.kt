@@ -8,11 +8,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -21,12 +21,10 @@ import com.awfs.coordination.R
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.presentation.common.BlackButton
 import za.co.woolworths.financial.services.android.shoptoggle.domain.model.ToggleModel
-import za.co.woolworths.financial.services.android.shoptoggle.presentation.ShopToggleActivity
 import za.co.woolworths.financial.services.android.shoptoggle.presentation.viewmodel.ShopToggleViewModel
 import za.co.woolworths.financial.services.android.ui.wfs.theme.*
-import za.co.woolworths.financial.services.android.util.BundleKeysConstants
-import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -34,13 +32,14 @@ fun ExpandedData(
     isExpanded: Boolean,
     item: ToggleModel,
     viewModel: ShopToggleViewModel,
+    onSelectDeliveryType: (Delivery?) -> Unit
 ) {
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scope = rememberCoroutineScope()
-    var showBottomSheet by remember { mutableStateOf(false) }
+    var showLearnMoreBottomSheet by remember { mutableStateOf(false) }
+    var showSetLocationBottomSheet by remember { mutableStateOf(false) }
 
-    val activity = (LocalContext.current as? ShopToggleActivity)
     if (isExpanded) {
         Spacer(modifier = Modifier.height(Dimens.sixteen_dp))
         Divider(color = ColorD8D8D8, thickness = Dimens.oneDp)
@@ -48,7 +47,7 @@ fun ExpandedData(
         Text(
             modifier = Modifier,
             textAlign = TextAlign.Start,
-            text = item.deliveryType,
+            text = item.deliveryTypeLabel,
             style = TextStyle(
                 fontFamily = OpenSansFontFamily,
                 fontWeight = FontWeight.W600,
@@ -56,34 +55,20 @@ fun ExpandedData(
                 color = Color.Black
             )
         )
-        Text(
-            modifier = Modifier,
-            textAlign = TextAlign.Start,
-            text = item.deliveryTime,
-            style = TextStyle(
-                fontFamily = OpenSansFontFamily,
-                fontWeight = FontWeight.W400,
-                fontSize = Dimens.thirteen_sp,
-                color = Color.Black
-            )
-        )
-
-        Text(
-            modifier = Modifier,
-            textAlign = TextAlign.Start,
-            text = item.deliveryProduct,
-            style = TextStyle(
-                fontFamily = OpenSansFontFamily,
-                fontWeight = FontWeight.W400,
-                fontSize = Dimens.thirteen_sp,
-                color = Color.Black
-            )
-        )
+        if (item.deliveryType.lowercase() == Delivery.DASH.type.lowercase()) {
+            LoadDashDetails(item = item)
+        }
+        if (item.deliveryType.lowercase() == Delivery.CNC.type.lowercase()) {
+            LoadCncDetails(item = item)
+        }
+        if (item.deliveryType.lowercase() == Delivery.STANDARD.type.lowercase()) {
+            LoadStandardDetails(item = item)
+        }
         Spacer(modifier = Modifier.height(Dimens.eight_dp))
         Text(
             modifier = Modifier,
             textAlign = TextAlign.Start,
-            text = item.deliveryCost,
+            text = item.deliveryCostLabel,
             style = TextStyle(
                 fontFamily = OpenSansFontFamily,
                 fontWeight = FontWeight.W600,
@@ -94,16 +79,20 @@ fun ExpandedData(
 
         Text(
             modifier = Modifier
-            .clickable(true) {
-                viewModel.getLearnMoreList()
-                showBottomSheet = true
-            },
+                .clickable(true) {
+                    viewModel.getLearnMoreList()
+                    showLearnMoreBottomSheet = true
+                },
             textAlign = TextAlign.Start,
             text = buildAnnotatedString {
-                append(item.learnMore)
-                withStyle(style = SpanStyle(textDecoration = TextDecoration.Underline,
+                append(item.deliveryCost)
+                append(" ")
+                withStyle(
+                    style = SpanStyle(
+                        textDecoration = TextDecoration.Underline,
 
-                )) {
+                        )
+                ) {
                     append(stringResource(R.string.learn_more))
                 }
             },
@@ -122,17 +111,20 @@ fun ExpandedData(
             text = item.deliveryButtonText.uppercase(),
             enabled = true,
         ) {
-            when (item.id) {
-                1 -> activity?.finish()
-                2 -> onEditDeliveryLocation(activity)
-                3 -> "//TODO: open click and collect screen"
+            val placeId = KotlinUtils.getDeliveryType()?.address?.placeId
+            if (placeId.isNullOrEmpty()) {
+                showSetLocationBottomSheet = true
+            } else {
+                // Call the confirm location API
+                val deliveryType = Delivery.getType(item.deliveryType)
+                onSelectDeliveryType(deliveryType)
             }
         }
     }
-    if (showBottomSheet) {
+    if (showLearnMoreBottomSheet) {
         ModalBottomSheet(
             onDismissRequest = {
-                showBottomSheet = false
+                showLearnMoreBottomSheet = false
             },
             sheetState = sheetState,
             containerColor = Color.White,
@@ -183,24 +175,190 @@ fun ExpandedData(
                 ) {
                     scope.launch { sheetState.hide() }.invokeOnCompletion {
                         if (!sheetState.isVisible) {
-                            showBottomSheet = false
+                            showLearnMoreBottomSheet = false
                         }
                     }
                 }
             }
         }
     }
+
+    if (showSetLocationBottomSheet) {
+        SetLocationBottomSheetMain(
+            delivery = viewModel.deliveryType(),
+            onDismissRequest = {
+                showSetLocationBottomSheet = false
+            }
+        )
+    }
 }
 
+@Composable
+private fun LoadStandardDetails(item: ToggleModel) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Text(
+            modifier = Modifier,
+            textAlign = TextAlign.Start,
+            text = fbhDeliverySlotsForStandard(item),
+            style = TextStyle(
+                fontFamily = OpenSansFontFamily,
+                fontWeight = FontWeight.W400,
+                fontSize = Dimens.thirteen_sp,
+                color = Color.Black
+            )
+        )
 
-private fun onEditDeliveryLocation(activity: ShopToggleActivity?) {
+        if (!item.dataFailure) {
+            Text(
+                modifier = Modifier,
+                textAlign = TextAlign.Start,
+                text = buildAnnotatedString {
+                    withStyle(
+                        style = SpanStyle(
+                            textDecoration = TextDecoration.Underline,
+                        )
+                    ) {
+                        append(stringResource(id = R.string.food_toggle_fulfilment))
+                    }
+                    append(" ")
+                    append(item.deliverySlotFood)
+                    withStyle(
+                        style = SpanStyle(
+                            fontStyle = FontStyle.Italic,
+                        )
+                    ) {
+                        append(" ")
+                        append(stringResource(id = R.string.unlimited_items))
+                    }
+                },
+                style = TextStyle(
+                    fontFamily = OpenSansFontFamily,
+                    fontWeight = FontWeight.W400,
+                    fontSize = Dimens.thirteen_sp,
+                    color = Color.Black
+                )
+            )
+        }
+    }
+}
 
-    KotlinUtils.presentEditDeliveryGeoLocationActivity(
-        activity,
-        BundleKeysConstants.REQUEST_CODE,
-        Delivery.getType(KotlinUtils.getDeliveryType()?.deliveryType) ?: KotlinUtils.browsingDeliveryType,
-        KotlinUtils.getDeliveryType()?.address?.placeId ?: ""
+@Composable
+private fun LoadDashDetails(item: ToggleModel) {
+    Text(
+        modifier = Modifier,
+        textAlign = TextAlign.Start,
+        text = dashDeliverySlots(item),
+        style = TextStyle(
+            fontFamily = OpenSansFontFamily,
+            fontWeight = FontWeight.W400,
+            fontSize = Dimens.thirteen_sp,
+            color = Color.Black
+        )
     )
-    activity?.finish()
+
+    Text(
+        modifier = Modifier,
+        textAlign = TextAlign.Start,
+        text = buildAnnotatedString {
+            append(stringResource(id = R.string.food_only_toggle_fulfilment))
+            append(" ")
+            withStyle(
+                style = SpanStyle(
+                    fontStyle = FontStyle.Italic,
+                )
+            ) {
+                append(stringResource(id = R.string.limited_food_item_msg, item.foodQuantity.toString()))
+            }
+        },
+        style = TextStyle(
+            fontFamily = OpenSansFontFamily,
+            fontWeight = FontWeight.W400,
+            fontSize = Dimens.thirteen_sp,
+            color = Color.Black
+        )
+    )
 }
 
+@Composable
+private fun LoadCncDetails(item: ToggleModel) {
+    Text(
+        modifier = Modifier,
+        textAlign = TextAlign.Start,
+        text = cncDeliverySlots(item),
+        style = TextStyle(
+            fontFamily = OpenSansFontFamily,
+            fontWeight = FontWeight.W400,
+            fontSize = Dimens.thirteen_sp,
+            color = Color.Black
+        )
+    )
+
+    if (!item.dataFailure) {
+
+        Text(
+            modifier = Modifier,
+            textAlign = TextAlign.Start,
+            text = buildAnnotatedString {
+                withStyle(
+                    style = SpanStyle(
+                        textDecoration = TextDecoration.Underline,
+                    )
+                ) {
+                    append(stringResource(id = R.string.food_toggle_fulfilment))
+                }
+                append(" ")
+                append(item.deliverySlotFood)
+            },
+            style = TextStyle(
+                fontFamily = OpenSansFontFamily,
+                fontWeight = FontWeight.W400,
+                fontSize = Dimens.thirteen_sp,
+                color = Color.Black
+            )
+        )
+    }
+}
+
+@Composable
+private fun cncDeliverySlots(item: ToggleModel) =
+    buildAnnotatedString {
+        if (item.dataFailure) {
+            append(stringResource(id = R.string.cnc_delivery_slots_not_available))
+        } else {
+            withStyle(
+                style = SpanStyle(
+                    textDecoration = TextDecoration.Underline,
+                )
+            ) {
+                append(stringResource(id = R.string.fashion_beauty_home_toggle_fulfilment))
+            }
+            append(" ")
+            append(item.deliverySlotFbh)
+        }
+    }
+
+@Composable
+private fun dashDeliverySlots(item: ToggleModel) =
+    if (!item.dataFailure) {
+        item.deliverySlotFood
+    } else {
+        stringResource(id = R.string.dash_delivery_slots_not_available)
+    }
+
+@Composable
+private fun fbhDeliverySlotsForStandard(item: ToggleModel) =
+    buildAnnotatedString {
+        if (item.dataFailure) {
+            append(stringResource(id = R.string.dash_delivery_slots_not_available))
+        } else {
+            withStyle(
+                style = SpanStyle(
+                    textDecoration = TextDecoration.Underline,
+                )
+            ) {
+                append(stringResource(id = R.string.fashion_beauty_home_toggle_fulfilment))
+            }
+            append(" ")
+            append(item.deliverySlotFbh)
+        }
+    }

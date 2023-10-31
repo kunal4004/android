@@ -20,11 +20,13 @@ import za.co.woolworths.financial.services.android.shoptoggle.presentation.viewm
 import za.co.woolworths.financial.services.android.ui.wfs.theme.Color666666
 import za.co.woolworths.financial.services.android.ui.wfs.theme.Dimens
 import za.co.woolworths.financial.services.android.ui.wfs.theme.FuturaFontFamily
+import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
 @Composable
 fun ToggleExpandableList(
     viewModel: ShopToggleViewModel,
     item: List<ToggleModel>,
+    onSelectDeliveryType: (Delivery?) -> Unit
 ) {
 
     LazyColumn(
@@ -44,6 +46,7 @@ fun ToggleExpandableList(
                     }
 
                 },
+                onSelectDeliveryType = onSelectDeliveryType,
                 viewModel
 
             )
