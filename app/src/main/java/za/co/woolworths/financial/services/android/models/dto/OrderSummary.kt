@@ -50,6 +50,7 @@ data class OrderSummary(
     var driverTrackingURL : String? = "",
     var hasMinimumBasketAmount: Boolean = false,
     var minimumBasketAmount: Double = 0.0,
-    var cashVoucherApplied: Double = 0.0
-
+    var cashVoucherApplied: Double = 0.0,
+    var endlessAisleOrder:Boolean = false,
+    var endlessAisleBarcode:String = ""
 ) : Parcelable

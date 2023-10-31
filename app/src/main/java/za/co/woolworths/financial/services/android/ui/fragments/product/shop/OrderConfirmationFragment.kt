@@ -843,10 +843,12 @@ class OrderConfirmationFragment :
                     standardAndCncItemsGroup.visibility = GONE
                     this.root.visibility = VISIBLE
                     orderNumber.text = resources.getString(R.string.order_with_hash)+response?.orderSummary?.orderId
-                    barcodeNumber.text = response?.barcodeNumber
+                    barcodeNumber.text = response?.orderSummary?.endlessAisleBarcode
                     barcodeMessage.text = getBarcodeMessage()
                     try {
-                        barcodeImage.setImageBitmap(Utils.encodeAsBitmap(response?.barcodeNumber, BarcodeFormat.CODE_128, barcodeImage.width, 60));
+                        barcodeImage.setImageBitmap(Utils.encodeAsBitmap(
+                            response?.orderSummary?.endlessAisleBarcode,
+                            BarcodeFormat.CODE_128, barcodeImage.width, 60));
                     } catch (e: WriterException) {
                         FirebaseManager.Companion.logException(e);
                     }
