@@ -60,6 +60,8 @@ import za.co.woolworths.financial.services.android.recommendations.data.response
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.HomePageRequestEvent
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.RatingAndReviewData
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.ReviewFeedback
+import za.co.woolworths.financial.services.android.ui.activities.write_a_review.request.PrepareWriteAReviewFormRequestEvent
+import za.co.woolworths.financial.services.android.ui.activities.write_a_review.response.WriteAReviewFormResponse
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.PrepareChangeAttributeRequestEvent
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Response.DyChangeAttributeResponse
 
@@ -2336,5 +2338,14 @@ interface ApiInterface {
         @Path("store_id") store_id: String,
         @Path("multipleSku") multipleSku: String,
         @Query("substitution") substitution: Boolean): retrofit2.Response<SkusInventoryForStoreResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @POST("wfs/app/reviews/submitReview")
+    suspend fun writeAReviewForm(
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Query("productId") productId: String?,
+        @Body prepareWriteAReviewFormRequestEvent: PrepareWriteAReviewFormRequestEvent
+    ) : retrofit2.Response<WriteAReviewFormResponse>
 
 }
