@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.recommendations.data.respons
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
+import za.co.woolworths.financial.services.android.models.dto.ProductList
 
 @Parcelize
 data class Action(
@@ -9,5 +10,5 @@ data class Action(
     val actionId: Int?,
     val componentName: String?,
     val experienceName: String?,
-    val products: List<Product>?,
+    val products: List<ProductList>?,
 ) : Parcelable
