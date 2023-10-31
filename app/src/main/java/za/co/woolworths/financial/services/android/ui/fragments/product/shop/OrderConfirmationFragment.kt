@@ -838,7 +838,7 @@ class OrderConfirmationFragment :
                                           deliveringToCollectionFromBinding: DeliveringToCollectionFromBinding
     ) {
         deliveringToCollectionFromBinding.apply {
-            if(isEndlessAisleJourney == true){
+            if(isEndlessAisleJourney == true && response?.orderSummary?.endlessAisleOrder == true){
                 endlessAisleOrderConfirmationLayout.apply {
                     standardAndCncItemsGroup.visibility = GONE
                     this.root.visibility = VISIBLE
