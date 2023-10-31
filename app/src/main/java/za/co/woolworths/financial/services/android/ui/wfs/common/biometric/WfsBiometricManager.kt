@@ -10,6 +10,7 @@ import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
+import za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView
 import za.co.woolworths.financial.services.android.ui.wfs.common.biometric.BiometricUtils.deviceHasPasswordPinLock
@@ -29,7 +30,7 @@ interface WfsBiometricManager {
     fun setupBiometricAuthenticationForAccountLanding(
         biometricSingleton: BiometricSingleton?,
         fragment: Fragment,
-        bottomNavigation: BottomNavigationActivity?,
+        appCompatActivity: AppCompatActivity?,
         viewModel: UserAccountLandingViewModel
     )
 
@@ -124,7 +125,6 @@ class WfsBiometricManagerImpl @Inject constructor() : WfsBiometricManager {
                     .setSubtitle(subtitle)
                     .setDescription(description)
                     .setDeviceCredentialAllowed(true)
-                    .setAllowedAuthenticators(authFlag)
                     .build()
             }
         } else {
@@ -133,7 +133,6 @@ class WfsBiometricManagerImpl @Inject constructor() : WfsBiometricManager {
                 .setSubtitle(subtitle)
                 .setDescription(description)
                 .setDeviceCredentialAllowed(true)
-                .setAllowedAuthenticators(authFlag)
                 .build()
         }
     }
@@ -173,21 +172,24 @@ class WfsBiometricManagerImpl @Inject constructor() : WfsBiometricManager {
     override fun setupBiometricAuthenticationForAccountLanding(
         biometricSingleton: BiometricSingleton?,
         fragment: Fragment,
-        bottomNavigation: BottomNavigationActivity?,
+        appCompatActivity: AppCompatActivity?,
         viewModel: UserAccountLandingViewModel
     ) {
         with(fragment) {
             if (isAdded &&
                 isVisible &&
                 isBiometricEnabled(fragment.requireContext())) {
-                bottomNavigation?.apply {
+                appCompatActivity?.apply {
                     when (unlockWithPinPasswordPatternOrBiometric()){
                         true -> {
                             biometricSingleton?.wasBiometricAuthenticationScreenActive = true
                             fragment.setPrompt { callback ->
                             when (callback) {
                                 BiometricCallback.ErrorUserCanceled -> {
-                                    bottomNavigation?.bottomNavigationById?.currentItem = BottomNavigationActivity.INDEX_TODAY
+                                    when (appCompatActivity) {
+                                        is BottomNavigationActivity -> { appCompatActivity.bottomNavigationById?.currentItem = BottomNavigationActivity.INDEX_TODAY }
+                                        is MyAccountActivity -> Unit
+                                    }
                                     viewModel.setScreenBlurDisabled()
                                     viewModel.setBiometricEnabled()
                                     biometricSingleton?.wasBiometricAuthenticationScreenActive = false
