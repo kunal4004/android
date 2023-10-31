@@ -828,11 +828,16 @@ class OrderConfirmationFragment :
         )
     }
 
+    /**
+     * This function will help us the update the layout if endless aisle feature is enabled
+     * @param response submitted Order API response
+     * @param deliveringToCollectionFromBinding layout which hold the information for fulfilment
+     * type standard and C&C
+     */
     private fun updateLayoutForPayInStore(response: SubmittedOrderResponse?,
                                           deliveringToCollectionFromBinding: DeliveringToCollectionFromBinding
     ) {
         deliveringToCollectionFromBinding.apply {
-            //if(!response?.barcodeNumber.isNullOrEmpty()){
             if(isEndlessAisleJourney == true){
                 endlessAisleOrderConfirmationLayout.apply {
                     standardAndCncItemsGroup.visibility = GONE
